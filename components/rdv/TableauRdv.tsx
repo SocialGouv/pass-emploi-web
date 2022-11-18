@@ -5,7 +5,7 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import { RdvRow } from 'components/rdv/RdvRow'
 import { HeaderCell } from 'components/ui/Table/HeaderCell'
 import TableLayout from 'components/ui/Table/TableLayout'
-import { RdvListItem } from 'interfaces/rdv'
+import { EvenementListItem } from 'interfaces/evenement'
 import {
   insertIntercalaires,
   renderListeWithIntercalaires,
@@ -13,7 +13,7 @@ import {
 
 type TableauRdvProps = {
   idConseiller: string
-  rdvs: RdvListItem[]
+  rdvs: EvenementListItem[]
   withIntercalaires?: boolean
   withNameJeune?: boolean
 }

@@ -24,6 +24,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { PeriodeEvenements, EvenementListItem } from 'interfaces/evenement'
 import {
   DetailJeune,
   IndicateursSemaine,
@@ -31,12 +32,11 @@ import {
 } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { PeriodeRdv, RdvListItem } from 'interfaces/rdv'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
+import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
@@ -60,7 +60,7 @@ const ongletProps: {
 
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
-  rdvs: RdvListItem[]
+  rdvs: EvenementListItem[]
   actionsInitiales: {
     actions: Action[]
     metadonnees: MetadonneesActions
@@ -437,7 +437,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    withDependance<RendezVousService>('rendezVousService')
+    withDependance<EvenementsService>('rendezVousService')
   const actionsService = withDependance<ActionsService>('actionsService')
   const {
     session: {
@@ -462,7 +462,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       ? []
       : rendezVousService.getRendezVousJeune(
           context.query.jeune_id as string,
-          PeriodeRdv.FUTURS,
+          PeriodeEvenements.FUTURS,
           accessToken
         ),
     isPoleEmploi

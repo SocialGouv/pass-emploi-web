@@ -3,34 +3,34 @@ import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
 import {
-  jsonToRdvListItem,
-  jsonToRdv,
-  RdvFormData,
-  RdvJeuneJson,
-  rdvJeuneJsonToRdvListItem,
-  RdvJson,
+  AnimationCollective,
+  Evenement,
+  EvenementListItem,
+  TypeEvenement,
+} from 'interfaces/evenement'
+import {
+  jsonToListItem,
+  jsonToEvenement,
+  EvenementFormData,
+  EvenementJeuneJson,
+  evenementJeuneJsonToListItem,
+  EvenementJson,
   jsonToAnimationCollective,
   AnimationCollectiveJson,
-} from 'interfaces/json/rdv'
-import {
-  AnimationCollective,
-  Rdv,
-  RdvListItem,
-  TypeRendezVous,
-} from 'interfaces/rdv'
+} from 'interfaces/json/evenement'
 import { ApiError } from 'utils/httpClient'
 
-export interface RendezVousService {
+export interface EvenementsService {
   getRendezVousConseiller(
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
-  ): Promise<RdvListItem[]>
+  ): Promise<EvenementListItem[]>
   getRendezVousJeune(
     idJeune: string,
     periode: string,
     accessToken: string
-  ): Promise<RdvListItem[]>
+  ): Promise<EvenementListItem[]>
 
   getRendezVousEtablissement(
     idEtablissement: string,
@@ -38,48 +38,47 @@ export interface RendezVousService {
     dateFin: DateTime
   ): Promise<AnimationCollective[]>
 
-  getDetailsRendezVous(
+  getDetailsEvenement(
     idRdv: string,
     accessToken: string
-  ): Promise<Rdv | undefined>
+  ): Promise<Evenement | undefined>
 
-  getTypesRendezVous(accessToken: string): Promise<TypeRendezVous[]>
+  getTypesRendezVous(accessToken: string): Promise<TypeEvenement[]>
 
-  postNewRendezVous(newRDV: RdvFormData): Promise<void>
+  creerEvenement(newRDV: EvenementFormData): Promise<void>
 
-  updateRendezVous(idRdv: string, updatedRdv: RdvFormData): Promise<void>
+  updateRendezVous(idRdv: string, updatedRdv: EvenementFormData): Promise<void>
 
-  deleteRendezVous(idRendezVous: string): Promise<void>
+  deleteEvenement(idRendezVous: string): Promise<void>
 }
 
-export class RendezVousApiService implements RendezVousService {
+export class EvenementsApiService implements EvenementsService {
   constructor(private readonly apiClient: ApiClient) {}
 
   async getRendezVousConseiller(
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
-  ): Promise<RdvListItem[]> {
+  ): Promise<EvenementListItem[]> {
     const session = await getSession()
     const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
     const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-    const { content: rdvsJson } = await this.apiClient.get<RdvJson[]>(
+    const { content: rdvsJson } = await this.apiClient.get<EvenementJson[]>(
       `/v2/conseillers/${idConseiller}/rendezvous?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
       session!.accessToken
     )
-    return rdvsJson.map(jsonToRdvListItem)
+    return rdvsJson.map(jsonToListItem)
   }
 
   async getRendezVousJeune(
     idJeune: string,
     periode: string,
     accessToken: string
-  ): Promise<RdvListItem[]> {
-    const { content: rdvsJson } = await this.apiClient.get<RdvJeuneJson[]>(
-      `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
-      accessToken
-    )
-    return rdvsJson.map(rdvJeuneJsonToRdvListItem)
+  ): Promise<EvenementListItem[]> {
+    const { content: rdvsJson } = await this.apiClient.get<
+      EvenementJeuneJson[]
+    >(`/jeunes/${idJeune}/rendezvous?periode=${periode}`, accessToken)
+    return rdvsJson.map(evenementJeuneJsonToListItem)
   }
 
   async getRendezVousEtablissement(
@@ -100,16 +99,16 @@ export class RendezVousApiService implements RendezVousService {
     return animationsCollectivesJson.map(jsonToAnimationCollective)
   }
 
-  async getDetailsRendezVous(
+  async getDetailsEvenement(
     idRdv: string,
     accessToken: string
-  ): Promise<Rdv | undefined> {
+  ): Promise<Evenement | undefined> {
     try {
-      const { content: rdvJson } = await this.apiClient.get<RdvJson>(
-        `/rendezvous/${idRdv}`,
+      const { content: rdvJson } = await this.apiClient.get<EvenementJson>(
+        `/rendezvous/${idRdv}?avecHistorique=true`,
         accessToken
       )
-      return jsonToRdv(rdvJson)
+      return jsonToEvenement(rdvJson)
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
         return undefined
@@ -118,15 +117,15 @@ export class RendezVousApiService implements RendezVousService {
     }
   }
 
-  async getTypesRendezVous(accessToken: string): Promise<TypeRendezVous[]> {
-    const { content: types } = await this.apiClient.get<TypeRendezVous[]>(
+  async getTypesRendezVous(accessToken: string): Promise<TypeEvenement[]> {
+    const { content: types } = await this.apiClient.get<TypeEvenement[]>(
       '/referentiels/types-rendezvous',
       accessToken
     )
     return types
   }
 
-  async postNewRendezVous(newRDV: RdvFormData): Promise<void> {
+  async creerEvenement(newRDV: EvenementFormData): Promise<void> {
     const session = await getSession()
     await this.apiClient.post(
       `/conseillers/${session!.user.id}/rendezvous`,
@@ -137,7 +136,7 @@ export class RendezVousApiService implements RendezVousService {
 
   async updateRendezVous(
     idRdv: string,
-    updatedRdv: RdvFormData
+    updatedRdv: EvenementFormData
   ): Promise<void> {
     const session = await getSession()
     const payload = {
@@ -148,6 +147,7 @@ export class RendezVousApiService implements RendezVousService {
       adresse: updatedRdv.adresse,
       organisme: updatedRdv.organisme,
       presenceConseiller: updatedRdv.presenceConseiller,
+      titre: updatedRdv.titre,
       comment: updatedRdv.comment,
     }
     await this.apiClient.put(
@@ -157,7 +157,7 @@ export class RendezVousApiService implements RendezVousService {
     )
   }
 
-  async deleteRendezVous(idRendezVous: string): Promise<void> {
+  async deleteEvenement(idRendezVous: string): Promise<void> {
     const session = await getSession()
     await this.apiClient.delete(
       `/rendezvous/${idRendezVous}`,

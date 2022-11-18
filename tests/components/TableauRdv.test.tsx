@@ -4,8 +4,8 @@ import { DateTime } from 'luxon'
 import React from 'react'
 
 import TableauRdv from 'components/rdv/TableauRdv'
-import { desRdvListItems } from 'fixtures/rendez-vous'
-import { RdvListItem } from 'interfaces/rdv'
+import { desEvenementsListItems } from 'fixtures/evenement'
+import { EvenementListItem } from 'interfaces/evenement'
 import {
   TIME_24_H_SEPARATOR,
   toFrenchFormat,
@@ -24,10 +24,10 @@ describe('<TableauRdv>', () => {
   })
 
   describe('Quand il y a des rendez-vous', () => {
-    let listeRdv: RdvListItem[]
+    let listeRdv: EvenementListItem[]
     beforeEach(() => {
       // Given
-      listeRdv = desRdvListItems()
+      listeRdv = desEvenementsListItems()
 
       // When
       render(<TableauRdv rdvs={listeRdv} idConseiller='1' />)

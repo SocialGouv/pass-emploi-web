@@ -5,7 +5,7 @@ import React, { useMemo } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import RowCell from 'components/ui/Table/RowCell'
-import { RdvListItem } from 'interfaces/rdv'
+import { EvenementListItem } from 'interfaces/evenement'
 import {
   WEEKDAY_MONTH_LONG,
   TIME_24_H_SEPARATOR,
@@ -14,7 +14,7 @@ import {
 } from 'utils/date'
 
 interface RdvRowProps {
-  rdv: RdvListItem
+  rdv: EvenementListItem
   idConseiller: string
   withNameJeune?: boolean
   withDate?: boolean
@@ -65,41 +65,38 @@ export function RdvRow({
           {rdv.modality}
         </RowCell>
 
-        {rdv.idCreateur && (
-          <RowCell className='rounded-r-small'>
-            <span className='flex items-center justify-between'>
-              {rdv.idCreateur === idConseiller && (
-                <>
-                  <span className='sr-only'>oui</span>
-                  <IconComponent
-                    name={IconName.RoundedCheckFilled}
-                    aria-hidden='true'
-                    focusable='false'
-                    className='h-3 fill-primary'
-                  />
-                </>
-              )}
-              {rdv.idCreateur !== idConseiller && (
-                <>
-                  <span className='sr-only'>non</span>
-                  <IconComponent
-                    name={IconName.Ko}
-                    aria-hidden='true'
-                    focusable='false'
-                    className='h-3'
-                  />
-                </>
-              )}
-              <IconComponent
-                name={IconName.ChevronRight}
-                focusable='false'
-                aria-hidden='true'
-                className='w-6 h-6 fill-content_color'
-              />
-            </span>
-          </RowCell>
-        )}
-        {!rdv.idCreateur && <div role='cell' />}
+        <RowCell className='rounded-r-small'>
+          <span className='flex items-center justify-between'>
+            {rdv.idCreateur === idConseiller && (
+              <>
+                <span className='sr-only'>oui</span>
+                <IconComponent
+                  name={IconName.RoundedCheckFilled}
+                  aria-hidden='true'
+                  focusable='false'
+                  className='h-3 fill-primary'
+                />
+              </>
+            )}
+            {rdv.idCreateur !== idConseiller && (
+              <>
+                <span className='sr-only'>non</span>
+                <IconComponent
+                  name={IconName.Ko}
+                  aria-hidden='true'
+                  focusable='false'
+                  className='h-3'
+                />
+              </>
+            )}
+            <IconComponent
+              name={IconName.ChevronRight}
+              focusable='false'
+              aria-hidden='true'
+              className='w-6 h-6 fill-content_color'
+            />
+          </span>
+        </RowCell>
       </a>
     </Link>
   )

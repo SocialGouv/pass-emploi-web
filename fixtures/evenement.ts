@@ -1,16 +1,16 @@
 import { DateTime } from 'luxon'
 
-import { RdvJeuneJson, RdvJson } from 'interfaces/json/rdv'
 import {
   AnimationCollective,
-  Rdv,
-  RdvListItem,
-  TypeRendezVous,
-} from 'interfaces/rdv'
+  Evenement,
+  EvenementListItem,
+  TypeEvenement,
+} from 'interfaces/evenement'
+import { EvenementJeuneJson, EvenementJson } from 'interfaces/json/evenement'
 
-export const typesDeRendezVous = (
-  overrides: TypeRendezVous[] = []
-): TypeRendezVous[] => {
+export const typesEvenement = (
+  overrides: TypeEvenement[] = []
+): TypeEvenement[] => {
   return [
     {
       code: 'ACTIVITES_EXTERIEURES',
@@ -48,8 +48,8 @@ export const typesDeRendezVous = (
   ]
 }
 
-export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
-  const defaults: Rdv = {
+export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
+  const defaults: Evenement = {
     id: '1',
     titre: 'Prise de nouvelles par téléphone',
     jeunes: [
@@ -68,14 +68,28 @@ export function unRendezVous(overrides: Partial<Rdv> = {}): Rdv {
     organisme: 'S.A.R.L',
     presenceConseiller: false,
     invitation: true,
-    comment: 'Rendez-vous avec Kenji',
+    commentaire: 'Rendez-vous avec Kenji',
     createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    historique: [
+      {
+        date: '2021-10-23T10:00:00.000Z',
+        auteur: { nom: 'Lama', prenom: 'Serge' },
+      },
+      {
+        date: '2021-10-22T10:00:00.000Z',
+        auteur: { nom: 'Lama', prenom: 'Serge' },
+      },
+      {
+        date: '2021-10-21T10:00:00.000Z',
+        auteur: { nom: 'Lama', prenom: 'Serge' },
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }
 }
 
-export function desRdvListItems(): RdvListItem[] {
+export function desEvenementsListItems(): EvenementListItem[] {
   return [
     {
       id: '1',
@@ -98,10 +112,10 @@ export function desRdvListItems(): RdvListItem[] {
   ]
 }
 
-export function unRdvListItem(
-  overrides: Partial<RdvListItem> = {}
-): RdvListItem {
-  const defaults: RdvListItem = {
+export function unEvenementListItem(
+  overrides: Partial<EvenementListItem> = {}
+): EvenementListItem {
+  const defaults: EvenementListItem = {
     id: '1',
     beneficiaires: 'Kenji Jirac',
     type: 'Autre',
@@ -119,7 +133,7 @@ export function uneAnimationCollective(
   const defaults: AnimationCollective = {
     id: 'ac-1',
     type: 'Atelier',
-    titre: 'Formation aux outils numériques',
+    titre: 'Prise de nouvelles par téléphone',
     date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
     duree: 125,
     statut: 'A_VENIR',
@@ -127,8 +141,10 @@ export function uneAnimationCollective(
   return { ...defaults, ...overrides }
 }
 
-export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
-  const defaults: RdvJson = {
+export function unEvenementJson(
+  overrides: Partial<EvenementJson> = {}
+): EvenementJson {
+  const defaults: EvenementJson = {
     id: '1',
     jeunes: [
       {
@@ -138,6 +154,7 @@ export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
       },
     ],
     type: { code: 'AUTRE', label: 'Autre' },
+    title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
@@ -148,15 +165,29 @@ export function unRendezVousJson(overrides: Partial<RdvJson> = {}): RdvJson {
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
     createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    historique: [
+      {
+        date: '2021-10-23T10:00:00.000Z',
+        auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
+      },
+      {
+        date: '2021-10-22T10:00:00.000Z',
+        auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
+      },
+      {
+        date: '2021-10-21T10:00:00.000Z',
+        auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }
 }
 
-export function unRendezVousJeuneJson(
-  overrides: Partial<RdvJeuneJson> = {}
-): RdvJeuneJson {
-  const defaults: RdvJeuneJson = {
+export function unEvenementJeuneJson(
+  overrides: Partial<EvenementJeuneJson> = {}
+): EvenementJeuneJson {
+  const defaults: EvenementJeuneJson = {
     id: '1',
     jeune: {
       id: '1',
@@ -164,6 +195,7 @@ export function unRendezVousJeuneJson(
       nom: 'Jirac',
     },
     type: { code: 'AUTRE', label: 'Autre' },
+    title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
@@ -174,6 +206,12 @@ export function unRendezVousJeuneJson(
     invitation: true,
     comment: 'Rendez-vous avec Kenji',
     createur: { id: '1', nom: 'Tavernier', prenom: 'Nils' },
+    historique: [
+      {
+        date: '2021-10-21T10:00:00.000Z',
+        auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }

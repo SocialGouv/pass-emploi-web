@@ -5,10 +5,10 @@ import IconComponent, { IconName } from '../ui/IconComponent'
 
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import TableauRdv from 'components/rdv/TableauRdv'
-import { RdvListItem } from 'interfaces/rdv'
+import { EvenementListItem } from 'interfaces/evenement'
 
 interface OngletRdvsProps {
-  rdvs: RdvListItem[]
+  rdvs: EvenementListItem[]
   poleEmploi: boolean
   idConseiller: string
   idJeune: string

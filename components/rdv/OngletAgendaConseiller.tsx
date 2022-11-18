@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import TableauRdv from 'components/rdv/TableauRdv'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import { RdvListItem } from 'interfaces/rdv'
+import { EvenementListItem } from 'interfaces/evenement'
 
 type OngletAgendaConseillerProps = {
   idConseiller: string | undefined
@@ -11,7 +11,7 @@ type OngletAgendaConseillerProps = {
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
-  ) => Promise<RdvListItem[]>
+  ) => Promise<EvenementListItem[]>
   trackNavigation: (append?: string) => void
 }
 export function OngletAgendaConseiller({
@@ -19,7 +19,7 @@ export function OngletAgendaConseiller({
   recupererRdvs,
   trackNavigation,
 }: OngletAgendaConseillerProps) {
-  const [rdvs, setRdvs] = useState<RdvListItem[]>([])
+  const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
 
   async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
     const evenements = await recupererRdvs(idConseiller!, dateDebut, dateFin)

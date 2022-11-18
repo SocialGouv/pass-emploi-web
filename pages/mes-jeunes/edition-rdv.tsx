@@ -1,4 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
@@ -11,21 +12,23 @@ import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { Evenement, Modification, TypeEvenement } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
-import { RdvFormData } from 'interfaces/json/rdv'
+import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { Rdv, TypeRendezVous } from 'interfaces/rdv'
 import { Agence } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ConseillerService } from 'services/conseiller.service'
+import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -33,10 +36,10 @@ import { deleteQueryParams, parseUrl, setQueryParams } from 'utils/urlParser'
 
 interface EditionRdvProps extends PageProps {
   jeunes: BaseJeune[]
-  typesRendezVous: TypeRendezVous[]
+  typesRendezVous: TypeEvenement[]
   returnTo: string
   idJeune?: string
-  rdv?: Rdv
+  evenement?: Evenement
 }
 
 function EditionRdv({
@@ -44,12 +47,12 @@ function EditionRdv({
   typesRendezVous,
   idJeune,
   returnTo,
-  rdv,
+  evenement,
 }: EditionRdvProps) {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    useDependance<RendezVousService>('rendezVousService')
+    useDependance<EvenementsService>('rendezVousService')
   const [conseiller, setConseiller] = useConseiller()
   const referentielService =
     useDependance<ReferentielService>('referentielService')
@@ -63,14 +66,24 @@ function EditionRdv({
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [payloadForConfirmationModal, setPayloadForConfirmationModal] =
-    useState<RdvFormData | undefined>(undefined)
+    useState<EvenementFormData | undefined>(undefined)
 
   const [showDeleteRdvModal, setShowDeleteRdvModal] = useState<boolean>(false)
   const [showDeleteRdvError, setShowDeleteRdvError] = useState<boolean>(false)
+
+  const [
+    formHasBeneficiaireAutrePortefeuille,
+    setFormHasBeneficiaireAutrePortefeuille,
+  ] = useState<boolean>(false)
   const [hasChanges, setHasChanges] = useState<boolean>(false)
 
+  const [historiqueModif, setHistoriqueModif] = useState<
+    Modification[] | undefined
+  >(evenement && evenement.historique.slice(0, 2))
+  const [showPlusHistorique, setShowPlusHistorique] = useState<boolean>(false)
+
   let initialTracking: string
-  if (rdv) initialTracking = `Modification rdv`
+  if (evenement) initialTracking = `Modification rdv`
   else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -107,7 +120,7 @@ function EditionRdv({
     setTrackingTitle(initialTracking)
   }
 
-  function showConfirmationModal(payload: RdvFormData) {
+  function showConfirmationModal(payload: EvenementFormData) {
     setPayloadForConfirmationModal(payload)
     setTrackingTitle(`${initialTracking} - Modale confirmation modification`)
   }
@@ -128,35 +141,37 @@ function EditionRdv({
   }
 
   function aDesJeunesDUnAutrePortefeuille(): boolean {
-    if (rdv) {
-      return rdv.jeunes.some(
-        ({ id }) => !jeunes.some((jeune) => jeune.id === id)
-      )
-    }
-    return false
+    const fromEvenement = evenement?.jeunes.some(
+      ({ id }) => !jeunes.some((jeune) => jeune.id === id)
+    )
+    return fromEvenement || formHasBeneficiaireAutrePortefeuille
   }
 
-  async function soumettreRendezVous(payload: RdvFormData): Promise<void> {
+  async function soumettreRendezVous(
+    payload: EvenementFormData
+  ): Promise<void> {
     setConfirmBeforeLeaving(false)
-    if (!rdv) {
-      await rendezVousService.postNewRendezVous(payload)
+    if (!evenement) {
+      await rendezVousService.creerEvenement(payload)
     } else {
-      await rendezVousService.updateRendezVous(rdv.id, payload)
+      await rendezVousService.updateRendezVous(evenement.id, payload)
     }
 
     const { pathname, query } = getCleanUrlObject(returnTo)
-    const queryParam = rdv ? QueryParam.modificationRdv : QueryParam.creationRdv
+    const queryParam = evenement
+      ? QueryParam.modificationRdv
+      : QueryParam.creationRdv
     await router.push({
       pathname,
       query: setQueryParams(query, { [queryParam]: QueryValue.succes }),
     })
   }
 
-  async function deleteRendezVous(): Promise<void> {
+  async function deleteEvenement(): Promise<void> {
     setShowDeleteRdvError(false)
     setShowDeleteRdvModal(false)
     try {
-      await rendezVousService.deleteRendezVous(rdv!.id)
+      await rendezVousService.deleteEvenement(evenement!.id)
       const { pathname, query } = getCleanUrlObject(returnTo)
       await router.push({
         pathname,
@@ -167,6 +182,13 @@ function EditionRdv({
     } catch (e) {
       setShowDeleteRdvError(true)
     }
+  }
+
+  function recupererJeunesDeLEtablissement() {
+    if (conseiller?.agence?.id) {
+      return jeunesService.getJeunesDeLEtablissement(conseiller.agence.id)
+    }
+    return Promise.resolve([])
   }
 
   async function renseignerAgence(agence: {
@@ -188,16 +210,16 @@ function EditionRdv({
     })
   }
 
+  function togglePlusHistorique() {
+    const newShowPlusHistorique = !showPlusHistorique
+    if (newShowPlusHistorique) setHistoriqueModif(evenement!.historique)
+    else setHistoriqueModif(evenement!.historique.slice(0, 2))
+    setShowPlusHistorique(newShowPlusHistorique)
+  }
+
   useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
 
   useMatomo(trackingTitle)
-
-  function recupererJeunesDeLEtablissement() {
-    if (conseiller?.agence?.id) {
-      return jeunesService.getJeunesDeLEtablissement(conseiller.agence.id)
-    }
-    return Promise.resolve([])
-  }
 
   return (
     <>
@@ -208,21 +230,80 @@ function EditionRdv({
         />
       )}
 
-      {rdv && (
-        <Button
-          style={ButtonStyle.SECONDARY}
-          onClick={handleDelete}
-          label={`Supprimer l’événement du ${rdv.date}`}
-          className='mb-4'
-        >
-          <IconComponent
-            name={IconName.Delete}
-            aria-hidden='true'
-            focusable='false'
-            className='mr-2 w-4 h-4'
-          />
-          Supprimer
-        </Button>
+      {aDesJeunesDUnAutrePortefeuille() && (
+        <div className='mb-6'>
+          <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
+        </div>
+      )}
+
+      {evenement && (
+        <>
+          <Button
+            style={ButtonStyle.SECONDARY}
+            onClick={handleDelete}
+            label={`Supprimer l’événement du ${evenement.date}`}
+          >
+            <IconComponent
+              name={IconName.Delete}
+              aria-hidden='true'
+              focusable='false'
+              className='mr-2 w-4 h-4'
+            />
+            Supprimer
+          </Button>
+
+          <dl>
+            <div className='mt-6 border border-solid border-grey_100 rounded-medium p-4'>
+              <dt className='sr-only'>Type de l’événement</dt>
+              <dd className='text-base-bold'>{evenement.type.label}</dd>
+
+              <div className='mt-2'>
+                <dt className='inline'>Créé par : </dt>
+                <dd className='inline text-s-bold'>
+                  {evenement.createur.prenom} {evenement.createur.nom}
+                </dd>
+              </div>
+            </div>
+
+            {historiqueModif && historiqueModif.length > 0 && (
+              <div className='mt-4 border border-solid border-grey_100 rounded-medium p-4'>
+                <dt className='text-base-bold'>Historique des modifications</dt>
+                <dd className='mt-2'>
+                  <ul>
+                    {historiqueModif.map(({ date, auteur }) => (
+                      <li key={date}>
+                        {toFrenchFormat(DateTime.fromISO(date), DATETIME_LONG)}{' '}
+                        :{' '}
+                        <span className='text-s-bold'>
+                          {auteur.prenom} {auteur.nom}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  {evenement.historique.length > 2 && (
+                    <button
+                      type='button'
+                      onClick={togglePlusHistorique}
+                      className='block ml-auto'
+                    >
+                      Voir {showPlusHistorique ? 'moins' : 'plus'}
+                      <IconComponent
+                        aria-hidden={true}
+                        focusable={false}
+                        name={
+                          showPlusHistorique
+                            ? IconName.ChevronUp
+                            : IconName.ChevronDown
+                        }
+                        className='inline h-4 w-4 fill-primary'
+                      />
+                    </button>
+                  )}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </>
       )}
 
       <EditionRdvForm
@@ -230,10 +311,14 @@ function EditionRdv({
         recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
         typesRendezVous={typesRendezVous}
         idJeune={idJeune}
-        rdv={rdv}
+        evenement={evenement}
         redirectTo={returnTo}
-        aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
-        conseillerIsCreator={!rdv || conseiller?.id === rdv.createur?.id}
+        onBeneficiairesDUnAutrePortefeuille={
+          setFormHasBeneficiaireAutrePortefeuille
+        }
+        conseillerIsCreator={
+          !evenement || conseiller?.id === evenement.createur.id
+        }
         conseiller={conseiller}
         onChanges={setHasChanges}
         soumettreRendezVous={soumettreRendezVous}
@@ -245,10 +330,10 @@ function EditionRdv({
       {showLeavePageModal && (
         <LeavePageConfirmationModal
           message={`Vous allez quitter la ${
-            rdv ? 'modification de l’' : 'création d’un nouvel '
+            evenement ? 'modification de l’' : 'création d’un nouvel '
           }événement`}
           commentaire={`Toutes les informations ${
-            rdv ? 'modifiées' : 'saisies'
+            evenement ? 'modifiées' : 'saisies'
           } seront perdues`}
           onCancel={closeLeavePageModal}
           destination={returnTo}
@@ -268,7 +353,7 @@ function EditionRdv({
         <DeleteRdvModal
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
-          performDelete={deleteRendezVous}
+          performDelete={deleteEvenement}
         />
       )}
 
@@ -303,7 +388,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    withDependance<RendezVousService>('rendezVousService')
+    withDependance<EvenementsService>('rendezVousService')
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
     user.id,
     accessToken
@@ -327,9 +412,12 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
   const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
-    const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
-    if (!rdv) return { notFound: true }
-    props.rdv = rdv
+    const evenement = await rendezVousService.getDetailsEvenement(
+      idRdv,
+      accessToken
+    )
+    if (!evenement) return { notFound: true }
+    props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
     props.pageHeader = 'Modifier l’événement'
   } else if (referer) {

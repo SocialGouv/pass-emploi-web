@@ -2,20 +2,23 @@ import { DateTime } from 'luxon'
 
 import { ApiClient } from 'clients/api.client'
 import {
-  typesDeRendezVous,
+  typesEvenement,
   uneAnimationCollective,
-  unRdvListItem,
-  unRendezVous,
-  unRendezVousJeuneJson,
-  unRendezVousJson,
-} from 'fixtures/rendez-vous'
-import { AnimationCollectiveJson, RdvFormData } from 'interfaces/json/rdv'
-import { AnimationCollective } from 'interfaces/rdv'
-import { modalites } from 'referentiel/rdv'
+  unEvenementListItem,
+  unEvenement,
+  unEvenementJeuneJson,
+  unEvenementJson,
+} from 'fixtures/evenement'
+import { AnimationCollective } from 'interfaces/evenement'
 import {
-  RendezVousApiService,
-  RendezVousService,
-} from 'services/rendez-vous.service'
+  AnimationCollectiveJson,
+  EvenementFormData,
+} from 'interfaces/json/evenement'
+import { modalites } from 'referentiel/evenement'
+import {
+  EvenementsApiService,
+  EvenementsService,
+} from 'services/evenements.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
@@ -26,26 +29,26 @@ jest.mock('next-auth/react', () => ({
   })),
 }))
 
-describe('RendezVousApiService', () => {
+describe('EvenementsApiService', () => {
   let apiClient: ApiClient
-  let rendezVousService: RendezVousService
+  let evenementsService: EvenementsService
   beforeEach(async () => {
     // Given
     apiClient = new FakeApiClient()
-    rendezVousService = new RendezVousApiService(apiClient)
+    evenementsService = new EvenementsApiService(apiClient)
   })
 
   describe('.getTypesRendezVous', () => {
     it('renvoie les types de rendez-vous ', async () => {
       // Given
       const accessToken = 'accessToken'
-      const typesRendezVous = typesDeRendezVous()
+      const typesRendezVous = typesEvenement()
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: typesRendezVous,
       })
 
       // When
-      const actual = await rendezVousService.getTypesRendezVous(accessToken)
+      const actual = await evenementsService.getTypesRendezVous(accessToken)
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -56,55 +59,35 @@ describe('RendezVousApiService', () => {
     })
   })
 
-  describe('.getDetailRendezVous', () => {
-    it('renvoie les détails du rdv', async () => {
+  describe('.getDetailEvenement', () => {
+    it('renvoie les détails de l’événement', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: unRendezVousJson(),
+        content: unEvenementJson(),
       })
 
       // When
-      const actual = await rendezVousService.getDetailsRendezVous(
+      const actual = await evenementsService.getDetailsEvenement(
         'id-rdv',
         'accessToken'
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/rendezvous/id-rdv',
+        '/rendezvous/id-rdv?avecHistorique=true',
         'accessToken'
       )
-      expect(actual).toEqual(unRendezVous())
+      expect(actual).toEqual(unEvenement())
     })
 
-    it("renvoie les détails d'un rdv sans créateur", async () => {
-      // Given
-      const rdvJson = unRendezVousJson()
-      delete rdvJson.createur
-      ;(apiClient.get as jest.Mock).mockResolvedValue({ content: rdvJson })
-
-      // When
-      const actual = await rendezVousService.getDetailsRendezVous(
-        'id-rdv',
-        'accessToken'
-      )
-
-      // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
-        '/rendezvous/id-rdv',
-        'accessToken'
-      )
-      expect(actual).toEqual(unRendezVous({ createur: null }))
-    })
-
-    it("renvoie undefined si le rdv n'existe pas", async () => {
+    it("renvoie undefined si l’événement n'existe pas", async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockRejectedValue(
         new ApiError(404, 'Rdv non trouvé')
       )
 
       // When
-      const actual = await rendezVousService.getDetailsRendezVous(
+      const actual = await evenementsService.getDetailsEvenement(
         'id-rdv',
         'accessToken'
       )
@@ -117,7 +100,7 @@ describe('RendezVousApiService', () => {
   describe('.updateRendezVous', () => {
     it('met à jour un rendez vous déja existant', async () => {
       // Given
-      const rdvFormData: RdvFormData = {
+      const rdvFormData: EvenementFormData = {
         jeunesIds: ['jeune-1', 'jeune-2'],
         type: 'AUTRE',
         precision: 'un texte de précision',
@@ -128,11 +111,12 @@ describe('RendezVousApiService', () => {
         organisme: undefined,
         presenceConseiller: true,
         invitation: false,
+        titre: 'Titre modifié',
         comment: 'Lorem ipsum dolor sit amet',
       }
 
       // When
-      await rendezVousService.updateRendezVous('id-rdv', rdvFormData)
+      await evenementsService.updateRendezVous('id-rdv', rdvFormData)
 
       // Then
       expect(apiClient.put).toHaveBeenCalledWith(
@@ -145,6 +129,7 @@ describe('RendezVousApiService', () => {
           adresse: undefined,
           organisme: undefined,
           presenceConseiller: true,
+          titre: 'Titre modifié',
           comment: 'Lorem ipsum dolor sit amet',
         },
         'accessToken'
@@ -157,8 +142,8 @@ describe('RendezVousApiService', () => {
       // Given
       const idConseiller = 'idConseiller'
       const listeRdvs = [
-        unRendezVousJson(),
-        unRendezVousJson({
+        unEvenementJson(),
+        unEvenementJson({
           jeunes: [
             {
               id: '1',
@@ -181,7 +166,7 @@ describe('RendezVousApiService', () => {
       const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
 
       // When
-      const actual = await rendezVousService.getRendezVousConseiller(
+      const actual = await evenementsService.getRendezVousConseiller(
         idConseiller,
         dateDebut,
         dateFin
@@ -193,8 +178,8 @@ describe('RendezVousApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual([
-        unRdvListItem(),
-        unRdvListItem({ beneficiaires: 'Bénéficiaires multiples' }),
+        unEvenementListItem(),
+        unEvenementListItem({ beneficiaires: 'Bénéficiaires multiples' }),
       ])
     })
   })
@@ -206,11 +191,11 @@ describe('RendezVousApiService', () => {
       const idJeune = 'id-jeune'
       const periode = 'PASSES'
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: [unRendezVousJeuneJson()],
+        content: [unEvenementJeuneJson()],
       })
 
       // When
-      const actual = await rendezVousService.getRendezVousJeune(
+      const actual = await evenementsService.getRendezVousJeune(
         'id-jeune',
         'PASSES',
         accessToken
@@ -221,7 +206,7 @@ describe('RendezVousApiService', () => {
         `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
         accessToken
       )
-      expect(actual).toEqual([unRdvListItem()])
+      expect(actual).toEqual([unEvenementListItem()])
     })
   })
 
@@ -232,16 +217,15 @@ describe('RendezVousApiService', () => {
       const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
       const animationsCollectivesJson: AnimationCollectiveJson[] = [
         {
-          ...unRendezVousJson({
+          ...unEvenementJson({
             id: 'ac-passee',
-            title: 'Titre de l’AC',
             type: { code: 'whatever', label: 'Information collective' },
             date: dateDebut.toISO(),
           }),
           statut: 'A_VENIR',
         },
         {
-          ...unRendezVousJson({
+          ...unEvenementJson({
             id: 'ac-future',
             type: { code: 'whatever', label: 'Atelier' },
             date: dateFin.toISO(),
@@ -254,7 +238,7 @@ describe('RendezVousApiService', () => {
       })
 
       // When
-      const actual = await rendezVousService.getRendezVousEtablissement(
+      const actual = await evenementsService.getRendezVousEtablissement(
         'id-etablissement',
         dateDebut,
         dateFin
@@ -269,19 +253,71 @@ describe('RendezVousApiService', () => {
         uneAnimationCollective({
           id: 'ac-passee',
           type: 'Information collective',
-          titre: 'Titre de l’AC',
           date: dateDebut,
           statut: 'A_VENIR',
         }),
         uneAnimationCollective({
           id: 'ac-future',
           type: 'Atelier',
-          titre: 'Atelier par téléphone',
           date: dateFin,
           statut: 'CLOTUREE',
         }),
       ]
       expect(actual).toEqual(animationsCollectives)
+    })
+  })
+
+  describe('.creerEvenement', () => {
+    it('crée un nouvel événement', async () => {
+      // Given
+      const rdvFormData: EvenementFormData = {
+        jeunesIds: ['jeune-1', 'jeune-2'],
+        type: 'AUTRE',
+        precision: 'un texte de précision',
+        modality: modalites[0],
+        date: '2022-03-03T09:30:00.000Z',
+        duration: 157,
+        adresse: undefined,
+        organisme: undefined,
+        presenceConseiller: true,
+        invitation: false,
+        comment: 'Lorem ipsum dolor sit amet',
+      }
+
+      // When
+      await evenementsService.creerEvenement(rdvFormData)
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller/rendezvous',
+        {
+          jeunesIds: ['jeune-1', 'jeune-2'],
+          modality: modalites[0],
+          type: 'AUTRE',
+          date: '2022-03-03T09:30:00.000Z',
+          duration: 157,
+          adresse: undefined,
+          invitation: false,
+          organisme: undefined,
+          presenceConseiller: true,
+          precision: 'un texte de précision',
+          comment: 'Lorem ipsum dolor sit amet',
+        },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.deleteEvenement', () => {
+    it('supprime un événement', async () => {
+      // When
+      await evenementsService.deleteEvenement('idEvenement')
+
+      // Then
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        '/rendezvous/idEvenement',
+        'accessToken'
+      )
     })
   })
 })

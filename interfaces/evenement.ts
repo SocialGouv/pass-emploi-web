@@ -2,12 +2,12 @@ import { DateTime } from 'luxon'
 
 import { BaseJeune } from 'interfaces/jeune'
 
-export interface TypeRendezVous {
+export type TypeEvenement = {
   code: string
   label: string
 }
 
-export interface AnimationCollective {
+export type AnimationCollective = {
   id: string
   type: string
   titre: string
@@ -16,43 +16,46 @@ export interface AnimationCollective {
   statut: 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
 }
 
-export interface RdvListItem {
+export type EvenementListItem = {
   id: string
   beneficiaires: string
   type: string
   modality: string
   date: string
   duree: number
-  idCreateur?: string
+  idCreateur: string
 }
 
-export interface Rdv {
+type Auteur = { nom: string; prenom: string }
+export type Modification = { date: string; auteur: Auteur }
+export type Evenement = {
   id: string
   titre: string
   jeunes: BaseJeune[]
-  type: TypeRendezVous
-  precisionType: string
+  type: TypeEvenement
   modality: string
   date: string
   duree: number
-  adresse: string
-  organisme: string
   presenceConseiller: boolean
   invitation: boolean
-  comment: string
-  createur: { id: string; nom: string; prenom: string } | null
+  createur: Auteur & { id: string }
+  historique: Modification[]
+  commentaire?: string
+  precisionType?: string
+  adresse?: string
+  organisme?: string
 }
 
-export const TYPE_RENDEZ_VOUS = {
+export const TYPE_EVENEMENT = {
   Autre: 'AUTRE',
   EntretienIndividuelConseiller: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
 }
 
-export function isCodeTypeAnimationCollective(code: string): boolean {
+export function isCodeTypeAnimationCollective(code?: string): boolean {
   return code === 'ATELIER' || code === 'INFORMATION_COLLECTIVE'
 }
 
-export enum PeriodeRdv {
+export enum PeriodeEvenements {
   PASSES = 'PASSES',
   FUTURS = 'FUTURS',
 }

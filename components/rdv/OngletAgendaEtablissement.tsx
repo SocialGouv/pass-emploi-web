@@ -12,7 +12,7 @@ import TableLayout from 'components/ui/Table/TableLayout'
 import { TBody } from 'components/ui/Table/TBody'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { AnimationCollective } from 'interfaces/rdv'
+import { AnimationCollective } from 'interfaces/evenement'
 import {
   insertIntercalaires,
   ItemOuIntercalaire,
