@@ -17,13 +17,13 @@ export default function AgendaActionRow({
   jeuneId,
 }: AgendaActionRowProps) {
   return (
-    <li className='contents'>
+    <li className='mt-4 p-4 text-base-regular rounded-small shadow-s hover:bg-primary_lighten'>
       <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
         <a
           aria-label={`Détail de l'action ${action.titre}, ${action.statut}`}
-          className={`contents text-base-regular rounded-small shadow-s hover:bg-primary_lighten`}
+          className={`flex w-full gap-5`}
         >
-          <div className='rounded-l-small'>
+          <div className='rounded-l-small mx-5'>
             <IconComponent
               name={IconName.Actions}
               focusable='false'
@@ -33,7 +33,7 @@ export default function AgendaActionRow({
             />
           </div>
 
-          <div>{action.titre}</div>
+          <div className='grow'>{action.titre}</div>
 
           <div className='flex justify-end'>
             <StatusTag status={action.statut!} />
@@ -41,7 +41,7 @@ export default function AgendaActionRow({
               name={IconName.ChevronRight}
               focusable='false'
               aria-hidden='true'
-              className='w-6 h-6 fill-content_color'
+              className='w-6 h-6 ml-3 fill-content_color'
             />
           </div>
         </a>

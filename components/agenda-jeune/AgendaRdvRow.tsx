@@ -11,13 +11,13 @@ interface AgendaRdvRowProps {
 
 export function AgendaRdvRow({ rdv }: AgendaRdvRowProps) {
   return (
-    <li className='contents'>
+    <li className='mt-4 p-4 text-base-regular rounded-small shadow-s hover:bg-primary_lighten'>
       <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
         <a
           aria-label={`Consulter l’événement du ${rdv.titre}`}
-          className='contents text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
+          className='w-full flex gap-5'
         >
-          <div className='rounded-l-small'>
+          <div className='rounded-l-small mx-5'>
             <IconComponent
               name={IconName.Calendar}
               focusable='false'
@@ -27,7 +27,7 @@ export function AgendaRdvRow({ rdv }: AgendaRdvRowProps) {
             />
           </div>
 
-          <div className='rounded-l-small'>{rdv.titre}</div>
+          <div className='grow rounded-l-small'>{rdv.titre}</div>
 
           <div className='rounded-r-small'>
             <IconComponent
