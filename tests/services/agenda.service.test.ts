@@ -13,7 +13,7 @@ jest.mock('next-auth/react', () => ({
 }))
 
 describe('AgendaService', () => {
-  describe('.recuperationAgendaMilo', () => {
+  describe('.recupererAgendaMilo', () => {
     let apiClient: ApiClient
     let agendaService: AgendaService
     beforeEach(async () => {
@@ -38,7 +38,7 @@ describe('AgendaService', () => {
       })
 
       // When
-      const actual = await agendaService.recuperationAgendaMilo(
+      const actual = await agendaService.recupererAgendaMilo(
         'jeune-1',
         maintenant
       )

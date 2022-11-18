@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 
 import { Action } from 'interfaces/action'
 import { RdvListItem } from 'interfaces/rdv'
+import { compareDates } from 'utils/date'
 
 export function fusionneEtTriActionsEtRendezVous(
   actions: Action[],
@@ -14,7 +15,7 @@ export function fusionneEtTriActionsEtRendezVous(
     return { ...rdv, datePourLeTri: DateTime.fromISO(rdv.date) }
   })
   const result = [...actionsTriables, ...rendezVousTriables].sort(
-    (first, second) => first.datePourLeTri.diff(second.datePourLeTri).toMillis()
+    (first, second) => compareDates(first.datePourLeTri, second.datePourLeTri)
   )
   return result.map((actionOuRendezvousTriable) => {
     const { datePourLeTri, ...actionOuRendezvous } = actionOuRendezvousTriable

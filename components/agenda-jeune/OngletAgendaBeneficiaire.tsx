@@ -14,13 +14,13 @@ import { toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 interface OngletAgendaBeneficiaireProps {
-  idJeune: string
+  idBeneficiaire: string
   isPoleEmploi: boolean
   updateNombreEvenement: (nombre: number) => void
 }
 
 export function OngletAgendaBeneficiaire({
-  idJeune,
+  idBeneficiaire,
   isPoleEmploi,
   updateNombreEvenement,
 }: OngletAgendaBeneficiaireProps) {
@@ -41,7 +41,13 @@ export function OngletAgendaBeneficiaire({
   function actionEtRendezVousRows(): JSX.Element[] {
     return actionsEtRendezVous.map((item) => {
       if (instanceOfAction(item)) {
-        return <AgendaActionRow key={item.id} action={item} jeuneId={idJeune} />
+        return (
+          <AgendaActionRow
+            key={item.id}
+            action={item}
+            jeuneId={idBeneficiaire}
+          />
+        )
       }
       if (instanceOfRdvListItem(item)) {
         return <AgendaRdvRow key={item.id} rdv={item} />
@@ -53,7 +59,7 @@ export function OngletAgendaBeneficiaire({
   useEffect(() => {
     if (!isPoleEmploi) {
       agendaService
-        .recuperationAgendaMilo(idJeune, DateTime.now())
+        .recupererAgendaMilo(idBeneficiaire, DateTime.now())
         .then((response) => {
           updateNombreEvenement(
             response.actions.length + response.rendezVous.length
@@ -85,7 +91,7 @@ export function OngletAgendaBeneficiaire({
             {toShortDate(metadata.dateDeFin)}
           </p>
           {actionsEtRendezVous.length === 0 && (
-            <p className='text-grey_700'>
+            <p className='text-content_color'>
               Il n’y a pas encore de rendez-vous ni d’action prévus sur cette
               période.
             </p>

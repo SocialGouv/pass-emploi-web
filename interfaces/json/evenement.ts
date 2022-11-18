@@ -104,7 +104,7 @@ export function jsonToAnimationCollective(
   }
 }
 
-function jsonToBeneficiaires(jeunes: BaseJeune[]) {
+function jsonToBeneficiaires(jeunes: BaseJeune[]): string {
   if (jeunes.length === 1) return jeunes[0].prenom + ' ' + jeunes[0].nom
   return 'Bénéficiaires multiples'
 }

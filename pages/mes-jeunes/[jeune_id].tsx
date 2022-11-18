@@ -118,7 +118,8 @@ function FicheJeune({
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
 
-  const [nombreEventDansAgenda, setNombreEventDansAgenda] = useState<number>()
+  const [nombreEvenementDansAgenda, setNombreEvenementDansAgenda] =
+    useState<number>()
 
   const aujourdHui = useMemo(() => DateTime.now(), [])
   const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
@@ -355,7 +356,7 @@ function FicheJeune({
       <TabList className='mt-10'>
         <Tab
           label='Agenda'
-          count={!isPoleEmploi ? nombreEventDansAgenda : undefined}
+          count={!isPoleEmploi ? nombreEvenementDansAgenda : undefined}
           selected={currentTab === Onglet.AGENDA}
           controls='agenda'
           onSelectTab={() => switchTab(Onglet.AGENDA)}
@@ -392,15 +393,15 @@ function FicheJeune({
       {currentTab === Onglet.AGENDA && (
         <div
           role='tabpanel'
-          aria-labelledby='liste-rdvs--tab'
+          aria-labelledby='agenda--tab'
           tabIndex={0}
-          id='liste-rdvs'
+          id='agenda'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
           <OngletAgendaBeneficiaire
-            idJeune={jeune.id}
+            idBeneficiaire={jeune.id}
             isPoleEmploi={isPoleEmploi}
-            updateNombreEvenement={setNombreEventDansAgenda}
+            updateNombreEvenement={setNombreEvenementDansAgenda}
           />
         </div>
       )}
@@ -543,6 +544,9 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
         break
       case 'rdvs':
         props.onglet = Onglet.RDVS
+        break
+      case 'favoris':
+        props.onglet = Onglet.FAVORIS
         break
       default:
         props.onglet = Onglet.AGENDA

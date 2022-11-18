@@ -82,7 +82,7 @@ describe('Fiche Jeune', () => {
         getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
       })
       agendaService = mockedAgendaService({
-        recuperationAgendaMilo: jest.fn(async () => ({
+        recupererAgendaMilo: jest.fn(async () => ({
           actions: [],
           rendezVous: [],
           metadata: {
@@ -527,7 +527,7 @@ describe('Fiche Jeune', () => {
           )
         ).toBeInTheDocument()
 
-        expect(agendaService.recuperationAgendaMilo).not.toHaveBeenCalled()
+        expect(agendaService.recupererAgendaMilo).not.toHaveBeenCalled()
       })
 
       it("n'affiche pas la liste des rendez-vous du jeune", async () => {
@@ -636,10 +636,10 @@ describe('Fiche Jeune', () => {
           ).toBeInTheDocument()
         })
 
-        it('avec un des rendez-vous et des actions si le jeune en a sur la période', async () => {
+        it('avec des rendez-vous et des actions si le jeune en a sur la période', async () => {
           // Given
           agendaService = mockedAgendaService({
-            recuperationAgendaMilo: jest.fn(async () => ({
+            recupererAgendaMilo: jest.fn(async () => ({
               actions: [uneAction()],
               rendezVous: [unEvenementListItem()],
               metadata: {
