@@ -93,17 +93,14 @@ export function jsonToListItem(json: EvenementJson): EvenementListItem {
   }
 }
 
-export function rdvJsonToEntree(
-  rdv: EvenementJeuneJson
-): EntreeAgenda & { datePourLeTri: DateTime } {
+export function rdvJsonToEntree(rdv: EvenementJeuneJson): EntreeAgenda {
   const date = DateTime.fromISO(rdv.date)
   const titre = `${toFrenchFormat(date, DATETIME_LONG)} - ${rdv.title}`
 
   return {
     id: rdv.id,
     type: 'evenement',
-    titre: titre,
-    datePourLeTri: date,
+    titre,
   }
 }
 

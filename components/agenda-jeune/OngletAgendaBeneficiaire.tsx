@@ -1,60 +1,33 @@
-import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
-import AgendaActionRow from './AgendaActionRow'
-
-import { AgendaRdvRow } from 'components/agenda-jeune/AgendaRdvRow'
+import AgendaRow from 'components/agenda-jeune/AgendaRow'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { AgendaMetadata, EntreeAgenda } from 'interfaces/agenda'
-import { AgendaService } from 'services/agenda.service'
+import { Agenda, AgendaMetadata, EntreeAgenda } from 'interfaces/agenda'
 import { toShortDate } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
 
 interface OngletAgendaBeneficiaireProps {
   idBeneficiaire: string
   isPoleEmploi: boolean
-  updateNombreEvenement: (nombre: number) => void
+  recupererAgenda: () => Promise<Agenda>
 }
 
 export function OngletAgendaBeneficiaire({
   idBeneficiaire,
   isPoleEmploi,
-  updateNombreEvenement,
+  recupererAgenda,
 }: OngletAgendaBeneficiaireProps) {
-  const agendaService = useDependance<AgendaService>('agendaService')
   const [actionsEtRendezVous, setActionsEtRendezVous] = useState<
     Array<EntreeAgenda>
   >([])
   const [metadata, setMetadata] = useState<AgendaMetadata>()
 
-  function actionEtRendezVousRows(): JSX.Element[] {
-    return actionsEtRendezVous.map((item) => {
-      if (item.type === 'action') {
-        return (
-          <AgendaActionRow
-            key={item.id}
-            action={item}
-            jeuneId={idBeneficiaire}
-          />
-        )
-      }
-      if (item.type === 'evenement') {
-        return <AgendaRdvRow key={item.id} rdv={item} />
-      }
-      return <></>
-    })
-  }
-
   useEffect(() => {
     if (!isPoleEmploi) {
-      agendaService
-        .recupererAgenda(idBeneficiaire, DateTime.now())
-        .then((response) => {
-          updateNombreEvenement(response.entrees.length)
-          setActionsEtRendezVous(response.entrees)
-          setMetadata(response.metadata)
-        })
+      recupererAgenda().then((agenda) => {
+        setActionsEtRendezVous(agenda.entrees)
+        setMetadata(agenda.metadata)
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -80,7 +53,15 @@ export function OngletAgendaBeneficiaire({
             </p>
           )}
           {actionsEtRendezVous.length > 0 && (
-            <ol className=''>{actionEtRendezVousRows()}</ol>
+            <ol>
+              {actionsEtRendezVous.map((entree) => (
+                <AgendaRow
+                  key={entree.id}
+                  entree={entree}
+                  jeuneId={idBeneficiaire}
+                />
+              ))}
+            </ol>
           )}
         </div>
       )}
