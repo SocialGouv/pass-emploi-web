@@ -2,36 +2,28 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
-import { Action } from 'interfaces/action'
-import { ActionJson, jsonToAction } from 'interfaces/json/action'
-import { jsonToRdvListItem, RdvJson } from 'interfaces/json/rdv'
-import { RdvListItem } from 'interfaces/rdv'
+import { AgendaMetadata, EntreeAgenda } from 'interfaces/agenda'
+import { ActionJson, actionJsonToEntree } from 'interfaces/json/action'
+import { EvenementJeuneJson, rdvJsonToEntree } from 'interfaces/json/evenement'
+import { compareDates } from 'utils/date'
 
 export interface AgendaService {
   recupererAgendaMilo(
     idJeune: string,
     maintenant: DateTime
   ): Promise<{
-    actions: Action[]
-    rendezVous: RdvListItem[]
+    entrees: EntreeAgenda[]
     metadata: AgendaMetadata
   }>
 }
 
 type DesRdvEtDesActions = {
   actions: ActionJson[]
-  rendezVous: RdvJson[]
+  rendezVous: EvenementJeuneJson[]
   metadata: AgendaMetadataJson
 }
 
-export type AgendaMetadata = {
-  actionsEnRetard: number
-  dateDeDebut: DateTime
-  dateDeFin: DateTime
-}
-
 type AgendaMetadataJson = {
-  actionsEnRetard: number
   dateDeDebut: string
   dateDeFin: string
 }
@@ -43,8 +35,7 @@ export class AgendaApiService implements AgendaService {
     idJeune: string,
     maintenant: DateTime
   ): Promise<{
-    actions: Action[]
-    rendezVous: RdvListItem[]
+    entrees: EntreeAgenda[]
     metadata: AgendaMetadata
   }> {
     const session = await getSession()
@@ -57,8 +48,10 @@ export class AgendaApiService implements AgendaService {
       )
 
     return {
-      actions: desRdvEtDesActions.actions.map(jsonToAction),
-      rendezVous: desRdvEtDesActions.rendezVous.map(jsonToRdvListItem),
+      entrees: fusionneEtTriActionsEtRendezVous(
+        desRdvEtDesActions.actions,
+        desRdvEtDesActions.rendezVous
+      ),
       metadata: jsonToMetadata(desRdvEtDesActions.metadata),
     }
   }
@@ -66,8 +59,25 @@ export class AgendaApiService implements AgendaService {
 
 function jsonToMetadata(json: AgendaMetadataJson): AgendaMetadata {
   return {
-    actionsEnRetard: json.actionsEnRetard,
     dateDeDebut: DateTime.fromISO(json.dateDeDebut),
     dateDeFin: DateTime.fromISO(json.dateDeFin),
   }
+}
+
+function fusionneEtTriActionsEtRendezVous(
+  actions: ActionJson[],
+  rendezVous: EvenementJeuneJson[]
+): Array<EntreeAgenda> {
+  const actionsTriables = actions.map(actionJsonToEntree)
+
+  const rendezVousTriables = rendezVous.map(rdvJsonToEntree)
+
+  const result = [...actionsTriables, ...rendezVousTriables].sort(
+    (first, second) => compareDates(first.datePourLeTri, second.datePourLeTri)
+  )
+
+  return result.map((actionOuRendezvousTriable) => {
+    const { datePourLeTri, ...actionOuRendezvous } = actionOuRendezvousTriable
+    return actionOuRendezvous
+  })
 }

@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 
+import { EntreeAgenda } from 'interfaces/agenda'
 import {
   AnimationCollective,
   Evenement,
@@ -7,6 +8,7 @@ import {
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
+import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
 type Auteur = { id: string; nom: string; prenom: string }
 export type EvenementJson = {
@@ -88,6 +90,20 @@ export function jsonToListItem(json: EvenementJson): EvenementListItem {
     date: json.date,
     duree: json.duration,
     idCreateur: json.createur.id,
+  }
+}
+
+export function rdvJsonToEntree(
+  rdv: EvenementJeuneJson
+): EntreeAgenda & { datePourLeTri: DateTime } {
+  const date = DateTime.fromISO(rdv.date)
+  const titre = `${toFrenchFormat(date, DATETIME_LONG)} - ${rdv.title}`
+
+  return {
+    id: rdv.id,
+    type: 'evenement',
+    titre: titre,
+    datePourLeTri: date,
   }
 }
 

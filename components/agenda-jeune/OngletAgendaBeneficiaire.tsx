@@ -6,10 +6,8 @@ import AgendaActionRow from './AgendaActionRow'
 import { AgendaRdvRow } from 'components/agenda-jeune/AgendaRdvRow'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { Action } from 'interfaces/action'
-import { RdvListItem } from 'interfaces/rdv'
-import { fusionneEtTriActionsEtRendezVous } from 'presentation/AgendaJeunePresentationHelper'
-import { AgendaMetadata, AgendaService } from 'services/agenda.service'
+import { AgendaMetadata, EntreeAgenda } from 'interfaces/agenda'
+import { AgendaService } from 'services/agenda.service'
 import { toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -26,21 +24,13 @@ export function OngletAgendaBeneficiaire({
 }: OngletAgendaBeneficiaireProps) {
   const agendaService = useDependance<AgendaService>('agendaService')
   const [actionsEtRendezVous, setActionsEtRendezVous] = useState<
-    Array<Action | RdvListItem>
+    Array<EntreeAgenda>
   >([])
   const [metadata, setMetadata] = useState<AgendaMetadata>()
 
-  function instanceOfAction(object: any): object is Action {
-    return 'creator' in object && 'dateEcheance' in object
-  }
-
-  function instanceOfRdvListItem(object: any): object is RdvListItem {
-    return 'beneficiaires' in object && 'modality' in object
-  }
-
   function actionEtRendezVousRows(): JSX.Element[] {
     return actionsEtRendezVous.map((item) => {
-      if (instanceOfAction(item)) {
+      if (item.type === 'action') {
         return (
           <AgendaActionRow
             key={item.id}
@@ -49,7 +39,7 @@ export function OngletAgendaBeneficiaire({
           />
         )
       }
-      if (instanceOfRdvListItem(item)) {
+      if (item.type === 'evenement') {
         return <AgendaRdvRow key={item.id} rdv={item} />
       }
       return <></>
@@ -61,15 +51,8 @@ export function OngletAgendaBeneficiaire({
       agendaService
         .recupererAgendaMilo(idBeneficiaire, DateTime.now())
         .then((response) => {
-          updateNombreEvenement(
-            response.actions.length + response.rendezVous.length
-          )
-          setActionsEtRendezVous(
-            fusionneEtTriActionsEtRendezVous(
-              response.actions,
-              response.rendezVous
-            )
-          )
+          updateNombreEvenement(response.entrees.length)
+          setActionsEtRendezVous(response.entrees)
           setMetadata(response.metadata)
         })
     }
@@ -97,11 +80,9 @@ export function OngletAgendaBeneficiaire({
             </p>
           )}
           {actionsEtRendezVous.length > 0 && (
-            <div className='table w-full border-spacing-y-2 border-separate'>
-              <div role='rowgroup' className='table-row-group'>
-                {actionEtRendezVousRows()}
-              </div>
-            </div>
+            <ol className='w-full grid grid-cols-[auto_1fr_auto] gap-4 border-spacing-y-2 border-separate'>
+              {actionEtRendezVousRows()}
+            </ol>
           )}
         </div>
       )}

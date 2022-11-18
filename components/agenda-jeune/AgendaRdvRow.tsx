@@ -1,33 +1,23 @@
-import { DateTime } from 'luxon'
 import Link from 'next/link'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RowCell from 'components/ui/Table/RowCell'
-import { RdvListItem } from 'interfaces/rdv'
-import { DATETIME_LONG, toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
+import { EntreeAgenda } from 'interfaces/agenda'
 
 interface AgendaRdvRowProps {
-  rdv: RdvListItem
+  rdv: EntreeAgenda
 }
 
 export function AgendaRdvRow({ rdv }: AgendaRdvRowProps) {
-  const date = DateTime.fromISO(rdv.date)
-  const fullDateAndTime = `${toFrenchFormat(
-    date,
-    WEEKDAY_MONTH_LONG
-  )} - ${toFrenchFormat(date, DATETIME_LONG)}`
-  const timeAndType = `${toFrenchFormat(date, DATETIME_LONG)} - ${rdv.type}`
-
   return (
-    <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
-      <a
-        role='row'
-        aria-label={`Consulter l’événement du ${fullDateAndTime}`}
-        className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
-      >
-        <RowCell className='rounded-l-small'>
-          <span className='flex items-center justify-center'>
+    <li className='contents'>
+      <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
+        <a
+          aria-label={`Consulter l’événement du ${rdv.titre}`}
+          className='contents text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
+        >
+          <div className='rounded-l-small'>
             <IconComponent
               name={IconName.Calendar}
               focusable='false'
@@ -35,26 +25,20 @@ export function AgendaRdvRow({ rdv }: AgendaRdvRowProps) {
               title={`Événement`}
               className='w-6 h-6'
             />
-          </span>
-        </RowCell>
+          </div>
 
-        <RowCell className='rounded-l-small'>{timeAndType}</RowCell>
+          <div className='rounded-l-small'>{rdv.titre}</div>
 
-        <RowCell>
-          <></>
-        </RowCell>
-
-        <RowCell className='rounded-r-small'>
-          <span className='flex items-center justify-end'>
+          <div className='rounded-r-small'>
             <IconComponent
               name={IconName.ChevronRight}
               focusable='false'
               aria-hidden='true'
-              className='w-6 h-6 fill-content_color'
+              className='w-6 h-6 ml-auto fill-content_color'
             />
-          </span>
-        </RowCell>
-      </a>
-    </Link>
+          </div>
+        </a>
+      </Link>
+    </li>
   )
 }

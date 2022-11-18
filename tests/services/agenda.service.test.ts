@@ -30,7 +30,6 @@ describe('AgendaService', () => {
           actions: uneListeDActionsJson(),
           rendezVous: uneListeDeRendezVousJson(),
           metadata: {
-            actionsEnRetard: 2,
             dateDeDebut: '2022-09-01T00:00:00.000+02:00',
             dateDeFin: '2022-09-14T00:00:00.000+02:00',
           },
@@ -55,7 +54,6 @@ describe('AgendaService', () => {
           unRdvListItem({ beneficiaires: 'Bénéficiaires multiples' }),
         ],
         metadata: {
-          actionsEnRetard: 2,
           dateDeDebut: DateTime.fromISO('2022-09-01T00:00:00.000+02:00'),
           dateDeFin: DateTime.fromISO('2022-09-14T00:00:00.000+02:00'),
         },

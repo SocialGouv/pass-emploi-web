@@ -5,9 +5,10 @@ import StatusTag from 'components/action/StatusTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RowCell from 'components/ui/Table/RowCell'
 import { Action } from 'interfaces/action'
+import { EntreeAgenda } from 'interfaces/agenda'
 
 interface AgendaActionRowProps {
-  action: Action
+  action: EntreeAgenda
   jeuneId: string
 }
 
@@ -16,14 +17,13 @@ export default function AgendaActionRow({
   jeuneId,
 }: AgendaActionRowProps) {
   return (
-    <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
-      <a
-        role='row'
-        aria-label={`Détail de l'action ${action.content}, ${action.status}`}
-        className={`table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten`}
-      >
-        <RowCell className='rounded-l-small'>
-          <span className='flex items-center justify-center'>
+    <li className='contents'>
+      <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
+        <a
+          aria-label={`Détail de l'action ${action.titre}, ${action.statut}`}
+          className={`contents text-base-regular rounded-small shadow-s hover:bg-primary_lighten`}
+        >
+          <div className='rounded-l-small'>
             <IconComponent
               name={IconName.Actions}
               focusable='false'
@@ -31,30 +31,21 @@ export default function AgendaActionRow({
               title={`Action`}
               className='w-6 h-6'
             />
-          </span>
-        </RowCell>
+          </div>
 
-        <RowCell>
-          <span className='flex items-center'>{action.content}</span>
-        </RowCell>
+          <div>{action.titre}</div>
 
-        <RowCell>
-          <span className='flex justify-end'>
-            <StatusTag status={action.status} />
-          </span>
-        </RowCell>
-
-        <RowCell className='rounded-r-small'>
-          <span className='flex items-center justify-end'>
+          <div className='flex justify-end'>
+            <StatusTag status={action.statut!} />
             <IconComponent
               name={IconName.ChevronRight}
               focusable='false'
               aria-hidden='true'
               className='w-6 h-6 fill-content_color'
             />
-          </span>
-        </RowCell>
-      </a>
-    </Link>
+          </div>
+        </a>
+      </Link>
+    </li>
   )
 }
