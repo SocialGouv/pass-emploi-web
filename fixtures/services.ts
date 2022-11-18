@@ -184,6 +184,6 @@ export function mockedSuggestionsService(
 }
 
 export function mockedAgendaService(overrides: Partial<AgendaService> = {}) {
-  const defaults: AgendaService = { recuperationAgendaMilo: jest.fn() }
+  const defaults: AgendaService = { recupererAgendaMilo: jest.fn() }
   return { ...defaults, ...overrides }
 }

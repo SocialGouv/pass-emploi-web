@@ -13,14 +13,17 @@ interface AgendaRdvRowProps {
 
 export function AgendaRdvRow({ rdv }: AgendaRdvRowProps) {
   const date = DateTime.fromISO(rdv.date)
-  const fullDate = toFrenchFormat(date, WEEKDAY_MONTH_LONG)
+  const fullDateAndTime = `${toFrenchFormat(
+    date,
+    WEEKDAY_MONTH_LONG
+  )} - ${toFrenchFormat(date, DATETIME_LONG)}`
   const timeAndType = `${toFrenchFormat(date, DATETIME_LONG)} - ${rdv.type}`
 
   return (
     <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
       <a
         role='row'
-        aria-label={`Consulter l’événement du ${fullDate}`}
+        aria-label={`Consulter l’événement du ${fullDateAndTime}`}
         className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
       >
         <RowCell className='rounded-l-small'>
@@ -29,6 +32,7 @@ export function AgendaRdvRow({ rdv }: AgendaRdvRowProps) {
               name={IconName.Calendar}
               focusable='false'
               aria-label={`Événement`}
+              title={`Événement`}
               className='w-6 h-6'
             />
           </span>

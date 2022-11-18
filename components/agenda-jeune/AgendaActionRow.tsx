@@ -19,7 +19,7 @@ export default function AgendaActionRow({
     <Link href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}>
       <a
         role='row'
-        aria-label={`Détail de l'action ${action.content}`}
+        aria-label={`Détail de l'action ${action.content}, ${action.status}`}
         className={`table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten`}
       >
         <RowCell className='rounded-l-small'>
@@ -28,6 +28,7 @@ export default function AgendaActionRow({
               name={IconName.Actions}
               focusable='false'
               aria-label={`Action`}
+              title={`Action`}
               className='w-6 h-6'
             />
           </span>
