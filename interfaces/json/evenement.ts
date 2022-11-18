@@ -5,6 +5,7 @@ import {
   AnimationCollective,
   Evenement,
   EvenementListItem,
+  StatutAnimationCollective,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
@@ -32,10 +33,14 @@ export type EvenementJson = {
 export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
   jeune: BaseJeune
 }
-
 export type AnimationCollectiveJson = EvenementJson & {
-  statut: 'A_VENIR' | 'A_CLOTURER' | 'CLOTUREE'
+  statut: StatutAnimationCollectiveJson
 }
+
+export type StatutAnimationCollectiveJson =
+  | 'A_VENIR'
+  | 'A_CLOTURER'
+  | 'CLOTUREE'
 
 export type EvenementFormData = {
   date: string
@@ -113,7 +118,26 @@ export function jsonToAnimationCollective(
     titre: json.title,
     date: DateTime.fromISO(json.date),
     duree: json.duration,
-    statut: json.statut,
+    statut: jsonToStatutAnimationCollective(json.statut),
+  }
+}
+
+function jsonToStatutAnimationCollective(
+  jsonStatus: StatutAnimationCollectiveJson
+): StatutAnimationCollective {
+  switch (jsonStatus) {
+    case 'A_VENIR':
+      return StatutAnimationCollective.AVenir
+    case 'A_CLOTURER':
+      return StatutAnimationCollective.AClore
+    case 'CLOTUREE':
+      return StatutAnimationCollective.Close
+
+    default:
+      console.warn(
+        `Statut d'animation collective ${jsonStatus} incorrect, traité comme AVenir`
+      )
+      return StatutAnimationCollective.AVenir
   }
 }
 
