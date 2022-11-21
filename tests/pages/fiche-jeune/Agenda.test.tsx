@@ -1,4 +1,5 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
+import { DateTime } from 'luxon'
 import React from 'react'
 
 import { desActionsInitiales } from 'fixtures/action'
@@ -14,6 +15,30 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Agenda de la fiche jeune', () => {
   let agendaService: AgendaService
+  const JANVIER_5 = DateTime.local(2022, 1, 5)
+  const UNE_DATE_SEMAINE_EN_COURS = DateTime.local(2022, 1, 3)
+  const UNE_DATE_SEMAINE_SUIVANTE = DateTime.local(2022, 1, 10)
+
+  beforeEach(() => {
+    jest.spyOn(DateTime, 'now').mockReturnValue(JANVIER_5)
+  })
+
+  describe('pour tous les conseillers', () => {
+    it('affiche un onglet Agenda', async () => {
+      // Given
+      agendaService = mockedAgendaService()
+
+      // When
+      await renderFicheJeune(StructureConseiller.POLE_EMPLOI, agendaService)
+
+      // Then
+      expect(
+        screen.getByRole('tab', {
+          name: /Agenda/,
+        })
+      ).toBeInTheDocument()
+    })
+  })
 
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
     it("n'affiche pas l’agenda du jeune (et ne tente pas de le récupérer)", async () => {
@@ -36,42 +61,15 @@ describe('Agenda de la fiche jeune', () => {
 
   describe('quand l’utilisateur n’est pas un conseiller Pole emploi', () => {
     describe('affiche l’agenda du jeune', () => {
-      it('avec un message si le jeune n’a rien sur la période', async () => {
-        // Given
-        agendaService = mockedAgendaService({
-          recupererAgenda: jest.fn(async () => unAgenda()),
-        })
-
-        // When
-        await renderFicheJeune(StructureConseiller.MILO, agendaService)
-
-        // Then
-        expect(
-          screen.getByRole('tab', {
-            name: /Agenda/,
-          })
-        ).toBeInTheDocument()
-        expect(
-          screen.getByText(
-            'Il n’y a pas encore de rendez-vous ni d’action prévus sur cette période.'
-          )
-        ).toBeInTheDocument()
-      })
-
-      it('avec des rendez-vous et des actions si le jeune en a sur la période', async () => {
+      it('avec un message si le jeune n’a rien sur la semaine en cours', async () => {
         // Given
         agendaService = mockedAgendaService({
           recupererAgenda: jest.fn(async () =>
             unAgenda({
               entrees: [
                 {
-                  id: 'id-action-1',
-                  type: 'action',
-                  titre: 'Identifier ses atouts et ses compétences',
-                  statut: StatutAction.ARealiser,
-                } as EntreeAgenda,
-                {
                   id: '1',
+                  date: UNE_DATE_SEMAINE_SUIVANTE,
                   type: 'evenement',
                   titre: '12h00 - Autre',
                 } as EntreeAgenda,
@@ -84,16 +82,123 @@ describe('Agenda de la fiche jeune', () => {
         await renderFicheJeune(StructureConseiller.MILO, agendaService)
 
         // Then
+        const semaineEnCours = screen.getByRole('region', {
+          name: 'Semaine en cours',
+        })
         expect(
-          screen.getByRole('tab', {
-            name: /Agenda/,
+          within(semaineEnCours).getByRole('heading', {
+            level: 2,
+            name: 'Semaine en cours',
           })
         ).toBeInTheDocument()
         expect(
-          screen.getByText('Identifier ses atouts et ses compétences')
+          within(semaineEnCours).getByText(
+            'Du lundi 3 janvier au vendredi 7 janvier'
+          )
         ).toBeInTheDocument()
-        expect(screen.getByText('À réaliser')).toBeInTheDocument()
-        expect(screen.getByText(/12h00 - Autre/)).toBeInTheDocument()
+        expect(
+          within(semaineEnCours).getByText('Pas d’action ni de rendez-vous')
+        ).toBeInTheDocument()
+      })
+
+      it('avec un message si le jeune n’a rien sur la semaine suivante', async () => {
+        // Given
+        agendaService = mockedAgendaService({
+          recupererAgenda: jest.fn(async () =>
+            unAgenda({
+              entrees: [
+                {
+                  id: '1',
+                  date: UNE_DATE_SEMAINE_EN_COURS,
+                  type: 'evenement',
+                  titre: '12h00 - Autre',
+                } as EntreeAgenda,
+              ],
+            })
+          ),
+        })
+
+        // When
+        await renderFicheJeune(StructureConseiller.MILO, agendaService)
+
+        // Then
+        const semaineSuivante = screen.getByRole('region', {
+          name: 'Semaine suivante',
+        })
+        expect(
+          within(semaineSuivante).getByRole('heading', {
+            level: 2,
+            name: 'Semaine suivante',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(semaineSuivante).getByText(
+            'Du lundi 10 janvier au vendredi 14 janvier'
+          )
+        ).toBeInTheDocument()
+        expect(
+          within(semaineSuivante).getByText('Pas d’action ni de rendez-vous')
+        ).toBeInTheDocument()
+      })
+
+      it('avec des rendez-vous et des actions séparés par semaine si le jeune en a', async () => {
+        // Given
+        agendaService = mockedAgendaService({
+          recupererAgenda: jest.fn(async () =>
+            unAgenda({
+              entrees: [
+                {
+                  id: 'id-action-1',
+                  date: UNE_DATE_SEMAINE_EN_COURS,
+                  type: 'action',
+                  titre: 'Identifier ses atouts et ses compétences',
+                  statut: StatutAction.ARealiser,
+                } as EntreeAgenda,
+                {
+                  id: '1',
+                  date: UNE_DATE_SEMAINE_SUIVANTE,
+                  type: 'evenement',
+                  titre: '12h00 - Autre',
+                } as EntreeAgenda,
+              ],
+            })
+          ),
+        })
+
+        // When
+        await renderFicheJeune(StructureConseiller.MILO, agendaService)
+
+        // Then
+        const semaineEnCours = screen.getByRole('region', {
+          name: 'Semaine en cours',
+        })
+        expect(
+          within(semaineEnCours).getByRole('heading', {
+            level: 2,
+            name: 'Semaine en cours',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(semaineEnCours).getByText(
+            'Identifier ses atouts et ses compétences'
+          )
+        ).toBeInTheDocument()
+        expect(
+          within(semaineEnCours).getByText('À réaliser')
+        ).toBeInTheDocument()
+
+        const semaineSuivante = screen.getByRole('region', {
+          name: 'Semaine suivante',
+        })
+        expect(
+          within(semaineSuivante).getByRole('heading', {
+            level: 2,
+            name: 'Semaine suivante',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(semaineSuivante).getByText(/12h00 - Autre/)
+        ).toBeInTheDocument()
       })
     })
   })

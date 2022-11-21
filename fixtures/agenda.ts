@@ -7,7 +7,7 @@ export const unAgenda = (overrides: Partial<Agenda> = {}): Agenda => {
     entrees: [],
     metadata: {
       dateDeDebut: DateTime.local(2022, 1, 1),
-      dateDeFin: DateTime.local(2022, 1, 14),
+      dateDeFin: DateTime.local(2022, 1, 15),
     },
   }
 
