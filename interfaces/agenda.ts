@@ -9,6 +9,7 @@ export type Agenda = {
 
 export type EntreeAgenda = {
   id: string
+  date: DateTime
   type: 'action' | 'evenement'
   titre: string
   statut?: StatutAction
