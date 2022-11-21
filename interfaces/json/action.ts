@@ -100,6 +100,7 @@ export function jsonToAction(json: ActionJson): Action {
 export function actionJsonToEntree(action: ActionJson): EntreeAgenda {
   return {
     id: action.id,
+    date: DateTime.fromISO(action.dateEcheance),
     type: 'action',
     titre: action.content,
     statut: jsonToActionStatus(action.status),
