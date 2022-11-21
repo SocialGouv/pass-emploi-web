@@ -756,7 +756,12 @@ describe('EditionRdv', () => {
         it('est désactivé quand la description dépasse 250 caractères', async () => {
           // When
           await userEvent.clear(inputDescription)
-          await userEvent.type(inputDescription, repeat('a', 250))
+          await userEvent.type(
+            inputDescription,
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' +
+              'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' +
+              'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+          )
           await userEvent.tab()
 
           // Then
@@ -1030,6 +1035,30 @@ describe('EditionRdv', () => {
           expect(
             screen.getByLabelText("Ce jeune n'est pas dans votre portefeuille")
           ).toBeInTheDocument()
+        })
+
+        it('redirige vers la page précédente avec le bon query param', async () => {
+          // Given
+          await userEvent.selectOptions(
+            screen.getByLabelText(/Type/),
+            'Atelier'
+          )
+          await userEvent.type(screen.getByLabelText(/Date/), '2022-03-03')
+          await userEvent.type(screen.getByLabelText(/Heure/), '10:30')
+          await userEvent.type(screen.getByLabelText(/Durée/), '02:37')
+          await userEvent.type(
+            screen.getByLabelText(/Titre/),
+            'Titre de l’événement'
+          )
+
+          // When
+          await userEvent.click(screen.getByText(/Créer/))
+
+          // Then
+          expect(push).toHaveBeenCalledWith({
+            pathname: '/agenda',
+            query: { creationAC: 'succes' },
+          })
         })
       })
     })
@@ -1394,6 +1423,50 @@ describe('EditionRdv', () => {
       })
     })
 
+    describe('quand on souhaite modifier une animation collective', () => {
+      it('renvoie vers la page précédente avec le bon query param', async () => {
+        // Given
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunesConseiller}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/agenda?creationRdv=succes'}
+            evenement={unEvenement({
+              type: { code: 'ATELIER', label: 'Atelier' },
+            })}
+            pageTitle={''}
+          />,
+          {
+            customDependances: { rendezVousService, jeunesService },
+            customConseiller: {
+              agence: {
+                nom: 'Mission locale Aubenas',
+                id: 'id-etablissement',
+              },
+            },
+          }
+        )
+
+        const inputTitre = screen.getByRole('textbox', { name: 'Titre' })
+        await userEvent.clear(inputTitre)
+        await userEvent.type(inputTitre, 'Nouveau titre')
+
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Modifier l’événement',
+          })
+        )
+
+        // Then
+        expect(push).toHaveBeenCalledWith({
+          pathname: '/agenda',
+          query: { modificationAC: 'succes' },
+        })
+      })
+    })
+
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
       let evenement: Evenement
       beforeEach(() => {
@@ -1562,6 +1635,3 @@ describe('EditionRdv', () => {
     })
   })
 })
-
-const repeat = (str: string, count: number) =>
-  new Array(count).fill(str).join('')

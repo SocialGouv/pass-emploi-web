@@ -205,17 +205,29 @@ export const getServerSideProps: GetServerSideProps<AgendaProps> = async (
         ? Onglet.ETABLISSEMENT
         : Onglet.CONSEILLER
 
-  if (context.query[QueryParam.creationRdv])
+  if (
+    context.query[QueryParam.creationRdv] ||
+    context.query[QueryParam.creationAC]
+  )
     props.creationSuccess =
-      context.query[QueryParam.creationRdv] === QueryValue.succes
+      context.query[QueryParam.creationRdv] === QueryValue.succes ||
+      context.query[QueryParam.creationAC] === QueryValue.succes
 
-  if (context.query[QueryParam.modificationRdv])
+  if (
+    context.query[QueryParam.modificationRdv] ||
+    context.query[QueryParam.modificationAC]
+  )
     props.modificationSuccess =
-      context.query[QueryParam.modificationRdv] === QueryValue.succes
+      context.query[QueryParam.modificationRdv] === QueryValue.succes ||
+      context.query[QueryParam.modificationAC] === QueryValue.succes
 
-  if (context.query[QueryParam.suppressionRdv])
+  if (
+    context.query[QueryParam.suppressionRdv] ||
+    context.query[QueryParam.suppressionAC]
+  )
     props.suppressionSuccess =
-      context.query[QueryParam.suppressionRdv] === QueryValue.succes
+      context.query[QueryParam.suppressionRdv] === QueryValue.succes ||
+      context.query[QueryParam.suppressionAC] === QueryValue.succes
 
   if (context.query[QueryParam.envoiMessage]) {
     props.messageEnvoiGroupeSuccess =

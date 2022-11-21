@@ -14,7 +14,12 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, Modification, TypeEvenement } from 'interfaces/evenement'
+import {
+  Evenement,
+  isCodeTypeAnimationCollective,
+  Modification,
+  TypeEvenement,
+} from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
@@ -158,9 +163,13 @@ function EditionRdv({
     }
 
     const { pathname, query } = getCleanUrlObject(returnTo)
-    const queryParam = evenement
-      ? QueryParam.modificationRdv
-      : QueryParam.creationRdv
+    let queryParam = QueryParam.creationRdv
+    if (!isCodeTypeAnimationCollective(payload.type) && evenement)
+      queryParam = QueryParam.modificationRdv
+    if (isCodeTypeAnimationCollective(payload.type) && !evenement)
+      queryParam = QueryParam.creationAC
+    if (isCodeTypeAnimationCollective(payload.type) && evenement)
+      queryParam = QueryParam.modificationAC
     await router.push({
       pathname,
       query: setQueryParams(query, { [queryParam]: QueryValue.succes }),
@@ -173,10 +182,15 @@ function EditionRdv({
     try {
       await rendezVousService.supprimerEvenement(evenement!.id)
       const { pathname, query } = getCleanUrlObject(returnTo)
+      const queryParamSuppression = isCodeTypeAnimationCollective(
+        evenement!.type.code
+      )
+        ? QueryParam.suppressionAC
+        : QueryParam.suppressionRdv
       await router.push({
         pathname,
         query: setQueryParams(query, {
-          [QueryParam.suppressionRdv]: QueryValue.succes,
+          [queryParamSuppression]: QueryValue.succes,
         }),
       })
     } catch (e) {
@@ -445,6 +459,9 @@ function getCleanUrlObject(url: string): {
       QueryParam.modificationRdv,
       QueryParam.creationRdv,
       QueryParam.suppressionRdv,
+      QueryParam.modificationAC,
+      QueryParam.creationAC,
+      QueryParam.suppressionAC,
     ]),
   }
 }

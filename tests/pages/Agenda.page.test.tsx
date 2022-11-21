@@ -230,7 +230,7 @@ describe('Agenda', () => {
 
         beforeEach(async () => {
           // When
-          await act(async () =>
+          await act(() =>
             userEvent.click(
               screen.getByRole('tab', { name: 'Agenda établissement' })
             )
