@@ -14,10 +14,11 @@ import { AgendaService } from 'services/agenda.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Agenda de la fiche jeune', () => {
-  let agendaService: AgendaService
   const JANVIER_5 = DateTime.local(2022, 1, 5)
   const UNE_DATE_SEMAINE_EN_COURS = DateTime.local(2022, 1, 3)
   const UNE_DATE_SEMAINE_SUIVANTE = DateTime.local(2022, 1, 10)
+
+  let agendaService: AgendaService
 
   beforeEach(() => {
     jest.spyOn(DateTime, 'now').mockReturnValue(JANVIER_5)
@@ -32,11 +33,7 @@ describe('Agenda de la fiche jeune', () => {
       await renderFicheJeune(StructureConseiller.POLE_EMPLOI, agendaService)
 
       // Then
-      expect(
-        screen.getByRole('tab', {
-          name: /Agenda/,
-        })
-      ).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: /Agenda/ })).toBeInTheDocument()
     })
   })
 
