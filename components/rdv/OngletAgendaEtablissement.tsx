@@ -14,10 +14,7 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import {
-  AnimationCollective,
-  StatutAnimationCollective,
-} from 'interfaces/evenement'
+import { AnimationCollective, StatutEvenement } from 'interfaces/evenement'
 import {
   insertIntercalaires,
   ItemOuIntercalaire,
@@ -53,9 +50,7 @@ export function OngletAgendaEtablissement({
   const [animationsCollectivesGroupees, setAnimationsCollectivesGroupees] =
     useState<ItemOuIntercalaire<AnimationCollective>[]>([])
 
-  const [statutsValides, setStatutsValides] = useState<
-    StatutAnimationCollective[]
-  >([])
+  const [statutsValides, setStatutsValides] = useState<StatutEvenement[]>([])
 
   async function chargerEvenementsPeriode(
     dateDebut: DateTime,
@@ -215,12 +210,12 @@ function statusProps({ type, statut }: AnimationCollective): {
   color: string
 } {
   switch (statut) {
-    case StatutAnimationCollective.AVenir:
+    case StatutEvenement.AVenir:
       return { label: 'À venir', color: 'accent_1' }
-    case StatutAnimationCollective.AClore:
+    case StatutEvenement.AClore:
       return { label: 'À clore', color: 'warning' }
 
-    case StatutAnimationCollective.Close:
+    case StatutEvenement.Close:
       return {
         label: type === 'Atelier' ? 'Clos' : 'Close',
         color: 'accent_2',

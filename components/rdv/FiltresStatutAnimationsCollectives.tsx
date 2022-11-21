@@ -2,13 +2,13 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { StatutAnimationCollective } from 'interfaces/evenement'
+import { StatutEvenement } from 'interfaces/evenement'
 
 type FiltresStatutAnimationsCollectivesProps = {
   onFiltres: (
-    statutsAnimationsCollectivesSelectionnes: StatutAnimationCollective[]
+    statutsAnimationsCollectivesSelectionnes: StatutEvenement[]
   ) => void
-  defaultValue?: StatutAnimationCollective[]
+  defaultValue?: StatutEvenement[]
 }
 
 export default function FiltresStatutAnimationsCollectives({
@@ -22,10 +22,10 @@ export default function FiltresStatutAnimationsCollectives({
   const [
     statutsAnimationsCollectivesSelectionnes,
     setStatutsAnimationsCollectivesSelectionnes,
-  ] = useState<StatutAnimationCollective[]>([])
+  ] = useState<StatutEvenement[]>([])
 
   function renderFiltreStatutAnimationCollective(
-    statut: StatutAnimationCollective
+    statut: StatutEvenement
   ): JSX.Element {
     const id = `statut-${statut.toLowerCase()}`
     return (
@@ -46,7 +46,7 @@ export default function FiltresStatutAnimationsCollectives({
   function actionnerStatutAnimationCollective(
     e: ChangeEvent<HTMLInputElement>
   ) {
-    const statut = e.target.value as StatutAnimationCollective
+    const statut = e.target.value as StatutEvenement
     if (statutsAnimationsCollectivesSelectionnes.includes(statut)) {
       setStatutsAnimationsCollectivesSelectionnes(
         statutsAnimationsCollectivesSelectionnes.filter((s) => s !== statut)
@@ -102,10 +102,8 @@ export default function FiltresStatutAnimationsCollectives({
             <legend className='sr-only'>
               Choisir un ou plusieurs statuts à filtrer
             </legend>
-            {Object.keys(StatutAnimationCollective).map((statut) =>
-              renderFiltreStatutAnimationCollective(
-                statut as StatutAnimationCollective
-              )
+            {Object.keys(StatutEvenement).map((statut) =>
+              renderFiltreStatutAnimationCollective(statut as StatutEvenement)
             )}
           </fieldset>
           <Button className='w-full justify-center' type='submit'>
@@ -117,13 +115,13 @@ export default function FiltresStatutAnimationsCollectives({
   )
 }
 
-function label(statut: StatutAnimationCollective): string {
+function label(statut: StatutEvenement): string {
   switch (statut) {
-    case StatutAnimationCollective.AVenir:
+    case StatutEvenement.AVenir:
       return 'À venir'
-    case StatutAnimationCollective.AClore:
+    case StatutEvenement.AClore:
       return 'À clore'
-    case StatutAnimationCollective.Close:
+    case StatutEvenement.Close:
       return 'Close'
   }
 }

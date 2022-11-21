@@ -5,13 +5,14 @@ import {
   AnimationCollective,
   Evenement,
   EvenementListItem,
-  StatutAnimationCollective,
+  StatutEvenement,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
 type Auteur = { id: string; nom: string; prenom: string }
+
 export type EvenementJson = {
   id: string
   date: string
@@ -28,6 +29,7 @@ export type EvenementJson = {
   presenceConseiller?: boolean
   adresse?: string
   organisme?: string
+  statut?: StatutAnimationCollectiveJson
 }
 
 export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
@@ -70,6 +72,7 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     presenceConseiller: Boolean(json.presenceConseiller),
     invitation: Boolean(json.invitation),
     historique: jsonToHistorique(json.historique),
+    statut: json.statut ? jsonToStatutEvenement(json.statut) : undefined,
   }
   if (json.comment) evenement.commentaire = json.comment
   if (json.precision) evenement.precisionType = json.precision
@@ -118,26 +121,26 @@ export function jsonToAnimationCollective(
     titre: json.title,
     date: DateTime.fromISO(json.date),
     duree: json.duration,
-    statut: jsonToStatutAnimationCollective(json.statut),
+    statut: jsonToStatutEvenement(json.statut),
   }
 }
 
-function jsonToStatutAnimationCollective(
+function jsonToStatutEvenement(
   jsonStatus: StatutAnimationCollectiveJson
-): StatutAnimationCollective {
+): StatutEvenement {
   switch (jsonStatus) {
     case 'A_VENIR':
-      return StatutAnimationCollective.AVenir
+      return StatutEvenement.AVenir
     case 'A_CLOTURER':
-      return StatutAnimationCollective.AClore
+      return StatutEvenement.AClore
     case 'CLOTUREE':
-      return StatutAnimationCollective.Close
+      return StatutEvenement.Close
 
     default:
       console.warn(
         `Statut d'animation collective ${jsonStatus} incorrect, traité comme AVenir`
       )
-      return StatutAnimationCollective.AVenir
+      return StatutEvenement.AVenir
   }
 }
 

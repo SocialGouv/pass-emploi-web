@@ -99,7 +99,7 @@ function intercalaireDate({ label }: IntercalaireJour) {
   return (
     <Intercalaire
       key={label}
-      className={`text-m-bold capitalize ${
+      className={`pt-4 pb-2 text-m-bold capitalize ${
         label === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'
       } `}
     >

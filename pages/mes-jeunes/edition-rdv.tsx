@@ -10,11 +10,17 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, Modification, TypeEvenement } from 'interfaces/evenement'
+import {
+  Evenement,
+  isStatutAClore,
+  Modification,
+  TypeEvenement,
+} from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
@@ -221,6 +227,8 @@ function EditionRdv({
 
   useMatomo(trackingTitle)
 
+  const dateFormattee = (dateString: string) =>
+    toFrenchFormat(DateTime.fromISO(dateString), DATETIME_LONG)
   return (
     <>
       {showDeleteRdvError && (
@@ -238,19 +246,36 @@ function EditionRdv({
 
       {evenement && (
         <>
-          <Button
-            style={ButtonStyle.SECONDARY}
-            onClick={handleDelete}
-            label={`Supprimer l’événement du ${evenement.date}`}
-          >
-            <IconComponent
-              name={IconName.Delete}
-              aria-hidden='true'
-              focusable='false'
-              className='mr-2 w-4 h-4'
-            />
-            Supprimer
-          </Button>
+          <div className='flex'>
+            <Button
+              style={ButtonStyle.SECONDARY}
+              onClick={handleDelete}
+              label={`Supprimer l’événement du ${evenement.date}`}
+            >
+              <IconComponent
+                name={IconName.Delete}
+                aria-hidden='true'
+                focusable='false'
+                className='mr-2 w-4 h-4'
+              />
+              Supprimer
+            </Button>
+            {isStatutAClore(evenement) && (
+              <ButtonLink
+                style={ButtonStyle.PRIMARY}
+                href={`/evenements/${evenement.id}/cloture`}
+                className='ml-6'
+              >
+                <IconComponent
+                  name={IconName.Clipboard}
+                  aria-hidden='true'
+                  focusable='false'
+                  className='mr-2 w-4 h-4'
+                />
+                Clore
+              </ButtonLink>
+            )}
+          </div>
 
           <dl>
             <div className='mt-6 border border-solid border-grey_100 rounded-medium p-4'>
