@@ -1,15 +1,19 @@
-import React, { ReactNode } from 'react'
+import React, { ReactElement } from 'react'
 
 type THeadProps = {
-  children: ReactNode
+  children: ReactElement
+  asDiv?: boolean
 }
 
-export function THead({ children }: THeadProps) {
-  return (
-    <div role='rowgroup' className='table-header-group'>
-      <div role='row' className='table-row'>
-        {children}
+export function THead({ children, asDiv = false }: THeadProps) {
+  if (asDiv)
+    return (
+      <div role='rowgroup' className='table-header-group'>
+        {React.Children.map(
+          children,
+          (child) => child && React.cloneElement(child, { asDiv: true })
+        )}
       </div>
-    </div>
-  )
+    )
+  else return <thead>{children}</thead>
 }

@@ -1,8 +1,11 @@
 import React from 'react'
 
 import OffreRow from 'components/favoris/offres/OffreRow'
-import { HeaderCell } from 'components/ui/Table/HeaderCell'
-import TableLayout from 'components/ui/Table/TableLayout'
+import Table from 'components/ui/Table/Table'
+import { TBody } from 'components/ui/Table/TBody'
+import { TH } from 'components/ui/Table/TH'
+import { THead } from 'components/ui/Table/THead'
+import { TR } from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
 
 interface TableauOffresProps {
@@ -19,21 +22,21 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
       )}
 
       {offres.length > 0 && (
-        <TableLayout caption='Liste des offres en favoris'>
-          <div role='rowgroup' className='table-header-group'>
-            <div role='row' className='table-row'>
-              <HeaderCell>N°Offre</HeaderCell>
-              <HeaderCell>Titre</HeaderCell>
-              <HeaderCell>Entreprise</HeaderCell>
-              <HeaderCell>Type</HeaderCell>
-            </div>
-          </div>
-          <div role='rowgroup' className='table-row-group'>
+        <Table asDiv={true} caption='Liste des offres en favoris'>
+          <THead>
+            <TR isHeader={true}>
+              <TH>N°Offre</TH>
+              <TH>Titre</TH>
+              <TH>Entreprise</TH>
+              <TH>Type</TH>
+            </TR>
+          </THead>
+          <TBody>
             {offres.map((offre) => (
               <OffreRow key={offre.id} offre={offre} />
             ))}
-          </div>
-        </TableLayout>
+          </TBody>
+        </Table>
       )}
     </>
   )

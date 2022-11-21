@@ -6,10 +6,10 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Tag } from 'components/ui/Indicateurs/Tag'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { HeaderCell } from 'components/ui/Table/HeaderCell'
-import RowCell from 'components/ui/Table/RowCell'
-import TableLayout from 'components/ui/Table/TableLayout'
+import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
+import TD from 'components/ui/Table/TD'
+import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { AnimationCollective } from 'interfaces/evenement'
@@ -136,12 +136,14 @@ export function OngletAgendaEtablissement({
 
       {animationsCollectivesWithIntercalaires &&
         animationsCollectivesWithIntercalaires.length > 0 && (
-          <TableLayout caption='Liste des animations collectives de mon établissement'>
+          <Table caption='Liste des animations collectives de mon établissement'>
             <THead>
-              <HeaderCell>Horaires</HeaderCell>
-              <HeaderCell>Titre</HeaderCell>
-              <HeaderCell>Type</HeaderCell>
-              <HeaderCell>Statut</HeaderCell>
+              <TR isHeader={true}>
+                <TH>Horaires</TH>
+                <TH>Titre</TH>
+                <TH>Type</TH>
+                <TH>Statut</TH>
+              </TR>
             </THead>
             <TBody>
               {renderListeWithIntercalaires(
@@ -152,12 +154,12 @@ export function OngletAgendaEtablissement({
                     href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
                     label={labelLien(ac)}
                   >
-                    <RowCell>
+                    <TD>
                       {heure(ac)} - {ac.duree} min
-                    </RowCell>
-                    <RowCell>{ac.titre}</RowCell>
-                    <RowCell>{tagType(ac)}</RowCell>
-                    <RowCell>
+                    </TD>
+                    <TD>{ac.titre}</TD>
+                    <TD>{tagType(ac)}</TD>
+                    <TD>
                       <div className='flex items-center justify-between'>
                         {tagStatut(ac)}
                         <IconComponent
@@ -167,12 +169,12 @@ export function OngletAgendaEtablissement({
                           className='w-6 h-6 fill-content_color'
                         />
                       </div>
-                    </RowCell>
+                    </TD>
                   </TR>
                 )
               )}
             </TBody>
-          </TableLayout>
+          </Table>
         )}
     </>
   )

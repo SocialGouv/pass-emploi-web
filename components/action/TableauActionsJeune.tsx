@@ -7,8 +7,12 @@ import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
 import { TRI } from 'components/action/OngletActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import SortIcon from 'components/ui/SortIcon'
-import { HeaderCell } from 'components/ui/Table/HeaderCell'
-import TableLayout from 'components/ui/Table/TableLayout'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
+import Table from 'components/ui/Table/Table'
+import { TBody } from 'components/ui/Table/TBody'
+import { TH } from 'components/ui/Table/TH'
+import { THead } from 'components/ui/Table/THead'
+import { TR } from 'components/ui/Table/TR'
 import {
   Action,
   EtatQualificationAction,
@@ -108,14 +112,38 @@ export default function TableauActionsJeune({
         />
       )}
 
-      <div className={isLoading ? 'animate-pulse' : ''}>
-        <TableLayout
+      {isLoading && <SpinningLoader />}
+
+      {actions.length === 0 && (
+        <>
+          <EmptyStateImage
+            focusable='false'
+            aria-hidden='true'
+            className='m-auto w-[200px] h-[200px]'
+          />
+          <p className='text-base-bold text-center'>
+            Aucune action ne correspondant aux filtres.
+          </p>
+          <Button
+            type='button'
+            style={ButtonStyle.PRIMARY}
+            onClick={reinitialiserFiltres}
+            className='m-auto mt-8'
+          >
+            Réinitialiser les filtres
+          </Button>
+        </>
+      )}
+
+      {actions.length > 0 && (
+        <Table
+          asDiv={true}
           caption={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
         >
-          <div role='rowgroup' className='table-header-group '>
-            <div role='row' className='table-row text-base-regular'>
-              <HeaderCell>Intitulé de l’action</HeaderCell>
-              <HeaderCell className={headerColumnWithButtonHover}>
+          <THead>
+            <TR isHeader={true}>
+              <TH>Intitulé de l’action</TH>
+              <TH className={headerColumnWithButtonHover}>
                 <button
                   onClick={trierParDateCreation}
                   aria-label='Créée le - trier les actions'
@@ -127,8 +155,8 @@ export default function TableauActionsJeune({
                     isDesc={getIsSortedDesc()}
                   />
                 </button>
-              </HeaderCell>
-              <HeaderCell className={headerColumnWithButtonHover}>
+              </TH>
+              <TH className={headerColumnWithButtonHover}>
                 <button
                   onClick={trierParDateEcheance}
                   aria-label='Échéance - trier les actions'
@@ -140,53 +168,23 @@ export default function TableauActionsJeune({
                     isDesc={getIsSortedDesc()}
                   />
                 </button>
-              </HeaderCell>
-              <FiltresStatutsActions
-                style={headerColumnWithButtonHover}
-                defaultValue={statutsValides}
-                onFiltres={filtrerActionsParStatuts}
-              />
-            </div>
-          </div>
+              </TH>
+              <TH className={headerColumnWithButtonHover}>
+                <FiltresStatutsActions
+                  defaultValue={statutsValides}
+                  onFiltres={filtrerActionsParStatuts}
+                />
+              </TH>
+            </TR>
+          </THead>
 
-          {actions.length === 0 && (
-            <div
-              role='rowgroup'
-              className='table-caption text-center'
-              style={{ captionSide: 'bottom' }}
-            >
-              <div role='row'>
-                <div role='cell' aria-colspan={4}>
-                  <EmptyStateImage
-                    focusable='false'
-                    aria-hidden='true'
-                    className='m-auto w-[200px] h-[200px]'
-                  />
-                  <p className='text-base-bold text-center'>
-                    Aucune action ne correspondant aux filtres.
-                  </p>
-                  <Button
-                    type='button'
-                    style={ButtonStyle.PRIMARY}
-                    onClick={reinitialiserFiltres}
-                    className='m-auto mt-8'
-                  >
-                    Réinitialiser les filtres
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {actions.length > 0 && (
-            <div role='rowgroup' className='table-row-group'>
-              {actions.map((action: Action) => (
-                <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
-              ))}
-            </div>
-          )}
-        </TableLayout>
-      </div>
+          <TBody>
+            {actions.map((action: Action) => (
+              <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
+            ))}
+          </TBody>
+        </Table>
+      )}
     </>
   )
 }
