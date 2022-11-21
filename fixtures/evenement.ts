@@ -4,6 +4,7 @@ import {
   AnimationCollective,
   Evenement,
   EvenementListItem,
+  StatutAnimationCollective,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { EvenementJeuneJson, EvenementJson } from 'interfaces/json/evenement'
@@ -128,7 +129,7 @@ export function uneAnimationCollective(
     titre: 'Prise de nouvelles par téléphone',
     date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
     duree: 125,
-    statut: 'A_VENIR',
+    statut: StatutAnimationCollective.AVenir,
   }
   return { ...defaults, ...overrides }
 }
