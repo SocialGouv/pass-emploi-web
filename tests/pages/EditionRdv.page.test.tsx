@@ -1075,6 +1075,91 @@ describe('EditionRdv', () => {
       })
     })
 
+    describe('Cloture', () => {
+      describe("quand il n'y a pas de statut", () => {
+        it("n'affiche pas le lien Clore", async () => {
+          // Given
+          const evenement = unEvenement({ statut: undefined })
+
+          // When
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'/agenda?creationRdv=succes'}
+              evenement={evenement}
+              pageTitle={''}
+            />,
+            { customDependances: { rendezVousService } }
+          )
+
+          // Then
+          const cloreButton = screen.queryByRole('link', {
+            name: 'Clore',
+          })
+          expect(cloreButton).not.toBeInTheDocument()
+        })
+      })
+      describe("quand il n'y un statut A_VENIR", () => {
+        it("n'affiche pas le lien Clore", async () => {
+          // Given
+          const evenement = unEvenement({ statut: 'A_VENIR' })
+
+          // When
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'/agenda?creationRdv=succes'}
+              evenement={evenement}
+              pageTitle={''}
+            />,
+            { customDependances: { rendezVousService } }
+          )
+
+          // Then
+          const cloreButton = screen.queryByRole('link', {
+            name: 'Clore',
+          })
+          expect(cloreButton).not.toBeInTheDocument()
+        })
+      })
+
+      describe("quand il n'y un statut A_CLOTURER", () => {
+        let evenement: Evenement
+        beforeEach(() => {
+          // Given
+          evenement = unEvenement({ statut: 'AClore' })
+
+          // When
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'/agenda?creationRdv=succes'}
+              evenement={evenement}
+              pageTitle={''}
+            />,
+            { customDependances: { rendezVousService } }
+          )
+        })
+
+        it('affiche le link Clore', async () => {
+          // Then
+          const cloreButton = screen.getByRole('link', {
+            name: 'Clore',
+          })
+          expect(cloreButton).toHaveAttribute(
+            'href',
+            `/evenements/${evenement.id}/cloture`
+          )
+        })
+      })
+    })
+
     describe('quand un id de jeune est spécifié', () => {
       it('initialise le destinataire', async () => {
         // Given
