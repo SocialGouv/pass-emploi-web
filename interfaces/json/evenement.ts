@@ -9,7 +9,7 @@ import {
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
-import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
+import { TIME_24_H_SEPARATOR, toFrenchFormat } from 'utils/date'
 
 type Auteur = { id: string; nom: string; prenom: string }
 export type EvenementJson = {
@@ -100,7 +100,7 @@ export function jsonToListItem(json: EvenementJson): EvenementListItem {
 
 export function rdvJsonToEntree(rdv: EvenementJeuneJson): EntreeAgenda {
   const date = DateTime.fromISO(rdv.date)
-  const titre = `${toFrenchFormat(date, DATETIME_LONG)} - ${rdv.title}`
+  const titre = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.title}`
 
   return {
     id: rdv.id,

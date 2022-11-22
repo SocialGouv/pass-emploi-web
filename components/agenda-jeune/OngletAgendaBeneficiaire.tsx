@@ -18,6 +18,13 @@ export function OngletAgendaBeneficiaire({
   isPoleEmploi,
   recupererAgenda,
 }: OngletAgendaBeneficiaireProps) {
+  const [joursSemaineEnCours, setJoursSemaineEnCours] = useState<
+    Array<DateTime>
+  >([])
+  const [joursSemaineSuivante, setJoursSemaineSuivante] = useState<
+    Array<DateTime>
+  >([])
+
   const [entreesSemaineEnCours, setEntreesSemaineEnCours] = useState<
     Array<EntreeAgenda>
   >([])
@@ -32,16 +39,20 @@ export function OngletAgendaBeneficiaire({
       recupererAgenda().then((agenda) => {
         const semaineEnCours = getSemaineEnCours(agenda.metadata)
         const semaineSuivante = getSemaineSuivante(agenda.metadata)
-        setEntreesSemaineEnCours(
-          agenda.entrees.filter((entree) =>
-            semaineEnCours.contains(entree.date)
-          )
+        const entreeDeLaSemaineEnCours = agenda.entrees.filter((entree) =>
+          semaineEnCours.contains(entree.date)
         )
-        setEntreesSemaineSuivante(
-          agenda.entrees.filter((entree) =>
-            semaineSuivante.contains(entree.date)
-          )
+        const entreesDeLaSemaineSuivante = agenda.entrees.filter((entree) =>
+          semaineSuivante.contains(entree.date)
         )
+        setJoursSemaineEnCours(
+          joursAPrendreEnCompte(semaineEnCours, entreeDeLaSemaineEnCours)
+        )
+        setJoursSemaineSuivante(
+          joursAPrendreEnCompte(semaineSuivante, entreesDeLaSemaineSuivante)
+        )
+        setEntreesSemaineEnCours(entreeDeLaSemaineEnCours)
+        setEntreesSemaineSuivante(entreesDeLaSemaineSuivante)
         setMetadata(agenda.metadata)
       })
     }
@@ -64,19 +75,16 @@ export function OngletAgendaBeneficiaire({
             </h2>
 
             {entreesSemaineEnCours.length === 0 && (
-              <AucuneEntree periode={getLibelleSemaineEnCours()} />
+              <AucuneEntreeDansLaSemaine periode={getLibelleSemaineEnCours()} />
             )}
 
             {entreesSemaineEnCours.length > 0 && (
-              <ol>
-                {entreesSemaineEnCours.map((entree) => (
-                  <AgendaRow
-                    key={entree.id}
-                    entree={entree}
-                    jeuneId={idBeneficiaire}
-                  />
-                ))}
-              </ol>
+              <EntreesParJourDeLaSemaine
+                idBeneficiaire={idBeneficiaire}
+                numeroSemaine={0}
+                jours={joursSemaineEnCours}
+                entrees={entreesSemaineEnCours}
+              />
             )}
           </section>
 
@@ -86,12 +94,63 @@ export function OngletAgendaBeneficiaire({
             </h2>
 
             {entreesSemaineSuivante.length === 0 && (
-              <AucuneEntree periode={getLibelleSemaineSuivante()} />
+              <AucuneEntreeDansLaSemaine
+                periode={getLibelleSemaineSuivante()}
+              />
             )}
 
             {entreesSemaineSuivante.length > 0 && (
+              <EntreesParJourDeLaSemaine
+                idBeneficiaire={idBeneficiaire}
+                numeroSemaine={1}
+                jours={joursSemaineSuivante}
+                entrees={entreesSemaineSuivante}
+              />
+            )}
+          </section>
+        </div>
+      )}
+    </>
+  )
+}
+
+interface EntreesParJourDeLaSemaineProps {
+  idBeneficiaire: string
+  numeroSemaine: number
+  jours: DateTime[]
+  entrees: EntreeAgenda[]
+}
+
+function EntreesParJourDeLaSemaine({
+  idBeneficiaire,
+  numeroSemaine,
+  jours,
+  entrees,
+}: EntreesParJourDeLaSemaineProps) {
+  return (
+    <>
+      {jours.map((jour, index) => {
+        const entreesDuJour = entrees.filter((entree) =>
+          jour.hasSame(entree.date, 'day')
+        )
+        return (
+          <section
+            key={`semaine-${numeroSemaine}-jour-${index}`}
+            aria-labelledby={`semaine-${numeroSemaine}-jour-${index}`}
+            className='rounded-small border border-grey_100 p-4 mt-6'
+          >
+            <h3
+              id={`semaine-${numeroSemaine}-jour-${index}`}
+              className='text-base-medium mb-6'
+            >
+              {capitalizeFirstLetter(toFrenchFormat(jour, WEEKDAY_MONTH_LONG))}
+            </h3>
+            {entreesDuJour.length === 0 && (
+              <p className='text-grey_700'>Pas d’action ni de rendez-vous</p>
+            )}
+            {entreesDuJour.length > 0 && (
               <ol>
-                {entreesSemaineSuivante.map((entree) => (
+                {entreesDuJour.map((entree) => (
                   <AgendaRow
                     key={entree.id}
                     entree={entree}
@@ -101,20 +160,47 @@ export function OngletAgendaBeneficiaire({
               </ol>
             )}
           </section>
-        </div>
-      )}
+        )
+      })}
     </>
   )
 }
 
-function AucuneEntree(props: { periode: string }) {
+function AucuneEntreeDansLaSemaine(props: { periode: string }) {
   return (
-    <div className='rounded-small p-4 border border-grey_100'>
+    <div className='rounded-small border border-grey_100 p-4'>
       <p className='text-base-medium'>{props.periode}</p>
       <p className='text-grey_700'>Pas d’action ni de rendez-vous</p>
     </div>
   )
 }
+
+function joursAPrendreEnCompte(
+  interval: Interval,
+  entrees: EntreeAgenda[]
+): DateTime[] {
+  const jours: DateTime[] = []
+  let jourCourrant = interval.start
+  while (jourCourrant < interval.end) {
+    jours.push(jourCourrant)
+    jourCourrant = jourCourrant.plus({ days: 1 })
+  }
+
+  const dateDeLaPremiereEntree = entrees[0]?.date
+  let indexDuPremierJour: number
+  if (estSamedi(dateDeLaPremiereEntree) && estSamedi(jours[0])) {
+    indexDuPremierJour = 0
+  } else if (estDimanche(dateDeLaPremiereEntree) && estDimanche(jours[1])) {
+    indexDuPremierJour = 1
+  } else {
+    indexDuPremierJour = 2
+  }
+  return jours.slice(indexDuPremierJour)
+}
+
+let estSamedi = (date?: DateTime) => date?.weekday == 6
+
+let estDimanche = (date?: DateTime) => date?.weekday == 7
 
 function getSemaineEnCours(metadata: AgendaMetadata): Interval {
   return Interval.fromDateTimes(
@@ -125,7 +211,7 @@ function getSemaineEnCours(metadata: AgendaMetadata): Interval {
 
 function getSemaineSuivante(metadata: AgendaMetadata): Interval {
   return Interval.fromDateTimes(
-    metadata.dateDeDebut.plus({ week: 1, day: 1 }),
+    metadata.dateDeDebut.plus({ week: 1 }),
     metadata.dateDeFin
   )
 }
@@ -148,4 +234,8 @@ function getLibelleSemaineSuivante(): string {
     lundiSuivant,
     WEEKDAY_MONTH_LONG
   )} au ${toFrenchFormat(vendrediSuivant, WEEKDAY_MONTH_LONG)}`
+}
+
+function capitalizeFirstLetter(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1)
 }

@@ -14,14 +14,17 @@ import { AgendaService } from 'services/agenda.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Agenda de la fiche jeune', () => {
-  const JANVIER_5 = DateTime.local(2022, 1, 5)
   const UNE_DATE_SEMAINE_EN_COURS = DateTime.local(2022, 1, 3)
   const UNE_DATE_SEMAINE_SUIVANTE = DateTime.local(2022, 1, 10)
+  const SAMEDI_JANVIER_1 = DateTime.local(2022, 1, 1)
+  const DIMANCHE_JANVIER_2 = DateTime.local(2022, 1, 2)
+  const LUNDI_JANVIER_3 = DateTime.local(2022, 1, 3)
+  const SAMEDI_JANVIER_8 = DateTime.local(2022, 1, 8)
 
   let agendaService: AgendaService
 
   beforeEach(() => {
-    jest.spyOn(DateTime, 'now').mockReturnValue(JANVIER_5)
+    jest.spyOn(DateTime, 'now').mockReturnValue(LUNDI_JANVIER_3)
   })
 
   describe('pour tous les conseillers', () => {
@@ -138,64 +141,231 @@ describe('Agenda de la fiche jeune', () => {
         ).toBeInTheDocument()
       })
 
-      it('avec des rendez-vous et des actions séparés par semaine si le jeune en a', async () => {
-        // Given
-        agendaService = mockedAgendaService({
-          recupererAgenda: jest.fn(async () =>
-            unAgenda({
-              entrees: [
-                {
-                  id: 'id-action-1',
-                  date: UNE_DATE_SEMAINE_EN_COURS,
-                  type: 'action',
-                  titre: 'Identifier ses atouts et ses compétences',
-                  statut: StatutAction.ARealiser,
-                } as EntreeAgenda,
-                {
-                  id: '1',
-                  date: UNE_DATE_SEMAINE_SUIVANTE,
-                  type: 'evenement',
-                  titre: '12h00 - Autre',
-                } as EntreeAgenda,
-              ],
-            })
-          ),
-        })
+      describe('si le jeune a des actions et des rendez-vous', () => {
+        it('ils sont séparés par semaine', async () => {
+          // Given
+          agendaService = mockedAgendaService({
+            recupererAgenda: jest.fn(async () =>
+              unAgenda({
+                entrees: [
+                  {
+                    id: 'id-action-1',
+                    date: UNE_DATE_SEMAINE_EN_COURS,
+                    type: 'action',
+                    titre: 'Identifier ses atouts et ses compétences',
+                    statut: StatutAction.ARealiser,
+                  } as EntreeAgenda,
+                  {
+                    id: '1',
+                    date: UNE_DATE_SEMAINE_SUIVANTE,
+                    type: 'evenement',
+                    titre: '12h00 - Autre',
+                  } as EntreeAgenda,
+                ],
+              })
+            ),
+          })
 
-        // When
-        await renderFicheJeune(StructureConseiller.MILO, agendaService)
+          // When
+          await renderFicheJeune(StructureConseiller.MILO, agendaService)
 
-        // Then
-        const semaineEnCours = screen.getByRole('region', {
-          name: 'Semaine en cours',
-        })
-        expect(
-          within(semaineEnCours).getByRole('heading', {
-            level: 2,
+          // Then
+          const semaineEnCours = screen.getByRole('region', {
             name: 'Semaine en cours',
           })
-        ).toBeInTheDocument()
-        expect(
-          within(semaineEnCours).getByText(
-            'Identifier ses atouts et ses compétences'
-          )
-        ).toBeInTheDocument()
-        expect(
-          within(semaineEnCours).getByText('À réaliser')
-        ).toBeInTheDocument()
+          expect(
+            within(semaineEnCours).getByRole('heading', {
+              level: 2,
+              name: 'Semaine en cours',
+            })
+          ).toBeInTheDocument()
+          expect(
+            within(semaineEnCours).getByText(
+              'Identifier ses atouts et ses compétences'
+            )
+          ).toBeInTheDocument()
+          expect(
+            within(semaineEnCours).getByText('À réaliser')
+          ).toBeInTheDocument()
 
-        const semaineSuivante = screen.getByRole('region', {
-          name: 'Semaine suivante',
-        })
-        expect(
-          within(semaineSuivante).getByRole('heading', {
-            level: 2,
+          const semaineSuivante = screen.getByRole('region', {
             name: 'Semaine suivante',
           })
-        ).toBeInTheDocument()
-        expect(
-          within(semaineSuivante).getByText(/12h00 - Autre/)
-        ).toBeInTheDocument()
+          expect(
+            within(semaineSuivante).getByRole('heading', {
+              level: 2,
+              name: 'Semaine suivante',
+            })
+          ).toBeInTheDocument()
+          expect(
+            within(semaineSuivante).getByText('12h00 - Autre')
+          ).toBeInTheDocument()
+        })
+
+        it('ils sont groupés par jour', async () => {
+          // Given
+          agendaService = mockedAgendaService({
+            recupererAgenda: jest.fn(async () =>
+              unAgenda({
+                entrees: [
+                  {
+                    id: 'id-action-1',
+                    date: SAMEDI_JANVIER_1,
+                    type: 'action',
+                    titre: 'Action du samedi 1',
+                    statut: StatutAction.ARealiser,
+                  } as EntreeAgenda,
+                  {
+                    id: '1',
+                    date: SAMEDI_JANVIER_1,
+                    type: 'evenement',
+                    titre: '12h00 - Rdv du samedi 1',
+                  } as EntreeAgenda,
+                  {
+                    id: '1',
+                    date: LUNDI_JANVIER_3,
+                    type: 'evenement',
+                    titre: '15h00 - Rdv du lundi 3',
+                  } as EntreeAgenda,
+                  {
+                    id: '1',
+                    date: SAMEDI_JANVIER_8,
+                    type: 'evenement',
+                    titre: 'Action du samedi 8',
+                  } as EntreeAgenda,
+                ],
+              })
+            ),
+          })
+
+          // When
+          await renderFicheJeune(StructureConseiller.MILO, agendaService)
+
+          // Then
+          const semaineEnCours = screen.getByRole('region', {
+            name: 'Semaine en cours',
+          })
+
+          expect(
+            within(semaineEnCours).getByRole('heading', {
+              level: 2,
+              name: 'Semaine en cours',
+            })
+          ).toBeInTheDocument()
+          expextContenuCeJour(
+            semaineEnCours,
+            'Samedi 1 janvier',
+            'Action du samedi 1'
+          )
+          expextContenuCeJour(
+            semaineEnCours,
+            'Samedi 1 janvier',
+            '12h00 - Rdv du samedi 1'
+          )
+          expextAucuneEntreeCeJour(semaineEnCours, 'Dimanche 2 janvier')
+          expextContenuCeJour(
+            semaineEnCours,
+            'Lundi 3 janvier',
+            '15h00 - Rdv du lundi 3'
+          )
+          expextAucuneEntreeCeJour(semaineEnCours, 'Mardi 4 janvier')
+          expextAucuneEntreeCeJour(semaineEnCours, 'Mercredi 5 janvier')
+          expextAucuneEntreeCeJour(semaineEnCours, 'Jeudi 6 janvier')
+          expextAucuneEntreeCeJour(semaineEnCours, 'Vendredi 7 janvier')
+
+          const semaineSuivante = screen.getByRole('region', {
+            name: 'Semaine suivante',
+          })
+          expect(
+            within(semaineSuivante).getByRole('heading', {
+              level: 2,
+              name: 'Semaine suivante',
+            })
+          ).toBeInTheDocument()
+          expextContenuCeJour(
+            semaineSuivante,
+            'Samedi 8 janvier',
+            'Action du samedi 8'
+          )
+          expextAucuneEntreeCeJour(semaineSuivante, 'Dimanche 9 janvier')
+          expextAucuneEntreeCeJour(semaineSuivante, 'Lundi 10 janvier')
+          expextAucuneEntreeCeJour(semaineSuivante, 'Mardi 11 janvier')
+          expextAucuneEntreeCeJour(semaineSuivante, 'Mercredi 12 janvier')
+          expextAucuneEntreeCeJour(semaineSuivante, 'Jeudi 13 janvier')
+          expextAucuneEntreeCeJour(semaineSuivante, 'Vendredi 14 janvier')
+        })
+
+        it('n’affiche pas le samedi si les entrees commencent le dimanche', async () => {
+          // Given
+          agendaService = mockedAgendaService({
+            recupererAgenda: jest.fn(async () =>
+              unAgenda({
+                entrees: [
+                  {
+                    id: 'id-action-1',
+                    date: DIMANCHE_JANVIER_2,
+                    type: 'action',
+                    titre: 'Action du dimanche 2',
+                    statut: StatutAction.ARealiser,
+                  } as EntreeAgenda,
+                ],
+              })
+            ),
+          })
+
+          // When
+          await renderFicheJeune(StructureConseiller.MILO, agendaService)
+
+          // Then
+          const semaineEnCours = screen.getByRole('region', {
+            name: 'Semaine en cours',
+          })
+          expect(() =>
+            within(semaineEnCours).getByRole('heading', {
+              level: 3,
+              name: 'Samedi 1 janvier',
+            })
+          ).toThrow()
+        })
+
+        it('n’affiche ni le samedi ni le dimanche si les entrees commencent dans la semaine', async () => {
+          // Given
+          agendaService = mockedAgendaService({
+            recupererAgenda: jest.fn(async () =>
+              unAgenda({
+                entrees: [
+                  {
+                    id: 'id-action-1',
+                    date: LUNDI_JANVIER_3,
+                    type: 'action',
+                    titre: 'Action du lundi 3',
+                    statut: StatutAction.ARealiser,
+                  } as EntreeAgenda,
+                ],
+              })
+            ),
+          })
+
+          // When
+          await renderFicheJeune(StructureConseiller.MILO, agendaService)
+
+          // Then
+          const semaineEnCours = screen.getByRole('region', {
+            name: 'Semaine en cours',
+          })
+          expect(() =>
+            within(semaineEnCours).getByRole('heading', {
+              level: 3,
+              name: 'Samedi 1 janvier',
+            })
+          ).toThrow()
+          expect(() =>
+            within(semaineEnCours).getByRole('heading', {
+              level: 3,
+              name: 'Dimanche 2 janvier',
+            })
+          ).toThrow()
+        })
       })
     })
   })
@@ -224,4 +394,23 @@ async function renderFicheJeune(
       }
     )
   })
+}
+
+function expextContenuCeJour(
+  semaine: HTMLElement,
+  jour: string,
+  contenu: string
+) {
+  const sectionDuJour = within(semaine).getByRole('region', { name: jour })
+  expect(
+    within(sectionDuJour).getByRole('heading', {
+      level: 3,
+      name: jour,
+    })
+  ).toBeInTheDocument()
+  expect(within(sectionDuJour).getByText(contenu)).toBeInTheDocument()
+}
+
+function expextAucuneEntreeCeJour(semaine: HTMLElement, jour: string) {
+  expextContenuCeJour(semaine, jour, 'Pas d’action ni de rendez-vous')
 }

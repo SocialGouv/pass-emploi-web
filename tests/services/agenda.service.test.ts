@@ -49,13 +49,13 @@ describe('AgendaService', () => {
           {
             id: '1',
             date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
-            titre: '21/10/2021 à 12h00 - Prise de nouvelles par téléphone',
+            titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
           },
           {
             id: '1',
             date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
-            titre: '21/10/2021 à 12h00 - Prise de nouvelles par téléphone',
+            titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
           },
           {
