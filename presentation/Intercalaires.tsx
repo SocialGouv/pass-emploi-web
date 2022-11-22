@@ -73,8 +73,8 @@ export function renderListeWithIntercalaires<T>(
   liste: ItemOuIntercalaire<T>[],
   renderItem: (item: T) => JSX.Element
 ): JSX.Element[] {
-  return liste.map((item) => {
-    if (item instanceof IntercalaireJour) return intercalaireDate(item)
+  return liste.map((item, index) => {
+    if (item instanceof IntercalaireJour) return intercalaireDate(item, index)
     if (item instanceof IntercalairePlageHoraire)
       return intercalairePlageHoraire(item)
     return renderItem(item)
@@ -95,11 +95,11 @@ function isApresMidi(heure: number) {
   return heure > 12
 }
 
-function intercalaireDate({ label }: IntercalaireJour) {
+function intercalaireDate({ label }: IntercalaireJour, index: number) {
   return (
     <Intercalaire
       key={label}
-      className={`pt-4 pb-2 text-m-bold capitalize ${
+      className={`text-m-bold capitalize ${index > 0 ? 'pt-6' : ''} ${
         label === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'
       } `}
     >
