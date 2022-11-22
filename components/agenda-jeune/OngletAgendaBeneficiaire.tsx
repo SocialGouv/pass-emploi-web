@@ -114,10 +114,10 @@ export function OngletAgendaBeneficiaire({
   )
 }
 
-function AucuneEntreeDansLaSemaine(props: { periode: string }) {
+function AucuneEntreeDansLaSemaine({ periode }: { periode: string }) {
   return (
     <div className='rounded-small border border-grey_100 p-4'>
-      <p className='text-base-medium mb-2'>{props.periode}</p>
+      <p className='text-base-medium mb-2'>{periode}</p>
       <p className='text-grey_800'>Pas d’action ni de rendez-vous</p>
     </div>
   )
