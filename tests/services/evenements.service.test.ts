@@ -77,7 +77,7 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/rendezvous/id-rdv?avecHistorique=true',
+        '/rendezvous/id-rdv',
         'accessToken'
       )
       expect(actual).toEqual(unEvenement())

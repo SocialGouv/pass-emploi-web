@@ -105,7 +105,7 @@ export class EvenementsApiService implements EvenementsService {
   ): Promise<Evenement | undefined> {
     try {
       const { content: rdvJson } = await this.apiClient.get<EvenementJson>(
-        `/rendezvous/${idRdv}?avecHistorique=true`,
+        `/rendezvous/${idRdv}`,
         accessToken
       )
       return jsonToEvenement(rdvJson)
