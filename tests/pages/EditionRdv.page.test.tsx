@@ -9,9 +9,9 @@ import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import {
   mockedConseillerService,
+  mockedEvenementsService,
   mockedJeunesService,
   mockedReferentielService,
-  mockedEvenementsService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, TypeEvenement } from 'interfaces/evenement'
@@ -1475,6 +1475,43 @@ describe('EditionRdv', () => {
         expect(push).toHaveBeenCalledWith({
           pathname: '/agenda',
           query: { modificationAC: 'succes' },
+        })
+      })
+    })
+
+    describe('quand on souhaite supprimer une animation collective', () => {
+      it('renvoie vers la page précédente avec le bon query param', async () => {
+        // Given
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunesConseiller}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo={'/agenda?creationRdv=succes'}
+            evenement={unEvenement({
+              type: { code: 'ATELIER', label: 'Atelier' },
+            })}
+            pageTitle={''}
+          />,
+          {
+            customDependances: { evenementsService, jeunesService },
+            customConseiller: {
+              agence: {
+                nom: 'Mission locale Aubenas',
+                id: 'id-etablissement',
+              },
+            },
+          }
+        )
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: /Supprimer/ }))
+        await userEvent.click(screen.getByText('Confirmer'))
+
+        // Then
+        expect(push).toHaveBeenCalledWith({
+          pathname: '/agenda',
+          query: { suppressionAC: 'succes' },
         })
       })
     })

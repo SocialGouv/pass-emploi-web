@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
@@ -86,7 +86,7 @@ describe('AlertDisplayer', () => {
     it("permet d'accéder à la fiche de l’événement", async () => {
       // When
       const lienEvenement = screen.getByRole('link', {
-        name: 'Voir le détail de l’événement',
+        name: 'Voir le détail de l’animation collective',
       })
 
       // Then
