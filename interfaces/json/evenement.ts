@@ -21,6 +21,7 @@ export type EvenementJson = {
   jeunes: BaseJeune[]
   title: string
   createur: Auteur
+  // historique possiblement undefined (vérifier le back)
   historique: Array<{ date: string; auteur: Auteur }>
   invitation: boolean
   precision?: string
