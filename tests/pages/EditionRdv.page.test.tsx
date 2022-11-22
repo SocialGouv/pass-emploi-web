@@ -127,12 +127,8 @@ describe('EditionRdv', () => {
       it('récupère le jeune concerné', async () => {
         // When
         const actual = await getServerSideProps({
-          req: {
-            headers: {
-              referer: '/mes-jeunes/id-jeune',
-            },
-          },
-          query: {},
+          req: { headers: {} },
+          query: { idJeune: 'id-jeune' },
         } as unknown as GetServerSidePropsContext)
 
         // Then

@@ -456,7 +456,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(
           screen.getByRole('link', { name: 'Créer un rendez-vous' })
-        ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
+        ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idJeune=jeune-1')
       })
 
       it('permet la création d’une action', async () => {

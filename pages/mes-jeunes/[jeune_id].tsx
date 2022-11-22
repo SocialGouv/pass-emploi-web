@@ -319,7 +319,7 @@ function FicheJeune({
       <div className='flex justify-between mt-6 mb-4'>
         <div className='flex'>
           {!isPoleEmploi && (
-            <ButtonLink href={`/mes-jeunes/edition-rdv`}>
+            <ButtonLink href={`/mes-jeunes/edition-rdv?idJeune=${jeune.id}`}>
               <IconComponent
                 name={IconName.Add}
                 focusable='false'
