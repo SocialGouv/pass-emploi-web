@@ -251,6 +251,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   }
 
   const idRdv = context.query.idRdv as string | undefined
+  const idJeune = context.query.idJeune as string | undefined
   if (idRdv) {
     const rdv = await rendezVousService.getDetailsRendezVous(idRdv, accessToken)
     if (!rdv) return { notFound: true }
@@ -258,10 +259,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     props.idJeune = rdv.jeunes[0].id
     props.pageTitle = 'Mes rendez-vous - Modifier'
     props.pageHeader = 'Modifier le rendez-vous'
-  } else if (referer) {
-    const regex = /mes-jeunes\/(?<idJeune>[\w-]+)/
-    const match = regex.exec(referer)
-    if (match?.groups?.idJeune) props.idJeune = match.groups.idJeune
+  } else if (idJeune) {
+    props.idJeune = idJeune
   }
 
   return { props }
