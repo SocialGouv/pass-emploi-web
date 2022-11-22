@@ -21,7 +21,7 @@ export default function AgendaRow({ entree, jeuneId }: AgendaRowProps) {
     action: {
       href: `/mes-jeunes/${jeuneId}/actions/`,
       iconName: IconName.Actions,
-      label: `Consulter l'action ${entree.titre} ${entree.statut}`,
+      label: `Consulter l'action ${entree.titre}, de statut ${entree.statut}`,
     },
     evenement: {
       href: `/mes-jeunes/edition-rdv?idRdv=`,

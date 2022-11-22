@@ -41,7 +41,7 @@ describe('Agenda de la fiche jeune', () => {
   })
 
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
-    it("n'affiche pas l’agenda du jeune (et ne tente pas de le récupérer)", async () => {
+    it("n'affiche pas l’agenda du bénéficiaire (et ne tente pas de le récupérer)", async () => {
       // Given
       agendaService = mockedAgendaService()
 
@@ -60,8 +60,8 @@ describe('Agenda de la fiche jeune', () => {
   })
 
   describe('quand l’utilisateur n’est pas un conseiller Pole emploi', () => {
-    describe('affiche l’agenda du jeune', () => {
-      it('avec un message si le jeune n’a rien sur la semaine en cours', async () => {
+    describe('affiche l’agenda du bénéficiaire', () => {
+      it('avec un message si le bénéficiaire n’a rien sur la semaine en cours', async () => {
         // Given
         agendaService = mockedAgendaService({
           recupererAgenda: jest.fn(async () =>
@@ -101,7 +101,7 @@ describe('Agenda de la fiche jeune', () => {
         ).toBeInTheDocument()
       })
 
-      it('avec un message si le jeune n’a rien sur la semaine suivante', async () => {
+      it('avec un message si le bénéficiaire n’a rien sur la semaine suivante', async () => {
         // Given
         agendaService = mockedAgendaService({
           recupererAgenda: jest.fn(async () =>
@@ -141,7 +141,7 @@ describe('Agenda de la fiche jeune', () => {
         ).toBeInTheDocument()
       })
 
-      describe('si le jeune a des actions et des rendez-vous', () => {
+      describe('si le bénéficiaire a des actions et des rendez-vous', () => {
         it('ils sont séparés par semaine', async () => {
           // Given
           agendaService = mockedAgendaService({
@@ -252,26 +252,26 @@ describe('Agenda de la fiche jeune', () => {
               name: 'Semaine en cours',
             })
           ).toBeInTheDocument()
-          expextContenuCeJour(
+          expectContenuCeJour(
             semaineEnCours,
             'Samedi 1 janvier',
             'Action du samedi 1'
           )
-          expextContenuCeJour(
+          expectContenuCeJour(
             semaineEnCours,
             'Samedi 1 janvier',
             '12h00 - Rdv du samedi 1'
           )
-          expextAucuneEntreeCeJour(semaineEnCours, 'Dimanche 2 janvier')
-          expextContenuCeJour(
+          expectAucuneEntreeCeJour(semaineEnCours, 'Dimanche 2 janvier')
+          expectContenuCeJour(
             semaineEnCours,
             'Lundi 3 janvier',
             '15h00 - Rdv du lundi 3'
           )
-          expextAucuneEntreeCeJour(semaineEnCours, 'Mardi 4 janvier')
-          expextAucuneEntreeCeJour(semaineEnCours, 'Mercredi 5 janvier')
-          expextAucuneEntreeCeJour(semaineEnCours, 'Jeudi 6 janvier')
-          expextAucuneEntreeCeJour(semaineEnCours, 'Vendredi 7 janvier')
+          expectAucuneEntreeCeJour(semaineEnCours, 'Mardi 4 janvier')
+          expectAucuneEntreeCeJour(semaineEnCours, 'Mercredi 5 janvier')
+          expectAucuneEntreeCeJour(semaineEnCours, 'Jeudi 6 janvier')
+          expectAucuneEntreeCeJour(semaineEnCours, 'Vendredi 7 janvier')
 
           const semaineSuivante = screen.getByRole('region', {
             name: 'Semaine suivante',
@@ -282,20 +282,20 @@ describe('Agenda de la fiche jeune', () => {
               name: 'Semaine suivante',
             })
           ).toBeInTheDocument()
-          expextContenuCeJour(
+          expectContenuCeJour(
             semaineSuivante,
             'Samedi 8 janvier',
             'Action du samedi 8'
           )
-          expextAucuneEntreeCeJour(semaineSuivante, 'Dimanche 9 janvier')
-          expextAucuneEntreeCeJour(semaineSuivante, 'Lundi 10 janvier')
-          expextAucuneEntreeCeJour(semaineSuivante, 'Mardi 11 janvier')
-          expextAucuneEntreeCeJour(semaineSuivante, 'Mercredi 12 janvier')
-          expextAucuneEntreeCeJour(semaineSuivante, 'Jeudi 13 janvier')
-          expextAucuneEntreeCeJour(semaineSuivante, 'Vendredi 14 janvier')
+          expectAucuneEntreeCeJour(semaineSuivante, 'Dimanche 9 janvier')
+          expectAucuneEntreeCeJour(semaineSuivante, 'Lundi 10 janvier')
+          expectAucuneEntreeCeJour(semaineSuivante, 'Mardi 11 janvier')
+          expectAucuneEntreeCeJour(semaineSuivante, 'Mercredi 12 janvier')
+          expectAucuneEntreeCeJour(semaineSuivante, 'Jeudi 13 janvier')
+          expectAucuneEntreeCeJour(semaineSuivante, 'Vendredi 14 janvier')
         })
 
-        it('n’affiche pas le samedi si les entrees commencent le dimanche', async () => {
+        it('n’affiche pas le samedi si les entrées commencent le dimanche', async () => {
           // Given
           agendaService = mockedAgendaService({
             recupererAgenda: jest.fn(async () =>
@@ -328,7 +328,7 @@ describe('Agenda de la fiche jeune', () => {
           ).toThrow()
         })
 
-        it('n’affiche ni le samedi ni le dimanche si les entrees commencent dans la semaine', async () => {
+        it('n’affiche ni le samedi ni le dimanche si les entrées commencent dans la semaine', async () => {
           // Given
           agendaService = mockedAgendaService({
             recupererAgenda: jest.fn(async () =>
@@ -396,7 +396,7 @@ async function renderFicheJeune(
   })
 }
 
-function expextContenuCeJour(
+function expectContenuCeJour(
   semaine: HTMLElement,
   jour: string,
   contenu: string
@@ -411,6 +411,6 @@ function expextContenuCeJour(
   expect(within(sectionDuJour).getByText(contenu)).toBeInTheDocument()
 }
 
-function expextAucuneEntreeCeJour(semaine: HTMLElement, jour: string) {
-  expextContenuCeJour(semaine, jour, 'Pas d’action ni de rendez-vous')
+function expectAucuneEntreeCeJour(semaine: HTMLElement, jour: string) {
+  expectContenuCeJour(semaine, jour, 'Pas d’action ni de rendez-vous')
 }

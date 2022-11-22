@@ -1,7 +1,7 @@
 import { DateTime, Interval } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
-import AgendaRow from 'components/agenda-jeune/AgendaRow'
+import { EntreesAgendaParJourDeLaSemaine } from 'components/agenda-jeune/EntreesAgendaParJourDeLaSemaine'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Agenda, AgendaMetadata, EntreeAgenda } from 'interfaces/agenda'
@@ -79,7 +79,7 @@ export function OngletAgendaBeneficiaire({
             )}
 
             {entreesSemaineEnCours.length > 0 && (
-              <EntreesParJourDeLaSemaine
+              <EntreesAgendaParJourDeLaSemaine
                 idBeneficiaire={idBeneficiaire}
                 numeroSemaine={0}
                 jours={joursSemaineEnCours}
@@ -100,7 +100,7 @@ export function OngletAgendaBeneficiaire({
             )}
 
             {entreesSemaineSuivante.length > 0 && (
-              <EntreesParJourDeLaSemaine
+              <EntreesAgendaParJourDeLaSemaine
                 idBeneficiaire={idBeneficiaire}
                 numeroSemaine={1}
                 jours={joursSemaineSuivante}
@@ -114,63 +114,11 @@ export function OngletAgendaBeneficiaire({
   )
 }
 
-interface EntreesParJourDeLaSemaineProps {
-  idBeneficiaire: string
-  numeroSemaine: number
-  jours: DateTime[]
-  entrees: EntreeAgenda[]
-}
-
-function EntreesParJourDeLaSemaine({
-  idBeneficiaire,
-  numeroSemaine,
-  jours,
-  entrees,
-}: EntreesParJourDeLaSemaineProps) {
-  return (
-    <>
-      {jours.map((jour, index) => {
-        const entreesDuJour = entrees.filter((entree) =>
-          jour.hasSame(entree.date, 'day')
-        )
-        return (
-          <section
-            key={`semaine-${numeroSemaine}-jour-${index}`}
-            aria-labelledby={`semaine-${numeroSemaine}-jour-${index}`}
-            className='rounded-small border border-grey_100 p-4 mt-6'
-          >
-            <h3
-              id={`semaine-${numeroSemaine}-jour-${index}`}
-              className='text-base-medium mb-6'
-            >
-              {capitalizeFirstLetter(toFrenchFormat(jour, WEEKDAY_MONTH_LONG))}
-            </h3>
-            {entreesDuJour.length === 0 && (
-              <p className='text-grey_700'>Pas d’action ni de rendez-vous</p>
-            )}
-            {entreesDuJour.length > 0 && (
-              <ol>
-                {entreesDuJour.map((entree) => (
-                  <AgendaRow
-                    key={entree.id}
-                    entree={entree}
-                    jeuneId={idBeneficiaire}
-                  />
-                ))}
-              </ol>
-            )}
-          </section>
-        )
-      })}
-    </>
-  )
-}
-
 function AucuneEntreeDansLaSemaine(props: { periode: string }) {
   return (
     <div className='rounded-small border border-grey_100 p-4'>
-      <p className='text-base-medium'>{props.periode}</p>
-      <p className='text-grey_700'>Pas d’action ni de rendez-vous</p>
+      <p className='text-base-medium mb-2'>{props.periode}</p>
+      <p className='text-grey_800'>Pas d’action ni de rendez-vous</p>
     </div>
   )
 }
@@ -180,10 +128,10 @@ function joursAPrendreEnCompte(
   entrees: EntreeAgenda[]
 ): DateTime[] {
   const jours: DateTime[] = []
-  let jourCourrant = interval.start
-  while (jourCourrant < interval.end) {
-    jours.push(jourCourrant)
-    jourCourrant = jourCourrant.plus({ days: 1 })
+  let jourCourant = interval.start
+  while (jourCourant < interval.end) {
+    jours.push(jourCourant)
+    jourCourant = jourCourant.plus({ days: 1 })
   }
 
   const dateDeLaPremiereEntree = entrees[0]?.date
@@ -234,8 +182,4 @@ function getLibelleSemaineSuivante(): string {
     lundiSuivant,
     WEEKDAY_MONTH_LONG
   )} au ${toFrenchFormat(vendrediSuivant, WEEKDAY_MONTH_LONG)}`
-}
-
-function capitalizeFirstLetter(string: string): string {
-  return string.charAt(0).toUpperCase() + string.slice(1)
 }
