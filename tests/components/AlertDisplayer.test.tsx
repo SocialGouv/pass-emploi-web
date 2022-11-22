@@ -15,7 +15,7 @@ describe('AlertDisplayer', () => {
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
         asPath: '/agenda',
-        query: { creationRdv: 'succes' },
+        query: { creationRdv: 'succes', idEvenement: 'id-evenement' },
         push: routerPush,
       })
 
@@ -28,6 +28,19 @@ describe('AlertDisplayer', () => {
       expect(
         screen.getByText(/L’événement a bien été créé/)
       ).toBeInTheDocument()
+    })
+
+    it("permet d'accéder à la fiche de l’événement", async () => {
+      // When
+      const lienEvenement = screen.getByRole('link', {
+        name: 'Voir le détail de l’événement',
+      })
+
+      // Then
+      expect(lienEvenement).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=id-evenement'
+      )
     })
 
     it("permet de fermer l'alerte du succès", async () => {
@@ -55,7 +68,7 @@ describe('AlertDisplayer', () => {
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
         asPath: '/agenda',
-        query: { creationAC: 'succes' },
+        query: { creationAC: 'succes', idEvenement: 'id-evenement' },
         push: routerPush,
       })
 
@@ -68,6 +81,19 @@ describe('AlertDisplayer', () => {
       expect(
         screen.getByText(/L’animation collective a bien été créée/)
       ).toBeInTheDocument()
+    })
+
+    it("permet d'accéder à la fiche de l’événement", async () => {
+      // When
+      const lienEvenement = screen.getByRole('link', {
+        name: 'Voir le détail de l’événement',
+      })
+
+      // Then
+      expect(lienEvenement).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=id-evenement'
+      )
     })
 
     it("permet de fermer l'alerte du succès", async () => {
@@ -313,7 +339,7 @@ describe('AlertDisplayer', () => {
     it("permet d'accéder à la fiche du jeune", async () => {
       // When
       const lienFicheJeune = screen.getByRole('link', {
-        name: 'voir le détail du bénéficiaire',
+        name: 'Voir le détail du bénéficiaire',
       })
 
       // Then

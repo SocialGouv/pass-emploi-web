@@ -286,9 +286,12 @@ describe('EvenementsApiService', () => {
         invitation: false,
         comment: 'Lorem ipsum dolor sit amet',
       }
+      ;(apiClient.post as jest.Mock).mockResolvedValue({
+        content: { id: 'id-nouvel-evenement' },
+      })
 
       // When
-      await evenementsService.creerEvenement(rdvFormData)
+      const result = await evenementsService.creerEvenement(rdvFormData)
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -308,6 +311,7 @@ describe('EvenementsApiService', () => {
         },
         'accessToken'
       )
+      expect(result).toEqual('id-nouvel-evenement')
     })
   })
 

@@ -11,7 +11,7 @@ import {
   mockedConseillerService,
   mockedJeunesService,
   mockedReferentielService,
-  mockedRendezVousService,
+  mockedEvenementsService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, TypeEvenement } from 'interfaces/evenement'
@@ -74,12 +74,12 @@ describe('EditionRdv', () => {
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
         })
-        rendezVousService = mockedRendezVousService({
+        rendezVousService = mockedEvenementsService({
           getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
         })
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'rendezVousService') return rendezVousService
+          if (dependance === 'evenementsService') return rendezVousService
         })
       })
 
@@ -225,7 +225,7 @@ describe('EditionRdv', () => {
     let jeunesConseiller: JeuneFromListe[]
     let jeunesAutreConseiller: BaseJeune[]
     let jeunesEtablissement: BaseJeune[]
-    let rendezVousService: EvenementsService
+    let evenementsService: EvenementsService
     let jeunesService: JeunesService
     let typesRendezVous: TypeEvenement[]
     let push: Function
@@ -245,8 +245,11 @@ describe('EditionRdv', () => {
         ...jeunesConseiller.map(({ id, nom, prenom }) => ({ id, nom, prenom })),
         ...jeunesAutreConseiller,
       ]
-      rendezVousService = mockedRendezVousService({
+      evenementsService = mockedEvenementsService({
         supprimerEvenement: jest.fn(async () => undefined),
+        creerEvenement: jest.fn(
+          async () => '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
+        ),
       })
       jeunesService = mockedJeunesService({
         getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
@@ -269,7 +272,7 @@ describe('EditionRdv', () => {
             pageTitle={''}
           />,
           {
-            customDependances: { rendezVousService },
+            customDependances: { evenementsService: evenementsService },
             customConseiller: { email: 'fake@email.com' },
           }
         )
@@ -591,7 +594,7 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(rendezVousService.creerEvenement).toHaveBeenCalledWith({
+            expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
               jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
               titre: 'Titre de l’événement',
               type: 'ACTIVITES_EXTERIEURES',
@@ -618,7 +621,7 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(rendezVousService.creerEvenement).toHaveBeenCalledWith({
+            expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
               jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
               titre: 'Titre de l’événement',
               type: 'AUTRE',
@@ -641,7 +644,10 @@ describe('EditionRdv', () => {
             // Then
             expect(push).toHaveBeenCalledWith({
               pathname: '/agenda',
-              query: { creationRdv: 'succes' },
+              query: {
+                creationRdv: 'succes',
+                idEvenement: '963afb47-2b15-46a9-8c0c-0e95240b2eb5',
+              },
             })
           })
         })
@@ -833,7 +839,7 @@ describe('EditionRdv', () => {
             />,
             {
               customDependances: {
-                rendezVousService,
+                evenementsService: evenementsService,
                 referentielService,
                 conseillerService,
                 jeunesService,
@@ -937,7 +943,10 @@ describe('EditionRdv', () => {
               pageTitle={''}
             />,
             {
-              customDependances: { rendezVousService, jeunesService },
+              customDependances: {
+                evenementsService: evenementsService,
+                jeunesService,
+              },
               customConseiller: {
                 agence: {
                   nom: 'Mission locale Aubenas',
@@ -1009,7 +1018,7 @@ describe('EditionRdv', () => {
             name: 'Rechercher et ajouter des jeunes Nom et prénom',
           })
           expect(selectJeunes).toHaveAttribute('aria-required', 'false')
-          expect(rendezVousService.creerEvenement).toHaveBeenCalledWith(
+          expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
             expect.objectContaining({
               jeunesIds: [],
             })
@@ -1057,7 +1066,10 @@ describe('EditionRdv', () => {
           // Then
           expect(push).toHaveBeenCalledWith({
             pathname: '/agenda',
-            query: { creationAC: 'succes' },
+            query: {
+              creationAC: 'succes',
+              idEvenement: '963afb47-2b15-46a9-8c0c-0e95240b2eb5',
+            },
           })
         })
       })
@@ -1079,7 +1091,7 @@ describe('EditionRdv', () => {
             idJeune={idJeune}
             pageTitle={''}
           />,
-          { customDependances: { rendezVousService } }
+          { customDependances: { evenementsService: evenementsService } }
         )
         const selectType = screen.getByRole('combobox', {
           name: 'Type',
@@ -1129,7 +1141,7 @@ describe('EditionRdv', () => {
             evenement={evenement}
             pageTitle={''}
           />,
-          { customDependances: { rendezVousService } }
+          { customDependances: { evenementsService: evenementsService } }
         )
       })
 
@@ -1353,7 +1365,7 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
+            expect(evenementsService.updateRendezVous).toHaveBeenCalledWith(
               evenement.id,
               {
                 jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[1].id],
@@ -1412,7 +1424,7 @@ describe('EditionRdv', () => {
           await userEvent.click(deleteButtonFromModal)
 
           // Then
-          expect(rendezVousService.supprimerEvenement).toHaveBeenCalledWith(
+          expect(evenementsService.supprimerEvenement).toHaveBeenCalledWith(
             evenement.id
           )
           expect(push).toHaveBeenCalledWith({
@@ -1438,7 +1450,7 @@ describe('EditionRdv', () => {
             pageTitle={''}
           />,
           {
-            customDependances: { rendezVousService, jeunesService },
+            customDependances: { evenementsService, jeunesService },
             customConseiller: {
               agence: {
                 nom: 'Mission locale Aubenas',
@@ -1497,7 +1509,7 @@ describe('EditionRdv', () => {
             evenement={evenement}
             pageTitle={''}
           />,
-          { customDependances: { rendezVousService } }
+          { customDependances: { evenementsService: evenementsService } }
         )
       })
 
@@ -1600,7 +1612,7 @@ describe('EditionRdv', () => {
               'Vous avez modifié un événement dont vous n’êtes pas le créateur'
             )
           ).toBeInTheDocument()
-          expect(rendezVousService.updateRendezVous).not.toHaveBeenCalled()
+          expect(evenementsService.updateRendezVous).not.toHaveBeenCalled()
         })
 
         it('modifie le rendez-vous après la modale', async () => {
@@ -1613,7 +1625,7 @@ describe('EditionRdv', () => {
           await userEvent.click(boutonConfirmer)
 
           // Then
-          expect(rendezVousService.updateRendezVous).toHaveBeenCalledWith(
+          expect(evenementsService.updateRendezVous).toHaveBeenCalledWith(
             evenement.id,
             {
               jeunesIds: [jeunesConseiller[0].id, 'jeune-autre-conseiller'],

@@ -40,7 +40,7 @@ function Agenda({
   messageEnvoiGroupeSuccess,
 }: AgendaProps) {
   const rendezVousService =
-    useDependance<EvenementsService>('rendezVousService')
+    useDependance<EvenementsService>('evenementsService')
   const [conseiller] = useConseiller()
   const router = useRouter()
 

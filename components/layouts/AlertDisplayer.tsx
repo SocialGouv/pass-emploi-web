@@ -21,12 +21,12 @@ export default function AlertDisplayer({
   const [conseiller] = useConseiller()
   const [alerts, setAlerts] = useState<DictAlerts>(ALERTS)
 
-  async function closeSuccessAlert(queryParam: QueryParam): Promise<void> {
+  async function closeSuccessAlert(queryParams: QueryParam[]): Promise<void> {
     const { pathname, query } = parseUrl(router.asPath)
     await router.push(
       {
         pathname,
-        query: deleteQueryParams(query, [queryParam]),
+        query: deleteQueryParams(query, queryParams),
       },
       undefined,
       { shallow: true }
@@ -40,14 +40,31 @@ export default function AlertDisplayer({
     const estUneCreationDeBeneficiaire =
       queryParams[QueryParam.creationBeneficiaire] === QueryValue.succes &&
       queryParams['idBeneficiaire']
+
+    const estUneCreationDEvenement =
+      (queryParams[QueryParam.creationRdv] === QueryValue.succes ||
+        queryParams[QueryParam.creationAC] === QueryValue.succes) &&
+      queryParams['idEvenement']
+
     return (
       <>
         {sub}
+
         {estUneCreationDeBeneficiaire && (
           <AlertLink
             href={`/mes-jeunes/${queryParams['idBeneficiaire']}`}
-            label='voir le détail du bénéficiaire'
-            onClick={() => closeSuccessAlert(QueryParam.creationBeneficiaire)}
+            label='Voir le détail du bénéficiaire'
+            onClick={() => closeSuccessAlert([QueryParam.creationBeneficiaire])}
+          />
+        )}
+
+        {estUneCreationDEvenement && (
+          <AlertLink
+            href={`/mes-jeunes/edition-rdv?idRdv=${queryParams['idEvenement']}`}
+            label='Voir le détail de l’événement'
+            onClick={() =>
+              closeSuccessAlert([QueryParam.creationRdv, QueryParam.creationAC])
+            }
           />
         )}
       </>
@@ -69,7 +86,7 @@ export default function AlertDisplayer({
             <SuccessAlert
               key={`alerte-${queryParam}`}
               label={alerts[queryParam].title}
-              onAcknowledge={() => closeSuccessAlert(queryParam)}
+              onAcknowledge={() => closeSuccessAlert([queryParam])}
             >
               {getChild(router.query, alerts[queryParam])}
             </SuccessAlert>
@@ -81,10 +98,16 @@ export default function AlertDisplayer({
 }
 type DictAlerts = { [key in QueryParam]: { title: string; sub?: string } }
 const ALERTS: DictAlerts = {
-  creationRdv: { title: 'L’événement a bien été créé' },
+  creationRdv: {
+    title: 'L’événement a bien été créé',
+    sub: 'Vous pouvez modifier l’événement dans la page de détail',
+  },
   modificationRdv: { title: 'L’événement a bien été modifié' },
   suppressionRdv: { title: 'L’événement a bien été supprimé' },
-  creationAC: { title: 'L’animation collective a bien été créée' },
+  creationAC: {
+    title: 'L’animation collective a bien été créée',
+    sub: 'Vous pouvez modifier l’animation collective dans la page de détail',
+  },
   modificationAC: { title: 'L’animation collective a bien été modifiée' },
   suppressionAC: { title: 'L’animation collective a bien été supprimée' },
   recuperation: { title: 'Vous avez récupéré vos bénéficiaires avec succès' },

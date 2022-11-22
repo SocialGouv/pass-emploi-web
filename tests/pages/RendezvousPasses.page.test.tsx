@@ -6,7 +6,7 @@ import React from 'react'
 import renderWithContexts from '../renderWithContexts'
 
 import { desEvenementsListItems, unEvenementListItem } from 'fixtures/evenement'
-import { mockedRendezVousService } from 'fixtures/services'
+import { mockedEvenementsService } from 'fixtures/services'
 import RendezVousPasses, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/rendez-vous-passes'
@@ -57,11 +57,11 @@ describe('RendezVousPasses', () => {
   describe('server side', () => {
     let rendezVousService: EvenementsService
     beforeEach(() => {
-      rendezVousService = mockedRendezVousService({
+      rendezVousService = mockedEvenementsService({
         getRendezVousJeune: jest.fn(async () => [unEvenementListItem()]),
       })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-        if (dependance === 'rendezVousService') return rendezVousService
+        if (dependance === 'evenementsService') return rendezVousService
       })
     })
 

@@ -7,7 +7,7 @@ import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { uneAnimationCollective, unEvenementListItem } from 'fixtures/evenement'
-import { mockedRendezVousService } from 'fixtures/services'
+import { mockedEvenementsService } from 'fixtures/services'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import Agenda, { getServerSideProps } from 'pages/agenda'
 import { EvenementsService } from 'services/evenements.service'
@@ -31,7 +31,7 @@ describe('Agenda', () => {
       replace = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ replace: replace })
 
-      rendezVousService = mockedRendezVousService({
+      rendezVousService = mockedEvenementsService({
         getRendezVousConseiller: jest.fn(async (_, dateDebut) => [
           unEvenementListItem({
             date: dateDebut.plus({ day: 3 }).toISO(),
@@ -71,7 +71,7 @@ describe('Agenda', () => {
         // When
         await act(async () => {
           await renderWithContexts(<Agenda pageTitle='' />, {
-            customDependances: { rendezVousService },
+            customDependances: { evenementsService: rendezVousService },
             customConseiller: conseiller,
           })
         })
@@ -352,7 +352,7 @@ describe('Agenda', () => {
         // When
         await act(async () => {
           await renderWithContexts(<Agenda pageTitle='' />, {
-            customDependances: { rendezVousService },
+            customDependances: { evenementsService: rendezVousService },
           })
         })
 

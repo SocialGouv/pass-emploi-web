@@ -13,7 +13,7 @@ import {
   mockedMessagesService,
   mockedOffresEmploiService,
   mockedReferentielService,
-  mockedRendezVousService,
+  mockedEvenementsService,
   mockedServicesCiviquesService,
   mockedSuggestionsService,
 } from 'fixtures/services'
@@ -43,7 +43,7 @@ export default function renderWithContexts(
     fichiersService: mockedFichiersService(),
     jeunesService: mockedJeunesService(),
     messagesService: mockedMessagesService(),
-    rendezVousService: mockedRendezVousService(),
+    evenementsService: mockedEvenementsService(),
     favorisService: mockedFavorisService(),
     offresEmploiService: mockedOffresEmploiService(),
     servicesCiviquesService: mockedServicesCiviquesService(),

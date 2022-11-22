@@ -56,8 +56,8 @@ function EditionRdv({
 }: EditionRdvProps) {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
-  const rendezVousService =
-    useDependance<EvenementsService>('rendezVousService')
+  const evenementsService =
+    useDependance<EvenementsService>('evenementsService')
   const [conseiller, setConseiller] = useConseiller()
   const referentielService =
     useDependance<ReferentielService>('referentielService')
@@ -157,22 +157,45 @@ function EditionRdv({
   ): Promise<void> {
     setConfirmBeforeLeaving(false)
     if (!evenement) {
-      await rendezVousService.creerEvenement(payload)
+      await creerNouvelEvenement(payload)
     } else {
-      await rendezVousService.updateRendezVous(evenement.id, payload)
+      await modifierEvenement(evenement.id, payload)
     }
+  }
+
+  async function creerNouvelEvenement(
+    payload: EvenementFormData
+  ): Promise<void> {
+    const idNouvelEvenement = await evenementsService.creerEvenement(payload)
+    const queryParam = isCodeTypeAnimationCollective(payload.type)
+      ? QueryParam.creationAC
+      : QueryParam.creationRdv
 
     const { pathname, query } = getCleanUrlObject(returnTo)
-    let queryParam = QueryParam.creationRdv
-    if (!isCodeTypeAnimationCollective(payload.type) && evenement)
-      queryParam = QueryParam.modificationRdv
-    if (isCodeTypeAnimationCollective(payload.type) && !evenement)
-      queryParam = QueryParam.creationAC
-    if (isCodeTypeAnimationCollective(payload.type) && evenement)
-      queryParam = QueryParam.modificationAC
     await router.push({
       pathname,
-      query: setQueryParams(query, { [queryParam]: QueryValue.succes }),
+      query: setQueryParams(query, {
+        [queryParam]: QueryValue.succes,
+        idEvenement: idNouvelEvenement,
+      }),
+    })
+  }
+
+  async function modifierEvenement(
+    idEvenement: string,
+    payload: EvenementFormData
+  ): Promise<void> {
+    await evenementsService.updateRendezVous(idEvenement, payload)
+    const queryParam = isCodeTypeAnimationCollective(payload.type)
+      ? QueryParam.modificationAC
+      : QueryParam.modificationRdv
+
+    const { pathname, query } = getCleanUrlObject(returnTo)
+    await router.push({
+      pathname,
+      query: setQueryParams(query, {
+        [queryParam]: QueryValue.succes,
+      }),
     })
   }
 
@@ -180,7 +203,7 @@ function EditionRdv({
     setShowDeleteRdvError(false)
     setShowDeleteRdvModal(false)
     try {
-      await rendezVousService.supprimerEvenement(evenement!.id)
+      await evenementsService.supprimerEvenement(evenement!.id)
       const { pathname, query } = getCleanUrlObject(returnTo)
       const queryParamSuppression = isCodeTypeAnimationCollective(
         evenement!.type.code
@@ -402,7 +425,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    withDependance<EvenementsService>('rendezVousService')
+    withDependance<EvenementsService>('evenementsService')
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
     user.id,
     accessToken

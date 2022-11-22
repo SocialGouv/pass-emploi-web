@@ -20,7 +20,7 @@ import {
   mockedActionsService,
   mockedAgendaService,
   mockedJeunesService,
-  mockedRendezVousService,
+  mockedEvenementsService,
 } from 'fixtures/services'
 import { EtatQualificationAction, StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
@@ -1402,7 +1402,7 @@ describe('Fiche Jeune', () => {
         ),
         getMetadonneesFavorisJeune: jest.fn(async () => uneMetadonneeFavoris()),
       })
-      rendezVousService = mockedRendezVousService({
+      rendezVousService = mockedEvenementsService({
         getRendezVousJeune: jest.fn(async () => [rdvAVenir]),
       })
       actionsService = mockedActionsService({
@@ -1418,7 +1418,7 @@ describe('Fiche Jeune', () => {
       })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
         if (dependance === 'jeunesService') return jeunesService
-        if (dependance === 'rendezVousService') return rendezVousService
+        if (dependance === 'evenementsService') return rendezVousService
         if (dependance === 'actionsService') return actionsService
       })
     })

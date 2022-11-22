@@ -479,7 +479,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    withDependance<EvenementsService>('rendezVousService')
+    withDependance<EvenementsService>('evenementsService')
   const actionsService = withDependance<ActionsService>('actionsService')
   const {
     session: {

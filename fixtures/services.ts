@@ -75,7 +75,7 @@ export function mockedMessagesService(
   return { ...defaults, ...overrides }
 }
 
-export function mockedRendezVousService(
+export function mockedEvenementsService(
   overrides: Partial<EvenementsService> = {}
 ): EvenementsService {
   const defaults: EvenementsService = {
