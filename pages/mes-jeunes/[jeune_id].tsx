@@ -26,7 +26,7 @@ import {
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { PeriodeEvenements, EvenementListItem } from 'interfaces/evenement'
+import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import {
   DetailJeune,
   IndicateursSemaine,
@@ -121,9 +121,6 @@ function FicheJeune({
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
 
-  const [nombreEvenementDansAgenda, setNombreEvenementDansAgenda] =
-    useState<number>()
-
   const aujourdHui = useMemo(() => DateTime.now(), [])
   const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
   const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
@@ -186,12 +183,7 @@ function FicheJeune({
   }
 
   async function recupererAgenda(): Promise<Agenda> {
-    return agendaService
-      .recupererAgenda(jeune.id, DateTime.now())
-      .then((agenda) => {
-        setNombreEvenementDansAgenda(agenda.entrees.length)
-        return agenda
-      })
+    return agendaService.recupererAgenda(jeune.id, DateTime.now())
   }
 
   async function openDeleteJeuneModal(e: React.MouseEvent<HTMLElement>) {
@@ -368,7 +360,6 @@ function FicheJeune({
       <TabList className='mt-10'>
         <Tab
           label='Agenda'
-          count={!isPoleEmploi ? nombreEvenementDansAgenda : undefined}
           selected={currentTab === Onglet.AGENDA}
           controls='agenda'
           onSelectTab={() => switchTab(Onglet.AGENDA)}
