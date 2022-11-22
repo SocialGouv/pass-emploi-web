@@ -444,8 +444,12 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   )
 
   const referer = context.req.headers.referer
-  const redirectTo =
-    referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
+  let redirectTo: string | undefined
+  if (referer && !comingFromHome(referer)) {
+    redirectTo = referer
+  } else {
+    redirectTo = '/mes-jeunes'
+  }
   const props: EditionRdvProps = {
     jeunes: [...jeunes].sort(compareJeunesByNom),
     typesRendezVous: typesRendezVous,

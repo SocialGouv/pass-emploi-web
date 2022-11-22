@@ -1,6 +1,7 @@
 import { ApiHttpClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
+import { AgendaApiService, AgendaService } from 'services/agenda.service'
 import {
   ConseillerApiService,
   ConseillerService,
@@ -38,7 +39,6 @@ import {
 } from 'services/suggestions.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import HttpClient from 'utils/httpClient'
-import { AgendaApiService, AgendaService } from 'services/agenda.service'
 
 export interface Dependencies {
   referentielService: ReferentielService
