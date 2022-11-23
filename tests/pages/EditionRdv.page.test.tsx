@@ -1067,7 +1067,7 @@ describe('EditionRdv', () => {
           expect(push).toHaveBeenCalledWith({
             pathname: '/agenda',
             query: {
-              creationAC: 'succes',
+              creationRdv: 'succes',
               idEvenement: '963afb47-2b15-46a9-8c0c-0e95240b2eb5',
             },
           })
@@ -1474,7 +1474,7 @@ describe('EditionRdv', () => {
         // Then
         expect(push).toHaveBeenCalledWith({
           pathname: '/agenda',
-          query: { modificationAC: 'succes' },
+          query: { modificationRdv: 'succes' },
         })
       })
     })
@@ -1511,7 +1511,7 @@ describe('EditionRdv', () => {
         // Then
         expect(push).toHaveBeenCalledWith({
           pathname: '/agenda',
-          query: { suppressionAC: 'succes' },
+          query: { suppressionRdv: 'succes' },
         })
       })
     })

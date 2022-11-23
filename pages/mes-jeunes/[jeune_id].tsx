@@ -520,29 +520,17 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
 
-  if (
-    context.query[QueryParam.creationRdv] ||
-    context.query[QueryParam.creationAC]
-  )
+  if (context.query[QueryParam.creationRdv])
     props.rdvCreationSuccess =
-      context.query[QueryParam.creationRdv] === QueryValue.succes ||
-      context.query[QueryParam.creationAC] === QueryValue.succes
+      context.query[QueryParam.creationRdv] === QueryValue.succes
 
-  if (
-    context.query[QueryParam.modificationRdv] ||
-    context.query[QueryParam.modificationAC]
-  )
+  if (context.query[QueryParam.modificationRdv])
     props.rdvModificationSuccess =
-      context.query[QueryParam.modificationRdv] === QueryValue.succes ||
-      context.query[QueryParam.modificationAC] === QueryValue.succes
+      context.query[QueryParam.modificationRdv] === QueryValue.succes
 
-  if (
-    context.query[QueryParam.suppressionRdv] ||
-    context.query[QueryParam.suppressionAC]
-  )
+  if (context.query[QueryParam.suppressionRdv])
     props.rdvSuppressionSuccess =
-      context.query[QueryParam.suppressionRdv] === QueryValue.succes ||
-      context.query[QueryParam.suppressionAC] === QueryValue.succes
+      context.query[QueryParam.suppressionRdv] === QueryValue.succes
 
   if (context.query[QueryParam.creationAction])
     props.actionCreationSuccess =

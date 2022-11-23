@@ -14,12 +14,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  Evenement,
-  isCodeTypeAnimationCollective,
-  Modification,
-  TypeEvenement,
-} from 'interfaces/evenement'
+import { Evenement, Modification, TypeEvenement } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
@@ -167,15 +162,12 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
-    const queryParam = isCodeTypeAnimationCollective(payload.type)
-      ? QueryParam.creationAC
-      : QueryParam.creationRdv
 
     const { pathname, query } = getCleanUrlObject(returnTo)
     await router.push({
       pathname,
       query: setQueryParams(query, {
-        [queryParam]: QueryValue.succes,
+        [QueryParam.creationRdv]: QueryValue.succes,
         idEvenement: idNouvelEvenement,
       }),
     })
@@ -186,15 +178,12 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
-    const queryParam = isCodeTypeAnimationCollective(payload.type)
-      ? QueryParam.modificationAC
-      : QueryParam.modificationRdv
 
     const { pathname, query } = getCleanUrlObject(returnTo)
     await router.push({
       pathname,
       query: setQueryParams(query, {
-        [queryParam]: QueryValue.succes,
+        [QueryParam.modificationRdv]: QueryValue.succes,
       }),
     })
   }
@@ -205,15 +194,10 @@ function EditionRdv({
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
       const { pathname, query } = getCleanUrlObject(returnTo)
-      const queryParamSuppression = isCodeTypeAnimationCollective(
-        evenement!.type.code
-      )
-        ? QueryParam.suppressionAC
-        : QueryParam.suppressionRdv
       await router.push({
         pathname,
         query: setQueryParams(query, {
-          [queryParamSuppression]: QueryValue.succes,
+          [QueryParam.suppressionRdv]: QueryValue.succes,
         }),
       })
     } catch (e) {
@@ -482,9 +466,6 @@ function getCleanUrlObject(url: string): {
       QueryParam.modificationRdv,
       QueryParam.creationRdv,
       QueryParam.suppressionRdv,
-      QueryParam.modificationAC,
-      QueryParam.creationAC,
-      QueryParam.suppressionAC,
     ]),
   }
 }

@@ -93,17 +93,6 @@ const ALERTS: DictAlerts = {
   },
   modificationRdv: { title: 'L’événement a bien été modifié' },
   suppressionRdv: { title: 'L’événement a bien été supprimé' },
-  creationAC: {
-    title: 'L’animation collective a bien été créée',
-    sub: 'Vous pouvez modifier l’animation collective dans la page de détail',
-    link: {
-      label: 'Voir le détail de l’animation collective',
-      buildHref: (query: ParsedUrlQuery) =>
-        '/mes-jeunes/edition-rdv?idRdv=' + query['idEvenement'],
-    },
-  },
-  modificationAC: { title: 'L’animation collective a bien été modifiée' },
-  suppressionAC: { title: 'L’animation collective a bien été supprimée' },
   recuperation: { title: 'Vous avez récupéré vos bénéficiaires avec succès' },
   suppression: { title: 'Le compte du bénéficiaire a bien été supprimé' },
   creationBeneficiaire: {
