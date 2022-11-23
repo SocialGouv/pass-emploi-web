@@ -14,7 +14,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement } from 'interfaces/evenement'
+import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -27,6 +27,7 @@ import { parseUrl, setQueryParams } from 'utils/urlParser'
 interface ClotureProps extends PageProps {
   returnTo: string
   evenement: Evenement
+  withoutChat: true
 }
 
 function Cloture({ returnTo, evenement }: ClotureProps) {
@@ -52,18 +53,17 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
     }
   }
 
-  async function handleCloture(_event: FormEvent) {
+  async function cloreAnimationCollective(event: FormEvent) {
+    event.preventDefault()
+
     await evenementsService.cloreAnimationCollective(
       evenement.id,
       idsJeunesSelected
     )
 
-    const { pathname, query } = parseUrl('/agenda')
-    const queryParam = QueryParam.clotureAC
-    await router.push({
-      pathname,
-      query: setQueryParams(query, { [queryParam]: QueryValue.succes }),
-    })
+    await router.push(
+      `${returnTo}&${QueryParam.clotureAC}=${QueryValue.succes}`
+    )
   }
 
   return (
@@ -71,13 +71,13 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
       <h2 className='text-m-bold'>Présence des bénéficiaires</h2>
       <p className='mt-6'>
         Vous devez valider la présence des bénéficiaires à l’animation
-        collective en sélectionnant dans la liste
+        collective en cochant dans la liste le nom des bénéficiaires
       </p>
       <div className='mt-6'>
         <InformationMessage content='La liste suivante se base sur les participants inscrits. Veuillez vous assurer de son exactitude.' />
       </div>
 
-      <form onSubmit={handleCloture} className='mt-6'>
+      <form onSubmit={cloreAnimationCollective} className='mt-6'>
         <Table caption='Jeunes de l’animation collective'>
           <THead>
             <TR isHeader={true}>
@@ -97,7 +97,10 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
                 />
               </TD>
               <TD>
-                <label htmlFor='cloture-tout-selectionner'>
+                <label
+                  htmlFor='cloture-tout-selectionner'
+                  onClick={(e) => e.stopPropagation()}
+                >
                   Tout sélectionner
                 </label>
               </TD>
@@ -109,11 +112,20 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
                 <TD>
                   <input
                     type='checkbox'
+                    id={'checkbox-' + jeune.id}
                     checked={idsJeunesSelected.includes(jeune.id)}
                     readOnly={true}
+                    title={'Sélectionner ' + getNomJeuneComplet(jeune)}
                   />
                 </TD>
-                <TD>{getNomJeuneComplet(jeune)}</TD>
+                <TD>
+                  <label
+                    htmlFor={'checkbox-' + jeune.id}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {getNomJeuneComplet(jeune)}
+                  </label>
+                </TD>
               </TR>
             ))}
           </TBody>
@@ -159,32 +171,25 @@ export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
-  const rendezVousService =
+  const evenementsService =
     withDependance<EvenementsService>('evenementsService')
 
-  const idEvenement = context.query.evenement_id as string
-
-  const evenement = await rendezVousService.getDetailsEvenement(
-    idEvenement,
+  const evenement = await evenementsService.getDetailsEvenement(
+    context.query.evenement_id as string,
     accessToken
   )
-  if (!evenement) return { notFound: true }
-
-  const referer = context.req.headers.referer ?? '/agenda?onglet=etablissement'
-  const returnTo = referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
+  if (evenement?.statut !== StatutAnimationCollective.AClore)
+    return { notFound: true }
 
   const props: ClotureProps = {
     evenement,
-    returnTo,
+    returnTo: '/mes-jeunes/edition-rdv?idRdv=' + evenement.id,
     pageTitle: 'Mes événements - Clore',
-    pageHeader: 'Clore l’animation collective',
+    pageHeader: 'Clôture de l’événement',
+    withoutChat: true,
   }
 
   return { props }
 }
 
 export default withTransaction(Cloture.name, 'page')(Cloture)
-
-function comingFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/index')
-}
