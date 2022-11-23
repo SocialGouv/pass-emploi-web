@@ -33,27 +33,6 @@ export default function AlertDisplayer({
     )
   }
 
-  function getChild(
-    queryParams: ParsedUrlQuery,
-    { sub }: { sub?: string }
-  ): JSX.Element {
-    const estUneCreationDeBeneficiaire =
-      queryParams[QueryParam.creationBeneficiaire] === QueryValue.succes &&
-      queryParams['idBeneficiaire']
-    return (
-      <>
-        {sub}
-        {estUneCreationDeBeneficiaire && (
-          <AlertLink
-            href={`/mes-jeunes/${queryParams['idBeneficiaire']}`}
-            label='voir le détail du bénéficiaire'
-            onClick={() => closeSuccessAlert(QueryParam.creationBeneficiaire)}
-          />
-        )}
-      </>
-    )
-  }
-
   useEffect(() => {
     if (conseiller) {
       setAlerts(getAlertsForStructure(conseiller.structure))
@@ -62,32 +41,78 @@ export default function AlertDisplayer({
 
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
-      {Object.keys(alerts).map((key) => {
-        const queryParam = key as QueryParam
-        return (
-          router.query[queryParam] === QueryValue.succes && (
-            <SuccessAlert
-              key={`alerte-${queryParam}`}
-              label={alerts[queryParam].title}
-              onAcknowledge={() => closeSuccessAlert(queryParam)}
-            >
-              {getChild(router.query, alerts[queryParam])}
-            </SuccessAlert>
-          )
-        )
-      })}
+      {Object.entries(router.query)
+        .filter(([_, value]) => value === QueryValue.succes)
+        .map(([key]) => {
+          const queryParam = key as QueryParam
+          const alert = alerts[queryParam]
+          if (alert)
+            return (
+              <SuccessAlert
+                key={`alerte-${queryParam}`}
+                label={alert.title}
+                onAcknowledge={() => closeSuccessAlert(queryParam)}
+              >
+                <>
+                  {alert.sub}
+
+                  {alert.link && (
+                    <AlertLink
+                      href={alert.link.buildHref(router.query)}
+                      label={alert.link.label}
+                      onClick={() => closeSuccessAlert(queryParam)}
+                    />
+                  )}
+                </>
+              </SuccessAlert>
+            )
+        })}
     </div>
   )
 }
-type DictAlerts = { [key in QueryParam]: { title: string; sub?: string } }
+
+type DictAlerts = {
+  [key in QueryParam]: {
+    title: string
+    sub?: string
+    link?: {
+      label: string
+      buildHref: (query: ParsedUrlQuery) => string
+    }
+  }
+}
 const ALERTS: DictAlerts = {
-  creationRdv: { title: 'L’événement a bien été créé' },
+  creationRdv: {
+    title: 'L’événement a bien été créé',
+    sub: 'Vous pouvez modifier l’événement dans la page de détail',
+    link: {
+      label: 'Voir le détail de l’événement',
+      buildHref: (query: ParsedUrlQuery) =>
+        '/mes-jeunes/edition-rdv?idRdv=' + query['idEvenement'],
+    },
+  },
   modificationRdv: { title: 'L’événement a bien été modifié' },
   suppressionRdv: { title: 'L’événement a bien été supprimé' },
+  creationAC: {
+    title: 'L’animation collective a bien été créée',
+    sub: 'Vous pouvez modifier l’animation collective dans la page de détail',
+    link: {
+      label: 'Voir le détail de l’animation collective',
+      buildHref: (query: ParsedUrlQuery) =>
+        '/mes-jeunes/edition-rdv?idRdv=' + query['idEvenement'],
+    },
+  },
+  modificationAC: { title: 'L’animation collective a bien été modifiée' },
+  suppressionAC: { title: 'L’animation collective a bien été supprimée' },
   recuperation: { title: 'Vous avez récupéré vos bénéficiaires avec succès' },
   suppression: { title: 'Le compte du bénéficiaire a bien été supprimé' },
   creationBeneficiaire: {
     title: 'Le bénéficiaire a été ajouté à votre portefeuille',
+    link: {
+      label: 'Voir le détail du bénéficiaire',
+      buildHref: (query: ParsedUrlQuery) =>
+        '/mes-jeunes/' + query['idBeneficiaire'],
+    },
   },
   creationAction: { title: 'L’action a bien été créée' },
   suppressionAction: { title: 'L’action a bien été supprimée' },

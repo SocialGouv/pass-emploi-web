@@ -36,7 +36,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const rendezVousService =
-    withDependance<EvenementsService>('rendezVousService')
+    withDependance<EvenementsService>('evenementsService')
 
   const {
     session: {

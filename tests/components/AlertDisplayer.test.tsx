@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
@@ -15,7 +15,7 @@ describe('AlertDisplayer', () => {
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
         asPath: '/agenda',
-        query: { creationRdv: 'succes' },
+        query: { creationRdv: 'succes', idEvenement: 'id-evenement' },
         push: routerPush,
       })
 
@@ -28,6 +28,72 @@ describe('AlertDisplayer', () => {
       expect(
         screen.getByText(/L’événement a bien été créé/)
       ).toBeInTheDocument()
+    })
+
+    it("permet d'accéder à la fiche de l’événement", async () => {
+      // When
+      const lienEvenement = screen.getByRole('link', {
+        name: 'Voir le détail de l’événement',
+      })
+
+      // Then
+      expect(lienEvenement).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=id-evenement'
+      )
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/agenda',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+
+  describe('quand la création d’une animation collective est réussie', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/agenda',
+        query: { creationAC: 'succes', idEvenement: 'id-evenement' },
+        push: routerPush,
+      })
+
+      // When
+      renderAlertDisplayer()
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/L’animation collective a bien été créée/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet d'accéder à la fiche de l’événement", async () => {
+      // When
+      const lienEvenement = screen.getByRole('link', {
+        name: 'Voir le détail de l’animation collective',
+      })
+
+      // Then
+      expect(lienEvenement).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=id-evenement'
+      )
     })
 
     it("permet de fermer l'alerte du succès", async () => {
@@ -88,6 +154,46 @@ describe('AlertDisplayer', () => {
     })
   })
 
+  describe('quand la modification de l’animation collective est réussie', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/agenda',
+        query: { modificationAC: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      renderAlertDisplayer()
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/animation collective a bien été modifié/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/agenda',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+
   describe('quand la suppression de rdv est réussie', () => {
     let routerPush: Function
     beforeEach(() => {
@@ -107,6 +213,46 @@ describe('AlertDisplayer', () => {
       // Then
       expect(
         screen.getByText(/événement a bien été supprimé/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(routerPush).toHaveBeenCalledWith(
+        {
+          pathname: '/agenda',
+          query: {},
+        },
+        undefined,
+        { shallow: true }
+      )
+    })
+  })
+
+  describe('quand la suppression de l’animation collective est réussie', () => {
+    let routerPush: Function
+    beforeEach(() => {
+      // Given
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        asPath: '/agenda',
+        query: { suppressionAC: 'succes' },
+        push: routerPush,
+      })
+
+      // When
+      renderAlertDisplayer()
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/animation collective a bien été supprimé/)
       ).toBeInTheDocument()
     })
 
@@ -193,7 +339,7 @@ describe('AlertDisplayer', () => {
     it("permet d'accéder à la fiche du jeune", async () => {
       // When
       const lienFicheJeune = screen.getByRole('link', {
-        name: 'voir le détail du bénéficiaire',
+        name: 'Voir le détail du bénéficiaire',
       })
 
       // Then

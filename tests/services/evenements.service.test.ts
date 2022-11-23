@@ -286,9 +286,12 @@ describe('EvenementsApiService', () => {
         invitation: false,
         comment: 'Lorem ipsum dolor sit amet',
       }
+      ;(apiClient.post as jest.Mock).mockResolvedValue({
+        content: { id: 'id-nouvel-evenement' },
+      })
 
       // When
-      await evenementsService.creerEvenement(rdvFormData)
+      const result = await evenementsService.creerEvenement(rdvFormData)
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -308,13 +311,14 @@ describe('EvenementsApiService', () => {
         },
         'accessToken'
       )
+      expect(result).toEqual('id-nouvel-evenement')
     })
   })
 
-  describe('.deleteEvenement', () => {
+  describe('.supprimerEvenement', () => {
     it('supprime un événement', async () => {
       // When
-      await evenementsService.deleteEvenement('idEvenement')
+      await evenementsService.supprimerEvenement('idEvenement')
 
       // Then
       expect(apiClient.delete).toHaveBeenCalledWith(

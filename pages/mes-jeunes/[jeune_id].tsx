@@ -479,7 +479,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    withDependance<EvenementsService>('rendezVousService')
+    withDependance<EvenementsService>('evenementsService')
   const actionsService = withDependance<ActionsService>('actionsService')
   const {
     session: {
@@ -529,17 +529,29 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
 
-  if (context.query[QueryParam.creationRdv])
+  if (
+    context.query[QueryParam.creationRdv] ||
+    context.query[QueryParam.creationAC]
+  )
     props.rdvCreationSuccess =
-      context.query[QueryParam.creationRdv] === QueryValue.succes
+      context.query[QueryParam.creationRdv] === QueryValue.succes ||
+      context.query[QueryParam.creationAC] === QueryValue.succes
 
-  if (context.query[QueryParam.modificationRdv])
+  if (
+    context.query[QueryParam.modificationRdv] ||
+    context.query[QueryParam.modificationAC]
+  )
     props.rdvModificationSuccess =
-      context.query[QueryParam.modificationRdv] === QueryValue.succes
+      context.query[QueryParam.modificationRdv] === QueryValue.succes ||
+      context.query[QueryParam.modificationAC] === QueryValue.succes
 
-  if (context.query[QueryParam.suppressionRdv])
+  if (
+    context.query[QueryParam.suppressionRdv] ||
+    context.query[QueryParam.suppressionAC]
+  )
     props.rdvSuppressionSuccess =
-      context.query[QueryParam.suppressionRdv] === QueryValue.succes
+      context.query[QueryParam.suppressionRdv] === QueryValue.succes ||
+      context.query[QueryParam.suppressionAC] === QueryValue.succes
 
   if (context.query[QueryParam.creationAction])
     props.actionCreationSuccess =

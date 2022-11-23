@@ -14,7 +14,12 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, Modification, TypeEvenement } from 'interfaces/evenement'
+import {
+  Evenement,
+  isCodeTypeAnimationCollective,
+  Modification,
+  TypeEvenement,
+} from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
@@ -51,8 +56,8 @@ function EditionRdv({
 }: EditionRdvProps) {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
-  const rendezVousService =
-    useDependance<EvenementsService>('rendezVousService')
+  const evenementsService =
+    useDependance<EvenementsService>('evenementsService')
   const [conseiller, setConseiller] = useConseiller()
   const referentielService =
     useDependance<ReferentielService>('referentielService')
@@ -152,31 +157,63 @@ function EditionRdv({
   ): Promise<void> {
     setConfirmBeforeLeaving(false)
     if (!evenement) {
-      await rendezVousService.creerEvenement(payload)
+      await creerNouvelEvenement(payload)
     } else {
-      await rendezVousService.updateRendezVous(evenement.id, payload)
+      await modifierEvenement(evenement.id, payload)
     }
+  }
+
+  async function creerNouvelEvenement(
+    payload: EvenementFormData
+  ): Promise<void> {
+    const idNouvelEvenement = await evenementsService.creerEvenement(payload)
+    const queryParam = isCodeTypeAnimationCollective(payload.type)
+      ? QueryParam.creationAC
+      : QueryParam.creationRdv
 
     const { pathname, query } = getCleanUrlObject(returnTo)
-    const queryParam = evenement
-      ? QueryParam.modificationRdv
-      : QueryParam.creationRdv
     await router.push({
       pathname,
-      query: setQueryParams(query, { [queryParam]: QueryValue.succes }),
+      query: setQueryParams(query, {
+        [queryParam]: QueryValue.succes,
+        idEvenement: idNouvelEvenement,
+      }),
     })
   }
 
-  async function deleteEvenement(): Promise<void> {
+  async function modifierEvenement(
+    idEvenement: string,
+    payload: EvenementFormData
+  ): Promise<void> {
+    await evenementsService.updateRendezVous(idEvenement, payload)
+    const queryParam = isCodeTypeAnimationCollective(payload.type)
+      ? QueryParam.modificationAC
+      : QueryParam.modificationRdv
+
+    const { pathname, query } = getCleanUrlObject(returnTo)
+    await router.push({
+      pathname,
+      query: setQueryParams(query, {
+        [queryParam]: QueryValue.succes,
+      }),
+    })
+  }
+
+  async function supprimerEvenement(): Promise<void> {
     setShowDeleteRdvError(false)
     setShowDeleteRdvModal(false)
     try {
-      await rendezVousService.deleteEvenement(evenement!.id)
+      await evenementsService.supprimerEvenement(evenement!.id)
       const { pathname, query } = getCleanUrlObject(returnTo)
+      const queryParamSuppression = isCodeTypeAnimationCollective(
+        evenement!.type.code
+      )
+        ? QueryParam.suppressionAC
+        : QueryParam.suppressionRdv
       await router.push({
         pathname,
         query: setQueryParams(query, {
-          [QueryParam.suppressionRdv]: QueryValue.succes,
+          [queryParamSuppression]: QueryValue.succes,
         }),
       })
     } catch (e) {
@@ -353,7 +390,7 @@ function EditionRdv({
         <DeleteRdvModal
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
-          performDelete={deleteEvenement}
+          performDelete={supprimerEvenement}
         />
       )}
 
@@ -388,7 +425,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    withDependance<EvenementsService>('rendezVousService')
+    withDependance<EvenementsService>('evenementsService')
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
     user.id,
     accessToken
@@ -445,6 +482,9 @@ function getCleanUrlObject(url: string): {
       QueryParam.modificationRdv,
       QueryParam.creationRdv,
       QueryParam.suppressionRdv,
+      QueryParam.modificationAC,
+      QueryParam.creationAC,
+      QueryParam.suppressionAC,
     ]),
   }
 }

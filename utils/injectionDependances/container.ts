@@ -46,7 +46,7 @@ export interface Dependencies {
   conseillerService: ConseillerService
   jeunesService: JeunesService
   messagesService: MessagesService
-  rendezVousService: EvenementsService
+  evenementsService: EvenementsService
   fichiersService: FichiersService
   favorisService: FavorisService
   offresEmploiService: OffresEmploiService
@@ -80,7 +80,7 @@ export class Container {
         new ChatCrypto(),
         apiClient
       ),
-      rendezVousService: new EvenementsApiService(apiClient),
+      evenementsService: new EvenementsApiService(apiClient),
       fichiersService: new FichiersApiService(apiClient),
       favorisService: new FavorisApiService(apiClient),
       offresEmploiService: new OffresEmploiApiService(apiClient),
