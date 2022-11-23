@@ -68,7 +68,7 @@ export function OngletAgendaBeneficiaire({
       {!isPoleEmploi && !metadata && <SpinningLoader />}
 
       {!isPoleEmploi && metadata && (
-        <div>
+        <>
           <section aria-labelledby='semaine-en-cours'>
             <h2 id='semaine-en-cours' className='text-m-bold text-primary mb-6'>
               Semaine en cours
@@ -108,7 +108,7 @@ export function OngletAgendaBeneficiaire({
               />
             )}
           </section>
-        </div>
+        </>
       )}
     </>
   )
