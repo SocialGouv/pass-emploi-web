@@ -22,7 +22,6 @@ import { EvenementsService } from 'services/evenements.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { parseUrl, setQueryParams } from 'utils/urlParser'
 
 interface ClotureProps extends PageProps {
   returnTo: string
@@ -183,7 +182,7 @@ export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
 
   const props: ClotureProps = {
     evenement,
-    returnTo: '/mes-jeunes/edition-rdv?idRdv=' + evenement.id,
+    returnTo: `/mes-jeunes/edition-rdv?idRdv=${evenement.id}&redirectUrl=${context.query.redirectUrl}`,
     pageTitle: 'Mes événements - Clore',
     pageHeader: 'Clôture de l’événement',
     withoutChat: true,

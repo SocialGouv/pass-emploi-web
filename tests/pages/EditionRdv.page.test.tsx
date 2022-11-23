@@ -180,6 +180,26 @@ describe('EditionRdv', () => {
         })
       })
 
+      it('récupère l’url de redirection s’il y en a une', async () => {
+        // Given
+        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+          unEvenement()
+        )
+
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: {} },
+          query: { redirectUrl: 'redirectUrl' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: {
+            returnTo: 'redirectUrl',
+          },
+        })
+      })
+
       it("renvoie une 404 si le rendez-vous n'existe pas", async () => {
         // Given
         ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
@@ -1148,7 +1168,7 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda?creationRdv=succes'}
+              returnTo={'https://localhost:3000/agenda?creationRdv=succes'}
               evenement={evenement}
               pageTitle={''}
             />,
@@ -1161,7 +1181,7 @@ describe('EditionRdv', () => {
           })
           expect(cloreButton).toHaveAttribute(
             'href',
-            `/evenements/${evenement.id}/cloture`
+            `/evenements/${evenement.id}/cloture?redirectUrl=https%3A%2F%2Flocalhost%3A3000%2Fagenda`
           )
         })
       })
@@ -1354,7 +1374,7 @@ describe('EditionRdv', () => {
         // Then
         const link = screen.getByText('Annuler la modification')
         expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute('href', '/agenda?creationRdv=succes')
+        expect(link).toHaveAttribute('href', '/agenda')
       })
 
       describe('rendez-vous modifié', () => {

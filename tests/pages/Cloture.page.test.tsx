@@ -40,7 +40,7 @@ describe('Cloture', () => {
           withoutChat={true}
           pageTitle=''
           evenement={animationCollective}
-          returnTo={'/mes-jeunes/edition-rdv?idRdv=' + animationCollective.id}
+          returnTo={`/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl`}
         />,
         { customDependances: { evenementsService } }
       )
@@ -117,7 +117,7 @@ describe('Cloture', () => {
       it('renvoie sur le détail de l’animation collective', () => {
         // Then
         expect(routerPush).toHaveBeenCalledWith(
-          `/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&clotureAC=succes`
+          `/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl&clotureAC=succes`
         )
       })
     })
@@ -168,7 +168,10 @@ describe('Cloture', () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: {} },
-          query: { evenement_id: 'id-animation-collective' },
+          query: {
+            evenement_id: 'id-animation-collective',
+            redirectUrl: 'redirectUrl',
+          },
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -181,7 +184,7 @@ describe('Cloture', () => {
             evenement: unEvenement({
               statut: StatutAnimationCollective.AClore,
             }),
-            returnTo: '/mes-jeunes/edition-rdv?idRdv=1',
+            returnTo: '/mes-jeunes/edition-rdv?idRdv=1&redirectUrl=redirectUrl',
             pageTitle: 'Mes événements - Clore',
             pageHeader: 'Clôture de l’événement',
             withoutChat: true,

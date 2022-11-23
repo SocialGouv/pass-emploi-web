@@ -8,7 +8,7 @@ describe('urlParser', () => {
 
       // Then
       expect(result).toEqual({
-        pathname: 'http://pass-emploi.fr/mes-jeunes',
+        baseUrl: 'http://pass-emploi.fr/mes-jeunes',
         query: {},
       })
     })
@@ -19,7 +19,7 @@ describe('urlParser', () => {
 
       // Then
       expect(result).toEqual({
-        pathname: '/mes-jeunes',
+        baseUrl: '/mes-jeunes',
         query: { action: 'succes' },
       })
     })
@@ -30,7 +30,7 @@ describe('urlParser', () => {
 
       // Then
       expect(result).toEqual({
-        pathname: '/mes-jeunes',
+        baseUrl: '/mes-jeunes',
         query: { action: 'succes', filtre: 'valeur' },
       })
     })
@@ -43,7 +43,7 @@ describe('urlParser', () => {
 
       // Then
       expect(result).toEqual({
-        pathname: '/mes-jeunes',
+        baseUrl: '/mes-jeunes',
         query: { action: 'succes', filtre: ['valeur', 'autreValeur'] },
       })
     })
@@ -56,7 +56,7 @@ describe('urlParser', () => {
 
       // Then
       expect(result).toEqual({
-        pathname: '/mes-jeunes',
+        baseUrl: '/mes-jeunes',
         query: {
           action: 'succes',
           filtre: ['valeur', 'autreValeur', 'troisiemeValeur'],
