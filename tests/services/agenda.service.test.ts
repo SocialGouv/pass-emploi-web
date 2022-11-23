@@ -48,34 +48,40 @@ describe('AgendaService', () => {
         entrees: [
           {
             id: '1',
-            titre: '21/10/2021 à 12h00 - Prise de nouvelles par téléphone',
+            date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
+            titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
           },
           {
             id: '1',
-            titre: '21/10/2021 à 12h00 - Prise de nouvelles par téléphone',
+            date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
+            titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
           },
           {
             id: 'id-action-1',
+            date: DateTime.fromISO('2022-02-20T14:50:46.000Z'),
             statut: 'ARealiser',
             titre: 'Identifier ses atouts et ses compétences',
             type: 'action',
           },
           {
             id: 'id-action-2',
+            date: DateTime.fromISO('2022-02-20T14:50:46.000Z'),
             statut: 'Commencee',
             titre: 'Compléter son cv',
             type: 'action',
           },
           {
             id: 'id-action-3',
+            date: DateTime.fromISO('2022-02-21T14:50:46.000Z'),
             statut: 'Terminee',
             titre: 'Chercher une formation',
             type: 'action',
           },
           {
             id: 'id-action-4',
+            date: DateTime.fromISO('2022-02-22T14:50:46.000Z'),
             statut: 'Terminee',
             titre: "Consulter les offres d'emploi",
             type: 'action',
