@@ -153,9 +153,13 @@ describe('<Conversation />', () => {
     )
   })
 
-  it('affiche au survol la présence d’un lien externe dans le message s’il en a un', () => {
+  it('indique la présence d’un lien externe dans le message s’il en a un', () => {
     // Then
-    expect(screen.getByText(/https/)).toHaveAttribute('title', 'Lien externe')
+    expect(
+      screen.getByRole('link', {
+        name: 'https://www.pass-emploi.com/ (nouvelle fenêtre)',
+      })
+    ).toBeInTheDocument()
   })
 
   describe('au clic ouvre une boîte de dialogue de confirmation', () => {
@@ -299,14 +303,21 @@ describe('<Conversation />', () => {
 
     it("affiche le titre de l'offre", async () => {
       // Then
-      expect(within(message).getByText('Une offre')).toBeInTheDocument()
+      expect(
+        within(message).getByText((content, element) => {
+          return (
+            element!.tagName.toLowerCase() === 'p' &&
+            content.startsWith('Une offre')
+          )
+        })
+      ).toBeInTheDocument()
     })
 
     it("affiche le lien de l'offre", async () => {
       // Then
       expect(
         within(message).getByRole('link', {
-          name: 'Voir l’offre',
+          name: /Voir l’offre/,
         })
       ).toHaveAttribute('href', '/offres/emploi/id-offre')
     })
