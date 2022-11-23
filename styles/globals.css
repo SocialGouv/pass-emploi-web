@@ -55,13 +55,6 @@ select:disabled {
   z-index: 50;
 }
 
-.svgChat {
-  fill: currentColor;
-}
-.svgChat:hover {
-  fill: currentColor;
-}
-
 @font-face {
   font-family: 'Marianne', sans-serif;
   src: url('/fonts/Marianne/static/Marianne-Regular.otf');
