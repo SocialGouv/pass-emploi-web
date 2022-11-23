@@ -103,7 +103,9 @@ export default function FiltresStatutAnimationsCollectives({
               Choisir un ou plusieurs statuts à filtrer
             </legend>
             {Object.keys(StatutAnimationCollective).map((statut) =>
-              renderFiltreStatutAnimationCollective(statut as StatutAnimationCollective)
+              renderFiltreStatutAnimationCollective(
+                statut as StatutAnimationCollective
+              )
             )}
           </fieldset>
           <Button className='w-full justify-center' type='submit'>

@@ -328,13 +328,13 @@ describe('EvenementsApiService', () => {
     })
   })
 
-  describe('.cloreEvenement', () => {
+  describe('.cloreAnimationCollective', () => {
     it('clos une animation collective', async () => {
       // Given
       const idsJeunes = ['jeune-1', 'jeune-2']
 
       // When
-      await evenementsService.clore('id-rdv', idsJeunes)
+      await evenementsService.cloreAnimationCollective('id-rdv', idsJeunes)
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(

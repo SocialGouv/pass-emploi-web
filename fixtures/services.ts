@@ -87,7 +87,7 @@ export function mockedEvenementsService(
     creerEvenement: jest.fn(),
     updateRendezVous: jest.fn(),
     supprimerEvenement: jest.fn(),
-    clore: jest.fn(),
+    cloreAnimationCollective: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

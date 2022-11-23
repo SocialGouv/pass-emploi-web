@@ -81,7 +81,7 @@ describe('Cloture', () => {
         await userEvent.click(clore)
 
         // Then
-        expect(evenementService.clore).toHaveBeenCalledWith(
+        expect(evenementService.cloreAnimationCollective).toHaveBeenCalledWith(
           evenementAClore.id,
           [evenementAClore.jeunes[0].id]
         )

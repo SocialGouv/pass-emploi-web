@@ -67,6 +67,6 @@ export enum PeriodeEvenements {
   FUTURS = 'FUTURS',
 }
 
-export function isAClore(evenement: Evenement) {
-  return evenement.statut === 'AClore'
+export function isAClore(animationCollective: Evenement) {
+  return animationCollective.statut === 'AClore'
 }

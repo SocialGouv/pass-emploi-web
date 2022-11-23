@@ -22,9 +22,8 @@ export type EvenementJson = {
   jeunes: BaseJeune[]
   title: string
   createur: Auteur
-  // historique possiblement undefined (vérifier le back)
-  historique: Array<{ date: string; auteur: Auteur }>
   invitation: boolean
+  historique?: Array<{ date: string; auteur: Auteur }>
   precision?: string
   comment?: string
   presenceConseiller?: boolean
@@ -72,13 +71,15 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     titre: json.title,
     presenceConseiller: Boolean(json.presenceConseiller),
     invitation: Boolean(json.invitation),
-    historique: jsonToHistorique(json.historique),
-    statut: json.statut ? jsonToStatutEvenement(json.statut) : undefined,
+    historique: [],
   }
   if (json.comment) evenement.commentaire = json.comment
   if (json.precision) evenement.precisionType = json.precision
   if (json.adresse) evenement.adresse = json.adresse
   if (json.organisme) evenement.organisme = json.organisme
+  if (json.historique) evenement.historique = jsonToHistorique(json.historique)
+  if (json.statut)
+    evenement.statut = jsonToStatutAnimationCollective(json.statut)
 
   return evenement
 }
@@ -123,11 +124,11 @@ export function jsonToAnimationCollective(
     titre: json.title,
     date: DateTime.fromISO(json.date),
     duree: json.duration,
-    statut: jsonToStatutEvenement(json.statut),
+    statut: jsonToStatutAnimationCollective(json.statut),
   }
 }
 
-function jsonToStatutEvenement(
+function jsonToStatutAnimationCollective(
   jsonStatus: StatutAnimationCollectiveJson
 ): StatutAnimationCollective {
   switch (jsonStatus) {

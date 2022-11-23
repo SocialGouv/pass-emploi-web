@@ -288,8 +288,8 @@ function EditionRdv({
               >
                 <IconComponent
                   name={IconName.Clipboard}
-                  aria-hidden='true'
-                  focusable='false'
+                  aria-hidden={true}
+                  focusable={false}
                   className='mr-2 w-4 h-4'
                 />
                 Clore
@@ -444,12 +444,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   )
 
   const referer = context.req.headers.referer
-  let redirectTo: string | undefined
-  if (referer && !comingFromHome(referer)) {
-    redirectTo = referer
-  } else {
-    redirectTo = '/mes-jeunes'
-  }
+  const redirectTo =
+    referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   const props: EditionRdvProps = {
     jeunes: [...jeunes].sort(compareJeunesByNom),
     typesRendezVous: typesRendezVous,

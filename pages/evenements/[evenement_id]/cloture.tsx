@@ -32,7 +32,7 @@ interface ClotureProps extends PageProps {
 function Cloture({ returnTo, evenement }: ClotureProps) {
   const router = useRouter()
   const evenementsService =
-    useDependance<EvenementsService>('rendezVousService')
+    useDependance<EvenementsService>('evenementsService')
 
   const [idsJeunesSelected, setIdsJeunesSelected] = useState<string[]>([])
 
@@ -53,10 +53,13 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
   }
 
   async function handleCloture(_event: FormEvent) {
-    await evenementsService.clore(evenement.id, idsJeunesSelected)
+    await evenementsService.cloreAnimationCollective(
+      evenement.id,
+      idsJeunesSelected
+    )
 
     const { pathname, query } = parseUrl('/agenda')
-    const queryParam = QueryParam.cloture
+    const queryParam = QueryParam.clotureAC
     await router.push({
       pathname,
       query: setQueryParams(query, { [queryParam]: QueryValue.succes }),
@@ -157,7 +160,7 @@ export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
     }
 
   const rendezVousService =
-    withDependance<EvenementsService>('rendezVousService')
+    withDependance<EvenementsService>('evenementsService')
 
   const idEvenement = context.query.evenement_id as string
 

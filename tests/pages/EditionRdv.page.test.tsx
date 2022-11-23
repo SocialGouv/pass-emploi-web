@@ -14,7 +14,11 @@ import {
   mockedReferentielService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, TypeEvenement } from 'interfaces/evenement'
+import {
+  Evenement,
+  StatutAnimationCollective,
+  TypeEvenement,
+} from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
@@ -36,7 +40,7 @@ jest.mock('components/Modal')
 describe('EditionRdv', () => {
   describe('server side', () => {
     let jeunesService: JeunesService
-    let rendezVousService: EvenementsService
+    let evenementsService: EvenementsService
     let jeunes: JeuneFromListe[]
     let typesRendezVous: TypeEvenement[]
 
@@ -74,12 +78,12 @@ describe('EditionRdv', () => {
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
         })
-        rendezVousService = mockedEvenementsService({
+        evenementsService = mockedEvenementsService({
           getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
         })
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'evenementsService') return rendezVousService
+          if (dependance === 'evenementsService') return evenementsService
         })
       })
 
@@ -114,7 +118,7 @@ describe('EditionRdv', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(rendezVousService.getTypesRendezVous).toHaveBeenCalledWith(
+        expect(evenementsService.getTypesRendezVous).toHaveBeenCalledWith(
           'accessToken'
         )
         expect(actual).toMatchObject({ props: { typesRendezVous } })
@@ -152,7 +156,7 @@ describe('EditionRdv', () => {
 
       it('récupère le rendez-vous concerné', async () => {
         // Given
-        ;(rendezVousService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
           unEvenement()
         )
 
@@ -163,7 +167,7 @@ describe('EditionRdv', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(rendezVousService.getDetailsEvenement).toHaveBeenCalledWith(
+        expect(evenementsService.getDetailsEvenement).toHaveBeenCalledWith(
           'id-rdv',
           'accessToken'
         )
@@ -178,7 +182,7 @@ describe('EditionRdv', () => {
 
       it("renvoie une 404 si le rendez-vous n'existe pas", async () => {
         // Given
-        ;(rendezVousService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
           undefined
         )
 
@@ -1079,7 +1083,8 @@ describe('EditionRdv', () => {
       describe("quand il n'y a pas de statut", () => {
         it("n'affiche pas le lien Clore", async () => {
           // Given
-          const evenement = unEvenement({ statut: undefined })
+          const evenement = unEvenement()
+          delete evenement.statut
 
           // When
           renderWithContexts(
@@ -1091,7 +1096,7 @@ describe('EditionRdv', () => {
               evenement={evenement}
               pageTitle={''}
             />,
-            { customDependances: { rendezVousService } }
+            { customDependances: { evenementsService } }
           )
 
           // Then
@@ -1101,10 +1106,13 @@ describe('EditionRdv', () => {
           expect(cloreButton).not.toBeInTheDocument()
         })
       })
-      describe("quand il n'y un statut A_VENIR", () => {
+
+      describe('quand l’animation collection est à venir', () => {
         it("n'affiche pas le lien Clore", async () => {
           // Given
-          const evenement = unEvenement({ statut: 'A_VENIR' })
+          const evenement = unEvenement({
+            statut: StatutAnimationCollective.AVenir,
+          })
 
           // When
           renderWithContexts(
@@ -1116,7 +1124,7 @@ describe('EditionRdv', () => {
               evenement={evenement}
               pageTitle={''}
             />,
-            { customDependances: { rendezVousService } }
+            { customDependances: { evenementsService } }
           )
 
           // Then
@@ -1127,11 +1135,12 @@ describe('EditionRdv', () => {
         })
       })
 
-      describe("quand il n'y un statut A_CLOTURER", () => {
-        let evenement: Evenement
-        beforeEach(() => {
+      describe('quand l’animation est passée et non close', () => {
+        it('affiche un lien pour la clore', async () => {
           // Given
-          evenement = unEvenement({ statut: 'AClore' })
+          const evenement = unEvenement({
+            statut: StatutAnimationCollective.AClore,
+          })
 
           // When
           renderWithContexts(
@@ -1143,11 +1152,9 @@ describe('EditionRdv', () => {
               evenement={evenement}
               pageTitle={''}
             />,
-            { customDependances: { rendezVousService } }
+            { customDependances: { evenementsService } }
           )
-        })
 
-        it('affiche le link Clore', async () => {
           // Then
           const cloreButton = screen.getByRole('link', {
             name: 'Clore',

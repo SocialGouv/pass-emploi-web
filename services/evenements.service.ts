@@ -51,7 +51,10 @@ export interface EvenementsService {
 
   supprimerEvenement(idRendezVous: string): Promise<void>
 
-  clore(idRendezVous: string, idsJeunes: string[]): Promise<void>
+  cloreAnimationCollective(
+    idAnimationCollective: string,
+    idsJeunes: string[]
+  ): Promise<void>
 }
 
 export class EvenementsApiService implements EvenementsService {
@@ -170,16 +173,14 @@ export class EvenementsApiService implements EvenementsService {
     )
   }
 
-  async clore(
-    idRendezVous: string,
+  async cloreAnimationCollective(
+    idAnimationCollective: string,
     idsJeunes: string[]
   ): Promise<void> {
     const session = await getSession()
-    const payload = {
-      idsJeunes,
-    }
+    const payload = { idsJeunes }
     await this.apiClient.post(
-      `/etablissements/animations-collectives/${idRendezVous}/cloturer`,
+      `/etablissements/animations-collectives/${idAnimationCollective}/cloturer`,
       payload,
       session!.accessToken
     )
