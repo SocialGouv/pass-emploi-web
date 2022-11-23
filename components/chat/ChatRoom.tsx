@@ -98,13 +98,13 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   return (
     <>
       {currentChat && (
-        <article className={styles.chatRoom}>
+        <aside className={styles.chatRoom}>
           <Conversation
             onBack={() => setIdCurrentJeune(undefined)}
             jeuneChat={currentChat}
             conseillers={conseillers}
           />
-        </article>
+        </aside>
       )}
 
       {!currentChat && showMenu && (
@@ -140,7 +140,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
       )}
 
       {!currentChat && (
-        <article className={styles.chatRoom}>
+        <aside className={styles.chatRoom}>
           <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
             <nav
               role='navigation'
@@ -185,7 +185,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             onToggleFlag={toggleFlag}
             onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
           />
-        </article>
+        </aside>
       )}
     </>
   )
