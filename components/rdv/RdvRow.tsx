@@ -42,8 +42,11 @@ export function RdvRow({
       href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
       label={`Consulter l’événement du ${fullDate} avec ${rdv.beneficiaires}`}
     >
-      <TD className='rounded-l-small'>
-        <span aria-label={fullDate}>{withDate && `${shortDate} - `}</span>
+      <TD
+        aria-label={withDate ? fullDate + ' - ' + timeAndDuration : ''}
+        className='rounded-l-small'
+      >
+        {withDate && `${shortDate} - `}
         {timeAndDuration}
       </TD>
 

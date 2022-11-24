@@ -36,7 +36,7 @@ export default function Pagination({
   }
 
   function renderEllipse(position: string) {
-    return <span key={`ellipse-${position}`}>&#8230;</span>
+    return <li key={`ellipse-${position}`}>&#8230;</li>
   }
 
   function renderPagination() {

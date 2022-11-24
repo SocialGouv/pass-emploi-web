@@ -185,7 +185,7 @@ describe('Cloture', () => {
               statut: StatutAnimationCollective.AClore,
             }),
             returnTo: '/mes-jeunes/edition-rdv?idRdv=1&redirectUrl=redirectUrl',
-            pageTitle: 'Mes événements - Clore',
+            pageTitle: 'Clore - Mes événements',
             pageHeader: 'Clôture de l’événement',
             withoutChat: true,
           },

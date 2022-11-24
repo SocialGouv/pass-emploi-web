@@ -1,23 +1,28 @@
-import React, { ReactNode } from 'react'
+import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 
-interface TDProps {
+type TDProps = ComponentPropsWithoutRef<'td'> & {
   children?: ReactNode
   asDiv?: boolean
-  className?: string
 }
 
 export default function TD({
   children,
   asDiv = false,
   className = '',
+  ...props
 }: TDProps) {
   const style = 'p-4 align-middle text-base-regular ' + className
 
   if (asDiv)
     return (
-      <div role='cell' className={'table-cell ' + style}>
+      <div role='cell' className={'table-cell ' + style} {...props}>
         {children}
       </div>
     )
-  else return <td className={style}>{children}</td>
+  else
+    return (
+      <td className={style} {...props}>
+        {children}
+      </td>
+    )
 }
