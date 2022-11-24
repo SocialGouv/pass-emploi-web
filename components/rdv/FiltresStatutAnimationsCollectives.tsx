@@ -124,6 +124,6 @@ function label(statut: StatutAnimationCollective): string {
     case StatutAnimationCollective.AClore:
       return 'À clore'
     case StatutAnimationCollective.Close:
-      return 'Close'
+      return 'Clos'
   }
 }

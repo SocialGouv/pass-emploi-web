@@ -188,10 +188,10 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Warning]: WarningIcon,
 }
 
-interface IconComponentProps extends ComponentPropsWithoutRef<any> {
+type IconComponentProps = ComponentPropsWithoutRef<'svg'> & {
   name: IconName
+  title?: string
 }
-
 export default function IconComponent({ name, ...props }: IconComponentProps) {
   const Icon = iconsByName[name]
   return <Icon {...props} />

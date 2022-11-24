@@ -1,9 +1,9 @@
-import { ChangeEvent, ComponentPropsWithoutRef } from 'react'
+import { ChangeEvent } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import styles from 'styles/components/IconCheckbox.module.css'
 
-interface IconCheckboxProps extends ComponentPropsWithoutRef<any> {
+interface IconCheckboxProps {
   id: string
   checked: boolean
   checkedIconName: IconName
@@ -11,6 +11,7 @@ interface IconCheckboxProps extends ComponentPropsWithoutRef<any> {
   checkedLabel: string
   uncheckedLabel: string
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
+  className?: string
 }
 
 export default function IconCheckbox({
@@ -21,10 +22,10 @@ export default function IconCheckbox({
   checkedLabel,
   uncheckedLabel,
   onChange,
-  ...props
+  className,
 }: IconCheckboxProps) {
   return (
-    <div title={checked ? checkedLabel : uncheckedLabel} {...props}>
+    <div title={checked ? checkedLabel : uncheckedLabel} className={className}>
       <input
         type='checkbox'
         id={id}

@@ -1,6 +1,6 @@
 import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 
-type TDProps = ComponentPropsWithoutRef<'td'> & {
+type TDProps = Omit<ComponentPropsWithoutRef<'td'>, 'children'> & {
   children?: ReactNode
   asDiv?: boolean
 }

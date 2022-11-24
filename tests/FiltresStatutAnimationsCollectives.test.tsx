@@ -30,7 +30,7 @@ describe('FiltresStatutAnimationsCollectives', () => {
     ).toBeInTheDocument()
     expect(screen.getByLabelText('À venir')).toBeInTheDocument()
     expect(screen.getByLabelText('À clore')).toBeInTheDocument()
-    expect(screen.getByLabelText('Close')).toBeInTheDocument()
+    expect(screen.getByLabelText('Clos')).toBeInTheDocument()
   })
 
   it('cache la liste des statuts', async () => {
@@ -57,16 +57,23 @@ describe('FiltresStatutAnimationsCollectives', () => {
     // Then
     expect(screen.getByLabelText('À venir')).not.toHaveAttribute('checked')
     expect(screen.getByLabelText('À clore')).not.toHaveAttribute('checked')
-    expect(screen.getByLabelText('Close')).not.toHaveAttribute('checked')
+    expect(screen.getByLabelText('Clos')).not.toHaveAttribute('checked')
   })
 
   it('filtre les animations collectives avec les statuts sélectionnés', async () => {
     // Given
-    await userEvent.click(screen.getByLabelText('Close'))
+    await userEvent.click(screen.getByLabelText('Clos'))
     await userEvent.click(screen.getByLabelText('À clore'))
+    await userEvent.click(screen.getByLabelText('À venir'))
     await userEvent.click(screen.getByLabelText('À venir'))
 
     // When
     await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+
+    // Then
+    expect(filtrerAnimationsCollectives).toHaveBeenCalledWith([
+      StatutAnimationCollective.Close,
+      StatutAnimationCollective.AClore,
+    ])
   })
 })
