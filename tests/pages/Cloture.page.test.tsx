@@ -46,7 +46,7 @@ describe('Cloture', () => {
       )
     })
 
-    it("affiche les jeunes de l'événement", async () => {
+    it("affiche les bénéficiaires de l'événement", async () => {
       // THEN
       for (const jeune of animationCollective.jeunes) {
         expect(
@@ -106,7 +106,7 @@ describe('Cloture', () => {
         await userEvent.click(clore)
       })
 
-      it('clos l’animation collective', async () => {
+      it('clôt l’animation collective', async () => {
         // Then
         expect(evenementsService.cloreAnimationCollective).toHaveBeenCalledWith(
           animationCollective.id,

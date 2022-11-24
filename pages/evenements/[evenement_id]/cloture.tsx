@@ -34,21 +34,21 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
   const evenementsService =
     useDependance<EvenementsService>('evenementsService')
 
-  const [idsJeunesSelected, setIdsJeunesSelected] = useState<string[]>([])
+  const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
 
-  function selectionnerJeune(_event: FormEvent, jeune: BaseJeune) {
-    if (idsJeunesSelected.includes(jeune.id)) {
-      setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))
+  function selectionnerBeneficiaire(jeune: BaseJeune) {
+    if (idsSelectionnes.includes(jeune.id)) {
+      setIdsSelectionnes(idsSelectionnes.filter((id) => id !== jeune.id))
     } else {
-      setIdsJeunesSelected(idsJeunesSelected.concat(jeune.id))
+      setIdsSelectionnes(idsSelectionnes.concat(jeune.id))
     }
   }
 
-  function selectionnerTousLesJeunes(_event: FormEvent) {
-    if (idsJeunesSelected.length !== evenement.jeunes.length) {
-      setIdsJeunesSelected(evenement.jeunes.map((jeune) => jeune.id))
+  function selectionnerTousLesBeneficiaires(_event: FormEvent) {
+    if (idsSelectionnes.length !== evenement.jeunes.length) {
+      setIdsSelectionnes(evenement.jeunes.map((jeune) => jeune.id))
     } else {
-      setIdsJeunesSelected([])
+      setIdsSelectionnes([])
     }
   }
 
@@ -57,7 +57,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
 
     await evenementsService.cloreAnimationCollective(
       evenement.id,
-      idsJeunesSelected
+      idsSelectionnes
     )
 
     await router.push(
@@ -77,7 +77,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
       </div>
 
       <form onSubmit={cloreAnimationCollective} className='mt-6'>
-        <Table caption='Jeunes de l’animation collective'>
+        <Table caption='Bénéficiaires de l’animation collective'>
           <THead>
             <TR isHeader={true}>
               <TH>Présence</TH>
@@ -85,13 +85,12 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
             </TR>
           </THead>
           <TBody>
-            <TR onClick={(e) => selectionnerTousLesJeunes(e)}>
+            <TR onClick={(e) => selectionnerTousLesBeneficiaires(e)}>
               <TD>
                 <input
                   id='cloture-tout-selectionner'
                   type='checkbox'
-                  checked={idsJeunesSelected.length === evenement.jeunes.length}
-                  readOnly={true}
+                  checked={idsSelectionnes.length === evenement.jeunes.length}
                   title='Tout sélectionner'
                 />
               </TD>
@@ -107,13 +106,15 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
           </TBody>
           <TBody>
             {evenement.jeunes.map((jeune: BaseJeune) => (
-              <TR key={jeune.id} onClick={(e) => selectionnerJeune(e, jeune)}>
+              <TR
+                key={jeune.id}
+                onClick={() => selectionnerBeneficiaire(jeune)}
+              >
                 <TD>
                   <input
                     type='checkbox'
                     id={'checkbox-' + jeune.id}
-                    checked={idsJeunesSelected.includes(jeune.id)}
-                    readOnly={true}
+                    checked={idsSelectionnes.includes(jeune.id)}
                     title={'Sélectionner ' + getNomJeuneComplet(jeune)}
                   />
                 </TD>
@@ -183,7 +184,7 @@ export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
   const props: ClotureProps = {
     evenement,
     returnTo: `/mes-jeunes/edition-rdv?idRdv=${evenement.id}&redirectUrl=${context.query.redirectUrl}`,
-    pageTitle: 'Mes événements - Clore',
+    pageTitle: 'Clore - Mes événements',
     pageHeader: 'Clôture de l’événement',
     withoutChat: true,
   }

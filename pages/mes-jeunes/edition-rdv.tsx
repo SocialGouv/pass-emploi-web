@@ -17,7 +17,7 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   Evenement,
-  isAClore,
+  estAClore,
   Modification,
   TypeEvenement,
 } from 'interfaces/evenement'
@@ -282,7 +282,7 @@ function EditionRdv({
               Supprimer
             </Button>
 
-            {isAClore(evenement) && (
+            {estAClore(evenement) && (
               <ButtonLink
                 style={ButtonStyle.PRIMARY}
                 href={`/evenements/${
@@ -302,6 +302,12 @@ function EditionRdv({
               </ButtonLink>
             )}
           </div>
+
+          {estAClore(evenement) && (
+            <div className='pt-6'>
+              <FailureAlert label='Cette animation collective est passée et doit être close' />
+            </div>
+          )}
 
           <dl>
             <div className='mt-6 border border-solid border-grey_100 rounded-medium p-4'>

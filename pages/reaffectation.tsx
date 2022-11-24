@@ -413,7 +413,6 @@ function Reaffectation(_: ReaffectationProps) {
                     type='checkbox'
                     className='mr-6'
                     checked={idsJeunesSelected.length === jeunes.length}
-                    readOnly={true}
                     title='Tout sélectionner'
                   />
                 </TD>
@@ -435,7 +434,6 @@ function Reaffectation(_: ReaffectationProps) {
                       id={'checkbox-' + jeune.id}
                       type='checkbox'
                       checked={idsJeunesSelected.includes(jeune.id)}
-                      readOnly={true}
                       title={'Sélectionner ' + getNomJeuneComplet(jeune)}
                     />
                   </TD>

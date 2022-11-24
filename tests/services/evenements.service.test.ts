@@ -329,7 +329,7 @@ describe('EvenementsApiService', () => {
   })
 
   describe('.cloreAnimationCollective', () => {
-    it('clos une animation collective', async () => {
+    it('clôt une animation collective', async () => {
       // Given
       const idsJeunes = ['jeune-1', 'jeune-2']
 
