@@ -22,10 +22,10 @@ export default function AlertDisplayer({
   const [alerts, setAlerts] = useState<DictAlerts>(ALERTS)
 
   async function closeSuccessAlert(queryParam: QueryParam): Promise<void> {
-    const { pathname, query } = parseUrl(router.asPath)
+    const { baseUrl, query } = parseUrl(router.asPath)
     await router.push(
       {
-        pathname,
+        pathname: baseUrl,
         query: deleteQueryParams(query, [queryParam]),
       },
       undefined,
@@ -126,6 +126,7 @@ const ALERTS: DictAlerts = {
   suggestionRecherche: {
     title: 'La recherche et ses critères ont bien été partagés',
   },
+  clotureAC: { title: "L'animation collective a bien été close" },
 }
 
 const ALERTS_MILO: DictAlerts = {

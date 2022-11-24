@@ -50,6 +50,11 @@ export interface EvenementsService {
   updateRendezVous(idRdv: string, updatedRdv: EvenementFormData): Promise<void>
 
   supprimerEvenement(idRendezVous: string): Promise<void>
+
+  cloreAnimationCollective(
+    idAnimationCollective: string,
+    idsJeunes: string[]
+  ): Promise<void>
 }
 
 export class EvenementsApiService implements EvenementsService {
@@ -105,7 +110,7 @@ export class EvenementsApiService implements EvenementsService {
   ): Promise<Evenement | undefined> {
     try {
       const { content: rdvJson } = await this.apiClient.get<EvenementJson>(
-        `/rendezvous/${idRdv}?avecHistorique=true`,
+        `/rendezvous/${idRdv}`,
         accessToken
       )
       return jsonToEvenement(rdvJson)
@@ -164,6 +169,19 @@ export class EvenementsApiService implements EvenementsService {
     const session = await getSession()
     await this.apiClient.delete(
       `/rendezvous/${idRendezVous}`,
+      session!.accessToken
+    )
+  }
+
+  async cloreAnimationCollective(
+    idAnimationCollective: string,
+    idsJeunes: string[]
+  ): Promise<void> {
+    const session = await getSession()
+    const payload = { idsJeunes }
+    await this.apiClient.post(
+      `/etablissements/animations-collectives/${idAnimationCollective}/cloturer`,
+      payload,
       session!.accessToken
     )
   }

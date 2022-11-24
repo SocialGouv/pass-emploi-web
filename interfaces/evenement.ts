@@ -50,6 +50,7 @@ export type Evenement = {
   precisionType?: string
   adresse?: string
   organisme?: string
+  statut?: StatutAnimationCollective
 }
 
 export const TYPE_EVENEMENT = {
@@ -64,4 +65,8 @@ export function isCodeTypeAnimationCollective(code?: string): boolean {
 export enum PeriodeEvenements {
   PASSES = 'PASSES',
   FUTURS = 'FUTURS',
+}
+
+export function estAClore(animationCollective: Evenement) {
+  return animationCollective.statut === 'AClore'
 }

@@ -8,7 +8,7 @@ import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
 import {
   TIME_24_H_SEPARATOR,
-  toFrenchFormat,
+  toFrenchFormat, toShortDate,
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 
@@ -42,7 +42,7 @@ describe('<TableauRdv>', () => {
         expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         expect(
           screen.getByText(
-            `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duree} min`
+            `${toShortDate(date)} - ${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duree} min`
           )
         ).toBeInTheDocument()
       })

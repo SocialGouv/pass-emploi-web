@@ -12,6 +12,7 @@ import { BaseJeune } from 'interfaces/jeune'
 import { TIME_24_H_SEPARATOR, toFrenchFormat } from 'utils/date'
 
 type Auteur = { id: string; nom: string; prenom: string }
+
 export type EvenementJson = {
   id: string
   date: string
@@ -21,13 +22,14 @@ export type EvenementJson = {
   jeunes: BaseJeune[]
   title: string
   createur: Auteur
-  historique: Array<{ date: string; auteur: Auteur }>
   invitation: boolean
+  historique?: Array<{ date: string; auteur: Auteur }>
   precision?: string
   comment?: string
   presenceConseiller?: boolean
   adresse?: string
   organisme?: string
+  statut?: StatutAnimationCollectiveJson
 }
 
 export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
@@ -69,12 +71,15 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     titre: json.title,
     presenceConseiller: Boolean(json.presenceConseiller),
     invitation: Boolean(json.invitation),
-    historique: jsonToHistorique(json.historique),
+    historique: [],
   }
   if (json.comment) evenement.commentaire = json.comment
   if (json.precision) evenement.precisionType = json.precision
   if (json.adresse) evenement.adresse = json.adresse
   if (json.organisme) evenement.organisme = json.organisme
+  if (json.historique) evenement.historique = jsonToHistorique(json.historique)
+  if (json.statut)
+    evenement.statut = jsonToStatutAnimationCollective(json.statut)
 
   return evenement
 }

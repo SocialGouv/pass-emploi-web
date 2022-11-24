@@ -10,11 +10,17 @@ import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, Modification, TypeEvenement } from 'interfaces/evenement'
+import {
+  Evenement,
+  estAClore,
+  Modification,
+  TypeEvenement,
+} from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
@@ -86,6 +92,8 @@ function EditionRdv({
   if (evenement) initialTracking = `Modification rdv`
   else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
+  const cleanReturnTo = getCleanUrlObject(returnTo)
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
@@ -163,9 +171,9 @@ function EditionRdv({
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
 
-    const { pathname, query } = getCleanUrlObject(returnTo)
+    const { baseUrl, query } = cleanReturnTo
     await router.push({
-      pathname,
+      pathname: baseUrl,
       query: setQueryParams(query, {
         [QueryParam.creationRdv]: QueryValue.succes,
         idEvenement: idNouvelEvenement,
@@ -179,9 +187,9 @@ function EditionRdv({
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
 
-    const { pathname, query } = getCleanUrlObject(returnTo)
+    const { baseUrl, query } = cleanReturnTo
     await router.push({
-      pathname,
+      pathname: baseUrl,
       query: setQueryParams(query, {
         [QueryParam.modificationRdv]: QueryValue.succes,
       }),
@@ -193,9 +201,9 @@ function EditionRdv({
     setShowDeleteRdvModal(false)
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      const { pathname, query } = getCleanUrlObject(returnTo)
+      const { baseUrl, query } = getCleanUrlObject(returnTo)
       await router.push({
-        pathname,
+        pathname: baseUrl,
         query: setQueryParams(query, {
           [QueryParam.suppressionRdv]: QueryValue.succes,
         }),
@@ -259,19 +267,47 @@ function EditionRdv({
 
       {evenement && (
         <>
-          <Button
-            style={ButtonStyle.SECONDARY}
-            onClick={handleDelete}
-            label={`Supprimer l’événement du ${evenement.date}`}
-          >
-            <IconComponent
-              name={IconName.Delete}
-              aria-hidden='true'
-              focusable='false'
-              className='mr-2 w-4 h-4'
-            />
-            Supprimer
-          </Button>
+          <div className='flex'>
+            <Button
+              style={ButtonStyle.SECONDARY}
+              onClick={handleDelete}
+              label={`Supprimer l’événement du ${evenement.date}`}
+            >
+              <IconComponent
+                name={IconName.Delete}
+                aria-hidden='true'
+                focusable='false'
+                className='mr-2 w-4 h-4'
+              />
+              Supprimer
+            </Button>
+
+            {estAClore(evenement) && (
+              <ButtonLink
+                style={ButtonStyle.PRIMARY}
+                href={`/evenements/${
+                  evenement.id
+                }/cloture?redirectUrl=${encodeURIComponent(
+                  cleanReturnTo.baseUrl
+                )}`}
+                className='ml-6'
+              >
+                <IconComponent
+                  name={IconName.Clipboard}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='mr-2 w-4 h-4'
+                />
+                Clore
+              </ButtonLink>
+            )}
+          </div>
+
+          {estAClore(evenement) && (
+            <div className='pt-6'>
+              <FailureAlert label='Cette animation collective est passée et doit être close' />
+            </div>
+          )}
 
           <dl>
             <div className='mt-6 border border-solid border-grey_100 rounded-medium p-4'>
@@ -333,7 +369,7 @@ function EditionRdv({
         typesRendezVous={typesRendezVous}
         idJeune={idJeune}
         evenement={evenement}
-        redirectTo={returnTo}
+        redirectTo={cleanReturnTo.baseUrl}
         onBeneficiairesDUnAutrePortefeuille={
           setFormHasBeneficiaireAutrePortefeuille
         }
@@ -357,7 +393,7 @@ function EditionRdv({
             evenement ? 'modifiées' : 'saisies'
           } seront perdues`}
           onCancel={closeLeavePageModal}
-          destination={returnTo}
+          destination={cleanReturnTo.baseUrl}
         />
       )}
 
@@ -419,9 +455,11 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     accessToken
   )
 
-  const referer = context.req.headers.referer
-  const redirectTo =
-    referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
+  let redirectTo = context.query.redirectUrl as string
+  if (!redirectTo) {
+    const referer = context.req.headers.referer
+    redirectTo = referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
+  }
   const props: EditionRdvProps = {
     jeunes: [...jeunes].sort(compareJeunesByNom),
     typesRendezVous: typesRendezVous,
@@ -456,12 +494,12 @@ function comingFromHome(referer: string): boolean {
 }
 
 function getCleanUrlObject(url: string): {
-  pathname: string
+  baseUrl: string
   query: Record<string, string | string[]>
 } {
-  const { pathname, query } = parseUrl(url)
+  const { baseUrl, query } = parseUrl(url)
   return {
-    pathname,
+    baseUrl,
     query: deleteQueryParams(query, [
       QueryParam.modificationRdv,
       QueryParam.creationRdv,

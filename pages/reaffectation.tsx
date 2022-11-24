@@ -79,7 +79,7 @@ function Reaffectation(_: ReaffectationProps) {
     setIsReaffectationTemporaire(undefined)
   }
 
-  function selectionnerJeune(_event: FormEvent, jeune: JeuneFromListe) {
+  function selectionnerJeune(jeune: JeuneFromListe) {
     setErreurReaffectation(undefined)
     if (idsJeunesSelected.includes(jeune.id)) {
       setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))
@@ -398,9 +398,7 @@ function Reaffectation(_: ReaffectationProps) {
             <THead>
               <TR isHeader={true}>
                 <TH>
-                  <span onClick={(e) => selectionnerTousLesJeunes(e)}>
-                    <span className='sr-only'>Cocher/Décocher les jeunes</span>
-                  </span>
+                  <span className='sr-only'>Cocher/Décocher les jeunes</span>
                 </TH>
                 <TH>Nom et prénom</TH>
                 <TH>Conseiller précédent</TH>
@@ -415,12 +413,14 @@ function Reaffectation(_: ReaffectationProps) {
                     type='checkbox'
                     className='mr-6'
                     checked={idsJeunesSelected.length === jeunes.length}
-                    readOnly={true}
                     title='Tout sélectionner'
                   />
                 </TD>
                 <TD className='whitespace-nowrap'>
-                  <label htmlFor='reaffectation-tout-selectionner'>
+                  <label
+                    htmlFor='reaffectation-tout-selectionner'
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     Tout sélectionner
                   </label>
                 </TD>
@@ -428,16 +428,22 @@ function Reaffectation(_: ReaffectationProps) {
             </TBody>
             <TBody>
               {jeunes.map((jeune: JeuneFromListe) => (
-                <TR key={jeune.id} onClick={(e) => selectionnerJeune(e, jeune)}>
+                <TR key={jeune.id} onClick={() => selectionnerJeune(jeune)}>
                   <TD className='p-4 rounded-l-small'>
                     <input
+                      id={'checkbox-' + jeune.id}
                       type='checkbox'
                       checked={idsJeunesSelected.includes(jeune.id)}
-                      readOnly={true}
+                      title={'Sélectionner ' + getNomJeuneComplet(jeune)}
                     />
                   </TD>
                   <TD className='p-4 text-base-regular'>
-                    {getNomJeuneComplet(jeune)}
+                    <label
+                      htmlFor={'checkbox-' + jeune.id}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {getNomJeuneComplet(jeune)}
+                    </label>
                   </TD>
                   <TD className='p-4 text-base-regular'>
                     {jeune.conseillerPrecedent

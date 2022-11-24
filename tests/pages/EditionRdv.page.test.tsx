@@ -14,7 +14,11 @@ import {
   mockedReferentielService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, TypeEvenement } from 'interfaces/evenement'
+import {
+  Evenement,
+  StatutAnimationCollective,
+  TypeEvenement,
+} from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
@@ -36,7 +40,7 @@ jest.mock('components/Modal')
 describe('EditionRdv', () => {
   describe('server side', () => {
     let jeunesService: JeunesService
-    let rendezVousService: EvenementsService
+    let evenementsService: EvenementsService
     let jeunes: JeuneFromListe[]
     let typesRendezVous: TypeEvenement[]
 
@@ -74,12 +78,12 @@ describe('EditionRdv', () => {
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
         })
-        rendezVousService = mockedEvenementsService({
+        evenementsService = mockedEvenementsService({
           getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
         })
         ;(withDependance as jest.Mock).mockImplementation((dependance) => {
           if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'evenementsService') return rendezVousService
+          if (dependance === 'evenementsService') return evenementsService
         })
       })
 
@@ -114,7 +118,7 @@ describe('EditionRdv', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(rendezVousService.getTypesRendezVous).toHaveBeenCalledWith(
+        expect(evenementsService.getTypesRendezVous).toHaveBeenCalledWith(
           'accessToken'
         )
         expect(actual).toMatchObject({ props: { typesRendezVous } })
@@ -152,7 +156,7 @@ describe('EditionRdv', () => {
 
       it('récupère le rendez-vous concerné', async () => {
         // Given
-        ;(rendezVousService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
           unEvenement()
         )
 
@@ -163,7 +167,7 @@ describe('EditionRdv', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(rendezVousService.getDetailsEvenement).toHaveBeenCalledWith(
+        expect(evenementsService.getDetailsEvenement).toHaveBeenCalledWith(
           'id-rdv',
           'accessToken'
         )
@@ -176,9 +180,29 @@ describe('EditionRdv', () => {
         })
       })
 
+      it('récupère l’url de redirection s’il y en a une', async () => {
+        // Given
+        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+          unEvenement()
+        )
+
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: {} },
+          query: { redirectUrl: 'redirectUrl' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: {
+            returnTo: 'redirectUrl',
+          },
+        })
+      })
+
       it("renvoie une 404 si le rendez-vous n'existe pas", async () => {
         // Given
-        ;(rendezVousService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
           undefined
         )
 
@@ -1075,6 +1099,94 @@ describe('EditionRdv', () => {
       })
     })
 
+    describe('Cloture', () => {
+      describe("quand il n'y a pas de statut", () => {
+        it("n'affiche pas le lien Clore", async () => {
+          // Given
+          const evenement = unEvenement()
+          delete evenement.statut
+
+          // When
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'/agenda?creationRdv=succes'}
+              evenement={evenement}
+              pageTitle={''}
+            />,
+            { customDependances: { evenementsService } }
+          )
+
+          // Then
+          const cloreButton = screen.queryByRole('link', {
+            name: 'Clore',
+          })
+          expect(cloreButton).not.toBeInTheDocument()
+        })
+      })
+
+      describe('quand l’animation collection est à venir', () => {
+        it("n'affiche pas le lien Clore", async () => {
+          // Given
+          const evenement = unEvenement({
+            statut: StatutAnimationCollective.AVenir,
+          })
+
+          // When
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'/agenda?creationRdv=succes'}
+              evenement={evenement}
+              pageTitle={''}
+            />,
+            { customDependances: { evenementsService } }
+          )
+
+          // Then
+          const cloreButton = screen.queryByRole('link', {
+            name: 'Clore',
+          })
+          expect(cloreButton).not.toBeInTheDocument()
+        })
+      })
+
+      describe('quand l’animation est passée et non close', () => {
+        it('affiche un lien pour la clore', async () => {
+          // Given
+          const evenement = unEvenement({
+            statut: StatutAnimationCollective.AClore,
+          })
+
+          // When
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'https://localhost:3000/agenda?creationRdv=succes'}
+              evenement={evenement}
+              pageTitle={''}
+            />,
+            { customDependances: { evenementsService } }
+          )
+
+          // Then
+          const cloreButton = screen.getByRole('link', {
+            name: 'Clore',
+          })
+          expect(cloreButton).toHaveAttribute(
+            'href',
+            `/evenements/${evenement.id}/cloture?redirectUrl=https%3A%2F%2Flocalhost%3A3000%2Fagenda`
+          )
+        })
+      })
+    })
+
     describe('quand un id de jeune est spécifié', () => {
       it('initialise le destinataire', async () => {
         // Given
@@ -1262,7 +1374,7 @@ describe('EditionRdv', () => {
         // Then
         const link = screen.getByText('Annuler la modification')
         expect(link).toBeInTheDocument()
-        expect(link).toHaveAttribute('href', '/agenda?creationRdv=succes')
+        expect(link).toHaveAttribute('href', '/agenda')
       })
 
       describe('rendez-vous modifié', () => {

@@ -77,7 +77,7 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/rendezvous/id-rdv?avecHistorique=true',
+        '/rendezvous/id-rdv',
         'accessToken'
       )
       expect(actual).toEqual(unEvenement())
@@ -323,6 +323,25 @@ describe('EvenementsApiService', () => {
       // Then
       expect(apiClient.delete).toHaveBeenCalledWith(
         '/rendezvous/idEvenement',
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.cloreAnimationCollective', () => {
+    it('clôt une animation collective', async () => {
+      // Given
+      const idsJeunes = ['jeune-1', 'jeune-2']
+
+      // When
+      await evenementsService.cloreAnimationCollective('id-rdv', idsJeunes)
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/etablissements/animations-collectives/id-rdv/cloturer',
+        {
+          idsJeunes: ['jeune-1', 'jeune-2'],
+        },
         'accessToken'
       )
     })

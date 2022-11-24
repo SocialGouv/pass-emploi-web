@@ -129,9 +129,9 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
 
-      const { pathname, query } = parseUrl(returnTo)
+      const { baseUrl, query } = parseUrl(returnTo)
       await router.push({
-        pathname,
+        pathname: baseUrl,
         query: setQueryParams(query, {
           [QueryParam.envoiMessage]: QueryValue.succes,
         }),
