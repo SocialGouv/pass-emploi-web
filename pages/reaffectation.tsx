@@ -414,6 +414,7 @@ function Reaffectation(_: ReaffectationProps) {
                     className='mr-6'
                     checked={idsJeunesSelected.length === jeunes.length}
                     title='Tout sélectionner'
+                    onChange={() => false}
                   />
                 </TD>
                 <TD className='whitespace-nowrap'>
@@ -435,6 +436,7 @@ function Reaffectation(_: ReaffectationProps) {
                       type='checkbox'
                       checked={idsJeunesSelected.includes(jeune.id)}
                       title={'Sélectionner ' + getNomJeuneComplet(jeune)}
+                      onChange={() => false}
                     />
                   </TD>
                   <TD className='p-4 text-base-regular'>

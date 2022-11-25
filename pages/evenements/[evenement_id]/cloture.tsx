@@ -92,6 +92,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
                   type='checkbox'
                   checked={idsSelectionnes.length === evenement.jeunes.length}
                   title='Tout sélectionner'
+                  onChange={() => false}
                 />
               </TD>
               <TD>
@@ -116,6 +117,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
                     id={'checkbox-' + jeune.id}
                     checked={idsSelectionnes.includes(jeune.id)}
                     title={'Sélectionner ' + getNomJeuneComplet(jeune)}
+                    onChange={() => false}
                   />
                 </TD>
                 <TD>
