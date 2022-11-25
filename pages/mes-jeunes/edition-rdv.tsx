@@ -272,6 +272,7 @@ function EditionRdv({
               style={ButtonStyle.SECONDARY}
               onClick={handleDelete}
               label={`Supprimer l’événement du ${evenement.date}`}
+              className='min-w-fit w-1/4'
             >
               <IconComponent
                 name={IconName.Delete}
@@ -290,7 +291,7 @@ function EditionRdv({
                 }/cloture?redirectUrl=${encodeURIComponent(
                   cleanReturnTo.baseUrl
                 )}`}
-                className='ml-6'
+                className='ml-6 min-w-fit w-1/4'
               >
                 <IconComponent
                   name={IconName.Clipboard}
