@@ -18,4 +18,5 @@ export type EntreeAgenda = {
 export type AgendaMetadata = {
   dateDeDebut: DateTime
   dateDeFin: DateTime
+  actionsEnRetard: string
 }

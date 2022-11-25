@@ -1,5 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import { desActionsInitiales } from 'fixtures/action'
@@ -22,9 +24,15 @@ describe('Agenda de la fiche jeune', () => {
   const SAMEDI_JANVIER_8 = DateTime.local(2022, 1, 8)
 
   let agendaService: AgendaService
+  let replace: jest.Mock
 
   beforeEach(() => {
     jest.spyOn(DateTime, 'now').mockReturnValue(LUNDI_JANVIER_3)
+    replace = jest.fn(() => Promise.resolve())
+    ;(useRouter as jest.Mock).mockReturnValue({
+      replace: replace,
+      push: jest.fn(),
+    })
   })
 
   describe('pour tous les conseillers', () => {
@@ -61,6 +69,43 @@ describe('Agenda de la fiche jeune', () => {
 
   describe('quand l’utilisateur n’est pas un conseiller Pole emploi', () => {
     describe('affiche l’agenda du bénéficiaire', () => {
+      it('affiche les actions en retard dans la vue agenda ', async () => {
+        // Given
+        agendaService = mockedAgendaService({
+          recupererAgenda: jest.fn(async () =>
+            unAgenda({
+              entrees: [
+                {
+                  id: '1',
+                  date: UNE_DATE_SEMAINE_SUIVANTE,
+                  type: 'evenement',
+                  titre: '12h00 - Autre',
+                } as EntreeAgenda,
+              ],
+              metadata: {
+                dateDeDebut: DateTime.fromISO('2022-01-01T14:00:00.000+02:00'),
+                dateDeFin: DateTime.fromISO('2022-01-15T14:00:00.000+02:00'),
+                actionsEnRetard: '8',
+              },
+            })
+          ),
+        })
+        // When
+        await renderFicheJeune(StructureConseiller.MILO, agendaService)
+        const voirActionsEnRetard = screen.getByRole('button', {
+          name: 'Voir les actions en retard',
+        })
+
+        // Then
+        expect(screen.getByText('Actions en retard (8)')).toBeInTheDocument()
+        expect(voirActionsEnRetard).toBeInTheDocument()
+
+        await userEvent.click(voirActionsEnRetard)
+        expect(screen.getByRole('tab', { name: 'Actions 0' })).toHaveAttribute(
+          'aria-selected',
+          'true'
+        )
+      })
       it('avec un message si le bénéficiaire n’a rien sur la semaine en cours', async () => {
         // Given
         agendaService = mockedAgendaService({

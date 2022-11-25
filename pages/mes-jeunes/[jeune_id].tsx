@@ -405,6 +405,7 @@ function FicheJeune({
             idBeneficiaire={jeune.id}
             isPoleEmploi={isPoleEmploi}
             recupererAgenda={recupererAgenda}
+            redirectActions={() => switchTab(Onglet.ACTIONS)}
           />
         </div>
       )}

@@ -20,6 +20,7 @@ type DesRdvEtDesActions = {
 type AgendaMetadataJson = {
   dateDeDebut: string
   dateDeFin: string
+  actionsEnRetard: string
 }
 
 export class AgendaApiService implements AgendaService {
@@ -50,6 +51,7 @@ function jsonToMetadata(json: AgendaMetadataJson): AgendaMetadata {
   return {
     dateDeDebut: DateTime.fromISO(json.dateDeDebut),
     dateDeFin: DateTime.fromISO(json.dateDeFin),
+    actionsEnRetard: json.actionsEnRetard,
   }
 }
 
