@@ -19,6 +19,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
+  estClos,
   Evenement,
   isCodeTypeAnimationCollective,
   TYPE_EVENEMENT,
@@ -517,6 +518,7 @@ export function EditionRdvForm({
               invalid={Boolean(titre.error)}
               onChange={(value: string) => setTitre({ value })}
               onBlur={validateTitre}
+              disabled={evenement && estClos(evenement)}
             />
 
             <Label htmlFor='description' withBulleMessageSensible={true}>
@@ -538,14 +540,17 @@ export function EditionRdvForm({
               onChange={(value: string) => setDescription({ value })}
               invalid={Boolean(description.error)}
               onBlur={validateDescription}
+              disabled={evenement && estClos(evenement)}
             />
           </Etape>
+
           <Etape numero={3} titre='Ajout de bénéficiaires'>
-            {isCodeTypeAnimationCollective(codeTypeRendezVous) && (
-              <div className='mb-4'>
-                <InformationMessage content='Pour les animations collectives, l’ajout de bénéficiaires est facultatif' />
-              </div>
-            )}
+            {isCodeTypeAnimationCollective(codeTypeRendezVous) &&
+              (!evenement || !estClos(evenement)) && (
+                <div className='mb-4'>
+                  <InformationMessage content='Pour les animations collectives, l’ajout de bénéficiaires est facultatif' />
+                </div>
+              )}
             <JeunesMultiselectAutocomplete
               jeunes={buildOptionsJeunes()}
               typeSelection='Bénéficiaires'
@@ -553,6 +558,7 @@ export function EditionRdvForm({
               onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
+              disabled={evenement && estClos(evenement)}
             />
           </Etape>
 
@@ -562,6 +568,7 @@ export function EditionRdvForm({
               id='modalite'
               defaultValue={modalite}
               onChange={setModalite}
+              disabled={evenement && estClos(evenement)}
             >
               {modalites.map((md) => (
                 <option key={md} value={md}>
@@ -585,6 +592,7 @@ export function EditionRdvForm({
               onChange={(value: string) => setDate({ value })}
               onBlur={validateDate}
               invalid={Boolean(date.error)}
+              disabled={evenement && estClos(evenement)}
             />
 
             <Label htmlFor='horaire' inputRequired={true}>
@@ -605,6 +613,7 @@ export function EditionRdvForm({
               invalid={Boolean(horaire.error)}
               aria-invalid={horaire.error ? true : undefined}
               aria-describedby={horaire.error ? 'horaire--error' : undefined}
+              disabled={evenement && estClos(evenement)}
             />
 
             <Label htmlFor='duree' inputRequired={true}>
@@ -623,6 +632,7 @@ export function EditionRdvForm({
               onChange={(value: string) => setDuree({ value })}
               onBlur={validateDuree}
               invalid={Boolean(duree.error)}
+              disabled={evenement && estClos(evenement)}
             />
 
             <Label htmlFor='adresse'>
@@ -634,6 +644,7 @@ export function EditionRdvForm({
               defaultValue={adresse}
               onChange={setAdresse}
               icon='location'
+              disabled={evenement && estClos(evenement)}
             />
 
             <Label htmlFor='organisme'>
@@ -647,6 +658,7 @@ export function EditionRdvForm({
               id='organisme'
               defaultValue={organisme}
               onChange={setOrganisme}
+              disabled={evenement && estClos(evenement)}
             />
           </Etape>
 
@@ -672,7 +684,10 @@ export function EditionRdvForm({
                 <Switch
                   id='presenceConseiller'
                   checked={isConseillerPresent}
-                  disabled={typeEntretienIndividuelConseillerSelected()}
+                  disabled={
+                    typeEntretienIndividuelConseillerSelected() ||
+                    (evenement && estClos(evenement))
+                  }
                   onChange={handlePresenceConseiller}
                 />
               </label>
@@ -693,53 +708,55 @@ export function EditionRdvForm({
             </div>
           </Etape>
 
-          <div className='flex justify-center'>
-            {!formHasChanges() && (
-              <ButtonLink
-                href={redirectTo}
-                style={ButtonStyle.SECONDARY}
-                className='mr-3'
-              >
-                Annuler {evenement ? 'la modification' : ''}
-              </ButtonLink>
-            )}
-            {formHasChanges() && (
-              <Button
-                type='button'
-                label={`Quitter la ${
-                  evenement ? 'modification' : 'création'
-                } de l’événement`}
-                onClick={leaveWithChanges}
-                style={ButtonStyle.SECONDARY}
-                className='mr-3'
-              >
-                Annuler {evenement ? ' la modification' : ''}
-              </Button>
-            )}
+          {(!evenement || !estClos(evenement)) && (
+            <div className='flex justify-center'>
+              {!formHasChanges() && (
+                <ButtonLink
+                  href={redirectTo}
+                  style={ButtonStyle.SECONDARY}
+                  className='mr-3'
+                >
+                  Annuler {evenement ? 'la modification' : ''}
+                </ButtonLink>
+              )}
+              {formHasChanges() && (
+                <Button
+                  type='button'
+                  label={`Quitter la ${
+                    evenement ? 'modification' : 'création'
+                  } de l’événement`}
+                  onClick={leaveWithChanges}
+                  style={ButtonStyle.SECONDARY}
+                  className='mr-3'
+                >
+                  Annuler {evenement ? ' la modification' : ''}
+                </Button>
+              )}
 
-            {evenement && (
-              <Button
-                type='submit'
-                disabled={!formHasChanges() || !formIsValid()}
-              >
-                Modifier l’événement
-              </Button>
-            )}
-            {!evenement && (
-              <Button
-                type='submit'
-                disabled={!formHasChanges() || !formIsValid()}
-              >
-                <IconComponent
-                  name={IconName.Add}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='mr-2 w-4 h-4'
-                />
-                Créer l’événement
-              </Button>
-            )}
-          </div>
+              {evenement && (
+                <Button
+                  type='submit'
+                  disabled={!formHasChanges() || !formIsValid()}
+                >
+                  Modifier l’événement
+                </Button>
+              )}
+              {!evenement && (
+                <Button
+                  type='submit'
+                  disabled={!formHasChanges() || !formIsValid()}
+                >
+                  <IconComponent
+                    name={IconName.Add}
+                    focusable={false}
+                    aria-hidden={true}
+                    className='mr-2 w-4 h-4'
+                  />
+                  Créer l’événement
+                </Button>
+              )}
+            </div>
+          )}
         </>
       )}
     </form>

@@ -13,6 +13,7 @@ interface JeunesMultiselectAutocompleteProps {
   required?: boolean
   defaultJeunes?: Array<BaseJeune & { isAutrePortefeuille?: boolean }>
   error?: string
+  disabled?: boolean
 }
 
 const SELECT_ALL_JEUNES_OPTION = 'Sélectionner tous mes jeunes'
@@ -30,6 +31,7 @@ export default function JeunesMultiselectAutocomplete({
   required = true,
   error,
   defaultJeunes = [],
+  disabled,
 }: JeunesMultiselectAutocompleteProps) {
   const optionsJeunes: OptionJeune[] = jeunes.map(jeuneToOption)
   const [selectedJeunes, setSelectedJeunes] = useState<OptionJeune[]>(
@@ -59,6 +61,8 @@ export default function JeunesMultiselectAutocomplete({
   }
 
   function selectJeune(inputValue: string) {
+    if (disabled) return
+
     if (inputValue === SELECT_ALL_JEUNES_OPTION) {
       const updatedSelectedJeunes = selectAllJeunes()
       setSelectedJeunes(updatedSelectedJeunes)
@@ -81,6 +85,8 @@ export default function JeunesMultiselectAutocomplete({
   }
 
   function unselectJeune(idJeune: string) {
+    if (disabled) return
+
     const indexSelectedJeune = selectedJeunes.findIndex((j) => j.id === idJeune)
     if (indexSelectedJeune > -1) {
       const updatedSelectedJeune = [...selectedJeunes]
@@ -112,6 +118,7 @@ export default function JeunesMultiselectAutocomplete({
         aria-controls='selected-jeunes'
         ref={input}
         invalid={Boolean(error)}
+        disabled={disabled}
       />
 
       <p
@@ -134,6 +141,7 @@ export default function JeunesMultiselectAutocomplete({
           typeSelection='jeune'
           infoLabel={`Ce jeune n'est pas dans votre portefeuille`}
           unselect={unselectJeune}
+          disabled={disabled}
         />
       )}
     </>

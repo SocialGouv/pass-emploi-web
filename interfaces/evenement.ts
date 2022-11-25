@@ -70,3 +70,7 @@ export enum PeriodeEvenements {
 export function estAClore(animationCollective: Evenement) {
   return animationCollective.statut === 'AClore'
 }
+
+export function estClos(animationCollective: Evenement) {
+  return animationCollective.statut === 'Close'
+}

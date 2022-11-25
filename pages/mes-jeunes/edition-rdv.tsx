@@ -20,6 +20,7 @@ import {
   estAClore,
   Modification,
   TypeEvenement,
+  estClos,
 } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
@@ -268,20 +269,22 @@ function EditionRdv({
       {evenement && (
         <>
           <div className='flex'>
-            <Button
-              style={ButtonStyle.SECONDARY}
-              onClick={handleDelete}
-              label={`Supprimer l’événement du ${evenement.date}`}
-              className='min-w-fit w-1/4'
-            >
-              <IconComponent
-                name={IconName.Delete}
-                aria-hidden='true'
-                focusable='false'
-                className='mr-2 w-4 h-4'
-              />
-              Supprimer
-            </Button>
+            {!estClos(evenement) && (
+              <Button
+                style={ButtonStyle.SECONDARY}
+                onClick={handleDelete}
+                label={`Supprimer l’événement du ${evenement.date}`}
+                className='min-w-fit w-1/4'
+              >
+                <IconComponent
+                  name={IconName.Delete}
+                  aria-hidden='true'
+                  focusable='false'
+                  className='mr-2 w-4 h-4'
+                />
+                Supprimer
+              </Button>
+            )}
 
             {estAClore(evenement) && (
               <ButtonLink

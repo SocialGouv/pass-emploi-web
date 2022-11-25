@@ -243,7 +243,9 @@ describe('EnvoiMessageGroupe', () => {
 
       it('permet la suppression de la pièce jointe', async () => {
         // When
-        await userEvent.click(screen.getByText('Enlever fichier'))
+        await userEvent.click(
+          screen.getByText('Enlever fichier imageupload.png')
+        )
 
         // Then
         expect(() => screen.getByText('imageupload.png')).toThrow()

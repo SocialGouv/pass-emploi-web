@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
@@ -680,9 +680,7 @@ describe('EditionRdv', () => {
           // Given
           const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
             'button',
-            {
-              name: 'Enlever jeune',
-            }
+            { name: /Enlever jeune/ }
           )
 
           // When
@@ -1068,33 +1066,6 @@ describe('EditionRdv', () => {
           expect(
             screen.getByLabelText("Ce jeune n'est pas dans votre portefeuille")
           ).toBeInTheDocument()
-        })
-
-        it('redirige vers la page précédente avec le bon query param', async () => {
-          // Given
-          await userEvent.selectOptions(
-            screen.getByLabelText(/Type/),
-            'Atelier'
-          )
-          await userEvent.type(screen.getByLabelText(/Date/), '2022-03-03')
-          await userEvent.type(screen.getByLabelText(/Heure/), '10:30')
-          await userEvent.type(screen.getByLabelText(/Durée/), '02:37')
-          await userEvent.type(
-            screen.getByLabelText(/Titre/),
-            'Titre de l’événement'
-          )
-
-          // When
-          await userEvent.click(screen.getByText(/Créer/))
-
-          // Then
-          expect(push).toHaveBeenCalledWith({
-            pathname: '/agenda',
-            query: {
-              creationRdv: 'succes',
-              idEvenement: '963afb47-2b15-46a9-8c0c-0e95240b2eb5',
-            },
-          })
         })
       })
     })
@@ -1547,84 +1518,68 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on souhaite modifier une animation collective', () => {
-      it('renvoie vers la page précédente avec le bon query param', async () => {
+    describe('quand on souhaite modifier une animation collective close', () => {
+      it('empêche toute modification', async () => {
         // Given
-        renderWithContexts(
-          <EditionRdv
-            jeunes={jeunesConseiller}
-            typesRendezVous={typesRendezVous}
-            withoutChat={true}
-            returnTo={'/agenda?creationRdv=succes'}
-            evenement={unEvenement({
-              type: { code: 'ATELIER', label: 'Atelier' },
-            })}
-            pageTitle={''}
-          />,
-          {
-            customDependances: { evenementsService, jeunesService },
-            customConseiller: {
-              agence: {
-                nom: 'Mission locale Aubenas',
-                id: 'id-etablissement',
+        const jeune = {
+          id: jeunesConseiller[0].id,
+          prenom: jeunesConseiller[0].prenom,
+          nom: jeunesConseiller[0].nom,
+        }
+        const evenement = unEvenement({
+          jeunes: [jeune],
+          type: { code: 'ATELIER', label: 'Atelier' },
+          statut: StatutAnimationCollective.Close,
+        })
+
+        await act(async () => {
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo={'/agenda?creationRdv=succes'}
+              evenement={evenement}
+              pageTitle={''}
+            />,
+            {
+              customDependances: { evenementsService, jeunesService },
+              customConseiller: {
+                agence: {
+                  nom: 'Mission locale Aubenas',
+                  id: 'id-etablissement',
+                },
               },
-            },
-          }
-        )
-
-        const inputTitre = screen.getByRole('textbox', { name: 'Titre' })
-        await userEvent.clear(inputTitre)
-        await userEvent.type(inputTitre, 'Nouveau titre')
-
-        // When
-        await userEvent.click(
-          screen.getByRole('button', {
-            name: 'Modifier l’événement',
-          })
-        )
+            }
+          )
+        })
 
         // Then
-        expect(push).toHaveBeenCalledWith({
-          pathname: '/agenda',
-          query: { modificationRdv: 'succes' },
-        })
-      })
-    })
-
-    describe('quand on souhaite supprimer une animation collective', () => {
-      it('renvoie vers la page précédente avec le bon query param', async () => {
-        // Given
-        renderWithContexts(
-          <EditionRdv
-            jeunes={jeunesConseiller}
-            typesRendezVous={typesRendezVous}
-            withoutChat={true}
-            returnTo={'/agenda?creationRdv=succes'}
-            evenement={unEvenement({
-              type: { code: 'ATELIER', label: 'Atelier' },
-            })}
-            pageTitle={''}
-          />,
-          {
-            customDependances: { evenementsService, jeunesService },
-            customConseiller: {
-              agence: {
-                nom: 'Mission locale Aubenas',
-                id: 'id-etablissement',
-              },
-            },
-          }
-        )
-
-        // When
-        await userEvent.click(screen.getByRole('button', { name: /Supprimer/ }))
-        await userEvent.click(screen.getByText('Confirmer'))
-
-        // Then
-        expect(push).toHaveBeenCalledWith({
-          pathname: '/agenda',
-          query: { suppressionRdv: 'succes' },
-        })
+        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText('Modalité')).toBeDisabled()
+        expect(screen.getByLabelText(/Date/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
+        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
+        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
+        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
+        expect(screen.getByLabelText(/ajouter des jeunes/)).toBeDisabled()
+        expect(
+          screen.queryByText(/bénéficiaires est facultatif/)
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Enlever jeune/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Supprimer/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Annuler/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Modifier/ })
+        ).not.toBeInTheDocument()
       })
     })
 
