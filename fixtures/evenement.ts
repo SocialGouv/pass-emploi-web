@@ -202,11 +202,6 @@ export function unEvenementJeuneJson(
 ): EvenementJeuneJson {
   const defaults: EvenementJeuneJson = {
     id: '1',
-    jeune: {
-      id: '1',
-      prenom: 'Kenji',
-      nom: 'Jirac',
-    },
     type: { code: 'AUTRE', label: 'Autre' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',

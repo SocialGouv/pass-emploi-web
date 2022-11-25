@@ -6,6 +6,7 @@ import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import TD from 'components/ui/Table/TD'
 import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import {
   TIME_24_H_SEPARATOR,
   toFrenchFormat,
@@ -16,15 +17,15 @@ import {
 interface RdvRowProps {
   rdv: EvenementListItem
   idConseiller: string
-  withNameJeune?: boolean
+  beneficiaire?: BaseJeune
   withDate?: boolean
 }
 
 export function RdvRow({
   rdv,
-  withNameJeune,
-  withDate,
   idConseiller,
+  beneficiaire,
+  withDate,
 }: RdvRowProps) {
   const date = useMemo(() => DateTime.fromISO(rdv.date), [rdv.date])
   const shortDate = useMemo(() => toShortDate(date), [date])
@@ -36,11 +37,14 @@ export function RdvRow({
     () => `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duree} min`,
     [date, rdv.duree]
   )
+  const labelBeneficiaires = beneficiaire
+    ? getNomJeuneComplet(beneficiaire)
+    : rdv.beneficiaires
 
   return (
     <TR
       href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
-      label={`Consulter l’événement du ${fullDate} avec ${rdv.beneficiaires}`}
+      label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
     >
       <TD
         aria-label={withDate ? fullDate + ' - ' + timeAndDuration : ''}
@@ -50,7 +54,7 @@ export function RdvRow({
         {timeAndDuration}
       </TD>
 
-      {withNameJeune && <TD>{rdv.beneficiaires}</TD>}
+      {!beneficiaire && <TD>{rdv.beneficiaires}</TD>}
 
       <TD>
         <DataTag text={rdv.type} />

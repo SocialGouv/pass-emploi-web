@@ -209,7 +209,9 @@ describe('EvenementsApiService', () => {
         `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
         accessToken
       )
-      expect(actual).toEqual([unEvenementListItem()])
+      const expected = unEvenementListItem()
+      delete expected.beneficiaires
+      expect(actual).toEqual([expected])
     })
   })
 

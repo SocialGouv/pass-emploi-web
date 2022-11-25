@@ -352,14 +352,13 @@ describe('JeunesApiService', () => {
 
       // When
       const actual = await jeunesService.getMetadonneesFavorisJeune(
-        'id-conseiller',
         'id-jeune',
         'accessToken'
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/metadonnees',
+        '/jeunes/id-jeune/favoris/metadonnees',
         'accessToken'
       )
       expect(actual).toEqual(uneMetadonneeFavoris())
