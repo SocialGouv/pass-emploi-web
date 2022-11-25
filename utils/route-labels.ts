@@ -1,5 +1,6 @@
 const routesToLabel = new Map<RegExp, string>([
   // Agenda
+  [/\/mes-jeunes\/edition-rdv\?idRdv=.*$/, 'Fiche événement'],
   [/\/agenda$/, 'Agenda'],
 
   // Portefeuille
