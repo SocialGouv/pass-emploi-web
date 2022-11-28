@@ -99,9 +99,9 @@ function intercalaireDate({ label }: IntercalaireJour, index: number) {
   return (
     <Intercalaire
       key={label}
-      className={`text-m-bold capitalize ${index > 0 ? 'pt-6' : ''} ${
-        label === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'
-      } `}
+      className={`text-m-bold capitalize whitespace-nowrap pl-4 ${
+        index > 0 ? 'pt-6' : ''
+      } ${label === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'} `}
     >
       {label}
     </Intercalaire>
@@ -110,7 +110,7 @@ function intercalaireDate({ label }: IntercalaireJour, index: number) {
 
 function intercalairePlageHoraire({ label, jour }: IntercalairePlageHoraire) {
   return (
-    <Intercalaire key={`${label}-${jour}`} className='text-s-bold'>
+    <Intercalaire key={`${label}-${jour}`} className='text-s-bold pl-4'>
       {label}
     </Intercalaire>
   )
