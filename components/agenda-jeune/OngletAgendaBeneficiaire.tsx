@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 import {
@@ -16,21 +15,21 @@ interface OngletAgendaBeneficiaireProps {
   idBeneficiaire: string
   isPoleEmploi: boolean
   recupererAgenda: () => Promise<Agenda>
-  redirectActions: () => void
+  goToActions: () => void
 }
 
 export function OngletAgendaBeneficiaire({
   idBeneficiaire,
   isPoleEmploi,
   recupererAgenda,
-  redirectActions,
+  goToActions,
 }: OngletAgendaBeneficiaireProps) {
   const [semaines, setSemaines] = useState<{
     courante: SemaineAgenda
     suivante: SemaineAgenda
   }>()
 
-  const [actionsEnRetard, setActionsEnRetard] = useState<string>()
+  const [nombreActionsEnRetard, setNombreActionsEnRetard] = useState<number>()
 
   useEffect(() => {
     if (!isPoleEmploi) {
@@ -53,7 +52,7 @@ export function OngletAgendaBeneficiaire({
           })
 
           setSemaines({ courante, suivante })
-          setActionsEnRetard(actionsEnRetard)
+          setNombreActionsEnRetard(actionsEnRetard)
         }
       )
     }
@@ -70,34 +69,33 @@ export function OngletAgendaBeneficiaire({
 
       {!isPoleEmploi && semaines && (
         <>
-          <section
-            aria-labelledby='actions-en-retard'
-            className='flex justify-between p-4 mb-6 bg-warning_lighten rounded-medium'
-          >
-            <div className='flex gap-2'>
-              <IconComponent
-                name={IconName.ImportantOutline}
-                focusable={false}
-                aria-hidden={true}
-                className='w-[16px] h-[16px] m-auto accent-warning'
-              />
-              <p>Actions en retard ({actionsEnRetard})</p>
+          {Boolean(nombreActionsEnRetard) && (
+            <div className='flex justify-between p-4 mb-6 bg-warning_lighten rounded-medium'>
+              <div className='flex gap-2'>
+                <IconComponent
+                  name={IconName.ImportantOutline}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='w-[16px] h-[16px] m-auto accent-warning'
+                />
+                <p>Actions en retard ({nombreActionsEnRetard})</p>
+              </div>
+              <button
+                type='button'
+                onClick={goToActions}
+                className='flex items-center'
+              >
+                Voir
+                <IconComponent
+                  name={IconName.ChevronRight}
+                  className='w-4 h-5'
+                  aria-hidden={true}
+                  focusable={false}
+                />
+                <span className='sr-only'>les actions</span>
+              </button>
             </div>
-            <button
-              type='button'
-              onClick={redirectActions}
-              className='flex items-center'
-            >
-              Voir
-              <IconComponent
-                name={IconName.ChevronRight}
-                className='w-4 h-5 fill-[inherit]'
-                aria-hidden={true}
-                focusable={false}
-              />
-              <span className='sr-only'>les actions en retard</span>
-            </button>
-          </section>
+          )}
           <section aria-labelledby='semaine-en-cours'>
             <h2 id='semaine-en-cours' className='text-m-bold text-primary mb-6'>
               Semaine en cours

@@ -85,7 +85,7 @@ describe('Agenda de la fiche jeune', () => {
               metadata: {
                 dateDeDebut: DateTime.fromISO('2022-01-01T14:00:00.000+02:00'),
                 dateDeFin: DateTime.fromISO('2022-01-15T14:00:00.000+02:00'),
-                actionsEnRetard: '8',
+                actionsEnRetard: 8,
               },
             })
           ),
@@ -93,7 +93,7 @@ describe('Agenda de la fiche jeune', () => {
         // When
         await renderFicheJeune(StructureConseiller.MILO, agendaService)
         const voirActionsEnRetard = screen.getByRole('button', {
-          name: 'Voir les actions en retard',
+          name: 'Voir les actions',
         })
 
         // Then

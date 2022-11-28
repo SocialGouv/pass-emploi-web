@@ -51,7 +51,7 @@ function jsonToMetadata(json: AgendaMetadataJson): AgendaMetadata {
   return {
     dateDeDebut: DateTime.fromISO(json.dateDeDebut),
     dateDeFin: DateTime.fromISO(json.dateDeFin),
-    actionsEnRetard: json.actionsEnRetard,
+    actionsEnRetard: parseInt(json.actionsEnRetard),
   }
 }
 
