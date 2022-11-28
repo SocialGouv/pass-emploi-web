@@ -175,7 +175,6 @@ describe('Fiche Jeune', () => {
       it('récupère les favoris', async () => {
         // Then
         expect(jeunesService.getMetadonneesFavorisJeune).toHaveBeenCalledWith(
-          'id-conseiller',
           'id-jeune',
           'accessToken'
         )

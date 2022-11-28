@@ -32,9 +32,8 @@ export type EvenementJson = {
   statut?: StatutAnimationCollectiveJson
 }
 
-export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
-  jeune: BaseJeune
-}
+export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'>
+
 export type AnimationCollectiveJson = EvenementJson & {
   statut: StatutAnimationCollectiveJson
 }
@@ -84,23 +83,24 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
   return evenement
 }
 
-export function evenementJeuneJsonToListItem(
-  evenementJeuneJson: EvenementJeuneJson
+export function jsonToListItem(
+  json: EvenementJson | EvenementJeuneJson
 ): EvenementListItem {
-  const { jeune, ...data } = evenementJeuneJson
-  return jsonToListItem({ ...data, jeunes: [jeune] })
-}
-
-export function jsonToListItem(json: EvenementJson): EvenementListItem {
-  return {
+  const evenement: EvenementListItem = {
     id: json.id,
-    beneficiaires: jsonToBeneficiaires(json.jeunes),
     type: json.type.label,
     modality: json.modality,
     date: json.date,
     duree: json.duration,
     idCreateur: json.createur.id,
   }
+  if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {
+    evenement.labelBeneficiaires = jsonToBeneficiaires(
+      (json as EvenementJson).jeunes
+    )
+  }
+
+  return evenement
 }
 
 export function rdvJsonToEntree(rdv: EvenementJeuneJson): EntreeAgenda {
@@ -147,7 +147,7 @@ function jsonToStatutAnimationCollective(
   }
 }
 
-function jsonToBeneficiaires(jeunes: BaseJeune[]): string {
+function jsonToBeneficiaires(jeunes: BaseJeune[]): string | undefined {
   if (jeunes.length === 1) return jeunes[0].prenom + ' ' + jeunes[0].nom
   return 'Bénéficiaires multiples'
 }

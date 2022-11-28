@@ -9,14 +9,13 @@ import {
   TypeEvenement,
 } from 'interfaces/evenement'
 import {
-  jsonToListItem,
-  jsonToEvenement,
+  AnimationCollectiveJson,
   EvenementFormData,
   EvenementJeuneJson,
-  evenementJeuneJsonToListItem,
   EvenementJson,
   jsonToAnimationCollective,
-  AnimationCollectiveJson,
+  jsonToEvenement,
+  jsonToListItem,
 } from 'interfaces/json/evenement'
 import { ApiError } from 'utils/httpClient'
 
@@ -83,7 +82,8 @@ export class EvenementsApiService implements EvenementsService {
     const { content: rdvsJson } = await this.apiClient.get<
       EvenementJeuneJson[]
     >(`/jeunes/${idJeune}/rendezvous?periode=${periode}`, accessToken)
-    return rdvsJson.map(evenementJeuneJsonToListItem)
+
+    return rdvsJson.map(jsonToListItem)
   }
 
   async getRendezVousEtablissement(

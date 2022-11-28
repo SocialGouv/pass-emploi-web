@@ -9,6 +9,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
+import { BaseJeune } from 'interfaces/jeune'
 import {
   insertIntercalaires,
   renderListeWithIntercalaires,
@@ -18,14 +19,14 @@ type TableauRdvProps = {
   idConseiller: string
   rdvs: EvenementListItem[]
   withIntercalaires?: boolean
-  withNameJeune?: boolean
+  beneficiaireUnique?: BaseJeune
 }
 
 export default function TableauRdv({
   rdvs,
   idConseiller,
   withIntercalaires = false,
-  withNameJeune = true,
+  beneficiaireUnique,
 }: TableauRdvProps) {
   const rdvsAffiches = useMemo(
     () =>
@@ -55,7 +56,7 @@ export default function TableauRdv({
           <THead>
             <TR isHeader={true}>
               <TH>Horaires</TH>
-              {withNameJeune && <TH>Bénéficiaire</TH>}
+              {!beneficiaireUnique && <TH>Bénéficiaire</TH>}
               <TH>Type</TH>
               <TH>Modalité</TH>
               <TH>Créé par vous</TH>
@@ -68,7 +69,7 @@ export default function TableauRdv({
                 key={rdv.id}
                 rdv={rdv}
                 withDate={!withIntercalaires}
-                withNameJeune={withNameJeune}
+                beneficiaireUnique={beneficiaireUnique}
                 idConseiller={idConseiller}
               />
             ))}

@@ -24,12 +24,12 @@ export type AnimationCollective = {
 
 export type EvenementListItem = {
   id: string
-  beneficiaires: string
   type: string
   modality: string
   date: string
   duree: number
   idCreateur: string
+  labelBeneficiaires?: string
 }
 
 type Auteur = { nom: string; prenom: string }

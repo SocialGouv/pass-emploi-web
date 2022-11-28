@@ -37,7 +37,7 @@ describe('<TableauRdv>', () => {
       // Then
       listeRdv.forEach((rdv) => {
         const date = DateTime.fromISO(rdv.date)
-        expect(screen.getByText(`${rdv.beneficiaires}`)).toBeInTheDocument()
+        expect(screen.getByText(`${rdv.labelBeneficiaires}`)).toBeInTheDocument()
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
         expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         expect(
@@ -54,7 +54,7 @@ describe('<TableauRdv>', () => {
           `Consulter l’événement du ${toFrenchFormat(
             DateTime.fromISO(rdv.date),
             WEEKDAY_MONTH_LONG
-          )} avec ${rdv.beneficiaires}`
+          )} avec ${rdv.labelBeneficiaires}`
         )
         expect(link).toHaveAttribute(
           'href',
@@ -65,10 +65,10 @@ describe('<TableauRdv>', () => {
 
     it('affiche si l’utilisateur est le créateur du rendez-vous', () => {
       const rendezVous0 = screen.getByRole('row', {
-        name: new RegExp(`${listeRdv[0].beneficiaires}`),
+        name: new RegExp(`${listeRdv[0].labelBeneficiaires}`),
       })
       const rendezVous1 = screen.getByRole('row', {
-        name: new RegExp(`${listeRdv[1].beneficiaires}`),
+        name: new RegExp(`${listeRdv[1].labelBeneficiaires}`),
       })
 
       // Then

@@ -182,7 +182,7 @@ describe('EvenementsApiService', () => {
       )
       expect(actual).toEqual([
         unEvenementListItem(),
-        unEvenementListItem({ beneficiaires: 'Bénéficiaires multiples' }),
+        unEvenementListItem({ labelBeneficiaires: 'Bénéficiaires multiples' }),
       ])
     })
   })
@@ -209,7 +209,9 @@ describe('EvenementsApiService', () => {
         `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
         accessToken
       )
-      expect(actual).toEqual([unEvenementListItem()])
+      const expected = unEvenementListItem()
+      delete expected.labelBeneficiaires
+      expect(actual).toEqual([expected])
     })
   })
 

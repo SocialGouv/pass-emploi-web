@@ -6,11 +6,13 @@ import React from 'react'
 import renderWithContexts from '../renderWithContexts'
 
 import { desEvenementsListItems, unEvenementListItem } from 'fixtures/evenement'
-import { mockedEvenementsService } from 'fixtures/services'
+import { unDetailJeune, uneBaseJeune } from 'fixtures/jeune'
+import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import RendezVousPasses, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/rendez-vous-passes'
 import { EvenementsService } from 'services/evenements.service'
+import { JeunesService } from 'services/jeunes.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -27,7 +29,9 @@ describe('RendezVousPasses', () => {
 
           // When
           await act(async () => {
-            await renderWithContexts(<RendezVousPasses rdvs={rdvs} />)
+            await renderWithContexts(
+              <RendezVousPasses beneficiaire={uneBaseJeune()} rdvs={rdvs} />
+            )
           })
 
           // Then
@@ -42,7 +46,10 @@ describe('RendezVousPasses', () => {
         it('affiche un message', async () => {
           // When
           await act(async () => {
-            await renderWithContexts(<RendezVousPasses rdvs={[]} />, {})
+            await renderWithContexts(
+              <RendezVousPasses beneficiaire={uneBaseJeune()} rdvs={[]} />,
+              {}
+            )
           })
 
           // Then
@@ -55,13 +62,18 @@ describe('RendezVousPasses', () => {
   })
 
   describe('server side', () => {
-    let rendezVousService: EvenementsService
+    let evenementsService: EvenementsService
+    let jeunesService: JeunesService
     beforeEach(() => {
-      rendezVousService = mockedEvenementsService({
+      evenementsService = mockedEvenementsService({
         getRendezVousJeune: jest.fn(async () => [unEvenementListItem()]),
       })
+      jeunesService = mockedJeunesService({
+        getJeuneDetails: jest.fn(async () => unDetailJeune()),
+      })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-        if (dependance === 'evenementsService') return rendezVousService
+        if (dependance === 'evenementsService') return evenementsService
+        if (dependance === 'jeunesService') return jeunesService
       })
     })
 
@@ -80,6 +92,7 @@ describe('RendezVousPasses', () => {
         expect(actual).toEqual({ redirect: 'whatever' })
       })
     })
+
     describe('quand la session est valide', () => {
       let actual: GetServerSidePropsResult<any>
 
@@ -99,16 +112,24 @@ describe('RendezVousPasses', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(rendezVousService.getRendezVousJeune).toHaveBeenCalledWith(
+        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
+        expect(evenementsService.getRendezVousJeune).toHaveBeenCalledWith(
           'id-jeune',
           'PASSES',
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { rdvs: [unEvenementListItem()] },
+          props: {
+            beneficiaire: unDetailJeune(),
+            rdvs: [unEvenementListItem()],
+          },
         })
       })
     })
+
     describe('quand le conseiller est Pôle emploi', () => {
       let actual: GetServerSidePropsResult<any>
 
@@ -124,7 +145,7 @@ describe('RendezVousPasses', () => {
           query: {},
         } as unknown as GetServerSidePropsContext)
         // Then
-        expect(rendezVousService.getRendezVousJeune).not.toHaveBeenCalled()
+        expect(evenementsService.getRendezVousJeune).not.toHaveBeenCalled()
         expect(actual).toMatchObject({ props: { rdvs: [] } })
       })
     })

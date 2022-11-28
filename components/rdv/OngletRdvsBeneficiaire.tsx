@@ -6,20 +6,21 @@ import IconComponent, { IconName } from '../ui/IconComponent'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import TableauRdv from 'components/rdv/TableauRdv'
 import { EvenementListItem } from 'interfaces/evenement'
+import { BaseJeune } from 'interfaces/jeune'
 
-interface OngletRdvsProps {
+interface OngletRdvsBeneficiaireProps {
   rdvs: EvenementListItem[]
+  beneficiaire: BaseJeune
   poleEmploi: boolean
   idConseiller: string
-  idJeune: string
 }
 
 export function OngletRdvsBeneficiaire({
   idConseiller,
-  idJeune,
+  beneficiaire,
   poleEmploi,
   rdvs,
-}: OngletRdvsProps) {
+}: OngletRdvsBeneficiaireProps) {
   return (
     <>
       {!poleEmploi ? (
@@ -27,9 +28,9 @@ export function OngletRdvsBeneficiaire({
           <TableauRdv
             rdvs={rdvs}
             idConseiller={idConseiller}
-            withNameJeune={false}
+            beneficiaireUnique={beneficiaire}
           />
-          <Link href={`/mes-jeunes/${idJeune}/rendez-vous-passes`}>
+          <Link href={`/mes-jeunes/${beneficiaire.id}/rendez-vous-passes`}>
             <a className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
               Voir les événements passés
               <IconComponent

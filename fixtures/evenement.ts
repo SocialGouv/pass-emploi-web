@@ -95,7 +95,7 @@ export function desEvenementsListItems(): EvenementListItem[] {
     unEvenementListItem(),
     {
       id: '2',
-      beneficiaires: 'Raja Jirac',
+      labelBeneficiaires: 'Raja Jirac',
       type: 'Atelier',
       modality: 'En agence',
       date: '2021-10-25T12:00:00.000Z',
@@ -110,7 +110,7 @@ export function unEvenementListItem(
 ): EvenementListItem {
   const defaults: EvenementListItem = {
     id: '1',
-    beneficiaires: 'Kenji Jirac',
+    labelBeneficiaires: 'Kenji Jirac',
     type: 'Autre',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
@@ -202,11 +202,6 @@ export function unEvenementJeuneJson(
 ): EvenementJeuneJson {
   const defaults: EvenementJeuneJson = {
     id: '1',
-    jeune: {
-      id: '1',
-      prenom: 'Kenji',
-      nom: 'Jirac',
-    },
     type: { code: 'AUTRE', label: 'Autre' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
