@@ -145,15 +145,11 @@ function Profil({ referentielAgences }: ProfilProps) {
           </section>
           <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Notifications</h2>
-            <label
-              htmlFor='notificationSonore'
-              className='flex items-center flex-wrap layout_m:flex-nowrap'
-            >
-              <span className='mr-4'>
+            <div className='flex items-center flex-wrap layout_m:flex-nowrap'>
+              <label htmlFor='notificationSonore' className='mr-4'>
                 Recevoir des notifications sonores pour la réception de nouveaux
                 messages
-              </span>
-              {/*FIXME Switch dans le label ?*/}
+              </label>
               <Switch
                 id='notificationSonore'
                 checkedLabel='Activé'
@@ -161,7 +157,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                 checked={conseiller.notificationsSonores}
                 onChange={toggleNotificationsSonores}
               />
-            </label>
+            </div>
           </section>
           <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>
