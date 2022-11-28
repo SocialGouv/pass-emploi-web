@@ -306,7 +306,7 @@ function EditionRdv({
 
           {estAClore(evenement) && (
             <div className='pt-6'>
-              <FailureAlert label='Cette animation collective est passée et doit être close' />
+              <FailureAlert label='Cet événement est passé et doit être clos' />
             </div>
           )}
 
