@@ -91,7 +91,7 @@ describe('<Conversation />', () => {
     const file = new File(['un contenu'], 'imageupload.png', {
       type: 'image/png',
     })
-    const fileInput = screen.getByLabelText('Attacher une pièce jointe')
+    const fileInput = screen.getByLabelText('Ajouter une pièce jointe')
     const messageInput = screen.getByPlaceholderText(
       'Écrivez votre message ici...'
     )
@@ -241,15 +241,14 @@ describe('<Conversation />', () => {
   })
 
   describe('quand on crée un message avec une pièce jointe', () => {
-    let uploadFileButton: HTMLButtonElement
+    let fileInput: HTMLInputElement
     let file: File
     let submitButton: HTMLButtonElement
     beforeEach(async () => {
       // Given
       file = new File(['un contenu'], 'imageupload.png')
 
-      const fileInput = screen.getByLabelText('Attacher une pièce jointe')
-      uploadFileButton = fileInput.closest('button')!
+      fileInput = screen.getByLabelText('Ajouter une pièce jointe')
       submitButton = screen.getByRole('button', { name: /Envoyer/ })
 
       // When
@@ -263,7 +262,7 @@ describe('<Conversation />', () => {
       expect(
         screen.getByLabelText('Supprimer la pièce jointe')
       ).toBeInTheDocument()
-      expect(uploadFileButton).toHaveAttribute('disabled', '')
+      expect(fileInput).toHaveAttribute('disabled', '')
       expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
         ['jeune-1'],
         file

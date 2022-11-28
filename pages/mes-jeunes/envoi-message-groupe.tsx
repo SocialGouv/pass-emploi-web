@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
+import React, { MouseEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -10,6 +10,7 @@ import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
+import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
@@ -53,7 +54,6 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
   const [pieceJointe, setPieceJointe] = useState<File | undefined>()
-  const hiddenFileInput = useRef<HTMLInputElement>(null)
   const [isSending, setIsSending] = useState<boolean>(false)
   const [erreurUploadPieceJointe, setErreurUploadPieceJointe] = useState<
     string | undefined
@@ -175,19 +175,6 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     openLeavePageConfirmationModal
   )
 
-  function ouvrirSelectionFichier() {
-    hiddenFileInput.current!.click()
-  }
-
-  function ajouterPieceJointe(event: ChangeEvent<HTMLInputElement>) {
-    if (!event.target.files || !event.target.files[0]) return
-
-    const fichierSelectionne = event.target.files[0]
-    setPieceJointe(fichierSelectionne)
-
-    hiddenFileInput.current!.value = ''
-  }
-
   function enleverFichier() {
     setErreurUploadPieceJointe(undefined)
     setPieceJointe(undefined)
@@ -238,42 +225,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             </div>
 
             <div className='my-4'>
-              <Button
-                type='button'
-                controls='piece-jointe-multi'
-                describedBy='piece-jointe-multi--desc'
-                style={ButtonStyle.SECONDARY}
-                onClick={ouvrirSelectionFichier}
+              <FileInput
+                id='piece-jointe-multi'
+                ariaDescribedby='piece-jointe-multi--desc'
+                onChange={setPieceJointe}
                 disabled={Boolean(pieceJointe)}
-              >
-                <IconComponent
-                  name={IconName.File}
-                  aria-hidden={true}
-                  focusable={false}
-                  className='h-4 w-4 mr-2'
-                />
-                <label
-                  htmlFor='piece-jointe-multi'
-                  className='cursor-pointer'
-                  onClick={(e) => e.preventDefault()}
-                >
-                  Ajouter une pièce jointe
-                </label>
-                <input
-                  id='piece-jointe-multi'
-                  type='file'
-                  ref={hiddenFileInput}
-                  aria-describedby={
-                    erreurUploadPieceJointe
-                      ? 'piece-jointe-multi--error'
-                      : undefined
-                  }
-                  aria-invalid={erreurUploadPieceJointe ? true : undefined}
-                  onChange={ajouterPieceJointe}
-                  className='hidden'
-                  accept='.pdf, .png, .jpeg, .jpg'
-                />
-              </Button>
+              />
             </div>
 
             {pieceJointe && (
