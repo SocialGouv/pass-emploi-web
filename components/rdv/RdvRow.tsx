@@ -17,14 +17,14 @@ import {
 interface RdvRowProps {
   rdv: EvenementListItem
   idConseiller: string
-  beneficiaire?: BaseJeune
+  beneficiaireUnique?: BaseJeune
   withDate?: boolean
 }
 
 export function RdvRow({
   rdv,
   idConseiller,
-  beneficiaire,
+  beneficiaireUnique,
   withDate,
 }: RdvRowProps) {
   const date = useMemo(() => DateTime.fromISO(rdv.date), [rdv.date])
@@ -37,9 +37,9 @@ export function RdvRow({
     () => `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duree} min`,
     [date, rdv.duree]
   )
-  const labelBeneficiaires = beneficiaire
-    ? getNomJeuneComplet(beneficiaire)
-    : rdv.beneficiaires
+  const labelBeneficiaires = beneficiaireUnique
+    ? getNomJeuneComplet(beneficiaireUnique)
+    : rdv.labelBeneficiaires
 
   return (
     <TR
@@ -54,7 +54,7 @@ export function RdvRow({
         {timeAndDuration}
       </TD>
 
-      {!beneficiaire && <TD>{rdv.beneficiaires}</TD>}
+      {!beneficiaireUnique && <TD>{rdv.labelBeneficiaires}</TD>}
 
       <TD>
         <DataTag text={rdv.type} />

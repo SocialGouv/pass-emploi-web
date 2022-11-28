@@ -28,7 +28,7 @@ export function OngletRdvsBeneficiaire({
           <TableauRdv
             rdvs={rdvs}
             idConseiller={idConseiller}
-            beneficiaire={beneficiaire}
+            beneficiaireUnique={beneficiaire}
           />
           <Link href={`/mes-jeunes/${beneficiaire.id}/rendez-vous-passes`}>
             <a className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>

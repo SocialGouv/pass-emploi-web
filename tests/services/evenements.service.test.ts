@@ -182,7 +182,7 @@ describe('EvenementsApiService', () => {
       )
       expect(actual).toEqual([
         unEvenementListItem(),
-        unEvenementListItem({ beneficiaires: 'Bénéficiaires multiples' }),
+        unEvenementListItem({ labelBeneficiaires: 'Bénéficiaires multiples' }),
       ])
     })
   })
@@ -210,7 +210,7 @@ describe('EvenementsApiService', () => {
         accessToken
       )
       const expected = unEvenementListItem()
-      delete expected.beneficiaires
+      delete expected.labelBeneficiaires
       expect(actual).toEqual([expected])
     })
   })

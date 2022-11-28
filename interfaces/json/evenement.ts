@@ -95,7 +95,7 @@ export function jsonToListItem(
     idCreateur: json.createur.id,
   }
   if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {
-    evenement.beneficiaires = jsonToBeneficiaires(
+    evenement.labelBeneficiaires = jsonToBeneficiaires(
       (json as EvenementJson).jeunes
     )
   }

@@ -25,7 +25,7 @@ function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
     <TableauRdv
       rdvs={rdvs}
       idConseiller={conseiller?.id ?? ''}
-      beneficiaire={beneficiaire}
+      beneficiaireUnique={beneficiaire}
     />
   )
 }
@@ -50,14 +50,14 @@ export const getServerSideProps: GetServerSideProps<
   } = sessionOrRedirect
 
   const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
-  const idJeune: string = context.query.jeune_id as string
+  const idBeneficiaire = context.query.jeune_id as string
 
   const [beneficiaire, rdvs] = await Promise.all([
-    jeunesService.getJeuneDetails(idJeune, accessToken),
+    jeunesService.getJeuneDetails(idBeneficiaire, accessToken),
     isPoleEmploi
       ? []
       : await evenementsService.getRendezVousJeune(
-          idJeune,
+          idBeneficiaire,
           PeriodeEvenements.PASSES,
           accessToken
         ),

@@ -29,7 +29,7 @@ export type EvenementListItem = {
   date: string
   duree: number
   idCreateur: string
-  beneficiaires?: string
+  labelBeneficiaires?: string
 }
 
 type Auteur = { nom: string; prenom: string }
