@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next'
 import TableauRdv from 'components/rdv/TableauRdv'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PeriodeEvenements, EvenementListItem } from 'interfaces/evenement'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       beneficiaire,
       rdvs,
-      pageTitle: 'Rendez-vous passés',
+      pageTitle: 'Rendez-vous passés de ' + getNomJeuneComplet(beneficiaire),
     },
   }
 }

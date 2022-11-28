@@ -121,10 +121,11 @@ describe('RendezVousPasses', () => {
           'PASSES',
           'accessToken'
         )
-        expect(actual).toMatchObject({
+        expect(actual).toEqual({
           props: {
             beneficiaire: unDetailJeune(),
             rdvs: [unEvenementListItem()],
+            pageTitle: 'Rendez-vous passés de Jirac Kenji',
           },
         })
       })
