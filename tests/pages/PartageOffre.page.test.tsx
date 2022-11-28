@@ -460,7 +460,7 @@ describe('Page Partage Offre', () => {
           // Given
           const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
             'button',
-            { name: 'Enlever jeune' }
+            { name: /Enlever jeune/ }
           )
 
           // When

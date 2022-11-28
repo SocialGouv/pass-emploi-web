@@ -5,6 +5,7 @@ interface MultiselectionProps {
   typeSelection: string
   unselect: (id: string) => void
   infoLabel?: string
+  disabled?: boolean
 }
 
 export default function Multiselection({
@@ -12,6 +13,7 @@ export default function Multiselection({
   infoLabel,
   typeSelection,
   unselect,
+  disabled,
 }: MultiselectionProps) {
   const tag = `selected-${typeSelection}s`
 
@@ -46,16 +48,20 @@ export default function Multiselection({
           )}
           {!withInfo && value}
 
-          <button type='reset' onClick={() => unselect(id)}>
-            <span className='sr-only'>Enlever {typeSelection}</span>
-            <IconComponent
-              name={IconName.Remove}
-              focusable={false}
-              aria-hidden={true}
-              className='w-8 h-8'
-              title='Enlever'
-            />
-          </button>
+          {!disabled && (
+            <button type='reset' onClick={() => unselect(id)}>
+              <span className='sr-only'>
+                Enlever {typeSelection} {value}
+              </span>
+              <IconComponent
+                name={IconName.Remove}
+                focusable={false}
+                aria-hidden={true}
+                className='w-8 h-8'
+                title='Enlever'
+              />
+            </button>
+          )}
         </li>
       ))}
     </ul>
