@@ -126,7 +126,7 @@ const ALERTS: DictAlerts = {
   suggestionRecherche: {
     title: 'La recherche et ses critères ont bien été partagés',
   },
-  clotureAC: { title: "L'animation collective a bien été close" },
+  clotureAC: { title: 'Cet événement a bien été clos' },
 }
 
 const ALERTS_MILO: DictAlerts = {
