@@ -708,11 +708,11 @@ export function EditionRdvForm({
             )}
 
             <div className='flex items-center mb-8'>
-              <label htmlFor='presenceConseiller' className='flex items-center'>
-                <span className='w-64 mr-4'>
+              <div className='flex items-center'>
+                <label htmlFor='presenceConseiller' className='w-64 mr-4'>
                   Informer les bénéficiaires qu’un conseiller sera présent à
                   l’événement
-                </span>
+                </label>
                 <Switch
                   id='presenceConseiller'
                   checked={isConseillerPresent}
@@ -722,19 +722,19 @@ export function EditionRdvForm({
                   }
                   onChange={handlePresenceConseiller}
                 />
-              </label>
+              </div>
             </div>
 
             <div className='flex items-center mb-8'>
-              <label htmlFor='emailInvitation' className='flex items-center'>
-                <span className='w-64 mr-4'>{emailInvitationText()}</span>
+              <div className='flex items-center'>
+                <label htmlFor='emailInvitation' className='w-64 mr-4'>{emailInvitationText()}</label>
                 <Switch
                   id='emailInvitation'
                   disabled={Boolean(evenement)}
                   checked={sendEmailInvitation}
                   onChange={(e) => setSendEmailInvitation(e.target.checked)}
                 />
-              </label>
+              </div>
             </div>
           </Etape>
 

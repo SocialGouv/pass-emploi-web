@@ -23,28 +23,28 @@
 }
 
 
-.checkbox:checked + .toggle::after {
-    left : 1.25rem;
-}
-
-.checkbox:checked + .toggle {
-    background-color: #34C759;
-    border: 1px solid #34C759;
-}
-
 .checkbox {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.checkbox:focus + .toggle {
+.checkbox:checked + div > .toggle::after {
+    left : 1.25rem;
+}
+
+.checkbox:checked + div > .toggle {
+    background-color: #34C759;
+    border: 1px solid #34C759;
+}
+
+.checkbox:focus + div > .toggle {
     outline: 1px solid blue;
     outline: 1px auto -webkit-focus-ring-color;
 
 }
 
-.checkbox:disabled + .toggle {
+.checkbox:disabled + div > .toggle {
     opacity: 0.6;
     filter: grayscale(40%);
     cursor: not-allowed;
