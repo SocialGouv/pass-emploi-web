@@ -85,7 +85,6 @@ export interface JeunesService {
   getMotifsSuppression(): Promise<MotifSuppressionJeune[]>
 
   getMetadonneesFavorisJeune(
-    idConseiller: string,
     idJeune: string,
     accessToken: string
   ): Promise<MetadonneesFavoris | undefined>
@@ -287,17 +286,13 @@ export class JeunesApiService implements JeunesService {
   }
 
   async getMetadonneesFavorisJeune(
-    idConseiller: string,
     idJeune: string,
     accessToken: string
   ): Promise<MetadonneesFavoris | undefined> {
     try {
       const { content: metadonneesFavoris } = await this.apiClient.get<{
         favoris: MetadonneesFavorisJson
-      }>(
-        `/conseillers/${idConseiller}/jeunes/${idJeune}/metadonnees`,
-        accessToken
-      )
+      }>(`/jeunes/${idJeune}/favoris/metadonnees`, accessToken)
       return jsonToMetadonneesFavoris(metadonneesFavoris)
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {

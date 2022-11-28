@@ -475,7 +475,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const {
     session: {
       accessToken,
-      user: { structure, id },
+      user: { structure },
     },
   } = sessionOrRedirect
 
@@ -487,7 +487,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       accessToken
     ),
     jeunesService.getMetadonneesFavorisJeune(
-      id,
       context.query.jeune_id as string,
       accessToken
     ),
