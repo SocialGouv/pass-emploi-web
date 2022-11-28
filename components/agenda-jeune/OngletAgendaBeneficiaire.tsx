@@ -6,6 +6,7 @@ import {
   SemaineAgenda,
 } from 'components/agenda-jeune/EntreesAgendaParJourDeLaSemaine'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Agenda, EntreeAgenda } from 'interfaces/agenda'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
@@ -14,22 +15,29 @@ interface OngletAgendaBeneficiaireProps {
   idBeneficiaire: string
   isPoleEmploi: boolean
   recupererAgenda: () => Promise<Agenda>
+  goToActions: () => void
 }
 
 export function OngletAgendaBeneficiaire({
   idBeneficiaire,
   isPoleEmploi,
   recupererAgenda,
+  goToActions,
 }: OngletAgendaBeneficiaireProps) {
   const [semaines, setSemaines] = useState<{
     courante: SemaineAgenda
     suivante: SemaineAgenda
   }>()
 
+  const [nombreActionsEnRetard, setNombreActionsEnRetard] = useState<number>()
+
   useEffect(() => {
     if (!isPoleEmploi) {
       recupererAgenda().then(
-        ({ entrees, metadata: { dateDeDebut, dateDeFin } }) => {
+        ({
+          entrees,
+          metadata: { dateDeDebut, dateDeFin, actionsEnRetard },
+        }) => {
           const { courante, suivante, separation } = preparerSemaines(
             dateDeDebut,
             dateDeFin
@@ -44,6 +52,7 @@ export function OngletAgendaBeneficiaire({
           })
 
           setSemaines({ courante, suivante })
+          setNombreActionsEnRetard(actionsEnRetard)
         }
       )
     }
@@ -60,6 +69,33 @@ export function OngletAgendaBeneficiaire({
 
       {!isPoleEmploi && semaines && (
         <>
+          {Boolean(nombreActionsEnRetard) && (
+            <div className='flex justify-between p-4 mb-6 bg-warning_lighten rounded-medium'>
+              <div className='flex gap-2'>
+                <IconComponent
+                  name={IconName.ImportantOutline}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='w-[16px] h-[16px] m-auto accent-warning'
+                />
+                <p>Actions en retard ({nombreActionsEnRetard})</p>
+              </div>
+              <button
+                type='button'
+                onClick={goToActions}
+                className='flex items-center'
+              >
+                Voir
+                <IconComponent
+                  name={IconName.ChevronRight}
+                  className='w-4 h-5'
+                  aria-hidden={true}
+                  focusable={false}
+                />
+                <span className='sr-only'>les actions</span>
+              </button>
+            </div>
+          )}
           <section aria-labelledby='semaine-en-cours'>
             <h2 id='semaine-en-cours' className='text-m-bold text-primary mb-6'>
               Semaine en cours

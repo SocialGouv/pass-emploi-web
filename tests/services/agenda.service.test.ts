@@ -32,6 +32,7 @@ describe('AgendaService', () => {
           metadata: {
             dateDeDebut: '2022-09-01T00:00:00.000+02:00',
             dateDeFin: '2022-09-14T00:00:00.000+02:00',
+            actionsEnRetard: '8',
           },
         },
       })
@@ -90,6 +91,7 @@ describe('AgendaService', () => {
         metadata: {
           dateDeDebut: DateTime.fromISO('2022-09-01T00:00:00.000+02:00'),
           dateDeFin: DateTime.fromISO('2022-09-14T00:00:00.000+02:00'),
+          actionsEnRetard: 8,
         },
       })
     })
