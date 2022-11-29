@@ -3,7 +3,9 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
-import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import JeunesMultiselectAutocomplete, {
+  OptionJeune,
+} from 'components/jeune/JeunesMultiselectAutocomplete'
 import ImmersionCard from 'components/offres/ImmersionCard'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
@@ -14,7 +16,7 @@ import { Etape } from 'components/ui/Form/Etape'
 import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
@@ -51,6 +53,13 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
     () => idsDestinataires.value.length > 0,
     [idsDestinataires]
   )
+
+  function buildOptionsJeunes(): OptionJeune[] {
+    return jeunes.map((jeune) => ({
+      id: jeune.id,
+      value: getNomJeuneComplet(jeune),
+    }))
+  }
 
   function updateIdsDestinataires(selectedIds: string[]) {
     setIdsDestinataires({
@@ -106,7 +115,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
       <form onSubmit={partager} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>
           <JeunesMultiselectAutocomplete
-            jeunes={jeunes}
+            jeunes={buildOptionsJeunes()}
             typeSelection='Bénéficiaires'
             onUpdate={updateIdsDestinataires}
             error={idsDestinataires.error}

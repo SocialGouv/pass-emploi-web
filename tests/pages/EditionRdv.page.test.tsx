@@ -1064,7 +1064,7 @@ describe('EditionRdv', () => {
             screen.getByText(/des bénéficiaires que vous ne suivez pas/)
           ).toBeInTheDocument()
           expect(
-            screen.getByLabelText("Ce jeune n'est pas dans votre portefeuille")
+            screen.getByLabelText('Ce jeune n’est pas dans votre portefeuille')
           ).toBeInTheDocument()
         })
       })
@@ -1518,7 +1518,7 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on souhaite modifier une animation collective close', () => {
+    describe('quand on consulte une animation collective close', () => {
       it('empêche toute modification', async () => {
         // Given
         const jeune = {
@@ -1581,6 +1581,8 @@ describe('EditionRdv', () => {
           screen.queryByRole('button', { name: /Modifier/ })
         ).not.toBeInTheDocument()
       })
+
+      it('indique les bénéficiaires qui étaient présents', () => {})
     })
 
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
@@ -1636,7 +1638,7 @@ describe('EditionRdv', () => {
         )
         expect(() =>
           within(jeune).getByLabelText(
-            /Ce jeune n'est pas dans votre portefeuille/
+            /Ce jeune n’est pas dans votre portefeuille/
           )
         ).toThrow()
         expect(() =>
@@ -1649,7 +1651,7 @@ describe('EditionRdv', () => {
         const autreJeune = within(beneficiaires).getByText('Dupont Michel')
         expect(
           within(autreJeune).getByLabelText(
-            /Ce jeune n'est pas dans votre portefeuille/
+            /Ce jeune n’est pas dans votre portefeuille/
           )
         ).toBeInTheDocument()
         expect(() =>

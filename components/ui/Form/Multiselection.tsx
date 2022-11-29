@@ -1,7 +1,7 @@
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface MultiselectionProps {
-  selection: { id: string; value: string; withInfo: boolean }[]
+  selection: { id: string; value: string; avecIndicateur: boolean }[]
   typeSelection: string
   unselect: (id: string) => void
   infoLabel?: string
@@ -26,13 +26,13 @@ export default function Multiselection({
       aria-live='polite'
       aria-relevant='additions removals'
     >
-      {selection.map(({ id, value, withInfo }) => (
+      {selection.map(({ id, value, avecIndicateur }) => (
         <li
           key={id}
           className='bg-blanc w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           aria-atomic={true}
         >
-          {withInfo && (
+          {avecIndicateur && (
             <div className='flex items-center text-base-bold text-accent_3'>
               <div aria-label={infoLabel} className='mr-2'>
                 <IconComponent
@@ -46,7 +46,7 @@ export default function Multiselection({
               {value}
             </div>
           )}
-          {!withInfo && value}
+          {!avecIndicateur && value}
 
           {!disabled && (
             <button type='reset' onClick={() => unselect(id)}>

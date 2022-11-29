@@ -3,14 +3,16 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
-import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import JeunesMultiselectAutocomplete, {
+  OptionJeune,
+} from 'components/jeune/JeunesMultiselectAutocomplete'
 import SuggestionCard from 'components/offres/suggestions/SuggestionCard'
 import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
@@ -75,6 +77,13 @@ function PartageRecherche({
     () => idsDestinataires.value.length > 0,
     [idsDestinataires]
   )
+
+  function buildOptionsJeunes(): OptionJeune[] {
+    return jeunes.map((jeune) => ({
+      id: jeune.id,
+      value: getNomJeuneComplet(jeune),
+    }))
+  }
 
   function getLabelMetier(): string | undefined {
     switch (type) {
@@ -207,7 +216,7 @@ function PartageRecherche({
       <form onSubmit={partagerCriteresRecherche} className='mt-8'>
         <Etape numero={1} titre='Destinataires'>
           <JeunesMultiselectAutocomplete
-            jeunes={jeunes}
+            jeunes={buildOptionsJeunes()}
             typeSelection='Destinataires'
             onUpdate={updateIdsDestinataires}
             error={idsDestinataires.error}

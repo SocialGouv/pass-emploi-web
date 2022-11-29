@@ -1,7 +1,9 @@
 import { DateTime } from 'luxon'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import JeunesMultiselectAutocomplete, {
+  OptionJeune,
+} from 'components/jeune/JeunesMultiselectAutocomplete'
 import {
   RequiredValue,
   RequiredValue as ValueWithError,
@@ -25,7 +27,7 @@ import {
   TYPE_EVENEMENT,
   TypeEvenement,
 } from 'interfaces/evenement'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { modalites } from 'referentiel/evenement'
 import {
@@ -135,37 +137,46 @@ export function EditionRdvForm({
       ? 'Mission locale'
       : 'agence'
 
-  function buildOptionsJeunes(): Array<
-    BaseJeune & { isAutrePortefeuille: boolean }
-  > {
+  function estUnBeneficiaireDuConseiller(idJeune: string): boolean {
+    return jeunesConseiller.some(({ id }) => idJeune === id)
+  }
+
+  function buildOptionsJeunes(): OptionJeune[] {
     if (!isCodeTypeAnimationCollective(codeTypeRendezVous)) {
       return jeunesConseiller.map((jeune) => ({
-        ...jeune,
-        isAutrePortefeuille: false,
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndicateur: false,
       }))
     }
 
     return jeunesEtablissement.map((jeune) => ({
-      ...jeune,
-      isAutrePortefeuille: !jeunesConseiller.some(({ id }) => jeune.id === id),
+      id: jeune.id,
+      value: getNomJeuneComplet(jeune),
+      avecIndicateur: !estUnBeneficiaireDuConseiller(jeune.id),
     }))
   }
 
-  function initJeunesFromRdvOrIdJeune(): Array<
-    BaseJeune & { isAutrePortefeuille: boolean }
-  > {
+  function initJeunesFromRdvOrIdJeune(): OptionJeune[] {
     if (evenement) {
       return evenement.jeunes.map((jeune) => ({
-        ...jeune,
-        isAutrePortefeuille: !jeunesConseiller.some(
-          ({ id }) => jeune.id === id
-        ),
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndicateur: !estUnBeneficiaireDuConseiller(jeune.id),
       }))
     }
+
     if (idJeune) {
       const jeune = jeunesConseiller.find(({ id }) => id === idJeune)!
-      return [{ ...jeune, isAutrePortefeuille: false }]
+      return [
+        {
+          id: jeune.id,
+          value: getNomJeuneComplet(jeune),
+          avecIndicateur: false,
+        },
+      ]
     }
+
     return []
   }
 
@@ -229,9 +240,7 @@ export function EditionRdvForm({
         : undefined,
     })
     onBeneficiairesDUnAutrePortefeuille(
-      selectedIds.some(
-        (id) => !jeunesConseiller.some((jeune) => jeune.id === id)
-      )
+      selectedIds.some((id) => !estUnBeneficiaireDuConseiller(id))
     )
   }
 
@@ -554,6 +563,7 @@ export function EditionRdvForm({
             <JeunesMultiselectAutocomplete
               jeunes={buildOptionsJeunes()}
               typeSelection='Bénéficiaires'
+              infoLabel='Ce jeune n’est pas dans votre portefeuille'
               defaultJeunes={defaultJeunes}
               onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
