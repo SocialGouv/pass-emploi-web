@@ -1,18 +1,19 @@
+import { BeneficiaireIndicateurPortefeuille } from 'components/jeune/BeneficiaireIndicateurs'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface MultiselectionProps {
   selection: { id: string; value: string; avecIndicateur: boolean }[]
   typeSelection: string
   unselect: (id: string) => void
-  infoLabel?: string
+  renderIndicateur?: (props: { value: string }) => JSX.Element
   disabled?: boolean
 }
 
 export default function Multiselection({
   selection,
-  infoLabel,
   typeSelection,
   unselect,
+  renderIndicateur = BeneficiaireIndicateurPortefeuille,
   disabled,
 }: MultiselectionProps) {
   const id = `selected-${typeSelection}s`
@@ -26,30 +27,17 @@ export default function Multiselection({
       aria-live='polite'
       aria-relevant='additions removals'
     >
-      {selection.map(({ id, value, avecIndicateur }) => (
+      {selection.map(({ id: idItem, value, avecIndicateur }) => (
         <li
-          key={id}
+          key={idItem}
           className='bg-blanc w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           aria-atomic={true}
         >
-          {avecIndicateur && (
-            <div className='flex items-center text-base-bold text-accent_3'>
-              <div aria-label={infoLabel} className='mr-2'>
-                <IconComponent
-                  name={IconName.Info}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='w-6 h-6 fill-accent_3'
-                  title={infoLabel}
-                />
-              </div>
-              {value}
-            </div>
-          )}
+          {avecIndicateur && renderIndicateur({ value })}
           {!avecIndicateur && value}
 
           {!disabled && (
-            <button type='reset' onClick={() => unselect(id)}>
+            <button type='reset' onClick={() => unselect(idItem)}>
               <span className='sr-only'>
                 Enlever {typeSelection} {value}
               </span>

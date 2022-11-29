@@ -19,7 +19,7 @@ export type EvenementJson = {
   duration: number
   type: TypeEvenement
   modality: string
-  jeunes: BaseJeune[]
+  jeunes: Array<BaseJeune & { futPresent?: boolean }>
   title: string
   createur: Auteur
   invitation: boolean

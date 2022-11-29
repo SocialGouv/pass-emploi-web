@@ -1047,7 +1047,7 @@ describe('EditionRdv', () => {
           )
           expect(
             screen.getByText(
-              'Pour les animations collectives, l’ajout de bénéficiaires est facultatif'
+              'Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif'
             )
           ).toBeInTheDocument()
         })
@@ -1064,7 +1064,9 @@ describe('EditionRdv', () => {
             screen.getByText(/des bénéficiaires que vous ne suivez pas/)
           ).toBeInTheDocument()
           expect(
-            screen.getByLabelText('Ce jeune n’est pas dans votre portefeuille')
+            screen.getByLabelText(
+              'Ce bénéficiaire n’est pas dans votre portefeuille'
+            )
           ).toBeInTheDocument()
         })
       })
@@ -1519,15 +1521,24 @@ describe('EditionRdv', () => {
     })
 
     describe('quand on consulte une animation collective close', () => {
-      it('empêche toute modification', async () => {
-        // Given
-        const jeune = {
+      let jeuneAbsent: BaseJeune & { futPresent: boolean }
+      let jeunePresent: BaseJeune & { futPresent: boolean }
+
+      beforeEach(async () => {
+        jeuneAbsent = {
           id: jeunesConseiller[0].id,
           prenom: jeunesConseiller[0].prenom,
           nom: jeunesConseiller[0].nom,
+          futPresent: false,
+        }
+        jeunePresent = {
+          id: jeunesConseiller[1].id,
+          prenom: jeunesConseiller[1].prenom,
+          nom: jeunesConseiller[1].nom,
+          futPresent: true,
         }
         const evenement = unEvenement({
-          jeunes: [jeune],
+          jeunes: [jeuneAbsent, jeunePresent],
           type: { code: 'ATELIER', label: 'Atelier' },
           statut: StatutAnimationCollective.Close,
         })
@@ -1553,7 +1564,9 @@ describe('EditionRdv', () => {
             }
           )
         })
+      })
 
+      it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
         expect(screen.getByLabelText(/Description/)).toBeDisabled()
@@ -1584,7 +1597,19 @@ describe('EditionRdv', () => {
         ).not.toBeInTheDocument()
       })
 
-      it('indique les bénéficiaires qui étaient présents', () => {})
+      it('indique les bénéficiaires qui étaient présents', () => {
+        // Then
+        expect(
+          within(
+            screen.getByText(getNomJeuneComplet(jeunePresent))
+          ).getByLabelText(/Ce bénéficiaire était présent à l’événement/)
+        ).toBeInTheDocument()
+        expect(
+          within(
+            screen.getByText(getNomJeuneComplet(jeuneAbsent))
+          ).queryByLabelText(/Ce bénéficiaire était présent à l’événement/)
+        ).not.toBeInTheDocument()
+      })
     })
 
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
@@ -1653,7 +1678,7 @@ describe('EditionRdv', () => {
         const autreJeune = within(beneficiaires).getByText('Dupont Michel')
         expect(
           within(autreJeune).getByLabelText(
-            /Ce jeune n’est pas dans votre portefeuille/
+            /Ce bénéficiaire n’est pas dans votre portefeuille/
           )
         ).toBeInTheDocument()
         expect(() =>

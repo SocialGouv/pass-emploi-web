@@ -1,6 +1,10 @@
 import { DateTime } from 'luxon'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
+import {
+  BeneficiaireIndicateurPortefeuille,
+  BeneficiaireIndicateurPresent,
+} from 'components/jeune/BeneficiaireIndicateurs'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
@@ -137,8 +141,10 @@ export function EditionRdvForm({
       ? 'Mission locale'
       : 'agence'
 
-  function estUnBeneficiaireDuConseiller(idJeune: string): boolean {
-    return jeunesConseiller.some(({ id }) => idJeune === id)
+  function estUnBeneficiaireDuConseiller(
+    idBeneficiaireAVerifier: string
+  ): boolean {
+    return jeunesConseiller.some(({ id }) => idBeneficiaireAVerifier === id)
   }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
@@ -150,6 +156,10 @@ export function EditionRdvForm({
       }))
     }
 
+    if (evenement && estClos(evenement)) {
+      return []
+    }
+
     return jeunesEtablissement.map((jeune) => ({
       id: jeune.id,
       value: getNomJeuneComplet(jeune),
@@ -158,6 +168,14 @@ export function EditionRdvForm({
   }
 
   function initJeunesFromRdvOrIdJeune(): OptionBeneficiaire[] {
+    if (evenement && estClos(evenement)) {
+      return evenement.jeunes.map((jeune) => ({
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndicateur: jeune.futPresent,
+      }))
+    }
+
     if (evenement) {
       return evenement.jeunes.map((jeune) => ({
         id: jeune.id,
@@ -557,18 +575,22 @@ export function EditionRdvForm({
             {isCodeTypeAnimationCollective(codeTypeRendezVous) &&
               (!evenement || !estClos(evenement)) && (
                 <div className='mb-4'>
-                  <InformationMessage content='Pour les animations collectives, l’ajout de bénéficiaires est facultatif' />
+                  <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
                 </div>
               )}
             <BeneficiairesMultiselectAutocomplete
               beneficiaires={buildOptionsJeunes()}
               typeSelection='Bénéficiaires'
-              infoLabel='Ce jeune n’est pas dans votre portefeuille'
               defaultBeneficiaires={defaultJeunes}
               onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
               disabled={evenement && estClos(evenement)}
+              renderIndicateur={
+                evenement && estClos(evenement)
+                  ? BeneficiaireIndicateurPresent
+                  : BeneficiaireIndicateurPortefeuille
+              }
             />
           </Etape>
 
