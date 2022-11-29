@@ -8,6 +8,7 @@ type FileInputProps = {
   id: string
   onChange: (fichier: File) => void
   ariaDescribedby?: string
+  iconOnly?: boolean
   invalid?: boolean
   disabled?: boolean
 }
@@ -15,10 +16,16 @@ export default function FileInput({
   id,
   onChange,
   ariaDescribedby,
+  iconOnly = false,
   invalid = false,
   disabled = false,
 }: FileInputProps) {
   const hiddenFileInput = useRef<HTMLInputElement>(null)
+
+  const styleLabel = iconOnly
+    ? 'bg-primary w-12 h-12 border-none rounded-full short:hidden'
+    : `${buttonStyle.button} ${buttonStyle.buttonSecondary} w-fit text-s-bold`
+  const styleIcone = iconOnly ? 'm-auto w-6 h-6 fill-blanc' : 'w-4 h-4 mr-2'
 
   function emettreFichier(
     event: ChangeEvent<HTMLInputElement>
@@ -43,17 +50,16 @@ export default function FileInput({
         accept='.pdf, .png, .jpeg, .jpg'
         disabled={disabled}
       />
-      <label
-        htmlFor={id}
-        className={`${buttonStyle.button} ${buttonStyle.buttonSecondary} w-fit text-s-bold cursor-pointer`}
-      >
+      <label htmlFor={id} className={'cursor-pointer ' + styleLabel}>
         <IconComponent
           name={IconName.File}
           aria-hidden={true}
           focusable={false}
-          className='h-4 w-4 mr-2'
+          className={styleIcone}
         />
-        Ajouter une pièce jointe
+        <span className={iconOnly ? 'sr-only' : ''}>
+          Ajouter une pièce jointe
+        </span>
       </label>
     </>
   )
