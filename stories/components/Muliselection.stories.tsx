@@ -44,6 +44,5 @@ Default.args = {
     },
   ],
   typeSelection: 'jeune',
-  infoLabel: 'Label élément spécial',
   unselect: () => undefined,
 }

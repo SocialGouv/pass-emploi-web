@@ -419,6 +419,14 @@ export function EditionRdvForm({
     }
   }
 
+  function emailInvitationText() {
+    if (conseillerIsCreator) {
+      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
+    } else {
+      return "Le créateur de l’événement recevra un mail pour l'informer de la modification."
+    }
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
@@ -436,14 +444,6 @@ export function EditionRdvForm({
     jeunesEtablissement.length,
     recupererJeunesDeLEtablissement,
   ])
-
-  function emailInvitationText(conseillerIsCreator: boolean) {
-    if (conseillerIsCreator) {
-      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
-    } else {
-      return "Le créateur de l’événement recevra un mail pour l'informer de la modification."
-    }
-  }
 
   return (
     <form onSubmit={handleSoumettreRdv}>
@@ -727,9 +727,7 @@ export function EditionRdvForm({
 
             <div className='flex items-center mb-8'>
               <label htmlFor='emailInvitation' className='flex items-center'>
-                <span className='w-64 mr-4'>
-                  {emailInvitationText(conseillerIsCreator)}
-                </span>
+                <span className='w-64 mr-4'>{emailInvitationText()}</span>
                 <Switch
                   id='emailInvitation'
                   disabled={Boolean(evenement)}

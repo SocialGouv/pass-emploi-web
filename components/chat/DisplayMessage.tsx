@@ -41,12 +41,8 @@ export default function DisplayMessage({
     }
   }
 
-  function detecteLien(message: string) {
-    return message.includes('http') || message.includes('https')
-  }
-
-  function formateMessageAvecLien(message: string) {
-    const messageFormate = message.split(' ').map((mot) => {
+  function formateMessageAvecLien(texte: string) {
+    const messageFormate = texte.split(' ').map((mot) => {
       if (detecteLien(mot)) {
         return `<a id="lienExterne">
           <span>${mot}</span>  
@@ -91,6 +87,10 @@ export default function DisplayMessage({
     }
 
     return parse(`<p>${messageFormate.join(' ')}</p>`, options)
+  }
+
+  function detecteLien(texte: string) {
+    return texte.includes('http') || texte.includes('https')
   }
 
   return (
