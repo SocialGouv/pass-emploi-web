@@ -404,7 +404,7 @@ describe('EditionRdv', () => {
         it('contient une liste pour choisir un jeune', () => {
           // Then
           const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
           })
           const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -578,7 +578,7 @@ describe('EditionRdv', () => {
           await userEvent.selectOptions(selectType, typesRendezVous[0].code)
 
           selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
           })
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
@@ -680,7 +680,7 @@ describe('EditionRdv', () => {
           // Given
           const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
             'button',
-            { name: /Enlever jeune/ }
+            { name: /Enlever beneficiaire/ }
           )
 
           // When
@@ -1037,7 +1037,7 @@ describe('EditionRdv', () => {
 
           // Then
           const selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
           })
           expect(selectJeunes).toHaveAttribute('aria-required', 'false')
           expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
@@ -1055,7 +1055,7 @@ describe('EditionRdv', () => {
         it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
           // Given
           await userEvent.type(
-            screen.getByLabelText(/ajouter des jeunes/),
+            screen.getByLabelText(/ajouter des bénéficiaires/),
             getNomJeuneComplet(jeunesAutreConseiller[0])
           )
 
@@ -1353,7 +1353,7 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           // Given
           const searchJeune = screen.getByRole('combobox', {
-            name: /ajouter des jeunes/,
+            name: /ajouter des bénéficiaires/,
           })
           const beneficiaires = screen.getByRole('region', {
             name: /Bénéficiaires/,
@@ -1564,7 +1564,9 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
-        expect(screen.getByLabelText(/ajouter des jeunes/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/ajouter des bénéficiaires/)
+        ).toBeDisabled()
         expect(
           screen.queryByText(/bénéficiaires est facultatif/)
         ).not.toBeInTheDocument()

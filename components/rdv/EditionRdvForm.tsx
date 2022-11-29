@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import JeunesMultiselectAutocomplete, {
-  OptionJeune,
-} from 'components/jeune/JeunesMultiselectAutocomplete'
+import BeneficiairesMultiselectAutocomplete, {
+  OptionBeneficiaire,
+} from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import {
   RequiredValue,
   RequiredValue as ValueWithError,
@@ -141,7 +141,7 @@ export function EditionRdvForm({
     return jeunesConseiller.some(({ id }) => idJeune === id)
   }
 
-  function buildOptionsJeunes(): OptionJeune[] {
+  function buildOptionsJeunes(): OptionBeneficiaire[] {
     if (!isCodeTypeAnimationCollective(codeTypeRendezVous)) {
       return jeunesConseiller.map((jeune) => ({
         id: jeune.id,
@@ -157,7 +157,7 @@ export function EditionRdvForm({
     }))
   }
 
-  function initJeunesFromRdvOrIdJeune(): OptionJeune[] {
+  function initJeunesFromRdvOrIdJeune(): OptionBeneficiaire[] {
     if (evenement) {
       return evenement.jeunes.map((jeune) => ({
         id: jeune.id,
@@ -560,11 +560,11 @@ export function EditionRdvForm({
                   <InformationMessage content='Pour les animations collectives, l’ajout de bénéficiaires est facultatif' />
                 </div>
               )}
-            <JeunesMultiselectAutocomplete
-              jeunes={buildOptionsJeunes()}
+            <BeneficiairesMultiselectAutocomplete
+              beneficiaires={buildOptionsJeunes()}
               typeSelection='Bénéficiaires'
               infoLabel='Ce jeune n’est pas dans votre portefeuille'
-              defaultJeunes={defaultJeunes}
+              defaultBeneficiaires={defaultJeunes}
               onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}

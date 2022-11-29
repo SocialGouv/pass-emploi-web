@@ -15,12 +15,12 @@ export default function Multiselection({
   unselect,
   disabled,
 }: MultiselectionProps) {
-  const tag = `selected-${typeSelection}s`
+  const id = `selected-${typeSelection}s`
 
   return (
     <ul
-      aria-labelledby={`${tag}--title`}
-      id={tag}
+      aria-labelledby={`${id}--title`}
+      id={id}
       role='region'
       className='bg-grey_100 rounded-[12px] px-2 py-4 max-h-96 overflow-y-auto'
       aria-live='polite'

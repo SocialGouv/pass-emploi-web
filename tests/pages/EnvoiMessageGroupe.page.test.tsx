@@ -64,7 +64,7 @@ describe('EnvoiMessageGroupe', () => {
       )
 
       inputSearchJeune = screen.getByRole('combobox', {
-        name: 'Rechercher et ajouter des jeunes Nom et prénom',
+        name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
       })
       inputMessage = screen.getByLabelText('* Message')
       fileInput = screen.getByLabelText('Ajouter une pièce jointe')
@@ -311,7 +311,10 @@ describe('EnvoiMessageGroupe', () => {
     describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {
       it('sélectionne tout les jeunes dans la liste', async () => {
         // When
-        await userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
+        await userEvent.type(
+          inputSearchJeune,
+          'Sélectionner tous mes bénéficiaires'
+        )
 
         // Then
         expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()

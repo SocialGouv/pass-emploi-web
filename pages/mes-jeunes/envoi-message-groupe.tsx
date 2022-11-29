@@ -3,9 +3,9 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
 
-import JeunesMultiselectAutocomplete, {
-  OptionJeune,
-} from 'components/jeune/JeunesMultiselectAutocomplete'
+import BeneficiairesMultiselectAutocomplete, {
+  OptionBeneficiaire,
+} from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -67,7 +67,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  function buildOptionsJeunes(): OptionJeune[] {
+  function buildOptionsJeunes(): OptionBeneficiaire[] {
     return jeunes.map((jeune) => ({
       id: jeune.id,
       value: getNomJeuneComplet(jeune),
@@ -205,8 +205,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
         </div>
 
         <Etape numero={1} titre='Destinataires'>
-          <JeunesMultiselectAutocomplete
-            jeunes={buildOptionsJeunes()}
+          <BeneficiairesMultiselectAutocomplete
+            beneficiaires={buildOptionsJeunes()}
             typeSelection='Destinataires'
             onUpdate={setSelectedJeunesIds}
           />

@@ -3,9 +3,9 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useMemo, useState } from 'react'
 
-import JeunesMultiselectAutocomplete, {
-  OptionJeune,
-} from 'components/jeune/JeunesMultiselectAutocomplete'
+import BeneficiairesMultiselectAutocomplete, {
+  OptionBeneficiaire,
+} from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import ImmersionCard from 'components/offres/ImmersionCard'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
@@ -54,7 +54,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
     [idsDestinataires]
   )
 
-  function buildOptionsJeunes(): OptionJeune[] {
+  function buildOptionsJeunes(): OptionBeneficiaire[] {
     return jeunes.map((jeune) => ({
       id: jeune.id,
       value: getNomJeuneComplet(jeune),
@@ -114,8 +114,8 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
 
       <form onSubmit={partager} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>
-          <JeunesMultiselectAutocomplete
-            jeunes={buildOptionsJeunes()}
+          <BeneficiairesMultiselectAutocomplete
+            beneficiaires={buildOptionsJeunes()}
             typeSelection='Bénéficiaires'
             onUpdate={updateIdsDestinataires}
             error={idsDestinataires.error}
