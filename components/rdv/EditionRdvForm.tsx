@@ -2,9 +2,9 @@ import { DateTime } from 'luxon'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import {
-  BeneficiaireIndicateurPortefeuille,
-  BeneficiaireIndicateurPresent,
-} from 'components/jeune/BeneficiaireIndicateurs'
+  BeneficiaireIndicationPortefeuille,
+  BeneficiaireIndicationPresent,
+} from 'components/jeune/BeneficiaireIndications'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
@@ -152,7 +152,7 @@ export function EditionRdvForm({
       return jeunesConseiller.map((jeune) => ({
         id: jeune.id,
         value: getNomJeuneComplet(jeune),
-        avecIndicateur: false,
+        avecIndication: false,
       }))
     }
 
@@ -163,7 +163,7 @@ export function EditionRdvForm({
     return jeunesEtablissement.map((jeune) => ({
       id: jeune.id,
       value: getNomJeuneComplet(jeune),
-      avecIndicateur: !estUnBeneficiaireDuConseiller(jeune.id),
+      avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
     }))
   }
 
@@ -172,7 +172,7 @@ export function EditionRdvForm({
       return evenement.jeunes.map((jeune) => ({
         id: jeune.id,
         value: getNomJeuneComplet(jeune),
-        avecIndicateur: jeune.futPresent,
+        avecIndication: jeune.futPresent,
       }))
     }
 
@@ -180,7 +180,7 @@ export function EditionRdvForm({
       return evenement.jeunes.map((jeune) => ({
         id: jeune.id,
         value: getNomJeuneComplet(jeune),
-        avecIndicateur: !estUnBeneficiaireDuConseiller(jeune.id),
+        avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
       }))
     }
 
@@ -190,7 +190,7 @@ export function EditionRdvForm({
         {
           id: jeune.id,
           value: getNomJeuneComplet(jeune),
-          avecIndicateur: false,
+          avecIndication: false,
         },
       ]
     }
@@ -586,10 +586,10 @@ export function EditionRdvForm({
               error={idsJeunes.error}
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
               disabled={evenement && estClos(evenement)}
-              renderIndicateur={
+              renderIndication={
                 evenement && estClos(evenement)
-                  ? BeneficiaireIndicateurPresent
-                  : BeneficiaireIndicateurPortefeuille
+                  ? BeneficiaireIndicationPresent
+                  : BeneficiaireIndicationPortefeuille
               }
             />
           </Etape>

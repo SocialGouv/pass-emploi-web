@@ -1,11 +1,11 @@
-import { BeneficiaireIndicateurPortefeuille } from 'components/jeune/BeneficiaireIndicateurs'
+import { BeneficiaireIndicationPortefeuille } from 'components/jeune/BeneficiaireIndications'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface MultiselectionProps {
-  selection: { id: string; value: string; avecIndicateur: boolean }[]
+  selection: { id: string; value: string; avecIndication: boolean }[]
   typeSelection: string
   unselect: (id: string) => void
-  renderIndicateur?: (props: { value: string }) => JSX.Element
+  renderIndication?: (props: { value: string }) => JSX.Element
   disabled?: boolean
 }
 
@@ -13,7 +13,7 @@ export default function Multiselection({
   selection,
   typeSelection,
   unselect,
-  renderIndicateur = BeneficiaireIndicateurPortefeuille,
+  renderIndication = BeneficiaireIndicationPortefeuille,
   disabled,
 }: MultiselectionProps) {
   const id = `selected-${typeSelection}s`
@@ -27,14 +27,14 @@ export default function Multiselection({
       aria-live='polite'
       aria-relevant='additions removals'
     >
-      {selection.map(({ id: idItem, value, avecIndicateur }) => (
+      {selection.map(({ id: idItem, value, avecIndication }) => (
         <li
           key={idItem}
           className='bg-blanc w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           aria-atomic={true}
         >
-          {avecIndicateur && renderIndicateur({ value })}
-          {!avecIndicateur && value}
+          {avecIndication && renderIndication({ value })}
+          {!avecIndication && value}
 
           {!disabled && (
             <button type='reset' onClick={() => unselect(idItem)}>

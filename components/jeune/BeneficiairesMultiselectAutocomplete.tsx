@@ -13,7 +13,7 @@ interface BeneficiairesMultiselectAutocompleteProps {
   defaultBeneficiaires?: OptionBeneficiaire[]
   error?: string
   disabled?: boolean
-  renderIndicateur?: (props: { value: string }) => JSX.Element
+  renderIndication?: (props: { value: string }) => JSX.Element
 }
 
 const SELECT_ALL_BENEFICIAIRES_OPTION = 'Sélectionner tous mes bénéficiaires'
@@ -21,7 +21,7 @@ const SELECT_ALL_BENEFICIAIRES_OPTION = 'Sélectionner tous mes bénéficiaires'
 export interface OptionBeneficiaire {
   id: string
   value: string
-  avecIndicateur?: boolean
+  avecIndication?: boolean
 }
 
 export default function BeneficiairesMultiselectAutocomplete({
@@ -32,7 +32,7 @@ export default function BeneficiairesMultiselectAutocomplete({
   error,
   defaultBeneficiaires = [],
   disabled,
-  renderIndicateur,
+  renderIndication,
 }: BeneficiairesMultiselectAutocompleteProps) {
   const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] =
     useState<OptionBeneficiaire[]>(defaultBeneficiaires)
@@ -136,15 +136,15 @@ export default function BeneficiairesMultiselectAutocomplete({
       {beneficiairesSelectionnes.length > 0 && (
         <Multiselection
           selection={beneficiairesSelectionnes.map(
-            ({ id, value, avecIndicateur = false }) => ({
+            ({ id, value, avecIndication = false }) => ({
               id,
               value,
-              avecIndicateur,
+              avecIndication: avecIndication,
             })
           )}
           typeSelection='beneficiaire'
           unselect={deselectionnerBeneficiaire}
-          renderIndicateur={renderIndicateur}
+          renderIndication={renderIndication}
           disabled={disabled}
         />
       )}

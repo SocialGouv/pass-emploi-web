@@ -30,17 +30,17 @@ Default.args = {
     {
       id: 'jeune-1',
       value: 'Kobe Bryant',
-      avecIndicateur: false,
+      avecIndication: false,
     },
     {
       id: 'jeune-2',
       value: 'Chris Paul',
-      avecIndicateur: false,
+      avecIndication: false,
     },
     {
       id: 'jeune-3',
       value: 'Tony Parker',
-      avecIndicateur: true,
+      avecIndication: true,
     },
   ],
   typeSelection: 'jeune',

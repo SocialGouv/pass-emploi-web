@@ -283,7 +283,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                     {
                       id: pieceJointe.name,
                       value: pieceJointe.name,
-                      avecIndicateur: false,
+                      avecIndication: false,
                     },
                   ]}
                   typeSelection='fichier'
