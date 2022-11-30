@@ -727,7 +727,9 @@ export function EditionRdvForm({
 
             <div className='flex items-center mb-8'>
               <div className='flex items-center'>
-                <label htmlFor='emailInvitation' className='w-64 mr-4'>{emailInvitationText()}</label>
+                <label htmlFor='emailInvitation' className='w-64 mr-4'>
+                  {emailInvitationText()}
+                </label>
                 <Switch
                   id='emailInvitation'
                   disabled={Boolean(evenement)}

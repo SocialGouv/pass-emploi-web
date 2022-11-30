@@ -292,7 +292,7 @@ function EditionRdv({
                 href={`/evenements/${
                   evenement.id
                 }/cloture?redirectUrl=${encodeURIComponent(
-                  cleanReturnTo.baseUrl
+                  cleanReturnTo.baseUrl + '?onglet=etablissement'
                 )}`}
                 className='ml-6 min-w-fit w-1/4'
               >
