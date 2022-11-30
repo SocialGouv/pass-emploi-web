@@ -42,7 +42,7 @@ export default function DisplayMessage({
   }
 
   function formateMessageAvecLien(texte: string) {
-    const messageFormate = texte.split(' ').map((mot) => {
+    const messageFormate = texte.split(/\r?\n|\s+/).map((mot) => {
       if (detecteLien(mot)) {
         return `<a id="lienExterne">
           <span>${mot}</span>  
