@@ -71,25 +71,25 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
           className='m-auto h-56 w-56'
         />
 
-        <div className='bg-blanc px-[122px] py-[48px] rounded-x_large'>
-          <h1 className='text-m-bold text-primary_darken text-center mb-[48px]'>
+        <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-x_large'>
+          <h1 className='text-m-bold text-primary_darken text-center mb-[24px]'>
             Connectez-vous à l&apos;espace conseiller
           </h1>
 
           <FormButton
             label='Connexion conseiller Mission Locale'
-            className='pt-4'
+            className='whitespace-nowrap'
             handleSubmit={(event) => handleSignin(event, 'similo-conseiller')}
           />
           <FormButton
             label='Connexion conseiller Pôle emploi'
-            className='pt-4'
+            className='pt-4 whitespace-nowrap'
             handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
           />
 
           {ssoPassEmploiEstActif && (
             <FormButton
-              className='mt-4'
+              className='mt-4 whitespace-nowrap'
               label='Authentification pass emploi'
               handleSubmit={(event) => handleSignin(event)}
             />
