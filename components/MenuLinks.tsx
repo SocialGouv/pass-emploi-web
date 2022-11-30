@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React from 'react'
 
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import MenuLink from 'components/ui/Form/MenuLink'
 import { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
-import useMatomo from 'utils/analytics/useMatomo'
+import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
 
@@ -26,7 +26,6 @@ export default function MenuLinks({
   items,
 }: MenuLinksProps) {
   const router = useRouter()
-  const [isLoggedOut, setIsLoggedOut] = useState(false)
   const [conseiller] = useConseiller()
 
   const isMilo = conseiller?.structure === StructureConseiller.MILO
@@ -35,14 +34,18 @@ export default function MenuLinks({
 
   const isCurrentRoute = (href: string) => router.pathname.startsWith(href)
 
-  async function handleLogout(event: any) {
-    event.preventDefault()
-    setIsLoggedOut(true)
-    window.location.href = '/api/auth/federated-logout'
+  async function handleLogout() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Session',
+      action: 'Déconnexion',
+      nom: '',
+    })
+    router.push('/api/auth/federated-logout')
   }
 
-  useMatomo(isLoggedOut ? 'Clic déconnexion' : undefined)
   useLeanBeWidget(conseiller?.structure)
+
   return (
     <>
       <div>
@@ -145,7 +148,6 @@ export default function MenuLinks({
         )}
         <span className='border-b border-blanc mx-4 mb-8'></span>
         <MenuLink
-          href='/api/logout'
           label='Déconnexion'
           iconName={IconName.Logout}
           onClick={handleLogout}

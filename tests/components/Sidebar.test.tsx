@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/dom'
 import { within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -10,8 +11,13 @@ import renderWithContexts from 'tests/renderWithContexts'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
 describe('<Sidebar/>', () => {
+  let routerPush: Function
   beforeEach(() => {
-    ;(useRouter as jest.Mock).mockReturnValue({ pathname: '' })
+    routerPush = jest.fn()
+    ;(useRouter as jest.Mock).mockReturnValue({
+      pathname: '',
+      push: routerPush,
+    })
   })
 
   it('affiche les liens de la barre de navigation', () => {
@@ -36,14 +42,15 @@ describe('<Sidebar/>', () => {
     expect(() => within(navigation).getByText('Réaffectation')).toThrow()
   })
 
-  it('affiche le lien de déconnexion', () => {
-    // WHEN
+  it('permet la deconnexion', async () => {
+    // Given
     renderSidebar()
 
-    // THEN
-    expect(
-      screen.getByRole('link', { name: 'Déconnexion' })
-    ).toBeInTheDocument()
+    // When
+    await userEvent.click(screen.getByRole('button', { name: 'Déconnexion' }))
+
+    // Then
+    expect(routerPush).toHaveBeenCalledWith('/api/auth/federated-logout')
   })
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
