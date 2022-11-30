@@ -404,7 +404,7 @@ describe('EditionRdv', () => {
         it('contient une liste pour choisir un jeune', () => {
           // Then
           const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
           })
           const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -578,7 +578,7 @@ describe('EditionRdv', () => {
           await userEvent.selectOptions(selectType, typesRendezVous[0].code)
 
           selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
           })
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
@@ -680,7 +680,7 @@ describe('EditionRdv', () => {
           // Given
           const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
             'button',
-            { name: /Enlever jeune/ }
+            { name: /Enlever beneficiaire/ }
           )
 
           // When
@@ -1037,7 +1037,7 @@ describe('EditionRdv', () => {
 
           // Then
           const selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des jeunes Nom et prénom',
+            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
           })
           expect(selectJeunes).toHaveAttribute('aria-required', 'false')
           expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
@@ -1047,7 +1047,7 @@ describe('EditionRdv', () => {
           )
           expect(
             screen.getByText(
-              'Pour les animations collectives, l’ajout de bénéficiaires est facultatif'
+              'Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif'
             )
           ).toBeInTheDocument()
         })
@@ -1055,7 +1055,7 @@ describe('EditionRdv', () => {
         it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
           // Given
           await userEvent.type(
-            screen.getByLabelText(/ajouter des jeunes/),
+            screen.getByLabelText(/ajouter des bénéficiaires/),
             getNomJeuneComplet(jeunesAutreConseiller[0])
           )
 
@@ -1064,7 +1064,9 @@ describe('EditionRdv', () => {
             screen.getByText(/des bénéficiaires que vous ne suivez pas/)
           ).toBeInTheDocument()
           expect(
-            screen.getByLabelText("Ce jeune n'est pas dans votre portefeuille")
+            screen.getByLabelText(
+              'Ce bénéficiaire n’est pas dans votre portefeuille'
+            )
           ).toBeInTheDocument()
         })
       })
@@ -1353,7 +1355,7 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           // Given
           const searchJeune = screen.getByRole('combobox', {
-            name: /ajouter des jeunes/,
+            name: /ajouter des bénéficiaires/,
           })
           const beneficiaires = screen.getByRole('region', {
             name: /Bénéficiaires/,
@@ -1518,16 +1520,25 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on souhaite modifier une animation collective close', () => {
-      it('empêche toute modification', async () => {
-        // Given
-        const jeune = {
+    describe('quand on consulte une animation collective close', () => {
+      let jeuneAbsent: BaseJeune & { futPresent: boolean }
+      let jeunePresent: BaseJeune & { futPresent: boolean }
+
+      beforeEach(async () => {
+        jeuneAbsent = {
           id: jeunesConseiller[0].id,
           prenom: jeunesConseiller[0].prenom,
           nom: jeunesConseiller[0].nom,
+          futPresent: false,
+        }
+        jeunePresent = {
+          id: jeunesConseiller[1].id,
+          prenom: jeunesConseiller[1].prenom,
+          nom: jeunesConseiller[1].nom,
+          futPresent: true,
         }
         const evenement = unEvenement({
-          jeunes: [jeune],
+          jeunes: [jeuneAbsent, jeunePresent],
           type: { code: 'ATELIER', label: 'Atelier' },
           statut: StatutAnimationCollective.Close,
         })
@@ -1553,7 +1564,9 @@ describe('EditionRdv', () => {
             }
           )
         })
+      })
 
+      it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
         expect(screen.getByLabelText(/Description/)).toBeDisabled()
@@ -1564,7 +1577,9 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
-        expect(screen.getByLabelText(/ajouter des jeunes/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/ajouter des bénéficiaires/)
+        ).toBeDisabled()
         expect(
           screen.queryByText(/bénéficiaires est facultatif/)
         ).not.toBeInTheDocument()
@@ -1579,6 +1594,20 @@ describe('EditionRdv', () => {
         ).not.toBeInTheDocument()
         expect(
           screen.queryByRole('button', { name: /Modifier/ })
+        ).not.toBeInTheDocument()
+      })
+
+      it('indique les bénéficiaires qui étaient présents', () => {
+        // Then
+        expect(
+          within(
+            screen.getByText(getNomJeuneComplet(jeunePresent))
+          ).getByLabelText(/Ce bénéficiaire était présent à l’événement/)
+        ).toBeInTheDocument()
+        expect(
+          within(
+            screen.getByText(getNomJeuneComplet(jeuneAbsent))
+          ).queryByLabelText(/Ce bénéficiaire était présent à l’événement/)
         ).not.toBeInTheDocument()
       })
     })
@@ -1636,7 +1665,7 @@ describe('EditionRdv', () => {
         )
         expect(() =>
           within(jeune).getByLabelText(
-            /Ce jeune n'est pas dans votre portefeuille/
+            /Ce jeune n’est pas dans votre portefeuille/
           )
         ).toThrow()
         expect(() =>
@@ -1649,7 +1678,7 @@ describe('EditionRdv', () => {
         const autreJeune = within(beneficiaires).getByText('Dupont Michel')
         expect(
           within(autreJeune).getByLabelText(
-            /Ce jeune n'est pas dans votre portefeuille/
+            /Ce bénéficiaire n’est pas dans votre portefeuille/
           )
         ).toBeInTheDocument()
         expect(() =>

@@ -37,7 +37,7 @@ export type Modification = { date: string; auteur: Auteur }
 export type Evenement = {
   id: string
   titre: string
-  jeunes: BaseJeune[]
+  jeunes: Array<BaseJeune & { futPresent?: boolean }>
   type: TypeEvenement
   modality: string
   date: string

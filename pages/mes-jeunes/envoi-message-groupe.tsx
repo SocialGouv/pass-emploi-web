@@ -3,7 +3,9 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
 
-import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import BeneficiairesMultiselectAutocomplete, {
+  OptionBeneficiaire,
+} from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -15,7 +17,11 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { InfoFichier } from 'interfaces/fichier'
-import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
+import {
+  BaseJeune,
+  compareJeunesByNom,
+  getNomJeuneComplet,
+} from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { FichiersService } from 'services/fichiers.service'
@@ -60,6 +66,13 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+
+  function buildOptionsJeunes(): OptionBeneficiaire[] {
+    return jeunes.map((jeune) => ({
+      id: jeune.id,
+      value: getNomJeuneComplet(jeune),
+    }))
+  }
 
   function formIsValid(): boolean {
     return Boolean(selectedJeunesIds.length && (message || pieceJointe))
@@ -192,8 +205,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
         </div>
 
         <Etape numero={1} titre='Destinataires'>
-          <JeunesMultiselectAutocomplete
-            jeunes={jeunes}
+          <BeneficiairesMultiselectAutocomplete
+            beneficiaires={buildOptionsJeunes()}
             typeSelection='Destinataires'
             onUpdate={setSelectedJeunesIds}
           />
@@ -270,7 +283,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                     {
                       id: pieceJointe.name,
                       value: pieceJointe.name,
-                      withInfo: false,
+                      avecIndication: false,
                     },
                   ]}
                   typeSelection='fichier'

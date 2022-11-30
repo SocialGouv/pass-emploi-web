@@ -1,7 +1,13 @@
 import { DateTime } from 'luxon'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import {
+  BeneficiaireIndicationPortefeuille,
+  BeneficiaireIndicationPresent,
+} from 'components/jeune/BeneficiaireIndications'
+import BeneficiairesMultiselectAutocomplete, {
+  OptionBeneficiaire,
+} from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import {
   RequiredValue,
   RequiredValue as ValueWithError,
@@ -25,7 +31,7 @@ import {
   TYPE_EVENEMENT,
   TypeEvenement,
 } from 'interfaces/evenement'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { modalites } from 'referentiel/evenement'
 import {
@@ -135,37 +141,60 @@ export function EditionRdvForm({
       ? 'Mission locale'
       : 'agence'
 
-  function buildOptionsJeunes(): Array<
-    BaseJeune & { isAutrePortefeuille: boolean }
-  > {
+  function estUnBeneficiaireDuConseiller(
+    idBeneficiaireAVerifier: string
+  ): boolean {
+    return jeunesConseiller.some(({ id }) => idBeneficiaireAVerifier === id)
+  }
+
+  function buildOptionsJeunes(): OptionBeneficiaire[] {
     if (!isCodeTypeAnimationCollective(codeTypeRendezVous)) {
       return jeunesConseiller.map((jeune) => ({
-        ...jeune,
-        isAutrePortefeuille: false,
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndication: false,
       }))
+    }
+
+    if (evenement && estClos(evenement)) {
+      return []
     }
 
     return jeunesEtablissement.map((jeune) => ({
-      ...jeune,
-      isAutrePortefeuille: !jeunesConseiller.some(({ id }) => jeune.id === id),
+      id: jeune.id,
+      value: getNomJeuneComplet(jeune),
+      avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
     }))
   }
 
-  function initJeunesFromRdvOrIdJeune(): Array<
-    BaseJeune & { isAutrePortefeuille: boolean }
-  > {
-    if (evenement) {
+  function initJeunesFromRdvOrIdJeune(): OptionBeneficiaire[] {
+    if (evenement && estClos(evenement)) {
       return evenement.jeunes.map((jeune) => ({
-        ...jeune,
-        isAutrePortefeuille: !jeunesConseiller.some(
-          ({ id }) => jeune.id === id
-        ),
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndication: jeune.futPresent,
       }))
     }
+
+    if (evenement) {
+      return evenement.jeunes.map((jeune) => ({
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
+      }))
+    }
+
     if (idJeune) {
       const jeune = jeunesConseiller.find(({ id }) => id === idJeune)!
-      return [{ ...jeune, isAutrePortefeuille: false }]
+      return [
+        {
+          id: jeune.id,
+          value: getNomJeuneComplet(jeune),
+          avecIndication: false,
+        },
+      ]
     }
+
     return []
   }
 
@@ -229,9 +258,7 @@ export function EditionRdvForm({
         : undefined,
     })
     onBeneficiairesDUnAutrePortefeuille(
-      selectedIds.some(
-        (id) => !jeunesConseiller.some((jeune) => jeune.id === id)
-      )
+      selectedIds.some((id) => !estUnBeneficiaireDuConseiller(id))
     )
   }
 
@@ -392,6 +419,14 @@ export function EditionRdvForm({
     }
   }
 
+  function emailInvitationText() {
+    if (conseillerIsCreator) {
+      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
+    } else {
+      return "Le créateur de l’événement recevra un mail pour l'informer de la modification."
+    }
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
@@ -409,14 +444,6 @@ export function EditionRdvForm({
     jeunesEtablissement.length,
     recupererJeunesDeLEtablissement,
   ])
-
-  function emailInvitationText(conseillerIsCreator: boolean) {
-    if (conseillerIsCreator) {
-      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
-    } else {
-      return "Le créateur de l’événement recevra un mail pour l'informer de la modification."
-    }
-  }
 
   return (
     <form onSubmit={handleSoumettreRdv}>
@@ -548,17 +575,22 @@ export function EditionRdvForm({
             {isCodeTypeAnimationCollective(codeTypeRendezVous) &&
               (!evenement || !estClos(evenement)) && (
                 <div className='mb-4'>
-                  <InformationMessage content='Pour les animations collectives, l’ajout de bénéficiaires est facultatif' />
+                  <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
                 </div>
               )}
-            <JeunesMultiselectAutocomplete
-              jeunes={buildOptionsJeunes()}
+            <BeneficiairesMultiselectAutocomplete
+              beneficiaires={buildOptionsJeunes()}
               typeSelection='Bénéficiaires'
-              defaultJeunes={defaultJeunes}
+              defaultBeneficiaires={defaultJeunes}
               onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
               disabled={evenement && estClos(evenement)}
+              renderIndication={
+                evenement && estClos(evenement)
+                  ? BeneficiaireIndicationPresent
+                  : BeneficiaireIndicationPortefeuille
+              }
             />
           </Etape>
 
@@ -695,9 +727,7 @@ export function EditionRdvForm({
 
             <div className='flex items-center mb-8'>
               <label htmlFor='emailInvitation' className='flex items-center'>
-                <span className='w-64 mr-4'>
-                  {emailInvitationText(conseillerIsCreator)}
-                </span>
+                <span className='w-64 mr-4'>{emailInvitationText()}</span>
                 <Switch
                   id='emailInvitation'
                   disabled={Boolean(evenement)}

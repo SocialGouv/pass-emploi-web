@@ -87,7 +87,7 @@ describe('Page Recherche Offres', () => {
         screen.getByText(
           'Aucune offre ne correspond à vos critères de recherche.'
         )
-      )
+      ).toBeInTheDocument()
     })
   })
 

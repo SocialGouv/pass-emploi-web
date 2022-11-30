@@ -27,11 +27,11 @@ export const DetailsJeune = ({
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
-  const [showIdentifiantPartenaireModal, setShowIdentifiantPartenaireModal] =
-    useState<boolean>(false)
   const [identifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
   >(jeune.idPartenaire)
+  const [showIdentifiantPartenaireModal, setShowIdentifiantPartenaireModal] =
+    useState<boolean>(false)
 
   function openIdentifiantPartenaireModal() {
     setShowIdentifiantPartenaireModal(true)
@@ -42,12 +42,12 @@ export const DetailsJeune = ({
   }
 
   async function updateIdentifiantPartenaire(
-    identifiantPartenaire: string
+    nouvelleValeur: string
   ): Promise<void> {
     jeunesService
-      .modifierIdentifiantPartenaire(jeune.id, identifiantPartenaire)
+      .modifierIdentifiantPartenaire(jeune.id, nouvelleValeur)
       .then(() => {
-        setIdentifiantPartenaire(identifiantPartenaire)
+        setIdentifiantPartenaire(nouvelleValeur)
         setShowIdentifiantPartenaireModal(false)
         router.push({
           pathname: `/mes-jeunes/${jeune.id}`,

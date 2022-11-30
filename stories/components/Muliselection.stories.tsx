@@ -30,20 +30,19 @@ Default.args = {
     {
       id: 'jeune-1',
       value: 'Kobe Bryant',
-      withInfo: false,
+      avecIndication: false,
     },
     {
       id: 'jeune-2',
       value: 'Chris Paul',
-      withInfo: false,
+      avecIndication: false,
     },
     {
       id: 'jeune-3',
       value: 'Tony Parker',
-      withInfo: true,
+      avecIndication: true,
     },
   ],
   typeSelection: 'jeune',
-  infoLabel: 'Label élément spécial',
   unselect: () => undefined,
 }
