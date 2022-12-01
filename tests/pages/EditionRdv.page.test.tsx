@@ -22,6 +22,7 @@ import {
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
@@ -252,6 +253,8 @@ describe('EditionRdv', () => {
     let evenementsService: EvenementsService
     let jeunesService: JeunesService
     let typesRendezVous: TypeEvenement[]
+
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
     beforeEach(() => {
       jeunesConseiller = desItemsJeunes()
@@ -280,6 +283,7 @@ describe('EditionRdv', () => {
       })
       typesRendezVous = typesEvenement()
 
+      alerteSetter = jest.fn()
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
     })
@@ -292,12 +296,13 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/agenda'}
-            pageTitle={''}
+            returnTo='/agenda'
+            pageTitle=''
           />,
           {
             customDependances: { evenementsService: evenementsService },
             customConseiller: { email: 'fake@email.com' },
+            customAlerte: { alerteSetter },
           }
         )
       })
@@ -666,13 +671,11 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(push).toHaveBeenCalledWith({
-              pathname: '/agenda',
-              query: {
-                creationRdv: 'succes',
-                idEvenement: '963afb47-2b15-46a9-8c0c-0e95240b2eb5',
-              },
-            })
+            expect(alerteSetter).toHaveBeenCalledWith(
+              'creationEvenement',
+              '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
+            )
+            expect(push).toHaveBeenCalledWith('/agenda')
           })
         })
 
@@ -856,8 +859,8 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda'}
-              pageTitle={''}
+              returnTo='/agenda'
+              pageTitle=''
             />,
             {
               customDependances: {
@@ -961,8 +964,8 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda'}
-              pageTitle={''}
+              returnTo='/agenda'
+              pageTitle=''
             />,
             {
               customDependances: {
@@ -1085,9 +1088,9 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda?creationRdv=succes'}
+              returnTo='/agenda'
               evenement={evenement}
-              pageTitle={''}
+              pageTitle=''
             />,
             { customDependances: { evenementsService } }
           )
@@ -1113,9 +1116,9 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda?creationRdv=succes'}
+              returnTo='/agenda'
               evenement={evenement}
-              pageTitle={''}
+              pageTitle=''
             />,
             { customDependances: { evenementsService } }
           )
@@ -1141,9 +1144,9 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'https://localhost:3000/agenda?creationRdv=succes'}
+              returnTo='https://localhost:3000/agenda'
               evenement={evenement}
-              pageTitle={''}
+              pageTitle=''
             />,
             { customDependances: { evenementsService } }
           )
@@ -1172,9 +1175,9 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/agenda'}
+            returnTo='/agenda'
             idJeune={idJeune}
-            pageTitle={''}
+            pageTitle=''
           />,
           { customDependances: { evenementsService: evenementsService } }
         )
@@ -1222,11 +1225,14 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/agenda?creationRdv=succes'}
+            returnTo='/agenda'
             evenement={evenement}
-            pageTitle={''}
+            pageTitle=''
           />,
-          { customDependances: { evenementsService: evenementsService } }
+          {
+            customDependances: { evenementsService: evenementsService },
+            customAlerte: { alerteSetter },
+          }
         )
       })
 
@@ -1474,10 +1480,8 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(push).toHaveBeenCalledWith({
-              pathname: '/agenda',
-              query: { modificationRdv: 'succes' },
-            })
+            expect(alerteSetter).toHaveBeenCalledWith('modificationEvenement')
+            expect(push).toHaveBeenCalledWith('/agenda')
           })
         })
       })
@@ -1512,10 +1516,8 @@ describe('EditionRdv', () => {
           expect(evenementsService.supprimerEvenement).toHaveBeenCalledWith(
             evenement.id
           )
-          expect(push).toHaveBeenCalledWith({
-            pathname: '/agenda',
-            query: { suppressionRdv: 'succes' },
-          })
+          expect(alerteSetter).toHaveBeenCalledWith('suppressionEvenement')
+          expect(push).toHaveBeenCalledWith('/agenda')
         })
       })
     })
@@ -1549,9 +1551,9 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda?creationRdv=succes'}
+              returnTo='/agenda'
               evenement={evenement}
-              pageTitle={''}
+              pageTitle=''
             />,
             {
               customDependances: { evenementsService, jeunesService },
@@ -1638,9 +1640,9 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/agenda?creationRdv=succes'}
+            returnTo='/agenda'
             evenement={evenement}
-            pageTitle={''}
+            pageTitle=''
           />,
           { customDependances: { evenementsService: evenementsService } }
         )

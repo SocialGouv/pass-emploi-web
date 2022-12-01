@@ -11,6 +11,7 @@ import 'styles/typography.css'
 import AppHead from 'components/AppHead'
 import Footer from 'components/layouts/Footer'
 import Layout from 'components/layouts/Layout'
+import { AlerteProvider } from 'utils/alerteContext'
 import { init } from 'utils/analytics/matomo'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
@@ -57,9 +58,11 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
           ) : (
             <ChatCredentialsProvider>
               <CurrentJeuneProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
+                <AlerteProvider>
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                </AlerteProvider>
               </CurrentJeuneProvider>
             </ChatCredentialsProvider>
           )}

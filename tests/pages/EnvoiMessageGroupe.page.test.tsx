@@ -13,6 +13,7 @@ import { JeuneFromListe } from 'interfaces/jeune'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -34,7 +35,13 @@ describe('EnvoiMessageGroupe', () => {
     let fileInput: HTMLInputElement
     let submitButton: HTMLButtonElement
 
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+    let push: Function
     beforeEach(async () => {
+      alerteSetter = jest.fn()
+      push = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
+
       jeunes = desItemsJeunes()
 
       messagesService = mockedMessagesService({
@@ -60,6 +67,7 @@ describe('EnvoiMessageGroupe', () => {
             messagesService,
             fichiersService,
           },
+          customAlerte: { alerteSetter },
         }
       )
 
@@ -108,12 +116,8 @@ describe('EnvoiMessageGroupe', () => {
     })
 
     describe('quand on remplit le formulaire', () => {
-      let push: Function
       let newMessage: string
       beforeEach(async () => {
-        push = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ push })
-
         // Given
         newMessage = 'Un nouveau message pour plusieurs destinataires'
 
@@ -147,10 +151,8 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(push).toHaveBeenCalledWith({
-          pathname: '/mes-jeunes',
-          query: { envoiMessage: 'succes' },
-        })
+        expect(alerteSetter).toHaveBeenCalledWith('envoiMessage')
+        expect(push).toHaveBeenCalledWith('/mes-jeunes')
       })
 
       // FIXME trouver comment tester

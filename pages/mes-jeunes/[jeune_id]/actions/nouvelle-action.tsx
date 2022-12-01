@@ -14,9 +14,10 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPredefinie } from 'interfaces/action'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
@@ -30,6 +31,7 @@ interface EditionActionProps extends PageProps {
 function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   const router = useRouter()
   const actionsService = useDependance<ActionsService>('actionsService')
+  const [_, setAlerte] = useAlerte()
 
   type Tab = 'predefinie' | 'personnalisee'
   const tabsLabel: { [key in Tab]: string } = {
@@ -70,10 +72,8 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
       dateEcheance,
     }
     await actionsService.createAction(action, idJeune)
-    await router.push({
-      pathname: `/mes-jeunes/${idJeune}`,
-      query: { [QueryParam.creationAction]: QueryValue.succes },
-    })
+    setAlerte(AlerteParam.creationAction)
+    await router.push(`/mes-jeunes/${idJeune}?onglet=actions`)
   }
 
   useMatomo(trackingTitle)

@@ -15,6 +15,7 @@ import {
 import PageQualification, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/qualification'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -198,6 +199,8 @@ describe("Page Qualification d'une action", () => {
     let action: Action
     let situationsNonProfessionnelles: SituationNonProfessionnelle[]
     let actionsService: ActionsService
+
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: jest.Mock
     beforeEach(() => {
       // Given
@@ -205,6 +208,7 @@ describe("Page Qualification d'une action", () => {
       situationsNonProfessionnelles = desSituationsNonProfessionnelles()
       actionsService = mockedActionsService()
 
+      alerteSetter = jest.fn()
       push = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
@@ -216,7 +220,7 @@ describe("Page Qualification d'une action", () => {
           pageTitle=''
           returnTo='/mes-jeunes/jeune-1/actions/id-action-1'
         />,
-        { customDependances: { actionsService } }
+        { customDependances: { actionsService }, customAlerte: { alerteSetter } }
       )
     })
 
@@ -293,8 +297,9 @@ describe("Page Qualification d'une action", () => {
 
       it("redirige vers le détail de l'action", () => {
         // Then
+        expect(alerteSetter).toHaveBeenCalledWith('qualificationSNP')
         expect(push).toHaveBeenCalledWith(
-          '/mes-jeunes/jeune-1/actions/id-action-1?qualificationSNP=succes'
+          '/mes-jeunes/jeune-1/actions/id-action-1'
         )
       })
     })

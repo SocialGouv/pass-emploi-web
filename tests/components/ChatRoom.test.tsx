@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
-import AlertDisplayer from 'components/layouts/AlertDisplayer'
+import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -14,7 +14,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('components/chat/Conversation', () =>
   jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
 )
-jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
+jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 
 describe('<ChatRoom />', () => {
   const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
@@ -56,7 +56,7 @@ describe('<ChatRoom />', () => {
     })
 
     it('affiche les alertes sur petit écran', () => {
-      expect(AlertDisplayer).toHaveBeenCalledWith(
+      expect(AlerteDisplayer).toHaveBeenCalledWith(
         { hideOnLargeScreen: true },
         {}
       )

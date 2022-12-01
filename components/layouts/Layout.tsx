@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
-import AlertDisplayer from 'components/layouts/AlertDisplayer'
+import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import ChatContainer from 'components/layouts/ChatContainer'
 import Footer from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
@@ -96,7 +96,7 @@ export default function Layout({ children }: LayoutProps) {
               withChat ? styles.content_when_chat : ''
             }`}
           >
-            <AlertDisplayer />
+            <AlerteDisplayer />
             {children}
           </main>
 

@@ -21,8 +21,9 @@ import { StructureConseiller, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -34,19 +35,14 @@ interface PageActionProps extends PageProps {
   action: Action
   jeune: BaseJeune
   commentaires: Commentaire[]
-  messageEnvoiGroupeSuccess?: boolean
   pageTitle: string
 }
 
-function PageAction({
-  action,
-  jeune,
-  commentaires,
-  messageEnvoiGroupeSuccess,
-}: PageActionProps) {
+function PageAction({ action, jeune, commentaires }: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const router = useRouter()
   const [conseiller] = useConseiller()
+  const [alerte, setAlerte] = useAlerte()
 
   const [qualification, setQualification] = useState<
     QualificationAction | undefined
@@ -104,11 +100,7 @@ function PageAction({
         DateTime.fromISO(action.dateEcheance)
       )
       setQualification(nouvelleQualification)
-      await router.replace(
-        `/mes-jeunes/${jeune.id}/actions/${action.id}?${QueryParam.qualificationNonSNP}=${QueryValue.succes}`,
-        undefined,
-        { shallow: true }
-      )
+      setAlerte(AlerteParam.qualificationNonSNP)
     }
   }
 
@@ -117,12 +109,10 @@ function PageAction({
     actionsService
       .deleteAction(action.id)
       .then(() => {
+        setAlerte(AlerteParam.suppressionAction)
         router.push({
-          pathname: `/mes-jeunes/${jeune.id}`,
-          query: {
-            [QueryParam.suppressionAction]: QueryValue.succes,
-            onglet: 'actions',
-          },
+          pathname: '/mes-jeunes/' + jeune.id,
+          query: { onglet: 'actions' },
         })
       })
       .catch((error: Error) => {
@@ -138,17 +128,13 @@ function PageAction({
     if (!estEnSucces) {
       setShowEchecMessage(true)
     } else {
-      router.push({
-        pathname: `/mes-jeunes/${jeune.id}/actions/${action.id}`,
-        query: {
-          [QueryParam.ajoutCommentaireAction]: QueryValue.succes,
-        },
-      })
+      setAlerte(AlerteParam.ajoutCommentaireAction)
+      router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
     }
   }
 
   useMatomo(
-    messageEnvoiGroupeSuccess
+    alerte && alerte.key === AlerteParam.envoiMessage
       ? `${pageTracking} - Succès envoi message`
       : pageTracking
   )
@@ -261,11 +247,6 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
     commentaires,
     pageTitle: `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
     pageHeader: 'Détails de l’action',
-  }
-
-  if (context.query[QueryParam.envoiMessage]) {
-    props.messageEnvoiGroupeSuccess =
-      context.query[QueryParam.envoiMessage] === QueryValue.succes
   }
 
   return { props }

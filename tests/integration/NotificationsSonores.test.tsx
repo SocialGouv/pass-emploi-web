@@ -19,7 +19,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
-jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
+jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()

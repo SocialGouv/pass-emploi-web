@@ -11,6 +11,7 @@ import { ActionPredefinie } from 'interfaces/action'
 import NouvelleAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -82,10 +83,12 @@ describe('NouvelleAction', () => {
 
   describe('client side', () => {
     let actionsService: ActionsService
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
     let actionsPredefinies: ActionPredefinie[]
     beforeEach(async () => {
       // Given
+      alerteSetter = jest.fn()
       push = jest.fn(async () => {})
       ;(useRouter as jest.Mock).mockReturnValue({ push })
       actionsService = mockedActionsService()
@@ -106,7 +109,10 @@ describe('NouvelleAction', () => {
           withoutChat={true}
           pageTitle=''
         />,
-        { customDependances: { actionsService } }
+        {
+          customDependances: { actionsService },
+          customAlerte: { alerteSetter },
+        }
       )
     })
 
@@ -213,10 +219,10 @@ describe('NouvelleAction', () => {
 
           it('redirige vers la fiche du jeune', () => {
             // Then
-            expect(push).toHaveBeenCalledWith({
-              pathname: `/mes-jeunes/id-jeune`,
-              query: { creationAction: 'succes' },
-            })
+            expect(alerteSetter).toHaveBeenCalledWith('creationAction')
+            expect(push).toHaveBeenCalledWith(
+              '/mes-jeunes/id-jeune?onglet=actions'
+            )
           })
         })
       })
@@ -302,10 +308,10 @@ describe('NouvelleAction', () => {
 
           it('redirige vers la fiche du jeune', () => {
             // Then
-            expect(push).toHaveBeenCalledWith({
-              pathname: `/mes-jeunes/id-jeune`,
-              query: { creationAction: 'succes' },
-            })
+            expect(alerteSetter).toHaveBeenCalledWith('creationAction')
+            expect(push).toHaveBeenCalledWith(
+              '/mes-jeunes/id-jeune?onglet=actions'
+            )
           })
         })
       })

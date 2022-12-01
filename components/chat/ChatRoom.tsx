@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
-import AlertDisplayer from 'components/layouts/AlertDisplayer'
+import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -170,7 +170,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
           </div>
 
           <div className='mx-3'>
-            <AlertDisplayer hideOnLargeScreen={true} />
+            <AlerteDisplayer hideOnLargeScreen={true} />
           </div>
 
           <div

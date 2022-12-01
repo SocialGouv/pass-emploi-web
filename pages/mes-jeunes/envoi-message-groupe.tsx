@@ -24,13 +24,14 @@ import {
   getNomJeuneComplet,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
 import {
   FormNouveauMessageGroupe,
   MessagesService,
 } from 'services/messages.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -38,7 +39,6 @@ import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { parseUrl, setQueryParams } from 'utils/urlParser'
 
 interface EnvoiMessageGroupeProps extends PageProps {
   jeunes: BaseJeune[]
@@ -50,6 +50,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
+  const [_, setAlerte] = useAlerte()
 
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
@@ -142,13 +143,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
 
-      const { baseUrl, query } = parseUrl(returnTo)
-      await router.push({
-        pathname: baseUrl,
-        query: setQueryParams(query, {
-          [QueryParam.envoiMessage]: QueryValue.succes,
-        }),
-      })
+      setAlerte(AlerteParam.envoiMessage)
+      await router.push(returnTo)
     } catch (error) {
       setErreurEnvoi(
         error instanceof ApiError

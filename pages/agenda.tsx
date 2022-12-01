@@ -13,8 +13,9 @@ import TabList from 'components/ui/Navigation/TabList'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -24,25 +25,18 @@ enum Onglet {
   CONSEILLER = 'CONSEILLER',
   ETABLISSEMENT = 'ETABLISSEMENT',
 }
+
 interface AgendaProps extends PageProps {
   pageTitle: string
   onglet?: Onglet
-  creationSuccess?: boolean
-  modificationSuccess?: boolean
-  suppressionSuccess?: boolean
-  messageEnvoiGroupeSuccess?: boolean
 }
-function Agenda({
-  onglet,
-  creationSuccess,
-  modificationSuccess,
-  suppressionSuccess,
-  messageEnvoiGroupeSuccess,
-}: AgendaProps) {
+
+function Agenda({ onglet }: AgendaProps) {
   const rendezVousService =
     useDependance<EvenementsService>('evenementsService')
   const [conseiller] = useConseiller()
   const router = useRouter()
+  const [alerte] = useAlerte()
 
   const ongletProps: {
     [key in Onglet]: { queryParam: string; trackingLabel: string }
@@ -58,10 +52,14 @@ function Agenda({
   )
 
   let initialTracking = `Agenda`
-  if (creationSuccess) initialTracking += ' - Creation rdv succès'
-  if (modificationSuccess) initialTracking += ' - Modification rdv succès'
-  if (suppressionSuccess) initialTracking += ' - Suppression rdv succès'
-  if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
+  if (alerte?.key === AlerteParam.creationEvenement)
+    initialTracking += ' - Creation rdv succès'
+  if (alerte?.key === AlerteParam.modificationEvenement)
+    initialTracking += ' - Modification rdv succès'
+  if (alerte?.key === AlerteParam.suppressionEvenement)
+    initialTracking += ' - Suppression rdv succès'
+  if (alerte?.key === AlerteParam.envoiMessage)
+    initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   async function switchTab(tab: Onglet) {
@@ -205,22 +203,6 @@ export const getServerSideProps: GetServerSideProps<AgendaProps> = async (
         ? Onglet.ETABLISSEMENT
         : Onglet.CONSEILLER
 
-  if (context.query[QueryParam.creationRdv])
-    props.creationSuccess =
-      context.query[QueryParam.creationRdv] === QueryValue.succes
-
-  if (context.query[QueryParam.modificationRdv])
-    props.modificationSuccess =
-      context.query[QueryParam.modificationRdv] === QueryValue.succes
-
-  if (context.query[QueryParam.suppressionRdv])
-    props.suppressionSuccess =
-      context.query[QueryParam.suppressionRdv] === QueryValue.succes
-
-  if (context.query[QueryParam.envoiMessage]) {
-    props.messageEnvoiGroupeSuccess =
-      context.query[QueryParam.envoiMessage] === QueryValue.succes
-  }
   return { props }
 }
 

@@ -1,26 +1,30 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
 
-import AlertDisplayer from 'components/layouts/AlertDisplayer'
+import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { unConseiller } from 'fixtures/conseiller'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { AlerteParam } from 'referentiel/alerteParam'
+import renderWithContexts from 'tests/renderWithContexts'
 
-describe('AlertDisplayer', () => {
+describe('AlerteDisplayer', () => {
+  let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+  beforeEach(() => {
+    alerteSetter = jest.fn()
+  })
+
   describe('quand la création de rdv est réussie', () => {
-    let routerPush: Function
     beforeEach(() => {
-      // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/agenda',
-        query: { creationRdv: 'succes', idEvenement: 'id-evenement' },
-        push: routerPush,
-      })
-
       // When
-      renderAlertDisplayer()
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.creationEvenement,
+            target: 'id-evenement',
+          },
+          alerteSetter,
+        },
+      })
     })
 
     it("affiche l'alerte de succès", () => {
@@ -50,30 +54,20 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/agenda',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand la modification de rdv est réussie', () => {
-    let routerPush: Function
     beforeEach(() => {
-      // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/agenda',
-        query: { modificationRdv: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.modificationEvenement,
+          },
+          alerteSetter,
+        },
       })
-
-      // When
-      renderAlertDisplayer()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -90,30 +84,21 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/agenda',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand la suppression de rdv est réussie', () => {
-    let routerPush: Function
     beforeEach(() => {
       // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/agenda',
-        query: { suppressionRdv: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.suppressionEvenement,
+          },
+          alerteSetter,
+        },
       })
-
-      // When
-      renderAlertDisplayer()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -130,30 +115,21 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/agenda',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand on vient de récupérer des bénéficiaires', () => {
-    let routerPush: Function
     beforeEach(() => {
       // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes',
-        query: { recuperation: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.recuperationBeneficiaires,
+          },
+          alerteSetter,
+        },
       })
-
-      // When
-      renderAlertDisplayer()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -170,30 +146,22 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/mes-jeunes',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand la création d’un jeune est réussie', () => {
-    let routerPush: Function
     beforeEach(() => {
       // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes',
-        query: { creationBeneficiaire: 'succes', idBeneficiaire: 'id' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.creationBeneficiaire,
+            target: 'id-beneficiaire',
+          },
+          alerteSetter,
+        },
       })
-
-      // When
-      renderAlertDisplayer()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -211,7 +179,10 @@ describe('AlertDisplayer', () => {
 
       // Then
       expect(lienFicheJeune).toBeInTheDocument()
-      expect(lienFicheJeune).toHaveAttribute('href', '/mes-jeunes/id')
+      expect(lienFicheJeune).toHaveAttribute(
+        'href',
+        '/mes-jeunes/id-beneficiaire'
+      )
     })
 
     it("permet de fermer l'alerte du succès", async () => {
@@ -221,30 +192,21 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/mes-jeunes',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand on vient de supprimer un jeune', () => {
-    let routerPush: Function
     beforeEach(() => {
       // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes',
-        query: { suppression: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.suppressionBeneficiaire,
+          },
+          alerteSetter,
+        },
       })
-
-      // When
-      renderAlertDisplayer()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -261,30 +223,21 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/mes-jeunes',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand la création d’une action est réussie', () => {
-    let routerPush: Function
     beforeEach(() => {
       // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes/jeune-1',
-        query: { creationAction: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.creationAction,
+          },
+          alerteSetter,
+        },
       })
-
-      // When
-      renderAlertDisplayer()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -299,30 +252,21 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/mes-jeunes/jeune-1',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand l’ajout ou la modification de l’identifiant partenaire est réussi', () => {
-    let routerPush: Function
     beforeEach(() => {
       // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes/jeune-1',
-        query: { modificationIdentifiantPartenaire: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.modificationIdentifiantPartenaire,
+          },
+          alerteSetter,
+        },
       })
-
-      // When
-      renderAlertDisplayer()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -339,30 +283,21 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/mes-jeunes/jeune-1',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('envoie de message multi-destinataire', () => {
-    let routerPush: Function
     beforeEach(() => {
       // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes',
-        query: { envoiMessage: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.envoiMessage,
+          },
+          alerteSetter,
+        },
       })
-
-      // When
-      renderAlertDisplayer()
     })
 
     it("affiche l'alerte de succès", () => {
@@ -379,33 +314,24 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/mes-jeunes',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand on renseigne une agence Milo', () => {
-    let routerPush: Function
     beforeEach(() => {
       // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes',
-        query: { choixAgence: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.choixAgence,
+          },
+          alerteSetter,
+        },
+        customConseiller: unConseiller({
+          structure: StructureConseiller.MILO,
+        }),
       })
-
-      // When
-      const conseillerMilo = unConseiller({
-        structure: StructureConseiller.MILO,
-      })
-      renderAlertDisplayer(conseillerMilo)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -420,33 +346,23 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/mes-jeunes',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand on renseigne une agence Pole emploi', () => {
-    let routerPush: Function
     beforeEach(() => {
-      // Given
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes',
-        query: { choixAgence: 'succes' },
-        push: routerPush,
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.choixAgence,
+          },
+          alerteSetter,
+        },
+        customConseiller: unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI,
+        }),
       })
-
-      // When
-      const conseillerPoleEmploi = unConseiller({
-        structure: StructureConseiller.POLE_EMPLOI,
-      })
-      renderAlertDisplayer(conseillerPoleEmploi)
     })
 
     it("affiche l'alerte de succès", () => {
@@ -461,22 +377,7 @@ describe('AlertDisplayer', () => {
       )
 
       // Then
-      expect(routerPush).toHaveBeenCalledWith(
-        {
-          pathname: '/mes-jeunes',
-          query: {},
-        },
-        undefined,
-        { shallow: true }
-      )
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 })
-
-function renderAlertDisplayer(conseiller?: Conseiller) {
-  return render(
-    <ConseillerProvider conseiller={conseiller ?? unConseiller()}>
-      <AlertDisplayer />
-    </ConseillerProvider>
-  )
-}

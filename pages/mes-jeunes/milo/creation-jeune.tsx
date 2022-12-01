@@ -10,8 +10,9 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { DossierMilo } from 'interfaces/jeune'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Container, useDependance } from 'utils/injectionDependances'
@@ -30,6 +31,7 @@ function MiloCreationJeune({
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
   const router = useRouter()
+  const [_, setAlerte] = useAlerte()
 
   const [etape, setEtape] = useState(1)
   const [erreurMessage, setErreurMessage] = useState<string>(
@@ -39,13 +41,8 @@ function MiloCreationJeune({
   async function creerCompteJeune(newJeune: JeuneMiloFormData): Promise<void> {
     try {
       const { id } = await conseillerService.createCompteJeuneMilo(newJeune)
-      await router.push({
-        pathname: `/mes-jeunes`,
-        query: {
-          [QueryParam.creationBeneficiaire]: QueryValue.succes,
-          idBeneficiaire: id,
-        },
-      })
+      setAlerte(AlerteParam.creationBeneficiaire, id)
+      await router.push('/mes-jeunes')
     } catch (error) {
       setErreurMessage((error as Error).message)
     }
