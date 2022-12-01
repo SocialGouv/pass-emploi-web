@@ -260,7 +260,7 @@ describe('<Conversation />', () => {
       // Then
       expect(screen.getByText('imageupload.png')).toBeInTheDocument()
       expect(
-        screen.getByLabelText('Supprimer la pièce jointe')
+        screen.getByLabelText('Supprimer la pièce jointe imageupload.png')
       ).toBeInTheDocument()
       expect(fileInput).toHaveAttribute('disabled', '')
       expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
@@ -272,7 +272,7 @@ describe('<Conversation />', () => {
     it('on peut supprimer la pièce jointe ', async () => {
       // Given
       const boutonDeleteFichier = screen.getByLabelText(
-        'Supprimer la pièce jointe'
+        'Supprimer la pièce jointe imageupload.png'
       )
       // When
       await userEvent.click(boutonDeleteFichier)

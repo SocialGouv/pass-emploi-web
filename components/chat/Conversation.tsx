@@ -289,7 +289,9 @@ export default function Conversation({
                 </span>
                 <button
                   type='button'
-                  aria-label='Supprimer la pièce jointe'
+                  aria-label={
+                    'Supprimer la pièce jointe ' + uploadedFileInfo.nom
+                  }
                   onClick={deleteFile}
                 >
                   <IconComponent

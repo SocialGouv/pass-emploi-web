@@ -2,24 +2,27 @@ import Link from 'next/link'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-type MenuLinkProps = {
+type NavLinkProps = {
   label: string | null
+  href: string
   iconName: IconName
   showLabelOnSmallScreen: boolean
   isActive?: boolean
   className?: string
   isExternal?: boolean
-} & ({ href: string } | { onClick: () => void })
+  onClick?: () => void
+}
 
-export default function MenuLink({
+export default function NavLink({
   isActive,
   label,
+  href,
   iconName,
   className,
   isExternal = false,
   showLabelOnSmallScreen = false,
-  ...props
-}: MenuLinkProps) {
+  onClick,
+}: NavLinkProps) {
   const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-medium layout_s:justify-start layout_l:justify-start ${
     isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
   }`
@@ -73,47 +76,35 @@ export default function MenuLink({
       )}
     </>
   )
+
   return (
     <>
-      {isLink(props) && (
-        <>
-          {!isExternal && (
-            <Link href={props.href}>
-              <a className={linkStyle}>{linkContent}</a>
-            </Link>
-          )}
-
-          {isExternal && (
-            <a
-              href={props.href}
-              target='_blank'
-              rel='noreferrer noopener'
-              aria-label={`${label} (nouvel onglet)`}
-              className={linkStyle}
-            >
-              {linkContent}
-              <IconComponent
-                name={IconName.Launch}
-                aria-hidden={true}
-                focusable={false}
-                className='mx-2 w-3 h-3 fill-blanc hidden layout_l:block'
-              />
-            </a>
-          )}
-        </>
+      {!isExternal && (
+        <Link href={href}>
+          <a className={linkStyle} onClick={onClick}>
+            {linkContent}
+          </a>
+        </Link>
       )}
 
-      {!isLink(props) && (
-        <button type='button' onClick={props.onClick} className={linkStyle}>
+      {isExternal && (
+        <a
+          href={href}
+          target='_blank'
+          rel='noreferrer noopener'
+          aria-label={`${label} (nouvel onglet)`}
+          className={linkStyle}
+          onClick={onClick}
+        >
           {linkContent}
-        </button>
+          <IconComponent
+            name={IconName.Launch}
+            aria-hidden={true}
+            focusable={false}
+            className='mx-2 w-3 h-3 fill-blanc hidden layout_l:block'
+          />
+        </a>
       )}
     </>
   )
-}
-
-function isLink(
-  props: { href: string } | { onClick: () => void }
-): props is { href: string } {
-  return Object.prototype.hasOwnProperty.call(props, 'href')
 }

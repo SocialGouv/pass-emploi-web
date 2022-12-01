@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/dom'
 import { within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -43,14 +42,14 @@ describe('<Sidebar/>', () => {
   })
 
   it('permet la deconnexion', async () => {
-    // Given
+    // When
     renderSidebar()
 
-    // When
-    await userEvent.click(screen.getByRole('button', { name: 'Déconnexion' }))
-
     // Then
-    expect(routerPush).toHaveBeenCalledWith('/api/auth/federated-logout')
+    expect(screen.getByRole('link', { name: 'Déconnexion' })).toHaveAttribute(
+      'href',
+      '/api/auth/federated-logout'
+    )
   })
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
