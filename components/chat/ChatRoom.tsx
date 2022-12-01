@@ -164,7 +164,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               </button>
             </nav>
 
-            <h2 className='text-m-bold text-primary text-center layout_s:text-left layout_xs:m-6 layout_s:p-0 layout_base:my-3 m-6 grow'>
+            <h2 className='text-m-bold text-primary text-center m-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
               Messagerie
             </h2>
           </div>
