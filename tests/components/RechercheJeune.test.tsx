@@ -102,5 +102,17 @@ describe('Recherche', () => {
       })
       expect(result).toBeInTheDocument()
     })
+
+    it('quand on recherche un prénom', async () => {
+      //WHEN
+      await userEvent.type(inputSearch, 'Nadia')
+      await userEvent.click(submitButton)
+
+      //THEN
+      const result = screen.getByRole('row', {
+        name: /Nadia/i,
+      })
+      expect(result).toBeInTheDocument()
+    })
   })
 })

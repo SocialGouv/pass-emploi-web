@@ -265,7 +265,7 @@ function Reaffectation(_: ReaffectationProps) {
           <div className='flex'>
             <ResettableTextInput
               id={'email-conseiller-initial'}
-              defaultValue={conseillerInitial.email}
+              value={conseillerInitial.email}
               onChange={editEmailConseillerInitial}
               onReset={resetAll}
               type={'email'}
@@ -323,7 +323,7 @@ function Reaffectation(_: ReaffectationProps) {
         >
           <ResettableTextInput
             id={'email-conseiller-destination'}
-            defaultValue={emailConseillerDestination.value}
+            value={emailConseillerDestination.value}
             onChange={editEmailConseillerDestination}
             onReset={() => editEmailConseillerDestination('')}
             disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
