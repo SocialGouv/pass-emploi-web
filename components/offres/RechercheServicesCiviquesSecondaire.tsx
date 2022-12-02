@@ -30,12 +30,15 @@ export default function RechercheServicesCiviquesSecondaire({
     if (query.dateDebut) {
       onQueryUpdate({ ...query, dateDebut: undefined })
     } else {
-      onQueryUpdate({ ...query, dateDebut: DateTime.now() })
+      onQueryUpdate({
+        ...query,
+        dateDebut: DateTime.now().toFormat(DATE_DASH_SEPARATOR),
+      })
     }
   }
 
-  function updateDateDebut(value: string) {
-    onQueryUpdate({ ...query, dateDebut: DateTime.fromISO(value) })
+  function updateDateDebut(dateDebut: string) {
+    onQueryUpdate({ ...query, dateDebut })
   }
 
   function updateRayon(rayon: number) {
@@ -68,34 +71,38 @@ export default function RechercheServicesCiviquesSecondaire({
 
       <fieldset>
         <legend className='text-base-bold mb-6'>Date de début</legend>
-        <label htmlFor='des-que-possible' className='flex items-center mb-6'>
+        <div className='flex items-center mb-6'>
+          <label htmlFor='des-que-possible' className='mr-4'>
+            Dès que possible
+          </label>
           <Switch
             id='des-que-possible'
             checked={!query.dateDebut}
             onChange={() => toggleDateDebut()}
           />
-          <span className='ml-8'>Dès que possible</span>
-        </label>
-        <label htmlFor='a-partir-de' className='flex items-center '>
+        </div>
+        <div className='flex items-center'>
+          <label htmlFor='a-partir-de' className='mr-4'>
+            À partir de
+          </label>
           <Switch
             id='a-partir-de'
             checked={Boolean(query.dateDebut)}
             onChange={() => {}}
             disabled
           />
-          <span className='ml-8'>À partir de</span>
-        </label>
+        </div>
 
         {query.dateDebut && (
-          <>
+          <div className='mt-4'>
             <Label htmlFor='date-debut'>Sélectionner une date de début</Label>
             <Input
               type='date'
               id='date-debut'
-              value={query.dateDebut.toFormat(DATE_DASH_SEPARATOR)}
+              value={query.dateDebut}
               onChange={updateDateDebut}
             />
-          </>
+          </div>
         )}
       </fieldset>
 

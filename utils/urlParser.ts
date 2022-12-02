@@ -1,8 +1,8 @@
 export function parseUrl(url: string): {
-  pathname: string
+  baseUrl: string
   query: Record<string, string | string[]>
 } {
-  const [pathname, queryString] = url.split('?')
+  const [baseUrl, queryString] = url.split('?')
   const query = queryString
     ? queryString.split('&').reduce((dict, param) => {
         const [key, value] = param.split('=')
@@ -13,7 +13,7 @@ export function parseUrl(url: string): {
         return dict
       }, {} as Record<string, string | string[]>)
     : {}
-  return { pathname, query }
+  return { baseUrl, query }
 }
 
 export function setQueryParams(

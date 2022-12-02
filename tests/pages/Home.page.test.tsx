@@ -417,12 +417,12 @@ describe('Home', () => {
       it('redirige vers l’url renseignée', async () => {
         // When
         const actual = await getServerSideProps({
-          query: { redirectUrl: '/mes-rendezvous' },
+          query: { redirectUrl: '/agenda' },
         } as unknown as GetServerSidePropsContext)
 
         //Then
         expect(actual).toEqual({
-          redirect: { destination: '/mes-rendezvous', permanent: false },
+          redirect: { destination: '/agenda', permanent: false },
         })
       })
     })
@@ -444,7 +444,8 @@ describe('Home', () => {
         })
 
         referentielService = {
-          getAgences: jest.fn(async () => uneListeDAgencesMILO()),
+          getAgencesServerSide: jest.fn(async () => uneListeDAgencesMILO()),
+          getAgencesClientSide: jest.fn(async () => uneListeDAgencesMILO()),
           getCommunesEtDepartements: jest.fn(),
           getCommunes: jest.fn(),
           getActionsPredefinies: jest.fn(),
@@ -475,13 +476,13 @@ describe('Home', () => {
       it('renvoie l’url renseignée', async () => {
         // When
         const actual = await getServerSideProps({
-          query: { redirectUrl: '/mes-rendezvous' },
+          query: { redirectUrl: '/agenda' },
         } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(actual).toEqual({
           props: {
-            redirectUrl: '/mes-rendezvous',
+            redirectUrl: '/agenda',
             referentielAgences: uneListeDAgencesMILO(),
             pageTitle: 'Accueil',
           },

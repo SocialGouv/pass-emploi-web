@@ -4,7 +4,7 @@ import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import MenuLinks, { MenuItem } from 'components/MenuLinks'
+import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
@@ -98,13 +98,13 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   return (
     <>
       {currentChat && (
-        <article className={styles.chatRoom}>
+        <aside className={styles.chatRoom}>
           <Conversation
             onBack={() => setIdCurrentJeune(undefined)}
             jeuneChat={currentChat}
             conseillers={conseillers}
           />
-        </article>
+        </aside>
       )}
 
       {!currentChat && showMenu && (
@@ -131,16 +131,16 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             />
           </button>
           <div className='grow flex flex-col justify-between'>
-            <MenuLinks
+            <NavLinks
               showLabelsOnSmallScreen={true}
-              items={[MenuItem.Messagerie, MenuItem.Raccourci, MenuItem.Aide]}
+              items={[NavItem.Messagerie, NavItem.Raccourci, NavItem.Aide]}
             />
           </div>
         </nav>
       )}
 
       {!currentChat && (
-        <article className={styles.chatRoom}>
+        <aside className={styles.chatRoom}>
           <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
             <nav
               role='navigation'
@@ -164,7 +164,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
               </button>
             </nav>
 
-            <h2 className='text-m-bold text-primary text-center layout_s:text-left layout_xs:p-6 layout_s:p-0 layout_base:my-3 grow'>
+            <h2 className='text-m-bold text-primary text-center m-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
               Messagerie
             </h2>
           </div>
@@ -185,7 +185,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             onToggleFlag={toggleFlag}
             onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
           />
-        </article>
+        </aside>
       )}
     </>
   )

@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import RadioButton from 'components/action/RadioButton'
 import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
@@ -22,27 +16,25 @@ import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
+import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 
 type FormRechercheOffresProps = {
   hasResults: boolean
   fetchMetiers: (search: string) => Promise<Metier[]>
   fetchCommunes: (search: string) => Promise<Commune[]>
   fetchCommunesEtDepartements: (search: string) => Promise<Localite[]>
-  stateTypeOffre: [
-    TypeOffre | undefined,
-    Dispatch<SetStateAction<TypeOffre | undefined>>
-  ]
+  stateTypeOffre: [TypeOffre | undefined, (type: TypeOffre) => void]
   stateQueryOffresEmploi: [
     FormValues<SearchOffresEmploiQuery>,
-    Dispatch<SetStateAction<FormValues<SearchOffresEmploiQuery>>>
+    (query: FormValues<SearchOffresEmploiQuery>) => void
   ]
   stateQueryServicesCiviques: [
     FormValues<SearchServicesCiviquesQuery>,
-    Dispatch<SetStateAction<FormValues<SearchServicesCiviquesQuery>>>
+    (query: FormValues<SearchServicesCiviquesQuery>) => void
   ]
   stateQueryImmersions: [
     FormValues<SearchImmersionsQuery>,
-    Dispatch<SetStateAction<FormValues<SearchImmersionsQuery>>>
+    (query: FormValues<SearchImmersionsQuery>) => void
   ]
   onNouvelleRecherche: () => void
 }
@@ -59,7 +51,10 @@ export default function FormRechercheOffres({
 }: FormRechercheOffresProps) {
   const [showForm, setShowForm] = useState<boolean>(true)
   const [showMoreFilters, setShowMoreFilters] = useState<boolean>(false)
-  const [countCriteres, setCountCriteres] = useState<number>(0)
+  const [countCriteres, setCountCriteres] = useSessionStorage<number>(
+    'recherche-offres--nb-criteres',
+    0
+  )
 
   const [typeOffre, setTypeOffre] = stateTypeOffre
   const [queryOffresEmploi, setQueryOffresEmploi] = stateQueryOffresEmploi
@@ -67,28 +62,28 @@ export default function FormRechercheOffres({
     stateQueryServicesCiviques
   const [queryImmersions, setQueryImmersions] = stateQueryImmersions
 
-  const formIsInvalid =
-    queryOffresEmploi.hasError ||
-    queryServicesCiviques.hasError ||
-    queryImmersions.hasError
+  function formIsInvalid(): boolean {
+    switch (typeOffre) {
+      case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
+        return queryOffresEmploi.hasError
+      case TypeOffre.SERVICE_CIVIQUE:
+        return queryServicesCiviques.hasError
+      case TypeOffre.IMMERSION:
+        return queryImmersions.hasError
+      default:
+        return true
+    }
+  }
 
   async function rechercherPremierePage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (hasResults) return
-    if (formIsInvalid) return
+    if (formIsInvalid()) return
     if (!typeOffre) return
 
     onNouvelleRecherche()
   }
-
-  useEffect(() => {
-    setQueryOffresEmploi({ hasError: false })
-    setQueryServicesCiviques({ hasError: false })
-    setQueryImmersions({
-      rayon: 10,
-      hasError: typeOffre === TypeOffre.IMMERSION,
-    })
-  }, [typeOffre])
 
   return (
     <form
@@ -180,7 +175,7 @@ export default function FormRechercheOffres({
             <Button
               type='submit'
               className='mx-auto'
-              disabled={formIsInvalid || hasResults}
+              disabled={formIsInvalid() || hasResults}
             >
               <IconComponent
                 name={IconName.Search}
@@ -199,9 +194,18 @@ export default function FormRechercheOffres({
   function getRechercheMain(): JSX.Element | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+        return (
+          <RechercheOffresEmploiPrincipale
+            key='recherche-offres--emploi--principale'
+            recupererCommunesEtDepartements={fetchCommunesEtDepartements}
+            query={queryOffresEmploi}
+            onQueryUpdate={setQueryOffresEmploi}
+          />
+        )
       case TypeOffre.ALTERNANCE:
         return (
           <RechercheOffresEmploiPrincipale
+            key='recherche-offres--alternance--principale'
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
@@ -232,10 +236,20 @@ export default function FormRechercheOffres({
   function getRechercheSecondary(): JSX.Element | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
+        return (
+          <RechercheOffresEmploiSecondaire
+            key='recherche-offres--emploi--secondaire'
+            alternanceOnly={false}
+            onCriteresChange={setCountCriteres}
+            query={queryOffresEmploi}
+            onQueryUpdate={setQueryOffresEmploi}
+          />
+        )
       case TypeOffre.ALTERNANCE:
         return (
           <RechercheOffresEmploiSecondaire
-            alternanceOnly={typeOffre === TypeOffre.ALTERNANCE}
+            key='recherche-offres--alternance--secondaire'
+            alternanceOnly={true}
             onCriteresChange={setCountCriteres}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}

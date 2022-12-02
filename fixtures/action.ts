@@ -1,6 +1,7 @@
 import {
   Action,
   Commentaire,
+  MetadonneesActions,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
@@ -138,6 +139,18 @@ export const uneListeDActionsJson = (
   },
   ...supplementaryActions,
 ]
+
+export const desActionsInitiales = (): {
+  actions: Action[]
+  metadonnees: MetadonneesActions
+  page: number
+} => {
+  return {
+    actions: [],
+    page: 0,
+    metadonnees: { nombreTotal: 0, nombrePages: 0 },
+  }
+}
 
 export const unCommentaire = (
   overrides: Partial<Commentaire> = {}

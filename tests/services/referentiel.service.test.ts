@@ -1,9 +1,9 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import {
   desCommunes,
+  desCommunesJson,
   desLocalites,
+  desLocalitesJson,
   desMetiers,
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
@@ -13,6 +13,7 @@ import {
   ReferentielApiService,
   ReferentielService,
 } from 'services/referentiel.service'
+import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(() => ({
@@ -29,7 +30,7 @@ describe('ReferentielApiService', () => {
     referentielService = new ReferentielApiService(apiClient)
   })
 
-  describe('.getAgences', () => {
+  describe('.getAgencesServerSide', () => {
     let structure: StructureConseiller
     beforeEach(() => {
       ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
@@ -44,7 +45,7 @@ describe('ReferentielApiService', () => {
       // Given
       structure = StructureConseiller.MILO
       // WHEN
-      const actual = await referentielService.getAgences(
+      const actual = await referentielService.getAgencesServerSide(
         structure,
         'accessToken'
       )
@@ -57,10 +58,42 @@ describe('ReferentielApiService', () => {
       // Given
       structure = StructureConseiller.POLE_EMPLOI
       // WHEN
-      const actual = await referentielService.getAgences(
+      const actual = await referentielService.getAgencesServerSide(
         structure,
         'accessToken'
       )
+
+      // THEN
+      expect(actual).toStrictEqual(uneListeDAgencesPoleEmploi())
+    })
+  })
+
+  describe('.getAgencesClientSide', () => {
+    let structure: StructureConseiller
+    beforeEach(() => {
+      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+        if (url === `/referentiels/agences?structure=MILO`)
+          return { content: uneListeDAgencesMILO() }
+        if (url === `/referentiels/agences?structure=POLE_EMPLOI`)
+          return { content: uneListeDAgencesPoleEmploi() }
+      })
+    })
+
+    it('renvoie le référentiel des agences MILO', async () => {
+      // Given
+      structure = StructureConseiller.MILO
+      // WHEN
+      const actual = await referentielService.getAgencesClientSide(structure)
+
+      // THEN
+      expect(actual).toStrictEqual(uneListeDAgencesMILO())
+    })
+
+    it('renvoie le référentiel des agences Pôle emploi', async () => {
+      // Given
+      structure = StructureConseiller.POLE_EMPLOI
+      // WHEN
+      const actual = await referentielService.getAgencesClientSide(structure)
 
       // THEN
       expect(actual).toStrictEqual(uneListeDAgencesPoleEmploi())
@@ -71,7 +104,7 @@ describe('ReferentielApiService', () => {
     it('retourne un référentiel de communes et départements avec des codes uniques', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: [...desLocalites(), ...desLocalites()],
+        content: [...desLocalitesJson(), ...desLocalitesJson()],
       })
 
       // When
@@ -92,7 +125,7 @@ describe('ReferentielApiService', () => {
     it('retourne un référentiel de communes avec des codes uniques', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: [...desCommunes(), ...desCommunes()],
+        content: [...desCommunesJson(), ...desCommunesJson()],
       })
 
       // When

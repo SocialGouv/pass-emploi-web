@@ -21,10 +21,12 @@ export default function RadioButton({
 }: RadioButtonProps) {
   function onClickDiv(e: MouseEvent) {
     e.preventDefault()
+    if (disabled) return
     onChange()
   }
   function onClickInput(e: MouseEvent) {
     e.stopPropagation()
+    if (disabled) return
     onChange()
   }
 

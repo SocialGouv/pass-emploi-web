@@ -1,5 +1,7 @@
 import { ActionsService } from 'services/actions.service'
+import { AgendaService } from 'services/agenda.service'
 import { ConseillerService } from 'services/conseiller.service'
+import { EvenementsService } from 'services/evenements.service'
 import { FavorisService } from 'services/favoris.service'
 import { FichiersService } from 'services/fichiers.service'
 import { ImmersionsService } from 'services/immersions.service'
@@ -7,8 +9,8 @@ import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
+import { SuggestionsService } from 'services/suggestions.service'
 
 export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
@@ -29,6 +31,7 @@ export function mockedJeunesService(
     getMotifsSuppression: jest.fn(),
     getMetadonneesFavorisJeune: jest.fn(),
     modifierIdentifiantPartenaire: jest.fn(),
+    getJeunesDeLEtablissement: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
@@ -72,17 +75,19 @@ export function mockedMessagesService(
   return { ...defaults, ...overrides }
 }
 
-export function mockedRendezVousService(
-  overrides: Partial<RendezVousService> = {}
-): RendezVousService {
-  const defaults: RendezVousService = {
+export function mockedEvenementsService(
+  overrides: Partial<EvenementsService> = {}
+): EvenementsService {
+  const defaults: EvenementsService = {
     getRendezVousConseiller: jest.fn(),
     getRendezVousJeune: jest.fn(),
-    getDetailsRendezVous: jest.fn(),
+    getRendezVousEtablissement: jest.fn(),
+    getDetailsEvenement: jest.fn(),
     getTypesRendezVous: jest.fn(),
-    postNewRendezVous: jest.fn(),
+    creerEvenement: jest.fn(),
     updateRendezVous: jest.fn(),
-    deleteRendezVous: jest.fn(),
+    supprimerEvenement: jest.fn(),
+    cloreAnimationCollective: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
@@ -106,7 +111,8 @@ export function mockedReferentielService(
   overrides: Partial<ReferentielService> = {}
 ): ReferentielService {
   const defaults: ReferentielService = {
-    getAgences: jest.fn(),
+    getAgencesServerSide: jest.fn(),
+    getAgencesClientSide: jest.fn(),
     getCommunesEtDepartements: jest.fn(),
     getCommunes: jest.fn(),
     getActionsPredefinies: jest.fn(),
@@ -140,7 +146,6 @@ export function mockedOffresEmploiService(
 ): OffresEmploiService {
   const defaults: OffresEmploiService = {
     getOffreEmploiServerSide: jest.fn(),
-    getLienOffreEmploi: jest.fn(),
     searchOffresEmploi: jest.fn(),
     searchAlternances: jest.fn(),
   }
@@ -151,7 +156,6 @@ export function mockedServicesCiviquesService(
   overrides: Partial<ServicesCiviquesService> = {}
 ): ServicesCiviquesService {
   const defaults: ServicesCiviquesService = {
-    getLienServiceCivique: jest.fn(),
     searchServicesCiviques: jest.fn(),
     getServiceCiviqueServerSide: jest.fn(),
   }
@@ -165,5 +169,22 @@ export function mockedImmersionsService(
     getImmersionServerSide: jest.fn(),
     searchImmersions: jest.fn(),
   }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedSuggestionsService(
+  overrides: Partial<SuggestionsService> = {}
+) {
+  const defaults: SuggestionsService = {
+    partagerRechercheOffreEmploi: jest.fn(),
+    partagerRechercheAlternance: jest.fn(),
+    partagerRechercheImmersion: jest.fn(),
+    partagerRechercheServiceCivique: jest.fn(),
+  }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedAgendaService(overrides: Partial<AgendaService> = {}) {
+  const defaults: AgendaService = { recupererAgenda: jest.fn() }
   return { ...defaults, ...overrides }
 }

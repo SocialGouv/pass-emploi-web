@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon'
 import React, {
-  ChangeEvent,
   FormEvent,
   useCallback,
   useEffect,
@@ -10,6 +9,7 @@ import React, {
 
 import DisplayMessage from 'components/chat/DisplayMessage'
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
+import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import ResizingMultilineInput from 'components/ui/Form/ResizingMultilineInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -57,7 +57,6 @@ export default function Conversation({
   const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
     undefined
   )
-  const hiddenFileInput = useRef<HTMLInputElement>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   const displayDate = useCallback((date: DateTime) => {
@@ -129,15 +128,9 @@ export default function Conversation({
     [messagesService]
   )
 
-  function handleFileUploadClick() {
-    hiddenFileInput.current!.click()
-  }
-
-  async function handleFileUploadChange(event: ChangeEvent<HTMLInputElement>) {
+  async function uploadFichier(fichierSelectionne: File) {
     setUploadedFileError(undefined)
-    if (!event.target.files || !event.target.files[0]) return
 
-    const fichierSelectionne = event.target.files[0]
     try {
       setIsFileUploading(true)
       const infoFichier = await fichiersService.uploadFichier(
@@ -148,7 +141,6 @@ export default function Conversation({
     } catch (error) {
       setUploadedFileError((error as Error).message)
     } finally {
-      hiddenFileInput.current!.value = ''
       setIsFileUploading(false)
     }
   }
@@ -276,38 +268,15 @@ export default function Conversation({
             Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
             maximum)
           </span>
-          <button
-            type='button'
-            aria-controls='piece-jointe'
-            aria-describedby='piece-jointe--desc'
-            className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed short:hidden'
-            onClick={handleFileUploadClick}
-            disabled={Boolean(uploadedFileInfo) || isFileUploading}
-          >
-            <IconComponent
-              name={isFileUploading ? IconName.Spinner : IconName.File}
-              aria-hidden='true'
-              focusable='false'
-              className={`m-auto w-6 h-6 fill-blanc ${
-                isFileUploading ? 'animate-spin' : ''
-              }`}
-            />
-            <label htmlFor='piece-jointe' className='sr-only'>
-              Attacher une pièce jointe
-            </label>
-            <input
-              id='piece-jointe'
-              type='file'
-              aria-describedby={
-                uploadedFileError ? 'piece-jointe--error' : undefined
-              }
-              aria-invalid={uploadedFileError ? true : undefined}
-              ref={hiddenFileInput}
-              onChange={handleFileUploadChange}
-              className='hidden'
-              accept='.pdf, .png, .jpeg, .jpg'
-            />
-          </button>
+
+          <FileInput
+            id='piece-jointe'
+            ariaDescribedby='piece-jointe--desc'
+            onChange={uploadFichier}
+            isLoading={isFileUploading}
+            disabled={Boolean(uploadedFileInfo)}
+            iconOnly={true}
+          />
 
           <div
             className='p-4 bg-blanc rounded-x_large border text-base-bold border-primary focus-within:outline focus-within:outline-1'
@@ -320,7 +289,9 @@ export default function Conversation({
                 </span>
                 <button
                   type='button'
-                  aria-label='Supprimer la pièce jointe'
+                  aria-label={
+                    'Supprimer la pièce jointe ' + uploadedFileInfo.nom
+                  }
                   onClick={deleteFile}
                 >
                   <IconComponent

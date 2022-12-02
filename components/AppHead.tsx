@@ -23,6 +23,7 @@ export default function AppHead({ titre, hasMessageNonLu }: AppHeadProps) {
       <meta name='apple-mobile-web-app-capable' content='yes' />
       <meta name='apple-mobile-web-app-status-bar-style' content='default' />
       <meta name='apple-mobile-web-app-title' content='CEJ conseiller' />
+      <meta name='viewport' content='width=device-width, initial-scale=1' />
 
       <link rel='shortcut icon' href='/favicon.png' />
       <link rel='apple-touch-icon' href='/favicon.png' />

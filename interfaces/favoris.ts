@@ -2,9 +2,7 @@ export interface Offre {
   id: string
   titre: string
   type: string
-  isEmploi: boolean
-  isAlternance: boolean
-  isServiceCivique: boolean
+  urlParam: string
   organisation?: string
   localisation?: string
 }

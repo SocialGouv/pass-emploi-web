@@ -59,7 +59,7 @@ function Profil({ referentielAgences }: ProfilProps) {
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence: agence.nom })
+    setConseiller({ ...conseiller!, agence })
     setTrackingLabel('Profil - Succès ajout agence')
   }
 
@@ -101,7 +101,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                     Votre {labelAgence} :
                   </dt>
                   <dd className='ml-2 inline text-base-bold'>
-                    {conseiller.agence}
+                    {conseiller.agence.nom}
                   </dd>
                 </div>
               )}
@@ -145,15 +145,11 @@ function Profil({ referentielAgences }: ProfilProps) {
           </section>
           <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Notifications</h2>
-            <label
-              htmlFor='notificationSonore'
-              className='flex items-center flex-wrap layout_m:flex-nowrap'
-            >
-              <span className='mr-4'>
+            <div className='flex items-center flex-wrap layout_m:flex-nowrap'>
+              <label htmlFor='notificationSonore' className='mr-4'>
                 Recevoir des notifications sonores pour la réception de nouveaux
                 messages
-              </span>
-              {/*FIXME Switch dans le label ?*/}
+              </label>
               <Switch
                 id='notificationSonore'
                 checkedLabel='Activé'
@@ -161,7 +157,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                 checked={conseiller.notificationsSonores}
                 onChange={toggleNotificationsSonores}
               />
-            </label>
+            </div>
           </section>
           <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>
@@ -246,7 +242,7 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
     if (!conseiller.agence) {
       const agenceService =
         withDependance<ReferentielService>('referentielService')
-      referentielAgences = await agenceService.getAgences(
+      referentielAgences = await agenceService.getAgencesServerSide(
         user.structure,
         accessToken
       )

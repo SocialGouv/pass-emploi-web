@@ -9,9 +9,7 @@ export function uneListeDOffres(): Offre[] {
       type: 'Offre d’emploi',
       organisation: 'organisation',
       localisation: 'localisation',
-      isEmploi: true,
-      isAlternance: false,
-      isServiceCivique: false,
+      urlParam: 'emploi',
     },
     {
       id: 'idOffre2',
@@ -19,9 +17,7 @@ export function uneListeDOffres(): Offre[] {
       type: 'Service civique',
       organisation: 'organisation',
       localisation: 'localisation',
-      isEmploi: false,
-      isAlternance: false,
-      isServiceCivique: true,
+      urlParam: 'service-civique',
     },
     {
       id: 'idOffre3',
@@ -29,9 +25,7 @@ export function uneListeDOffres(): Offre[] {
       type: 'Immersion',
       organisation: 'organisation',
       localisation: 'localisation',
-      isEmploi: false,
-      isAlternance: false,
-      isServiceCivique: false,
+      urlParam: 'immersion',
     },
     {
       id: 'idOffre4',
@@ -39,9 +33,7 @@ export function uneListeDOffres(): Offre[] {
       type: 'Alternance',
       organisation: 'organisation',
       localisation: 'localisation',
-      isEmploi: false,
-      isAlternance: true,
-      isServiceCivique: false,
+      urlParam: 'emploi',
     },
   ]
 }

@@ -3,6 +3,7 @@ export enum QueryParam {
   creationRdv = 'creationRdv',
   modificationRdv = 'modificationRdv',
   suppressionRdv = 'suppressionRdv',
+  clotureAC = 'clotureAC',
   // Bénéficiaires
   recuperationBeneficiaires = 'recuperation',
   suppressionBeneficiaire = 'suppression',
@@ -18,6 +19,7 @@ export enum QueryParam {
   qualificationSNP = 'qualificationSNP',
   qualificationNonSNP = 'qualificationNonSNP',
   partageOffre = 'partageOffre',
+  suggestionRecherche = 'suggestionRecherche',
 }
 
 export enum QueryValue {

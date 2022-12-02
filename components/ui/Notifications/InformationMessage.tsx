@@ -15,7 +15,7 @@ export default function InformationMessage({
 }: InformationMessageProps) {
   return (
     <div className='p-6 bg-primary_lighten rounded-medium text-primary'>
-      <div className='flex items-center'>
+      <div className={`flex ${!Array.isArray(content) ? '' : 'items-center'}`}>
         <IconComponent
           name={iconName ?? IconName.Info}
           focusable={false}

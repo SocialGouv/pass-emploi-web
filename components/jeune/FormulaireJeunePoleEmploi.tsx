@@ -129,7 +129,6 @@ function FormulaireJeunePoleEmploi({
         </Label>
         <div className='w-8/12'>
           <Input
-            label='Nom'
             type='text'
             id='jeune-nom'
             defaultValue={nom.value}

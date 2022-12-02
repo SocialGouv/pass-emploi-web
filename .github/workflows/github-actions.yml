@@ -4,14 +4,20 @@ on:
   push:
     branches: [develop, master]
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 jobs:
   Test:
     runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
 
     strategy:
       matrix:
-        node-version: [16.14.2]
+        node-version: [18.12.1]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -21,6 +27,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          yarn: cache
       - name: Install dependencies
         run: yarn
       - name: Lint
@@ -31,4 +38,19 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  deploy-review-app:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - name: Install Scalingo CLI
+        run: |
+          wget -qO- https://cli-dl.scalingo.com/install.sh | bash
+          echo "$HOME/bin" >> $GITHUB_PATH
+      - name: Configure Scalingo CLI
+        run: |
+          scalingo login --api-token ${{ secrets.SCALINGO_API_KEY }}
+      - name: Deploy review app
+        run: |
+          scalingo -a pa-front-staging integration-link-manual-review-app ${{ github.event.pull_request.number }} 

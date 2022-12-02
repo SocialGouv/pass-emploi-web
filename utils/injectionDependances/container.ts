@@ -1,10 +1,15 @@
 import { ApiHttpClient } from 'clients/api.client'
 import { FirebaseClient } from 'clients/firebase.client'
 import { ActionsApiService, ActionsService } from 'services/actions.service'
+import { AgendaApiService, AgendaService } from 'services/agenda.service'
 import {
   ConseillerApiService,
   ConseillerService,
 } from 'services/conseiller.service'
+import {
+  EvenementsApiService,
+  EvenementsService,
+} from 'services/evenements.service'
 import { FavorisApiService, FavorisService } from 'services/favoris.service'
 import { FichiersApiService, FichiersService } from 'services/fichiers.service'
 import {
@@ -25,13 +30,13 @@ import {
   ReferentielService,
 } from 'services/referentiel.service'
 import {
-  RendezVousApiService,
-  RendezVousService,
-} from 'services/rendez-vous.service'
-import {
   ServicesCiviquesApiService,
   ServicesCiviquesService,
 } from 'services/services-civiques.service'
+import {
+  SuggestionsApiService,
+  SuggestionsService,
+} from 'services/suggestions.service'
 import { ChatCrypto } from 'utils/chat/chatCrypto'
 import HttpClient from 'utils/httpClient'
 
@@ -41,12 +46,14 @@ export interface Dependencies {
   conseillerService: ConseillerService
   jeunesService: JeunesService
   messagesService: MessagesService
-  rendezVousService: RendezVousService
+  evenementsService: EvenementsService
   fichiersService: FichiersService
   favorisService: FavorisService
   offresEmploiService: OffresEmploiService
   servicesCiviquesService: ServicesCiviquesService
   immersionsService: ImmersionsService
+  suggestionsService: SuggestionsService
+  agendaService: AgendaService
 }
 
 export class Container {
@@ -73,12 +80,14 @@ export class Container {
         new ChatCrypto(),
         apiClient
       ),
-      rendezVousService: new RendezVousApiService(apiClient),
+      evenementsService: new EvenementsApiService(apiClient),
       fichiersService: new FichiersApiService(apiClient),
       favorisService: new FavorisApiService(apiClient),
       offresEmploiService: new OffresEmploiApiService(apiClient),
       servicesCiviquesService: new ServicesCiviquesApiService(apiClient),
       immersionsService: new ImmersionsApiService(apiClient),
+      suggestionsService: new SuggestionsApiService(apiClient),
+      agendaService: new AgendaApiService(apiClient),
     })
   }
 }

@@ -72,8 +72,9 @@ function PageAction({
     () =>
       action.creatorType === UserType.CONSEILLER.toLowerCase() &&
       !Boolean(action.qualification) &&
-      commentaires.length === 0,
-    [action.creatorType, action.qualification, commentaires.length]
+      commentaires.length === 0 &&
+      statut !== StatutAction.Terminee,
+    [action.creatorType, action.qualification, commentaires.length, statut]
   )
   const dateEcheance: string = useMemo(
     () => toShortDate(action.dateEcheance),

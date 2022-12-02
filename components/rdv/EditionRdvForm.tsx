@@ -1,11 +1,17 @@
 import { DateTime } from 'luxon'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
-import JeunesMultiselectAutocomplete, {
-  jeuneToOption,
-  OptionJeune,
-} from 'components/jeune/JeunesMultiselectAutocomplete'
-import { RequiredValue } from 'components/RequiredValue'
+import {
+  BeneficiaireIndicationPortefeuille,
+  BeneficiaireIndicationPresent,
+} from 'components/jeune/BeneficiaireIndications'
+import BeneficiairesMultiselectAutocomplete, {
+  OptionBeneficiaire,
+} from 'components/jeune/BeneficiairesMultiselectAutocomplete'
+import {
+  RequiredValue,
+  RequiredValue as ValueWithError,
+} from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -17,10 +23,17 @@ import { Switch } from 'components/ui/Form/Switch'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { BaseJeune } from 'interfaces/jeune'
-import { RdvFormData } from 'interfaces/json/rdv'
-import { Rdv, TYPE_RENDEZ_VOUS, TypeRendezVous } from 'interfaces/rdv'
-import { modalites } from 'referentiel/rdv'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import {
+  estClos,
+  Evenement,
+  isCodeTypeAnimationCollective,
+  TYPE_EVENEMENT,
+  TypeEvenement,
+} from 'interfaces/evenement'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { EvenementFormData } from 'interfaces/json/evenement'
+import { modalites } from 'referentiel/evenement'
 import {
   DATE_DASH_SEPARATOR,
   TIME_24_SIMPLE,
@@ -29,73 +42,164 @@ import {
 } from 'utils/date'
 
 interface EditionRdvFormProps {
-  jeunes: BaseJeune[]
-  typesRendezVous: TypeRendezVous[]
+  jeunesConseiller: BaseJeune[]
+  typesRendezVous: TypeEvenement[]
   redirectTo: string
-  aDesJeunesDUnAutrePortefeuille: boolean
   conseillerIsCreator: boolean
-  conseillerEmail: string
-  soumettreRendezVous: (payload: RdvFormData) => Promise<void>
+  soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
-  rdv?: Rdv
+  conseiller?: Conseiller
+  evenement?: Evenement
   idJeune?: string
-  showConfirmationModal: (payload: RdvFormData) => void
+  showConfirmationModal: (payload: EvenementFormData) => void
+  renseignerAgence: () => void
+  recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
+  onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
 }
 
 export function EditionRdvForm({
-  jeunes,
+  jeunesConseiller,
+  recupererJeunesDeLEtablissement,
   typesRendezVous,
   redirectTo,
-  aDesJeunesDUnAutrePortefeuille,
+  onBeneficiairesDUnAutrePortefeuille,
   conseillerIsCreator,
-  conseillerEmail,
+  conseiller,
   soumettreRendezVous,
   leaveWithChanges,
   onChanges,
-  rdv,
+  evenement,
   idJeune,
   showConfirmationModal,
+  renseignerAgence,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
+  const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
+    []
+  )
   const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
     value: defaultJeunes.map(({ id }) => id),
   })
-  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<string>(
-    rdv?.type.code ?? ''
-  )
+  const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<
+    string | undefined
+  >(evenement?.type.code)
 
-  const [precisionType, setPrecisionType] = useState<RequiredValue>({
-    value: rdv?.precisionType ?? '',
+  const [precisionType, setPrecisionType] = useState<
+    RequiredValue<string | undefined>
+  >({
+    value: evenement?.precisionType,
   })
   const [showPrecisionType, setShowPrecisionType] = useState<boolean>(
-    Boolean(rdv?.precisionType)
+    Boolean(evenement?.precisionType)
   )
-  const [modalite, setModalite] = useState<string>(rdv?.modality ?? '')
+  const [modalite, setModalite] = useState<string | undefined>(
+    evenement?.modality
+  )
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
-  const dateRdv = rdv ? DateTime.fromISO(rdv.date) : undefined
-  const localDate = dateRdv ? toFrenchFormat(dateRdv, DATE_DASH_SEPARATOR) : ''
-  const [date, setDate] = useState<RequiredValue>({ value: localDate })
+  const dateRdv = evenement && DateTime.fromISO(evenement.date)
+  const localDate = dateRdv && toFrenchFormat(dateRdv, DATE_DASH_SEPARATOR)
+  const [date, setDate] = useState<RequiredValue<string | undefined>>({
+    value: localDate,
+  })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
-  const localTime = dateRdv
-    ? toFrenchString(dateRdv, DateTime.TIME_24_SIMPLE)
-    : ''
-  const [horaire, setHoraire] = useState<RequiredValue>({ value: localTime })
+  const localTime = dateRdv && toFrenchString(dateRdv, DateTime.TIME_24_SIMPLE)
+  const [horaire, setHoraire] = useState<RequiredValue<string | undefined>>({
+    value: localTime,
+  })
   const regexDuree = /^\d{2}:\d{2}$/
-  const dureeRdv = dureeFromMinutes(rdv?.duration)
-  const [duree, setDuree] = useState<RequiredValue>({ value: dureeRdv })
-  const [adresse, setAdresse] = useState<string>(rdv?.adresse ?? '')
-  const [organisme, setOrganisme] = useState<string>(rdv?.organisme ?? '')
+  const dureeRdv = dureeFromMinutes(evenement?.duree)
+  const [duree, setDuree] = useState<RequiredValue<string | undefined>>({
+    value: dureeRdv,
+  })
+  const [adresse, setAdresse] = useState<string | undefined>(evenement?.adresse)
+  const [organisme, setOrganisme] = useState<string | undefined>(
+    evenement?.organisme
+  )
   const [isConseillerPresent, setConseillerPresent] = useState<boolean>(
-    rdv?.presenceConseiller ?? true
+    evenement?.presenceConseiller ?? true
   )
   const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(
-    Boolean(rdv?.invitation)
+    Boolean(evenement?.invitation)
   )
-  const [commentaire, setCommentaire] = useState<string>(rdv?.comment ?? '')
+  const [titre, setTitre] = useState<RequiredValue<string | undefined>>({
+    value: evenement?.titre,
+  })
+  const [description, setDescription] = useState<
+    ValueWithError<string | undefined>
+  >({
+    value: evenement?.commentaire,
+  })
+
+  const isAgenceNecessaire =
+    isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseiller?.agence
+  const afficherSuiteFormulaire =
+    codeTypeRendezVous &&
+    (!isCodeTypeAnimationCollective(codeTypeRendezVous) || conseiller?.agence)
+  const labelAgence =
+    conseiller?.structure === StructureConseiller.MILO
+      ? 'Mission locale'
+      : 'agence'
+
+  function estUnBeneficiaireDuConseiller(
+    idBeneficiaireAVerifier: string
+  ): boolean {
+    return jeunesConseiller.some(({ id }) => idBeneficiaireAVerifier === id)
+  }
+
+  function buildOptionsJeunes(): OptionBeneficiaire[] {
+    if (!isCodeTypeAnimationCollective(codeTypeRendezVous)) {
+      return jeunesConseiller.map((jeune) => ({
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndication: false,
+      }))
+    }
+
+    if (evenement && estClos(evenement)) {
+      return []
+    }
+
+    return jeunesEtablissement.map((jeune) => ({
+      id: jeune.id,
+      value: getNomJeuneComplet(jeune),
+      avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
+    }))
+  }
+
+  function initJeunesFromRdvOrIdJeune(): OptionBeneficiaire[] {
+    if (evenement && estClos(evenement)) {
+      return evenement.jeunes.map((jeune) => ({
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndication: jeune.futPresent,
+      }))
+    }
+
+    if (evenement) {
+      return evenement.jeunes.map((jeune) => ({
+        id: jeune.id,
+        value: getNomJeuneComplet(jeune),
+        avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
+      }))
+    }
+
+    if (idJeune) {
+      const jeune = jeunesConseiller.find(({ id }) => id === idJeune)!
+      return [
+        {
+          id: jeune.id,
+          value: getNomJeuneComplet(jeune),
+          avecIndication: false,
+        },
+      ]
+    }
+
+    return []
+  }
 
   function formHasChanges(): boolean {
-    if (!rdv) {
+    if (!evenement) {
       return Boolean(
         idsJeunes.value.length ||
           codeTypeRendezVous ||
@@ -103,41 +207,45 @@ export function EditionRdvForm({
           date.value ||
           horaire.value ||
           duree.value ||
+          titre.value ||
           adresse ||
           organisme ||
-          commentaire
+          description.value
       )
     }
 
-    const previousIds = rdv.jeunes.map(({ id }) => id).sort()
-    idsJeunes.value.sort()
+    const previousIds = evenement.jeunes.map(({ id }) => id).sort()
+    const currentIds = [...idsJeunes.value].sort()
     return (
-      previousIds.toString() !== idsJeunes.value.toString() ||
-      modalite !== rdv.modality ||
+      previousIds.toString() !== currentIds.toString() ||
+      modalite !== evenement.modality ||
       date.value !== localDate ||
       horaire.value !== localTime ||
       duree.value !== dureeRdv ||
-      adresse !== rdv.adresse ||
-      organisme !== rdv.organisme ||
-      commentaire !== rdv.comment ||
-      isConseillerPresent !== rdv.presenceConseiller
+      adresse !== evenement.adresse ||
+      organisme !== evenement.organisme ||
+      titre.value !== evenement.titre ||
+      description.value !== evenement.commentaire ||
+      isConseillerPresent !== evenement.presenceConseiller
     )
   }
 
   function formIsValid(): boolean {
     return (
-      Boolean(idsJeunes.value.length) &&
+      typeIsValid() &&
+      beneficiairesAreValid(idsJeunes.value) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
-      typeIsValid()
+      titreIsValid() &&
+      descriptionIsValid()
     )
   }
 
-  function handleSelectedTypeRendezVous(value: string) {
+  async function handleSelectedTypeRendezVous(value: string) {
     setCodeTypeRendezVous(value)
-    setShowPrecisionType(value === TYPE_RENDEZ_VOUS.Autre)
-    if (value === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller) {
+    setShowPrecisionType(value === TYPE_EVENEMENT.Autre)
+    if (value === TYPE_EVENEMENT.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
     }
   }
@@ -145,24 +253,32 @@ export function EditionRdvForm({
   function updateIdsJeunes(selectedIds: string[]) {
     setIdsJeunes({
       value: selectedIds,
-      error: !selectedIds.length
+      error: !beneficiairesAreValid(selectedIds)
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
+    onBeneficiairesDUnAutrePortefeuille(
+      selectedIds.some((id) => !estUnBeneficiaireDuConseiller(id))
+    )
   }
 
-  function validateTypeRendezVousAutre() {
+  function validateTypeEvenementAutre() {
     if (!precisionType.value) {
       setPrecisionType({
         value: precisionType.value,
         error:
-          "Le champ Préciser n'est pas renseigné. Veuillez préciser le type de rendez-vous.",
+          "Le champ Préciser n'est pas renseigné. Veuillez préciser le type d’événement.",
       })
     }
   }
 
+  function beneficiairesAreValid(idsBeneficiaires: string[]): boolean {
+    if (isCodeTypeAnimationCollective(codeTypeRendezVous)) return true
+    return idsBeneficiaires.length > 0
+  }
+
   function dateIsValid(): boolean {
-    return regexDate.test(date.value)
+    return Boolean(date.value && regexDate.test(date.value))
   }
 
   function validateDate() {
@@ -176,7 +292,7 @@ export function EditionRdvForm({
   }
 
   function horaireIsValid() {
-    return regexHoraire.test(horaire.value)
+    return Boolean(horaire.value && regexHoraire.test(horaire.value))
   }
 
   function validateHoraire() {
@@ -195,8 +311,8 @@ export function EditionRdvForm({
     }
   }
 
-  function dureeIsValid() {
-    return regexDuree.test(duree.value)
+  function dureeIsValid(): boolean {
+    return Boolean(duree.value && regexDuree.test(duree.value))
   }
 
   function validateDuree() {
@@ -217,13 +333,45 @@ export function EditionRdvForm({
 
   function typeIsValid(): boolean {
     if (!codeTypeRendezVous) return false
-    if (codeTypeRendezVous === TYPE_RENDEZ_VOUS.Autre)
+    if (codeTypeRendezVous === TYPE_EVENEMENT.Autre)
       return Boolean(precisionType.value)
     return true
   }
 
+  function titreIsValid(): boolean {
+    return (
+      !isCodeTypeAnimationCollective(codeTypeRendezVous) || Boolean(titre.value)
+    )
+  }
+
+  function validateTitre() {
+    if (isCodeTypeAnimationCollective(codeTypeRendezVous) && !titre.value) {
+      setTitre({
+        ...titre,
+        error:
+          'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.',
+      })
+    } else {
+      setTitre({ value: titre.value })
+    }
+  }
+
+  function descriptionIsValid(): boolean {
+    return !description.value || description.value.length < 250
+  }
+
+  function validateDescription() {
+    if (!descriptionIsValid()) {
+      setDescription({
+        ...description,
+        error:
+          'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.',
+      })
+    }
+  }
+
   function typeEntretienIndividuelConseillerSelected() {
-    return codeTypeRendezVous === TYPE_RENDEZ_VOUS.EntretienIndividuelConseiller
+    return codeTypeRendezVous === TYPE_EVENEMENT.EntretienIndividuelConseiller
   }
 
   function handlePresenceConseiller(e: ChangeEvent<HTMLInputElement>) {
@@ -240,26 +388,29 @@ export function EditionRdvForm({
     if (!formHasChanges()) return Promise.resolve()
     if (!formIsValid()) return Promise.resolve()
 
-    const [dureeHeures, dureeMinutes] = duree.value.split(':')
+    const [dureeHeures, dureeMinutes] = duree.value!.split(':')
     const dateTime: DateTime = DateTime.fromFormat(
       `${date.value} ${horaire.value}`,
       `${DATE_DASH_SEPARATOR} ${TIME_24_SIMPLE}`
     )
-    const payload: RdvFormData = {
+    const dureeEnMinutes =
+      parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10)
+    const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
-      type: codeTypeRendezVous,
+      type: codeTypeRendezVous!,
       date: dateTime.toISO(),
-      duration: parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10),
+      duration: dureeEnMinutes,
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,
       precision:
-        codeTypeRendezVous === TYPE_RENDEZ_VOUS.Autre
+        codeTypeRendezVous === TYPE_EVENEMENT.Autre
           ? precisionType.value
           : undefined,
-      modality: modalite || undefined,
-      adresse: adresse || undefined,
-      organisme: organisme || undefined,
-      comment: commentaire || undefined,
+      modality: modalite,
+      adresse,
+      organisme,
+      titre: titre.value,
+      comment: description.value,
     }
     if (!conseillerIsCreator && sendEmailInvitation) {
       showConfirmationModal(payload)
@@ -268,51 +419,47 @@ export function EditionRdvForm({
     }
   }
 
+  function emailInvitationText() {
+    if (conseillerIsCreator) {
+      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
+    } else {
+      return "Le créateur de l’événement recevra un mail pour l'informer de la modification."
+    }
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
   })
 
-  function emailInvitationText(conseillerIsCreator: boolean) {
-    if (conseillerIsCreator) {
-      return `Intégrer ce rendez-vous à mon agenda via l’adresse e-mail suivante :
-      ${conseillerEmail}`
-    } else {
-      return "Le créateur du rendez-vous recevra un mail pour l'informer de la modification."
+  useEffect(() => {
+    if (
+      isCodeTypeAnimationCollective(codeTypeRendezVous) &&
+      !jeunesEtablissement.length
+    ) {
+      recupererJeunesDeLEtablissement().then(setJeunesEtablissement)
     }
-  }
+  }, [
+    codeTypeRendezVous,
+    jeunesEtablissement.length,
+    recupererJeunesDeLEtablissement,
+  ])
 
   return (
     <form onSubmit={handleSoumettreRdv}>
-      <p className='text-s-bold mb-6'>
+      <p className='text-s-bold my-6'>
         Tous les champs avec * sont obligatoires
       </p>
 
-      {aDesJeunesDUnAutrePortefeuille && (
-        <div className='mb-6'>
-          <InformationMessage content='Ce rendez-vous concerne des jeunes que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
-        </div>
-      )}
-
-      <Etape numero={1} titre='Bénéficiaires'>
-        <JeunesMultiselectAutocomplete
-          jeunes={jeunes}
-          typeSelection='Bénéficiaires'
-          defaultJeunes={defaultJeunes}
-          onUpdate={updateIdsJeunes}
-          error={idsJeunes.error}
-        />
-      </Etape>
-
-      <Etape numero={2} titre='Type de rendez-vous'>
-        <Label htmlFor='typeRendezVous' inputRequired={true}>
+      <Etape numero={1} titre='Type d’événement'>
+        <Label htmlFor='typeEvenement' inputRequired={true}>
           Type
         </Label>
         <Select
-          id='typeRendezVous'
+          id='typeEvenement'
           defaultValue={codeTypeRendezVous}
           required={true}
-          disabled={Boolean(rdv)}
+          disabled={Boolean(evenement)}
           onChange={handleSelectedTypeRendezVous}
         >
           {typesRendezVous.map(({ code, label }) => (
@@ -325,250 +472,331 @@ export function EditionRdvForm({
         {showPrecisionType && (
           <>
             <Label
-              htmlFor='typeRendezVous-autre'
+              htmlFor='typeEvenement-autre'
               inputRequired={true}
               withBulleMessageSensible={true}
             >
               Préciser
             </Label>
             {precisionType.error && (
-              <InputError id='typeRendezVous-autre--error' className='mb-2'>
+              <InputError id='typeEvenement-autre--error' className='mb-2'>
                 {precisionType.error}
               </InputError>
             )}
             <Input
               type='text'
-              id='typeRendezVous-autre'
+              id='typeEvenement-autre'
               required={true}
-              disabled={Boolean(rdv)}
+              disabled={Boolean(evenement)}
               defaultValue={precisionType.value}
               onChange={(value: string) => setPrecisionType({ value })}
-              onBlur={validateTypeRendezVousAutre}
+              onBlur={validateTypeEvenementAutre}
               invalid={Boolean(precisionType.error)}
             />
           </>
         )}
 
-        <Label htmlFor='modalite'>Modalité</Label>
-        <Select id='modalite' defaultValue={modalite} onChange={setModalite}>
-          {modalites.map((md) => (
-            <option key={md} value={md}>
-              {md}
-            </option>
-          ))}
-        </Select>
+        {isAgenceNecessaire && (
+          <div className='bg-warning_lighten rounded-medium p-6'>
+            <p className='flex justify-center items-center text-base-bold text-warning mb-2'>
+              <IconComponent
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 mr-2 fill-warning'
+                name={IconName.Important}
+              />
+              Votre {labelAgence} n’est pas renseignée
+            </p>
+            <p className='text-base-regular text-warning mb-6'>
+              Pour créer une information collective ou un atelier vous devez
+              renseigner votre {labelAgence} dans votre profil.
+            </p>
+            <Button
+              type='button'
+              style={ButtonStyle.PRIMARY}
+              onClick={renseignerAgence}
+              className='mx-auto'
+            >
+              Renseigner votre {labelAgence}
+            </Button>
+          </div>
+        )}
       </Etape>
 
-      <Etape numero={3} titre='Lieu et date'>
-        <Label htmlFor='date' inputRequired={true}>
-          {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
-        </Label>
-        {date.error && (
-          <InputError id='date--error' className='mb-2'>
-            {date.error}
-          </InputError>
-        )}
-        <Input
-          type='date'
-          id='date'
-          defaultValue={date.value}
-          required={true}
-          onChange={(value: string) => setDate({ value })}
-          onBlur={validateDate}
-          invalid={Boolean(date.error)}
-        />
+      {afficherSuiteFormulaire && (
+        <>
+          <Etape numero={2} titre='Description'>
+            <Label
+              htmlFor='titre'
+              inputRequired={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+            >
+              Titre
+            </Label>
+            {titre.error && (
+              <InputError id='titre--error' className='mb-2'>
+                {titre.error}
+              </InputError>
+            )}
+            <Input
+              id='titre'
+              type='text'
+              defaultValue={titre.value}
+              required={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+              invalid={Boolean(titre.error)}
+              onChange={(value: string) => setTitre({ value })}
+              onBlur={validateTitre}
+              disabled={evenement && estClos(evenement)}
+            />
 
-        <Label htmlFor='horaire' inputRequired={true}>
-          {{ main: 'Heure', helpText: '(format : hh:mm)' }}
-        </Label>
-        {horaire.error && (
-          <InputError id='horaire--error' className='mb-2'>
-            {horaire.error}
-          </InputError>
-        )}
-        <Input
-          type='time'
-          id='horaire'
-          defaultValue={horaire.value}
-          required={true}
-          onChange={(value: string) => setHoraire({ value })}
-          onBlur={validateHoraire}
-          invalid={Boolean(horaire.error)}
-          aria-invalid={horaire.error ? true : undefined}
-          aria-describedby={horaire.error ? 'horaire--error' : undefined}
-        />
+            <Label htmlFor='description' withBulleMessageSensible={true}>
+              {{
+                main: 'Description',
+                helpText: '250 caractères maximum',
+              }}
+            </Label>
+            {description.error && (
+              <InputError id='description--error' className='mb-2'>
+                {description.error}
+              </InputError>
+            )}
+            <Textarea
+              id='description'
+              defaultValue={description.value}
+              rows={3}
+              maxLength={250}
+              onChange={(value: string) => setDescription({ value })}
+              invalid={Boolean(description.error)}
+              onBlur={validateDescription}
+              disabled={evenement && estClos(evenement)}
+            />
+          </Etape>
 
-        <Label htmlFor='duree' inputRequired={true}>
-          {{ main: 'Durée', helpText: '(format : hh:mm)' }}
-        </Label>
-        {duree.error && (
-          <InputError id='duree--error' className='mb-2'>
-            {duree.error}
-          </InputError>
-        )}
-        <Input
-          type='time'
-          id='duree'
-          required={true}
-          defaultValue={duree.value}
-          onChange={(value: string) => setDuree({ value })}
-          onBlur={validateDuree}
-          invalid={Boolean(duree.error)}
-        />
+          <Etape numero={3} titre='Ajout de bénéficiaires'>
+            {isCodeTypeAnimationCollective(codeTypeRendezVous) &&
+              (!evenement || !estClos(evenement)) && (
+                <div className='mb-4'>
+                  <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
+                </div>
+              )}
+            <BeneficiairesMultiselectAutocomplete
+              beneficiaires={buildOptionsJeunes()}
+              typeSelection='Bénéficiaires'
+              defaultBeneficiaires={defaultJeunes}
+              onUpdate={updateIdsJeunes}
+              error={idsJeunes.error}
+              required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
+              disabled={evenement && estClos(evenement)}
+              renderIndication={
+                evenement && estClos(evenement)
+                  ? BeneficiaireIndicationPresent
+                  : BeneficiaireIndicationPortefeuille
+              }
+            />
+          </Etape>
 
-        <Label htmlFor='adresse'>
-          {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
-        </Label>
-        <Input
-          type='text'
-          id='adresse'
-          defaultValue={adresse}
-          onChange={setAdresse}
-          icon='location'
-        />
+          <Etape numero={4} titre='Lieu et date'>
+            <Label htmlFor='modalite'>Modalité</Label>
+            <Select
+              id='modalite'
+              defaultValue={modalite}
+              onChange={setModalite}
+              disabled={evenement && estClos(evenement)}
+            >
+              {modalites.map((md) => (
+                <option key={md} value={md}>
+                  {md}
+                </option>
+              ))}
+            </Select>
+            <Label htmlFor='date' inputRequired={true}>
+              {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
+            </Label>
+            {date.error && (
+              <InputError id='date--error' className='mb-2'>
+                {date.error}
+              </InputError>
+            )}
+            <Input
+              type='date'
+              id='date'
+              defaultValue={date.value}
+              required={true}
+              onChange={(value: string) => setDate({ value })}
+              onBlur={validateDate}
+              invalid={Boolean(date.error)}
+              disabled={evenement && estClos(evenement)}
+            />
 
-        <Label htmlFor='organisme'>
-          {{
-            main: 'Organisme',
-            helpText: 'Ex : prestataire, entreprise, etc.',
-          }}
-        </Label>
-        <Input
-          type='text'
-          id='organisme'
-          defaultValue={organisme}
-          onChange={setOrganisme}
-        />
-      </Etape>
+            <Label htmlFor='horaire' inputRequired={true}>
+              {{ main: 'Heure', helpText: '(format : hh:mm)' }}
+            </Label>
+            {horaire.error && (
+              <InputError id='horaire--error' className='mb-2'>
+                {horaire.error}
+              </InputError>
+            )}
+            <Input
+              type='time'
+              id='horaire'
+              defaultValue={horaire.value}
+              required={true}
+              onChange={(value: string) => setHoraire({ value })}
+              onBlur={validateHoraire}
+              invalid={Boolean(horaire.error)}
+              aria-invalid={horaire.error ? true : undefined}
+              aria-describedby={horaire.error ? 'horaire--error' : undefined}
+              disabled={evenement && estClos(evenement)}
+            />
 
-      <Etape numero={4} titre='Informations conseiller'>
-        {!conseillerIsCreator && (
-          <>
-            {rdv!.createur && (
+            <Label htmlFor='duree' inputRequired={true}>
+              {{ main: 'Durée', helpText: '(format : hh:mm)' }}
+            </Label>
+            {duree.error && (
+              <InputError id='duree--error' className='mb-2'>
+                {duree.error}
+              </InputError>
+            )}
+            <Input
+              type='time'
+              id='duree'
+              required={true}
+              defaultValue={duree.value}
+              onChange={(value: string) => setDuree({ value })}
+              onBlur={validateDuree}
+              invalid={Boolean(duree.error)}
+              disabled={evenement && estClos(evenement)}
+            />
+
+            <Label htmlFor='adresse'>
+              {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
+            </Label>
+            <Input
+              type='text'
+              id='adresse'
+              defaultValue={adresse}
+              onChange={setAdresse}
+              icon='location'
+              disabled={evenement && estClos(evenement)}
+            />
+
+            <Label htmlFor='organisme'>
+              {{
+                main: 'Organisme',
+                helpText: 'Ex : prestataire, entreprise, etc.',
+              }}
+            </Label>
+            <Input
+              type='text'
+              id='organisme'
+              defaultValue={organisme}
+              onChange={setOrganisme}
+              disabled={evenement && estClos(evenement)}
+            />
+          </Etape>
+
+          <Etape numero={5} titre='Gestion des accès'>
+            {!conseillerIsCreator && (
               <div className='mb-6'>
                 <InformationMessage
-                  content={`Le rendez-vous a été créé par un autre conseiller : ${
-                    rdv!.createur.prenom
+                  content={`L’événement a été créé par un autre conseiller : ${
+                    evenement!.createur.prenom
                   } ${
-                    rdv!.createur.nom
+                    evenement!.createur.nom
                   }. Vous ne recevrez pas d'invitation dans votre agenda`}
                 />
               </div>
             )}
-            {!rdv!.createur && (
-              <div className='mb-6'>
-                <InformationMessage
-                  content={`Le rendez-vous a été créé par un autre conseiller. Vous ne recevrez pas d'invitation dans votre agenda`}
+
+            <div className='flex items-center mb-8'>
+              <div className='flex items-center'>
+                <label htmlFor='presenceConseiller' className='w-64 mr-4'>
+                  Informer les bénéficiaires qu’un conseiller sera présent à
+                  l’événement
+                </label>
+                <Switch
+                  id='presenceConseiller'
+                  checked={isConseillerPresent}
+                  disabled={
+                    typeEntretienIndividuelConseillerSelected() ||
+                    (evenement && estClos(evenement))
+                  }
+                  onChange={handlePresenceConseiller}
                 />
               </div>
-            )}
-          </>
-        )}
+            </div>
 
-        <div className='flex items-center mb-8'>
-          <label htmlFor='presenceConseiller' className='flex items-center'>
-            <span className='w-64 mr-4'>
-              Informer les bénéficiaires qu’un conseiller sera présent au
-              rendez-vous
-            </span>
-            <Switch
-              id='presenceConseiller'
-              checked={isConseillerPresent}
-              disabled={typeEntretienIndividuelConseillerSelected()}
-              onChange={handlePresenceConseiller}
-            />
-          </label>
-        </div>
+            <div className='flex items-center mb-8'>
+              <div className='flex items-center'>
+                <label htmlFor='emailInvitation' className='w-64 mr-4'>
+                  {emailInvitationText()}
+                </label>
+                <Switch
+                  id='emailInvitation'
+                  disabled={Boolean(evenement)}
+                  checked={sendEmailInvitation}
+                  onChange={(e) => setSendEmailInvitation(e.target.checked)}
+                />
+              </div>
+            </div>
+          </Etape>
 
-        <div className='flex items-center mb-8'>
-          <label htmlFor='emailInvitation' className='flex items-center'>
-            <span className='w-64 mr-4'>
-              {emailInvitationText(conseillerIsCreator)}
-            </span>
-            <Switch
-              id='emailInvitation'
-              disabled={Boolean(rdv)}
-              checked={sendEmailInvitation}
-              onChange={(e) => setSendEmailInvitation(e.target.checked)}
-            />
-          </label>
-        </div>
+          {(!evenement || !estClos(evenement)) && (
+            <div className='flex justify-center'>
+              {!formHasChanges() && (
+                <ButtonLink
+                  href={redirectTo}
+                  style={ButtonStyle.SECONDARY}
+                  className='mr-3'
+                >
+                  Annuler {evenement ? 'la modification' : ''}
+                </ButtonLink>
+              )}
+              {formHasChanges() && (
+                <Button
+                  type='button'
+                  label={`Quitter la ${
+                    evenement ? 'modification' : 'création'
+                  } de l’événement`}
+                  onClick={leaveWithChanges}
+                  style={ButtonStyle.SECONDARY}
+                  className='mr-3'
+                >
+                  Annuler {evenement ? ' la modification' : ''}
+                </Button>
+              )}
 
-        <Label htmlFor='commentaire' withBulleMessageSensible={true}>
-          {{
-            main: 'Commentaire à destination des jeunes',
-            helpText: 'Le commentaire sera lu par l’ensemble des destinataires',
-          }}
-        </Label>
-        <Textarea
-          id='commentaire'
-          defaultValue={commentaire}
-          rows={3}
-          onChange={(e) => setCommentaire(e.target.value)}
-        />
-      </Etape>
-
-      <div className='flex justify-center'>
-        {!formHasChanges() && (
-          <ButtonLink
-            href={redirectTo}
-            style={ButtonStyle.SECONDARY}
-            className='mr-3'
-          >
-            Annuler
-          </ButtonLink>
-        )}
-        {formHasChanges() && (
-          <Button
-            type='button'
-            label={`Quitter la ${
-              rdv ? 'modification' : 'création'
-            } du rendez-vous`}
-            onClick={leaveWithChanges}
-            style={ButtonStyle.SECONDARY}
-            className='mr-3'
-          >
-            Annuler
-          </Button>
-        )}
-
-        {rdv && (
-          <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
-            Modifier le rendez-vous
-          </Button>
-        )}
-        {!rdv && (
-          <Button type='submit' disabled={!formHasChanges() || !formIsValid()}>
-            <IconComponent
-              name={IconName.Add}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
-            />
-            Créer le rendez-vous
-          </Button>
-        )}
-      </div>
+              {evenement && (
+                <Button
+                  type='submit'
+                  disabled={!formHasChanges() || !formIsValid()}
+                >
+                  Modifier l’événement
+                </Button>
+              )}
+              {!evenement && (
+                <Button
+                  type='submit'
+                  disabled={!formHasChanges() || !formIsValid()}
+                >
+                  <IconComponent
+                    name={IconName.Add}
+                    focusable={false}
+                    aria-hidden={true}
+                    className='mr-2 w-4 h-4'
+                  />
+                  Créer l’événement
+                </Button>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </form>
   )
-
-  function initJeunesFromRdvOrIdJeune(): OptionJeune[] {
-    if (rdv) {
-      return rdv.jeunes.map(({ id, nom, prenom }) => ({
-        id,
-        value: nom + ' ' + prenom,
-      }))
-    }
-    if (idJeune) {
-      const jeune = jeunes.find(({ id }) => id === idJeune)!
-      return [jeuneToOption(jeune)]
-    }
-    return []
-  }
 }
 
-function dureeFromMinutes(duration?: number): string {
-  if (!duration) return ''
+function dureeFromMinutes(duration?: number): string | undefined {
+  if (!duration) return
 
   const hours = Math.floor(duration / 60)
   const minutes = duration % 60

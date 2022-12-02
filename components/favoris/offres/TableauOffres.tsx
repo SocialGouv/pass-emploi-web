@@ -1,17 +1,18 @@
 import React from 'react'
 
 import OffreRow from 'components/favoris/offres/OffreRow'
+import Table from 'components/ui/Table/Table'
+import { TBody } from 'components/ui/Table/TBody'
+import { TH } from 'components/ui/Table/TH'
+import { THead } from 'components/ui/Table/THead'
+import { TR } from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
 
 interface TableauOffresProps {
   offres: Offre[]
-  handleRedirectionOffre: (offre: Offre) => void
 }
 
-export default function TableauOffres({
-  offres,
-  handleRedirectionOffre,
-}: TableauOffresProps) {
+export default function TableauOffres({ offres }: TableauOffresProps) {
   return (
     <>
       {offres.length === 0 && (
@@ -21,27 +22,21 @@ export default function TableauOffres({
       )}
 
       {offres.length > 0 && (
-        <table className='w-full border-separate border-spacing-y-2'>
-          <caption className='sr-only'>Liste des offres en favoris</caption>
-          <thead>
-            <tr>
-              <th className='text-base-regular text-left p-4'>N°Offre</th>
-              <th className='text-base-regular text-left p-4'>Titre</th>
-              <th className='text-base-regular text-left p-4'>Entreprise</th>
-              <th className='text-base-regular text-left p-4'>Type</th>
-              <th className='aria-hidden' />
-            </tr>
-          </thead>
-          <tbody>
+        <Table asDiv={true} caption='Liste des offres en favoris'>
+          <THead>
+            <TR isHeader={true}>
+              <TH>N°Offre</TH>
+              <TH>Titre</TH>
+              <TH>Entreprise</TH>
+              <TH>Type</TH>
+            </TR>
+          </THead>
+          <TBody>
             {offres.map((offre) => (
-              <OffreRow
-                key={offre.id}
-                offre={offre}
-                handleRedirectionOffre={handleRedirectionOffre}
-              />
+              <OffreRow key={offre.id} offre={offre} />
             ))}
-          </tbody>
-        </table>
+          </TBody>
+        </Table>
       )}
     </>
   )

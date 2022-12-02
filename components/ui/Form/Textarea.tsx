@@ -1,10 +1,10 @@
-import { ChangeEvent, forwardRef } from 'react'
+import { forwardRef } from 'react'
 
 import styles from 'styles/components/Input.module.css'
 
 type TextareaProps = {
   id: string
-  onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void
+  onChange: (value: string) => void
   rows: number
   required?: boolean
   disabled?: boolean
@@ -34,13 +34,13 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       required={required}
       disabled={disabled}
       defaultValue={defaultValue}
-      onChange={onChange}
+      onChange={(e) => onChange(e.target.value)}
       onBlur={onBlur}
       maxLength={maxLength}
       rows={rows}
-      aria-invalid={invalid || undefined}
       aria-describedby={invalid ? `${id}--error` : undefined}
-      className={`${styles.input} ${invalid ? 'invalid' : ''}`}
+      aria-invalid={invalid || undefined}
+      className={`${styles.input}  ${invalid ? styles.invalid : ''}`}
       ref={ref}
     />
   )

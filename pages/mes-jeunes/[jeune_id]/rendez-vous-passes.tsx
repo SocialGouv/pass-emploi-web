@@ -3,18 +3,21 @@ import { GetServerSideProps } from 'next'
 
 import TableauRdv from 'components/rdv/TableauRdv'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { PeriodeRdv, RdvListItem, rdvToListItem } from 'interfaces/rdv'
-import { RendezVousService } from 'services/rendez-vous.service'
+import { PeriodeEvenements, EvenementListItem } from 'interfaces/evenement'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { EvenementsService } from 'services/evenements.service'
+import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface RendezVousPassesProps {
-  rdvs: RdvListItem[]
+  beneficiaire: BaseJeune
+  rdvs: EvenementListItem[]
 }
 
-function RendezVousPasses({ rdvs }: RendezVousPassesProps) {
+function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
   const [conseiller] = useConseiller()
   useMatomo('Détail jeune - Rendez-vous passés')
 
@@ -22,7 +25,7 @@ function RendezVousPasses({ rdvs }: RendezVousPassesProps) {
     <TableauRdv
       rdvs={rdvs}
       idConseiller={conseiller?.id ?? ''}
-      withNameJeune={false}
+      beneficiaireUnique={beneficiaire}
     />
   )
 }
@@ -35,8 +38,9 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const rendezVousService =
-    withDependance<RendezVousService>('rendezVousService')
+  const evenementsService =
+    withDependance<EvenementsService>('evenementsService')
+  const jeunesService = withDependance<JeunesService>('jeunesService')
 
   const {
     session: {
@@ -46,23 +50,27 @@ export const getServerSideProps: GetServerSideProps<
   } = sessionOrRedirect
 
   const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
+  const idBeneficiaire = context.query.jeune_id as string
 
-  const rdvs = isPoleEmploi
-    ? []
-    : await rendezVousService.getRendezVousJeune(
-        context.query.jeune_id as string,
-        PeriodeRdv.PASSES,
-        accessToken
-      )
-
-  if (!rdvs) {
+  const [beneficiaire, rdvs] = await Promise.all([
+    jeunesService.getJeuneDetails(idBeneficiaire, accessToken),
+    isPoleEmploi
+      ? []
+      : await evenementsService.getRendezVousJeune(
+          idBeneficiaire,
+          PeriodeEvenements.PASSES,
+          accessToken
+        ),
+  ])
+  if (!beneficiaire) {
     return { notFound: true }
   }
 
   return {
     props: {
-      rdvs: rdvs.map(rdvToListItem),
-      pageTitle: 'Rendez-vous passés',
+      beneficiaire,
+      rdvs,
+      pageTitle: 'Rendez-vous passés de ' + getNomJeuneComplet(beneficiaire),
     },
   }
 }

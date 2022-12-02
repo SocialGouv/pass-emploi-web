@@ -64,7 +64,7 @@ describe('EnvoiMessageGroupe', () => {
       )
 
       inputSearchJeune = screen.getByRole('combobox', {
-        name: 'Rechercher et ajouter des jeunes Nom et prénom',
+        name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
       })
       inputMessage = screen.getByLabelText('* Message')
       fileInput = screen.getByLabelText('Ajouter une pièce jointe')
@@ -243,7 +243,9 @@ describe('EnvoiMessageGroupe', () => {
 
       it('permet la suppression de la pièce jointe', async () => {
         // When
-        await userEvent.click(screen.getByText('Enlever fichier'))
+        await userEvent.click(
+          screen.getByText('Enlever fichier imageupload.png')
+        )
 
         // Then
         expect(() => screen.getByText('imageupload.png')).toThrow()
@@ -309,7 +311,10 @@ describe('EnvoiMessageGroupe', () => {
     describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {
       it('sélectionne tout les jeunes dans la liste', async () => {
         // When
-        await userEvent.type(inputSearchJeune, 'Sélectionner tous mes jeunes')
+        await userEvent.type(
+          inputSearchJeune,
+          'Sélectionner tous mes bénéficiaires'
+        )
 
         // Then
         expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
@@ -359,7 +364,7 @@ describe('EnvoiMessageGroupe', () => {
       it('récupère la liste des jeunes du conseiller', async () => {
         // When
         const actual = await getServerSideProps({
-          req: { headers: { referer: 'http://localhost:3000/mes-rendezvous' } },
+          req: { headers: { referer: 'http://localhost:3000/agenda' } },
         } as GetServerSidePropsContext)
 
         // Then
@@ -368,7 +373,7 @@ describe('EnvoiMessageGroupe', () => {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
             pageTitle: 'Message multi-destinataires',
-            returnTo: 'http://localhost:3000/mes-rendezvous',
+            returnTo: 'http://localhost:3000/agenda',
           },
         })
       })

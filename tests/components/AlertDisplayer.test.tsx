@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
@@ -14,8 +14,8 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
-        query: { creationRdv: 'succes' },
+        asPath: '/agenda',
+        query: { creationRdv: 'succes', idEvenement: 'id-evenement' },
         push: routerPush,
       })
 
@@ -26,8 +26,21 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/Le rendez-vous a bien été créé/)
+        screen.getByText(/L’événement a bien été créé/)
       ).toBeInTheDocument()
+    })
+
+    it("permet d'accéder à la fiche de l’événement", async () => {
+      // When
+      const lienEvenement = screen.getByRole('link', {
+        name: 'Voir le détail de l’événement',
+      })
+
+      // Then
+      expect(lienEvenement).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=id-evenement'
+      )
     })
 
     it("permet de fermer l'alerte du succès", async () => {
@@ -39,7 +52,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,
@@ -54,7 +67,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
+        asPath: '/agenda',
         query: { modificationRdv: 'succes' },
         push: routerPush,
       })
@@ -66,7 +79,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/rendez-vous a bien été modifié/)
+        screen.getByText(/événement a bien été modifié/)
       ).toBeInTheDocument()
     })
 
@@ -79,7 +92,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,
@@ -94,7 +107,7 @@ describe('AlertDisplayer', () => {
       // Given
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-rendezvous',
+        asPath: '/agenda',
         query: { suppressionRdv: 'succes' },
         push: routerPush,
       })
@@ -106,7 +119,7 @@ describe('AlertDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/rendez-vous a bien été supprimé/)
+        screen.getByText(/événement a bien été supprimé/)
       ).toBeInTheDocument()
     })
 
@@ -119,7 +132,7 @@ describe('AlertDisplayer', () => {
       // Then
       expect(routerPush).toHaveBeenCalledWith(
         {
-          pathname: '/mes-rendezvous',
+          pathname: '/agenda',
           query: {},
         },
         undefined,
@@ -193,7 +206,7 @@ describe('AlertDisplayer', () => {
     it("permet d'accéder à la fiche du jeune", async () => {
       // When
       const lienFicheJeune = screen.getByRole('link', {
-        name: 'voir le détail du bénéficiaire',
+        name: 'Voir le détail du bénéficiaire',
       })
 
       // Then

@@ -1,13 +1,27 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  RenderResult,
+  screen,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import React from 'react'
 
 import { listeBaseImmersions, uneBaseImmersion } from 'fixtures/offre'
-import { desCommunes, desMetiers, uneCommune, unMetier } from 'fixtures/referentiel'
-import { mockedImmersionsService, mockedReferentielService } from 'fixtures/services'
+import {
+  desCommunes,
+  desMetiers,
+  uneCommune,
+  unMetier,
+} from 'fixtures/referentiel'
+import {
+  mockedImmersionsService,
+  mockedReferentielService,
+} from 'fixtures/services'
 import { BaseImmersion } from 'interfaces/offre'
 import { Commune, Metier } from 'interfaces/referentiel'
 import RechercheOffres from 'pages/recherche-offres'
-import React from 'react'
 import { ImmersionsService } from 'services/immersions.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -18,10 +32,11 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 describe('Page Recherche Immersions', () => {
   let immersionsService: ImmersionsService
   let referentielService: ReferentielService
-
   let immersions: BaseImmersion[]
   let metiers: Metier[]
   let communes: Commune[]
+
+  let rendered: RenderResult
   beforeEach(async () => {
     metiers = desMetiers()
     communes = desCommunes()
@@ -29,7 +44,7 @@ describe('Page Recherche Immersions', () => {
     immersionsService = mockedImmersionsService({
       searchImmersions: jest.fn(async () => ({
         offres: immersions,
-        metadonnees: { nombrePages: 4, nombreTotal: 31 },
+        metadonnees: { nombrePages: 4, nombreTotal: 37 },
       })),
     })
     referentielService = mockedReferentielService({
@@ -37,7 +52,7 @@ describe('Page Recherche Immersions', () => {
       getCommunes: jest.fn(async () => communes),
     })
 
-    renderWithContexts(<RechercheOffres pageTitle='' />, {
+    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
       customDependances: { referentielService, immersionsService },
     })
     await userEvent.click(screen.getByRole('radio', { name: 'Immersion' }))
@@ -269,7 +284,7 @@ describe('Page Recherche Immersions', () => {
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
       // When-Then
-      await saisirCommune('paris 14')
+      await saisirCommune('paris 14 (75)')
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
@@ -282,6 +297,56 @@ describe('Page Recherche Immersions', () => {
 
       // Then
       expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
+    })
+  })
+
+  describe('partage des critères de recherche', () => {
+    it('ne permet pas de partager s’il n’y a ni métier ni commune renseignés', async () => {
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: `Partager critères de recherche`,
+        })
+      )
+
+      expect(
+        screen.getByText(
+          'Pour suggérer des critères de recherche, vous devez saisir un métier et une ville.'
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('affiche le bouton de partage de critère s’il y a un métier et une commune renseignés', async () => {
+      // When
+      await saisirMetier('développeur / développeuse web')
+      await saisirCommune('paris 14 (75)')
+
+      // Then
+      expect(
+        screen.getByText(
+          'Suggérer ces critères de recherche à vos bénéficiaires'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('construit le bon lien qui correspond aux critères de recherches', async () => {
+      // Given
+      await saisirMetier('développeur / développeuse web')
+      await saisirCommune('paris 14 (75)')
+
+      // Then
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toHaveAttribute(
+        'href',
+        `/offres/partage-recherche?type=IMMERSION&titre=D%C3%A9veloppeur%20/%20D%C3%A9veloppeuse%20web%20-%20PARIS%2014%20(75)&labelMetier=D%C3%A9veloppeur%20/%20D%C3%A9veloppeuse%20web&codeMetier=M1805&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
+      )
     })
   })
 
@@ -307,7 +372,7 @@ describe('Page Recherche Immersions', () => {
       })
 
       // When
-      await saisirCommune('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
@@ -336,7 +401,7 @@ describe('Page Recherche Immersions', () => {
 
       // When
       await saisirMetier('développeur / développeuse web')
-      await saisirCommune('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
@@ -376,12 +441,12 @@ describe('Page Recherche Immersions', () => {
 
       // When
       await saisirMetier('développeur / développeuse web')
-      await saisirCommune('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
       offresList = screen.getByRole('list', {
-        description: `Liste des résultats (31 offres)`,
+        description: `Liste des résultats (37 offres)`,
       })
     })
 
@@ -406,7 +471,7 @@ describe('Page Recherche Immersions', () => {
         ).toBeInTheDocument()
         expect(
           within(immersionCard).getByRole('link', {
-            name: 'Détail de l’immersion chez ' + immersion.nomEtablissement,
+            name: 'Détail de l’offre chez ' + immersion.nomEtablissement,
           })
         ).toHaveAttribute('href', '/offres/immersion/' + immersion.id)
       })
@@ -467,7 +532,7 @@ describe('Page Recherche Immersions', () => {
       beforeEach(() => {
         ;(immersionsService.searchImmersions as jest.Mock).mockImplementation(
           (_query, page) => ({
-            metadonnees: { nombreTotal: 31, nombrePages: 4 },
+            metadonnees: { nombreTotal: 37, nombrePages: 4 },
             offres: [uneBaseImmersion({ titre: 'Immersion page ' + page })],
           })
         )
@@ -525,6 +590,46 @@ describe('Page Recherche Immersions', () => {
         // Then
         expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(1)
       })
+    })
+  })
+
+  describe('sauvegarde', () => {
+    it('retient l’état de la recherche', async () => {
+      // Given
+      await saisirMetier('développeur / développeuse web')
+      await saisirCommune('paris 14 (75)')
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+      fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+        target: { value: 43 },
+      })
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Page 2' }))
+
+      // When
+      rendered.unmount()
+      renderWithContexts(<RechercheOffres pageTitle='' />, {
+        customDependances: { referentielService, immersionsService },
+      })
+
+      // Then
+      expect(screen.getByLabelText('Immersion')).toBeChecked()
+      expect(screen.getByLabelText(/Métier/)).toHaveValue(
+        'DEVELOPPEUR / DEVELOPPEUSE WEB'
+      )
+      expect(screen.getByLabelText(/Localisation/)).toHaveValue('PARIS 14 (75)')
+      expect(screen.getByText('[1] critère sélectionné')).toBeInTheDocument()
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+      expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
+      const offresList = screen.getByRole('list', {
+        description: 'Liste des résultats (37 offres)',
+      })
+      expect(within(offresList).getAllByRole('listitem').length).toEqual(
+        immersions.length
+      )
+      expect(screen.getByRole('button', { name: 'Page 2' })).toHaveAttribute(
+        'aria-current',
+        'page'
+      )
     })
   })
 })

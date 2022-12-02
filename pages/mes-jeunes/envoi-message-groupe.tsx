@@ -1,13 +1,16 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, MouseEvent, useRef, useState } from 'react'
+import React, { MouseEvent, useState } from 'react'
 
-import JeunesMultiselectAutocomplete from 'components/jeune/JeunesMultiselectAutocomplete'
+import BeneficiairesMultiselectAutocomplete, {
+  OptionBeneficiaire,
+} from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
+import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
@@ -15,7 +18,11 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { InfoFichier } from 'interfaces/fichier'
-import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
+import {
+  BaseJeune,
+  compareJeunesByNom,
+  getNomJeuneComplet,
+} from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { FichiersService } from 'services/fichiers.service'
@@ -47,7 +54,6 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
   const [pieceJointe, setPieceJointe] = useState<File | undefined>()
-  const hiddenFileInput = useRef<HTMLInputElement>(null)
   const [isSending, setIsSending] = useState<boolean>(false)
   const [erreurUploadPieceJointe, setErreurUploadPieceJointe] = useState<
     string | undefined
@@ -60,6 +66,13 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+
+  function buildOptionsJeunes(): OptionBeneficiaire[] {
+    return jeunes.map((jeune) => ({
+      id: jeune.id,
+      value: getNomJeuneComplet(jeune),
+    }))
+  }
 
   function formIsValid(): boolean {
     return Boolean(selectedJeunesIds.length && (message || pieceJointe))
@@ -129,9 +142,9 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
 
-      const { pathname, query } = parseUrl(returnTo)
+      const { baseUrl, query } = parseUrl(returnTo)
       await router.push({
-        pathname,
+        pathname: baseUrl,
         query: setQueryParams(query, {
           [QueryParam.envoiMessage]: QueryValue.succes,
         }),
@@ -162,19 +175,6 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     openLeavePageConfirmationModal
   )
 
-  function ouvrirSelectionFichier() {
-    hiddenFileInput.current!.click()
-  }
-
-  function ajouterPieceJointe(event: ChangeEvent<HTMLInputElement>) {
-    if (!event.target.files || !event.target.files[0]) return
-
-    const fichierSelectionne = event.target.files[0]
-    setPieceJointe(fichierSelectionne)
-
-    hiddenFileInput.current!.value = ''
-  }
-
   function enleverFichier() {
     setErreurUploadPieceJointe(undefined)
     setPieceJointe(undefined)
@@ -192,8 +192,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
         </div>
 
         <Etape numero={1} titre='Destinataires'>
-          <JeunesMultiselectAutocomplete
-            jeunes={jeunes}
+          <BeneficiairesMultiselectAutocomplete
+            beneficiaires={buildOptionsJeunes()}
             typeSelection='Destinataires'
             onUpdate={setSelectedJeunesIds}
           />
@@ -208,12 +208,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             Message
           </Label>
 
-          <Textarea
-            id='message'
-            rows={10}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-          />
+          <Textarea id='message' rows={10} onChange={setMessage} required />
 
           <div>
             <div
@@ -230,42 +225,12 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             </div>
 
             <div className='my-4'>
-              <Button
-                type='button'
-                controls='piece-jointe-multi'
-                describedBy='piece-jointe-multi--desc'
-                style={ButtonStyle.SECONDARY}
-                onClick={ouvrirSelectionFichier}
+              <FileInput
+                id='piece-jointe-multi'
+                ariaDescribedby='piece-jointe-multi--desc'
+                onChange={setPieceJointe}
                 disabled={Boolean(pieceJointe)}
-              >
-                <IconComponent
-                  name={IconName.File}
-                  aria-hidden={true}
-                  focusable={false}
-                  className='h-4 w-4 mr-2'
-                />
-                <label
-                  htmlFor='piece-jointe-multi'
-                  className='cursor-pointer'
-                  onClick={(e) => e.preventDefault()}
-                >
-                  Ajouter une pièce jointe
-                </label>
-                <input
-                  id='piece-jointe-multi'
-                  type='file'
-                  ref={hiddenFileInput}
-                  aria-describedby={
-                    erreurUploadPieceJointe
-                      ? 'piece-jointe-multi--error'
-                      : undefined
-                  }
-                  aria-invalid={erreurUploadPieceJointe ? true : undefined}
-                  onChange={ajouterPieceJointe}
-                  className='hidden'
-                  accept='.pdf, .png, .jpeg, .jpg'
-                />
-              </Button>
+              />
             </div>
 
             {pieceJointe && (
@@ -275,7 +240,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                     {
                       id: pieceJointe.name,
                       value: pieceJointe.name,
-                      withInfo: false,
+                      avecIndication: false,
                     },
                   ]}
                   typeSelection='fichier'

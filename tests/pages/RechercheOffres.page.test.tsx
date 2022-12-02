@@ -87,7 +87,7 @@ describe('Page Recherche Offres', () => {
         screen.getByText(
           'Aucune offre ne correspond à vos critères de recherche.'
         )
-      )
+      ).toBeInTheDocument()
     })
   })
 
@@ -143,7 +143,7 @@ describe('Page Recherche Offres', () => {
         props: {
           pageTitle: 'Recherche d’offres',
           pageHeader: 'Offres',
-          partageSuccess: true,
+          partageOffreSuccess: true,
         },
       })
     })

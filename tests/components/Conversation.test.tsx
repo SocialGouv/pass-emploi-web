@@ -11,6 +11,7 @@ import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
+import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toShortDate } from 'utils/date'
 
@@ -90,7 +91,7 @@ describe('<Conversation />', () => {
     const file = new File(['un contenu'], 'imageupload.png', {
       type: 'image/png',
     })
-    const fileInput = screen.getByLabelText('Attacher une pièce jointe')
+    const fileInput = screen.getByLabelText('Ajouter une pièce jointe')
     const messageInput = screen.getByPlaceholderText(
       'Écrivez votre message ici...'
     )
@@ -152,9 +153,13 @@ describe('<Conversation />', () => {
     )
   })
 
-  it('affiche au survol la présence d’un lien externe dans le message s’il en a un', () => {
+  it('indique la présence d’un lien externe dans le message s’il en a un', () => {
     // Then
-    expect(screen.getByText(/https/)).toHaveAttribute('title', 'Lien externe')
+    expect(
+      screen.getByRole('link', {
+        name: 'https://www.pass-emploi.com/ (nouvelle fenêtre)',
+      })
+    ).toBeInTheDocument()
   })
 
   describe('au clic ouvre une boîte de dialogue de confirmation', () => {
@@ -236,15 +241,14 @@ describe('<Conversation />', () => {
   })
 
   describe('quand on crée un message avec une pièce jointe', () => {
-    let uploadFileButton: HTMLButtonElement
+    let fileInput: HTMLInputElement
     let file: File
     let submitButton: HTMLButtonElement
     beforeEach(async () => {
       // Given
       file = new File(['un contenu'], 'imageupload.png')
 
-      const fileInput = screen.getByLabelText('Attacher une pièce jointe')
-      uploadFileButton = fileInput.closest('button')!
+      fileInput = screen.getByLabelText('Ajouter une pièce jointe')
       submitButton = screen.getByRole('button', { name: /Envoyer/ })
 
       // When
@@ -256,9 +260,9 @@ describe('<Conversation />', () => {
       // Then
       expect(screen.getByText('imageupload.png')).toBeInTheDocument()
       expect(
-        screen.getByLabelText('Supprimer la pièce jointe')
+        screen.getByLabelText('Supprimer la pièce jointe imageupload.png')
       ).toBeInTheDocument()
-      expect(uploadFileButton).toHaveAttribute('disabled', '')
+      expect(fileInput).toHaveAttribute('disabled', '')
       expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
         ['jeune-1'],
         file
@@ -268,7 +272,7 @@ describe('<Conversation />', () => {
     it('on peut supprimer la pièce jointe ', async () => {
       // Given
       const boutonDeleteFichier = screen.getByLabelText(
-        'Supprimer la pièce jointe'
+        'Supprimer la pièce jointe imageupload.png'
       )
       // When
       await userEvent.click(boutonDeleteFichier)
@@ -298,16 +302,54 @@ describe('<Conversation />', () => {
 
     it("affiche le titre de l'offre", async () => {
       // Then
-      expect(within(message).getByText('Une offre')).toBeInTheDocument()
+      expect(
+        within(message).getByText((content, element) => {
+          return (
+            element!.tagName.toLowerCase() === 'p' &&
+            content.startsWith('Une offre')
+          )
+        })
+      ).toBeInTheDocument()
     })
 
     it("affiche le lien de l'offre", async () => {
       // Then
       expect(
         within(message).getByRole('link', {
-          name: 'Voir l’offre',
+          name: /Voir l’offre/,
         })
       ).toHaveAttribute('href', '/offres/emploi/id-offre')
+    })
+  })
+
+  describe("quand on reçoit un message de partage d'événement", () => {
+    let message: HTMLElement
+    beforeEach(() => {
+      message = screen.getByText('Decrypted: Je vous partage cet événement')
+        .parentElement!
+    })
+
+    it("affiche le titre de l'événement", async () => {
+      // Then
+      expect(getByDescriptionTerm('Titre de l’événement :')).toHaveTextContent(
+        'Un atelier'
+      )
+    })
+
+    it("affiche la date de l'événement", async () => {
+      // Then
+      expect(getByDescriptionTerm('Date de l’événement :')).toHaveTextContent(
+        'le 22/12/2021'
+      )
+    })
+
+    it("affiche le lien de l'événement", async () => {
+      // Then
+      expect(
+        within(message).getByRole('link', {
+          name: 'Voir l’événement',
+        })
+      ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=id-evenement')
     })
   })
 })

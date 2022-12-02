@@ -69,6 +69,17 @@ export const desMessages = (): Message[] => [
     creationDate: DateTime.local(2022, 1, 16),
     conseillerId: 'conseiller-2',
   }),
+  unMessage({
+    id: 'message-7',
+    content: 'Je vous partage cet événement',
+    creationDate: DateTime.local(2022, 1, 17),
+    type: TypeMessage.MESSAGE_EVENEMENT,
+    infoEvenement: {
+      id: 'id-evenement',
+      titre: 'Un atelier',
+      date: DateTime.fromISO('2021-12-22T00:00:00.000Z'),
+    },
+  }),
 ]
 
 export const desMessagesParJour = (): MessagesOfADay[] => [
@@ -134,6 +145,22 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
           'Decrypted: Message du 16/1/2022 avec un lien https://www.pass-emploi.com/',
         creationDate: DateTime.local(2022, 1, 16),
         conseillerId: 'conseiller-2',
+      }),
+    ],
+  },
+  {
+    date: DateTime.local(2022, 1, 17),
+    messages: [
+      unMessage({
+        id: 'message-7',
+        content: 'Decrypted: Je vous partage cet événement',
+        creationDate: DateTime.local(2022, 1, 17),
+        type: TypeMessage.MESSAGE_EVENEMENT,
+        infoEvenement: {
+          id: 'id-evenement',
+          titre: 'Un atelier',
+          date: DateTime.fromISO('2021-12-22T00:00:00.000Z'),
+        },
       }),
     ],
   },

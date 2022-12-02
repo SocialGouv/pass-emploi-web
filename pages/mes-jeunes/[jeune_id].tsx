@@ -5,12 +5,13 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
+import { OngletAgendaBeneficiaire } from 'components/agenda-jeune/OngletAgendaBeneficiaire'
 import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
-import { OngletRdvs } from 'components/rdv/OngletRdvs'
+import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -23,7 +24,9 @@ import {
   MetadonneesActions,
   StatutAction,
 } from 'interfaces/action'
+import { Agenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import {
   DetailJeune,
   IndicateursSemaine,
@@ -31,12 +34,12 @@ import {
 } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { PeriodeRdv, RdvListItem, rdvToListItem } from 'interfaces/rdv'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { QueryParam, QueryValue } from 'referentiel/queryParam'
 import { ActionsService } from 'services/actions.service'
+import { AgendaService } from 'services/agenda.service'
+import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
-import { RendezVousService } from 'services/rendez-vous.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
@@ -45,22 +48,24 @@ import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 export enum Onglet {
-  RDVS = 'RDVS',
+  AGENDA = 'AGENDA',
   ACTIONS = 'ACTIONS',
+  RDVS = 'RDVS',
   FAVORIS = 'FAVORIS',
 }
 
 const ongletProps: {
   [key in Onglet]: { queryParam: string; trackingLabel: string }
 } = {
-  RDVS: { queryParam: 'rdvs', trackingLabel: 'Événements' },
+  AGENDA: { queryParam: 'agenda', trackingLabel: 'Agenda' },
   ACTIONS: { queryParam: 'actions', trackingLabel: 'Actions' },
+  RDVS: { queryParam: 'rdvs', trackingLabel: 'Événements' },
   FAVORIS: { queryParam: 'favoris', trackingLabel: 'Favoris' },
 }
 
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
-  rdvs: RdvListItem[]
+  rdvs: EvenementListItem[]
   actionsInitiales: {
     actions: Action[]
     metadonnees: MetadonneesActions
@@ -89,6 +94,7 @@ function FicheJeune({
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const agendaService = useDependance<AgendaService>('agendaService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
@@ -97,7 +103,7 @@ function FicheJeune({
     MotifSuppressionJeune[]
   >([])
 
-  const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.RDVS)
+  const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.AGENDA)
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
@@ -174,6 +180,10 @@ function FicheJeune({
 
     setTotalActions(result.metadonnees.nombreTotal)
     return result
+  }
+
+  async function recupererAgenda(): Promise<Agenda> {
+    return agendaService.recupererAgenda(jeune.id, DateTime.now())
   }
 
   async function openDeleteJeuneModal(e: React.MouseEvent<HTMLElement>) {
@@ -326,7 +336,7 @@ function FicheJeune({
                 aria-hidden='true'
                 className='mr-2 w-4 h-4'
               />
-              Créer un rendez-vous
+              Créer un événement
             </ButtonLink>
           )}
 
@@ -349,11 +359,10 @@ function FicheJeune({
 
       <TabList className='mt-10'>
         <Tab
-          label='Rendez-vous'
-          count={!isPoleEmploi ? rdvs.length : undefined}
-          selected={currentTab === Onglet.RDVS}
-          controls='liste-rdvs'
-          onSelectTab={() => switchTab(Onglet.RDVS)}
+          label='Agenda'
+          selected={currentTab === Onglet.AGENDA}
+          controls='agenda'
+          onSelectTab={() => switchTab(Onglet.AGENDA)}
           iconName={IconName.Calendar}
         />
         <Tab
@@ -363,6 +372,14 @@ function FicheJeune({
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
           iconName={IconName.Actions}
+        />
+        <Tab
+          label='Rendez-vous'
+          count={!isPoleEmploi ? rdvs.length : undefined}
+          selected={currentTab === Onglet.RDVS}
+          controls='liste-rdvs'
+          onSelectTab={() => switchTab(Onglet.RDVS)}
+          iconName={IconName.Calendar}
         />
         {metadonneesFavoris && (
           <Tab
@@ -376,6 +393,23 @@ function FicheJeune({
         )}
       </TabList>
 
+      {currentTab === Onglet.AGENDA && (
+        <div
+          role='tabpanel'
+          aria-labelledby='agenda--tab'
+          tabIndex={0}
+          id='agenda'
+          className='mt-8 pb-8 border-b border-primary_lighten'
+        >
+          <OngletAgendaBeneficiaire
+            idBeneficiaire={jeune.id}
+            isPoleEmploi={isPoleEmploi}
+            recupererAgenda={recupererAgenda}
+            goToActions={() => switchTab(Onglet.ACTIONS)}
+          />
+        </div>
+      )}
+
       {currentTab === Onglet.RDVS && (
         <div
           role='tabpanel'
@@ -384,11 +418,11 @@ function FicheJeune({
           id='liste-rdvs'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          <OngletRdvs
+          <OngletRdvsBeneficiaire
             poleEmploi={isPoleEmploi}
+            beneficiaire={jeune}
             rdvs={rdvs}
             idConseiller={conseiller?.id ?? ''}
-            idJeune={jeune.id}
           />
         </div>
       )}
@@ -437,12 +471,12 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
-    withDependance<RendezVousService>('rendezVousService')
+    withDependance<EvenementsService>('evenementsService')
   const actionsService = withDependance<ActionsService>('actionsService')
   const {
     session: {
       accessToken,
-      user: { structure, id },
+      user: { structure },
     },
   } = sessionOrRedirect
 
@@ -454,7 +488,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       accessToken
     ),
     jeunesService.getMetadonneesFavorisJeune(
-      id,
       context.query.jeune_id as string,
       accessToken
     ),
@@ -462,7 +495,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       ? []
       : rendezVousService.getRendezVousJeune(
           context.query.jeune_id as string,
-          PeriodeRdv.FUTURS,
+          PeriodeEvenements.FUTURS,
           accessToken
         ),
     isPoleEmploi
@@ -481,7 +514,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const props: FicheJeuneProps = {
     jeune,
     metadonneesFavoris,
-    rdvs: rdvs.map(rdvToListItem),
+    rdvs,
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
@@ -508,8 +541,19 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       context.query[QueryParam.envoiMessage] === QueryValue.succes
 
   if (context.query.onglet) {
-    props.onglet =
-      context.query.onglet === 'actions' ? Onglet.ACTIONS : Onglet.RDVS
+    switch (context.query.onglet) {
+      case 'actions':
+        props.onglet = Onglet.ACTIONS
+        break
+      case 'rdvs':
+        props.onglet = Onglet.RDVS
+        break
+      case 'favoris':
+        props.onglet = Onglet.FAVORIS
+        break
+      default:
+        props.onglet = Onglet.AGENDA
+    }
   }
 
   return {

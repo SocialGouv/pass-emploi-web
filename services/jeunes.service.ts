@@ -4,6 +4,7 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
 import {
+  BaseJeune,
   ConseillerHistorique,
   DetailJeune,
   IndicateursSemaine,
@@ -15,9 +16,11 @@ import {
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
 import {
+  BaseJeuneJson,
   DetailJeuneJson,
   IndicateursSemaineJson,
   ItemJeuneJson,
+  jsonToBaseJeune,
   jsonToDetailJeune,
   jsonToIndicateursSemaine,
   jsonToItemJeune,
@@ -82,7 +85,6 @@ export interface JeunesService {
   getMotifsSuppression(): Promise<MotifSuppressionJeune[]>
 
   getMetadonneesFavorisJeune(
-    idConseiller: string,
     idJeune: string,
     accessToken: string
   ): Promise<MetadonneesFavoris | undefined>
@@ -98,6 +100,8 @@ export interface JeunesService {
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<IndicateursSemaine>
+
+  getJeunesDeLEtablissement(idEtablissement: string): Promise<BaseJeune[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -282,17 +286,13 @@ export class JeunesApiService implements JeunesService {
   }
 
   async getMetadonneesFavorisJeune(
-    idConseiller: string,
     idJeune: string,
     accessToken: string
   ): Promise<MetadonneesFavoris | undefined> {
     try {
       const { content: metadonneesFavoris } = await this.apiClient.get<{
         favoris: MetadonneesFavorisJson
-      }>(
-        `/conseillers/${idConseiller}/jeunes/${idJeune}/metadonnees`,
-        accessToken
-      )
+      }>(`/jeunes/${idJeune}/favoris/metadonnees`, accessToken)
       return jsonToMetadonneesFavoris(metadonneesFavoris)
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
@@ -333,5 +333,16 @@ export class JeunesApiService implements JeunesService {
         session!.accessToken
       )
     return jsonToIndicateursSemaine(indicateurs)
+  }
+
+  async getJeunesDeLEtablissement(
+    idEtablissement: string
+  ): Promise<BaseJeune[]> {
+    const session = await getSession()
+    const { content: jeunes } = await this.apiClient.get<BaseJeuneJson[]>(
+      `/etablissements/${idEtablissement}/jeunes`,
+      session!.accessToken
+    )
+    return jeunes.map(jsonToBaseJeune)
   }
 }

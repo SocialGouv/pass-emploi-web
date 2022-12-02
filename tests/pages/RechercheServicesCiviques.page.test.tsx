@@ -1,4 +1,10 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  RenderResult,
+  screen,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import React from 'react'
@@ -26,9 +32,10 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 describe('Page Recherche Offres', () => {
   let servicesCiviquesService: ServicesCiviquesService
   let referentielService: ReferentielService
-
   let servicesCiviques: BaseServiceCivique[]
   let communes: Localite[]
+
+  let rendered: RenderResult
   beforeEach(async () => {
     communes = desCommunes()
     servicesCiviques = listeBaseServicesCiviques()
@@ -38,12 +45,12 @@ describe('Page Recherche Offres', () => {
     })
     servicesCiviquesService = mockedServicesCiviquesService({
       searchServicesCiviques: jest.fn().mockResolvedValue({
-        metadonnees: { nombreTotal: 10, nombrePages: 4 },
+        metadonnees: { nombreTotal: 37, nombrePages: 4 },
         offres: servicesCiviques,
       }),
     })
 
-    renderWithContexts(<RechercheOffres pageTitle='' />, {
+    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
       customDependances: {
         referentielService,
         servicesCiviquesService,
@@ -77,7 +84,7 @@ describe('Page Recherche Offres', () => {
       const inputLocalisation = screen.getByLabelText(/Localisation/)
 
       // When
-      await saisirLocalite('Épinay-sur-Seine')
+      await saisirCommune('Épinay-sur-Seine')
 
       // Then
       expect(inputLocalisation).toHaveValue('EPINAY SUR SEINE')
@@ -89,7 +96,7 @@ describe('Page Recherche Offres', () => {
 
     it('récupère les communes à la saisie', async () => {
       // When
-      await saisirLocalite('Epinay-sur-Seine')
+      await saisirCommune('Epinay-sur-Seine')
 
       // Then
       expect(referentielService.getCommunes).toHaveBeenCalledTimes(1)
@@ -244,7 +251,7 @@ describe('Page Recherche Offres', () => {
         within(etape3).getByRole('group', { name: 'Distance' })
       ).toThrow()
 
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
 
       // Then
       const distanceGroup = within(etape3).getByRole('group', {
@@ -277,7 +284,7 @@ describe('Page Recherche Offres', () => {
       )
       expect(screen.getByText('[2] critères sélectionnés')).toBeInTheDocument()
 
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
@@ -296,6 +303,54 @@ describe('Page Recherche Offres', () => {
       expect(screen.getByLabelText(/À partir de/)).toBeChecked()
       expect(screen.getByLabelText(/date de début/)).toHaveValue('2022-11-01')
       expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
+    })
+  })
+
+  describe('partage des critères de recherche', () => {
+    it('ne permet pas de partager s’il n’y a pas de commune renseignée', async () => {
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: `Partager critères de recherche`,
+        })
+      )
+
+      expect(
+        screen.getByText(
+          'Pour suggérer des critères de recherche, vous devez saisir une ville.'
+        )
+      ).toBeInTheDocument()
+    })
+
+    it('affiche le bouton de partage de critère s’il y a une commune renseignés', async () => {
+      // When
+      await saisirCommune('paris 14 (75)')
+
+      // Then
+      expect(
+        screen.getByText(
+          'Suggérer ces critères de recherche à vos bénéficiaires'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('construit le bon lien qui correspond aux critères de recherches', async () => {
+      // Given
+      await saisirCommune('paris 14 (75)')
+
+      // Then
+      expect(
+        screen.getByRole('link', {
+          name: `Partager critères de recherche`,
+        })
+      ).toHaveAttribute(
+        'href',
+        `/offres/partage-recherche?type=SERVICE_CIVIQUE&titre=PARIS%2014%20(75)&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
+      )
     })
   })
 
@@ -322,7 +377,7 @@ describe('Page Recherche Offres', () => {
       })
 
       // When
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(submitButton)
 
       // Then
@@ -339,7 +394,7 @@ describe('Page Recherche Offres', () => {
 
     it('construit la recherche avec les critères d’affinage', async () => {
       // Given
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
       await userEvent.selectOptions(
@@ -365,7 +420,7 @@ describe('Page Recherche Offres', () => {
         {
           commune: uneCommune(),
           domaine: domainesServiceCivique[2].code,
-          dateDebut: DateTime.fromISO('2022-11-01'),
+          dateDebut: '2022-11-01',
           rayon: 43,
         },
         1
@@ -374,7 +429,7 @@ describe('Page Recherche Offres', () => {
 
     it('vide les critères lorsqu’on change le type d’offre', async () => {
       // Given
-      await saisirLocalite('paris 14')
+      await saisirCommune('paris 14 (75)')
       await userEvent.click(screen.getByText('Voir plus de critères'))
 
       await userEvent.selectOptions(
@@ -416,7 +471,7 @@ describe('Page Recherche Offres', () => {
 
       // Then
       offresList = screen.getByRole('list', {
-        description: 'Liste des résultats (10 offres)',
+        description: 'Liste des résultats (37 offres)',
       })
     })
 
@@ -439,7 +494,7 @@ describe('Page Recherche Offres', () => {
         expect(within(offreCard).getByText(offre.ville!)).toBeInTheDocument()
         expect(
           within(offreCard).getByRole('link', {
-            name: 'Détail de l’offre ' + offre.id,
+            name: 'Détail de l’offre ' + offre.titre,
           })
         ).toHaveAttribute('href', '/offres/service-civique/' + offre.id)
       })
@@ -501,7 +556,7 @@ describe('Page Recherche Offres', () => {
         ;(
           servicesCiviquesService.searchServicesCiviques as jest.Mock
         ).mockImplementation((_query, page) => ({
-          metadonnees: { nombreTotal: 10, nombrePages: 4 },
+          metadonnees: { nombreTotal: 37, nombrePages: 4 },
           offres: [uneBaseServiceCivique({ titre: 'Offre page ' + page })],
         }))
       })
@@ -547,9 +602,62 @@ describe('Page Recherche Offres', () => {
       })
     })
   })
+
+  describe('sauvegarde', () => {
+    it('retient l’état de la recherche', async () => {
+      // Given
+      await saisirCommune('paris 14 (75)')
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+      await userEvent.selectOptions(
+        screen.getByLabelText('Sélectionner domaine'),
+        domainesServiceCivique[2].libelle
+      )
+      await userEvent.click(screen.getByLabelText(/Dès que possible/))
+      fireEvent.change(
+        screen.getByLabelText('Sélectionner une date de début'),
+        { target: { value: '2022-11-01' } }
+      )
+      fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
+        target: { value: 43 },
+      })
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Page 2' }))
+
+      // When
+      rendered.unmount()
+      renderWithContexts(<RechercheOffres pageTitle='' />, {
+        customDependances: {
+          referentielService,
+          servicesCiviquesService,
+        },
+      })
+
+      // Then
+      expect(screen.getByLabelText('Service civique')).toBeChecked()
+      expect(screen.getByLabelText(/Localisation/)).toHaveValue('PARIS 14 (75)')
+      expect(screen.getByText('[3] critères sélectionnés')).toBeInTheDocument()
+      await userEvent.click(screen.getByText('Voir plus de critères'))
+      expect(screen.getByLabelText(/domaine/)).toHaveValue(
+        domainesServiceCivique[2].code
+      )
+      expect(screen.getByLabelText(/Dès que possible/)).not.toBeChecked()
+      expect(screen.getByLabelText(/date de début/)).toHaveValue('2022-11-01')
+      expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
+      const offresList = screen.getByRole('list', {
+        description: 'Liste des résultats (37 offres)',
+      })
+      expect(within(offresList).getAllByRole('listitem').length).toEqual(
+        servicesCiviques.length
+      )
+      expect(screen.getByRole('button', { name: 'Page 2' })).toHaveAttribute(
+        'aria-current',
+        'page'
+      )
+    })
+  })
 })
 
-async function saisirLocalite(text: string) {
+async function saisirCommune(text: string) {
   await userEvent.type(screen.getByLabelText(/Localisation/), text)
   await act(() => new Promise((r) => setTimeout(r, 500)))
 }

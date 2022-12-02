@@ -11,6 +11,8 @@ import {
   desItemsJeunesJson,
   unDetailJeune,
   unDetailJeuneJson,
+  uneBaseJeune,
+  uneBaseJeuneJson,
   uneMetadonneeFavoris,
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
@@ -350,14 +352,13 @@ describe('JeunesApiService', () => {
 
       // When
       const actual = await jeunesService.getMetadonneesFavorisJeune(
-        'id-conseiller',
         'id-jeune',
         'accessToken'
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/metadonnees',
+        '/jeunes/id-jeune/favoris/metadonnees',
         'accessToken'
       )
       expect(actual).toEqual(uneMetadonneeFavoris())
@@ -405,6 +406,27 @@ describe('JeunesApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(desIndicateursSemaine())
+    })
+  })
+
+  describe('getJeunesDeLEtablissement', () => {
+    it('retourne les bénéficiaires d’un établissement', async () => {
+      // Given
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: [uneBaseJeuneJson()],
+      })
+
+      // When
+      const actual = await jeunesService.getJeunesDeLEtablissement(
+        'id-etablissement'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/etablissements/id-etablissement/jeunes',
+        'accessToken'
+      )
+      expect(actual).toEqual([uneBaseJeune()])
     })
   })
 })

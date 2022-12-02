@@ -62,19 +62,19 @@ export default function RechercheOffresEmploiPrincipale({
         onChange={updateMotsCles}
       />
 
-      <Label htmlFor='localisation'>
+      <Label htmlFor='localites'>
         {{
           main: 'Lieu de travail',
           helpText: 'Saisissez une ville ou un département',
         }}
       </Label>
       <SelectAutocompleteWithFetch<Localite>
-        id='localisation'
+        id='localites'
         fetch={recupererCommunesEtDepartements}
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateLocalite}
         errorMessage='Veuillez saisir une localisation correcte.'
-        value={query.commune?.libelle ?? query.departement?.libelle}
+        defaultValue={query.commune?.libelle ?? query.departement?.libelle}
       />
     </Etape>
   )

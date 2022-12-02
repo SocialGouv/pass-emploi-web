@@ -32,44 +32,6 @@ describe('OffresEmploiApiService', () => {
     offresEmploiService = new OffresEmploiApiService(apiClient)
   })
 
-  describe('.getLienOffreEmploi', () => {
-    it('renvoie le lien de l’offre d’emploi si elle est trouvée en base', async () => {
-      // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: unDetailOffreJson(),
-      })
-
-      // When
-      const actual = await offresEmploiService.getLienOffreEmploi(
-        'ID_OFFRE_EMPLOI'
-      )
-
-      // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
-        '/offres-emploi/ID_OFFRE_EMPLOI',
-        'accessToken'
-      )
-      expect(actual).toStrictEqual(
-        unDetailOffreJson().urlRedirectPourPostulation
-      )
-    })
-
-    it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
-      // Given
-      ;(apiClient.get as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'offre d’emploi non trouvée')
-      )
-
-      // When
-      const actual = await offresEmploiService.getLienOffreEmploi(
-        'ID_OFFRE_EMPLOI'
-      )
-
-      // Then
-      expect(actual).toStrictEqual(undefined)
-    })
-  })
-
   describe('.getOffreEmploiServerSide', () => {
     it('renvoie l’offre d’emploi si elle est trouvée en base', async () => {
       // Given

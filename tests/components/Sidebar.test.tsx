@@ -10,8 +10,13 @@ import renderWithContexts from 'tests/renderWithContexts'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
 describe('<Sidebar/>', () => {
+  let routerPush: Function
   beforeEach(() => {
-    ;(useRouter as jest.Mock).mockReturnValue({ pathname: '' })
+    routerPush = jest.fn()
+    ;(useRouter as jest.Mock).mockReturnValue({
+      pathname: '',
+      push: routerPush,
+    })
   })
 
   it('affiche les liens de la barre de navigation', () => {
@@ -24,8 +29,8 @@ describe('<Sidebar/>', () => {
       within(navigation).getByRole('link', { name: 'Portefeuille' })
     ).toHaveAttribute('href', '/mes-jeunes')
     expect(
-      within(navigation).getByRole('link', { name: 'Rendez-vous' })
-    ).toHaveAttribute('href', '/mes-rendezvous')
+      within(navigation).getByRole('link', { name: 'Agenda' })
+    ).toHaveAttribute('href', '/agenda')
     expect(
       within(navigation).getByRole('link', { name: 'Offres' })
     ).toHaveAttribute('href', '/recherche-offres')
@@ -36,14 +41,15 @@ describe('<Sidebar/>', () => {
     expect(() => within(navigation).getByText('Réaffectation')).toThrow()
   })
 
-  it('affiche le lien de déconnexion', () => {
-    // WHEN
+  it('permet la deconnexion', async () => {
+    // When
     renderSidebar()
 
-    // THEN
-    expect(
-      screen.getByRole('link', { name: 'Déconnexion' })
-    ).toBeInTheDocument()
+    // Then
+    expect(screen.getByRole('link', { name: 'Déconnexion' })).toHaveAttribute(
+      'href',
+      '/api/auth/federated-logout'
+    )
   })
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {

@@ -19,12 +19,11 @@ import { ApiError } from 'utils/httpClient'
 export type SearchServicesCiviquesQuery = {
   commune?: Commune
   domaine?: string
-  dateDebut?: DateTime
+  dateDebut?: string
   rayon?: number
 }
 
 export interface ServicesCiviquesService {
-  getLienServiceCivique(idOffreEngagement: string): Promise<string | undefined>
   getServiceCiviqueServerSide(
     idServiceCivique: string,
     accessToken: string
@@ -36,20 +35,6 @@ export interface ServicesCiviquesService {
 }
 export class ServicesCiviquesApiService implements ServicesCiviquesService {
   constructor(private readonly apiClient: ApiClient) {}
-
-  async getLienServiceCivique(
-    idServiceCivique: string
-  ): Promise<string | undefined> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
-
-    const serviceCiviqueJson = await this.getServiceCivique(
-      idServiceCivique,
-      accessToken
-    )
-
-    return serviceCiviqueJson?.lienAnnonce
-  }
 
   async getServiceCiviqueServerSide(
     idServiceCivique: string,
@@ -125,7 +110,8 @@ function buildSearchParams(
     searchParams.set('lat', commune.latitude.toString(10))
   }
   if (domaine) searchParams.set('domaine', domaine)
-  if (dateDebut) searchParams.set('dateDeDebutMinimum', dateDebut.toISO())
+  if (dateDebut)
+    searchParams.set('dateDeDebutMinimum', DateTime.fromISO(dateDebut).toISO())
   if (rayon) searchParams.set('distance', rayon.toString(10))
 
   return searchParams

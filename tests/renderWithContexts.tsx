@@ -4,6 +4,7 @@ import React from 'react'
 import { unConseiller } from 'fixtures/conseiller'
 import {
   mockedActionsService,
+  mockedAgendaService,
   mockedConseillerService,
   mockedFavorisService,
   mockedFichiersService,
@@ -12,8 +13,9 @@ import {
   mockedMessagesService,
   mockedOffresEmploiService,
   mockedReferentielService,
-  mockedRendezVousService,
+  mockedEvenementsService,
   mockedServicesCiviquesService,
+  mockedSuggestionsService,
 } from 'fixtures/services'
 import { Conseiller } from 'interfaces/conseiller'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
@@ -41,11 +43,13 @@ export default function renderWithContexts(
     fichiersService: mockedFichiersService(),
     jeunesService: mockedJeunesService(),
     messagesService: mockedMessagesService(),
-    rendezVousService: mockedRendezVousService(),
+    evenementsService: mockedEvenementsService(),
     favorisService: mockedFavorisService(),
     offresEmploiService: mockedOffresEmploiService(),
     servicesCiviquesService: mockedServicesCiviquesService(),
     immersionsService: mockedImmersionsService(),
+    suggestionsService: mockedSuggestionsService(),
+    agendaService: mockedAgendaService(),
     ...customDependances,
   }
 

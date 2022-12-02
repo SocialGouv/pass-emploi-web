@@ -6,6 +6,12 @@ import Button from 'components/ui/Button/Button'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
+import Table from 'components/ui/Table/Table'
+import { TBody } from 'components/ui/Table/TBody'
+import TD from 'components/ui/Table/TD'
+import { TH } from 'components/ui/Table/TH'
+import { THead } from 'components/ui/Table/THead'
+import { TR } from 'components/ui/Table/TR'
 import {
   compareJeunesByNom,
   getNomJeuneComplet,
@@ -73,7 +79,7 @@ function Reaffectation(_: ReaffectationProps) {
     setIsReaffectationTemporaire(undefined)
   }
 
-  function selectionnerJeune(_event: FormEvent, jeune: JeuneFromListe) {
+  function selectionnerJeune(jeune: JeuneFromListe) {
     setErreurReaffectation(undefined)
     if (idsJeunesSelected.includes(jeune.id)) {
       setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))
@@ -181,9 +187,6 @@ function Reaffectation(_: ReaffectationProps) {
   }
 
   useMatomo(trackingTitle)
-
-  const headerColumnStyle =
-    'pb-2 pl-4 pr-4 text-base-regular text-left text-content_color'
 
   return (
     <>
@@ -386,74 +389,76 @@ function Reaffectation(_: ReaffectationProps) {
             idsJeunesSelected.length === 0 ? 'mt-16' : 'mt-7'
           } ml-5`}
         >
-          <table className='w-full border-spacing-y-2 border-separate'>
-            <caption className='text-m-bold text-primary text-left mb-8'>
-              Jeunes de {conseillerInitial.email}
-            </caption>
-            <thead>
-              <tr>
-                <th scope='col' className='pb-2 pl-2'>
-                  <span onClick={(e) => selectionnerTousLesJeunes(e)}>
-                    <span className='sr-only'>Cocher/Décocher les jeunes</span>
-                  </span>
-                </th>
-                <th scope='col' className={headerColumnStyle}>
-                  Nom et prénom
-                </th>
-                <th scope='col' className={headerColumnStyle}>
-                  Conseiller précédent
-                </th>
-                <th scope='col' className='sr-only'>
-                  Email conseiller précédent
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr onClick={(e) => selectionnerTousLesJeunes(e)}>
-                <td className='py-4 pl-4'>
+          <Table
+            caption={{
+              text: `Jeunes de ${conseillerInitial.email}`,
+              visible: true,
+            }}
+          >
+            <THead>
+              <TR isHeader={true}>
+                <TH>
+                  <span className='sr-only'>Cocher/Décocher les jeunes</span>
+                </TH>
+                <TH>Nom et prénom</TH>
+                <TH>Conseiller précédent</TH>
+                <TH className='sr-only'>Email conseiller précédent</TH>
+              </TR>
+            </THead>
+            <TBody>
+              <TR onClick={(e) => selectionnerTousLesJeunes(e)}>
+                <TD className='py-4 pl-4'>
                   <input
                     id='reaffectation-tout-selectionner'
                     type='checkbox'
                     className='mr-6'
                     checked={idsJeunesSelected.length === jeunes.length}
-                    readOnly={true}
                     title='Tout sélectionner'
+                    onChange={() => false}
                   />
-                </td>
-                <td className={`${headerColumnStyle} whitespace-nowrap`}>
-                  <label htmlFor='reaffectation-tout-selectionner'>
+                </TD>
+                <TD className='whitespace-nowrap'>
+                  <label
+                    htmlFor='reaffectation-tout-selectionner'
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     Tout sélectionner
                   </label>
-                </td>
-              </tr>
+                </TD>
+              </TR>
+            </TBody>
+            <TBody>
               {jeunes.map((jeune: JeuneFromListe) => (
-                <tr
-                  key={jeune.id}
-                  onClick={(e) => selectionnerJeune(e, jeune)}
-                  className='hover:bg-primary_lighten cursor-pointer rounded-small shadow-s hover:bg-primary_lighten'
-                >
-                  <td className='p-4 rounded-l-small'>
+                <TR key={jeune.id} onClick={() => selectionnerJeune(jeune)}>
+                  <TD className='p-4 rounded-l-small'>
                     <input
+                      id={'checkbox-' + jeune.id}
                       type='checkbox'
                       checked={idsJeunesSelected.includes(jeune.id)}
-                      readOnly={true}
+                      title={'Sélectionner ' + getNomJeuneComplet(jeune)}
+                      onChange={() => false}
                     />
-                  </td>
-                  <td className='p-4 text-base-regular'>
-                    {getNomJeuneComplet(jeune)}
-                  </td>
-                  <td className='p-4 text-base-regular'>
+                  </TD>
+                  <TD className='p-4 text-base-regular'>
+                    <label
+                      htmlFor={'checkbox-' + jeune.id}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {getNomJeuneComplet(jeune)}
+                    </label>
+                  </TD>
+                  <TD className='p-4 text-base-regular'>
                     {jeune.conseillerPrecedent
                       ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
                       : '-'}
-                  </td>
-                  <td className='p-4 text-base-regular rounded-r-small'>
+                  </TD>
+                  <TD className='p-4 text-base-regular rounded-r-small'>
                     {jeune.conseillerPrecedent?.email ?? '-'}
-                  </td>
-                </tr>
+                  </TD>
+                </TR>
               ))}
-            </tbody>
-          </table>
+            </TBody>
+          </Table>
         </div>
       )}
     </>

@@ -2,14 +2,8 @@ import { ComponentPropsWithoutRef, forwardRef } from 'react'
 
 import styles from 'styles/components/Input.module.css'
 
-type InputProps = ComponentPropsWithoutRef<any> & {
-  type: string
-  id: string
+type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'onChange'> & {
   onChange: (value: string) => void
-  required?: boolean
-  disabled?: boolean
-  defaultValue?: string
-  onBlur?: () => void
   invalid?: boolean
   icon?: string
 }

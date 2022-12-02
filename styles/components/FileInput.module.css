@@ -1,0 +1,12 @@
+.input:focus + label {
+    outline: 1px solid blue;
+    outline: 1px auto -webkit-focus-ring-color;
+}
+
+.input[disabled] + label {
+    background-color: theme('colors.primary');
+    opacity: 50%;
+    cursor: not-allowed;
+    border: 1px solid transparent;
+    color: theme('colors.blanc');
+}

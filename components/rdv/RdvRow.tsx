@@ -1,30 +1,31 @@
 import { DateTime } from 'luxon'
-import Link from 'next/link'
 import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
-import RowCell from 'components/ui/Table/RowCell'
-import { RdvListItem } from 'interfaces/rdv'
+import TD from 'components/ui/Table/TD'
+import { TR } from 'components/ui/Table/TR'
+import { EvenementListItem } from 'interfaces/evenement'
+import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import {
-  WEEKDAY_MONTH_LONG,
   TIME_24_H_SEPARATOR,
-  toShortDate,
   toFrenchFormat,
+  toShortDate,
+  WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 
 interface RdvRowProps {
-  rdv: RdvListItem
+  rdv: EvenementListItem
   idConseiller: string
-  withNameJeune?: boolean
+  beneficiaireUnique?: BaseJeune
   withDate?: boolean
 }
 
 export function RdvRow({
   rdv,
-  withNameJeune,
-  withDate,
   idConseiller,
+  beneficiaireUnique,
+  withDate,
 }: RdvRowProps) {
   const date = useMemo(() => DateTime.fromISO(rdv.date), [rdv.date])
   const shortDate = useMemo(() => toShortDate(date), [date])
@@ -33,74 +34,74 @@ export function RdvRow({
     [date]
   )
   const timeAndDuration = useMemo(
-    () => `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duration} min`,
-    [date, rdv.duration]
+    () => `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duree} min`,
+    [date, rdv.duree]
   )
+  const labelBeneficiaires = beneficiaireUnique
+    ? getNomJeuneComplet(beneficiaireUnique)
+    : rdv.labelBeneficiaires
 
   return (
-    <Link href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}>
-      <a
-        role='row'
-        aria-label={`Modifier rendez-vous du ${fullDate} avec ${rdv.beneficiaires}`}
-        className='table-row text-base-regular rounded-small shadow-s hover:bg-primary_lighten'
+    <TR
+      href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
+      label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
+    >
+      <TD
+        aria-label={withDate ? fullDate + ' - ' + timeAndDuration : ''}
+        className='rounded-l-small'
       >
-        <RowCell className='rounded-l-small'>
-          <span aria-label={fullDate}>{withDate && `${shortDate} - `}</span>
-          {timeAndDuration}
-        </RowCell>
+        {withDate && `${shortDate} - `}
+        {timeAndDuration}
+      </TD>
 
-        {withNameJeune && <RowCell>{rdv.beneficiaires}</RowCell>}
+      {!beneficiaireUnique && <TD>{rdv.labelBeneficiaires}</TD>}
 
-        <RowCell>
-          <DataTag text={rdv.type} />
-        </RowCell>
+      <TD>
+        <DataTag text={rdv.type} />
+      </TD>
 
-        <RowCell>
-          <IconComponent
-            name={IconName.Location}
-            focusable='false'
-            aria-hidden='true'
-            className='inline mr-2 h-6 w-6 fill-primary'
-          />
-          {rdv.modality}
-        </RowCell>
+      <TD>
+        <IconComponent
+          name={IconName.Location}
+          focusable={false}
+          aria-hidden={true}
+          className='inline mr-2 h-6 w-6 fill-primary'
+        />
+        {rdv.modality}
+      </TD>
 
-        {rdv.idCreateur && (
-          <RowCell className='rounded-r-small'>
-            <span className='flex items-center justify-between'>
-              {rdv.idCreateur === idConseiller && (
-                <>
-                  <span className='sr-only'>oui</span>
-                  <IconComponent
-                    name={IconName.RoundedCheckFilled}
-                    aria-hidden='true'
-                    focusable='false'
-                    className='h-3 fill-primary'
-                  />
-                </>
-              )}
-              {rdv.idCreateur !== idConseiller && (
-                <>
-                  <span className='sr-only'>non</span>
-                  <IconComponent
-                    name={IconName.Ko}
-                    aria-hidden='true'
-                    focusable='false'
-                    className='h-3'
-                  />
-                </>
-              )}
+      <TD className='rounded-r-small'>
+        <span className='flex items-center justify-between'>
+          {rdv.idCreateur === idConseiller && (
+            <>
+              <span className='sr-only'>oui</span>
               <IconComponent
-                name={IconName.ChevronRight}
-                focusable='false'
-                aria-hidden='true'
-                className='w-6 h-6 fill-content_color'
+                name={IconName.RoundedCheckFilled}
+                aria-hidden={true}
+                focusable={false}
+                className='h-3 fill-primary'
               />
-            </span>
-          </RowCell>
-        )}
-        {!rdv.idCreateur && <div role='cell' />}
-      </a>
-    </Link>
+            </>
+          )}
+          {rdv.idCreateur !== idConseiller && (
+            <>
+              <span className='sr-only'>non</span>
+              <IconComponent
+                name={IconName.Ko}
+                aria-hidden={true}
+                focusable={false}
+                className='h-3'
+              />
+            </>
+          )}
+          <IconComponent
+            name={IconName.ChevronRight}
+            focusable={false}
+            aria-hidden={true}
+            className='w-6 h-6 fill-content_color'
+          />
+        </span>
+      </TD>
+    </TR>
   )
 }

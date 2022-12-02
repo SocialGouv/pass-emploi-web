@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 
 import { TRI } from 'components/action/OngletActions'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
+import { uneAction } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
 
 describe('TableauActionsJeune', () => {
@@ -13,7 +14,7 @@ describe('TableauActionsJeune', () => {
         <TableauActionsJeune
           afficherFiltresEtatsQualification={false}
           jeune={uneBaseJeune()}
-          actions={[]}
+          actions={[uneAction()]}
           isLoading={false}
           onFiltres={jest.fn()}
           onTri={jest.fn()}

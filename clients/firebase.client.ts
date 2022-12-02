@@ -34,9 +34,10 @@ type TypeMessageFirebase =
   | 'MESSAGE'
   | 'MESSAGE_PJ'
   | 'MESSAGE_OFFRE'
+  | 'MESSAGE_EVENEMENT'
   | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
 
-interface FirebaseMessage {
+export interface FirebaseMessage {
   creationDate: Timestamp
   sentBy: string
   content: string
@@ -45,12 +46,20 @@ interface FirebaseMessage {
   conseillerId: string | undefined
   type: TypeMessageFirebase | undefined
   offre?: InfoOffreFirebase
+  evenement?: EvenementPartage
 }
 
 export type InfoOffreFirebase = {
   id: string
   titre: string
   type?: string
+}
+
+export interface EvenementPartage {
+  id: string
+  titre: string
+  type: string
+  date: string
 }
 
 type BaseCreateFirebaseMessage = {
@@ -64,7 +73,6 @@ export type CreateFirebaseMessage = BaseCreateFirebaseMessage & {
 export type CreateFirebaseMessageWithOffre = BaseCreateFirebaseMessage & {
   offre: BaseOffre
 }
-
 class FirebaseClient {
   private readonly firebaseApp: FirebaseApp
   private readonly auth: Auth
@@ -417,12 +425,15 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
   }
 }
 
-function docSnapshotToMessage(
+export function docSnapshotToMessage(
   docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
 ): Message {
   const firebaseMessage = docSnapshot.data()
   const message: Message = {
-    ...firebaseMessage,
+    sentBy: firebaseMessage.sentBy,
+    content: firebaseMessage.content,
+    iv: firebaseMessage.iv,
+    conseillerId: firebaseMessage.conseillerId,
     creationDate: DateTime.fromMillis(firebaseMessage.creationDate.toMillis()),
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
@@ -434,6 +445,17 @@ function docSnapshotToMessage(
 
   if (message.type === TypeMessage.MESSAGE_OFFRE && firebaseMessage.offre) {
     message.infoOffre = offreFromFirebase(firebaseMessage.offre)
+  }
+
+  if (
+    message.type === TypeMessage.MESSAGE_EVENEMENT &&
+    firebaseMessage.evenement
+  ) {
+    message.infoEvenement = {
+      id: firebaseMessage.evenement.id,
+      titre: firebaseMessage.evenement.titre,
+      date: DateTime.fromISO(firebaseMessage.evenement.date),
+    }
   }
 
   return message
@@ -450,6 +472,8 @@ function firebaseToMessageType(
       return TypeMessage.MESSAGE_PJ
     case 'MESSAGE_OFFRE':
       return TypeMessage.MESSAGE_OFFRE
+    case 'MESSAGE_EVENEMENT':
+      return TypeMessage.MESSAGE_EVENEMENT
     case 'MESSAGE':
       return TypeMessage.MESSAGE
     case undefined:
