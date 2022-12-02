@@ -4,7 +4,7 @@ import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import MenuLinks, { MenuItem } from 'components/MenuLinks'
+import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
@@ -131,9 +131,9 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             />
           </button>
           <div className='grow flex flex-col justify-between'>
-            <MenuLinks
+            <NavLinks
               showLabelsOnSmallScreen={true}
-              items={[MenuItem.Messagerie, MenuItem.Raccourci, MenuItem.Aide]}
+              items={[NavItem.Messagerie, NavItem.Raccourci, NavItem.Aide]}
             />
           </div>
         </nav>

@@ -2,26 +2,26 @@ import Link from 'next/link'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-interface NavLinkProps {
-  href: string
+type NavLinkProps = {
   label: string | null
+  href: string
   iconName: IconName
   showLabelOnSmallScreen: boolean
   isActive?: boolean
   className?: string
-  onClick?: any
   isExternal?: boolean
+  onClick?: () => void
 }
 
-function MenuLink({
+export default function NavLink({
   isActive,
-  href,
   label,
+  href,
   iconName,
   className,
-  onClick,
   isExternal = false,
   showLabelOnSmallScreen = false,
+  onClick,
 }: NavLinkProps) {
   const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-medium layout_s:justify-start layout_l:justify-start ${
     isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
@@ -76,11 +76,12 @@ function MenuLink({
       )}
     </>
   )
+
   return (
     <>
       {!isExternal && (
         <Link href={href}>
-          <a onClick={onClick} className={linkStyle}>
+          <a className={linkStyle} onClick={onClick}>
             {linkContent}
           </a>
         </Link>
@@ -93,6 +94,7 @@ function MenuLink({
           rel='noreferrer noopener'
           aria-label={`${label} (nouvel onglet)`}
           className={linkStyle}
+          onClick={onClick}
         >
           {linkContent}
           <IconComponent
@@ -106,5 +108,3 @@ function MenuLink({
     </>
   )
 }
-
-export default MenuLink

@@ -119,16 +119,16 @@ export default function RechercheOffresEmploiSecondaire({
 
       <fieldset>
         <legend className='text-base-bold mb-6'>Expérience</legend>
-        <label htmlFor='debutants-acceptes' className='flex items-center'>
+        <div className='flex items-center'>
+          <label htmlFor='debutants-acceptes' className='mr-4'>
+            Afficher uniquement les offres débutant accepté
+          </label>
           <Switch
             id='debutants-acceptes'
             checked={Boolean(query.debutantAccepte)}
             onChange={updateExperience}
           />
-          <span className='ml-8'>
-            Afficher uniquement les offres débutant accepté
-          </span>
-        </label>
+        </div>
       </fieldset>
 
       {query.rayon !== undefined && (

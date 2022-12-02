@@ -71,26 +71,30 @@ export default function RechercheServicesCiviquesSecondaire({
 
       <fieldset>
         <legend className='text-base-bold mb-6'>Date de début</legend>
-        <label htmlFor='des-que-possible' className='flex items-center mb-6'>
+        <div className='flex items-center mb-6'>
+          <label htmlFor='des-que-possible' className='mr-4'>
+            Dès que possible
+          </label>
           <Switch
             id='des-que-possible'
             checked={!query.dateDebut}
             onChange={() => toggleDateDebut()}
           />
-          <span className='ml-8'>Dès que possible</span>
-        </label>
-        <label htmlFor='a-partir-de' className='flex items-center '>
+        </div>
+        <div className='flex items-center'>
+          <label htmlFor='a-partir-de' className='mr-4'>
+            À partir de
+          </label>
           <Switch
             id='a-partir-de'
             checked={Boolean(query.dateDebut)}
             onChange={() => {}}
             disabled
           />
-          <span className='ml-8'>À partir de</span>
-        </label>
+        </div>
 
         {query.dateDebut && (
-          <>
+          <div className='mt-4'>
             <Label htmlFor='date-debut'>Sélectionner une date de début</Label>
             <Input
               type='date'
@@ -98,7 +102,7 @@ export default function RechercheServicesCiviquesSecondaire({
               value={query.dateDebut}
               onChange={updateDateDebut}
             />
-          </>
+          </div>
         )}
       </fieldset>
 

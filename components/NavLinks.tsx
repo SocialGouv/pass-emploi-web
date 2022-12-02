@@ -1,15 +1,15 @@
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React from 'react'
 
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
-import MenuLink from 'components/ui/Form/MenuLink'
+import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
-import useMatomo from 'utils/analytics/useMatomo'
+import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
 
-export enum MenuItem {
+export enum NavItem {
   Jeunes = 'Jeunes',
   Rdvs = 'Rdvs',
   RechercheOffres = 'RechercheOffres',
@@ -20,13 +20,12 @@ export enum MenuItem {
   Raccourci = 'Raccourci,',
   Messagerie = 'Messagerie',
 }
-type MenuLinksProps = { showLabelsOnSmallScreen: boolean; items: MenuItem[] }
-export default function MenuLinks({
+type NavLinksProps = { showLabelsOnSmallScreen: boolean; items: NavItem[] }
+export default function NavLinks({
   showLabelsOnSmallScreen,
   items,
-}: MenuLinksProps) {
+}: NavLinksProps) {
   const router = useRouter()
-  const [isLoggedOut, setIsLoggedOut] = useState(false)
   const [conseiller] = useConseiller()
 
   const isMilo = conseiller?.structure === StructureConseiller.MILO
@@ -35,19 +34,22 @@ export default function MenuLinks({
 
   const isCurrentRoute = (href: string) => router.pathname.startsWith(href)
 
-  async function handleLogout(event: any) {
-    event.preventDefault()
-    setIsLoggedOut(true)
-    window.location.href = '/api/auth/federated-logout'
+  async function trackLogout() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Session',
+      action: 'Déconnexion',
+      nom: '',
+    })
   }
 
-  useMatomo(isLoggedOut ? 'Clic déconnexion' : undefined)
   useLeanBeWidget(conseiller?.structure)
+
   return (
     <>
       <div>
-        {items.includes(MenuItem.Jeunes) && (
-          <MenuLink
+        {items.includes(NavItem.Jeunes) && (
+          <NavLink
             isActive={isCurrentRoute('/mes-jeunes')}
             href='/mes-jeunes'
             label='Portefeuille'
@@ -56,8 +58,8 @@ export default function MenuLinks({
           />
         )}
 
-        {!isPoleEmploi && items.includes(MenuItem.Rdvs) && (
-          <MenuLink
+        {!isPoleEmploi && items.includes(NavItem.Rdvs) && (
+          <NavLink
             isActive={isCurrentRoute('/agenda')}
             href='/agenda'
             label='Agenda'
@@ -66,8 +68,8 @@ export default function MenuLinks({
           />
         )}
 
-        {items.includes(MenuItem.RechercheOffres) && (
-          <MenuLink
+        {items.includes(NavItem.RechercheOffres) && (
+          <NavLink
             isActive={
               isCurrentRoute('/recherche-offres') || isCurrentRoute('/offres')
             }
@@ -78,9 +80,9 @@ export default function MenuLinks({
           />
         )}
 
-        {isSuperviseur && items.includes(MenuItem.Supervision) && (
+        {isSuperviseur && items.includes(NavItem.Supervision) && (
           <>
-            <MenuLink
+            <NavLink
               iconName={IconName.ArrowRight}
               label='Réaffectation'
               href='/reaffectation'
@@ -90,9 +92,9 @@ export default function MenuLinks({
           </>
         )}
 
-        {items.includes(MenuItem.Messagerie) && (
+        {items.includes(NavItem.Messagerie) && (
           <>
-            <MenuLink
+            <NavLink
               iconName={IconName.Note}
               label='Messagerie'
               href='/mes-jeunes'
@@ -102,9 +104,9 @@ export default function MenuLinks({
           </>
         )}
 
-        {items.includes(MenuItem.Raccourci) && (
+        {items.includes(NavItem.Raccourci) && (
           <>
-            <MenuLink
+            <NavLink
               iconName={IconName.Add}
               label='Créer un raccourci'
               href='/raccourci'
@@ -114,12 +116,12 @@ export default function MenuLinks({
           </>
         )}
 
-        {items.includes(MenuItem.Actualites) && (
+        {items.includes(NavItem.Actualites) && (
           <ActualitesMenuButton structure={conseiller?.structure} />
         )}
 
-        {items.includes(MenuItem.Aide) && (
-          <MenuLink
+        {items.includes(NavItem.Aide) && (
+          <NavLink
             href={
               isMilo
                 ? process.env.FAQ_MILO_EXTERNAL_LINK ?? ''
@@ -133,8 +135,8 @@ export default function MenuLinks({
         )}
       </div>
       <div className='flex flex-col'>
-        {conseiller && items.includes(MenuItem.Profil) && (
-          <MenuLink
+        {conseiller && items.includes(NavItem.Profil) && (
+          <NavLink
             isActive={isCurrentRoute('/profil')}
             href='/profil'
             label={`${conseiller.firstName} ${conseiller.lastName}`}
@@ -144,11 +146,11 @@ export default function MenuLinks({
           />
         )}
         <span className='border-b border-blanc mx-4 mb-8'></span>
-        <MenuLink
-          href='/api/logout'
+        <NavLink
+          href='/api/auth/federated-logout'
           label='Déconnexion'
           iconName={IconName.Logout}
-          onClick={handleLogout}
+          onClick={trackLogout}
           showLabelOnSmallScreen={showLabelsOnSmallScreen}
         />
       </div>
