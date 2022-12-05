@@ -18,6 +18,10 @@ import {
 } from 'services/immersions.service'
 import { JeunesApiService, JeunesService } from 'services/jeunes.service'
 import {
+  ListesDeDiffusionApiService,
+  ListesDeDiffusionService,
+} from 'services/listes-de-diffusion.service'
+import {
   MessagesFirebaseAndApiService,
   MessagesService,
 } from 'services/messages.service'
@@ -54,6 +58,7 @@ export interface Dependencies {
   immersionsService: ImmersionsService
   suggestionsService: SuggestionsService
   agendaService: AgendaService
+  listesDeDiffusionService: ListesDeDiffusionService
 }
 
 export class Container {
@@ -88,6 +93,7 @@ export class Container {
       immersionsService: new ImmersionsApiService(apiClient),
       suggestionsService: new SuggestionsApiService(apiClient),
       agendaService: new AgendaApiService(apiClient),
+      listesDeDiffusionService: new ListesDeDiffusionApiService(),
     })
   }
 }
