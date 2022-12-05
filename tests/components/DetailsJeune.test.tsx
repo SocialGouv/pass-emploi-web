@@ -1,11 +1,11 @@
 import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
 
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { unDetailJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -142,15 +142,9 @@ describe('<DetailsJeune>', () => {
     })
   })
   describe('identifiant partenaire', () => {
-    let routerPush: Function
-
-    beforeEach(() => {
-      routerPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        asPath: '/mes-jeunes/jeune-1',
-        query: { modificationIdentifiantPartenaire: 'succes' },
-        push: routerPush,
-      })
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+    beforeEach(async () => {
+      alerteSetter = jest.fn()
     })
 
     describe('pour un jeune Pôle emploi qui n’a pas d’identifiant partenaire', () => {
@@ -166,7 +160,7 @@ describe('<DetailsJeune>', () => {
             onDossierMiloClick={() => {}}
             onDeleteJeuneClick={() => {}}
           />,
-          { customDependances: { jeunesService } }
+          { customDependances: { jeunesService }, customAlerte: { alerteSetter } }
         )
       })
 
@@ -224,10 +218,9 @@ describe('<DetailsJeune>', () => {
           expect(
             jeunesService.modifierIdentifiantPartenaire
           ).toHaveBeenCalledWith('jeune-1', '12345')
-          expect(routerPush).toHaveBeenCalledWith({
-            pathname: '/mes-jeunes/jeune-1',
-            query: { modificationIdentifiantPartenaire: 'succes' },
-          })
+          expect(alerteSetter).toHaveBeenCalledWith(
+            'modificationIdentifiantPartenaire'
+          )
           expect(screen.getByText('12345')).toBeInTheDocument()
         })
       })
@@ -246,7 +239,7 @@ describe('<DetailsJeune>', () => {
             onDossierMiloClick={() => {}}
             onDeleteJeuneClick={() => {}}
           />,
-          { customDependances: { jeunesService } }
+          { customDependances: { jeunesService }, customAlerte: { alerteSetter } }
         )
       })
 
@@ -304,10 +297,9 @@ describe('<DetailsJeune>', () => {
           expect(
             jeunesService.modifierIdentifiantPartenaire
           ).toHaveBeenCalledWith('jeune-1', '123456789')
-          expect(routerPush).toHaveBeenCalledWith({
-            pathname: '/mes-jeunes/jeune-1',
-            query: { modificationIdentifiantPartenaire: 'succes' },
-          })
+          expect(alerteSetter).toHaveBeenCalledWith(
+            'modificationIdentifiantPartenaire'
+          )
           expect(screen.getByText('123456789')).toBeInTheDocument()
         })
       })

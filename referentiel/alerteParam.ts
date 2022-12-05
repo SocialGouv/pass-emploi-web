@@ -1,27 +1,23 @@
-export enum QueryParam {
-  // RDV
-  creationRdv = 'creationRdv',
-  modificationRdv = 'modificationRdv',
-  suppressionRdv = 'suppressionRdv',
+export enum AlerteParam {
+  // Événements
+  creationEvenement = 'creationEvenement',
+  modificationEvenement = 'modificationEvenement',
+  suppressionEvenement = 'suppressionEvenement',
   clotureAC = 'clotureAC',
   // Bénéficiaires
-  recuperationBeneficiaires = 'recuperation',
-  suppressionBeneficiaire = 'suppression',
+  recuperationBeneficiaires = 'recuperationBeneficiaires',
+  suppressionBeneficiaire = 'suppressionBeneficiaire',
   creationBeneficiaire = 'creationBeneficiaire',
   // Action
   creationAction = 'creationAction',
   suppressionAction = 'suppressionAction',
   ajoutCommentaireAction = 'ajoutCommentaireAction',
+  qualificationSNP = 'qualificationSNP',
+  qualificationNonSNP = 'qualificationNonSNP',
   // Autre
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',
   modificationIdentifiantPartenaire = 'modificationIdentifiantPartenaire',
-  qualificationSNP = 'qualificationSNP',
-  qualificationNonSNP = 'qualificationNonSNP',
   partageOffre = 'partageOffre',
   suggestionRecherche = 'suggestionRecherche',
-}
-
-export enum QueryValue {
-  succes = 'succes',
 }

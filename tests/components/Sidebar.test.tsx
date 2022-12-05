@@ -4,10 +4,8 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 import Sidebar from 'components/layouts/Sidebar'
-import { unConseiller } from 'fixtures/conseiller'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 
 describe('<Sidebar/>', () => {
   let routerPush: Function
@@ -73,9 +71,5 @@ describe('<Sidebar/>', () => {
 })
 
 function renderSidebar(conseiller?: Partial<Conseiller>) {
-  return renderWithContexts(
-    <ConseillerProvider conseiller={unConseiller({ ...conseiller })}>
-      <Sidebar />
-    </ConseillerProvider>
-  )
+  return renderWithContexts(<Sidebar />, { customConseiller: conseiller })
 }

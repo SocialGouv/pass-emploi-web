@@ -5,20 +5,25 @@ import { useRouter } from 'next/router'
 
 import { mockedJeunesService } from 'fixtures/services'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('PoleEmploiCreationJeune', () => {
   let jeunesService: JeunesService
   let submitButton: HTMLElement
+
+  let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let push: Function
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
+    alerteSetter = jest.fn()
     push = jest.fn(() => Promise.resolve())
     ;(useRouter as jest.Mock).mockReturnValue({ push })
     renderWithContexts(<PoleEmploiCreationJeune />, {
       customDependances: { jeunesService },
+      customAlerte: { alerteSetter },
     })
 
     submitButton = screen.getByRole('button', {
@@ -135,10 +140,8 @@ describe('PoleEmploiCreationJeune', () => {
         email: 'nadia.sanfamiye@poleemploi.fr',
       })
 
-      expect(push).toHaveBeenCalledWith({
-        pathname: '/mes-jeunes',
-        query: { creationBeneficiaire: 'succes', idBeneficiaire: 'un-id' },
-      })
+      expect(alerteSetter).toHaveBeenCalledWith('creationBeneficiaire', 'un-id')
+      expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {

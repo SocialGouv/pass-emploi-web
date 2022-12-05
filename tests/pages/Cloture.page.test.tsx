@@ -11,6 +11,7 @@ import { StatutAnimationCollective } from 'interfaces/evenement'
 import Cloture, {
   getServerSideProps,
 } from 'pages/evenements/[evenement_id]/cloture'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -24,14 +25,15 @@ describe('Cloture', () => {
     let evenementsService: EvenementsService
     const animationCollective = unEvenement()
 
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let routerPush: Function
-    routerPush = jest.fn()
-    ;(useRouter as jest.Mock).mockReturnValue({
-      push: routerPush,
-    })
-
     beforeEach(async () => {
       // Given
+      alerteSetter = jest.fn()
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({
+        push: routerPush,
+      })
       evenementsService = mockedEvenementsService()
 
       // When
@@ -42,7 +44,10 @@ describe('Cloture', () => {
           evenement={animationCollective}
           returnTo={`/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl`}
         />,
-        { customDependances: { evenementsService } }
+        {
+          customDependances: { evenementsService },
+          customAlerte: { alerteSetter },
+        }
       )
     })
 
@@ -116,8 +121,9 @@ describe('Cloture', () => {
 
       it('renvoie sur le détail de l’animation collective', () => {
         // Then
+        expect(alerteSetter).toHaveBeenCalledWith('clotureAC')
         expect(routerPush).toHaveBeenCalledWith(
-          `/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl&clotureAC=succes`
+          `/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl`
         )
       })
     })

@@ -16,21 +16,22 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
-  Evenement,
   estAClore,
+  estClos,
+  Evenement,
   Modification,
   TypeEvenement,
-  estClos,
 } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -39,7 +40,6 @@ import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { deleteQueryParams, parseUrl, setQueryParams } from 'utils/urlParser'
 
 interface EditionRdvProps extends PageProps {
   jeunes: BaseJeune[]
@@ -65,6 +65,7 @@ function EditionRdv({
     useDependance<ReferentielService>('referentielService')
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
+  const [_, setAlerte] = useAlerte()
 
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
   const [agences, setAgences] = useState<Agence[]>([])
@@ -93,8 +94,6 @@ function EditionRdv({
   if (evenement) initialTracking = `Modification rdv`
   else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-
-  const cleanReturnTo = getCleanUrlObject(returnTo)
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
@@ -172,14 +171,8 @@ function EditionRdv({
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
 
-    const { baseUrl, query } = cleanReturnTo
-    await router.push({
-      pathname: baseUrl,
-      query: setQueryParams(query, {
-        [QueryParam.creationRdv]: QueryValue.succes,
-        idEvenement: idNouvelEvenement,
-      }),
-    })
+    setAlerte(AlerteParam.creationEvenement, idNouvelEvenement)
+    await router.push(returnTo)
   }
 
   async function modifierEvenement(
@@ -188,27 +181,18 @@ function EditionRdv({
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
 
-    const { baseUrl, query } = cleanReturnTo
-    await router.push({
-      pathname: baseUrl,
-      query: setQueryParams(query, {
-        [QueryParam.modificationRdv]: QueryValue.succes,
-      }),
-    })
+    setAlerte(AlerteParam.modificationEvenement)
+    await router.push(returnTo)
   }
 
   async function supprimerEvenement(): Promise<void> {
     setShowDeleteRdvError(false)
     setShowDeleteRdvModal(false)
+
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      const { baseUrl, query } = getCleanUrlObject(returnTo)
-      await router.push({
-        pathname: baseUrl,
-        query: setQueryParams(query, {
-          [QueryParam.suppressionRdv]: QueryValue.succes,
-        }),
-      })
+      setAlerte(AlerteParam.suppressionEvenement)
+      await router.push(returnTo)
     } catch (e) {
       setShowDeleteRdvError(true)
     }
@@ -292,7 +276,7 @@ function EditionRdv({
                 href={`/evenements/${
                   evenement.id
                 }/cloture?redirectUrl=${encodeURIComponent(
-                  cleanReturnTo.baseUrl + '?onglet=etablissement'
+                  returnTo + '?onglet=etablissement'
                 )}`}
                 className='ml-6 min-w-fit w-1/4'
               >
@@ -373,7 +357,7 @@ function EditionRdv({
         typesRendezVous={typesRendezVous}
         idJeune={idJeune}
         evenement={evenement}
-        redirectTo={cleanReturnTo.baseUrl}
+        redirectTo={returnTo}
         onBeneficiairesDUnAutrePortefeuille={
           setFormHasBeneficiaireAutrePortefeuille
         }
@@ -397,7 +381,7 @@ function EditionRdv({
             evenement ? 'modifiées' : 'saisies'
           } seront perdues`}
           onCancel={closeLeavePageModal}
-          destination={cleanReturnTo.baseUrl}
+          destination={returnTo}
         />
       )}
 
@@ -495,20 +479,4 @@ export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
 
 function comingFromHome(referer: string): boolean {
   return referer.split('?')[0].endsWith('/index')
-}
-
-function getCleanUrlObject(url: string): {
-  baseUrl: string
-  query: Record<string, string | string[]>
-} {
-  const { baseUrl, query } = parseUrl(url)
-  return {
-    baseUrl,
-    query: deleteQueryParams(query, [
-      QueryParam.modificationRdv,
-      QueryParam.creationRdv,
-      QueryParam.suppressionRdv,
-      'idEvenement',
-    ]),
-  }
 }

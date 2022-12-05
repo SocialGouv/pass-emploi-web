@@ -16,8 +16,9 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
@@ -37,6 +38,7 @@ function PageQualification({
 }: QualificationProps) {
   const router = useRouter()
   const actionsService = useDependance<ActionsService>('actionsService')
+  const [_, setAlerte] = useAlerte()
 
   const [codeSNP, setCodeSNP] = useState<string | undefined>()
   const [dateDebut, setDateDebut] = useState<string>(action.creationDate)
@@ -67,9 +69,8 @@ function PageQualification({
         DateTime.fromISO(dateDebut).startOf('day'),
         DateTime.fromISO(dateFin!).startOf('day')
       )
-      await router.push(
-        `${returnTo}?${QueryParam.qualificationSNP}=${QueryValue.succes}`
-      )
+      setAlerte(AlerteParam.qualificationSNP)
+      await router.push(returnTo)
     } catch (error) {
       setErreurQualification(
         error instanceof ApiError

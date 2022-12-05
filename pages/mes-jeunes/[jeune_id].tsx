@@ -35,11 +35,12 @@ import {
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import { AgendaService } from 'services/agenda.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
@@ -72,11 +73,6 @@ interface FicheJeuneProps extends PageProps {
     page: number
   }
   metadonneesFavoris?: MetadonneesFavoris
-  rdvCreationSuccess?: boolean
-  rdvModificationSuccess?: boolean
-  rdvSuppressionSuccess?: boolean
-  actionCreationSuccess?: boolean
-  messageEnvoiGroupeSuccess?: boolean
   onglet?: Onglet
 }
 
@@ -85,11 +81,6 @@ function FicheJeune({
   rdvs,
   actionsInitiales,
   metadonneesFavoris,
-  rdvCreationSuccess,
-  rdvModificationSuccess,
-  rdvSuppressionSuccess,
-  actionCreationSuccess,
-  messageEnvoiGroupeSuccess,
   onglet,
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
@@ -98,6 +89,7 @@ function FicheJeune({
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
+  const [alerte, setAlerte] = useAlerte()
 
   const [motifsSuppression, setMotifsSuppression] = useState<
     MotifSuppressionJeune[]
@@ -129,11 +121,16 @@ function FicheJeune({
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
   let initialTracking = pageTracking
-  if (rdvCreationSuccess) initialTracking += ' - Creation rdv succès'
-  if (rdvModificationSuccess) initialTracking += ' - Modification rdv succès'
-  if (rdvSuppressionSuccess) initialTracking += ' - Suppression rdv succès'
-  if (actionCreationSuccess) initialTracking += ' - Succès creation action'
-  if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
+  if (alerte?.key === AlerteParam.creationEvenement)
+    initialTracking += ' - Creation rdv succès'
+  if (alerte?.key === AlerteParam.modificationEvenement)
+    initialTracking += ' - Modification rdv succès'
+  if (alerte?.key === AlerteParam.suppressionEvenement)
+    initialTracking += ' - Suppression rdv succès'
+  if (alerte?.key === AlerteParam.creationAction)
+    initialTracking += ' - Succès creation action'
+  if (alerte?.key === AlerteParam.envoiMessage)
+    initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
@@ -209,9 +206,8 @@ function FicheJeune({
   ): Promise<void> {
     try {
       await jeunesService.archiverJeune(jeune.id, payload)
-      await router.push(
-        `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
-      )
+      setAlerte(AlerteParam.suppressionBeneficiaire)
+      await router.push('/mes-jeunes')
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
@@ -223,9 +219,8 @@ function FicheJeune({
   async function supprimerJeuneInactif(): Promise<void> {
     try {
       await jeunesService.supprimerJeuneInactif(jeune.id)
-      await router.push(
-        `/mes-jeunes?${QueryParam.suppressionBeneficiaire}=${QueryValue.succes}`
-      )
+      setAlerte(AlerteParam.suppressionBeneficiaire)
+      await router.push('/mes-jeunes')
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
@@ -519,26 +514,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
   }
-
-  if (context.query[QueryParam.creationRdv])
-    props.rdvCreationSuccess =
-      context.query[QueryParam.creationRdv] === QueryValue.succes
-
-  if (context.query[QueryParam.modificationRdv])
-    props.rdvModificationSuccess =
-      context.query[QueryParam.modificationRdv] === QueryValue.succes
-
-  if (context.query[QueryParam.suppressionRdv])
-    props.rdvSuppressionSuccess =
-      context.query[QueryParam.suppressionRdv] === QueryValue.succes
-
-  if (context.query[QueryParam.creationAction])
-    props.actionCreationSuccess =
-      context.query[QueryParam.creationAction] === QueryValue.succes
-
-  if (context.query[QueryParam.envoiMessage])
-    props.messageEnvoiGroupeSuccess =
-      context.query[QueryParam.envoiMessage] === QueryValue.succes
 
   if (context.query.onglet) {
     switch (context.query.onglet) {

@@ -9,9 +9,10 @@ import {
   uneListeDAgencesPoleEmploi,
 } from 'fixtures/referentiel'
 import { mockedConseillerService } from 'fixtures/services'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import Home, { getServerSideProps } from 'pages/index'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { ReferentielService } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -26,10 +27,12 @@ describe('Home', () => {
   describe('client side', () => {
     describe('quand le conseiller n’est pas Mission locale', () => {
       let agences: Agence[]
+      let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
       let replace: jest.Mock
       let conseillerService: ConseillerService
       beforeEach(() => {
         // Given
+        alerteSetter = jest.fn()
         replace = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ replace })
         agences = uneListeDAgencesPoleEmploi()
@@ -45,6 +48,7 @@ describe('Home', () => {
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
             customDependances: { conseillerService },
+            customAlerte: { alerteSetter },
           }
         )
       })
@@ -110,7 +114,8 @@ describe('Home', () => {
           nom: 'Agence Pôle emploi THIERS',
           codeDepartement: '3',
         })
-        expect(replace).toHaveBeenCalledWith('/mes-jeunes?choixAgence=succes')
+        expect(alerteSetter).toHaveBeenCalledWith('choixAgence')
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
       })
 
       it("prévient si l'agence n'est pas renseignée", async () => {
@@ -390,10 +395,9 @@ describe('Home', () => {
           },
         })
 
-        const conseillerAvecAgence = {
-          ...unConseiller(),
-          agence: 'MLS3F SAINT-LOUIS',
-        }
+        const conseillerAvecAgence: Conseiller = unConseiller({
+          agence: { nom: 'MLS3F SAINT-LOUIS', id: 'id-agence' },
+        })
         conseillerService = mockedConseillerService({
           getConseillerServerSide: jest.fn(async () => conseillerAvecAgence),
         })

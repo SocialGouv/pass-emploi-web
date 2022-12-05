@@ -9,12 +9,12 @@ const ConseillerContext = createContext<ConseillerState | undefined>(undefined)
 
 export function ConseillerProvider({
   children,
-  conseiller,
+  conseillerForTests,
 }: {
   children: ReactNode
-  conseiller?: Conseiller
+  conseillerForTests?: Conseiller
 }) {
-  const state = useState<MaybeConseiller>(conseiller)
+  const state = useState<MaybeConseiller>(conseillerForTests)
   return (
     <ConseillerContext.Provider value={state}>
       {children}

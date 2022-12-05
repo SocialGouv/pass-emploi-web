@@ -2,7 +2,6 @@ import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -25,6 +24,7 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import MesJeunes, { getServerSideProps } from 'pages/mes-jeunes'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -37,14 +37,11 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('Mes Jeunes', () => {
   describe('client side', () => {
-    let routerReplace: Function
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let dependances: Pick<Dependencies, 'messagesService' | 'conseillerService'>
     const jeunes = desJeunesAvecActionsNonTerminees()
     beforeEach(() => {
-      routerReplace = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        replace: routerReplace,
-      })
+      alerteSetter = jest.fn()
 
       dependances = {
         messagesService: mockedMessagesService({
@@ -146,7 +143,11 @@ describe('Mes Jeunes', () => {
           conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
           renderWithContexts(
             <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
-            { customDependances: dependances, customConseiller: conseiller }
+            {
+              customDependances: dependances,
+              customConseiller: conseiller,
+              customAlerte: { alerteSetter },
+            }
           )
         })
       })
@@ -173,10 +174,7 @@ describe('Mes Jeunes', () => {
         expect(
           dependances.conseillerService.recupererBeneficiaires
         ).toHaveBeenCalledWith()
-        expect(routerReplace).toHaveBeenCalledWith({
-          pathname: '/mes-jeunes',
-          query: { recuperation: 'succes' },
-        })
+        expect(alerteSetter).toHaveBeenCalledWith('recuperationBeneficiaires')
       })
     })
 
@@ -410,75 +408,6 @@ describe('Mes Jeunes', () => {
       expect(
         jeunesService.getJeunesDuConseillerServerSide
       ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
-    })
-
-    it('traite la réussite de la création d’un jeune', async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
-          accessToken: 'accessToken',
-        },
-      })
-
-      // When
-      const actual = await getServerSideProps({
-        query: { creationBeneficiaire: 'succes' },
-      } as unknown as GetServerSidePropsContext)
-
-      // Then
-      expect(actual).toMatchObject({
-        props: {
-          creationSuccess: true,
-        },
-      })
-    })
-
-    it("traite la réussite d'une suppression de jeune", async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
-          accessToken: 'accessToken',
-        },
-      })
-
-      // When
-      const actual = await getServerSideProps({
-        query: { suppression: 'succes' },
-      } as unknown as GetServerSidePropsContext)
-
-      // Then
-      expect(actual).toMatchObject({
-        props: {
-          deletionSuccess: true,
-        },
-      })
-    })
-
-    it("traite la réussite d'une récupération de bénéficiaires", async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
-          accessToken: 'accessToken',
-        },
-      })
-
-      // When
-      const actual = await getServerSideProps({
-        query: { recuperation: 'succes' },
-      } as unknown as GetServerSidePropsContext)
-
-      // Then
-      expect(actual).toMatchObject({
-        props: {
-          recuperationSuccess: true,
-        },
-      })
     })
 
     describe('pour un conseiller Pole emploi', () => {

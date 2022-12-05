@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import React, { MouseEventHandler, useState } from 'react'
 
 import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
@@ -6,8 +5,9 @@ import { BlocSituation } from 'components/jeune/BlocSituation'
 import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
+import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useDependance } from 'utils/injectionDependances'
 
@@ -24,8 +24,8 @@ export const DetailsJeune = ({
   onDossierMiloClick,
   onDeleteJeuneClick,
 }: DetailsJeuneProps) => {
-  const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const [_, setAlerte] = useAlerte()
 
   const [identifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
@@ -49,12 +49,7 @@ export const DetailsJeune = ({
       .then(() => {
         setIdentifiantPartenaire(nouvelleValeur)
         setShowIdentifiantPartenaireModal(false)
-        router.push({
-          pathname: `/mes-jeunes/${jeune.id}`,
-          query: {
-            [QueryParam.modificationIdentifiantPartenaire]: QueryValue.succes,
-          },
-        })
+        setAlerte(AlerteParam.modificationIdentifiantPartenaire)
       })
       .catch(() => {
         setShowIdentifiantPartenaireModal(false)

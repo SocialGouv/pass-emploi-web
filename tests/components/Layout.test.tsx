@@ -1,17 +1,21 @@
 import { act, render, screen } from '@testing-library/react'
-
-import AppHead from 'components/AppHead'
-import ChatRoom from 'components/chat/ChatRoom'
-import AlertDisplayer from 'components/layouts/AlertDisplayer'
-import Layout from 'components/layouts/Layout'
-import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
-import { mockedConseillerService, mockedJeunesService, mockedMessagesService } from 'fixtures/services'
-import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
+
+import AppHead from 'components/AppHead'
+import ChatRoom from 'components/chat/ChatRoom'
+import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
+import Layout from 'components/layouts/Layout'
+import { unConseiller } from 'fixtures/conseiller'
+import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
+import {
+  mockedConseillerService,
+  mockedJeunesService,
+  mockedMessagesService,
+} from 'fixtures/services'
+import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -22,7 +26,7 @@ import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
-jest.mock('components/layouts/AlertDisplayer', () => jest.fn(() => <></>))
+jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()
@@ -122,7 +126,7 @@ describe('<Layout />', () => {
 
     it("affiche les messages d'alerte", () => {
       // Then
-      expect(AlertDisplayer).toHaveBeenCalledWith({}, {})
+      expect(AlerteDisplayer).toHaveBeenCalledWith({}, {})
     })
 
     it('signs into chat', () => {
@@ -217,7 +221,7 @@ describe('<Layout />', () => {
           >
             <ConseillerProvider>
               <ChatCredentialsProvider
-                credentials={{
+                credentialsForTests={{
                   token: 'firebaseToken',
                   cleChiffrement: 'cleChiffrement',
                 }}
