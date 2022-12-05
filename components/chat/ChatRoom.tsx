@@ -57,8 +57,9 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
     const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
     const chatsFiltresResult = (jeunesChats ?? []).filter((jeune) => {
       const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
+      const jeuneFirstName = jeune.prenom.replace(/’/i, "'").toLocaleLowerCase()
       for (const item of querySplit) {
-        if (jeuneLastName.includes(item)) {
+        if (jeuneLastName.includes(item) || jeuneFirstName.includes(item)) {
           return true
         }
       }

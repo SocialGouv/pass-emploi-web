@@ -31,7 +31,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
       <div className='flex mt-1'>
         <ResettableTextInput
           id={'rechercher-jeunes'}
-          defaultValue={query}
+          value={query}
           onChange={setQuery}
           onReset={onReset}
           className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-primary_darken'

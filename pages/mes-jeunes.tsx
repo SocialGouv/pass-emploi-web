@@ -81,8 +81,11 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
       if (query) {
         const jeunesFiltresResult = jeunes!.filter((jeune) => {
           const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
+          const jeuneFirstName = jeune.prenom
+            .replace(/’/i, "'")
+            .toLocaleLowerCase()
           for (const item of querySplit) {
-            if (jeuneLastName.includes(item)) {
+            if (jeuneLastName.includes(item) || jeuneFirstName.includes(item)) {
               return true
             }
           }
