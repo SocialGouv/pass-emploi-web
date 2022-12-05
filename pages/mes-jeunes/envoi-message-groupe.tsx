@@ -197,7 +197,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
         </Etape>
 
         <div className='flex'>
-          <Link href='/mes-listes-de-diffusion'>
+          <Link href='/mes-jeunes/listes-de-diffusion'>
             <a className='text-s-regular text-content_color underline hover:text-primary_darken'>
               Gérer mes listes
             </a>
