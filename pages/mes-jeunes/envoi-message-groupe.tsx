@@ -1,5 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { MouseEvent, useState } from 'react'
 
@@ -194,6 +195,20 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             onUpdate={setSelectedJeunesIds}
           />
         </Etape>
+
+        <div className='flex'>
+          <Link href='/mes-listes-de-diffusion'>
+            <a className='text-s-regular text-content_color underline hover:text-primary_darken'>
+              Gérer mes listes
+            </a>
+          </Link>
+          <IconComponent
+            name={IconName.ChevronRight}
+            aria-hidden={true}
+            focusable={false}
+            className='mx-2 w-6 h-6'
+          />
+        </div>
 
         <Etape numero={2} titre='Écrivez votre message'>
           <Label

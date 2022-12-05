@@ -104,6 +104,17 @@ describe('EnvoiMessageGroupe', () => {
         ).toBeInTheDocument()
       })
 
+      it('affiche un lien qui renvoie vers la page de gestion des listes de diffusion', () => {
+        // Given
+
+        // When
+
+        // Then
+        expect(
+          screen.getByRole('link', { name: 'Gérer mes listes' })
+        ).toHaveAttribute('href', '/mes-listes-de-diffusion')
+      })
+
       it('ne devrait pas pouvoir cliquer sur le bouton envoyer avec un champ du formulaire vide', async () => {
         // Given
         await userEvent.type(inputMessage, 'Un message')
