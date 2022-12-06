@@ -1,3 +1,4 @@
+import { ApiClient } from 'clients/api.client'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
 export interface ListesDeDiffusionService {
@@ -8,10 +9,15 @@ export interface ListesDeDiffusionService {
 }
 
 export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
+  constructor(private readonly apiClient: ApiClient) {}
+
   async getListesDeDiffusion(
     idConseiller: string,
     accessToken: string
   ): Promise<ListeDeDiffusion[]> {
-    throw new Error('Not implemented')
+    const { content: listesDeDiffusion } = await this.apiClient.get<
+      ListeDeDiffusion[]
+    >(`/conseillers/${idConseiller}/listes-de-diffusion`, accessToken)
+    return listesDeDiffusion
   }
 }
