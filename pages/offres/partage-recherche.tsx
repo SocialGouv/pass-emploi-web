@@ -118,8 +118,8 @@ function PartageRecherche({
 
     try {
       await partagerRecherche()
-      setAlerte(AlerteParam.suggestionRecherche)
       await router.push('/recherche-offres')
+      setAlerte(AlerteParam.suggestionRecherche)
     } finally {
       setIsPartageEnCours(false)
     }

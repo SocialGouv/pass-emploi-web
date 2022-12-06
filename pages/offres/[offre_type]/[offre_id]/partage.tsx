@@ -87,8 +87,8 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
         cleChiffrement: chatCredentials!.cleChiffrement,
         message: message || messageDefault,
       })
-      setAlerte(AlerteParam.partageOffre)
       await router.push(returnTo)
+      setAlerte(AlerteParam.partageOffre)
     } finally {
       setIsPartageEnCours(false)
     }

@@ -62,8 +62,8 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
       idsSelectionnes
     )
 
-    setAlerte(AlerteParam.clotureAC)
     await router.push(returnTo)
+    setAlerte(AlerteParam.clotureAC)
   }
 
   return (

@@ -41,8 +41,8 @@ function MiloCreationJeune({
   async function creerCompteJeune(newJeune: JeuneMiloFormData): Promise<void> {
     try {
       const { id } = await conseillerService.createCompteJeuneMilo(newJeune)
-      setAlerte(AlerteParam.creationBeneficiaire, id)
       await router.push('/mes-jeunes')
+      setAlerte(AlerteParam.creationBeneficiaire, id)
     } catch (error) {
       setErreurMessage((error as Error).message)
     }

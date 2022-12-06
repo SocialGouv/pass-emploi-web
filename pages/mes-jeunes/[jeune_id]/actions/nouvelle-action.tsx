@@ -72,8 +72,8 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
       dateEcheance,
     }
     await actionsService.createAction(action, idJeune)
-    setAlerte(AlerteParam.creationAction)
     await router.push(`/mes-jeunes/${idJeune}?onglet=actions`)
+    setAlerte(AlerteParam.creationAction)
   }
 
   useMatomo(trackingTitle)

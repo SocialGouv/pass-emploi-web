@@ -109,11 +109,11 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
     actionsService
       .deleteAction(action.id)
       .then(() => {
-        setAlerte(AlerteParam.suppressionAction)
         router.push({
           pathname: '/mes-jeunes/' + jeune.id,
           query: { onglet: 'actions' },
         })
+        setAlerte(AlerteParam.suppressionAction)
       })
       .catch((error: Error) => {
         setShowEchecMessage(true)
@@ -128,8 +128,8 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
     if (!estEnSucces) {
       setShowEchecMessage(true)
     } else {
-      setAlerte(AlerteParam.ajoutCommentaireAction)
       router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
+      setAlerte(AlerteParam.ajoutCommentaireAction)
     }
   }
 

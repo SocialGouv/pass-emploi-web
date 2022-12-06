@@ -41,8 +41,8 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller!, agence })
     setTrackingLabel('Succès ajout agence')
-    setAlerte(AlerteParam.choixAgence)
     redirectToUrl()
+    setAlerte(AlerteParam.choixAgence)
   }
 
   async function redirectToUrl() {

@@ -143,8 +143,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
 
-      setAlerte(AlerteParam.envoiMessage)
       await router.push(returnTo)
+      setAlerte(AlerteParam.envoiMessage)
     } catch (error) {
       setErreurEnvoi(
         error instanceof ApiError

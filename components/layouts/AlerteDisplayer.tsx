@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import AlertLink from 'components/ui/Notifications/AlertLink'
@@ -14,6 +15,7 @@ interface AlerteDisplayerProps {
 export default function AlerteDisplayer({
   hideOnLargeScreen = false,
 }: AlerteDisplayerProps) {
+  const router = useRouter()
   const [conseiller] = useConseiller()
   const [alertes, setAlertes] = useState<DictAlertes>(ALERTES)
 
@@ -22,7 +24,7 @@ export default function AlerteDisplayer({
     AlerteAffichee | undefined
   >()
 
-  async function closeAlerte(): Promise<void> {
+  function fermerAlerte(): void {
     setAlerte(undefined)
   }
 
@@ -36,10 +38,17 @@ export default function AlerteDisplayer({
     setAlerteAAfficher(alerte && alertes[alerte.key])
   }, [alerte, alertes, setAlerte])
 
+  useEffect(() => {
+    fermerAlerte()
+  }, [router.asPath])
+
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
       {alerte && alerteAAfficher && (
-        <SuccessAlert label={alerteAAfficher.title} onAcknowledge={closeAlerte}>
+        <SuccessAlert
+          label={alerteAAfficher.title}
+          onAcknowledge={fermerAlerte}
+        >
           <>
             {alerteAAfficher.sub}
 
@@ -47,7 +56,7 @@ export default function AlerteDisplayer({
               <AlertLink
                 href={alerteAAfficher.link.buildHref(alerte.target)}
                 label={alerteAAfficher.link.label}
-                onClick={closeAlerte}
+                onClick={fermerAlerte}
               />
             )}
           </>

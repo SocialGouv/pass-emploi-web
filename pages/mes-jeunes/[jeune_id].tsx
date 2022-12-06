@@ -206,8 +206,8 @@ function FicheJeune({
   ): Promise<void> {
     try {
       await jeunesService.archiverJeune(jeune.id, payload)
-      setAlerte(AlerteParam.suppressionBeneficiaire)
       await router.push('/mes-jeunes')
+      setAlerte(AlerteParam.suppressionBeneficiaire)
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
@@ -219,8 +219,8 @@ function FicheJeune({
   async function supprimerJeuneInactif(): Promise<void> {
     try {
       await jeunesService.supprimerJeuneInactif(jeune.id)
-      setAlerte(AlerteParam.suppressionBeneficiaire)
       await router.push('/mes-jeunes')
+      setAlerte(AlerteParam.suppressionBeneficiaire)
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)

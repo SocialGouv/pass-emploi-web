@@ -35,8 +35,8 @@ function PoleEmploiCreationJeune(): JSX.Element {
         lastName: newJeune.nom,
         email: newJeune.email,
       })
-      setAlerte(AlerteParam.creationBeneficiaire, id)
       await router.push('/mes-jeunes')
+      setAlerte(AlerteParam.creationBeneficiaire, id)
     } catch (error) {
       setCreationError(
         (error as Error).message || "Une erreur inconnue s'est produite"

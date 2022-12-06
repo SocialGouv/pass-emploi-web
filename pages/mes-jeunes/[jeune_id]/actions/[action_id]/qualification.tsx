@@ -69,8 +69,8 @@ function PageQualification({
         DateTime.fromISO(dateDebut).startOf('day'),
         DateTime.fromISO(dateFin!).startOf('day')
       )
-      setAlerte(AlerteParam.qualificationSNP)
       await router.push(returnTo)
+      setAlerte(AlerteParam.qualificationSNP)
     } catch (error) {
       setErreurQualification(
         error instanceof ApiError

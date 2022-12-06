@@ -171,8 +171,8 @@ function EditionRdv({
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
 
-    setAlerte(AlerteParam.creationEvenement, idNouvelEvenement)
     await router.push(returnTo)
+    setAlerte(AlerteParam.creationEvenement, idNouvelEvenement)
   }
 
   async function modifierEvenement(
@@ -181,8 +181,8 @@ function EditionRdv({
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
 
-    setAlerte(AlerteParam.modificationEvenement)
     await router.push(returnTo)
+    setAlerte(AlerteParam.modificationEvenement)
   }
 
   async function supprimerEvenement(): Promise<void> {
@@ -191,8 +191,8 @@ function EditionRdv({
 
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      setAlerte(AlerteParam.suppressionEvenement)
       await router.push(returnTo)
+      setAlerte(AlerteParam.suppressionEvenement)
     } catch (e) {
       setShowDeleteRdvError(true)
     }
