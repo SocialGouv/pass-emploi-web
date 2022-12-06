@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { uneBaseJeune } from 'fixtures/jeune'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { mockedListesDeDiffusionService } from 'fixtures/services'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -30,7 +31,15 @@ describe('Page Listes de Diffusion', () => {
     describe('quand il y a des listes de diffusion', () => {
       beforeEach(() => {
         // Given
-        const listesDeDiffusion: ListeDeDiffusion[] = [uneListeDeDiffusion()]
+        const listesDeDiffusion: ListeDeDiffusion[] = [
+          uneListeDeDiffusion(),
+          uneListeDeDiffusion({
+            id: 'liste-2',
+            beneficiaires: [
+              { ...uneBaseJeune(), estDansLePortefeuille: false },
+            ],
+          }),
+        ]
 
         // When
         render(
@@ -40,15 +49,20 @@ describe('Page Listes de Diffusion', () => {
 
       it('affiche les informations des listes', () => {
         // Then
+        expect(screen.getAllByText('Liste export international')).toHaveLength(
+          2
+        )
+        expect(screen.getAllByText('1 destinataire(s)')).toHaveLength(2)
         expect(
-          screen.getByText('Liste export international')
+          screen.getByLabelText(
+            'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
+          )
         ).toBeInTheDocument()
-        expect(screen.getByText('1 destinataire(s)')).toBeInTheDocument()
       })
 
       it('affiche le nombre de listes', () => {
         // Then
-        expect(screen.getByText('Listes (1)')).toBeInTheDocument()
+        expect(screen.getByText('Listes (2)')).toBeInTheDocument()
       })
     })
   })

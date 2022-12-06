@@ -7,7 +7,7 @@ export function uneListeDeDiffusion(
   const defaults: ListeDeDiffusion = {
     id: '1',
     titre: 'Liste export international',
-    beneficiaires: [uneBaseJeune()],
+    beneficiaires: [{ ...uneBaseJeune(), estDansLePortefeuille: true }],
   }
   return { ...defaults, ...overrides }
 }

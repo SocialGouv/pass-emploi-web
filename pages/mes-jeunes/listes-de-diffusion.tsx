@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import React from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
@@ -20,6 +21,32 @@ type ListesDiffusionProps = PageProps & {
 }
 
 function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
+  function getTitre(liste: ListeDeDiffusion) {
+    const informationLabel =
+      'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
+
+    if (
+      liste.beneficiaires.some(
+        ({ estDansLePortefeuille }) => !estDansLePortefeuille
+      )
+    ) {
+      return (
+        <div className='flex items-center text-primary'>
+          <IconComponent
+            name={IconName.Info}
+            role='img'
+            focusable={false}
+            aria-label={informationLabel}
+            title={informationLabel}
+            className='w-6 h-6 mr-2 fill-[currentColor]'
+          />
+          {liste.titre}
+        </div>
+      )
+    }
+    return liste.titre
+  }
+
   return (
     <>
       {listesDiffusion.length === 0 && (
@@ -51,7 +78,7 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
           <TBody>
             {listesDiffusion.map((liste) => (
               <TR key={liste.id}>
-                <TD>{liste.titre}</TD>
+                <TD>{getTitre(liste)}</TD>
                 <TD>{liste.beneficiaires.length} destinataire(s)</TD>
               </TR>
             ))}

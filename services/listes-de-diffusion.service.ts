@@ -1,5 +1,4 @@
 import { ApiClient } from 'clients/api.client'
-import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
 export interface ListesDeDiffusionService {

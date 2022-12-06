@@ -194,21 +194,18 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             typeSelection='Destinataires'
             onUpdate={setSelectedJeunesIds}
           />
-        </Etape>
-
-        <div className='flex'>
           <Link href='/mes-jeunes/listes-de-diffusion'>
-            <a className='text-s-regular text-content_color underline hover:text-primary_darken'>
+            <a className='flex items-center pt-2 text-s-regular text-content_color underline hover:text-primary_darken'>
               Gérer mes listes
+              <IconComponent
+                name={IconName.ChevronRight}
+                aria-hidden={true}
+                focusable={false}
+                className='w-6 h-6 fill-[currentColor]'
+              />
             </a>
           </Link>
-          <IconComponent
-            name={IconName.ChevronRight}
-            aria-hidden={true}
-            focusable={false}
-            className='mx-2 w-6 h-6'
-          />
-        </div>
+        </Etape>
 
         <Etape numero={2} titre='Écrivez votre message'>
           <Label
