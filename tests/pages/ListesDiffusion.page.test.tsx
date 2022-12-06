@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { mockedListesDeDiffusionService } from 'fixtures/services'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import ListesDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
 import { getServerSideProps } from 'pages/mes-jeunes/listes-de-diffusion'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
@@ -16,12 +18,37 @@ describe('Page Listes de Diffusion', () => {
     describe('quand il n’y a pas de listes de diffusion', () => {
       it('affiche le message idoine', async () => {
         // Given - When
-        render(<ListesDiffusion />)
+        render(<ListesDiffusion listesDiffusion={[]} pageTitle='' />)
 
         // Then
         expect(
           screen.getByText('Vous n’avez aucune liste de diffusion.')
         ).toBeInTheDocument()
+      })
+    })
+
+    describe('quand il y a des listes de diffusion', () => {
+      beforeEach(() => {
+        // Given
+        const listesDeDiffusion: ListeDeDiffusion[] = [uneListeDeDiffusion()]
+
+        // When
+        render(
+          <ListesDiffusion listesDiffusion={listesDeDiffusion} pageTitle='' />
+        )
+      })
+
+      it('affiche les informations des listes', () => {
+        // Then
+        expect(
+          screen.getByText('Liste export international')
+        ).toBeInTheDocument()
+        expect(screen.getByText('1 destinataire(s)')).toBeInTheDocument()
+      })
+
+      it('affiche le nombre de listes', () => {
+        // Then
+        expect(screen.getByText('Listes (1)')).toBeInTheDocument()
       })
     })
   })

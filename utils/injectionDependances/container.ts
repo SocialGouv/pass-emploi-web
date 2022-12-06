@@ -93,7 +93,7 @@ export class Container {
       immersionsService: new ImmersionsApiService(apiClient),
       suggestionsService: new SuggestionsApiService(apiClient),
       agendaService: new AgendaApiService(apiClient),
-      listesDeDiffusionService: new ListesDeDiffusionApiService(),
+      listesDeDiffusionService: new ListesDeDiffusionApiService(apiClient),
     })
   }
 }
