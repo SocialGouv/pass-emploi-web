@@ -1,5 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
@@ -22,14 +23,19 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-type EditionListeDiffusionProps = {
+type EditionListeDiffusionProps = PageProps & {
   beneficiaires: BaseJeune[]
-} & PageProps
+  returnTo: string
+}
 
-function EditionListeDiffusion({ beneficiaires }: EditionListeDiffusionProps) {
+function EditionListeDiffusion({
+  beneficiaires,
+  returnTo,
+}: EditionListeDiffusionProps) {
   const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
     'listesDeDiffusionService'
   )
+  const router = useRouter()
 
   const [titre, setTitre] = useState<string | undefined>()
   const [idsDestinataires, setIdsDestinataires] = useState<string[]>([])
@@ -41,13 +47,14 @@ function EditionListeDiffusion({ beneficiaires }: EditionListeDiffusionProps) {
     }))
   }
 
-  function creerListe(e: FormEvent) {
+  async function creerListe(e: FormEvent) {
     e.preventDefault()
 
-    listesDeDiffusionService.creerListeDeDiffusion({
+    await listesDeDiffusionService.creerListeDeDiffusion({
       titre: titre!,
       idsDestinataires,
     })
+    router.push(returnTo)
   }
 
   return (

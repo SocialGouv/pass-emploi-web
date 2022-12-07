@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
@@ -24,13 +25,22 @@ describe('Page d’édition d’une liste de diffusion', () => {
   describe('client side', () => {
     let beneficiaires: BaseJeune[]
     let listesDeDiffusionService: ListesDeDiffusionService
+    let routerPush: jest.Mock
+
     beforeEach(async () => {
       // Given - When
+      routerPush = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+
       listesDeDiffusionService = mockedListesDeDiffusionService()
 
       beneficiaires = desItemsJeunes()
       renderWithContexts(
-        <EditionListeDiffusion beneficiaires={beneficiaires} pageTitle='' />,
+        <EditionListeDiffusion
+          beneficiaires={beneficiaires}
+          pageTitle=''
+          returnTo='/mes-jeunes/listes-de-diffusion'
+        />,
         { customDependances: { listesDeDiffusionService } }
       )
     })
@@ -56,27 +66,30 @@ describe('Page d’édition d’une liste de diffusion', () => {
     })
 
     describe('formulaire rempli', () => {
+      beforeEach(async () => {
+        const titreInput = screen.getByLabelText('* Titre')
+        const destinatairesSelect = screen.getByLabelText(/des bénéficiaires/)
+        const creationButton = screen.getByRole('button', {
+          name: 'Créer la liste',
+        })
+
+        // Given
+        await userEvent.type(titreInput, 'Liste métiers aéronautique')
+        await userEvent.type(
+          destinatairesSelect,
+          getNomJeuneComplet(beneficiaires[0])
+        )
+        await userEvent.type(
+          destinatairesSelect,
+          getNomJeuneComplet(beneficiaires[2])
+        )
+
+        // When
+        await userEvent.click(creationButton)
+      })
+
       describe('quand le formulaire est validé', () => {
         it('crée la liste', async () => {
-          // Given
-          await userEvent.type(
-            screen.getByLabelText('* Titre'),
-            'Liste métiers aéronautique'
-          )
-          await userEvent.type(
-            screen.getByLabelText(/des bénéficiaires/),
-            getNomJeuneComplet(beneficiaires[0])
-          )
-          await userEvent.type(
-            screen.getByLabelText(/des bénéficiaires/),
-            getNomJeuneComplet(beneficiaires[2])
-          )
-
-          // When
-          await userEvent.click(
-            screen.getByRole('button', { name: 'Créer la liste' })
-          )
-
           // Then
           expect(
             listesDeDiffusionService.creerListeDeDiffusion
@@ -84,6 +97,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
             titre: 'Liste métiers aéronautique',
             idsDestinataires: [beneficiaires[0].id, beneficiaires[2].id],
           })
+        })
+        it('redirige vers mes listes de diffusion', async () => {
+          // Then
+          expect(routerPush).toHaveBeenCalledWith(
+            '/mes-jeunes/listes-de-diffusion'
+          )
         })
       })
     })
