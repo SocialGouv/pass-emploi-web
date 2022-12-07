@@ -115,6 +115,38 @@ describe('Page d’édition d’une liste de diffusion', () => {
           )
         })
       })
+      it('est désactivé quand le titre n’est pas renseigné', async () => {
+        // Given
+        await userEvent.clear(screen.getByLabelText('* Titre'))
+        // Then
+        expect(
+          screen.getByRole('button', {
+            name: 'Créer la liste',
+          })
+        ).toHaveAttribute('disabled', '')
+      })
+
+      it('est désactivé quand aucun destinataire n’est renseigné', async () => {
+        // Given
+        const enleverBeneficiaires: HTMLButtonElement[] =
+          screen.getAllByText(/Enlever/)
+
+        // When
+        for (const bouton of enleverBeneficiaires) {
+          await userEvent.click(bouton)
+        }
+        // Then
+        expect(
+          screen.getByRole('button', {
+            name: 'Créer la liste',
+          })
+        ).toHaveAttribute('disabled', '')
+        expect(
+          screen.getByText(
+            'Aucun bénéficiaire n’est renseigné. Veuillez sélectionner au moins un bénéficiaire.'
+          )
+        ).toBeInTheDocument()
+      })
     })
   })
 

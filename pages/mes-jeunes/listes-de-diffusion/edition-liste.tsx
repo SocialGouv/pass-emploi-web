@@ -6,6 +6,7 @@ import React, { FormEvent, useState } from 'react'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
+import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
@@ -41,7 +42,12 @@ function EditionListeDiffusion({
   const [_, setAlerte] = useAlerte()
 
   const [titre, setTitre] = useState<string | undefined>()
-  const [idsDestinataires, setIdsDestinataires] = useState<string[]>([])
+  const [idsDestinataires, setIdsDestinataires] = useState<
+    RequiredValue<string[]>
+  >({
+    value: [],
+  })
+  const formIsValid = Boolean(titre) && Boolean(idsDestinataires.value.length)
 
   function buildOptionsDestinataires(): OptionBeneficiaire[] {
     return beneficiaires.map((beneficiaire) => ({
@@ -50,12 +56,21 @@ function EditionListeDiffusion({
     }))
   }
 
+  function updateIdsDestinataires(ids: string[]) {
+    setIdsDestinataires({
+      value: ids,
+      error: ids.length
+        ? undefined
+        : 'Aucun bénéficiaire n’est renseigné. Veuillez sélectionner au moins un bénéficiaire.',
+    })
+  }
+
   async function creerListe(e: FormEvent) {
     e.preventDefault()
 
     await listesDeDiffusionService.creerListeDeDiffusion({
       titre: titre!,
-      idsDestinataires,
+      idsDestinataires: idsDestinataires.value,
     })
 
     setAlerte(AlerteParam.creationListeDiffusion)
@@ -81,8 +96,9 @@ function EditionListeDiffusion({
         <BeneficiairesMultiselectAutocomplete
           beneficiaires={buildOptionsDestinataires()}
           typeSelection='Destinaires'
-          onUpdate={setIdsDestinataires}
+          onUpdate={updateIdsDestinataires}
           required={true}
+          error={idsDestinataires.error}
         />
 
         <div className='flex gap-2 mt-6 justify-center'>
@@ -92,7 +108,7 @@ function EditionListeDiffusion({
           >
             Annuler
           </ButtonLink>
-          <Button type='submit'>
+          <Button type='submit' disabled={!formIsValid}>
             <IconComponent
               name={IconName.Add}
               focusable={false}
