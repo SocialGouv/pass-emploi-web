@@ -115,6 +115,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           )
         })
       })
+
       it('est désactivé quand le titre n’est pas renseigné', async () => {
         // Given
         await userEvent.clear(screen.getByLabelText('* Titre'))
@@ -144,6 +145,23 @@ describe('Page d’édition d’une liste de diffusion', () => {
         expect(
           screen.getByText(
             'Aucun bénéficiaire n’est renseigné. Veuillez sélectionner au moins un bénéficiaire.'
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('affiche un message d’erreur si la création échoue', async () => {
+        // Given
+        ;(
+          listesDeDiffusionService.creerListeDeDiffusion as jest.Mock
+        ).mockRejectedValue({})
+
+        // When
+        await userEvent.click(screen.getByText('Créer la liste'))
+
+        // Then
+        expect(
+          screen.getByText(
+            'Une erreur s’est produite, veuillez réessayer ultérieurement.'
           )
         ).toBeInTheDocument()
       })

@@ -12,6 +12,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   BaseJeune,
   compareJeunesByNom,
@@ -47,6 +48,7 @@ function EditionListeDiffusion({
   >({
     value: [],
   })
+  const [erreurCreation, setErreurCreation] = useState<boolean>(false)
   const formIsValid = Boolean(titre) && Boolean(idsDestinataires.value.length)
 
   function buildOptionsDestinataires(): OptionBeneficiaire[] {
@@ -67,18 +69,28 @@ function EditionListeDiffusion({
 
   async function creerListe(e: FormEvent) {
     e.preventDefault()
+    try {
+      await listesDeDiffusionService.creerListeDeDiffusion({
+        titre: titre!,
+        idsDestinataires: idsDestinataires.value,
+      })
 
-    await listesDeDiffusionService.creerListeDeDiffusion({
-      titre: titre!,
-      idsDestinataires: idsDestinataires.value,
-    })
-
-    setAlerte(AlerteParam.creationListeDiffusion)
-    await router.push(returnTo)
+      setAlerte(AlerteParam.creationListeDiffusion)
+      await router.push(returnTo)
+    } catch (erreur) {
+      setErreurCreation(true)
+      console.error(erreur)
+    }
   }
 
   return (
     <>
+      {erreurCreation && (
+        <FailureAlert
+          label='Une erreur s’est produite, veuillez réessayer ultérieurement.'
+          onAcknowledge={() => setErreurCreation(false)}
+        />
+      )}
       <p className='text-s-bold text-content_color mb-4'>
         Tous les champs avec * sont obligatoires
       </p>
