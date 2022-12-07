@@ -195,7 +195,7 @@ export function mockedListesDeDiffusionService(
 ): ListesDeDiffusionService {
   const defaults: ListesDeDiffusionService = {
     getListesDeDiffusion: jest.fn(),
-    creerListe: jest.fn(),
+    creerListeDeDiffusion: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

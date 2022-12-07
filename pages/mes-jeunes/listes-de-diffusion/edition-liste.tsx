@@ -1,21 +1,61 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import React from 'react'
+import { GetServerSideProps } from 'next'
+import React, { FormEvent, useState } from 'react'
 
-import BeneficiairesMultiselectAutocomplete from 'components/jeune/BeneficiairesMultiselectAutocomplete'
+import BeneficiairesMultiselectAutocomplete, {
+  OptionBeneficiaire,
+} from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import {
+  BaseJeune,
+  compareJeunesByNom,
+  getNomJeuneComplet,
+} from 'interfaces/jeune'
+import { JeunesService } from 'services/jeunes.service'
+import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 
-function EditionListeDiffusion() {
+type EditionListeDiffusionProps = {
+  beneficiaires: BaseJeune[]
+}
+
+function EditionListeDiffusion({ beneficiaires }: EditionListeDiffusionProps) {
+  const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
+    'listesDeDiffusionService'
+  )
+
+  const [titre, setTitre] = useState<string | undefined>()
+  const [idsDestinataires, setIdsDestinataires] = useState<string[]>([])
+
+  function buildOptionsDestinataires(): OptionBeneficiaire[] {
+    return beneficiaires.map((beneficiaire) => ({
+      id: beneficiaire.id,
+      value: getNomJeuneComplet(beneficiaire),
+    }))
+  }
+
+  function creerListe(e: FormEvent) {
+    e.preventDefault()
+
+    listesDeDiffusionService.creerListeDeDiffusion({
+      titre: titre!,
+      idsDestinataires,
+    })
+  }
+
   return (
     <>
       <p className='text-s-bold text-content_color mb-4'>
         Tous les champs avec * sont obligatoires
       </p>
 
-      <form>
+      <form onSubmit={creerListe}>
         <Label htmlFor='titre-liste' inputRequired={true}>
           Titre
         </Label>
@@ -23,12 +63,12 @@ function EditionListeDiffusion() {
           type='text'
           id='titre-liste'
           required={true}
-          onChange={() => {}}
+          onChange={setTitre}
         />
         <BeneficiairesMultiselectAutocomplete
-          beneficiaires={[]}
+          beneficiaires={buildOptionsDestinataires()}
           typeSelection='Destinaires'
-          onUpdate={() => {}}
+          onUpdate={setIdsDestinataires}
           required={true}
         />
 
@@ -52,6 +92,26 @@ function EditionListeDiffusion() {
       </form>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps<
+  EditionListeDiffusionProps
+> = async (context) => {
+  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+  if (!sessionOrRedirect.validSession)
+    return { redirect: sessionOrRedirect.redirect }
+
+  const { user, accessToken } = sessionOrRedirect.session
+  const jeunesService: JeunesService =
+    withDependance<JeunesService>('jeunesService')
+  const beneficiaires = await jeunesService.getJeunesDuConseillerServerSide(
+    user.id,
+    accessToken
+  )
+
+  return {
+    props: { beneficiaires: [...beneficiaires].sort(compareJeunesByNom) },
+  }
 }
 
 export default withTransaction(

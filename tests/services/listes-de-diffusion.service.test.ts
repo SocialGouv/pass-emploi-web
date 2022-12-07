@@ -1,7 +1,10 @@
 import { ApiClient } from 'clients/api.client'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { ListesDeDiffusionApiService } from 'services/listes-de-diffusion.service'
+import {
+  ListesDeDiffusionApiService,
+  ListesDeDiffusionService,
+} from 'services/listes-de-diffusion.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
 jest.mock('next-auth/react', () => ({
@@ -13,11 +16,11 @@ jest.mock('next-auth/react', () => ({
 
 describe('ListesDeDiffusionApiService', () => {
   let apiClient: ApiClient
-  let mockedListesDeDiffusionService: ListesDeDiffusionApiService
+  let listesDeDiffusionService: ListesDeDiffusionService
   beforeEach(async () => {
     // Given
     apiClient = new FakeApiClient()
-    mockedListesDeDiffusionService = new ListesDeDiffusionApiService(apiClient)
+    listesDeDiffusionService = new ListesDeDiffusionApiService(apiClient)
   })
 
   describe('.getListesDeDiffusion', () => {
@@ -32,17 +35,38 @@ describe('ListesDeDiffusionApiService', () => {
       })
 
       // When
-      const actual = await mockedListesDeDiffusionService.getListesDeDiffusion(
+      const actual = await listesDeDiffusionService.getListesDeDiffusion(
         'idConseiller',
         'accessToken'
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        `/conseillers/idConseiller/listes-de-diffusion`,
+        '/conseillers/idConseiller/listes-de-diffusion',
         'accessToken'
       )
       expect(actual).toEqual(listesDeDiffusion)
+    })
+  })
+
+  describe('.creerListeDeDiffusion', () => {
+    it('crée la liste de diffusion', async () => {
+      // Given
+      const titre = 'Un titre'
+      const idsBeneficiaires = ['id-1', 'id-2']
+
+      // When
+      await listesDeDiffusionService.creerListeDeDiffusion({
+        titre,
+        idsDestinataires: idsBeneficiaires,
+      })
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/conseillers/idConseiller/listes-de-diffusion',
+        { titre, idsBeneficiaires },
+        'accessToken'
+      )
     })
   })
 })
