@@ -17,8 +17,10 @@ import {
   getNomJeuneComplet,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { useAlerte } from 'utils/alerteContext'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -36,6 +38,7 @@ function EditionListeDiffusion({
     'listesDeDiffusionService'
   )
   const router = useRouter()
+  const [_, setAlerte] = useAlerte()
 
   const [titre, setTitre] = useState<string | undefined>()
   const [idsDestinataires, setIdsDestinataires] = useState<string[]>([])
@@ -54,7 +57,9 @@ function EditionListeDiffusion({
       titre: titre!,
       idsDestinataires,
     })
-    router.push(returnTo)
+
+    setAlerte(AlerteParam.creationListeDiffusion)
+    await router.push(returnTo)
   }
 
   return (

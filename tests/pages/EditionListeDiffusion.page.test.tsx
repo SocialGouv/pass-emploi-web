@@ -12,6 +12,7 @@ import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import EditionListeDiffusion, {
   getServerSideProps,
 } from 'pages/mes-jeunes/listes-de-diffusion/edition-liste'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -25,10 +26,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
   describe('client side', () => {
     let beneficiaires: BaseJeune[]
     let listesDeDiffusionService: ListesDeDiffusionService
+    let alerteSetter: (alert: AlerteParam | undefined) => void
     let routerPush: jest.Mock
 
     beforeEach(async () => {
       // Given - When
+      alerteSetter = jest.fn()
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
@@ -41,7 +44,10 @@ describe('Page d’édition d’une liste de diffusion', () => {
           pageTitle=''
           returnTo='/mes-jeunes/listes-de-diffusion'
         />,
-        { customDependances: { listesDeDiffusionService } }
+        {
+          customDependances: { listesDeDiffusionService },
+          customAlerte: { alerteSetter },
+        }
       )
     })
 
@@ -98,8 +104,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
             idsDestinataires: [beneficiaires[0].id, beneficiaires[2].id],
           })
         })
+
         it('redirige vers mes listes de diffusion', async () => {
           // Then
+          expect(alerteSetter).toHaveBeenCalledWith(
+            AlerteParam.creationListeDiffusion
+          )
           expect(routerPush).toHaveBeenCalledWith(
             '/mes-jeunes/listes-de-diffusion'
           )

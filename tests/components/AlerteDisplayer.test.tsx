@@ -380,4 +380,37 @@ describe('AlerteDisplayer', () => {
       expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
+
+  describe('quand on crée une liste de diffusion', () => {
+    beforeEach(() => {
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.creationListeDiffusion,
+          },
+          alerteSetter,
+        },
+        customConseiller: unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI,
+        }),
+      })
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/La liste de diffusion a bien été créée/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet de fermer l'alerte du succès", async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', { name: "J'ai compris" })
+      )
+
+      // Then
+      expect(alerteSetter).toHaveBeenCalledWith(undefined)
+    })
+  })
 })

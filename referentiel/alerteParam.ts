@@ -8,12 +8,14 @@ export enum AlerteParam {
   recuperationBeneficiaires = 'recuperationBeneficiaires',
   suppressionBeneficiaire = 'suppressionBeneficiaire',
   creationBeneficiaire = 'creationBeneficiaire',
-  // Action
+  // Actions
   creationAction = 'creationAction',
   suppressionAction = 'suppressionAction',
   ajoutCommentaireAction = 'ajoutCommentaireAction',
   qualificationSNP = 'qualificationSNP',
   qualificationNonSNP = 'qualificationNonSNP',
+  // Listes de diffusion
+  creationListeDiffusion = 'creationListeDiffusion',
   // Autre
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',

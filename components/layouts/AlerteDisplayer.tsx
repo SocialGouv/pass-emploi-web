@@ -115,6 +115,7 @@ const ALERTES: DictAlertes = {
     title: 'La recherche et ses critères ont bien été partagés',
   },
   clotureAC: { title: 'Cet événement a bien été clos' },
+  creationListeDiffusion: { title: 'La liste de diffusion a bien été créée' },
 }
 
 const ALERTES_MILO: DictAlertes = {
