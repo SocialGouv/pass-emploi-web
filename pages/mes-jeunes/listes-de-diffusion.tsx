@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import React from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -49,6 +50,19 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
 
   return (
     <>
+      <ButtonLink
+        href='/mes-jeunes/listes-de-diffusion/edition-liste'
+        className='w-fit mb-6'
+      >
+        <IconComponent
+          name={IconName.Add}
+          focusable={false}
+          aria-hidden={true}
+          className='mr-2 w-4 h-4'
+        />
+        Créer une liste
+      </ButtonLink>
+
       {listesDiffusion.length === 0 && (
         <div className='mx-auto my-0 flex flex-col items-center'>
           <EmptyStateImage

@@ -16,6 +16,21 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('Page Listes de Diffusion', () => {
   describe('client side', () => {
+    describe('contenu', () => {
+      it('afficher un lien pour créer une liste de diffusion', () => {
+        // Given - When
+        render(<ListesDiffusion listesDiffusion={[]} pageTitle='' />)
+
+        // Then
+        expect(
+          screen.getByRole('link', { name: 'Créer une liste' })
+        ).toHaveAttribute(
+          'href',
+          '/mes-jeunes/listes-de-diffusion/edition-liste'
+        )
+      })
+    })
+
     describe('quand il n’y a pas de listes de diffusion', () => {
       it('affiche le message idoine', async () => {
         // Given - When

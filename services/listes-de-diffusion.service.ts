@@ -6,6 +6,8 @@ export interface ListesDeDiffusionService {
     idConseiller: string,
     accessToken: string
   ): Promise<ListeDeDiffusion[]>
+
+  creerListe(): Promise<void>
 }
 
 export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
@@ -19,5 +21,9 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
       ListeDeDiffusion[]
     >(`/conseillers/${idConseiller}/listes-de-diffusion`, accessToken)
     return listesDeDiffusion
+  }
+
+  creerListe(): Promise<void> {
+    throw new Error('not implemented')
   }
 }

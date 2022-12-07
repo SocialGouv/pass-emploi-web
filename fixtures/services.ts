@@ -193,6 +193,9 @@ export function mockedAgendaService(overrides: Partial<AgendaService> = {}) {
 export function mockedListesDeDiffusionService(
   overrides: Partial<ListesDeDiffusionService> = {}
 ): ListesDeDiffusionService {
-  const defaults: ListesDeDiffusionService = { getListesDeDiffusion: jest.fn() }
+  const defaults: ListesDeDiffusionService = {
+    getListesDeDiffusion: jest.fn(),
+    creerListe: jest.fn(),
+  }
   return { ...defaults, ...overrides }
 }
