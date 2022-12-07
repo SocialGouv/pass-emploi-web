@@ -15,6 +15,7 @@ import {
   compareJeunesByNom,
   getNomJeuneComplet,
 } from 'interfaces/jeune'
+import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -23,7 +24,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 type EditionListeDiffusionProps = {
   beneficiaires: BaseJeune[]
-}
+} & PageProps
 
 function EditionListeDiffusion({ beneficiaires }: EditionListeDiffusionProps) {
   const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
@@ -110,7 +111,13 @@ export const getServerSideProps: GetServerSideProps<
   )
 
   return {
-    props: { beneficiaires: [...beneficiaires].sort(compareJeunesByNom) },
+    props: {
+      beneficiaires: [...beneficiaires].sort(compareJeunesByNom),
+      pageTitle: 'Créer - Listes de diffusion - Portefeuille',
+      pageHeader: 'Créer une nouvelle liste',
+      returnTo: '/mes-jeunes/listes-de-diffusion',
+      withoutChat: true,
+    },
   }
 }
 

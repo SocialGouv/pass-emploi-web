@@ -30,7 +30,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
       beneficiaires = desItemsJeunes()
       renderWithContexts(
-        <EditionListeDiffusion beneficiaires={beneficiaires} />,
+        <EditionListeDiffusion beneficiaires={beneficiaires} pageTitle='' />,
         { customDependances: { listesDeDiffusionService } }
       )
     })
@@ -139,6 +139,10 @@ describe('Page d’édition d’une liste de diffusion', () => {
         expect(actual).toEqual({
           props: {
             beneficiaires: [jeunes[2], jeunes[0], jeunes[1]],
+            pageTitle: 'Créer - Listes de diffusion - Portefeuille',
+            pageHeader: 'Créer une nouvelle liste',
+            returnTo: '/mes-jeunes/listes-de-diffusion',
+            withoutChat: true,
           },
         })
       })
