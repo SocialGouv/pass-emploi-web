@@ -6,6 +6,7 @@ import { FavorisService } from 'services/favoris.service'
 import { FichiersService } from 'services/fichiers.service'
 import { ImmersionsService } from 'services/immersions.service'
 import { JeunesService } from 'services/jeunes.service'
+import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
@@ -186,5 +187,12 @@ export function mockedSuggestionsService(
 
 export function mockedAgendaService(overrides: Partial<AgendaService> = {}) {
   const defaults: AgendaService = { recupererAgenda: jest.fn() }
+  return { ...defaults, ...overrides }
+}
+
+export function mockedListesDeDiffusionService(
+  overrides: Partial<ListesDeDiffusionService> = {}
+): ListesDeDiffusionService {
+  const defaults: ListesDeDiffusionService = { getListesDeDiffusion: jest.fn() }
   return { ...defaults, ...overrides }
 }
