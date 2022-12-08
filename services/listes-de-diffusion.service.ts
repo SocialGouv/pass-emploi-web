@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
-type ListeDeDiffusionFormData = {
+export type ListeDeDiffusionFormData = {
   titre: string
   idsBeneficiaires: string[]
 }
@@ -14,12 +14,17 @@ export interface ListesDeDiffusionService {
     accessToken: string
   ): Promise<ListeDeDiffusion[]>
 
-  creerListeDeDiffusion(nouvelleListe: ListeDeDiffusionFormData): Promise<void>
-
   recupererListeDeDiffusion(
     id: string,
     accessToken: string
   ): Promise<ListeDeDiffusion>
+
+  creerListeDeDiffusion(nouvelleListe: ListeDeDiffusionFormData): Promise<void>
+
+  modifierListeDeDiffusion(
+    idListe: string,
+    modifications: ListeDeDiffusionFormData
+  ): Promise<void>
 }
 
 export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
@@ -33,6 +38,18 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
       ListeDeDiffusion[]
     >(`/conseillers/${idConseiller}/listes-de-diffusion`, accessToken)
     return listesDeDiffusion
+  }
+
+  async recupererListeDeDiffusion(
+    id: string,
+    accessToken: string
+  ): Promise<ListeDeDiffusion> {
+    const { content: listeDeDiffusion } =
+      await this.apiClient.get<ListeDeDiffusion>(
+        `/listes-de-diffusion/${id}`,
+        accessToken
+      )
+    return listeDeDiffusion
   }
 
   async creerListeDeDiffusion({
@@ -49,15 +66,16 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
     )
   }
 
-  async recupererListeDeDiffusion(
-    id: string,
-    accessToken: string
-  ): Promise<ListeDeDiffusion> {
-    const { content: listeDeDiffusion } =
-      await this.apiClient.get<ListeDeDiffusion>(
-        `/listes-de-diffusion/${id}`,
-        accessToken
-      )
-    return listeDeDiffusion
+  async modifierListeDeDiffusion(
+    idListe: string,
+    { titre, idsBeneficiaires }: ListeDeDiffusionFormData
+  ): Promise<void> {
+    const session = await getSession()
+
+    await this.apiClient.put(
+      '/listes-de-diffusion/' + idListe,
+      { titre, idsBeneficiaires },
+      session!.accessToken
+    )
   }
 }

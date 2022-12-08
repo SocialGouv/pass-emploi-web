@@ -23,7 +23,10 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import {
+  ListeDeDiffusionFormData,
+  ListesDeDiffusionService,
+} from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -53,8 +56,8 @@ function EditionListeDiffusion({
   >({ value: defaultBeneficiaires.map(({ id }) => id) })
   const [titre, setTitre] = useState<string | undefined>(liste?.titre)
 
-  const [isCreating, setIsCreating] = useState<boolean>(false)
-  const [erreurCreation, setErreurCreation] = useState<boolean>(false)
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
+  const [erreurSoumission, setErreurSoumission] = useState<boolean>(false)
   const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
 
   function estUnBeneficiaireDuConseiller(
@@ -91,35 +94,51 @@ function EditionListeDiffusion({
     })
   }
 
-  async function creerListe(e: FormEvent) {
+  async function soumettreListe(e: FormEvent) {
     e.preventDefault()
     if (!formIsValid) return
 
-    setIsCreating(true)
+    setIsProcessing(true)
+    const payload: ListeDeDiffusionFormData = {
+      titre: titre!,
+      idsBeneficiaires: idsBeneficiaires.value,
+    }
     try {
-      await listesDeDiffusionService.creerListeDeDiffusion({
-        titre: titre!,
-        idsBeneficiaires: idsBeneficiaires.value,
-      })
-
-      setAlerte(AlerteParam.creationListeDiffusion)
-      await router.push(returnTo)
+      if (!liste) {
+        await creerListe(payload)
+      } else {
+        await modifierListe(liste.id, payload)
+      }
     } catch (erreur) {
-      setErreurCreation(true)
+      setErreurSoumission(true)
       console.error(erreur)
     } finally {
-      setIsCreating(false)
+      setIsProcessing(false)
     }
+  }
+
+  async function creerListe(payload: ListeDeDiffusionFormData) {
+    await listesDeDiffusionService.creerListeDeDiffusion(payload)
+
+    setAlerte(AlerteParam.creationListeDiffusion)
+    await router.push(returnTo)
+  }
+
+  async function modifierListe(
+    idListe: string,
+    payload: ListeDeDiffusionFormData
+  ) {
+    await listesDeDiffusionService.modifierListeDeDiffusion(idListe, payload)
   }
 
   useMatomo('Création liste diffusion')
 
   return (
     <>
-      {erreurCreation && (
+      {erreurSoumission && (
         <FailureAlert
           label='Une erreur s’est produite, veuillez réessayer ultérieurement.'
-          onAcknowledge={() => setErreurCreation(false)}
+          onAcknowledge={() => setErreurSoumission(false)}
         />
       )}
 
@@ -127,7 +146,7 @@ function EditionListeDiffusion({
         Tous les champs avec * sont obligatoires
       </p>
 
-      <form onSubmit={creerListe}>
+      <form onSubmit={soumettreListe}>
         <Label htmlFor='titre-liste' inputRequired={true}>
           {{ main: 'Titre', helpText: 'Exemple : Ma liste de pâtissier' }}
         </Label>
@@ -153,17 +172,34 @@ function EditionListeDiffusion({
             href='/mes-jeunes/listes-de-diffusion'
             style={ButtonStyle.SECONDARY}
           >
-            Annuler
+            Annuler {liste ? 'la modification' : ''}
           </ButtonLink>
-          <Button type='submit' disabled={!formIsValid} isLoading={isCreating}>
-            <IconComponent
-              name={IconName.Add}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
-            />
-            Créer la liste
-          </Button>
+
+          {liste && (
+            <Button
+              type='submit'
+              disabled={!formIsValid}
+              isLoading={isProcessing}
+            >
+              Modifier la liste
+            </Button>
+          )}
+
+          {!liste && (
+            <Button
+              type='submit'
+              disabled={!formIsValid}
+              isLoading={isProcessing}
+            >
+              <IconComponent
+                name={IconName.Add}
+                focusable={false}
+                aria-hidden={true}
+                className='mr-2 w-4 h-4'
+              />
+              Créer la liste
+            </Button>
+          )}
         </div>
       </form>
     </>

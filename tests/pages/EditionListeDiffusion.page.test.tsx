@@ -176,7 +176,8 @@ describe('Page d’édition d’une liste de diffusion', () => {
     })
 
     describe('modification', () => {
-      it('charge le formulaire avec les informations de la liste', () => {
+      let listeDeDiffusion: ListeDeDiffusion
+      beforeEach(() => {
         // When
         const jeune0 = {
           id: beneficiaires[0].id,
@@ -190,7 +191,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           nom: 'Chirac',
           estDansLePortefeuille: false,
         }
-        const listeDeDiffusion = uneListeDeDiffusion({
+        listeDeDiffusion = uneListeDeDiffusion({
           beneficiaires: [jeune0, jeune2],
         })
         renderWithContexts(
@@ -205,9 +206,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
             customAlerte: { alerteSetter },
           }
         )
+      })
 
-        const jeune0Fullname = getNomJeuneComplet(jeune0)
-        const jeune2Fullname = getNomJeuneComplet(jeune2)
+      it('charge les bénéficiaires de la liste', () => {
+        // Then
+        const jeune0Fullname = getNomJeuneComplet(beneficiaires[0])
+        const jeune2Fullname = 'Chirac Jacques'
         expect(() =>
           screen.getByRole('option', {
             name: jeune0Fullname,
@@ -221,10 +225,6 @@ describe('Page d’édition d’une liste de diffusion', () => {
           })
         ).toThrow()
 
-        // Then
-        expect(screen.getByLabelText(/Titre/)).toHaveValue(
-          listeDeDiffusion.titre
-        )
         const destinataires = screen.getByRole('region', {
           name: /Bénéficiaires/,
         })
@@ -239,6 +239,51 @@ describe('Page d’édition d’une liste de diffusion', () => {
             'Ce bénéficiaire a été réaffecté temporairement à un autre conseiller'
           )
         ).toBeInTheDocument()
+      })
+
+      it('charge le titre de la liste', () => {
+        // When
+        expect(screen.getByLabelText(/Titre/)).toHaveValue(
+          listeDeDiffusion.titre
+        )
+      })
+
+      it('contient un lien pour annuler', async () => {
+        // Then
+        expect(screen.getByText('Annuler la modification')).toHaveAttribute(
+          'href',
+          '/mes-jeunes/listes-de-diffusion'
+        )
+      })
+
+      describe('liste modifiée', () => {
+        it('modifie la liste', async () => {
+          // Given
+          const inputTitre = screen.getByLabelText(/Titre/)
+          await userEvent.clear(inputTitre)
+          await userEvent.type(inputTitre, 'Nouveau titre')
+
+          await userEvent.click(
+            screen.getByText(/Enlever beneficiaire Chirac Jacques/)
+          )
+          await userEvent.type(
+            screen.getByLabelText(/des bénéficiaires/),
+            getNomJeuneComplet(beneficiaires[1])
+          )
+
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Modifier la liste' })
+          )
+
+          // Then
+          expect(
+            listesDeDiffusionService.modifierListeDeDiffusion
+          ).toHaveBeenCalledWith(listeDeDiffusion.id, {
+            titre: 'Nouveau titre',
+            idsBeneficiaires: [beneficiaires[0].id, beneficiaires[1].id],
+          })
+        })
       })
     })
   })

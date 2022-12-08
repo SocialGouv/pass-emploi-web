@@ -49,27 +49,6 @@ describe('ListesDeDiffusionApiService', () => {
     })
   })
 
-  describe('.creerListeDeDiffusion', () => {
-    it('crée la liste de diffusion', async () => {
-      // Given
-      const titre = 'Un titre'
-      const idsBeneficiaires = ['id-1', 'id-2']
-
-      // When
-      await listesDeDiffusionService.creerListeDeDiffusion({
-        titre,
-        idsBeneficiaires: idsBeneficiaires,
-      })
-
-      // Then
-      expect(apiClient.post).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/listes-de-diffusion',
-        { titre, idsBeneficiaires },
-        'accessToken'
-      )
-    })
-  })
-
   describe('.recupererListeDeDiffusion', () => {
     it('renvoie la liste de diffusion', async () => {
       // Given
@@ -91,6 +70,48 @@ describe('ListesDeDiffusionApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual(listeDeDiffusion)
+    })
+  })
+
+  describe('.creerListeDeDiffusion', () => {
+    it('crée la liste de diffusion', async () => {
+      // Given
+      const titre = 'Un titre'
+      const idsBeneficiaires = ['id-1', 'id-2']
+
+      // When
+      await listesDeDiffusionService.creerListeDeDiffusion({
+        titre,
+        idsBeneficiaires: idsBeneficiaires,
+      })
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/conseillers/idConseiller/listes-de-diffusion',
+        { titre, idsBeneficiaires },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.modifierListeDeDiffusion', () => {
+    it('modifie la liste de diffusion', async () => {
+      // Given
+      const titre = 'Un titre'
+      const idsBeneficiaires = ['id-1', 'id-2']
+
+      // When
+      await listesDeDiffusionService.modifierListeDeDiffusion('id-liste', {
+        titre,
+        idsBeneficiaires: idsBeneficiaires,
+      })
+
+      // Then
+      expect(apiClient.put).toHaveBeenCalledWith(
+        '/listes-de-diffusion/id-liste',
+        { titre, idsBeneficiaires },
+        'accessToken'
+      )
     })
   })
 })
