@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
+import { BeneficiaireIndicationReaffectaction } from 'components/jeune/BeneficiaireIndications'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
@@ -35,10 +36,6 @@ type EditionListeDiffusionProps = PageProps & {
   liste?: ListeDeDiffusion
 }
 
-function getBeneficiairesIds(liste?: ListeDeDiffusion) {
-  return liste ? liste.beneficiaires.map((beneficiaire) => beneficiaire.id) : []
-}
-
 function EditionListeDiffusion({
   beneficiaires,
   returnTo,
@@ -50,14 +47,21 @@ function EditionListeDiffusion({
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
-  const [titre, setTitre] = useState<string | undefined>(liste?.titre)
+  const defaultBeneficiaires = getDefaultBeneficiaires()
   const [idsBeneficiaires, setIdsBeneficiaires] = useState<
     RequiredValue<string[]>
-  >({ value: getBeneficiairesIds(liste) })
+  >({ value: defaultBeneficiaires.map(({ id }) => id) })
+  const [titre, setTitre] = useState<string | undefined>(liste?.titre)
 
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [erreurCreation, setErreurCreation] = useState<boolean>(false)
   const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
+
+  function estUnBeneficiaireDuConseiller(
+    idBeneficiaireAVerifier: string
+  ): boolean {
+    return beneficiaires.some(({ id }) => idBeneficiaireAVerifier === id)
+  }
 
   function buildOptionsBeneficiaires(): OptionBeneficiaire[] {
     return beneficiaires.map((beneficiaire) => ({
@@ -72,6 +76,7 @@ function EditionListeDiffusion({
           return {
             value: getNomJeuneComplet(beneficiaire),
             id: beneficiaire.id,
+            avecIndication: !estUnBeneficiaireDuConseiller(beneficiaire.id),
           }
         })
       : []
@@ -137,9 +142,10 @@ function EditionListeDiffusion({
           beneficiaires={buildOptionsBeneficiaires()}
           typeSelection='Bénéficiaires'
           onUpdate={updateIdsBeneficiaires}
-          defaultBeneficiaires={getDefaultBeneficiaires()}
+          defaultBeneficiaires={defaultBeneficiaires}
           required={true}
           error={idsBeneficiaires.error}
+          renderIndication={BeneficiaireIndicationReaffectaction}
         />
 
         <div className='flex gap-2 mt-6 justify-center'>

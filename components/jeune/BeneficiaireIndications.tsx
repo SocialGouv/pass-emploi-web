@@ -39,3 +39,22 @@ export function BeneficiaireIndicationPresent({
     </div>
   )
 }
+
+export function BeneficiaireIndicationReaffectaction({
+  value,
+}: BeneficiaireIndicationProps) {
+  const infoLabel =
+    'Ce bénéficiaire a été réaffecté temporairement à un autre conseiller'
+  return (
+    <div className='flex items-center text-base-bold text-accent_3'>
+      <IconComponent
+        name={IconName.Info}
+        focusable={false}
+        aria-label={infoLabel}
+        className='w-6 h-6 fill-accent_3 mr-2'
+        title={infoLabel}
+      />
+      {value}
+    </div>
+  )
+}
