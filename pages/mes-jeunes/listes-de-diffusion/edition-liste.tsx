@@ -23,6 +23,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -82,6 +83,8 @@ function EditionListeDiffusion({
       console.error(erreur)
     }
   }
+
+  useMatomo('Création liste diffusion')
 
   return (
     <>

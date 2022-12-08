@@ -13,7 +13,10 @@ import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { useAlerte } from 'utils/alerteContext'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -22,6 +25,8 @@ type ListesDiffusionProps = PageProps & {
 }
 
 function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
+  const [alerte] = useAlerte()
+
   function getTitre(liste: ListeDeDiffusion) {
     const informationLabel =
       'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
@@ -47,6 +52,12 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
     }
     return liste.titre
   }
+
+  useMatomo(
+    'Listes diffusion' + alerte?.key === AlerteParam.creationListeDiffusion
+      ? ' - Creation succès'
+      : ''
+  )
 
   return (
     <>
