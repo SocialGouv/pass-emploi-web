@@ -53,10 +53,11 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
     it('affiche le formulaire', () => {
       // Then
-      expect(screen.getByRole('textbox', { name: 'Titre' })).toHaveProperty(
-        'required',
-        true
-      )
+      expect(
+        screen.getByRole('textbox', {
+          name: 'Titre Exemple : Ma liste de pâtissier',
+        })
+      ).toHaveProperty('required', true)
       expect(
         screen.getByRole('combobox', { name: /des bénéficiaires/ })
       ).toHaveAttribute('aria-required', 'true')
@@ -73,7 +74,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
     describe('formulaire rempli', () => {
       beforeEach(async () => {
-        const titreInput = screen.getByLabelText('* Titre')
+        const titreInput = screen.getByLabelText(/\* Titre/)
         const destinatairesSelect = screen.getByLabelText(/des bénéficiaires/)
         const creationButton = screen.getByRole('button', {
           name: 'Créer la liste',
@@ -101,7 +102,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
             listesDeDiffusionService.creerListeDeDiffusion
           ).toHaveBeenCalledWith({
             titre: 'Liste métiers aéronautique',
-            idsDestinataires: [beneficiaires[0].id, beneficiaires[2].id],
+            idsBeneficiaires: [beneficiaires[0].id, beneficiaires[2].id],
           })
         })
 
@@ -118,7 +119,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
       it('est désactivé quand le titre n’est pas renseigné', async () => {
         // Given
-        await userEvent.clear(screen.getByLabelText('* Titre'))
+        await userEvent.clear(screen.getByLabelText(/\* Titre/))
         // Then
         expect(
           screen.getByRole('button', {
