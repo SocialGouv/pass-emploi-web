@@ -52,7 +52,7 @@ export default function Button({
       aria-label={label ?? undefined}
       aria-describedby={describedBy ?? undefined}
       disabled={disabled || isLoading}
-      aria-disabled={disabled}
+      aria-disabled={disabled || isLoading}
     >
       {isLoading && (
         <IconComponent

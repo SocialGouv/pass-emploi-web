@@ -1,13 +1,15 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { uneBaseJeune } from 'fixtures/jeune'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { mockedListesDeDiffusionService } from 'fixtures/services'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import ListesDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
-import { getServerSideProps } from 'pages/mes-jeunes/listes-de-diffusion'
+import ListesDiffusion, {
+  getServerSideProps,
+} from 'pages/mes-jeunes/listes-de-diffusion'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -19,7 +21,9 @@ describe('Page Listes de Diffusion', () => {
     describe('contenu', () => {
       it('afficher un lien pour créer une liste de diffusion', () => {
         // Given - When
-        render(<ListesDiffusion listesDiffusion={[]} pageTitle='' />)
+        renderWithContexts(
+          <ListesDiffusion listesDiffusion={[]} pageTitle='' />
+        )
 
         // Then
         expect(
@@ -34,7 +38,9 @@ describe('Page Listes de Diffusion', () => {
     describe('quand il n’y a pas de listes de diffusion', () => {
       it('affiche le message idoine', async () => {
         // Given - When
-        render(<ListesDiffusion listesDiffusion={[]} pageTitle='' />)
+        renderWithContexts(
+          <ListesDiffusion listesDiffusion={[]} pageTitle='' />
+        )
 
         // Then
         expect(
@@ -57,7 +63,7 @@ describe('Page Listes de Diffusion', () => {
         ]
 
         // When
-        render(
+        renderWithContexts(
           <ListesDiffusion listesDiffusion={listesDeDiffusion} pageTitle='' />
         )
       })

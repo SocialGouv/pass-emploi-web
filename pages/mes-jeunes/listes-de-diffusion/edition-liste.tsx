@@ -46,9 +46,9 @@ function EditionListeDiffusion({
   const [titre, setTitre] = useState<string | undefined>()
   const [idsDestinataires, setIdsDestinataires] = useState<
     RequiredValue<string[]>
-  >({
-    value: [],
-  })
+  >({ value: [] })
+
+  const [isCreating, setIsCreating] = useState<boolean>(false)
   const [erreurCreation, setErreurCreation] = useState<boolean>(false)
   const formIsValid = Boolean(titre) && Boolean(idsDestinataires.value.length)
 
@@ -70,6 +70,9 @@ function EditionListeDiffusion({
 
   async function creerListe(e: FormEvent) {
     e.preventDefault()
+    if (!formIsValid) return
+
+    setIsCreating(true)
     try {
       await listesDeDiffusionService.creerListeDeDiffusion({
         titre: titre!,
@@ -81,6 +84,8 @@ function EditionListeDiffusion({
     } catch (erreur) {
       setErreurCreation(true)
       console.error(erreur)
+    } finally {
+      setIsCreating(false)
     }
   }
 
@@ -94,6 +99,7 @@ function EditionListeDiffusion({
           onAcknowledge={() => setErreurCreation(false)}
         />
       )}
+
       <p className='text-s-bold text-content_color mb-4'>
         Tous les champs avec * sont obligatoires
       </p>
@@ -123,7 +129,7 @@ function EditionListeDiffusion({
           >
             Annuler
           </ButtonLink>
-          <Button type='submit' disabled={!formIsValid}>
+          <Button type='submit' disabled={!formIsValid} isLoading={isCreating}>
             <IconComponent
               name={IconName.Add}
               focusable={false}

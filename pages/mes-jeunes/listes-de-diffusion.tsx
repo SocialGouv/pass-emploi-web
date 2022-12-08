@@ -27,32 +27,6 @@ type ListesDiffusionProps = PageProps & {
 function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   const [alerte] = useAlerte()
 
-  function getTitre(liste: ListeDeDiffusion) {
-    const informationLabel =
-      'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
-
-    if (
-      liste.beneficiaires.some(
-        ({ estDansLePortefeuille }) => !estDansLePortefeuille
-      )
-    ) {
-      return (
-        <div className='flex items-center text-primary'>
-          <IconComponent
-            name={IconName.Info}
-            role='img'
-            focusable={false}
-            aria-label={informationLabel}
-            title={informationLabel}
-            className='w-6 h-6 mr-2 fill-[currentColor]'
-          />
-          {liste.titre}
-        </div>
-      )
-    }
-    return liste.titre
-  }
-
   useMatomo(
     'Listes diffusion' + alerte?.key === AlerteParam.creationListeDiffusion
       ? ' - Creation succès'
@@ -103,7 +77,9 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
           <TBody>
             {listesDiffusion.map((liste) => (
               <TR key={liste.id}>
-                <TD>{getTitre(liste)}</TD>
+                <TD>
+                  <TitreListe liste={liste} />
+                </TD>
                 <TD>{liste.beneficiaires.length} destinataire(s)</TD>
               </TR>
             ))}
@@ -112,6 +88,33 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
       )}
     </>
   )
+}
+
+function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
+  const informationLabel =
+    'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
+
+  if (
+    liste.beneficiaires.some(
+      ({ estDansLePortefeuille }) => !estDansLePortefeuille
+    )
+  ) {
+    return (
+      <div className='flex items-center text-primary'>
+        <IconComponent
+          name={IconName.Info}
+          role='img'
+          focusable={false}
+          aria-label={informationLabel}
+          title={informationLabel}
+          className='w-6 h-6 mr-2 fill-[currentColor]'
+        />
+        {liste.titre}
+      </div>
+    )
+  }
+
+  return <>{liste.titre}</>
 }
 
 export const getServerSideProps: GetServerSideProps<
