@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -11,8 +11,6 @@ import {
 } from 'fixtures/services'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import listesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
-import ListesDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
 import EditionListeDiffusion, {
   getServerSideProps,
 } from 'pages/mes-jeunes/listes-de-diffusion/edition-liste'
@@ -180,7 +178,21 @@ describe('Page d’édition d’une liste de diffusion', () => {
     describe('modification', () => {
       it('charge le formulaire avec les informations de la liste', () => {
         // When
-        const listeDeDiffusion = uneListeDeDiffusion()
+        const jeune0 = {
+          id: beneficiaires[0].id,
+          prenom: beneficiaires[0].prenom,
+          nom: beneficiaires[0].nom,
+          estDansLePortefeuille: true,
+        }
+        const jeune2 = {
+          id: 'id-2',
+          prenom: 'Jacques',
+          nom: 'Chirac',
+          estDansLePortefeuille: false,
+        }
+        const listeDeDiffusion = uneListeDeDiffusion({
+          beneficiaires: [jeune0, jeune2],
+        })
         renderWithContexts(
           <EditionListeDiffusion
             beneficiaires={beneficiaires}
@@ -194,10 +206,34 @@ describe('Page d’édition d’une liste de diffusion', () => {
           }
         )
 
+        const jeune0Fullname = getNomJeuneComplet(jeune0)
+        const jeune2Fullname = getNomJeuneComplet(jeune2)
+        expect(() =>
+          screen.getByRole('option', {
+            name: jeune0Fullname,
+            hidden: true,
+          })
+        ).toThrow()
+        expect(() =>
+          screen.getByRole('option', {
+            name: jeune2Fullname,
+            hidden: true,
+          })
+        ).toThrow()
+
         // Then
         expect(screen.getByLabelText(/Titre/)).toHaveValue(
           listeDeDiffusion.titre
         )
+        const destinataires = screen.getByRole('region', {
+          name: /Bénéficiaires/,
+        })
+        expect(
+          within(destinataires).getByText(jeune0Fullname)
+        ).toBeInTheDocument()
+        expect(
+          within(destinataires).getByText(jeune2Fullname)
+        ).toBeInTheDocument()
       })
     })
   })

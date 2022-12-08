@@ -35,6 +35,10 @@ type EditionListeDiffusionProps = PageProps & {
   liste?: ListeDeDiffusion
 }
 
+function getBeneficiairesIds(liste?: ListeDeDiffusion) {
+  return liste ? liste.beneficiaires.map((beneficiaire) => beneficiaire.id) : []
+}
+
 function EditionListeDiffusion({
   beneficiaires,
   returnTo,
@@ -49,7 +53,7 @@ function EditionListeDiffusion({
   const [titre, setTitre] = useState<string | undefined>(liste?.titre)
   const [idsBeneficiaires, setIdsBeneficiaires] = useState<
     RequiredValue<string[]>
-  >({ value: [] })
+  >({ value: getBeneficiairesIds(liste) })
 
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [erreurCreation, setErreurCreation] = useState<boolean>(false)
@@ -60,6 +64,17 @@ function EditionListeDiffusion({
       id: beneficiaire.id,
       value: getNomJeuneComplet(beneficiaire),
     }))
+  }
+
+  function getDefaultBeneficiaires(): OptionBeneficiaire[] {
+    return liste
+      ? liste.beneficiaires.map((beneficiaire) => {
+          return {
+            value: getNomJeuneComplet(beneficiaire),
+            id: beneficiaire.id,
+          }
+        })
+      : []
   }
 
   function updateIdsBeneficiaires(ids: string[]) {
@@ -122,6 +137,7 @@ function EditionListeDiffusion({
           beneficiaires={buildOptionsBeneficiaires()}
           typeSelection='Bénéficiaires'
           onUpdate={updateIdsBeneficiaires}
+          defaultBeneficiaires={getDefaultBeneficiaires()}
           required={true}
           error={idsBeneficiaires.error}
         />
