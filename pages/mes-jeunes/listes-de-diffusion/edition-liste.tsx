@@ -18,6 +18,7 @@ import {
   compareJeunesByNom,
   getNomJeuneComplet,
 } from 'interfaces/jeune'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
@@ -31,11 +32,13 @@ import withDependance from 'utils/injectionDependances/withDependance'
 type EditionListeDiffusionProps = PageProps & {
   beneficiaires: BaseJeune[]
   returnTo: string
+  liste?: ListeDeDiffusion
 }
 
 function EditionListeDiffusion({
   beneficiaires,
   returnTo,
+  liste,
 }: EditionListeDiffusionProps) {
   const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
     'listesDeDiffusionService'
@@ -43,7 +46,7 @@ function EditionListeDiffusion({
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
-  const [titre, setTitre] = useState<string | undefined>()
+  const [titre, setTitre] = useState<string | undefined>(liste?.titre)
   const [idsBeneficiaires, setIdsBeneficiaires] = useState<
     RequiredValue<string[]>
   >({ value: [] })
@@ -112,6 +115,7 @@ function EditionListeDiffusion({
           type='text'
           id='titre-liste'
           required={true}
+          defaultValue={titre}
           onChange={setTitre}
         />
         <BeneficiairesMultiselectAutocomplete
@@ -158,16 +162,33 @@ export const getServerSideProps: GetServerSideProps<
     user.id,
     accessToken
   )
+  const listesDeDiffusionService = withDependance<ListesDeDiffusionService>(
+    'listesDeDiffusionService'
+  )
 
-  return {
-    props: {
-      beneficiaires: [...beneficiaires].sort(compareJeunesByNom),
-      pageTitle: 'Créer - Listes de diffusion - Portefeuille',
-      pageHeader: 'Créer une nouvelle liste',
-      returnTo: '/mes-jeunes/listes-de-diffusion',
-      withoutChat: true,
-    },
+  const props: EditionListeDiffusionProps = {
+    beneficiaires: [...beneficiaires].sort(compareJeunesByNom),
+    pageTitle: 'Créer - Listes de diffusion - Portefeuille',
+    pageHeader: 'Créer une nouvelle liste',
+    returnTo: '/mes-jeunes/listes-de-diffusion',
+    withoutChat: true,
   }
+
+  const idListe = context.query.idListe
+  if (idListe) {
+    const liste = await listesDeDiffusionService.recupererListeDeDiffusion(
+      idListe as string,
+      accessToken
+    )
+    if (!liste) {
+      return { notFound: true }
+    }
+    props.liste = liste
+    props.pageTitle = 'Modifier - Listes de diffusion - Portefeuille'
+    props.pageHeader = 'Modifier la liste'
+  }
+
+  return { props }
 }
 
 export default withTransaction(

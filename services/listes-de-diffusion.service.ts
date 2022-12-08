@@ -15,6 +15,11 @@ export interface ListesDeDiffusionService {
   ): Promise<ListeDeDiffusion[]>
 
   creerListeDeDiffusion(nouvelleListe: ListeDeDiffusionFormData): Promise<void>
+
+  recupererListeDeDiffusion(
+    id: string,
+    accessToken: string
+  ): Promise<ListeDeDiffusion>
 }
 
 export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
@@ -42,5 +47,17 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
       { titre, idsBeneficiaires },
       accessToken
     )
+  }
+
+  async recupererListeDeDiffusion(
+    id: string,
+    accessToken: string
+  ): Promise<ListeDeDiffusion> {
+    const { content: listeDeDiffusion } =
+      await this.apiClient.get<ListeDeDiffusion>(
+        `/listes-de-diffusion/${id}`,
+        accessToken
+      )
+    return listeDeDiffusion
   }
 }

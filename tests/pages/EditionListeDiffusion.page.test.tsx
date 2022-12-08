@@ -4,11 +4,15 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
+import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
   mockedJeunesService,
   mockedListesDeDiffusionService,
 } from 'fixtures/services'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import listesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
+import ListesDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
 import EditionListeDiffusion, {
   getServerSideProps,
 } from 'pages/mes-jeunes/listes-de-diffusion/edition-liste'
@@ -38,133 +42,162 @@ describe('Page d’édition d’une liste de diffusion', () => {
       listesDeDiffusionService = mockedListesDeDiffusionService()
 
       beneficiaires = desItemsJeunes()
-      renderWithContexts(
-        <EditionListeDiffusion
-          beneficiaires={beneficiaires}
-          pageTitle=''
-          returnTo='/mes-jeunes/listes-de-diffusion'
-        />,
-        {
-          customDependances: { listesDeDiffusionService },
-          customAlerte: { alerteSetter },
-        }
-      )
     })
 
-    it('affiche le formulaire', () => {
-      // Then
-      expect(
-        screen.getByRole('textbox', {
-          name: 'Titre Exemple : Ma liste de pâtissier',
-        })
-      ).toHaveProperty('required', true)
-      expect(
-        screen.getByRole('combobox', { name: /des bénéficiaires/ })
-      ).toHaveAttribute('aria-required', 'true')
-
-      expect(
-        screen.getByRole('button', { name: 'Créer la liste' })
-      ).toBeInTheDocument()
-
-      expect(screen.getByRole('link', { name: 'Annuler' })).toHaveAttribute(
-        'href',
-        '/mes-jeunes/listes-de-diffusion'
-      )
-    })
-
-    describe('formulaire rempli', () => {
-      beforeEach(async () => {
-        const titreInput = screen.getByLabelText(/\* Titre/)
-        const destinatairesSelect = screen.getByLabelText(/des bénéficiaires/)
-        const creationButton = screen.getByRole('button', {
-          name: 'Créer la liste',
-        })
-
-        // Given
-        await userEvent.type(titreInput, 'Liste métiers aéronautique')
-        await userEvent.type(
-          destinatairesSelect,
-          getNomJeuneComplet(beneficiaires[0])
+    describe('contenu', () => {
+      beforeEach(() => {
+        renderWithContexts(
+          <EditionListeDiffusion
+            beneficiaires={beneficiaires}
+            pageTitle=''
+            returnTo='/mes-jeunes/listes-de-diffusion'
+          />,
+          {
+            customDependances: { listesDeDiffusionService },
+            customAlerte: { alerteSetter },
+          }
         )
-        await userEvent.type(
-          destinatairesSelect,
-          getNomJeuneComplet(beneficiaires[2])
-        )
-
-        // When
-        await userEvent.click(creationButton)
       })
 
-      describe('quand le formulaire est validé', () => {
-        it('crée la liste', async () => {
+      it('affiche le formulaire', () => {
+        // Then
+        expect(
+          screen.getByRole('textbox', {
+            name: 'Titre Exemple : Ma liste de pâtissier',
+          })
+        ).toHaveProperty('required', true)
+        expect(
+          screen.getByRole('combobox', { name: /des bénéficiaires/ })
+        ).toHaveAttribute('aria-required', 'true')
+
+        expect(
+          screen.getByRole('button', { name: 'Créer la liste' })
+        ).toBeInTheDocument()
+
+        expect(screen.getByRole('link', { name: 'Annuler' })).toHaveAttribute(
+          'href',
+          '/mes-jeunes/listes-de-diffusion'
+        )
+      })
+
+      describe('formulaire rempli', () => {
+        beforeEach(async () => {
+          const titreInput = screen.getByLabelText(/\* Titre/)
+          const destinatairesSelect = screen.getByLabelText(/des bénéficiaires/)
+          const creationButton = screen.getByRole('button', {
+            name: 'Créer la liste',
+          })
+
+          // Given
+          await userEvent.type(titreInput, 'Liste métiers aéronautique')
+          await userEvent.type(
+            destinatairesSelect,
+            getNomJeuneComplet(beneficiaires[0])
+          )
+          await userEvent.type(
+            destinatairesSelect,
+            getNomJeuneComplet(beneficiaires[2])
+          )
+
+          // When
+          await userEvent.click(creationButton)
+        })
+
+        describe('quand le formulaire est validé', () => {
+          it('crée la liste', async () => {
+            // Then
+            expect(
+              listesDeDiffusionService.creerListeDeDiffusion
+            ).toHaveBeenCalledWith({
+              titre: 'Liste métiers aéronautique',
+              idsBeneficiaires: [beneficiaires[0].id, beneficiaires[2].id],
+            })
+          })
+
+          it('redirige vers mes listes de diffusion', async () => {
+            // Then
+            expect(alerteSetter).toHaveBeenCalledWith(
+              AlerteParam.creationListeDiffusion
+            )
+            expect(routerPush).toHaveBeenCalledWith(
+              '/mes-jeunes/listes-de-diffusion'
+            )
+          })
+        })
+
+        it('est désactivé quand le titre n’est pas renseigné', async () => {
+          // Given
+          await userEvent.clear(screen.getByLabelText(/\* Titre/))
           // Then
           expect(
-            listesDeDiffusionService.creerListeDeDiffusion
-          ).toHaveBeenCalledWith({
-            titre: 'Liste métiers aéronautique',
-            idsBeneficiaires: [beneficiaires[0].id, beneficiaires[2].id],
-          })
+            screen.getByRole('button', {
+              name: 'Créer la liste',
+            })
+          ).toHaveAttribute('disabled', '')
         })
 
-        it('redirige vers mes listes de diffusion', async () => {
+        it('est désactivé quand aucun destinataire n’est renseigné', async () => {
+          // Given
+          const enleverBeneficiaires: HTMLButtonElement[] =
+            screen.getAllByText(/Enlever/)
+
+          // When
+          for (const bouton of enleverBeneficiaires) {
+            await userEvent.click(bouton)
+          }
           // Then
-          expect(alerteSetter).toHaveBeenCalledWith(
-            AlerteParam.creationListeDiffusion
-          )
-          expect(routerPush).toHaveBeenCalledWith(
-            '/mes-jeunes/listes-de-diffusion'
-          )
+          expect(
+            screen.getByRole('button', {
+              name: 'Créer la liste',
+            })
+          ).toHaveAttribute('disabled', '')
+          expect(
+            screen.getByText(
+              'Aucun bénéficiaire n’est renseigné. Veuillez sélectionner au moins un bénéficiaire.'
+            )
+          ).toBeInTheDocument()
+        })
+
+        it('affiche un message d’erreur si la création échoue', async () => {
+          // Given
+          ;(
+            listesDeDiffusionService.creerListeDeDiffusion as jest.Mock
+          ).mockRejectedValue({})
+
+          // When
+          await userEvent.click(screen.getByText('Créer la liste'))
+
+          // Then
+          expect(
+            screen.getByText(
+              'Une erreur s’est produite, veuillez réessayer ultérieurement.'
+            )
+          ).toBeInTheDocument()
         })
       })
+    })
 
-      it('est désactivé quand le titre n’est pas renseigné', async () => {
-        // Given
-        await userEvent.clear(screen.getByLabelText(/\* Titre/))
-        // Then
-        expect(
-          screen.getByRole('button', {
-            name: 'Créer la liste',
-          })
-        ).toHaveAttribute('disabled', '')
-      })
-
-      it('est désactivé quand aucun destinataire n’est renseigné', async () => {
-        // Given
-        const enleverBeneficiaires: HTMLButtonElement[] =
-          screen.getAllByText(/Enlever/)
-
+    describe('modification', () => {
+      it('charge le formulaire avec les informations de la liste', () => {
         // When
-        for (const bouton of enleverBeneficiaires) {
-          await userEvent.click(bouton)
-        }
-        // Then
-        expect(
-          screen.getByRole('button', {
-            name: 'Créer la liste',
-          })
-        ).toHaveAttribute('disabled', '')
-        expect(
-          screen.getByText(
-            'Aucun bénéficiaire n’est renseigné. Veuillez sélectionner au moins un bénéficiaire.'
-          )
-        ).toBeInTheDocument()
-      })
-
-      it('affiche un message d’erreur si la création échoue', async () => {
-        // Given
-        ;(
-          listesDeDiffusionService.creerListeDeDiffusion as jest.Mock
-        ).mockRejectedValue({})
-
-        // When
-        await userEvent.click(screen.getByText('Créer la liste'))
+        const listeDeDiffusion = uneListeDeDiffusion()
+        renderWithContexts(
+          <EditionListeDiffusion
+            beneficiaires={beneficiaires}
+            pageTitle=''
+            returnTo='/mes-jeunes/listes-de-diffusion'
+            liste={listeDeDiffusion}
+          />,
+          {
+            customDependances: { listesDeDiffusionService },
+            customAlerte: { alerteSetter },
+          }
+        )
 
         // Then
-        expect(
-          screen.getByText(
-            'Une erreur s’est produite, veuillez réessayer ultérieurement.'
-          )
-        ).toBeInTheDocument()
+        expect(screen.getByLabelText(/Titre/)).toHaveValue(
+          listeDeDiffusion.titre
+        )
       })
     })
   })
@@ -187,7 +220,10 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
     describe("quand l'utilisateur est connecté", () => {
       let jeunesService: JeunesService
+      let listesDeDiffusionService: ListesDeDiffusionService
       let jeunes: JeuneFromListe[]
+      let listeDeDiffusion: ListeDeDiffusion
+
       beforeEach(() => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -199,10 +235,20 @@ describe('Page d’édition d’une liste de diffusion', () => {
         })
 
         jeunes = desItemsJeunes()
+        listeDeDiffusion = uneListeDeDiffusion()
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
         })
-        ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
+        listesDeDiffusionService = mockedListesDeDiffusionService({
+          recupererListeDeDiffusion: jest
+            .fn()
+            .mockResolvedValue(listeDeDiffusion),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'jeunesService') return jeunesService
+          if (dependance === 'listesDeDiffusionService')
+            return listesDeDiffusionService
+        })
       })
 
       it('récupère la liste des jeunes du conseiller', async () => {
@@ -223,6 +269,26 @@ describe('Page d’édition d’une liste de diffusion', () => {
             pageHeader: 'Créer une nouvelle liste',
             returnTo: '/mes-jeunes/listes-de-diffusion',
             withoutChat: true,
+          },
+        })
+      })
+
+      it('récupère la liste de diffusion concernée', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: {} },
+          query: { idListe: '1' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(
+          listesDeDiffusionService.recupererListeDeDiffusion
+        ).toHaveBeenCalledWith('1', 'accessToken')
+
+        expect(actual).toMatchObject({
+          props: {
+            pageTitle: 'Modifier - Listes de diffusion - Portefeuille',
+            liste: listeDeDiffusion,
           },
         })
       })

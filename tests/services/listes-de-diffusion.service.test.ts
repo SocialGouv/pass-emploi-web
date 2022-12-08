@@ -69,4 +69,28 @@ describe('ListesDeDiffusionApiService', () => {
       )
     })
   })
+
+  describe('.recupererListeDeDiffusion', () => {
+    it('renvoie la liste de diffusion', async () => {
+      // Given
+      const listeDeDiffusion: ListeDeDiffusion = uneListeDeDiffusion()
+
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: listeDeDiffusion,
+      })
+
+      // When
+      const actual = await listesDeDiffusionService.recupererListeDeDiffusion(
+        '1',
+        'accessToken'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/listes-de-diffusion/1',
+        'accessToken'
+      )
+      expect(actual).toEqual(listeDeDiffusion)
+    })
+  })
 })
