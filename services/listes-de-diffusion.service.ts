@@ -5,7 +5,7 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
 type ListeDeDiffusionFormData = {
   titre: string
-  idsDestinataires: string[]
+  idsBeneficiaires: string[]
 }
 
 export interface ListesDeDiffusionService {
@@ -32,14 +32,14 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
 
   async creerListeDeDiffusion({
     titre,
-    idsDestinataires,
+    idsBeneficiaires,
   }: ListeDeDiffusionFormData): Promise<void> {
     const session = await getSession()
     const { user, accessToken } = session!
 
     await this.apiClient.post(
       `/conseillers/${user.id}/listes-de-diffusion`,
-      { titre, idsBeneficiaires: idsDestinataires },
+      { titre, idsBeneficiaires },
       accessToken
     )
   }

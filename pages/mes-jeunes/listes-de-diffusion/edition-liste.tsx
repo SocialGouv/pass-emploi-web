@@ -44,23 +44,23 @@ function EditionListeDiffusion({
   const [_, setAlerte] = useAlerte()
 
   const [titre, setTitre] = useState<string | undefined>()
-  const [idsDestinataires, setIdsDestinataires] = useState<
+  const [idsBeneficiaires, setIdsBeneficiaires] = useState<
     RequiredValue<string[]>
   >({ value: [] })
 
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const [erreurCreation, setErreurCreation] = useState<boolean>(false)
-  const formIsValid = Boolean(titre) && Boolean(idsDestinataires.value.length)
+  const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
 
-  function buildOptionsDestinataires(): OptionBeneficiaire[] {
+  function buildOptionsBeneficiaires(): OptionBeneficiaire[] {
     return beneficiaires.map((beneficiaire) => ({
       id: beneficiaire.id,
       value: getNomJeuneComplet(beneficiaire),
     }))
   }
 
-  function updateIdsDestinataires(ids: string[]) {
-    setIdsDestinataires({
+  function updateIdsBeneficiaires(ids: string[]) {
+    setIdsBeneficiaires({
       value: ids,
       error: ids.length
         ? undefined
@@ -76,7 +76,7 @@ function EditionListeDiffusion({
     try {
       await listesDeDiffusionService.creerListeDeDiffusion({
         titre: titre!,
-        idsDestinataires: idsDestinataires.value,
+        idsBeneficiaires: idsBeneficiaires.value,
       })
 
       setAlerte(AlerteParam.creationListeDiffusion)
@@ -106,7 +106,7 @@ function EditionListeDiffusion({
 
       <form onSubmit={creerListe}>
         <Label htmlFor='titre-liste' inputRequired={true}>
-          Titre
+          {{ main: 'Titre', helpText: 'Exemple : Ma liste de pâtissier' }}
         </Label>
         <Input
           type='text'
@@ -115,11 +115,11 @@ function EditionListeDiffusion({
           onChange={setTitre}
         />
         <BeneficiairesMultiselectAutocomplete
-          beneficiaires={buildOptionsDestinataires()}
-          typeSelection='Destinaires'
-          onUpdate={updateIdsDestinataires}
+          beneficiaires={buildOptionsBeneficiaires()}
+          typeSelection='Bénéficiaires'
+          onUpdate={updateIdsBeneficiaires}
           required={true}
-          error={idsDestinataires.error}
+          error={idsBeneficiaires.error}
         />
 
         <div className='flex gap-2 mt-6 justify-center'>

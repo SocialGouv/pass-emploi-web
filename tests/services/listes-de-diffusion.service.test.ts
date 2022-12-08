@@ -58,7 +58,7 @@ describe('ListesDeDiffusionApiService', () => {
       // When
       await listesDeDiffusionService.creerListeDeDiffusion({
         titre,
-        idsDestinataires: idsBeneficiaires,
+        idsBeneficiaires: idsBeneficiaires,
       })
 
       // Then
