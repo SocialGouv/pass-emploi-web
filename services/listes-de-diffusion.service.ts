@@ -1,11 +1,20 @@
+import { getSession } from 'next-auth/react'
+
 import { ApiClient } from 'clients/api.client'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+
+type ListeDeDiffusionFormData = {
+  titre: string
+  idsBeneficiaires: string[]
+}
 
 export interface ListesDeDiffusionService {
   getListesDeDiffusion(
     idConseiller: string,
     accessToken: string
   ): Promise<ListeDeDiffusion[]>
+
+  creerListeDeDiffusion(nouvelleListe: ListeDeDiffusionFormData): Promise<void>
 }
 
 export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
@@ -19,5 +28,19 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
       ListeDeDiffusion[]
     >(`/conseillers/${idConseiller}/listes-de-diffusion`, accessToken)
     return listesDeDiffusion
+  }
+
+  async creerListeDeDiffusion({
+    titre,
+    idsBeneficiaires,
+  }: ListeDeDiffusionFormData): Promise<void> {
+    const session = await getSession()
+    const { user, accessToken } = session!
+
+    await this.apiClient.post(
+      `/conseillers/${user.id}/listes-de-diffusion`,
+      { titre, idsBeneficiaires },
+      accessToken
+    )
   }
 }

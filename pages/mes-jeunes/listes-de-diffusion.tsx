@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import React from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -12,7 +13,10 @@ import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { useAlerte } from 'utils/alerteContext'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -21,34 +25,29 @@ type ListesDiffusionProps = PageProps & {
 }
 
 function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
-  function getTitre(liste: ListeDeDiffusion) {
-    const informationLabel =
-      'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
+  const [alerte] = useAlerte()
 
-    if (
-      liste.beneficiaires.some(
-        ({ estDansLePortefeuille }) => !estDansLePortefeuille
-      )
-    ) {
-      return (
-        <div className='flex items-center text-primary'>
-          <IconComponent
-            name={IconName.Info}
-            role='img'
-            focusable={false}
-            aria-label={informationLabel}
-            title={informationLabel}
-            className='w-6 h-6 mr-2 fill-[currentColor]'
-          />
-          {liste.titre}
-        </div>
-      )
-    }
-    return liste.titre
-  }
+  useMatomo(
+    'Listes diffusion' + alerte?.key === AlerteParam.creationListeDiffusion
+      ? ' - Creation succès'
+      : ''
+  )
 
   return (
     <>
+      <ButtonLink
+        href='/mes-jeunes/listes-de-diffusion/edition-liste'
+        className='w-fit mb-6'
+      >
+        <IconComponent
+          name={IconName.Add}
+          focusable={false}
+          aria-hidden={true}
+          className='mr-2 w-4 h-4'
+        />
+        Créer une liste
+      </ButtonLink>
+
       {listesDiffusion.length === 0 && (
         <div className='mx-auto my-0 flex flex-col items-center'>
           <EmptyStateImage
@@ -78,7 +77,9 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
           <TBody>
             {listesDiffusion.map((liste) => (
               <TR key={liste.id}>
-                <TD>{getTitre(liste)}</TD>
+                <TD>
+                  <TitreListe liste={liste} />
+                </TD>
                 <TD>{liste.beneficiaires.length} destinataire(s)</TD>
               </TR>
             ))}
@@ -87,6 +88,33 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
       )}
     </>
   )
+}
+
+function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
+  const informationLabel =
+    'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
+
+  if (
+    liste.beneficiaires.some(
+      ({ estDansLePortefeuille }) => !estDansLePortefeuille
+    )
+  ) {
+    return (
+      <div className='flex items-center text-primary'>
+        <IconComponent
+          name={IconName.Info}
+          role='img'
+          focusable={false}
+          aria-label={informationLabel}
+          title={informationLabel}
+          className='w-6 h-6 mr-2 fill-[currentColor]'
+        />
+        {liste.titre}
+      </div>
+    )
+  }
+
+  return <>{liste.titre}</>
 }
 
 export const getServerSideProps: GetServerSideProps<
