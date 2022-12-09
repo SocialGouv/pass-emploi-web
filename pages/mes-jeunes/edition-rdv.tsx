@@ -164,15 +164,14 @@ function EditionRdv({
     } else {
       await modifierEvenement(evenement.id, payload)
     }
+    await router.push(returnTo)
   }
 
   async function creerNouvelEvenement(
     payload: EvenementFormData
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
-
     setAlerte(AlerteParam.creationEvenement, idNouvelEvenement)
-    await router.push(returnTo)
   }
 
   async function modifierEvenement(
@@ -180,9 +179,7 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
-
     setAlerte(AlerteParam.modificationEvenement)
-    await router.push(returnTo)
   }
 
   async function supprimerEvenement(): Promise<void> {

@@ -1667,7 +1667,7 @@ describe('EditionRdv', () => {
         )
         expect(() =>
           within(jeune).getByLabelText(
-            /Ce jeune n’est pas dans votre portefeuille/
+            /Ce bénéficiaire n’est pas dans votre portefeuille/
           )
         ).toThrow()
         expect(() =>

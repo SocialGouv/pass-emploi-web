@@ -8,6 +8,7 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import ListesDiffusion, {
   getServerSideProps,
 } from 'pages/mes-jeunes/listes-de-diffusion'
+import listesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -50,12 +51,14 @@ describe('Page Listes de Diffusion', () => {
     })
 
     describe('quand il y a des listes de diffusion', () => {
+      let listesDeDiffusion: ListeDeDiffusion[]
       beforeEach(() => {
         // Given
-        const listesDeDiffusion: ListeDeDiffusion[] = [
+        listesDeDiffusion = [
           uneListeDeDiffusion(),
           uneListeDeDiffusion({
             id: 'liste-2',
+            titre: 'Liste métiers pâtisserie',
             beneficiaires: [
               { ...uneBaseJeune(), estDansLePortefeuille: false },
             ],
@@ -70,15 +73,30 @@ describe('Page Listes de Diffusion', () => {
 
       it('affiche les informations des listes', () => {
         // Then
-        expect(screen.getAllByText('Liste export international')).toHaveLength(
-          2
-        )
+        expect(
+          screen.getByText('Liste export international')
+        ).toBeInTheDocument()
+        expect(screen.getByText('Liste métiers pâtisserie')).toBeInTheDocument()
         expect(screen.getAllByText('1 destinataire(s)')).toHaveLength(2)
         expect(
           screen.getByLabelText(
             'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
           )
         ).toBeInTheDocument()
+      })
+
+      it('permet de modifier la liste', () => {
+        // Then
+        listesDeDiffusion.forEach((liste) => {
+          expect(
+            screen.getByRole('row', {
+              name: 'Consulter la liste ' + liste.titre,
+            })
+          ).toHaveAttribute(
+            'href',
+            '/mes-jeunes/listes-de-diffusion/edition-liste?idListe=' + liste.id
+          )
+        })
       })
 
       it('affiche le nombre de listes', () => {

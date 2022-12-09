@@ -413,4 +413,26 @@ describe('AlerteDisplayer', () => {
       expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
+
+  describe('quand on modifie une liste de diffusion', () => {
+    it("affiche l'alerte de succès", () => {
+      // Given - When
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.modificationListeDiffusion,
+          },
+          alerteSetter,
+        },
+        customConseiller: unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI,
+        }),
+      })
+
+      // Then
+      expect(
+        screen.getByText(/La liste de diffusion a bien été modifiée/)
+      ).toBeInTheDocument()
+    })
+  })
 })
