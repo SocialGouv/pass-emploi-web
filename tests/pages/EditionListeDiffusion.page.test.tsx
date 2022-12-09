@@ -260,6 +260,11 @@ describe('Page d’édition d’une liste de diffusion', () => {
         )
       })
 
+      it('ne permet pas de modifier tant qu’il n’y a pas de changement', () => {
+        //Then
+        expect(screen.getByText('Modifier la liste')).toBeDisabled()
+      })
+
       describe('liste modifiée', () => {
         beforeEach(async () => {
           // Given

@@ -60,6 +60,18 @@ function EditionListeDiffusion({
   const [erreurSoumission, setErreurSoumission] = useState<boolean>(false)
   const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
 
+  function hasChanges(): boolean {
+    if (liste) {
+      const previousIds = liste.beneficiaires.map(({ id }) => id).sort()
+      const currentIds = [...idsBeneficiaires.value].sort()
+      return (
+        previousIds.toString() !== currentIds.toString() ||
+        liste.titre !== titre
+      )
+    }
+    return true
+  }
+
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
   ): boolean {
@@ -178,7 +190,7 @@ function EditionListeDiffusion({
           {liste && (
             <Button
               type='submit'
-              disabled={!formIsValid}
+              disabled={!formIsValid || !hasChanges()}
               isLoading={isProcessing}
             >
               Modifier la liste
