@@ -27,11 +27,15 @@ type ListesDiffusionProps = PageProps & {
 function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   const [alerte] = useAlerte()
 
-  useMatomo(
-    'Listes diffusion' + alerte?.key === AlerteParam.creationListeDiffusion
-      ? ' - Creation succès'
-      : ''
-  )
+  let tracking = 'Listes diffusion'
+  if (alerte?.key === AlerteParam.creationListeDiffusion) {
+    tracking += ' - Creation succès'
+  }
+  if (alerte?.key === AlerteParam.modificationListeDiffusion) {
+    tracking += ' - Modification succès'
+  }
+
+  useMatomo(tracking)
 
   return (
     <>

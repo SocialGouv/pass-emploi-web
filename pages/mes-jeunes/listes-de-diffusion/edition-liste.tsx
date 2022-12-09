@@ -131,7 +131,7 @@ function EditionListeDiffusion({
     setAlerte(AlerteParam.modificationListeDiffusion)
   }
 
-  useMatomo('Création liste diffusion')
+  useMatomo(liste ? 'Modification liste diffusion' : 'Création liste diffusion')
 
   return (
     <>
