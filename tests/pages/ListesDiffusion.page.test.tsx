@@ -73,9 +73,10 @@ describe('Page Listes de Diffusion', () => {
 
       it('affiche les informations des listes', () => {
         // Then
-        expect(screen.getAllByText('Liste export international')).toHaveLength(
-          2
-        )
+        expect(
+          screen.getByText('Liste export international')
+        ).toBeInTheDocument()
+        expect(screen.getByText('Liste métiers pâtisserie')).toBeInTheDocument()
         expect(screen.getAllByText('1 destinataire(s)')).toHaveLength(2)
         expect(
           screen.getByLabelText(
