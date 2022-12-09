@@ -25,6 +25,8 @@ export interface ListesDeDiffusionService {
     idListe: string,
     modifications: ListeDeDiffusionFormData
   ): Promise<void>
+
+  supprimerListeDeDiffusion(idListe: string): Promise<void>
 }
 
 export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
@@ -75,6 +77,15 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
     await this.apiClient.put(
       '/listes-de-diffusion/' + idListe,
       { titre, idsBeneficiaires },
+      session!.accessToken
+    )
+  }
+
+  async supprimerListeDeDiffusion(idListe: string): Promise<void> {
+    const session = await getSession()
+
+    await this.apiClient.delete(
+      '/listes-de-diffusion/' + idListe,
       session!.accessToken
     )
   }

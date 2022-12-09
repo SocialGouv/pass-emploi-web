@@ -168,10 +168,10 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
             disabled={deleteDisabled}
           >
             <IconComponent
-              name={IconName.TrashCan}
+              name={IconName.Trashcan}
               aria-hidden={true}
               focusable={false}
-              className='w-2.5 h-3 mr-4'
+              className='w-4 h-4 mr-2'
             />
             Supprimer
           </Button>

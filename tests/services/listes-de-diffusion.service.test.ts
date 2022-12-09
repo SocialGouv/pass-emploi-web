@@ -114,4 +114,17 @@ describe('ListesDeDiffusionApiService', () => {
       )
     })
   })
+
+  describe('.supprimerListeDeDiffusion', () => {
+    it('modifie la liste de diffusion', async () => {
+      // When
+      await listesDeDiffusionService.supprimerListeDeDiffusion('id-liste')
+
+      // Then
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        '/listes-de-diffusion/id-liste',
+        'accessToken'
+      )
+    })
+  })
 })

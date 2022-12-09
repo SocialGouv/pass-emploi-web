@@ -119,6 +119,9 @@ const ALERTES: DictAlertes = {
   modificationListeDiffusion: {
     title: 'La liste de diffusion a bien été modifiée',
   },
+  suppressionListeDiffusion: {
+    title: 'La liste de diffusion a bien été supprimée',
+  },
 }
 
 const ALERTES_MILO: DictAlertes = {

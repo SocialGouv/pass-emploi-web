@@ -49,12 +49,12 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   }, [tri])
 
   let tracking = 'Listes diffusion'
-  if (alerte?.key === AlerteParam.creationListeDiffusion) {
+  if (alerte?.key === AlerteParam.creationListeDiffusion)
     tracking += ' - Creation succès'
-  }
-  if (alerte?.key === AlerteParam.modificationListeDiffusion) {
+  if (alerte?.key === AlerteParam.modificationListeDiffusion)
     tracking += ' - Modification succès'
-  }
+  if (alerte?.key === AlerteParam.suppressionListeDiffusion)
+    tracking += ' - Suppression succès'
   useMatomo(tracking)
 
   return (

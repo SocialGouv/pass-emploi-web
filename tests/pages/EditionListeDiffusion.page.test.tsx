@@ -212,6 +212,22 @@ describe('Page d’édition d’une liste de diffusion', () => {
         )
       })
 
+      it('permet de supprimer la liste', async () => {
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Supprimer' }))
+
+        // Then
+        expect(
+          listesDeDiffusionService.supprimerListeDeDiffusion
+        ).toHaveBeenCalledWith(listeDeDiffusion.id)
+        expect(alerteSetter).toHaveBeenCalledWith(
+          AlerteParam.suppressionListeDiffusion
+        )
+        expect(routerPush).toHaveBeenCalledWith(
+          '/mes-jeunes/listes-de-diffusion'
+        )
+      })
+
       it('charge les bénéficiaires de la liste', () => {
         // Then
         const jeune0Fullname = getNomJeuneComplet(beneficiaires[0])

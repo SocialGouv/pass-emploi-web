@@ -435,4 +435,26 @@ describe('AlerteDisplayer', () => {
       ).toBeInTheDocument()
     })
   })
+
+  describe('quand on supprime une liste de diffusion', () => {
+    it("affiche l'alerte de succès", () => {
+      // Given - When
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.suppressionListeDiffusion,
+          },
+          alerteSetter,
+        },
+        customConseiller: unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI,
+        }),
+      })
+
+      // Then
+      expect(
+        screen.getByText(/La liste de diffusion a bien été supprimée/)
+      ).toBeInTheDocument()
+    })
+  })
 })
