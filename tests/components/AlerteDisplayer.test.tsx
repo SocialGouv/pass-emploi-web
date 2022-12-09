@@ -46,20 +46,10 @@ describe('AlerteDisplayer', () => {
         '/mes-jeunes/edition-rdv?idRdv=id-evenement'
       )
     })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
-    })
   })
 
   describe('quand la modification de rdv est réussie', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           alerte: {
@@ -68,28 +58,16 @@ describe('AlerteDisplayer', () => {
           alerteSetter,
         },
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(
         screen.getByText(/événement a bien été modifié/)
       ).toBeInTheDocument()
     })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
-    })
   })
 
   describe('quand la suppression de rdv est réussie', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
@@ -99,28 +77,16 @@ describe('AlerteDisplayer', () => {
           alerteSetter,
         },
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(
         screen.getByText(/événement a bien été supprimé/)
       ).toBeInTheDocument()
     })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
-    })
   })
 
   describe('quand on vient de récupérer des bénéficiaires', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
@@ -130,23 +96,11 @@ describe('AlerteDisplayer', () => {
           alerteSetter,
         },
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(
         screen.getByText(/Vous avez récupéré vos bénéficiaires avec succès/)
       ).toBeInTheDocument()
-    })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
@@ -184,20 +138,10 @@ describe('AlerteDisplayer', () => {
         '/mes-jeunes/id-beneficiaire'
       )
     })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
-    })
   })
 
   describe('quand on vient de supprimer un jeune', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
@@ -207,28 +151,16 @@ describe('AlerteDisplayer', () => {
           alerteSetter,
         },
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(
         screen.getByText(/compte du bénéficiaire a bien été supprimé/)
       ).toBeInTheDocument()
     })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
-    })
   })
 
   describe('quand la création d’une action est réussie', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
@@ -238,26 +170,14 @@ describe('AlerteDisplayer', () => {
           alerteSetter,
         },
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(screen.getByText(/L’action a bien été créée/)).toBeInTheDocument()
-    })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand l’ajout ou la modification de l’identifiant partenaire est réussi', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
@@ -267,28 +187,16 @@ describe('AlerteDisplayer', () => {
           alerteSetter,
         },
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(
         screen.getByText(/L’identifiant Pôle emploi a bien été mis à jour/)
       ).toBeInTheDocument()
     })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
-    })
   })
 
   describe('envoie de message multi-destinataire', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
@@ -298,28 +206,16 @@ describe('AlerteDisplayer', () => {
           alerteSetter,
         },
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(
         screen.getByText(/Votre message multi-destinataires/)
       ).toBeInTheDocument()
     })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
-    })
   })
 
   describe('quand on renseigne une agence Milo', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       // Given
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
@@ -332,26 +228,14 @@ describe('AlerteDisplayer', () => {
           structure: StructureConseiller.MILO,
         }),
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(screen.getByText(/Votre Mission locale/)).toBeInTheDocument()
-    })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand on renseigne une agence Pole emploi', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           alerte: {
@@ -363,26 +247,14 @@ describe('AlerteDisplayer', () => {
           structure: StructureConseiller.POLE_EMPLOI,
         }),
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(screen.getByText(/Votre agence/)).toBeInTheDocument()
-    })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
   describe('quand on crée une liste de diffusion', () => {
-    beforeEach(() => {
+    it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           alerte: {
@@ -394,23 +266,11 @@ describe('AlerteDisplayer', () => {
           structure: StructureConseiller.POLE_EMPLOI,
         }),
       })
-    })
 
-    it("affiche l'alerte de succès", () => {
       // Then
       expect(
         screen.getByText(/La liste de diffusion a bien été créée/)
       ).toBeInTheDocument()
-    })
-
-    it("permet de fermer l'alerte du succès", async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', { name: "J'ai compris" })
-      )
-
-      // Then
-      expect(alerteSetter).toHaveBeenCalledWith(undefined)
     })
   })
 
@@ -456,5 +316,26 @@ describe('AlerteDisplayer', () => {
         screen.getByText(/La liste de diffusion a bien été supprimée/)
       ).toBeInTheDocument()
     })
+  })
+
+  it("permet de fermer l'alerte du succès", async () => {
+    // Given
+    renderWithContexts(<AlerteDisplayer />, {
+      customAlerte: {
+        alerte: {
+          key: AlerteParam.creationEvenement,
+        },
+        alerteSetter,
+      },
+      customConseiller: unConseiller({
+        structure: StructureConseiller.POLE_EMPLOI,
+      }),
+    })
+
+    // When
+    await userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))
+
+    // Then
+    expect(alerteSetter).toHaveBeenCalledWith(undefined)
   })
 })
