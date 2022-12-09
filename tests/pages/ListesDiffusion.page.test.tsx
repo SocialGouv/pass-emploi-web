@@ -1,4 +1,5 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { uneBaseJeune } from 'fixtures/jeune'
@@ -102,6 +103,47 @@ describe('Page Listes de Diffusion', () => {
       it('affiche le nombre de listes', () => {
         // Then
         expect(screen.getByText('Listes (2)')).toBeInTheDocument()
+      })
+
+      it('permet de trier les listes par ordre alphabétique inversé', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Trier les listes de diffusion par ordre alphabétique inversé',
+          })
+        )
+
+        // Then
+        const [_header, ...listes] = screen.getAllByRole('row')
+        expect(listes[0]).toHaveAccessibleName(
+          new RegExp(listesDeDiffusion[1].titre)
+        )
+        expect(listes[1]).toHaveAccessibleName(
+          new RegExp(listesDeDiffusion[0].titre)
+        )
+      })
+
+      it('permet de trier les listes par ordre alphabétique', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Trier les listes de diffusion par ordre alphabétique inversé',
+          })
+        )
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Trier les listes de diffusion par ordre alphabétique',
+          })
+        )
+
+        // Then
+        const [_header, ...listes] = screen.getAllByRole('row')
+        expect(listes[0]).toHaveAccessibleName(
+          new RegExp(listesDeDiffusion[0].titre)
+        )
+        expect(listes[1]).toHaveAccessibleName(
+          new RegExp(listesDeDiffusion[1].titre)
+        )
       })
     })
   })

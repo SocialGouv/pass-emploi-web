@@ -1,10 +1,11 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
@@ -27,6 +28,26 @@ type ListesDiffusionProps = PageProps & {
 function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   const [alerte] = useAlerte()
 
+  const ALPHABETIQUE = 'ASC'
+  const INVERSE = 'DESC'
+  const [listeTriees, setListesTriees] = useState(listesDiffusion)
+  const [tri, setTri] = useState<typeof ALPHABETIQUE | typeof INVERSE>(
+    ALPHABETIQUE
+  )
+
+  function inverserTri() {
+    setTri(tri === ALPHABETIQUE ? INVERSE : ALPHABETIQUE)
+  }
+
+  useEffect(() => {
+    setListesTriees((listes) => {
+      const ordre = tri === ALPHABETIQUE ? 1 : -1
+      return [...listes].sort(
+        (liste1, liste2) => liste1.titre.localeCompare(liste2.titre) * ordre
+      )
+    })
+  }, [tri])
+
   let tracking = 'Listes diffusion'
   if (alerte?.key === AlerteParam.creationListeDiffusion) {
     tracking += ' - Creation succès'
@@ -34,7 +55,6 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   if (alerte?.key === AlerteParam.modificationListeDiffusion) {
     tracking += ' - Modification succès'
   }
-
   useMatomo(tracking)
 
   return (
@@ -75,12 +95,26 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
         >
           <THead>
             <TR isHeader={true}>
-              <TH>Nom de la liste</TH>
+              <TH className='rounded-medium hover:bg-primary_lighten'>
+                <button
+                  className='flex border-none items-center w-full'
+                  onClick={inverserTri}
+                  aria-label={`Trier les listes de diffusion par ordre alphabétique ${
+                    tri === ALPHABETIQUE ? 'inversé' : ''
+                  }`}
+                  title={`Trier les listes de diffusion par ordre alphabétique ${
+                    tri === ALPHABETIQUE ? 'inversé' : ''
+                  }`}
+                >
+                  <span className='mr-1'>Nom de la liste</span>
+                  <SortIcon isDesc={tri === INVERSE} />
+                </button>
+              </TH>
               <TH>Nombre de destinataires</TH>
             </TR>
           </THead>
           <TBody>
-            {listesDiffusion.map((liste) => (
+            {listeTriees.map((liste) => (
               <TR
                 key={liste.id}
                 href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
