@@ -114,11 +114,15 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
           it('redirige vers mes listes de diffusion', async () => {
             // Then
-            expect(alerteSetter).toHaveBeenCalledWith(
-              AlerteParam.creationListeDiffusion
-            )
             expect(routerPush).toHaveBeenCalledWith(
               '/mes-jeunes/listes-de-diffusion'
+            )
+          })
+
+          it('affiche un message de succès', async () => {
+            // Then
+            expect(alerteSetter).toHaveBeenCalledWith(
+              AlerteParam.creationListeDiffusion
             )
           })
         })
@@ -257,7 +261,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
       })
 
       describe('liste modifiée', () => {
-        it('modifie la liste', async () => {
+        beforeEach(async () => {
           // Given
           const inputTitre = screen.getByLabelText(/Titre/)
           await userEvent.clear(inputTitre)
@@ -275,7 +279,9 @@ describe('Page d’édition d’une liste de diffusion', () => {
           await userEvent.click(
             screen.getByRole('button', { name: 'Modifier la liste' })
           )
+        })
 
+        it('modifie la liste', async () => {
           // Then
           expect(
             listesDeDiffusionService.modifierListeDeDiffusion
@@ -283,6 +289,20 @@ describe('Page d’édition d’une liste de diffusion', () => {
             titre: 'Nouveau titre',
             idsBeneficiaires: [beneficiaires[0].id, beneficiaires[1].id],
           })
+        })
+
+        it('affiche un message de succès', async () => {
+          // Then
+          expect(alerteSetter).toHaveBeenCalledWith(
+            AlerteParam.modificationListeDiffusion
+          )
+        })
+
+        it('redirige vers mes listes de diffusion', async () => {
+          // Then
+          expect(routerPush).toHaveBeenCalledWith(
+            '/mes-jeunes/listes-de-diffusion'
+          )
         })
       })
     })

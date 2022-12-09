@@ -16,6 +16,7 @@ export enum AlerteParam {
   qualificationNonSNP = 'qualificationNonSNP',
   // Listes de diffusion
   creationListeDiffusion = 'creationListeDiffusion',
+  modificationListeDiffusion = 'modificationListeDiffusion',
   // Autre
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',

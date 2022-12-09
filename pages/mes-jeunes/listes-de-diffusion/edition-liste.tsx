@@ -109,6 +109,7 @@ function EditionListeDiffusion({
       } else {
         await modifierListe(liste.id, payload)
       }
+      await router.push(returnTo)
     } catch (erreur) {
       setErreurSoumission(true)
       console.error(erreur)
@@ -119,9 +120,7 @@ function EditionListeDiffusion({
 
   async function creerListe(payload: ListeDeDiffusionFormData) {
     await listesDeDiffusionService.creerListeDeDiffusion(payload)
-
     setAlerte(AlerteParam.creationListeDiffusion)
-    await router.push(returnTo)
   }
 
   async function modifierListe(
@@ -129,6 +128,7 @@ function EditionListeDiffusion({
     payload: ListeDeDiffusionFormData
   ) {
     await listesDeDiffusionService.modifierListeDeDiffusion(idListe, payload)
+    setAlerte(AlerteParam.modificationListeDiffusion)
   }
 
   useMatomo('Création liste diffusion')
