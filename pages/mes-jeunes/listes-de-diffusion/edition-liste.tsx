@@ -56,7 +56,7 @@ function EditionListeDiffusion({
   >({ value: defaultBeneficiaires.map(({ id }) => id) })
   const [titre, setTitre] = useState<string | undefined>(liste?.titre)
 
-  const [isProcessing, setIsProcessing] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [erreurSoumission, setErreurSoumission] = useState<boolean>(false)
   const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
 
@@ -110,7 +110,7 @@ function EditionListeDiffusion({
     e.preventDefault()
     if (!formIsValid) return
 
-    setIsProcessing(true)
+    setIsLoading(true)
     const payload: ListeDeDiffusionFormData = {
       titre: titre!,
       idsBeneficiaires: idsBeneficiaires.value,
@@ -126,7 +126,7 @@ function EditionListeDiffusion({
       setErreurSoumission(true)
       console.error(erreur)
     } finally {
-      setIsProcessing(false)
+      setIsLoading(false)
     }
   }
 
@@ -191,18 +191,14 @@ function EditionListeDiffusion({
             <Button
               type='submit'
               disabled={!formIsValid || !hasChanges()}
-              isLoading={isProcessing}
+              isLoading={isLoading}
             >
               Modifier la liste
             </Button>
           )}
 
           {!liste && (
-            <Button
-              type='submit'
-              disabled={!formIsValid}
-              isLoading={isProcessing}
-            >
+            <Button type='submit' disabled={!formIsValid} isLoading={isLoading}>
               <IconComponent
                 name={IconName.Add}
                 focusable={false}
