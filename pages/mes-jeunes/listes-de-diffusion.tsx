@@ -17,8 +17,10 @@ import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 type ListesDiffusionProps = PageProps & {
@@ -26,6 +28,7 @@ type ListesDiffusionProps = PageProps & {
 }
 
 function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
+  const [conseiller] = useConseiller()
   const [alerte] = useAlerte()
 
   const ALPHABETIQUE = 'ASC'
@@ -36,7 +39,14 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   )
 
   function inverserTri() {
-    setTri(tri === ALPHABETIQUE ? INVERSE : ALPHABETIQUE)
+    const nouvelOrdre = tri === ALPHABETIQUE ? INVERSE : ALPHABETIQUE
+    setTri(nouvelOrdre)
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Listes de diffusion',
+      action: 'Tri',
+      nom: nouvelOrdre,
+    })
   }
 
   useEffect(() => {
