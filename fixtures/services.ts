@@ -198,6 +198,7 @@ export function mockedListesDeDiffusionService(
     recupererListeDeDiffusion: jest.fn(),
     creerListeDeDiffusion: jest.fn(),
     modifierListeDeDiffusion: jest.fn(),
+    supprimerListeDeDiffusion: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

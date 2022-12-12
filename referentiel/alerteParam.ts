@@ -17,6 +17,7 @@ export enum AlerteParam {
   // Listes de diffusion
   creationListeDiffusion = 'creationListeDiffusion',
   modificationListeDiffusion = 'modificationListeDiffusion',
+  suppressionListeDiffusion = 'suppressionListeDiffusion',
   // Autre
   choixAgence = 'choixAgence',
   envoiMessage = 'envoiMessage',

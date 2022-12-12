@@ -23,6 +23,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('components/Modal')
 
 describe('Page d’édition d’une liste de diffusion', () => {
   describe('client side', () => {
@@ -209,6 +210,23 @@ describe('Page d’édition d’une liste de diffusion', () => {
             customDependances: { listesDeDiffusionService },
             customAlerte: { alerteSetter },
           }
+        )
+      })
+
+      it('permet de supprimer la liste', async () => {
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Supprimer' }))
+        await userEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
+
+        // Then
+        expect(
+          listesDeDiffusionService.supprimerListeDeDiffusion
+        ).toHaveBeenCalledWith(listeDeDiffusion.id)
+        expect(alerteSetter).toHaveBeenCalledWith(
+          AlerteParam.suppressionListeDiffusion
+        )
+        expect(routerPush).toHaveBeenCalledWith(
+          '/mes-jeunes/listes-de-diffusion'
         )
       })
 

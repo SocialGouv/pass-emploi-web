@@ -28,7 +28,6 @@ import CloseIcon from 'assets/icons/close.svg'
 import CommentIcon from 'assets/icons/comment.svg'
 import ContratIcon from 'assets/icons/contrat.svg'
 import DecorativePointIcon from 'assets/icons/decorative_point.svg'
-import DeleteIcon from 'assets/icons/delete.svg'
 import EmailIcon from 'assets/icons/email.svg'
 import EuroIcon from 'assets/icons/euro.svg'
 import FavoriteIcon from 'assets/icons/favorite.svg'
@@ -58,7 +57,7 @@ import SearchIcon from 'assets/icons/search.svg'
 import SendIcon from 'assets/icons/send.svg'
 import SpinnerIcon from 'assets/icons/spinner.svg'
 import SuitcaseIcon from 'assets/icons/suitcase.svg'
-import TrashCanIcon from 'assets/icons/trash_can.svg'
+import TrashcanIcon from 'assets/icons/trashcan.svg'
 import WarningIcon from 'assets/icons/warning.svg'
 
 export enum IconName {
@@ -89,7 +88,7 @@ export enum IconName {
   Comment = 'Comment',
   Contrat = 'Contrat',
   DecorativePoint = 'DecorativePoint',
-  Delete = 'Delete',
+  Trashcan = 'Trashcan',
   Email = 'Email',
   Euro = 'Euro',
   Favorite = 'Favorite',
@@ -120,7 +119,6 @@ export enum IconName {
   Send = 'Send',
   Spinner = 'Spinner',
   Suitcase = 'Suitcase',
-  TrashCan = 'TrashCan',
   Warning = 'Warning',
 }
 
@@ -152,7 +150,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Comment]: CommentIcon,
   [IconName.Contrat]: ContratIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
-  [IconName.Delete]: DeleteIcon,
+  [IconName.Trashcan]: TrashcanIcon,
   [IconName.Email]: EmailIcon,
   [IconName.Euro]: EuroIcon,
   [IconName.Favorite]: FavoriteIcon,
@@ -184,7 +182,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Send]: SendIcon,
   [IconName.Spinner]: SpinnerIcon,
   [IconName.Suitcase]: SuitcaseIcon,
-  [IconName.TrashCan]: TrashCanIcon,
   [IconName.Warning]: WarningIcon,
 }
 

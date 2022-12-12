@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
+import ConfirmationDeleteListeDiffusion from 'components/ConfirmationDeleteListeDiffusionModal'
 import { BeneficiaireIndicationReaffectaction } from 'components/jeune/BeneficiaireIndications'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -57,19 +58,19 @@ function EditionListeDiffusion({
   const [titre, setTitre] = useState<string | undefined>(liste?.titre)
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [erreurSoumission, setErreurSoumission] = useState<boolean>(false)
+  const [showErreurSoumission, setShowErreurTraitement] =
+    useState<boolean>(false)
+  const [showConfirmationSuppression, setShowConfirmationSuppression] =
+    useState(false)
+
   const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
 
   function hasChanges(): boolean {
-    if (liste) {
-      const previousIds = liste.beneficiaires.map(({ id }) => id).sort()
-      const currentIds = [...idsBeneficiaires.value].sort()
-      return (
-        previousIds.toString() !== currentIds.toString() ||
-        liste.titre !== titre
-      )
-    }
-    return true
+    const previousIds = liste!.beneficiaires.map(({ id }) => id).sort()
+    const currentIds = [...idsBeneficiaires.value].sort()
+    return (
+      previousIds.toString() !== currentIds.toString() || liste!.titre !== titre
+    )
   }
 
   function estUnBeneficiaireDuConseiller(
@@ -123,7 +124,7 @@ function EditionListeDiffusion({
       }
       await router.push(returnTo)
     } catch (erreur) {
-      setErreurSoumission(true)
+      setShowErreurTraitement(true)
       console.error(erreur)
     } finally {
       setIsLoading(false)
@@ -143,19 +144,49 @@ function EditionListeDiffusion({
     setAlerte(AlerteParam.modificationListeDiffusion)
   }
 
+  async function supprimerListe() {
+    setIsLoading(true)
+    try {
+      await listesDeDiffusionService.supprimerListeDeDiffusion(liste!.id)
+      setAlerte(AlerteParam.suppressionListeDiffusion)
+      await router.push(returnTo)
+    } catch (e) {
+      console.error(e)
+      setShowErreurTraitement(true)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useMatomo(liste ? 'Modification liste diffusion' : 'Création liste diffusion')
 
   return (
     <>
-      {erreurSoumission && (
+      {showErreurSoumission && (
         <FailureAlert
           label='Une erreur s’est produite, veuillez réessayer ultérieurement.'
-          onAcknowledge={() => setErreurSoumission(false)}
+          onAcknowledge={() => setShowErreurTraitement(false)}
         />
       )}
 
+      {liste && (
+        <Button
+          onClick={() => setShowConfirmationSuppression(true)}
+          style={ButtonStyle.SECONDARY}
+          className='mb-6'
+        >
+          <IconComponent
+            name={IconName.Trashcan}
+            focusable={false}
+            aria-hidden={true}
+            className='mr-2 w-4 h-4'
+          />
+          Supprimer
+        </Button>
+      )}
+
       <p className='text-s-bold text-content_color mb-4'>
-        Tous les champs avec * sont obligatoires
+        Tous les champs sont obligatoires
       </p>
 
       <form onSubmit={soumettreListe}>
@@ -210,6 +241,13 @@ function EditionListeDiffusion({
           )}
         </div>
       </form>
+
+      {showConfirmationSuppression && (
+        <ConfirmationDeleteListeDiffusion
+          onConfirmation={supprimerListe}
+          onCancel={() => setShowConfirmationSuppression(false)}
+        />
+      )}
     </>
   )
 }

@@ -258,7 +258,7 @@ function EditionRdv({
                 className='min-w-fit w-1/4'
               >
                 <IconComponent
-                  name={IconName.Delete}
+                  name={IconName.Trashcan}
                   aria-hidden='true'
                   focusable='false'
                   className='mr-2 w-4 h-4'

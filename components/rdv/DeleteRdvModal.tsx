@@ -28,7 +28,7 @@ export default function DeleteRdvModal({
         name={IconName.Warning}
         focusable={false}
         aria-hidden={true}
-        className='w-[100px] h-[91px] m-auto mb-16 fill-primary'
+        className='w-[108px] h-[108px] m-auto mb-16 fill-primary'
       />
 
       <p className='text-base-bold text-content_color text-center mx-28'>

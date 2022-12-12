@@ -170,16 +170,12 @@ function BouttonSupprimerCompte(props: {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
 }) {
   return (
-    <Button
-      onClick={props.onClick}
-      style={ButtonStyle.SECONDARY}
-      className='w-fit'
-    >
+    <Button onClick={props.onClick} style={ButtonStyle.SECONDARY}>
       <IconComponent
-        name={IconName.TrashCan}
-        focusable='false'
-        aria-hidden='true'
-        className='mr-3 w-3 h-3'
+        name={IconName.Trashcan}
+        focusable={false}
+        aria-hidden={true}
+        className='mr-2 w-4 h-4'
       />
       Supprimer ce compte
     </Button>
