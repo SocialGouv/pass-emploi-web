@@ -278,7 +278,7 @@ describe('Mes Jeunes', () => {
 
         // Then
         expect(() =>
-          screen.getByLabelText(/Rechercher un jeune par son nom de famille/)
+          screen.getByLabelText(/Rechercher un jeune par son nom ou prénom/)
         ).toThrow()
       })
 
