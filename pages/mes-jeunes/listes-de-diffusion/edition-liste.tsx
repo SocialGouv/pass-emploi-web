@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
+import ConfirmationDeleteListeDiffusion from 'components/ConfirmationDeleteListeDiffusionModal'
 import { BeneficiaireIndicationReaffectaction } from 'components/jeune/BeneficiaireIndications'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -59,6 +60,9 @@ function EditionListeDiffusion({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showErreurSoumission, setShowErreurTraitement] =
     useState<boolean>(false)
+  const [showConfirmationSuppression, setShowConfirmationSuppression] =
+    useState(false)
+
   const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
 
   function hasChanges(): boolean {
@@ -167,7 +171,7 @@ function EditionListeDiffusion({
 
       {liste && (
         <Button
-          onClick={supprimerListe}
+          onClick={() => setShowConfirmationSuppression(true)}
           style={ButtonStyle.SECONDARY}
           className='mb-6'
         >
@@ -237,6 +241,13 @@ function EditionListeDiffusion({
           )}
         </div>
       </form>
+
+      {showConfirmationSuppression && (
+        <ConfirmationDeleteListeDiffusion
+          onConfirmation={supprimerListe}
+          onCancel={() => setShowConfirmationSuppression(false)}
+        />
+      )}
     </>
   )
 }

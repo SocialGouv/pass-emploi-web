@@ -32,7 +32,7 @@ export default function LeavePageConfirmationModal({
           name={IconName.Warning}
           focusable={false}
           aria-hidden={true}
-          className='w-[54px] h-[57px] m-auto fill-primary'
+          className='w-[54px] h-[54px] m-auto fill-primary'
         />
         <p className='mt-6 text-base-bold'>{message}</p>
         <p className='mt-6'>{commentaire}</p>
