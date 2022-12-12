@@ -50,13 +50,17 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   }
 
   useEffect(() => {
-    setListesTriees((listes) => {
-      const ordre = tri === ALPHABETIQUE ? 1 : -1
-      return [...listes].sort(
+    console.log(
+      '>>> page',
+      listesDiffusion.map(({ titre }) => titre)
+    )
+    const ordre = tri === ALPHABETIQUE ? 1 : -1
+    setListesTriees(
+      [...listesDiffusion].sort(
         (liste1, liste2) => liste1.titre.localeCompare(liste2.titre) * ordre
       )
-    })
-  }, [tri])
+    )
+  }, [listesDiffusion, tri])
 
   let tracking = 'Listes diffusion'
   if (alerte?.key === AlerteParam.creationListeDiffusion)
@@ -185,6 +189,14 @@ export const getServerSideProps: GetServerSideProps<
     user.id,
     accessToken
   )
+
+  console.log(
+    '>>> ssr',
+    listesDeDiffusion.map(({ titre }) => titre)
+  )
+
+  context.res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
+
   return {
     props: {
       pageTitle: 'Listes de diffusion - Portefeuille',

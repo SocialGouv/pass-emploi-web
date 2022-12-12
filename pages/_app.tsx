@@ -60,7 +60,7 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
               <CurrentJeuneProvider>
                 <AlerteProvider>
                   <Layout>
-                    <Component {...pageProps} />
+                    <Component key={router.asPath} {...pageProps} />
                   </Layout>
                 </AlerteProvider>
               </CurrentJeuneProvider>

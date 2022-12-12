@@ -122,7 +122,7 @@ function EditionListeDiffusion({
       } else {
         await modifierListe(liste.id, payload)
       }
-      await router.push(returnTo)
+      await router.push(returnTo, undefined, { shallow: false })
     } catch (erreur) {
       setShowErreurTraitement(true)
       console.error(erreur)
@@ -149,7 +149,7 @@ function EditionListeDiffusion({
     try {
       await listesDeDiffusionService.supprimerListeDeDiffusion(liste!.id)
       setAlerte(AlerteParam.suppressionListeDiffusion)
-      await router.push(returnTo)
+      await router.push(returnTo, undefined, { shallow: false })
     } catch (e) {
       console.error(e)
       setShowErreurTraitement(true)

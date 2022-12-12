@@ -39,6 +39,10 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
     const { content: listesDeDiffusion } = await this.apiClient.get<
       ListeDeDiffusion[]
     >(`/conseillers/${idConseiller}/listes-de-diffusion`, accessToken)
+    console.log(
+      '>>> server',
+      listesDeDiffusion.map(({ titre }) => titre)
+    )
     return listesDeDiffusion
   }
 

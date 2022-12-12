@@ -4,6 +4,11 @@ const withPWA = require('next-pwa')({ dest: 'public' })
 
 module.exports = withPWA({
   reactStrictMode: true,
+  onDemandEntries: {
+    // Cette option désactive le cache pour les pages de votre application
+    maxInactiveAge: 0,
+  },
+  generateEtags: false,
 
   env: {
     // API
