@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 
+import ChatsDeDiffusion from 'components/chat/ChatsDeDiffusion'
 import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
@@ -8,7 +8,9 @@ import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { JeunesService } from 'services/jeunes.service'
+import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { MessagesService } from 'services/messages.service'
 import styles from 'styles/components/Layouts.module.css'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -23,17 +25,25 @@ interface ChatRoomProps {
 export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const messagesService = useDependance<MessagesService>('messagesService')
+  const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
+    'listesDeDiffusionService'
+  )
 
   const [conseiller] = useConseiller()
-  const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
   const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
+
+  const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
-  const [showMenu, setShowMenu] = useState<boolean>(false)
+  const [showListesDeDiffusion, setShowListesDeDiffusion] =
+    useState<boolean>(false)
+  const [listesDeDiffusion, setListesDeDiffusion] =
+    useState<ListeDeDiffusion[]>()
 
+  const [showMenu, setShowMenu] = useState<boolean>(false)
   const closeMenuRef = useRef<HTMLButtonElement>(null)
 
   function fermerMenu(): void {
@@ -78,6 +88,14 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   }, [jeunesService, idCurrentJeune])
 
   useEffect(() => {
+    if (showListesDeDiffusion && !listesDeDiffusion) {
+      listesDeDiffusionService
+        .getListesDeDiffusionClientSide()
+        .then(setListesDeDiffusion)
+    }
+  }, [showListesDeDiffusion])
+
+  useEffect(() => {
     if (idCurrentJeune && jeunesChats) {
       setCurrentChat(
         jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
@@ -109,7 +127,16 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
         </aside>
       )}
 
-      {!currentChat && showMenu && (
+      {showListesDeDiffusion && listesDeDiffusion && (
+        <aside className={styles.chatRoom}>
+          <ChatsDeDiffusion
+            listesDeDiffusion={listesDeDiffusion}
+            onBack={() => setShowListesDeDiffusion(false)}
+          />
+        </aside>
+      )}
+
+      {!currentChat && !showListesDeDiffusion && showMenu && (
         <nav
           role='navigation'
           id='menu-mobile'
@@ -141,7 +168,7 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
         </nav>
       )}
 
-      {!currentChat && (
+      {!currentChat && !showListesDeDiffusion && (
         <aside className={styles.chatRoom}>
           <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
             <nav
@@ -182,24 +209,26 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <RechercheJeune onSearchFilterBy={filtrerConversations} />
           </div>
 
-          <Link href='/mes-jeunes/listes-de-diffusion'>
-            <a className='flex justify-between items-center text-primary bg-blanc rounded-large p-4 mb-2 mx-4'>
-              <IconComponent
-                name={IconName.People}
-                className='mr-2 h-6 w-6'
-                aria-hidden={true}
-                focusable={false}
-              />
-              <span className='grow'>Listes de diffusion</span>
-              <IconComponent
-                name={IconName.ChevronRight}
-                className='mr-2 h-6 w-6'
-                fill='currentColor'
-                aria-hidden={true}
-                focusable={false}
-              />
-            </a>
-          </Link>
+          <button
+            className='flex items-center text-primary bg-blanc rounded-large p-4 mb-2 mx-4'
+            onClick={() => setShowListesDeDiffusion(true)}
+          >
+            <IconComponent
+              name={IconName.People}
+              className='mr-2 h-6 w-6'
+              aria-hidden={true}
+              focusable={false}
+            />
+            <span className='grow text-left'>Listes de diffusion</span>
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='mr-2 h-6 w-6 fill-[currentColor]'
+              aria-label='Voir'
+              title='Voir'
+              focusable={false}
+            />
+          </button>
+
           <ListeConversations
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}

@@ -1,15 +1,13 @@
-import { screen, within } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { uneBaseJeune } from 'fixtures/jeune'
-import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
+import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { mockedListesDeDiffusionService } from 'fixtures/services'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import ListesDiffusion, {
   getServerSideProps,
 } from 'pages/mes-jeunes/listes-de-diffusion'
-import listesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -55,17 +53,7 @@ describe('Page Listes de Diffusion', () => {
       let listesDeDiffusion: ListeDeDiffusion[]
       beforeEach(() => {
         // Given
-        listesDeDiffusion = [
-          uneListeDeDiffusion(),
-          uneListeDeDiffusion({
-            id: 'liste-2',
-            titre: 'Liste métiers pâtisserie',
-            beneficiaires: [
-              { ...uneBaseJeune(), estDansLePortefeuille: false },
-            ],
-          }),
-        ]
-
+        listesDeDiffusion = desListesDeDiffusion()
         // When
         renderWithContexts(
           <ListesDiffusion listesDiffusion={listesDeDiffusion} pageTitle='' />
@@ -174,7 +162,7 @@ describe('Page Listes de Diffusion', () => {
       })
       const listesDeDiffusionService: ListesDeDiffusionService =
         mockedListesDeDiffusionService({
-          getListesDeDiffusion: jest.fn(async () => []),
+          getListesDeDiffusionServerSide: jest.fn(async () => []),
         })
       ;(withDependance as jest.Mock).mockReturnValue(listesDeDiffusionService)
 
@@ -183,7 +171,7 @@ describe('Page Listes de Diffusion', () => {
 
       // Then
       expect(
-        listesDeDiffusionService.getListesDeDiffusion
+        listesDeDiffusionService.getListesDeDiffusionServerSide
       ).toHaveBeenCalledWith('id-conseiller', 'access-token')
       expect(actual).toEqual({
         props: {

@@ -5,9 +5,15 @@ import React from 'react'
 import ChatRoom from 'components/chat/ChatRoom'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { mockedJeunesService, mockedMessagesService } from 'fixtures/services'
+import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
+import {
+  mockedJeunesService,
+  mockedListesDeDiffusionService,
+  mockedMessagesService,
+} from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
+import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -21,6 +27,7 @@ describe('<ChatRoom />', () => {
   let jeunesChats: JeuneChat[]
   let jeunesService: JeunesService
   let messagesService: MessagesService
+  let listesDeDiffusionService: ListesDeDiffusionService
   let conseillers: ConseillerHistorique[]
   beforeEach(async () => {
     jeunesService = mockedJeunesService({
@@ -29,6 +36,11 @@ describe('<ChatRoom />', () => {
       ),
     })
     messagesService = mockedMessagesService()
+    listesDeDiffusionService = mockedListesDeDiffusionService({
+      getListesDeDiffusionClientSide: jest.fn(async () =>
+        desListesDeDiffusion()
+      ),
+    })
     jeunesChats = [
       unJeuneChat({
         ...jeunes[0],
@@ -51,7 +63,11 @@ describe('<ChatRoom />', () => {
   describe('quand le conseiller a des jeunes', () => {
     beforeEach(async () => {
       renderWithContexts(<ChatRoom jeunesChats={jeunesChats} />, {
-        customDependances: { jeunesService, messagesService },
+        customDependances: {
+          jeunesService,
+          messagesService,
+          listesDeDiffusionService,
+        },
       })
     })
 
@@ -130,6 +146,47 @@ describe('<ChatRoom />', () => {
           `chat-${jeune.id}`,
           false
         )
+      })
+    })
+
+    describe('listes de diffusion', () => {
+      it('permet d’accéder aux messages envoyés aux listes de diffusion', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Listes de diffusion Voir',
+          })
+        )
+
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Mes listes de diffusion',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('ne charge les listes de diffusion qu’une fois', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Listes de diffusion Voir',
+          })
+        )
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Retour sur ma messagerie' })
+        )
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Listes de diffusion Voir',
+          })
+        )
+
+        // Then
+        expect(
+          listesDeDiffusionService.getListesDeDiffusionClientSide
+        ).toHaveBeenCalledTimes(1)
       })
     })
   })

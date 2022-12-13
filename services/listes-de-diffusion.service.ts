@@ -9,7 +9,9 @@ export type ListeDeDiffusionFormData = {
 }
 
 export interface ListesDeDiffusionService {
-  getListesDeDiffusion(
+  getListesDeDiffusionClientSide(): Promise<ListeDeDiffusion[]>
+
+  getListesDeDiffusionServerSide(
     idConseiller: string,
     accessToken: string
   ): Promise<ListeDeDiffusion[]>
@@ -32,14 +34,16 @@ export interface ListesDeDiffusionService {
 export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async getListesDeDiffusion(
+  async getListesDeDiffusionClientSide (): Promise<ListeDeDiffusion[]> {
+    const session = await getSession()
+    return this.getListesDeDiffusion(session!.user.id, session!.accessToken)
+  }
+
+  async getListesDeDiffusionServerSide(
     idConseiller: string,
     accessToken: string
   ): Promise<ListeDeDiffusion[]> {
-    const { content: listesDeDiffusion } = await this.apiClient.get<
-      ListeDeDiffusion[]
-    >(`/conseillers/${idConseiller}/listes-de-diffusion`, accessToken)
-    return listesDeDiffusion
+    return this.getListesDeDiffusion(idConseiller, accessToken)
   }
 
   async recupererListeDeDiffusion(
@@ -88,5 +92,15 @@ export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
       '/listes-de-diffusion/' + idListe,
       session!.accessToken
     )
+  }
+
+  private async getListesDeDiffusion(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<ListeDeDiffusion[]> {
+    const { content: listesDeDiffusion } = await this.apiClient.get<
+      ListeDeDiffusion[]
+    >(`/conseillers/${idConseiller}/listes-de-diffusion`, accessToken)
+    return listesDeDiffusion
   }
 }
