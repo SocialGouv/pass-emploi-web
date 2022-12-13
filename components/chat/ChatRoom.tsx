@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 
 import Conversation from 'components/chat/Conversation'
@@ -181,6 +182,24 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
             <RechercheJeune onSearchFilterBy={filtrerConversations} />
           </div>
 
+          <Link href='/mes-jeunes/listes-de-diffusion'>
+            <a className='flex justify-between items-center text-primary bg-blanc rounded-large p-4 mb-2 mx-4'>
+              <IconComponent
+                name={IconName.People}
+                className='mr-2 h-6 w-6'
+                aria-hidden={true}
+                focusable={false}
+              />
+              <span className='grow'>Listes de diffusion</span>
+              <IconComponent
+                name={IconName.ChevronRight}
+                className='mr-2 h-6 w-6'
+                fill='currentColor'
+                aria-hidden={true}
+                focusable={false}
+              />
+            </a>
+          </Link>
           <ListeConversations
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
