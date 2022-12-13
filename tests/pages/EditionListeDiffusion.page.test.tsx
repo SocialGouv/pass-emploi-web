@@ -116,7 +116,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           it('redirige vers mes listes de diffusion', async () => {
             // Then
             expect(routerPush).toHaveBeenCalledWith(
-              '/mes-jeunes/listes-de-diffusion'
+              expect.stringMatching('/mes-jeunes/listes-de-diffusion')
             )
           })
 
@@ -226,7 +226,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           AlerteParam.suppressionListeDiffusion
         )
         expect(routerPush).toHaveBeenCalledWith(
-          '/mes-jeunes/listes-de-diffusion'
+          expect.stringMatching('/mes-jeunes/listes-de-diffusion')
         )
       })
 
@@ -324,7 +324,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         it('redirige vers mes listes de diffusion', async () => {
           // Then
           expect(routerPush).toHaveBeenCalledWith(
-            '/mes-jeunes/listes-de-diffusion'
+            expect.stringMatching('/mes-jeunes/listes-de-diffusion')
           )
         })
       })

@@ -122,7 +122,8 @@ function EditionListeDiffusion({
       } else {
         await modifierListe(liste.id, payload)
       }
-      await router.push(returnTo)
+      // FIXME : dirty fix, problème de rafraichissement de la liste
+      await router.push(returnTo + '?misc=' + Math.random())
     } catch (erreur) {
       setShowErreurTraitement(true)
       console.error(erreur)
@@ -149,7 +150,8 @@ function EditionListeDiffusion({
     try {
       await listesDeDiffusionService.supprimerListeDeDiffusion(liste!.id)
       setAlerte(AlerteParam.suppressionListeDiffusion)
-      await router.push(returnTo)
+      // FIXME : dirty fix, problème de rafraichissement de la liste
+      await router.push(returnTo + '?misc=' + Math.random())
     } catch (e) {
       console.error(e)
       setShowErreurTraitement(true)
