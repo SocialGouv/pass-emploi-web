@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
-import ChatsDeDiffusion from 'components/chat/ChatsDeDiffusion'
 import Conversation from 'components/chat/Conversation'
+import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
 import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -29,7 +29,7 @@ export default function ChatContainer({ jeunesChats }: ChatContainerProps) {
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
 
-  const [showListesDeDiffusion, setShowListesDeDiffusion] =
+  const [showRubriqueListesDeDiffusion, setShowRubriqueListesDeDiffusion] =
     useState<boolean>(false)
   const [listesDeDiffusion, setListesDeDiffusion] =
     useState<ListeDeDiffusion[]>()
@@ -38,12 +38,16 @@ export default function ChatContainer({ jeunesChats }: ChatContainerProps) {
   const closeMenuRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    if (showListesDeDiffusion && !listesDeDiffusion) {
+    if (showRubriqueListesDeDiffusion && !listesDeDiffusion) {
       listesDeDiffusionService
         .getListesDeDiffusionClientSide()
         .then(setListesDeDiffusion)
     }
-  }, [listesDeDiffusionService, listesDeDiffusion, showListesDeDiffusion])
+  }, [
+    listesDeDiffusionService,
+    listesDeDiffusion,
+    showRubriqueListesDeDiffusion,
+  ])
 
   useEffect(() => {
     if (idCurrentJeune) {
@@ -78,19 +82,21 @@ export default function ChatContainer({ jeunesChats }: ChatContainerProps) {
           />
         )}
 
-        {showListesDeDiffusion && (
-          <ChatsDeDiffusion
+        {showRubriqueListesDeDiffusion && (
+          <RubriqueListesDeDiffusion
             listesDeDiffusion={listesDeDiffusion}
-            onBack={() => setShowListesDeDiffusion(false)}
+            onBack={() => setShowRubriqueListesDeDiffusion(false)}
           />
         )}
 
-        {!currentChat && !showListesDeDiffusion && (
+        {!currentChat && !showRubriqueListesDeDiffusion && (
           <ChatRoom
             jeunesChats={jeunesChats}
             showMenu={showMenu}
             onOuvertureMenu={() => setShowMenu(true)}
-            onAccesListesDiffusion={() => setShowListesDeDiffusion(true)}
+            onAccesListesDiffusion={() =>
+              setShowRubriqueListesDeDiffusion(true)
+            }
             onAccesConversation={setIdCurrentJeune}
           />
         )}

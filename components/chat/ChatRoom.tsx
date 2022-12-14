@@ -111,12 +111,13 @@ export default function ChatRoom({
           aria-hidden={true}
           focusable={false}
         />
-        <span className='grow text-left'>Listes de diffusion</span>
+        <span className='grow text-left'>
+          <span>Voir </span>Listes de diffusion
+        </span>
         <IconComponent
           name={IconName.ChevronRight}
           className='mr-2 h-6 w-6 fill-[currentColor]'
-          aria-label='Voir'
-          title='Voir'
+          aria-hidden={true}
           focusable={false}
         />
       </button>

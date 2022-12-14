@@ -1,6 +1,5 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import React from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
@@ -11,6 +10,7 @@ import {
   mockedMessagesService,
 } from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { MessagesService } from 'services/messages.service'
@@ -120,7 +120,7 @@ describe('<ChatContainer />', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Listes de diffusion Voir',
+          name: 'Voir Listes de diffusion',
         })
       )
 
@@ -137,7 +137,7 @@ describe('<ChatContainer />', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Listes de diffusion Voir',
+          name: 'Voir Listes de diffusion',
         })
       )
       await userEvent.click(
@@ -145,7 +145,7 @@ describe('<ChatContainer />', () => {
       )
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Listes de diffusion Voir',
+          name: 'Voir Listes de diffusion',
         })
       )
 

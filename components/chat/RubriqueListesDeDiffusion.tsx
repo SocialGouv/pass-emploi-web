@@ -5,15 +5,15 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
-type ChatsDeDiffusionProps = {
+type RubriqueListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
   onBack: () => void
 }
 
-export default function ChatsDeDiffusion({
+export default function RubriqueListesDeDiffusion({
   listesDeDiffusion,
   onBack,
-}: ChatsDeDiffusionProps) {
+}: RubriqueListesDeDiffusionProps) {
   return (
     <div className='h-full flex flex-col bg-grey_100 '>
       <div className='flex items-center mx-4 pb-6 my-6 border-b border-grey_500 short:hidden'>
@@ -63,7 +63,7 @@ export default function ChatsDeDiffusion({
           >
             {listesDeDiffusion.map((liste) => (
               <li
-                key={Math.random()}
+                key={liste.id}
                 className='p-3 bg-blanc rounded-small mb-2 last:mb-0'
               >
                 <TitreListe liste={liste} />
