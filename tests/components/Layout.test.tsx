@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 import AppHead from 'components/AppHead'
-import ChatRoom from 'components/chat/ChatRoom'
+import ChatContainer from 'components/chat/ChatContainer'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
@@ -25,7 +25,7 @@ import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
-jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
+jest.mock('components/chat/ChatContainer', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
@@ -161,9 +161,9 @@ describe('<Layout />', () => {
       )
     })
 
-    it('affiche la ChatRoom avec les jeunes avec un message non lu en premier', async () => {
+    it('affiche le ChatContainer avec les jeunes avec un message non lu en premier', async () => {
       // Then
-      expect(ChatRoom).toHaveBeenCalledWith(
+      expect(ChatContainer).toHaveBeenCalledWith(
         { jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]] },
         {}
       )

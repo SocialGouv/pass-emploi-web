@@ -7,19 +7,19 @@ import { UserType } from 'interfaces/conseiller'
 import { JeuneChat } from 'interfaces/jeune'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
-interface ChatRoomTileProps {
+interface ConversationTileProps {
   id: string
   jeuneChat: JeuneChat
   onClick: () => void
   onToggleFlag: (flagged: boolean) => void
 }
 
-export function ChatRoomTile({
+export function ConversationTile({
   id,
   jeuneChat,
   onClick,
   onToggleFlag,
-}: ChatRoomTileProps) {
+}: ConversationTileProps) {
   const lastMessageSentAt: string | undefined = useMemo(
     () =>
       jeuneChat.lastMessageSentAt &&

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import React from 'react'
 
-import { ChatRoomTile } from 'components/chat/ChatRoomTile'
+import { ConversationTile } from 'components/chat/ConversationTile'
 import { unJeuneChat } from 'fixtures/jeune'
 
 describe('<ChatRoomTile />', () => {
@@ -17,7 +17,7 @@ describe('<ChatRoomTile />', () => {
     it('permet de ne plus la suivre', async () => {
       // Given
       render(
-        <ChatRoomTile
+        <ConversationTile
           jeuneChat={unJeuneChat({
             flaggedByConseiller: true,
           })}
@@ -40,7 +40,7 @@ describe('<ChatRoomTile />', () => {
     it('permet de la suivre', async () => {
       // Given
       render(
-        <ChatRoomTile
+        <ConversationTile
           jeuneChat={unJeuneChat({
             flaggedByConseiller: false,
           })}
@@ -62,7 +62,7 @@ describe('<ChatRoomTile />', () => {
   it("affiche un indicateur si le conseiller n'a pas lu le dernier message", () => {
     // When
     render(
-      <ChatRoomTile
+      <ConversationTile
         jeuneChat={unJeuneChat({
           lastMessageSentBy: 'conseiller',
           seenByConseiller: false,
@@ -80,7 +80,7 @@ describe('<ChatRoomTile />', () => {
   it("affiche un indicateur si le dernier message vient du conseiller et le jeune ne l'a pas lu", () => {
     // When
     render(
-      <ChatRoomTile
+      <ConversationTile
         jeuneChat={unJeuneChat({
           lastMessageSentBy: 'conseiller',
           lastMessageSentAt: DateTime.now(),

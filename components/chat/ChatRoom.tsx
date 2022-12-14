@@ -1,58 +1,35 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import ChatsDeDiffusion from 'components/chat/ChatsDeDiffusion'
-import Conversation from 'components/chat/Conversation'
 import ListeConversations from 'components/chat/ListeConversations'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
-import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { JeunesService } from 'services/jeunes.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { JeuneChat } from 'interfaces/jeune'
 import { MessagesService } from 'services/messages.service'
-import styles from 'styles/components/Layouts.module.css'
 import { trackEvent } from 'utils/analytics/matomo'
-import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
 interface ChatRoomProps {
   jeunesChats: JeuneChat[] | undefined
+  showMenu: boolean
+  onOuvertureMenu: () => void
+  onAccesListesDiffusion: () => void
+  onAccesConversation: (idJeune: string) => void
 }
 
-export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
-  const jeunesService = useDependance<JeunesService>('jeunesService')
+export default function ChatRoom({
+  jeunesChats,
+  showMenu,
+  onOuvertureMenu,
+  onAccesListesDiffusion,
+  onAccesConversation,
+}: ChatRoomProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
-  const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
-    'listesDeDiffusionService'
-  )
 
   const [conseiller] = useConseiller()
+
   const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
-
-  const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
-  const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
-    undefined
-  )
-  const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
-
-  const [showListesDeDiffusion, setShowListesDeDiffusion] =
-    useState<boolean>(false)
-  const [listesDeDiffusion, setListesDeDiffusion] =
-    useState<ListeDeDiffusion[]>()
-
-  const [showMenu, setShowMenu] = useState<boolean>(false)
-  const closeMenuRef = useRef<HTMLButtonElement>(null)
-
-  function fermerMenu(): void {
-    setShowMenu(false)
-  }
-
-  function ouvrirMenu(): void {
-    setShowMenu(true)
-  }
 
   function toggleFlag(idChat: string, flagged: boolean): void {
     messagesService.toggleFlag(idChat, flagged)
@@ -80,162 +57,75 @@ export default function ChatRoom({ jeunesChats }: ChatRoomProps) {
   }
 
   useEffect(() => {
-    if (idCurrentJeune) {
-      jeunesService
-        .getConseillersDuJeuneClientSide(idCurrentJeune)
-        .then((conseillersJeunes) => setConseillers(conseillersJeunes))
-    }
-  }, [jeunesService, idCurrentJeune])
-
-  useEffect(() => {
-    if (showListesDeDiffusion && !listesDeDiffusion) {
-      listesDeDiffusionService
-        .getListesDeDiffusionClientSide()
-        .then(setListesDeDiffusion)
-    }
-  }, [showListesDeDiffusion])
-
-  useEffect(() => {
-    if (idCurrentJeune && jeunesChats) {
-      setCurrentChat(
-        jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
-      )
-    } else {
-      setCurrentChat(undefined)
-    }
-  }, [jeunesChats, idCurrentJeune])
-
-  useEffect(() => {
-    if (showMenu) {
-      closeMenuRef.current!.focus()
-    }
-  }, [showMenu])
-
-  useEffect(() => {
     setChatsFiltres(jeunesChats)
   }, [jeunesChats])
 
   return (
     <>
-      {currentChat && (
-        <aside className={styles.chatRoom}>
-          <Conversation
-            onBack={() => setIdCurrentJeune(undefined)}
-            jeuneChat={currentChat}
-            conseillers={conseillers}
-          />
-        </aside>
-      )}
-
-      {showListesDeDiffusion && listesDeDiffusion && (
-        <aside className={styles.chatRoom}>
-          <ChatsDeDiffusion
-            listesDeDiffusion={listesDeDiffusion}
-            onBack={() => setShowListesDeDiffusion(false)}
-          />
-        </aside>
-      )}
-
-      {!currentChat && !showListesDeDiffusion && showMenu && (
+      <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
         <nav
           role='navigation'
-          id='menu-mobile'
-          className='w-[100vw] flex flex-col bg-primary px-6 py-3 z-10 layout_s:hidden'
+          aria-label='Menu principal'
+          className='layout_s:hidden'
         >
           <button
-            ref={closeMenuRef}
             type='button'
+            onClick={onOuvertureMenu}
             aria-controls='menu-mobile'
-            onClick={fermerMenu}
-            aria-label='Fermer le menu principal'
-            aria-expanded={true}
-            className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-[50%]'
+            aria-expanded={showMenu}
+            className='absolute left-4 top-[calc(50%-1.25rem)]'
           >
             <IconComponent
-              name={IconName.Close}
-              className='w-10 h-10 fill-blanc'
+              name={IconName.Menu}
+              className='w-10 h-10 fill-primary layout_s:hidden'
               aria-hidden={true}
               focusable={false}
-              title='Fermer le menu principal'
+              title='Ouvrir le menu principal'
             />
           </button>
-          <div className='grow flex flex-col justify-between'>
-            <NavLinks
-              showLabelsOnSmallScreen={true}
-              items={[NavItem.Messagerie, NavItem.Raccourci, NavItem.Aide]}
-            />
-          </div>
         </nav>
-      )}
 
-      {!currentChat && !showListesDeDiffusion && (
-        <aside className={styles.chatRoom}>
-          <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
-            <nav
-              role='navigation'
-              aria-label='Menu principal'
-              className={`layout_s:hidden ${showMenu ? 'hidden' : ''}`}
-            >
-              <button
-                type='button'
-                onClick={ouvrirMenu}
-                aria-controls='menu-mobile'
-                aria-expanded={showMenu}
-                className='absolute left-4 top-[calc(50%-1.25rem)]'
-              >
-                <IconComponent
-                  name={IconName.Menu}
-                  className='w-10 h-10 fill-primary layout_s:hidden'
-                  aria-hidden={true}
-                  focusable={false}
-                  title='Ouvrir le menu principal'
-                />
-              </button>
-            </nav>
+        <h2 className='text-m-bold text-primary text-center m-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
+          Messagerie
+        </h2>
+      </div>
 
-            <h2 className='text-m-bold text-primary text-center m-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
-              Messagerie
-            </h2>
-          </div>
+      <div className='mx-3'>
+        <AlerteDisplayer hideOnLargeScreen={true} />
+      </div>
 
-          <div className='mx-3'>
-            <AlerteDisplayer hideOnLargeScreen={true} />
-          </div>
+      <div
+        className='flex justify-center my-8 layout_s:hidden'
+        data-testid='form-chat'
+      >
+        <RechercheJeune onSearchFilterBy={filtrerConversations} />
+      </div>
 
-          <div
-            className='flex justify-center my-8 layout_s:hidden'
-            data-testid='form-chat'
-          >
-            <RechercheJeune onSearchFilterBy={filtrerConversations} />
-          </div>
+      <button
+        className='flex items-center text-primary bg-blanc rounded-large p-4 mb-2 mx-4'
+        onClick={onAccesListesDiffusion}
+      >
+        <IconComponent
+          name={IconName.People}
+          className='mr-2 h-6 w-6'
+          aria-hidden={true}
+          focusable={false}
+        />
+        <span className='grow text-left'>Listes de diffusion</span>
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='mr-2 h-6 w-6 fill-[currentColor]'
+          aria-label='Voir'
+          title='Voir'
+          focusable={false}
+        />
+      </button>
 
-          <button
-            className='flex items-center text-primary bg-blanc rounded-large p-4 mb-2 mx-4'
-            onClick={() => setShowListesDeDiffusion(true)}
-          >
-            <IconComponent
-              name={IconName.People}
-              className='mr-2 h-6 w-6'
-              aria-hidden={true}
-              focusable={false}
-            />
-            <span className='grow text-left'>Listes de diffusion</span>
-            <IconComponent
-              name={IconName.ChevronRight}
-              className='mr-2 h-6 w-6 fill-[currentColor]'
-              aria-label='Voir'
-              title='Voir'
-              focusable={false}
-            />
-          </button>
-
-          <ListeConversations
-            conversations={chatsFiltres}
-            onToggleFlag={toggleFlag}
-            onSelectConversation={(idChat) => setIdCurrentJeune(idChat)}
-          />
-        </aside>
-      )}
+      <ListeConversations
+        conversations={chatsFiltres}
+        onToggleFlag={toggleFlag}
+        onSelectConversation={onAccesConversation}
+      />
     </>
   )
 }

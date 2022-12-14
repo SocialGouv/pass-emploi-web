@@ -1,46 +1,23 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import {
-  mockedJeunesService,
-  mockedListesDeDiffusionService,
-  mockedMessagesService,
-} from 'fixtures/services'
-import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { JeunesService } from 'services/jeunes.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { mockedMessagesService } from 'fixtures/services'
+import { BaseJeune, JeuneChat } from 'interfaces/jeune'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('components/chat/Conversation', () =>
-  jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
-)
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 
 describe('<ChatRoom />', () => {
   const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
   let jeunesChats: JeuneChat[]
-  let jeunesService: JeunesService
   let messagesService: MessagesService
-  let listesDeDiffusionService: ListesDeDiffusionService
-  let conseillers: ConseillerHistorique[]
   beforeEach(async () => {
-    jeunesService = mockedJeunesService({
-      getConseillersDuJeuneClientSide: jest.fn((_) =>
-        Promise.resolve(conseillers)
-      ),
-    })
     messagesService = mockedMessagesService()
-    listesDeDiffusionService = mockedListesDeDiffusionService({
-      getListesDeDiffusionClientSide: jest.fn(async () =>
-        desListesDeDiffusion()
-      ),
-    })
     jeunesChats = [
       unJeuneChat({
         ...jeunes[0],
@@ -61,14 +38,21 @@ describe('<ChatRoom />', () => {
   })
 
   describe('quand le conseiller a des jeunes', () => {
+    let accederConversation: (idJeune: string) => void
     beforeEach(async () => {
-      renderWithContexts(<ChatRoom jeunesChats={jeunesChats} />, {
-        customDependances: {
-          jeunesService,
-          messagesService,
-          listesDeDiffusionService,
-        },
-      })
+      accederConversation = jest.fn()
+      renderWithContexts(
+        <ChatRoom
+          jeunesChats={jeunesChats}
+          showMenu={false}
+          onAccesConversation={accederConversation}
+          onAccesListesDiffusion={() => {}}
+          onOuvertureMenu={() => {}}
+        />,
+        {
+          customDependances: { messagesService },
+        }
+      )
     })
 
     it('affiche les alertes sur petit écran', () => {
@@ -96,8 +80,8 @@ describe('<ChatRoom />', () => {
     })
 
     describe('quand on sélectionne un jeune', () => {
-      const [jeuneSelectionne, jeunePasSelectionne] = jeunes
-      beforeEach(async () => {
+      it('affiche la conversation du jeune', async () => {
+        const [jeuneSelectionne] = jeunes
         // Given
         const goToConversation = screen
           .getByText(jeuneSelectionne.prenom, {
@@ -107,20 +91,10 @@ describe('<ChatRoom />', () => {
 
         // When
         await userEvent.click(goToConversation!)
-      })
 
-      it('affiche la conversation du jeune', async () => {
         // Then
-        expect(
-          screen.getByText(`conversation-${jeuneSelectionne.id}`)
-        ).toBeInTheDocument()
-      })
-
-      it("n'affiche pas les autres chats", async () => {
-        // Then
-        expect(() =>
-          screen.getByText(`conversation-${jeunePasSelectionne.id}`)
-        ).toThrow()
+        expect(accederConversation).toHaveBeenCalledTimes(1)
+        expect(accederConversation).toHaveBeenCalledWith(jeuneSelectionne.id)
       })
     })
 
@@ -148,72 +122,23 @@ describe('<ChatRoom />', () => {
         )
       })
     })
-
-    describe('listes de diffusion', () => {
-      it('permet d’accéder aux messages envoyés aux listes de diffusion', async () => {
-        // When
-        await userEvent.click(
-          screen.getByRole('button', {
-            name: 'Listes de diffusion Voir',
-          })
-        )
-
-        // Then
-        expect(
-          screen.getByRole('heading', {
-            level: 2,
-            name: 'Mes listes de diffusion',
-          })
-        ).toBeInTheDocument()
-      })
-
-      it('ne charge les listes de diffusion qu’une fois', async () => {
-        // When
-        await userEvent.click(
-          screen.getByRole('button', {
-            name: 'Listes de diffusion Voir',
-          })
-        )
-        await userEvent.click(
-          screen.getByRole('button', { name: 'Retour sur ma messagerie' })
-        )
-        await userEvent.click(
-          screen.getByRole('button', {
-            name: 'Listes de diffusion Voir',
-          })
-        )
-
-        // Then
-        expect(
-          listesDeDiffusionService.getListesDeDiffusionClientSide
-        ).toHaveBeenCalledTimes(1)
-      })
-    })
-  })
-
-  describe('réaction au contexte du jeune', () => {
-    it('affiche le chat du jeune courant', async () => {
-      // When
-      await act(async () => {
-        renderWithContexts(<ChatRoom jeunesChats={jeunesChats} />, {
-          customDependances: { jeunesService, messagesService },
-          customCurrentJeune: { id: jeunes[2].id },
-        })
-      })
-
-      // Then
-      expect(
-        screen.getByText(`conversation-${jeunes[2].id}`)
-      ).toBeInTheDocument()
-    })
   })
 
   describe("quand le conseiller n'a pas de jeunes", () => {
     it('affiche un message informatif', async () => {
       // When
-      renderWithContexts(<ChatRoom jeunesChats={[]} />, {
-        customDependances: { jeunesService, messagesService },
-      })
+      renderWithContexts(
+        <ChatRoom
+          jeunesChats={[]}
+          showMenu={false}
+          onAccesConversation={() => {}}
+          onAccesListesDiffusion={() => {}}
+          onOuvertureMenu={() => {}}
+        />,
+        {
+          customDependances: { messagesService },
+        }
+      )
 
       // Then
       expect(
@@ -225,12 +150,21 @@ describe('<ChatRoom />', () => {
   })
 
   // FIXME: mock le resizeWindow
-  describe('quand on est sur un écran à partir de 600 px', () => {
-    xit('affiche une barre de recherches pour filtrer les conversations avec les bénéficiaires', () => {
+  xdescribe('quand on est sur un écran à partir de 600 px', () => {
+    it('affiche une barre de recherches pour filtrer les conversations avec les bénéficiaires', () => {
       // Given
-      renderWithContexts(<ChatRoom jeunesChats={[]} />, {
-        customDependances: { jeunesService, messagesService },
-      })
+      renderWithContexts(
+        <ChatRoom
+          jeunesChats={jeunesChats}
+          showMenu={false}
+          onAccesConversation={() => {}}
+          onAccesListesDiffusion={() => {}}
+          onOuvertureMenu={() => {}}
+        />,
+        {
+          customDependances: { messagesService },
+        }
+      )
 
       // When
       resizeWindow(800)
