@@ -2,7 +2,7 @@ import React from 'react'
 
 import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
 import EmptyStateImage from 'assets/images/empty_state.svg'
-import { ChatRoomTile } from 'components/chat/ChatRoomTile'
+import { ConversationTile } from 'components/chat/ConversationTile'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
@@ -46,7 +46,7 @@ export default function ListeConversations({
             <ul className='px-4 pb-24'>
               {conversations.map((jeuneChat: JeuneChat) => (
                 <li key={`chat-${jeuneChat.id}`} className='mb-2'>
-                  <ChatRoomTile
+                  <ConversationTile
                     jeuneChat={jeuneChat}
                     id={`chat-${jeuneChat.id}`}
                     onClick={() => onSelectConversation(jeuneChat.id)}

@@ -183,7 +183,7 @@ export default function Conversation({
 
   return (
     <div className='h-full flex flex-col bg-grey_100 '>
-      <div className='flex items-center mx-4 my-6 short:hidden'>
+      <div className='flex items-center mx-4 pb-6 my-6 border-b border-grey_500 short:hidden'>
         <button
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
           onClick={onBack}
@@ -224,10 +224,9 @@ export default function Conversation({
           )}
         </button>
       </div>
-      <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />
 
       <div
-        className='p-4 flex-grow overflow-y-auto short:hidden'
+        className='p-4 grow overflow-y-auto short:hidden'
         aria-live='polite'
         aria-busy={!messagesByDay}
       >

@@ -8,7 +8,7 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
-import ChatContainer from 'components/layouts/ChatContainer'
+import ChatManager from 'components/layouts/ChatManager'
 import Footer from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
@@ -102,7 +102,7 @@ export default function Layout({ children }: LayoutProps) {
 
           <Footer />
         </div>
-        <ChatContainer
+        <ChatManager
           displayChat={withChat}
           setHasMessageNonLu={setHasMessageNonLu}
         />

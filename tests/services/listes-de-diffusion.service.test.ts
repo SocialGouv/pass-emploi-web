@@ -1,5 +1,8 @@
 import { ApiClient } from 'clients/api.client'
-import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
+import {
+  desListesDeDiffusion,
+  uneListeDeDiffusion,
+} from 'fixtures/listes-de-diffusion'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import {
   ListesDeDiffusionApiService,
@@ -23,22 +26,41 @@ describe('ListesDeDiffusionApiService', () => {
     listesDeDiffusionService = new ListesDeDiffusionApiService(apiClient)
   })
 
-  describe('.getListesDeDiffusion', () => {
+  describe('.getListesDeDiffusionClientSide', () => {
     it('renvoie les listes de diffusion du conseiller', async () => {
       // Given
-      const listesDeDiffusion: ListeDeDiffusion[] = [
-        uneListeDeDiffusion({ id: '1' }),
-        uneListeDeDiffusion({ id: '2' }),
-      ]
+      const listesDeDiffusion: ListeDeDiffusion[] = desListesDeDiffusion()
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: listesDeDiffusion,
       })
 
       // When
-      const actual = await listesDeDiffusionService.getListesDeDiffusion(
-        'idConseiller',
+      const actual =
+        await listesDeDiffusionService.getListesDeDiffusionClientSide()
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/conseillers/idConseiller/listes-de-diffusion',
         'accessToken'
       )
+      expect(actual).toEqual(listesDeDiffusion)
+    })
+  })
+
+  describe('.getListesDeDiffusionServerSide', () => {
+    it('renvoie les listes de diffusion du conseiller', async () => {
+      // Given
+      const listesDeDiffusion: ListeDeDiffusion[] = desListesDeDiffusion()
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: listesDeDiffusion,
+      })
+
+      // When
+      const actual =
+        await listesDeDiffusionService.getListesDeDiffusionServerSide(
+          'idConseiller',
+          'accessToken'
+        )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(

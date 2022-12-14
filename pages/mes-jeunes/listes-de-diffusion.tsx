@@ -181,10 +181,11 @@ export const getServerSideProps: GetServerSideProps<
     'listesDeDiffusionService'
   )
   const { user, accessToken } = sessionOrRedirect.session
-  const listesDeDiffusion = await listesDeDiffusionService.getListesDeDiffusion(
-    user.id,
-    accessToken
-  )
+  const listesDeDiffusion =
+    await listesDeDiffusionService.getListesDeDiffusionServerSide(
+      user.id,
+      accessToken
+    )
   return {
     props: {
       pageTitle: 'Listes de diffusion - Portefeuille',
