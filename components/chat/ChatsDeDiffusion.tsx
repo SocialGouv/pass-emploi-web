@@ -50,14 +50,17 @@ export default function ChatsDeDiffusion({
       )}
 
       {listesDeDiffusion && listesDeDiffusion.length > 0 && (
-        <div className='px-4 overflow-y-auto'>
+        <div className='h-full flex flex-col px-4'>
           <h3
             id='listes-de-diffusion'
             className='text-m-medium text-primary mb-4'
           >
             Listes ({listesDeDiffusion.length})
           </h3>
-          <ul aria-describedby='listes-de-diffusion'>
+          <ul
+            aria-describedby='listes-de-diffusion'
+            className='overflow-y-auto'
+          >
             {listesDeDiffusion.map((liste) => (
               <li
                 key={Math.random()}
