@@ -265,32 +265,18 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     newMessage,
   }: FormNouveauMessageGroupe) {
     const session = await getSession()
-    const now = DateTime.now()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
-    const nouveauMessage: CreateFirebaseMessage = {
-      idConseiller: session!.user.id,
-      message: encryptedMessage,
-      date: now,
-    }
-    let type: MessageType = 'MESSAGE_ENVOYE_MULTIPLE'
-    if (infoPieceJointe) {
-      nouveauMessage.infoPieceJointe = {
-        ...infoPieceJointe,
-        nom: this.chatCrypto.encryptWithCustomIv(
-          infoPieceJointe.nom,
-          cleChiffrement,
-          encryptedMessage.iv
-        ),
-      }
-      type = 'MESSAGE_ENVOYE_MULTIPLE_PJ'
-    }
 
-    await this.envoyerMessage(
-      idsDestinataires,
-      nouveauMessage,
-      type,
-      session!,
-      now
+    await this.apiClient.post(
+      '/messages',
+      {
+        message: encryptedMessage.encryptedText,
+        iv: encryptedMessage.iv,
+        idsBeneficiaires: idsDestinataires,
+        idConseiller: session!.user.id,
+        infoPieceJointe,
+      },
+      session!.accessToken
     )
   }
 
