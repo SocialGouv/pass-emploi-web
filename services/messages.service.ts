@@ -267,6 +267,18 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     const session = await getSession()
     const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
 
+    let encryptedPieceJointe
+    if (infoPieceJointe) {
+      encryptedPieceJointe = {
+        ...infoPieceJointe,
+        nom: this.chatCrypto.encryptWithCustomIv(
+          infoPieceJointe.nom,
+          cleChiffrement,
+          encryptedMessage.iv
+        ),
+      }
+    }
+
     await this.apiClient.post(
       '/messages',
       {
@@ -274,7 +286,9 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         iv: encryptedMessage.iv,
         idsBeneficiaires: idsDestinataires,
         idConseiller: session!.user.id,
-        infoPieceJointe,
+        infoPieceJointe: encryptedPieceJointe
+          ? encryptedPieceJointe
+          : undefined,
       },
       session!.accessToken
     )
