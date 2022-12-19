@@ -407,7 +407,7 @@ describe('MessagesFirebaseAndApiService', () => {
           idsBeneficiaires,
           message: `Encrypted: ${newMessageGroupe}`,
           iv: `IV: ${newMessageGroupe}`,
-          infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
+          infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
         },
         accessToken
       )
