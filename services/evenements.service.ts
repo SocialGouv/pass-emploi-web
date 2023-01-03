@@ -3,6 +3,12 @@ import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
 import {
+  uneListeDEvenementJson,
+  unEvenement,
+  unEvenementJson,
+} from 'fixtures/evenement'
+import { StructureConseiller } from 'interfaces/conseiller'
+import {
   AnimationCollective,
   Evenement,
   EvenementListItem,

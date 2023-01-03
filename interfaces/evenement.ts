@@ -51,6 +51,7 @@ export type Evenement = {
   adresse?: string
   organisme?: string
   statut?: StatutAnimationCollective
+  source?: string
 }
 
 export const TYPE_EVENEMENT = {
@@ -73,4 +74,8 @@ export function estAClore(animationCollective: Evenement) {
 
 export function estClos(animationCollective: Evenement) {
   return animationCollective.statut === 'Close'
+}
+
+export function estCreeParSiMILO(evenement: Evenement) {
+  return evenement.source === 'MILO'
 }

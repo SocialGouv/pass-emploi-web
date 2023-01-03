@@ -26,6 +26,7 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   estClos,
+  estCreeParSiMILO,
   Evenement,
   isCodeTypeAnimationCollective,
   TYPE_EVENEMENT,
@@ -550,7 +551,10 @@ export function EditionRdvForm({
               invalid={Boolean(titre.error)}
               onChange={(value: string) => setTitre({ value })}
               onBlur={validateTitre}
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
             />
 
             <Label htmlFor='description' withBulleMessageSensible={true}>
@@ -572,7 +576,10 @@ export function EditionRdvForm({
               onChange={(value: string) => setDescription({ value })}
               invalid={Boolean(description.error)}
               onBlur={validateDescription}
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
             />
           </Etape>
 
@@ -583,6 +590,7 @@ export function EditionRdvForm({
                   <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
                 </div>
               )}
+
             <BeneficiairesMultiselectAutocomplete
               beneficiaires={buildOptionsJeunes()}
               typeSelection='Bénéficiaires'
@@ -590,7 +598,10 @@ export function EditionRdvForm({
               onUpdate={updateIdsJeunes}
               error={idsJeunes.error}
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
               renderIndication={
                 evenement && estClos(evenement)
                   ? BeneficiaireIndicationPresent
@@ -605,7 +616,10 @@ export function EditionRdvForm({
               id='modalite'
               defaultValue={modalite}
               onChange={setModalite}
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
             >
               {modalites.map((md) => (
                 <option key={md} value={md}>
@@ -629,7 +643,10 @@ export function EditionRdvForm({
               onChange={(value: string) => setDate({ value })}
               onBlur={validateDate}
               invalid={Boolean(date.error)}
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
             />
 
             <Label htmlFor='horaire' inputRequired={true}>
@@ -650,7 +667,10 @@ export function EditionRdvForm({
               invalid={Boolean(horaire.error)}
               aria-invalid={horaire.error ? true : undefined}
               aria-describedby={horaire.error ? 'horaire--error' : undefined}
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
             />
 
             <Label htmlFor='duree' inputRequired={true}>
@@ -669,7 +689,10 @@ export function EditionRdvForm({
               onChange={(value: string) => setDuree({ value })}
               onBlur={validateDuree}
               invalid={Boolean(duree.error)}
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
             />
 
             <Label htmlFor='adresse'>
@@ -681,7 +704,10 @@ export function EditionRdvForm({
               defaultValue={adresse}
               onChange={setAdresse}
               icon='location'
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
             />
 
             <Label htmlFor='organisme'>
@@ -695,22 +721,26 @@ export function EditionRdvForm({
               id='organisme'
               defaultValue={organisme}
               onChange={setOrganisme}
-              disabled={evenement && estClos(evenement)}
+              disabled={
+                (evenement && estClos(evenement)) ||
+                (evenement && estCreeParSiMILO(evenement))
+              }
             />
           </Etape>
 
           <Etape numero={5} titre='Gestion des accès'>
-            {!conseillerIsCreator && (
-              <div className='mb-6'>
-                <InformationMessage
-                  content={`L’événement a été créé par un autre conseiller : ${
-                    evenement!.createur.prenom
-                  } ${
-                    evenement!.createur.nom
-                  }. Vous ne recevrez pas d'invitation dans votre agenda`}
-                />
-              </div>
-            )}
+            {!conseillerIsCreator ||
+              (evenement && !estCreeParSiMILO(evenement) && (
+                <div className='mb-6'>
+                  <InformationMessage
+                    content={`L’événement a été créé par un autre conseiller : ${
+                      evenement!.createur.prenom
+                    } ${
+                      evenement!.createur.nom
+                    }. Vous ne recevrez pas d'invitation dans votre agenda`}
+                  />
+                </div>
+              ))}
 
             <div className='flex items-center mb-8'>
               <div className='flex items-center'>
@@ -723,7 +753,8 @@ export function EditionRdvForm({
                   checked={isConseillerPresent}
                   disabled={
                     typeEntretienIndividuelConseillerSelected() ||
-                    (evenement && estClos(evenement))
+                    (evenement && estClos(evenement)) ||
+                    (evenement && estCreeParSiMILO(evenement))
                   }
                   onChange={handlePresenceConseiller}
                 />
@@ -745,7 +776,8 @@ export function EditionRdvForm({
             </div>
           </Etape>
 
-          {(!evenement || !estClos(evenement)) && (
+          {(!evenement ||
+            (!estClos(evenement) && !estCreeParSiMILO(evenement))) && (
             <div className='flex justify-center'>
               {!formHasChanges() && (
                 <ButtonLink

@@ -18,6 +18,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import {
   estAClore,
   estClos,
+  estCreeParSiMILO,
   Evenement,
   Modification,
   TypeEvenement,
@@ -241,6 +242,12 @@ function EditionRdv({
         />
       )}
 
+      {evenement && estCreeParSiMILO(evenement) && (
+        <div className='mb-6'>
+          <InformationMessage content='Pour modifier cet événement vous devez vous rendre dans le système d’information iMilo, il sera ensuite mis à jour dans la demi-heure' />
+        </div>
+      )}
+
       {aDesJeunesDUnAutrePortefeuille() && (
         <div className='mb-6'>
           <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
@@ -250,7 +257,7 @@ function EditionRdv({
       {evenement && (
         <>
           <div className='flex'>
-            {!estClos(evenement) && (
+            {!estClos(evenement) && !estCreeParSiMILO(evenement) && (
               <Button
                 style={ButtonStyle.SECONDARY}
                 onClick={handleDelete}
@@ -300,50 +307,59 @@ function EditionRdv({
               <dd className='text-base-bold'>{evenement.type.label}</dd>
 
               <div className='mt-2'>
-                <dt className='inline'>Créé par : </dt>
+                <dt className='inline'>Créé(e) par : </dt>
                 <dd className='inline text-s-bold'>
-                  {evenement.createur.prenom} {evenement.createur.nom}
+                  {estCreeParSiMILO(evenement) && 'Système d’information MILO'}
+                  {!estCreeParSiMILO(evenement) &&
+                    `${evenement.createur.prenom}  ${evenement.createur.nom}`}
                 </dd>
               </div>
             </div>
 
-            {historiqueModif && historiqueModif.length > 0 && (
-              <div className='mt-4 border border-solid border-grey_100 rounded-medium p-4'>
-                <dt className='text-base-bold'>Historique des modifications</dt>
-                <dd className='mt-2'>
-                  <ul>
-                    {historiqueModif.map(({ date, auteur }) => (
-                      <li key={date}>
-                        {toFrenchFormat(DateTime.fromISO(date), DATETIME_LONG)}{' '}
-                        :{' '}
-                        <span className='text-s-bold'>
-                          {auteur.prenom} {auteur.nom}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  {evenement.historique.length > 2 && (
-                    <button
-                      type='button'
-                      onClick={togglePlusHistorique}
-                      className='block ml-auto'
-                    >
-                      Voir {showPlusHistorique ? 'moins' : 'plus'}
-                      <IconComponent
-                        aria-hidden={true}
-                        focusable={false}
-                        name={
-                          showPlusHistorique
-                            ? IconName.ChevronUp
-                            : IconName.ChevronDown
-                        }
-                        className='inline h-4 w-4 fill-primary'
-                      />
-                    </button>
-                  )}
-                </dd>
-              </div>
-            )}
+            {!estCreeParSiMILO(evenement) &&
+              historiqueModif &&
+              historiqueModif.length > 0 && (
+                <div className='mt-4 border border-solid border-grey_100 rounded-medium p-4'>
+                  <dt className='text-base-bold'>
+                    Historique des modifications
+                  </dt>
+                  <dd className='mt-2'>
+                    <ul>
+                      {historiqueModif.map(({ date, auteur }) => (
+                        <li key={date}>
+                          {toFrenchFormat(
+                            DateTime.fromISO(date),
+                            DATETIME_LONG
+                          )}{' '}
+                          :{' '}
+                          <span className='text-s-bold'>
+                            {auteur.prenom} {auteur.nom}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {evenement.historique.length > 2 && (
+                      <button
+                        type='button'
+                        onClick={togglePlusHistorique}
+                        className='block ml-auto'
+                      >
+                        Voir {showPlusHistorique ? 'moins' : 'plus'}
+                        <IconComponent
+                          aria-hidden={true}
+                          focusable={false}
+                          name={
+                            showPlusHistorique
+                              ? IconName.ChevronUp
+                              : IconName.ChevronDown
+                          }
+                          className='inline h-4 w-4 fill-primary'
+                        />
+                      </button>
+                    )}
+                  </dd>
+                </div>
+              )}
           </dl>
         </>
       )}
@@ -464,7 +480,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     if (!evenement) return { notFound: true }
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
-    props.pageHeader = 'Modifier l’événement'
+    props.pageHeader = 'Détails de l’événement'
   } else if (idJeune) {
     props.idJeune = idJeune
   }
