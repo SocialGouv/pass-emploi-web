@@ -79,6 +79,7 @@ function EnvoiMessageGroupe({
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
+  // TODO suppr
   function buildOptionsBeneficiaires(): OptionBeneficiaire[] {
     const jeunesFormate = jeunes.map((jeune) => ({
       id: jeune.id,
@@ -214,7 +215,8 @@ function EnvoiMessageGroupe({
 
         <Etape numero={1} titre='Destinataires'>
           <BeneficiairesMultiselectAutocomplete
-            beneficiaires={buildOptionsBeneficiaires()}
+            beneficiaires={buildOptionsJeunes()}
+            listesDeDiffusion={listesDiffusion}
             typeSelection='Destinataires'
             onUpdate={setSelectedJeunesIds}
           />
