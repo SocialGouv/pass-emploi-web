@@ -4,6 +4,7 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import { getNomJeuneComplet } from 'interfaces/jeune'
 import {
   getListeInformations,
   ListeDeDiffusion,
@@ -67,19 +68,30 @@ export default function BeneficiairesMultiselectAutocomplete({
     }))
   }
 
-  function getListeDeDiffusion(value: string) {
+  function rechercheUnBeneficiaire(inputValue: string) {
+    return getBeneficiairesNonSelectionnes().find(
+      ({ value }) =>
+        value.localeCompare(inputValue, undefined, {
+          sensitivity: 'base',
+        }) === 0
+    )
+  }
+
+  function rechercheUneListeDeDiffusion(value: string) {
     return listesDeDiffusion.find(
       (uneListe: ListeDeDiffusion) => value === getListeInformations(uneListe)
     )
   }
 
   function buildOptions(): OptionBeneficiaire[] {
-    const beneficiairesNonSelectionnes = getBeneficiairesNonSelectionnes()
+    let beneficiairesNonSelectionnes = getBeneficiairesNonSelectionnes()
     if (!beneficiairesNonSelectionnes.length) return []
     if (listesDeDiffusion?.length) {
       const listeFormate: OptionBeneficiaire[] =
         getListesDeDiffusionNonSelectionnes()
-      return listeFormate.concat(beneficiairesNonSelectionnes)
+      beneficiairesNonSelectionnes = listeFormate.concat(
+        beneficiairesNonSelectionnes
+      )
     }
     return [
       {
@@ -93,43 +105,44 @@ export default function BeneficiairesMultiselectAutocomplete({
     return beneficiairesSelectionnes.concat(getBeneficiairesNonSelectionnes())
   }
 
+  function updateBeneficiairesSelectionnes(
+    option: OptionBeneficiaire | OptionBeneficiaire[]
+  ) {
+    const updatedBeneficiairesSelectionnes =
+      beneficiairesSelectionnes.concat(option)
+    setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
+    onUpdate(updatedBeneficiairesSelectionnes.map((selected) => selected.id))
+  }
+
   function selectBeneficiaire(inputValue: string) {
     if (disabled) return
 
-    console.log('--------------------------------------------')
-    console.log(inputValue)
-    console.log(getListeDeDiffusion(inputValue))
-
     if (inputValue === SELECT_ALL_BENEFICIAIRES_OPTION) {
-      const updatedBeneficiairesSelectionnes = selectAllBeneficiaires()
-      setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
-      onUpdate(updatedBeneficiairesSelectionnes.map((selected) => selected.id))
+      updateBeneficiairesSelectionnes(selectAllBeneficiaires())
       input.current!.value = ''
       return
     }
 
-    if (getListeDeDiffusion(inputValue)) {
-      setListesSelectionnes([
-        ...listesSelectionnes,
-        getListeDeDiffusion(inputValue),
-      ])
+    if (rechercheUneListeDeDiffusion(inputValue)) {
+      const uneListeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)
+      setListesSelectionnes([...listesSelectionnes, uneListeDeDiffusion])
+      const beneficiairesDeLaListe = uneListeDeDiffusion!.beneficiaires.map(
+        (beneficiaire) => ({
+          id: beneficiaire.id,
+          value: getNomJeuneComplet(beneficiaire),
+          estUneListe: false,
+        })
+      )
+      updateBeneficiairesSelectionnes(beneficiairesDeLaListe)
       input.current!.value = ''
       return
     }
 
-    // todo sortir les poeration pour liste et benefiiaires dans des methodes ext
-    const option = getBeneficiairesNonSelectionnes().find(
-      ({ value }) =>
-        value.localeCompare(inputValue, undefined, {
-          sensitivity: 'base',
-        }) === 0
-    )
+    const option = rechercheUnBeneficiaire(inputValue)
     if (option) {
-      const updatedBeneficiairesSelectionnes =
-        beneficiairesSelectionnes.concat(option)
-      setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
-      onUpdate(updatedBeneficiairesSelectionnes.map((selected) => selected.id))
+      updateBeneficiairesSelectionnes(option)
       input.current!.value = ''
+      return
     }
   }
 
