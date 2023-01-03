@@ -82,16 +82,17 @@ export function ResumeIndicateursJeune({
 
 function LienVersIndicateurs(props: { idJeune: string }) {
   return (
-    <Link href={`/mes-jeunes/${props.idJeune}/indicateurs`}>
-      <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'>
-        Voir plus d’indicateurs
-        <IconComponent
-          name={IconName.ChevronRight}
-          className='w-4 h-5 fill-[inherit]'
-          aria-hidden={true}
-          focusable={false}
-        />
-      </a>
+    <Link
+      href={`/mes-jeunes/${props.idJeune}/indicateurs`}
+      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'
+    >
+      Voir plus d’indicateurs
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-[inherit]'
+        aria-hidden={true}
+        focusable={false}
+      />
     </Link>
   )
 }

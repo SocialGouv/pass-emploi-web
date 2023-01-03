@@ -184,16 +184,17 @@ function BouttonSupprimerCompte(props: {
 
 function LienVersHistorique(props: { idJeune: string }) {
   return (
-    <Link href={`/mes-jeunes/${props.idJeune}/historique`}>
-      <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
-        Voir l’historique des conseillers
-        <IconComponent
-          name={IconName.ChevronRight}
-          className='w-4 h-5 fill-[inherit]'
-          aria-hidden={true}
-          focusable={false}
-        />
-      </a>
+    <Link
+      href={`/mes-jeunes/${props.idJeune}/historique`}
+      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
+    >
+      Voir l’historique des conseillers
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-[inherit]'
+        aria-hidden={true}
+        focusable={false}
+      />
     </Link>
   )
 }

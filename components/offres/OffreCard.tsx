@@ -35,20 +35,19 @@ export default function OffreCard({
       >
         {children}
 
-        <Link href={hrefDetail}>
-          <a
-            className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'
-            onClick={(e) => e.stopPropagation()}
-            aria-label={`Détail de l’offre ${titreLien}`}
-          >
-            Voir le détail
-            <IconComponent
-              name={IconName.ChevronRight}
-              className='w-4 h-4 mr-2 fill-primary'
-              focusable={false}
-              aria-hidden={true}
-            />
-          </a>
+        <Link
+          href={hrefDetail}
+          className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'
+          onClick={(e) => e.stopPropagation()}
+          aria-label={`Détail de l’offre ${titreLien}`}
+        >
+          Voir le détail
+          <IconComponent
+            name={IconName.ChevronRight}
+            className='w-4 h-4 mr-2 fill-primary'
+            focusable={false}
+            aria-hidden={true}
+          />
         </Link>
       </div>
 

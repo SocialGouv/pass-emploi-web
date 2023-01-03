@@ -80,10 +80,8 @@ export default function NavLink({
   return (
     <>
       {!isExternal && (
-        <Link href={href}>
-          <a className={linkStyle} onClick={onClick}>
-            {linkContent}
-          </a>
+        <Link href={href} className={linkStyle} onClick={onClick}>
+          {linkContent}
         </Link>
       )}
 

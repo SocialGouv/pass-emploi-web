@@ -22,8 +22,11 @@ export default function LienEvenement({
       <div
         className={`mt-4 w-max ml-auto text-s-regular text-primary_darken hover:text-primary`}
       >
-        <Link href={`/mes-jeunes/edition-rdv?idRdv=${infoEvenement.id}`}>
-          <a className='underline text-[inherit]'>Voir l’événement</a>
+        <Link
+          href={`/mes-jeunes/edition-rdv?idRdv=${infoEvenement.id}`}
+          className='underline text-[inherit]'
+        >
+          Voir l’événement
         </Link>
       </div>
     </div>
