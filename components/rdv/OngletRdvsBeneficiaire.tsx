@@ -30,16 +30,17 @@ export function OngletRdvsBeneficiaire({
             idConseiller={idConseiller}
             beneficiaireUnique={beneficiaire}
           />
-          <Link href={`/mes-jeunes/${beneficiaire.id}/rendez-vous-passes`}>
-            <a className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
-              Voir les événements passés
-              <IconComponent
-                name={IconName.ChevronRight}
-                className='w-4 h-5 fill-[inherit]'
-                aria-hidden={true}
-                focusable={false}
-              />
-            </a>
+          <Link
+            href={`/mes-jeunes/${beneficiaire.id}/rendez-vous-passes`}
+            className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
+          >
+            Voir les événements passés
+            <IconComponent
+              name={IconName.ChevronRight}
+              className='w-4 h-5 fill-[inherit]'
+              aria-hidden={true}
+              focusable={false}
+            />
           </Link>
         </>
       ) : (

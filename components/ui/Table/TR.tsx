@@ -16,18 +16,17 @@ export function TR(props: TRProps | TRLinkProps) {
   if (isLink(props)) {
     const { href, label, children } = props
     return (
-      <Link href={href}>
-        <a
-          role='row'
-          aria-label={label}
-          title={label}
-          className={`table-row ${style} ${clickableStyle}`}
-        >
-          {React.Children.map(
-            children,
-            (child) => child && React.cloneElement(child, { asDiv: true })
-          )}
-        </a>
+      <Link
+        href={href}
+        role='row'
+        aria-label={label}
+        title={label}
+        className={`table-row ${style} ${clickableStyle}`}
+      >
+        {React.Children.map(
+          children,
+          (child) => child && React.cloneElement(child, { asDiv: true })
+        )}
       </Link>
     )
   } else if (props.asDiv) {
