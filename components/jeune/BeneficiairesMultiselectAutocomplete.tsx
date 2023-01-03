@@ -126,13 +126,18 @@ export default function BeneficiairesMultiselectAutocomplete({
     if (rechercheUneListeDeDiffusion(inputValue)) {
       const uneListeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)
       setListesSelectionnes([...listesSelectionnes, uneListeDeDiffusion])
-      const beneficiairesDeLaListe = uneListeDeDiffusion!.beneficiaires.map(
-        (beneficiaire) => ({
-          id: beneficiaire.id,
-          value: getNomJeuneComplet(beneficiaire),
-          estUneListe: false,
+      const beneficiairesDeLaListe = uneListeDeDiffusion!.beneficiaires
+        .filter(
+          (beneficiaire) =>
+            !beneficiairesSelectionnes.find((one) => one.id === beneficiaire.id)
+        )
+        .map((beneficiaire) => {
+          return {
+            id: beneficiaire.id,
+            value: getNomJeuneComplet(beneficiaire),
+            estUneListe: false,
+          }
         })
-      )
       updateBeneficiairesSelectionnes(beneficiairesDeLaListe)
       input.current!.value = ''
       return
