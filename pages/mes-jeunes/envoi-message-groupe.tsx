@@ -79,21 +79,6 @@ function EnvoiMessageGroupe({
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
-  // TODO suppr
-  function buildOptionsBeneficiaires(): OptionBeneficiaire[] {
-    const jeunesFormate = jeunes.map((jeune) => ({
-      id: jeune.id,
-      value: getNomJeuneComplet(jeune),
-      estUneListe: false,
-    }))
-    const listeFormate = listesDiffusion.map((uneListeDeDiffusion) => ({
-      id: uneListeDeDiffusion.id,
-      value: getListeInformations(uneListeDeDiffusion),
-      estUneListe: true,
-    }))
-    return listeFormate.concat(jeunesFormate)
-  }
-
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return jeunes.map((jeune) => ({
       id: jeune.id,

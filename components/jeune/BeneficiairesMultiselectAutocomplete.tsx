@@ -124,7 +124,7 @@ export default function BeneficiairesMultiselectAutocomplete({
     }
 
     if (rechercheUneListeDeDiffusion(inputValue)) {
-      const uneListeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)
+      const uneListeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)!
       setListesSelectionnes([...listesSelectionnes, uneListeDeDiffusion])
       const beneficiairesDeLaListe = uneListeDeDiffusion!.beneficiaires
         .filter(
@@ -151,11 +151,22 @@ export default function BeneficiairesMultiselectAutocomplete({
     }
   }
 
-  function deselectionnerBeneficiaire(idBeneficiaire: string) {
+  function deselectionnerBeneficiaire(id: string) {
     if (disabled) return
 
+    const indexListe = listesSelectionnes.findIndex(
+      (uneListeSelectionne) => uneListeSelectionne.id === id
+    )
+
+    if (indexListe > -1) {
+      const updatedListesSelectionnes = [...listesSelectionnes]
+      updatedListesSelectionnes.splice(indexListe, 1)
+      setListesSelectionnes(updatedListesSelectionnes)
+      onUpdate(beneficiairesSelectionnes.map((selected) => selected.id))
+    }
+
     const indexBeneficiaire = beneficiairesSelectionnes.findIndex(
-      (j) => j.id === idBeneficiaire
+      (j) => j.id === id
     )
     if (indexBeneficiaire > -1) {
       const updatedBeneficiairesSelectionnes = [...beneficiairesSelectionnes]
