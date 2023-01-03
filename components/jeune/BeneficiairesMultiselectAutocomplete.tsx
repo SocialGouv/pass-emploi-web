@@ -4,6 +4,7 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import listesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
 
 interface BeneficiairesMultiselectAutocompleteProps {
   beneficiaires: OptionBeneficiaire[]
@@ -22,6 +23,7 @@ export interface OptionBeneficiaire {
   id: string
   value: string
   avecIndication?: boolean
+  estUneListe?: boolean
 }
 
 export default function BeneficiairesMultiselectAutocomplete({
@@ -45,6 +47,13 @@ export default function BeneficiairesMultiselectAutocomplete({
     )
   }
 
+  function estUneListeDeDiffusion(value: string) {
+    return beneficiaires.find(
+      (uneListe: OptionBeneficiaire) =>
+        uneListe.estUneListe && value === uneListe.value
+    )
+  }
+
   function buildOptions(): OptionBeneficiaire[] {
     const beneficiairesNonSelectionnes = getBeneficiairesNonSelectionnes()
     if (!beneficiairesNonSelectionnes.length) return []
@@ -62,6 +71,10 @@ export default function BeneficiairesMultiselectAutocomplete({
 
   function selectBeneficiaire(inputValue: string) {
     if (disabled) return
+
+    console.log('--------------------------------------------')
+    console.log(inputValue)
+    console.log(estUneListeDeDiffusion(inputValue))
 
     if (inputValue === SELECT_ALL_BENEFICIAIRES_OPTION) {
       const updatedBeneficiairesSelectionnes = selectAllBeneficiaires()
@@ -136,10 +149,11 @@ export default function BeneficiairesMultiselectAutocomplete({
       {beneficiairesSelectionnes.length > 0 && (
         <Multiselection
           selection={beneficiairesSelectionnes.map(
-            ({ id, value, avecIndication = false }) => ({
+            ({ id, value, avecIndication = false, estUneListe = false }) => ({
               id,
               value,
               avecIndication: avecIndication,
+              estUneListe: estUneListe,
             })
           )}
           typeSelection='beneficiaire'

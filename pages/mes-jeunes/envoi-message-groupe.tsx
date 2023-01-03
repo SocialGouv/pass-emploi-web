@@ -24,10 +24,15 @@ import {
   compareJeunesByNom,
   getNomJeuneComplet,
 } from 'interfaces/jeune'
+import {
+  getListeInformations,
+  ListeDeDiffusion,
+} from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
+import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import {
   FormNouveauMessageGroupe,
   MessagesService,
@@ -43,10 +48,15 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface EnvoiMessageGroupeProps extends PageProps {
   jeunes: BaseJeune[]
+  listesDiffusion: ListeDeDiffusion[]
   returnTo: string
 }
 
-function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
+function EnvoiMessageGroupe({
+  jeunes,
+  listesDiffusion,
+  returnTo,
+}: EnvoiMessageGroupeProps) {
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
@@ -68,6 +78,20 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+
+  function buildOptionsBeneficiaires(): OptionBeneficiaire[] {
+    const jeunesFormate = jeunes.map((jeune) => ({
+      id: jeune.id,
+      value: getNomJeuneComplet(jeune),
+      estUneListe: false,
+    }))
+    const listeFormate = listesDiffusion.map((uneListeDeDiffusion) => ({
+      id: uneListeDeDiffusion.id,
+      value: getListeInformations(uneListeDeDiffusion),
+      estUneListe: true,
+    }))
+    return listeFormate.concat(jeunesFormate)
+  }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return jeunes.map((jeune) => ({
@@ -190,7 +214,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
         <Etape numero={1} titre='Destinataires'>
           <BeneficiairesMultiselectAutocomplete
-            beneficiaires={buildOptionsJeunes()}
+            beneficiaires={buildOptionsBeneficiaires()}
             typeSelection='Destinataires'
             onUpdate={setSelectedJeunesIds}
           />
@@ -325,6 +349,9 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
+  const listesDeDiffusionService = withDependance<ListesDeDiffusionService>(
+    'listesDeDiffusionService'
+  )
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
@@ -334,6 +361,12 @@ export const getServerSideProps: GetServerSideProps<
     accessToken
   )
 
+  const listesDeDiffusion =
+    await listesDeDiffusionService.getListesDeDiffusionServerSide(
+      user.id,
+      accessToken
+    )
+
   const referer: string | undefined = context.req.headers.referer
 
   const previousUrl =
@@ -341,6 +374,7 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByNom),
+      listesDiffusion: listesDeDiffusion,
       withoutChat: true,
       pageTitle: 'Message multi-destinataires',
       returnTo: previousUrl,

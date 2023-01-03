@@ -4,6 +4,23 @@ type BeneficiaireIndicationProps = {
   value: string
 }
 
+export function BeneficiaireListeItem({ value }: BeneficiaireIndicationProps) {
+  // TODO à definir l'info label
+  const infoLabel = 'TODO à definir'
+  return (
+    <div className='flex items-center'>
+      <IconComponent
+        name={IconName.People}
+        focusable={false}
+        aria-label={infoLabel}
+        className='w-6 h-6 fill-primary mr-2'
+        title={infoLabel}
+      />
+      {value}
+    </div>
+  )
+}
+
 export function BeneficiaireIndicationPortefeuille({
   value,
 }: BeneficiaireIndicationProps) {

@@ -4,17 +4,24 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
+import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
   mockedFichiersService,
   mockedJeunesService,
+  mockedListesDeDiffusionService,
   mockedMessagesService,
 } from 'fixtures/services'
 import { JeuneFromListe } from 'interfaces/jeune'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
+import listesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
+import ListesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
+import { JeunesService } from 'services/jeunes.service'
+import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -28,6 +35,7 @@ jest.mock('utils/injectionDependances/withDependance')
 describe('EnvoiMessageGroupe', () => {
   describe('client side', () => {
     let jeunes: JeuneFromListe[]
+    let listesDeDiffusion: ListeDeDiffusion[]
     let messagesService: MessagesService
     let fichiersService: FichiersService
     let inputSearchJeune: HTMLSelectElement
@@ -43,6 +51,7 @@ describe('EnvoiMessageGroupe', () => {
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
       jeunes = desItemsJeunes()
+      listesDeDiffusion = desListesDeDiffusion()
 
       messagesService = mockedMessagesService({
         sendNouveauMessageGroupe: jest.fn(() => {
@@ -59,6 +68,7 @@ describe('EnvoiMessageGroupe', () => {
         <EnvoiMessageGroupe
           pageTitle={''}
           jeunes={jeunes}
+          listesDiffusion={listesDeDiffusion}
           withoutChat={true}
           returnTo='/mes-jeunes'
         />,
@@ -354,6 +364,9 @@ describe('EnvoiMessageGroupe', () => {
 
     describe("quand l'utilisateur est connecté", () => {
       let jeunes: JeuneFromListe[]
+      let listesDeDiffusion: ListeDeDiffusion[]
+      let jeunesService: JeunesService
+      let listesDeDiffusionService: ListesDeDiffusionService
       beforeEach(() => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -364,10 +377,20 @@ describe('EnvoiMessageGroupe', () => {
           },
         })
         jeunes = desItemsJeunes()
-        const jeunesService = mockedJeunesService({
+        listesDeDiffusion = desListesDeDiffusion()
+        jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn(async () => jeunes),
         })
-        ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
+        listesDeDiffusionService = mockedListesDeDiffusionService({
+          getListesDeDiffusionServerSide: jest.fn(
+            async () => listesDeDiffusion
+          ),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'jeunesService') return jeunesService
+          if (dependance === 'listesDeDiffusionService')
+            return listesDeDiffusionService
+        })
       })
 
       it('récupère la liste des jeunes du conseiller', async () => {
@@ -377,9 +400,34 @@ describe('EnvoiMessageGroupe', () => {
         } as GetServerSidePropsContext)
 
         // Then
+        expect(
+          jeunesService.getJeunesDuConseillerServerSide
+        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
         expect(actual).toEqual({
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
+            listesDiffusion: listesDeDiffusion,
+            withoutChat: true,
+            pageTitle: 'Message multi-destinataires',
+            returnTo: 'http://localhost:3000/agenda',
+          },
+        })
+      })
+
+      it('récupère les listes de diffusion du conseiller', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: { referer: 'http://localhost:3000/agenda' } },
+        } as GetServerSidePropsContext)
+
+        // Then
+        expect(
+          listesDeDiffusionService.getListesDeDiffusionServerSide
+        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
+        expect(actual).toEqual({
+          props: {
+            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
+            listesDiffusion: listesDeDiffusion,
             withoutChat: true,
             pageTitle: 'Message multi-destinataires',
             returnTo: 'http://localhost:3000/agenda',
@@ -402,6 +450,7 @@ describe('EnvoiMessageGroupe', () => {
         expect(actual).toEqual({
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
+            listesDiffusion: listesDeDiffusion,
             withoutChat: true,
             pageTitle: 'Message multi-destinataires',
             returnTo: '/mes-jeunes',

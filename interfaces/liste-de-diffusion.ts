@@ -9,3 +9,7 @@ export type ListeDeDiffusion = {
     }
   >
 }
+
+export function getListeInformations(l: ListeDeDiffusion): string {
+  return `${l.titre} (${l.beneficiaires.length})`
+}
