@@ -199,6 +199,18 @@ export default function BeneficiairesMultiselectAutocomplete({
     return listesFormate.concat(beneficiairesFormate)
   }
 
+  function countBeneficiairesUniques() {
+    const idsBeneficiaires = beneficiairesSelectionnes
+      .map(({ id }) => id)
+      .concat(
+        listesSelectionnes.flatMap(({ beneficiaires }) =>
+          beneficiaires.map((beneficiaire) => beneficiaire.id)
+        )
+      )
+
+    return new Set(idsBeneficiaires).size
+  }
+
   return (
     <>
       <Label htmlFor='select-beneficiaires' inputRequired={required}>
@@ -225,16 +237,15 @@ export default function BeneficiairesMultiselectAutocomplete({
       />
 
       <p
-        aria-label={`${typeSelection} sélectionnés (${beneficiairesSelectionnes.length})`}
+        aria-label={`${typeSelection} sélectionnés (${countBeneficiairesUniques()})`}
         id='selected-beneficiaires--title'
         className='text-base-medium mb-2'
         aria-live='polite'
       >
-        {typeSelection} ({beneficiairesSelectionnes.length})
+        {typeSelection} ({countBeneficiairesUniques()})
       </p>
 
-      {(beneficiairesSelectionnes.length > 0 ||
-        listesSelectionnes.length > 0) && (
+      {countBeneficiairesUniques() > 0 && (
         <Multiselection
           selection={beneficiairesEtListesSelectionne()}
           typeSelection='beneficiaire'
