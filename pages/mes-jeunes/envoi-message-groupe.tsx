@@ -132,6 +132,7 @@ function EnvoiMessageGroupe({
       if (pieceJointe) {
         fileInfo = await fichiersService.uploadFichier(
           selectedJeunesIds,
+          selectedListesIds,
           pieceJointe
         )
       }
@@ -150,6 +151,7 @@ function EnvoiMessageGroupe({
     try {
       const formNouveauMessage: FormNouveauMessageGroupe = {
         idsDestinataires: selectedJeunesIds,
+        idsListesDeDiffusion: selectedListesIds,
         newMessage:
           message ||
           'Votre conseiller vous a transmis une nouvelle pièce jointe : ',

@@ -362,10 +362,12 @@ describe('MessagesFirebaseAndApiService', () => {
 
   describe('.sendNouveauMessageGroupe', () => {
     let idsBeneficiaires: string[]
+    let idsListesDeDiffusion: string[]
     let newMessageGroupe: string
     beforeEach(async () => {
       // Given
       idsBeneficiaires = desItemsJeunes().map(({ id }) => id)
+      idsListesDeDiffusion = ['liste-1', 'liste-2']
       newMessageGroupe = 'nouveau message groupé'
     })
 
@@ -373,6 +375,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // When
       await messagesService.sendNouveauMessageGroupe({
         idsDestinataires: idsBeneficiaires,
+        idsListesDeDiffusion,
         newMessage: newMessageGroupe,
         cleChiffrement,
       })
@@ -383,6 +386,7 @@ describe('MessagesFirebaseAndApiService', () => {
         {
           idConseiller: 'id-conseiller',
           idsBeneficiaires,
+          idsListesDeDiffusion,
           message: `Encrypted: ${newMessageGroupe}`,
           iv: `IV: ${newMessageGroupe}`,
         },
@@ -394,6 +398,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // When
       await messagesService.sendNouveauMessageGroupe({
         idsDestinataires: idsBeneficiaires,
+        idsListesDeDiffusion,
         newMessage: newMessageGroupe,
         cleChiffrement,
         infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
@@ -405,6 +410,7 @@ describe('MessagesFirebaseAndApiService', () => {
         {
           idConseiller: 'id-conseiller',
           idsBeneficiaires,
+          idsListesDeDiffusion,
           message: `Encrypted: ${newMessageGroupe}`,
           iv: `IV: ${newMessageGroupe}`,
           infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },

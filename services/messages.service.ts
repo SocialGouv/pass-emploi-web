@@ -32,6 +32,7 @@ export type FormNouveauMessageIndividuel = FormNouveauMessage & {
 }
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
   idsDestinataires: string[]
+  idsListesDeDiffusion: string[]
 }
 
 type FormPartageOffre = {
@@ -261,6 +262,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   async sendNouveauMessageGroupe({
     cleChiffrement,
     idsDestinataires,
+    idsListesDeDiffusion,
     infoPieceJointe,
     newMessage,
   }: FormNouveauMessageGroupe) {
@@ -285,6 +287,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         message: encryptedMessage.encryptedText,
         iv: encryptedMessage.iv,
         idsBeneficiaires: idsDestinataires,
+        idsListesDeDiffusion,
         idConseiller: session!.user.id,
         infoPieceJointe: encryptedPieceJointe
           ? encryptedPieceJointe

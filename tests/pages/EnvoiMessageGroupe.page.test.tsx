@@ -138,16 +138,18 @@ describe('EnvoiMessageGroupe', () => {
         // Given
         newMessage = 'Un nouveau message pour plusieurs destinataires'
 
-        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
         await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        await userEvent.type(inputSearchJeune, 'Liste export international (1)')
         await userEvent.type(inputMessage, newMessage)
       })
 
       it('sélectionne plusieurs jeunes dans la liste', () => {
         // Then
-        expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
-        expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
         expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
+        expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
+        expect(
+          screen.getByText('Liste export international (1)')
+        ).toBeInTheDocument()
       })
 
       it('envoi un message à plusieurs destinataires', async () => {
@@ -157,7 +159,8 @@ describe('EnvoiMessageGroupe', () => {
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(0)
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[0].id, jeunes[1].id],
+          idsDestinataires: [jeunes[1].id],
+          idsListesDeDiffusion: ['liste-1'],
           newMessage,
           cleChiffrement: 'cleChiffrement',
         })
@@ -249,8 +252,8 @@ describe('EnvoiMessageGroupe', () => {
           type: 'image/png',
         })
 
-        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
         await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        await userEvent.type(inputSearchJeune, 'Liste export international (1)')
         await userEvent.type(inputMessage, newMessage)
         await userEvent.upload(fileInput, file, { applyAccept: false })
       })
@@ -276,11 +279,13 @@ describe('EnvoiMessageGroupe', () => {
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
-          [jeunes[0].id, jeunes[1].id],
+          [jeunes[1].id],
+          ['liste-1'],
           file
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[0].id, jeunes[1].id],
+          idsDestinataires: [jeunes[1].id],
+          idsListesDeDiffusion: ['liste-1'],
           newMessage,
           cleChiffrement: 'cleChiffrement',
           infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
@@ -296,11 +301,13 @@ describe('EnvoiMessageGroupe', () => {
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
-          [jeunes[0].id, jeunes[1].id],
+          [jeunes[1].id],
+          ['liste-1'],
           file
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[0].id, jeunes[1].id],
+          idsDestinataires: [jeunes[1].id],
+          idsListesDeDiffusion: ['liste-1'],
           newMessage:
             'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
           cleChiffrement: 'cleChiffrement',
