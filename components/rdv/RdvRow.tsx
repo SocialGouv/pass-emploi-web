@@ -5,6 +5,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import TD from 'components/ui/Table/TD'
 import { TR } from 'components/ui/Table/TR'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import {
@@ -41,6 +42,19 @@ export function RdvRow({
     ? getNomJeuneComplet(beneficiaireUnique)
     : rdv.labelBeneficiaires
 
+  function getRdvIconName(rdv: EvenementListItem) {
+    if (rdv.source === StructureConseiller.MILO) {
+      switch (rdv.type) {
+        case 'Atelier':
+        case 'Entretien individuel conseiller':
+          return IconName.Lock
+        case undefined:
+        default:
+          return undefined
+      }
+    }
+  }
+
   return (
     <TR
       href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
@@ -57,7 +71,11 @@ export function RdvRow({
       {!beneficiaireUnique && <TD>{rdv.labelBeneficiaires}</TD>}
 
       <TD>
-        <DataTag text={rdv.type} />
+        <DataTag
+          text={rdv.type}
+          iconName={getRdvIconName(rdv)}
+          iconLabel='Non modifiable'
+        />
       </TD>
 
       <TD>

@@ -40,6 +40,7 @@ import InfoOutlineIcon from 'assets/icons/information_outline.svg'
 import KoIcon from 'assets/icons/ko.svg'
 import LaunchIcon from 'assets/icons/launch.svg'
 import LocationIcon from 'assets/icons/location.svg'
+import LockIcon from 'assets/icons/lock.svg'
 import LogoutIcon from 'assets/icons/logout.svg'
 import MenuIcon from 'assets/icons/menu.svg'
 import NoteIcon from 'assets/icons/note.svg'
@@ -102,6 +103,7 @@ export enum IconName {
   Ko = 'Ko',
   Launch = 'Launch',
   Location = 'Location',
+  Lock = 'Lock',
   Logout = 'Logout',
   Menu = 'Menu',
   Note = 'Note',
@@ -164,6 +166,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Ko]: KoIcon,
   [IconName.Launch]: LaunchIcon,
   [IconName.Location]: LocationIcon,
+  [IconName.Lock]: LockIcon,
   [IconName.Logout]: LogoutIcon,
   [IconName.Menu]: MenuIcon,
   [IconName.Note]: NoteIcon,

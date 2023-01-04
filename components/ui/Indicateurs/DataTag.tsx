@@ -6,9 +6,15 @@ interface DataTagProps {
   text: string
   iconName?: IconName
   className?: string
+  iconLabel?: string
 }
 
-export function DataTag({ text, iconName, className }: DataTagProps) {
+export function DataTag({
+  text,
+  iconName,
+  className,
+  iconLabel,
+}: DataTagProps) {
   return (
     <span
       className={`inline-flex items-center bg-primary_lighten border border-solid border-primary rounded-x_large ${
@@ -18,8 +24,10 @@ export function DataTag({ text, iconName, className }: DataTagProps) {
       {iconName && (
         <IconComponent
           name={iconName}
-          aria-hidden={true}
+          aria-hidden={iconLabel ? false : true}
           focusable={false}
+          aria-label={iconLabel}
+          title={iconLabel}
           className='inline w-4 h-4 fill-[currentColor] mr-1'
         />
       )}

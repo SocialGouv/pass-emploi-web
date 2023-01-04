@@ -6,6 +6,7 @@ import {
   uneListeDEvenementJson,
   unEvenement,
   unEvenementJson,
+  unEvenementListItem,
 } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
