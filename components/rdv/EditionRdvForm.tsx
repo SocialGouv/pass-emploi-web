@@ -250,15 +250,20 @@ export function EditionRdvForm({
     }
   }
 
-  function updateIdsJeunes(selectedIds: string[]) {
+  function updateIdsJeunes(selectedIds: {
+    beneficiaires?: string[]
+    listesDeDiffusion?: string[]
+  }) {
     setIdsJeunes({
-      value: selectedIds,
-      error: !beneficiairesAreValid(selectedIds)
+      value: selectedIds.beneficiaires!,
+      error: !beneficiairesAreValid(selectedIds.beneficiaires!)
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
     onBeneficiairesDUnAutrePortefeuille(
-      selectedIds.some((id) => !estUnBeneficiaireDuConseiller(id))
+      selectedIds.beneficiaires!.some(
+        (id) => !estUnBeneficiaireDuConseiller(id)
+      )
     )
   }
 

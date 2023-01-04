@@ -63,10 +63,13 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
     }))
   }
 
-  function updateIdsDestinataires(selectedIds: string[]) {
+  function updateIdsDestinataires(selectedIds: {
+    beneficiaires?: string[]
+    listesDeDiffusion?: string[]
+  }) {
     setIdsDestinataires({
-      value: selectedIds,
-      error: !selectedIds.length
+      value: selectedIds.beneficiaires!,
+      error: !selectedIds.beneficiaires!.length
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
