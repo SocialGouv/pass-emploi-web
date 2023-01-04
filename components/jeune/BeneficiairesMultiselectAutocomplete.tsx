@@ -178,22 +178,20 @@ export default function BeneficiairesMultiselectAutocomplete({
   }
 
   function beneficiairesEtListesSelectionne() {
-    const beneficiairesFormate: OptionBeneficiaire[] =
-      beneficiairesSelectionnes.map(
-        ({ id, value, avecIndication = false }) => ({
-          id,
-          value,
-          avecIndication: avecIndication,
-          estUneListe: false,
-        })
-      )
-    const listesFormate: OptionBeneficiaire[] = listesSelectionnes.map(
-      (uneListeDeDiffusion) => ({
-        id: uneListeDeDiffusion.id,
-        value: getListeInformations(uneListeDeDiffusion),
-        estUneListe: true,
+    const beneficiairesFormate = beneficiairesSelectionnes.map(
+      ({ id, value, avecIndication = false }) => ({
+        id,
+        value,
+        avecIndication,
+        estUneListe: false,
       })
     )
+    const listesFormate = listesSelectionnes.map((liste) => ({
+      id: liste.id,
+      value: getListeInformations(liste),
+      avecIndication: false,
+      estUneListe: true,
+    }))
 
     return listesFormate.concat(beneficiairesFormate)
   }

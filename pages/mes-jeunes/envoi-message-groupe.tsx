@@ -276,6 +276,7 @@ function EnvoiMessageGroupe({
                       id: pieceJointe.name,
                       value: pieceJointe.name,
                       avecIndication: false,
+                      estUneListe: false,
                     },
                   ]}
                   typeSelection='fichier'
