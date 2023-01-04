@@ -4,7 +4,6 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
-import { getNomJeuneComplet } from 'interfaces/jeune'
 import {
   getListeInformations,
   ListeDeDiffusion,
@@ -14,7 +13,10 @@ interface BeneficiairesMultiselectAutocompleteProps {
   beneficiaires: OptionBeneficiaire[]
   listesDeDiffusion?: ListeDeDiffusion[]
   typeSelection: string
-  onUpdate: (selectedIds: string[]) => void
+  onUpdate: (selectedIds: {
+    beneficiaires?: string[]
+    listesDeDiffusion?: string[]
+  }) => void
   required?: boolean
   defaultBeneficiaires?: OptionBeneficiaire[]
   error?: string
@@ -111,7 +113,11 @@ export default function BeneficiairesMultiselectAutocomplete({
     const updatedBeneficiairesSelectionnes =
       beneficiairesSelectionnes.concat(option)
     setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
-    onUpdate(updatedBeneficiairesSelectionnes.map((selected) => selected.id))
+    onUpdate({
+      beneficiaires: updatedBeneficiairesSelectionnes.map(
+        (selected) => selected.id
+      ),
+    })
   }
 
   function selectBeneficiaire(inputValue: string) {
@@ -126,19 +132,9 @@ export default function BeneficiairesMultiselectAutocomplete({
     if (rechercheUneListeDeDiffusion(inputValue)) {
       const uneListeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)!
       setListesSelectionnes([...listesSelectionnes, uneListeDeDiffusion])
-      const beneficiairesDeLaListe = uneListeDeDiffusion!.beneficiaires
-        .filter(
-          (beneficiaire) =>
-            !beneficiairesSelectionnes.find((one) => one.id === beneficiaire.id)
-        )
-        .map((beneficiaire) => {
-          return {
-            id: beneficiaire.id,
-            value: getNomJeuneComplet(beneficiaire),
-            estUneListe: false,
-          }
-        })
-      updateBeneficiairesSelectionnes(beneficiairesDeLaListe)
+      onUpdate({
+        listesDeDiffusion: listesSelectionnes.map((selected) => selected.id),
+      })
       input.current!.value = ''
       return
     }
@@ -162,7 +158,9 @@ export default function BeneficiairesMultiselectAutocomplete({
       const updatedListesSelectionnes = [...listesSelectionnes]
       updatedListesSelectionnes.splice(indexListe, 1)
       setListesSelectionnes(updatedListesSelectionnes)
-      onUpdate(beneficiairesSelectionnes.map((selected) => selected.id))
+      onUpdate({
+        listesDeDiffusion: listesSelectionnes.map((selected) => selected.id),
+      })
     }
 
     const indexBeneficiaire = beneficiairesSelectionnes.findIndex(
@@ -172,7 +170,11 @@ export default function BeneficiairesMultiselectAutocomplete({
       const updatedBeneficiairesSelectionnes = [...beneficiairesSelectionnes]
       updatedBeneficiairesSelectionnes.splice(indexBeneficiaire, 1)
       setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
-      onUpdate(updatedBeneficiairesSelectionnes.map((selected) => selected.id))
+      onUpdate({
+        beneficiaires: updatedBeneficiairesSelectionnes.map(
+          (selected) => selected.id
+        ),
+      })
     }
   }
 
@@ -230,7 +232,9 @@ export default function BeneficiairesMultiselectAutocomplete({
       >
         {typeSelection} ({beneficiairesSelectionnes.length})
       </p>
-      {beneficiairesSelectionnes.length > 0 && (
+
+      {(beneficiairesSelectionnes.length > 0 ||
+        listesSelectionnes.length > 0) && (
         <Multiselection
           selection={beneficiairesEtListesSelectionne()}
           typeSelection='beneficiaire'

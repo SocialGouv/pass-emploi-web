@@ -24,10 +24,7 @@ import {
   compareJeunesByNom,
   getNomJeuneComplet,
 } from 'interfaces/jeune'
-import {
-  getListeInformations,
-  ListeDeDiffusion,
-} from 'interfaces/liste-de-diffusion'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
@@ -64,6 +61,7 @@ function EnvoiMessageGroupe({
   const [_, setAlerte] = useAlerte()
 
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
+  const [selectedListesIds, setSelectedListesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
   const [pieceJointe, setPieceJointe] = useState<File | undefined>()
   const [isSending, setIsSending] = useState<boolean>(false)
@@ -87,11 +85,19 @@ function EnvoiMessageGroupe({
   }
 
   function formIsValid(): boolean {
-    return Boolean(selectedJeunesIds.length && (message || pieceJointe))
+    return Boolean(
+      (selectedJeunesIds.length || selectedListesIds.length) &&
+        (message || pieceJointe)
+    )
   }
 
   function formHasChanges(): boolean {
-    return Boolean(selectedJeunesIds.length || message || pieceJointe)
+    return Boolean(
+      selectedJeunesIds.length ||
+        selectedListesIds.length ||
+        message ||
+        pieceJointe
+    )
   }
 
   function openLeavePageConfirmationModal(e?: MouseEvent) {
@@ -187,6 +193,15 @@ function EnvoiMessageGroupe({
     setPieceJointe(undefined)
   }
 
+  function updateDestinataires(selectedIds: {
+    beneficiaires?: string[]
+    listesDeDiffusion?: string[]
+  }) {
+    const { beneficiaires, listesDeDiffusion } = selectedIds
+    if (beneficiaires) setSelectedJeunesIds(beneficiaires)
+    if (listesDeDiffusion) setSelectedListesIds(listesDeDiffusion)
+  }
+
   return (
     <>
       {erreurEnvoi && (
@@ -203,7 +218,7 @@ function EnvoiMessageGroupe({
             beneficiaires={buildOptionsJeunes()}
             listesDeDiffusion={listesDiffusion}
             typeSelection='Destinataires'
-            onUpdate={setSelectedJeunesIds}
+            onUpdate={updateDestinataires}
           />
           <Link
             href='/mes-jeunes/listes-de-diffusion'
