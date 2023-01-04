@@ -5,8 +5,7 @@ type BeneficiaireIndicationProps = {
 }
 
 export function BeneficiaireListeItem({ value }: BeneficiaireIndicationProps) {
-  // TODO à definir l'info label
-  const infoLabel = 'TODO à definir'
+  const infoLabel = 'Liste de diffusion'
   return (
     <div className='flex items-center'>
       <IconComponent

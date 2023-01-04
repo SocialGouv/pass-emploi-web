@@ -103,24 +103,7 @@ export default function BeneficiairesMultiselectAutocomplete({
     ].concat(beneficiairesNonSelectionnes)
   }
 
-  function selectAllBeneficiaires(): OptionBeneficiaire[] {
-    return beneficiairesSelectionnes.concat(getBeneficiairesNonSelectionnes())
-  }
-
-  function updateBeneficiairesSelectionnes(
-    option: OptionBeneficiaire | OptionBeneficiaire[]
-  ) {
-    const updatedBeneficiairesSelectionnes =
-      beneficiairesSelectionnes.concat(option)
-    setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
-    onUpdate({
-      beneficiaires: updatedBeneficiairesSelectionnes.map(
-        (selected) => selected.id
-      ),
-    })
-  }
-
-  function selectBeneficiaire(inputValue: string) {
+  function selectionnerOption(inputValue: string) {
     if (disabled) return
 
     if (inputValue === SELECT_ALL_BENEFICIAIRES_OPTION) {
@@ -129,11 +112,13 @@ export default function BeneficiairesMultiselectAutocomplete({
       return
     }
 
-    if (rechercheUneListeDeDiffusion(inputValue)) {
-      const uneListeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)!
-      setListesSelectionnes([...listesSelectionnes, uneListeDeDiffusion])
+    const listeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)
+    if (listeDeDiffusion) {
+      const updatedListesSelectionnees =
+        listesSelectionnes.concat(listeDeDiffusion)
+      setListesSelectionnes(updatedListesSelectionnees)
       onUpdate({
-        listesDeDiffusion: listesSelectionnes.map((selected) => selected.id),
+        listesDeDiffusion: updatedListesSelectionnees.map(({ id }) => id),
       })
       input.current!.value = ''
       return
@@ -147,7 +132,22 @@ export default function BeneficiairesMultiselectAutocomplete({
     }
   }
 
-  function deselectionnerBeneficiaire(id: string) {
+  function selectAllBeneficiaires(): OptionBeneficiaire[] {
+    return beneficiairesSelectionnes.concat(getBeneficiairesNonSelectionnes())
+  }
+
+  function updateBeneficiairesSelectionnes(
+    option: OptionBeneficiaire | OptionBeneficiaire[]
+  ) {
+    const updatedBeneficiairesSelectionnes =
+      beneficiairesSelectionnes.concat(option)
+    setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
+    onUpdate({
+      beneficiaires: updatedBeneficiairesSelectionnes.map(({ id }) => id),
+    })
+  }
+
+  function deselectionnerOption(id: string) {
     if (disabled) return
 
     const indexListe = listesSelectionnes.findIndex(
@@ -159,8 +159,9 @@ export default function BeneficiairesMultiselectAutocomplete({
       updatedListesSelectionnes.splice(indexListe, 1)
       setListesSelectionnes(updatedListesSelectionnes)
       onUpdate({
-        listesDeDiffusion: listesSelectionnes.map((selected) => selected.id),
+        listesDeDiffusion: updatedListesSelectionnes.map(({ id }) => id),
       })
+      return
     }
 
     const indexBeneficiaire = beneficiairesSelectionnes.findIndex(
@@ -171,9 +172,7 @@ export default function BeneficiairesMultiselectAutocomplete({
       updatedBeneficiairesSelectionnes.splice(indexBeneficiaire, 1)
       setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
       onUpdate({
-        beneficiaires: updatedBeneficiairesSelectionnes.map(
-          (selected) => selected.id
-        ),
+        beneficiaires: updatedBeneficiairesSelectionnes.map(({ id }) => id),
       })
     }
   }
@@ -227,7 +226,7 @@ export default function BeneficiairesMultiselectAutocomplete({
       <SelectAutocomplete
         id='select-beneficiaires'
         options={buildOptions()}
-        onChange={(value: string) => selectBeneficiaire(value)}
+        onChange={(value: string) => selectionnerOption(value)}
         required={required}
         multiple={true}
         aria-controls='selected-beneficiaires'
@@ -249,7 +248,7 @@ export default function BeneficiairesMultiselectAutocomplete({
         <Multiselection
           selection={beneficiairesEtListesSelectionne()}
           typeSelection='beneficiaire'
-          unselect={deselectionnerBeneficiaire}
+          unselect={deselectionnerOption}
           renderIndication={renderIndication}
           disabled={disabled}
         />

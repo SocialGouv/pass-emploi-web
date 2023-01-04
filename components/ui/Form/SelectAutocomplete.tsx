@@ -2,8 +2,10 @@ import { forwardRef } from 'react'
 
 import Input from 'components/ui/Form/Input'
 
+export type OptionAutocomplete = { id: string; value: string }
+
 interface SelectAutocompleteProps {
-  options: { id: string; value: string }[]
+  options: OptionAutocomplete[]
   onChange: (value: string) => void
   id: string
   multiple?: boolean
