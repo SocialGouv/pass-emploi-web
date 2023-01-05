@@ -28,8 +28,7 @@ export class FichiersApiService implements FichiersService {
       formData.append('jeunesIds', idJeune)
     })
     idsListesDeDiffusion.forEach((idListe) => {
-      // TODO verifier nom parametre dans l'API
-      formData.append('idsListesDeDiffusion', idListe)
+      formData.append('listesDeDiffusionIds', idListe)
     })
     formData.append('fichier', fichier)
     formData.append('nom', fichier.name)
