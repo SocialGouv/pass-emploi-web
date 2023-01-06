@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 
 import { EntreeAgenda } from 'interfaces/agenda'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   Evenement,
@@ -30,6 +31,7 @@ export type EvenementJson = {
   adresse?: string
   organisme?: string
   statut?: StatutAnimationCollectiveJson
+  source?: StructureConseiller
 }
 
 export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'>
@@ -71,6 +73,7 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     presenceConseiller: Boolean(json.presenceConseiller),
     invitation: Boolean(json.invitation),
     historique: [],
+    source: json.source,
   }
   if (json.comment) evenement.commentaire = json.comment
   if (json.precision) evenement.precisionType = json.precision
@@ -79,6 +82,7 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
   if (json.historique) evenement.historique = jsonToHistorique(json.historique)
   if (json.statut)
     evenement.statut = jsonToStatutAnimationCollective(json.statut)
+  if (json.source) evenement.source = json.source
 
   return evenement
 }
@@ -93,6 +97,7 @@ export function jsonToListItem(
     date: json.date,
     duree: json.duration,
     idCreateur: json.createur.id,
+    source: json.source,
   }
   if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {
     evenement.labelBeneficiaires = jsonToBeneficiaires(

@@ -176,7 +176,7 @@ describe('EditionRdv', () => {
           props: {
             evenement: unEvenement(),
             pageTitle: 'Mes événements - Modifier',
-            pageHeader: 'Modifier l’événement',
+            pageHeader: 'Détails de l’événement',
           },
         })
       })
@@ -1163,6 +1163,42 @@ describe('EditionRdv', () => {
       })
     })
 
+    describe('événements issus d’i-MILO', () => {
+      beforeEach(() => {
+        // Given
+        const evenement = unEvenement({ source: StructureConseiller.MILO })
+
+        // When
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunesConseiller}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo='https://localhost:3000/agenda'
+            evenement={evenement}
+            pageTitle=''
+          />,
+          { customDependances: { evenementsService } }
+        )
+      })
+
+      it('affiche encart explicatif d’un événement provenant du système d’information MILO', () => {
+        //Then
+        expect(
+          screen.getByText(
+            /Pour modifier cet événement vous devez vous rendre dans le système d’information iMilo, il sera ensuite mis à jour dans la demi-heure/
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('affiche l’information de création d’événement provenant du système d’information MILO', () => {
+        //Then
+        expect(
+          screen.getByText('Système d’information MILO')
+        ).toBeInTheDocument()
+      })
+    })
+
     describe('quand un id de jeune est spécifié', () => {
       it('initialise le destinataire', async () => {
         // Given
@@ -1241,7 +1277,7 @@ describe('EditionRdv', () => {
         expect(getByDescriptionTerm('Type de l’événement')).toHaveTextContent(
           'Autre'
         )
-        expect(getByDescriptionTerm('Créé par : ')).toHaveTextContent(
+        expect(getByDescriptionTerm('Créé(e) par : ')).toHaveTextContent(
           'Nils Tavernier'
         )
       })
@@ -1614,6 +1650,69 @@ describe('EditionRdv', () => {
       })
     })
 
+    describe('quand on consulte un événement provenant d’i-MILO', () => {
+      beforeEach(async () => {
+        const evenement = unEvenement({
+          jeunes: [],
+          type: { code: 'ATELIER', label: 'Atelier' },
+          source: StructureConseiller.MILO,
+        })
+
+        await act(async () => {
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo='/agenda'
+              evenement={evenement}
+              pageTitle=''
+            />,
+            {
+              customDependances: { evenementsService, jeunesService },
+              customConseiller: {
+                agence: {
+                  nom: 'Mission locale Aubenas',
+                  id: 'id-etablissement',
+                },
+              },
+            }
+          )
+        })
+      })
+
+      it('empêche toute modification', () => {
+        // Then
+        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText('Modalité')).toBeDisabled()
+        expect(screen.getByLabelText(/Date/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
+        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
+        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
+        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/ajouter des destinataires/)
+        ).toBeDisabled()
+        expect(
+          screen.queryByText(/bénéficiaires est facultatif/)
+        ).toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Enlever jeune/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Supprimer/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Annuler/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Modifier/ })
+        ).not.toBeInTheDocument()
+      })
+    })
+
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
       let evenement: Evenement
       beforeEach(() => {
@@ -1696,15 +1795,6 @@ describe('EditionRdv', () => {
         expect(
           screen.getByLabelText(
             /Le créateur de l’événement recevra un mail pour l'informer de la modification./i
-          )
-        ).toBeInTheDocument()
-      })
-
-      it("contient un message pour prévenir le conseiller qu'il ne recevra pas d'invitation", () => {
-        // Then
-        expect(
-          screen.getByText(
-            "L’événement a été créé par un autre conseiller : Gaëlle Hermet. Vous ne recevrez pas d'invitation dans votre agenda"
           )
         ).toBeInTheDocument()
       })

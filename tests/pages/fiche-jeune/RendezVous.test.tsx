@@ -45,6 +45,14 @@ describe('Rendez-vous de la fiche jeune', () => {
       ).toThrow()
     })
 
+    it('indique caractère non modifiable d’un rendez-vous issu d’i-Milo', async () => {
+      // Given
+      await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
+
+      // Then
+      expect(screen.getByLabelText('Non modifiable')).toBeInTheDocument()
+    })
+
     it('affiche un lien vers les rendez-vous passés du jeune', async () => {
       // Given
       await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
