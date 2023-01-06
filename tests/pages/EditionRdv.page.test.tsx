@@ -1650,7 +1650,7 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on consulte un événement provenant d’iMilo', () => {
+    describe('quand on consulte un événement provenant d’i-MILO', () => {
       beforeEach(async () => {
         const evenement = unEvenement({
           jeunes: [],
@@ -1693,7 +1693,7 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
         expect(
-          screen.getByLabelText(/ajouter des bénéficiaires/)
+          screen.getByLabelText(/ajouter des destinataires/)
         ).toBeDisabled()
         expect(
           screen.queryByText(/bénéficiaires est facultatif/)
