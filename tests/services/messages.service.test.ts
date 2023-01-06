@@ -362,17 +362,20 @@ describe('MessagesFirebaseAndApiService', () => {
 
   describe('.sendNouveauMessageGroupe', () => {
     let idsBeneficiaires: string[]
+    let idsListesDeDiffusion: string[]
     let newMessageGroupe: string
     beforeEach(async () => {
       // Given
       idsBeneficiaires = desItemsJeunes().map(({ id }) => id)
+      idsListesDeDiffusion = ['liste-1', 'liste-2']
       newMessageGroupe = 'nouveau message groupé'
     })
 
     it('envoie un nouveau message sans pièce jointe pour tous les destinataires', async () => {
       // When
       await messagesService.sendNouveauMessageGroupe({
-        idsDestinataires: idsBeneficiaires,
+        idsBeneficiaires: idsBeneficiaires,
+        idsListesDeDiffusion,
         newMessage: newMessageGroupe,
         cleChiffrement,
       })
@@ -383,6 +386,7 @@ describe('MessagesFirebaseAndApiService', () => {
         {
           idConseiller: 'id-conseiller',
           idsBeneficiaires,
+          idsListesDeDiffusion,
           message: `Encrypted: ${newMessageGroupe}`,
           iv: `IV: ${newMessageGroupe}`,
         },
@@ -393,7 +397,8 @@ describe('MessagesFirebaseAndApiService', () => {
     it('envoie un nouveau message avec pièce jointe pour tous les destinataires', async () => {
       // When
       await messagesService.sendNouveauMessageGroupe({
-        idsDestinataires: idsBeneficiaires,
+        idsBeneficiaires: idsBeneficiaires,
+        idsListesDeDiffusion,
         newMessage: newMessageGroupe,
         cleChiffrement,
         infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
@@ -405,6 +410,7 @@ describe('MessagesFirebaseAndApiService', () => {
         {
           idConseiller: 'id-conseiller',
           idsBeneficiaires,
+          idsListesDeDiffusion,
           message: `Encrypted: ${newMessageGroupe}`,
           iv: `IV: ${newMessageGroupe}`,
           infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },

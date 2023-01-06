@@ -31,7 +31,8 @@ export type FormNouveauMessageIndividuel = FormNouveauMessage & {
   jeuneChat: JeuneChat
 }
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
-  idsDestinataires: string[]
+  idsBeneficiaires: string[]
+  idsListesDeDiffusion: string[]
 }
 
 type FormPartageOffre = {
@@ -260,7 +261,8 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
   async sendNouveauMessageGroupe({
     cleChiffrement,
-    idsDestinataires,
+    idsBeneficiaires,
+    idsListesDeDiffusion,
     infoPieceJointe,
     newMessage,
   }: FormNouveauMessageGroupe) {
@@ -284,7 +286,8 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       {
         message: encryptedMessage.encryptedText,
         iv: encryptedMessage.iv,
-        idsBeneficiaires: idsDestinataires,
+        idsBeneficiaires: idsBeneficiaires,
+        idsListesDeDiffusion,
         idConseiller: session!.user.id,
         infoPieceJointe: encryptedPieceJointe
           ? encryptedPieceJointe

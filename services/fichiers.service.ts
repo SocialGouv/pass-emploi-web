@@ -4,7 +4,11 @@ import { ApiClient } from 'clients/api.client'
 import { InfoFichier } from 'interfaces/fichier'
 
 export interface FichiersService {
-  uploadFichier(idJeunes: string[], fichier: File): Promise<InfoFichier>
+  uploadFichier(
+    idsJeunes: string[],
+    idsListesDeDiffusion: string[],
+    fichier: File
+  ): Promise<InfoFichier>
 
   deleteFichier(idFichier: string): Promise<void>
 }
@@ -12,12 +16,19 @@ export interface FichiersService {
 export class FichiersApiService implements FichiersService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  async uploadFichier(idJeunes: string[], fichier: File): Promise<InfoFichier> {
+  async uploadFichier(
+    idsJeunes: string[],
+    idsListesDeDiffusion: string[],
+    fichier: File
+  ): Promise<InfoFichier> {
     const session = await getSession()
 
     const formData = new FormData()
-    idJeunes.forEach((idJeune) => {
+    idsJeunes.forEach((idJeune) => {
       formData.append('jeunesIds', idJeune)
+    })
+    idsListesDeDiffusion.forEach((idListe) => {
+      formData.append('listesDeDiffusionIds', idListe)
     })
     formData.append('fichier', fichier)
     formData.append('nom', fichier.name)

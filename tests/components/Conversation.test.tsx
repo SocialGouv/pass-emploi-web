@@ -265,6 +265,7 @@ describe('<Conversation />', () => {
       expect(fileInput).toHaveAttribute('disabled', '')
       expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
         ['jeune-1'],
+        [],
         file
       )
     })

@@ -98,10 +98,14 @@ function EditionListeDiffusion({
       : []
   }
 
-  function updateIdsBeneficiaires(ids: string[]) {
+  function updateIdsBeneficiaires({
+    beneficiaires,
+  }: {
+    beneficiaires?: string[]
+  }) {
     setIdsBeneficiaires({
-      value: ids,
-      error: ids.length
+      value: beneficiaires!,
+      error: beneficiaires!.length
         ? undefined
         : 'Aucun bénéficiaire n’est renseigné. Veuillez sélectionner au moins un bénéficiaire.',
     })

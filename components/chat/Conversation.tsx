@@ -135,6 +135,7 @@ export default function Conversation({
       setIsFileUploading(true)
       const infoFichier = await fichiersService.uploadFichier(
         [jeuneChat.id],
+        [],
         fichierSelectionne
       )
       setUploadedFileInfo(infoFichier)
