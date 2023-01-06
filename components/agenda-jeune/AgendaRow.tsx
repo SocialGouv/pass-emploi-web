@@ -3,7 +3,9 @@ import React from 'react'
 
 import StatusTag from 'components/action/StatusTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { Tag } from 'components/ui/Indicateurs/Tag'
 import { EntreeAgenda } from 'interfaces/agenda'
+import { StructureConseiller } from 'interfaces/conseiller'
 
 interface AgendaRowProps {
   entree: EntreeAgenda
@@ -52,6 +54,14 @@ export default function AgendaRow({ entree, jeuneId }: AgendaRowProps) {
 
         <div className='flex justify-end'>
           {entree.statut && <StatusTag status={entree.statut} />}
+          {entree.source === StructureConseiller.MILO && (
+            <Tag
+              label='Non modifiable'
+              color='accent_2'
+              backgroundColor='accent_2_lighten'
+              iconName={IconName.Lock}
+            />
+          )}
           <IconComponent
             name={IconName.ChevronRight}
             focusable={false}

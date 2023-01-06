@@ -117,6 +117,7 @@ export function rdvJsonToEntree(rdv: EvenementJeuneJson): EntreeAgenda {
     date: date,
     type: 'evenement',
     titre,
+    source: rdv.source,
   }
 }
 
