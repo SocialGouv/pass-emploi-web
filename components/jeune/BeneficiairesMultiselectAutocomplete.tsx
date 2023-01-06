@@ -87,7 +87,11 @@ export default function BeneficiairesMultiselectAutocomplete({
 
   function buildOptions(): OptionBeneficiaire[] {
     let beneficiairesNonSelectionnes = getBeneficiairesNonSelectionnees()
-    if (!beneficiairesNonSelectionnes.length) return []
+    if (
+      !beneficiairesNonSelectionnes.length &&
+      !getListesDeDiffusionNonSelectionnees().length
+    )
+      return []
     if (listesDeDiffusion?.length) {
       const listeFormatee: OptionBeneficiaire[] =
         getListesDeDiffusionNonSelectionnees()
