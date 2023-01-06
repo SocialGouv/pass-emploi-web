@@ -362,7 +362,7 @@ describe('Page Partage Offre', () => {
 
         // Then
         const selectJeune = within(etape).getByRole('combobox', {
-          name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+          name: 'Rechercher et ajouter des destinataires Nom et prénom',
         })
         const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -409,7 +409,7 @@ describe('Page Partage Offre', () => {
           // Given
 
           const selectJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
           inputMessage = screen.getByRole('textbox', { name: /Message/ })
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })

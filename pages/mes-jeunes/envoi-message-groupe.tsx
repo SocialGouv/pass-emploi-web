@@ -150,7 +150,7 @@ function EnvoiMessageGroupe({
 
     try {
       const formNouveauMessage: FormNouveauMessageGroupe = {
-        idsDestinataires: selectedJeunesIds,
+        idsBeneficiaires: selectedJeunesIds,
         idsListesDeDiffusion: selectedListesIds,
         newMessage:
           message ||
@@ -211,7 +211,7 @@ function EnvoiMessageGroupe({
       )}
 
       <form>
-        <div className='text-s-regular text-primary_darken mb-8'>
+        <div className='text-s-bold text-content_color mb-8'>
           Tous les champs sont obligatoires
         </div>
 

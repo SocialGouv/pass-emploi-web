@@ -82,7 +82,7 @@ describe('EnvoiMessageGroupe', () => {
       )
 
       inputSearchJeune = screen.getByRole('combobox', {
-        name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+        name: 'Rechercher et ajouter des destinataires Nom et prénom du bénéficiaire ou nom de votre liste de diffusion',
       })
       inputMessage = screen.getByLabelText('* Message')
       fileInput = screen.getByLabelText('Ajouter une pièce jointe')
@@ -159,7 +159,7 @@ describe('EnvoiMessageGroupe', () => {
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(0)
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[1].id],
+          idsBeneficiaires: [jeunes[1].id],
           idsListesDeDiffusion: ['liste-1'],
           newMessage,
           cleChiffrement: 'cleChiffrement',
@@ -284,7 +284,7 @@ describe('EnvoiMessageGroupe', () => {
           file
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[1].id],
+          idsBeneficiaires: [jeunes[1].id],
           idsListesDeDiffusion: ['liste-1'],
           newMessage,
           cleChiffrement: 'cleChiffrement',
@@ -306,7 +306,7 @@ describe('EnvoiMessageGroupe', () => {
           file
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[1].id],
+          idsBeneficiaires: [jeunes[1].id],
           idsListesDeDiffusion: ['liste-1'],
           newMessage:
             'Votre conseiller vous a transmis une nouvelle pièce jointe : ',

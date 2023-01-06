@@ -69,7 +69,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 
     // Then
     input = screen.getByRole('combobox', {
-      name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+      name: 'Rechercher et ajouter des destinataires Nom et prénom du bénéficiaire ou nom de votre liste de diffusion',
     })
   })
 

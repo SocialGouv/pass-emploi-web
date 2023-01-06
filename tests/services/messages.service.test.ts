@@ -374,7 +374,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('envoie un nouveau message sans pièce jointe pour tous les destinataires', async () => {
       // When
       await messagesService.sendNouveauMessageGroupe({
-        idsDestinataires: idsBeneficiaires,
+        idsBeneficiaires: idsBeneficiaires,
         idsListesDeDiffusion,
         newMessage: newMessageGroupe,
         cleChiffrement,
@@ -397,7 +397,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('envoie un nouveau message avec pièce jointe pour tous les destinataires', async () => {
       // When
       await messagesService.sendNouveauMessageGroupe({
-        idsDestinataires: idsBeneficiaires,
+        idsBeneficiaires: idsBeneficiaires,
         idsListesDeDiffusion,
         newMessage: newMessageGroupe,
         cleChiffrement,

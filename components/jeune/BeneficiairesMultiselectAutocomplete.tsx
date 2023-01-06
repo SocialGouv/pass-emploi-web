@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -46,32 +46,32 @@ export default function BeneficiairesMultiselectAutocomplete({
 }: BeneficiairesMultiselectAutocompleteProps) {
   const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] =
     useState<OptionBeneficiaire[]>(defaultBeneficiaires)
-  const [listesSelectionnes, setListesSelectionnes] = useState<
+  const [listesSelectionnees, setListesSelectionnees] = useState<
     ListeDeDiffusion[]
   >([])
   const input = useRef<HTMLInputElement>(null)
 
-  function getBeneficiairesNonSelectionnes(): OptionBeneficiaire[] {
+  function getBeneficiairesNonSelectionnees(): OptionBeneficiaire[] {
     return beneficiaires.filter(
       (benef) =>
         beneficiairesSelectionnes.findIndex((j) => j.id === benef.id) < 0
     )
   }
 
-  function getListesDeDiffusionNonSelectionnes(): OptionBeneficiaire[] {
-    const listesDeDiffusionNonSelectionnes = listesDeDiffusion.filter(
+  function getListesDeDiffusionNonSelectionnees(): OptionBeneficiaire[] {
+    const listesDeDiffusionNonSelectionnees = listesDeDiffusion.filter(
       (uneListe) =>
-        listesSelectionnes.findIndex((l) => l.id === uneListe.id) < 0
+        listesSelectionnees.findIndex((l) => l.id === uneListe.id) < 0
     )
 
-    return listesDeDiffusionNonSelectionnes.map((uneListeDeDiffusion) => ({
+    return listesDeDiffusionNonSelectionnees.map((uneListeDeDiffusion) => ({
       id: uneListeDeDiffusion.id,
       value: getListeInformations(uneListeDeDiffusion),
     }))
   }
 
   function rechercheUnBeneficiaire(inputValue: string) {
-    return getBeneficiairesNonSelectionnes().find(
+    return getBeneficiairesNonSelectionnees().find(
       ({ value }) =>
         value.localeCompare(inputValue, undefined, {
           sensitivity: 'base',
@@ -86,12 +86,12 @@ export default function BeneficiairesMultiselectAutocomplete({
   }
 
   function buildOptions(): OptionBeneficiaire[] {
-    let beneficiairesNonSelectionnes = getBeneficiairesNonSelectionnes()
+    let beneficiairesNonSelectionnes = getBeneficiairesNonSelectionnees()
     if (!beneficiairesNonSelectionnes.length) return []
     if (listesDeDiffusion?.length) {
-      const listeFormate: OptionBeneficiaire[] =
-        getListesDeDiffusionNonSelectionnes()
-      beneficiairesNonSelectionnes = listeFormate.concat(
+      const listeFormatee: OptionBeneficiaire[] =
+        getListesDeDiffusionNonSelectionnees()
+      beneficiairesNonSelectionnes = listeFormatee.concat(
         beneficiairesNonSelectionnes
       )
     }
@@ -115,8 +115,8 @@ export default function BeneficiairesMultiselectAutocomplete({
     const listeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)
     if (listeDeDiffusion) {
       const updatedListesSelectionnees =
-        listesSelectionnes.concat(listeDeDiffusion)
-      setListesSelectionnes(updatedListesSelectionnees)
+        listesSelectionnees.concat(listeDeDiffusion)
+      setListesSelectionnees(updatedListesSelectionnees)
       onUpdate({
         listesDeDiffusion: updatedListesSelectionnees.map(({ id }) => id),
       })
@@ -133,7 +133,7 @@ export default function BeneficiairesMultiselectAutocomplete({
   }
 
   function selectAllBeneficiaires(): OptionBeneficiaire[] {
-    return beneficiairesSelectionnes.concat(getBeneficiairesNonSelectionnes())
+    return getBeneficiairesNonSelectionnees()
   }
 
   function updateBeneficiairesSelectionnes(
@@ -150,16 +150,16 @@ export default function BeneficiairesMultiselectAutocomplete({
   function deselectionnerOption(id: string) {
     if (disabled) return
 
-    const indexListe = listesSelectionnes.findIndex(
-      (uneListeSelectionne) => uneListeSelectionne.id === id
+    const indexListe = listesSelectionnees.findIndex(
+      (uneListeSelectionnee) => uneListeSelectionnee.id === id
     )
 
     if (indexListe > -1) {
-      const updatedListesSelectionnes = [...listesSelectionnes]
-      updatedListesSelectionnes.splice(indexListe, 1)
-      setListesSelectionnes(updatedListesSelectionnes)
+      const updatedListesSelectionnees = [...listesSelectionnees]
+      updatedListesSelectionnees.splice(indexListe, 1)
+      setListesSelectionnees(updatedListesSelectionnees)
       onUpdate({
-        listesDeDiffusion: updatedListesSelectionnes.map(({ id }) => id),
+        listesDeDiffusion: updatedListesSelectionnees.map(({ id }) => id),
       })
       return
     }
@@ -177,8 +177,8 @@ export default function BeneficiairesMultiselectAutocomplete({
     }
   }
 
-  function beneficiairesEtListesSelectionne() {
-    const beneficiairesFormate = beneficiairesSelectionnes.map(
+  function beneficiairesEtListesSelectionnes() {
+    const beneficiairesFormates = beneficiairesSelectionnes.map(
       ({ id, value, avecIndication = false }) => ({
         id,
         value,
@@ -186,21 +186,21 @@ export default function BeneficiairesMultiselectAutocomplete({
         estUneListe: false,
       })
     )
-    const listesFormate = listesSelectionnes.map((liste) => ({
+    const listesFormatees = listesSelectionnees.map((liste) => ({
       id: liste.id,
       value: getListeInformations(liste),
       avecIndication: false,
       estUneListe: true,
     }))
 
-    return listesFormate.concat(beneficiairesFormate)
+    return listesFormatees.concat(beneficiairesFormates)
   }
 
   function countBeneficiairesUniques() {
     const idsBeneficiaires = beneficiairesSelectionnes
       .map(({ id }) => id)
       .concat(
-        listesSelectionnes.flatMap(({ beneficiaires }) =>
+        listesSelectionnees.flatMap(({ beneficiaires }) =>
           beneficiaires.map((beneficiaire) => beneficiaire.id)
         )
       )
@@ -208,12 +208,18 @@ export default function BeneficiairesMultiselectAutocomplete({
     return new Set(idsBeneficiaires).size
   }
 
+  function getHelpText() {
+    return listesDeDiffusion?.length > 0
+      ? 'Nom et prénom du bénéficiaire ou nom de votre liste de diffusion'
+      : 'Nom et prénom'
+  }
+
   return (
     <>
       <Label htmlFor='select-beneficiaires' inputRequired={required}>
         {{
-          main: 'Rechercher et ajouter des bénéficiaires',
-          helpText: 'Nom et prénom',
+          main: 'Rechercher et ajouter des destinataires',
+          helpText: getHelpText(),
         }}
       </Label>
       {error && (
@@ -244,7 +250,7 @@ export default function BeneficiairesMultiselectAutocomplete({
 
       {countBeneficiairesUniques() > 0 && (
         <Multiselection
-          selection={beneficiairesEtListesSelectionne()}
+          selection={beneficiairesEtListesSelectionnes()}
           typeSelection='beneficiaire'
           unselect={deselectionnerOption}
           renderIndication={renderIndication}
