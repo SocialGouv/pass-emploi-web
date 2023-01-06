@@ -412,6 +412,33 @@ describe('Agenda de la fiche jeune', () => {
           ).toThrow()
         })
       })
+
+      describe('si le bénéficiaire a des rendez-vous créés par i-MILO', () => {
+        it('indique le caractère non modifiable de l’événement', async () => {
+          // Given
+          agendaService = mockedAgendaService({
+            recupererAgenda: jest.fn(async () =>
+              unAgenda({
+                entrees: [
+                  {
+                    id: '1',
+                    date: LUNDI_JANVIER_3,
+                    type: 'evenement',
+                    titre: '15h00 - Rdv du lundi 3',
+                    source: StructureConseiller.MILO,
+                  } as EntreeAgenda,
+                ],
+              })
+            ),
+          })
+
+          // When
+          await renderFicheJeune(StructureConseiller.MILO, agendaService)
+
+          // Then
+          expect(screen.getByText('Non modifiable')).toBeInTheDocument()
+        })
+      })
     })
   })
 })
