@@ -97,6 +97,7 @@ export function jsonToListItem(
     date: json.date,
     duree: json.duration,
     idCreateur: json.createur.id,
+    source: json.source,
   }
   if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {
     evenement.labelBeneficiaires = jsonToBeneficiaires(

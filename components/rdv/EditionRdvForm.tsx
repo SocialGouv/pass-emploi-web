@@ -552,8 +552,7 @@ export function EditionRdvForm({
               onChange={(value: string) => setTitre({ value })}
               onBlur={validateTitre}
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
             />
 
@@ -577,8 +576,7 @@ export function EditionRdvForm({
               invalid={Boolean(description.error)}
               onBlur={validateDescription}
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
             />
           </Etape>
@@ -599,8 +597,7 @@ export function EditionRdvForm({
               error={idsJeunes.error}
               required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
               renderIndication={
                 evenement && estClos(evenement)
@@ -617,8 +614,7 @@ export function EditionRdvForm({
               defaultValue={modalite}
               onChange={setModalite}
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
             >
               {modalites.map((md) => (
@@ -644,8 +640,7 @@ export function EditionRdvForm({
               onBlur={validateDate}
               invalid={Boolean(date.error)}
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
             />
 
@@ -668,8 +663,7 @@ export function EditionRdvForm({
               aria-invalid={horaire.error ? true : undefined}
               aria-describedby={horaire.error ? 'horaire--error' : undefined}
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
             />
 
@@ -690,8 +684,7 @@ export function EditionRdvForm({
               onBlur={validateDuree}
               invalid={Boolean(duree.error)}
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
             />
 
@@ -705,8 +698,7 @@ export function EditionRdvForm({
               onChange={setAdresse}
               icon='location'
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
             />
 
@@ -722,8 +714,7 @@ export function EditionRdvForm({
               defaultValue={organisme}
               onChange={setOrganisme}
               disabled={
-                (evenement && estClos(evenement)) ||
-                (evenement && estCreeParSiMILO(evenement))
+                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
               }
             />
           </Etape>
@@ -733,11 +724,7 @@ export function EditionRdvForm({
               (evenement && !estCreeParSiMILO(evenement) && (
                 <div className='mb-6'>
                   <InformationMessage
-                    content={`L’événement a été créé par un autre conseiller : ${
-                      evenement!.createur.prenom
-                    } ${
-                      evenement!.createur.nom
-                    }. Vous ne recevrez pas d'invitation dans votre agenda`}
+                    content={`L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`}
                   />
                 </div>
               ))}
@@ -753,8 +740,8 @@ export function EditionRdvForm({
                   checked={isConseillerPresent}
                   disabled={
                     typeEntretienIndividuelConseillerSelected() ||
-                    (evenement && estClos(evenement)) ||
-                    (evenement && estCreeParSiMILO(evenement))
+                    (evenement &&
+                      (estClos(evenement) || estCreeParSiMILO(evenement)))
                   }
                   onChange={handlePresenceConseiller}
                 />

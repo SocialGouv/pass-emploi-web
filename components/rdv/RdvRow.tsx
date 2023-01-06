@@ -42,15 +42,15 @@ export function RdvRow({
     ? getNomJeuneComplet(beneficiaireUnique)
     : rdv.labelBeneficiaires
 
-  function getRdvIconName(rdv: EvenementListItem) {
-    if (rdv.source === StructureConseiller.MILO) {
-      switch (rdv.type) {
+  function getRdvIconName(evenement: EvenementListItem) {
+    if (evenement.source === StructureConseiller.MILO) {
+      switch (evenement.type) {
         case 'Atelier':
         case 'Entretien individuel conseiller':
           return IconName.Lock
         case undefined:
         default:
-          return undefined
+          return
       }
     }
   }
