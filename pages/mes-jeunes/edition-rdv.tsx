@@ -480,7 +480,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     if (!evenement) return { notFound: true }
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
-    props.pageHeader = 'Détails de l’événement'
+    props.pageHeader = 'Détail de l’événement'
   } else if (idJeune) {
     props.idJeune = idJeune
   }

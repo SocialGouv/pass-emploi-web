@@ -176,7 +176,7 @@ describe('EditionRdv', () => {
           props: {
             evenement: unEvenement(),
             pageTitle: 'Mes événements - Modifier',
-            pageHeader: 'Détails de l’événement',
+            pageHeader: 'Détail de l’événement',
           },
         })
       })
