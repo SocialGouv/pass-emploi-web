@@ -24,7 +24,7 @@ interface BeneficiairesMultiselectAutocompleteProps {
   renderIndication?: (props: { value: string }) => JSX.Element
 }
 
-const SELECT_ALL_BENEFICIAIRES_OPTION = 'Sélectionner tous mes bénéficiaires'
+const SELECT_ALL_DESTINATAIRES_OPTION = 'Sélectionner tous mes destinataires'
 
 export interface OptionBeneficiaire {
   id: string
@@ -101,8 +101,8 @@ export default function BeneficiairesMultiselectAutocomplete({
     }
     return [
       {
-        id: 'select-all-beneficiaires',
-        value: SELECT_ALL_BENEFICIAIRES_OPTION,
+        id: 'select-all-destinataires',
+        value: SELECT_ALL_DESTINATAIRES_OPTION,
       },
     ].concat(beneficiairesNonSelectionnes)
   }
@@ -110,8 +110,13 @@ export default function BeneficiairesMultiselectAutocomplete({
   function selectionnerOption(inputValue: string) {
     if (disabled) return
 
-    if (inputValue === SELECT_ALL_BENEFICIAIRES_OPTION) {
-      updateBeneficiairesSelectionnes(selectAllBeneficiaires())
+    if (inputValue === SELECT_ALL_DESTINATAIRES_OPTION) {
+      setBeneficiairesSelectionnes(beneficiaires)
+      setListesSelectionnees(listesDeDiffusion)
+      onUpdate({
+        beneficiaires: beneficiaires.map(({ id }) => id),
+        listesDeDiffusion: listesDeDiffusion?.map(({ id }) => id),
+      })
       input.current!.value = ''
       return
     }
@@ -130,25 +135,15 @@ export default function BeneficiairesMultiselectAutocomplete({
 
     const option = rechercheUnBeneficiaire(inputValue)
     if (option) {
-      updateBeneficiairesSelectionnes(option)
+      const updatedBeneficiairesSelectionnes =
+        beneficiairesSelectionnes.concat(option)
+      setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
+      onUpdate({
+        beneficiaires: updatedBeneficiairesSelectionnes.map(({ id }) => id),
+      })
       input.current!.value = ''
       return
     }
-  }
-
-  function selectAllBeneficiaires(): OptionBeneficiaire[] {
-    return getBeneficiairesNonSelectionnees()
-  }
-
-  function updateBeneficiairesSelectionnes(
-    option: OptionBeneficiaire | OptionBeneficiaire[]
-  ) {
-    const updatedBeneficiairesSelectionnes =
-      beneficiairesSelectionnes.concat(option)
-    setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
-    onUpdate({
-      beneficiaires: updatedBeneficiairesSelectionnes.map(({ id }) => id),
-    })
   }
 
   function deselectionnerOption(id: string) {

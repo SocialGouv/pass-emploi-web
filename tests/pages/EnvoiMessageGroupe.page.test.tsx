@@ -339,7 +339,7 @@ describe('EnvoiMessageGroupe', () => {
         // When
         await userEvent.type(
           inputSearchJeune,
-          'Sélectionner tous mes bénéficiaires'
+          'Sélectionner tous mes destinataires'
         )
 
         // Then
