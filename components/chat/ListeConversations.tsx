@@ -63,7 +63,8 @@ export default function ListeConversations({
 
       {conversations && conversations.length > 0 && (
         <ButtonLink
-          href='/mes-jeunes/envoi-message-groupe'
+          // FIXME : dirty fix, problème de rafraichissement des listes de diffusion
+          href={'/mes-jeunes/envoi-message-groupe?misc=' + Math.random()}
           style={ButtonStyle.PRIMARY}
           className='absolute bottom-8 self-center'
         >
