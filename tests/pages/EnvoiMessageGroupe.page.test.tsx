@@ -117,7 +117,7 @@ describe('EnvoiMessageGroupe', () => {
       it('affiche un lien qui renvoie vers la page de gestion des listes de diffusion', () => {
         // Then
         expect(
-          screen.getByRole('link', { name: 'Gérer mes listes' })
+          screen.getByRole('link', { name: 'Gérer mes listes de diffusion' })
         ).toHaveAttribute('href', '/mes-jeunes/listes-de-diffusion')
       })
 
