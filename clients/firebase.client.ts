@@ -24,7 +24,12 @@ import { DateTime } from 'luxon'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { Chat } from 'interfaces/jeune'
-import { InfoOffre, Message, TypeMessage } from 'interfaces/message'
+import {
+  InfoOffre,
+  Message,
+  MessageListeDiffusion,
+  TypeMessage,
+} from 'interfaces/message'
 import { BaseOffre, TypeOffre } from 'interfaces/offre'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
 import { captureRUMError } from 'utils/monitoring/init-rum'
@@ -37,7 +42,7 @@ type TypeMessageFirebase =
   | 'MESSAGE_EVENEMENT'
   | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
 
-export interface FirebaseMessage {
+export type FirebaseMessage = {
   creationDate: Timestamp
   sentBy: string
   content: string
@@ -47,6 +52,16 @@ export interface FirebaseMessage {
   type: TypeMessageFirebase | undefined
   offre?: InfoOffreFirebase
   evenement?: EvenementPartage
+}
+
+export type FirebaseMessageGroupe = {
+  creationDate: Timestamp
+  sentBy: string
+  content: string
+  iv: string
+  piecesJointes?: InfoFichier[]
+  conseillerId: string
+  type: TypeMessageFirebase
 }
 
 export type InfoOffreFirebase = {
@@ -76,7 +91,8 @@ export type CreateFirebaseMessageWithOffre = BaseCreateFirebaseMessage & {
 class FirebaseClient {
   private readonly firebaseApp: FirebaseApp
   private readonly auth: Auth
-  private readonly collectionName: string
+  private readonly chatCollection: string
+  private readonly groupeCollection: string
   private isSignedIn: boolean | null = null
 
   constructor() {
@@ -85,7 +101,8 @@ class FirebaseClient {
     this.auth.onAuthStateChanged((user) => {
       this.isSignedIn = Boolean(user)
     })
-    this.collectionName = process.env.FIREBASE_COLLECTION_NAME || ''
+    this.chatCollection = process.env.FIREBASE_CHAT_COLLECTION_NAME || ''
+    this.groupeCollection = process.env.FIREBASE_GROUPE_COLLECTION_NAME || ''
   }
 
   async signIn(token: string): Promise<void> {
@@ -141,7 +158,7 @@ class FirebaseClient {
         query<FirebaseChat>(
           collection(
             this.getDb(),
-            this.collectionName
+            this.chatCollection
           ) as CollectionReference<FirebaseChat>,
           where('conseillerId', '==', idConseiller)
         ),
@@ -179,6 +196,34 @@ class FirebaseClient {
         )
         return mappedChats
       }, {} as { [idJeune: string]: Chat })
+    } catch (e) {
+      console.error(e)
+      captureRUMError(e as Error)
+      throw e
+    }
+  }
+
+  async getMessagesGroupe(idGroupe: string): Promise<MessageListeDiffusion[]> {
+    try {
+      const groupeSnapshot = await this.getGroupeSnapshot(idGroupe)
+      if (!groupeSnapshot) {
+        console.error(
+          'Aucun document corresponsant à la liste de diffusion ' + idGroupe
+        )
+        return []
+      }
+
+      const querySnapshots: QuerySnapshot<FirebaseMessageGroupe> =
+        await getDocs(
+          query<FirebaseMessageGroupe>(
+            collection(
+              groupeSnapshot.ref,
+              'messages'
+            ) as CollectionReference<FirebaseMessageGroupe>,
+            orderBy('creationDate')
+          )
+        )
+      return querySnapshots.docs.map(docSnapshotToMessageListeDiffusion)
     } catch (e) {
       console.error(e)
       captureRUMError(e as Error)
@@ -251,12 +296,27 @@ class FirebaseClient {
     }
   }
 
+  private async getGroupeSnapshot(
+    idGroupe: string
+  ): Promise<QueryDocumentSnapshot<FirebaseGroupe> | undefined> {
+    const collectionRef = collection(
+      this.getDb(),
+      this.groupeCollection
+    ) as CollectionReference<FirebaseGroupe>
+
+    const querySnapshots: QuerySnapshot<FirebaseGroupe> = await getDocs(
+      query<FirebaseGroupe>(collectionRef, where('groupeId', '==', idGroupe))
+    )
+
+    if (querySnapshots.docs.length > 0) return querySnapshots.docs[0]
+  }
+
   private async getChatsSnapshot(
     idConseiller: string
   ): Promise<QueryDocumentSnapshot<FirebaseChat>[]> {
     const collectionRef = collection(
       this.getDb(),
-      this.collectionName
+      this.chatCollection
     ) as CollectionReference<FirebaseChat>
 
     const querySnapshots: QuerySnapshot<FirebaseChat> = await getDocs(
@@ -276,7 +336,7 @@ class FirebaseClient {
     return doc<FirebaseChat>(
       collection(
         this.getDb(),
-        this.collectionName
+        this.chatCollection
       ) as CollectionReference<FirebaseChat>,
       idChat
     )
@@ -317,7 +377,7 @@ function createFirebaseMessage(
   return firebaseMessage
 }
 
-interface FirebaseChat {
+type FirebaseChat = {
   jeuneId: string
   seenByConseiller: boolean | undefined
   flaggedByConseiller: boolean | undefined
@@ -328,6 +388,14 @@ interface FirebaseChat {
   lastConseillerReading: Timestamp | undefined
   lastJeuneReading: Timestamp | undefined
   lastMessageIv: string | undefined
+}
+
+type FirebaseGroupe = {
+  groupeId: string
+  conseillerId: string
+  lastMessageContent: string | undefined
+  lastMessageIv: string | undefined
+  lastMessageSentAt: Timestamp | undefined
 }
 
 function typeToFirebase(typeOffre: TypeOffre): string {
@@ -456,6 +524,25 @@ export function docSnapshotToMessage(
       titre: firebaseMessage.evenement.titre,
       date: DateTime.fromISO(firebaseMessage.evenement.date),
     }
+  }
+
+  return message
+}
+
+export function docSnapshotToMessageListeDiffusion(
+  docSnapshot: QueryDocumentSnapshot<FirebaseMessageGroupe>
+): MessageListeDiffusion {
+  const firebaseMessage = docSnapshot.data()
+  const message: MessageListeDiffusion = {
+    content: firebaseMessage.content,
+    iv: firebaseMessage.iv,
+    creationDate: DateTime.fromMillis(firebaseMessage.creationDate.toMillis()),
+    id: docSnapshot.id,
+    type: firebaseToMessageType(firebaseMessage.type),
+  }
+
+  if (message.type === TypeMessage.MESSAGE_PJ) {
+    message.infoPiecesJointes = firebaseMessage.piecesJointes ?? []
   }
 
   return message

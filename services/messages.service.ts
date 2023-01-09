@@ -14,6 +14,7 @@ import { BaseJeune, Chat, JeuneChat } from 'interfaces/jeune'
 import {
   ChatCredentials,
   Message,
+  MessageListeDiffusion,
   MessagesOfADay,
   TypeMessage,
 } from 'interfaces/message'
@@ -75,6 +76,11 @@ export interface MessagesService {
     cleChiffrement: string,
     onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
   ): () => void
+
+  getMessagesListeDeDiffusion(
+    cleChiffrement: string,
+    idListeDiffusion: string
+  ): Promise<MessageListeDiffusion[]>
 
   observeJeuneReadingDate(
     idChat: string,
@@ -186,6 +192,26 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         onJeuneReadingDate(lastJeuneReadingDate)
       }
     })
+  }
+
+  async getMessagesListeDeDiffusion(
+    cleChiffrement: string,
+    idListeDiffusion: string
+  ): Promise<MessageListeDiffusion[]> {
+    const messages = await this.firebaseClient.getMessagesGroupe(
+      idListeDiffusion
+    )
+    return messages.map((message) => ({
+      ...message,
+      ...this.decryptContentAndFilename(
+        {
+          iv: message.iv,
+          content: message.content,
+          infoPiecesJointes: message.infoPiecesJointes,
+        },
+        cleChiffrement
+      ),
+    }))
   }
 
   async countMessagesNotRead(
@@ -408,7 +434,17 @@ export class MessagesFirebaseAndApiService implements MessagesService {
       .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
       .forEach((message) => {
         if (message.iv) {
-          message = this.decryptMessageAndFilename(message, cleChiffrement)
+          message = {
+            ...message,
+            ...this.decryptContentAndFilename(
+              {
+                iv: message.iv,
+                content: message.content,
+                infoPiecesJointes: message.infoPiecesJointes,
+              },
+              cleChiffrement
+            ),
+          }
         }
 
         const day = toShortDate(message.creationDate)
@@ -423,13 +459,15 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     return Object.values(messagesByDay)
   }
 
-  private decryptMessageAndFilename(
-    message: Message,
+  private decryptContentAndFilename(
+    message: { iv: string; content: string; infoPiecesJointes?: InfoFichier[] },
     cleChiffrement: string
-  ): Message {
+  ): { content: string; infoPiecesJointes?: InfoFichier[] } {
     const iv = message.iv!
-    const decryptedMessage: Message = {
-      ...message,
+    const decryptedMessage: {
+      content: string
+      infoPiecesJointes?: InfoFichier[]
+    } = {
       content: this.chatCrypto.decrypt(
         { encryptedText: message.content, iv },
         cleChiffrement

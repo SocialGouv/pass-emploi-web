@@ -25,4 +25,5 @@ export const FirebaseClient = jest.fn(() => ({
     'jeune-3': unChat({ chatId: `chat-jeune-3` }),
   })),
   countMessagesNotRead: jest.fn(),
+  getMessagesGroupe: jest.fn(),
 }))

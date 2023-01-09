@@ -139,6 +139,30 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
+  describe('.getMessagesListeDeDiffusion', () => {
+    it('retourne les messages de la liste de diffusion', async () => {
+      // Given
+      ;(firebaseClient.getMessagesGroupe as jest.Mock).mockResolvedValue(
+        desMessages()
+      )
+
+      // When
+      const actual = await messagesService.getMessagesListeDeDiffusion(
+        cleChiffrement,
+        'id-liste'
+      )
+
+      // Then
+      expect(firebaseClient.getMessagesGroupe).toHaveBeenCalledWith('id-liste')
+      expect(actual).toEqual(
+        desMessages().map(({ content, ...message }) => ({
+          ...message,
+          content: 'Decrypted: ' + content,
+        }))
+      )
+    })
+  })
+
   describe('.observeMessages', () => {
     let idChat: string
     let onMessages: (messagesGroupesParJour: MessagesOfADay[]) => void

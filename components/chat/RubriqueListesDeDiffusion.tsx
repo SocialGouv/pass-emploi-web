@@ -4,6 +4,9 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { MessagesService } from 'services/messages.service'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useDependance } from 'utils/injectionDependances'
 
 type RubriqueListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
@@ -14,6 +17,17 @@ export default function RubriqueListesDeDiffusion({
   listesDeDiffusion,
   onBack,
 }: RubriqueListesDeDiffusionProps) {
+  const messagesService = useDependance<MessagesService>('messagesService')
+  const [chatCredentials] = useChatCredentials()
+
+  async function getMessagesListe(idListe: string) {
+    await messagesService.signIn(chatCredentials!.token)
+    const toto = await messagesService.getMessagesListeDeDiffusion(
+      chatCredentials!.cleChiffrement,
+      idListe
+    )
+    console.log(toto)
+  }
   return (
     <div className='h-full flex flex-col bg-grey_100 '>
       <div className='flex items-center mx-4 pb-6 my-6 border-b border-grey_500 short:hidden'>
@@ -65,6 +79,7 @@ export default function RubriqueListesDeDiffusion({
               <li
                 key={liste.id}
                 className='p-3 bg-blanc rounded-small mb-2 last:mb-0'
+                onClick={() => getMessagesListe(liste.id)}
               >
                 <TitreListe liste={liste} />
                 <span className='text-s-regular'>

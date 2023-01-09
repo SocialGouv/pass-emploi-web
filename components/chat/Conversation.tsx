@@ -39,9 +39,9 @@ export default function Conversation({
   conseillers,
   onBack,
 }: ConversationProps) {
-  const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
+  const [chatCredentials] = useChatCredentials()
   const [conseiller] = useConseiller()
 
   const [newMessage, setNewMessage] = useState('')

@@ -24,6 +24,15 @@ export interface Message {
   infoEvenement?: InfoEvenement
 }
 
+export interface MessageListeDiffusion {
+  id: string
+  content: string
+  creationDate: DateTime
+  iv: string
+  type: TypeMessage
+  infoPiecesJointes?: InfoFichier[]
+}
+
 export interface MessagesOfADay {
   date: DateTime
   messages: Message[]
