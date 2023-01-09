@@ -83,14 +83,14 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     expect(options).toHaveAttribute('id', 'select-beneficiaires--options')
   })
 
-  it('permet de sélectionner les bénéficiaires', async () => {
+  it('permet de sélectionner les destinataires', async () => {
     // Then
     expect(
       within(options).getByRole('option', {
-        name: 'Sélectionner tous mes bénéficiaires',
+        name: 'Sélectionner tous mes destinataires',
         hidden: true,
       })
-    ).toHaveValue('Sélectionner tous mes bénéficiaires')
+    ).toHaveValue('Sélectionner tous mes destinataires')
 
     beneficiaires.forEach((beneficiaire) => {
       expect(
@@ -99,6 +99,14 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
           hidden: true,
         })
       ).toHaveValue(beneficiaire.value)
+    })
+    listes.forEach((liste) => {
+      expect(
+        within(options).getByRole('option', {
+          name: liste.titre + ' (' + liste.beneficiaires.length + ')',
+          hidden: true,
+        })
+      ).toHaveValue(liste.titre + ' (' + liste.beneficiaires.length + ')')
     })
   })
 
@@ -115,7 +123,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     })
   })
 
-  describe('selection bénéficiaires', () => {
+  describe('sélection bénéficiaires', () => {
     beforeEach(async () => {
       // When
       await userEvent.type(input, 'Option 1')
@@ -133,17 +141,19 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 
     it('transmet la selection du bénéficiaire', async () => {
       // Then
-      expect(onUpdate).toHaveBeenCalledWith({ beneficiaires: ['option-1'] })
+      expect(onUpdate).toHaveBeenCalledWith({
+        beneficiaires: ['option-1'],
+      })
       expect(onUpdate).toHaveBeenCalledWith({
         beneficiaires: ['option-1', 'option-3'],
       })
     })
   })
 
-  describe('selection tous mes bénéficiaires', () => {
-    it('sélectionnes tous les bénéficiaires d‘un coup', async () => {
+  describe('sélectionnes tous mes destinataires', () => {
+    it('sélectionnes tous les destinataires d‘un coup', async () => {
       // When
-      await userEvent.type(input, 'Sélectionner tous mes bénéficiaires')
+      await userEvent.type(input, 'Sélectionner tous mes destinataires')
 
       // Then
       const selections = screen.getByRole('region', {
@@ -152,13 +162,16 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       expect(within(selections).getByText('Option 1')).toBeInTheDocument()
       expect(within(selections).getByText('Option 2')).toBeInTheDocument()
       expect(within(selections).getByText('Option 3')).toBeInTheDocument()
+      expect(within(selections).getByText('Liste 1 (1)')).toBeInTheDocument()
+      expect(within(selections).getByText('Liste 2 (2)')).toBeInTheDocument()
       expect(onUpdate).toHaveBeenCalledWith({
         beneficiaires: ['option-1', 'option-2', 'option-3'],
+        listesDeDiffusion: ['liste-1', 'liste-2'],
       })
     })
   })
 
-  describe('selection liste', () => {
+  describe('sélection liste', () => {
     beforeEach(async () => {
       // When
       await userEvent.type(input, 'Liste 2 (2)')
@@ -172,13 +185,13 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       expect(within(selections).getByText('Liste 2 (2)')).toBeInTheDocument()
     })
 
-    it('transmet la selection de la liste', async () => {
+    it('transmet la sélection de la liste', async () => {
       // Then
       expect(onUpdate).toHaveBeenCalledWith({ listesDeDiffusion: ['liste-2'] })
     })
   })
 
-  describe('déselection bénéficiaires', () => {
+  describe('désélection bénéficiaires', () => {
     let selections: HTMLElement
     beforeEach(async () => {
       // Given
@@ -208,7 +221,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     })
   })
 
-  describe('déselection liste', () => {
+  describe('désélection liste', () => {
     let selections: HTMLElement
     beforeEach(async () => {
       // Given

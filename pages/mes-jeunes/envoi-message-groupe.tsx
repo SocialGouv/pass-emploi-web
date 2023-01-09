@@ -226,7 +226,7 @@ function EnvoiMessageGroupe({
             href='/mes-jeunes/listes-de-diffusion'
             className='flex items-center pt-2 text-s-regular text-content_color underline hover:text-primary_darken'
           >
-            Gérer mes listes
+            Gérer mes listes de diffusion
             <IconComponent
               name={IconName.ChevronRight}
               aria-hidden={true}
