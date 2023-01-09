@@ -2,15 +2,15 @@ import Router from 'next/router'
 import { useCallback, useEffect } from 'react'
 
 export function useLeavePageModal(
-  enabled: boolean | (() => boolean),
-  openModal: () => void
+  enabled: boolean,
+  openModal: (destination: string) => void
 ) {
   useBeforeUnload(enabled)
 
   useEffect(() => {
-    function handler() {
-      if (typeof enabled === 'function' ? enabled() : enabled) {
-        openModal()
+    function handler(destination: string) {
+      if (enabled) {
+        openModal(destination)
         throw new Error('Navigation annulée pour confirmation')
       }
     }
@@ -23,10 +23,10 @@ export function useLeavePageModal(
   }, [enabled, openModal])
 }
 
-function useBeforeUnload(enabled: boolean | (() => boolean)) {
+function useBeforeUnload(enabled: boolean) {
   const handler = useCallback(
     (event: BeforeUnloadEvent) => {
-      if (typeof enabled === 'function' ? !enabled() : !enabled) {
+      if (!enabled) {
         return
       }
 

@@ -73,6 +73,7 @@ function EnvoiMessageGroupe({
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+  const [leavePageUrl, setLeavePageUrl] = useState<string>(returnTo)
 
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
@@ -100,12 +101,8 @@ function EnvoiMessageGroupe({
     )
   }
 
-  function openLeavePageConfirmationModal(e?: MouseEvent) {
-    if (e) {
-      e.preventDefault()
-      e.stopPropagation()
-    }
-
+  function openLeavePageConfirmationModal(destination: string) {
+    setLeavePageUrl(destination)
     setShowLeavePageModal(true)
     setConfirmBeforeLeaving(false)
   }
@@ -307,8 +304,9 @@ function EnvoiMessageGroupe({
           )}
           {formHasChanges() && (
             <Button
+              type='button'
               label='Quitter la rédaction du message groupé'
-              onClick={openLeavePageConfirmationModal}
+              onClick={() => openLeavePageConfirmationModal(returnTo)}
               style={ButtonStyle.SECONDARY}
               className='mr-3 p-2'
             >
@@ -332,12 +330,13 @@ function EnvoiMessageGroupe({
             Envoyer
           </Button>
         </div>
+
         {showLeavePageModal && (
           <LeavePageConfirmationModal
             message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
             commentaire='Toutes les informations saisies seront perdues ainsi que les pièces jointes attachées.'
             onCancel={closeLeavePageConfirmationModal}
-            destination={returnTo}
+            destination={leavePageUrl}
           />
         )}
       </form>
