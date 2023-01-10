@@ -1,11 +1,10 @@
-import { DateTime } from 'luxon'
 import React from 'react'
 
 import AgendaRow from 'components/agenda-jeune/AgendaRow'
 import { EntreeAgenda } from 'interfaces/agenda'
 
 export type SemaineAgenda = {
-  jours: { [jour: string]: { date: DateTime; entrees: EntreeAgenda[] } }
+  jours: { [jour: string]: { entrees: EntreeAgenda[] } }
   aEvenement: boolean
 }
 
@@ -21,7 +20,7 @@ export function EntreesAgendaParJourDeLaSemaine({
 }: EntreesAgendaParJourDeLaSemaineProps) {
   return (
     <>
-      {Object.entries(semaine.jours).map(([jour, { date, entrees }], index) => {
+      {Object.entries(semaine.jours).map(([jour, { entrees }], index) => {
         return (
           <section
             key={`semaine-${numeroSemaine}-jour-${index}`}
