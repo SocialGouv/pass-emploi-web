@@ -11074,9 +11074,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-react-parser@npm:3.0.6":
-  version: 3.0.6
-  resolution: "html-react-parser@npm:3.0.6"
+"html-react-parser@npm:3.0.7":
+  version: 3.0.7
+  resolution: "html-react-parser@npm:3.0.7"
   dependencies:
     domhandler: 5.0.3
     html-dom-parser: 3.1.2
@@ -11084,7 +11084,7 @@ __metadata:
     style-to-js: 1.1.2
   peerDependencies:
     react: 0.14 || 15 || 16 || 17 || 18
-  checksum: 9ec91ecd67e23debb344b7e33a70fe5cad445b6612a330ba604fba9d2f05c7e6d8008f8f7f6015da62911ee9f23905d9e41d2c78563bdfef166ea04bbf7fb02e
+  checksum: a797cc3849351169235604f84061e49c7f97c7707c86d1231b8c15c27ccef1a7650db299e0d3e61b1d3ef530adcdbdb8edf817a3e2172044c43575fe0d67cfe9
   languageName: node
   linkType: hard
 
@@ -15026,7 +15026,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-storybook: ^0.6.8
     firebase: 9.15.0
-    html-react-parser: 3.0.6
+    html-react-parser: 3.0.7
     jest: ^29.3.1
     jest-environment-jsdom: ^29.3.1
     jsonwebtoken: 9.0.0
