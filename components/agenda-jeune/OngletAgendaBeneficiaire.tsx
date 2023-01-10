@@ -47,8 +47,6 @@ export function OngletAgendaBeneficiaire({
             const semaine = entree.date < separation ? courante : suivante
             semaine.jours[toFrenchFulldate(entree.date)].entrees.push(entree)
             semaine.aEvenement = true
-            if (entree.date.weekday === 6) semaine.afficherSamedi = true
-            if (entree.date.weekday === 7) semaine.afficherDimanche = true
           })
 
           setSemaines({ courante, suivante })
@@ -153,16 +151,12 @@ function preparerSemaines(
         [jour: string]: { date: DateTime; entrees: EntreeAgenda[] }
       },
       aEvenement: false,
-      afficherSamedi: false,
-      afficherDimanche: false,
     },
     suivante: {
       jours: {} as {
         [jour: string]: { date: DateTime; entrees: EntreeAgenda[] }
       },
       aEvenement: false,
-      afficherSamedi: false,
-      afficherDimanche: false,
     },
   }
   const separation = dateDeDebut.plus({ week: 1 })
@@ -185,9 +179,9 @@ function AucuneEntreeDansLaSemaine({ periode }: { periode: string }) {
 function getLibelleSemaineEnCours(): string {
   const maintenant = DateTime.now()
   const lundi = maintenant.startOf('week')
-  const vendredi = lundi.plus({ day: 4 })
+  const dimanche = lundi.plus({ day: 6 })
   return `Du ${toFrenchFulldate(lundi)} au ${toFrenchFormat(
-    vendredi,
+    dimanche,
     WEEKDAY_MONTH_LONG
   )}`
 }
@@ -195,11 +189,11 @@ function getLibelleSemaineEnCours(): string {
 function getLibelleSemaineSuivante(): string {
   const maintenant = DateTime.now()
   const lundiSuivant = maintenant.plus({ week: 1 }).startOf('week')
-  const vendrediSuivant = lundiSuivant.plus({ day: 4 })
+  const dimancheSuivant = lundiSuivant.plus({ day: 6 })
   return `Du ${toFrenchFormat(
     lundiSuivant,
     WEEKDAY_MONTH_LONG
-  )} au ${toFrenchFulldate(vendrediSuivant)}`
+  )} au ${toFrenchFulldate(dimancheSuivant)}`
 }
 
 function toFrenchFulldate(date: DateTime) {
