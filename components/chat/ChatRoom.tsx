@@ -62,7 +62,7 @@ export default function ChatRoom({
 
   return (
     <>
-      <div className='relative bg-blanc shadow-s mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
+      <div className='relative bg-blanc shadow-base mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
         <nav
           role='navigation'
           aria-label='Menu principal'

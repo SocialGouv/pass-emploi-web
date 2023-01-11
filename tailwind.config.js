@@ -97,7 +97,8 @@ module.exports = {
         location: "url('../assets/icons/location_big.svg')",
       },
       boxShadow: {
-        s: '0 6px 25px 0px rgba(0,0,0,0.1)',
+        base: '0 4px 12px 0px rgba(39, 73, 150, 0.12)',
+        m: '0 8px 12px 0px rgba(39, 73, 150, 0.24)',
       },
       fontFamily: {
         sans: ['Marianne'],

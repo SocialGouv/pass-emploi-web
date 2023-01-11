@@ -34,7 +34,7 @@ export default function AgendaRow({ entree, jeuneId }: AgendaRowProps) {
   const { href, iconName, label } = props[entree.type]
 
   return (
-    <li className='mt-4 text-base-regular rounded-small shadow-s hover:bg-primary_lighten'>
+    <li className='mt-4 text-base-regular rounded-small shadow-base hover:bg-primary_lighten'>
       <Link
         href={href + entree.id}
         aria-label={label}

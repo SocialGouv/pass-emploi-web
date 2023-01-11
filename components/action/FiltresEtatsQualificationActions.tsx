@@ -94,7 +94,7 @@ export default function FiltresEtatsQualificationActions({
 
       {afficherFiltresQualification && (
         <form
-          className='absolute z-10 bg-blanc rounded-medium shadow-s p-4 text-base-regular'
+          className='absolute z-10 bg-blanc rounded-medium shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrerActions}
         >

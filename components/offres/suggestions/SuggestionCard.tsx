@@ -31,7 +31,7 @@ export default function SuggestionCard({
   }
 
   return (
-    <div className='rounded-large shadow-s p-6'>
+    <div className='rounded-large shadow-base p-6'>
       <h2 className='text-base-bold mb-2'>{titre}</h2>
       <dl>
         <dt className='sr-only'>Type</dt>
