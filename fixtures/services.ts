@@ -72,6 +72,7 @@ export function mockedMessagesService(
     sendNouveauMessageGroupe: jest.fn(),
     toggleFlag: jest.fn(),
     partagerOffre: jest.fn(),
+    getMessagesListeDeDiffusion: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

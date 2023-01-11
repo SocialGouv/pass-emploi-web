@@ -1,9 +1,12 @@
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
+import { mockedMessagesService } from 'fixtures/services'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<RubriqueListesDeDiffusion />', () => {
   let listesDeDiffusion: ListeDeDiffusion[]
@@ -14,16 +17,26 @@ describe('<RubriqueListesDeDiffusion />', () => {
       listesDeDiffusion = desListesDeDiffusion()
 
       // When
-      render(
+      renderWithContexts(
         <RubriqueListesDeDiffusion
           listesDeDiffusion={listesDeDiffusion}
           onBack={() => {}}
-        />
+        />,
+        {
+          customDependances: {
+            messagesService: mockedMessagesService({
+              getMessagesListeDeDiffusion: jest.fn(async () => []),
+            }),
+          },
+        }
       )
     })
 
     it('affiche les listes de diffusion', async () => {
       // Then
+      expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
+        'Mes listes de diffusion'
+      )
       const listes = screen.getByRole('list', {
         description: 'Listes (2)',
       })
@@ -54,15 +67,39 @@ describe('<RubriqueListesDeDiffusion />', () => {
         })
       ).toBeInTheDocument()
     })
+
+    it('permet d’accéder aux messages d’une liste', async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: new RegExp(listesDeDiffusion[0].titre),
+        })
+      )
+      // Then
+      expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
+        listesDeDiffusion[0].titre
+      )
+
+      // When
+      await userEvent.click(screen.getByRole('button', { name: /Retour/ }))
+      // Then
+      expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
+        'Mes listes de diffusion'
+      )
+    })
   })
 
   describe('quand le conseiller n‘a pas de liste de diffusion', () => {
-    // When
-    render(<RubriqueListesDeDiffusion listesDeDiffusion={[]} onBack={() => {}} />)
+    it('prévient le conseiller qu’il n’a pas de liste', async () => {
+      // When
+      render(
+        <RubriqueListesDeDiffusion listesDeDiffusion={[]} onBack={() => {}} />
+      )
 
-    // Then
-    expect(
-      screen.getByText('Vous n’avez pas encore créé de liste de diffusion')
-    ).toBeInTheDocument()
+      // Then
+      expect(
+        screen.getByText('Vous n’avez pas encore créé de liste de diffusion')
+      ).toBeInTheDocument()
+    })
   })
 })

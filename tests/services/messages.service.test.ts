@@ -8,7 +8,7 @@ import {
   uneBaseJeune,
   unJeuneChat,
 } from 'fixtures/jeune'
-import { desMessages, desMessagesParJour } from 'fixtures/message'
+import { desMessages, desMessagesListeDiffusion, desMessagesParJour } from 'fixtures/message'
 import { unDetailOffreEmploi } from 'fixtures/offre'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { Message, MessagesOfADay } from 'interfaces/message'
@@ -143,7 +143,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('retourne les messages de la liste de diffusion', async () => {
       // Given
       ;(firebaseClient.getMessagesGroupe as jest.Mock).mockResolvedValue(
-        desMessages()
+        desMessagesListeDiffusion()
       )
 
       // When
@@ -155,7 +155,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(firebaseClient.getMessagesGroupe).toHaveBeenCalledWith('id-liste')
       expect(actual).toEqual(
-        desMessages().map(({ content, ...message }) => ({
+        desMessagesListeDiffusion().map(({ content, ...message }) => ({
           ...message,
           content: 'Decrypted: ' + content,
         }))

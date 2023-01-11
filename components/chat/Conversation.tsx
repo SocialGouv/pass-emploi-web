@@ -232,6 +232,7 @@ export default function Conversation({
         aria-busy={!messagesByDay}
       >
         {!messagesByDay && <SpinningLoader />}
+
         {messagesByDay && (
           <ul>
             {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
