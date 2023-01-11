@@ -20,6 +20,7 @@ type TableauRdvProps = {
   rdvs: EvenementListItem[]
   withIntercalaires?: boolean
   beneficiaireUnique?: BaseJeune
+  optionalHeader?: string
 }
 
 export default function TableauRdv({
@@ -27,6 +28,7 @@ export default function TableauRdv({
   idConseiller,
   withIntercalaires = false,
   beneficiaireUnique,
+  optionalHeader = 'Modalité',
 }: TableauRdvProps) {
   const rdvsAffiches = useMemo(
     () =>
@@ -58,7 +60,7 @@ export default function TableauRdv({
               <TH>Horaires</TH>
               {!beneficiaireUnique && <TH>Bénéficiaire</TH>}
               <TH>Type</TH>
-              <TH>Modalité</TH>
+              <TH>{optionalHeader}</TH>
               <TH>Créé par vous</TH>
             </TR>
           </THead>

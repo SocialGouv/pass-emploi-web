@@ -26,6 +26,7 @@ function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
       rdvs={rdvs}
       idConseiller={conseiller?.id ?? ''}
       beneficiaireUnique={beneficiaire}
+      optionalHeader='Présent'
     />
   )
 }

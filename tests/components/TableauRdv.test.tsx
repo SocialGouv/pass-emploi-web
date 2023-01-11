@@ -37,12 +37,17 @@ describe('<TableauRdv>', () => {
       // Then
       listeRdv.forEach((rdv) => {
         const date = DateTime.fromISO(rdv.date)
-        expect(screen.getByText(`${rdv.labelBeneficiaires}`)).toBeInTheDocument()
+        expect(
+          screen.getByText(`${rdv.labelBeneficiaires}`)
+        ).toBeInTheDocument()
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
         expect(screen.getByText(rdv.modality)).toBeInTheDocument()
         expect(
           screen.getByText(
-            `${toShortDate(date)} - ${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duree} min`
+            `${toShortDate(date)} - ${toFrenchFormat(
+              date,
+              TIME_24_H_SEPARATOR
+            )} - ${rdv.duree} min`
           )
         ).toBeInTheDocument()
       })

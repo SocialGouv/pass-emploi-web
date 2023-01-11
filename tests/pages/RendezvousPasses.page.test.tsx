@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
@@ -35,9 +35,42 @@ describe('RendezVousPasses', () => {
           })
 
           // Then
+          expect(
+            screen.getByRole('columnheader', { name: 'Horaires' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('columnheader', { name: 'Type' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('columnheader', { name: 'Présent' })
+          ).toBeInTheDocument()
+
           rdvs.forEach((rdv) => {
             expect(screen.getByText(rdv.type)).toBeInTheDocument()
             expect(screen.getByText(rdv.modality)).toBeInTheDocument()
+          })
+        })
+
+        describe('quand les rendez-vous sont de type animation collective ', () => {
+          it('affiche si le bénéficiaire a été présent', async () => {
+            // Given
+            const rdvs = [
+              unEvenementListItem(),
+              unEvenementListItem({ source: 'MILO' }),
+            ]
+
+            // When
+            await act(async () => {
+              await renderWithContexts(
+                <RendezVousPasses beneficiaire={uneBaseJeune()} rdvs={rdvs} />
+              )
+            })
+            screen.debug()
+
+            // Then
+            expect(
+              screen.getByRole('cell', { name: /Oui/i })
+            ).toBeInTheDocument()
           })
         })
       })
