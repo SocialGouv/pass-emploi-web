@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import {
   Message,
   MessageListeDiffusion,
-  MessagesOfADay,
+  ByDay,
   TypeMessage,
 } from 'interfaces/message'
 import { TypeOffre } from 'interfaces/offre'
@@ -87,7 +87,7 @@ export const desMessages = (): Message[] => [
   }),
 ]
 
-export const desMessagesParJour = (): MessagesOfADay[] => [
+export const desMessagesParJour = (): ByDay<Message>[] => [
   {
     date: DateTime.local(2021, 12, 22),
     messages: [
@@ -210,3 +210,42 @@ export function desMessagesListeDiffusion(): MessageListeDiffusion[] {
     }),
   ]
 }
+
+export const desMessagesListeDeDiffusionParJour =
+  (): ByDay<MessageListeDiffusion>[] => [
+    {
+      date: DateTime.local(2021, 12, 22),
+      messages: [
+        unMessageListeDiffusion({
+          id: 'message-1',
+          content: 'Decrypted: Message du 22/12/2021',
+          creationDate: DateTime.local(2021, 12, 22),
+        }),
+      ],
+    },
+    {
+      date: DateTime.local(2022, 1, 10),
+      messages: [
+        unMessageListeDiffusion({
+          id: 'message-2',
+          content: 'Decrypted: Message du 10/1/2022',
+          creationDate: DateTime.local(2022, 1, 10),
+        }),
+      ],
+    },
+    {
+      date: DateTime.local(2022, 1, 13, 9),
+      messages: [
+        unMessageListeDiffusion({
+          id: 'message-3',
+          content: 'Decrypted: Message du 13/1/2022 9h',
+          creationDate: DateTime.local(2022, 1, 13, 9),
+        }),
+        unMessageListeDiffusion({
+          id: 'message-4',
+          content: 'Decrypted: Message du 13/1/2022 10h',
+          creationDate: DateTime.local(2022, 1, 13, 10),
+        }),
+      ],
+    },
+  ]

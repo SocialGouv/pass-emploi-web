@@ -33,9 +33,9 @@ export interface MessageListeDiffusion {
   infoPiecesJointes?: InfoFichier[]
 }
 
-export interface MessagesOfADay {
+export interface ByDay<T> {
   date: DateTime
-  messages: Message[]
+  messages: T[]
 }
 
 export interface ChatCredentials {

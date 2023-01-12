@@ -3,20 +3,21 @@ import React from 'react'
 
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { desMessagesListeDiffusion } from 'fixtures/message'
+import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { MessageListeDiffusion } from 'interfaces/message'
+import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { toShortDate } from 'utils/date'
 
 describe('<MessagesListeDeDiffusion />', () => {
-  let messages: MessageListeDiffusion[]
+  let messages: ByDay<MessageListeDiffusion>[]
   let messagesService: MessagesService
   let listeDeDiffusion: ListeDeDiffusion
   beforeEach(async () => {
     // Given
-    messages = desMessagesListeDiffusion()
+    messages = desMessagesListeDeDiffusionParJour()
     messagesService = mockedMessagesService({
       getMessagesListeDeDiffusion: jest.fn(async () => messages),
     })
@@ -42,16 +43,24 @@ describe('<MessagesListeDeDiffusion />', () => {
     )
   })
 
-  it('affiche les messages', async () => {
+  it('affiche les messages groupés par jour', async () => {
     // Then
-    const listeMessages = screen.getByRole('list')
-    expect(within(listeMessages).getAllByRole('listitem')).toHaveLength(
-      messages.length
-    )
-    messages.forEach((message) => {
+    const listeJours = screen.getByRole('list', {
+      description: 'Messages envoyés à la liste de diffusion',
+    })
+    messages.forEach((jour) => {
       expect(
-        within(listeMessages).getByText(message.content)
+        within(listeJours).getByText(`Le ${toShortDate(jour.date)}`)
       ).toBeInTheDocument()
+
+      const listeMessages = screen.getByRole('list', {
+        description: `Le ${toShortDate(jour.date)}`,
+      })
+      jour.messages.forEach((message) => {
+        expect(
+          within(listeMessages).getByText(message.content)
+        ).toBeInTheDocument()
+      })
     })
   })
 })

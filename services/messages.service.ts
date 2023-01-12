@@ -15,7 +15,7 @@ import {
   ChatCredentials,
   Message,
   MessageListeDiffusion,
-  MessagesOfADay,
+  ByDay,
   TypeMessage,
 } from 'interfaces/message'
 import { BaseOffre } from 'interfaces/offre'
@@ -74,13 +74,13 @@ export interface MessagesService {
   observeMessages(
     idChat: string,
     cleChiffrement: string,
-    onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
+    onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
   ): () => void
 
   getMessagesListeDeDiffusion(
     cleChiffrement: string,
     idListeDiffusion: string
-  ): Promise<MessageListeDiffusion[]>
+  ): Promise<ByDay<MessageListeDiffusion>[]>
 
   observeJeuneReadingDate(
     idChat: string,
@@ -170,12 +170,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   observeMessages(
     idChat: string,
     cleChiffrement: string,
-    onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
+    onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
   ): () => void {
     return this.firebaseClient.observeMessagesDuChat(
       idChat,
       (messages: Message[]) => {
-        const messagesGroupesParJour: MessagesOfADay[] =
+        const messagesGroupesParJour: ByDay<Message>[] =
           this.grouperMessagesParJour(messages, cleChiffrement)
         onMessagesGroupesParJour(messagesGroupesParJour)
       }
@@ -197,21 +197,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   async getMessagesListeDeDiffusion(
     cleChiffrement: string,
     idListeDiffusion: string
-  ): Promise<MessageListeDiffusion[]> {
+  ): Promise<ByDay<MessageListeDiffusion>[]> {
     const messages = await this.firebaseClient.getMessagesGroupe(
       idListeDiffusion
     )
-    return messages.map((message) => ({
-      ...message,
-      ...this.decryptContentAndFilename(
-        {
-          iv: message.iv,
-          content: message.content,
-          infoPiecesJointes: message.infoPiecesJointes,
-        },
-        cleChiffrement
-      ),
-    }))
+
+    return this.grouperMessagesParJour(messages, cleChiffrement)
   }
 
   async countMessagesNotRead(
@@ -424,11 +415,11 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     )
   }
 
-  private grouperMessagesParJour(
-    messages: Message[],
+  private grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
+    messages: T[],
     cleChiffrement: string
-  ): MessagesOfADay[] {
-    const messagesByDay: { [day: string]: MessagesOfADay } = {}
+  ): ByDay<T>[] {
+    const messagesByDay: { [day: string]: ByDay<T> } = {}
 
     messages
       .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
@@ -463,7 +454,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     message: { iv: string; content: string; infoPiecesJointes?: InfoFichier[] },
     cleChiffrement: string
   ): { content: string; infoPiecesJointes?: InfoFichier[] } {
-    const iv = message.iv!
+    const iv = message.iv
     const decryptedMessage: {
       content: string
       infoPiecesJointes?: InfoFichier[]
