@@ -208,16 +208,5 @@ export function desMessagesListeDiffusion(): MessageListeDiffusion[] {
       content: 'Message du 13/1/2022 10h',
       creationDate: DateTime.local(2022, 1, 13, 10),
     }),
-    unMessageListeDiffusion({
-      id: 'message-5',
-      content: 'Changement de conseiller',
-      creationDate: DateTime.local(2022, 1, 14),
-      type: TypeMessage.NOUVEAU_CONSEILLER,
-    }),
-    unMessageListeDiffusion({
-      id: 'message-lien-1',
-      content: 'Message du 16/1/2022 avec un lien https://www.pass-emploi.com/',
-      creationDate: DateTime.local(2022, 1, 16),
-    }),
   ]
 }

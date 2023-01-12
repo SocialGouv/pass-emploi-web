@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { MessageListeDiffusion } from 'interfaces/message'
@@ -46,9 +46,12 @@ export default function MessagesListeDeDiffusion({
       )}
 
       {messages && messages.length > 0 && (
-        <ul>
+        <ul className='overflow-y-auto'>
           {messages.map((message) => (
-            <li key={message.id}>{message.content}</li>
+            <DisplayMessageListeDeDiffusion
+              key={message.id}
+              message={message}
+            ></DisplayMessageListeDeDiffusion>
           ))}
         </ul>
       )}

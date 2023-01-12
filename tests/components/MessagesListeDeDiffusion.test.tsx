@@ -14,7 +14,6 @@ describe('<MessagesListeDeDiffusion />', () => {
   let messages: MessageListeDiffusion[]
   let messagesService: MessagesService
   let listeDeDiffusion: ListeDeDiffusion
-  let onBack: () => void
   beforeEach(async () => {
     // Given
     messages = desMessagesListeDiffusion()
@@ -22,12 +21,11 @@ describe('<MessagesListeDeDiffusion />', () => {
       getMessagesListeDeDiffusion: jest.fn(async () => messages),
     })
     listeDeDiffusion = uneListeDeDiffusion()
-    onBack = jest.fn()
 
     // When
     await act(async () => {
       await renderWithContexts(
-        <MessagesListeDeDiffusion liste={listeDeDiffusion} onBack={onBack} />,
+        <MessagesListeDeDiffusion liste={listeDeDiffusion} />,
         {
           customDependances: { messagesService },
         }
