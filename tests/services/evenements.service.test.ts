@@ -213,6 +213,41 @@ describe('EvenementsApiService', () => {
       delete expected.labelBeneficiaires
       expect(actual).toEqual([expected])
     })
+
+    it('renvoie les rendez-vous avec présence du bénéficiaire', async () => {
+      // Given
+      const accessToken = 'accessToken'
+      const idJeune = 'id-jeune'
+      const periode = 'PASSES'
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: [
+          unEvenementJeuneJson({
+            type: { code: 'ATELIER', label: 'Atelier' },
+            futPresent: true,
+          }),
+        ],
+      })
+
+      // When
+      const actual = await evenementsService.getRendezVousJeune(
+        'id-jeune',
+        'PASSES',
+        accessToken
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
+        accessToken
+      )
+      const expected = unEvenementListItem({
+        type: 'Atelier',
+        futPresent: true,
+      })
+
+      delete expected.labelBeneficiaires
+      expect(actual[0].futPresent).toBeTruthy()
+    })
   })
 
   describe('.getRendezVousEtablissement', () => {

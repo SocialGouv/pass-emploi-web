@@ -29,6 +29,7 @@ export function OngletRdvsBeneficiaire({
             rdvs={rdvs}
             idConseiller={idConseiller}
             beneficiaireUnique={beneficiaire}
+            customizedColumnlHeader='Modalité'
           />
           <Link
             href={`/mes-jeunes/${beneficiaire.id}/rendez-vous-passes`}

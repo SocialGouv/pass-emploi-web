@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 
-import TableauRdv from 'components/rdv/TableauRdv'
+import TableauRdv, { ColumnHeaderLabel } from 'components/rdv/TableauRdv'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PeriodeEvenements, EvenementListItem } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
@@ -19,6 +19,7 @@ interface RendezVousPassesProps {
 
 function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
   const [conseiller] = useConseiller()
+
   useMatomo('Détail jeune - Rendez-vous passés')
 
   return (
@@ -26,7 +27,7 @@ function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
       rdvs={rdvs}
       idConseiller={conseiller?.id ?? ''}
       beneficiaireUnique={beneficiaire}
-      optionalHeader='Présent'
+      customizedColumnlHeader={ColumnHeaderLabel.present}
     />
   )
 }

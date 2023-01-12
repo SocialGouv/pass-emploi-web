@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { RdvRow } from 'components/rdv/RdvRow'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
@@ -20,7 +21,12 @@ type TableauRdvProps = {
   rdvs: EvenementListItem[]
   withIntercalaires?: boolean
   beneficiaireUnique?: BaseJeune
-  optionalHeader?: string
+  customizedColumnlHeader?: string
+}
+
+export const enum ColumnHeaderLabel {
+  present = 'Présent',
+  modalite = 'Modalité',
 }
 
 export default function TableauRdv({
@@ -28,7 +34,7 @@ export default function TableauRdv({
   idConseiller,
   withIntercalaires = false,
   beneficiaireUnique,
-  optionalHeader = 'Modalité',
+  customizedColumnlHeader = ColumnHeaderLabel.modalite,
 }: TableauRdvProps) {
   const rdvsAffiches = useMemo(
     () =>
@@ -37,6 +43,9 @@ export default function TableauRdv({
         : rdvs,
     [rdvs, withIntercalaires]
   )
+
+  const informationLabel =
+    'L’information de présence est connue uniquement pour les informations collectives et les ateliers.'
 
   return (
     <>
@@ -60,7 +69,19 @@ export default function TableauRdv({
               <TH>Horaires</TH>
               {!beneficiaireUnique && <TH>Bénéficiaire</TH>}
               <TH>Type</TH>
-              <TH>{optionalHeader}</TH>
+              <TH>
+                {customizedColumnlHeader}
+                {customizedColumnlHeader === ColumnHeaderLabel.present && (
+                  <IconComponent
+                    name={IconName.Info}
+                    role='img'
+                    focusable={false}
+                    aria-label={informationLabel}
+                    title={informationLabel}
+                    className='w-3 h-3 ml-2 fill-primary inline'
+                  />
+                )}
+              </TH>
               <TH>Créé par vous</TH>
             </TR>
           </THead>
@@ -73,6 +94,9 @@ export default function TableauRdv({
                 withDate={!withIntercalaires}
                 beneficiaireUnique={beneficiaireUnique}
                 idConseiller={idConseiller}
+                withIndicationPresenceBeneficiaire={
+                  customizedColumnlHeader === ColumnHeaderLabel.present
+                }
               />
             ))}
           </TBody>

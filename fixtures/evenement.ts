@@ -87,6 +87,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
       },
     ],
     source: 'PASS_EMPLOI',
+    futPresent: false,
   }
 
   return { ...defaults, ...overrides }
@@ -120,6 +121,7 @@ export function unEvenementListItem(
     duree: 125,
     idCreateur: '1',
     source: 'PASS_EMPLOI',
+    futPresent: false,
   }
   return { ...defaults, ...overrides }
 }
@@ -177,6 +179,7 @@ export function unEvenementJson(
       },
     ],
     source: StructureConseiller.PASS_EMPLOI,
+    futPresent: false,
   }
 
   return { ...defaults, ...overrides }
@@ -226,6 +229,7 @@ export function unEvenementJeuneJson(
       },
     ],
     source: StructureConseiller.PASS_EMPLOI,
+    futPresent: false,
   }
 
   return { ...defaults, ...overrides }

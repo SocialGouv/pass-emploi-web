@@ -32,6 +32,7 @@ export type EvenementJson = {
   organisme?: string
   statut?: StatutAnimationCollectiveJson
   source?: StructureConseiller
+  futPresent?: boolean
 }
 
 export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'>
@@ -73,6 +74,7 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     invitation: Boolean(json.invitation),
     historique: [],
     source: json.source,
+    futPresent: Boolean(json.futPresent),
   }
   if (json.modality) evenement.modality = json.modality
   if (json.comment) evenement.commentaire = json.comment
@@ -83,6 +85,7 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
   if (json.statut)
     evenement.statut = jsonToStatutAnimationCollective(json.statut)
   if (json.source) evenement.source = json.source
+  if (json.futPresent) evenement.futPresent = json.futPresent
 
   return evenement
 }
@@ -97,6 +100,7 @@ export function jsonToListItem(
     duree: json.duration,
     idCreateur: json.createur.id,
     source: json.source,
+    futPresent: Boolean(json.futPresent),
   }
   if (json.modality) evenement.modality = json.modality
   if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {

@@ -1,13 +1,14 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import renderWithContexts from '../renderWithContexts'
 
-import { desEvenementsListItems, unEvenementListItem } from 'fixtures/evenement'
+import { unEvenementListItem } from 'fixtures/evenement'
 import { unDetailJeune, uneBaseJeune } from 'fixtures/jeune'
 import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
+import { EvenementListItem } from 'interfaces/evenement'
 import RendezVousPasses, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/rendez-vous-passes'
@@ -23,17 +24,28 @@ describe('RendezVousPasses', () => {
   describe('client side', () => {
     describe('quand l’utilisateur n’est pas Pôle emploi ', () => {
       describe('quand il y a des rendez-vous passés', () => {
-        it('affiche le tableau des rendez-vous passés du conseiller avec le jeune', async () => {
+        let rdvs: EvenementListItem[]
+        beforeEach(async () => {
           // Given
-          const rdvs = desEvenementsListItems()
+          rdvs = [
+            unEvenementListItem({ type: 'Atelier', futPresent: false }),
+            unEvenementListItem({
+              type: 'Information collective',
+              futPresent: true,
+            }),
+            unEvenementListItem({
+              futPresent: false,
+            }),
+          ]
 
-          // When
           await act(async () => {
             await renderWithContexts(
               <RendezVousPasses beneficiaire={uneBaseJeune()} rdvs={rdvs} />
             )
           })
+        })
 
+        it('affiche le tableau des rendez-vous passés du conseiller avec le jeune', async () => {
           // Then
           expect(
             screen.getByRole('columnheader', { name: 'Horaires' })
@@ -42,35 +54,34 @@ describe('RendezVousPasses', () => {
             screen.getByRole('columnheader', { name: 'Type' })
           ).toBeInTheDocument()
           expect(
-            screen.getByRole('columnheader', { name: 'Présent' })
+            screen.getByRole('columnheader', {
+              name: /Présent L’information de présence/,
+            })
           ).toBeInTheDocument()
 
           rdvs.forEach((rdv) => {
             expect(screen.getByText(rdv.type)).toBeInTheDocument()
-            expect(screen.getByText(rdv.modality)).toBeInTheDocument()
           })
         })
 
-        describe('quand les rendez-vous sont de type animation collective ', () => {
-          it('affiche si le bénéficiaire a été présent', async () => {
-            // Given
-            const rdvs = [
-              unEvenementListItem(),
-              unEvenementListItem({ source: 'MILO' }),
-            ]
+        describe('informe sur la présence du bénéficiaire', () => {
+          it('quand les rendez-vous sont de type ANIMATION COLLECTIVE', async () => {
+            // Then
+            expect(screen.getByText('Non')).not.toHaveAttribute(
+              'class',
+              'sr-only'
+            )
+            expect(screen.getByText('Oui')).not.toHaveAttribute(
+              'class',
+              'sr-only'
+            )
+          })
 
-            // When
-            await act(async () => {
-              await renderWithContexts(
-                <RendezVousPasses beneficiaire={uneBaseJeune()} rdvs={rdvs} />
-              )
-            })
-            screen.debug()
-
+          it('quand les rendez-vous ne sont pas de type ANIMATION COLLECTIVE', async () => {
             // Then
             expect(
-              screen.getByRole('cell', { name: /Oui/i })
-            ).toBeInTheDocument()
+              screen.getByText('information non disponible')
+            ).toHaveAttribute('class', 'sr-only')
           })
         })
       })
