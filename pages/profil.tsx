@@ -78,7 +78,7 @@ function Profil({ referentielAgences }: ProfilProps) {
     <>
       {conseiller && (
         <>
-          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
+          <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Informations</h2>
             <h3 className='text-base-bold'>
               {conseiller.firstName} {conseiller.lastName}
@@ -143,7 +143,7 @@ function Profil({ referentielAgences }: ProfilProps) {
               </>
             )}
           </section>
-          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
+          <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>Notifications</h2>
             <div className='flex items-center flex-wrap layout_m:flex-nowrap'>
               <label htmlFor='notificationSonore' className='mr-4'>
@@ -159,7 +159,7 @@ function Profil({ referentielAgences }: ProfilProps) {
               />
             </div>
           </section>
-          <section className='border border-solid rounded-medium w-full p-4 border-grey_100 mb-8'>
+          <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
             <h2 className='text-m-bold mb-4'>
               Application CEJ jeune - mode démo
             </h2>

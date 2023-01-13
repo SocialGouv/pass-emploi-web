@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react'
 
-import RadioButton from 'components/action/RadioButton'
+import RadioBox from 'components/action/RadioBox'
 import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
 import RechercheImmersionsSecondaire from 'components/offres/RechercheImmersionsSecondaire'
 import RechercheOffresEmploiPrincipale from 'components/offres/RechercheOffresEmploiPrincipale'
@@ -88,7 +88,7 @@ export default function FormRechercheOffres({
   return (
     <form
       onSubmit={rechercherPremierePage}
-      className={hasResults ? 'bg-primary_lighten p-6 mb-10 rounded-small' : ''}
+      className={hasResults ? 'bg-primary_lighten p-6 mb-10 rounded-base' : ''}
     >
       <div className={`flex justify-between ${showForm ? 'mb-5' : ''}`}>
         <h2 className='text-m-medium text-primary'>Ma recherche</h2>
@@ -110,28 +110,28 @@ export default function FormRechercheOffres({
       <div className={!showForm ? 'hidden' : ''} aria-hidden={!showForm}>
         <Etape numero={1} titre='Sélectionner un type d’offre'>
           <div className='flex flex-wrap'>
-            <RadioButton
+            <RadioBox
               isSelected={typeOffre === TypeOffre.EMPLOI}
               onChange={() => setTypeOffre(TypeOffre.EMPLOI)}
               name='type-offre'
               id='type-offre--emploi'
               label='Offre d’emploi'
             />
-            <RadioButton
+            <RadioBox
               isSelected={typeOffre === TypeOffre.ALTERNANCE}
               onChange={() => setTypeOffre(TypeOffre.ALTERNANCE)}
               name='type-offre'
               id='type-offre--alternance'
               label='Alternance'
             />
-            <RadioButton
+            <RadioBox
               isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
               onChange={() => setTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
               name='type-offre'
               id='type-offre--service-civique'
               label='Service civique'
             />
-            <RadioButton
+            <RadioBox
               isSelected={typeOffre === TypeOffre.IMMERSION}
               onChange={() => setTypeOffre(TypeOffre.IMMERSION)}
               name='type-offre'

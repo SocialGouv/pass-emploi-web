@@ -13,7 +13,7 @@ export default function FailureAlert({
   return (
     <div
       role='alert'
-      className='text-warning bg-warning_lighten p-6 flex items-center rounded-medium mb-8'
+      className='text-warning bg-warning_lighten p-6 flex items-center rounded-base mb-8'
     >
       <FailureIcon
         aria-hidden={true}

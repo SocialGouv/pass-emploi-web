@@ -115,7 +115,7 @@ export default function RenseignementAgenceForm({
           value={agenceLibre.value ?? ''}
           onChange={(value) => setAgenceLibre({ value })}
           onReset={() => setAgenceLibre({ value: '' })}
-          className={`mt-2 border border-solid rounded-medium w-full mt-2 ${
+          className={`mt-2 border border-solid rounded-base w-full mt-2 ${
             agenceLibre.error
               ? 'border-warning text-warning'
               : 'border-content_color'

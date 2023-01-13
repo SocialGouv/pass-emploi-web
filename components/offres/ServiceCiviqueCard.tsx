@@ -4,7 +4,7 @@ import React from 'react'
 import OffreCard from 'components/offres/OffreCard'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
-import { Tag } from 'components/ui/Indicateurs/Tag'
+import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import { BaseServiceCivique } from 'interfaces/offre'
 import { toFrenchString } from 'utils/date'
 
@@ -23,7 +23,7 @@ export default function ServiceCiviqueCard({
       titreLien={offre.titre}
       withPartage={withPartage}
     >
-      <Tag
+      <TagMetier
         label='Service civique'
         color='accent_2'
         backgroundColor='white'

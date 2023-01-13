@@ -21,7 +21,7 @@ export function BlocSituation({
   versionResumee,
 }: BlocSituationProps) {
   return (
-    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
+    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       {versionResumee && <h2 className='text-m-bold mb-1'>Situation</h2>}
       {!(situations && situations.length) && <SansSituation />}
 

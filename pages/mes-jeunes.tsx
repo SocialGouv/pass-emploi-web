@@ -136,7 +136,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   return (
     <>
       {conseiller?.aDesBeneficiairesARecuperer && (
-        <div className='bg-primary_lighten rounded-medium p-6 mb-6 text-center'>
+        <div className='bg-primary_lighten rounded-base p-6 mb-6 text-center'>
           <p className='text-base-bold text-primary'>
             {conseillerJeunes.length > 0 &&
               'Certains de vos bénéficiaires ont été transférés temporairement.'}

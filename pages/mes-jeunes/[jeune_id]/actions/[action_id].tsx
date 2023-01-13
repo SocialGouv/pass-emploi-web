@@ -181,7 +181,7 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
       {action.comment && <p className='mb-8'>{action.comment}</p>}
 
       {estARealiser && (
-        <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-medium mb-8'>
+        <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-l mb-8'>
           <IconComponent
             name={IconName.Clock}
             aria-hidden='true'

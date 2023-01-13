@@ -52,7 +52,7 @@ export default function DossierJeuneMilo({
 
   return (
     <>
-      <div className='border border-primary_lighten rounded-large p-6'>
+      <div className='border border-primary_lighten rounded-base p-6'>
         <dl className='text-primary_darken'>
           <div className='flex items-center mb-3'>
             <dt className='text-base-regular mr-1'>Prénom :</dt>

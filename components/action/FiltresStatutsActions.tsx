@@ -76,9 +76,10 @@ export default function FiltresStatutsActions({
           className='h-4 w-4 ml-2 fill-primary'
         />
       </button>
+
       {afficherFiltresStatuts && (
         <form
-          className='absolute z-10 bg-blanc rounded-medium shadow-base p-4 text-base-regular'
+          className='absolute z-10 bg-blanc rounded-base shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrerActions}
         >

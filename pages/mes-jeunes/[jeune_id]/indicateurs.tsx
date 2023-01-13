@@ -72,7 +72,7 @@ function IndicateursActions({
   actions,
 }: Partial<Pick<IndicateursSemaine, 'actions'>>) {
   return (
-    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
+    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
       <ul className='flex flex-wrap gap-2'>
         <TileIndicateur
@@ -110,7 +110,7 @@ function IndicateursRendezvous({
   rendezVous,
 }: Partial<Pick<IndicateursSemaine, 'rendezVous'>>) {
   return (
-    <div className='border border-solid rounded-medium w-full mt-6 p-4 border-grey_100'>
+    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les événements</h3>
       <ul className='flex'>
         <TileIndicateur
@@ -129,7 +129,7 @@ function IndicateursOffres({
   favoris,
 }: Partial<Pick<IndicateursSemaine, 'offres' | 'favoris'>>) {
   return (
-    <div className='border border-solid rounded-medium w-full mt-6 p-4 border-grey_100'>
+    <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les offres</h3>
       <ul className='flex flex-wrap gap-2'>
         <TileIndicateur

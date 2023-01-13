@@ -9,7 +9,7 @@ interface IntegrationPoleEmploiProps {
 export const IntegrationPoleEmploi = ({
   label,
 }: IntegrationPoleEmploiProps) => (
-  <div className='bg-primary_lighten rounded-medium flex items-center p-4'>
+  <div className='bg-primary_lighten rounded-base flex items-center p-4'>
     <Exclamation
       className='mr-4 fill-primary h-8 w-8'
       focusable='false'

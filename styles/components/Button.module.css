@@ -1,7 +1,7 @@
 .button {
   padding: 0.5rem 1rem;
   height: max-content;
-  border-radius: 9999px;
+  border-radius: theme('borderRadius.l');
   transition: border-color 0.2s, color 0.2s, background-color 0.2s;
   display: flex;
   align-items: center;

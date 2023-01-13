@@ -23,7 +23,7 @@ export default function DisplayMessageListeDeDiffusion({
 
   return (
     <li className='mb-4 px-4' ref={scrollToRef}>
-      <div className='text-base-regular break-words p-4 rounded-large text-content_color bg-blanc mb-1'>
+      <div className='text-base-regular break-words p-4 rounded-base text-content_color bg-blanc mb-1'>
         <TexteAvecLien texte={message.content} lighten={false} />
 
         {message.type === TypeMessage.MESSAGE_PJ &&

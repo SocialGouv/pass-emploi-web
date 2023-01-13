@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import React from 'react'
 
-import StatusTag from 'components/action/StatusTag'
+import TagStatutAction from 'components/action/TagStatutAction'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Tag } from 'components/ui/Indicateurs/Tag'
+import { TagStatut } from 'components/ui/Indicateurs/Tag'
 import { EntreeAgenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
 
@@ -34,7 +34,7 @@ export default function AgendaRow({ entree, jeuneId }: AgendaRowProps) {
   const { href, iconName, label } = props[entree.type]
 
   return (
-    <li className='mt-4 text-base-regular rounded-small shadow-base hover:bg-primary_lighten'>
+    <li className='mt-4 text-base-regular rounded-base shadow-base hover:bg-primary_lighten'>
       <Link
         href={href + entree.id}
         aria-label={label}
@@ -53,9 +53,9 @@ export default function AgendaRow({ entree, jeuneId }: AgendaRowProps) {
         <div className='grow'>{entree.titre}</div>
 
         <div className='flex justify-end'>
-          {entree.statut && <StatusTag status={entree.statut} />}
+          {entree.statut && <TagStatutAction status={entree.statut} />}
           {entree.source === StructureConseiller.MILO && (
-            <Tag
+            <TagStatut
               label='Non modifiable'
               color='accent_2'
               backgroundColor='accent_2_lighten'

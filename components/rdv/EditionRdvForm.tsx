@@ -503,7 +503,7 @@ export function EditionRdvForm({
         )}
 
         {isAgenceNecessaire && (
-          <div className='bg-warning_lighten rounded-medium p-6'>
+          <div className='bg-warning_lighten rounded-base p-6'>
             <p className='flex justify-center items-center text-base-bold text-warning mb-2'>
               <IconComponent
                 focusable={false}

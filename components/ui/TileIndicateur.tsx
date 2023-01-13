@@ -15,7 +15,7 @@ export default function TileIndicateur({
 }) {
   return (
     <li
-      className={`flex flex-col shrink-0 p-3 rounded-medium ${
+      className={`flex flex-col shrink-0 p-3 rounded-base ${
         parseInt(valeur, 10) > 0
           ? `bg-${bgColor} text-${textColor}`
           : 'bg-grey_100 text-grey_800'

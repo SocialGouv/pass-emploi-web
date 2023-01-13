@@ -194,7 +194,7 @@ function Reaffectation(_: ReaffectationProps) {
         <SuccessAlert label={'Les jeunes ont été réaffectés avec succès'} />
       )}
 
-      <div className='mb-10 bg-accent_2_lighten rounded-medium p-6'>
+      <div className='mb-10 bg-accent_2_lighten rounded-base p-6'>
         <p className='text-base-bold mb-4'>
           Pour réaffecter les jeunes d&apos;un conseiller vers un autre
           conseiller :
@@ -269,11 +269,11 @@ function Reaffectation(_: ReaffectationProps) {
               onChange={editEmailConseillerInitial}
               onReset={resetAll}
               type={'email'}
-              className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-regular text-primary_darken'
+              className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-regular text-primary_darken'
               required={true}
             />
             <button
-              className={`flex p-3 items-center border border-solid border-content_color rounded-r-medium ${
+              className={`flex p-3 items-center border border-solid border-content_color rounded-r-base ${
                 isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
               } disabled:cursor-not-allowed disabled:border-disabled`}
               type='submit'
@@ -328,7 +328,7 @@ function Reaffectation(_: ReaffectationProps) {
             onReset={() => editEmailConseillerDestination('')}
             disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
             type={'email'}
-            className='flex-1 border border-solid border-grey_700 rounded-medium text-base-regular text-primary_darken'
+            className='flex-1 border border-solid border-grey_700 rounded-base text-base-regular text-primary_darken'
             required={true}
           />
         </form>
@@ -430,7 +430,7 @@ function Reaffectation(_: ReaffectationProps) {
             <TBody>
               {jeunes.map((jeune: JeuneFromListe) => (
                 <TR key={jeune.id} onClick={() => selectionnerJeune(jeune)}>
-                  <TD className='p-4 rounded-l-small'>
+                  <TD className='p-4 rounded-l-base'>
                     <input
                       id={'checkbox-' + jeune.id}
                       type='checkbox'
@@ -452,7 +452,7 @@ function Reaffectation(_: ReaffectationProps) {
                       ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
                       : '-'}
                   </TD>
-                  <TD className='p-4 text-base-regular rounded-r-small'>
+                  <TD className='p-4 text-base-regular rounded-r-base'>
                     {jeune.conseillerPrecedent?.email ?? '-'}
                   </TD>
                 </TR>

@@ -71,7 +71,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
           className='m-auto h-56 w-56'
         />
 
-        <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-x_large'>
+        <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-base'>
           <h1 className='text-m-bold text-primary_darken text-center mb-[24px]'>
             Connectez-vous à l&apos;espace conseiller
           </h1>

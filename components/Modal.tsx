@@ -84,13 +84,13 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   }, [])
 
   const modalTemplate = (
-    <div className='rounded-x_large bg-blanc max-w-[620px] p-3' ref={modalRef}>
+    <div className='rounded-base bg-blanc max-w-[620px] p-3' ref={modalRef}>
       <div className='flex justify-end'>
         <button
           type='button'
           onClick={handleClose}
           ref={focusOnRender}
-          className='p-2 border-none hover:bg-primary_lighten hover:rounded-full'
+          className='p-2 border-none hover:bg-primary_lighten hover:rounded-l'
         >
           <IconComponent
             name={IconName.Close}

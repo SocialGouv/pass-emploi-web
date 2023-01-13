@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Tag } from 'components/ui/Indicateurs/Tag'
+import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import { TR } from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
@@ -14,7 +14,7 @@ export default function OffreRow({ offre }: { offre: Offre }) {
       <TD>{offre.titre}</TD>
       <TD>{offre.organisation}</TD>
       <TD>
-        <Tag
+        <TagMetier
           label={offre.type}
           color='primary'
           backgroundColor='primary_lighten'

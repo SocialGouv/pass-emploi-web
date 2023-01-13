@@ -73,7 +73,7 @@ export default function FiltresEtatsQualificationActions({
     <div className='relative'>
       <button
         type='button'
-        className='flex items-center w-fit text-s-bold border border-solid border-grey_800 text-grey_800 py-2 px-4 rounded-x_large'
+        className='flex items-center w-fit text-s-bold border border-solid border-grey_800 text-grey_800 py-2 px-4 rounded-l'
         aria-controls='filtres-statut'
         aria-expanded={afficherFiltresQualification}
         onClick={() =>
@@ -94,7 +94,7 @@ export default function FiltresEtatsQualificationActions({
 
       {afficherFiltresQualification && (
         <form
-          className='absolute z-10 bg-blanc rounded-medium shadow-base p-4 text-base-regular'
+          className='absolute z-10 bg-blanc rounded-base shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrerActions}
         >
