@@ -112,10 +112,8 @@ export default function BeneficiairesMultiselectAutocomplete({
 
     if (inputValue === SELECT_ALL_DESTINATAIRES_OPTION) {
       setBeneficiairesSelectionnes(beneficiaires)
-      setListesSelectionnees(listesDeDiffusion)
       onUpdate({
         beneficiaires: beneficiaires.map(({ id }) => id),
-        listesDeDiffusion: listesDeDiffusion?.map(({ id }) => id),
       })
       input.current!.value = ''
       return
