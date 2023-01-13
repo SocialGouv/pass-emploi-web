@@ -13,7 +13,7 @@ interface TagProps {
 function Tag({ label, color, backgroundColor, className, iconName }: TagProps) {
   return (
     <span
-      className={`flex items-center w-fit text-s-regular border border-solid border-${color} text-${color} px-3 bg-${backgroundColor} whitespace-nowrap ${
+      className={`flex items-center w-fit text-s-medium text-${color} px-3 bg-${backgroundColor} whitespace-nowrap ${
         className ?? ''
       }`}
     >

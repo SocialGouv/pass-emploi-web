@@ -24,7 +24,7 @@ export default function TagQualificationAction({
           color='accent_2'
           backgroundColor='accent_2_lighten'
           iconName={IconName.Pending}
-          className='mb-4 border-none text-s-bold'
+          className='mb-4 text-s-bold'
         />
       )}
       {qualification && qualification.isSituationNonProfessionnelle && (
