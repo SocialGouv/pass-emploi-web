@@ -25,10 +25,10 @@ export type AnimationCollective = {
 export type EvenementListItem = {
   id: string
   type: string
-  modality: string
   date: string
   duree: number
   idCreateur: string
+  modality?: string
   labelBeneficiaires?: string
   source?: string
 }
@@ -40,7 +40,6 @@ export type Evenement = {
   titre: string
   jeunes: Array<BaseJeune & { futPresent?: boolean }>
   type: TypeEvenement
-  modality: string
   date: string
   duree: number
   presenceConseiller: boolean
@@ -48,6 +47,7 @@ export type Evenement = {
   createur: Auteur & { id: string }
   historique: Modification[]
   commentaire?: string
+  modality?: string
   precisionType?: string
   adresse?: string
   organisme?: string
