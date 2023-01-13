@@ -29,7 +29,7 @@ export default function MessagesListeDeDiffusion({
   useEffect(() => {
     if (chatCredentials) {
       messagesService
-        .getMessagesListeDeDiffusion(chatCredentials?.cleChiffrement, liste.id)
+        .getMessagesListeDeDiffusion(liste.id, chatCredentials.cleChiffrement)
         .then(setMessages)
     }
   }, [chatCredentials, liste.id])

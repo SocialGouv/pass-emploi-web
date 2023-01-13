@@ -78,8 +78,8 @@ export interface MessagesService {
   ): () => void
 
   getMessagesListeDeDiffusion(
-    cleChiffrement: string,
-    idListeDiffusion: string
+    idListeDiffusion: string,
+    cleChiffrement: string
   ): Promise<ByDay<MessageListeDiffusion>[]>
 
   observeJeuneReadingDate(
@@ -195,10 +195,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   }
 
   async getMessagesListeDeDiffusion(
-    cleChiffrement: string,
-    idListeDiffusion: string
+    idListeDiffusion: string,
+    cleChiffrement: string
   ): Promise<ByDay<MessageListeDiffusion>[]> {
+    const session = await getSession()
     const messages = await this.firebaseClient.getMessagesGroupe(
+      session!.user.id,
       idListeDiffusion
     )
 

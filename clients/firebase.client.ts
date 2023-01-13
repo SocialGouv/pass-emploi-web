@@ -203,9 +203,15 @@ class FirebaseClient {
     }
   }
 
-  async getMessagesGroupe(idGroupe: string): Promise<MessageListeDiffusion[]> {
+  async getMessagesGroupe(
+    idConseiller: string,
+    idGroupe: string
+  ): Promise<MessageListeDiffusion[]> {
     try {
-      const groupeSnapshot = await this.getGroupeSnapshot(idGroupe)
+      const groupeSnapshot = await this.getGroupeSnapshot(
+        idConseiller,
+        idGroupe
+      )
       if (!groupeSnapshot) {
         console.error(
           'Aucun document correspondant à la liste de diffusion ' + idGroupe
@@ -297,6 +303,7 @@ class FirebaseClient {
   }
 
   private async getGroupeSnapshot(
+    idConseiller: string,
     idGroupe: string
   ): Promise<QueryDocumentSnapshot<FirebaseGroupe> | undefined> {
     const collectionRef = collection(
@@ -305,7 +312,11 @@ class FirebaseClient {
     ) as CollectionReference<FirebaseGroupe>
 
     const querySnapshots: QuerySnapshot<FirebaseGroupe> = await getDocs(
-      query<FirebaseGroupe>(collectionRef, where('groupeId', '==', idGroupe))
+      query<FirebaseGroupe>(
+        collectionRef,
+        where('conseillerId', '==', idConseiller),
+        where('groupeId', '==', idGroupe)
+      )
     )
 
     if (querySnapshots.docs.length > 0) return querySnapshots.docs[0]

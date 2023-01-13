@@ -38,8 +38,8 @@ describe('<MessagesListeDeDiffusion />', () => {
     // Then
     expect(messagesService.getMessagesListeDeDiffusion).toHaveBeenCalledTimes(1)
     expect(messagesService.getMessagesListeDeDiffusion).toHaveBeenCalledWith(
-      'cleChiffrement',
-      listeDeDiffusion.id
+      listeDeDiffusion.id,
+      'cleChiffrement'
     )
   })
 

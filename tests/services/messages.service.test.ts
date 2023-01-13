@@ -153,12 +153,15 @@ describe('MessagesFirebaseAndApiService', () => {
 
       // When
       const actual = await messagesService.getMessagesListeDeDiffusion(
-        cleChiffrement,
-        'id-liste'
+        'id-liste',
+        cleChiffrement
       )
 
       // Then
-      expect(firebaseClient.getMessagesGroupe).toHaveBeenCalledWith('id-liste')
+      expect(firebaseClient.getMessagesGroupe).toHaveBeenCalledWith(
+        'id-conseiller',
+        'id-liste'
+      )
       expect(actual).toEqual(desMessagesListeDeDiffusionParJour())
     })
   })
