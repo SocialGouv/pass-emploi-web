@@ -19,7 +19,6 @@ export type EvenementJson = {
   date: string
   duration: number
   type: TypeEvenement
-  modality: string
   jeunes: Array<BaseJeune & { futPresent?: boolean }>
   title: string
   createur: Auteur
@@ -27,6 +26,7 @@ export type EvenementJson = {
   historique?: Array<{ date: string; auteur: Auteur }>
   precision?: string
   comment?: string
+  modality?: string
   presenceConseiller?: boolean
   adresse?: string
   organisme?: string
@@ -67,7 +67,6 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     date: json.date,
     createur: json.createur,
     type: json.type,
-    modality: json.modality,
     duree: json.duration,
     titre: json.title,
     presenceConseiller: Boolean(json.presenceConseiller),
@@ -75,6 +74,7 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     historique: [],
     source: json.source,
   }
+  if (json.modality) evenement.modality = json.modality
   if (json.comment) evenement.commentaire = json.comment
   if (json.precision) evenement.precisionType = json.precision
   if (json.adresse) evenement.adresse = json.adresse
@@ -93,12 +93,12 @@ export function jsonToListItem(
   const evenement: EvenementListItem = {
     id: json.id,
     type: json.type.label,
-    modality: json.modality,
     date: json.date,
     duree: json.duration,
     idCreateur: json.createur.id,
     source: json.source,
   }
+  if (json.modality) evenement.modality = json.modality
   if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {
     evenement.labelBeneficiaires = jsonToBeneficiaires(
       (json as EvenementJson).jeunes
