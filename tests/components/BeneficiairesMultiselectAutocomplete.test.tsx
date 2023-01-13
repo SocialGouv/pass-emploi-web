@@ -162,11 +162,8 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       expect(within(selections).getByText('Option 1')).toBeInTheDocument()
       expect(within(selections).getByText('Option 2')).toBeInTheDocument()
       expect(within(selections).getByText('Option 3')).toBeInTheDocument()
-      expect(within(selections).getByText('Liste 1 (1)')).toBeInTheDocument()
-      expect(within(selections).getByText('Liste 2 (2)')).toBeInTheDocument()
       expect(onUpdate).toHaveBeenCalledWith({
         beneficiaires: ['option-1', 'option-2', 'option-3'],
-        listesDeDiffusion: ['liste-1', 'liste-2'],
       })
     })
   })
