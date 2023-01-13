@@ -8,10 +8,15 @@ import {
   uneBaseJeune,
   unJeuneChat,
 } from 'fixtures/jeune'
-import { desMessages, desMessagesParJour } from 'fixtures/message'
+import {
+  desMessages,
+  desMessagesListeDeDiffusionParJour,
+  desMessagesListeDiffusion,
+  desMessagesParJour,
+} from 'fixtures/message'
 import { unDetailOffreEmploi } from 'fixtures/offre'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
-import { Message, MessagesOfADay } from 'interfaces/message'
+import { Message, ByDay } from 'interfaces/message'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
@@ -139,9 +144,31 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
+  describe('.getMessagesListeDeDiffusion', () => {
+    it('retourne les messages de la liste de diffusion', async () => {
+      // Given
+      ;(firebaseClient.getMessagesGroupe as jest.Mock).mockResolvedValue(
+        desMessagesListeDiffusion()
+      )
+
+      // When
+      const actual = await messagesService.getMessagesListeDeDiffusion(
+        'id-liste',
+        cleChiffrement
+      )
+
+      // Then
+      expect(firebaseClient.getMessagesGroupe).toHaveBeenCalledWith(
+        'id-conseiller',
+        'id-liste'
+      )
+      expect(actual).toEqual(desMessagesListeDeDiffusionParJour())
+    })
+  })
+
   describe('.observeMessages', () => {
     let idChat: string
-    let onMessages: (messagesGroupesParJour: MessagesOfADay[]) => void
+    let onMessages: (messagesGroupesParJour: ByDay<Message>[]) => void
     beforeEach(async () => {
       // Given
       ;(firebaseClient.observeMessagesDuChat as jest.Mock).mockImplementation(

@@ -14,7 +14,8 @@ import { BaseJeune, Chat, JeuneChat } from 'interfaces/jeune'
 import {
   ChatCredentials,
   Message,
-  MessagesOfADay,
+  MessageListeDiffusion,
+  ByDay,
   TypeMessage,
 } from 'interfaces/message'
 import { BaseOffre } from 'interfaces/offre'
@@ -73,8 +74,13 @@ export interface MessagesService {
   observeMessages(
     idChat: string,
     cleChiffrement: string,
-    onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
+    onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
   ): () => void
+
+  getMessagesListeDeDiffusion(
+    idListeDiffusion: string,
+    cleChiffrement: string
+  ): Promise<ByDay<MessageListeDiffusion>[]>
 
   observeJeuneReadingDate(
     idChat: string,
@@ -164,12 +170,12 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   observeMessages(
     idChat: string,
     cleChiffrement: string,
-    onMessagesGroupesParJour: (messagesGroupesParJour: MessagesOfADay[]) => void
+    onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
   ): () => void {
     return this.firebaseClient.observeMessagesDuChat(
       idChat,
       (messages: Message[]) => {
-        const messagesGroupesParJour: MessagesOfADay[] =
+        const messagesGroupesParJour: ByDay<Message>[] =
           this.grouperMessagesParJour(messages, cleChiffrement)
         onMessagesGroupesParJour(messagesGroupesParJour)
       }
@@ -186,6 +192,19 @@ export class MessagesFirebaseAndApiService implements MessagesService {
         onJeuneReadingDate(lastJeuneReadingDate)
       }
     })
+  }
+
+  async getMessagesListeDeDiffusion(
+    idListeDiffusion: string,
+    cleChiffrement: string
+  ): Promise<ByDay<MessageListeDiffusion>[]> {
+    const session = await getSession()
+    const messages = await this.firebaseClient.getMessagesGroupe(
+      session!.user.id,
+      idListeDiffusion
+    )
+
+    return this.grouperMessagesParJour(messages, cleChiffrement)
   }
 
   async countMessagesNotRead(
@@ -398,17 +417,27 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     )
   }
 
-  private grouperMessagesParJour(
-    messages: Message[],
+  private grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
+    messages: T[],
     cleChiffrement: string
-  ): MessagesOfADay[] {
-    const messagesByDay: { [day: string]: MessagesOfADay } = {}
+  ): ByDay<T>[] {
+    const messagesByDay: { [day: string]: ByDay<T> } = {}
 
     messages
       .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
       .forEach((message) => {
         if (message.iv) {
-          message = this.decryptMessageAndFilename(message, cleChiffrement)
+          message = {
+            ...message,
+            ...this.decryptContentAndFilename(
+              {
+                iv: message.iv,
+                content: message.content,
+                infoPiecesJointes: message.infoPiecesJointes,
+              },
+              cleChiffrement
+            ),
+          }
         }
 
         const day = toShortDate(message.creationDate)
@@ -423,13 +452,15 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     return Object.values(messagesByDay)
   }
 
-  private decryptMessageAndFilename(
-    message: Message,
+  private decryptContentAndFilename(
+    message: { iv: string; content: string; infoPiecesJointes?: InfoFichier[] },
     cleChiffrement: string
-  ): Message {
-    const iv = message.iv!
-    const decryptedMessage: Message = {
-      ...message,
+  ): { content: string; infoPiecesJointes?: InfoFichier[] } {
+    const iv = message.iv
+    const decryptedMessage: {
+      content: string
+      infoPiecesJointes?: InfoFichier[]
+    } = {
       content: this.chatCrypto.decrypt(
         { encryptedText: message.content, iv },
         cleChiffrement

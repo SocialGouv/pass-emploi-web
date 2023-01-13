@@ -16,7 +16,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Message, MessagesOfADay } from 'interfaces/message'
+import { Message, ByDay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import {
   FormNouveauMessageIndividuel,
@@ -39,13 +39,13 @@ export default function Conversation({
   conseillers,
   onBack,
 }: ConversationProps) {
-  const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
+  const [chatCredentials] = useChatCredentials()
   const [conseiller] = useConseiller()
 
   const [newMessage, setNewMessage] = useState('')
-  const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>()
+  const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
   const [uploadedFileInfo, setUploadedFileInfo] = useState<
     InfoFichier | undefined
   >(undefined)
@@ -59,9 +59,9 @@ export default function Conversation({
   )
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const displayDate = useCallback((date: DateTime) => {
+  function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
-  }, [])
+  }
 
   async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -106,7 +106,7 @@ export default function Conversation({
       return messagesService.observeMessages(
         idChatToObserve,
         chatCredentials.cleChiffrement,
-        (messagesGroupesParJour: MessagesOfADay[]) => {
+        (messagesGroupesParJour: ByDay<Message>[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
           if (document.activeElement === inputRef.current) {
@@ -232,9 +232,10 @@ export default function Conversation({
         aria-busy={!messagesByDay}
       >
         {!messagesByDay && <SpinningLoader />}
+
         {messagesByDay && (
           <ul>
-            {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
+            {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
               <li key={messagesOfADay.date.toMillis()} className='mb-5'>
                 <div className='text-base-regular text-center mb-3'>
                   <span>{displayDate(messagesOfADay.date)}</span>
