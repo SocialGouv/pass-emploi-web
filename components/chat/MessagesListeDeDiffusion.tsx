@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
@@ -22,9 +22,9 @@ export default function MessagesListeDeDiffusion({
 
   const [messages, setMessages] = useState<ByDay<MessageListeDiffusion>[]>()
 
-  const displayDate = useCallback((date: DateTime) => {
+  function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
-  }, [])
+  }
 
   useEffect(() => {
     if (chatCredentials) {

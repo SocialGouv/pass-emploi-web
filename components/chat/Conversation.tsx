@@ -59,9 +59,9 @@ export default function Conversation({
   )
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const displayDate = useCallback((date: DateTime) => {
+  function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
-  }, [])
+  }
 
   async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

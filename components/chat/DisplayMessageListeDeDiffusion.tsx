@@ -1,5 +1,5 @@
 import parse, { domToReact } from 'html-react-parser'
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import { MessageListeDiffusion, TypeMessage } from 'interfaces/message'
@@ -12,9 +12,9 @@ interface DisplayMessageListeDeDiffusionProps {
 export default function DisplayMessageListeDeDiffusion({
   message,
 }: DisplayMessageListeDeDiffusionProps) {
-  const creationTime: string = useMemo(
-    () => toFrenchFormat(message.creationDate, TIME_24_H_SEPARATOR),
-    [message.creationDate]
+  const creationTime: string = toFrenchFormat(
+    message.creationDate,
+    TIME_24_H_SEPARATOR
   )
 
   function scrollToRef(element: HTMLLIElement | null) {
@@ -90,7 +90,10 @@ export default function DisplayMessageListeDeDiffusion({
             <LienPieceJointe key={id} id={id} nom={nom} />
           ))}
       </div>
-      <p className='text-xs-medium text-grey_800 text-right'>{creationTime}</p>
+      <p className='text-xs-medium text-content text-right'>
+        <span className='sr-only'>Envoyé le </span>
+        {creationTime}
+      </p>
     </li>
   )
 }

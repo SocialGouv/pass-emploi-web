@@ -47,15 +47,10 @@ export default function ListeListesDeDiffusion({
                 key={liste.id}
                 className='bg-blanc rounded-small mb-2 last:mb-0'
               >
-                <button
-                  onClick={() => onAfficherListe(liste)}
-                  className='w-full p-3 text-left'
-                >
-                  <TitreListe liste={liste} />
-                  <span className='text-s-regular'>
-                    {liste.beneficiaires.length} destinataire(s)
-                  </span>
-                </button>
+                <ListeDeDiffusionTile
+                  liste={liste}
+                  onAfficherListe={onAfficherListe}
+                />
               </li>
             ))}
           </ul>
@@ -65,29 +60,49 @@ export default function ListeListesDeDiffusion({
   )
 }
 
-function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
+function ListeDeDiffusionTile({
+  liste,
+  onAfficherListe,
+}: {
+  liste: ListeDeDiffusion
+  onAfficherListe: (liste: ListeDeDiffusion) => void
+}): JSX.Element {
+  const aBeneficiairesReaffectes = liste.beneficiaires.some(
+    ({ estDansLePortefeuille }) => !estDansLePortefeuille
+  )
   const informationLabel =
     'Un ou plusieurs bénéficiaires de cette liste ont été réaffectés temporairement.'
 
-  if (
-    liste.beneficiaires.some(
-      ({ estDansLePortefeuille }) => !estDansLePortefeuille
-    )
-  ) {
-    return (
-      <h4 className='flex items-center text-primary text-base-medium'>
-        <IconComponent
-          name={IconName.Info}
-          role='img'
-          focusable={false}
-          aria-label={informationLabel}
-          title={informationLabel}
-          className='w-3 h-3 mr-2 fill-[currentColor]'
-        />
-        {liste.titre}
-      </h4>
-    )
-  }
+  return (
+    <button
+      onClick={() => onAfficherListe(liste)}
+      className='w-full p-3 text-left'
+      aria-label={
+        'Consulter les messages de la liste ' +
+        liste.titre +
+        (aBeneficiairesReaffectes ? ` (${informationLabel})` : '')
+      }
+    >
+      {aBeneficiairesReaffectes && (
+        <h4 className='flex items-center text-primary text-base-medium'>
+          <IconComponent
+            name={IconName.Info}
+            role='img'
+            focusable={false}
+            aria-label={informationLabel}
+            title={informationLabel}
+            className='w-3 h-3 mr-2 fill-[currentColor]'
+          />
+          {liste.titre}
+        </h4>
+      )}
+      {!aBeneficiairesReaffectes && (
+        <h4 className='text-base-medium'>{liste.titre}</h4>
+      )}
 
-  return <h4 className='text-base-medium'>{liste.titre}</h4>
+      <span className='text-s-regular'>
+        {liste.beneficiaires.length} destinataire(s)
+      </span>
+    </button>
+  )
 }

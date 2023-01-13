@@ -208,7 +208,7 @@ class FirebaseClient {
       const groupeSnapshot = await this.getGroupeSnapshot(idGroupe)
       if (!groupeSnapshot) {
         console.error(
-          'Aucun document corresponsant à la liste de diffusion ' + idGroupe
+          'Aucun document correspondant à la liste de diffusion ' + idGroupe
         )
         return []
       }
