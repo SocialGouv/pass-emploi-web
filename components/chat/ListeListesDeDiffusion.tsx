@@ -76,33 +76,41 @@ function ListeDeDiffusionTile({
   return (
     <button
       onClick={() => onAfficherListe(liste)}
-      className='w-full p-3 text-left'
+      className='w-full p-3 flex'
       aria-label={
         'Consulter les messages de la liste ' +
         liste.titre +
         (aBeneficiairesReaffectes ? ` (${informationLabel})` : '')
       }
     >
-      {aBeneficiairesReaffectes && (
-        <h4 className='flex items-center text-primary text-base-medium'>
-          <IconComponent
-            name={IconName.Info}
-            role='img'
-            focusable={false}
-            aria-label={informationLabel}
-            title={informationLabel}
-            className='w-3 h-3 mr-2 fill-[currentColor]'
-          />
-          {liste.titre}
-        </h4>
-      )}
-      {!aBeneficiairesReaffectes && (
-        <h4 className='text-base-medium'>{liste.titre}</h4>
-      )}
+      <div className='grow text-left'>
+        {aBeneficiairesReaffectes && (
+          <h4 className='flex items-center text-primary text-base-medium'>
+            <IconComponent
+              name={IconName.Info}
+              role='img'
+              focusable={false}
+              aria-label={informationLabel}
+              title={informationLabel}
+              className='w-3 h-3 mr-2 fill-[currentColor]'
+            />
+            {liste.titre}
+          </h4>
+        )}
+        {!aBeneficiairesReaffectes && (
+          <h4 className='text-base-medium'>{liste.titre}</h4>
+        )}
 
-      <span className='text-s-regular'>
-        {liste.beneficiaires.length} destinataire(s)
-      </span>
+        <span className='text-s-regular'>
+          {liste.beneficiaires.length} destinataire(s)
+        </span>
+      </div>
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='h-6 w-6'
+        aria-hidden={true}
+        focusable={false}
+      />
     </button>
   )
 }

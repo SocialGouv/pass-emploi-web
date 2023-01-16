@@ -1,5 +1,6 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import React from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
@@ -10,7 +11,6 @@ import {
   mockedMessagesService,
 } from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import React from 'react'
 import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { MessagesService } from 'services/messages.service'
@@ -120,7 +120,7 @@ describe('<ChatContainer />', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Voir Listes de diffusion',
+          name: 'Voir les messages envoyés à mes listes de diffusion',
         })
       )
 
@@ -136,17 +136,13 @@ describe('<ChatContainer />', () => {
     it('ne charge les listes de diffusion qu’une fois', async () => {
       // When
       await userEvent.click(
-        screen.getByRole('button', {
-          name: 'Voir Listes de diffusion',
-        })
+        screen.getByRole('button', { name: /mes listes de diffusion/ })
       )
       await userEvent.click(
         screen.getByRole('button', { name: 'Retour sur ma messagerie' })
       )
       await userEvent.click(
-        screen.getByRole('button', {
-          name: 'Voir Listes de diffusion',
-        })
+        screen.getByRole('button', { name: /mes listes de diffusion/ })
       )
 
       // Then

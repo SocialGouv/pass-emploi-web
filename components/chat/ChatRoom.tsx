@@ -112,7 +112,7 @@ export default function ChatRoom({
           focusable={false}
         />
         <span className='grow text-left'>
-          <span>Voir </span>Listes de diffusion
+          Voir les messages envoyés à mes listes de diffusion
         </span>
         <IconComponent
           name={IconName.ChevronRight}
