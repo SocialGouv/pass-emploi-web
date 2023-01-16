@@ -299,7 +299,7 @@ export default function Conversation({
                     name={IconName.RoundedClose}
                     aria-hidden='true'
                     focusable='false'
-                    className='w-6 h-6 ml-2'
+                    className='w-6 h-6 ml-2 fill-primary stroke-primary'
                   />
                 </button>
               </div>

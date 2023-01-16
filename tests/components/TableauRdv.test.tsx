@@ -8,7 +8,8 @@ import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
 import {
   TIME_24_H_SEPARATOR,
-  toFrenchFormat, toShortDate,
+  toFrenchFormat,
+  toShortDate,
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 
@@ -37,19 +38,16 @@ describe('<TableauRdv>', () => {
       // Then
       listeRdv.forEach((rdv) => {
         const date = DateTime.fromISO(rdv.date)
+        const horaires = `${toShortDate(date)} - ${toFrenchFormat(
+          date,
+          TIME_24_H_SEPARATOR
+        )} - ${rdv.duree} min`
         expect(
           screen.getByText(`${rdv.labelBeneficiaires}`)
         ).toBeInTheDocument()
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
         expect(screen.getByText(rdv.modality)).toBeInTheDocument()
-        expect(
-          screen.getByText(
-            `${toShortDate(date)} - ${toFrenchFormat(
-              date,
-              TIME_24_H_SEPARATOR
-            )} - ${rdv.duree} min`
-          )
-        ).toBeInTheDocument()
+        expect(screen.getByText(horaires)).toBeInTheDocument()
       })
     })
 

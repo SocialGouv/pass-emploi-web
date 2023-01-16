@@ -21,20 +21,17 @@ type TableauRdvProps = {
   rdvs: EvenementListItem[]
   withIntercalaires?: boolean
   beneficiaireUnique?: BaseJeune
-  customizedColumnlHeader?: string
+  additionalColumns?: ColumnHeaderLabel
 }
 
-export const enum ColumnHeaderLabel {
-  present = 'Présent',
-  modalite = 'Modalité',
-}
+export type ColumnHeaderLabel = 'Présent' | 'Modalité'
 
 export default function TableauRdv({
   rdvs,
   idConseiller,
   withIntercalaires = false,
   beneficiaireUnique,
-  customizedColumnlHeader = ColumnHeaderLabel.modalite,
+  additionalColumns = 'Modalité',
 }: TableauRdvProps) {
   const rdvsAffiches = useMemo(
     () =>
@@ -70,8 +67,8 @@ export default function TableauRdv({
               {!beneficiaireUnique && <TH>Bénéficiaire</TH>}
               <TH>Type</TH>
               <TH>
-                {customizedColumnlHeader}
-                {customizedColumnlHeader === ColumnHeaderLabel.present && (
+                {additionalColumns}
+                {additionalColumns === 'Présent' && (
                   <IconComponent
                     name={IconName.Info}
                     role='img'
@@ -95,7 +92,7 @@ export default function TableauRdv({
                 beneficiaireUnique={beneficiaireUnique}
                 idConseiller={idConseiller}
                 withIndicationPresenceBeneficiaire={
-                  customizedColumnlHeader === ColumnHeaderLabel.present
+                  additionalColumns === 'Présent'
                 }
               />
             ))}

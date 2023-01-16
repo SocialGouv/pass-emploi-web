@@ -87,7 +87,6 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
       },
     ],
     source: 'PASS_EMPLOI',
-    futPresent: false,
   }
 
   return { ...defaults, ...overrides }
