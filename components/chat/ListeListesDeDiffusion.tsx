@@ -1,6 +1,8 @@
 import React from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -15,6 +17,16 @@ export default function ListeListesDeDiffusion({
 }: ListeListesDeDiffusionProps) {
   return (
     <>
+      <div className='hidden layout_s:block'>
+        <ButtonLink
+          href={'/mes-jeunes/listes-de-diffusion'}
+          style={ButtonStyle.SECONDARY}
+          className='mx-4'
+        >
+          Gérer mes listes de diffusion
+        </ButtonLink>
+      </div>
+
       {!listesDeDiffusion && <SpinningLoader />}
 
       {listesDeDiffusion && listesDeDiffusion.length === 0 && (
@@ -31,7 +43,7 @@ export default function ListeListesDeDiffusion({
       )}
 
       {listesDeDiffusion && listesDeDiffusion.length > 0 && (
-        <div className='h-full flex flex-col px-4'>
+        <div className='flex flex-col m-4 overflow-y-auto'>
           <h3
             id='listes-de-diffusion'
             className='text-m-medium text-primary mb-4'
@@ -76,33 +88,41 @@ function ListeDeDiffusionTile({
   return (
     <button
       onClick={() => onAfficherListe(liste)}
-      className='w-full p-3 text-left'
+      className='w-full p-3 flex'
       aria-label={
         'Consulter les messages de la liste ' +
         liste.titre +
         (aBeneficiairesReaffectes ? ` (${informationLabel})` : '')
       }
     >
-      {aBeneficiairesReaffectes && (
-        <h4 className='flex items-center text-primary text-base-medium'>
-          <IconComponent
-            name={IconName.Info}
-            role='img'
-            focusable={false}
-            aria-label={informationLabel}
-            title={informationLabel}
-            className='w-3 h-3 mr-2 fill-[currentColor]'
-          />
-          {liste.titre}
-        </h4>
-      )}
-      {!aBeneficiairesReaffectes && (
-        <h4 className='text-base-medium'>{liste.titre}</h4>
-      )}
+      <div className='grow text-left'>
+        {aBeneficiairesReaffectes && (
+          <h4 className='flex items-center text-primary text-base-medium'>
+            <IconComponent
+              name={IconName.Info}
+              role='img'
+              focusable={false}
+              aria-label={informationLabel}
+              title={informationLabel}
+              className='w-3 h-3 mr-2 fill-[currentColor]'
+            />
+            {liste.titre}
+          </h4>
+        )}
+        {!aBeneficiairesReaffectes && (
+          <h4 className='text-base-medium'>{liste.titre}</h4>
+        )}
 
-      <span className='text-s-regular'>
-        {liste.beneficiaires.length} destinataire(s)
-      </span>
+        <span className='text-s-regular'>
+          {liste.beneficiaires.length} destinataire(s)
+        </span>
+      </div>
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='h-6 w-6'
+        aria-hidden={true}
+        focusable={false}
+      />
     </button>
   )
 }

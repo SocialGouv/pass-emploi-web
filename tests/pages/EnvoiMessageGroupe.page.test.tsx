@@ -16,8 +16,6 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
-import listesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
-import ListesDeDiffusion from 'pages/mes-jeunes/listes-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
