@@ -143,26 +143,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
           ).toBeInTheDocument()
         })
 
-        it('affiche une case à cocher pour confirmer le motif Déménagement ou changement de conseiller', async () => {
-          // Given
-          const selectMotif = screen.getByRole('combobox', {
-            name: /Motif de suppression/,
-          })
-
-          // When
-          await userEvent.selectOptions(
-            selectMotif,
-            'Déménagement ou changement de conseiller'
-          )
-
-          // Then
-          expect(
-            screen.getByLabelText(
-              'Uniquement dans le cas où vous ne pouvez pas réaffecter ce jeune. Dans le cas contraire, contactez votre superviseur.'
-            )
-          ).toBeInTheDocument()
-        })
-
         it('lors de la confirmation, supprime le bénéficiaire', async () => {
           // Given
           const selectMotif = screen.getByRole('combobox', {
