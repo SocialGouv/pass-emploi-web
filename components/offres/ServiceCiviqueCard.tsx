@@ -25,8 +25,8 @@ export default function ServiceCiviqueCard({
     >
       <TagMetier
         label='Service civique'
-        color='accent_2'
-        backgroundColor='white'
+        color='content_color'
+        backgroundColor='additional_2_lighten'
         className='text-s-regular mb-4'
       />
 

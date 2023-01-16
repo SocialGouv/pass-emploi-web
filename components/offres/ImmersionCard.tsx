@@ -23,8 +23,8 @@ export default function ImmersionCard({
     >
       <TagMetier
         label='Immersion'
-        color='accent_2'
-        backgroundColor='white'
+        color='content_color'
+        backgroundColor='additional_1_lighten'
         className='text-s-regular mb-4'
       />
 

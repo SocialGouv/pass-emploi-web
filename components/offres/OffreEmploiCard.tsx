@@ -23,8 +23,12 @@ export default function OffreEmploiCard({
     >
       <TagMetier
         label={offre.type === TypeOffre.ALTERNANCE ? 'Alternance' : 'Emploi'}
-        color='accent_2'
-        backgroundColor='white'
+        color='content_color'
+        backgroundColor={
+          offre.type === TypeOffre.ALTERNANCE
+            ? 'additional_3_lighten'
+            : 'additional_4_lighten'
+        }
         className='text-s-regular mb-4'
       />
 

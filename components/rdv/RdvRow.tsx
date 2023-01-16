@@ -73,6 +73,7 @@ export function RdvRow({
       <TD>
         <DataTag
           text={rdv.type}
+          style='additional'
           iconName={getRdvIconName(rdv)}
           iconLabel='Non modifiable'
         />
