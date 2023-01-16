@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { RdvRow } from 'components/rdv/RdvRow'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
@@ -20,13 +21,17 @@ type TableauRdvProps = {
   rdvs: EvenementListItem[]
   withIntercalaires?: boolean
   beneficiaireUnique?: BaseJeune
+  additionalColumns?: ColumnHeaderLabel
 }
+
+export type ColumnHeaderLabel = 'Présent' | 'Modalité'
 
 export default function TableauRdv({
   rdvs,
   idConseiller,
   withIntercalaires = false,
   beneficiaireUnique,
+  additionalColumns = 'Modalité',
 }: TableauRdvProps) {
   const rdvsAffiches = useMemo(
     () =>
@@ -35,6 +40,9 @@ export default function TableauRdv({
         : rdvs,
     [rdvs, withIntercalaires]
   )
+
+  const informationLabel =
+    'L’information de présence est connue uniquement pour les informations collectives et les ateliers.'
 
   return (
     <>
@@ -58,7 +66,19 @@ export default function TableauRdv({
               <TH>Horaires</TH>
               {!beneficiaireUnique && <TH>Bénéficiaire</TH>}
               <TH>Type</TH>
-              <TH>Modalité</TH>
+              <TH>
+                {additionalColumns}
+                {additionalColumns === 'Présent' && (
+                  <IconComponent
+                    name={IconName.Info}
+                    role='img'
+                    focusable={false}
+                    aria-label={informationLabel}
+                    title={informationLabel}
+                    className='w-3 h-3 ml-2 fill-primary inline'
+                  />
+                )}
+              </TH>
               <TH>Créé par vous</TH>
             </TR>
           </THead>
@@ -71,6 +91,9 @@ export default function TableauRdv({
                 withDate={!withIntercalaires}
                 beneficiaireUnique={beneficiaireUnique}
                 idConseiller={idConseiller}
+                withIndicationPresenceBeneficiaire={
+                  additionalColumns === 'Présent'
+                }
               />
             ))}
           </TBody>

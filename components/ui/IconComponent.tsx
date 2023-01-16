@@ -54,6 +54,7 @@ import RendezVousIcon from 'assets/icons/rendez-vous.svg'
 import RoundedCheckIcon from 'assets/icons/rounded_check.svg'
 import RoundedCheckFilledIcon from 'assets/icons/rounded_check_filled.svg'
 import RoundedCloseIcon from 'assets/icons/rounded_close.svg'
+import RoundedCloseFilledIcon from 'assets/icons/rounded_close_filled.svg'
 import SearchIcon from 'assets/icons/search.svg'
 import SendIcon from 'assets/icons/send.svg'
 import SpinnerIcon from 'assets/icons/spinner.svg'
@@ -115,6 +116,7 @@ export enum IconName {
   Remove = 'Remove',
   RendezVous = 'RendezVous',
   RoundedClose = 'RoundedClose',
+  RoundedCloseFilled = 'RoundedCloseFilled',
   RoundedCheck = 'RoundedCheck',
   RoundedCheckFilled = 'RoundedCheckFilled',
   Search = 'Search',
@@ -178,6 +180,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Remove]: RemoveIcon,
   [IconName.RendezVous]: RendezVousIcon,
   [IconName.RoundedClose]: RoundedCloseIcon,
+  [IconName.RoundedCloseFilled]: RoundedCloseFilledIcon,
   [IconName.RoundedCheck]: RoundedCheckIcon,
   [IconName.RoundedCheck]: RoundedCheckIcon,
   [IconName.RoundedCheckFilled]: RoundedCheckFilledIcon,

@@ -33,6 +33,7 @@ module.exports = {
       success_darken: '#033C24',
       warning: '#D31140',
       warning_lighten: '#FDEAEF',
+      alert: '#FF975C',
       alert_lighten: '#FFC6A6',
       accent_1: '#950EFF',
       accent_1_lighten: '#F4E5FF',

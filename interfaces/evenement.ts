@@ -31,6 +31,7 @@ export type EvenementListItem = {
   modality?: string
   labelBeneficiaires?: string
   source?: string
+  futPresent?: boolean
 }
 
 type Auteur = { nom: string; prenom: string }
