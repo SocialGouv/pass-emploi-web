@@ -468,11 +468,9 @@ export function EditionRdvForm({
           disabled={Boolean(evenement)}
           onChange={handleSelectedTypeRendezVous}
         >
-          {typesRendezVous.map(({ code, label }) => (
-            <option key={code} value={code}>
-              {label}
-            </option>
-          ))}
+          {Boolean(evenement)
+            ? getTypeDeLevenement(evenement!)
+            : getTypesReferentiel(typesRendezVous)}
         </Select>
 
         {showPrecisionType && (
@@ -817,6 +815,22 @@ export function EditionRdvForm({
       )}
     </form>
   )
+}
+
+function getTypesReferentiel(typesRendezVous: TypeEvenement[]) {
+  return typesRendezVous.map(({ code, label }) => (
+    <option key={code} value={code}>
+      {label}
+    </option>
+  ))
+}
+
+function getTypeDeLevenement(evenement: Evenement) {
+  return [
+    <option key={evenement.type.code} value={evenement.type.code}>
+      {evenement.type.label}
+    </option>,
+  ]
 }
 
 function dureeFromMinutes(duration?: number): string | undefined {
