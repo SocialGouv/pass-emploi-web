@@ -5,7 +5,7 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Tag } from 'components/ui/Indicateurs/Tag'
+import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
@@ -201,7 +201,7 @@ function tagType({ type }: AnimationCollective): JSX.Element {
   const iconName =
     type === 'Information collective' ? IconName.ImportantOutline : undefined
   return (
-    <Tag
+    <TagMetier
       label={type}
       color={color}
       backgroundColor={color + '_lighten'}
@@ -231,6 +231,10 @@ function statusProps({ type, statut }: AnimationCollective): {
 function tagStatut(ac: AnimationCollective): JSX.Element {
   const { label, color } = statusProps(ac)
   return (
-    <Tag label={label} color={color} backgroundColor={color + '_lighten'} />
+    <TagStatut
+      label={label}
+      color={color}
+      backgroundColor={color + '_lighten'}
+    />
   )
 }

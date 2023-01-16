@@ -6,7 +6,7 @@ type IndicationRechercheDossierProps = {}
 
 function IndicationRechercheDossier({}: IndicationRechercheDossierProps) {
   return (
-    <div className='inline-flex flex-wrap justify-between max-w-2xl bg-primary_lighten mb-6 p-3 rounded-medium'>
+    <div className='inline-flex flex-wrap justify-between max-w-2xl bg-primary_lighten mb-6 p-3 rounded-base'>
       <div style={{ flex: '0 0 136px' }}>
         <Indication1 focusable='false' aria-hidden='true' className='mb-2' />
         <p className='text-s-regular'>

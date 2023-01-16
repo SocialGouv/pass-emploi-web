@@ -13,7 +13,7 @@ export default function LienOffre({
 }) {
   return (
     <div
-      className={`mt-4 p-4 rounded-medium ${
+      className={`mt-4 p-4 rounded-base ${
         isSentByConseiller ? 'bg-primary_darken' : 'bg-blanc'
       }`}
     >

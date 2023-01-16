@@ -15,7 +15,7 @@ export function BlocFavoris({
   metadonneesFavoris: { offres, recherches, autoriseLePartage },
 }: BlocFavorisProps) {
   return (
-    <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
+    <div className='border border-solid rounded-base w-full p-4 mt-3 border-grey_100'>
       <dl>
         <Offres offres={offres} />
 

@@ -39,7 +39,7 @@ export function ConversationTile({
   return (
     <div className='relative'>
       <button
-        className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-small'
+        className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-base'
         onClick={onClick}
       >
         {!jeuneChat.seenByConseiller && (

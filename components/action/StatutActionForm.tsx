@@ -1,8 +1,7 @@
 import React, { FormEvent, useState } from 'react'
 
-import RadioButton from './RadioButton'
-
-import RadioButtonStatus from 'components/action/RadioButtonStatus'
+import RadioBox from 'components/action/RadioBox'
+import RadioBoxStatut from 'components/action/RadioBoxStatut'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { StatutAction } from 'interfaces/action'
 
@@ -35,7 +34,7 @@ function StatutActionForm({
       <h2 className='text-m-bold pb-6'>Statut</h2>
       <form className='flex flex-raw mb-10'>
         {Object.values(StatutAction).map((status: StatutAction) => (
-          <RadioButtonStatus
+          <RadioBoxStatut
             key={status.toLowerCase()}
             status={status}
             isSelected={statutCourant === status}
@@ -48,13 +47,13 @@ function StatutActionForm({
       </form>
 
       {estAQualifier && (
-        <div className='border border-solid border-grey_100 bg-primary_lighten rounded-medium p-4 mb-10'>
+        <div className='border border-solid border-grey_100 bg-primary_lighten rounded-base p-4 mb-10'>
           <h2 className='text-m-bold mb-2'>
             S’agit-il d’une Situation Non Professionnelle ?
           </h2>
           <form className='flex flex-col w-fit' onSubmit={submit}>
             <div className='my-4'>
-              <RadioButton
+              <RadioBox
                 isSelected={isSituationNonProfessionnelle === true}
                 onChange={() => setIsSituationNonProfessionnelle(true)}
                 name='option-snp'
@@ -63,7 +62,7 @@ function StatutActionForm({
               />
             </div>
             <div className='mb-6'>
-              <RadioButton
+              <RadioBox
                 isSelected={isSituationNonProfessionnelle === false}
                 onChange={() => setIsSituationNonProfessionnelle(false)}
                 name='option-snp'

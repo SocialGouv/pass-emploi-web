@@ -62,7 +62,7 @@ export function RdvRow({
     >
       <TD
         aria-label={withDate ? fullDate + ' - ' + timeAndDuration : ''}
-        className='rounded-l-small'
+        className='rounded-l-base'
       >
         {withDate && `${shortDate} - `}
         {timeAndDuration}
@@ -88,7 +88,7 @@ export function RdvRow({
         {rdv.modality}
       </TD>
 
-      <TD className='rounded-r-small'>
+      <TD className='rounded-r-base'>
         <span className='flex items-center justify-between'>
           {rdv.idCreateur === idConseiller && (
             <>

@@ -3,7 +3,7 @@
   margin-bottom: 2rem;
 
   border: solid 1px theme('colors.content_color');
-  border-radius: theme('borderRadius.medium');
+  border-radius: theme('borderRadius.base');
 
   padding: 0.75rem 1rem;
 }

@@ -21,7 +21,7 @@ export function ResumeIndicateursJeune({
   indicateursSemaine,
 }: ResumeIndicateursJeuneProps) {
   return (
-    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
+    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h2 className='text-m-bold'>Les indicateurs de la semaine</h2>
       <p className='mb-4'>
         du {toFrenchString(debutDeLaSemaine)} au{' '}

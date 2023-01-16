@@ -302,7 +302,7 @@ function EditionRdv({
           )}
 
           <dl>
-            <div className='mt-6 border border-solid border-grey_100 rounded-medium p-4'>
+            <div className='mt-6 border border-solid border-grey_100 rounded-base p-4'>
               <dt className='sr-only'>Type de l’événement</dt>
               <dd className='text-base-bold'>{evenement.type.label}</dd>
 
@@ -319,7 +319,7 @@ function EditionRdv({
             {!estCreeParSiMILO(evenement) &&
               historiqueModif &&
               historiqueModif.length > 0 && (
-                <div className='mt-4 border border-solid border-grey_100 rounded-medium p-4'>
+                <div className='mt-4 border border-solid border-grey_100 rounded-base p-4'>
                   <dt className='text-base-bold'>
                     Historique des modifications
                   </dt>

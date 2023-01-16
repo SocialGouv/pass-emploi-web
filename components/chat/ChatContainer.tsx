@@ -115,7 +115,7 @@ export default function ChatContainer({ jeunesChats }: ChatContainerProps) {
             onClick={() => setShowMenu(false)}
             aria-label='Fermer le menu principal'
             aria-expanded={true}
-            className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-[50%]'
+            className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-full'
           >
             <IconComponent
               name={IconName.Close}

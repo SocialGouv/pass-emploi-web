@@ -17,14 +17,14 @@ export function DataTag({
 }: DataTagProps) {
   return (
     <span
-      className={`inline-flex items-center bg-primary_lighten border border-solid border-primary rounded-x_large ${
+      className={`inline-flex items-center bg-primary_lighten border border-solid border-primary rounded-base ${
         iconName ? 'px-2' : 'px-4'
       } py-1 text-s-regular text-primary whitespace-nowrap ${className ?? ''}`}
     >
       {iconName && (
         <IconComponent
           name={iconName}
-          aria-hidden={iconLabel ? false : true}
+          aria-hidden={!iconLabel}
           focusable={false}
           aria-label={iconLabel}
           title={iconLabel}

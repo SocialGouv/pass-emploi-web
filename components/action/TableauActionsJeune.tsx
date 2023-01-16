@@ -83,7 +83,7 @@ export default function TableauActionsJeune({
     onTri(nouveauTri)
   }
 
-  const headerColumnWithButtonHover = 'rounded-medium hover:bg-primary_lighten'
+  const headerColumnWithButtonHover = 'rounded-base hover:bg-primary_lighten'
 
   function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
     setStatutsValides(statutsSelectionnes)

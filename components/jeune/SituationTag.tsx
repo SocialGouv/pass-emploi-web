@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Tag } from 'components/ui/Indicateurs/Tag'
+import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import { CategorieSituation } from 'interfaces/jeune'
 
 interface TagProps {
@@ -55,7 +55,7 @@ const mappedSituation: {
 export default function SituationTag({ situation, className }: TagProps) {
   const { color, backgroundColor } = mappedSituation[situation]
   return (
-    <Tag
+    <TagMetier
       label={situation}
       color={color}
       backgroundColor={backgroundColor}

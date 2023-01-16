@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react'
 
-interface RadioButtonProps {
+interface RadioBoxProps {
   isSelected: boolean
   id: string
   label: string
@@ -10,7 +10,7 @@ interface RadioButtonProps {
   disabled?: boolean
 }
 
-export default function RadioButton({
+export default function RadioBox({
   isSelected,
   onChange,
   id,
@@ -18,7 +18,7 @@ export default function RadioButton({
   name,
   color = 'primary',
   disabled,
-}: RadioButtonProps) {
+}: RadioBoxProps) {
   function onClickDiv(e: MouseEvent) {
     e.preventDefault()
     if (disabled) return
@@ -34,7 +34,7 @@ export default function RadioButton({
 
   return (
     <div
-      className={`flex items-center w-fit px-4 py-2 border border-solid rounded-full text-s-bold mr-4 cursor-pointer ${
+      className={`flex items-center w-fit px-4 py-2 border border-solid rounded-l text-s-bold mr-4 cursor-pointer ${
         isSelected ? selectedStyle : 'border-grey_800 text-grey_800'
       } ${disabled ? 'hover:cursor-not-allowed' : ''}`}
       onClick={onClickDiv}

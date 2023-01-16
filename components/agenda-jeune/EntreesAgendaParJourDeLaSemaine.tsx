@@ -25,7 +25,7 @@ export function EntreesAgendaParJourDeLaSemaine({
           <section
             key={`semaine-${numeroSemaine}-jour-${index}`}
             aria-labelledby={`semaine-${numeroSemaine}-jour-${index}`}
-            className='rounded-small border border-grey_100 p-4 mt-6'
+            className='rounded-base border border-grey_100 p-4 mt-6'
           >
             <h3
               id={`semaine-${numeroSemaine}-jour-${index}`}

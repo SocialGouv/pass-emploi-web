@@ -1,11 +1,11 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as React from 'react'
 
-import RadioButton from 'components/action/RadioButton'
+import RadioBox from 'components/action/RadioBox'
 
 export default {
   title: 'Components/Form/RadioButton',
-  component: RadioButton,
+  component: RadioBox,
   argTypes: {
     isSelected: {
       control: { type: 'boolean' },
@@ -19,10 +19,10 @@ export default {
       control: { type: 'boolean' },
     },
   },
-} as ComponentMeta<typeof RadioButton>
+} as ComponentMeta<typeof RadioBox>
 
-const Template: ComponentStory<typeof RadioButton> = (args) => (
-  <RadioButton {...args} />
+const Template: ComponentStory<typeof RadioBox> = (args) => (
+  <RadioBox {...args} />
 )
 
 export const Default = Template.bind({})

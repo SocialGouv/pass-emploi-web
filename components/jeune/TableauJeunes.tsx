@@ -184,7 +184,7 @@ export default function TableauJeunes({
 
   useMatomo(matomoTitle())
 
-  const columnHeaderStyle = 'rounded-medium hover:bg-primary_lighten'
+  const columnHeaderStyle = 'rounded-l hover:bg-primary_lighten'
   const columnHeaderButtonStyle = 'flex border-none items-center w-full'
 
   return (
@@ -313,7 +313,7 @@ export default function TableauJeunes({
                     jeune.messagesNonLus
                   } messages non lus`}
                 >
-                  <TD className='rounded-l-small'>
+                  <TD className='rounded-l-base'>
                     <span className='flex items-baseline'>
                       {jeune.isReaffectationTemporaire && (
                         <span
@@ -362,7 +362,7 @@ export default function TableauJeunes({
                     </TD>
                   )}
 
-                  <TD className='rounded-r-small'>
+                  <TD className='rounded-r-base'>
                     <span className='flex'>
                       <div className='relative w-fit mx-auto'>
                         <IconComponent

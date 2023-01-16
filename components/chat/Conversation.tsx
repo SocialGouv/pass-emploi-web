@@ -280,11 +280,11 @@ export default function Conversation({
           />
 
           <div
-            className='p-4 bg-blanc rounded-x_large border text-base-bold border-primary focus-within:outline focus-within:outline-1'
+            className='p-4 bg-blanc rounded-base border text-base-bold border-primary focus-within:outline focus-within:outline-1'
             onClick={() => inputRef.current!.focus()}
           >
             {uploadedFileInfo && (
-              <div className='flex px-2 py-1 rounded-medium bg-primary_lighten w-fit mb-4'>
+              <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
                 <span className='break-all overflow-y-auto max-h-56'>
                   {uploadedFileInfo.nom}
                 </span>
@@ -324,7 +324,7 @@ export default function Conversation({
               type='submit'
               aria-label='Envoyer le message'
               disabled={!newMessage && !Boolean(uploadedFileInfo)}
-              className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
+              className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed'
             >
               <IconComponent
                 name={IconName.Send}

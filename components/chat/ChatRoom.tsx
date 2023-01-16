@@ -102,7 +102,7 @@ export default function ChatRoom({
       </div>
 
       <button
-        className='flex items-center text-primary bg-blanc rounded-large p-4 mb-2 mx-4'
+        className='flex items-center text-primary bg-blanc rounded-base p-4 mb-2 mx-4'
         onClick={onAccesListesDiffusion}
       >
         <IconComponent

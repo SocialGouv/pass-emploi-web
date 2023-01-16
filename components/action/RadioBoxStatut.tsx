@@ -1,25 +1,25 @@
 import propsStatutsActions from 'components/action/propsStatutsActions'
-import RadioButton from 'components/action/RadioButton'
+import RadioBox from 'components/action/RadioBox'
 import { StatutAction } from 'interfaces/action'
 
-interface RadioButtonStatusProps {
+interface RadioBoxStatutProps {
   status: StatutAction
   isSelected: boolean
   onChange: (statutChoisi: StatutAction) => void
   isDisabled: boolean
 }
 
-export default function RadioButtonStatus({
+export default function RadioBoxStatut({
   status,
   isSelected,
   onChange,
   isDisabled,
-}: RadioButtonStatusProps) {
+}: RadioBoxStatutProps) {
   const { label, color } = propsStatutsActions[status]
   const id = `option-statut--${label.toLowerCase()}`
 
   return (
-    <RadioButton
+    <RadioBox
       isSelected={isSelected}
       color={color}
       onChange={() => onChange(status)}
