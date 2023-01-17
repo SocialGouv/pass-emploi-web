@@ -80,6 +80,7 @@ module.exports = {
       l: '24px',
       full: '9999px',
     },
+
     screens: {
       layout_xs: '375px',
       layout_s: '600px',
@@ -91,15 +92,16 @@ module.exports = {
       short: { raw: '(max-height: 350px)' },
     },
 
+    boxShadow: {
+      base: '0 4px 12px 0px rgba(39, 73, 150, 0.12)',
+      m: '0 8px 12px 0px rgba(39, 73, 150, 0.24)',
+    },
+
     extend: {
       backgroundImage: {
         // path relative to globals.css
         clock: "url('../assets/icons/clock.svg')",
         location: "url('../assets/icons/location_big.svg')",
-      },
-      boxShadow: {
-        base: '0 4px 12px 0px rgba(39, 73, 150, 0.12)',
-        m: '0 8px 12px 0px rgba(39, 73, 150, 0.24)',
       },
       fontFamily: {
         sans: ['Marianne'],
