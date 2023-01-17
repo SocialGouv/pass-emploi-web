@@ -28,14 +28,17 @@ describe('RendezVousPasses', () => {
         beforeEach(async () => {
           // Given
           rdvs = [
-            unEvenementListItem({ type: 'Atelier', futPresent: false }),
             unEvenementListItem({
+              id: 'evenement-1',
+              type: 'Atelier',
+              futPresent: false,
+            }),
+            unEvenementListItem({
+              id: 'evenement-2',
               type: 'Information collective',
               futPresent: true,
             }),
-            unEvenementListItem({
-              futPresent: false,
-            }),
+            unEvenementListItem({ id: 'evenement-3' }),
           ]
 
           await act(async () => {
@@ -65,7 +68,7 @@ describe('RendezVousPasses', () => {
         })
 
         describe('informe sur la présence du bénéficiaire', () => {
-          it('quand les rendez-vous sont de type ANIMATION COLLECTIVE', async () => {
+          it('quand la présence du bénéficiaire est renseignée', async () => {
             // Then
             expect(screen.getByText('Non')).not.toHaveAttribute(
               'class',
@@ -77,7 +80,7 @@ describe('RendezVousPasses', () => {
             )
           })
 
-          it('quand les rendez-vous ne sont pas de type ANIMATION COLLECTIVE', async () => {
+          it('quand la présence du bénéficiaire n’est pas renseignée', async () => {
             // Then
             expect(
               screen.getByText('information non disponible')

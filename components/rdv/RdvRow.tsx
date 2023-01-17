@@ -50,10 +50,6 @@ export function RdvRow({
     }
   }
 
-  function isLabelTypeAnimationCollective(label?: string): boolean {
-    return label === 'Atelier' || label === 'Information collective'
-  }
-
   return (
     <TR
       href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
@@ -91,31 +87,33 @@ export function RdvRow({
           </>
         )}
 
-        {withIndicationPresenceBeneficiaire &&
-          isLabelTypeAnimationCollective(rdv.type) && (
-            <>
-              <IconComponent
-                name={
-                  rdv.futPresent
-                    ? IconName.RoundedCheckFilled
-                    : IconName.RoundedCloseFilled
-                }
-                focusable={false}
-                aria-hidden={true}
-                className={`inline mr-2 h-6 w-6 fill-${
-                  rdv.futPresent ? 'success' : 'alert'
-                }`}
-              />
-              {rdv.futPresent ? 'Oui' : 'Non'}
-            </>
-          )}
+        {withIndicationPresenceBeneficiaire && (
+          <>
+            {rdv.futPresent === undefined && (
+              <>
+                - <span className='sr-only'>information non disponible</span>
+              </>
+            )}
 
-        {withIndicationPresenceBeneficiaire &&
-          !isLabelTypeAnimationCollective(rdv.type) && (
-            <>
-              - <span className='sr-only'>information non disponible</span>
-            </>
-          )}
+            {rdv.futPresent !== undefined && (
+              <>
+                <IconComponent
+                  name={
+                    rdv.futPresent
+                      ? IconName.RoundedCheckFilled
+                      : IconName.RoundedCloseFilled
+                  }
+                  focusable={false}
+                  aria-hidden={true}
+                  className={`inline mr-2 h-6 w-6 fill-${
+                    rdv.futPresent ? 'success' : 'alert'
+                  }`}
+                />
+                {rdv.futPresent ? 'Oui' : 'Non'}
+              </>
+            )}
+          </>
+        )}
       </TD>
 
       <TD className='rounded-r-base'>
