@@ -718,14 +718,17 @@ export function EditionRdvForm({
           </Etape>
 
           <Etape numero={5} titre='Gestion des accès'>
-            {!conseillerIsCreator ||
-              (evenement && !estCreeParSiMILO(evenement) && (
-                <div className='mb-6'>
-                  <InformationMessage
-                    content={`L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`}
-                  />
-                </div>
-              ))}
+            {evenement && !conseillerIsCreator && (
+              <div className='mb-6'>
+                <InformationMessage
+                  content={
+                    estCreeParSiMILO(evenement)
+                      ? `L'événement a été créé sur i-milo. Vous ne recevrez pas d'invitation dans votre agenda`
+                      : `L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`
+                  }
+                />
+              </div>
+            )}
 
             <div className='flex items-center mb-8'>
               <div className='flex items-center'>
