@@ -16,7 +16,7 @@ import {
   TypeOffre,
 } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import {
   ImmersionsService,
   SearchImmersionsQuery,
@@ -31,20 +31,13 @@ import {
   ServicesCiviquesService,
 } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 import { useDependance } from 'utils/injectionDependances'
 
-type RechercheOffresProps = PageProps & {
-  partageOffreSuccess?: boolean
-  suggestionRechercheSuccess?: boolean
-}
-
-function RechercheOffres({
-  partageOffreSuccess,
-  suggestionRechercheSuccess,
-}: RechercheOffresProps) {
+function RechercheOffres() {
   const referentielService =
     useDependance<ReferentielService>('referentielService')
   const offresEmploiService = useDependance<OffresEmploiService>(
@@ -55,6 +48,7 @@ function RechercheOffres({
   )
   const immersionsService =
     useDependance<ImmersionsService>('immersionsService')
+  const [alerte] = useAlerte()
 
   const RAYON_DEFAULT = 10
   const [typeOffre, setTypeOffre] = useSessionStorage<TypeOffre | undefined>(
@@ -95,8 +89,9 @@ function RechercheOffres({
 
   const pageTracking: string = 'Recherche offres emploi'
   let initialTracking: string = pageTracking
-  if (partageOffreSuccess) initialTracking += ' - Partage offre succès'
-  if (suggestionRechercheSuccess)
+  if (alerte?.key === AlerteParam.partageOffre)
+    initialTracking += ' - Partage offre succès'
+  if (alerte?.key === AlerteParam.suggestionRecherche)
     initialTracking += ' - Partage critères recherche succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
@@ -277,26 +272,18 @@ function RechercheOffres({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  RechercheOffresProps
-> = async (context) => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async (
+  context
+) => {
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const props: RechercheOffresProps = {
+  const props: PageProps = {
     pageTitle: 'Recherche d’offres',
     pageHeader: 'Offres',
   }
-
-  if (context.query[QueryParam.partageOffre])
-    props.partageOffreSuccess =
-      context.query[QueryParam.partageOffre] === QueryValue.succes
-
-  if (context.query[QueryParam.suggestionRecherche])
-    props.suggestionRechercheSuccess =
-      context.query[QueryParam.suggestionRecherche] === QueryValue.succes
 
   return { props }
 }

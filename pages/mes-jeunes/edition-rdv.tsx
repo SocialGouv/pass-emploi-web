@@ -16,21 +16,23 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
-  Evenement,
   estAClore,
+  estClos,
+  estCreeParSiMILO,
+  Evenement,
   Modification,
   TypeEvenement,
-  estClos,
 } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -39,7 +41,6 @@ import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { deleteQueryParams, parseUrl, setQueryParams } from 'utils/urlParser'
 
 interface EditionRdvProps extends PageProps {
   jeunes: BaseJeune[]
@@ -65,6 +66,7 @@ function EditionRdv({
     useDependance<ReferentielService>('referentielService')
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
+  const [_, setAlerte] = useAlerte()
 
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
   const [agences, setAgences] = useState<Agence[]>([])
@@ -93,8 +95,6 @@ function EditionRdv({
   if (evenement) initialTracking = `Modification rdv`
   else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-
-  const cleanReturnTo = getCleanUrlObject(returnTo)
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
@@ -165,21 +165,14 @@ function EditionRdv({
     } else {
       await modifierEvenement(evenement.id, payload)
     }
+    await router.push(returnTo)
   }
 
   async function creerNouvelEvenement(
     payload: EvenementFormData
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
-
-    const { baseUrl, query } = cleanReturnTo
-    await router.push({
-      pathname: baseUrl,
-      query: setQueryParams(query, {
-        [QueryParam.creationRdv]: QueryValue.succes,
-        idEvenement: idNouvelEvenement,
-      }),
-    })
+    setAlerte(AlerteParam.creationEvenement, idNouvelEvenement)
   }
 
   async function modifierEvenement(
@@ -187,28 +180,17 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
-
-    const { baseUrl, query } = cleanReturnTo
-    await router.push({
-      pathname: baseUrl,
-      query: setQueryParams(query, {
-        [QueryParam.modificationRdv]: QueryValue.succes,
-      }),
-    })
+    setAlerte(AlerteParam.modificationEvenement)
   }
 
   async function supprimerEvenement(): Promise<void> {
     setShowDeleteRdvError(false)
     setShowDeleteRdvModal(false)
+
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      const { baseUrl, query } = getCleanUrlObject(returnTo)
-      await router.push({
-        pathname: baseUrl,
-        query: setQueryParams(query, {
-          [QueryParam.suppressionRdv]: QueryValue.succes,
-        }),
-      })
+      setAlerte(AlerteParam.suppressionEvenement)
+      await router.push(returnTo)
     } catch (e) {
       setShowDeleteRdvError(true)
     }
@@ -260,6 +242,12 @@ function EditionRdv({
         />
       )}
 
+      {evenement && estCreeParSiMILO(evenement) && (
+        <div className='mb-6'>
+          <InformationMessage content='Pour modifier cet événement vous devez vous rendre dans le système d’information iMilo, il sera ensuite mis à jour dans la demi-heure' />
+        </div>
+      )}
+
       {aDesJeunesDUnAutrePortefeuille() && (
         <div className='mb-6'>
           <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
@@ -269,7 +257,7 @@ function EditionRdv({
       {evenement && (
         <>
           <div className='flex'>
-            {!estClos(evenement) && (
+            {!estClos(evenement) && !estCreeParSiMILO(evenement) && (
               <Button
                 style={ButtonStyle.SECONDARY}
                 onClick={handleDelete}
@@ -277,7 +265,7 @@ function EditionRdv({
                 className='min-w-fit w-1/4'
               >
                 <IconComponent
-                  name={IconName.Delete}
+                  name={IconName.Trashcan}
                   aria-hidden='true'
                   focusable='false'
                   className='mr-2 w-4 h-4'
@@ -292,7 +280,7 @@ function EditionRdv({
                 href={`/evenements/${
                   evenement.id
                 }/cloture?redirectUrl=${encodeURIComponent(
-                  cleanReturnTo.baseUrl + '?onglet=etablissement'
+                  returnTo + '?onglet=etablissement'
                 )}`}
                 className='ml-6 min-w-fit w-1/4'
               >
@@ -314,55 +302,64 @@ function EditionRdv({
           )}
 
           <dl>
-            <div className='mt-6 border border-solid border-grey_100 rounded-medium p-4'>
+            <div className='mt-6 border border-solid border-grey_100 rounded-base p-4'>
               <dt className='sr-only'>Type de l’événement</dt>
               <dd className='text-base-bold'>{evenement.type.label}</dd>
 
               <div className='mt-2'>
-                <dt className='inline'>Créé par : </dt>
+                <dt className='inline'>Créé(e) par : </dt>
                 <dd className='inline text-s-bold'>
-                  {evenement.createur.prenom} {evenement.createur.nom}
+                  {estCreeParSiMILO(evenement) && 'Système d’information MILO'}
+                  {!estCreeParSiMILO(evenement) &&
+                    `${evenement.createur.prenom}  ${evenement.createur.nom}`}
                 </dd>
               </div>
             </div>
 
-            {historiqueModif && historiqueModif.length > 0 && (
-              <div className='mt-4 border border-solid border-grey_100 rounded-medium p-4'>
-                <dt className='text-base-bold'>Historique des modifications</dt>
-                <dd className='mt-2'>
-                  <ul>
-                    {historiqueModif.map(({ date, auteur }) => (
-                      <li key={date}>
-                        {toFrenchFormat(DateTime.fromISO(date), DATETIME_LONG)}{' '}
-                        :{' '}
-                        <span className='text-s-bold'>
-                          {auteur.prenom} {auteur.nom}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  {evenement.historique.length > 2 && (
-                    <button
-                      type='button'
-                      onClick={togglePlusHistorique}
-                      className='block ml-auto'
-                    >
-                      Voir {showPlusHistorique ? 'moins' : 'plus'}
-                      <IconComponent
-                        aria-hidden={true}
-                        focusable={false}
-                        name={
-                          showPlusHistorique
-                            ? IconName.ChevronUp
-                            : IconName.ChevronDown
-                        }
-                        className='inline h-4 w-4 fill-primary'
-                      />
-                    </button>
-                  )}
-                </dd>
-              </div>
-            )}
+            {!estCreeParSiMILO(evenement) &&
+              historiqueModif &&
+              historiqueModif.length > 0 && (
+                <div className='mt-4 border border-solid border-grey_100 rounded-base p-4'>
+                  <dt className='text-base-bold'>
+                    Historique des modifications
+                  </dt>
+                  <dd className='mt-2'>
+                    <ul>
+                      {historiqueModif.map(({ date, auteur }) => (
+                        <li key={date}>
+                          {toFrenchFormat(
+                            DateTime.fromISO(date),
+                            DATETIME_LONG
+                          )}{' '}
+                          :{' '}
+                          <span className='text-s-bold'>
+                            {auteur.prenom} {auteur.nom}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {evenement.historique.length > 2 && (
+                      <button
+                        type='button'
+                        onClick={togglePlusHistorique}
+                        className='block ml-auto'
+                      >
+                        Voir {showPlusHistorique ? 'moins' : 'plus'}
+                        <IconComponent
+                          aria-hidden={true}
+                          focusable={false}
+                          name={
+                            showPlusHistorique
+                              ? IconName.ChevronUp
+                              : IconName.ChevronDown
+                          }
+                          className='inline h-4 w-4 fill-primary'
+                        />
+                      </button>
+                    )}
+                  </dd>
+                </div>
+              )}
           </dl>
         </>
       )}
@@ -373,7 +370,7 @@ function EditionRdv({
         typesRendezVous={typesRendezVous}
         idJeune={idJeune}
         evenement={evenement}
-        redirectTo={cleanReturnTo.baseUrl}
+        redirectTo={returnTo}
         onBeneficiairesDUnAutrePortefeuille={
           setFormHasBeneficiaireAutrePortefeuille
         }
@@ -397,7 +394,7 @@ function EditionRdv({
             evenement ? 'modifiées' : 'saisies'
           } seront perdues`}
           onCancel={closeLeavePageModal}
-          destination={cleanReturnTo.baseUrl}
+          destination={returnTo}
         />
       )}
 
@@ -483,7 +480,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     if (!evenement) return { notFound: true }
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
-    props.pageHeader = 'Modifier l’événement'
+    props.pageHeader = 'Détail de l’événement'
   } else if (idJeune) {
     props.idJeune = idJeune
   }
@@ -495,20 +492,4 @@ export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
 
 function comingFromHome(referer: string): boolean {
   return referer.split('?')[0].endsWith('/index')
-}
-
-function getCleanUrlObject(url: string): {
-  baseUrl: string
-  query: Record<string, string | string[]>
-} {
-  const { baseUrl, query } = parseUrl(url)
-  return {
-    baseUrl,
-    query: deleteQueryParams(query, [
-      QueryParam.modificationRdv,
-      QueryParam.creationRdv,
-      QueryParam.suppressionRdv,
-      'idEvenement',
-    ]),
-  }
 }

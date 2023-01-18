@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 
 import { EntreeAgenda } from 'interfaces/agenda'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   Evenement,
@@ -18,7 +19,6 @@ export type EvenementJson = {
   date: string
   duration: number
   type: TypeEvenement
-  modality: string
   jeunes: Array<BaseJeune & { futPresent?: boolean }>
   title: string
   createur: Auteur
@@ -26,13 +26,18 @@ export type EvenementJson = {
   historique?: Array<{ date: string; auteur: Auteur }>
   precision?: string
   comment?: string
+  modality?: string
   presenceConseiller?: boolean
   adresse?: string
   organisme?: string
   statut?: StatutAnimationCollectiveJson
+  source?: StructureConseiller
+  futPresent?: boolean
 }
 
-export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'>
+export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
+  futPresent?: boolean
+}
 
 export type AnimationCollectiveJson = EvenementJson & {
   statut: StatutAnimationCollectiveJson
@@ -65,13 +70,13 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
     date: json.date,
     createur: json.createur,
     type: json.type,
-    modality: json.modality,
     duree: json.duration,
     titre: json.title,
     presenceConseiller: Boolean(json.presenceConseiller),
     invitation: Boolean(json.invitation),
     historique: [],
   }
+  if (json.modality) evenement.modality = json.modality
   if (json.comment) evenement.commentaire = json.comment
   if (json.precision) evenement.precisionType = json.precision
   if (json.adresse) evenement.adresse = json.adresse
@@ -79,6 +84,7 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
   if (json.historique) evenement.historique = jsonToHistorique(json.historique)
   if (json.statut)
     evenement.statut = jsonToStatutAnimationCollective(json.statut)
+  if (json.source) evenement.source = json.source
 
   return evenement
 }
@@ -89,11 +95,13 @@ export function jsonToListItem(
   const evenement: EvenementListItem = {
     id: json.id,
     type: json.type.label,
-    modality: json.modality,
     date: json.date,
     duree: json.duration,
     idCreateur: json.createur.id,
+    source: json.source,
   }
+  if (json.modality) evenement.modality = json.modality
+  if (json.futPresent !== undefined) evenement.futPresent = json.futPresent
   if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {
     evenement.labelBeneficiaires = jsonToBeneficiaires(
       (json as EvenementJson).jeunes
@@ -112,6 +120,7 @@ export function rdvJsonToEntree(rdv: EvenementJeuneJson): EntreeAgenda {
     date: date,
     type: 'evenement',
     titre,
+    source: rdv.source,
   }
 }
 

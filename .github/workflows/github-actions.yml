@@ -51,6 +51,9 @@ jobs:
       - name: Configure Scalingo CLI
         run: |
           scalingo login --api-token ${{ secrets.SCALINGO_API_KEY }}
-      - name: Deploy review app
+      - name: Link review app
         run: |
-          scalingo -a pa-front-staging integration-link-manual-review-app ${{ github.event.pull_request.number }} 
+          if scalingo -a pa-front-staging review-apps | grep -q pa-front-staging-pr${{ github.event.pull_request.number }}; then
+          echo 'Review app already linked'
+          else scalingo -a pa-front-staging integration-link-manual-review-app ${{ github.event.pull_request.number }}
+          fi

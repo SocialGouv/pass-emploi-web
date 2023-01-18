@@ -13,7 +13,7 @@ export default function LienOffre({
 }) {
   return (
     <div
-      className={`mt-4 p-4 rounded-medium ${
+      className={`mt-4 p-4 rounded-base ${
         isSentByConseiller ? 'bg-primary_darken' : 'bg-blanc'
       }`}
     >
@@ -33,10 +33,9 @@ export default function LienOffre({
       >
         <Link
           href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
+          className='underline text-[inherit]'
         >
-          <a className='underline text-[inherit]'>
-            Voir l’offre <span className='sr-only'>{infoOffre.titre}</span>
-          </a>
+          Voir l’offre <span className='sr-only'>{infoOffre.titre}</span>
         </Link>
       </div>
     </div>

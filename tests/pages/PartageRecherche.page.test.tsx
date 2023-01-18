@@ -14,6 +14,7 @@ import { TypeOffre } from 'interfaces/offre'
 import PartageCritere, {
   getServerSideProps,
 } from 'pages/offres/partage-recherche'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
 import { SuggestionsService } from 'services/suggestions.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -234,10 +235,15 @@ describe('Partage Recherche', () => {
     let suggestionsService: SuggestionsService
     let inputSearchJeune: HTMLSelectElement
     let submitButton: HTMLButtonElement
-    let push: Function
 
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+    let push: Function
     describe('pour tous les partages de recherche', () => {
       beforeEach(() => {
+        alerteSetter = jest.fn()
+        push = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ push })
+
         suggestionsService = mockedSuggestionsService()
 
         renderWithContexts(
@@ -255,12 +261,15 @@ describe('Partage Recherche', () => {
             withoutChat={true}
             returnTo=''
           />,
-          { customDependances: { suggestionsService: suggestionsService } }
+          {
+            customDependances: { suggestionsService: suggestionsService },
+            customAlerte: { alerteSetter },
+          }
         )
 
         //Given
         inputSearchJeune = screen.getByRole('combobox', {
-          name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+          name: 'Rechercher et ajouter des destinataires Nom et prénom',
         })
 
         submitButton = screen.getByRole('button', {
@@ -289,9 +298,6 @@ describe('Partage Recherche', () => {
 
       describe('quand on remplit le formulaire', () => {
         beforeEach(async () => {
-          push = jest.fn(() => Promise.resolve())
-          ;(useRouter as jest.Mock).mockReturnValue({ push })
-
           // Given
           await userEvent.type(inputSearchJeune, 'Jirac Kenji')
           await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
@@ -309,10 +315,8 @@ describe('Partage Recherche', () => {
           await userEvent.click(submitButton)
 
           // Then
-          expect(push).toHaveBeenCalledWith({
-            pathname: '/recherche-offres',
-            query: { suggestionRecherche: 'succes' },
-          })
+          expect(alerteSetter).toHaveBeenCalledWith('suggestionRecherche')
+          expect(push).toHaveBeenCalledWith('/recherche-offres')
         })
       })
     })
@@ -341,7 +345,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
 
           submitButton = screen.getByRole('button', {
@@ -362,8 +366,6 @@ describe('Partage Recherche', () => {
 
         it('envoie une suggestion d’offre d’emploi à plusieurs destinataires', async () => {
           // Given
-          push = jest.fn(() => Promise.resolve())
-          ;(useRouter as jest.Mock).mockReturnValue({ push })
           await userEvent.type(inputSearchJeune, 'Jirac Kenji')
           await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
 
@@ -406,7 +408,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
 
           submitButton = screen.getByRole('button', {
@@ -425,8 +427,6 @@ describe('Partage Recherche', () => {
 
         it('envoie une suggestion d’alternance à plusieurs destinataires', async () => {
           // Given
-          push = jest.fn(() => Promise.resolve())
-          ;(useRouter as jest.Mock).mockReturnValue({ push })
           await userEvent.type(inputSearchJeune, 'Jirac Kenji')
           await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
 
@@ -470,7 +470,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
 
           submitButton = screen.getByRole('button', {
@@ -489,8 +489,6 @@ describe('Partage Recherche', () => {
 
         it('envoie une suggestion d’immersion à plusieurs destinataires', async () => {
           // Given
-          push = jest.fn(() => Promise.resolve())
-          ;(useRouter as jest.Mock).mockReturnValue({ push })
           await userEvent.type(inputSearchJeune, 'Jirac Kenji')
           await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
 
@@ -534,7 +532,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
 
           submitButton = screen.getByRole('button', {
@@ -554,8 +552,6 @@ describe('Partage Recherche', () => {
 
         it('envoie une suggestion de service civique à plusieurs destinataires', async () => {
           // Given
-          push = jest.fn(() => Promise.resolve())
-          ;(useRouter as jest.Mock).mockReturnValue({ push })
           await userEvent.type(inputSearchJeune, 'Jirac Kenji')
           await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
 

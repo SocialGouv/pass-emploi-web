@@ -15,7 +15,7 @@ export function BlocFavoris({
   metadonneesFavoris: { offres, recherches, autoriseLePartage },
 }: BlocFavorisProps) {
   return (
-    <div className='border border-solid rounded-medium w-full p-4 mt-3 border-grey_100'>
+    <div className='border border-solid rounded-base w-full p-4 mt-3 border-grey_100'>
       <dl>
         <Offres offres={offres} />
 
@@ -68,16 +68,17 @@ function RecherchesSauvegardees({ total }: { total: number }) {
 function LienVersFavoris({ idJeune }: { idJeune: string }) {
   return (
     <div className='flex justify-end mt-4'>
-      <Link href={`/mes-jeunes/${idJeune}/favoris`}>
-        <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
-          Voir la liste des favoris
-          <IconComponent
-            name={IconName.ChevronRight}
-            className='w-4 h-5 fill-[inherit]'
-            aria-hidden={true}
-            focusable={false}
-          />
-        </a>
+      <Link
+        href={`/mes-jeunes/${idJeune}/favoris`}
+        className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
+      >
+        Voir la liste des favoris
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
       </Link>
     </div>
   )

@@ -46,10 +46,11 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
           <li key={label} className='flex items-center'>
             {index < ariane.length - 1 && (
               <>
-                <Link href={href}>
-                  <a className='text-s-regular text-content_color underline hover:text-primary_darken'>
-                    {label}
-                  </a>
+                <Link
+                  href={href}
+                  className='text-s-regular text-content_color underline hover:text-primary_darken'
+                >
+                  {label}
                 </Link>
                 <IconComponent
                   name={IconName.ChevronRight}
@@ -60,13 +61,12 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
               </>
             )}
             {index === ariane.length - 1 && (
-              <Link href={href}>
-                <a
-                  aria-current='page'
-                  className='text-s-regular text-content_color'
-                >
-                  {label}
-                </a>
+              <Link
+                href={href}
+                aria-current='page'
+                className='text-s-regular text-content_color'
+              >
+                {label}
               </Link>
             )}
           </li>

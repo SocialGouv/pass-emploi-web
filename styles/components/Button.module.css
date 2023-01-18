@@ -1,15 +1,23 @@
 .button {
   padding: 0.5rem 1rem;
   height: max-content;
-  border-radius: 9999px;
+  border-radius: theme('borderRadius.l');
   transition: border-color 0.2s, color 0.2s, background-color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.button:hover {
+  box-shadow: theme('boxShadow.m');
+}
+
+.button[disabled]:hover {
+  box-shadow: none;
+}
+
 .button svg {
-  fill: currentColor
+  fill: currentColor;
 }
 
 /**
@@ -20,6 +28,7 @@
   background-color: theme('colors.primary');
   color: theme('colors.blanc');
   border: 1px solid transparent;
+  box-shadow: theme('boxShadow.base');
 }
 
 .buttonPrimary:hover,
@@ -45,22 +54,25 @@
 * Button Secondary / Button Tertiary
 */
 
-.buttonSecondary, .buttonTertiary {
+.buttonSecondary,
+.buttonTertiary {
   background-color: theme('colors.blanc');
   color: theme('colors.primary');
   border: 1px solid theme('colors.primary');
 }
 
 .buttonTertiary {
+  background-color: theme('colors.primary_lighten');
   border: 1px solid transparent;
 }
 
 .buttonSecondary:hover,
-.buttonSecondary:active, .buttonTertiary:hover, .buttonTertiary:active {
+.buttonSecondary:active {
   background-color: theme('colors.primary_lighten');
 }
 
-.buttonSecondary[disabled], .buttonTertiary[disabled] {
+.buttonSecondary[disabled],
+.buttonTertiary[disabled] {
   background-color: theme('colors.primary');
   opacity: 50%;
   cursor: not-allowed;

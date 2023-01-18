@@ -3,7 +3,7 @@ import React from 'react'
 import OffreCard from 'components/offres/OffreCard'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
-import { Tag } from 'components/ui/Indicateurs/Tag'
+import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import { BaseImmersion } from 'interfaces/offre'
 
 interface ImmersionCardProps {
@@ -21,10 +21,10 @@ export default function ImmersionCard({
       titreLien={'chez ' + offre.nomEtablissement}
       withPartage={withPartage}
     >
-      <Tag
+      <TagMetier
         label='Immersion'
-        color='accent_2'
-        backgroundColor='white'
+        color='content_color'
+        backgroundColor='additional_1_lighten'
         className='text-s-regular mb-4'
       />
 

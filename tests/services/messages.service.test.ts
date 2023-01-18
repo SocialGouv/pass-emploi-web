@@ -8,10 +8,15 @@ import {
   uneBaseJeune,
   unJeuneChat,
 } from 'fixtures/jeune'
-import { desMessages, desMessagesParJour } from 'fixtures/message'
+import {
+  desMessages,
+  desMessagesListeDeDiffusionParJour,
+  desMessagesListeDiffusion,
+  desMessagesParJour,
+} from 'fixtures/message'
 import { unDetailOffreEmploi } from 'fixtures/offre'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
-import { Message, MessagesOfADay } from 'interfaces/message'
+import { Message, ByDay } from 'interfaces/message'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import { MessagesFirebaseAndApiService } from 'services/messages.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
@@ -139,9 +144,31 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
+  describe('.getMessagesListeDeDiffusion', () => {
+    it('retourne les messages de la liste de diffusion', async () => {
+      // Given
+      ;(firebaseClient.getMessagesGroupe as jest.Mock).mockResolvedValue(
+        desMessagesListeDiffusion()
+      )
+
+      // When
+      const actual = await messagesService.getMessagesListeDeDiffusion(
+        'id-liste',
+        cleChiffrement
+      )
+
+      // Then
+      expect(firebaseClient.getMessagesGroupe).toHaveBeenCalledWith(
+        'id-conseiller',
+        'id-liste'
+      )
+      expect(actual).toEqual(desMessagesListeDeDiffusionParJour())
+    })
+  })
+
   describe('.observeMessages', () => {
     let idChat: string
-    let onMessages: (messagesGroupesParJour: MessagesOfADay[]) => void
+    let onMessages: (messagesGroupesParJour: ByDay<Message>[]) => void
     beforeEach(async () => {
       // Given
       ;(firebaseClient.observeMessagesDuChat as jest.Mock).mockImplementation(
@@ -361,141 +388,62 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.sendNouveauMessageGroupe', () => {
-    let destinataires: JeuneFromListe[]
-    let idsJeunes: string[]
-    let chats: { [idJeune: string]: Chat }
+    let idsBeneficiaires: string[]
+    let idsListesDeDiffusion: string[]
     let newMessageGroupe: string
-    const now = DateTime.now()
     beforeEach(async () => {
       // Given
-      jest.spyOn(DateTime, 'now').mockReturnValue(now)
-      destinataires = desItemsJeunes()
-      idsJeunes = destinataires.map(({ id }) => id)
+      idsBeneficiaires = desItemsJeunes().map(({ id }) => id)
+      idsListesDeDiffusion = ['liste-1', 'liste-2']
       newMessageGroupe = 'nouveau message groupé'
+    })
 
+    it('envoie un nouveau message sans pièce jointe pour tous les destinataires', async () => {
       // When
-      chats = idsJeunes.reduce((mappedChats, idJeune) => {
-        mappedChats[idJeune] = unChat({ chatId: `chat-${idJeune}` })
-        return mappedChats
-      }, {} as { [idJeune: string]: Chat })
-      ;(firebaseClient.getChatsDuConseiller as jest.Mock).mockResolvedValue(
-        chats
+      await messagesService.sendNouveauMessageGroupe({
+        idsBeneficiaires: idsBeneficiaires,
+        idsListesDeDiffusion,
+        newMessage: newMessageGroupe,
+        cleChiffrement,
+      })
+
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/messages',
+        {
+          idConseiller: 'id-conseiller',
+          idsBeneficiaires,
+          idsListesDeDiffusion,
+          message: `Encrypted: ${newMessageGroupe}`,
+          iv: `IV: ${newMessageGroupe}`,
+        },
+        accessToken
       )
     })
 
-    describe('sans piece jointe', () => {
-      beforeEach(async () => {
-        await messagesService.sendNouveauMessageGroupe({
-          idsDestinataires: idsJeunes,
-          newMessage: newMessageGroupe,
-          cleChiffrement,
-        })
+    it('envoie un nouveau message avec pièce jointe pour tous les destinataires', async () => {
+      // When
+      await messagesService.sendNouveauMessageGroupe({
+        idsBeneficiaires: idsBeneficiaires,
+        idsListesDeDiffusion,
+        newMessage: newMessageGroupe,
+        cleChiffrement,
+        infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
       })
 
-      it('ajoute un nouveau message à firebase pour chaque destinataire', () => {
-        // Then
-        expect(firebaseClient.getChatsDuConseiller).toHaveBeenCalledWith(
-          'id-conseiller'
-        )
-
-        Object.values(chats).forEach((chat) => {
-          expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
-            idConseiller: 'id-conseiller',
-            message: {
-              encryptedText: `Encrypted: ${newMessageGroupe}`,
-              iv: `IV: ${newMessageGroupe}`,
-            },
-            date: now,
-          })
-        })
-      })
-
-      it('met à jour le chat dans firebase pour chaque destinataire', () => {
-        expect(firebaseClient.getChatsDuConseiller).toHaveBeenCalledWith(
-          'id-conseiller'
-        )
-        // Then
-        Object.values(chats).forEach((chat) => {
-          expect(firebaseClient.updateChat).toHaveBeenCalledWith(chat.chatId, {
-            lastMessageContent: `Encrypted: ${newMessageGroupe}`,
-            lastMessageIv: `IV: ${newMessageGroupe}`,
-            lastMessageSentAt: now,
-            lastMessageSentBy: 'conseiller',
-            newConseillerMessageCount: chat.newConseillerMessageCount + 1,
-          })
-        })
-      })
-
-      it('notifie envoi de message pour chaque destinataire', () => {
-        // Then
-        expect(apiClient.post).toHaveBeenCalledWith(
-          `/conseillers/id-conseiller/jeunes/notify-messages`,
-          { idsJeunes: idsJeunes },
-          accessToken
-        )
-      })
-
-      it('tracks nouveau message groupé', () => {
-        // Then
-        expect(apiClient.post).toHaveBeenCalledWith(
-          '/evenements',
-          {
-            type: 'MESSAGE_ENVOYE_MULTIPLE',
-            emetteur: {
-              type: 'CONSEILLER',
-              structure: 'POLE_EMPLOI',
-              id: 'id-conseiller',
-            },
-          },
-          accessToken
-        )
-      })
-    })
-
-    describe('avec piece jointe', () => {
-      beforeEach(async () => {
-        await messagesService.sendNouveauMessageGroupe({
-          idsDestinataires: idsJeunes,
-          newMessage: newMessageGroupe,
-          cleChiffrement,
-          infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
-        })
-      })
-
-      it('ajoute un nouveau message à firebase pour chaque destinataire', () => {
-        // Then
-        expect(firebaseClient.getChatsDuConseiller).toHaveBeenCalledWith(
-          'id-conseiller'
-        )
-
-        Object.values(chats).forEach((chat) => {
-          expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
-            idConseiller: 'id-conseiller',
-            message: {
-              encryptedText: `Encrypted: ${newMessageGroupe}`,
-              iv: `IV: ${newMessageGroupe}`,
-            },
-            date: now,
-            infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
-          })
-        })
-      })
-
-      it('tracks nouveau message groupé avec piece jointe', () => {
-        // Then
-        expect(apiClient.post).toHaveBeenCalledWith(
-          '/evenements',
-          {
-            type: 'MESSAGE_ENVOYE_MULTIPLE_PJ',
-            emetteur: {
-              type: 'CONSEILLER',
-              structure: 'POLE_EMPLOI',
-              id: 'id-conseiller',
-            },
-          },
-          accessToken
-        )
-      })
+      // Then
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/messages',
+        {
+          idConseiller: 'id-conseiller',
+          idsBeneficiaires,
+          idsListesDeDiffusion,
+          message: `Encrypted: ${newMessageGroupe}`,
+          iv: `IV: ${newMessageGroupe}`,
+          infoPieceJointe: { id: 'fake-id', nom: 'Encrypted: fake-nom' },
+        },
+        accessToken
+      )
     })
   })
 

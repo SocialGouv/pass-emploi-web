@@ -7,8 +7,9 @@ import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmplo
 import { StructureConseiller } from 'interfaces/conseiller'
 import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
@@ -18,6 +19,8 @@ interface PoleEmploiCreationJeuneProps extends PageProps {}
 function PoleEmploiCreationJeune(): JSX.Element {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
+  const [_, setAlerte] = useAlerte()
+
   const [creationError, setCreationError] = useState<string>('')
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
@@ -32,13 +35,8 @@ function PoleEmploiCreationJeune(): JSX.Element {
         lastName: newJeune.nom,
         email: newJeune.email,
       })
-      await router.push({
-        pathname: `/mes-jeunes`,
-        query: {
-          [QueryParam.creationBeneficiaire]: QueryValue.succes,
-          idBeneficiaire: id,
-        },
-      })
+      setAlerte(AlerteParam.creationBeneficiaire, id)
+      await router.push('/mes-jeunes')
     } catch (error) {
       setCreationError(
         (error as Error).message || "Une erreur inconnue s'est produite"

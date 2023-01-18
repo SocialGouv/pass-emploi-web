@@ -126,26 +126,5 @@ describe('Page Recherche Offres', () => {
         },
       })
     })
-
-    it('récupère la réussite du partage', async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-      })
-
-      // When
-      const actual = await getServerSideProps({
-        query: { partageOffre: 'succes' },
-      } as unknown as GetServerSidePropsContext)
-
-      // Then
-      expect(actual).toEqual({
-        props: {
-          pageTitle: 'Recherche d’offres',
-          pageHeader: 'Offres',
-          partageOffreSuccess: true,
-        },
-      })
-    })
   })
 })

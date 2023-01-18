@@ -19,6 +19,7 @@ interface RendezVousPassesProps {
 
 function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
   const [conseiller] = useConseiller()
+
   useMatomo('Détail jeune - Rendez-vous passés')
 
   return (
@@ -26,6 +27,7 @@ function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
       rdvs={rdvs}
       idConseiller={conseiller?.id ?? ''}
       beneficiaireUnique={beneficiaire}
+      additionalColumns='Présent'
     />
   )
 }

@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   Evenement,
@@ -85,6 +86,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
         auteur: { nom: 'Lama', prenom: 'Serge' },
       },
     ],
+    source: 'PASS_EMPLOI',
   }
 
   return { ...defaults, ...overrides }
@@ -101,6 +103,7 @@ export function desEvenementsListItems(): EvenementListItem[] {
       date: '2021-10-25T12:00:00.000Z',
       duree: 25,
       idCreateur: '2',
+      source: 'MILO',
     },
   ]
 }
@@ -116,6 +119,7 @@ export function unEvenementListItem(
     date: '2021-10-21T10:00:00.000Z',
     duree: 125,
     idCreateur: '1',
+    source: 'PASS_EMPLOI',
   }
   return { ...defaults, ...overrides }
 }
@@ -172,6 +176,7 @@ export function unEvenementJson(
         auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
       },
     ],
+    source: StructureConseiller.PASS_EMPLOI,
   }
 
   return { ...defaults, ...overrides }
@@ -220,6 +225,7 @@ export function unEvenementJeuneJson(
         auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
       },
     ],
+    source: StructureConseiller.PASS_EMPLOI,
   }
 
   return { ...defaults, ...overrides }

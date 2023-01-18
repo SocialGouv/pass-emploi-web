@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { IconName } from 'components/ui/IconComponent'
-import { Tag } from 'components/ui/Indicateurs/Tag'
+import { TagStatut } from 'components/ui/Indicateurs/Tag'
 import { StatutAction } from 'interfaces/action'
 
 interface Props {
@@ -19,16 +19,16 @@ export default function TagQualificationAction({
   return (
     <>
       {statut === StatutAction.Terminee && !qualification && (
-        <Tag
+        <TagStatut
           label={'Action à qualifier'}
           color='accent_2'
           backgroundColor='accent_2_lighten'
           iconName={IconName.Pending}
-          className='mb-4 border-none text-s-bold'
+          className='mb-4 text-s-bold'
         />
       )}
       {qualification && qualification.isSituationNonProfessionnelle && (
-        <Tag
+        <TagStatut
           label={qualification.libelle}
           color='accent_4'
           backgroundColor='accent_4_lighten'
@@ -37,7 +37,7 @@ export default function TagQualificationAction({
         />
       )}
       {qualification && !qualification.isSituationNonProfessionnelle && (
-        <Tag
+        <TagStatut
           label={qualification.libelle}
           color='accent_5'
           backgroundColor='accent_5_lighten'

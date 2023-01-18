@@ -8,7 +8,7 @@ import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Message, MessagesOfADay } from 'interfaces/message'
+import { Message, ByDay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -33,7 +33,7 @@ describe('<Conversation />', () => {
         }
       ),
       observeMessages: jest.fn(
-        (_idChat, _cle, fn: (messages: MessagesOfADay[]) => void) => {
+        (_idChat, _cle, fn: (messages: ByDay[]) => void) => {
           fn(messagesParJour)
           return () => {}
         }
@@ -265,6 +265,7 @@ describe('<Conversation />', () => {
       expect(fileInput).toHaveAttribute('disabled', '')
       expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
         ['jeune-1'],
+        [],
         file
       )
     })

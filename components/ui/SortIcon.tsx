@@ -1,11 +1,11 @@
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function SortIcon({
-  isSorted,
   isDesc,
+  isSorted = true,
 }: {
-  isSorted: boolean
   isDesc: boolean
+  isSorted?: boolean
 }) {
   return (
     <IconComponent

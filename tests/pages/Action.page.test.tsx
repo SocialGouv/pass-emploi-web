@@ -15,6 +15,7 @@ import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -26,6 +27,13 @@ jest.mock('next/router')
 
 describe("Page Détail d'une action d'un jeune", () => {
   describe('client side', () => {
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+    let routerPush: Function
+    beforeEach(() => {
+      alerteSetter = jest.fn()
+      routerPush = jest.fn()
+    })
+
     describe('render', () => {
       const action = uneAction()
       const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
@@ -35,10 +43,8 @@ describe("Page Détail d'une action d'un jeune", () => {
         nom: 'Sanfamiye',
       }
       let actionsService: ActionsService
-      let routerPush: Function
 
       beforeEach(async () => {
-        routerPush = jest.fn()
         actionsService = mockedActionsService({
           updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
           deleteAction: jest.fn(),
@@ -53,7 +59,10 @@ describe("Page Détail d'une action d'un jeune", () => {
             commentaires={commentaires}
             pageTitle=''
           />,
-          { customDependances: { actionsService } }
+          {
+            customDependances: { actionsService },
+            customAlerte: { alerteSetter },
+          }
         )
       })
 
@@ -101,12 +110,10 @@ describe("Page Détail d'une action d'un jeune", () => {
               'id-action-1',
               'test'
             )
-            expect(routerPush).toHaveBeenCalledWith({
-              pathname: '/mes-jeunes/jeune-1/actions/id-action-1',
-              query: {
-                ajoutCommentaireAction: 'succes',
-              },
-            })
+            expect(alerteSetter).toHaveBeenCalledWith('ajoutCommentaireAction')
+            expect(routerPush).toHaveBeenCalledWith(
+              '/mes-jeunes/jeune-1/actions/id-action-1'
+            )
             expect(textbox).toHaveValue('')
           })
 
@@ -148,8 +155,6 @@ describe("Page Détail d'une action d'un jeune", () => {
           nom: 'Sanfamiye',
         }
         let actionsService: ActionsService
-        let push: jest.Mock
-        let replace: jest.Mock
         beforeEach(async () => {
           actionsService = mockedActionsService({
             qualifier: jest.fn().mockResolvedValue({
@@ -157,10 +162,7 @@ describe("Page Détail d'une action d'un jeune", () => {
               isSituationNonProfessionnelle: false,
             }),
           })
-
-          push = jest.fn()
-          replace = jest.fn()
-          ;(useRouter as jest.Mock).mockReturnValue({ push, replace })
+          ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
           renderWithContexts(
             <PageAction
@@ -172,6 +174,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             {
               customDependances: { actionsService },
               customConseiller: { structure: StructureConseiller.MILO },
+              customAlerte: { alerteSetter },
             }
           )
         })
@@ -221,11 +224,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           })
 
           it('affiche une alerte de succès', () => {
-            expect(replace).toHaveBeenCalledWith(
-              `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}?qualificationNonSNP=succes`,
-              undefined,
-              { shallow: true }
-            )
+            expect(alerteSetter).toHaveBeenCalledWith('qualificationNonSNP')
           })
         })
 
@@ -245,7 +244,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           })
 
           it('redirige vers la page de qualification', () => {
-            expect(push).toHaveBeenCalledWith(
+            expect(routerPush).toHaveBeenCalledWith(
               `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}/qualification`
             )
           })
@@ -371,7 +370,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             commentaires,
             pageTitle,
             pageHeader: 'Détails de l’action',
-            messageEnvoiGroupeSuccess: true,
           },
         })
       })

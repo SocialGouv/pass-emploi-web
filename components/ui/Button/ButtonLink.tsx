@@ -22,15 +22,14 @@ export default function ButtonLink({
   onClick = () => {},
 }: Props) {
   return (
-    <Link href={href}>
-      <a
-        className={`${className ? className : ''} text-s-bold ${
-          styles.button
-        } ${getColorStyleClassName(style)}`}
-        onClick={onClick}
-      >
-        {children}
-      </a>
+    <Link
+      href={href}
+      className={`${className ? className : ''} text-s-bold ${
+        styles.button
+      } ${getColorStyleClassName(style)}`}
+      onClick={onClick}
+    >
+      {children}
     </Link>
   )
 }

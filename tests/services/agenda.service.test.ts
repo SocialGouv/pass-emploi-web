@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { ApiClient } from 'clients/api.client'
 import { uneListeDActionsJson } from 'fixtures/action'
 import { uneListeDEvenementJson } from 'fixtures/evenement'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { AgendaApiService, AgendaService } from 'services/agenda.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
@@ -52,12 +53,14 @@ describe('AgendaService', () => {
             date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
             titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
+            source: StructureConseiller.PASS_EMPLOI,
           },
           {
             id: '1',
             date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
             titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
+            source: StructureConseiller.PASS_EMPLOI,
           },
           {
             id: 'id-action-1',

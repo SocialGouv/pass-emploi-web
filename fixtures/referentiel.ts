@@ -211,11 +211,8 @@ export function desMotifsDeSuppression(): MotifSuppressionJeune[] {
     },
     { motif: 'Demande du jeune de sortir du dispositif' },
     { motif: 'Non respect des engagements ou abandon' },
-    {
-      motif: 'Déménagement ou changement de conseiller',
-      description:
-        'Uniquement dans le cas où vous ne pouvez pas réaffecter ce jeune. Dans le cas contraire, contactez votre superviseur.',
-    },
+    { motif: 'Déménagement' },
+    { motif: 'Changement de conseiller' },
     { motif: 'Autre', description: 'Champ libre' },
   ]
 }

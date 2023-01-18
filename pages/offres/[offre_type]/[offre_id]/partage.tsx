@@ -19,12 +19,13 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ImmersionsService } from 'services/immersions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -42,6 +43,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
+  const [_, setAlerte] = useAlerte()
 
   const [idsDestinataires, setIdsDestinataires] = useState<
     RequiredValue<string[]>
@@ -61,10 +63,13 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
     }))
   }
 
-  function updateIdsDestinataires(selectedIds: string[]) {
+  function updateIdsDestinataires(selectedIds: {
+    beneficiaires?: string[]
+    listesDeDiffusion?: string[]
+  }) {
     setIdsDestinataires({
-      value: selectedIds,
-      error: !selectedIds.length
+      value: selectedIds.beneficiaires!,
+      error: !selectedIds.beneficiaires!.length
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
@@ -85,10 +90,8 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
         cleChiffrement: chatCredentials!.cleChiffrement,
         message: message || messageDefault,
       })
-      await router.push({
-        pathname: returnTo,
-        query: { [QueryParam.partageOffre]: QueryValue.succes },
-      })
+      setAlerte(AlerteParam.partageOffre)
+      await router.push(returnTo)
     } finally {
       setIsPartageEnCours(false)
     }

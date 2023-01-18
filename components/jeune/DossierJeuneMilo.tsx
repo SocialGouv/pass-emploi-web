@@ -52,7 +52,7 @@ export default function DossierJeuneMilo({
 
   return (
     <>
-      <div className='border border-primary_lighten rounded-large p-6'>
+      <div className='border border-primary_lighten rounded-base p-6'>
         <dl className='text-primary_darken'>
           <div className='flex items-center mb-3'>
             <dt className='text-base-regular mr-1'>Prénom :</dt>
@@ -124,17 +124,18 @@ export default function DossierJeuneMilo({
       )}
 
       <div className='flex items-center mt-14'>
-        <Link href={'/mes-jeunes/milo/creation-jeune'}>
-          <a className='flex items-center text-base-bold text-primary_darken mr-6'>
-            <IconComponent
-              name={IconName.ArrowLeft}
-              className='mr-2.5 w-3 h-3'
-              role='img'
-              focusable='false'
-              aria-label="Retour Création d'un compte jeune étape 1"
-            />
-            Retour
-          </a>
+        <Link
+          href={'/mes-jeunes/milo/creation-jeune'}
+          className='flex items-center text-base-bold text-primary_darken mr-6'
+        >
+          <IconComponent
+            name={IconName.ArrowLeft}
+            className='mr-2.5 w-3 h-3'
+            role='img'
+            focusable='false'
+            aria-label="Retour Création d'un compte jeune étape 1"
+          />
+          Retour
         </Link>
 
         {!erreurMessageHttpPassEmploi &&

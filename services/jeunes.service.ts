@@ -281,7 +281,7 @@ export class JeunesApiService implements JeunesService {
     const session = await getSession()
     const { content: motifs } = await this.apiClient.get<
       MotifSuppressionJeune[]
-    >('/v2/referentiels/motifs-suppression-jeune', session!.accessToken)
+    >('/referentiels/motifs-suppression-jeune', session!.accessToken)
     return motifs
   }
 

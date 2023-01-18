@@ -3,7 +3,7 @@ import React from 'react'
 import OffreCard from 'components/offres/OffreCard'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
-import { Tag } from 'components/ui/Indicateurs/Tag'
+import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import { BaseOffreEmploi, TypeOffre } from 'interfaces/offre'
 
 interface OffreEmploiCardProps {
@@ -21,10 +21,14 @@ export default function OffreEmploiCard({
       titreLien={offre.titre}
       withPartage={withPartage}
     >
-      <Tag
+      <TagMetier
         label={offre.type === TypeOffre.ALTERNANCE ? 'Alternance' : 'Emploi'}
-        color='accent_2'
-        backgroundColor='white'
+        color='content_color'
+        backgroundColor={
+          offre.type === TypeOffre.ALTERNANCE
+            ? 'additional_3_lighten'
+            : 'additional_4_lighten'
+        }
         className='text-s-regular mb-4'
       />
 

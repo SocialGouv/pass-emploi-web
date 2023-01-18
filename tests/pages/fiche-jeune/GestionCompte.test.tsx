@@ -12,6 +12,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -20,9 +21,11 @@ jest.mock('components/Modal')
 describe('Gestion du compte dans la fiche jeune', () => {
   let motifsSuppression: MotifSuppressionJeune[]
   let jeunesService: JeunesService
+  let alerteSetter: jest.Mock
   let push: jest.Mock
 
   beforeEach(async () => {
+    alerteSetter = jest.fn()
     push = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(),
@@ -57,7 +60,8 @@ describe('Gestion du compte dans la fiche jeune', () => {
         await renderFicheJeune(
           StructureConseiller.PASS_EMPLOI,
           unDetailJeune({ isActivated: true }),
-          jeunesService
+          jeunesService,
+          alerteSetter
         )
         const deleteButton = screen.getByText('Supprimer ce compte')
 
@@ -138,25 +142,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
             )
           ).toBeInTheDocument()
         })
-        it('affiche une case à cocher pour confirmer le motif Déménagement ou changement de conseiller', async () => {
-          // Given
-          const selectMotif = screen.getByRole('combobox', {
-            name: /Motif de suppression/,
-          })
-
-          // When
-          await userEvent.selectOptions(
-            selectMotif,
-            'Déménagement ou changement de conseiller'
-          )
-
-          // Then
-          expect(
-            screen.getByLabelText(
-              'Uniquement dans le cas où vous ne pouvez pas réaffecter ce jeune. Dans le cas contraire, contactez votre superviseur.'
-            )
-          ).toBeInTheDocument()
-        })
 
         it('lors de la confirmation, supprime le bénéficiaire', async () => {
           // Given
@@ -177,7 +162,8 @@ describe('Gestion du compte dans la fiche jeune', () => {
             motif: 'Demande du jeune de sortir du dispositif',
             commentaire: undefined,
           })
-          expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
+          expect(alerteSetter).toHaveBeenCalledWith('suppressionBeneficiaire')
+          expect(push).toHaveBeenCalledWith('/mes-jeunes')
         })
       })
     })
@@ -188,7 +174,8 @@ describe('Gestion du compte dans la fiche jeune', () => {
         await renderFicheJeune(
           StructureConseiller.PASS_EMPLOI,
           unDetailJeune({ isActivated: false }),
-          jeunesService
+          jeunesService,
+          alerteSetter
         )
         const deleteButton = screen.getByText('Supprimer ce compte')
 
@@ -221,7 +208,8 @@ describe('Gestion du compte dans la fiche jeune', () => {
         expect(jeunesService.supprimerJeuneInactif).toHaveBeenCalledWith(
           'jeune-1'
         )
-        expect(push).toHaveBeenCalledWith('/mes-jeunes?suppression=succes')
+        expect(alerteSetter).toHaveBeenCalledWith('suppressionBeneficiaire')
+        expect(push).toHaveBeenCalledWith('/mes-jeunes')
       })
     })
 
@@ -262,7 +250,8 @@ describe('Gestion du compte dans la fiche jeune', () => {
 async function renderFicheJeune(
   structure: StructureConseiller,
   jeune: DetailJeune,
-  jeunesService: JeunesService
+  jeunesService: JeunesService,
+  alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
   await act(async () => {
     await renderWithContexts(
@@ -280,6 +269,7 @@ async function renderFicheJeune(
             recupererAgenda: jest.fn(async () => unAgenda()),
           }),
         },
+        customAlerte: { alerteSetter },
       }
     )
   })

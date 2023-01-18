@@ -19,7 +19,7 @@ export function HistoriqueAction({ action }: HistoriqueActionProps) {
   )
 
   return (
-    <div className='border border-solid border-grey_100 rounded-medium p-4 mb-5'>
+    <div className='border border-solid border-grey_100 rounded-base p-4 mb-5'>
       <h2 className='text-m-bold text-content_color mb-6 mt-2'>
         Historique de l’action
       </h2>

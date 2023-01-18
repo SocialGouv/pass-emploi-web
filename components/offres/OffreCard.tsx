@@ -30,25 +30,24 @@ export default function OffreCard({
     <div className='relative'>
       <div
         tabIndex={0}
-        className='block rounded-small shadow-s p-6 cursor-pointer hover:bg-primary_lighten'
+        className='block rounded-base shadow-base p-6 cursor-pointer hover:bg-primary_lighten'
         onClick={goToDetail}
       >
         {children}
 
-        <Link href={hrefDetail}>
-          <a
-            className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'
-            onClick={(e) => e.stopPropagation()}
-            aria-label={`Détail de l’offre ${titreLien}`}
-          >
-            Voir le détail
-            <IconComponent
-              name={IconName.ChevronRight}
-              className='w-4 h-4 mr-2 fill-primary'
-              focusable={false}
-              aria-hidden={true}
-            />
-          </a>
+        <Link
+          href={hrefDetail}
+          className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'
+          onClick={(e) => e.stopPropagation()}
+          aria-label={`Détail de l’offre ${titreLien}`}
+        >
+          Voir le détail
+          <IconComponent
+            name={IconName.ChevronRight}
+            className='w-4 h-4 mr-2 fill-primary'
+            focusable={false}
+            aria-hidden={true}
+          />
         </Link>
       </div>
 

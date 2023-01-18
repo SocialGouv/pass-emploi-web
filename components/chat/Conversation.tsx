@@ -16,7 +16,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Message, MessagesOfADay } from 'interfaces/message'
+import { Message, ByDay } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import {
   FormNouveauMessageIndividuel,
@@ -39,13 +39,13 @@ export default function Conversation({
   conseillers,
   onBack,
 }: ConversationProps) {
-  const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
+  const [chatCredentials] = useChatCredentials()
   const [conseiller] = useConseiller()
 
   const [newMessage, setNewMessage] = useState('')
-  const [messagesByDay, setMessagesByDay] = useState<MessagesOfADay[]>()
+  const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
   const [uploadedFileInfo, setUploadedFileInfo] = useState<
     InfoFichier | undefined
   >(undefined)
@@ -59,9 +59,9 @@ export default function Conversation({
   )
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const displayDate = useCallback((date: DateTime) => {
+  function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
-  }, [])
+  }
 
   async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -106,7 +106,7 @@ export default function Conversation({
       return messagesService.observeMessages(
         idChatToObserve,
         chatCredentials.cleChiffrement,
-        (messagesGroupesParJour: MessagesOfADay[]) => {
+        (messagesGroupesParJour: ByDay<Message>[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
           if (document.activeElement === inputRef.current) {
@@ -135,6 +135,7 @@ export default function Conversation({
       setIsFileUploading(true)
       const infoFichier = await fichiersService.uploadFichier(
         [jeuneChat.id],
+        [],
         fichierSelectionne
       )
       setUploadedFileInfo(infoFichier)
@@ -183,7 +184,7 @@ export default function Conversation({
 
   return (
     <div className='h-full flex flex-col bg-grey_100 '>
-      <div className='flex items-center mx-4 my-6 short:hidden'>
+      <div className='flex items-center mx-4 pb-6 my-6 border-b border-grey_500 short:hidden'>
         <button
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
           onClick={onBack}
@@ -224,17 +225,17 @@ export default function Conversation({
           )}
         </button>
       </div>
-      <span className='border-b border-grey_500 mx-4 mb-6 short:hidden' />
 
       <div
-        className='p-4 flex-grow overflow-y-auto short:hidden'
+        className='p-4 grow overflow-y-auto short:hidden'
         aria-live='polite'
         aria-busy={!messagesByDay}
       >
         {!messagesByDay && <SpinningLoader />}
+
         {messagesByDay && (
           <ul>
-            {messagesByDay.map((messagesOfADay: MessagesOfADay) => (
+            {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
               <li key={messagesOfADay.date.toMillis()} className='mb-5'>
                 <div className='text-base-regular text-center mb-3'>
                   <span>{displayDate(messagesOfADay.date)}</span>
@@ -279,11 +280,11 @@ export default function Conversation({
           />
 
           <div
-            className='p-4 bg-blanc rounded-x_large border text-base-bold border-primary focus-within:outline focus-within:outline-1'
+            className='p-4 bg-blanc rounded-base border text-base-bold border-primary focus-within:outline focus-within:outline-1'
             onClick={() => inputRef.current!.focus()}
           >
             {uploadedFileInfo && (
-              <div className='flex px-2 py-1 rounded-medium bg-primary_lighten w-fit mb-4'>
+              <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
                 <span className='break-all overflow-y-auto max-h-56'>
                   {uploadedFileInfo.nom}
                 </span>
@@ -298,7 +299,7 @@ export default function Conversation({
                     name={IconName.RoundedClose}
                     aria-hidden='true'
                     focusable='false'
-                    className='w-6 h-6 ml-2'
+                    className='w-6 h-6 ml-2 fill-primary stroke-primary'
                   />
                 </button>
               </div>
@@ -323,7 +324,7 @@ export default function Conversation({
               type='submit'
               aria-label='Envoyer le message'
               disabled={!newMessage && !Boolean(uploadedFileInfo)}
-              className='bg-primary w-12 h-12 border-none rounded-[50%] disabled:bg-grey_500 disabled:cursor-not-allowed'
+              className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed'
             >
               <IconComponent
                 name={IconName.Send}

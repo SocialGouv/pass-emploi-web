@@ -10,16 +10,10 @@ interface TagProps {
   iconName?: IconName
 }
 
-export function Tag({
-  label,
-  color,
-  backgroundColor,
-  className,
-  iconName,
-}: TagProps) {
+function Tag({ label, color, backgroundColor, className, iconName }: TagProps) {
   return (
     <span
-      className={`flex items-center w-fit text-s-regular border border-solid border-${color} text-${color} px-3 bg-${backgroundColor} rounded-x_large whitespace-nowrap ${
+      className={`flex items-center w-fit text-s-medium text-${color} px-3 bg-${backgroundColor} whitespace-nowrap ${
         className ?? ''
       }`}
     >
@@ -33,4 +27,12 @@ export function Tag({
       {label}
     </span>
   )
+}
+
+export function TagMetier({ className, ...props }: TagProps) {
+  return <Tag className={'rounded-base ' + className} {...props} />
+}
+
+export function TagStatut({ className, ...props }: TagProps) {
+  return <Tag className={'rounded-l ' + className} {...props} />
 }

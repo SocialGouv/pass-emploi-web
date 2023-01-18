@@ -17,8 +17,9 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
+import { useAlerte } from 'utils/alerteContext'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -33,6 +34,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
   const router = useRouter()
   const evenementsService =
     useDependance<EvenementsService>('evenementsService')
+  const [_, setAlerte] = useAlerte()
 
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
 
@@ -60,9 +62,8 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
       idsSelectionnes
     )
 
-    await router.push(
-      `${returnTo}&${QueryParam.clotureAC}=${QueryValue.succes}`
-    )
+    setAlerte(AlerteParam.clotureAC)
+    await router.push(returnTo)
   }
 
   return (

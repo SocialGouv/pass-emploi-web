@@ -39,7 +39,7 @@ export function BlocInformationJeune({
   )
 
   return (
-    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
+    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h2 className='text-m-bold mb-4'>Informations</h2>
       <dl>
         <div className='flex'>
@@ -170,16 +170,12 @@ function BouttonSupprimerCompte(props: {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
 }) {
   return (
-    <Button
-      onClick={props.onClick}
-      style={ButtonStyle.SECONDARY}
-      className='w-fit'
-    >
+    <Button onClick={props.onClick} style={ButtonStyle.SECONDARY}>
       <IconComponent
-        name={IconName.TrashCan}
-        focusable='false'
-        aria-hidden='true'
-        className='mr-3 w-3 h-3'
+        name={IconName.Trashcan}
+        focusable={false}
+        aria-hidden={true}
+        className='mr-2 w-4 h-4'
       />
       Supprimer ce compte
     </Button>
@@ -188,16 +184,17 @@ function BouttonSupprimerCompte(props: {
 
 function LienVersHistorique(props: { idJeune: string }) {
   return (
-    <Link href={`/mes-jeunes/${props.idJeune}/historique`}>
-      <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'>
-        Voir l’historique des conseillers
-        <IconComponent
-          name={IconName.ChevronRight}
-          className='w-4 h-5 fill-[inherit]'
-          aria-hidden={true}
-          focusable={false}
-        />
-      </a>
+    <Link
+      href={`/mes-jeunes/${props.idJeune}/historique`}
+      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
+    >
+      Voir l’historique des conseillers
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-[inherit]'
+        aria-hidden={true}
+        focusable={false}
+      />
     </Link>
   )
 }

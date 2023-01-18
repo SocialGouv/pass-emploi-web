@@ -16,9 +16,10 @@ import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
 import { SuggestionsService } from 'services/suggestions.service'
+import { useAlerte } from 'utils/alerteContext'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -68,6 +69,8 @@ function PartageRecherche({
   const suggestionsService =
     useDependance<SuggestionsService>('suggestionsService')
   const router = useRouter()
+  const [_, setAlerte] = useAlerte()
+
   const [idsDestinataires, setIdsDestinataires] = useState<
     RequiredValue<string[]>
   >({ value: [] })
@@ -98,10 +101,13 @@ function PartageRecherche({
     }
   }
 
-  function updateIdsDestinataires(selectedIds: string[]) {
+  function updateIdsDestinataires(selectedIds: {
+    beneficiaires?: string[]
+    listesDeDiffusion?: string[]
+  }) {
     setIdsDestinataires({
-      value: selectedIds,
-      error: !selectedIds.length
+      value: selectedIds.beneficiaires!,
+      error: !selectedIds.beneficiaires!.length
         ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
         : undefined,
     })
@@ -115,10 +121,8 @@ function PartageRecherche({
 
     try {
       await partagerRecherche()
-      await router.push({
-        pathname: '/recherche-offres',
-        query: { [QueryParam.suggestionRecherche]: QueryValue.succes },
-      })
+      setAlerte(AlerteParam.suggestionRecherche)
+      await router.push('/recherche-offres')
     } finally {
       setIsPartageEnCours(false)
     }

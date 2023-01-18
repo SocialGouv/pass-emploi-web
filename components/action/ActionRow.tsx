@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import React, { useMemo } from 'react'
 
-import StatusTag from 'components/action/StatusTag'
+import TagStatutAction from 'components/action/TagStatutAction'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TD from 'components/ui/Table/TD'
 import { TR } from 'components/ui/Table/TR'
@@ -35,7 +35,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
       href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}
       label={`Détail de l'action ${action.content}`}
     >
-      <TD className='rounded-l-small'>
+      <TD className='rounded-l-base'>
         <div className='flex items-center'>
           {action.qualification?.isSituationNonProfessionnelle && (
             <IconComponent
@@ -79,9 +79,9 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
           </span>
         </span>
       </TD>
-      <TD className='rounded-r-small w-[160px]'>
+      <TD className='rounded-r-base w-[160px]'>
         <span className='flex items-center justify-between'>
-          <StatusTag status={action.status} />
+          <TagStatutAction status={action.status} />
           <IconComponent
             name={IconName.ChevronRight}
             focusable='false'

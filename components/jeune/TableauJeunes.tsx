@@ -184,8 +184,8 @@ export default function TableauJeunes({
 
   useMatomo(matomoTitle())
 
-  const columnHeaderButtonStyle = 'flex border-none items-center'
-  const columnHeaderButtonStyleHover = 'rounded-medium hover:bg-primary_lighten'
+  const columnHeaderStyle = 'rounded-l hover:bg-primary_lighten'
+  const columnHeaderButtonStyle = 'flex border-none items-center w-full'
 
   return (
     <>
@@ -210,7 +210,7 @@ export default function TableauJeunes({
           >
             <THead>
               <TR isHeader={true}>
-                <TH className={columnHeaderButtonStyleHover}>
+                <TH className={columnHeaderStyle}>
                   <button
                     className={columnHeaderButtonStyle}
                     onClick={() => sortJeunes(SortColumn.NOM)}
@@ -226,7 +226,7 @@ export default function TableauJeunes({
                   </button>
                 </TH>
                 {withSituations && (
-                  <TH className={columnHeaderButtonStyleHover}>
+                  <TH className={columnHeaderStyle}>
                     <button
                       className={columnHeaderButtonStyle}
                       onClick={() => sortJeunes(SortColumn.SITUATION)}
@@ -242,7 +242,7 @@ export default function TableauJeunes({
                     </button>
                   </TH>
                 )}
-                <TH className={columnHeaderButtonStyleHover}>
+                <TH className={columnHeaderStyle}>
                   <button
                     className={columnHeaderButtonStyle}
                     onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
@@ -263,7 +263,7 @@ export default function TableauJeunes({
                 </TH>
 
                 {withActions && (
-                  <TH className={columnHeaderButtonStyleHover}>
+                  <TH className={columnHeaderStyle}>
                     <button
                       className={`${columnHeaderButtonStyle} mx-auto`}
                       onClick={() =>
@@ -282,7 +282,7 @@ export default function TableauJeunes({
                   </TH>
                 )}
 
-                <TH className={columnHeaderButtonStyleHover}>
+                <TH className={columnHeaderStyle}>
                   <button
                     className={`${columnHeaderButtonStyle} mx-auto`}
                     onClick={() => sortJeunes(SortColumn.MESSAGES)}
@@ -313,7 +313,7 @@ export default function TableauJeunes({
                     jeune.messagesNonLus
                   } messages non lus`}
                 >
-                  <TD className='rounded-l-small'>
+                  <TD className='rounded-l-base'>
                     <span className='flex items-baseline'>
                       {jeune.isReaffectationTemporaire && (
                         <span
@@ -362,7 +362,7 @@ export default function TableauJeunes({
                     </TD>
                   )}
 
-                  <TD className='rounded-r-small'>
+                  <TD className='rounded-r-base'>
                     <span className='flex'>
                       <div className='relative w-fit mx-auto'>
                         <IconComponent

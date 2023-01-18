@@ -1,5 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { MouseEvent, useState } from 'react'
 
@@ -23,14 +24,17 @@ import {
   compareJeunesByNom,
   getNomJeuneComplet,
 } from 'interfaces/jeune'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
 import { JeunesService } from 'services/jeunes.service'
+import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import {
   FormNouveauMessageGroupe,
   MessagesService,
 } from 'services/messages.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -38,20 +42,26 @@ import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { parseUrl, setQueryParams } from 'utils/urlParser'
 
 interface EnvoiMessageGroupeProps extends PageProps {
   jeunes: BaseJeune[]
+  listesDiffusion: ListeDeDiffusion[]
   returnTo: string
 }
 
-function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
+function EnvoiMessageGroupe({
+  jeunes,
+  listesDiffusion,
+  returnTo,
+}: EnvoiMessageGroupeProps) {
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
+  const [_, setAlerte] = useAlerte()
 
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
+  const [selectedListesIds, setSelectedListesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
   const [pieceJointe, setPieceJointe] = useState<File | undefined>()
   const [isSending, setIsSending] = useState<boolean>(false)
@@ -63,6 +73,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+  const [leavePageUrl, setLeavePageUrl] = useState<string>(returnTo)
 
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
@@ -75,19 +86,23 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
   }
 
   function formIsValid(): boolean {
-    return Boolean(selectedJeunesIds.length && (message || pieceJointe))
+    return Boolean(
+      (selectedJeunesIds.length || selectedListesIds.length) &&
+        (message || pieceJointe)
+    )
   }
 
   function formHasChanges(): boolean {
-    return Boolean(selectedJeunesIds.length || message || pieceJointe)
+    return Boolean(
+      selectedJeunesIds.length ||
+        selectedListesIds.length ||
+        message ||
+        pieceJointe
+    )
   }
 
-  function openLeavePageConfirmationModal(e?: MouseEvent) {
-    if (e) {
-      e.preventDefault()
-      e.stopPropagation()
-    }
-
+  function openLeavePageConfirmationModal(destination: string) {
+    setLeavePageUrl(destination)
     setShowLeavePageModal(true)
     setConfirmBeforeLeaving(false)
   }
@@ -114,6 +129,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       if (pieceJointe) {
         fileInfo = await fichiersService.uploadFichier(
           selectedJeunesIds,
+          selectedListesIds,
           pieceJointe
         )
       }
@@ -131,7 +147,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
 
     try {
       const formNouveauMessage: FormNouveauMessageGroupe = {
-        idsDestinataires: selectedJeunesIds,
+        idsBeneficiaires: selectedJeunesIds,
+        idsListesDeDiffusion: selectedListesIds,
         newMessage:
           message ||
           'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
@@ -142,13 +159,8 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       await messagesService.signIn(chatCredentials!.token)
       await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
 
-      const { baseUrl, query } = parseUrl(returnTo)
-      await router.push({
-        pathname: baseUrl,
-        query: setQueryParams(query, {
-          [QueryParam.envoiMessage]: QueryValue.succes,
-        }),
-      })
+      setAlerte(AlerteParam.envoiMessage)
+      await router.push(returnTo)
     } catch (error) {
       setErreurEnvoi(
         error instanceof ApiError
@@ -180,6 +192,15 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
     setPieceJointe(undefined)
   }
 
+  function updateDestinataires(selectedIds: {
+    beneficiaires?: string[]
+    listesDeDiffusion?: string[]
+  }) {
+    const { beneficiaires, listesDeDiffusion } = selectedIds
+    if (beneficiaires) setSelectedJeunesIds(beneficiaires)
+    if (listesDeDiffusion) setSelectedListesIds(listesDeDiffusion)
+  }
+
   return (
     <>
       {erreurEnvoi && (
@@ -187,16 +208,29 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
       )}
 
       <form>
-        <div className='text-s-regular text-primary_darken mb-8'>
+        <div className='text-s-bold text-content_color mb-8'>
           Tous les champs sont obligatoires
         </div>
 
         <Etape numero={1} titre='Destinataires'>
           <BeneficiairesMultiselectAutocomplete
             beneficiaires={buildOptionsJeunes()}
+            listesDeDiffusion={listesDiffusion}
             typeSelection='Destinataires'
-            onUpdate={setSelectedJeunesIds}
+            onUpdate={updateDestinataires}
           />
+          <Link
+            href='/mes-jeunes/listes-de-diffusion'
+            className='flex items-center pt-2 text-s-regular text-content_color underline hover:text-primary_darken'
+          >
+            Gérer mes listes de diffusion
+            <IconComponent
+              name={IconName.ChevronRight}
+              aria-hidden={true}
+              focusable={false}
+              className='w-6 h-6 fill-[currentColor]'
+            />
+          </Link>
         </Etape>
 
         <Etape numero={2} titre='Écrivez votre message'>
@@ -241,6 +275,7 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
                       id: pieceJointe.name,
                       value: pieceJointe.name,
                       avecIndication: false,
+                      estUneListe: false,
                     },
                   ]}
                   typeSelection='fichier'
@@ -269,8 +304,9 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
           )}
           {formHasChanges() && (
             <Button
+              type='button'
               label='Quitter la rédaction du message groupé'
-              onClick={openLeavePageConfirmationModal}
+              onClick={() => openLeavePageConfirmationModal(returnTo)}
               style={ButtonStyle.SECONDARY}
               className='mr-3 p-2'
             >
@@ -294,12 +330,13 @@ function EnvoiMessageGroupe({ jeunes, returnTo }: EnvoiMessageGroupeProps) {
             Envoyer
           </Button>
         </div>
+
         {showLeavePageModal && (
           <LeavePageConfirmationModal
             message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
             commentaire='Toutes les informations saisies seront perdues ainsi que les pièces jointes attachées.'
             onCancel={closeLeavePageConfirmationModal}
-            destination={returnTo}
+            destination={leavePageUrl}
           />
         )}
       </form>
@@ -316,6 +353,9 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
+  const listesDeDiffusionService = withDependance<ListesDeDiffusionService>(
+    'listesDeDiffusionService'
+  )
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
@@ -325,6 +365,12 @@ export const getServerSideProps: GetServerSideProps<
     accessToken
   )
 
+  const listesDeDiffusion =
+    await listesDeDiffusionService.getListesDeDiffusionServerSide(
+      user.id,
+      accessToken
+    )
+
   const referer: string | undefined = context.req.headers.referer
 
   const previousUrl =
@@ -332,6 +378,7 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByNom),
+      listesDiffusion: listesDeDiffusion,
       withoutChat: true,
       pageTitle: 'Message multi-destinataires',
       returnTo: previousUrl,

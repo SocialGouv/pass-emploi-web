@@ -21,7 +21,7 @@ export function BlocSituation({
   versionResumee,
 }: BlocSituationProps) {
   return (
-    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
+    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       {versionResumee && <h2 className='text-m-bold mb-1'>Situation</h2>}
       {!(situations && situations.length) && <SansSituation />}
 
@@ -89,16 +89,17 @@ function Situation({
 
 function LienVersHistorique({ idJeune }: { idJeune: string }) {
   return (
-    <Link href={`/mes-jeunes/${idJeune}/historique`}>
-      <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'>
-        Voir le détail des situations
-        <IconComponent
-          name={IconName.ChevronRight}
-          className='w-4 h-5 fill-[inherit]'
-          aria-hidden={true}
-          focusable={false}
-        />
-      </a>
+    <Link
+      href={`/mes-jeunes/${idJeune}/historique`}
+      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
+    >
+      Voir le détail des situations
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-[inherit]'
+        aria-hidden={true}
+        focusable={false}
+      />
     </Link>
   )
 }

@@ -31,9 +31,9 @@ module.exports = {
       success: '#0D7F50',
       success_lighten: '#E5F6EF',
       success_darken: '#033C24',
-      warning: '#D33211',
-      warning_lighten: '#FFF1ED',
-      warning_lighten2: '#FFCBBC',
+      warning: '#D31140',
+      warning_lighten: '#FDEAEF',
+      alert: '#FF975C',
       alert_lighten: '#FFC6A6',
       accent_1: '#950EFF',
       accent_1_lighten: '#F4E5FF',
@@ -45,6 +45,11 @@ module.exports = {
       accent_4_lighten: '#DDFFED',
       accent_5: '#6D597A',
       accent_5_lighten: '#F0EDF2',
+      additional_1_lighten: '#FFD88D',
+      additional_2_lighten: '#DDFFED',
+      additional_3_lighten: '#D2CEF6',
+      additional_4_lighten: '#DBEDF9',
+      additional_5_lighten: '#CEF0F1',
       content_color: '#161616',
       grey_800: '#646464',
       grey_700: '#878787',
@@ -71,14 +76,11 @@ module.exports = {
     screenSize: (theme) => theme('screens'),
 
     borderRadius: {
-      none: '0',
-      x_small: '2px',
-      small: '6px',
-      medium: '8px',
-      large: '16px',
-      x_large: '24px',
+      base: '8px',
+      l: '24px',
       full: '9999px',
     },
+
     screens: {
       layout_xs: '375px',
       layout_s: '600px',
@@ -90,14 +92,17 @@ module.exports = {
       short: { raw: '(max-height: 350px)' },
     },
 
+    boxShadow: {
+      base: '0 4px 12px 0px rgba(39, 73, 150, 0.12)',
+      m: '0 8px 12px 0px rgba(39, 73, 150, 0.24)',
+      none: 'none',
+    },
+
     extend: {
       backgroundImage: {
         // path relative to globals.css
         clock: "url('../assets/icons/clock.svg')",
         location: "url('../assets/icons/location_big.svg')",
-      },
-      boxShadow: {
-        s: '0 6px 25px 0px rgba(0,0,0,0.1)',
       },
       fontFamily: {
         sans: ['Marianne'],

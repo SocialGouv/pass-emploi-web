@@ -11,17 +11,17 @@ const CurrentJeuneContext = createContext<CurrentJeuneState | undefined>(
 
 export function CurrentJeuneProvider({
   children,
-  idJeune,
-  setIdJeune,
+  idForTests,
+  setterForTests,
 }: {
   children: ReactNode
-  idJeune?: string
-  setIdJeune?: (idCurrentJeune: string | undefined) => void
+  idForTests?: string
+  setterForTests?: (idCurrentJeune: string | undefined) => void
 }) {
   const [idCurrentJeune, setIdCurrentJeune]: CurrentJeuneState = useState<
     string | undefined
-  >(idJeune)
-  const setter = setIdJeune ?? setIdCurrentJeune
+  >(idForTests)
+  const setter = setterForTests ?? setIdCurrentJeune
   const value: CurrentJeuneState = useMemo(
     () => [idCurrentJeune, setter],
     [idCurrentJeune, setter]

@@ -22,6 +22,7 @@ import {
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
@@ -175,7 +176,7 @@ describe('EditionRdv', () => {
           props: {
             evenement: unEvenement(),
             pageTitle: 'Mes événements - Modifier',
-            pageHeader: 'Modifier l’événement',
+            pageHeader: 'Détail de l’événement',
           },
         })
       })
@@ -252,6 +253,8 @@ describe('EditionRdv', () => {
     let evenementsService: EvenementsService
     let jeunesService: JeunesService
     let typesRendezVous: TypeEvenement[]
+
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
     beforeEach(() => {
       jeunesConseiller = desItemsJeunes()
@@ -280,6 +283,7 @@ describe('EditionRdv', () => {
       })
       typesRendezVous = typesEvenement()
 
+      alerteSetter = jest.fn()
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
     })
@@ -292,12 +296,13 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/agenda'}
-            pageTitle={''}
+            returnTo='/agenda'
+            pageTitle=''
           />,
           {
             customDependances: { evenementsService: evenementsService },
             customConseiller: { email: 'fake@email.com' },
+            customAlerte: { alerteSetter },
           }
         )
       })
@@ -404,7 +409,7 @@ describe('EditionRdv', () => {
         it('contient une liste pour choisir un jeune', () => {
           // Then
           const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
           const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -578,7 +583,7 @@ describe('EditionRdv', () => {
           await userEvent.selectOptions(selectType, typesRendezVous[0].code)
 
           selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
@@ -666,13 +671,11 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(push).toHaveBeenCalledWith({
-              pathname: '/agenda',
-              query: {
-                creationRdv: 'succes',
-                idEvenement: '963afb47-2b15-46a9-8c0c-0e95240b2eb5',
-              },
-            })
+            expect(alerteSetter).toHaveBeenCalledWith(
+              'creationEvenement',
+              '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
+            )
+            expect(push).toHaveBeenCalledWith('/agenda')
           })
         })
 
@@ -856,8 +859,8 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda'}
-              pageTitle={''}
+              returnTo='/agenda'
+              pageTitle=''
             />,
             {
               customDependances: {
@@ -961,8 +964,8 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda'}
-              pageTitle={''}
+              returnTo='/agenda'
+              pageTitle=''
             />,
             {
               customDependances: {
@@ -1037,7 +1040,7 @@ describe('EditionRdv', () => {
 
           // Then
           const selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
           expect(selectJeunes).toHaveAttribute('aria-required', 'false')
           expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
@@ -1055,7 +1058,7 @@ describe('EditionRdv', () => {
         it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
           // Given
           await userEvent.type(
-            screen.getByLabelText(/ajouter des bénéficiaires/),
+            screen.getByLabelText(/ajouter des destinataires/),
             getNomJeuneComplet(jeunesAutreConseiller[0])
           )
 
@@ -1085,9 +1088,9 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda?creationRdv=succes'}
+              returnTo='/agenda'
               evenement={evenement}
-              pageTitle={''}
+              pageTitle=''
             />,
             { customDependances: { evenementsService } }
           )
@@ -1113,9 +1116,9 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda?creationRdv=succes'}
+              returnTo='/agenda'
               evenement={evenement}
-              pageTitle={''}
+              pageTitle=''
             />,
             { customDependances: { evenementsService } }
           )
@@ -1141,9 +1144,9 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'https://localhost:3000/agenda?creationRdv=succes'}
+              returnTo='https://localhost:3000/agenda'
               evenement={evenement}
-              pageTitle={''}
+              pageTitle=''
             />,
             { customDependances: { evenementsService } }
           )
@@ -1160,6 +1163,42 @@ describe('EditionRdv', () => {
       })
     })
 
+    describe('événements issus d’i-MILO', () => {
+      beforeEach(() => {
+        // Given
+        const evenement = unEvenement({ source: StructureConseiller.MILO })
+
+        // When
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunesConseiller}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo='https://localhost:3000/agenda'
+            evenement={evenement}
+            pageTitle=''
+          />,
+          { customDependances: { evenementsService } }
+        )
+      })
+
+      it('affiche encart explicatif d’un événement provenant du système d’information MILO', () => {
+        //Then
+        expect(
+          screen.getByText(
+            /Pour modifier cet événement vous devez vous rendre dans le système d’information iMilo, il sera ensuite mis à jour dans la demi-heure/
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('affiche l’information de création d’événement provenant du système d’information MILO', () => {
+        //Then
+        expect(
+          screen.getByText('Système d’information MILO')
+        ).toBeInTheDocument()
+      })
+    })
+
     describe('quand un id de jeune est spécifié', () => {
       it('initialise le destinataire', async () => {
         // Given
@@ -1172,9 +1211,9 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/agenda'}
+            returnTo='/agenda'
             idJeune={idJeune}
-            pageTitle={''}
+            pageTitle=''
           />,
           { customDependances: { evenementsService: evenementsService } }
         )
@@ -1222,11 +1261,14 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/agenda?creationRdv=succes'}
+            returnTo='/agenda'
             evenement={evenement}
-            pageTitle={''}
+            pageTitle=''
           />,
-          { customDependances: { evenementsService: evenementsService } }
+          {
+            customDependances: { evenementsService: evenementsService },
+            customAlerte: { alerteSetter },
+          }
         )
       })
 
@@ -1235,7 +1277,7 @@ describe('EditionRdv', () => {
         expect(getByDescriptionTerm('Type de l’événement')).toHaveTextContent(
           'Autre'
         )
-        expect(getByDescriptionTerm('Créé par : ')).toHaveTextContent(
+        expect(getByDescriptionTerm('Créé(e) par : ')).toHaveTextContent(
           'Nils Tavernier'
         )
       })
@@ -1355,7 +1397,7 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           // Given
           const searchJeune = screen.getByRole('combobox', {
-            name: /ajouter des bénéficiaires/,
+            name: /ajouter des destinataires/,
           })
           const beneficiaires = screen.getByRole('region', {
             name: /Bénéficiaires/,
@@ -1474,10 +1516,8 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(push).toHaveBeenCalledWith({
-              pathname: '/agenda',
-              query: { modificationRdv: 'succes' },
-            })
+            expect(alerteSetter).toHaveBeenCalledWith('modificationEvenement')
+            expect(push).toHaveBeenCalledWith('/agenda')
           })
         })
       })
@@ -1512,10 +1552,8 @@ describe('EditionRdv', () => {
           expect(evenementsService.supprimerEvenement).toHaveBeenCalledWith(
             evenement.id
           )
-          expect(push).toHaveBeenCalledWith({
-            pathname: '/agenda',
-            query: { suppressionRdv: 'succes' },
-          })
+          expect(alerteSetter).toHaveBeenCalledWith('suppressionEvenement')
+          expect(push).toHaveBeenCalledWith('/agenda')
         })
       })
     })
@@ -1549,9 +1587,9 @@ describe('EditionRdv', () => {
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo={'/agenda?creationRdv=succes'}
+              returnTo='/agenda'
               evenement={evenement}
-              pageTitle={''}
+              pageTitle=''
             />,
             {
               customDependances: { evenementsService, jeunesService },
@@ -1578,7 +1616,7 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
         expect(
-          screen.getByLabelText(/ajouter des bénéficiaires/)
+          screen.getByLabelText(/ajouter des destinataires/)
         ).toBeDisabled()
         expect(
           screen.queryByText(/bénéficiaires est facultatif/)
@@ -1612,6 +1650,69 @@ describe('EditionRdv', () => {
       })
     })
 
+    describe('quand on consulte un événement provenant d’i-MILO', () => {
+      beforeEach(async () => {
+        const evenement = unEvenement({
+          jeunes: [],
+          type: { code: 'ATELIER', label: 'Atelier' },
+          source: StructureConseiller.MILO,
+        })
+
+        await act(async () => {
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo='/agenda'
+              evenement={evenement}
+              pageTitle=''
+            />,
+            {
+              customDependances: { evenementsService, jeunesService },
+              customConseiller: {
+                agence: {
+                  nom: 'Mission locale Aubenas',
+                  id: 'id-etablissement',
+                },
+              },
+            }
+          )
+        })
+      })
+
+      it('empêche toute modification', () => {
+        // Then
+        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText('Modalité')).toBeDisabled()
+        expect(screen.getByLabelText(/Date/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
+        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
+        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
+        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/ajouter des destinataires/)
+        ).toBeDisabled()
+        expect(
+          screen.queryByText(/bénéficiaires est facultatif/)
+        ).toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Enlever jeune/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Supprimer/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Annuler/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Modifier/ })
+        ).not.toBeInTheDocument()
+      })
+    })
+
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
       let evenement: Evenement
       beforeEach(() => {
@@ -1638,9 +1739,9 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo={'/agenda?creationRdv=succes'}
+            returnTo='/agenda'
             evenement={evenement}
-            pageTitle={''}
+            pageTitle=''
           />,
           { customDependances: { evenementsService: evenementsService } }
         )
@@ -1665,7 +1766,7 @@ describe('EditionRdv', () => {
         )
         expect(() =>
           within(jeune).getByLabelText(
-            /Ce jeune n’est pas dans votre portefeuille/
+            /Ce bénéficiaire n’est pas dans votre portefeuille/
           )
         ).toThrow()
         expect(() =>
@@ -1694,15 +1795,6 @@ describe('EditionRdv', () => {
         expect(
           screen.getByLabelText(
             /Le créateur de l’événement recevra un mail pour l'informer de la modification./i
-          )
-        ).toBeInTheDocument()
-      })
-
-      it("contient un message pour prévenir le conseiller qu'il ne recevra pas d'invitation", () => {
-        // Then
-        expect(
-          screen.getByText(
-            "L’événement a été créé par un autre conseiller : Gaëlle Hermet. Vous ne recevrez pas d'invitation dans votre agenda"
           )
         ).toBeInTheDocument()
       })

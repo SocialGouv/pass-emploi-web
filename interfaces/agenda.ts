@@ -13,6 +13,7 @@ export type EntreeAgenda = {
   type: 'action' | 'evenement'
   titre: string
   statut?: StatutAction
+  source?: string
 }
 
 export type AgendaMetadata = {

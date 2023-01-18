@@ -26,19 +26,19 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
         htmlFor='rechercher-jeunes'
         className='text-base-medium text-content_color'
       >
-        Rechercher un bénéficiaire par son nom de famille
+        Rechercher un bénéficiaire par son nom ou prénom
       </label>
       <div className='flex mt-1'>
         <ResettableTextInput
           id={'rechercher-jeunes'}
-          defaultValue={query}
+          value={query}
           onChange={setQuery}
           onReset={onReset}
-          className='flex-1 border border-solid border-grey_700 rounded-l-medium border-r-0 text-base-medium text-primary_darken'
+          className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
         />
 
         <button
-          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-medium hover:bg-primary_lighten'
+          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
           type='submit'
         >
           <IconComponent

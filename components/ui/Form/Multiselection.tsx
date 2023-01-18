@@ -1,11 +1,20 @@
-import { BeneficiaireIndicationPortefeuille } from 'components/jeune/BeneficiaireIndications'
+import {
+  BeneficiaireIndicationPortefeuille,
+  BeneficiaireListeItem,
+} from 'components/jeune/BeneficiaireIndications'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface MultiselectionProps {
-  selection: { id: string; value: string; avecIndication: boolean }[]
+  selection: {
+    id: string
+    value: string
+    avecIndication: boolean
+    estUneListe: boolean
+  }[]
   typeSelection: string
   unselect: (id: string) => void
   renderIndication?: (props: { value: string }) => JSX.Element
+  renderListeItem?: (props: { value: string }) => JSX.Element
   disabled?: boolean
 }
 
@@ -14,6 +23,7 @@ export default function Multiselection({
   typeSelection,
   unselect,
   renderIndication = BeneficiaireIndicationPortefeuille,
+  renderListeItem = BeneficiaireListeItem,
   disabled,
 }: MultiselectionProps) {
   const id = `selected-${typeSelection}s`
@@ -23,18 +33,19 @@ export default function Multiselection({
       aria-labelledby={`${id}--title`}
       id={id}
       role='region'
-      className='bg-grey_100 rounded-[12px] px-2 py-4 max-h-96 overflow-y-auto'
+      className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
       aria-live='polite'
       aria-relevant='additions removals'
     >
-      {selection.map(({ id: idItem, value, avecIndication }) => (
+      {selection.map(({ id: idItem, value, avecIndication, estUneListe }) => (
         <li
           key={idItem}
           className='bg-blanc w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           aria-atomic={true}
         >
           {avecIndication && renderIndication({ value })}
-          {!avecIndication && value}
+          {estUneListe && renderListeItem({ value })}
+          {!avecIndication && !estUneListe && value}
 
           {!disabled && (
             <button type='reset' onClick={() => unselect(idItem)}>

@@ -1,6 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
@@ -17,11 +16,12 @@ import {
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -32,25 +32,14 @@ import withDependance from 'utils/injectionDependances/withDependance'
 interface MesJeunesProps extends PageProps {
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
-  recuperationSuccess?: boolean
-  creationSuccess?: boolean
-  deletionSuccess?: boolean
-  messageEnvoiGroupeSuccess?: boolean
 }
 
-function MesJeunes({
-  conseillerJeunes,
-  isFromEmail,
-  recuperationSuccess,
-  creationSuccess,
-  deletionSuccess,
-  messageEnvoiGroupeSuccess,
-}: MesJeunesProps) {
+function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   const [chatCredentials] = useChatCredentials()
   const messagesService = useDependance<MessagesService>('messagesService')
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
-  const router = useRouter()
+  const [alerte, setAlerte] = useAlerte()
 
   const [conseiller, setConseiller] = useConseiller()
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>()
@@ -65,20 +54,21 @@ function MesJeunes({
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
-  if (creationSuccess) initialTracking += ' - Succès creation compte'
-  if (deletionSuccess) initialTracking += ' - Succès suppr. compte'
-  if (recuperationSuccess) initialTracking += ' - Succès récupération'
-  if (messageEnvoiGroupeSuccess) initialTracking += ' - Succès envoi message'
+  if (alerte?.key === AlerteParam.creationBeneficiaire)
+    initialTracking += ' - Succès creation compte'
+  if (alerte?.key === AlerteParam.suppressionBeneficiaire)
+    initialTracking += ' - Succès suppr. compte'
+  if (alerte?.key === AlerteParam.recuperationBeneficiaires)
+    initialTracking += ' - Succès récupération'
+  if (alerte?.key === AlerteParam.envoiMessage)
+    initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   async function recupererBeneficiaires(): Promise<void> {
     setIsRecuperationBeneficiairesLoading(true)
     try {
       await conseillerService.recupererBeneficiaires()
-      await router.replace({
-        pathname: '/mes-jeunes',
-        query: { [QueryParam.recuperationBeneficiaires]: QueryValue.succes },
-      })
+      setAlerte(AlerteParam.recuperationBeneficiaires)
       setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
     } finally {
       setIsRecuperationBeneficiairesLoading(false)
@@ -91,8 +81,11 @@ function MesJeunes({
       if (query) {
         const jeunesFiltresResult = jeunes!.filter((jeune) => {
           const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
+          const jeuneFirstName = jeune.prenom
+            .replace(/’/i, "'")
+            .toLocaleLowerCase()
           for (const item of querySplit) {
-            if (jeuneLastName.includes(item)) {
+            if (jeuneLastName.includes(item) || jeuneFirstName.includes(item)) {
               return true
             }
           }
@@ -143,7 +136,7 @@ function MesJeunes({
   return (
     <>
       {conseiller?.aDesBeneficiairesARecuperer && (
-        <div className='bg-primary_lighten rounded-medium p-6 mb-6 text-center'>
+        <div className='bg-primary_lighten rounded-base p-6 mb-6 text-center'>
           <p className='text-base-bold text-primary'>
             {conseillerJeunes.length > 0 &&
               'Certains de vos bénéficiaires ont été transférés temporairement.'}
@@ -250,24 +243,6 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     ),
     isFromEmail: Boolean(context.query?.source),
     pageTitle: 'Portefeuille',
-  }
-
-  if (context.query[QueryParam.recuperationBeneficiaires]) {
-    props.recuperationSuccess =
-      context.query[QueryParam.recuperationBeneficiaires] === QueryValue.succes
-  }
-
-  if (context.query[QueryParam.creationBeneficiaire])
-    props.creationSuccess =
-      context.query[QueryParam.creationBeneficiaire] === QueryValue.succes
-
-  if (context.query[QueryParam.suppressionBeneficiaire])
-    props.deletionSuccess =
-      context.query[QueryParam.suppressionBeneficiaire] === QueryValue.succes
-
-  if (context.query[QueryParam.envoiMessage]) {
-    props.messageEnvoiGroupeSuccess =
-      context.query[QueryParam.envoiMessage] === QueryValue.succes
   }
 
   return { props }

@@ -5,9 +5,10 @@ import React from 'react'
 
 import renderWithContexts from '../renderWithContexts'
 
-import { desEvenementsListItems, unEvenementListItem } from 'fixtures/evenement'
+import { unEvenementListItem } from 'fixtures/evenement'
 import { unDetailJeune, uneBaseJeune } from 'fixtures/jeune'
 import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
+import { EvenementListItem } from 'interfaces/evenement'
 import RendezVousPasses, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/rendez-vous-passes'
@@ -23,21 +24,67 @@ describe('RendezVousPasses', () => {
   describe('client side', () => {
     describe('quand l’utilisateur n’est pas Pôle emploi ', () => {
       describe('quand il y a des rendez-vous passés', () => {
-        it('affiche le tableau des rendez-vous passés du conseiller avec le jeune', async () => {
+        let rdvs: EvenementListItem[]
+        beforeEach(async () => {
           // Given
-          const rdvs = desEvenementsListItems()
+          rdvs = [
+            unEvenementListItem({
+              id: 'evenement-1',
+              type: 'Atelier',
+              futPresent: false,
+            }),
+            unEvenementListItem({
+              id: 'evenement-2',
+              type: 'Information collective',
+              futPresent: true,
+            }),
+            unEvenementListItem({ id: 'evenement-3' }),
+          ]
 
-          // When
           await act(async () => {
             await renderWithContexts(
               <RendezVousPasses beneficiaire={uneBaseJeune()} rdvs={rdvs} />
             )
           })
+        })
 
+        it('affiche le tableau des rendez-vous passés du conseiller avec le jeune', async () => {
           // Then
+          expect(
+            screen.getByRole('columnheader', { name: 'Horaires' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('columnheader', { name: 'Type' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('columnheader', {
+              name: /Présent L’information de présence/,
+            })
+          ).toBeInTheDocument()
+
           rdvs.forEach((rdv) => {
             expect(screen.getByText(rdv.type)).toBeInTheDocument()
-            expect(screen.getByText(rdv.modality)).toBeInTheDocument()
+          })
+        })
+
+        describe('informe sur la présence du bénéficiaire', () => {
+          it('quand la présence du bénéficiaire est renseignée', async () => {
+            // Then
+            expect(screen.getByText('Non')).not.toHaveAttribute(
+              'class',
+              'sr-only'
+            )
+            expect(screen.getByText('Oui')).not.toHaveAttribute(
+              'class',
+              'sr-only'
+            )
+          })
+
+          it('quand la présence du bénéficiaire n’est pas renseignée', async () => {
+            // Then
+            expect(
+              screen.getByText('information non disponible')
+            ).toHaveAttribute('class', 'sr-only')
           })
         })
       })

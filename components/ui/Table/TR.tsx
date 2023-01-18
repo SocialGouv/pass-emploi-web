@@ -10,24 +10,23 @@ type TRProps = Children & {
 type TRLinkProps = Children & { href: string; label: string }
 
 export function TR(props: TRProps | TRLinkProps) {
-  const style = 'focus-within:primary_lighten rounded-small shadow-s'
+  const style = 'focus-within:primary_lighten rounded-base shadow-base'
   const clickableStyle = 'cursor-pointer hover:bg-primary_lighten'
 
   if (isLink(props)) {
     const { href, label, children } = props
     return (
-      <Link href={href}>
-        <a
-          role='row'
-          aria-label={label}
-          title={label}
-          className={`table-row ${style} ${clickableStyle}`}
-        >
-          {React.Children.map(
-            children,
-            (child) => child && React.cloneElement(child, { asDiv: true })
-          )}
-        </a>
+      <Link
+        href={href}
+        role='row'
+        aria-label={label}
+        title={label}
+        className={`table-row ${style} ${clickableStyle}`}
+      >
+        {React.Children.map(
+          children,
+          (child) => child && React.cloneElement(child, { asDiv: true })
+        )}
       </Link>
     )
   } else if (props.asDiv) {

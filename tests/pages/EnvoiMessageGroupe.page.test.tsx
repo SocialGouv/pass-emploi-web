@@ -4,16 +4,22 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
+import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
   mockedFichiersService,
   mockedJeunesService,
+  mockedListesDeDiffusionService,
   mockedMessagesService,
 } from 'fixtures/services'
 import { JeuneFromListe } from 'interfaces/jeune'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
+import { JeunesService } from 'services/jeunes.service'
+import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -27,6 +33,7 @@ jest.mock('utils/injectionDependances/withDependance')
 describe('EnvoiMessageGroupe', () => {
   describe('client side', () => {
     let jeunes: JeuneFromListe[]
+    let listesDeDiffusion: ListeDeDiffusion[]
     let messagesService: MessagesService
     let fichiersService: FichiersService
     let inputSearchJeune: HTMLSelectElement
@@ -34,8 +41,15 @@ describe('EnvoiMessageGroupe', () => {
     let fileInput: HTMLInputElement
     let submitButton: HTMLButtonElement
 
+    let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+    let push: Function
     beforeEach(async () => {
+      alerteSetter = jest.fn()
+      push = jest.fn(() => Promise.resolve())
+      ;(useRouter as jest.Mock).mockReturnValue({ push })
+
       jeunes = desItemsJeunes()
+      listesDeDiffusion = desListesDeDiffusion()
 
       messagesService = mockedMessagesService({
         sendNouveauMessageGroupe: jest.fn(() => {
@@ -52,6 +66,7 @@ describe('EnvoiMessageGroupe', () => {
         <EnvoiMessageGroupe
           pageTitle={''}
           jeunes={jeunes}
+          listesDiffusion={listesDeDiffusion}
           withoutChat={true}
           returnTo='/mes-jeunes'
         />,
@@ -60,11 +75,12 @@ describe('EnvoiMessageGroupe', () => {
             messagesService,
             fichiersService,
           },
+          customAlerte: { alerteSetter },
         }
       )
 
       inputSearchJeune = screen.getByRole('combobox', {
-        name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+        name: 'Rechercher et ajouter des destinataires Nom et prénom du bénéficiaire ou nom de votre liste de diffusion',
       })
       inputMessage = screen.getByLabelText('* Message')
       fileInput = screen.getByLabelText('Ajouter une pièce jointe')
@@ -96,6 +112,13 @@ describe('EnvoiMessageGroupe', () => {
         ).toBeInTheDocument()
       })
 
+      it('affiche un lien qui renvoie vers la page de gestion des listes de diffusion', () => {
+        // Then
+        expect(
+          screen.getByRole('link', { name: 'Gérer mes listes de diffusion' })
+        ).toHaveAttribute('href', '/mes-jeunes/listes-de-diffusion')
+      })
+
       it('ne devrait pas pouvoir cliquer sur le bouton envoyer avec un champ du formulaire vide', async () => {
         // Given
         await userEvent.type(inputMessage, 'Un message')
@@ -108,25 +131,23 @@ describe('EnvoiMessageGroupe', () => {
     })
 
     describe('quand on remplit le formulaire', () => {
-      let push: Function
       let newMessage: string
       beforeEach(async () => {
-        push = jest.fn(() => Promise.resolve())
-        ;(useRouter as jest.Mock).mockReturnValue({ push })
-
         // Given
         newMessage = 'Un nouveau message pour plusieurs destinataires'
 
-        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
         await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        await userEvent.type(inputSearchJeune, 'Liste export international (1)')
         await userEvent.type(inputMessage, newMessage)
       })
 
       it('sélectionne plusieurs jeunes dans la liste', () => {
         // Then
-        expect(screen.getByText('Jirac Kenji')).toBeInTheDocument()
-        expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
         expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
+        expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
+        expect(
+          screen.getByText('Liste export international (1)')
+        ).toBeInTheDocument()
       })
 
       it('envoi un message à plusieurs destinataires', async () => {
@@ -136,7 +157,8 @@ describe('EnvoiMessageGroupe', () => {
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(0)
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[0].id, jeunes[1].id],
+          idsBeneficiaires: [jeunes[1].id],
+          idsListesDeDiffusion: ['liste-1'],
           newMessage,
           cleChiffrement: 'cleChiffrement',
         })
@@ -147,10 +169,8 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(push).toHaveBeenCalledWith({
-          pathname: '/mes-jeunes',
-          query: { envoiMessage: 'succes' },
-        })
+        expect(alerteSetter).toHaveBeenCalledWith('envoiMessage')
+        expect(push).toHaveBeenCalledWith('/mes-jeunes')
       })
 
       // FIXME trouver comment tester
@@ -230,8 +250,8 @@ describe('EnvoiMessageGroupe', () => {
           type: 'image/png',
         })
 
-        await userEvent.type(inputSearchJeune, 'Jirac Kenji')
         await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+        await userEvent.type(inputSearchJeune, 'Liste export international (1)')
         await userEvent.type(inputMessage, newMessage)
         await userEvent.upload(fileInput, file, { applyAccept: false })
       })
@@ -257,11 +277,13 @@ describe('EnvoiMessageGroupe', () => {
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
-          [jeunes[0].id, jeunes[1].id],
+          [jeunes[1].id],
+          ['liste-1'],
           file
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[0].id, jeunes[1].id],
+          idsBeneficiaires: [jeunes[1].id],
+          idsListesDeDiffusion: ['liste-1'],
           newMessage,
           cleChiffrement: 'cleChiffrement',
           infoPieceJointe: { id: 'id-fichier', nom: 'nom-fichier.png' },
@@ -277,11 +299,13 @@ describe('EnvoiMessageGroupe', () => {
 
         // Then
         expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
-          [jeunes[0].id, jeunes[1].id],
+          [jeunes[1].id],
+          ['liste-1'],
           file
         )
         expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
-          idsDestinataires: [jeunes[0].id, jeunes[1].id],
+          idsBeneficiaires: [jeunes[1].id],
+          idsListesDeDiffusion: ['liste-1'],
           newMessage:
             'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
           cleChiffrement: 'cleChiffrement',
@@ -313,7 +337,7 @@ describe('EnvoiMessageGroupe', () => {
         // When
         await userEvent.type(
           inputSearchJeune,
-          'Sélectionner tous mes bénéficiaires'
+          'Sélectionner tous mes destinataires'
         )
 
         // Then
@@ -345,6 +369,9 @@ describe('EnvoiMessageGroupe', () => {
 
     describe("quand l'utilisateur est connecté", () => {
       let jeunes: JeuneFromListe[]
+      let listesDeDiffusion: ListeDeDiffusion[]
+      let jeunesService: JeunesService
+      let listesDeDiffusionService: ListesDeDiffusionService
       beforeEach(() => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -355,10 +382,20 @@ describe('EnvoiMessageGroupe', () => {
           },
         })
         jeunes = desItemsJeunes()
-        const jeunesService = mockedJeunesService({
+        listesDeDiffusion = desListesDeDiffusion()
+        jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn(async () => jeunes),
         })
-        ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
+        listesDeDiffusionService = mockedListesDeDiffusionService({
+          getListesDeDiffusionServerSide: jest.fn(
+            async () => listesDeDiffusion
+          ),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'jeunesService') return jeunesService
+          if (dependance === 'listesDeDiffusionService')
+            return listesDeDiffusionService
+        })
       })
 
       it('récupère la liste des jeunes du conseiller', async () => {
@@ -368,9 +405,34 @@ describe('EnvoiMessageGroupe', () => {
         } as GetServerSidePropsContext)
 
         // Then
+        expect(
+          jeunesService.getJeunesDuConseillerServerSide
+        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
         expect(actual).toEqual({
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
+            listesDiffusion: listesDeDiffusion,
+            withoutChat: true,
+            pageTitle: 'Message multi-destinataires',
+            returnTo: 'http://localhost:3000/agenda',
+          },
+        })
+      })
+
+      it('récupère les listes de diffusion du conseiller', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: { referer: 'http://localhost:3000/agenda' } },
+        } as GetServerSidePropsContext)
+
+        // Then
+        expect(
+          listesDeDiffusionService.getListesDeDiffusionServerSide
+        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
+        expect(actual).toEqual({
+          props: {
+            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
+            listesDiffusion: listesDeDiffusion,
             withoutChat: true,
             pageTitle: 'Message multi-destinataires',
             returnTo: 'http://localhost:3000/agenda',
@@ -393,6 +455,7 @@ describe('EnvoiMessageGroupe', () => {
         expect(actual).toEqual({
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
+            listesDiffusion: listesDeDiffusion,
             withoutChat: true,
             pageTitle: 'Message multi-destinataires',
             returnTo: '/mes-jeunes',

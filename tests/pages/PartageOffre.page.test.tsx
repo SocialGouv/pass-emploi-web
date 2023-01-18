@@ -27,6 +27,7 @@ import {
 import PartageOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_type]/[offre_id]/partage'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ImmersionsService } from 'services/immersions.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -325,7 +326,13 @@ describe('Page Partage Offre', () => {
       let jeunes: BaseJeune[]
       let messagesService: MessagesService
 
+      let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+      let push: Function
       beforeEach(() => {
+        alerteSetter = jest.fn()
+        push = jest.fn(async () => {})
+        ;(useRouter as jest.Mock).mockReturnValue({ push })
+
         offre = unDetailOffreEmploi()
         jeunes = desItemsJeunes()
         messagesService = mockedMessagesService({
@@ -340,7 +347,10 @@ describe('Page Partage Offre', () => {
             pageTitle=''
             returnTo='/return/to'
           />,
-          { customDependances: { messagesService } }
+          {
+            customDependances: { messagesService },
+            customAlerte: { alerteSetter },
+          }
         )
       })
 
@@ -352,7 +362,7 @@ describe('Page Partage Offre', () => {
 
         // Then
         const selectJeune = within(etape).getByRole('combobox', {
-          name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+          name: 'Rechercher et ajouter des destinataires Nom et prénom',
         })
         const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -395,14 +405,11 @@ describe('Page Partage Offre', () => {
         let inputMessage: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
         let message: string
-        let push: Function
         beforeEach(async () => {
           // Given
-          push = jest.fn(async () => {})
-          ;(useRouter as jest.Mock).mockReturnValue({ push })
 
           const selectJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des bénéficiaires Nom et prénom',
+            name: 'Rechercher et ajouter des destinataires Nom et prénom',
           })
           inputMessage = screen.getByRole('textbox', { name: /Message/ })
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })
@@ -449,10 +456,8 @@ describe('Page Partage Offre', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(push).toHaveBeenCalledWith({
-              pathname: '/return/to',
-              query: { partageOffre: 'succes' },
-            })
+            expect(alerteSetter).toHaveBeenCalledWith('partageOffre')
+            expect(push).toHaveBeenCalledWith('/return/to')
           })
         })
 

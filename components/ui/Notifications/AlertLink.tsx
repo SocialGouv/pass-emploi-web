@@ -11,19 +11,18 @@ interface AlertLinkProps {
 
 export default function AlertLink({ href, label, onClick }: AlertLinkProps) {
   return (
-    <Link href={href}>
-      <a
-        className='flex items-center text-base-regular whitespace-nowrap underline text-success fill-success hover:text-success_darken'
-        onClick={onClick}
-      >
-        {label}
-        <IconComponent
-          name={IconName.ChevronRight}
-          className='w-5 h-5 fill-[inherit]'
-          focusable='false'
-          aria-hidden={true}
-        />
-      </a>
+    <Link
+      href={href}
+      className='flex items-center text-base-regular whitespace-nowrap underline text-success fill-success hover:text-success_darken'
+      onClick={onClick}
+    >
+      {label}
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-5 h-5 fill-[inherit]'
+        focusable='false'
+        aria-hidden={true}
+      />
     </Link>
   )
 }

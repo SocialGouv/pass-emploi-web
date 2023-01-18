@@ -17,8 +17,8 @@ import {
 import {
   mockedActionsService,
   mockedAgendaService,
-  mockedJeunesService,
   mockedEvenementsService,
+  mockedJeunesService,
 } from 'fixtures/services'
 import FicheJeune, {
   getServerSideProps,
@@ -225,96 +225,6 @@ describe('Fiche Jeune', () => {
               page: 3,
             },
           },
-        })
-      })
-    })
-
-    describe('Quand on vient de créer un rendez-vous', () => {
-      it('récupère le statut de la création', async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: {
-            accessToken: 'accessToken',
-            user: { structure: 'MILO' },
-          },
-          validSession: true,
-        })
-
-        // When
-        const actual = await getServerSideProps({
-          query: { creationRdv: 'succes' },
-        } as unknown as GetServerSidePropsContext)
-
-        // Then
-        expect(actual).toMatchObject({ props: { rdvCreationSuccess: true } })
-      })
-    })
-
-    describe('Quand on vient de modifier un rendez-vous', () => {
-      it('récupère le statut de la modification', async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: {
-            accessToken: 'accessToken',
-            user: { structure: 'MILO' },
-          },
-          validSession: true,
-        })
-
-        // When
-        const actual = await getServerSideProps({
-          query: { modificationRdv: 'succes' },
-        } as unknown as GetServerSidePropsContext)
-
-        // Then
-        expect(actual).toMatchObject({
-          props: { rdvModificationSuccess: true },
-        })
-      })
-    })
-
-    describe("Quand on vient d'envoyer un message groupé", () => {
-      it("récupère le statut de l'envoi", async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: {
-            accessToken: 'accessToken',
-            user: { structure: 'MILO' },
-          },
-          validSession: true,
-        })
-
-        // When
-        const actual = await getServerSideProps({
-          query: { envoiMessage: 'succes' },
-        } as unknown as GetServerSidePropsContext)
-
-        // Then
-        expect(actual).toMatchObject({
-          props: { messageEnvoiGroupeSuccess: true },
-        })
-      })
-    })
-
-    describe('Quand on vient de créer une action', () => {
-      it('récupère le statut de la création', async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: {
-            accessToken: 'accessToken',
-            user: { structure: 'MILO' },
-          },
-          validSession: true,
-        })
-
-        // When
-        const actual = await getServerSideProps({
-          query: { creationAction: 'succes' },
-        } as unknown as GetServerSidePropsContext)
-
-        // Then
-        expect(actual).toMatchObject({
-          props: { actionCreationSuccess: true },
         })
       })
     })

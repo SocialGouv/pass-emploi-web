@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import ChatRoom from 'components/chat/ChatRoom'
+import ChatContainer from 'components/chat/ChatContainer'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
@@ -10,15 +10,15 @@ import { useDependance } from 'utils/injectionDependances'
 
 const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
-interface ChatContainerProps {
+interface ChatManagerProps {
   displayChat: boolean
   setHasMessageNonLu: (value: boolean) => void
 }
 
-export default function ChatContainer({
+export default function ChatManager({
   displayChat,
   setHasMessageNonLu,
-}: ChatContainerProps) {
+}: ChatManagerProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
@@ -105,5 +105,5 @@ export default function ChatContainer({
     jeunesService,
   ])
 
-  return displayChat ? <ChatRoom jeunesChats={chats} /> : <></>
+  return displayChat ? <ChatContainer jeunesChats={chats} /> : <></>
 }

@@ -14,12 +14,12 @@ const ChatCredentialsContext = createContext<ChatCredentialsState | undefined>(
 
 export function ChatCredentialsProvider({
   children,
-  credentials,
+  credentialsForTests,
 }: {
   children: ReactNode
-  credentials?: ChatCredentials
+  credentialsForTests?: ChatCredentials
 }) {
-  const chatCredentialsState = useState<MaybeChatCredentials>(credentials)
+  const chatCredentialsState = useState<MaybeChatCredentials>(credentialsForTests)
   return (
     <ChatCredentialsContext.Provider value={chatCredentialsState}>
       {children}

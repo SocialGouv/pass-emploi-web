@@ -7,9 +7,10 @@ import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
-import { QueryParam, QueryValue } from 'referentiel/queryParam'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -27,6 +28,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
   const [conseiller, setConseiller] = useConseiller()
+  const [_, setAlerte] = useAlerte()
 
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Pop-in sélection agence'
@@ -39,9 +41,8 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller!, agence })
     setTrackingLabel('Succès ajout agence')
-    await router.replace(
-      `${redirectUrl}?${QueryParam.choixAgence}=${QueryValue.succes}`
-    )
+    setAlerte(AlerteParam.choixAgence)
+    redirectToUrl()
   }
 
   async function redirectToUrl() {

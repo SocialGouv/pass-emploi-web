@@ -40,7 +40,7 @@ describe('Recherche', () => {
     //GIVEN
     const searchForm = screen.getByRole('search') as HTMLFormElement
     const inputSearch = screen.getByLabelText(
-      'Rechercher un bénéficiaire par son nom de famille'
+      'Rechercher un bénéficiaire par son nom ou prénom'
     )
     const submitButton = screen.getByRole('button', {
       name: 'Rechercher',
@@ -60,7 +60,7 @@ describe('Recherche', () => {
     beforeEach(() => {
       searchForm = screen.getByRole('search') as HTMLFormElement
       inputSearch = screen.getByLabelText(
-        'Rechercher un bénéficiaire par son nom de famille'
+        'Rechercher un bénéficiaire par son nom ou prénom'
       )
       submitButton = screen.getByRole('button', {
         name: 'Rechercher',
@@ -99,6 +99,18 @@ describe('Recherche', () => {
       //THEN
       const result = screen.getByRole('row', {
         name: /D'Aböville-Muñoz François/i,
+      })
+      expect(result).toBeInTheDocument()
+    })
+
+    it('quand on recherche un prénom', async () => {
+      //WHEN
+      await userEvent.type(inputSearch, 'Nadia')
+      await userEvent.click(submitButton)
+
+      //THEN
+      const result = screen.getByRole('row', {
+        name: /Nadia/i,
       })
       expect(result).toBeInTheDocument()
     })

@@ -3,6 +3,9 @@ const routesToLabel = new Map<RegExp, string>([
   [/\/mes-jeunes\/edition-rdv\?idRdv=.*$/, 'Fiche événement'],
   [/\/agenda$/, 'Agenda'],
 
+  // Listes de diffusion
+  [/\/mes-jeunes\/listes-de-diffusion$/, 'Mes listes'],
+
   // Portefeuille
   [/\/mes-jeunes$/, 'Portefeuille'],
   [/\/mes-jeunes\/(milo|pole-emploi)\/creation-jeune$/, 'Création'],

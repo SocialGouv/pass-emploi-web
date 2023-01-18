@@ -14,7 +14,7 @@ export default function SuccessAlert({
   children,
 }: SuccessMessageProps) {
   return (
-    <div className='flex-col items-center text-success bg-success_lighten p-6 rounded-medium mb-8'>
+    <div className='flex-col items-center text-success bg-success_lighten p-6 rounded-base mb-8'>
       <div className='flex justify-between'>
         <div className='flex items-center'>
           <IconComponent

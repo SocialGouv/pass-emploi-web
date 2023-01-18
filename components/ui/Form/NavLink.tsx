@@ -23,7 +23,7 @@ export default function NavLink({
   showLabelOnSmallScreen = false,
   onClick,
 }: NavLinkProps) {
-  const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-medium layout_s:justify-start layout_l:justify-start ${
+  const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start ${
     isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
   }`
 
@@ -80,10 +80,8 @@ export default function NavLink({
   return (
     <>
       {!isExternal && (
-        <Link href={href}>
-          <a className={linkStyle} onClick={onClick}>
-            {linkContent}
-          </a>
+        <Link href={href} className={linkStyle} onClick={onClick}>
+          {linkContent}
         </Link>
       )}
 

@@ -21,7 +21,7 @@ export function ResumeIndicateursJeune({
   indicateursSemaine,
 }: ResumeIndicateursJeuneProps) {
   return (
-    <div className='border border-solid rounded-medium w-full p-4 border-grey_100'>
+    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h2 className='text-m-bold'>Les indicateurs de la semaine</h2>
       <p className='mb-4'>
         du {toFrenchString(debutDeLaSemaine)} au{' '}
@@ -82,16 +82,17 @@ export function ResumeIndicateursJeune({
 
 function LienVersIndicateurs(props: { idJeune: string }) {
   return (
-    <Link href={`/mes-jeunes/${props.idJeune}/indicateurs`}>
-      <a className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'>
-        Voir plus d’indicateurs
-        <IconComponent
-          name={IconName.ChevronRight}
-          className='w-4 h-5 fill-[inherit]'
-          aria-hidden={true}
-          focusable={false}
-        />
-      </a>
+    <Link
+      href={`/mes-jeunes/${props.idJeune}/indicateurs`}
+      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'
+    >
+      Voir plus d’indicateurs
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-[inherit]'
+        aria-hidden={true}
+        focusable={false}
+      />
     </Link>
   )
 }

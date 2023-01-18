@@ -28,7 +28,6 @@ import CloseIcon from 'assets/icons/close.svg'
 import CommentIcon from 'assets/icons/comment.svg'
 import ContratIcon from 'assets/icons/contrat.svg'
 import DecorativePointIcon from 'assets/icons/decorative_point.svg'
-import DeleteIcon from 'assets/icons/delete.svg'
 import EmailIcon from 'assets/icons/email.svg'
 import EuroIcon from 'assets/icons/euro.svg'
 import FavoriteIcon from 'assets/icons/favorite.svg'
@@ -41,6 +40,7 @@ import InfoOutlineIcon from 'assets/icons/information_outline.svg'
 import KoIcon from 'assets/icons/ko.svg'
 import LaunchIcon from 'assets/icons/launch.svg'
 import LocationIcon from 'assets/icons/location.svg'
+import LockIcon from 'assets/icons/lock.svg'
 import LogoutIcon from 'assets/icons/logout.svg'
 import MenuIcon from 'assets/icons/menu.svg'
 import NoteIcon from 'assets/icons/note.svg'
@@ -54,11 +54,12 @@ import RendezVousIcon from 'assets/icons/rendez-vous.svg'
 import RoundedCheckIcon from 'assets/icons/rounded_check.svg'
 import RoundedCheckFilledIcon from 'assets/icons/rounded_check_filled.svg'
 import RoundedCloseIcon from 'assets/icons/rounded_close.svg'
+import RoundedCloseFilledIcon from 'assets/icons/rounded_close_filled.svg'
 import SearchIcon from 'assets/icons/search.svg'
 import SendIcon from 'assets/icons/send.svg'
 import SpinnerIcon from 'assets/icons/spinner.svg'
 import SuitcaseIcon from 'assets/icons/suitcase.svg'
-import TrashCanIcon from 'assets/icons/trash_can.svg'
+import TrashcanIcon from 'assets/icons/trashcan.svg'
 import WarningIcon from 'assets/icons/warning.svg'
 
 export enum IconName {
@@ -89,7 +90,7 @@ export enum IconName {
   Comment = 'Comment',
   Contrat = 'Contrat',
   DecorativePoint = 'DecorativePoint',
-  Delete = 'Delete',
+  Trashcan = 'Trashcan',
   Email = 'Email',
   Euro = 'Euro',
   Favorite = 'Favorite',
@@ -103,6 +104,7 @@ export enum IconName {
   Ko = 'Ko',
   Launch = 'Launch',
   Location = 'Location',
+  Lock = 'Lock',
   Logout = 'Logout',
   Menu = 'Menu',
   Note = 'Note',
@@ -114,13 +116,13 @@ export enum IconName {
   Remove = 'Remove',
   RendezVous = 'RendezVous',
   RoundedClose = 'RoundedClose',
+  RoundedCloseFilled = 'RoundedCloseFilled',
   RoundedCheck = 'RoundedCheck',
   RoundedCheckFilled = 'RoundedCheckFilled',
   Search = 'Search',
   Send = 'Send',
   Spinner = 'Spinner',
   Suitcase = 'Suitcase',
-  TrashCan = 'TrashCan',
   Warning = 'Warning',
 }
 
@@ -152,7 +154,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Comment]: CommentIcon,
   [IconName.Contrat]: ContratIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
-  [IconName.Delete]: DeleteIcon,
+  [IconName.Trashcan]: TrashcanIcon,
   [IconName.Email]: EmailIcon,
   [IconName.Euro]: EuroIcon,
   [IconName.Favorite]: FavoriteIcon,
@@ -166,6 +168,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Ko]: KoIcon,
   [IconName.Launch]: LaunchIcon,
   [IconName.Location]: LocationIcon,
+  [IconName.Lock]: LockIcon,
   [IconName.Logout]: LogoutIcon,
   [IconName.Menu]: MenuIcon,
   [IconName.Note]: NoteIcon,
@@ -177,6 +180,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Remove]: RemoveIcon,
   [IconName.RendezVous]: RendezVousIcon,
   [IconName.RoundedClose]: RoundedCloseIcon,
+  [IconName.RoundedCloseFilled]: RoundedCloseFilledIcon,
   [IconName.RoundedCheck]: RoundedCheckIcon,
   [IconName.RoundedCheck]: RoundedCheckIcon,
   [IconName.RoundedCheckFilled]: RoundedCheckFilledIcon,
@@ -184,7 +188,6 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Send]: SendIcon,
   [IconName.Spinner]: SpinnerIcon,
   [IconName.Suitcase]: SuitcaseIcon,
-  [IconName.TrashCan]: TrashCanIcon,
   [IconName.Warning]: WarningIcon,
 }
 

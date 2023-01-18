@@ -1,6 +1,11 @@
 import { DateTime } from 'luxon'
 
-import { Message, MessagesOfADay, TypeMessage } from 'interfaces/message'
+import {
+  Message,
+  MessageListeDiffusion,
+  ByDay,
+  TypeMessage,
+} from 'interfaces/message'
 import { TypeOffre } from 'interfaces/offre'
 
 export const unMessage = (args: Partial<Message> = {}): Message => {
@@ -82,7 +87,7 @@ export const desMessages = (): Message[] => [
   }),
 ]
 
-export const desMessagesParJour = (): MessagesOfADay[] => [
+export const desMessagesParJour = (): ByDay<Message>[] => [
   {
     date: DateTime.local(2021, 12, 22),
     messages: [
@@ -165,3 +170,82 @@ export const desMessagesParJour = (): MessagesOfADay[] => [
     ],
   },
 ]
+
+export const unMessageListeDiffusion = (
+  args: Partial<MessageListeDiffusion> = {}
+): MessageListeDiffusion => {
+  const defaults: MessageListeDiffusion = {
+    id: 'idMessage',
+    content: `Encrypted: content`,
+    creationDate: DateTime.now(),
+    iv: 'iv',
+    type: TypeMessage.MESSAGE,
+    infoPiecesJointes: [],
+  }
+
+  return { ...defaults, ...args }
+}
+
+export function desMessagesListeDiffusion(): MessageListeDiffusion[] {
+  return [
+    unMessageListeDiffusion({
+      id: 'message-1',
+      content: 'Message du 22/12/2021',
+      creationDate: DateTime.local(2021, 12, 22),
+    }),
+    unMessageListeDiffusion({
+      id: 'message-2',
+      content: 'Message du 10/1/2022',
+      creationDate: DateTime.local(2022, 1, 10),
+    }),
+    unMessageListeDiffusion({
+      id: 'message-3',
+      content: 'Message du 13/1/2022 9h',
+      creationDate: DateTime.local(2022, 1, 13, 9),
+    }),
+    unMessageListeDiffusion({
+      id: 'message-4',
+      content: 'Message du 13/1/2022 10h',
+      creationDate: DateTime.local(2022, 1, 13, 10),
+    }),
+  ]
+}
+
+export const desMessagesListeDeDiffusionParJour =
+  (): ByDay<MessageListeDiffusion>[] => [
+    {
+      date: DateTime.local(2021, 12, 22),
+      messages: [
+        unMessageListeDiffusion({
+          id: 'message-1',
+          content: 'Decrypted: Message du 22/12/2021',
+          creationDate: DateTime.local(2021, 12, 22),
+        }),
+      ],
+    },
+    {
+      date: DateTime.local(2022, 1, 10),
+      messages: [
+        unMessageListeDiffusion({
+          id: 'message-2',
+          content: 'Decrypted: Message du 10/1/2022',
+          creationDate: DateTime.local(2022, 1, 10),
+        }),
+      ],
+    },
+    {
+      date: DateTime.local(2022, 1, 13, 9),
+      messages: [
+        unMessageListeDiffusion({
+          id: 'message-3',
+          content: 'Decrypted: Message du 13/1/2022 9h',
+          creationDate: DateTime.local(2022, 1, 13, 9),
+        }),
+        unMessageListeDiffusion({
+          id: 'message-4',
+          content: 'Decrypted: Message du 13/1/2022 10h',
+          creationDate: DateTime.local(2022, 1, 13, 10),
+        }),
+      ],
+    },
+  ]

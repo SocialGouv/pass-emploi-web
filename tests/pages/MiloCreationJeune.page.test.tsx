@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
@@ -73,6 +73,7 @@ describe('MiloCreationJeune', () => {
         createCompteJeuneMilo: jest.fn((_) => Promise.resolve({ id: 'un-id' })),
       })
       const push = jest.fn(() => Promise.resolve())
+      const setAlerte = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
       const dossier = unDossierMilo()
@@ -84,7 +85,10 @@ describe('MiloCreationJeune', () => {
           erreurMessageHttpMilo={''}
           pageTitle=''
         />,
-        { customDependances: { conseillerService } }
+        {
+          customDependances: { conseillerService },
+          customAlerte: { alerteSetter: setAlerte },
+        }
       )
 
       // When
@@ -102,10 +106,8 @@ describe('MiloCreationJeune', () => {
         prenom: 'Kenji',
       })
 
-      expect(push).toHaveBeenCalledWith({
-        pathname: '/mes-jeunes',
-        query: { creationBeneficiaire: 'succes', idBeneficiaire: 'un-id' },
-      })
+      expect(setAlerte).toHaveBeenCalledWith('creationBeneficiaire', 'un-id')
+      expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {

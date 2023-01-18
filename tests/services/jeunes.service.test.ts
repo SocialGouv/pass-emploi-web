@@ -336,7 +336,7 @@ describe('JeunesApiService', () => {
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/referentiels/motifs-suppression-jeune',
+        '/referentiels/motifs-suppression-jeune',
         accessToken
       )
       expect(actual).toEqual(motifs)
