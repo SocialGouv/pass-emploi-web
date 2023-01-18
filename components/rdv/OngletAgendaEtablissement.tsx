@@ -197,7 +197,7 @@ function heure({ date }: AnimationCollective): string {
 }
 
 function tagType({ type }: AnimationCollective): JSX.Element {
-  const color = type === 'Atelier' ? 'accent_2' : 'accent_4'
+  const color = type === 'Atelier' ? 'accent_2' : 'additional_2'
   const iconName =
     type === 'Information collective' ? IconName.ImportantOutline : undefined
   return (

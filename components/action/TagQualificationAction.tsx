@@ -30,8 +30,8 @@ export default function TagQualificationAction({
       {qualification && qualification.isSituationNonProfessionnelle && (
         <TagStatut
           label={qualification.libelle}
-          color='accent_4'
-          backgroundColor='accent_4_lighten'
+          color='additional_2'
+          backgroundColor='additional_2_lighten'
           iconName={IconName.Suitcase}
           className='mb-4 text-s-bold'
         />
@@ -39,8 +39,8 @@ export default function TagQualificationAction({
       {qualification && !qualification.isSituationNonProfessionnelle && (
         <TagStatut
           label={qualification.libelle}
-          color='accent_5'
-          backgroundColor='accent_5_lighten'
+          color='accent_4'
+          backgroundColor='accent_4_lighten'
           className='mb-4 text-s-bold'
         />
       )}
