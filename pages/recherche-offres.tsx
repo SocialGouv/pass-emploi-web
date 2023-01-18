@@ -12,6 +12,7 @@ import {
   BaseOffre,
   BaseOffreEmploi,
   BaseServiceCivique,
+  DetailOffreEmploi,
   MetadonneesOffres,
   TypeOffre,
 } from 'interfaces/offre'
@@ -189,10 +190,36 @@ function RechercheOffres() {
     return query
   }
 
+  async function getOffreById(
+    idOffre: string
+  ): Promise<DetailOffreEmploi | undefined> {
+    return offresEmploiService.getOffreEmploiClientSide(idOffre)
+  }
+
   async function rechercherOffresEmploi(page: number): Promise<{
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
   }> {
+    if (queryOffresEmploi.idOffre) {
+      const uneOffre = await getOffreById(queryOffresEmploi.idOffre)
+
+      if (uneOffre) {
+        return {
+          offres: [uneOffre],
+          metadonnees: {
+            nombreTotal: 1,
+            nombrePages: 1,
+          },
+        }
+      }
+      return {
+        offres: [],
+        metadonnees: {
+          nombreTotal: 0,
+          nombrePages: 0,
+        },
+      }
+    }
     return offresEmploiService.searchOffresEmploi(getQueryOffreEmploi(), page)
   }
 

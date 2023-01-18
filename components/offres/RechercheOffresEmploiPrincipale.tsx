@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 
+import Checkbox from 'components/offres/Checkbox'
 import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'
 import { Localite } from 'interfaces/referentiel'
-import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
+import {
+  SearchOffresEmploiQuery,
+  TypeContrat,
+} from 'services/offres-emploi.service'
 import { FormValues } from 'types/form'
 
 type RechercheOffresEmploiPrincipaleProps = {
@@ -20,6 +24,20 @@ export default function RechercheOffresEmploiPrincipale({
   query,
   onQueryUpdate,
 }: RechercheOffresEmploiPrincipaleProps) {
+  const [isSearchByIdOffre, setSearchByIdOffre] = useState<boolean>(false)
+
+  function rechercheParIdOffre() {
+    if (isSearchByIdOffre) {
+      updateIdOffre('')
+    }
+
+    setSearchByIdOffre(!isSearchByIdOffre)
+  }
+
+  function updateIdOffre(value: string) {
+    onQueryUpdate({ ...query, idOffre: value })
+  }
+
   function updateMotsCles(value: string) {
     onQueryUpdate({ ...query, motsCles: value })
   }
@@ -54,12 +72,36 @@ export default function RechercheOffresEmploiPrincipale({
 
   return (
     <Etape numero={2} titre='Critères de recherche'>
+      <div className='mt-2 mb-6'>
+        <Checkbox
+          id='recherche-par-id-offre'
+          label='Recherche avec un numéro d’offre pôle emploi'
+          value='searchByIdOffre'
+          checked={isSearchByIdOffre}
+          onChange={rechercheParIdOffre}
+        />
+      </div>
+
+      {isSearchByIdOffre && (
+        <>
+          <Label htmlFor='id-offre'>Numéro d’offre</Label>
+          <Input
+            type='text'
+            id='id-offre'
+            required={isSearchByIdOffre ? true : false}
+            value={query.idOffre ?? ''}
+            onChange={updateIdOffre}
+          />
+        </>
+      )}
+
       <Label htmlFor='mots-cles'>Mots clés (Métier, code ROME)</Label>
       <Input
         type='text'
         id='mots-cles'
         value={query.motsCles ?? ''}
         onChange={updateMotsCles}
+        disabled={isSearchByIdOffre}
       />
 
       <Label htmlFor='localites'>
@@ -75,6 +117,7 @@ export default function RechercheOffresEmploiPrincipale({
         onUpdateSelected={updateLocalite}
         errorMessage='Veuillez saisir une localisation correcte.'
         defaultValue={query.commune?.libelle ?? query.departement?.libelle}
+        disabled={isSearchByIdOffre}
       />
     </Etape>
   )

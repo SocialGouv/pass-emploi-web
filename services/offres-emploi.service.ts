@@ -18,6 +18,7 @@ import { ApiError } from 'utils/httpClient'
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
 export type Duree = 'Temps plein' | 'Temps partiel'
 export type SearchOffresEmploiQuery = {
+  idOffre?: string
   motsCles?: string
   commune?: Commune
   debutantAccepte?: boolean
@@ -31,6 +32,10 @@ export interface OffresEmploiService {
   getOffreEmploiServerSide(
     idOffreEmploi: string,
     accessToken: string
+  ): Promise<DetailOffreEmploi | undefined>
+
+  getOffreEmploiClientSide(
+    idOffreEmploi: string
   ): Promise<DetailOffreEmploi | undefined>
 
   searchOffresEmploi(
@@ -51,6 +56,17 @@ export class OffresEmploiApiService implements OffresEmploiService {
     idOffreEmploi: string,
     accessToken: string
   ): Promise<DetailOffreEmploi | undefined> {
+    return this.getOffreEmploi(idOffreEmploi, accessToken)
+  }
+
+  async getOffreEmploiClientSide(
+    idOffreEmploi: string
+  ): Promise<DetailOffreEmploi | undefined> {
+    const session = await getSession()
+    return this.getOffreEmploi(idOffreEmploi, session!.accessToken)
+  }
+
+  async getOffreEmploi(idOffreEmploi: string, accessToken: string) {
     try {
       const { content: offreEmploiJson } =
         await this.apiClient.get<DetailOffreEmploiJson>(

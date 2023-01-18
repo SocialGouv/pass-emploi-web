@@ -13,6 +13,7 @@ type SelectAutocompleteWithFetchProps<T> = {
   errorMessage: string
   defaultValue?: string
   required?: boolean
+  disabled?: boolean
 }
 export default function SelectAutocompleteWithFetch<T>({
   id,
@@ -22,6 +23,7 @@ export default function SelectAutocompleteWithFetch<T>({
   errorMessage,
   defaultValue,
   required,
+  disabled = false,
 }: SelectAutocompleteWithFetchProps<T>) {
   const [entites, setEntites] = useState<WithSimplifiedLabel<T>[]>([])
   const options: Array<{ id: string; value: string }> = useMemo(
@@ -98,6 +100,7 @@ export default function SelectAutocompleteWithFetch<T>({
         invalid={Boolean(input.error)}
         value={input.value ?? ''}
         required={required}
+        disabled={disabled}
       />
     </>
   )
