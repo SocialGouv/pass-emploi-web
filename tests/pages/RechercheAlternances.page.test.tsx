@@ -44,7 +44,7 @@ describe('Page Recherche Alternances', () => {
       getCommunesEtDepartements: jest.fn().mockResolvedValue(desLocalites()),
     })
 
-    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
+    rendered = renderWithContexts(<RechercheOffres />, {
       customDependances: {
         offresEmploiService,
         referentielService,
@@ -61,13 +61,31 @@ describe('Page Recherche Alternances', () => {
 
     expect(etape2).toBeInTheDocument()
     expect(
+      within(etape2).getByRole('checkbox', {
+        name: 'Recherche avec un numéro d’offre pôle emploi',
+      })
+    ).toBeInTheDocument()
+    // todo voir ou mettre ca
+    // expect(within(etape2).getByLabelText('Numéro d’offre')).toHaveAttribute(
+    //   'type',
+    //   'text'
+    // )
+    expect(
       within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
     ).toHaveAttribute('type', 'text')
+    expect(
+      within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
+    ).toHaveAttribute('disabled', false)
     expect(
       within(etape2).getByRole('combobox', {
         name: 'Lieu de travail Saisissez une ville ou un département',
       })
     ).toBeInTheDocument()
+    expect(
+      within(etape2).getByRole('combobox', {
+        name: 'Lieu de travail Saisissez une ville ou un département',
+      })
+    ).toHaveAttribute('disabled', false)
     expect(() =>
       within(etape2).getAllByRole('option', { hidden: true })
     ).toThrow()
@@ -620,7 +638,7 @@ describe('Page Recherche Alternances', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffres pageTitle='' />, {
+      renderWithContexts(<RechercheOffres />, {
         customDependances: {
           offresEmploiService,
           referentielService,
