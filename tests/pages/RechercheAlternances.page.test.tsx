@@ -65,17 +65,16 @@ describe('Page Recherche Alternances', () => {
         name: 'Recherche avec un numéro d’offre pôle emploi',
       })
     ).toBeInTheDocument()
-    // todo voir ou mettre ca
-    // expect(within(etape2).getByLabelText('Numéro d’offre')).toHaveAttribute(
-    //   'type',
-    //   'text'
-    // )
+
+    expect(
+      within(etape2).queryByLabelText(/Numéro d’offre/)
+    ).not.toBeInTheDocument()
     expect(
       within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
     ).toHaveAttribute('type', 'text')
     expect(
       within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
-    ).toHaveAttribute('disabled', false)
+    ).not.toHaveAttribute('disabled')
     expect(
       within(etape2).getByRole('combobox', {
         name: 'Lieu de travail Saisissez une ville ou un département',
@@ -85,10 +84,36 @@ describe('Page Recherche Alternances', () => {
       within(etape2).getByRole('combobox', {
         name: 'Lieu de travail Saisissez une ville ou un département',
       })
-    ).toHaveAttribute('disabled', false)
+    ).not.toHaveAttribute('disabled')
     expect(() =>
       within(etape2).getAllByRole('option', { hidden: true })
     ).toThrow()
+  })
+
+  it('affiche le champ de saisie de l’offre si l’utilisateur souhaite faire une recherche par ID', async () => {
+    // Given
+    const etape2 = screen.getByRole('group', {
+      name: 'Étape 2 Critères de recherche',
+    })
+    const checkbox = screen.getByRole('checkbox', {
+      name: 'Recherche avec un numéro d’offre pôle emploi',
+    })
+    // When
+    await userEvent.click(checkbox)
+
+    // Then
+    expect(within(etape2).getByLabelText(/Numéro d’offre/)).toHaveAttribute(
+      'type',
+      'text'
+    )
+    expect(
+      within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
+    ).toHaveAttribute('disabled')
+    expect(
+      within(etape2).getByRole('combobox', {
+        name: 'Lieu de travail Saisissez une ville ou un département',
+      })
+    ).toHaveAttribute('disabled')
   })
 
   describe('autocomplétion localisation', () => {

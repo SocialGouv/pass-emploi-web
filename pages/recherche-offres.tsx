@@ -166,7 +166,6 @@ function RechercheOffres() {
       setNbPages(nombrePages)
       setTrackingTitle(pageTracking + ' - Résultats')
     } catch (e) {
-      console.error(e)
       nettoyerResultats()
       setSearchError('Une erreur est survenue. Vous pouvez réessayer')
       setTrackingTitle(pageTracking + ' - Erreur')
@@ -203,20 +202,11 @@ function RechercheOffres() {
     if (queryOffresEmploi.idOffre) {
       const uneOffre = await getOffreById(queryOffresEmploi.idOffre)
 
-      if (uneOffre) {
-        return {
-          offres: [uneOffre],
-          metadonnees: {
-            nombreTotal: 1,
-            nombrePages: 1,
-          },
-        }
-      }
       return {
-        offres: [],
+        offres: uneOffre ? [uneOffre] : [],
         metadonnees: {
-          nombreTotal: 0,
-          nombrePages: 0,
+          nombreTotal: uneOffre ? 1 : 0,
+          nombrePages: uneOffre ? 1 : 0,
         },
       }
     }

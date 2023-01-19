@@ -50,6 +50,7 @@ export default function FormRechercheOffres({
   stateTypeOffre,
 }: FormRechercheOffresProps) {
   const [showForm, setShowForm] = useState<boolean>(true)
+  const [showFilters, setShowFilters] = useState<boolean>(true)
   const [showMoreFilters, setShowMoreFilters] = useState<boolean>(false)
   const [countCriteres, setCountCriteres] = useSessionStorage<number>(
     'recherche-offres--nb-criteres',
@@ -143,7 +144,7 @@ export default function FormRechercheOffres({
 
         {getRechercheMain()}
 
-        {typeOffre && (
+        {typeOffre && showFilters && (
           <div className='flex justify-end mb-6'>
             <button
               type='button'
@@ -200,6 +201,9 @@ export default function FormRechercheOffres({
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
+            searchedByIdOffer={(value) => {
+              setShowFilters(value)
+            }}
           />
         )
       case TypeOffre.ALTERNANCE:
@@ -209,6 +213,9 @@ export default function FormRechercheOffres({
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
+            searchedByIdOffer={(value) => {
+              setShowFilters(value)
+            }}
           />
         )
       case TypeOffre.SERVICE_CIVIQUE:

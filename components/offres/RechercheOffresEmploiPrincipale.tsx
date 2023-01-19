@@ -6,16 +6,14 @@ import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'
 import { Localite } from 'interfaces/referentiel'
-import {
-  SearchOffresEmploiQuery,
-  TypeContrat,
-} from 'services/offres-emploi.service'
+import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { FormValues } from 'types/form'
 
 type RechercheOffresEmploiPrincipaleProps = {
   recupererCommunesEtDepartements: (search: string) => Promise<Localite[]>
   query: FormValues<SearchOffresEmploiQuery>
   onQueryUpdate: (query: FormValues<SearchOffresEmploiQuery>) => void
+  searchedByIdOffer?: (value: boolean) => void
 }
 const RAYON_DEFAULT = 10
 
@@ -23,12 +21,17 @@ export default function RechercheOffresEmploiPrincipale({
   recupererCommunesEtDepartements,
   query,
   onQueryUpdate,
+  searchedByIdOffer,
 }: RechercheOffresEmploiPrincipaleProps) {
   const [isSearchByIdOffre, setSearchByIdOffre] = useState<boolean>(false)
 
   function rechercheParIdOffre() {
     if (isSearchByIdOffre) {
       updateIdOffre('')
+    }
+
+    if (searchedByIdOffer) {
+      searchedByIdOffer(isSearchByIdOffre)
     }
 
     setSearchByIdOffre(!isSearchByIdOffre)
@@ -84,7 +87,12 @@ export default function RechercheOffresEmploiPrincipale({
 
       {isSearchByIdOffre && (
         <>
-          <Label htmlFor='id-offre'>Numéro d’offre</Label>
+          <Label
+            htmlFor='id-offre'
+            inputRequired={isSearchByIdOffre ? true : false}
+          >
+            Numéro d’offre
+          </Label>
           <Input
             type='text'
             id='id-offre'
