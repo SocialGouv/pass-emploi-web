@@ -149,6 +149,7 @@ export function mockedOffresEmploiService(
 ): OffresEmploiService {
   const defaults: OffresEmploiService = {
     getOffreEmploiServerSide: jest.fn(),
+    getOffreEmploiClientSide: jest.fn(),
     searchOffresEmploi: jest.fn(),
     searchAlternances: jest.fn(),
   }
