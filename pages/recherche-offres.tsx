@@ -189,24 +189,20 @@ function RechercheOffres() {
     return query
   }
 
-  async function getOffreById(
-    idOffre: string
-  ): Promise<DetailOffreEmploi | undefined> {
-    return offresEmploiService.getOffreEmploiClientSide(idOffre)
-  }
-
   async function rechercherOffresEmploi(page: number): Promise<{
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
   }> {
     if (queryOffresEmploi.idOffre) {
-      const uneOffre = await getOffreById(queryOffresEmploi.idOffre)
+      const offre = await offresEmploiService.getOffreEmploiClientSide(
+        queryOffresEmploi.idOffre
+      )
 
       return {
-        offres: uneOffre ? [uneOffre] : [],
+        offres: offre ? [offre] : [],
         metadonnees: {
-          nombreTotal: uneOffre ? 1 : 0,
-          nombrePages: uneOffre ? 1 : 0,
+          nombreTotal: offre ? 1 : 0,
+          nombrePages: offre ? 1 : 0,
         },
       }
     }
@@ -217,6 +213,19 @@ function RechercheOffres() {
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesOffres
   }> {
+    if (queryOffresEmploi.idOffre) {
+      const offre = await offresEmploiService.getOffreEmploiClientSide(
+        queryOffresEmploi.idOffre
+      )
+
+      return {
+        offres: offre ? [offre] : [],
+        metadonnees: {
+          nombreTotal: offre ? 1 : 0,
+          nombrePages: offre ? 1 : 0,
+        },
+      }
+    }
     return offresEmploiService.searchAlternances(getQueryOffreEmploi(), page)
   }
 

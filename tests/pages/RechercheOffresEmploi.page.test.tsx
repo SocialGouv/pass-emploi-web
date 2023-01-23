@@ -397,6 +397,27 @@ describe('Page Recherche Offres Emploi', () => {
       expect(offresEmploiService.searchOffresEmploi).toHaveBeenCalledWith({}, 1)
     })
 
+    it('permet de faire ue recherche d’offre par Id ', async () => {
+      // Given
+      const checkbox = screen.getByRole('checkbox', {
+        name: 'Recherche avec un numéro d’offre pôle emploi',
+      })
+      await userEvent.click(checkbox)
+      await userEvent.type(screen.getByLabelText(/Numéro d’offre/), 'id-offre')
+
+      const submitButton = screen.getByRole('button', {
+        name: 'Rechercher',
+      })
+
+      // When
+      await userEvent.click(submitButton)
+
+      // Then
+      expect(offresEmploiService.getOffreEmploiClientSide).toHaveBeenCalledWith(
+        'id-offre'
+      )
+    })
+
     it('construit la recherche avec un département', async () => {
       // Given
       const inputMotsCles = screen.getByLabelText(/Mots clés/)
