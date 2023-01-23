@@ -22,7 +22,9 @@ export function ResumeIndicateursJeune({
 }: ResumeIndicateursJeuneProps) {
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold'>Les indicateurs de la semaine</h2>
+      <h2 className='text-m-bold text-grey_800'>
+        Les indicateurs de la semaine
+      </h2>
       <p className='mb-4'>
         du {toFrenchString(debutDeLaSemaine)} au{' '}
         {toFrenchString(finDeLaSemaine)}
@@ -32,7 +34,7 @@ export function ResumeIndicateursJeune({
           !indicateursSemaine ? 'animate-pulse' : ''
         }`}
       >
-        <div className='text-primary_darken text-base-bold'>
+        <div className='text-content_color text-base-bold'>
           <h3 className='mb-2'>Les actions</h3>
           <ul className='flex gap-2'>
             <TileIndicateur
@@ -63,7 +65,7 @@ export function ResumeIndicateursJeune({
             />
           </ul>
         </div>
-        <div className='text-primary_darken text-base-bold'>
+        <div className='text-content_color text-base-bold'>
           <h3 className='mb-2'>Les événements</h3>
           <div className='flex gap-2'>
             <TileIndicateur

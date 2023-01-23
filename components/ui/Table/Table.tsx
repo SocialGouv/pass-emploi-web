@@ -14,7 +14,7 @@ export default function Table({
   const style = 'w-full border-spacing-y-2 border-separate'
   const captionVisible = captionIsVisible(caption)
   const captionText = captionVisible ? caption.text : caption
-  const captionStyle = 'text-m-regular text-primary'
+  const captionStyle = 'text-m-bold text-grey_800'
 
   if (asDiv)
     return (
