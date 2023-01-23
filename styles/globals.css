@@ -59,6 +59,6 @@ select:disabled {
   font-family: 'Marianne', sans-serif;
   src: url('/fonts/Marianne/static/Marianne-Regular.otf');
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   font-display: swap;
 }

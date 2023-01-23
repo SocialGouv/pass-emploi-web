@@ -63,7 +63,7 @@ export function RdvRow({
         {timeAndDuration}
       </TD>
 
-      {!beneficiaireUnique && <TD>{rdv.labelBeneficiaires}</TD>}
+      {!beneficiaireUnique && <TD isBold>{rdv.labelBeneficiaires}</TD>}
 
       <TD>
         <DataTag
