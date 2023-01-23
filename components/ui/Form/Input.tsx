@@ -35,7 +35,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         onBlur={onBlur}
         aria-describedby={invalid ? `${id}--error` : undefined}
         aria-invalid={invalid || undefined}
-        className={`${styles.input} ${invalid ? styles.invalid : ''} ${
+        className={`text-base-medium ${styles.input} ${
+          invalid ? styles.invalid : ''
+        } ${
           icon
             ? `bg-${icon} bg-[center_right_1rem] bg-[length:24px_24px] bg-no-repeat`
             : ''

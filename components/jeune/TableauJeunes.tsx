@@ -313,7 +313,7 @@ export default function TableauJeunes({
                     jeune.messagesNonLus
                   } messages non lus`}
                 >
-                  <TD className='rounded-l-base'>
+                  <TD isBold className='rounded-l-base'>
                     <span className='flex items-baseline'>
                       {jeune.isReaffectationTemporaire && (
                         <span

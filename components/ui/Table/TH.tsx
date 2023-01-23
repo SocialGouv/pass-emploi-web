@@ -11,7 +11,7 @@ export function TH({
   asDiv = false,
   className = '',
 }: THProps): JSX.Element {
-  const style = 'text-base-regular text-left p-4 ' + className
+  const style = 'text-s-medium text-left text-content_color p-4 ' + className
 
   if (asDiv)
     return (
