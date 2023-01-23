@@ -3,15 +3,19 @@ import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 type TDProps = Omit<ComponentPropsWithoutRef<'td'>, 'children'> & {
   children?: ReactNode
   asDiv?: boolean
+  isBold?: boolean
 }
 
 export default function TD({
   children,
   asDiv = false,
   className = '',
+  isBold = false,
   ...props
 }: TDProps) {
-  const style = 'p-4 align-middle text-base-regular ' + className
+  const style =
+    `p-4 align-middle  ${isBold ? 'text-base-bold' : 'text-base-regular'} ` +
+    className
 
   if (asDiv)
     return (
