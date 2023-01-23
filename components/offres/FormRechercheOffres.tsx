@@ -145,26 +145,28 @@ export default function FormRechercheOffres({
         {getRechercheMain()}
 
         {typeOffre && showFilters && (
-          <div className='flex justify-end mb-6'>
-            <button
-              type='button'
-              onClick={() => setShowMoreFilters(!showMoreFilters)}
-              className='mr-12'
-            >
-              Voir {showMoreFilters ? 'moins' : 'plus'} de critères
-              <IconComponent
-                name={
-                  showMoreFilters ? IconName.ChevronUp : IconName.ChevronDown
-                }
-                className='h-4 w-4 fill-primary inline ml-2'
-                aria-hidden={true}
-                focusable={false}
-              ></IconComponent>
-            </button>
-          </div>
-        )}
+          <>
+            <div className='flex justify-end mb-6'>
+              <button
+                type='button'
+                onClick={() => setShowMoreFilters(!showMoreFilters)}
+                className='mr-12'
+              >
+                Voir {showMoreFilters ? 'moins' : 'plus'} de critères
+                <IconComponent
+                  name={
+                    showMoreFilters ? IconName.ChevronUp : IconName.ChevronDown
+                  }
+                  className='h-4 w-4 fill-primary inline ml-2'
+                  aria-hidden={true}
+                  focusable={false}
+                ></IconComponent>
+              </button>
+            </div>
 
-        {showMoreFilters && getRechercheSecondary()}
+            {showMoreFilters && getRechercheSecondary()}
+          </>
+        )}
 
         {typeOffre && (
           <>
@@ -201,8 +203,8 @@ export default function FormRechercheOffres({
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
-            searchedByIdOffer={(value) => {
-              setShowFilters(value)
+            onRechercheParIdOffre={(value) => {
+              setShowFilters(!value)
             }}
           />
         )
@@ -213,8 +215,8 @@ export default function FormRechercheOffres({
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
             onQueryUpdate={setQueryOffresEmploi}
-            searchedByIdOffer={(value) => {
-              setShowFilters(value)
+            onRechercheParIdOffre={(value) => {
+              setShowFilters(!value)
             }}
           />
         )

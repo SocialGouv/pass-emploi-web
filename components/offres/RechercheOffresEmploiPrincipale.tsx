@@ -13,7 +13,7 @@ type RechercheOffresEmploiPrincipaleProps = {
   recupererCommunesEtDepartements: (search: string) => Promise<Localite[]>
   query: FormValues<SearchOffresEmploiQuery>
   onQueryUpdate: (query: FormValues<SearchOffresEmploiQuery>) => void
-  searchedByIdOffer?: (value: boolean) => void
+  onRechercheParIdOffre: (value: boolean) => void
 }
 const RAYON_DEFAULT = 10
 
@@ -21,20 +21,16 @@ export default function RechercheOffresEmploiPrincipale({
   recupererCommunesEtDepartements,
   query,
   onQueryUpdate,
-  searchedByIdOffer,
+  onRechercheParIdOffre,
 }: RechercheOffresEmploiPrincipaleProps) {
   const [isSearchByIdOffre, setSearchByIdOffre] = useState<boolean>(false)
 
-  function rechercheParIdOffre() {
-    if (isSearchByIdOffre) {
-      updateIdOffre('')
-    }
+  function toggleRechercheParIdOffre() {
+    updateIdOffre('')
 
-    if (searchedByIdOffer) {
-      searchedByIdOffer(isSearchByIdOffre)
-    }
-
-    setSearchByIdOffre(!isSearchByIdOffre)
+    const rechercheParId = !isSearchByIdOffre
+    onRechercheParIdOffre(rechercheParId)
+    setSearchByIdOffre(rechercheParId)
   }
 
   function updateIdOffre(value: string) {
@@ -42,7 +38,9 @@ export default function RechercheOffresEmploiPrincipale({
   }
 
   function updateMotsCles(value: string) {
-    onQueryUpdate({ ...query, motsCles: value })
+    if (!isSearchByIdOffre) {
+      onQueryUpdate({ ...query, motsCles: value })
+    }
   }
 
   function updateLocalite({
@@ -52,6 +50,8 @@ export default function RechercheOffresEmploiPrincipale({
     selected?: Localite
     hasError: boolean
   }) {
+    if (isSearchByIdOffre) return
+
     const { rayon, commune, departement, ...autresCriteres } = query
     if (!selected) {
       onQueryUpdate({ ...autresCriteres, hasError })
@@ -81,7 +81,7 @@ export default function RechercheOffresEmploiPrincipale({
           label='Recherche avec un numéro d’offre pôle emploi'
           value='searchByIdOffre'
           checked={isSearchByIdOffre}
-          onChange={rechercheParIdOffre}
+          onChange={toggleRechercheParIdOffre}
         />
       </div>
 

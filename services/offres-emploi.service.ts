@@ -66,7 +66,21 @@ export class OffresEmploiApiService implements OffresEmploiService {
     return this.getOffreEmploi(idOffreEmploi, session!.accessToken)
   }
 
-  async getOffreEmploi(idOffreEmploi: string, accessToken: string) {
+  async searchOffresEmploi(
+    recherche: SearchOffresEmploiQuery,
+    page: number
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+    return this.searchOffres({ recherche, page, alternanceOnly: false })
+  }
+
+  async searchAlternances(
+    recherche: SearchOffresEmploiQuery,
+    page: number
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+    return this.searchOffres({ recherche, page, alternanceOnly: true })
+  }
+
+  private async getOffreEmploi(idOffreEmploi: string, accessToken: string) {
     try {
       const { content: offreEmploiJson } =
         await this.apiClient.get<DetailOffreEmploiJson>(
@@ -80,20 +94,6 @@ export class OffresEmploiApiService implements OffresEmploiService {
       }
       throw e
     }
-  }
-
-  async searchOffresEmploi(
-    recherche: SearchOffresEmploiQuery,
-    page: number
-  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
-    return this.searchOffres({ recherche, page, alternanceOnly: false })
-  }
-
-  async searchAlternances(
-    recherche: SearchOffresEmploiQuery,
-    page: number
-  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
-    return this.searchOffres({ recherche, page, alternanceOnly: true })
   }
 
   private async searchOffres({
