@@ -445,14 +445,14 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     }
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
-  const rendezVousService =
+  const evenementsService =
     withDependance<EvenementsService>('evenementsService')
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
     user.id,
     accessToken
   )
 
-  const typesRendezVous = await rendezVousService.getTypesRendezVous(
+  const typesRendezVous = await evenementsService.getTypesRendezVous(
     accessToken
   )
 
@@ -473,7 +473,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const idRdv = context.query.idRdv as string | undefined
   const idJeune = context.query.idJeune as string | undefined
   if (idRdv) {
-    const evenement = await rendezVousService.getDetailsEvenement(
+    const evenement = await evenementsService.getDetailsEvenement(
       idRdv,
       accessToken
     )

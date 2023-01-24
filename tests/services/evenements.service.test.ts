@@ -66,7 +66,7 @@ describe('EvenementsApiService', () => {
     it('renvoie les détails de l’événement', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: unEvenementJson(),
+        content: unEvenementJson({ nombreMaxParticipants: 10 }),
       })
 
       // When
@@ -80,7 +80,7 @@ describe('EvenementsApiService', () => {
         '/rendezvous/id-rdv',
         'accessToken'
       )
-      expect(actual).toEqual(unEvenement())
+      expect(actual).toEqual(unEvenement({ nombreMaxParticipants: 10 }))
     })
 
     it("renvoie undefined si l’événement n'existe pas", async () => {
@@ -116,6 +116,7 @@ describe('EvenementsApiService', () => {
         invitation: false,
         titre: 'Titre modifié',
         comment: 'Lorem ipsum dolor sit amet',
+        nombreMaxParticipants: 10,
       }
 
       // When
@@ -134,6 +135,7 @@ describe('EvenementsApiService', () => {
           presenceConseiller: true,
           titre: 'Titre modifié',
           comment: 'Lorem ipsum dolor sit amet',
+          nombreMaxParticipants: 10,
         },
         'accessToken'
       )
@@ -316,6 +318,7 @@ describe('EvenementsApiService', () => {
         presenceConseiller: true,
         invitation: false,
         comment: 'Lorem ipsum dolor sit amet',
+        nombreMaxParticipants: 10,
       }
       ;(apiClient.post as jest.Mock).mockResolvedValue({
         content: { id: 'id-nouvel-evenement' },
@@ -339,6 +342,7 @@ describe('EvenementsApiService', () => {
           presenceConseiller: true,
           precision: 'un texte de précision',
           comment: 'Lorem ipsum dolor sit amet',
+          nombreMaxParticipants: 10,
         },
         'accessToken'
       )

@@ -54,6 +54,7 @@ export type Evenement = {
   organisme?: string
   statut?: StatutAnimationCollective
   source?: string
+  nombreMaxParticipants?: number
 }
 
 export const TYPE_EVENEMENT = {

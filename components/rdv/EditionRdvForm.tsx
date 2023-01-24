@@ -132,6 +132,14 @@ export function EditionRdvForm({
     value: evenement?.commentaire,
   })
 
+  const [showNombreMaxParticipants, setShowNombreMaxParticipants] =
+    useState<boolean>(Boolean(evenement?.nombreMaxParticipants))
+  const [nombreMaxParticipants, setNombreMaxParticipants] = useState<
+    ValueWithError<number | undefined>
+  >({
+    value: evenement?.nombreMaxParticipants,
+  })
+
   const isAgenceNecessaire =
     isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseiller?.agence
   const afficherSuiteFormulaire =
@@ -211,7 +219,8 @@ export function EditionRdvForm({
           titre.value ||
           adresse ||
           organisme ||
-          description.value
+          description.value ||
+          nombreMaxParticipants.value
       )
     }
 
@@ -227,23 +236,26 @@ export function EditionRdvForm({
       organisme !== evenement.organisme ||
       titre.value !== evenement.titre ||
       description.value !== evenement.commentaire ||
-      isConseillerPresent !== evenement.presenceConseiller
+      isConseillerPresent !== evenement.presenceConseiller ||
+      nombreMaxParticipants.value !== evenement.nombreMaxParticipants
     )
   }
 
   function formIsValid(): boolean {
     return (
       typeIsValid() &&
-      beneficiairesAreValid(idsJeunes.value) &&
+      nombreParticipantsIsValid(idsJeunes.value) &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
       titreIsValid() &&
-      descriptionIsValid()
+      descriptionIsValid() &&
+      nombreMaxParticipantsIsValid()
     )
   }
 
   async function handleSelectedTypeRendezVous(value: string) {
+    setNombreMaxParticipants({ value: undefined })
     setCodeTypeRendezVous(value)
     setShowPrecisionType(value === TYPE_EVENEMENT.Autre)
     if (value === TYPE_EVENEMENT.EntretienIndividuelConseiller) {
@@ -251,20 +263,13 @@ export function EditionRdvForm({
     }
   }
 
-  function updateIdsJeunes(selectedIds: {
-    beneficiaires?: string[]
-    listesDeDiffusion?: string[]
-  }) {
+  function updateIdsJeunes({ beneficiaires }: { beneficiaires?: string[] }) {
     setIdsJeunes({
-      value: selectedIds.beneficiaires!,
-      error: !beneficiairesAreValid(selectedIds.beneficiaires!)
-        ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
-        : undefined,
+      value: beneficiaires!,
+      error: validateNombreParticipants(beneficiaires!),
     })
     onBeneficiairesDUnAutrePortefeuille(
-      selectedIds.beneficiaires!.some(
-        (id) => !estUnBeneficiaireDuConseiller(id)
-      )
+      beneficiaires!.some((id) => !estUnBeneficiaireDuConseiller(id))
     )
   }
 
@@ -276,11 +281,6 @@ export function EditionRdvForm({
           "Le champ Préciser n'est pas renseigné. Veuillez préciser le type d’événement.",
       })
     }
-  }
-
-  function beneficiairesAreValid(idsBeneficiaires: string[]): boolean {
-    if (isCodeTypeAnimationCollective(codeTypeRendezVous)) return true
-    return idsBeneficiaires.length > 0
   }
 
   function dateIsValid(): boolean {
@@ -376,6 +376,56 @@ export function EditionRdvForm({
     }
   }
 
+  function nombreMaxParticipantsIsValid(): boolean {
+    return Boolean(!showNombreMaxParticipants || nombreMaxParticipants.value)
+  }
+
+  function validateNombreMaxParticipants() {
+    if (!nombreMaxParticipantsIsValid()) {
+      setNombreMaxParticipants({
+        ...nombreMaxParticipants,
+        error:
+          "Aucun nombre maximum de participants n'est renseigné. Veuillez renseigner une valeur.",
+      })
+    }
+
+    if (!nombreParticipantsIsValid(idsJeunes.value)) {
+      setNombreMaxParticipants({
+        ...nombreMaxParticipants,
+        error: 'Le nombre maximum de participants est dépassé.',
+      })
+    }
+  }
+
+  function nombreParticipantsIsValid(idsBeneficiaires: string[]): boolean {
+    if (
+      nombreMaxParticipants.value &&
+      nombreMaxParticipants.value < idsBeneficiaires.length
+    )
+      return false
+
+    return (
+      isCodeTypeAnimationCollective(codeTypeRendezVous) ||
+      idsBeneficiaires.length > 0
+    )
+  }
+
+  function validateNombreParticipants(
+    idsBeneficiaires: string[]
+  ): string | undefined {
+    if (
+      nombreMaxParticipants.value &&
+      nombreMaxParticipants.value < idsBeneficiaires.length
+    )
+      return 'Le nombre maximum de participants est dépassé.'
+
+    if (
+      !isCodeTypeAnimationCollective(codeTypeRendezVous) &&
+      !idsBeneficiaires.length
+    )
+      return "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+  }
+
   function typeEntretienIndividuelConseillerSelected() {
     return codeTypeRendezVous === TYPE_EVENEMENT.EntretienIndividuelConseiller
   }
@@ -417,6 +467,7 @@ export function EditionRdvForm({
       organisme,
       titre: titre.value,
       comment: description.value,
+      nombreMaxParticipants: nombreMaxParticipants.value,
     }
     if (!conseillerIsCreator && sendEmailInvitation) {
       showConfirmationModal(payload)
@@ -450,6 +501,13 @@ export function EditionRdvForm({
     jeunesEtablissement.length,
     recupererJeunesDeLEtablissement,
   ])
+
+  function updateNbMaxParticipants(value: string) {
+    const parsed = parseInt(value, 10)
+    setNombreMaxParticipants({
+      value: isNaN(parsed) ? undefined : parsed,
+    })
+  }
 
   return (
     <form onSubmit={handleSoumettreRdv}>
@@ -580,12 +638,59 @@ export function EditionRdvForm({
           </Etape>
 
           <Etape numero={3} titre='Ajout de bénéficiaires'>
-            {isCodeTypeAnimationCollective(codeTypeRendezVous) &&
-              (!evenement || !estClos(evenement)) && (
-                <div className='mb-4'>
-                  <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
+            {isCodeTypeAnimationCollective(codeTypeRendezVous) && (
+              <>
+                <div className='flex items-center mb-8'>
+                  <label htmlFor='toggle-max-participants' className='mr-4'>
+                    Définir un nombre maximum de participants
+                  </label>
+                  <Switch
+                    id='toggle-max-participants'
+                    checked={showNombreMaxParticipants}
+                    onChange={() =>
+                      setShowNombreMaxParticipants(!showNombreMaxParticipants)
+                    }
+                    disabled={
+                      evenement &&
+                      (estClos(evenement) || estCreeParSiMILO(evenement))
+                    }
+                  />
                 </div>
-              )}
+
+                {showNombreMaxParticipants && (
+                  <>
+                    <Label htmlFor='max-participants' inputRequired={true}>
+                      Nombre maximum de participants
+                    </Label>
+                    {nombreMaxParticipants.error && (
+                      <InputError id='max-participants--error' className='mb-2'>
+                        {nombreMaxParticipants.error}
+                      </InputError>
+                    )}
+                    <Input
+                      id='max-participants'
+                      type='number'
+                      defaultValue={nombreMaxParticipants.value}
+                      onChange={updateNbMaxParticipants}
+                      onBlur={validateNombreMaxParticipants}
+                      required={true}
+                      min={1}
+                      invalid={Boolean(nombreMaxParticipants.error)}
+                      disabled={
+                        evenement &&
+                        (estClos(evenement) || estCreeParSiMILO(evenement))
+                      }
+                    />
+                  </>
+                )}
+
+                {(!evenement || !estClos(evenement)) && (
+                  <div className='mb-4'>
+                    <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
+                  </div>
+                )}
+              </>
+            )}
 
             <BeneficiairesMultiselectAutocomplete
               beneficiaires={buildOptionsJeunes()}

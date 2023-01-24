@@ -33,6 +33,7 @@ export type EvenementJson = {
   statut?: StatutAnimationCollectiveJson
   source?: StructureConseiller
   futPresent?: boolean
+  nombreMaxParticipants?: number
 }
 
 export type EvenementJeuneJson = Omit<EvenementJson, 'jeunes'> & {
@@ -61,6 +62,7 @@ export type EvenementFormData = {
   organisme?: string
   titre?: string
   comment?: string
+  nombreMaxParticipants?: number
 }
 
 export function jsonToEvenement(json: EvenementJson): Evenement {
@@ -85,6 +87,8 @@ export function jsonToEvenement(json: EvenementJson): Evenement {
   if (json.statut)
     evenement.statut = jsonToStatutAnimationCollective(json.statut)
   if (json.source) evenement.source = json.source
+  if (json.nombreMaxParticipants)
+    evenement.nombreMaxParticipants = json.nombreMaxParticipants
 
   return evenement
 }
