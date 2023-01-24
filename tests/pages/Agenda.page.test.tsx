@@ -77,15 +77,6 @@ describe('Agenda', () => {
         })
       })
 
-      it('a un lien pour créer un rendez-vous', () => {
-        // Then
-        expect(
-          screen.getByRole('link', {
-            name: 'Créer un événement',
-          })
-        ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
-      })
-
       it('contient 2 onglets', () => {
         // Then
         expect(
@@ -150,6 +141,15 @@ describe('Agenda', () => {
         const SEPTEMBRE_14_23H = DateTime.fromISO(
           '2022-09-14T23:59:59.999+02:00'
         )
+
+        it('a un lien pour créer un rendez-vous', () => {
+          // Then
+          expect(
+            screen.getByRole('link', {
+              name: 'Créer un rendez-vous',
+            })
+          ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
+        })
 
         it('a deux boutons de navigation', () => {
           // When

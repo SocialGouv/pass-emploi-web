@@ -115,16 +115,6 @@ function Agenda({ onglet }: AgendaProps) {
 
   return (
     <>
-      <ButtonLink href='/mes-jeunes/edition-rdv' className='mb-10 w-fit'>
-        <IconComponent
-          name={IconName.Add}
-          focusable={false}
-          aria-hidden={true}
-          className='mr-2 w-4 h-4'
-        />
-        Créer un événement
-      </ButtonLink>
-
       <TabList className='mb-6'>
         <Tab
           label='Mon agenda'
@@ -151,6 +141,16 @@ function Agenda({ onglet }: AgendaProps) {
           tabIndex={0}
           id='agenda-conseiller'
         >
+          <ButtonLink href='/mes-jeunes/edition-rdv' className='mb-10 w-fit'>
+            <IconComponent
+              name={IconName.Add}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Créer un rendez-vous
+          </ButtonLink>
+
           <OngletAgendaConseiller
             idConseiller={conseiller?.id}
             recupererRdvs={recupererRdvsConseiller}

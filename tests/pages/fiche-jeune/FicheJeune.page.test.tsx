@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -20,6 +20,7 @@ import {
   mockedEvenementsService,
   mockedJeunesService,
 } from 'fixtures/services'
+import { StructureConseiller } from 'interfaces/conseiller'
 import FicheJeune, {
   getServerSideProps,
   Onglet,
@@ -68,6 +69,45 @@ describe('Fiche Jeune', () => {
 
         // Then
         expect(setIdJeune).toHaveBeenCalledWith('jeune-1')
+      })
+    })
+
+    describe('pour les conseillers MILO', () => {
+      it('affiche un lien pour accéder aux calendrier de l’établissement', async () => {
+        // Given
+        let setIdJeune = jest.fn()
+
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune()}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: { structure: StructureConseiller.MILO },
+              customDependances: {
+                jeunesService: mockedJeunesService({
+                  getIndicateursJeune: jest.fn(async () =>
+                    desIndicateursSemaine()
+                  ),
+                }),
+                agendaService: mockedAgendaService({
+                  recupererAgenda: jest.fn(async () => unAgenda()),
+                }),
+              },
+              customCurrentJeune: { idSetter: setIdJeune },
+            }
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Voir le calendrier de l’établissement',
+          })
+        ).toHaveAttribute('href', '/agenda?onglet=etablissement')
       })
     })
   })
