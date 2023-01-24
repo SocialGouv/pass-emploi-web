@@ -37,7 +37,12 @@ function Indicateurs({ idJeune }: IndicateursProps) {
   useEffect(() => {
     if (conseiller && !indicateursSemaine) {
       jeunesService
-        .getIndicateursJeune(conseiller.id, idJeune, debutSemaine, finSemaine)
+        .getIndicateursJeuneComplets(
+          conseiller.id,
+          idJeune,
+          debutSemaine,
+          finSemaine
+        )
         .then(setIndicateursSemaine)
     }
   }, [

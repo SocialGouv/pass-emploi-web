@@ -36,7 +36,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
     jeunesService = mockedJeunesService({
       getMotifsSuppression: jest.fn(async () => motifsSuppression),
-      getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
+      getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
     })
   })
 

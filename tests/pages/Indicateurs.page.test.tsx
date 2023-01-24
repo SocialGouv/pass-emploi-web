@@ -24,7 +24,9 @@ describe('Indicateurs', () => {
       // Given
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
       const jeunesService = mockedJeunesService({
-        getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
+        getIndicateursJeuneComplets: jest.fn(async () =>
+          desIndicateursSemaine()
+        ),
       })
       ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
 
