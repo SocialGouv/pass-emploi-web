@@ -4,7 +4,7 @@ import ErrorIcon from 'assets/icons/error_outline.svg'
 
 interface InputErrorProps {
   children: string
-  id?: string
+  id: string
   className?: string
 }
 

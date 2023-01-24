@@ -431,6 +431,15 @@ describe('EditionRdv', () => {
             )
           ).toThrow()
         })
+
+        it('ne permet pas de renseigner un nombre maximum de participants', () => {
+          // Then
+          expect(
+            screen.queryByRole('spinbutton', {
+              name: 'Définir un nombre maximum de participants',
+            })
+          ).not.toBeInTheDocument()
+        })
       })
 
       describe('étape 4 lieu et date', () => {
@@ -969,7 +978,7 @@ describe('EditionRdv', () => {
             />,
             {
               customDependances: {
-                evenementsService: evenementsService,
+                evenementsService,
                 jeunesService,
               },
               customConseiller: {
@@ -1055,6 +1064,23 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
+        it('permet de renseigner un nombre maximum de participants', async () => {
+          // When
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: 'Définir un nombre maximum de participants',
+            })
+          )
+
+          // Then
+          const maxParticipantsInput = screen.getByRole('spinbutton', {
+            name: 'Nombre maximum de participants',
+          })
+          expect(maxParticipantsInput).toHaveAttribute('required', '')
+          expect(maxParticipantsInput).toHaveAttribute('type', 'number')
+          expect(maxParticipantsInput).toHaveAttribute('min', '1')
+        })
+
         it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
           // Given
           await userEvent.type(
@@ -1071,6 +1097,123 @@ describe('EditionRdv', () => {
               'Ce bénéficiaire n’est pas dans votre portefeuille'
             )
           ).toBeInTheDocument()
+        })
+
+        describe('formulaire rempli avec nombre maximum de participants', () => {
+          let inputNbParticipants: HTMLInputElement
+          let buttonValider: HTMLButtonElement
+          beforeEach(async () => {
+            // Given
+            await userEvent.type(
+              screen.getByRole('combobox', {
+                name: /ajouter des destinataires/,
+              }),
+              getNomJeuneComplet(jeunesConseiller[0])
+            )
+            await userEvent.type(
+              screen.getByLabelText('* Date (format : jj/mm/aaaa)'),
+              '2022-03-03'
+            )
+            await userEvent.type(
+              screen.getByLabelText('* Heure (format : hh:mm)'),
+              '10:30'
+            )
+            await userEvent.type(
+              screen.getByLabelText('* Durée (format : hh:mm)'),
+              '02:37'
+            )
+            await userEvent.type(
+              screen.getByRole('textbox', { name: 'Titre' }),
+              'Titre de l’événement'
+            )
+            await userEvent.click(
+              screen.getByRole('checkbox', {
+                name: /maximum de participants/,
+              })
+            )
+
+            inputNbParticipants = screen.getByRole('spinbutton', {
+              name: /maximum de participants/,
+            })
+            await userEvent.type(inputNbParticipants, '10')
+
+            buttonValider = screen.getByRole('button', {
+              name: 'Créer l’événement',
+            })
+          })
+
+          it('est désactivé quand le nombre maximum de participants n’est pas renseigné', async () => {
+            // Given
+            await userEvent.clear(inputNbParticipants)
+            await userEvent.tab()
+
+            // Then
+            expect(buttonValider).toHaveAttribute('disabled', '')
+            expect(
+              screen.getByText(
+                "Aucun nombre maximum de participants n'est renseigné. Veuillez renseigner une valeur."
+              )
+            ).toBeInTheDocument()
+          })
+
+          it('est désactivé quand on ajoute trop de participants', async () => {
+            // Given
+            await userEvent.clear(inputNbParticipants)
+            await userEvent.type(inputNbParticipants, '1')
+            await userEvent.type(
+              screen.getByRole('combobox', {
+                name: /ajouter des destinataires/,
+              }),
+              getNomJeuneComplet(jeunesConseiller[2])
+            )
+
+            // Then
+            expect(buttonValider).toHaveAttribute('disabled', '')
+            expect(
+              screen.getByText('Le nombre maximum de participants est dépassé.')
+            ).toBeInTheDocument()
+          })
+
+          it('est désactivé quand on diminue trop le nombre maximum de participants', async () => {
+            // Given
+            await userEvent.type(
+              screen.getByRole('combobox', {
+                name: /ajouter des destinataires/,
+              }),
+              getNomJeuneComplet(jeunesConseiller[2])
+            )
+            await userEvent.clear(inputNbParticipants)
+            await userEvent.type(inputNbParticipants, '1')
+            await userEvent.tab()
+
+            // Then
+            expect(buttonValider).toHaveAttribute('disabled', '')
+            expect(
+              screen.getByText('Le nombre maximum de participants est dépassé.')
+            ).toBeInTheDocument()
+          })
+
+          it('crée une animation collective avec un nombre maximum de participants', async () => {
+            // When
+            await userEvent.click(buttonValider)
+
+            // Then
+            expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
+              nombreMaxParticipants: 10,
+              jeunesIds: [jeunesConseiller[0].id],
+              titre: 'Titre de l’événement',
+              type: 'ATELIER',
+              date: '2022-03-03T10:30:00.000+01:00',
+              duration: 157,
+              presenceConseiller: true,
+              invitation: false,
+              modality: undefined,
+              adresse: undefined,
+              organisme: undefined,
+              comment: undefined,
+              precision: undefined,
+            })
+          })
         })
       })
     })
@@ -1558,6 +1701,46 @@ describe('EditionRdv', () => {
       })
     })
 
+    describe('quand on souhaite modifier une animation collective', () => {
+      it('initialise le nombre maximum de participants', async () => {
+        // Given
+        const evenement = unEvenement({
+          type: { code: 'ATELIER', label: 'Atelier' },
+          nombreMaxParticipants: 10,
+        })
+
+        // When
+        await act(async () =>
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo='/agenda'
+              evenement={evenement}
+              pageTitle=''
+            />,
+            {
+              customDependances: { jeunesService },
+              customConseiller: {
+                agence: {
+                  nom: 'Mission locale Aubenas',
+                  id: 'id-etablissement',
+                },
+              },
+            }
+          )
+        )
+
+        // Then
+        expect(
+          screen.getByLabelText<HTMLSelectElement>(
+            /Nombre maximum de participants/
+          ).value
+        ).toEqual('10')
+      })
+    })
+
     describe('quand on consulte une animation collective close', () => {
       let jeuneAbsent: BaseJeune & { futPresent: boolean }
       let jeunePresent: BaseJeune & { futPresent: boolean }
@@ -1579,6 +1762,7 @@ describe('EditionRdv', () => {
           jeunes: [jeuneAbsent, jeunePresent],
           type: { code: 'ATELIER', label: 'Atelier' },
           statut: StatutAnimationCollective.Close,
+          nombreMaxParticipants: 10,
         })
 
         await act(async () => {
@@ -1615,6 +1799,10 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/Définir un nombre maximum/)
+        ).toBeDisabled()
+        expect(screen.getByLabelText(/Nombre maximum/)).toBeDisabled()
         expect(
           screen.getByLabelText(/ajouter des destinataires/)
         ).toBeDisabled()

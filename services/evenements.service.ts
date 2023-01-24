@@ -146,18 +146,8 @@ export class EvenementsApiService implements EvenementsService {
     idRdv: string,
     updatedRdv: EvenementFormData
   ): Promise<void> {
+    const { type, precision, invitation, ...payload } = updatedRdv
     const session = await getSession()
-    const payload = {
-      jeunesIds: updatedRdv.jeunesIds,
-      modality: updatedRdv.modality,
-      date: updatedRdv.date,
-      duration: updatedRdv.duration,
-      adresse: updatedRdv.adresse,
-      organisme: updatedRdv.organisme,
-      presenceConseiller: updatedRdv.presenceConseiller,
-      titre: updatedRdv.titre,
-      comment: updatedRdv.comment,
-    }
     await this.apiClient.put(
       `/rendezvous/${idRdv}`,
       payload,
