@@ -66,7 +66,7 @@ describe('Rendez-vous de la fiche jeune', () => {
     it('permet la prise de rendez-vous', async () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Créer un événement' })
+        screen.getByRole('link', { name: 'Créer un rendez-vous' })
       ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idJeune=jeune-1')
     })
   })

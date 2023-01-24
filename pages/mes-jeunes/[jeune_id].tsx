@@ -12,6 +12,7 @@ import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
+import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -336,7 +337,7 @@ function FicheJeune({
                 aria-hidden='true'
                 className='mr-2 w-4 h-4'
               />
-              Créer un événement
+              Créer un rendez-vous
             </ButtonLink>
           )}
 
@@ -351,7 +352,23 @@ function FicheJeune({
                 aria-hidden='true'
                 className='mr-2 w-4 h-4'
               />
-              Créer une nouvelle action
+              Créer une action
+            </ButtonLink>
+          )}
+
+          {!isPoleEmploi && (
+            <ButtonLink
+              href='/agenda?onglet=etablissement'
+              className='ml-4'
+              style={ButtonStyle.TERTIARY}
+            >
+              <IconComponent
+                name={IconName.Add}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Voir le calendrier de l’établissement
             </ButtonLink>
           )}
         </div>
