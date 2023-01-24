@@ -38,7 +38,7 @@ describe('Indicateurs dans la fiche jeune', () => {
           {
             customDependances: {
               jeunesService: mockedJeunesService({
-                getIndicateursJeune: jest.fn(async () =>
+                getIndicateursJeuneAlleges: jest.fn(async () =>
                   desIndicateursSemaine()
                 ),
               }),

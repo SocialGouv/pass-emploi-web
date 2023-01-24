@@ -602,7 +602,7 @@ async function renderFicheJeune({
         customConseiller: { structure: structure },
         customDependances: {
           jeunesService: mockedJeunesService({
-            getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
+            getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
           }),
           agendaService: mockedAgendaService({
             recupererAgenda: jest.fn(async () => unAgenda()),

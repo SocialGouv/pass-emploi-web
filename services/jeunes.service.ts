@@ -94,7 +94,14 @@ export interface JeunesService {
     idPartenaire: string
   ): Promise<void>
 
-  getIndicateursJeune(
+  getIndicateursJeuneAlleges(
+    idConseiller: string,
+    idJeune: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<IndicateursSemaine>
+
+  getIndicateursJeuneComplets(
     idConseiller: string,
     idJeune: string,
     dateDebut: DateTime,
@@ -317,11 +324,42 @@ export class JeunesApiService implements JeunesService {
     )
   }
 
-  async getIndicateursJeune(
+  async getIndicateursJeuneAlleges(
     idConseiller: string,
     idJeune: string,
     dateDebut: DateTime,
     dateFin: DateTime
+  ): Promise<IndicateursSemaine> {
+    return this.getIndicateursJeune(
+      idConseiller,
+      idJeune,
+      dateDebut,
+      dateFin,
+      true
+    )
+  }
+
+  async getIndicateursJeuneComplets(
+    idConseiller: string,
+    idJeune: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<IndicateursSemaine> {
+    return this.getIndicateursJeune(
+      idConseiller,
+      idJeune,
+      dateDebut,
+      dateFin,
+      false
+    )
+  }
+
+  private async getIndicateursJeune(
+    idConseiller: string,
+    idJeune: string,
+    dateDebut: DateTime,
+    dateFin: DateTime,
+    exclureOffresEtFavoris: boolean
   ): Promise<IndicateursSemaine> {
     const session = await getSession()
     const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
@@ -329,7 +367,7 @@ export class JeunesApiService implements JeunesService {
 
     const { content: indicateurs } =
       await this.apiClient.get<IndicateursSemaineJson>(
-        `/conseillers/${idConseiller}/jeunes/${idJeune}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+        `/conseillers/${idConseiller}/jeunes/${idJeune}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&exclureOffresEtFavoris=${exclureOffresEtFavoris}`,
         session!.accessToken
       )
     return jsonToIndicateursSemaine(indicateurs)

@@ -27,7 +27,7 @@ describe('Historique des conseillers dans la fiche jeune', () => {
           customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
           customDependances: {
             jeunesService: mockedJeunesService({
-              getIndicateursJeune: jest.fn(async () => desIndicateursSemaine()),
+              getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
             }),
             agendaService: mockedAgendaService({
               recupererAgenda: jest.fn(async () => unAgenda()),

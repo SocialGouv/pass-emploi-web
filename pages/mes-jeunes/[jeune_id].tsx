@@ -239,7 +239,12 @@ function FicheJeune({
   useEffect(() => {
     if (conseiller && !isPoleEmploi && !indicateursSemaine) {
       jeunesService
-        .getIndicateursJeune(conseiller.id, jeune.id, debutSemaine, finSemaine)
+        .getIndicateursJeuneAlleges(
+          conseiller.id,
+          jeune.id,
+          debutSemaine,
+          finSemaine
+        )
         .then(setIndicateursSemaine)
     }
   }, [
