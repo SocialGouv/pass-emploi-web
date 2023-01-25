@@ -55,8 +55,8 @@ export default function RechercheOffresEmploiSecondaire({
 
   useEffect(() => {
     let nbCriteres = 0
-    if (query.typesContrats?.length) nbCriteres += query.typesContrats?.length
-    if (query.durees?.length) nbCriteres += query.durees?.length
+    if (query.typesContrats?.length) nbCriteres += query.typesContrats.length
+    if (query.durees?.length) nbCriteres += query.durees.length
     if (query.debutantAccepte) nbCriteres++
     if (query.rayon !== undefined) nbCriteres++
     onCriteresChange(nbCriteres)
