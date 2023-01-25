@@ -294,9 +294,10 @@ describe("Page Qualification d'une action", () => {
     })
 
     describe('validation formulaire', () => {
+      let inputCommentaire: HTMLElement
       beforeEach(async () => {
         // Given
-        const inputCommentaire = screen.getByRole('textbox', {
+        inputCommentaire = screen.getByRole('textbox', {
           name: /Titre et description/,
         })
         const selectSNP = screen.getByRole('combobox', { name: 'Type' })
@@ -310,14 +311,14 @@ describe("Page Qualification d'une action", () => {
         )
         // FIXME userEvent.type ne marche pas bien avec les input date/time
         fireEvent.change(inputDate, { target: { value: '2022-09-05' } })
+      })
 
+      it('envoie la qualification au fuseau horaire du navigateur du client', async () => {
         // When
         await userEvent.click(
           screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
         )
-      })
 
-      it('envoie la qualification au fuseau horaire du navigateur du client', async () => {
         // Then
         expect(actionsService.qualifier).toHaveBeenCalledWith(
           action.id,
@@ -332,11 +333,51 @@ describe("Page Qualification d'une action", () => {
         )
       })
 
-      it("redirige vers le détail de l'action", () => {
+      it("redirige vers le détail de l'action", async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
+        )
+
         // Then
         expect(alerteSetter).toHaveBeenCalledWith('qualificationSNP')
         expect(push).toHaveBeenCalledWith(
           '/mes-jeunes/jeune-1/actions/id-action-1'
+        )
+      })
+
+      it('est désactivée sur le commentaire n’est pas renseigné', async () => {
+        // When
+        await userEvent.clear(inputCommentaire)
+        await userEvent.tab()
+
+        // Then
+        expect(
+          screen.getByText(
+            'Le champ Titre et description n’est pas renseigné. Veuillez renseigner une description.'
+          )
+        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /Créer/ })).toHaveAttribute(
+          'disabled',
+          ''
+        )
+      })
+
+      it('est désactivée sur le commentaire contient plus de 255 caractères', async () => {
+        // When
+        await userEvent.clear(inputCommentaire)
+        await userEvent.type(inputCommentaire, 'a'.repeat(256))
+        await userEvent.tab()
+
+        // Then
+        expect(
+          screen.getByText(
+            'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
+          )
+        ).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /Créer/ })).toHaveAttribute(
+          'disabled',
+          ''
         )
       })
     })
