@@ -207,6 +207,7 @@ function EditionListeDiffusion({
           onChange={setTitre}
         />
         <BeneficiairesMultiselectAutocomplete
+          id={'select-beneficiaires'}
           beneficiaires={buildOptionsBeneficiaires()}
           typeSelection='Bénéficiaires'
           onUpdate={updateIdsBeneficiaires}

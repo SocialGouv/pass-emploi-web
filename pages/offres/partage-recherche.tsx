@@ -220,6 +220,7 @@ function PartageRecherche({
       <form onSubmit={partagerCriteresRecherche} className='mt-8'>
         <Etape numero={1} titre='Destinataires'>
           <BeneficiairesMultiselectAutocomplete
+            id='select-beneficiaires'
             beneficiaires={buildOptionsJeunes()}
             typeSelection='Destinataires'
             onUpdate={updateIdsDestinataires}

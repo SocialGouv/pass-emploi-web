@@ -60,6 +60,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     // When
     render(
       <BeneficiairesMultiselectAutocomplete
+        id='select-beneficiaires'
         beneficiaires={beneficiaires}
         listesDeDiffusion={listes}
         typeSelection='Bénéficiaires'
