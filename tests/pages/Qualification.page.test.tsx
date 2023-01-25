@@ -296,8 +296,14 @@ describe("Page Qualification d'une action", () => {
     describe('validation formulaire', () => {
       beforeEach(async () => {
         // Given
+        const inputCommentaire = screen.getByRole('textbox', {
+          name: /Titre et description/,
+        })
         const selectSNP = screen.getByRole('combobox', { name: 'Type' })
         const inputDate = screen.getByLabelText('* Date de fin')
+
+        await userEvent.clear(inputCommentaire)
+        await userEvent.type(inputCommentaire, 'Nouveau commentaire modifié')
         await userEvent.selectOptions(
           selectSNP,
           situationsNonProfessionnelles[1].code
@@ -316,8 +322,13 @@ describe("Page Qualification d'une action", () => {
         expect(actionsService.qualifier).toHaveBeenCalledWith(
           action.id,
           'SNP_2',
-          DateTime.fromISO('2022-02-15T00:00:00.000+01:00'), // en février, l'offset est +1 (DST)
-          DateTime.fromISO('2022-09-05T00:00:00.000+02:00')
+          {
+            commentaire: 'Nouveau commentaire modifié',
+            dateDebutModifiee: DateTime.fromISO(
+              '2022-02-15T00:00:00.000+01:00' // en février, l'offset est +1 (DST)
+            ),
+            dateFinModifiee: DateTime.fromISO('2022-09-05T00:00:00.000+02:00'),
+          }
         )
       })
 

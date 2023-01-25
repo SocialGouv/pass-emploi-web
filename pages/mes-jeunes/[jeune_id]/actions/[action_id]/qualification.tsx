@@ -72,12 +72,11 @@ function PageQualification({
     setErreurQualification(undefined)
     setIsQualificationEnCours(true)
     try {
-      await actionsService.qualifier(
-        action.id,
-        codeSNP!,
-        DateTime.fromISO(dateDebut).startOf('day'),
-        DateTime.fromISO(dateFin!).startOf('day')
-      )
+      await actionsService.qualifier(action.id, codeSNP!, {
+        commentaire: commentaire.value,
+        dateDebutModifiee: DateTime.fromISO(dateDebut).startOf('day'),
+        dateFinModifiee: DateTime.fromISO(dateFin!).startOf('day'),
+      })
       setAlerte(AlerteParam.qualificationSNP)
       await router.push(returnTo)
     } catch (error) {
