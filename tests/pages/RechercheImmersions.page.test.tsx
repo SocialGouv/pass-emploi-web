@@ -289,7 +289,7 @@ describe('Page Recherche Immersions', () => {
         target: { value: 43 },
       })
       expect(getByTextContent('* Dans un rayon de : 43km')).toBeInTheDocument()
-      expect(screen.getByText('[1] critère sélectionné')).toBeInTheDocument()
+      expect(screen.getByText('[1] filtre sélectionné')).toBeInTheDocument()
 
       // When
       await userEvent.click(screen.getByText('Voir moins de critères'))
@@ -617,7 +617,7 @@ describe('Page Recherche Immersions', () => {
         'DEVELOPPEUR / DEVELOPPEUSE WEB'
       )
       expect(screen.getByLabelText(/Localisation/)).toHaveValue('PARIS 14 (75)')
-      expect(screen.getByText('[1] critère sélectionné')).toBeInTheDocument()
+      expect(screen.getByText('[1] filtre sélectionné')).toBeInTheDocument()
       await userEvent.click(screen.getByText('Voir plus de critères'))
       expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
       const offresList = screen.getByRole('list', {

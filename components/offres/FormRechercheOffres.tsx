@@ -171,7 +171,7 @@ export default function FormRechercheOffres({
         {typeOffre && (
           <>
             <div className='mt-5 mb-4 text-center'>
-              [{countCriteres}] critère{countCriteres > 1 && 's'} sélectionné
+              [{countCriteres}] filtre{countCriteres > 1 && 's'} sélectionné
               {countCriteres > 1 && 's'}
             </div>
 
