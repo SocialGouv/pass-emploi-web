@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { domToReact } from 'html-react-parser'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
@@ -15,6 +14,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { ValueWithError } from 'components/ValueWithError'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
@@ -42,6 +42,9 @@ function PageQualification({
   const actionsService = useDependance<ActionsService>('actionsService')
   const [_, setAlerte] = useAlerte()
 
+  const [commentaire, setCommentaire] = useState<ValueWithError>({
+    value: action.content + ' - ' + action.comment,
+  })
   const [codeSNP, setCodeSNP] = useState<string | undefined>()
   const [dateDebut, setDateDebut] = useState<string>(action.creationDate)
   const [dateFin, setDateFin] = useState<string | undefined>(
@@ -121,8 +124,22 @@ function PageQualification({
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
 
       <Etape numero={1} titre="Résumé de l'action">
-        <p className='text-m-bold'>{action.content}</p>
-        <p className='pt-6 text-base-regular'>{action.comment}</p>
+        <Label
+          htmlFor='commentaire'
+          inputRequired={true}
+          withBulleMessageSensible={true}
+        >
+          {{
+            main: "Titre et description de l'action",
+            helpText: '255 caractères maximum',
+          }}
+        </Label>
+        <Input
+          id='commentaire'
+          type='text'
+          defaultValue={commentaire.value}
+          onChange={(value) => setCommentaire({ value })}
+        />
       </Etape>
 
       <Etape numero={2} titre='Type'>

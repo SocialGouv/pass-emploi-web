@@ -9,13 +9,13 @@ import BeneficiairesMultiselectAutocomplete, {
 import ImmersionCard from 'components/offres/ImmersionCard'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
-import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { ValueWithError } from 'components/ValueWithError'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
@@ -46,7 +46,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
   const [_, setAlerte] = useAlerte()
 
   const [idsDestinataires, setIdsDestinataires] = useState<
-    RequiredValue<string[]>
+    ValueWithError<string[]>
   >({ value: [] })
   const [message, setMessage] = useState<string | undefined>()
   const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)

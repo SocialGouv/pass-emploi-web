@@ -252,8 +252,11 @@ describe("Page Qualification d'une action", () => {
       const etape1 = screen.getByRole('group', {
         name: "Étape 1 Résumé de l'action",
       })
-      expect(within(etape1).getByText(action.content)).toBeInTheDocument()
-      expect(within(etape1).getByText(action.comment)).toBeInTheDocument()
+      expect(
+        within(etape1).getByRole('textbox', {
+          name: /Titre et description de l'action/,
+        })
+      ).toHaveValue(action.content + ' - ' + action.comment)
     })
 
     it('demande un type de situation non professionnelle', () => {
