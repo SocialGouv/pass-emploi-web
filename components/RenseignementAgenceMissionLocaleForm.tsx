@@ -132,7 +132,7 @@ export function RenseignementAgenceMissionLocaleForm({
 
       {agenceNestPasDansLaListe() && container !== FormContainer.PAGE && (
         <div className='mt-2'>
-          <InformationMessage content={CONTACTER_LE_SUPPORT_LABEL} />
+          <InformationMessage label={CONTACTER_LE_SUPPORT_LABEL} />
         </div>
       )}
 

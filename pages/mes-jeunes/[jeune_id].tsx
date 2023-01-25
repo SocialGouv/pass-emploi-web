@@ -290,12 +290,12 @@ function FicheJeune({
       {!jeune.isActivated &&
         conseiller?.structure === StructureConseiller.MILO && (
           <div className='mb-8'>
-            <InformationMessage
-              content={[
-                'Le lien d’activation est valable 12h.',
-                'Si le délai est dépassé, veuillez orienter ce bénéficiaire vers l’option : mot de passe oublié.',
-              ]}
-            />
+            <InformationMessage label='Le lien d’activation est valable 12h.'>
+              <p>
+                Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
+                l’option : mot de passe oublié.
+              </p>
+            </InformationMessage>
           </div>
         )}
 
@@ -303,7 +303,7 @@ function FicheJeune({
         <div className='mb-6'>
           <InformationMessage
             iconName={IconName.Clock}
-            content='Ce bénéficiaire a été ajouté temporairement à votre portefeuille en attendant le retour de son conseiller initial.'
+            label='Ce bénéficiaire a été ajouté temporairement à votre portefeuille en attendant le retour de son conseiller initial.'
           />
         </div>
       )}

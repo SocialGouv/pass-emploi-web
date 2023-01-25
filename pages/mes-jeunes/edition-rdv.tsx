@@ -244,13 +244,13 @@ function EditionRdv({
 
       {evenement && estCreeParSiMILO(evenement) && (
         <div className='mb-6'>
-          <InformationMessage content='Pour modifier cet événement vous devez vous rendre dans le système d’information iMilo, il sera ensuite mis à jour dans la demi-heure' />
+          <InformationMessage label='Pour modifier cet événement vous devez vous rendre dans le système d’information iMilo, il sera ensuite mis à jour dans la demi-heure' />
         </div>
       )}
 
       {aDesJeunesDUnAutrePortefeuille() && (
         <div className='mb-6'>
-          <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
+          <InformationMessage label='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
       )}
 

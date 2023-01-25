@@ -1,4 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { domToReact } from 'html-react-parser'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
@@ -11,6 +12,7 @@ import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, StatutAction } from 'interfaces/action'
@@ -52,6 +54,10 @@ function PageQualification({
     string | undefined
   >()
 
+  const [labelMatomo, setLabelMatomo] = useState<string | undefined>(
+    'Création Situation Non Professionnelle'
+  )
+
   function isFormValid(): boolean {
     return Boolean(codeSNP) && Boolean(dateFin) && Boolean(dateDebut)
   }
@@ -82,7 +88,7 @@ function PageQualification({
     }
   }
 
-  useMatomo('Création Situation Non Professionnelle')
+  useMatomo(labelMatomo)
 
   return (
     <form onSubmit={qualifierAction}>
@@ -94,7 +100,22 @@ function PageQualification({
       )}
 
       <div className='mb-6'>
-        <InformationMessage content='Ces informations seront intégrées sur le dossier i-milo du jeune' />
+        <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du jeune'>
+          <p>
+            Les informations saisies sont partagées avec I-MILO, et doivent en
+            respecter les Conditions Générales d’utilisation. Elles ne doivent
+            comporter aucune donnée personnelle non autorisée par{' '}
+            <strong>l’arrêté du 17 novembre 2021</strong> relatif au traitement
+            automatisé de données à caractère personnel dénommé « I-MILO »
+          </p>
+          <span className='hover:text-primary_darken'>
+            <ExternalLink
+              href='https://doc.pass-emploi.beta.gouv.fr/legal/web_conditions_generales'
+              label='voir le détail des CGU'
+              onClick={() => setLabelMatomo('Lien CGU')}
+            />
+          </span>
+        </InformationMessage>
       </div>
 
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>

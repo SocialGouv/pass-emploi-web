@@ -684,7 +684,7 @@ export function EditionRdvForm({
 
                 {(!evenement || !estClos(evenement)) && (
                   <div className='mb-4'>
-                    <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
+                    <InformationMessage label='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
                   </div>
                 )}
 
@@ -838,7 +838,7 @@ export function EditionRdvForm({
             {evenement && !conseillerIsCreator && (
               <div className='mb-6'>
                 <InformationMessage
-                  content={
+                  label={
                     estCreeParSiMILO(evenement)
                       ? `L'événement a été créé sur i-milo. Vous ne recevrez pas d'invitation dans votre agenda`
                       : `L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`
