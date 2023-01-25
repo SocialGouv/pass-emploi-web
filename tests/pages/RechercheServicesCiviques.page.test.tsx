@@ -50,7 +50,7 @@ describe('Page Recherche Offres', () => {
       }),
     })
 
-    rendered = renderWithContexts(<RechercheOffres />, {
+    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
       customDependances: {
         referentielService,
         servicesCiviquesService,
@@ -625,7 +625,7 @@ describe('Page Recherche Offres', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffres />, {
+      renderWithContexts(<RechercheOffres pageTitle='' />, {
         customDependances: {
           referentielService,
           servicesCiviquesService,
