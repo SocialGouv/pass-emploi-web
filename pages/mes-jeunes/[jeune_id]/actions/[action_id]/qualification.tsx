@@ -8,6 +8,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
+import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -61,8 +62,30 @@ function PageQualification({
     'Création Situation Non Professionnelle'
   )
 
+  function isCommentaireValid(): boolean {
+    return Boolean(commentaire.value) && commentaire.value.length <= 255
+  }
+
+  function validateCommentaire() {
+    let error
+    if (!commentaire.value) {
+      error =
+        'Le champ Titre et description n’est pas renseigné. Veuillez renseigner une description.'
+    }
+    if (commentaire.value.length > 255)
+      error =
+        'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
+
+    setCommentaire({ ...commentaire, error })
+  }
+
   function isFormValid(): boolean {
-    return Boolean(codeSNP) && Boolean(dateFin) && Boolean(dateDebut)
+    return (
+      isCommentaireValid() &&
+      Boolean(codeSNP) &&
+      Boolean(dateFin) &&
+      Boolean(dateDebut)
+    )
   }
 
   async function qualifierAction(e: FormEvent<HTMLFormElement>): Promise<void> {
@@ -133,11 +156,16 @@ function PageQualification({
             helpText: '255 caractères maximum',
           }}
         </Label>
+        {commentaire.error && (
+          <InputError id='commentaire--error'>{commentaire.error}</InputError>
+        )}
         <Input
           id='commentaire'
           type='text'
           defaultValue={commentaire.value}
           onChange={(value) => setCommentaire({ value })}
+          invalid={Boolean(commentaire.error)}
+          onBlur={validateCommentaire}
         />
       </Etape>
 
