@@ -14,6 +14,7 @@ interface SelectAutocompleteProps {
   disabled?: boolean
   onBlur?: () => void
   value?: string
+  ariaDescribedBy?: string
 }
 
 const SelectAutocomplete = forwardRef<
@@ -31,6 +32,7 @@ const SelectAutocomplete = forwardRef<
       required,
       onBlur,
       value,
+      ariaDescribedBy,
     },
     ref
   ) => {
@@ -50,6 +52,7 @@ const SelectAutocomplete = forwardRef<
           disabled={disabled}
           onBlur={onBlur}
           value={value}
+          aria-describedby={invalid ? `${id}--error` : ariaDescribedBy}
         />
         <datalist id={`${id}--options`}>
           {options.map(({ id: optionId, value: optionValue }) => (

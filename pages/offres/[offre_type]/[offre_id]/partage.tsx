@@ -118,6 +118,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
       <form onSubmit={partager} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>
           <BeneficiairesMultiselectAutocomplete
+            id={'select-beneficiaires'}
             beneficiaires={buildOptionsJeunes()}
             typeSelection='Bénéficiaires'
             onUpdate={updateIdsDestinataires}

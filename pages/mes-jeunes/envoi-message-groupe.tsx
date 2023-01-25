@@ -214,6 +214,7 @@ function EnvoiMessageGroupe({
 
         <Etape numero={1} titre='Destinataires'>
           <BeneficiairesMultiselectAutocomplete
+            id={'select-beneficiaires'}
             beneficiaires={buildOptionsJeunes()}
             listesDeDiffusion={listesDiffusion}
             typeSelection='Destinataires'

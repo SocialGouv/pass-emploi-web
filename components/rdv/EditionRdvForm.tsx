@@ -22,6 +22,7 @@ import Select from 'components/ui/Form/Select'
 import { Switch } from 'components/ui/Form/Switch'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -139,6 +140,9 @@ export function EditionRdvForm({
   >({
     value: evenement?.nombreMaxParticipants,
   })
+  const nbMaxParticipantsDepasse =
+    nombreMaxParticipants.value &&
+    idsJeunes.value.length > nombreMaxParticipants.value
 
   const isAgenceNecessaire =
     isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseiller?.agence
@@ -266,7 +270,7 @@ export function EditionRdvForm({
   function updateIdsJeunes({ beneficiaires }: { beneficiaires?: string[] }) {
     setIdsJeunes({
       value: beneficiaires!,
-      error: validateNombreParticipants(beneficiaires!),
+      error: validatePresenceParticipants(beneficiaires!),
     })
     onBeneficiairesDUnAutrePortefeuille(
       beneficiaires!.some((id) => !estUnBeneficiaireDuConseiller(id))
@@ -388,13 +392,6 @@ export function EditionRdvForm({
           "Aucun nombre maximum de participants n'est renseigné. Veuillez renseigner une valeur.",
       })
     }
-
-    if (!nombreParticipantsIsValid(idsJeunes.value)) {
-      setNombreMaxParticipants({
-        ...nombreMaxParticipants,
-        error: 'Le nombre maximum de participants est dépassé.',
-      })
-    }
   }
 
   function nombreParticipantsIsValid(idsBeneficiaires: string[]): boolean {
@@ -410,15 +407,9 @@ export function EditionRdvForm({
     )
   }
 
-  function validateNombreParticipants(
+  function validatePresenceParticipants(
     idsBeneficiaires: string[]
   ): string | undefined {
-    if (
-      nombreMaxParticipants.value &&
-      nombreMaxParticipants.value < idsBeneficiaires.length
-    )
-      return 'Le nombre maximum de participants est dépassé.'
-
     if (
       !isCodeTypeAnimationCollective(codeTypeRendezVous) &&
       !idsBeneficiaires.length
@@ -680,6 +671,13 @@ export function EditionRdvForm({
                         evenement &&
                         (estClos(evenement) || estCreeParSiMILO(evenement))
                       }
+                      aria-describedby={
+                        Boolean(nombreMaxParticipants.error)
+                          ? 'max-participants--error'
+                          : nbMaxParticipantsDepasse
+                          ? 'nombre-participants--error'
+                          : undefined
+                      }
                     />
                   </>
                 )}
@@ -689,10 +687,17 @@ export function EditionRdvForm({
                     <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
                   </div>
                 )}
+
+                {nbMaxParticipantsDepasse && (
+                  <div id='nombre-participants--error'>
+                    <FailureAlert label='Le nombre maximum de participants est dépassé.' />
+                  </div>
+                )}
               </>
             )}
 
             <BeneficiairesMultiselectAutocomplete
+              id='select-beneficiaires'
               beneficiaires={buildOptionsJeunes()}
               typeSelection='Bénéficiaires'
               defaultBeneficiaires={defaultJeunes}
@@ -706,6 +711,13 @@ export function EditionRdvForm({
                 evenement && estClos(evenement)
                   ? BeneficiaireIndicationPresent
                   : BeneficiaireIndicationPortefeuille
+              }
+              aria-describedby={
+                Boolean(nombreMaxParticipants.error)
+                  ? 'select-beneficiaires--error'
+                  : nbMaxParticipantsDepasse
+                  ? 'nombre-participants--error'
+                  : undefined
               }
             />
           </Etape>

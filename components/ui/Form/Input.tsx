@@ -33,7 +33,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         defaultValue={defaultValue || undefined}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
-        aria-describedby={invalid ? `${id}--error` : undefined}
+        aria-describedby={invalid ? id + '--error' : undefined}
         aria-invalid={invalid || undefined}
         className={`text-base-medium ${styles.input} ${
           invalid ? styles.invalid : ''
