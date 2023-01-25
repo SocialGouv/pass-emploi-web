@@ -222,7 +222,7 @@ describe('EvenementsApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: [
           unEvenementJeuneJson({
-            type: { code: 'ATELIER', label: 'Atelier' },
+            type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
             futPresent: true,
           }),
         ],
@@ -255,7 +255,11 @@ describe('EvenementsApiService', () => {
         {
           ...unEvenementJson({
             id: 'ac-passee',
-            type: { code: 'whatever', label: 'Information collective' },
+            type: {
+              code: 'whatever',
+              label: 'Information collective',
+              categorie: 'CEJ_AC',
+            },
             date: dateDebut.toISO(),
           }),
           statut: 'A_VENIR',
@@ -263,7 +267,7 @@ describe('EvenementsApiService', () => {
         {
           ...unEvenementJson({
             id: 'ac-future',
-            type: { code: 'whatever', label: 'Atelier' },
+            type: { code: 'whatever', label: 'Atelier', categorie: 'CEJ_AC' },
             date: dateFin.toISO(),
           }),
           statut: 'CLOTUREE',

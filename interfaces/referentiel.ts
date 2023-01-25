@@ -1,3 +1,6 @@
+import { TypeEvenement } from 'interfaces/evenement'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+
 export type Departement = {
   code: string
   libelle: string
