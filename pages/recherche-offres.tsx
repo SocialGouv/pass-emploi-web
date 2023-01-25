@@ -12,7 +12,6 @@ import {
   BaseOffre,
   BaseOffreEmploi,
   BaseServiceCivique,
-  DetailOffreEmploi,
   MetadonneesOffres,
   TypeOffre,
 } from 'interfaces/offre'
@@ -38,7 +37,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 import { useDependance } from 'utils/injectionDependances'
 
-function RechercheOffres() {
+function RechercheOffres(_: PageProps) {
   const referentielService =
     useDependance<ReferentielService>('referentielService')
   const offresEmploiService = useDependance<OffresEmploiService>(
