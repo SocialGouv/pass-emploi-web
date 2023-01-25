@@ -132,7 +132,7 @@ export default function DeleteJeuneActifModal({
           titleIcon={IconName.Warning}
           onClose={onClose}
         >
-          <InformationMessage content='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
+          <InformationMessage label='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
 
           <form className='mt-8' onSubmit={handleSoumettreSuppression}>
             <fieldset>

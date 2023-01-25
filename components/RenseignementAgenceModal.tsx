@@ -36,14 +36,12 @@ export default function RenseignementAgenceModal({
       onClose={onClose}
     >
       {structureConseiller !== StructureConseiller.MILO && (
-        <InformationMessage
-          content={`La liste des agences a été mise à jour et les accents sont pris en compte.`}
-        />
+        <InformationMessage label='La liste des agences a été mise à jour et les accents sont pris en compte.' />
       )}
 
       <div className='mt-2'>
         <InformationMessage
-          content={`Une fois votre ${labelAgence} renseignée, ce message n'apparaitra plus.`}
+          label={`Une fois votre ${labelAgence} renseignée, ce message n'apparaitra plus.`}
         />
       </div>
 

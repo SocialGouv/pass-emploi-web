@@ -220,7 +220,30 @@ describe("Page Qualification d'une action", () => {
           pageTitle=''
           returnTo='/mes-jeunes/jeune-1/actions/id-action-1'
         />,
-        { customDependances: { actionsService }, customAlerte: { alerteSetter } }
+        {
+          customDependances: { actionsService },
+          customAlerte: { alerteSetter },
+        }
+      )
+    })
+
+    it('affiche un message d’information', async () => {
+      // Then
+      expect(
+        screen.getByText(
+          'Ces informations seront intégrées sur le dossier i-milo du jeune'
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(/respecter les Conditions Générales d’utilisation/)
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: 'voir le détail des CGU (nouvelle fenêtre)',
+        })
+      ).toHaveAttribute(
+        'href',
+        'https://doc.pass-emploi.beta.gouv.fr/legal/web_conditions_generales'
       )
     })
 
