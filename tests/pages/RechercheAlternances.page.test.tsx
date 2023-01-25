@@ -62,7 +62,7 @@ describe('Page Recherche Alternances', () => {
     expect(etape2).toBeInTheDocument()
     expect(
       within(etape2).getByRole('checkbox', {
-        name: 'Recherche avec un numéro d’offre pôle emploi',
+        name: 'Recherche avec un numéro d’offre Pôle emploi',
       })
     ).toBeInTheDocument()
 
@@ -96,7 +96,7 @@ describe('Page Recherche Alternances', () => {
       name: 'Étape 2 Critères de recherche',
     })
     const checkbox = screen.getByRole('checkbox', {
-      name: 'Recherche avec un numéro d’offre pôle emploi',
+      name: 'Recherche avec un numéro d’offre Pôle emploi',
     })
     // When
     await userEvent.click(checkbox)
@@ -384,7 +384,7 @@ describe('Page Recherche Alternances', () => {
     it('permet de faire ue recherche d’offre par Id ', async () => {
       // Given
       const checkbox = screen.getByRole('checkbox', {
-        name: 'Recherche avec un numéro d’offre pôle emploi',
+        name: 'Recherche avec un numéro d’offre Pôle emploi',
       })
       await userEvent.click(checkbox)
       await userEvent.type(screen.getByLabelText(/Numéro d’offre/), 'id-offre')

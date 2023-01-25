@@ -78,7 +78,7 @@ export default function RechercheOffresEmploiPrincipale({
       <div className='mt-2 mb-6'>
         <Checkbox
           id='recherche-par-id-offre'
-          label='Recherche avec un numéro d’offre pôle emploi'
+          label='Recherche avec un numéro d’offre Pôle emploi'
           value='searchByIdOffre'
           checked={isSearchByIdOffre}
           onChange={toggleRechercheParIdOffre}
