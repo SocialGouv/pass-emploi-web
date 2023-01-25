@@ -7,16 +7,26 @@ import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { uneAnimationCollective, unEvenementListItem } from 'fixtures/evenement'
-import { mockedEvenementsService } from 'fixtures/services'
+import { uneListeDAgencesMILO } from 'fixtures/referentiel'
+import {
+  mockedConseillerService,
+  mockedEvenementsService,
+  mockedReferentielService,
+} from 'fixtures/services'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
+import { Agence } from 'interfaces/referentiel'
 import Agenda, { getServerSideProps } from 'pages/agenda'
+import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
+import { ReferentielService } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/Modal')
 
 describe('Agenda', () => {
   describe('client side', () => {
@@ -348,27 +358,119 @@ describe('Agenda', () => {
     })
 
     describe('quand le conseiller n’a pas d’établissement', () => {
-      it('n’affiche pas l’agenda de l’établissement', async () => {
+      let agences: Agence[]
+      let referentielService: ReferentielService
+      let conseillerService: ConseillerService
+
+      beforeEach(async () => {
+        agences = uneListeDAgencesMILO()
+        referentielService = mockedReferentielService({
+          getAgencesClientSide: jest.fn(async () => agences),
+        })
+
+        conseillerService = mockedConseillerService()
+
         // When
         await act(async () => {
           await renderWithContexts(<Agenda pageTitle='' />, {
-            customDependances: { evenementsService: rendezVousService },
+            customDependances: {
+              referentielService,
+              conseillerService,
+            },
+            customConseiller: { structure: StructureConseiller.MILO },
           })
         })
 
+        userEvent.tab()
+      })
+
+      it('n’affiche pas l’agenda de l’établissement', async () => {
         // Then
         expect(() =>
           screen.getByRole('tab', {
             name: 'Agenda établissement',
+            selected: true,
+          })
+        ).toBeTruthy()
+
+        expect(() =>
+          screen.getByRole('table', {
+            name: 'Liste des animations collectives de mon établissement',
             selected: false,
           })
         ).toThrow()
+      })
+
+      it('demande de renseigner son agence', async () => {
+        // Then
+        expect(
+          screen.getByText(/Votre agence n’est pas renseignée/)
+        ).toBeInTheDocument()
+
+        expect(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('permet de renseigner son agence', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        )
+
+        // Then
+        expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
+          StructureConseiller.MILO
+        )
+        expect(
+          screen.getByRole('combobox', { name: /votre Mission locale/ })
+        ).toBeInTheDocument()
+        agences.forEach((agence) =>
+          expect(
+            screen.getByRole('option', { hidden: true, name: agence.nom })
+          ).toBeInTheDocument()
+        )
+      })
+
+      it('sauvegarde l’agence et affiche la liste des animations collectives de l’agence', async () => {
+        // Given
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        )
+        const agence = agences[2]
+        const searchAgence = screen.getByRole('combobox', {
+          name: /votre Mission locale/,
+        })
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+        // When
+        await userEvent.selectOptions(searchAgence, agence.nom)
+        await userEvent.click(submit)
+
+        // Then
+        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          id: agence.id,
+          nom: agence.nom,
+          codeDepartement: '3',
+        })
+        expect(() =>
+          screen.getByText('Votre Mission locale n’est pas renseignée')
+        ).toThrow()
+        expect(
+          screen.getByRole('button', { name: /Créer une animation collective/ })
+        ).toBeInTheDocument()
       })
     })
   })
 
   describe('server side', () => {
-    describe('Pour un conseiller Pole Emploi', () => {
+    describe('Pour un conseiller Pôle Emploi', () => {
       it('renvoie une 404', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({

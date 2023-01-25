@@ -6,6 +6,8 @@ import React, { useState } from 'react'
 
 import { OngletAgendaConseiller } from 'components/rdv/OngletAgendaConseiller'
 import { OngletAgendaEtablissement } from 'components/rdv/OngletAgendaEtablissement'
+import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -13,9 +15,13 @@ import TabList from 'components/ui/Navigation/TabList'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
+import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
+import { ReferentielService } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -32,9 +38,15 @@ interface AgendaProps extends PageProps {
 }
 
 function Agenda({ onglet }: AgendaProps) {
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
   const rendezVousService =
     useDependance<EvenementsService>('evenementsService')
-  const [conseiller] = useConseiller()
+  const referentielService =
+    useDependance<ReferentielService>('referentielService')
+
+  const [conseiller, setConseiller] = useConseiller()
+
   const router = useRouter()
   const [alerte] = useAlerte()
 
@@ -50,6 +62,11 @@ function Agenda({ onglet }: AgendaProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(
     onglet ?? Onglet.CONSEILLER
   )
+
+  const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
+  const [agences, setAgences] = useState<Agence[]>([])
+
+  const isAgenceNecessaire = !conseiller?.agence
 
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationEvenement)
@@ -102,6 +119,31 @@ function Agenda({ onglet }: AgendaProps) {
     )
   }
 
+  async function openAgenceModal() {
+    if (!agences.length) {
+      setAgences(
+        await referentielService.getAgencesClientSide(conseiller!.structure)
+      )
+    }
+    setShowAgenceModal(true)
+    setTrackingTitle(initialTracking + ' - Pop-in sélection agence')
+  }
+
+  async function closeAgenceModal() {
+    setShowAgenceModal(false)
+    setTrackingTitle(initialTracking)
+  }
+
+  async function renseignerAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...conseiller!, agence })
+    setTrackingTitle(initialTracking + ' - Succès ajout agence')
+    setShowAgenceModal(false)
+  }
+
   function trackNavigation(append?: string) {
     const trackingOnglet = trackingLabelOnglet(currentTab)
     setTrackingTitle(trackingOnglet + (append ? ` - ${append}` : ''))
@@ -109,6 +151,15 @@ function Agenda({ onglet }: AgendaProps) {
 
   function trackingLabelOnglet(tab: Onglet): string {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
+  }
+
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Pop-in sélection agence',
+      nom: '',
+    })
   }
 
   useMatomo(trackingTitle)
@@ -123,15 +174,14 @@ function Agenda({ onglet }: AgendaProps) {
           onSelectTab={() => switchTab(Onglet.CONSEILLER)}
           iconName={IconName.Calendar}
         />
-        {conseiller?.agence?.id && (
-          <Tab
-            label='Agenda établissement'
-            selected={currentTab === Onglet.ETABLISSEMENT}
-            controls='agenda-etablissement'
-            onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
-            iconName={IconName.Calendar}
-          />
-        )}
+
+        <Tab
+          label='Agenda établissement'
+          selected={currentTab === Onglet.ETABLISSEMENT}
+          controls='agenda-etablissement'
+          onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
+          iconName={IconName.Calendar}
+        />
       </TabList>
 
       {currentTab === Onglet.CONSEILLER && (
@@ -159,19 +209,65 @@ function Agenda({ onglet }: AgendaProps) {
         </div>
       )}
 
-      {currentTab === Onglet.ETABLISSEMENT && (
+      {!isAgenceNecessaire && currentTab === Onglet.ETABLISSEMENT && (
         <div
           role='tabpanel'
           aria-labelledby='agenda-etablissement--tab'
           tabIndex={0}
           id='agenda-etablissement'
         >
+          <ButtonLink href='/mes-jeunes/edition-rdv' className='mb-10 w-fit'>
+            <IconComponent
+              name={IconName.Add}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Créer une animation collective
+          </ButtonLink>
+
           <OngletAgendaEtablissement
             idEtablissement={conseiller?.agence?.id}
             recupererAnimationsCollectives={recupererRdvsEtablissement}
             trackNavigation={trackNavigation}
           />
         </div>
+      )}
+
+      {isAgenceNecessaire && currentTab === Onglet.ETABLISSEMENT && (
+        <div className='bg-warning_lighten rounded-base p-6'>
+          <p className='flex items-center text-base-bold text-warning mb-2'>
+            <IconComponent
+              focusable={false}
+              aria-hidden={true}
+              className='w-4 h-4 mr-2 fill-warning'
+              name={IconName.Important}
+            />
+            Votre agence n’est pas renseignée
+          </p>
+          <p className='text-base-regular text-warning mb-6'>
+            Pour créer ou voir les animations collectives de votre mission
+            locale vous devez la renseigner dans votre profil.
+          </p>
+          <Button
+            type='button'
+            style={ButtonStyle.PRIMARY}
+            onClick={openAgenceModal}
+            className='mx-auto'
+          >
+            Renseigner votre Mission locale
+          </Button>
+        </div>
+      )}
+
+      {showAgenceModal && agences.length && (
+        <RenseignementAgenceModal
+          structureConseiller={conseiller!.structure}
+          referentielAgences={agences}
+          onAgenceChoisie={renseignerAgence}
+          onContacterSupport={trackContacterSupport}
+          onClose={closeAgenceModal}
+        />
       )}
     </>
   )

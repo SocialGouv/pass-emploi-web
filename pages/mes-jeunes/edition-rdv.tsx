@@ -8,7 +8,6 @@ import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
-import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -31,9 +30,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
-import { ReferentielService } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
-import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -61,15 +58,9 @@ function EditionRdv({
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const evenementsService =
     useDependance<EvenementsService>('evenementsService')
-  const [conseiller, setConseiller] = useConseiller()
-  const referentielService =
-    useDependance<ReferentielService>('referentielService')
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
-  const [_, setAlerte] = useAlerte()
+  const [conseiller] = useConseiller()
 
-  const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
-  const [agences, setAgences] = useState<Agence[]>([])
+  const [_, setAlerte] = useAlerte()
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
@@ -91,6 +82,8 @@ function EditionRdv({
   >(evenement && evenement.historique.slice(0, 2))
   const [showPlusHistorique, setShowPlusHistorique] = useState<boolean>(false)
 
+  const estUneAc = returnTo.includes('etablissement')
+
   let initialTracking: string
   if (evenement) initialTracking = `Modification rdv`
   else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
@@ -100,21 +93,6 @@ function EditionRdv({
     e.preventDefault()
     e.stopPropagation()
     openDeleteRdvModal()
-  }
-
-  async function openAgenceModal() {
-    if (!agences.length) {
-      setAgences(
-        await referentielService.getAgencesClientSide(conseiller!.structure)
-      )
-    }
-    setShowAgenceModal(true)
-    setTrackingTitle(initialTracking + ' - Pop-in sélection agence')
-  }
-
-  async function closeAgenceModal() {
-    setShowAgenceModal(false)
-    setTrackingTitle(initialTracking)
   }
 
   function openLeavePageModal() {
@@ -203,25 +181,6 @@ function EditionRdv({
     return Promise.resolve([])
   }
 
-  async function renseignerAgence(agence: {
-    id?: string
-    nom: string
-  }): Promise<void> {
-    await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence })
-    setTrackingTitle(initialTracking + ' - Succès ajout agence')
-    setShowAgenceModal(false)
-  }
-
-  function trackContacterSupport() {
-    trackEvent({
-      structure: conseiller!.structure,
-      categorie: 'Contact Support',
-      action: 'Pop-in sélection agence',
-      nom: '',
-    })
-  }
-
   function togglePlusHistorique() {
     const newShowPlusHistorique = !showPlusHistorique
     if (newShowPlusHistorique) setHistoriqueModif(evenement!.historique)
@@ -232,6 +191,11 @@ function EditionRdv({
   useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
 
   useMatomo(trackingTitle)
+
+  const typesRdvCej = [...typesRendezVous].filter(
+    (t) => t.categorie === 'CEJ_RDV'
+  )
+  const typesAC = [...typesRendezVous].filter((t) => t.categorie === 'CEJ_AC')
 
   return (
     <>
@@ -367,7 +331,7 @@ function EditionRdv({
       <EditionRdvForm
         jeunesConseiller={jeunes}
         recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
-        typesRendezVous={typesRendezVous}
+        typesRendezVous={estUneAc ? typesAC : typesRdvCej}
         idJeune={idJeune}
         evenement={evenement}
         redirectTo={returnTo}
@@ -382,7 +346,6 @@ function EditionRdv({
         soumettreRendezVous={soumettreRendezVous}
         leaveWithChanges={openLeavePageModal}
         showConfirmationModal={showConfirmationModal}
-        renseignerAgence={openAgenceModal}
       />
 
       {showLeavePageModal && (
@@ -412,16 +375,6 @@ function EditionRdv({
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={supprimerEvenement}
-        />
-      )}
-
-      {showAgenceModal && agences.length && (
-        <RenseignementAgenceModal
-          structureConseiller={conseiller!.structure}
-          referentielAgences={agences}
-          onAgenceChoisie={renseignerAgence}
-          onContacterSupport={trackContacterSupport}
-          onClose={closeAgenceModal}
         />
       )}
     </>
@@ -461,13 +414,22 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     const referer = context.req.headers.referer
     redirectTo = referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   }
+
   const props: EditionRdvProps = {
     jeunes: [...jeunes].sort(compareJeunesByNom),
     typesRendezVous: typesRendezVous,
     withoutChat: true,
     returnTo: redirectTo,
-    pageTitle: 'Mes événements - Créer',
-    pageHeader: 'Créer un nouvel événement',
+    pageTitle: `Mes événements - Créer ${
+      context.req.headers.referer?.endsWith('etablissement')
+        ? 'une animation collective'
+        : 'un rendez-vous'
+    }`,
+    pageHeader: `${
+      context.req.headers.referer?.endsWith('etablissement')
+        ? 'Créer une animation collective'
+        : 'Créer un rendez-vous'
+    }`,
   }
 
   const idRdv = context.query.idRdv as string | undefined
@@ -480,7 +442,11 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     if (!evenement) return { notFound: true }
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
-    props.pageHeader = 'Détail de l’événement'
+    props.pageHeader = `${
+      context.req.headers.referer?.endsWith('etablissement')
+        ? 'Détail de l’animation collective'
+        : 'Détail du rendez-vous'
+    }`
   } else if (idJeune) {
     props.idJeune = idJeune
   }

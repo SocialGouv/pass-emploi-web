@@ -4,15 +4,14 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { typesEvenement, unEvenement } from 'fixtures/evenement'
-import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
-import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import {
-  mockedConseillerService,
-  mockedEvenementsService,
-  mockedJeunesService,
-  mockedReferentielService,
-} from 'fixtures/services'
+  typesAnimationsCollectives,
+  typesEvenement,
+  typesRendezVousCEJ,
+  unEvenement,
+} from 'fixtures/evenement'
+import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
+import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   Evenement,
@@ -20,14 +19,11 @@ import {
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
-import { Agence } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
-import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
-import { ReferentielService } from 'services/referentiel.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -74,7 +70,7 @@ describe('EditionRdv', () => {
         })
 
         jeunes = desItemsJeunes()
-        typesRendezVous = typesEvenement()
+        typesRendezVous = typesRendezVousCEJ()
 
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
@@ -103,15 +99,15 @@ describe('EditionRdv', () => {
           props: {
             jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
-            pageTitle: 'Mes événements - Créer',
-            pageHeader: 'Créer un nouvel événement',
+            pageTitle: 'Mes événements - Créer un rendez-vous',
+            pageHeader: 'Créer un rendez-vous',
             returnTo: '/mes-jeunes',
             typesRendezVous: expect.arrayContaining([]),
           },
         })
       })
 
-      it('récupère le referentiel des types de rendez vous', async () => {
+      it('récupère le référentiel des types de rendez-vous', async () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: {} },
@@ -176,7 +172,7 @@ describe('EditionRdv', () => {
           props: {
             evenement: unEvenement(),
             pageTitle: 'Mes événements - Modifier',
-            pageHeader: 'Détail de l’événement',
+            pageHeader: 'Détail du rendez-vous',
           },
         })
       })
@@ -218,7 +214,7 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand l’utilisateur est Pole Emploi', () => {
+    describe('quand l’utilisateur est Pôle Emploi', () => {
       it('renvoie sur la liste des jeunes', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -296,7 +292,7 @@ describe('EditionRdv', () => {
             jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
-            returnTo='/agenda'
+            returnTo='/agenda?onglet=conseiller'
             pageTitle=''
           />,
           {
@@ -319,13 +315,15 @@ describe('EditionRdv', () => {
       describe('étape 1 type d’événements', () => {
         let etape: HTMLFieldSetElement
         let selectType: HTMLSelectElement
+
         beforeEach(() => {
           etape = screen.getByRole('group', {
-            name: 'Étape 1 Type d’événement',
+            name: 'Étape 1 Type de rendez-vous',
           })
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
           })
+          typesRendezVous = typesRendezVousCEJ()
         })
 
         it('contient une liste pour choisir un type', () => {
@@ -334,17 +332,11 @@ describe('EditionRdv', () => {
           expect(selectType).toHaveAttribute('required', '')
           for (const typeRendezVous of typesRendezVous) {
             expect(
-              within(etape).getByRole('option', { name: typeRendezVous.label })
+              within(etape).getByRole('option', {
+                name: typeRendezVous.label,
+              })
             ).toBeInTheDocument()
           }
-        })
-
-        it('n’affiche pas les autres étapes quand le type n’est pas sélectionné', () => {
-          // Then
-          expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
-          expect(() => screen.getByRole('group', { name: /Étape 3/ })).toThrow()
-          expect(() => screen.getByRole('group', { name: /Étape 4/ })).toThrow()
-          expect(() => screen.getByRole('group', { name: /Étape 5/ })).toThrow()
         })
 
         describe('lorsque le type de rendez-vous est de type ENTRETIEN INDIVIDUEL CONSEILLER', () => {
@@ -684,7 +676,7 @@ describe('EditionRdv', () => {
               'creationEvenement',
               '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
             )
-            expect(push).toHaveBeenCalledWith('/agenda')
+            expect(push).toHaveBeenCalledWith('/agenda?onglet=conseiller')
           })
         })
 
@@ -852,128 +844,16 @@ describe('EditionRdv', () => {
     })
 
     describe('quand on veut créer une animation collective', () => {
-      describe('quand le conseiller n’a pas d’agence', () => {
-        let agences: Agence[]
-        let referentielService: ReferentielService
-        let conseillerService: ConseillerService
-        beforeEach(async () => {
-          // Given
-          agences = uneListeDAgencesMILO()
-          referentielService = mockedReferentielService({
-            getAgencesClientSide: jest.fn(async () => agences),
-          })
-          conseillerService = mockedConseillerService()
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              pageTitle=''
-            />,
-            {
-              customDependances: {
-                evenementsService: evenementsService,
-                referentielService,
-                conseillerService,
-                jeunesService,
-              },
-              customConseiller: { structure: StructureConseiller.MILO },
-            }
-          )
-
-          // When
-          await userEvent.selectOptions(
-            screen.getByRole('combobox', { name: 'Type' }),
-            'Atelier'
-          )
-        })
-
-        it('n’affiche pas la suite du formulaire', () => {
-          // Then
-          expect(() => screen.getByRole('group', { name: /Étape 2/ })).toThrow()
-        })
-
-        it('demande de renseigner son agence', () => {
-          // Given
-          const etape1 = screen.getByRole('group', { name: /Étape 1/ })
-
-          // Then
-          expect(
-            within(etape1).getByText(
-              'Votre Mission locale n’est pas renseignée'
-            )
-          ).toBeInTheDocument()
-          expect(
-            within(etape1).getByRole('button', {
-              name: 'Renseigner votre Mission locale',
-            })
-          ).toBeInTheDocument()
-        })
-
-        it('permet de renseigner son agence', async () => {
-          // When
-          await userEvent.click(
-            screen.getByRole('button', {
-              name: 'Renseigner votre Mission locale',
-            })
-          )
-
-          // Then
-          expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
-            StructureConseiller.MILO
-          )
-          expect(
-            screen.getByRole('combobox', { name: /votre Mission locale/ })
-          ).toBeInTheDocument()
-          agences.forEach((agence) =>
-            expect(
-              screen.getByRole('option', { hidden: true, name: agence.nom })
-            ).toBeInTheDocument()
-          )
-        })
-
-        it('sauvegarde l’agence et affiche la suite du formulaire', async () => {
-          // Given
-          await userEvent.click(
-            screen.getByRole('button', {
-              name: 'Renseigner votre Mission locale',
-            })
-          )
-          const agence = agences[2]
-          const searchAgence = screen.getByRole('combobox', {
-            name: /votre Mission locale/,
-          })
-          const submit = screen.getByRole('button', { name: 'Ajouter' })
-
-          // When
-          await userEvent.selectOptions(searchAgence, agence.nom)
-          await userEvent.click(submit)
-
-          // Then
-          expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
-            id: agence.id,
-            nom: agence.nom,
-            codeDepartement: '3',
-          })
-          expect(() =>
-            screen.getByText('Votre Mission locale n’est pas renseignée')
-          ).toThrow()
-          expect(
-            screen.getByRole('group', { name: /Étape 2/ })
-          ).toBeInTheDocument()
-        })
-      })
-
       describe('quand le conseiller a une agence', () => {
         beforeEach(async () => {
           // Given
+          typesRendezVous = typesAnimationsCollectives()
           renderWithContexts(
             <EditionRdv
               jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
-              returnTo='/agenda'
+              returnTo='/agenda?onglet=etablissement'
               pageTitle=''
             />,
             {
@@ -1568,7 +1448,7 @@ describe('EditionRdv', () => {
           })
 
           buttonValider = screen.getByRole('button', {
-            name: 'Modifier l’événement',
+            name: 'Modifier le rendez-vous',
           })
 
           // Given
@@ -1760,7 +1640,7 @@ describe('EditionRdv', () => {
         }
         const evenement = unEvenement({
           jeunes: [jeuneAbsent, jeunePresent],
-          type: { code: 'ATELIER', label: 'Atelier' },
+          type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
           statut: StatutAnimationCollective.Close,
           nombreMaxParticipants: 10,
         })
@@ -1842,7 +1722,7 @@ describe('EditionRdv', () => {
       beforeEach(async () => {
         const evenement = unEvenement({
           jeunes: [],
-          type: { code: 'ATELIER', label: 'Atelier' },
+          type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
           source: StructureConseiller.MILO,
         })
 
@@ -2012,7 +1892,7 @@ describe('EditionRdv', () => {
             inputDescription,
             'modification de la description'
           )
-          const buttonSubmit = screen.getByText('Modifier l’événement')
+          const buttonSubmit = screen.getByText('Modifier le rendez-vous')
 
           // When
           await userEvent.click(buttonSubmit)
