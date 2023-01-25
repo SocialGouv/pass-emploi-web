@@ -96,8 +96,10 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
       const nouvelleQualification = await actionsService.qualifier(
         action.id,
         CODE_QUALIFICATION_NON_SNP,
-        DateTime.fromISO(action.dateEcheance),
-        DateTime.fromISO(action.dateEcheance)
+        {
+          dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
+          dateFinModifiee: DateTime.fromISO(action.dateEcheance),
+        }
       )
       setQualification(nouvelleQualification)
       setAlerte(AlerteParam.qualificationNonSNP)
