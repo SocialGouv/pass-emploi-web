@@ -72,7 +72,6 @@ export function CommentairesAction({
           ref={inputRef}
           id='commentaire-action'
           onChange={setNouveauCommentaire}
-          rows={3}
         ></Textarea>
         <Button
           className='self-end'

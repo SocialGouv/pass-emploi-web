@@ -11,6 +11,7 @@ import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
+import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -159,9 +160,10 @@ function PageQualification({
         {commentaire.error && (
           <InputError id='commentaire--error'>{commentaire.error}</InputError>
         )}
-        <Input
+        <Textarea
           id='commentaire'
-          type='text'
+          maxLength={255}
+          allowOverMax={true}
           defaultValue={commentaire.value}
           onChange={(value) => setCommentaire({ value })}
           invalid={Boolean(commentaire.error)}

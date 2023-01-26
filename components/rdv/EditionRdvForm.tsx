@@ -614,7 +614,6 @@ export function EditionRdvForm({
             <Textarea
               id='description'
               defaultValue={description.value}
-              rows={3}
               maxLength={250}
               onChange={(value: string) => setDescription({ value })}
               invalid={Boolean(description.error)}
