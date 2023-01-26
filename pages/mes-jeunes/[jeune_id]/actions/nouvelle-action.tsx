@@ -128,7 +128,6 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               defaultValue={commentaire}
               onChange={setDescription}
               maxLength={INPUT_MAX_LENGTH}
-              rows={3}
             />
 
             <Label
@@ -176,7 +175,6 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               defaultValue={commentaire}
               onChange={setDescription}
               maxLength={INPUT_MAX_LENGTH}
-              rows={3}
             />
 
             <Label

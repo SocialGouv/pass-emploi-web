@@ -178,7 +178,6 @@ export default function DeleteJeuneActifModal({
                     required
                     onChange={(value) => setCommentaireMotif({ value })}
                     onBlur={validateCommentaireMotif}
-                    rows={3}
                     invalid={Boolean(commentaireMotif)}
                   />
                 </>
