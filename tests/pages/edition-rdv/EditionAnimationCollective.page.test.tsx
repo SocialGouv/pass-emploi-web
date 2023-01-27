@@ -296,8 +296,11 @@ describe('EditionAnimationCollective', () => {
             pageTitle=''
           />,
           {
-            customDependances: { evenementsService: evenementsService },
-            customConseiller: { email: 'fake@email.com' },
+            customDependances: { evenementsService, jeunesService },
+            customConseiller: {
+              email: 'fake@email.com',
+              agence: { id: 'id-agence', nom: 'Agence Tour' },
+            },
             customAlerte: { alerteSetter },
           }
         )
