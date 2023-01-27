@@ -292,17 +292,17 @@ describe('Page Recherche Alternances', () => {
       await userEvent.click(
         screen.getByLabelText(/Afficher uniquement les offres débutant accepté/)
       )
-      expect(screen.getByText('[1] critère sélectionné')).toBeInTheDocument()
+      expect(screen.getByText('[1] filtre sélectionné')).toBeInTheDocument()
 
       await userEvent.click(screen.getByLabelText('Temps plein'))
-      expect(screen.getByText('[2] critères sélectionnés')).toBeInTheDocument()
+      expect(screen.getByText('[2] filtres sélectionnés')).toBeInTheDocument()
 
       await saisirLocalite('paris 14 (75)')
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
       expect(getByTextContent('Dans un rayon de : 43km')).toBeInTheDocument()
-      expect(screen.getByText('[3] critères sélectionnés')).toBeInTheDocument()
+      expect(screen.getByText('[3] filtres sélectionnés')).toBeInTheDocument()
 
       // When
       await userEvent.click(screen.getByText('Voir moins de critères'))
@@ -696,7 +696,7 @@ describe('Page Recherche Alternances', () => {
       expect(screen.getByLabelText(/Lieu de travail/)).toHaveValue(
         'PARIS 14 (75)'
       )
-      expect(screen.getByText('[3] critères sélectionnés')).toBeInTheDocument()
+      expect(screen.getByText('[3] filtres sélectionnés')).toBeInTheDocument()
       await userEvent.click(screen.getByText('Voir plus de critères'))
       expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
       expect(screen.getByLabelText('Temps plein')).toBeChecked()
