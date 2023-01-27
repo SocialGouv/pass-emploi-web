@@ -136,9 +136,16 @@ function PageQualification({
           </p>
           <span className='hover:text-primary_darken'>
             <ExternalLink
-              href='https://doc.pass-emploi.beta.gouv.fr/legal/web_conditions_generales'
+              href='https://c-milo.i-milo.fr/jcms/t482_1002488/fr/mentions-legales'
               label='voir le détail des CGU'
               onClick={() => setLabelMatomo('Lien CGU')}
+            />
+          </span>
+          <span className='hover:text-primary_darken'>
+            <ExternalLink
+              href='https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361'
+              label='voir le détail de l’arrêté du 17 novembre 2021'
+              onClick={() => setLabelMatomo('Lien Arrêté 17 novembre 2021')}
             />
           </span>
         </InformationMessage>

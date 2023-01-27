@@ -243,8 +243,13 @@ describe("Page Qualification d'une action", () => {
         })
       ).toHaveAttribute(
         'href',
-        'https://doc.pass-emploi.beta.gouv.fr/legal/web_conditions_generales'
+        'https://c-milo.i-milo.fr/jcms/t482_1002488/fr/mentions-legales'
       )
+      expect(
+        screen.getByRole('link', {
+          name: 'voir le détail de l’arrêté du 17 novembre 2021 (nouvelle fenêtre)',
+        })
+      ).toHaveAttribute('href', 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361')
     })
 
     it("affiche le résumé de l'action", () => {
