@@ -84,8 +84,16 @@ function EditionRdv({
   const estUneAc = returnTo.includes('etablissement')
 
   let initialTracking: string
-  if (evenement) initialTracking = `Modification rdv`
-  else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
+  if (evenement)
+    initialTracking = `Modification ${
+      isCodeTypeAnimationCollective(evenement.type.code)
+        ? 'animation collective'
+        : 'rdv'
+    }`
+  else
+    initialTracking = `Création ${estUneAc ? 'animation collective' : 'rdv'} ${
+      idJeune ? ' jeune' : ''
+    }`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
@@ -133,9 +141,7 @@ function EditionRdv({
     return fromEvenement || formHasBeneficiaireAutrePortefeuille
   }
 
-  async function soumettreRendezVous(
-    payload: EvenementFormData
-  ): Promise<void> {
+  async function soumettreEvenement(payload: EvenementFormData): Promise<void> {
     setConfirmBeforeLeaving(false)
     if (!evenement) {
       await creerNouvelEvenement(payload)
@@ -342,7 +348,7 @@ function EditionRdv({
         }
         conseiller={conseiller}
         onChanges={setHasChanges}
-        soumettreRendezVous={soumettreRendezVous}
+        soumettreRendezVous={soumettreEvenement}
         leaveWithChanges={openLeavePageModal}
         showConfirmationModal={showConfirmationModal}
       />
@@ -363,9 +369,7 @@ function EditionRdv({
       {payloadForConfirmationModal && (
         <ConfirmationUpdateRdvModal
           onCancel={closeConfirmationModal}
-          onConfirmation={() =>
-            soumettreRendezVous(payloadForConfirmationModal)
-          }
+          onConfirmation={() => soumettreEvenement(payloadForConfirmationModal)}
         />
       )}
 
@@ -420,12 +424,10 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     withoutChat: true,
     returnTo: redirectTo,
     pageTitle: `Mes événements - Créer ${
-      context.req.headers.referer?.endsWith('etablissement')
-        ? 'une animation collective'
-        : 'un rendez-vous'
+      context.query.type ? 'une animation collective' : 'un rendez-vous'
     }`,
     pageHeader: `${
-      context.req.headers.referer?.endsWith('etablissement')
+      context.query.type
         ? 'Créer une animation collective'
         : 'Créer un rendez-vous'
     }`,
@@ -442,8 +444,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
     props.pageHeader = `${
-      context.req.headers.referer?.endsWith('etablissement') ||
-      isCodeTypeAnimationCollective(evenement.type.code)
+      context.query.type || isCodeTypeAnimationCollective(evenement.type.code)
         ? 'Détail de l’animation collective'
         : 'Détail du rendez-vous'
     }`

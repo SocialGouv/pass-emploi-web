@@ -4,11 +4,7 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import {
-  typesEvenement,
-  typesRendezVousCEJ,
-  unEvenement,
-} from 'fixtures/evenement'
+import { typesEvenement, typesRdvCEJ, unEvenement } from 'fixtures/evenement'
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -65,7 +61,7 @@ describe('EditionRdv', () => {
         })
 
         jeunes = desItemsJeunes()
-        typesRendezVous = typesRendezVousCEJ()
+        typesRendezVous = typesRdvCEJ()
 
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
@@ -318,7 +314,7 @@ describe('EditionRdv', () => {
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
           })
-          typesRendezVous = typesRendezVousCEJ()
+          typesRendezVous = typesRdvCEJ()
         })
 
         it('contient une liste pour choisir un type', () => {

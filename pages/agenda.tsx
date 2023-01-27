@@ -216,7 +216,10 @@ function Agenda({ onglet }: AgendaProps) {
           tabIndex={0}
           id='agenda-etablissement'
         >
-          <ButtonLink href='/mes-jeunes/edition-rdv' className='mb-10 w-fit'>
+          <ButtonLink
+            href='/mes-jeunes/edition-rdv?type=ac'
+            className='mb-10 w-fit'
+          >
             <IconComponent
               name={IconName.Add}
               focusable={false}

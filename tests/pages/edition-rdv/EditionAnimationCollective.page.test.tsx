@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import {
-  typesAnimationsCollectives,
-  typesRendezVousCEJ,
+  typesRdvAnimationsCollectives,
+  typesRdvCEJ,
   uneAnimationCollective,
   unEvenement,
 } from 'fixtures/evenement'
@@ -70,7 +70,7 @@ describe('EditionAnimationCollective', () => {
         })
 
         jeunes = desItemsJeunes()
-        typesRendezVous = typesAnimationsCollectives()
+        typesRendezVous = typesRdvAnimationsCollectives()
 
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
@@ -88,8 +88,8 @@ describe('EditionAnimationCollective', () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: { referer: '/agenda?onglet=etablissement' } },
-          query: {},
-        } as GetServerSidePropsContext)
+          query: { type: 'ac' },
+        } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(
@@ -160,7 +160,7 @@ describe('EditionAnimationCollective', () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: { referer: '/agenda?onglet=etablissement' } },
-          query: { idRdv: 'id-rdv' },
+          query: { idRdv: 'id-rdv', type: 'ac' },
         } as unknown as GetServerSidePropsContext)
 
         // Then
@@ -277,7 +277,7 @@ describe('EditionAnimationCollective', () => {
       jeunesService = mockedJeunesService({
         getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
       })
-      typesRendezVous = typesAnimationsCollectives()
+      typesRendezVous = typesRdvAnimationsCollectives()
 
       alerteSetter = jest.fn()
       push = jest.fn(() => Promise.resolve())
@@ -324,7 +324,7 @@ describe('EditionAnimationCollective', () => {
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
           })
-          typesRendezVous = typesAnimationsCollectives()
+          typesRendezVous = typesRdvAnimationsCollectives()
 
           // Then
           expect(selectType).toBeInTheDocument()
@@ -522,7 +522,7 @@ describe('EditionAnimationCollective', () => {
       describe('quand le conseiller a une agence', () => {
         beforeEach(async () => {
           // Given
-          typesRendezVous = typesAnimationsCollectives()
+          typesRendezVous = typesRdvAnimationsCollectives()
           renderWithContexts(
             <EditionRdv
               jeunes={jeunesConseiller}

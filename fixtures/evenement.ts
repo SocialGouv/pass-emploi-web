@@ -58,7 +58,7 @@ export const typesEvenement = (
   ]
 }
 
-export const typesAnimationsCollectives = (
+export const typesRdvAnimationsCollectives = (
   overrides: TypeEvenement[] = []
 ): TypeEvenement[] => {
   return [
@@ -77,7 +77,7 @@ export const typesAnimationsCollectives = (
   ]
 }
 
-export const typesRendezVousCEJ = (
+export const typesRdvCEJ = (
   overrides: TypeEvenement[] = []
 ): TypeEvenement[] => {
   return [
