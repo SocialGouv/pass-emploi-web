@@ -247,6 +247,15 @@ describe('Agenda', () => {
           )
         })
 
+        it('a un lien pour créer une animation collective', () => {
+          // Then
+          expect(
+            screen.getByRole('link', {
+              name: 'Créer une animation collective',
+            })
+          ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?type=ac')
+        })
+
         it('récupère les événements sur une période de 7 jours à partir de la date du jour', async () => {
           // Then
           expect(
@@ -381,7 +390,11 @@ describe('Agenda', () => {
           })
         })
 
-        await userEvent.tab()
+        await act(() =>
+          userEvent.click(
+            screen.getByRole('tab', { name: 'Agenda établissement' })
+          )
+        )
       })
 
       it('n’affiche pas l’agenda de l’établissement', async () => {
@@ -462,9 +475,6 @@ describe('Agenda', () => {
         expect(() =>
           screen.getByText('Votre Mission locale n’est pas renseignée')
         ).toThrow()
-        expect(
-          screen.getByRole('button', { name: /Créer une animation collective/ })
-        ).toBeInTheDocument()
       })
     })
   })
