@@ -1,7 +1,6 @@
 import React, { FormEvent, useState } from 'react'
 
 import Modal from 'components/Modal'
-import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -9,6 +8,7 @@ import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
 import { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { ValueWithError } from 'components/ValueWithError'
 import { BaseJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
@@ -34,7 +34,7 @@ export default function DeleteJeuneActifModal({
   const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<
     string | undefined
   >(undefined)
-  const [commentaireMotif, setCommentaireMotif] = useState<RequiredValue>({
+  const [commentaireMotif, setCommentaireMotif] = useState<ValueWithError>({
     value: '',
   })
 
@@ -132,7 +132,7 @@ export default function DeleteJeuneActifModal({
           titleIcon={IconName.Warning}
           onClose={onClose}
         >
-          <InformationMessage content='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
+          <InformationMessage label='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
 
           <form className='mt-8' onSubmit={handleSoumettreSuppression}>
             <fieldset>
@@ -178,7 +178,6 @@ export default function DeleteJeuneActifModal({
                     required
                     onChange={(value) => setCommentaireMotif({ value })}
                     onBlur={validateCommentaireMotif}
-                    rows={3}
                     invalid={Boolean(commentaireMotif)}
                   />
                 </>

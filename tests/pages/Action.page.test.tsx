@@ -204,8 +204,14 @@ describe("Page Détail d'une action d'un jeune", () => {
             expect(actionsService.qualifier).toHaveBeenCalledWith(
               actionAQualifier.id,
               CODE_QUALIFICATION_NON_SNP,
-              DateTime.fromISO(actionAQualifier.dateEcheance),
-              DateTime.fromISO(actionAQualifier.dateEcheance)
+              {
+                dateDebutModifiee: DateTime.fromISO(
+                  actionAQualifier.dateEcheance
+                ),
+                dateFinModifiee: DateTime.fromISO(
+                  actionAQualifier.dateEcheance
+                ),
+              }
             )
           })
 

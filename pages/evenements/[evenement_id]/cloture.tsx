@@ -74,7 +74,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
         collective en cochant dans la liste le nom des bénéficiaires
       </p>
       <div className='mt-6'>
-        <InformationMessage content='La liste suivante se base sur les participants inscrits. Veuillez vous assurer de son exactitude.' />
+        <InformationMessage label='La liste suivante se base sur les participants inscrits. Veuillez vous assurer de son exactitude.' />
       </div>
 
       <form onSubmit={cloreAnimationCollective} className='mt-6'>

@@ -8,13 +8,13 @@ import { BeneficiaireIndicationReaffectaction } from 'components/jeune/Beneficia
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
-import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import { ValueWithError } from 'components/ValueWithError'
 import {
   BaseJeune,
   compareJeunesByNom,
@@ -53,7 +53,7 @@ function EditionListeDiffusion({
 
   const defaultBeneficiaires = getDefaultBeneficiaires()
   const [idsBeneficiaires, setIdsBeneficiaires] = useState<
-    RequiredValue<string[]>
+    ValueWithError<string[]>
   >({ value: defaultBeneficiaires.map(({ id }) => id) })
   const [titre, setTitre] = useState<string | undefined>(liste?.titre)
 

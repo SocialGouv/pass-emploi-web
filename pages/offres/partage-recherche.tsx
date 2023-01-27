@@ -7,11 +7,11 @@ import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import SuggestionCard from 'components/offres/suggestions/SuggestionCard'
-import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { ValueWithError } from 'components/ValueWithError'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
@@ -72,7 +72,7 @@ function PartageRecherche({
   const [_, setAlerte] = useAlerte()
 
   const [idsDestinataires, setIdsDestinataires] = useState<
-    RequiredValue<string[]>
+    ValueWithError<string[]>
   >({ value: [] })
   const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)
 

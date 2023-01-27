@@ -17,7 +17,6 @@
 }
 
 .invalid {
-  margin-bottom: 1rem;
   color: theme('colors.warning');
   border-color: theme('colors.warning');
 }

@@ -80,8 +80,11 @@ export interface ActionsService {
   qualifier(
     idAction: string,
     type: string,
-    dateDebutModifiee?: DateTime,
-    dateFinModifiee?: DateTime
+    options?: {
+      dateDebutModifiee?: DateTime
+      dateFinModifiee?: DateTime
+      commentaire?: string
+    }
   ): Promise<QualificationAction>
 
   getSituationsNonProfessionnelles(
@@ -231,8 +234,11 @@ export class ActionsApiService implements ActionsService {
   async qualifier(
     idAction: string,
     type: string,
-    dateDebutModifiee?: DateTime,
-    dateFinModifiee?: DateTime
+    options?: {
+      dateDebutModifiee?: DateTime
+      dateFinModifiee?: DateTime
+      commentaire?: string
+    }
   ): Promise<QualificationAction> {
     const session = await getSession()
 
@@ -240,11 +246,15 @@ export class ActionsApiService implements ActionsService {
       codeQualification: string
       dateDebut?: string
       dateFinReelle?: string
-    } = {
-      codeQualification: type,
-    }
-    if (dateDebutModifiee) payload.dateDebut = dateDebutModifiee.toISO()
-    if (dateFinModifiee) payload.dateFinReelle = dateFinModifiee.toISO()
+      commentaireQualification?: string
+    } = { codeQualification: type }
+
+    if (options?.dateDebutModifiee)
+      payload.dateDebut = options.dateDebutModifiee.toISO()
+    if (options?.dateFinModifiee)
+      payload.dateFinReelle = options.dateFinModifiee.toISO()
+    if (options?.commentaire)
+      payload.commentaireQualification = options.commentaire
 
     const { content } = await this.apiClient.post<QualificationActionJson>(
       `/actions/${idAction}/qualifier`,

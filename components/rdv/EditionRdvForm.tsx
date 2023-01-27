@@ -8,10 +8,6 @@ import {
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
-import {
-  RequiredValue,
-  RequiredValue as ValueWithError,
-} from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -24,6 +20,7 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { ValueWithError } from 'components/ValueWithError'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   estClos,
@@ -80,7 +77,7 @@ export function EditionRdvForm({
   const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
     []
   )
-  const [idsJeunes, setIdsJeunes] = useState<RequiredValue<string[]>>({
+  const [idsJeunes, setIdsJeunes] = useState<ValueWithError<string[]>>({
     value: defaultJeunes.map(({ id }) => id),
   })
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<
@@ -88,7 +85,7 @@ export function EditionRdvForm({
   >(evenement?.type.code)
 
   const [precisionType, setPrecisionType] = useState<
-    RequiredValue<string | undefined>
+    ValueWithError<string | undefined>
   >({
     value: evenement?.precisionType,
   })
@@ -101,17 +98,17 @@ export function EditionRdvForm({
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
   const dateRdv = evenement && DateTime.fromISO(evenement.date)
   const localDate = dateRdv && toFrenchFormat(dateRdv, DATE_DASH_SEPARATOR)
-  const [date, setDate] = useState<RequiredValue<string | undefined>>({
+  const [date, setDate] = useState<ValueWithError<string | undefined>>({
     value: localDate,
   })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
   const localTime = dateRdv && toFrenchString(dateRdv, DateTime.TIME_24_SIMPLE)
-  const [horaire, setHoraire] = useState<RequiredValue<string | undefined>>({
+  const [horaire, setHoraire] = useState<ValueWithError<string | undefined>>({
     value: localTime,
   })
   const regexDuree = /^\d{2}:\d{2}$/
   const dureeRdv = dureeFromMinutes(evenement?.duree)
-  const [duree, setDuree] = useState<RequiredValue<string | undefined>>({
+  const [duree, setDuree] = useState<ValueWithError<string | undefined>>({
     value: dureeRdv,
   })
   const [adresse, setAdresse] = useState<string | undefined>(evenement?.adresse)
@@ -124,7 +121,7 @@ export function EditionRdvForm({
   const [sendEmailInvitation, setSendEmailInvitation] = useState<boolean>(
     Boolean(evenement?.invitation)
   )
-  const [titre, setTitre] = useState<RequiredValue<string | undefined>>({
+  const [titre, setTitre] = useState<ValueWithError<string | undefined>>({
     value: evenement?.titre,
   })
   const [description, setDescription] = useState<
@@ -617,7 +614,6 @@ export function EditionRdvForm({
             <Textarea
               id='description'
               defaultValue={description.value}
-              rows={3}
               maxLength={250}
               onChange={(value: string) => setDescription({ value })}
               invalid={Boolean(description.error)}
@@ -684,7 +680,7 @@ export function EditionRdvForm({
 
                 {(!evenement || !estClos(evenement)) && (
                   <div className='mb-4'>
-                    <InformationMessage content='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
+                    <InformationMessage label='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
                   </div>
                 )}
 
@@ -838,7 +834,7 @@ export function EditionRdvForm({
             {evenement && !conseillerIsCreator && (
               <div className='mb-6'>
                 <InformationMessage
-                  content={
+                  label={
                     estCreeParSiMILO(evenement)
                       ? `L'événement a été créé sur i-milo. Vous ne recevrez pas d'invitation dans votre agenda`
                       : `L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`

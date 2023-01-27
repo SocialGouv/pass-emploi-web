@@ -7,7 +7,7 @@ export default {
   title: 'Components/Notifications/InformationMessage',
   component: InformationMessage,
   argTypes: {
-    content: {
+    label: {
       control: { type: 'text' },
       description: 'Le message d’information',
     },
@@ -25,6 +25,6 @@ const Template: ComponentStory<typeof InformationMessage> = (args) => (
 
 export const Default_with_children = Template.bind({})
 Default_with_children.args = {
-  content: 'Un message',
+  label: 'Un message',
   children: 'Je suis une description d’un message d’information',
 }

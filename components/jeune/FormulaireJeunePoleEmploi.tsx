@@ -1,10 +1,10 @@
 import { FormEvent, useEffect, useState } from 'react'
 
-import { RequiredValue } from 'components/RequiredValue'
 import Button from 'components/ui/Button/Button'
 import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
+import { ValueWithError } from 'components/ValueWithError'
 import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import isEmailValid from 'utils/isEmailValid'
 
@@ -19,13 +19,13 @@ function FormulaireJeunePoleEmploi({
   creationError,
   creationEnCours,
 }: FormulaireJeunePoleEmploiProps) {
-  const [prenom, setPrenom] = useState<RequiredValue>({
+  const [prenom, setPrenom] = useState<ValueWithError>({
     value: '',
   })
-  const [nom, setNom] = useState<RequiredValue>({
+  const [nom, setNom] = useState<ValueWithError>({
     value: '',
   })
-  const [email, setEmail] = useState<RequiredValue>({
+  const [email, setEmail] = useState<ValueWithError>({
     value: '',
   })
   const [error, setError] = useState<string>(creationError)

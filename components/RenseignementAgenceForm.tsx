@@ -1,11 +1,11 @@
 import React, { FormEvent, useRef, useState } from 'react'
 
-import { RequiredValue } from 'components/RequiredValue'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import { ValueWithError } from 'components/ValueWithError'
 import { Agence } from 'interfaces/referentiel'
 
 interface RenseignementAgenceFormProps {
@@ -20,9 +20,9 @@ export default function RenseignementAgenceForm({
   onClose,
 }: RenseignementAgenceFormProps) {
   const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
-    useState<RequiredValue>({ value: '' })
+    useState<ValueWithError>({ value: '' })
   const [showAgenceLibre, setShowAgenceLibre] = useState<boolean>(false)
-  const [agenceLibre, setAgenceLibre] = useState<RequiredValue>({ value: '' })
+  const [agenceLibre, setAgenceLibre] = useState<ValueWithError>({ value: '' })
   const searchAgenceRef = useRef<HTMLInputElement>(null)
   const agenceLibreRef = useRef<HTMLInputElement>(null)
 
