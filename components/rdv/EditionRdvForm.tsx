@@ -495,7 +495,11 @@ export function EditionRdvForm({
 
       <Etape
         numero={1}
-        titre={`Type ${estUneAc ? 'd’animation collective' : 'de rendez-vous'}`}
+        titre={`Type ${
+          estUneAc || isCodeTypeAnimationCollective(codeTypeRendezVous)
+            ? 'd’animation collective'
+            : 'de rendez-vous'
+        }`}
       >
         <Label htmlFor='typeEvenement' inputRequired={true}>
           Type
@@ -541,10 +545,7 @@ export function EditionRdvForm({
       </Etape>
 
       <Etape numero={2} titre='Description'>
-        <Label
-          htmlFor='titre'
-          inputRequired={isCodeTypeAnimationCollective(codeTypeRendezVous)}
-        >
+        <Label htmlFor='titre' inputRequired={estUneAc}>
           Titre
         </Label>
         {titre.error && (
@@ -579,7 +580,6 @@ export function EditionRdvForm({
         <Textarea
           id='description'
           defaultValue={description.value}
-
           maxLength={250}
           onChange={(value: string) => setDescription({ value })}
           invalid={Boolean(description.error)}
@@ -591,94 +591,89 @@ export function EditionRdvForm({
       </Etape>
 
       <Etape numero={3} titre='Ajout de bénéficiaires'>
-        {isCodeTypeAnimationCollective(codeTypeRendezVous) &&(
+        {isCodeTypeAnimationCollective(codeTypeRendezVous) && (
           <>
-                <div className='flex items-center mb-8'>
-                  <label htmlFor='toggle-max-participants' className='mr-4'>
-                    Définir un nombre maximum de participants
-                  </label>
-                  <Switch
-                    id='toggle-max-participants'
-                    checked={showNombreMaxParticipants}
-                    onChange={() =>
-                      setShowNombreMaxParticipants(!showNombreMaxParticipants)
-                    }
-                    disabled={
-                      evenement &&
-                      (estClos(evenement) || estCreeParSiMILO(evenement))
-                    }
-                  />
-                </div>
-
-                {showNombreMaxParticipants && (
-                  <>
-                    <Label htmlFor='max-participants' inputRequired={true}>
-                      Nombre maximum de participants
-                    </Label>
-                    {nombreMaxParticipants.error && (
-                      <InputError id='max-participants--error' className='mb-2'>
-                        {nombreMaxParticipants.error}
-                      </InputError>
-                    )}
-                    <Input
-                      id='max-participants'
-                      type='number'
-                      defaultValue={nombreMaxParticipants.value}
-                      onChange={updateNbMaxParticipants}
-                      onBlur={validateNombreMaxParticipants}
-                      required={true}
-                      min={1}
-                      invalid={Boolean(nombreMaxParticipants.error)}
-                      disabled={
-                        evenement &&
-                        (estClos(evenement) || estCreeParSiMILO(evenement))
-                      }
-                      aria-describedby={
-                        Boolean(nombreMaxParticipants.error)
-                          ? 'max-participants--error'
-                          : nbMaxParticipantsDepasse
-                          ? 'nombre-participants--error'
-                          : undefined
-                      }
-                    />
-                  </>
-                )}
-
-                {(!evenement || !estClos(evenement)) && (
-            <div className='mb-4'>
-              <InformationMessage label='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
+            <div className='flex items-center mb-8'>
+              <label htmlFor='toggle-max-participants' className='mr-4'>
+                Définir un nombre maximum de participants
+              </label>
+              <Switch
+                id='toggle-max-participants'
+                checked={showNombreMaxParticipants}
+                onChange={() =>
+                  setShowNombreMaxParticipants(!showNombreMaxParticipants)
+                }
+                disabled={
+                  evenement &&
+                  (estClos(evenement) || estCreeParSiMILO(evenement))
+                }
+              />
             </div>
-          )}
 
-        {nbMaxParticipantsDepasse && (
-                  <div id='nombre-participants--error'>
-                    <FailureAlert label='Le nombre maximum de participants est dépassé.' />
-                  </div>
+            {showNombreMaxParticipants && (
+              <>
+                <Label htmlFor='max-participants' inputRequired={true}>
+                  Nombre maximum de participants
+                </Label>
+                {nombreMaxParticipants.error && (
+                  <InputError id='max-participants--error' className='mb-2'>
+                    {nombreMaxParticipants.error}
+                  </InputError>
                 )}
+                <Input
+                  id='max-participants'
+                  type='number'
+                  defaultValue={nombreMaxParticipants.value}
+                  onChange={updateNbMaxParticipants}
+                  onBlur={validateNombreMaxParticipants}
+                  required={true}
+                  min={1}
+                  invalid={Boolean(nombreMaxParticipants.error)}
+                  disabled={
+                    evenement &&
+                    (estClos(evenement) || estCreeParSiMILO(evenement))
+                  }
+                  aria-describedby={
+                    Boolean(nombreMaxParticipants.error)
+                      ? 'max-participants--error'
+                      : nbMaxParticipantsDepasse
+                      ? 'nombre-participants--error'
+                      : undefined
+                  }
+                />
               </>
             )}
 
-            <BeneficiairesMultiselectAutocomplete
-              id='select-beneficiaires'
+            {nbMaxParticipantsDepasse && (
+              <div id='nombre-participants--error'>
+                <FailureAlert label='Le nombre maximum de participants est dépassé.' />
+              </div>
+            )}
+          </>
+        )}
+
+        <BeneficiairesMultiselectAutocomplete
+          id='select-beneficiaires'
           beneficiaires={buildOptionsJeunes()}
           typeSelection='Bénéficiaires'
           defaultBeneficiaires={defaultJeunes}
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
-          required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
+          required={!estUneAc}
           disabled={
             evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
           }
           renderIndication={
             evenement && estClos(evenement)
               ? BeneficiaireIndicationPresent
-              : BeneficiaireIndicationPortefeuille}
-              aria-describedby={
-                Boolean(nombreMaxParticipants.error)
-                  ? 'select-beneficiaires--error'
-                  : nbMaxParticipantsDepasse
-                  ? 'nombre-participants--error'
-                  : undefined
+              : BeneficiaireIndicationPortefeuille
+          }
+          aria-describedby={
+            Boolean(nombreMaxParticipants.error)
+              ? 'select-beneficiaires--error'
+              : nbMaxParticipantsDepasse
+              ? 'nombre-participants--error'
+              : undefined
           }
         />
       </Etape>
@@ -873,7 +868,7 @@ export function EditionRdvForm({
               type='submit'
               disabled={!formHasChanges() || !formIsValid()}
             >
-              {estUneAc
+              {estUneAc || isCodeTypeAnimationCollective(codeTypeRendezVous)
                 ? 'Modifier l’animation collective'
                 : 'Modifier le rendez-vous'}
             </Button>
@@ -889,7 +884,9 @@ export function EditionRdvForm({
                 aria-hidden={true}
                 className='mr-2 w-4 h-4'
               />
-              Créer l’événement
+              {estUneAc
+                ? 'Créer l’animation collective'
+                : 'Créer le rendez-vous'}
             </Button>
           )}
         </div>

@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import {
-  typesAnimationsCollectives,
   typesEvenement,
   typesRendezVousCEJ,
   unEvenement,
@@ -13,11 +12,7 @@ import {
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  Evenement,
-  StatutAnimationCollective,
-  TypeEvenement,
-} from 'interfaces/evenement'
+import { Evenement, TypeEvenement } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -312,7 +307,7 @@ describe('EditionRdv', () => {
         })
       })
 
-      describe('étape 1 type d’événements', () => {
+      describe('étape 1 type de rendez-vous', () => {
         let etape: HTMLFieldSetElement
         let selectType: HTMLSelectElement
 
@@ -598,7 +593,7 @@ describe('EditionRdv', () => {
           })
 
           buttonValider = screen.getByRole('button', {
-            name: 'Créer l’événement',
+            name: 'Créer le rendez-vous',
           })
 
           // Given
@@ -843,349 +838,6 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on veut créer une animation collective', () => {
-      describe('quand le conseiller a une agence', () => {
-        beforeEach(async () => {
-          // Given
-          typesRendezVous = typesAnimationsCollectives()
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda?onglet=etablissement'
-              pageTitle=''
-            />,
-            {
-              customDependances: {
-                evenementsService,
-                jeunesService,
-              },
-              customConseiller: {
-                agence: {
-                  nom: 'Mission locale Aubenas',
-                  id: 'id-etablissement',
-                },
-              },
-            }
-          )
-
-          const selectType = screen.getByRole('combobox', {
-            name: 'Type',
-          })
-          await userEvent.selectOptions(selectType, 'Atelier')
-        })
-
-        it('récupère les bénéficiaires de l’établissement', async () => {
-          // Then
-          expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledWith(
-            'id-etablissement'
-          )
-          jeunesEtablissement.forEach((jeune) =>
-            expect(
-              screen.getByRole('option', {
-                name: getNomJeuneComplet(jeune),
-                hidden: true,
-              })
-            ).toBeInTheDocument()
-          )
-        })
-
-        it('le titre est obligatoire', async () => {
-          // Given
-          const inputTitre = screen.getByRole('textbox', { name: 'Titre' })
-
-          // When
-          expect(inputTitre).toHaveAttribute('required', '')
-          await userEvent.click(inputTitre)
-          await userEvent.tab()
-
-          // Then
-          expect(
-            screen.getByText(
-              'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.'
-            )
-          ).toBeInTheDocument()
-        })
-
-        it('les bénéficiaires sont facultatifs', async () => {
-          // Given
-          const inputDate = screen.getByLabelText(
-            '* Date (format : jj/mm/aaaa)'
-          )
-          const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
-          const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
-          const inputTitre = screen.getByLabelText('* Titre')
-          await userEvent.type(inputDate, '2022-03-03')
-          await userEvent.type(inputHoraire, '10:30')
-          await userEvent.type(inputDuree, '02:37')
-          await userEvent.type(inputTitre, 'Titre de l’événement')
-
-          // When
-          const buttonValider = screen.getByRole('button', {
-            name: 'Créer l’événement',
-          })
-          await userEvent.click(buttonValider)
-
-          // Then
-          const selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
-          })
-          expect(selectJeunes).toHaveAttribute('aria-required', 'false')
-          expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
-            expect.objectContaining({
-              jeunesIds: [],
-            })
-          )
-          expect(
-            screen.getByText(
-              'Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif'
-            )
-          ).toBeInTheDocument()
-        })
-
-        it('permet de renseigner un nombre maximum de participants', async () => {
-          // When
-          await userEvent.click(
-            screen.getByRole('checkbox', {
-              name: 'Définir un nombre maximum de participants',
-            })
-          )
-
-          // Then
-          const maxParticipantsInput = screen.getByRole('spinbutton', {
-            name: 'Nombre maximum de participants',
-          })
-          expect(maxParticipantsInput).toHaveAttribute('required', '')
-          expect(maxParticipantsInput).toHaveAttribute('type', 'number')
-          expect(maxParticipantsInput).toHaveAttribute('min', '1')
-        })
-
-        it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
-          // Given
-          await userEvent.type(
-            screen.getByLabelText(/ajouter des destinataires/),
-            getNomJeuneComplet(jeunesAutreConseiller[0])
-          )
-
-          // Then
-          expect(
-            screen.getByText(/des bénéficiaires que vous ne suivez pas/)
-          ).toBeInTheDocument()
-          expect(
-            screen.getByLabelText(
-              'Ce bénéficiaire n’est pas dans votre portefeuille'
-            )
-          ).toBeInTheDocument()
-        })
-
-        describe('formulaire rempli avec nombre maximum de participants', () => {
-          let inputNbParticipants: HTMLInputElement
-          let buttonValider: HTMLButtonElement
-          beforeEach(async () => {
-            // Given
-            await userEvent.type(
-              screen.getByRole('combobox', {
-                name: /ajouter des destinataires/,
-              }),
-              getNomJeuneComplet(jeunesConseiller[0])
-            )
-            await userEvent.type(
-              screen.getByLabelText('* Date (format : jj/mm/aaaa)'),
-              '2022-03-03'
-            )
-            await userEvent.type(
-              screen.getByLabelText('* Heure (format : hh:mm)'),
-              '10:30'
-            )
-            await userEvent.type(
-              screen.getByLabelText('* Durée (format : hh:mm)'),
-              '02:37'
-            )
-            await userEvent.type(
-              screen.getByRole('textbox', { name: 'Titre' }),
-              'Titre de l’événement'
-            )
-            await userEvent.click(
-              screen.getByRole('checkbox', {
-                name: /maximum de participants/,
-              })
-            )
-
-            inputNbParticipants = screen.getByRole('spinbutton', {
-              name: /maximum de participants/,
-            })
-            await userEvent.type(inputNbParticipants, '10')
-
-            buttonValider = screen.getByRole('button', {
-              name: 'Créer l’événement',
-            })
-          })
-
-          it('est désactivé quand le nombre maximum de participants n’est pas renseigné', async () => {
-            // Given
-            await userEvent.clear(inputNbParticipants)
-            await userEvent.tab()
-
-            // Then
-            expect(buttonValider).toHaveAttribute('disabled', '')
-            expect(
-              screen.getByText(
-                "Aucun nombre maximum de participants n'est renseigné. Veuillez renseigner une valeur."
-              )
-            ).toBeInTheDocument()
-          })
-
-          it('est désactivé quand on ajoute trop de participants', async () => {
-            // Given
-            await userEvent.clear(inputNbParticipants)
-            await userEvent.type(inputNbParticipants, '1')
-            await userEvent.type(
-              screen.getByRole('combobox', {
-                name: /ajouter des destinataires/,
-              }),
-              getNomJeuneComplet(jeunesConseiller[2])
-            )
-
-            // Then
-            expect(buttonValider).toHaveAttribute('disabled', '')
-            expect(
-              screen.getByText('Le nombre maximum de participants est dépassé.')
-            ).toBeInTheDocument()
-          })
-
-          it('est désactivé quand on diminue trop le nombre maximum de participants', async () => {
-            // Given
-            await userEvent.type(
-              screen.getByRole('combobox', {
-                name: /ajouter des destinataires/,
-              }),
-              getNomJeuneComplet(jeunesConseiller[2])
-            )
-            await userEvent.clear(inputNbParticipants)
-            await userEvent.type(inputNbParticipants, '1')
-            await userEvent.tab()
-
-            // Then
-            expect(buttonValider).toHaveAttribute('disabled', '')
-            expect(
-              screen.getByText('Le nombre maximum de participants est dépassé.')
-            ).toBeInTheDocument()
-          })
-
-          it('crée une animation collective avec un nombre maximum de participants', async () => {
-            // When
-            await userEvent.click(buttonValider)
-
-            // Then
-            expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
-              nombreMaxParticipants: 10,
-              jeunesIds: [jeunesConseiller[0].id],
-              titre: 'Titre de l’événement',
-              type: 'ATELIER',
-              date: '2022-03-03T10:30:00.000+01:00',
-              duration: 157,
-              presenceConseiller: true,
-              invitation: false,
-              modality: undefined,
-              adresse: undefined,
-              organisme: undefined,
-              comment: undefined,
-              precision: undefined,
-            })
-          })
-        })
-      })
-    })
-
-    describe('Cloture', () => {
-      describe("quand il n'y a pas de statut", () => {
-        it("n'affiche pas le lien Clore", async () => {
-          // Given
-          const evenement = unEvenement()
-          delete evenement.statut
-
-          // When
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            { customDependances: { evenementsService } }
-          )
-
-          // Then
-          const cloreButton = screen.queryByRole('link', {
-            name: 'Clore',
-          })
-          expect(cloreButton).not.toBeInTheDocument()
-        })
-      })
-
-      describe('quand l’animation collection est à venir', () => {
-        it("n'affiche pas le lien Clore", async () => {
-          // Given
-          const evenement = unEvenement({
-            statut: StatutAnimationCollective.AVenir,
-          })
-
-          // When
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            { customDependances: { evenementsService } }
-          )
-
-          // Then
-          const cloreButton = screen.queryByRole('link', {
-            name: 'Clore',
-          })
-          expect(cloreButton).not.toBeInTheDocument()
-        })
-      })
-
-      describe('quand l’animation est passée et non close', () => {
-        it('affiche un lien pour la clore', async () => {
-          // Given
-          const evenement = unEvenement({
-            statut: StatutAnimationCollective.AClore,
-          })
-
-          // When
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='https://localhost:3000/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            { customDependances: { evenementsService } }
-          )
-
-          // Then
-          const cloreButton = screen.getByRole('link', {
-            name: 'Clore',
-          })
-          expect(cloreButton).toHaveAttribute(
-            'href',
-            `/evenements/${evenement.id}/cloture?redirectUrl=https%3A%2F%2Flocalhost%3A3000%2Fagenda%3Fonglet%3Detablissement`
-          )
-        })
-      })
-    })
-
     describe('événements issus d’i-MILO', () => {
       beforeEach(() => {
         // Given
@@ -1261,7 +913,7 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on souhaite modifier un événement existant', () => {
+    describe('quand on souhaite modifier un rendez-vous existant', () => {
       let evenement: Evenement
       beforeEach(() => {
         // Given
@@ -1581,143 +1233,6 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on souhaite modifier une animation collective', () => {
-      it('initialise le nombre maximum de participants', async () => {
-        // Given
-        const evenement = unEvenement({
-          type: { code: 'ATELIER', label: 'Atelier' },
-          nombreMaxParticipants: 10,
-        })
-
-        // When
-        await act(async () =>
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            {
-              customDependances: { jeunesService },
-              customConseiller: {
-                agence: {
-                  nom: 'Mission locale Aubenas',
-                  id: 'id-etablissement',
-                },
-              },
-            }
-          )
-        )
-
-        // Then
-        expect(
-          screen.getByLabelText<HTMLSelectElement>(
-            /Nombre maximum de participants/
-          ).value
-        ).toEqual('10')
-      })
-    })
-
-    describe('quand on consulte une animation collective close', () => {
-      let jeuneAbsent: BaseJeune & { futPresent: boolean }
-      let jeunePresent: BaseJeune & { futPresent: boolean }
-
-      beforeEach(async () => {
-        jeuneAbsent = {
-          id: jeunesConseiller[0].id,
-          prenom: jeunesConseiller[0].prenom,
-          nom: jeunesConseiller[0].nom,
-          futPresent: false,
-        }
-        jeunePresent = {
-          id: jeunesConseiller[1].id,
-          prenom: jeunesConseiller[1].prenom,
-          nom: jeunesConseiller[1].nom,
-          futPresent: true,
-        }
-        const evenement = unEvenement({
-          jeunes: [jeuneAbsent, jeunePresent],
-          type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
-          statut: StatutAnimationCollective.Close,
-          nombreMaxParticipants: 10,
-        })
-
-        await act(async () => {
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            {
-              customDependances: { evenementsService, jeunesService },
-              customConseiller: {
-                agence: {
-                  nom: 'Mission locale Aubenas',
-                  id: 'id-etablissement',
-                },
-              },
-            }
-          )
-        })
-      })
-
-      it('empêche toute modification', () => {
-        // Then
-        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Description/)).toBeDisabled()
-        expect(screen.getByLabelText('Modalité')).toBeDisabled()
-        expect(screen.getByLabelText(/Date/)).toBeDisabled()
-        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
-        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
-        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
-        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
-        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
-        expect(
-          screen.getByLabelText(/Définir un nombre maximum/)
-        ).toBeDisabled()
-        expect(screen.getByLabelText(/Nombre maximum/)).toBeDisabled()
-        expect(
-          screen.getByLabelText(/ajouter des destinataires/)
-        ).toBeDisabled()
-        expect(
-          screen.queryByText(/bénéficiaires est facultatif/)
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Enlever jeune/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Supprimer/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Annuler/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Modifier/ })
-        ).not.toBeInTheDocument()
-      })
-
-      it('indique les bénéficiaires qui étaient présents', () => {
-        // Then
-        expect(
-          within(
-            screen.getByText(getNomJeuneComplet(jeunePresent))
-          ).getByLabelText(/Ce bénéficiaire était présent à l’événement/)
-        ).toBeInTheDocument()
-        expect(
-          within(
-            screen.getByText(getNomJeuneComplet(jeuneAbsent))
-          ).queryByLabelText(/Ce bénéficiaire était présent à l’événement/)
-        ).not.toBeInTheDocument()
-      })
-    })
-
     describe('quand on consulte un événement provenant d’i-MILO', () => {
       beforeEach(async () => {
         const evenement = unEvenement({
@@ -1763,9 +1278,6 @@ describe('EditionRdv', () => {
         expect(
           screen.getByLabelText(/ajouter des destinataires/)
         ).toBeDisabled()
-        expect(
-          screen.queryByText(/bénéficiaires est facultatif/)
-        ).toBeInTheDocument()
         expect(
           screen.queryByRole('button', { name: /Enlever jeune/ })
         ).not.toBeInTheDocument()

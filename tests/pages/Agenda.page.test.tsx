@@ -381,7 +381,7 @@ describe('Agenda', () => {
           })
         })
 
-        userEvent.tab()
+        await userEvent.tab()
       })
 
       it('n’affiche pas l’agenda de l’établissement', async () => {

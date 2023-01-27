@@ -19,15 +19,14 @@ import {
   estClos,
   estCreeParSiMILO,
   Evenement,
+  isCodeTypeAnimationCollective,
   Modification,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -443,7 +442,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
     props.pageHeader = `${
-      context.req.headers.referer?.endsWith('etablissement')
+      context.req.headers.referer?.endsWith('etablissement') ||
+      isCodeTypeAnimationCollective(evenement.type.code)
         ? 'Détail de l’animation collective'
         : 'Détail du rendez-vous'
     }`
