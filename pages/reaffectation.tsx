@@ -26,6 +26,7 @@ import isEmailValid from 'utils/isEmailValid'
 
 type ReaffectationProps = PageProps
 
+
 function Reaffectation(_: ReaffectationProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
