@@ -73,10 +73,8 @@ describe('Fiche Jeune', () => {
     })
 
     describe('pour les conseillers MILO', () => {
-      it('affiche un lien pour accéder aux calendrier de l’établissement', async () => {
-        // Given
-        let setIdJeune = jest.fn()
-
+      it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
+        // When
         await act(async () => {
           await renderWithContexts(
             <FicheJeune
@@ -89,7 +87,7 @@ describe('Fiche Jeune', () => {
               customConseiller: { structure: StructureConseiller.MILO },
               customDependances: {
                 jeunesService: mockedJeunesService({
-                  getIndicateursJeune: jest.fn(async () =>
+                  getIndicateursJeuneAlleges: jest.fn(async () =>
                     desIndicateursSemaine()
                   ),
                 }),
@@ -97,7 +95,6 @@ describe('Fiche Jeune', () => {
                   recupererAgenda: jest.fn(async () => unAgenda()),
                 }),
               },
-              customCurrentJeune: { idSetter: setIdJeune },
             }
           )
         })
