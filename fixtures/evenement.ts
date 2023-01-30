@@ -96,7 +96,6 @@ export const typesRdvCEJ = (
       label: 'Entretien par un partenaire',
       categorie: 'CEJ_RDV',
     },
-
     {
       code: 'VISITE',
       label: 'Visite',
@@ -295,4 +294,8 @@ export function unEvenementJeuneJson(
   }
 
   return { ...defaults, ...overrides }
+}
+
+export function isTypeAnimationCollective(type: TypeEvenement): boolean {
+  return type.categorie === 'CEJ_AC'
 }

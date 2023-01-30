@@ -475,6 +475,9 @@ describe('Agenda', () => {
         expect(() =>
           screen.getByText('Votre Mission locale n’est pas renseignée')
         ).toThrow()
+        expect(
+          screen.getByText('Créer une animation collective')
+        ).toBeInTheDocument()
       })
     })
   })

@@ -72,7 +72,7 @@ describe('Fiche Jeune', () => {
       })
     })
 
-    describe('pour les conseillers MILO', () => {
+    describe('pour les conseillers non Pôle Emploi', () => {
       it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
         // When
         await act(async () => {

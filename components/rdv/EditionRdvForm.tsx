@@ -54,6 +54,7 @@ interface EditionRdvFormProps {
   showConfirmationModal: (payload: EvenementFormData) => void
   recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
   onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
+  evenementTypeAC?: boolean
 }
 
 export function EditionRdvForm({
@@ -70,6 +71,7 @@ export function EditionRdvForm({
   evenement,
   idJeune,
   showConfirmationModal,
+  evenementTypeAC,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
   const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
@@ -138,8 +140,6 @@ export function EditionRdvForm({
   const nbMaxParticipantsDepasse =
     nombreMaxParticipants.value &&
     idsJeunes.value.length > nombreMaxParticipants.value
-
-  const estUneAc = redirectTo.includes('etablissement')
 
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
@@ -462,6 +462,10 @@ export function EditionRdvForm({
     }
   }
 
+  function estUneAc(codeType?: string) {
+    return evenementTypeAC || isCodeTypeAnimationCollective(codeType)
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
@@ -496,7 +500,7 @@ export function EditionRdvForm({
       <Etape
         numero={1}
         titre={`Type ${
-          estUneAc || isCodeTypeAnimationCollective(codeTypeRendezVous)
+          estUneAc(codeTypeRendezVous)
             ? 'd’animation collective'
             : 'de rendez-vous'
         }`}
@@ -545,7 +549,7 @@ export function EditionRdvForm({
       </Etape>
 
       <Etape numero={2} titre='Description'>
-        <Label htmlFor='titre' inputRequired={estUneAc}>
+        <Label htmlFor='titre' inputRequired={estUneAc(codeTypeRendezVous)}>
           Titre
         </Label>
         {titre.error && (
@@ -557,7 +561,7 @@ export function EditionRdvForm({
           id='titre'
           type='text'
           defaultValue={titre.value}
-          required={isCodeTypeAnimationCollective(codeTypeRendezVous)}
+          required={estUneAc(codeTypeRendezVous)}
           invalid={Boolean(titre.error)}
           onChange={(value: string) => setTitre({ value })}
           onBlur={validateTitre}
@@ -591,7 +595,7 @@ export function EditionRdvForm({
       </Etape>
 
       <Etape numero={3} titre='Ajout de bénéficiaires'>
-        {isCodeTypeAnimationCollective(codeTypeRendezVous) && (
+        {estUneAc(codeTypeRendezVous) && (
           <>
             <div className='flex items-center mb-8'>
               <label htmlFor='toggle-max-participants' className='mr-4'>
@@ -659,7 +663,7 @@ export function EditionRdvForm({
           defaultBeneficiaires={defaultJeunes}
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
-          required={!estUneAc}
+          required={!estUneAc(codeTypeRendezVous)}
           disabled={
             evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
           }
@@ -868,7 +872,7 @@ export function EditionRdvForm({
               type='submit'
               disabled={!formHasChanges() || !formIsValid()}
             >
-              {estUneAc || isCodeTypeAnimationCollective(codeTypeRendezVous)
+              {estUneAc(codeTypeRendezVous)
                 ? 'Modifier l’animation collective'
                 : 'Modifier le rendez-vous'}
             </Button>
@@ -884,7 +888,7 @@ export function EditionRdvForm({
                 aria-hidden={true}
                 className='mr-2 w-4 h-4'
               />
-              {estUneAc
+              {estUneAc(codeTypeRendezVous)
                 ? 'Créer l’animation collective'
                 : 'Créer le rendez-vous'}
             </Button>

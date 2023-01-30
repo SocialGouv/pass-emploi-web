@@ -13,6 +13,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { isTypeAnimationCollective } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   estAClore,
@@ -44,6 +45,7 @@ interface EditionRdvProps extends PageProps {
   returnTo: string
   idJeune?: string
   evenement?: Evenement
+  evenementTypeAC?: boolean
 }
 
 function EditionRdv({
@@ -52,6 +54,7 @@ function EditionRdv({
   idJeune,
   returnTo,
   evenement,
+  evenementTypeAC,
 }: EditionRdvProps) {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -81,8 +84,6 @@ function EditionRdv({
   >(evenement && evenement.historique.slice(0, 2))
   const [showPlusHistorique, setShowPlusHistorique] = useState<boolean>(false)
 
-  const estUneAc = returnTo.includes('etablissement')
-
   let initialTracking: string
   if (evenement)
     initialTracking = `Modification ${
@@ -91,9 +92,9 @@ function EditionRdv({
         : 'rdv'
     }`
   else
-    initialTracking = `Création ${estUneAc ? 'animation collective' : 'rdv'} ${
-      idJeune ? ' jeune' : ''
-    }`
+    initialTracking = `Création ${
+      evenementTypeAC ? 'animation collective' : 'rdv'
+    } ${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
@@ -128,7 +129,9 @@ function EditionRdv({
     setShowDeleteRdvModal(true)
     setTrackingTitle(
       initialTracking +
-        ` - Modale suppression ${estUneAc ? 'animation collective' : 'rdv'}`
+        ` - Modale suppression ${
+          evenementTypeAC ? 'animation collective' : 'rdv'
+        }`
     )
   }
 
@@ -199,11 +202,6 @@ function EditionRdv({
   useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
 
   useMatomo(trackingTitle)
-
-  const typesRdvCej = [...typesRendezVous].filter(
-    (t) => t.categorie === 'CEJ_RDV'
-  )
-  const typesAC = [...typesRendezVous].filter((t) => t.categorie === 'CEJ_AC')
 
   return (
     <>
@@ -339,7 +337,7 @@ function EditionRdv({
       <EditionRdvForm
         jeunesConseiller={jeunes}
         recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
-        typesRendezVous={estUneAc ? typesAC : typesRdvCej}
+        typesRendezVous={typesRendezVous}
         idJeune={idJeune}
         evenement={evenement}
         redirectTo={returnTo}
@@ -354,6 +352,7 @@ function EditionRdv({
         soumettreRendezVous={soumettreEvenement}
         leaveWithChanges={openLeavePageModal}
         showConfirmationModal={showConfirmationModal}
+        evenementTypeAC={evenementTypeAC}
       />
 
       {showLeavePageModal && (
@@ -415,6 +414,15 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     accessToken
   )
 
+  const estUneAC = context.query.type === 'ac'
+
+  const typesRdvCEJ = [...typesRendezVous].filter(
+    (t) => !isTypeAnimationCollective(t)
+  )
+  const typesRdvAC = [...typesRendezVous].filter((t) =>
+    isTypeAnimationCollective(t)
+  )
+
   let redirectTo = context.query.redirectUrl as string
   if (!redirectTo) {
     const referer = context.req.headers.referer
@@ -423,17 +431,16 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
   const props: EditionRdvProps = {
     jeunes: [...jeunes].sort(compareJeunesByNom),
-    typesRendezVous: typesRendezVous,
+    typesRendezVous: estUneAC ? typesRdvAC : typesRdvCEJ,
     withoutChat: true,
     returnTo: redirectTo,
     pageTitle: `Mes événements - Créer ${
-      context.query.type ? 'une animation collective' : 'un rendez-vous'
+      estUneAC ? 'une animation collective' : 'un rendez-vous'
     }`,
     pageHeader: `${
-      context.query.type
-        ? 'Créer une animation collective'
-        : 'Créer un rendez-vous'
+      estUneAC ? 'Créer une animation collective' : 'Créer un rendez-vous'
     }`,
+    evenementTypeAC: estUneAC,
   }
 
   const idRdv = context.query.idRdv as string | undefined
@@ -447,7 +454,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
     props.pageHeader = `${
-      context.query.type || isCodeTypeAnimationCollective(evenement.type.code)
+      estUneAC || isCodeTypeAnimationCollective(evenement.type.code)
         ? 'Détail de l’animation collective'
         : 'Détail du rendez-vous'
     }`
