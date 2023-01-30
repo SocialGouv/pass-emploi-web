@@ -126,7 +126,10 @@ function EditionRdv({
 
   function openDeleteRdvModal() {
     setShowDeleteRdvModal(true)
-    setTrackingTitle(initialTracking + ' - Modale suppression rdv')
+    setTrackingTitle(
+      initialTracking +
+        ` - Modale suppression ${estUneAc ? 'animation collective' : 'rdv'}`
+    )
   }
 
   function closeDeleteRdvModal() {
