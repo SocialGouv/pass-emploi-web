@@ -61,7 +61,7 @@ describe('EditionRdv', () => {
         })
 
         jeunes = desItemsJeunes()
-        typesRendezVous = typesRdvCEJ()
+        typesRendezVous = typesEvenement()
 
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
@@ -94,6 +94,7 @@ describe('EditionRdv', () => {
             pageHeader: 'Créer un rendez-vous',
             returnTo: '/mes-jeunes',
             typesRendezVous: expect.arrayContaining([]),
+            evenementTypeAC: false,
           },
         })
       })
@@ -109,7 +110,9 @@ describe('EditionRdv', () => {
         expect(evenementsService.getTypesRendezVous).toHaveBeenCalledWith(
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { typesRendezVous } })
+        expect(actual).toMatchObject({
+          props: { typesRendezVous: typesRdvCEJ() },
+        })
       })
 
       it("récupère la page d'origine", async () => {

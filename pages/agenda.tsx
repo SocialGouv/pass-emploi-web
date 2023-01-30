@@ -209,57 +209,61 @@ function Agenda({ onglet }: AgendaProps) {
         </div>
       )}
 
-      {!isAgenceNecessaire && currentTab === Onglet.ETABLISSEMENT && (
+      {currentTab === Onglet.ETABLISSEMENT && (
         <div
           role='tabpanel'
           aria-labelledby='agenda-etablissement--tab'
           tabIndex={0}
           id='agenda-etablissement'
         >
-          <ButtonLink
-            href='/mes-jeunes/edition-rdv?type=ac'
-            className='mb-10 w-fit'
-          >
-            <IconComponent
-              name={IconName.Add}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
-            />
-            Créer une animation collective
-          </ButtonLink>
+          {!isAgenceNecessaire && (
+            <>
+              <ButtonLink
+                href='/mes-jeunes/edition-rdv?type=ac'
+                className='mb-10 w-fit'
+              >
+                <IconComponent
+                  name={IconName.Add}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+                Créer une animation collective
+              </ButtonLink>
 
-          <OngletAgendaEtablissement
-            idEtablissement={conseiller?.agence?.id}
-            recupererAnimationsCollectives={recupererRdvsEtablissement}
-            trackNavigation={trackNavigation}
-          />
-        </div>
-      )}
+              <OngletAgendaEtablissement
+                idEtablissement={conseiller?.agence?.id}
+                recupererAnimationsCollectives={recupererRdvsEtablissement}
+                trackNavigation={trackNavigation}
+              />
+            </>
+          )}
 
-      {isAgenceNecessaire && currentTab === Onglet.ETABLISSEMENT && (
-        <div className='bg-warning_lighten rounded-base p-6'>
-          <p className='flex items-center text-base-bold text-warning mb-2'>
-            <IconComponent
-              focusable={false}
-              aria-hidden={true}
-              className='w-4 h-4 mr-2 fill-warning'
-              name={IconName.Important}
-            />
-            Votre agence n’est pas renseignée
-          </p>
-          <p className='text-base-regular text-warning mb-6'>
-            Pour créer ou voir les animations collectives de votre mission
-            locale vous devez la renseigner dans votre profil.
-          </p>
-          <Button
-            type='button'
-            style={ButtonStyle.PRIMARY}
-            onClick={openAgenceModal}
-            className='mx-auto'
-          >
-            Renseigner votre Mission locale
-          </Button>
+          {isAgenceNecessaire && (
+            <div className='bg-warning_lighten rounded-base p-6'>
+              <p className='flex items-center text-base-bold text-warning mb-2'>
+                <IconComponent
+                  focusable={false}
+                  aria-hidden={true}
+                  className='w-4 h-4 mr-2 fill-warning'
+                  name={IconName.Important}
+                />
+                Votre agence n’est pas renseignée
+              </p>
+              <p className='text-base-regular text-warning mb-6'>
+                Pour créer ou voir les animations collectives de votre mission
+                locale vous devez la renseigner dans votre profil.
+              </p>
+              <Button
+                type='button'
+                style={ButtonStyle.PRIMARY}
+                onClick={openAgenceModal}
+                className='mx-auto'
+              >
+                Renseigner votre Mission locale
+              </Button>
+            </div>
+          )}
         </div>
       )}
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import {
+  typesEvenement,
   typesRdvAnimationsCollectives,
   typesRdvCEJ,
   uneAnimationCollective,
@@ -70,7 +71,7 @@ describe('EditionAnimationCollective', () => {
         })
 
         jeunes = desItemsJeunes()
-        typesRendezVous = typesRdvAnimationsCollectives()
+        typesRendezVous = typesEvenement()
 
         jeunesService = mockedJeunesService({
           getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
@@ -103,6 +104,7 @@ describe('EditionAnimationCollective', () => {
             pageHeader: 'Créer une animation collective',
             returnTo: '/agenda?onglet=etablissement',
             typesRendezVous: expect.arrayContaining([]),
+            evenementTypeAC: true,
           },
         })
       })
@@ -111,14 +113,16 @@ describe('EditionAnimationCollective', () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: { referer: '/agenda?onglet=etablissement' } },
-          query: {},
-        } as GetServerSidePropsContext)
+          query: { type: 'ac' },
+        } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(evenementsService.getTypesRendezVous).toHaveBeenCalledWith(
           'accessToken'
         )
-        expect(actual).toMatchObject({ props: { typesRendezVous } })
+        expect(actual).toMatchObject({
+          props: { typesRendezVous: typesRdvAnimationsCollectives() },
+        })
       })
 
       it("récupère la page d'origine", async () => {
@@ -284,9 +288,10 @@ describe('EditionAnimationCollective', () => {
       ;(useRouter as jest.Mock).mockReturnValue({ push })
     })
 
-    describe('contenu', () => {
-      beforeEach(() => {
-        // When
+    describe('quand on veut créer une animation collective', () => {
+      beforeEach(async () => {
+        // Given
+        typesRendezVous = typesRdvAnimationsCollectives()
         renderWithContexts(
           <EditionRdv
             jeunes={jeunesConseiller}
@@ -296,344 +301,102 @@ describe('EditionAnimationCollective', () => {
             pageTitle=''
           />,
           {
-            customDependances: { evenementsService, jeunesService },
-            customConseiller: {
-              email: 'fake@email.com',
-              agence: { id: 'id-agence', nom: 'Agence Tour' },
+            customDependances: {
+              evenementsService: evenementsService,
+              jeunesService,
             },
-            customAlerte: { alerteSetter },
+            customConseiller: {
+              agence: {
+                nom: 'Mission locale Aubenas',
+                id: 'id-etablissement',
+              },
+            },
           }
+        )
+
+        const selectType = screen.getByRole('combobox', {
+          name: 'Type',
+        })
+        await userEvent.selectOptions(selectType, 'Atelier')
+      })
+
+      it('récupère les bénéficiaires de l’établissement', async () => {
+        // Then
+        expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledWith(
+          'id-etablissement'
+        )
+        jeunesEtablissement.forEach((jeune) =>
+          expect(
+            screen.getByRole('option', {
+              name: getNomJeuneComplet(jeune),
+              hidden: true,
+            })
+          ).toBeInTheDocument()
         )
       })
 
-      describe('header', () => {
-        it("ne contient pas de message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", () => {
-          // Then
-          expect(() =>
-            screen.getByText(/des jeunes que vous ne suivez pas/)
-          ).toThrow()
-        })
+      it('le titre est obligatoire', async () => {
+        // Given
+        const inputTitre = screen.getByRole('textbox', { name: 'Titre' })
+
+        // When
+        expect(inputTitre).toHaveAttribute('required', '')
+        await userEvent.click(inputTitre)
+        await userEvent.tab()
+
+        // Then
+        expect(
+          screen.getByText(
+            'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.'
+          )
+        ).toBeInTheDocument()
       })
 
-      describe('étape 1 type d’animation collective', () => {
-        let etape: HTMLFieldSetElement
-        let selectType: HTMLSelectElement
+      it('les bénéficiaires sont facultatifs', async () => {
+        // Given
+        const inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
+        const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
+        const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+        const inputTitre = screen.getByLabelText('* Titre')
+        await userEvent.type(inputDate, '2022-03-03')
+        await userEvent.type(inputHoraire, '10:30')
+        await userEvent.type(inputDuree, '02:37')
+        await userEvent.type(inputTitre, 'Titre de l’événement')
 
-        it('contient une liste pour choisir un type', () => {
-          // Given
-          etape = screen.getByRole('group', {
-            name: 'Étape 1 Type d’animation collective',
-          })
-          selectType = within(etape).getByRole('combobox', {
-            name: 'Type',
-          })
-          typesRendezVous = typesRdvAnimationsCollectives()
-
-          // Then
-          expect(selectType).toBeInTheDocument()
-          expect(selectType).toHaveAttribute('required', '')
-          for (const typeRendezVous of typesRendezVous) {
-            expect(
-              within(etape).getByRole('option', {
-                name: typeRendezVous.label,
-              })
-            ).toBeInTheDocument()
-          }
+        // When
+        const buttonValider = screen.getByRole('button', {
+          name: 'Créer l’animation collective',
         })
+        await userEvent.click(buttonValider)
+
+        // Then
+        const selectJeunes = screen.getByRole('combobox', {
+          name: 'Rechercher et ajouter des destinataires Nom et prénom',
+        })
+        expect(selectJeunes).toHaveAttribute('aria-required', 'false')
+        expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
+          expect.objectContaining({
+            jeunesIds: [],
+          })
+        )
       })
 
-      describe('étape 2 description', () => {
-        let etape: HTMLFieldSetElement
+      it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
+        // Given
+        await userEvent.type(
+          screen.getByLabelText(/ajouter des destinataires/),
+          getNomJeuneComplet(jeunesAutreConseiller[0])
+        )
 
-        beforeEach(async () => {
-          const selectType = screen.getByRole('combobox', {
-            name: 'Type',
-          })
-          await userEvent.selectOptions(selectType, 'Atelier')
-          etape = screen.getByRole('group', { name: 'Étape 2 Description' })
-        })
-
-        it('contient un champ pour renseigner un titre', () => {
-          // Then
-          expect(
-            within(etape).getByRole('textbox', { name: 'Titre' })
-          ).toHaveProperty('required', true)
-        })
-
-        it('contient un champ pour saisir une description', () => {
-          // Then
-          const inputDescription = within(etape).getByRole('textbox', {
-            name: /Description/,
-          })
-          expect(inputDescription).toBeInTheDocument()
-          expect(inputDescription).not.toHaveAttribute('required')
-        })
-      })
-
-      describe('étape 3 bénéficiaires', () => {
-        let etape: HTMLFieldSetElement
-
-        beforeEach(async () => {
-          const selectType = screen.getByRole('combobox', {
-            name: 'Type',
-          })
-          await userEvent.selectOptions(selectType, 'Atelier')
-          etape = screen.getByRole('group', {
-            name: 'Étape 3 Ajout de bénéficiaires',
-          })
-        })
-
-        it('contient une liste pour choisir un jeune', () => {
-          // Then
-          const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
-          })
-          const options = within(etape).getByRole('listbox', { hidden: true })
-
-          expect(selectJeune).toHaveAttribute('aria-required', 'false')
-          expect(selectJeune).toHaveAttribute('multiple', '')
-          for (const jeune of jeunesConseiller) {
-            const jeuneOption = within(options).getByRole('option', {
-              name: `${jeune.nom} ${jeune.prenom}`,
-              hidden: true,
-            })
-            expect(jeuneOption).toBeInTheDocument()
-          }
-        })
-      })
-
-      describe('étape 4 lieu et date', () => {
-        let etape: HTMLFieldSetElement
-        beforeEach(async () => {
-          const selectType = screen.getByRole('combobox', {
-            name: 'Type',
-          })
-          await userEvent.selectOptions(selectType, 'Atelier')
-          etape = screen.getByRole('group', { name: 'Étape 4 Lieu et date' })
-        })
-        it('contient une liste pour choisir une modalité', () => {
-          // Then
-          const selectModalite = within(etape).getByRole('combobox', {
-            name: 'Modalité',
-          })
-          expect(selectModalite).toBeInTheDocument()
-          for (const modalite of modalites) {
-            expect(
-              within(etape).getByRole('option', { name: modalite })
-            ).toBeInTheDocument()
-          }
-        })
-
-        it('contient un champ pour choisir la date', () => {
-          // Then
-          const inputDate = within(etape).getByLabelText(
-            '* Date (format : jj/mm/aaaa)'
+        // Then
+        expect(
+          screen.getByText(/des bénéficiaires que vous ne suivez pas/)
+        ).toBeInTheDocument()
+        expect(
+          screen.getByLabelText(
+            'Ce bénéficiaire n’est pas dans votre portefeuille'
           )
-          expect(inputDate).toBeInTheDocument()
-          expect(inputDate).toHaveAttribute('required', '')
-          expect(inputDate).toHaveAttribute('type', 'date')
-        })
-
-        it("contient un champ pour choisir l'horaire", () => {
-          // Then
-          const inputHoraire = within(etape).getByLabelText(
-            '* Heure (format : hh:mm)'
-          )
-          expect(inputHoraire).toBeInTheDocument()
-          expect(inputHoraire).toHaveAttribute('required', '')
-          expect(inputHoraire).toHaveAttribute('type', 'time')
-        })
-
-        it('contient un champ pour choisir la durée', () => {
-          // Then
-          const inputDuree = within(etape).getByLabelText(
-            '* Durée (format : hh:mm)'
-          )
-          expect(inputDuree).toBeInTheDocument()
-          expect(inputDuree).toHaveAttribute('required', '')
-          expect(inputDuree).toHaveAttribute('type', 'time')
-        })
-
-        it('contient un champ pour indiquer l’adresse si besoin', () => {
-          // Then
-          const inputAdresse = within(etape).getByLabelText(
-            'Adresse Ex : 12 rue duc, Brest'
-          )
-          expect(inputAdresse).toBeInTheDocument()
-          expect(inputAdresse).toHaveAttribute('type', 'text')
-        })
-
-        it('contient un champ pour indiquer un organisme si besoin', () => {
-          // Then
-          const inputOrganisme = within(etape).getByLabelText(
-            'Organisme Ex : prestataire, entreprise, etc.'
-          )
-          expect(inputOrganisme).toBeInTheDocument()
-          expect(inputOrganisme).toHaveAttribute('type', 'text')
-        })
-      })
-
-      describe('étape 5 gestion accès', () => {
-        let etape: HTMLFieldSetElement
-        let inputPresenceConseiller: HTMLInputElement
-        let inputEmailInvitation: HTMLInputElement
-        beforeEach(async () => {
-          const selectType = screen.getByRole('combobox', {
-            name: 'Type',
-          })
-          await userEvent.selectOptions(selectType, 'Information collective')
-          etape = screen.getByRole('group', {
-            name: 'Étape 5 Gestion des accès',
-          })
-        })
-        it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
-          // Given
-          inputPresenceConseiller = screen.getByLabelText(
-            /Informer les bénéficiaires qu’un conseiller sera présent à l’événement/i
-          )
-
-          // Then
-
-          expect(inputPresenceConseiller).toBeInTheDocument()
-        })
-
-        it('contient un champ pour demander au conseiller s’il souhaite recevoir un email d’invitation à l’événement', () => {
-          // Given
-          inputEmailInvitation = screen.getByLabelText(
-            /Intégrer cet événement à mon agenda via l’adresse e-mail suivante :/i
-          )
-
-          // Then
-
-          expect(inputEmailInvitation).toBeInTheDocument()
-        })
-
-        it('indique l’email auquel le conseiller va recevoir son invitation à l’événement', () => {
-          // Given
-
-          let getEmailConseiller: HTMLInputElement =
-            screen.getByLabelText(/fake@email.com/i)
-
-          // Then
-
-          expect(getEmailConseiller).toBeInTheDocument()
-        })
-      })
-    })
-
-    describe('quand on veut créer une animation collective', () => {
-      describe('quand le conseiller a une agence', () => {
-        beforeEach(async () => {
-          // Given
-          typesRendezVous = typesRdvAnimationsCollectives()
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda?onglet=etablissement'
-              pageTitle=''
-            />,
-            {
-              customDependances: {
-                evenementsService: evenementsService,
-                jeunesService,
-              },
-              customConseiller: {
-                agence: {
-                  nom: 'Mission locale Aubenas',
-                  id: 'id-etablissement',
-                },
-              },
-            }
-          )
-
-          const selectType = screen.getByRole('combobox', {
-            name: 'Type',
-          })
-          await userEvent.selectOptions(selectType, 'Atelier')
-        })
-
-        it('récupère les bénéficiaires de l’établissement', async () => {
-          // Then
-          expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledWith(
-            'id-etablissement'
-          )
-          jeunesEtablissement.forEach((jeune) =>
-            expect(
-              screen.getByRole('option', {
-                name: getNomJeuneComplet(jeune),
-                hidden: true,
-              })
-            ).toBeInTheDocument()
-          )
-        })
-
-        it('le titre est obligatoire', async () => {
-          // Given
-          const inputTitre = screen.getByRole('textbox', { name: 'Titre' })
-
-          // When
-          expect(inputTitre).toHaveAttribute('required', '')
-          await userEvent.click(inputTitre)
-          await userEvent.tab()
-
-          // Then
-          expect(
-            screen.getByText(
-              'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.'
-            )
-          ).toBeInTheDocument()
-        })
-
-        it('les bénéficiaires sont facultatifs', async () => {
-          // Given
-          const inputDate = screen.getByLabelText(
-            '* Date (format : jj/mm/aaaa)'
-          )
-          const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
-          const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
-          const inputTitre = screen.getByLabelText('* Titre')
-          await userEvent.type(inputDate, '2022-03-03')
-          await userEvent.type(inputHoraire, '10:30')
-          await userEvent.type(inputDuree, '02:37')
-          await userEvent.type(inputTitre, 'Titre de l’événement')
-
-          // When
-          const buttonValider = screen.getByRole('button', {
-            name: 'Créer l’animation collective',
-          })
-          await userEvent.click(buttonValider)
-
-          // Then
-          const selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
-          })
-          expect(selectJeunes).toHaveAttribute('aria-required', 'false')
-          expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
-            expect.objectContaining({
-              jeunesIds: [],
-            })
-          )
-        })
-
-        it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
-          // Given
-          await userEvent.type(
-            screen.getByLabelText(/ajouter des destinataires/),
-            getNomJeuneComplet(jeunesAutreConseiller[0])
-          )
-
-          // Then
-          expect(
-            screen.getByText(/des bénéficiaires que vous ne suivez pas/)
-          ).toBeInTheDocument()
-          expect(
-            screen.getByLabelText(
-              'Ce bénéficiaire n’est pas dans votre portefeuille'
-            )
-          ).toBeInTheDocument()
-        })
+        ).toBeInTheDocument()
       })
     })
 
