@@ -118,6 +118,7 @@ describe('Reaffectation', () => {
         ;(
           jeunesService.getJeunesDuConseillerParEmail as jest.Mock
         ).mockResolvedValue({ idConseiller: idConseillerInitial, jeunes })
+        await userEvent.click(screen.getByLabelText('Définitif'))
         await userEvent.type(emailInput, emailConseillerInitial)
 
         // WHEN
@@ -153,8 +154,26 @@ describe('Reaffectation', () => {
         expect(toutSelectionnerCheckbox).toBeChecked()
       })
 
+      describe('au reset du mail du conseiller initial', () => {
+        it('vide le champ de saisie du mail ', async () => {
+          //When
+          const inputSaisieEmailInitial = screen
+            .getByLabelText('* E-mail conseiller initial')
+            .closest('div') as HTMLElement
+          await userEvent.click(
+            within(inputSaisieEmailInitial).getByText(
+              'Effacer le champ de saisie'
+            )
+          )
+          // Then
+          expect(
+            screen.getByLabelText('* E-mail conseiller initial')
+          ).toHaveAttribute('value', '')
+        })
+      })
+
       describe('à la modification du mail du conseiller initial', () => {
-        it('reset la recherche', async () => {
+        it('reset de la liste des jeunes', async () => {
           // WHEN
           await userEvent.type(emailInput, 'whatever')
 
