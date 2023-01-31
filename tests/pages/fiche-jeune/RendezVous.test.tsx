@@ -66,7 +66,7 @@ describe('Rendez-vous de la fiche jeune', () => {
     it('permet la prise de rendez-vous', async () => {
       // Then
       expect(
-        screen.getByRole('link', { name: 'Créer un événement' })
+        screen.getByRole('link', { name: 'Créer un rendez-vous' })
       ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idJeune=jeune-1')
     })
   })
@@ -111,7 +111,9 @@ async function renderFicheJeune(
         customConseiller: { structure: structure },
         customDependances: {
           jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
           }),
           agendaService: mockedAgendaService({
             recupererAgenda: jest.fn(async () => unAgenda()),

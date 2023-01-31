@@ -17,34 +17,99 @@ export const typesEvenement = (
     {
       code: 'ACTIVITES_EXTERIEURES',
       label: 'Activités extérieures',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'ATELIER',
       label: 'Atelier',
+      categorie: 'CEJ_AC',
     },
     {
       code: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
       label: 'Entretien individuel conseiller',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'ENTRETIEN_PARTENAIRE',
       label: 'Entretien par un partenaire',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'INFORMATION_COLLECTIVE',
       label: 'Information collective',
+      categorie: 'CEJ_AC',
     },
     {
       code: 'VISITE',
       label: 'Visite',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'PRESTATION',
       label: 'Prestation',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'AUTRE',
       label: 'Autre',
+      categorie: 'CEJ_RDV',
+    },
+    ...overrides,
+  ]
+}
+
+export const typesRdvAnimationsCollectives = (
+  overrides: TypeEvenement[] = []
+): TypeEvenement[] => {
+  return [
+    {
+      code: 'ATELIER',
+      label: 'Atelier',
+      categorie: 'CEJ_AC',
+    },
+
+    {
+      code: 'INFORMATION_COLLECTIVE',
+      label: 'Information collective',
+      categorie: 'CEJ_AC',
+    },
+    ...overrides,
+  ]
+}
+
+export const typesRdvCEJ = (
+  overrides: TypeEvenement[] = []
+): TypeEvenement[] => {
+  return [
+    {
+      code: 'ACTIVITES_EXTERIEURES',
+      label: 'Activités extérieures',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      label: 'Entretien individuel conseiller',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'ENTRETIEN_PARTENAIRE',
+      label: 'Entretien par un partenaire',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'VISITE',
+      label: 'Visite',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'PRESTATION',
+      label: 'Prestation',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'AUTRE',
+      label: 'Autre',
+      categorie: 'CEJ_RDV',
     },
     ...overrides,
   ]
@@ -61,7 +126,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
         nom: 'Jirac',
       },
     ],
-    type: { code: 'AUTRE', label: 'Autre' },
+    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
     precisionType: 'Prise de nouvelles',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
@@ -150,7 +215,7 @@ export function unEvenementJson(
         nom: 'Jirac',
       },
     ],
-    type: { code: 'AUTRE', label: 'Autre' },
+    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',
@@ -207,7 +272,7 @@ export function unEvenementJeuneJson(
 ): EvenementJeuneJson {
   const defaults: EvenementJeuneJson = {
     id: '1',
-    type: { code: 'AUTRE', label: 'Autre' },
+    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',
@@ -229,4 +294,8 @@ export function unEvenementJeuneJson(
   }
 
   return { ...defaults, ...overrides }
+}
+
+export function isTypeAnimationCollective(type: TypeEvenement): boolean {
+  return type.categorie === 'CEJ_AC'
 }

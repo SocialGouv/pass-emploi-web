@@ -21,7 +21,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
 import {
   estClos,
   estCreeParSiMILO,
@@ -52,9 +52,9 @@ interface EditionRdvFormProps {
   evenement?: Evenement
   idJeune?: string
   showConfirmationModal: (payload: EvenementFormData) => void
-  renseignerAgence: () => void
   recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
   onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
+  evenementTypeAC?: boolean
 }
 
 export function EditionRdvForm({
@@ -71,7 +71,7 @@ export function EditionRdvForm({
   evenement,
   idJeune,
   showConfirmationModal,
-  renseignerAgence,
+  evenementTypeAC,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
   const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
@@ -140,16 +140,6 @@ export function EditionRdvForm({
   const nbMaxParticipantsDepasse =
     nombreMaxParticipants.value &&
     idsJeunes.value.length > nombreMaxParticipants.value
-
-  const isAgenceNecessaire =
-    isCodeTypeAnimationCollective(codeTypeRendezVous) && !conseiller?.agence
-  const afficherSuiteFormulaire =
-    codeTypeRendezVous &&
-    (!isCodeTypeAnimationCollective(codeTypeRendezVous) || conseiller?.agence)
-  const labelAgence =
-    conseiller?.structure === StructureConseiller.MILO
-      ? 'Mission locale'
-      : 'agence'
 
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
@@ -472,6 +462,10 @@ export function EditionRdvForm({
     }
   }
 
+  function estUneAc(codeType?: string) {
+    return evenementTypeAC || isCodeTypeAnimationCollective(codeType)
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
@@ -503,7 +497,14 @@ export function EditionRdvForm({
         Tous les champs avec * sont obligatoires
       </p>
 
-      <Etape numero={1} titre='Type d’événement'>
+      <Etape
+        numero={1}
+        titre={`Type ${
+          estUneAc(codeTypeRendezVous)
+            ? 'd’animation collective'
+            : 'de rendez-vous'
+        }`}
+      >
         <Label htmlFor='typeEvenement' inputRequired={true}>
           Type
         </Label>
@@ -545,389 +546,354 @@ export function EditionRdvForm({
             />
           </>
         )}
-
-        {isAgenceNecessaire && (
-          <div className='bg-warning_lighten rounded-base p-6'>
-            <p className='flex justify-center items-center text-base-bold text-warning mb-2'>
-              <IconComponent
-                focusable={false}
-                aria-hidden={true}
-                className='w-4 h-4 mr-2 fill-warning'
-                name={IconName.Important}
-              />
-              Votre {labelAgence} n’est pas renseignée
-            </p>
-            <p className='text-base-regular text-warning mb-6'>
-              Pour créer une information collective ou un atelier vous devez
-              renseigner votre {labelAgence} dans votre profil.
-            </p>
-            <Button
-              type='button'
-              style={ButtonStyle.PRIMARY}
-              onClick={renseignerAgence}
-              className='mx-auto'
-            >
-              Renseigner votre {labelAgence}
-            </Button>
-          </div>
-        )}
       </Etape>
 
-      {afficherSuiteFormulaire && (
-        <>
-          <Etape numero={2} titre='Description'>
-            <Label
-              htmlFor='titre'
-              inputRequired={isCodeTypeAnimationCollective(codeTypeRendezVous)}
-            >
-              Titre
-            </Label>
-            {titre.error && (
-              <InputError id='titre--error' className='mb-2'>
-                {titre.error}
-              </InputError>
-            )}
-            <Input
-              id='titre'
-              type='text'
-              defaultValue={titre.value}
-              required={isCodeTypeAnimationCollective(codeTypeRendezVous)}
-              invalid={Boolean(titre.error)}
-              onChange={(value: string) => setTitre({ value })}
-              onBlur={validateTitre}
-              disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-              }
-            />
+      <Etape numero={2} titre='Description'>
+        <Label htmlFor='titre' inputRequired={estUneAc(codeTypeRendezVous)}>
+          Titre
+        </Label>
+        {titre.error && (
+          <InputError id='titre--error' className='mb-2'>
+            {titre.error}
+          </InputError>
+        )}
+        <Input
+          id='titre'
+          type='text'
+          defaultValue={titre.value}
+          required={estUneAc(codeTypeRendezVous)}
+          invalid={Boolean(titre.error)}
+          onChange={(value: string) => setTitre({ value })}
+          onBlur={validateTitre}
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+        />
 
-            <Label htmlFor='description' withBulleMessageSensible={true}>
-              {{
-                main: 'Description',
-                helpText: '250 caractères maximum',
-              }}
-            </Label>
-            {description.error && (
-              <InputError id='description--error' className='mb-2'>
-                {description.error}
-              </InputError>
-            )}
-            <Textarea
-              id='description'
-              defaultValue={description.value}
-              maxLength={250}
-              onChange={(value: string) => setDescription({ value })}
-              invalid={Boolean(description.error)}
-              onBlur={validateDescription}
-              disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-              }
-            />
-          </Etape>
+        <Label htmlFor='description' withBulleMessageSensible={true}>
+          {{
+            main: 'Description',
+            helpText: '250 caractères maximum',
+          }}
+        </Label>
+        {description.error && (
+          <InputError id='description--error' className='mb-2'>
+            {description.error}
+          </InputError>
+        )}
+        <Textarea
+          id='description'
+          defaultValue={description.value}
+          maxLength={250}
+          onChange={(value: string) => setDescription({ value })}
+          invalid={Boolean(description.error)}
+          onBlur={validateDescription}
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+        />
+      </Etape>
 
-          <Etape numero={3} titre='Ajout de bénéficiaires'>
-            {isCodeTypeAnimationCollective(codeTypeRendezVous) && (
+      <Etape numero={3} titre='Ajout de bénéficiaires'>
+        {estUneAc(codeTypeRendezVous) && (
+          <>
+            <div className='flex items-center mb-8'>
+              <label htmlFor='toggle-max-participants' className='mr-4'>
+                Définir un nombre maximum de participants
+              </label>
+              <Switch
+                id='toggle-max-participants'
+                checked={showNombreMaxParticipants}
+                onChange={() =>
+                  setShowNombreMaxParticipants(!showNombreMaxParticipants)
+                }
+                disabled={
+                  evenement &&
+                  (estClos(evenement) || estCreeParSiMILO(evenement))
+                }
+              />
+            </div>
+
+            {showNombreMaxParticipants && (
               <>
-                <div className='flex items-center mb-8'>
-                  <label htmlFor='toggle-max-participants' className='mr-4'>
-                    Définir un nombre maximum de participants
-                  </label>
-                  <Switch
-                    id='toggle-max-participants'
-                    checked={showNombreMaxParticipants}
-                    onChange={() =>
-                      setShowNombreMaxParticipants(!showNombreMaxParticipants)
-                    }
-                    disabled={
-                      evenement &&
-                      (estClos(evenement) || estCreeParSiMILO(evenement))
-                    }
-                  />
-                </div>
-
-                {showNombreMaxParticipants && (
-                  <>
-                    <Label htmlFor='max-participants' inputRequired={true}>
-                      Nombre maximum de participants
-                    </Label>
-                    {nombreMaxParticipants.error && (
-                      <InputError id='max-participants--error' className='mb-2'>
-                        {nombreMaxParticipants.error}
-                      </InputError>
-                    )}
-                    <Input
-                      id='max-participants'
-                      type='number'
-                      defaultValue={nombreMaxParticipants.value}
-                      onChange={updateNbMaxParticipants}
-                      onBlur={validateNombreMaxParticipants}
-                      required={true}
-                      min={1}
-                      invalid={Boolean(nombreMaxParticipants.error)}
-                      disabled={
-                        evenement &&
-                        (estClos(evenement) || estCreeParSiMILO(evenement))
-                      }
-                      aria-describedby={
-                        Boolean(nombreMaxParticipants.error)
-                          ? 'max-participants--error'
-                          : nbMaxParticipantsDepasse
-                          ? 'nombre-participants--error'
-                          : undefined
-                      }
-                    />
-                  </>
+                <Label htmlFor='max-participants' inputRequired={true}>
+                  Nombre maximum de participants
+                </Label>
+                {nombreMaxParticipants.error && (
+                  <InputError id='max-participants--error' className='mb-2'>
+                    {nombreMaxParticipants.error}
+                  </InputError>
                 )}
-
-                {(!evenement || !estClos(evenement)) && (
-                  <div className='mb-4'>
-                    <InformationMessage label='Pour les événements de type Atelier ou Information collective, l’ajout de bénéficiaires est facultatif' />
-                  </div>
-                )}
-
-                {nbMaxParticipantsDepasse && (
-                  <div id='nombre-participants--error'>
-                    <FailureAlert label='Le nombre maximum de participants est dépassé.' />
-                  </div>
-                )}
+                <Input
+                  id='max-participants'
+                  type='number'
+                  defaultValue={nombreMaxParticipants.value}
+                  onChange={updateNbMaxParticipants}
+                  onBlur={validateNombreMaxParticipants}
+                  required={true}
+                  min={1}
+                  invalid={Boolean(nombreMaxParticipants.error)}
+                  disabled={
+                    evenement &&
+                    (estClos(evenement) || estCreeParSiMILO(evenement))
+                  }
+                  aria-describedby={
+                    Boolean(nombreMaxParticipants.error)
+                      ? 'max-participants--error'
+                      : nbMaxParticipantsDepasse
+                      ? 'nombre-participants--error'
+                      : undefined
+                  }
+                />
               </>
             )}
 
-            <BeneficiairesMultiselectAutocomplete
-              id='select-beneficiaires'
-              beneficiaires={buildOptionsJeunes()}
-              typeSelection='Bénéficiaires'
-              defaultBeneficiaires={defaultJeunes}
-              onUpdate={updateIdsJeunes}
-              error={idsJeunes.error}
-              required={!isCodeTypeAnimationCollective(codeTypeRendezVous)}
-              disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-              }
-              renderIndication={
-                evenement && estClos(evenement)
-                  ? BeneficiaireIndicationPresent
-                  : BeneficiaireIndicationPortefeuille
-              }
-              aria-describedby={
-                Boolean(nombreMaxParticipants.error)
-                  ? 'select-beneficiaires--error'
-                  : nbMaxParticipantsDepasse
-                  ? 'nombre-participants--error'
-                  : undefined
+            {nbMaxParticipantsDepasse && (
+              <div id='nombre-participants--error'>
+                <FailureAlert label='Le nombre maximum de participants est dépassé.' />
+              </div>
+            )}
+          </>
+        )}
+
+        <BeneficiairesMultiselectAutocomplete
+          id='select-beneficiaires'
+          beneficiaires={buildOptionsJeunes()}
+          typeSelection='Bénéficiaires'
+          defaultBeneficiaires={defaultJeunes}
+          onUpdate={updateIdsJeunes}
+          error={idsJeunes.error}
+          required={!estUneAc(codeTypeRendezVous)}
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+          renderIndication={
+            evenement && estClos(evenement)
+              ? BeneficiaireIndicationPresent
+              : BeneficiaireIndicationPortefeuille
+          }
+          aria-describedby={
+            Boolean(nombreMaxParticipants.error)
+              ? 'select-beneficiaires--error'
+              : nbMaxParticipantsDepasse
+              ? 'nombre-participants--error'
+              : undefined
+          }
+        />
+      </Etape>
+
+      <Etape numero={4} titre='Lieu et date'>
+        <Label htmlFor='modalite'>Modalité</Label>
+        <Select
+          id='modalite'
+          defaultValue={modalite}
+          onChange={setModalite}
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+        >
+          {modalites.map((md) => (
+            <option key={md} value={md}>
+              {md}
+            </option>
+          ))}
+        </Select>
+        <Label htmlFor='date' inputRequired={true}>
+          {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
+        </Label>
+        {date.error && (
+          <InputError id='date--error' className='mb-2'>
+            {date.error}
+          </InputError>
+        )}
+        <Input
+          type='date'
+          id='date'
+          defaultValue={date.value}
+          required={true}
+          onChange={(value: string) => setDate({ value })}
+          onBlur={validateDate}
+          invalid={Boolean(date.error)}
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+        />
+
+        <Label htmlFor='horaire' inputRequired={true}>
+          {{ main: 'Heure', helpText: '(format : hh:mm)' }}
+        </Label>
+        {horaire.error && (
+          <InputError id='horaire--error' className='mb-2'>
+            {horaire.error}
+          </InputError>
+        )}
+        <Input
+          type='time'
+          id='horaire'
+          defaultValue={horaire.value}
+          required={true}
+          onChange={(value: string) => setHoraire({ value })}
+          onBlur={validateHoraire}
+          invalid={Boolean(horaire.error)}
+          aria-invalid={horaire.error ? true : undefined}
+          aria-describedby={horaire.error ? 'horaire--error' : undefined}
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+        />
+
+        <Label htmlFor='duree' inputRequired={true}>
+          {{ main: 'Durée', helpText: '(format : hh:mm)' }}
+        </Label>
+        {duree.error && (
+          <InputError id='duree--error' className='mb-2'>
+            {duree.error}
+          </InputError>
+        )}
+        <Input
+          type='time'
+          id='duree'
+          required={true}
+          defaultValue={duree.value}
+          onChange={(value: string) => setDuree({ value })}
+          onBlur={validateDuree}
+          invalid={Boolean(duree.error)}
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+        />
+
+        <Label htmlFor='adresse'>
+          {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
+        </Label>
+        <Input
+          type='text'
+          id='adresse'
+          defaultValue={adresse}
+          onChange={setAdresse}
+          icon='location'
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+        />
+
+        <Label htmlFor='organisme'>
+          {{
+            main: 'Organisme',
+            helpText: 'Ex : prestataire, entreprise, etc.',
+          }}
+        </Label>
+        <Input
+          type='text'
+          id='organisme'
+          defaultValue={organisme}
+          onChange={setOrganisme}
+          disabled={
+            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+          }
+        />
+      </Etape>
+
+      <Etape numero={5} titre='Gestion des accès'>
+        {evenement && !conseillerIsCreator && (
+          <div className='mb-6'>
+            <InformationMessage
+              label={
+                estCreeParSiMILO(evenement)
+                  ? `L'événement a été créé sur i-milo. Vous ne recevrez pas d'invitation dans votre agenda`
+                  : `L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`
               }
             />
-          </Etape>
+          </div>
+        )}
 
-          <Etape numero={4} titre='Lieu et date'>
-            <Label htmlFor='modalite'>Modalité</Label>
-            <Select
-              id='modalite'
-              defaultValue={modalite}
-              onChange={setModalite}
+        <div className='flex items-center mb-8'>
+          <div className='flex items-center'>
+            <label htmlFor='presenceConseiller' className='w-64 mr-4'>
+              Informer les bénéficiaires qu’un conseiller sera présent à
+              l’événement
+            </label>
+            <Switch
+              id='presenceConseiller'
+              checked={isConseillerPresent}
               disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
+                typeEntretienIndividuelConseillerSelected() ||
+                (evenement &&
+                  (estClos(evenement) || estCreeParSiMILO(evenement)))
               }
+              onChange={handlePresenceConseiller}
+            />
+          </div>
+        </div>
+
+        <div className='flex items-center mb-8'>
+          <div className='flex items-center'>
+            <label htmlFor='emailInvitation' className='w-64 mr-4'>
+              {emailInvitationText()}
+            </label>
+            <Switch
+              id='emailInvitation'
+              disabled={Boolean(evenement)}
+              checked={sendEmailInvitation}
+              onChange={(e) => setSendEmailInvitation(e.target.checked)}
+            />
+          </div>
+        </div>
+      </Etape>
+
+      {(!evenement ||
+        (!estClos(evenement) && !estCreeParSiMILO(evenement))) && (
+        <div className='flex justify-center'>
+          {!formHasChanges() && (
+            <ButtonLink
+              href={redirectTo}
+              style={ButtonStyle.SECONDARY}
+              className='mr-3'
             >
-              {modalites.map((md) => (
-                <option key={md} value={md}>
-                  {md}
-                </option>
-              ))}
-            </Select>
-            <Label htmlFor='date' inputRequired={true}>
-              {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
-            </Label>
-            {date.error && (
-              <InputError id='date--error' className='mb-2'>
-                {date.error}
-              </InputError>
-            )}
-            <Input
-              type='date'
-              id='date'
-              defaultValue={date.value}
-              required={true}
-              onChange={(value: string) => setDate({ value })}
-              onBlur={validateDate}
-              invalid={Boolean(date.error)}
-              disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-              }
-            />
-
-            <Label htmlFor='horaire' inputRequired={true}>
-              {{ main: 'Heure', helpText: '(format : hh:mm)' }}
-            </Label>
-            {horaire.error && (
-              <InputError id='horaire--error' className='mb-2'>
-                {horaire.error}
-              </InputError>
-            )}
-            <Input
-              type='time'
-              id='horaire'
-              defaultValue={horaire.value}
-              required={true}
-              onChange={(value: string) => setHoraire({ value })}
-              onBlur={validateHoraire}
-              invalid={Boolean(horaire.error)}
-              aria-invalid={horaire.error ? true : undefined}
-              aria-describedby={horaire.error ? 'horaire--error' : undefined}
-              disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-              }
-            />
-
-            <Label htmlFor='duree' inputRequired={true}>
-              {{ main: 'Durée', helpText: '(format : hh:mm)' }}
-            </Label>
-            {duree.error && (
-              <InputError id='duree--error' className='mb-2'>
-                {duree.error}
-              </InputError>
-            )}
-            <Input
-              type='time'
-              id='duree'
-              required={true}
-              defaultValue={duree.value}
-              onChange={(value: string) => setDuree({ value })}
-              onBlur={validateDuree}
-              invalid={Boolean(duree.error)}
-              disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-              }
-            />
-
-            <Label htmlFor='adresse'>
-              {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
-            </Label>
-            <Input
-              type='text'
-              id='adresse'
-              defaultValue={adresse}
-              onChange={setAdresse}
-              icon='location'
-              disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-              }
-            />
-
-            <Label htmlFor='organisme'>
-              {{
-                main: 'Organisme',
-                helpText: 'Ex : prestataire, entreprise, etc.',
-              }}
-            </Label>
-            <Input
-              type='text'
-              id='organisme'
-              defaultValue={organisme}
-              onChange={setOrganisme}
-              disabled={
-                evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-              }
-            />
-          </Etape>
-
-          <Etape numero={5} titre='Gestion des accès'>
-            {evenement && !conseillerIsCreator && (
-              <div className='mb-6'>
-                <InformationMessage
-                  label={
-                    estCreeParSiMILO(evenement)
-                      ? `L'événement a été créé sur i-milo. Vous ne recevrez pas d'invitation dans votre agenda`
-                      : `L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`
-                  }
-                />
-              </div>
-            )}
-
-            <div className='flex items-center mb-8'>
-              <div className='flex items-center'>
-                <label htmlFor='presenceConseiller' className='w-64 mr-4'>
-                  Informer les bénéficiaires qu’un conseiller sera présent à
-                  l’événement
-                </label>
-                <Switch
-                  id='presenceConseiller'
-                  checked={isConseillerPresent}
-                  disabled={
-                    typeEntretienIndividuelConseillerSelected() ||
-                    (evenement &&
-                      (estClos(evenement) || estCreeParSiMILO(evenement)))
-                  }
-                  onChange={handlePresenceConseiller}
-                />
-              </div>
-            </div>
-
-            <div className='flex items-center mb-8'>
-              <div className='flex items-center'>
-                <label htmlFor='emailInvitation' className='w-64 mr-4'>
-                  {emailInvitationText()}
-                </label>
-                <Switch
-                  id='emailInvitation'
-                  disabled={Boolean(evenement)}
-                  checked={sendEmailInvitation}
-                  onChange={(e) => setSendEmailInvitation(e.target.checked)}
-                />
-              </div>
-            </div>
-          </Etape>
-
-          {(!evenement ||
-            (!estClos(evenement) && !estCreeParSiMILO(evenement))) && (
-            <div className='flex justify-center'>
-              {!formHasChanges() && (
-                <ButtonLink
-                  href={redirectTo}
-                  style={ButtonStyle.SECONDARY}
-                  className='mr-3'
-                >
-                  Annuler {evenement ? 'la modification' : ''}
-                </ButtonLink>
-              )}
-              {formHasChanges() && (
-                <Button
-                  type='button'
-                  label={`Quitter la ${
-                    evenement ? 'modification' : 'création'
-                  } de l’événement`}
-                  onClick={leaveWithChanges}
-                  style={ButtonStyle.SECONDARY}
-                  className='mr-3'
-                >
-                  Annuler {evenement ? ' la modification' : ''}
-                </Button>
-              )}
-
-              {evenement && (
-                <Button
-                  type='submit'
-                  disabled={!formHasChanges() || !formIsValid()}
-                >
-                  Modifier l’événement
-                </Button>
-              )}
-              {!evenement && (
-                <Button
-                  type='submit'
-                  disabled={!formHasChanges() || !formIsValid()}
-                >
-                  <IconComponent
-                    name={IconName.Add}
-                    focusable={false}
-                    aria-hidden={true}
-                    className='mr-2 w-4 h-4'
-                  />
-                  Créer l’événement
-                </Button>
-              )}
-            </div>
+              Annuler {evenement ? 'la modification' : ''}
+            </ButtonLink>
           )}
-        </>
+          {formHasChanges() && (
+            <Button
+              type='button'
+              label={`Quitter la ${
+                evenement ? 'modification' : 'création'
+              } de l’événement`}
+              onClick={leaveWithChanges}
+              style={ButtonStyle.SECONDARY}
+              className='mr-3'
+            >
+              Annuler {evenement ? ' la modification' : ''}
+            </Button>
+          )}
+
+          {evenement && (
+            <Button
+              type='submit'
+              disabled={!formHasChanges() || !formIsValid()}
+            >
+              {estUneAc(codeTypeRendezVous)
+                ? 'Modifier l’animation collective'
+                : 'Modifier le rendez-vous'}
+            </Button>
+          )}
+          {!evenement && (
+            <Button
+              type='submit'
+              disabled={!formHasChanges() || !formIsValid()}
+            >
+              <IconComponent
+                name={IconName.Add}
+                focusable={false}
+                aria-hidden={true}
+                className='mr-2 w-4 h-4'
+              />
+              {estUneAc(codeTypeRendezVous)
+                ? 'Créer l’animation collective'
+                : 'Créer le rendez-vous'}
+            </Button>
+          )}
+        </div>
       )}
     </form>
   )
