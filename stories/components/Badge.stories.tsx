@@ -15,6 +15,18 @@ export default {
       control: { type: 'text' },
       description: 'La couleur de fond du badge',
     },
+    textColor: {
+      control: { type: 'text' },
+      description: 'La couleur du texte du badge',
+    },
+    size: {
+      control: { type: 'text' },
+      description: 'La taille du badge',
+    },
+    style: {
+      control: { type: 'text' },
+      description: 'Le style supplémentaire',
+    },
   },
 } as ComponentMeta<typeof Badge>
 
@@ -24,5 +36,7 @@ export const Default = Template.bind({})
 Default.args = {
   count: 2,
   size: 6,
-  css: 'bg-primary_darken',
+  bgColor: 'primary_darken',
+  textColor: 'blanc',
+  style: '',
 }
