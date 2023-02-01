@@ -357,9 +357,8 @@ export default function TableauJeunes({
                         <Badge
                           count={jeune.nbActionsNonTerminees}
                           size={6}
-                          backgroundColor={'primary'}
                           textColor={'blanc'}
-                          css={''}
+                          bgColor={'primary'}
                         />
                       </div>
                     </TD>
@@ -378,9 +377,9 @@ export default function TableauJeunes({
                           <Badge
                             count={jeune.messagesNonLus}
                             size={4}
-                            backgroundColor={'accent_1_lighten'}
+                            bgColor={'accent_1_lighten'}
                             textColor={'accent_1'}
-                            css={
+                            style={
                               'absolute top-[-10px] left-[10px] flex justify-center items-center p-2.5 text-xs-medium'
                             }
                           />
