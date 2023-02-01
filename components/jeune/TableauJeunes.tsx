@@ -356,7 +356,10 @@ export default function TableauJeunes({
                       <div className='mx-auto w-fit'>
                         <Badge
                           count={jeune.nbActionsNonTerminees}
-                          bgColor='primary'
+                          size={6}
+                          backgroundColor={'primary'}
+                          textColor={'blanc'}
+                          css={''}
                         />
                       </div>
                     </TD>
@@ -372,9 +375,15 @@ export default function TableauJeunes({
                           className='w-6 h-6 fill-primary'
                         />
                         {jeune.messagesNonLus > 0 && (
-                          <div className='absolute top-[-10px] left-[10px] w-4 h-4 flex justify-center items-center bg-accent_1_lighten rounded-full text-center p-2.5 text-accent_1 text-xs-medium'>
-                            {jeune.messagesNonLus}
-                          </div>
+                          <Badge
+                            count={jeune.messagesNonLus}
+                            size={4}
+                            backgroundColor={'accent_1_lighten'}
+                            textColor={'accent_1'}
+                            css={
+                              'absolute top-[-10px] left-[10px] flex justify-center items-center p-2.5 text-xs-medium'
+                            }
+                          />
                         )}
                       </div>
                       <IconComponent

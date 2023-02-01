@@ -1,9 +1,22 @@
 import React from 'react'
 
-export function Badge({ count, bgColor }: { count: number; bgColor: string }) {
+interface BadgeProps {
+  count: number
+  backgroundColor: string
+  textColor: string
+  size: number
+  css: string
+}
+export function Badge({
+  count,
+  size = 6,
+  css = '',
+  textColor,
+  backgroundColor,
+}: BadgeProps) {
   return (
     <span
-      className={`w-6 h-6 inline-block text-center bg-${bgColor} rounded-full text-blanc text-s-bold`}
+      className={`w-${size} h-${size} inline-block text-center rounded-full text-${textColor} bg-${backgroundColor} text-s-bold ${css}`}
     >
       {count}
     </span>

@@ -23,5 +23,6 @@ const Template: ComponentStory<typeof Badge> = (args) => <Badge {...args} />
 export const Default = Template.bind({})
 Default.args = {
   count: 2,
-  bgColor: 'primary_darken',
+  size: 6,
+  css: 'bg-primary_darken',
 }

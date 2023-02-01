@@ -48,7 +48,13 @@ export default function Tab({
       {label}
       {count !== undefined && (
         <span className='ml-4'>
-          <Badge count={count} bgColor='primary' />
+          <Badge
+            count={count}
+            size={6}
+            backgroundColor={'primary'}
+            textColor={'blanc'}
+            css={''}
+          />
         </span>
       )}
     </li>
