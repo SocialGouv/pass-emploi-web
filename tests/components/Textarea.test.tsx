@@ -14,7 +14,9 @@ describe('<Textarea>', () => {
     await waitForDebounce(500)
 
     // Then
-    expect(textarea).toHaveAccessibleDescription('250 sur 250 caractères')
+    expect(textarea).toHaveAccessibleDescription(
+      '250 sur 250 caractères restants'
+    )
     expect(screen.getByText('250 / 250')).toBeInTheDocument()
   })
 
@@ -35,7 +37,9 @@ describe('<Textarea>', () => {
     await waitForDebounce(500)
 
     // Then
-    expect(textarea).toHaveAccessibleDescription('300 sur 250 caractères')
+    expect(textarea).toHaveAccessibleDescription(
+      '300 sur 250 caractères restants'
+    )
     expect(screen.getByText('300 / 250')).toBeInTheDocument()
   })
 })
