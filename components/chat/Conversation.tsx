@@ -11,12 +11,11 @@ import DisplayMessage from 'components/chat/DisplayMessage'
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
-import ResizingMultilineInput from 'components/ui/Form/ResizingMultilineInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Message, ByDay } from 'interfaces/message'
+import { ByDay, Message } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import {
   FormNouveauMessageIndividuel,
@@ -308,15 +307,14 @@ export default function Conversation({
             <label htmlFor='input-new-message' className='sr-only'>
               Message à envoyer
             </label>
-            <ResizingMultilineInput
-              inputRef={inputRef}
+            <textarea
+              ref={inputRef}
               id='input-new-message'
               className='w-full outline-none'
               onFocus={() => setReadByConseiller(jeuneChat.chatId)}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Écrivez votre message ici...'
-              minRows={3}
-              maxRows={7}
+              rows={5}
             />
           </div>
           <div>

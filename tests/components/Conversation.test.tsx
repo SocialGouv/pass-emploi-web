@@ -33,7 +33,7 @@ describe('<Conversation />', () => {
         }
       ),
       observeMessages: jest.fn(
-        (_idChat, _cle, fn: (messages: ByDay[]) => void) => {
+        (_idChat, _cle, fn: (messages: ByDay<Message>[]) => void) => {
           fn(messagesParJour)
           return () => {}
         }
