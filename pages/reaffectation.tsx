@@ -195,7 +195,10 @@ function Reaffectation(_: ReaffectationProps) {
   return (
     <>
       {isReaffectationSuccess && (
-        <SuccessAlert label={'Les jeunes ont été réaffectés avec succès'} />
+        <SuccessAlert
+          label={'Les jeunes ont été réaffectés avec succès'}
+          onAcknowledge={() => setReaffectationSuccess(false)}
+        />
       )}
 
       <div className='mb-10 bg-accent_2_lighten rounded-base p-6'>
