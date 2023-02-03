@@ -58,6 +58,9 @@ export default function Conversation({
   )
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
+  const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
+  const unsubscribeFromMessages = useRef<() => void>(() => undefined)
+
   function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
   }
@@ -98,13 +101,23 @@ export default function Conversation({
     [messagesService]
   )
 
+  function chargerPlusDeMessages() {
+    unsubscribeFromMessages.current()
+    unsubscribeFromMessages.current = observerMessages(
+      jeuneChat.chatId,
+      nombrePagesChargees + 1
+    )
+    setNombrePagesChargees(nombrePagesChargees + 1)
+  }
+
   const observerMessages = useCallback(
-    (idChatToObserve: string) => {
+    (idChatToObserve: string, nombreDePages: number) => {
       if (!chatCredentials) return () => {}
 
       return messagesService.observeDerniersMessages(
         idChatToObserve,
         chatCredentials.cleChiffrement,
+        nombreDePages,
         (messagesGroupesParJour: ByDay<Message>[]) => {
           setMessagesByDay(messagesGroupesParJour)
 
@@ -162,10 +175,10 @@ export default function Conversation({
   }
 
   useEffect(() => {
-    const unsubscribe = observerMessages(jeuneChat.chatId)
+    unsubscribeFromMessages.current = observerMessages(jeuneChat.chatId, 1)
     setReadByConseiller(jeuneChat.chatId)
 
-    return () => unsubscribe()
+    return unsubscribeFromMessages.current
   }, [jeuneChat.chatId, observerMessages, setReadByConseiller])
 
   useEffect(() => {
@@ -233,26 +246,31 @@ export default function Conversation({
         {!messagesByDay && <SpinningLoader />}
 
         {messagesByDay && (
-          <ul>
-            {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
-              <li key={messagesOfADay.date.toMillis()} className='mb-5'>
-                <div className='text-base-regular text-center mb-3'>
-                  <span>{displayDate(messagesOfADay.date)}</span>
-                </div>
+          <>
+            <button onClick={chargerPlusDeMessages}>
+              Voir messages plus anciens
+            </button>
+            <ul>
+              {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
+                <li key={messagesOfADay.date.toMillis()} className='mb-5'>
+                  <div className='text-base-regular text-center mb-3'>
+                    <span>{displayDate(messagesOfADay.date)}</span>
+                  </div>
 
-                <ul>
-                  {messagesOfADay.messages.map((message: Message) => (
-                    <DisplayMessage
-                      key={message.id}
-                      message={message}
-                      conseillerNomComplet={getConseillerNomComplet(message)}
-                      lastSeenByJeune={lastSeenByJeune}
-                    />
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
+                  <ul>
+                    {messagesOfADay.messages.map((message: Message) => (
+                      <DisplayMessage
+                        key={message.id}
+                        message={message}
+                        conseillerNomComplet={getConseillerNomComplet(message)}
+                        lastSeenByJeune={lastSeenByJeune}
+                      />
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
 

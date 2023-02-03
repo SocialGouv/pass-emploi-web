@@ -22,9 +22,11 @@ describe('<Conversation />', () => {
   let conseillersJeunes: ConseillerHistorique[]
   let rerender: (children: JSX.Element) => void
   const messagesParJour = desMessagesParJour()
+  let unsubscribe: () => void
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
     conseillersJeunes = desConseillersJeune()
+    unsubscribe = jest.fn()
     messagesService = mockedMessagesService({
       observeJeuneReadingDate: jest.fn(
         (idChat: string, fn: (date: DateTime) => void) => {
@@ -33,9 +35,9 @@ describe('<Conversation />', () => {
         }
       ),
       observeDerniersMessages: jest.fn(
-        (_idChat, _cle, fn: (messages: ByDay<Message>[]) => void) => {
+        (_idChat, _cle, _pages, fn: (messages: ByDay<Message>[]) => void) => {
           fn(messagesParJour)
-          return () => {}
+          return unsubscribe
         }
       ),
       sendNouveauMessage: jest.fn(() => {
@@ -67,6 +69,38 @@ describe('<Conversation />', () => {
     expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
       'cleChiffrement',
+      1,
+      expect.any(Function)
+    )
+  })
+
+  it('permet de charger des messages plus anciens', async () => {
+    // When
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Voir messages plus anciens',
+      })
+    )
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Voir messages plus anciens',
+      })
+    )
+
+    // Then
+    expect(unsubscribe).toHaveBeenCalledTimes(2)
+    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
+      jeuneChat.chatId,
+      'cleChiffrement',
+      2,
+      expect.any(Function)
+    )
+
+    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
+      jeuneChat.chatId,
+      'cleChiffrement',
+      3,
       expect.any(Function)
     )
   })

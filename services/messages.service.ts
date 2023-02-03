@@ -74,6 +74,7 @@ export interface MessagesService {
   observeDerniersMessages(
     idChat: string,
     cleChiffrement: string,
+    pages: number,
     onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
   ): () => void
 
@@ -170,11 +171,13 @@ export class MessagesFirebaseAndApiService implements MessagesService {
   observeDerniersMessages(
     idChat: string,
     cleChiffrement: string,
+    pages: number,
     onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
   ): () => void {
+    const NB_MESSAGES_PAR_PAGE = 10
     return this.firebaseClient.observeDerniersMessagesDuChat(
       idChat,
-      10,
+      pages * NB_MESSAGES_PAR_PAGE,
       (messagesAntechronologiques: Message[]) => {
         const messagesGroupesParJour: ByDay<Message>[] =
           this.grouperMessagesParJour(

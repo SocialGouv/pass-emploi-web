@@ -189,6 +189,7 @@ describe('MessagesFirebaseAndApiService', () => {
       await messagesService.observeDerniersMessages(
         idChat,
         cleChiffrement,
+        2,
         onMessagesAntechronologiques
       )
     })
@@ -197,7 +198,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(firebaseClient.observeDerniersMessagesDuChat).toHaveBeenCalledWith(
         idChat,
-        10,
+        20,
         expect.any(Function)
       )
     })
