@@ -66,6 +66,9 @@ export default function Conversation({
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
+  const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
+  const unsubscribeFromMessages = useRef<() => void>(() => undefined)
+
   function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
   }
