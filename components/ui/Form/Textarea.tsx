@@ -37,7 +37,7 @@ function DecompteCaracteres({
         aria-atomic={true}
         className='sr-only'
       >
-        {debounced.length} sur {maxLength} caractères restants
+        {debounced.length} sur {maxLength} caractères autorisés
       </p>
       <p aria-hidden={true} className={invalid ? 'text-warning' : ''}>
         {debounced.length} / {maxLength}
