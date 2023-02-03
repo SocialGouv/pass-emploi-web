@@ -56,10 +56,12 @@ export default function Conversation({
   const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
     undefined
   )
-  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
   const unsubscribeFromMessages = useRef<() => void>(() => undefined)
+
+  const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
@@ -182,6 +184,14 @@ export default function Conversation({
   }, [jeuneChat.chatId, observerMessages, setReadByConseiller])
 
   useEffect(() => {
+    if (messagesByDay?.length && nombrePagesChargees === 1) {
+      conteneurMessagesRef.current!.lastElementChild!.scrollIntoView({
+        behavior: 'smooth',
+      })
+    }
+  }, [messagesByDay, nombrePagesChargees])
+
+  useEffect(() => {
     const unsubscribe = observerLastJeuneReadingDate(jeuneChat.chatId)
     return () => unsubscribe()
   }, [jeuneChat.chatId, observerLastJeuneReadingDate])
@@ -250,7 +260,7 @@ export default function Conversation({
             <button onClick={chargerPlusDeMessages}>
               Voir messages plus anciens
             </button>
-            <ul>
+            <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                 <li key={messagesOfADay.date.toMillis()} className='mb-5'>
                   <div className='text-base-regular text-center mb-3'>
