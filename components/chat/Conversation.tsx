@@ -257,9 +257,19 @@ export default function Conversation({
 
         {messagesByDay && (
           <>
-            <button onClick={chargerPlusDeMessages}>
+            <button
+              onClick={chargerPlusDeMessages}
+              className='block mx-auto mb-2 underline text-primary hover:text-primary_darken'
+            >
+              <IconComponent
+                name={IconName.ChevronUp}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 fill-[currentColor] mx-auto'
+              />
               Voir messages plus anciens
             </button>
+
             <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                 <li key={messagesOfADay.date.toMillis()} className='mb-5'>
