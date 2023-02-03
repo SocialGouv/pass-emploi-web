@@ -310,7 +310,6 @@ export default function Conversation({
               />
               Voir messages plus anciens
             </Button>
-
             <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                 <li key={messagesOfADay.date.toMillis()} className='mb-5'>
