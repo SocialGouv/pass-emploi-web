@@ -9,7 +9,7 @@ import {
   unJeuneChat,
 } from 'fixtures/jeune'
 import {
-  desMessages,
+  desMessagesAntechronologiques,
   desMessagesListeDeDiffusionParJour,
   desMessagesListeDiffusion,
   desMessagesParJour,
@@ -166,32 +166,47 @@ describe('MessagesFirebaseAndApiService', () => {
     })
   })
 
-  describe('.observeMessages', () => {
+  describe('.observeDerniersMessages', () => {
     let idChat: string
-    let onMessages: (messagesGroupesParJour: ByDay<Message>[]) => void
+    let onMessagesAntechronologiques: (
+      messagesGroupesParJour: ByDay<Message>[]
+    ) => void
     beforeEach(async () => {
       // Given
-      ;(firebaseClient.observeMessagesDuChat as jest.Mock).mockImplementation(
-        (idChat: string, fn: (messages: Message[]) => void) => fn(desMessages())
+      ;(
+        firebaseClient.observeDerniersMessagesDuChat as jest.Mock
+      ).mockImplementation(
+        (
+          idChat: string,
+          nbMessages: number,
+          fn: (messages: Message[]) => void
+        ) => fn(desMessagesAntechronologiques())
       )
       idChat = 'idChat'
-      onMessages = jest.fn()
+      onMessagesAntechronologiques = jest.fn()
 
       // When
-      await messagesService.observeMessages(idChat, cleChiffrement, onMessages)
+      await messagesService.observeDerniersMessages(
+        idChat,
+        cleChiffrement,
+        onMessagesAntechronologiques
+      )
     })
 
     it('subscribes to chat messages in firebase', async () => {
       // Then
-      expect(firebaseClient.observeMessagesDuChat).toHaveBeenCalledWith(
+      expect(firebaseClient.observeDerniersMessagesDuChat).toHaveBeenCalledWith(
         idChat,
+        10,
         expect.any(Function)
       )
     })
 
     it('calls provided callback with decrypted messages grouped by day', async () => {
       // Then
-      expect(onMessages).toHaveBeenCalledWith(desMessagesParJour())
+      expect(onMessagesAntechronologiques).toHaveBeenCalledWith(
+        desMessagesParJour()
+      )
     })
   })
 

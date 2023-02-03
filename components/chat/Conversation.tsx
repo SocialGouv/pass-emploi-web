@@ -102,7 +102,7 @@ export default function Conversation({
     (idChatToObserve: string) => {
       if (!chatCredentials) return () => {}
 
-      return messagesService.observeMessages(
+      return messagesService.observeDerniersMessages(
         idChatToObserve,
         chatCredentials.cleChiffrement,
         (messagesGroupesParJour: ByDay<Message>[]) => {

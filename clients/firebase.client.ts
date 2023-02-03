@@ -10,6 +10,7 @@ import {
   Firestore,
   getDocs,
   getFirestore,
+  limit,
   onSnapshot,
   orderBy,
   query,
@@ -254,9 +255,10 @@ class FirebaseClient {
     }
   }
 
-  observeMessagesDuChat(
+  observeDerniersMessagesDuChat(
     idChat: string,
-    onMessages: (messages: Message[]) => void
+    nbMessages: number,
+    onMessagesAntechronologiques: (messages: Message[]) => void
   ): () => void {
     try {
       return onSnapshot<FirebaseMessage>(
@@ -265,7 +267,8 @@ class FirebaseClient {
             this.getChatReference(idChat),
             'messages'
           ) as CollectionReference<FirebaseMessage>,
-          orderBy('creationDate')
+          orderBy('creationDate', 'desc'),
+          limit(nbMessages)
         ),
         (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
           const messages: Message[] =
@@ -275,7 +278,7 @@ class FirebaseClient {
             return
           }
 
-          onMessages(messages)
+          onMessagesAntechronologiques(messages)
         }
       )
     } catch (e) {

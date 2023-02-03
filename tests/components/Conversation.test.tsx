@@ -32,7 +32,7 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
-      observeMessages: jest.fn(
+      observeDerniersMessages: jest.fn(
         (_idChat, _cle, fn: (messages: ByDay<Message>[]) => void) => {
           fn(messagesParJour)
           return () => {}
@@ -64,7 +64,7 @@ describe('<Conversation />', () => {
 
   it('s’abonne au message de la conversation', async () => {
     // Then
-    expect(messagesService.observeMessages).toHaveBeenCalledWith(
+    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
       'cleChiffrement',
       expect.any(Function)
