@@ -16,6 +16,36 @@ type TextareaProps = {
   allowOverMax?: boolean
 }
 
+type DecompteCaracteresProps = {
+  id: string
+  debounced: string
+  maxLength?: number
+  invalid: boolean
+}
+
+function DecompteCaracteres({
+  id,
+  debounced,
+  maxLength,
+  invalid,
+}: DecompteCaracteresProps) {
+  return (
+    <span className='text-xs-regular text-right mb-4'>
+      <p
+        id={id + '--length'}
+        aria-live='polite'
+        aria-atomic={true}
+        className='sr-only'
+      >
+        {debounced.length} sur {maxLength} caractères autorisés
+      </p>
+      <p aria-hidden={true} className={invalid ? 'text-warning' : ''}>
+        {debounced.length} / {maxLength}
+      </p>
+    </span>
+  )
+}
+
 const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
@@ -35,7 +65,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const [value, setValue] = useState<string>(defaultValue)
     const debounced = useDebounce(value, 500)
 
-    function upateValue(e: ChangeEvent<HTMLTextAreaElement>): void {
+    function updateValue(e: ChangeEvent<HTMLTextAreaElement>): void {
       const newValue = e.target.value
       setValue(newValue)
       onChange(newValue)
@@ -62,7 +92,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           required={required}
           disabled={disabled}
           defaultValue={defaultValue}
-          onChange={upateValue}
+          onChange={updateValue}
           onBlur={onBlur}
           maxLength={allowOverMax ? undefined : maxLength}
           rows={rows}
@@ -72,14 +102,12 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
         />
         {Boolean(maxLength) && (
-          <span className='text-xs-regular text-right mb-4'>
-            <span id={id + '--length'} className='sr-only'>
-              {debounced.length} sur {maxLength} caractères
-            </span>
-            <span aria-hidden={true} className={invalid ? 'text-warning' : ''}>
-              {debounced.length} / {maxLength}
-            </span>
-          </span>
+          <DecompteCaracteres
+            id={id}
+            debounced={debounced}
+            maxLength={maxLength}
+            invalid={invalid}
+          />
         )}
       </>
     )
