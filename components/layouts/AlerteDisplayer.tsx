@@ -68,16 +68,30 @@ type AlerteAffichee = {
 
 type DictAlertes = { [key in AlerteParam]: AlerteAffichee }
 const ALERTES: DictAlertes = {
-  creationEvenement: {
-    title: 'L’événement a bien été créé',
-    sub: 'Vous pouvez modifier l’événement dans la page de détail',
+  creationRDV: {
+    title: 'Le rendez-vous a bien été créé',
+    sub: 'Vous pouvez modifier le rendez-vous dans la page de détail',
     link: {
-      label: 'Voir le détail de l’événement',
+      label: 'Voir le détail du rendez-vous',
       buildHref: (target?: string) => '/mes-jeunes/edition-rdv?idRdv=' + target,
     },
   },
-  modificationEvenement: { title: 'L’événement a bien été modifié' },
-  suppressionEvenement: { title: 'L’événement a bien été supprimé' },
+  creationAnimationCollective: {
+    title: "L'animation collective a bien été créée",
+    sub: "Vous pouvez modifier l'animation collective dans la page de détail",
+    link: {
+      label: "Voir le détail de l'animation collective",
+      buildHref: (target?: string) => '/mes-jeunes/edition-rdv?idRdv=' + target,
+    },
+  },
+  modificationRDV: { title: 'Le rendez-vous a bien été modifié' },
+  modificationAnimationCollective: {
+    title: 'L’animation collective a bien été modifiée',
+  },
+  suppressionRDV: { title: 'Le rendez-vous a bien été supprimé' },
+  suppressionAnimationCollective: {
+    title: 'L’animation collective a bien été supprimée',
+  },
   recuperationBeneficiaires: {
     title: 'Vous avez récupéré vos bénéficiaires avec succès',
   },
