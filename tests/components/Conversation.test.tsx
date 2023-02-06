@@ -5,10 +5,10 @@ import React from 'react'
 
 import Conversation from 'components/chat/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
-import { desMessagesParJour } from 'fixtures/message'
+import { desMessagesParJour, unMessage } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Message, ByDay } from 'interfaces/message'
+import { ByDay, Message } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -22,9 +22,11 @@ describe('<Conversation />', () => {
   let conseillersJeunes: ConseillerHistorique[]
   let rerender: (children: JSX.Element) => void
   const messagesParJour = desMessagesParJour()
+  let unsubscribe: () => void
   beforeEach(async () => {
     jeuneChat = unJeuneChat()
     conseillersJeunes = desConseillersJeune()
+    unsubscribe = jest.fn()
     messagesService = mockedMessagesService({
       observeJeuneReadingDate: jest.fn(
         (idChat: string, fn: (date: DateTime) => void) => {
@@ -32,10 +34,15 @@ describe('<Conversation />', () => {
           return () => {}
         }
       ),
-      observeMessages: jest.fn(
-        (_idChat, _cle, fn: (messages: ByDay[]) => void) => {
-          fn(messagesParJour)
-          return () => {}
+      observeDerniersMessages: jest.fn(
+        (_idChat, _cle, pages, fn: (messages: ByDay<Message>[]) => void) => {
+          const messagesPagines = messagesParJour.map((jour) => ({ ...jour }))
+          messagesPagines[0].messages = [
+            unMessage({ id: 'message-page-' + pages }),
+            ...messagesPagines[0].messages,
+          ]
+          fn(messagesPagines)
+          return unsubscribe
         }
       ),
       sendNouveauMessage: jest.fn(() => {
@@ -64,9 +71,41 @@ describe('<Conversation />', () => {
 
   it('s’abonne au message de la conversation', async () => {
     // Then
-    expect(messagesService.observeMessages).toHaveBeenCalledWith(
+    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
       'cleChiffrement',
+      1,
+      expect.any(Function)
+    )
+  })
+
+  it('permet de charger des messages plus anciens', async () => {
+    // When
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Voir messages plus anciens',
+      })
+    )
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Voir messages plus anciens',
+      })
+    )
+
+    // Then
+    expect(unsubscribe).toHaveBeenCalledTimes(2)
+    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
+      jeuneChat.chatId,
+      'cleChiffrement',
+      2,
+      expect.any(Function)
+    )
+
+    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
+      jeuneChat.chatId,
+      'cleChiffrement',
+      3,
       expect.any(Function)
     )
   })

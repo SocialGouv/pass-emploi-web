@@ -27,12 +27,8 @@ export default function DisplayMessage({
     lastSeenByJeune && lastSeenByJeune > message.creationDate
   )
 
-  function scrollToRef(element: HTMLLIElement | null) {
-    if (element) element.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
-    <li className='mb-5' ref={scrollToRef} data-testid={message.id}>
+    <li className='mb-5' data-testid={message.id}>
       <div
         className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max ${
           isSentByConseiller

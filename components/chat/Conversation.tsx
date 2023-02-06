@@ -8,15 +8,15 @@ import React, {
 } from 'react'
 
 import DisplayMessage from 'components/chat/DisplayMessage'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
-import ResizingMultilineInput from 'components/ui/Form/ResizingMultilineInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Message, ByDay } from 'interfaces/message'
+import { ByDay, Message } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import {
   FormNouveauMessageIndividuel,
@@ -57,6 +57,13 @@ export default function Conversation({
   const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
     undefined
   )
+
+  const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
+  const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
+  const [hasNoMoreMessages, setHasNoMoreMessages] = useState<boolean>(false)
+  const unsubscribeFromMessages = useRef<() => void>(() => undefined)
+
+  const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   function displayDate(date: DateTime) {
@@ -99,15 +106,37 @@ export default function Conversation({
     [messagesService]
   )
 
+  function chargerPlusDeMessages() {
+    const pageSuivante = nombrePagesChargees + 1
+    setLoadingMoreMessages(true)
+    unsubscribeFromMessages.current()
+    unsubscribeFromMessages.current = observerMessages(
+      jeuneChat.chatId,
+      pageSuivante
+    )
+    setNombrePagesChargees(pageSuivante)
+  }
+
   const observerMessages = useCallback(
-    (idChatToObserve: string) => {
+    (idChatToObserve: string, nombreDePages: number) => {
       if (!chatCredentials) return () => {}
 
-      return messagesService.observeMessages(
+      return messagesService.observeDerniersMessages(
         idChatToObserve,
         chatCredentials.cleChiffrement,
+        nombreDePages,
         (messagesGroupesParJour: ByDay<Message>[]) => {
-          setMessagesByDay(messagesGroupesParJour)
+          setMessagesByDay((previousValue) => {
+            if (
+              previousValue &&
+              previousValue[0].messages[0].id ===
+                messagesGroupesParJour[0].messages[0].id
+            ) {
+              setHasNoMoreMessages(true)
+            }
+            return messagesGroupesParJour
+          })
+          setLoadingMoreMessages(false)
 
           if (document.activeElement === inputRef.current) {
             setReadByConseiller(idChatToObserve)
@@ -163,11 +192,19 @@ export default function Conversation({
   }
 
   useEffect(() => {
-    const unsubscribe = observerMessages(jeuneChat.chatId)
+    unsubscribeFromMessages.current = observerMessages(jeuneChat.chatId, 1)
     setReadByConseiller(jeuneChat.chatId)
 
-    return () => unsubscribe()
+    return unsubscribeFromMessages.current
   }, [jeuneChat.chatId, observerMessages, setReadByConseiller])
+
+  useEffect(() => {
+    if (messagesByDay?.length && nombrePagesChargees === 1) {
+      conteneurMessagesRef.current!.lastElementChild!.scrollIntoView({
+        behavior: 'smooth',
+      })
+    }
+  }, [messagesByDay, nombrePagesChargees])
 
   useEffect(() => {
     const unsubscribe = observerLastJeuneReadingDate(jeuneChat.chatId)
@@ -234,26 +271,53 @@ export default function Conversation({
         {!messagesByDay && <SpinningLoader />}
 
         {messagesByDay && (
-          <ul>
-            {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
-              <li key={messagesOfADay.date.toMillis()} className='mb-5'>
-                <div className='text-base-regular text-center mb-3'>
-                  <span>{displayDate(messagesOfADay.date)}</span>
-                </div>
+          <>
+            {hasNoMoreMessages && (
+              <span
+                id='no-more-messages'
+                className='text-xs-regular text-center block'
+              >
+                Aucun message plus ancien
+              </span>
+            )}
+            <Button
+              onClick={chargerPlusDeMessages}
+              style={ButtonStyle.TERTIARY}
+              className='mx-auto mb-3'
+              isLoading={loadingMoreMessages}
+              disabled={hasNoMoreMessages}
+              describedBy='no-more-messages'
+            >
+              <IconComponent
+                name={IconName.ChevronUp}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 fill-[currentColor] mr-2'
+              />
+              Voir messages plus anciens
+            </Button>
 
-                <ul>
-                  {messagesOfADay.messages.map((message: Message) => (
-                    <DisplayMessage
-                      key={message.id}
-                      message={message}
-                      conseillerNomComplet={getConseillerNomComplet(message)}
-                      lastSeenByJeune={lastSeenByJeune}
-                    />
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
+            <ul ref={conteneurMessagesRef}>
+              {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
+                <li key={messagesOfADay.date.toMillis()} className='mb-5'>
+                  <div className='text-base-regular text-center mb-3'>
+                    <span>{displayDate(messagesOfADay.date)}</span>
+                  </div>
+
+                  <ul>
+                    {messagesOfADay.messages.map((message: Message) => (
+                      <DisplayMessage
+                        key={message.id}
+                        message={message}
+                        conseillerNomComplet={getConseillerNomComplet(message)}
+                        lastSeenByJeune={lastSeenByJeune}
+                      />
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
 
@@ -308,15 +372,14 @@ export default function Conversation({
             <label htmlFor='input-new-message' className='sr-only'>
               Message à envoyer
             </label>
-            <ResizingMultilineInput
-              inputRef={inputRef}
+            <textarea
+              ref={inputRef}
               id='input-new-message'
               className='w-full outline-none'
               onFocus={() => setReadByConseiller(jeuneChat.chatId)}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Écrivez votre message ici...'
-              minRows={3}
-              maxRows={7}
+              rows={5}
             />
           </div>
           <div>
