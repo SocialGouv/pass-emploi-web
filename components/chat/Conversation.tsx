@@ -27,7 +27,6 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
-import Textarea from 'components/ui/Form/Textarea'
 
 type ConversationProps = {
   conseillers: ConseillerHistorique[]
@@ -68,6 +67,8 @@ export default function Conversation({
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
+  const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
+  const [hasNoMoreMessages, setHasNoMoreMessages] = useState<boolean>(false)
   const unsubscribeFromMessages = useRef<() => void>(() => undefined)
 
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
