@@ -155,10 +155,7 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
       )}
 
       <div className='flex items-start justify-between mb-5'>
-        <h2
-          className='text-m-bold text-content_color'
-          title='Intitulé de l’action'
-        >
+        <h2 className='text-m-bold text-grey_800' title='Intitulé de l’action'>
           {action.content}
         </h2>
 
