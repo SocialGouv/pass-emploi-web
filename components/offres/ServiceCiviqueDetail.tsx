@@ -42,7 +42,7 @@ export default function ServiceCiviqueDetail({
   )
 
   const sectionTitleStyle =
-    'inline-flex items-center w-full text-m-bold pb-6 border-b border-solid border-primary_lighten'
+    'inline-flex items-center w-full text-m-bold text-grey_800 pb-6 border-b border-solid border-primary_lighten'
   const pStyle = 'mt-4 text-s-regular pb-4 '
 
   return (

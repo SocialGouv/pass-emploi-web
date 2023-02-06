@@ -42,7 +42,7 @@ export default function OffreEmploiDetail({
   )
 
   const sectionTitleStyle =
-    'inline-flex items-center w-full text-m-bold pb-6 border-b border-solid border-primary_lighten'
+    'inline-flex items-center w-full text-m-bold text-grey_800 pb-6 border-b border-solid border-primary_lighten'
   const dtStyle = 'mt-6 text-base-bold'
   const ddStyle =
     'mt-4 text-s-regular pb-4 border-b border-solid border-primary_lighten'
