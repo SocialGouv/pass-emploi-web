@@ -12,10 +12,10 @@ import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { BaseJeune, Chat, JeuneChat } from 'interfaces/jeune'
 import {
+  ByDay,
   ChatCredentials,
   Message,
   MessageListeDiffusion,
-  ByDay,
   TypeMessage,
 } from 'interfaces/message'
 import { BaseOffre } from 'interfaces/offre'
@@ -71,9 +71,10 @@ export interface MessagesService {
     updateChats: (chats: JeuneChat[]) => void
   ): Promise<() => void>
 
-  observeMessages(
+  observeDerniersMessages(
     idChat: string,
     cleChiffrement: string,
+    pages: number,
     onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
   ): () => void
 
@@ -167,16 +168,22 @@ export class MessagesFirebaseAndApiService implements MessagesService {
     )
   }
 
-  observeMessages(
+  observeDerniersMessages(
     idChat: string,
     cleChiffrement: string,
+    pages: number,
     onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
   ): () => void {
-    return this.firebaseClient.observeMessagesDuChat(
+    const NB_MESSAGES_PAR_PAGE = 10
+    return this.firebaseClient.observeDerniersMessagesDuChat(
       idChat,
-      (messages: Message[]) => {
+      pages * NB_MESSAGES_PAR_PAGE,
+      (messagesAntechronologiques: Message[]) => {
         const messagesGroupesParJour: ByDay<Message>[] =
-          this.grouperMessagesParJour(messages, cleChiffrement)
+          this.grouperMessagesParJour(
+            [...messagesAntechronologiques].reverse(),
+            cleChiffrement
+          )
         onMessagesGroupesParJour(messagesGroupesParJour)
       }
     )

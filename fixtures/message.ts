@@ -28,34 +28,23 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
   return { ...defaults, ...args }
 }
 
-export const desMessages = (): Message[] => [
+export const desMessagesAntechronologiques = (): Message[] => [
   unMessage({
-    id: 'message-1',
-    content: 'Message du 22/12/2021',
-    creationDate: DateTime.local(2021, 12, 22),
+    id: 'message-7',
+    content: 'Je vous partage cet événement',
+    creationDate: DateTime.local(2022, 1, 17),
+    type: TypeMessage.MESSAGE_EVENEMENT,
+    infoEvenement: {
+      id: 'id-evenement',
+      titre: 'Un atelier',
+      date: DateTime.fromISO('2021-12-22T00:00:00.000Z'),
+    },
   }),
   unMessage({
-    id: 'message-2',
-    content: 'Message du 10/1/2022',
-    creationDate: DateTime.local(2022, 1, 10),
+    id: 'message-lien-1',
+    content: 'Message du 16/1/2022 avec un lien https://www.pass-emploi.com/',
+    creationDate: DateTime.local(2022, 1, 16),
     conseillerId: 'conseiller-2',
-  }),
-  unMessage({
-    id: 'message-3',
-    content: 'Message du 13/1/2022 9h',
-    creationDate: DateTime.local(2022, 1, 13, 9),
-    conseillerId: 'conseiller-3',
-  }),
-  unMessage({
-    id: 'message-4',
-    content: 'Message du 13/1/2022 10h',
-    creationDate: DateTime.local(2022, 1, 13, 10),
-  }),
-  unMessage({
-    id: 'message-5',
-    content: 'Changement de conseiller',
-    creationDate: DateTime.local(2022, 1, 14),
-    type: TypeMessage.NOUVEAU_CONSEILLER,
   }),
   unMessage({
     id: 'message-6',
@@ -69,21 +58,32 @@ export const desMessages = (): Message[] => [
     },
   }),
   unMessage({
-    id: 'message-lien-1',
-    content: 'Message du 16/1/2022 avec un lien https://www.pass-emploi.com/',
-    creationDate: DateTime.local(2022, 1, 16),
+    id: 'message-5',
+    content: 'Changement de conseiller',
+    creationDate: DateTime.local(2022, 1, 14),
+    type: TypeMessage.NOUVEAU_CONSEILLER,
+  }),
+  unMessage({
+    id: 'message-4',
+    content: 'Message du 13/1/2022 10h',
+    creationDate: DateTime.local(2022, 1, 13, 10),
+  }),
+  unMessage({
+    id: 'message-3',
+    content: 'Message du 13/1/2022 9h',
+    creationDate: DateTime.local(2022, 1, 13, 9),
+    conseillerId: 'conseiller-3',
+  }),
+  unMessage({
+    id: 'message-2',
+    content: 'Message du 10/1/2022',
+    creationDate: DateTime.local(2022, 1, 10),
     conseillerId: 'conseiller-2',
   }),
   unMessage({
-    id: 'message-7',
-    content: 'Je vous partage cet événement',
-    creationDate: DateTime.local(2022, 1, 17),
-    type: TypeMessage.MESSAGE_EVENEMENT,
-    infoEvenement: {
-      id: 'id-evenement',
-      titre: 'Un atelier',
-      date: DateTime.fromISO('2021-12-22T00:00:00.000Z'),
-    },
+    id: 'message-1',
+    content: 'Message du 22/12/2021',
+    creationDate: DateTime.local(2021, 12, 22),
   }),
 ]
 
