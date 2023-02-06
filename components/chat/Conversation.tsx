@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 
 import DisplayMessage from 'components/chat/DisplayMessage'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
@@ -26,6 +27,7 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
+import Textarea from 'components/ui/Form/Textarea'
 
 type ConversationProps = {
   conseillers: ConseillerHistorique[]
@@ -257,18 +259,19 @@ export default function Conversation({
 
         {messagesByDay && (
           <>
-            <button
+            <Button
               onClick={chargerPlusDeMessages}
-              className='block mx-auto mb-2 underline text-primary hover:text-primary_darken'
+              style={ButtonStyle.TERTIARY}
+              className='mx-auto mb-3'
             >
               <IconComponent
                 name={IconName.ChevronUp}
                 aria-hidden={true}
                 focusable={false}
-                className='w-4 h-4 fill-[currentColor] mx-auto'
+                className='w-4 h-4 fill-[currentColor] mr-2'
               />
               Voir messages plus anciens
-            </button>
+            </Button>
 
             <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
