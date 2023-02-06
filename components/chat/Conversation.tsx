@@ -27,7 +27,6 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
-import Textarea from 'components/ui/Form/Textarea'
 
 type ConversationProps = {
   conseillers: ConseillerHistorique[]
@@ -60,6 +59,8 @@ export default function Conversation({
   )
 
   const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
+  const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
+  const [hasNoMoreMessages, setHasNoMoreMessages] = useState<boolean>(false)
   const unsubscribeFromMessages = useRef<() => void>(() => undefined)
 
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
@@ -106,12 +107,14 @@ export default function Conversation({
   )
 
   function chargerPlusDeMessages() {
+    const pageSuivante = nombrePagesChargees + 1
+    setLoadingMoreMessages(true)
     unsubscribeFromMessages.current()
     unsubscribeFromMessages.current = observerMessages(
       jeuneChat.chatId,
-      nombrePagesChargees + 1
+      pageSuivante
     )
-    setNombrePagesChargees(nombrePagesChargees + 1)
+    setNombrePagesChargees(pageSuivante)
   }
 
   const observerMessages = useCallback(
@@ -123,7 +126,17 @@ export default function Conversation({
         chatCredentials.cleChiffrement,
         nombreDePages,
         (messagesGroupesParJour: ByDay<Message>[]) => {
-          setMessagesByDay(messagesGroupesParJour)
+          setMessagesByDay((previousValue) => {
+            if (
+              previousValue &&
+              previousValue[0].messages[0].id ===
+                messagesGroupesParJour[0].messages[0].id
+            ) {
+              setHasNoMoreMessages(true)
+            }
+            return messagesGroupesParJour
+          })
+          setLoadingMoreMessages(false)
 
           if (document.activeElement === inputRef.current) {
             setReadByConseiller(idChatToObserve)
@@ -259,10 +272,21 @@ export default function Conversation({
 
         {messagesByDay && (
           <>
+            {hasNoMoreMessages && (
+              <span
+                id='no-more-messages'
+                className='text-xs-regular text-center block'
+              >
+                Aucun message plus ancien
+              </span>
+            )}
             <Button
               onClick={chargerPlusDeMessages}
               style={ButtonStyle.TERTIARY}
               className='mx-auto mb-3'
+              isLoading={loadingMoreMessages}
+              disabled={hasNoMoreMessages}
+              describedBy='no-more-messages'
             >
               <IconComponent
                 name={IconName.ChevronUp}

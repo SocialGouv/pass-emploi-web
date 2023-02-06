@@ -5,10 +5,10 @@ import React from 'react'
 
 import Conversation from 'components/chat/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
-import { desMessagesParJour } from 'fixtures/message'
+import { desMessagesParJour, unMessage } from 'fixtures/message'
 import { mockedMessagesService } from 'fixtures/services'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Message, ByDay } from 'interfaces/message'
+import { ByDay, Message } from 'interfaces/message'
 import { FichiersService } from 'services/fichiers.service'
 import { MessagesService } from 'services/messages.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -35,8 +35,13 @@ describe('<Conversation />', () => {
         }
       ),
       observeDerniersMessages: jest.fn(
-        (_idChat, _cle, _pages, fn: (messages: ByDay<Message>[]) => void) => {
-          fn(messagesParJour)
+        (_idChat, _cle, pages, fn: (messages: ByDay<Message>[]) => void) => {
+          const messagesPagines = messagesParJour.map((jour) => ({ ...jour }))
+          messagesPagines[0].messages = [
+            unMessage({ id: 'message-page-' + pages }),
+            ...messagesPagines[0].messages,
+          ]
+          fn(messagesPagines)
           return unsubscribe
         }
       ),
