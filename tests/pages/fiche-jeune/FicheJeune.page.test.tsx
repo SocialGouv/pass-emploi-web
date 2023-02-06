@@ -102,7 +102,7 @@ describe('Fiche Jeune', () => {
         // Then
         expect(
           screen.getByRole('link', {
-            name: 'Voir le calendrier de l’établissement',
+            name: 'Inscrire à une animation collective',
           })
         ).toHaveAttribute('href', '/agenda?onglet=etablissement')
       })

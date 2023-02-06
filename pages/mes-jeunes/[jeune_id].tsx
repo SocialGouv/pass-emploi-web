@@ -368,7 +368,7 @@ function FicheJeune({
                 aria-hidden='true'
                 className='mr-2 w-4 h-4'
               />
-              Voir le calendrier de l’établissement
+              Inscrire à une animation collective
             </ButtonLink>
           )}
         </div>
