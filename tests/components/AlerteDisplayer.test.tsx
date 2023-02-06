@@ -6,6 +6,7 @@ import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import renderWithContexts from 'tests/renderWithContexts'
+import { animation } from 'polished'
 
 describe('AlerteDisplayer', () => {
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -19,8 +20,8 @@ describe('AlerteDisplayer', () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           alerte: {
-            key: AlerteParam.creationEvenement,
-            target: 'id-evenement',
+            key: AlerteParam.creationRDV,
+            target: 'id-rdv',
           },
           alerteSetter,
         },
@@ -30,20 +31,20 @@ describe('AlerteDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/L’événement a bien été créé/)
+        screen.getByText(/Le rendez-vous a bien été créé/)
       ).toBeInTheDocument()
     })
 
-    it("permet d'accéder à la fiche de l’événement", async () => {
+    it("permet d'accéder à la fiche du rendez-vous", async () => {
       // When
       const lienEvenement = screen.getByRole('link', {
-        name: 'Voir le détail de l’événement',
+        name: 'Voir le détail du rendez-vous',
       })
 
       // Then
       expect(lienEvenement).toHaveAttribute(
         'href',
-        '/mes-jeunes/edition-rdv?idRdv=id-evenement'
+        '/mes-jeunes/edition-rdv?idRdv=id-rdv'
       )
     })
   })
@@ -53,7 +54,7 @@ describe('AlerteDisplayer', () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           alerte: {
-            key: AlerteParam.modificationEvenement,
+            key: AlerteParam.modificationRDV,
           },
           alerteSetter,
         },
@@ -61,7 +62,7 @@ describe('AlerteDisplayer', () => {
 
       // Then
       expect(
-        screen.getByText(/événement a bien été modifié/)
+        screen.getByText(/Le rendez-vous a bien été modifié/)
       ).toBeInTheDocument()
     })
   })
@@ -72,7 +73,7 @@ describe('AlerteDisplayer', () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {
           alerte: {
-            key: AlerteParam.suppressionEvenement,
+            key: AlerteParam.suppressionRDV,
           },
           alerteSetter,
         },
@@ -80,7 +81,79 @@ describe('AlerteDisplayer', () => {
 
       // Then
       expect(
-        screen.getByText(/événement a bien été supprimé/)
+        screen.getByText(/Le rendez-vous a bien été supprimé/)
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('quand la création d une animation collective est réussie', () => {
+    beforeEach(() => {
+      // When
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.creationAnimationCollective,
+            target: 'id-ac',
+          },
+          alerteSetter,
+        },
+      })
+    })
+
+    it("affiche l'alerte de succès", () => {
+      // Then
+      expect(
+        screen.getByText(/L'animation collective a bien été créée/)
+      ).toBeInTheDocument()
+    })
+
+    it("permet d'accéder à la fiche de l’animation collective", async () => {
+      // When
+      const lienEvenement = screen.getByRole('link', {
+        name: "Voir le détail de l'animation collective",
+      })
+
+      // Then
+      expect(lienEvenement).toHaveAttribute(
+        'href',
+        '/mes-jeunes/edition-rdv?idRdv=id-ac'
+      )
+    })
+  })
+
+  describe('quand la modification d’une animation collective est réussie', () => {
+    it("affiche l'alerte de succès", () => {
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.modificationAnimationCollective,
+          },
+          alerteSetter,
+        },
+      })
+
+      // Then
+      expect(
+        screen.getByText(/L’animation collective a bien été modifiée/)
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('quand la suppression d’une animation collective est réussie', () => {
+    it("affiche l'alerte de succès", () => {
+      // Given
+      renderWithContexts(<AlerteDisplayer />, {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.suppressionAnimationCollective,
+          },
+          alerteSetter,
+        },
+      })
+
+      // Then
+      expect(
+        screen.getByText(/L’animation collective a bien été supprimée/)
       ).toBeInTheDocument()
     })
   })
@@ -323,7 +396,7 @@ describe('AlerteDisplayer', () => {
     renderWithContexts(<AlerteDisplayer />, {
       customAlerte: {
         alerte: {
-          key: AlerteParam.creationEvenement,
+          key: AlerteParam.creationRDV,
         },
         alerteSetter,
       },

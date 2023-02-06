@@ -69,12 +69,18 @@ function Agenda({ onglet }: AgendaProps) {
   const isAgenceNecessaire = !conseiller?.agence
 
   let initialTracking = `Agenda`
-  if (alerte?.key === AlerteParam.creationEvenement)
+  if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
-  if (alerte?.key === AlerteParam.modificationEvenement)
+  if (alerte?.key === AlerteParam.modificationRDV)
     initialTracking += ' - Modification rdv succès'
-  if (alerte?.key === AlerteParam.suppressionEvenement)
+  if (alerte?.key === AlerteParam.suppressionRDV)
     initialTracking += ' - Suppression rdv succès'
+  if (alerte?.key === AlerteParam.creationAnimationCollective)
+    initialTracking += ' - Creation animation collective succès'
+  if (alerte?.key === AlerteParam.modificationAnimationCollective)
+    initialTracking += ' - Modification animation collective succès'
+  if (alerte?.key === AlerteParam.suppressionAnimationCollective)
+    initialTracking += ' - Suppression animation collective succès'
   if (alerte?.key === AlerteParam.envoiMessage)
     initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
