@@ -27,6 +27,7 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
+import Textarea from 'components/ui/Form/Textarea'
 
 type ConversationProps = {
   conseillers: ConseillerHistorique[]
