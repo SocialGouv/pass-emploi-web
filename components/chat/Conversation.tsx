@@ -87,6 +87,7 @@ export default function Conversation({
     messagesService.sendNouveauMessage(formNouveauMessage)
 
     setUploadedFileInfo(undefined)
+    inputRef.current!.value = ''
     setNewMessage('')
   }
 
@@ -200,9 +201,11 @@ export default function Conversation({
 
   useEffect(() => {
     if (messagesByDay?.length && nombrePagesChargees === 1) {
-      conteneurMessagesRef.current!.lastElementChild!.scrollIntoView({
-        behavior: 'smooth',
-      })
+      conteneurMessagesRef
+        .current!.lastElementChild!.querySelector('li:last-child')
+        ?.scrollIntoView({
+          behavior: 'smooth',
+        })
     }
   }, [messagesByDay, nombrePagesChargees])
 
