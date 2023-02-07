@@ -161,7 +161,7 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
-    const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+    const alertType = evenementTypeAC
       ? AlerteParam.creationAnimationCollective
       : AlerteParam.creationRDV
     setAlerte(alertType, idNouvelEvenement)
@@ -389,6 +389,10 @@ function EditionRdv({
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={supprimerEvenement}
+          evenementTypeAC={
+            evenementTypeAC ||
+            isCodeTypeAnimationCollective(evenement?.type.code)
+          }
         />
       )}
     </>
