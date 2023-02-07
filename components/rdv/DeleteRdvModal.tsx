@@ -23,13 +23,13 @@ export default function DeleteRdvModal({
   const message = aDesJeunesDUnAutrePortefeuille
     ? `Vous allez supprimer ${
         evenementTypeAC ? 'une animation collective' : 'un rendez-vous'
-      } événement qui concerne des jeunes qui ne sont pas dans votre portefeuille`
+      } qui concerne des jeunes qui ne sont pas dans votre portefeuille`
     : 'L’ensemble des bénéficiaires sera notifié de la suppression'
 
   return (
     <Modal
       title={`Suppression ${
-        evenementTypeAC ? 'de l‘animation collective' : 'du rendez-vous'
+        evenementTypeAC ? 'de l’animation collective' : 'du rendez-vous'
       }`}
       onClose={handleCloseModal}
     >
@@ -47,8 +47,8 @@ export default function DeleteRdvModal({
       {aDesJeunesDUnAutrePortefeuille && (
         <div className='text-base-regular text-content_color text-center mx-28 mt-12'>
           <p>
-            Le créateur recevra un email de suppression{' '}
-            {evenementTypeAC ? 'de l‘animation collective' : 'du rendez-vous'}.
+            Le créateur recevra un e-mail de suppression{' '}
+            {evenementTypeAC ? 'de l’animation collective' : 'du rendez-vous'}.
           </p>
           <p>Les bénéficiaires seront notifiés sur l’application CEJ.</p>
         </div>

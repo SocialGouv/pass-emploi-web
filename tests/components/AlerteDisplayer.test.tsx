@@ -6,7 +6,6 @@ import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import renderWithContexts from 'tests/renderWithContexts'
-import { animation } from 'polished'
 
 describe('AlerteDisplayer', () => {
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -86,7 +85,7 @@ describe('AlerteDisplayer', () => {
     })
   })
 
-  describe('quand la création d une animation collective est réussie', () => {
+  describe('quand la création d’une animation collective est réussie', () => {
     beforeEach(() => {
       // When
       renderWithContexts(<AlerteDisplayer />, {
