@@ -161,7 +161,7 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
-    const alertType = evenementTypeAC
+    const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
       ? AlerteParam.creationAnimationCollective
       : AlerteParam.creationRDV
     setAlerte(alertType, idNouvelEvenement)
@@ -172,7 +172,7 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
-    const alertType = evenementTypeAC
+    const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
       ? AlerteParam.modificationAnimationCollective
       : AlerteParam.modificationRDV
     setAlerte(alertType)
@@ -184,7 +184,7 @@ function EditionRdv({
 
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      const alertType = evenementTypeAC
+      const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
         ? AlerteParam.suppressionAnimationCollective
         : AlerteParam.suppressionRDV
       setAlerte(alertType)
