@@ -29,7 +29,7 @@ export default function DeleteRdvModal({
   return (
     <Modal
       title={`Suppression ${
-        evenementTypeAC ? 'd‘une animation collective' : 'd‘un rendez-vous'
+        evenementTypeAC ? 'de l‘animation collective' : 'du rendez-vous'
       }`}
       onClose={handleCloseModal}
     >
