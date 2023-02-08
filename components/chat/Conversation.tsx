@@ -66,14 +66,6 @@ export default function Conversation({
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
-  const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
-  const [hasNoMoreMessages, setHasNoMoreMessages] = useState<boolean>(false)
-  const unsubscribeFromMessages = useRef<() => void>(() => undefined)
-
-  const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
-  const inputRef = useRef<HTMLTextAreaElement | null>(null)
-
   function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
   }
