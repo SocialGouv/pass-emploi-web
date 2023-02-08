@@ -15036,7 +15036,7 @@ __metadata:
     next-auth: 4.19.2
     next-logger: 3.0.1
     next-pwa: 5.6.0
-    pino: 8.8.0
+    pino: 8.9.0
     pino-pretty: ^9.1.1
     postcss: ^8.4.20
     prettier: ^2.8.1
@@ -15293,9 +15293,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:8.8.0":
-  version: 8.8.0
-  resolution: "pino@npm:8.8.0"
+"pino@npm:8.9.0":
+  version: 8.9.0
+  resolution: "pino@npm:8.9.0"
   dependencies:
     atomic-sleep: ^1.0.0
     fast-redact: ^3.1.1
@@ -15310,7 +15310,7 @@ __metadata:
     thread-stream: ^2.0.0
   bin:
     pino: bin.js
-  checksum: 69256469221b332776333069d637100053eb15dc7baa3f95897d7864bf2e6fd99f15cfd9cfc94b56e7b00da2e6b349c49affcff1abaca9a3d4b7ba63ff86b4f0
+  checksum: c7eb9345280383b9af4661b34ae2156c94e535eb33c8deaf525e00212fa9e4f0b9797cdeda17b80b333325d8a0aec6e7566618071506e944736822022b671fa8
   languageName: node
   linkType: hard
 
