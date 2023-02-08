@@ -102,14 +102,14 @@ describe('AlerteDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/L'animation collective a bien été créée/)
+        screen.getByText(/L’animation collective a bien été créée/)
       ).toBeInTheDocument()
     })
 
     it("permet d'accéder à la fiche de l’animation collective", async () => {
       // When
       const lienEvenement = screen.getByRole('link', {
-        name: "Voir le détail de l'animation collective",
+        name: 'Voir le détail de l’animation collective',
       })
 
       // Then

@@ -1390,7 +1390,7 @@ describe('EditionRdv', () => {
           )
         ).toBeInTheDocument()
         expect(
-          screen.getByText(/Le créateur recevra un email de suppression/)
+          screen.getByText(/Le créateur recevra un e-mail de suppression/)
         ).toBeInTheDocument()
       })
 

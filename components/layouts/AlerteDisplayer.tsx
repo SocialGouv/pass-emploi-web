@@ -77,10 +77,10 @@ const ALERTES: DictAlertes = {
     },
   },
   creationAnimationCollective: {
-    title: "L'animation collective a bien été créée",
-    sub: "Vous pouvez modifier l'animation collective dans la page de détail",
+    title: 'L’animation collective a bien été créée',
+    sub: 'Vous pouvez modifier l’animation collective dans la page de détail',
     link: {
-      label: "Voir le détail de l'animation collective",
+      label: 'Voir le détail de l’animation collective',
       buildHref: (target?: string) => '/mes-jeunes/edition-rdv?idRdv=' + target,
     },
   },
