@@ -667,7 +667,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(alerteSetter).toHaveBeenCalledWith(
-              'creationEvenement',
+              'creationRDV',
               '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
             )
             expect(push).toHaveBeenCalledWith('/agenda?onglet=conseiller')
@@ -1190,7 +1190,7 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(alerteSetter).toHaveBeenCalledWith('modificationEvenement')
+            expect(alerteSetter).toHaveBeenCalledWith('modificationRDV')
             expect(push).toHaveBeenCalledWith('/agenda')
           })
         })
@@ -1226,7 +1226,7 @@ describe('EditionRdv', () => {
           expect(evenementsService.supprimerEvenement).toHaveBeenCalledWith(
             evenement.id
           )
-          expect(alerteSetter).toHaveBeenCalledWith('suppressionEvenement')
+          expect(alerteSetter).toHaveBeenCalledWith('suppressionRDV')
           expect(push).toHaveBeenCalledWith('/agenda')
         })
       })
@@ -1390,7 +1390,7 @@ describe('EditionRdv', () => {
           )
         ).toBeInTheDocument()
         expect(
-          screen.getByText(/Le créateur recevra un email de suppression/)
+          screen.getByText(/Le créateur recevra un e-mail de suppression/)
         ).toBeInTheDocument()
       })
 

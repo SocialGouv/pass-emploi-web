@@ -7,23 +7,32 @@ interface DeleteRdvModalProps {
   aDesJeunesDUnAutrePortefeuille: boolean
   onClose: () => void
   performDelete: () => Promise<void>
+  evenementTypeAC: boolean
 }
 
 export default function DeleteRdvModal({
   aDesJeunesDUnAutrePortefeuille,
   onClose,
   performDelete,
+  evenementTypeAC,
 }: DeleteRdvModalProps) {
   function handleCloseModal() {
     onClose()
   }
 
   const message = aDesJeunesDUnAutrePortefeuille
-    ? 'Vous allez supprimer un événement qui concerne des jeunes qui ne sont pas dans votre portefeuille'
+    ? `Vous allez supprimer ${
+        evenementTypeAC ? 'une animation collective' : 'un rendez-vous'
+      } qui concerne des jeunes qui ne sont pas dans votre portefeuille`
     : 'L’ensemble des bénéficiaires sera notifié de la suppression'
 
   return (
-    <Modal title='Suppression de l’événement' onClose={handleCloseModal}>
+    <Modal
+      title={`Suppression ${
+        evenementTypeAC ? 'de l’animation collective' : 'du rendez-vous'
+      }`}
+      onClose={handleCloseModal}
+    >
       <IconComponent
         name={IconName.Warning}
         focusable={false}
@@ -37,7 +46,10 @@ export default function DeleteRdvModal({
 
       {aDesJeunesDUnAutrePortefeuille && (
         <div className='text-base-regular text-content_color text-center mx-28 mt-12'>
-          <p>Le créateur recevra un email de suppression de l’événement.</p>
+          <p>
+            Le créateur recevra un e-mail de suppression{' '}
+            {evenementTypeAC ? 'de l’animation collective' : 'du rendez-vous'}.
+          </p>
           <p>Les bénéficiaires seront notifiés sur l’application CEJ.</p>
         </div>
       )}

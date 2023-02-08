@@ -161,7 +161,10 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
-    setAlerte(AlerteParam.creationEvenement, idNouvelEvenement)
+    const alertType = evenementTypeAC
+      ? AlerteParam.creationAnimationCollective
+      : AlerteParam.creationRDV
+    setAlerte(alertType, idNouvelEvenement)
   }
 
   async function modifierEvenement(
@@ -169,7 +172,10 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
-    setAlerte(AlerteParam.modificationEvenement)
+    const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+      ? AlerteParam.modificationAnimationCollective
+      : AlerteParam.modificationRDV
+    setAlerte(alertType)
   }
 
   async function supprimerEvenement(): Promise<void> {
@@ -178,7 +184,10 @@ function EditionRdv({
 
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      setAlerte(AlerteParam.suppressionEvenement)
+      const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+        ? AlerteParam.suppressionAnimationCollective
+        : AlerteParam.suppressionRDV
+      setAlerte(alertType)
       await router.push(returnTo)
     } catch (e) {
       setShowDeleteRdvError(true)
@@ -380,6 +389,10 @@ function EditionRdv({
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={supprimerEvenement}
+          evenementTypeAC={
+            evenementTypeAC ||
+            isCodeTypeAnimationCollective(evenement?.type.code)
+          }
         />
       )}
     </>
