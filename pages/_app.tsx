@@ -38,15 +38,15 @@ Router.events.on('routeChangeError', progress.finish)
 export const fontMarianne = localFont({
   src: [
     {
-      path: '../public/fonts/Marianne/static/Marianne-Regular.woff2',
+      path: '../assets/fonts/Marianne/static/Marianne-Regular.woff2',
       weight: '400',
     },
     {
-      path: '../public/fonts/Marianne/static/Marianne-Medium.woff2',
+      path: '../assets/fonts/Marianne/static/Marianne-Medium.woff2',
       weight: '500',
     },
     {
-      path: '../public/fonts/Marianne/static/Marianne-Bold.woff2',
+      path: '../assets/fonts/Marianne/static/Marianne-Bold.woff2',
       weight: '700',
     },
   ],
