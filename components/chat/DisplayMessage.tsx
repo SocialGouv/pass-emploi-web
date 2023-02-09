@@ -28,7 +28,7 @@ export default function DisplayMessage({
   )
 
   return (
-    <li className='mb-5' data-testid={message.id}>
+    <li className='mb-5' id={message.id} data-testid={message.id}>
       <div
         className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max ${
           isSentByConseiller
