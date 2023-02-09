@@ -1,5 +1,7 @@
 // eslint import/order: 0
 import ProgressBar from '@badrap/bar-of-progress'
+import localFont from '@next/font/local'
+import arg from 'arg'
 import { AppProps as NextAppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
@@ -33,6 +35,24 @@ Router.events.on('routeChangeStart', progress.start)
 Router.events.on('routeChangeComplete', progress.finish)
 Router.events.on('routeChangeError', progress.finish)
 
+export const fontMarianne = localFont({
+  src: [
+    {
+      path: '../public/fonts/Marianne/static/Marianne-Regular.woff2',
+      weight: '400',
+    },
+    {
+      path: '../public/fonts/Marianne/static/Marianne-Medium.woff2',
+      weight: '500',
+    },
+    {
+      path: '../public/fonts/Marianne/static/Marianne-Bold.woff2',
+      weight: '700',
+    },
+  ],
+  fallback: ['arial'],
+})
+
 export default function CustomApp({ Component, pageProps }: NextAppProps) {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
@@ -45,6 +65,11 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
 
   return (
     <>
+      <style jsx global>{`
+        html {
+          font-family: ${fontMarianne.style.fontFamily};
+        }
+      `}</style>
       <DIProvider dependances={Container.getDIContainer().dependances}>
         <ConseillerProvider>
           {isLoginPage || isLogoutPage ? (

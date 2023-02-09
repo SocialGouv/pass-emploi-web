@@ -107,9 +107,6 @@ module.exports = {
         clock: "url('../assets/icons/clock.svg')",
         location: "url('../assets/icons/location_big.svg')",
       },
-      fontFamily: {
-        sans: ['Marianne'],
-      },
     },
   },
   plugins: [],

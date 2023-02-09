@@ -21,6 +21,7 @@
     "@badrap/bar-of-progress": "0.2.2",
     "@elastic/apm-rum": "5.12.0",
     "@elastic/apm-rum-react": "1.4.2",
+    "@next/font": "^13.1.6",
     "@storybook/storybook-deployer": "^2.8.16",
     "crypto-js": "4.1.1",
     "dotenv": "16.0.3",

@@ -32,12 +32,6 @@ export default function AppHead({ titre, hasMessageNonLu }: AppHeadProps) {
         href={`/${hasMessageNonLu ? 'favicon_notif' : 'favicon'}.png`}
       />
       <link rel='manifest' href='/manifest.webmanifest' />
-      <link
-        rel='preload'
-        href='/fonts/Marianne/static/Marianne-Regular.otf'
-        as='font'
-        crossOrigin=''
-      />
     </Head>
   )
 }
