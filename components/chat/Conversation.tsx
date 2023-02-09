@@ -201,14 +201,10 @@ export default function Conversation({
 
   useEffect(() => {
     if (messagesByDay?.length && nombrePagesChargees === 1) {
-      const lastMessage =
-        conteneurMessagesRef.current!.lastElementChild!.querySelector(
-          'li:last-child'
-        )
+      const dernierJour = conteneurMessagesRef.current!.lastElementChild
+      const lastMessage = dernierJour!.querySelector('li:last-child')
 
-      lastMessage!.scrollIntoView({
-        behavior: 'smooth',
-      })
+      lastMessage!.scrollIntoView()
     }
   }, [messagesByDay, nombrePagesChargees])
 
