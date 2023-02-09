@@ -1,7 +1,6 @@
 // eslint import/order: 0
 import ProgressBar from '@badrap/bar-of-progress'
 import localFont from '@next/font/local'
-import arg from 'arg'
 import { AppProps as NextAppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
