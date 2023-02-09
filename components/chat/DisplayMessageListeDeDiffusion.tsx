@@ -18,7 +18,7 @@ export default function DisplayMessageListeDeDiffusion({
   )
 
   function scrollToRef(element: HTMLLIElement | null) {
-    if (element) element.scrollIntoView({ behavior: 'smooth' })
+    if (element) element.scrollIntoView()
   }
 
   return (
