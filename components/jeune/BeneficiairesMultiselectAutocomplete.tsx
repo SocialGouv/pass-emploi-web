@@ -146,7 +146,6 @@ export default function BeneficiairesMultiselectAutocomplete({
         ),
       })
       input.current!.value = ''
-      return
     }
   }
 
@@ -205,8 +204,8 @@ export default function BeneficiairesMultiselectAutocomplete({
     const idsBeneficiaires = beneficiairesSelectionnes
       .map((beneficiaire) => beneficiaire.id)
       .concat(
-        listesSelectionnees.flatMap(({ beneficiaires }) =>
-          beneficiaires.map((beneficiaire) => beneficiaire.id)
+        listesSelectionnees.flatMap((liste) =>
+          liste.beneficiaires.map((beneficiaire) => beneficiaire.id)
         )
       )
 

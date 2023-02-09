@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function federatedLogout(
+export default async function health(
   _req: NextApiRequest,
   res: NextApiResponse
 ) {

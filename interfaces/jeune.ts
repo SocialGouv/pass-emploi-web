@@ -2,10 +2,6 @@ import { DateTime } from 'luxon'
 
 import { compareDates, compareDatesDesc } from 'utils/date'
 
-/**
- * TODO: utiliser cette interface en classe mère pour Jeune lorsque la traduction sera faite
- */
-
 export enum EtatSituation {
   EN_COURS = 'en cours',
   PREVU = 'prévue',
