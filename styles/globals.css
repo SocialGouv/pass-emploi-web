@@ -6,7 +6,6 @@ html {
   min-height: 100%;
   padding: 0;
   margin: 0;
-  font-family: 'Marianne', sans-serif;
   color: theme('colors.content_color');
 }
 
@@ -53,12 +52,4 @@ select:disabled {
 
 .bar-of-progress {
   z-index: 50;
-}
-
-@font-face {
-  font-family: 'Marianne', sans-serif;
-  src: url('/fonts/Marianne/static/Marianne-Regular.otf');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
 }
