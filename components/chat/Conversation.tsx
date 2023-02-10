@@ -110,12 +110,18 @@ export default function Conversation({
   function chargerPlusDeMessages() {
     const pageSuivante = nombrePagesChargees + 1
     setLoadingMoreMessages(true)
+    const idFirstDisplayedMessage = messagesByDay![0].messages[0].id
+
     unsubscribeFromMessages.current()
     unsubscribeFromMessages.current = observerMessages(
       jeuneChat.chatId,
       pageSuivante
     )
+
     setNombrePagesChargees(pageSuivante)
+    const previousFirstDisplayedMessage =
+      conteneurMessagesRef.current!.querySelector('#' + idFirstDisplayedMessage)
+    previousFirstDisplayedMessage!.scrollIntoView()
   }
 
   const observerMessages = useCallback(
