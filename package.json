@@ -27,7 +27,7 @@
     "dotenv": "16.0.3",
     "elastic-apm-node": "3.42.0",
     "firebase": "9.17.1",
-    "html-react-parser": "3.0.8",
+    "html-react-parser": "3.0.9",
     "jsonwebtoken": "9.0.0",
     "lodash.isequal": "4.5.0",
     "luxon": "3.2.1",
