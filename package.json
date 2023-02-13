@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "node server.js | pino-pretty",
     "watch": "yarn dev",
-    "build": "next build",
+    "build": "NODE_ENV=production next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "test": "TZ=Europe/Paris jest --config jest.config.js --coverage",
