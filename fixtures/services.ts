@@ -48,6 +48,8 @@ export function mockedActionsService(
     countActionsJeunes: jest.fn(),
     getActionsJeuneServerSide: jest.fn(),
     getActionsJeuneClientSide: jest.fn(),
+    getActionsAQualifierServerSide: jest.fn(),
+    getActionsAQualifierClientSide: jest.fn(),
     updateAction: jest.fn(),
     recupererLesCommentaires: jest.fn(),
     ajouterCommentaire: jest.fn(),

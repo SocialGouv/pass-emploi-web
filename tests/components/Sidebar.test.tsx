@@ -36,6 +36,9 @@ describe('<Sidebar/>', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Nils Tavernier' })
     ).toHaveAttribute('href', '/profil')
+    expect(
+      within(navigation).getByRole('link', { name: 'Pilotage' })
+    ).toHaveAttribute('href', '/pilotage')
     expect(() => within(navigation).getByText('Réaffectation')).toThrow()
   })
 

@@ -19,6 +19,7 @@ export enum NavItem {
   Actualites = 'Actualites',
   Raccourci = 'Raccourci,',
   Messagerie = 'Messagerie',
+  Pilotage = 'Pilotage',
 }
 type NavLinksProps = { showLabelsOnSmallScreen: boolean; items: NavItem[] }
 export default function NavLinks({
@@ -78,6 +79,18 @@ export default function NavLinks({
             iconName={IconName.Search}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
+        )}
+
+        {items.includes(NavItem.Pilotage) && (
+          <>
+            <NavLink
+              iconName={IconName.Board}
+              label='Pilotage'
+              href='/pilotage'
+              isActive={isCurrentRoute('/pilotage')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          </>
         )}
 
         {isSuperviseur && items.includes(NavItem.Supervision) && (

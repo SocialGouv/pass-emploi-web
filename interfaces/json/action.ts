@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 
 import {
   Action,
+  ActionPilotage,
   CreateurCommentaire,
   EtatQualificationAction,
   QualificationAction,
@@ -27,6 +28,17 @@ export interface ActionJson {
   dateEcheance: string
   dateFinReelle?: string
   qualification?: QualificationActionJson
+}
+
+export interface ActionPilotageJson {
+  id: string
+  titre: string
+  jeune: {
+    id: string
+    nom: string
+    prenom: string
+  }
+  dateFinReelle: string
 }
 
 export interface QualificationActionJson {
@@ -95,6 +107,21 @@ export function jsonToAction(json: ActionJson): Action {
   }
 
   return action
+}
+
+export function jsonToActionPilotage(
+  action: ActionPilotageJson
+): ActionPilotage {
+  return {
+    id: action.id,
+    titre: action.titre,
+    beneficiaire: {
+      id: action.jeune.id,
+      nom: action.jeune.nom,
+      prenom: action.jeune.prenom,
+    },
+    dateFinReelle: action.dateFinReelle,
+  }
 }
 
 export function actionJsonToEntree(action: ActionJson): EntreeAgenda {

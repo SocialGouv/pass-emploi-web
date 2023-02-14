@@ -23,6 +23,7 @@ export default function Sidebar() {
             NavItem.Aide,
             NavItem.Profil,
             NavItem.Actualites,
+            NavItem.Pilotage,
           ]}
         />
       </nav>
