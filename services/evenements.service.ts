@@ -4,8 +4,10 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 import {
   AnimationCollective,
+  AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
+  MetadonneesAnimationsCollectives,
   TypeEvenement,
 } from 'interfaces/evenement'
 import {
@@ -41,16 +43,16 @@ export interface EvenementsService {
     idEtablissement: string,
     page: number
   ): Promise<{
-    animationsCollectives: any
-    metadonneesAnimationsCollectives: any
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonneesAnimationsCollectives: MetadonneesAnimationsCollectives
   }>
 
   getRendezVousACloreServerSide(
     idEtablissement: string,
     accessToken: string
   ): Promise<{
-    animationsCollectives: any
-    metadonneesAnimationsCollectives: any
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonneesAnimationsCollectives: MetadonneesAnimationsCollectives
   }>
 
   getDetailsEvenement(
@@ -125,14 +127,14 @@ export class EvenementsApiService implements EvenementsService {
     page: number = 1,
     accessToken: string
   ): Promise<{
-    animationsCollectives: any
-    metadonneesAnimationsCollectives: any
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonneesAnimationsCollectives: MetadonneesAnimationsCollectives
   }> {
     const {
       content: { pagination, resultats },
     } = await this.apiClient.get<{
       pagination: { total: number; limit: number }
-      resultats: any
+      resultats: AnimationCollectivePilotage[]
     }>(
       `/v2/etablissements/${idEtablissement}/animations-collectives`,
       accessToken
@@ -153,8 +155,8 @@ export class EvenementsApiService implements EvenementsService {
     idEtablissement: string,
     page: number
   ): Promise<{
-    animationsCollectives: any
-    metadonneesAnimationsCollectives: any
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonneesAnimationsCollectives: MetadonneesAnimationsCollectives
   }> {
     const session = await getSession()
 
@@ -165,8 +167,8 @@ export class EvenementsApiService implements EvenementsService {
     idEtablissement: string,
     accessToken: string
   ): Promise<{
-    animationsCollectives: any
-    metadonneesAnimationsCollectives: any
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonneesAnimationsCollectives: MetadonneesAnimationsCollectives
   }> {
     return this.getRendezVousAClore(idEtablissement, 1, accessToken)
   }

@@ -203,6 +203,41 @@ export function uneAnimationCollective(
   return { ...defaults, ...overrides }
 }
 
+export const uneListeDAnimationCollectiveAClore = () => {
+  return [
+    {
+      id: '1',
+      titre: 'titre 1',
+      date: '2018-11-21T06:20:32.232Z',
+      nombreInscrits: 3,
+    },
+    {
+      id: '2',
+      titre: 'titre 2',
+      date: '2018-11-21T06:20:32.232Z',
+      nombreInscrits: 12,
+    },
+    {
+      id: '3',
+      titre: 'titre 3',
+      date: '2018-11-21T06:20:32.232Z',
+      nombreInscrits: 5,
+    },
+    {
+      id: '4',
+      titre: 'titre 4',
+      date: '2018-11-21T06:20:32.232Z',
+      nombreInscrits: 7,
+    },
+    {
+      id: '5',
+      titre: 'titre 5',
+      date: '2018-11-21T06:20:32.232Z',
+      nombreInscrits: 9,
+    },
+  ]
+}
+
 export function unEvenementJson(
   overrides: Partial<EvenementJson> = {}
 ): EvenementJson {

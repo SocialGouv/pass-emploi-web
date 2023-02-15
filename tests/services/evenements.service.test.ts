@@ -4,6 +4,7 @@ import { ApiClient } from 'clients/api.client'
 import {
   typesEvenement,
   uneAnimationCollective,
+  uneListeDAnimationCollectiveAClore,
   unEvenement,
   unEvenementJeuneJson,
   unEvenementJson,
@@ -24,10 +25,6 @@ import {
 } from 'services/evenements.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
-import {
-  uneListeDActionsAQualifier,
-  uneListeDActionsAQualifierJson,
-} from '../../fixtures/action'
 
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(async () => ({
@@ -313,11 +310,10 @@ describe('EvenementsApiService', () => {
 
   describe('.getRendezVousACloreClientSide', () => {
     it('renvoie les animations collectives du conseiller à clore', async () => {
-      // todo mock réalistes pour les ac à clore
       // GIVEN
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
-          resultats: [],
+          resultats: uneListeDAnimationCollectiveAClore(),
           pagination: { total: 5, limit: 10 },
         },
       })
@@ -334,7 +330,7 @@ describe('EvenementsApiService', () => {
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        animationsCollectives: [],
+        animationsCollectives: uneListeDAnimationCollectiveAClore(),
         metadonneesAnimationsCollectives: { nombrePages: 1, nombreTotal: 5 },
       })
     })
@@ -345,7 +341,7 @@ describe('EvenementsApiService', () => {
       // GIVEN
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
-          resultats: [],
+          resultats: uneListeDAnimationCollectiveAClore(),
           pagination: { total: 5, limit: 10 },
         },
       })
@@ -362,7 +358,7 @@ describe('EvenementsApiService', () => {
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        animationsCollectives: [],
+        animationsCollectives: uneListeDAnimationCollectiveAClore(),
         metadonneesAnimationsCollectives: { nombrePages: 1, nombreTotal: 5 },
       })
     })

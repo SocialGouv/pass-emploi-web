@@ -23,6 +23,18 @@ export type AnimationCollective = {
   statut: StatutAnimationCollective
 }
 
+export type AnimationCollectivePilotage = {
+  id: string
+  titre: string
+  date: string
+  nombreInscrits: number
+}
+
+export interface MetadonneesAnimationsCollectives {
+  nombrePages: number
+  nombreTotal: number
+}
+
 export type EvenementListItem = {
   id: string
   type: string
