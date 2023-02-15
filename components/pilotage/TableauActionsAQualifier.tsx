@@ -16,7 +16,6 @@ interface TableauActionsConseillerProps {
 export default function TableauActionsAQualifier({
   actions,
 }: TableauActionsConseillerProps) {
-  // todo formater date ( en attente modif format venant du back )
   return (
     <>
       {actions.length > 0 && (
