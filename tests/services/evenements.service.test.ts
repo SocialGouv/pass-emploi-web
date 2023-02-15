@@ -24,6 +24,10 @@ import {
 } from 'services/evenements.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
+import {
+  uneListeDActionsAQualifier,
+  uneListeDActionsAQualifierJson,
+} from '../../fixtures/action'
 
 jest.mock('next-auth/react', () => ({
   getSession: jest.fn(async () => ({
@@ -304,6 +308,63 @@ describe('EvenementsApiService', () => {
         }),
       ]
       expect(actual).toEqual(animationsCollectives)
+    })
+  })
+
+  describe('.getRendezVousACloreClientSide', () => {
+    it('renvoie les animations collectives du conseiller à clore', async () => {
+      // todo mock réalistes pour les ac à clore
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          resultats: [],
+          pagination: { total: 5, limit: 10 },
+        },
+      })
+
+      // WHEN
+      const actual = await evenementsService.getRendezVousACloreClientSide(
+        'id-etablissement',
+        1
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/etablissements/id-etablissement/animations-collectives',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        animationsCollectives: [],
+        metadonneesAnimationsCollectives: { nombrePages: 1, nombreTotal: 5 },
+      })
+    })
+  })
+
+  describe('.getRendezVousACloreServerSide', () => {
+    it('renvoie les animations collectives du conseiller à clore', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          resultats: [],
+          pagination: { total: 5, limit: 10 },
+        },
+      })
+
+      // WHEN
+      const actual = await evenementsService.getRendezVousACloreServerSide(
+        'id-etablissement',
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/etablissements/id-etablissement/animations-collectives',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        animationsCollectives: [],
+        metadonneesAnimationsCollectives: { nombrePages: 1, nombreTotal: 5 },
+      })
     })
   })
 

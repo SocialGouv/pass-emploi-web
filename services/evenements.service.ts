@@ -37,6 +37,22 @@ export interface EvenementsService {
     dateFin: DateTime
   ): Promise<AnimationCollective[]>
 
+  getRendezVousACloreClientSide(
+    idEtablissement: string,
+    page: number
+  ): Promise<{
+    animationsCollectives: any
+    metadonneesAnimationsCollectives: any
+  }>
+
+  getRendezVousACloreServerSide(
+    idEtablissement: string,
+    accessToken: string
+  ): Promise<{
+    animationsCollectives: any
+    metadonneesAnimationsCollectives: any
+  }>
+
   getDetailsEvenement(
     idRdv: string,
     accessToken: string
@@ -102,6 +118,57 @@ export class EvenementsApiService implements EvenementsService {
     )
 
     return animationsCollectivesJson.map(jsonToAnimationCollective)
+  }
+
+  private async getRendezVousAClore(
+    idEtablissement: string,
+    page: number = 1,
+    accessToken: string
+  ): Promise<{
+    animationsCollectives: any
+    metadonneesAnimationsCollectives: any
+  }> {
+    const {
+      content: { pagination, resultats },
+    } = await this.apiClient.get<{
+      pagination: { total: number; limit: number }
+      resultats: any
+    }>(
+      `/v2/etablissements/${idEtablissement}/animations-collectives`,
+      accessToken
+    )
+
+    const nombrePages = Math.ceil(pagination.total / pagination.limit)
+
+    return {
+      animationsCollectives: resultats,
+      metadonneesAnimationsCollectives: {
+        nombreTotal: pagination.total,
+        nombrePages: nombrePages,
+      },
+    }
+  }
+
+  async getRendezVousACloreClientSide(
+    idEtablissement: string,
+    page: number
+  ): Promise<{
+    animationsCollectives: any
+    metadonneesAnimationsCollectives: any
+  }> {
+    const session = await getSession()
+
+    return this.getRendezVousAClore(idEtablissement, page, session!.accessToken)
+  }
+
+  getRendezVousACloreServerSide(
+    idEtablissement: string,
+    accessToken: string
+  ): Promise<{
+    animationsCollectives: any
+    metadonneesAnimationsCollectives: any
+  }> {
+    return this.getRendezVousAClore(idEtablissement, 1, accessToken)
   }
 
   async getDetailsEvenement(

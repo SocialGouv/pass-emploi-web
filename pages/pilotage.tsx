@@ -2,6 +2,8 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
+import { EvenementsService } from '../services/evenements.service'
+
 import { OngletActionsPilotage } from 'components/pilotage/OngletActionsPilotage'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -56,14 +58,14 @@ function Pilotage({ actions, metadonneesActions }: PilotageProps) {
           onSelectTab={() => setCurrentTab(Onglet.ACTIONS)}
           iconName={IconName.Calendar}
         />
-        {/*<Tab*/}
-        {/*  label='Animations à clore'*/}
-        {/*  count={99}*/}
-        {/*  selected={currentTab === Onglet.ANIMATIONS_COLLECTIVES}*/}
-        {/*  controls='liste-animations-collectives-à-clore'*/}
-        {/*  onSelectTab={() => setCurrentTab(Onglet.ANIMATIONS_COLLECTIVES)}*/}
-        {/*  iconName={IconName.Calendar}*/}
-        {/*/>*/}
+        <Tab
+          label='Animations à clore'
+          count={99}
+          selected={currentTab === Onglet.ANIMATIONS_COLLECTIVES}
+          controls='liste-animations-collectives-à-clore'
+          onSelectTab={() => setCurrentTab(Onglet.ANIMATIONS_COLLECTIVES)}
+          iconName={IconName.Calendar}
+        />
       </TabList>
 
       {currentTab === Onglet.ACTIONS && (
@@ -85,17 +87,17 @@ function Pilotage({ actions, metadonneesActions }: PilotageProps) {
         </div>
       )}
 
-      {/*{currentTab === Onglet.ANIMATIONS_COLLECTIVES && (*/}
-      {/*  <div*/}
-      {/*    role='tabpanel'*/}
-      {/*    aria-labelledby='animations_collectives--tab'*/}
-      {/*    tabIndex={0}*/}
-      {/*    id='liste-animations-collectives-à-clore'*/}
-      {/*    className='mt-8 pb-8 border-b border-primary_lighten'*/}
-      {/*  >*/}
-      {/*    animations collectives*/}
-      {/*  </div>*/}
-      {/*)}*/}
+      {currentTab === Onglet.ANIMATIONS_COLLECTIVES && (
+        <div
+          role='tabpanel'
+          aria-labelledby='animations_collectives--tab'
+          tabIndex={0}
+          id='liste-animations-collectives-à-clore'
+          className='mt-8 pb-8 border-b border-primary_lighten'
+        >
+          animations collectives
+        </div>
+      )}
     </div>
   )
 }
@@ -107,6 +109,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const actionsService = withDependance<ActionsService>('actionsService')
+  const evenementsService =
+    withDependance<EvenementsService>('evenementsService')
+
   const {
     session: {
       accessToken,
@@ -117,11 +122,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { actions, metadonnees } =
     await actionsService.getActionsAQualifierServerSide(id, accessToken)
 
+  // const { animationsCollectives, metadonneesAnimationsCollectives } =
+  //   await evenementsService.getRendezVousACloreServerSide(id, accessToken)
+
   return {
     props: {
       pageTitle: 'Pilotage',
       actions,
       metadonneesActions: metadonnees,
+      // animationsCollectives: animationsCollectives,
+      // metadonneesAnimationsCollectives: metadonneesAnimationsCollectives,
     },
   }
 }
