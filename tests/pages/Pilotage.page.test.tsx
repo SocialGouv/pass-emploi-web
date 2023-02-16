@@ -70,7 +70,9 @@ describe('Pilotage', () => {
             )
           ).toBeInTheDocument()
           expect(
-            screen.getByLabelText(`Détail de l’action : ${action.titre}`)
+            screen.getByLabelText(
+              `Accéder au détail de l’action : ${action.titre}`
+            )
           ).toHaveAttribute(
             'href',
             `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`

@@ -33,7 +33,7 @@ export default function TableauActionsAQualifier({
               <TR
                 key={action.id}
                 href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
-                label={`Détail de l’action : ${action.titre}`}
+                label={`Accéder au détail de l’action : ${action.titre}`}
               >
                 <TD isBold>
                   {action.beneficiaire.nom} {action.beneficiaire.prenom}

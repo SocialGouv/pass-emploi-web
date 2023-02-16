@@ -72,7 +72,7 @@ function Pilotage({ actions, metadonneesActions }: PilotageProps) {
           aria-labelledby='liste-actions-à-qualifier--tab'
           tabIndex={0}
           id='liste-actions-à-qualifier'
-          className='mt-8 pb-8 border-b border-primary_lighten'
+          className='mt-6 pb-8 border-b border-primary_lighten'
         >
           <OngletActionsPilotage
             actionsInitiales={{

@@ -336,7 +336,7 @@ export class ActionsApiService implements ActionsService {
 
   private async getActionsAQualifier(
     idConseiller: string,
-    page: number = 1,
+    page: number,
     accessToken: string
   ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
     const {
@@ -352,9 +352,7 @@ export class ActionsApiService implements ActionsService {
     const nombrePages = Math.ceil(pagination.total / pagination.limit)
 
     return {
-      actions: resultats.map((action: ActionPilotageJson) =>
-        jsonToActionPilotage(action)
-      ),
+      actions: resultats.map(jsonToActionPilotage),
       metadonnees: {
         nombreTotal: pagination.total,
         nombrePages: nombrePages,
