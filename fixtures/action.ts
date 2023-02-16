@@ -1,11 +1,12 @@
 import {
   Action,
+  ActionPilotage,
   Commentaire,
   MetadonneesActions,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { ActionJson } from 'interfaces/json/action'
+import { ActionJson, ActionPilotageJson } from 'interfaces/json/action'
 
 export const uneAction = (overrides: Partial<Action> = {}): Action => {
   const defaults: Action = {
@@ -82,6 +83,116 @@ export const uneActionJson = (
   }
 
   return { ...defaults, ...overrides }
+}
+
+export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
+  return [
+    {
+      id: '009347ea-4acb-4b61-9e08-b6caf38e28fe',
+      titre: 'Faire du polynectar',
+      beneficiaire: {
+        id: 'hermione',
+        nom: 'Granger',
+        prenom: 'Hermione',
+      },
+      dateFinReelle: '18/12/2022',
+    },
+    {
+      id: '04816605-60a7-4666-9dc5-607d71a570ff',
+      titre: 'Identifier des pistes de métier',
+      beneficiaire: {
+        id: 'FFSYH',
+        nom: 'Fury',
+        prenom: 'Bryan',
+      },
+      dateFinReelle: '19/12/2022',
+    },
+    {
+      id: 'a9ced2e0-314d-47a2-8275-0502e48dde57',
+      titre: 'Mettre à jour le CV',
+      beneficiaire: {
+        id: 'FFSYH',
+        nom: 'Tran',
+        prenom: 'Mélodie',
+      },
+      dateFinReelle: '10/01/2023',
+    },
+    {
+      id: '3f09f448-c2db-4129-92ee-2349177bec52',
+      titre: 'Identifier des entreprises',
+      beneficiaire: {
+        id: 'CMVJL',
+        nom: 'Caramelle',
+        prenom: 'Amelle',
+      },
+      dateFinReelle: '30/01/2023',
+    },
+    {
+      id: '39095c2f-c4d9-4a8b-b6fe-9a0dc938442c',
+      titre: 'Aller au forum le 08/12',
+      beneficiaire: {
+        id: 'ZKBAC',
+        nom: 'Android',
+        prenom: 'Gabriel',
+      },
+      dateFinReelle: '31/01/2023',
+    },
+  ]
+}
+
+export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
+  return [
+    {
+      id: '009347ea-4acb-4b61-9e08-b6caf38e28fe',
+      titre: 'Faire du polynectar',
+      jeune: {
+        id: 'hermione',
+        nom: 'Granger',
+        prenom: 'Hermione',
+      },
+      dateFinReelle: '2022-12-18T14:03:56.395Z',
+    },
+    {
+      id: '04816605-60a7-4666-9dc5-607d71a570ff',
+      titre: 'Identifier des pistes de métier',
+      jeune: {
+        id: 'FFSYH',
+        nom: 'Fury',
+        prenom: 'Bryan',
+      },
+      dateFinReelle: '2022-12-19T14:03:56.395Z',
+    },
+    {
+      id: 'a9ced2e0-314d-47a2-8275-0502e48dde57',
+      titre: 'Mettre à jour le CV',
+      jeune: {
+        id: 'FFSYH',
+        nom: 'Tran',
+        prenom: 'Mélodie',
+      },
+      dateFinReelle: '2023-01-10T15:26:00.055Z',
+    },
+    {
+      id: '3f09f448-c2db-4129-92ee-2349177bec52',
+      titre: 'Identifier des entreprises',
+      jeune: {
+        id: 'CMVJL',
+        nom: 'Caramelle',
+        prenom: 'Amelle',
+      },
+      dateFinReelle: '2023-01-30T15:12:20.342Z',
+    },
+    {
+      id: '39095c2f-c4d9-4a8b-b6fe-9a0dc938442c',
+      titre: 'Aller au forum le 08/12',
+      jeune: {
+        id: 'ZKBAC',
+        nom: 'Android',
+        prenom: 'Gabriel',
+      },
+      dateFinReelle: '2023-01-31T15:12:20.342Z',
+    },
+  ]
 }
 
 export const uneListeDActionsJson = (

@@ -12,6 +12,17 @@ export interface Action {
   qualification?: QualificationAction
 }
 
+export interface ActionPilotage {
+  id: string
+  titre: string
+  beneficiaire: {
+    id: string
+    nom: string
+    prenom: string
+  }
+  dateFinReelle: string
+}
+
 export interface QualificationAction {
   libelle: string
   isSituationNonProfessionnelle: boolean
