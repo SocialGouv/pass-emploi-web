@@ -18,6 +18,7 @@ import Pilotage, { getServerSideProps } from 'pages/pilotage'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
+import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
@@ -87,6 +88,19 @@ describe('Pilotage', () => {
               agence: { nom: 'Mission locale Aubenas', id: 'id-etablissement' },
             },
           }
+        )
+      })
+
+      it('résume les activités', async () => {
+        // Then
+        expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
+          'Nouvelles activités'
+        )
+        expect(getByDescriptionTerm('Les actions')).toHaveTextContent(
+          '25 À qualifier'
+        )
+        expect(getByDescriptionTerm('Les animations')).toHaveTextContent(
+          '25 À clore'
         )
       })
 
@@ -338,6 +352,7 @@ describe('Pilotage', () => {
             'Vous devez renseigner votre Mission locale pour pouvoir consulter ses animations collectives.'
           )
         ).toBeInTheDocument()
+        expect(screen.queryByText('Les animations')).not.toBeInTheDocument()
       })
     })
   })
