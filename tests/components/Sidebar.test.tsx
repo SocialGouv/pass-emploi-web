@@ -53,12 +53,20 @@ describe('<Sidebar/>', () => {
     )
   })
 
-  it("n'affiche pas le lien de rendez-vous lorsque le conseiller n'est pas MILO", () => {
+  it("n'affiche pas le lien de l’agenda lorsque le conseiller est Pole emploi", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
     // THEN
-    expect(() => screen.getByText('Rendez-vous')).toThrow()
+    expect(() => screen.getByText('Agenda')).toThrow()
+  })
+
+  it("n'affiche pas le lien de rendez-vous lorsque le conseiller est Pole emploi", () => {
+    // WHEN
+    renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+
+    // THEN
+    expect(() => screen.getByText('Pilotage')).toThrow()
   })
 
   it('affiche le lien de réaffectation des jeunes lorsque le conseiller est superviseur', () => {

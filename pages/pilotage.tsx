@@ -9,6 +9,7 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage, MetadonneesActions } from 'interfaces/action'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollectivePilotage,
   MetadonneesAnimationsCollectives,
@@ -176,15 +177,17 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const {
+    session: { accessToken, user },
+  } = sessionOrRedirect
+  if (user.structure === StructureConseiller.POLE_EMPLOI)
+    return { notFound: true }
+
   const actionsService = withDependance<ActionsService>('actionsService')
   const conseillerService =
     withDependance<ConseillerService>('conseillerService')
   const evenementsService =
     withDependance<EvenementsService>('evenementsService')
-
-  const {
-    session: { accessToken, user },
-  } = sessionOrRedirect
 
   const [actions, evenements] = await Promise.all([
     actionsService.getActionsAQualifierServerSide(user.id, accessToken),

@@ -356,6 +356,25 @@ describe('Pilotage', () => {
       expect(actual).toEqual({ redirect: { destination: 'whatever' } })
     })
 
+    describe('quand le conseiller est Pole emploi', () => {
+      it('renvoie une 404', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'POLE_EMPLOI' },
+          },
+        })
+
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+        expect(actual).toEqual({ notFound: true })
+      })
+    })
+
     describe('quand le conseiller est connecté', () => {
       let actionsService: ActionsService
       let conseillerService: ConseillerService

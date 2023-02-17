@@ -81,7 +81,7 @@ export default function NavLinks({
           />
         )}
 
-        {items.includes(NavItem.Pilotage) && (
+        {!isPoleEmploi && items.includes(NavItem.Pilotage) && (
           <>
             <NavLink
               iconName={IconName.Board}
