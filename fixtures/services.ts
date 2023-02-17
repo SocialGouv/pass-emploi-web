@@ -87,6 +87,8 @@ export function mockedEvenementsService(
     getRendezVousConseiller: jest.fn(),
     getRendezVousJeune: jest.fn(),
     getRendezVousEtablissement: jest.fn(),
+    getRendezVousACloreClientSide: jest.fn(),
+    getRendezVousACloreServerSide: jest.fn(),
     getDetailsEvenement: jest.fn(),
     getTypesRendezVous: jest.fn(),
     creerEvenement: jest.fn(),

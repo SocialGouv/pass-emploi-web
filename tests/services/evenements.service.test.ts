@@ -5,6 +5,7 @@ import {
   typesEvenement,
   uneAnimationCollective,
   uneListeDAnimationCollectiveAClore,
+  uneListeDAnimationCollectiveACloreJson,
   unEvenement,
   unEvenementJeuneJson,
   unEvenementJson,
@@ -313,7 +314,7 @@ describe('EvenementsApiService', () => {
       // GIVEN
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
-          resultats: uneListeDAnimationCollectiveAClore(),
+          resultats: uneListeDAnimationCollectiveACloreJson(),
           pagination: { total: 5, limit: 10 },
         },
       })
@@ -321,27 +322,27 @@ describe('EvenementsApiService', () => {
       // WHEN
       const actual = await evenementsService.getRendezVousACloreClientSide(
         'id-etablissement',
-        1
+        2
       )
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/etablissements/id-etablissement/animations-collectives',
+        '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=2',
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        animationsCollectives: uneListeDAnimationCollectiveAClore(),
-        metadonneesAnimationsCollectives: { nombrePages: 1, nombreTotal: 5 },
+        evenements: uneListeDAnimationCollectiveAClore(),
+        metadonnees: { nombrePages: 1, nombreTotal: 5 },
       })
     })
   })
 
   describe('.getRendezVousACloreServerSide', () => {
-    it('renvoie les animations collectives du conseiller à clore', async () => {
+    it('renvoie les animations collectives de l’établissement à clore', async () => {
       // GIVEN
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
-          resultats: uneListeDAnimationCollectiveAClore(),
+          resultats: uneListeDAnimationCollectiveACloreJson(),
           pagination: { total: 5, limit: 10 },
         },
       })
@@ -354,12 +355,12 @@ describe('EvenementsApiService', () => {
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/etablissements/id-etablissement/animations-collectives',
+        '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=1',
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        animationsCollectives: uneListeDAnimationCollectiveAClore(),
-        metadonneesAnimationsCollectives: { nombrePages: 1, nombreTotal: 5 },
+        evenements: uneListeDAnimationCollectiveAClore(),
+        metadonnees: { nombrePages: 1, nombreTotal: 5 },
       })
     })
   })

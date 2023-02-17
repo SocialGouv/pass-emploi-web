@@ -7,41 +7,39 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { ActionPilotage } from 'interfaces/action'
+import { AnimationCollectivePilotage } from 'interfaces/evenement'
 
-interface TableauActionsConseillerProps {
-  actions: Array<ActionPilotage>
+interface TableauAnimationsACloreProps {
+  evenements: AnimationCollectivePilotage[]
 }
 
-export default function TableauActionsAQualifier({
-  actions,
-}: TableauActionsConseillerProps) {
+export default function TableauAnimationsAClore({
+  evenements,
+}: TableauAnimationsACloreProps) {
   return (
     <>
-      {actions.length > 0 && (
-        <Table asDiv={true} caption='Liste des actions à qualifier'>
+      {evenements.length > 0 && (
+        <Table asDiv={true} caption='Liste des animations collectives à clore'>
           <THead>
             <TR isHeader={true}>
-              <TH>Bénéficiaire</TH>
-              <TH>Date de réalisation</TH>
-              <TH>Titre de l’action</TH>
+              <TH>Date</TH>
+              <TH>Titre de l’animation collective</TH>
+              <TH>Participants</TH>
             </TR>
           </THead>
 
           <TBody>
-            {actions.map((action: ActionPilotage) => (
+            {evenements.map((evenement: AnimationCollectivePilotage) => (
               <TR
-                key={action.id}
-                href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
-                label={`Accéder au détail de l’action : ${action.titre}`}
+                key={evenement.id}
+                href={`/mes-jeunes/edition-rdv?idRdv=${evenement.id}`}
+                label={`Accéder au détail de l’animation collective : ${evenement.titre}`}
               >
-                <TD isBold>
-                  {action.beneficiaire.nom} {action.beneficiaire.prenom}
-                </TD>
-                <TD>{action.dateFinReelle}</TD>
-                <TD isBold>
+                <TD>{evenement.date}</TD>
+                <TD isBold>{evenement.titre}</TD>
+                <TD>
                   <span className='flex flex-row justify-between'>
-                    {action.titre}
+                    {evenement.nombreInscrits}
                     <IconComponent
                       name={IconName.ChevronRight}
                       focusable={false}

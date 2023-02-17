@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollective,
+  AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
   StatutAnimationCollective,
@@ -203,40 +204,77 @@ export function uneAnimationCollective(
   return { ...defaults, ...overrides }
 }
 
-export const uneListeDAnimationCollectiveAClore = () => {
-  return [
-    {
-      id: '1',
-      titre: 'titre 1',
-      date: '2018-11-21T06:20:32.232Z',
-      nombreInscrits: 3,
-    },
-    {
-      id: '2',
-      titre: 'titre 2',
-      date: '2018-11-21T06:20:32.232Z',
-      nombreInscrits: 12,
-    },
-    {
-      id: '3',
-      titre: 'titre 3',
-      date: '2018-11-21T06:20:32.232Z',
-      nombreInscrits: 5,
-    },
-    {
-      id: '4',
-      titre: 'titre 4',
-      date: '2018-11-21T06:20:32.232Z',
-      nombreInscrits: 7,
-    },
-    {
-      id: '5',
-      titre: 'titre 5',
-      date: '2018-11-21T06:20:32.232Z',
-      nombreInscrits: 9,
-    },
-  ]
-}
+export const uneListeDAnimationCollectiveAClore =
+  (): AnimationCollectivePilotage[] => {
+    return [
+      {
+        id: '1',
+        titre: 'titre 1',
+        date: '21/11/2018',
+        nombreInscrits: 3,
+      },
+      {
+        id: '2',
+        titre: 'titre 2',
+        date: '22/11/2018',
+        nombreInscrits: 12,
+      },
+      {
+        id: '3',
+        titre: 'titre 3',
+        date: '23/11/2018',
+        nombreInscrits: 5,
+      },
+      {
+        id: '4',
+        titre: 'titre 4',
+        date: '24/11/2018',
+        nombreInscrits: 7,
+      },
+      {
+        id: '5',
+        titre: 'titre 5',
+        date: '25/11/2018',
+        nombreInscrits: 9,
+      },
+    ]
+  }
+
+export const uneListeDAnimationCollectiveACloreJson =
+  (): AnimationCollectivePilotage[] => {
+    return [
+      {
+        id: '1',
+        titre: 'titre 1',
+        date: '2018-11-21T06:20:32.232Z',
+        nombreInscrits: 3,
+      },
+      {
+        id: '2',
+        titre: 'titre 2',
+        date: '2018-11-22T06:20:32.232Z',
+        nombreInscrits: 12,
+      },
+      {
+        id: '3',
+        titre: 'titre 3',
+        date: '2018-11-23T06:20:32.232Z',
+        nombreInscrits: 5,
+      },
+      {
+        id: '4',
+        titre: 'titre 4',
+        date: '2018-11-24T06:20:32.232Z',
+        nombreInscrits: 7,
+      },
+      {
+        id: '5',
+        titre: 'titre 5',
+        date: '2018-11-25T06:20:32.232Z',
+        nombreInscrits: 9,
+      },
+    ]
+  }
 
 export function unEvenementJson(
   overrides: Partial<EvenementJson> = {}
