@@ -96,7 +96,6 @@ export interface ActionsService {
     options?: {
       dateDebutModifiee?: DateTime
       dateFinModifiee?: DateTime
-      commentaire?: string
     }
   ): Promise<QualificationAction>
 
@@ -221,7 +220,6 @@ export class ActionsApiService implements ActionsService {
     options?: {
       dateDebutModifiee?: DateTime
       dateFinModifiee?: DateTime
-      commentaire?: string
     }
   ): Promise<QualificationAction> {
     const session = await getSession()
@@ -230,15 +228,12 @@ export class ActionsApiService implements ActionsService {
       codeQualification: string
       dateDebut?: string
       dateFinReelle?: string
-      commentaireQualification?: string
     } = { codeQualification: type }
 
     if (options?.dateDebutModifiee)
       payload.dateDebut = options.dateDebutModifiee.toISO()
     if (options?.dateFinModifiee)
       payload.dateFinReelle = options.dateFinModifiee.toISO()
-    if (options?.commentaire)
-      payload.commentaireQualification = options.commentaire
 
     const { content } = await this.apiClient.post<QualificationActionJson>(
       `/actions/${idAction}/qualifier`,
