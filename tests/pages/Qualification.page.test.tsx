@@ -239,7 +239,7 @@ describe("Page Qualification d'une action", () => {
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Voir le détail des CGU (nouvelle fenêtre)',
+          name: 'voir le détail des CGU (nouvelle fenêtre)',
         })
       ).toHaveAttribute(
         'href',
@@ -247,12 +247,9 @@ describe("Page Qualification d'une action", () => {
       )
       expect(
         screen.getByRole('link', {
-          name: 'Voir le détail de l’arrêté du 17 novembre 2021 (nouvelle fenêtre)',
+          name: 'voir le détail de l’arrêté du 17 novembre 2021 (nouvelle fenêtre)',
         })
-      ).toHaveAttribute(
-        'href',
-        'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361'
-      )
+      ).toHaveAttribute('href', 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361')
     })
 
     it("affiche le résumé de l'action", () => {

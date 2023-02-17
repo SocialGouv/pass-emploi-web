@@ -137,14 +137,14 @@ function PageQualification({
           <span className='hover:text-primary_darken'>
             <ExternalLink
               href='https://c-milo.i-milo.fr/jcms/t482_1002488/fr/mentions-legales'
-              label='Voir le détail des CGU'
+              label='voir le détail des CGU'
               onClick={() => setLabelMatomo('Lien CGU')}
             />
           </span>
           <span className='hover:text-primary_darken'>
             <ExternalLink
               href='https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361'
-              label='Voir le détail de l’arrêté du 17 novembre 2021'
+              label='voir le détail de l’arrêté du 17 novembre 2021'
               onClick={() => setLabelMatomo('Lien Arrêté 17 novembre 2021')}
             />
           </span>
