@@ -8,15 +8,11 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
-import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
-import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { ValueWithError } from 'components/ValueWithError'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
@@ -44,9 +40,6 @@ function PageQualification({
   const actionsService = useDependance<ActionsService>('actionsService')
   const [_, setAlerte] = useAlerte()
 
-  const [commentaire, setCommentaire] = useState<ValueWithError>({
-    value: action.content + ' - ' + action.comment,
-  })
   const [codeSNP, setCodeSNP] = useState<string | undefined>()
   const [dateDebut, setDateDebut] = useState<string>(action.creationDate)
   const [dateFin, setDateFin] = useState<string | undefined>(
@@ -59,34 +52,8 @@ function PageQualification({
     string | undefined
   >()
 
-  const [labelMatomo, setLabelMatomo] = useState<string | undefined>(
-    'Création Situation Non Professionnelle'
-  )
-
-  function isCommentaireValid(): boolean {
-    return Boolean(commentaire.value) && commentaire.value.length <= 255
-  }
-
-  function validateCommentaire() {
-    let error
-    if (!commentaire.value) {
-      error =
-        'Le champ Titre et description n’est pas renseigné. Veuillez renseigner une description.'
-    }
-    if (commentaire.value.length > 255)
-      error =
-        'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
-
-    setCommentaire({ ...commentaire, error })
-  }
-
   function isFormValid(): boolean {
-    return (
-      isCommentaireValid() &&
-      Boolean(codeSNP) &&
-      Boolean(dateFin) &&
-      Boolean(dateDebut)
-    )
+    return Boolean(codeSNP) && Boolean(dateFin) && Boolean(dateDebut)
   }
 
   async function qualifierAction(e: FormEvent<HTMLFormElement>): Promise<void> {
@@ -97,7 +64,6 @@ function PageQualification({
     setIsQualificationEnCours(true)
     try {
       await actionsService.qualifier(action.id, codeSNP!, {
-        commentaire: commentaire.value,
         dateDebutModifiee: DateTime.fromISO(dateDebut).startOf('day'),
         dateFinModifiee: DateTime.fromISO(dateFin!).startOf('day'),
       })
@@ -114,7 +80,7 @@ function PageQualification({
     }
   }
 
-  useMatomo(labelMatomo)
+  useMatomo('Création Situation Non Professionnelle')
 
   return (
     <form onSubmit={qualifierAction}>
@@ -126,56 +92,14 @@ function PageQualification({
       )}
 
       <div className='mb-6'>
-        <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du jeune'>
-          <p>
-            Les informations saisies sont partagées avec I-MILO, et doivent en
-            respecter les Conditions Générales d’utilisation. Elles ne doivent
-            comporter aucune donnée personnelle non autorisée par{' '}
-            <strong>l’arrêté du 17 novembre 2021</strong> relatif au traitement
-            automatisé de données à caractère personnel dénommé « I-MILO »
-          </p>
-          <span className='hover:text-primary_darken'>
-            <ExternalLink
-              href='https://c-milo.i-milo.fr/jcms/t482_1002488/fr/mentions-legales'
-              label='Voir le détail des CGU'
-              onClick={() => setLabelMatomo('Lien CGU')}
-            />
-          </span>
-          <span className='hover:text-primary_darken'>
-            <ExternalLink
-              href='https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361'
-              label='Voir le détail de l’arrêté du 17 novembre 2021'
-              onClick={() => setLabelMatomo('Lien Arrêté 17 novembre 2021')}
-            />
-          </span>
-        </InformationMessage>
+        <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du jeune' />
       </div>
 
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
 
       <Etape numero={1} titre="Résumé de l'action">
-        <Label
-          htmlFor='commentaire'
-          inputRequired={true}
-          withBulleMessageSensible={true}
-        >
-          {{
-            main: "Titre et description de l'action",
-            helpText: '255 caractères maximum',
-          }}
-        </Label>
-        {commentaire.error && (
-          <InputError id='commentaire--error'>{commentaire.error}</InputError>
-        )}
-        <Textarea
-          id='commentaire'
-          maxLength={255}
-          allowOverMax={true}
-          defaultValue={commentaire.value}
-          onChange={(value) => setCommentaire({ value })}
-          invalid={Boolean(commentaire.error)}
-          onBlur={validateCommentaire}
-        />
+        <p className='text-m-bold'>{action.content}</p>
+        <p className='pt-6 text-base-regular'>{action.comment}</p>
       </Etape>
 
       <Etape numero={2} titre='Type'>

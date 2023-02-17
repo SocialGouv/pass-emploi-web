@@ -227,44 +227,13 @@ describe("Page Qualification d'une action", () => {
       )
     })
 
-    it('affiche un message d’information', async () => {
-      // Then
-      expect(
-        screen.getByText(
-          'Ces informations seront intégrées sur le dossier i-milo du jeune'
-        )
-      ).toBeInTheDocument()
-      expect(
-        screen.getByText(/respecter les Conditions Générales d’utilisation/)
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('link', {
-          name: 'Voir le détail des CGU (nouvelle fenêtre)',
-        })
-      ).toHaveAttribute(
-        'href',
-        'https://c-milo.i-milo.fr/jcms/t482_1002488/fr/mentions-legales'
-      )
-      expect(
-        screen.getByRole('link', {
-          name: 'Voir le détail de l’arrêté du 17 novembre 2021 (nouvelle fenêtre)',
-        })
-      ).toHaveAttribute(
-        'href',
-        'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361'
-      )
-    })
-
     it("affiche le résumé de l'action", () => {
       // Then
       const etape1 = screen.getByRole('group', {
         name: "Étape 1 Résumé de l'action",
       })
-      expect(
-        within(etape1).getByRole('textbox', {
-          name: /Titre et description de l'action/,
-        })
-      ).toHaveValue(action.content + ' - ' + action.comment)
+      expect(within(etape1).getByText(action.content)).toBeInTheDocument()
+      expect(within(etape1).getByText(action.comment)).toBeInTheDocument()
     })
 
     it('demande un type de situation non professionnelle', () => {
@@ -302,90 +271,42 @@ describe("Page Qualification d'une action", () => {
     })
 
     describe('validation formulaire', () => {
-      let inputCommentaire: HTMLElement
       beforeEach(async () => {
         // Given
-        inputCommentaire = screen.getByRole('textbox', {
-          name: /Titre et description/,
-        })
         const selectSNP = screen.getByRole('combobox', { name: 'Type' })
         const inputDate = screen.getByLabelText('* Date de fin')
-
-        await userEvent.clear(inputCommentaire)
-        await userEvent.type(inputCommentaire, 'Nouveau commentaire modifié')
         await userEvent.selectOptions(
           selectSNP,
           situationsNonProfessionnelles[1].code
         )
         // FIXME userEvent.type ne marche pas bien avec les input date/time
         fireEvent.change(inputDate, { target: { value: '2022-09-05' } })
-      })
 
-      it('envoie la qualification au fuseau horaire du navigateur du client', async () => {
         // When
         await userEvent.click(
           screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
         )
+      })
 
+      it('envoie la qualification au fuseau horaire du navigateur du client', async () => {
         // Then
         expect(actionsService.qualifier).toHaveBeenCalledWith(
           action.id,
           'SNP_2',
           {
-            commentaire: 'Nouveau commentaire modifié',
             dateDebutModifiee: DateTime.fromISO(
-              '2022-02-15T00:00:00.000+01:00' // en février, l'offset est +1 (DST)
-            ),
+              '2022-02-15T00:00:00.000+01:00'
+            ), // en février, l'offset est +1 (DST)
             dateFinModifiee: DateTime.fromISO('2022-09-05T00:00:00.000+02:00'),
           }
         )
       })
 
-      it("redirige vers le détail de l'action", async () => {
-        // When
-        await userEvent.click(
-          screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
-        )
-
+      it("redirige vers le détail de l'action", () => {
         // Then
         expect(alerteSetter).toHaveBeenCalledWith('qualificationSNP')
         expect(push).toHaveBeenCalledWith(
           '/mes-jeunes/jeune-1/actions/id-action-1'
-        )
-      })
-
-      it('est désactivée sur le commentaire n’est pas renseigné', async () => {
-        // When
-        await userEvent.clear(inputCommentaire)
-        await userEvent.tab()
-
-        // Then
-        expect(
-          screen.getByText(
-            'Le champ Titre et description n’est pas renseigné. Veuillez renseigner une description.'
-          )
-        ).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: /Créer/ })).toHaveAttribute(
-          'disabled',
-          ''
-        )
-      })
-
-      it('est désactivée sur le commentaire contient plus de 255 caractères', async () => {
-        // When
-        await userEvent.clear(inputCommentaire)
-        await userEvent.type(inputCommentaire, 'a'.repeat(256))
-        await userEvent.tab()
-
-        // Then
-        expect(
-          screen.getByText(
-            'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
-          )
-        ).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: /Créer/ })).toHaveAttribute(
-          'disabled',
-          ''
         )
       })
     })
