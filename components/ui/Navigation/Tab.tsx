@@ -50,8 +50,8 @@ export default function Tab({
         <span className='ml-4'>
           <Badge
             count={count}
-            textColor={'blanc'}
-            bgColor={'primary'}
+            textColor='primary'
+            bgColor='primary_ligten'
             size={6}
           />
         </span>

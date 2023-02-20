@@ -19,7 +19,7 @@ export default function TableauActionsAQualifier({
   return (
     <>
       {actions.length > 0 && (
-        <Table asDiv={true} caption={`Liste des actions à qualifier.`}>
+        <Table asDiv={true} caption='Liste des actions à qualifier'>
           <THead>
             <TR isHeader={true}>
               <TH>Bénéficiaire</TH>
