@@ -7,23 +7,23 @@ import {
   MetadonneesAnimationsCollectives,
 } from 'interfaces/evenement'
 
-interface OngletEvenementsPilotageProps {
-  evenementsInitiaux?: AnimationCollectivePilotage[]
+interface OngletAnimationsCollectivesPilotageProps {
+  animationsCollectivesInitiales?: AnimationCollectivePilotage[]
   metadonneesInitiales?: MetadonneesAnimationsCollectives
-  getEvenements: (page: number) => Promise<{
-    evenements: AnimationCollectivePilotage[]
+  getAnimationsCollectives: (page: number) => Promise<{
+    animationsCollectives: AnimationCollectivePilotage[]
     metadonnees: MetadonneesAnimationsCollectives
   }>
 }
 
-export function OngletEvenementsPilotage({
-  evenementsInitiaux,
+export function OngletAnimationsCollectivesPilotage({
+  animationsCollectivesInitiales,
   metadonneesInitiales,
-  getEvenements,
-}: OngletEvenementsPilotageProps) {
-  const [evenements, setEvenements] = useState<
+  getAnimationsCollectives,
+}: OngletAnimationsCollectivesPilotageProps) {
+  const [animationsCollectives, setAnimationsCollectives] = useState<
     AnimationCollectivePilotage[] | undefined
-  >(evenementsInitiaux)
+  >(animationsCollectivesInitiales)
   const [metadonnees, setMetadonnees] = useState<
     MetadonneesAnimationsCollectives | undefined
   >(metadonneesInitiales)
@@ -40,8 +40,8 @@ export function OngletEvenementsPilotage({
 
   useEffect(() => {
     if (pageChangee.current) {
-      getEvenements(pageCourante).then((update) => {
-        setEvenements(update.evenements)
+      getAnimationsCollectives(pageCourante).then((update) => {
+        setAnimationsCollectives(update.animationsCollectives)
         setMetadonnees(update.metadonnees)
         setPageCourante(Math.min(pageCourante, update.metadonnees.nombrePages))
       })
@@ -65,7 +65,9 @@ export function OngletEvenementsPilotage({
 
       {metadonnees && metadonnees.nombreTotal > 0 && (
         <>
-          <TableauAnimationsAClore evenements={evenements!} />
+          <TableauAnimationsAClore
+            animationsCollectives={animationsCollectives!}
+          />
           {metadonnees.nombrePages > 1 && (
             <div className='mt-6'>
               <Pagination

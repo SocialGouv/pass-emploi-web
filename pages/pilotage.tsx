@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import { OngletActionsPilotage } from 'components/pilotage/OngletActionsPilotage'
-import { OngletEvenementsPilotage } from 'components/pilotage/OngletEvenementsPilotage'
+import { OngletAnimationsCollectivesPilotage } from 'components/pilotage/OngletAnimationsCollectivesPilotage'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
@@ -24,15 +24,6 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
-type PilotageProps = PageProps & {
-  actions: { donnees: ActionPilotage[]; metadonnees: MetadonneesActions }
-  evenements?: {
-    donnees: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
-  }
-  onglet?: Onglet
-}
-
 export enum Onglet {
   ACTIONS = 'ACTIONS',
   ANIMATIONS_COLLECTIVES = 'ANIMATIONS_COLLECTIVES',
@@ -43,12 +34,21 @@ const ongletProps: {
 } = {
   ACTIONS: { queryParam: 'actions', trackingLabel: 'Actions' },
   ANIMATIONS_COLLECTIVES: {
-    queryParam: 'evenements',
+    queryParam: 'animationsCollectives',
     trackingLabel: 'Animations collectives',
   },
 }
 
-function Pilotage({ actions, evenements, onglet }: PilotageProps) {
+type PilotageProps = PageProps & {
+  actions: { donnees: ActionPilotage[]; metadonnees: MetadonneesActions }
+  animationsCollectives?: {
+    donnees: AnimationCollectivePilotage[]
+    metadonnees: MetadonneesAnimationsCollectives
+  }
+  onglet?: Onglet
+}
+
+function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const evenementsService =
     useDependance<EvenementsService>('evenementsService')
@@ -59,9 +59,8 @@ function Pilotage({ actions, evenements, onglet }: PilotageProps) {
   const [totalActions, setTotalActions] = useState<number>(
     actions.metadonnees.nombreTotal
   )
-  const [totalEvenements, setTotalEvenements] = useState<number>(
-    evenements?.metadonnees.nombreTotal ?? 0
-  )
+  const [totalAnimationsCollectives, setTotalAnimationsCollectives] =
+    useState<number>(animationsCollectives?.metadonnees.nombreTotal ?? 0)
 
   const pageTracking = 'Pilotage'
   const [trackingLabel, setTrackingLabel] = useState<string>(
@@ -80,16 +79,17 @@ function Pilotage({ actions, evenements, onglet }: PilotageProps) {
     return result
   }
 
-  async function chargerEvenements(page: number): Promise<{
-    evenements: AnimationCollectivePilotage[]
+  async function chargerAnimationsCollectives(page: number): Promise<{
+    animationsCollectives: AnimationCollectivePilotage[]
     metadonnees: MetadonneesActions
   }> {
-    const result = await evenementsService.getRendezVousACloreClientSide(
-      conseiller!.agence!.id!,
-      page
-    )
+    const result =
+      await evenementsService.getAnimationsCollectivesACloreClientSide(
+        conseiller!.agence!.id!,
+        page
+      )
 
-    setTotalEvenements(result.metadonnees.nombreTotal)
+    setTotalAnimationsCollectives(result.metadonnees.nombreTotal)
     return result
   }
 
@@ -126,9 +126,9 @@ function Pilotage({ actions, evenements, onglet }: PilotageProps) {
         />
         <Tab
           label='Animations à clore'
-          count={totalEvenements}
+          count={totalAnimationsCollectives}
           selected={currentTab === Onglet.ANIMATIONS_COLLECTIVES}
-          controls='liste-animations-collectives-à-clore'
+          controls='liste-animations-collectives-a-clore'
           onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
           iconName={IconName.Calendar}
         />
@@ -153,15 +153,15 @@ function Pilotage({ actions, evenements, onglet }: PilotageProps) {
       {currentTab === Onglet.ANIMATIONS_COLLECTIVES && (
         <div
           role='tabpanel'
-          aria-labelledby='liste-animations-collectives-à-clore--tab'
+          aria-labelledby='liste-animations-collectives-a-clore--tab'
           tabIndex={0}
-          id='liste-animations-collectives-à-clore'
+          id='liste-animations-collectives-a-clore'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          <OngletEvenementsPilotage
-            evenementsInitiaux={evenements?.donnees}
-            metadonneesInitiales={evenements?.metadonnees}
-            getEvenements={chargerEvenements}
+          <OngletAnimationsCollectivesPilotage
+            animationsCollectivesInitiales={animationsCollectives?.donnees}
+            metadonneesInitiales={animationsCollectives?.metadonnees}
+            getAnimationsCollectives={chargerAnimationsCollectives}
           />
         </div>
       )}
@@ -195,7 +195,7 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
       .getConseillerServerSide(user, accessToken)
       .then((conseiller) => {
         if (!conseiller?.agence?.id) return
-        return evenementsService.getRendezVousACloreServerSide(
+        return evenementsService.getAnimationsCollectivesACloreServerSide(
           conseiller.agence.id,
           accessToken
         )
@@ -211,15 +211,15 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
   }
 
   if (evenements) {
-    props.evenements = {
-      donnees: evenements.evenements,
+    props.animationsCollectives = {
+      donnees: evenements.animationsCollectives,
       metadonnees: evenements.metadonnees,
     }
   }
 
   if (context.query.onglet) {
     switch (context.query.onglet) {
-      case 'evenements':
+      case 'animationsCollectives':
         props.onglet = Onglet.ANIMATIONS_COLLECTIVES
         break
       case 'actions':

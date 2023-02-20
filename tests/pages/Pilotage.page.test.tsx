@@ -53,17 +53,19 @@ describe('Pilotage', () => {
           })),
         })
         evenementsService = mockedEvenementsService({
-          getRendezVousACloreClientSide: jest.fn(async (_, page) => ({
-            evenements: [
-              {
-                id: 'evenement-page-' + page,
-                titre: 'Animation page ' + page,
-                date: '2018-11-21T06:20:32.232Z',
-                nombreInscrits: 5,
-              },
-            ],
-            metadonnees: { nombrePages: 3, nombreTotal: 25 },
-          })),
+          getAnimationsCollectivesACloreClientSide: jest.fn(
+            async (_, page) => ({
+              animationsCollectives: [
+                {
+                  id: 'evenement-page-' + page,
+                  titre: 'Animation page ' + page,
+                  date: '2018-11-21T06:20:32.232Z',
+                  nombreInscrits: 5,
+                },
+              ],
+              metadonnees: { nombrePages: 3, nombreTotal: 25 },
+            })
+          ),
         })
         ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
@@ -74,7 +76,7 @@ describe('Pilotage', () => {
               donnees: uneListeDActionsAQualifier(),
               metadonnees: { nombrePages: 3, nombreTotal: 25 },
             }}
-            evenements={{
+            animationsCollectives={{
               donnees: uneListeDAnimationCollectiveAClore(),
               metadonnees: { nombrePages: 3, nombreTotal: 25 },
             }}
@@ -244,7 +246,7 @@ describe('Pilotage', () => {
 
           // Then
           expect(
-            evenementsService.getRendezVousACloreClientSide
+            evenementsService.getAnimationsCollectivesACloreClientSide
           ).toHaveBeenCalledWith('id-etablissement', 2)
           expect(screen.getByText('Animation page 2')).toBeInTheDocument()
         })
@@ -262,7 +264,7 @@ describe('Pilotage', () => {
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
             }}
-            evenements={{
+            animationsCollectives={{
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
             }}
@@ -287,7 +289,7 @@ describe('Pilotage', () => {
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
             }}
-            evenements={{
+            animationsCollectives={{
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
             }}
@@ -306,7 +308,7 @@ describe('Pilotage', () => {
       })
     })
 
-    describe('quand le conseiller n’a pas renseignée son agence', () => {
+    describe('quand le conseiller n’a pas renseigné son agence', () => {
       it('affiche un message qui le précise', async () => {
         // Given
         let actionsService: ActionsService
@@ -410,8 +412,8 @@ describe('Pilotage', () => {
           ),
         })
         evenementsService = mockedEvenementsService({
-          getRendezVousACloreServerSide: jest.fn(async () => ({
-            evenements: uneListeDAnimationCollectiveAClore(),
+          getAnimationsCollectivesACloreServerSide: jest.fn(async () => ({
+            animationsCollectives: uneListeDAnimationCollectiveAClore(),
             metadonnees: {
               nombreTotal: 5,
               nombrePages: 1,
@@ -440,7 +442,7 @@ describe('Pilotage', () => {
           'accessToken'
         )
         expect(
-          evenementsService.getRendezVousACloreServerSide
+          evenementsService.getAnimationsCollectivesACloreServerSide
         ).toHaveBeenCalledWith('id-etablissement', 'accessToken')
         expect(actual).toEqual({
           props: {
@@ -449,7 +451,7 @@ describe('Pilotage', () => {
               donnees: uneListeDActionsAQualifier(),
               metadonnees: { nombreTotal: 5, nombrePages: 1 },
             },
-            evenements: {
+            animationsCollectives: {
               donnees: uneListeDAnimationCollectiveAClore(),
               metadonnees: { nombreTotal: 5, nombrePages: 1 },
             },
@@ -458,7 +460,7 @@ describe('Pilotage', () => {
         })
       })
 
-      it('ne récupère pas les animations collectives si le conseiller n’a pas renseignée son agence', async () => {
+      it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
         // Given
         ;(
           conseillerService.getConseillerServerSide as jest.Mock
@@ -472,12 +474,12 @@ describe('Pilotage', () => {
 
         // When
         const actual = await getServerSideProps({
-          query: { onglet: 'evenements' },
+          query: { onglet: 'animationsCollectives' },
         } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(
-          evenementsService.getRendezVousACloreServerSide
+          evenementsService.getAnimationsCollectivesACloreServerSide
         ).not.toHaveBeenCalled()
         expect(actual).toEqual({
           props: {

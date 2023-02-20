@@ -10,15 +10,15 @@ import { TR } from 'components/ui/Table/TR'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 
 interface TableauAnimationsACloreProps {
-  evenements: AnimationCollectivePilotage[]
+  animationsCollectives: AnimationCollectivePilotage[]
 }
 
 export default function TableauAnimationsAClore({
-  evenements,
+  animationsCollectives,
 }: TableauAnimationsACloreProps) {
   return (
     <>
-      {evenements.length > 0 && (
+      {animationsCollectives.length > 0 && (
         <Table asDiv={true} caption='Liste des animations collectives à clore'>
           <THead>
             <TR isHeader={true}>
@@ -29,17 +29,17 @@ export default function TableauAnimationsAClore({
           </THead>
 
           <TBody>
-            {evenements.map((evenement: AnimationCollectivePilotage) => (
+            {animationsCollectives.map((ac: AnimationCollectivePilotage) => (
               <TR
-                key={evenement.id}
-                href={`/mes-jeunes/edition-rdv?idRdv=${evenement.id}`}
-                label={`Accéder au détail de l’animation collective : ${evenement.titre}`}
+                key={ac.id}
+                href={`/mes-jeunes/edition-rdv?idRdv=${ac.id}`}
+                label={`Accéder au détail de l’animation collective : ${ac.titre}`}
               >
-                <TD>{evenement.date}</TD>
-                <TD isBold>{evenement.titre}</TD>
+                <TD>{ac.date}</TD>
+                <TD isBold>{ac.titre}</TD>
                 <TD>
                   <span className='flex flex-row justify-between'>
-                    {evenement.nombreInscrits}
+                    {ac.nombreInscrits}
                     <IconComponent
                       name={IconName.ChevronRight}
                       focusable={false}

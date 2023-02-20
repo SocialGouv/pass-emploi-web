@@ -40,19 +40,19 @@ export interface EvenementsService {
     dateFin: DateTime
   ): Promise<AnimationCollective[]>
 
-  getRendezVousACloreClientSide(
+  getAnimationsCollectivesACloreClientSide(
     idEtablissement: string,
     page: number
   ): Promise<{
-    evenements: AnimationCollectivePilotage[]
+    animationsCollectives: AnimationCollectivePilotage[]
     metadonnees: MetadonneesAnimationsCollectives
   }>
 
-  getRendezVousACloreServerSide(
+  getAnimationsCollectivesACloreServerSide(
     idEtablissement: string,
     accessToken: string
   ): Promise<{
-    evenements: AnimationCollectivePilotage[]
+    animationsCollectives: AnimationCollectivePilotage[]
     metadonnees: MetadonneesAnimationsCollectives
   }>
 
@@ -123,26 +123,30 @@ export class EvenementsApiService implements EvenementsService {
     return animationsCollectivesJson.map(jsonToAnimationCollective)
   }
 
-  async getRendezVousACloreClientSide(
+  async getAnimationsCollectivesACloreClientSide(
     idEtablissement: string,
     page: number
   ): Promise<{
-    evenements: AnimationCollectivePilotage[]
+    animationsCollectives: AnimationCollectivePilotage[]
     metadonnees: MetadonneesAnimationsCollectives
   }> {
     const session = await getSession()
 
-    return this.getRendezVousAClore(idEtablissement, page, session!.accessToken)
+    return this.getAnimationsCollectivesAClore(
+      idEtablissement,
+      page,
+      session!.accessToken
+    )
   }
 
-  getRendezVousACloreServerSide(
+  getAnimationsCollectivesACloreServerSide(
     idEtablissement: string,
     accessToken: string
   ): Promise<{
-    evenements: AnimationCollectivePilotage[]
+    animationsCollectives: AnimationCollectivePilotage[]
     metadonnees: MetadonneesAnimationsCollectives
   }> {
-    return this.getRendezVousAClore(idEtablissement, 1, accessToken)
+    return this.getAnimationsCollectivesAClore(idEtablissement, 1, accessToken)
   }
 
   async getDetailsEvenement(
@@ -217,12 +221,12 @@ export class EvenementsApiService implements EvenementsService {
     )
   }
 
-  private async getRendezVousAClore(
+  private async getAnimationsCollectivesAClore(
     idEtablissement: string,
     page: number,
     accessToken: string
   ): Promise<{
-    evenements: AnimationCollectivePilotage[]
+    animationsCollectives: AnimationCollectivePilotage[]
     metadonnees: MetadonneesAnimationsCollectives
   }> {
     const {
@@ -238,8 +242,8 @@ export class EvenementsApiService implements EvenementsService {
     const nombrePages = Math.ceil(pagination.total / pagination.limit)
 
     return {
-      evenements: resultats.map(({ date, ...evenement }) => ({
-        ...evenement,
+      animationsCollectives: resultats.map(({ date, ...ac }) => ({
+        ...ac,
         date: toShortDate(date),
       })),
       metadonnees: {

@@ -309,7 +309,7 @@ describe('EvenementsApiService', () => {
     })
   })
 
-  describe('.getRendezVousACloreClientSide', () => {
+  describe('.getAnimationsCollectivesACloreClientSide', () => {
     it('renvoie les animations collectives du conseiller à clore', async () => {
       // GIVEN
       ;(apiClient.get as jest.Mock).mockResolvedValue({
@@ -320,10 +320,11 @@ describe('EvenementsApiService', () => {
       })
 
       // WHEN
-      const actual = await evenementsService.getRendezVousACloreClientSide(
-        'id-etablissement',
-        2
-      )
+      const actual =
+        await evenementsService.getAnimationsCollectivesACloreClientSide(
+          'id-etablissement',
+          2
+        )
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -331,13 +332,13 @@ describe('EvenementsApiService', () => {
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        evenements: uneListeDAnimationCollectiveAClore(),
+        animationsCollectives: uneListeDAnimationCollectiveAClore(),
         metadonnees: { nombrePages: 1, nombreTotal: 5 },
       })
     })
   })
 
-  describe('.getRendezVousACloreServerSide', () => {
+  describe('.getAnimationsCollectivesACloreServerSide', () => {
     it('renvoie les animations collectives de l’établissement à clore', async () => {
       // GIVEN
       ;(apiClient.get as jest.Mock).mockResolvedValue({
@@ -348,10 +349,11 @@ describe('EvenementsApiService', () => {
       })
 
       // WHEN
-      const actual = await evenementsService.getRendezVousACloreServerSide(
-        'id-etablissement',
-        'accessToken'
-      )
+      const actual =
+        await evenementsService.getAnimationsCollectivesACloreServerSide(
+          'id-etablissement',
+          'accessToken'
+        )
 
       // THEN
       expect(apiClient.get).toHaveBeenCalledWith(
@@ -359,7 +361,7 @@ describe('EvenementsApiService', () => {
         'accessToken'
       )
       expect(actual).toStrictEqual({
-        evenements: uneListeDAnimationCollectiveAClore(),
+        animationsCollectives: uneListeDAnimationCollectiveAClore(),
         metadonnees: { nombrePages: 1, nombreTotal: 5 },
       })
     })
