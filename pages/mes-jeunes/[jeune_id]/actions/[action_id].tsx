@@ -225,16 +225,18 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   if (user.structure === StructureConseiller.POLE_EMPLOI) {
     return { notFound: true }
   }
+  const { jeune_id, action_id } = context.query
 
   const actionsService = withDependance<ActionsService>('actionsService')
   const actionEtJeune = await actionsService.getAction(
-    context.query.action_id as string,
+    action_id as string,
     accessToken
   )
   if (!actionEtJeune) return { notFound: true }
+  if (jeune_id !== actionEtJeune.jeune.id) return { notFound: true }
 
   const commentaires = await actionsService.recupererLesCommentaires(
-    context.query.action_id as string,
+    action_id as string,
     accessToken
   )
   if (!commentaires) return { notFound: true }
