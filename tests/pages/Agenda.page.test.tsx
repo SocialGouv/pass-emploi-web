@@ -30,7 +30,7 @@ jest.mock('components/Modal')
 
 describe('Agenda', () => {
   describe('client side', () => {
-    let rendezVousService: EvenementsService
+    let evenementsService: EvenementsService
     let replace: jest.Mock
 
     beforeEach(() => {
@@ -41,7 +41,7 @@ describe('Agenda', () => {
       replace = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ replace: replace })
 
-      rendezVousService = mockedEvenementsService({
+      evenementsService = mockedEvenementsService({
         getRendezVousConseiller: jest.fn(async (_, dateDebut) => [
           unEvenementListItem({
             date: dateDebut.plus({ day: 3 }).toISO(),
@@ -65,7 +65,6 @@ describe('Agenda', () => {
           }),
         ]),
       })
-      ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
     })
 
     describe('contenu', () => {
@@ -81,7 +80,7 @@ describe('Agenda', () => {
         // When
         await act(async () => {
           await renderWithContexts(<Agenda pageTitle='' />, {
-            customDependances: { evenementsService: rendezVousService },
+            customDependances: { evenementsService: evenementsService },
             customConseiller: conseiller,
           })
         })
@@ -179,7 +178,7 @@ describe('Agenda', () => {
         it('affiche une période de 7 jours à partir de la date du jour', async () => {
           // Then
           expect(
-            rendezVousService.getRendezVousConseiller
+            evenementsService.getRendezVousConseiller
           ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
 
           expect(screen.getByRole('table')).toBeInTheDocument()
@@ -204,7 +203,7 @@ describe('Agenda', () => {
           await userEvent.click(periodePasseeButton)
           // Then
           expect(
-            rendezVousService.getRendezVousConseiller
+            evenementsService.getRendezVousConseiller
           ).toHaveBeenLastCalledWith('1', AOUT_25_0H, AOUT_31_23H)
           expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
 
@@ -212,7 +211,7 @@ describe('Agenda', () => {
           await userEvent.click(buttonPeriodeCourante)
           // Then
           expect(
-            rendezVousService.getRendezVousConseiller
+            evenementsService.getRendezVousConseiller
           ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
@@ -220,7 +219,7 @@ describe('Agenda', () => {
           await userEvent.click(periodeFutureButton)
           // Then
           expect(
-            rendezVousService.getRendezVousConseiller
+            evenementsService.getRendezVousConseiller
           ).toHaveBeenLastCalledWith('1', SEPTEMBRE_8_0H, SEPTEMBRE_14_23H)
           expect(screen.getByText('dimanche 11 septembre')).toBeInTheDocument()
         })
@@ -240,10 +239,8 @@ describe('Agenda', () => {
 
         beforeEach(async () => {
           // When
-          await act(() =>
-            userEvent.click(
-              screen.getByRole('tab', { name: 'Agenda établissement' })
-            )
+          await userEvent.click(
+            screen.getByRole('tab', { name: 'Agenda établissement' })
           )
         })
 
@@ -259,7 +256,7 @@ describe('Agenda', () => {
         it('récupère les événements sur une période de 7 jours à partir de la date du jour', async () => {
           // Then
           expect(
-            rendezVousService.getRendezVousEtablissement
+            evenementsService.getRendezVousEtablissement
           ).toHaveBeenCalledWith(
             'id-etablissement',
             SEPTEMBRE_1_0H,
@@ -332,7 +329,7 @@ describe('Agenda', () => {
           await userEvent.click(periodesPasseesButton)
           // Then
           expect(
-            rendezVousService.getRendezVousEtablissement
+            evenementsService.getRendezVousEtablissement
           ).toHaveBeenLastCalledWith(
             'id-etablissement',
             AOUT_25_0H,
@@ -344,7 +341,7 @@ describe('Agenda', () => {
 
           // Then
           expect(
-            rendezVousService.getRendezVousEtablissement
+            evenementsService.getRendezVousEtablissement
           ).toHaveBeenCalledWith(
             'id-etablissement',
             SEPTEMBRE_1_0H,
@@ -356,7 +353,7 @@ describe('Agenda', () => {
           await userEvent.click(periodesFuturesButton)
           // Then
           expect(
-            rendezVousService.getRendezVousEtablissement
+            evenementsService.getRendezVousEtablissement
           ).toHaveBeenLastCalledWith(
             'id-etablissement',
             SEPTEMBRE_8_0H,
@@ -385,15 +382,14 @@ describe('Agenda', () => {
             customDependances: {
               referentielService,
               conseillerService,
+              evenementsService,
             },
             customConseiller: { structure: StructureConseiller.MILO },
           })
         })
 
-        await act(() =>
-          userEvent.click(
-            screen.getByRole('tab', { name: 'Agenda établissement' })
-          )
+        await userEvent.click(
+          screen.getByRole('tab', { name: 'Agenda établissement' })
         )
       })
 
