@@ -114,7 +114,30 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   useMatomo(trackingLabel)
 
   return (
-    <div>
+    <>
+      <div className='border border-solid border-grey_100 p-4'>
+        <h2 className='text-m-bold text-grey_800'>Nouvelles activités</h2>
+
+        <dl className='mt-4 flex gap-8'>
+          <div>
+            <dt className='text-base-bold'>Les actions</dt>
+            <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+              <div className='text-xl-bold'>{totalActions}</div>
+              <span className='text-base-bold'> À qualifier</span>
+            </dd>
+          </div>
+          {conseiller?.agence?.id && (
+            <div>
+              <dt className='text-base-bold'>Les animations</dt>
+              <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+                <div className='text-xl-bold'>{totalAnimationsCollectives}</div>
+                <span className='text-base-bold'> À clore</span>
+              </dd>
+            </div>
+          )}
+        </dl>
+      </div>
+
       <TabList className='mt-10'>
         <Tab
           label='Actions à qualifier'
@@ -126,7 +149,9 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
         />
         <Tab
           label='Animations à clore'
-          count={totalAnimationsCollectives}
+          count={
+            conseiller?.agence?.id ? totalAnimationsCollectives : undefined
+          }
           selected={currentTab === Onglet.ANIMATIONS_COLLECTIVES}
           controls='liste-animations-collectives-a-clore'
           onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
@@ -165,7 +190,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           />
         </div>
       )}
-    </div>
+    </>
   )
 }
 
