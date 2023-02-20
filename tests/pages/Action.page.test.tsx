@@ -362,7 +362,11 @@ describe("Page Détail d'une action d'un jeune", () => {
 
         // When
         const actual: GetServerSidePropsResult<any> = await getServerSideProps({
-          query: { action_id: 'id-action', envoiMessage: 'succes' },
+          query: {
+            action_id: 'id-action',
+            envoiMessage: 'succes',
+            jeune_id: 'jeune-1',
+          },
         } as unknown as GetServerSidePropsContext) // Then
         expect(actionsService.getAction).toHaveBeenCalledWith(
           'id-action',
@@ -398,6 +402,42 @@ describe("Page Détail d'une action d'un jeune", () => {
         // When
         let actual: GetServerSidePropsResult<any> = await getServerSideProps({
           query: { action_id: 'id-action', envoiMessage: 'succes' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({ notFound: true })
+      })
+    })
+
+    describe("quand l'action n'appartient pas au jeune", () => {
+      it('renvoie une 404', async () => {
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            accessToken: 'accessToken',
+            user: { structure: 'MILO' },
+          },
+        })
+        const action: Action = uneAction()
+        const commentaires = [unCommentaire()]
+        const jeune: BaseJeune = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+        }
+        const actionsService: ActionsService = mockedActionsService({
+          getAction: jest.fn(async () => ({ action, jeune })),
+          recupererLesCommentaires: jest.fn(async () => commentaires),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+
+        // When
+        let actual: GetServerSidePropsResult<any> = await getServerSideProps({
+          query: {
+            action_id: 'id-action',
+            envoiMessage: 'succes',
+            jeune_id: 'FAKE_ID',
+          },
         } as unknown as GetServerSidePropsContext)
 
         // Then
