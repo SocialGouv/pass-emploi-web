@@ -30,6 +30,7 @@ export interface MessageListeDiffusion {
   creationDate: DateTime
   iv: string
   type: TypeMessage
+  idsDestinataires: string[]
   infoPiecesJointes?: InfoFichier[]
 }
 

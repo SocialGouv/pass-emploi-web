@@ -32,6 +32,8 @@ import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
 export interface JeunesService {
+  asdfasdf(idsJeunes: string[]): Promise<BaseJeune[]>
+
   getJeunesDuConseillerServerSide(
     idConseiller: string,
     accessToken: string
@@ -113,6 +115,10 @@ export interface JeunesService {
 
 export class JeunesApiService implements JeunesService {
   constructor(private readonly apiClient: ApiClient) {}
+
+  asdfasdf(_idsJeunes: string[]): Promise<BaseJeune[]> {
+    throw new Error('Not implemented')
+  }
 
   private async getJeunesDuConseiller(
     idConseiller: string,
