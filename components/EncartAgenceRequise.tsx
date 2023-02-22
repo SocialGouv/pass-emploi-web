@@ -8,20 +8,20 @@ import RenseignementAgenceModal from './RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-type AgenceModaleProps = {
+type EncartAgenceRequiseProps = {
   structureConseiller: StructureConseiller
   getAgences: (structure: StructureConseiller) => Promise<Agence[]>
   onAgenceChoisie: (agence: { id?: string; nom: string }) => Promise<void>
   onContacterSupport: () => void
   onOuvertureModale: (trackingMessage: string) => void
 }
-export default function AgenceModale({
+export default function EncartAgenceRequise({
   structureConseiller,
   getAgences,
   onAgenceChoisie,
   onOuvertureModale,
   onContacterSupport,
-}: AgenceModaleProps): JSX.Element {
+}: EncartAgenceRequiseProps): JSX.Element {
   const [agences, setAgences] = useState<Agence[]>([])
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
 

@@ -4,7 +4,7 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import AgenceModale from 'components/AgenceModale'
+import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { OngletAgendaConseiller } from 'components/rdv/OngletAgendaConseiller'
 import { OngletAgendaEtablissement } from 'components/rdv/OngletAgendaEtablissement'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -118,7 +118,7 @@ function Agenda({ onglet }: AgendaProps) {
     )
   }
 
-  async function openAgenceModal(trackingMessage: string) {
+  async function trackAgenceModal(trackingMessage: string) {
     setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
 
@@ -227,14 +227,14 @@ function Agenda({ onglet }: AgendaProps) {
           )}
 
           {conseiller && !conseiller.agence && (
-            <AgenceModale
+            <EncartAgenceRequise
               onContacterSupport={trackContacterSupport}
               structureConseiller={conseiller.structure}
               onAgenceChoisie={renseignerAgence}
               getAgences={referentielService.getAgencesClientSide.bind(
                 referentielService
               )}
-              onOuvertureModale={openAgenceModal}
+              onOuvertureModale={trackAgenceModal}
             />
           )}
         </div>

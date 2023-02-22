@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { OngletActionsPilotage } from 'components/pilotage/OngletActionsPilotage'
 import { OngletAnimationsCollectivesPilotage } from 'components/pilotage/OngletAnimationsCollectivesPilotage'
@@ -23,6 +23,8 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { trackEvent } from '../utils/analytics/matomo'
+import { ReferentielService } from '../services/referentiel.service'
 
 export enum Onglet {
   ACTIONS = 'ACTIONS',
@@ -50,9 +52,13 @@ type PilotageProps = PageProps & {
 
 function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
+  const referentielService =
+    useDependance<ReferentielService>('referentielService')
   const evenementsService =
     useDependance<EvenementsService>('evenementsService')
-  const [conseiller] = useConseiller()
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
+  const [conseiller, setConseiller] = useConseiller()
   const router = useRouter()
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.ACTIONS)
@@ -61,6 +67,14 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   )
   const [totalAnimationsCollectives, setTotalAnimationsCollectives] =
     useState<number>(animationsCollectives?.metadonnees.nombreTotal ?? 0)
+
+  const [toto, setToto] = useState<
+    | {
+        donnees: AnimationCollectivePilotage[]
+        metadonnees: MetadonneesAnimationsCollectives
+      }
+    | undefined
+  >(animationsCollectives)
 
   const pageTracking = 'Pilotage'
   const [trackingLabel, setTrackingLabel] = useState<string>(
@@ -93,6 +107,27 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     return result
   }
 
+  async function renseignerAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...conseiller!, agence })
+    setTrackingLabel(pageTracking + ' - Succès ajout agence')
+  }
+
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Pop-in sélection agence',
+      nom: '',
+    })
+  }
+  async function trackAgenceModal(trackingMessage: string) {
+    setTrackingLabel(pageTracking + ' - ' + trackingMessage)
+  }
+
   async function switchTab(tab: Onglet) {
     setTrackingLabel(
       pageTracking + ' - Consultation ' + ongletProps[tab].trackingLabel
@@ -110,6 +145,20 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
 
     setCurrentTab(tab)
   }
+
+  useEffect(() => {
+    if (conseiller?.agence?.id && !toto) {
+      console.log('>>> USEEFFECT')
+      evenementsService
+        .getAnimationsCollectivesACloreClientSide(conseiller.agence.id, 1)
+        .then((ac) =>
+          setToto({
+            donnees: ac.animationsCollectives,
+            metadonnees: ac.metadonnees,
+          })
+        )
+    }
+  }, [conseiller?.agence?.id])
 
   useMatomo(trackingLabel)
 
@@ -183,11 +232,20 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           id='liste-animations-collectives-a-clore'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          <OngletAnimationsCollectivesPilotage
-            animationsCollectivesInitiales={animationsCollectives?.donnees}
-            metadonneesInitiales={animationsCollectives?.metadonnees}
-            getAnimationsCollectives={chargerAnimationsCollectives}
-          />
+          {conseiller && (
+            <OngletAnimationsCollectivesPilotage
+              structureConseiller={conseiller?.structure}
+              renseignerAgence={renseignerAgence}
+              getAgences={referentielService.getAgencesClientSide.bind(
+                referentielService
+              )}
+              trackAgenceModal={trackAgenceModal}
+              trackContacterSupport={trackContacterSupport}
+              animationsCollectivesInitiales={toto?.donnees}
+              metadonneesInitiales={toto?.metadonnees}
+              getAnimationsCollectives={chargerAnimationsCollectives}
+            />
+          )}
         </div>
       )}
     </>
