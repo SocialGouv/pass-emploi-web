@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { OngletActionsPilotage } from 'components/pilotage/OngletActionsPilotage'
 import { OngletAnimationsCollectivesPilotage } from 'components/pilotage/OngletAnimationsCollectivesPilotage'
 import { IconName } from 'components/ui/IconComponent'
@@ -18,13 +19,13 @@ import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
+import { ReferentielService } from 'services/referentiel.service'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
-import { trackEvent } from '../utils/analytics/matomo'
-import { ReferentielService } from '../services/referentiel.service'
 
 export enum Onglet {
   ACTIONS = 'ACTIONS',
@@ -68,13 +69,14 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   const [totalAnimationsCollectives, setTotalAnimationsCollectives] =
     useState<number>(animationsCollectives?.metadonnees.nombreTotal ?? 0)
 
-  const [toto, setToto] = useState<
-    | {
-        donnees: AnimationCollectivePilotage[]
-        metadonnees: MetadonneesAnimationsCollectives
-      }
-    | undefined
-  >(animationsCollectives)
+  const [animationsCollectivesAffichees, setAnimationsCollectivesAffichees] =
+    useState<
+      | {
+          donnees: AnimationCollectivePilotage[]
+          metadonnees: MetadonneesAnimationsCollectives
+        }
+      | undefined
+    >(animationsCollectives)
 
   const pageTracking = 'Pilotage'
   const [trackingLabel, setTrackingLabel] = useState<string>(
@@ -124,7 +126,8 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
       nom: '',
     })
   }
-  async function trackAgenceModal(trackingMessage: string) {
+
+  function trackAgenceModal(trackingMessage: string) {
     setTrackingLabel(pageTracking + ' - ' + trackingMessage)
   }
 
@@ -147,16 +150,16 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   }
 
   useEffect(() => {
-    if (conseiller?.agence?.id && !toto) {
-      console.log('>>> USEEFFECT')
+    if (conseiller?.agence?.id && !animationsCollectivesAffichees) {
       evenementsService
         .getAnimationsCollectivesACloreClientSide(conseiller.agence.id, 1)
-        .then((ac) =>
-          setToto({
-            donnees: ac.animationsCollectives,
-            metadonnees: ac.metadonnees,
+        .then((result) => {
+          setAnimationsCollectivesAffichees({
+            donnees: result.animationsCollectives,
+            metadonnees: result.metadonnees,
           })
-        )
+          setTotalAnimationsCollectives(result.metadonnees.nombreTotal)
+        })
     }
   }, [conseiller?.agence?.id])
 
@@ -232,17 +235,24 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           id='liste-animations-collectives-a-clore'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          {conseiller && (
-            <OngletAnimationsCollectivesPilotage
-              structureConseiller={conseiller?.structure}
-              renseignerAgence={renseignerAgence}
+          {!animationsCollectivesAffichees && conseiller && (
+            <EncartAgenceRequise
+              onContacterSupport={trackContacterSupport}
+              structureConseiller={conseiller.structure}
+              onAgenceChoisie={renseignerAgence}
               getAgences={referentielService.getAgencesClientSide.bind(
                 referentielService
               )}
-              trackAgenceModal={trackAgenceModal}
-              trackContacterSupport={trackContacterSupport}
-              animationsCollectivesInitiales={toto?.donnees}
-              metadonneesInitiales={toto?.metadonnees}
+              onChangeAffichageModal={trackAgenceModal}
+            />
+          )}
+
+          {animationsCollectivesAffichees && (
+            <OngletAnimationsCollectivesPilotage
+              animationsCollectivesInitiales={
+                animationsCollectivesAffichees?.donnees
+              }
+              metadonneesInitiales={animationsCollectivesAffichees?.metadonnees}
               getAnimationsCollectives={chargerAnimationsCollectives}
             />
           )}

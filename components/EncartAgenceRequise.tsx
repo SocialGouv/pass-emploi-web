@@ -1,25 +1,23 @@
 import React, { useState } from 'react'
 
-import { StructureConseiller } from '../interfaces/conseiller'
-import { Agence } from '../interfaces/referentiel'
-
-import RenseignementAgenceModal from './RenseignementAgenceModal'
-
+import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { Agence } from 'interfaces/referentiel'
 
 type EncartAgenceRequiseProps = {
   structureConseiller: StructureConseiller
   getAgences: (structure: StructureConseiller) => Promise<Agence[]>
   onAgenceChoisie: (agence: { id?: string; nom: string }) => Promise<void>
   onContacterSupport: () => void
-  onOuvertureModale: (trackingMessage: string) => void
+  onChangeAffichageModal: (trackingMessage: string) => void
 }
 export default function EncartAgenceRequise({
   structureConseiller,
   getAgences,
   onAgenceChoisie,
-  onOuvertureModale,
+  onChangeAffichageModal,
   onContacterSupport,
 }: EncartAgenceRequiseProps): JSX.Element {
   const [agences, setAgences] = useState<Agence[]>([])
@@ -30,12 +28,12 @@ export default function EncartAgenceRequise({
       setAgences(await getAgences(structureConseiller))
     }
     setShowAgenceModal(true)
-    onOuvertureModale('Pop-in sélection agence')
+    onChangeAffichageModal('Pop-in sélection agence')
   }
 
   async function closeAgenceModal() {
     setShowAgenceModal(false)
-    onOuvertureModale('Fermeture pop-in')
+    onChangeAffichageModal('Fermeture pop-in sélection agence')
   }
 
   async function renseignerAgence(agence: {
@@ -72,7 +70,7 @@ export default function EncartAgenceRequise({
         </Button>
       </div>
 
-      {showAgenceModal && agences.length && (
+      {showAgenceModal && agences.length > 0 && (
         <RenseignementAgenceModal
           structureConseiller={structureConseiller}
           referentielAgences={agences}

@@ -1,24 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { StructureConseiller } from '../../interfaces/conseiller'
-import { ReferentielService } from '../../services/referentiel.service'
-import { useDependance } from '../../utils/injectionDependances'
-import EncartAgenceRequise from '../EncartAgenceRequise'
-
 import TableauAnimationsAClore from 'components/pilotage/TableauAnimationsAClore'
 import Pagination from 'components/ui/Table/Pagination'
 import {
   AnimationCollectivePilotage,
   MetadonneesAnimationsCollectives,
 } from 'interfaces/evenement'
-import { Agence } from '../../interfaces/referentiel'
 
 interface OngletAnimationsCollectivesPilotageProps {
-  structureConseiller: StructureConseiller
-  getAgences: (structure: StructureConseiller) => Promise<Agence[]>
-  renseignerAgence: (agence: { id?: string; nom: string }) => Promise<void>
-  trackAgenceModal: (trackingMessage: string) => void
-  trackContacterSupport: () => void
   animationsCollectivesInitiales?: AnimationCollectivePilotage[]
   metadonneesInitiales?: MetadonneesAnimationsCollectives
   getAnimationsCollectives: (page: number) => Promise<{
@@ -28,11 +17,6 @@ interface OngletAnimationsCollectivesPilotageProps {
 }
 
 export function OngletAnimationsCollectivesPilotage({
-  structureConseiller,
-  renseignerAgence,
-  getAgences,
-  trackAgenceModal,
-  trackContacterSupport,
   animationsCollectivesInitiales,
   metadonneesInitiales,
   getAnimationsCollectives,
@@ -66,16 +50,6 @@ export function OngletAnimationsCollectivesPilotage({
 
   return (
     <>
-      {!metadonnees && (
-        <EncartAgenceRequise
-          onContacterSupport={trackContacterSupport}
-          structureConseiller={structureConseiller}
-          onAgenceChoisie={renseignerAgence}
-          getAgences={getAgences}
-          onOuvertureModale={trackAgenceModal}
-        />
-      )}
-
       {metadonnees && metadonnees.nombreTotal === 0 && (
         <p className='text-base-bold mb-2'>
           Vous n’avez pas d’animation collective à clore.

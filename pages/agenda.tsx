@@ -234,7 +234,7 @@ function Agenda({ onglet }: AgendaProps) {
               getAgences={referentielService.getAgencesClientSide.bind(
                 referentielService
               )}
-              onOuvertureModale={trackAgenceModal}
+              onChangeAffichageModal={trackAgenceModal}
             />
           )}
         </div>

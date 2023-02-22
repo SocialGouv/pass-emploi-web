@@ -4,14 +4,10 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { uneListeDAgencesMILO } from '../../fixtures/referentiel'
-import { StructureConseiller } from '../../interfaces/conseiller'
-import { Agence } from '../../interfaces/referentiel'
-import { ReferentielService } from '../../services/referentiel.service'
-
 import { uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
+import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import {
   mockedActionsService,
   mockedConseillerService,
@@ -19,11 +15,14 @@ import {
   mockedReferentielService,
 } from 'fixtures/services'
 import { ActionPilotage } from 'interfaces/action'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
+import { Agence } from 'interfaces/referentiel'
 import Pilotage, { getServerSideProps } from 'pages/pilotage'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
+import { ReferentielService } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -330,7 +329,6 @@ describe('Pilotage', () => {
     })
 
     describe('quand le conseiller n’a pas renseigné son agence', () => {
-      let actionsService: ActionsService
       let agences: Agence[]
       let referentielService: ReferentielService
       let conseillerService: ConseillerService
@@ -341,9 +339,22 @@ describe('Pilotage', () => {
           getAgencesClientSide: jest.fn(async () => agences),
         })
         conseillerService = mockedConseillerService()
-        actionsService = mockedActionsService({
-          getActionsAQualifierClientSide: jest.fn(),
+        const evenementsService = mockedEvenementsService({
+          getAnimationsCollectivesACloreClientSide: jest.fn(
+            async (_, page) => ({
+              animationsCollectives: [
+                {
+                  id: 'evenement-page-' + page,
+                  titre: 'Animation page ' + page,
+                  date: '2018-11-21T06:20:32.232Z',
+                  nombreInscrits: 5,
+                },
+              ],
+              metadonnees: { nombrePages: 3, nombreTotal: 25 },
+            })
+          ),
         })
+
         ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
         // When
@@ -358,9 +369,9 @@ describe('Pilotage', () => {
             />,
             {
               customDependances: {
-                actionsService,
                 referentielService,
                 conseillerService,
+                evenementsService,
               },
               customConseiller: { structure: StructureConseiller.MILO },
             }
@@ -439,10 +450,10 @@ describe('Pilotage', () => {
           codeDepartement: '3',
         })
         expect(() =>
-          screen.getByText('Votre Mission locale n’est pas renseignée')
+          screen.getByText('Votre agence n’est pas renseignée')
         ).toThrow()
         expect(
-          screen.getByRole('Table', {
+          screen.getByRole('table', {
             name: 'Liste des animations collectives à clore',
           })
         ).toBeInTheDocument()
