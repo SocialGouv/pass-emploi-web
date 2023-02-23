@@ -1,4 +1,5 @@
 import { act, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
@@ -9,12 +10,13 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { toShortDate } from 'utils/date'
+import { TIME_24_A11Y_SEPARATOR, toFrenchFormat, toShortDate } from 'utils/date'
 
 describe('<MessagesListeDeDiffusion />', () => {
   let messages: ByDay<MessageListeDiffusion>[]
   let messagesService: MessagesService
   let listeDeDiffusion: ListeDeDiffusion
+  let afficherDetailMessage: (message: MessageListeDiffusion) => void
   beforeEach(async () => {
     // Given
     messages = desMessagesListeDeDiffusionParJour()
@@ -22,11 +24,15 @@ describe('<MessagesListeDeDiffusion />', () => {
       getMessagesListeDeDiffusion: jest.fn(async () => messages),
     })
     listeDeDiffusion = uneListeDeDiffusion()
+    afficherDetailMessage = jest.fn()
 
     // When
     await act(async () => {
       await renderWithContexts(
-        <MessagesListeDeDiffusion liste={listeDeDiffusion} />,
+        <MessagesListeDeDiffusion
+          liste={listeDeDiffusion}
+          onAfficherDetailMessage={afficherDetailMessage}
+        />,
         {
           customDependances: { messagesService },
         }
@@ -56,11 +62,57 @@ describe('<MessagesListeDeDiffusion />', () => {
       const listeMessages = screen.getByRole('list', {
         description: `Le ${toShortDate(jour.date)}`,
       })
+
       jour.messages.forEach((message) => {
         expect(
           within(listeMessages).getByText(message.content)
         ).toBeInTheDocument()
       })
     })
+  })
+
+  it('permet d’accéder au détail d’un message', async () => {
+    // Then
+    messages.forEach((jour) => {
+      const listeMessages = screen.getByRole('list', {
+        description: `Le ${toShortDate(jour.date)}`,
+      })
+
+      jour.messages.forEach(({ creationDate }) => {
+        const creationTime = toFrenchFormat(
+          creationDate,
+          TIME_24_A11Y_SEPARATOR
+        )
+
+        expect(
+          within(listeMessages).getByRole('button', {
+            name: `Voir le détail du message du ${toShortDate(
+              creationDate
+            )} à ${creationTime}`,
+          })
+        )
+      })
+    })
+  })
+
+  it('affiche le détail d’un message', async () => {
+    // Given
+    const message = messages[0].messages[0]
+    const creationTime = toFrenchFormat(
+      message.creationDate,
+      TIME_24_A11Y_SEPARATOR
+    )
+
+    // When
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: `Voir le détail du message du ${toShortDate(
+          message.creationDate
+        )} à ${creationTime}`,
+      })
+    )
+
+    // Then
+    expect(afficherDetailMessage).toHaveBeenCalledWith(message)
   })
 })

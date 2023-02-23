@@ -3,19 +3,24 @@ import React from 'react'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import { MessageListeDiffusion, TypeMessage } from 'interfaces/message'
-import { TIME_24_H_SEPARATOR, toFrenchFormat } from 'utils/date'
+import {
+  TIME_24_A11Y_SEPARATOR,
+  TIME_24_H_SEPARATOR,
+  toFrenchFormat,
+  toShortDate,
+} from 'utils/date'
 
 interface DisplayMessageListeDeDiffusionProps {
   message: MessageListeDiffusion
+  onAfficherDetailMessage: () => void
 }
 
 export default function DisplayMessageListeDeDiffusion({
   message,
+  onAfficherDetailMessage,
 }: DisplayMessageListeDeDiffusionProps) {
-  const creationTime: string = toFrenchFormat(
-    message.creationDate,
-    TIME_24_H_SEPARATOR
-  )
+  const creationTime = toFrenchFormat(message.creationDate, TIME_24_H_SEPARATOR)
+  const a11yTime = toFrenchFormat(message.creationDate, TIME_24_A11Y_SEPARATOR)
 
   function scrollToRef(element: HTMLLIElement | null) {
     if (element) element.scrollIntoView()
@@ -31,9 +36,16 @@ export default function DisplayMessageListeDeDiffusion({
           message.infoPiecesJointes.map(({ id, nom }) => (
             <LienPieceJointe key={id} id={id} nom={nom} />
           ))}
+
+        <button onClick={onAfficherDetailMessage}>
+          Voir le détail du message{' '}
+          <span className='sr-only'>
+            du {toShortDate(message.creationDate)} à {a11yTime}
+          </span>
+        </button>
       </div>
       <p className='text-xs-medium text-content text-right'>
-        <span className='sr-only'>Envoyé le </span>
+        <span className='sr-only'>Envoyé à </span>
         {creationTime}
       </p>
     </li>

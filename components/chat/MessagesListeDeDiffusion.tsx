@@ -13,9 +13,11 @@ import { useDependance } from 'utils/injectionDependances'
 
 type MessagesListeDeDiffusionProps = {
   liste: ListeDeDiffusion
+  onAfficherDetailMessage: (message: MessageListeDiffusion) => void
 }
 export default function MessagesListeDeDiffusion({
   liste,
+  onAfficherDetailMessage,
 }: MessagesListeDeDiffusionProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
@@ -78,6 +80,9 @@ export default function MessagesListeDeDiffusion({
                     <DisplayMessageListeDeDiffusion
                       key={message.id}
                       message={message}
+                      onAfficherDetailMessage={() =>
+                        onAfficherDetailMessage(message)
+                      }
                     />
                   ))}
                 </ul>

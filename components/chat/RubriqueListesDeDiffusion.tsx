@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 
+import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
 import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { MessageListeDiffusion } from 'interfaces/message'
 
 type RubriqueListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
@@ -14,14 +16,23 @@ export default function RubriqueListesDeDiffusion({
   listesDeDiffusion,
   onBack,
 }: RubriqueListesDeDiffusionProps) {
-  const [listeAffichee, setListeAffichee] = useState<
+  const [listeSelectionnee, setListeSelectionnee] = useState<
     ListeDeDiffusion | undefined
   >()
+  const [messageSelectionne, setMessageSelectionne] = useState<
+    MessageListeDiffusion | undefined
+  >()
 
-  const titre = listeAffichee?.titre ?? 'Mes listes de diffusion'
+  const titre = messageSelectionne
+    ? 'Détail du message'
+    : listeSelectionnee?.titre ?? 'Mes listes de diffusion'
   const labelRetour =
     'Retour ' +
-    (listeAffichee ? 'à mes listes de diffusion' : 'sur ma messagerie')
+    (messageSelectionne
+      ? 'aux messages de ma liste'
+      : listeSelectionnee
+      ? 'à mes listes de diffusion'
+      : 'sur ma messagerie')
 
   return (
     <div className='h-full flex flex-col bg-grey_100 '>
@@ -29,7 +40,11 @@ export default function RubriqueListesDeDiffusion({
         <button
           className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
           onClick={() =>
-            listeAffichee ? setListeAffichee(undefined) : onBack()
+            messageSelectionne
+              ? setMessageSelectionne(undefined)
+              : listeSelectionnee
+              ? setListeSelectionnee(undefined)
+              : onBack()
           }
         >
           <IconComponent
@@ -44,14 +59,23 @@ export default function RubriqueListesDeDiffusion({
         <h2 className='w-full text-left text-primary text-l-bold'>{titre}</h2>
       </div>
 
-      {!listeAffichee && (
+      {!listeSelectionnee && (
         <ListeListesDeDiffusion
           listesDeDiffusion={listesDeDiffusion}
-          onAfficherListe={setListeAffichee}
+          onAfficherListe={setListeSelectionnee}
         />
       )}
 
-      {listeAffichee && <MessagesListeDeDiffusion liste={listeAffichee} />}
+      {listeSelectionnee && !messageSelectionne && (
+        <MessagesListeDeDiffusion
+          liste={listeSelectionnee}
+          onAfficherDetailMessage={setMessageSelectionne}
+        />
+      )}
+
+      {listeSelectionnee && messageSelectionne && (
+        <DetailMessageListeDeDiffusion message={messageSelectionne} />
+      )}
     </div>
   )
 }
