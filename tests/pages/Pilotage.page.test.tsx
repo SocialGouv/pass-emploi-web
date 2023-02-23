@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -7,17 +7,22 @@ import React from 'react'
 import { uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
+import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import {
   mockedActionsService,
   mockedConseillerService,
   mockedEvenementsService,
+  mockedReferentielService,
 } from 'fixtures/services'
 import { ActionPilotage } from 'interfaces/action'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
+import { Agence } from 'interfaces/referentiel'
 import Pilotage, { getServerSideProps } from 'pages/pilotage'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
+import { ReferentielService } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -25,6 +30,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/Modal')
 
 describe('Pilotage', () => {
   describe('Client side', () => {
@@ -323,46 +329,163 @@ describe('Pilotage', () => {
     })
 
     describe('quand le conseiller n’a pas renseigné son agence', () => {
-      it('affiche un message qui le précise', async () => {
-        // Given
-        let actionsService: ActionsService
-        actionsService = mockedActionsService({
-          getActionsAQualifierClientSide: jest.fn(),
+      let agences: Agence[]
+      let referentielService: ReferentielService
+      let conseillerService: ConseillerService
+
+      beforeEach(async () => {
+        agences = uneListeDAgencesMILO()
+        referentielService = mockedReferentielService({
+          getAgencesClientSide: jest.fn(async () => agences),
         })
-        renderWithContexts(
-          <Pilotage
-            withoutChat={true}
-            pageTitle=''
-            actions={{
-              donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
-            }}
-          />,
-          { customDependances: { actionsService } }
-        )
+        conseillerService = mockedConseillerService()
+        const evenementsService = mockedEvenementsService({
+          getAnimationsCollectivesACloreClientSide: jest.fn(
+            async (_, page) => ({
+              animationsCollectives: [
+                {
+                  id: 'evenement-page-' + page,
+                  titre: 'Animation page ' + page,
+                  date: '2018-11-21T06:20:32.232Z',
+                  nombreInscrits: 5,
+                },
+              ],
+              metadonnees: { nombrePages: 3, nombreTotal: 25 },
+            })
+          ),
+        })
+
+        ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
+
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <Pilotage
+              pageTitle=''
+              actions={{
+                donnees: [],
+                metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              }}
+            />,
+            {
+              customDependances: {
+                referentielService,
+                conseillerService,
+                evenementsService,
+              },
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
+          )
+        })
 
         // When
         await userEvent.click(
           screen.getByRole('tab', { name: /Animations à clore/ })
         )
+      })
 
+      it('n’affiche pas la liste des animations à clore', async () => {
+        // Then
+        expect(() =>
+          screen.getByRole('table', {
+            name: 'Liste des animations collectives à clore',
+          })
+        ).toThrow()
+      })
+
+      it('demande de renseigner son agence', async () => {
         // Then
         expect(
-          screen.getByText(
-            'Vous devez renseigner votre Mission locale pour pouvoir consulter ses animations collectives.'
-          )
+          screen.getByText(/Votre agence n’est pas renseignée/)
         ).toBeInTheDocument()
-        expect(screen.queryByText('Les animations')).not.toBeInTheDocument()
+
+        expect(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('permet de renseigner son agence', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        )
+
+        // Then
+        expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
+          StructureConseiller.MILO
+        )
+        expect(screen.getByRole('combobox')).toBeInTheDocument()
+        agences.forEach((agence) =>
+          expect(
+            screen.getByRole('option', { hidden: true, name: agence.nom })
+          ).toBeInTheDocument()
+        )
+      })
+
+      it('sauvegarde l’agence et affiche la liste des animations collectives à clore de l’agence', async () => {
+        // Given
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission locale',
+          })
+        )
+        const agence = agences[2]
+        const searchAgence = screen.getByRole('combobox', {
+          name: /votre Mission locale/,
+        })
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+        // When
+        await userEvent.selectOptions(searchAgence, agence.nom)
+        await userEvent.click(submit)
+
+        // Then
+        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          id: agence.id,
+          nom: agence.nom,
+          codeDepartement: '3',
+        })
+        expect(() =>
+          screen.getByText('Votre agence n’est pas renseignée')
+        ).toThrow()
+        expect(
+          screen.getByRole('table', {
+            name: 'Liste des animations collectives à clore',
+          })
+        ).toBeInTheDocument()
       })
     })
   })
+})
 
-  describe('Server side', () => {
-    it('requiert une session valide', async () => {
+describe('Server side', () => {
+  it('requiert une session valide', async () => {
+    // Given
+    ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+      validSession: false,
+      redirect: { destination: 'whatever' },
+    })
+
+    // When
+    const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+    // Then
+    expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+    expect(actual).toEqual({ redirect: { destination: 'whatever' } })
+  })
+
+  describe('quand le conseiller est Pole emploi', () => {
+    it('renvoie une 404', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: false,
-        redirect: { destination: 'whatever' },
+        validSession: true,
+        session: {
+          user: { structure: 'POLE_EMPLOI' },
+        },
       })
 
       // When
@@ -370,142 +493,123 @@ describe('Pilotage', () => {
 
       // Then
       expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ redirect: { destination: 'whatever' } })
+      expect(actual).toEqual({ notFound: true })
     })
+  })
 
-    describe('quand le conseiller est Pole emploi', () => {
-      it('renvoie une 404', async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          validSession: true,
-          session: {
-            user: { structure: 'POLE_EMPLOI' },
-          },
-        })
-
-        // When
-        const actual = await getServerSideProps({} as GetServerSidePropsContext)
-
-        // Then
-        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-        expect(actual).toEqual({ notFound: true })
-      })
-    })
-
-    describe('quand le conseiller est connecté', () => {
-      let actionsService: ActionsService
-      let conseillerService: ConseillerService
-      let evenementsService: EvenementsService
-      beforeEach(async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          validSession: true,
-          redirect: { destination: 'whatever' },
-          session: {
-            accessToken: 'accessToken',
-            user: { id: 'conseiller-id' },
-          },
-        })
-
-        actionsService = mockedActionsService({
-          getActionsAQualifierServerSide: jest.fn(async () => ({
-            actions: uneListeDActionsAQualifier(),
-            metadonnees: {
-              nombreTotal: 5,
-              nombrePages: 1,
-            },
-          })),
-        })
-        conseillerService = mockedConseillerService({
-          getConseillerServerSide: jest.fn(async () =>
-            unConseiller({
-              agence: {
-                nom: 'Mission locale Aubenas',
-                id: 'id-etablissement',
-              },
-            })
-          ),
-        })
-        evenementsService = mockedEvenementsService({
-          getAnimationsCollectivesACloreServerSide: jest.fn(async () => ({
-            animationsCollectives: uneListeDAnimationCollectiveAClore(),
-            metadonnees: {
-              nombreTotal: 5,
-              nombrePages: 1,
-            },
-          })),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'actionsService') return actionsService
-          if (dependance === 'conseillerService') return conseillerService
-          if (dependance === 'evenementsService') return evenementsService
-        })
+  describe('quand le conseiller est connecté', () => {
+    let actionsService: ActionsService
+    let conseillerService: ConseillerService
+    let evenementsService: EvenementsService
+    beforeEach(async () => {
+      // Given
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        redirect: { destination: 'whatever' },
+        session: {
+          accessToken: 'accessToken',
+          user: { id: 'conseiller-id' },
+        },
       })
 
-      it('prépare la page', async () => {
-        // When
-        const actual = await getServerSideProps({
-          query: { onglet: 'actions' },
-        } as unknown as GetServerSidePropsContext)
-
-        // Then
-        expect(
-          actionsService.getActionsAQualifierServerSide
-        ).toHaveBeenCalledWith('conseiller-id', 'accessToken')
-        expect(conseillerService.getConseillerServerSide).toHaveBeenCalledWith(
-          { id: 'conseiller-id' },
-          'accessToken'
-        )
-        expect(
-          evenementsService.getAnimationsCollectivesACloreServerSide
-        ).toHaveBeenCalledWith('id-etablissement', 'accessToken')
-        expect(actual).toEqual({
-          props: {
-            pageTitle: 'Pilotage',
-            actions: {
-              donnees: uneListeDActionsAQualifier(),
-              metadonnees: { nombreTotal: 5, nombrePages: 1 },
-            },
-            animationsCollectives: {
-              donnees: uneListeDAnimationCollectiveAClore(),
-              metadonnees: { nombreTotal: 5, nombrePages: 1 },
-            },
-            onglet: 'ACTIONS',
+      actionsService = mockedActionsService({
+        getActionsAQualifierServerSide: jest.fn(async () => ({
+          actions: uneListeDActionsAQualifier(),
+          metadonnees: {
+            nombreTotal: 5,
+            nombrePages: 1,
           },
-        })
+        })),
       })
-
-      it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
-        // Given
-        ;(
-          conseillerService.getConseillerServerSide as jest.Mock
-        ).mockResolvedValue(
+      conseillerService = mockedConseillerService({
+        getConseillerServerSide: jest.fn(async () =>
           unConseiller({
             agence: {
               nom: 'Mission locale Aubenas',
+              id: 'id-etablissement',
             },
           })
-        )
+        ),
+      })
+      evenementsService = mockedEvenementsService({
+        getAnimationsCollectivesACloreServerSide: jest.fn(async () => ({
+          animationsCollectives: uneListeDAnimationCollectiveAClore(),
+          metadonnees: {
+            nombreTotal: 5,
+            nombrePages: 1,
+          },
+        })),
+      })
+      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+        if (dependance === 'actionsService') return actionsService
+        if (dependance === 'conseillerService') return conseillerService
+        if (dependance === 'evenementsService') return evenementsService
+      })
+    })
 
-        // When
-        const actual = await getServerSideProps({
-          query: { onglet: 'animationsCollectives' },
-        } as unknown as GetServerSidePropsContext)
+    it('prépare la page', async () => {
+      // When
+      const actual = await getServerSideProps({
+        query: { onglet: 'actions' },
+      } as unknown as GetServerSidePropsContext)
 
-        // Then
-        expect(
-          evenementsService.getAnimationsCollectivesACloreServerSide
-        ).not.toHaveBeenCalled()
-        expect(actual).toEqual({
-          props: {
-            pageTitle: 'Pilotage',
-            actions: {
-              donnees: uneListeDActionsAQualifier(),
-              metadonnees: { nombreTotal: 5, nombrePages: 1 },
-            },
-            onglet: 'ANIMATIONS_COLLECTIVES',
+      // Then
+      expect(
+        actionsService.getActionsAQualifierServerSide
+      ).toHaveBeenCalledWith('conseiller-id', 'accessToken')
+      expect(conseillerService.getConseillerServerSide).toHaveBeenCalledWith(
+        { id: 'conseiller-id' },
+        'accessToken'
+      )
+      expect(
+        evenementsService.getAnimationsCollectivesACloreServerSide
+      ).toHaveBeenCalledWith('id-etablissement', 'accessToken')
+      expect(actual).toEqual({
+        props: {
+          pageTitle: 'Pilotage',
+          actions: {
+            donnees: uneListeDActionsAQualifier(),
+            metadonnees: { nombreTotal: 5, nombrePages: 1 },
+          },
+          animationsCollectives: {
+            donnees: uneListeDAnimationCollectiveAClore(),
+            metadonnees: { nombreTotal: 5, nombrePages: 1 },
+          },
+          onglet: 'ACTIONS',
+        },
+      })
+    })
+
+    it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
+      // Given
+      ;(
+        conseillerService.getConseillerServerSide as jest.Mock
+      ).mockResolvedValue(
+        unConseiller({
+          agence: {
+            nom: 'Mission locale Aubenas',
           },
         })
+      )
+
+      // When
+      const actual = await getServerSideProps({
+        query: { onglet: 'animationsCollectives' },
+      } as unknown as GetServerSidePropsContext)
+
+      // Then
+      expect(
+        evenementsService.getAnimationsCollectivesACloreServerSide
+      ).not.toHaveBeenCalled()
+      expect(actual).toEqual({
+        props: {
+          pageTitle: 'Pilotage',
+          actions: {
+            donnees: uneListeDActionsAQualifier(),
+            metadonnees: { nombreTotal: 5, nombrePages: 1 },
+          },
+          onglet: 'ANIMATIONS_COLLECTIVES',
+        },
       })
     })
   })

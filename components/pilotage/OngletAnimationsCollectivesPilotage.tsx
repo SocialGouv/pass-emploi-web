@@ -50,13 +50,6 @@ export function OngletAnimationsCollectivesPilotage({
 
   return (
     <>
-      {!metadonnees && (
-        <p className='text-base-bold mb-2'>
-          Vous devez renseigner votre Mission locale pour pouvoir consulter ses
-          animations collectives.
-        </p>
-      )}
-
       {metadonnees && metadonnees.nombreTotal === 0 && (
         <p className='text-base-bold mb-2'>
           Vous n’avez pas d’animation collective à clore.

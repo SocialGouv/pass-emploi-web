@@ -4,10 +4,9 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { OngletAgendaConseiller } from 'components/rdv/OngletAgendaConseiller'
 import { OngletAgendaEtablissement } from 'components/rdv/OngletAgendaEtablissement'
-import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -15,7 +14,6 @@ import TabList from 'components/ui/Navigation/TabList'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
@@ -62,11 +60,6 @@ function Agenda({ onglet }: AgendaProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(
     onglet ?? Onglet.CONSEILLER
   )
-
-  const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
-  const [agences, setAgences] = useState<Agence[]>([])
-
-  const isAgenceNecessaire = !conseiller?.agence
 
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
@@ -125,19 +118,8 @@ function Agenda({ onglet }: AgendaProps) {
     )
   }
 
-  async function openAgenceModal() {
-    if (!agences.length) {
-      setAgences(
-        await referentielService.getAgencesClientSide(conseiller!.structure)
-      )
-    }
-    setShowAgenceModal(true)
-    setTrackingTitle(initialTracking + ' - Pop-in sélection agence')
-  }
-
-  async function closeAgenceModal() {
-    setShowAgenceModal(false)
-    setTrackingTitle(initialTracking)
+  async function trackAgenceModal(trackingMessage: string) {
+    setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
 
   async function renseignerAgence(agence: {
@@ -147,7 +129,6 @@ function Agenda({ onglet }: AgendaProps) {
     await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller!, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
-    setShowAgenceModal(false)
   }
 
   function trackNavigation(append?: string) {
@@ -222,7 +203,7 @@ function Agenda({ onglet }: AgendaProps) {
           tabIndex={0}
           id='agenda-etablissement'
         >
-          {!isAgenceNecessaire && (
+          {conseiller && conseiller.agence && (
             <>
               <ButtonLink
                 href='/mes-jeunes/edition-rdv?type=ac'
@@ -245,42 +226,18 @@ function Agenda({ onglet }: AgendaProps) {
             </>
           )}
 
-          {isAgenceNecessaire && (
-            <div className='bg-warning_lighten rounded-base p-6'>
-              <p className='flex items-center text-base-bold text-warning mb-2'>
-                <IconComponent
-                  focusable={false}
-                  aria-hidden={true}
-                  className='w-4 h-4 mr-2 fill-warning'
-                  name={IconName.Important}
-                />
-                Votre agence n’est pas renseignée
-              </p>
-              <p className='text-base-regular text-warning mb-6'>
-                Pour créer ou voir les animations collectives de votre mission
-                locale vous devez la renseigner dans votre profil.
-              </p>
-              <Button
-                type='button'
-                style={ButtonStyle.PRIMARY}
-                onClick={openAgenceModal}
-                className='mx-auto'
-              >
-                Renseigner votre Mission locale
-              </Button>
-            </div>
+          {conseiller && !conseiller.agence && (
+            <EncartAgenceRequise
+              onContacterSupport={trackContacterSupport}
+              structureConseiller={conseiller.structure}
+              onAgenceChoisie={renseignerAgence}
+              getAgences={referentielService.getAgencesClientSide.bind(
+                referentielService
+              )}
+              onChangeAffichageModal={trackAgenceModal}
+            />
           )}
         </div>
-      )}
-
-      {showAgenceModal && agences.length && (
-        <RenseignementAgenceModal
-          structureConseiller={conseiller!.structure}
-          referentielAgences={agences}
-          onAgenceChoisie={renseignerAgence}
-          onContacterSupport={trackContacterSupport}
-          onClose={closeAgenceModal}
-        />
       )}
     </>
   )
