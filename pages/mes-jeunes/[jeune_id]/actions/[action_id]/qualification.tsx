@@ -46,6 +46,10 @@ function PageQualification({
     action.dateFinReelle
   )
 
+  const snpParOrdreAlphabetique = situationsNonProfessionnelles.sort((a, b) =>
+    a.label.localeCompare(b.label)
+  )
+
   const [isQualificationEnCours, setIsQualificationEnCours] =
     useState<boolean>(false)
   const [erreurQualification, setErreurQualification] = useState<
@@ -107,7 +111,7 @@ function PageQualification({
           Type
         </Label>
         <Select id='select-type' required={true} onChange={setCodeSNP}>
-          {situationsNonProfessionnelles.map(({ label, code }) => (
+          {snpParOrdreAlphabetique.map(({ label, code }) => (
             <option key={code} value={code}>
               {label}
             </option>
