@@ -32,7 +32,7 @@ import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { ApiError } from 'utils/httpClient'
 
 export interface JeunesService {
-  asdfasdf(idsJeunes: string[]): Promise<BaseJeune[]>
+  getIdentitesBeneficiaires(idsJeunes: string[]): Promise<BaseJeune[]>
 
   getJeunesDuConseillerServerSide(
     idConseiller: string,
@@ -116,19 +116,17 @@ export interface JeunesService {
 export class JeunesApiService implements JeunesService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  asdfasdf(_idsJeunes: string[]): Promise<BaseJeune[]> {
-    throw new Error('Not implemented')
-  }
+  async getIdentitesBeneficiaires(idsJeunes: string[]): Promise<BaseJeune[]> {
+    if (!idsJeunes.length) return []
+    const queryParam = idsJeunes.map((id) => 'ids=' + id).join('&')
 
-  private async getJeunesDuConseiller(
-    idConseiller: string,
-    accessToken: string
-  ) {
-    const { content: jeunes } = await this.apiClient.get<ItemJeuneJson[]>(
-      `/conseillers/${idConseiller}/jeunes`,
-      accessToken
+    const session = await getSession()
+    const { content: beneficiaires } = await this.apiClient.get<BaseJeune[]>(
+      `/conseillers/${session!.user.id}/jeunes/identites?${queryParam}`,
+      session!.accessToken
     )
-    return jeunes.map(jsonToItemJeune)
+
+    return beneficiaires
   }
 
   async getJeunesDuConseillerServerSide(
@@ -158,25 +156,6 @@ export class JeunesApiService implements JeunesService {
         return undefined
       }
       throw e
-    }
-  }
-
-  private async getConseillersDuJeune(
-    idJeune: string,
-    accessToken: string
-  ): Promise<ConseillerHistorique[]> {
-    {
-      try {
-        const { content: historique } = await this.apiClient.get<
-          ConseillerHistoriqueJson[]
-        >(`/jeunes/${idJeune}/conseillers`, accessToken)
-        return historique.map(toConseillerHistorique)
-      } catch (e) {
-        if (e instanceof ApiError && e.status === 404) {
-          return []
-        }
-        throw e
-      }
     }
   }
 
@@ -360,6 +339,47 @@ export class JeunesApiService implements JeunesService {
     )
   }
 
+  async getJeunesDeLEtablissement(
+    idEtablissement: string
+  ): Promise<BaseJeune[]> {
+    const session = await getSession()
+    const { content: jeunes } = await this.apiClient.get<BaseJeuneJson[]>(
+      `/etablissements/${idEtablissement}/jeunes`,
+      session!.accessToken
+    )
+    return jeunes.map(jsonToBaseJeune)
+  }
+
+  private async getJeunesDuConseiller(
+    idConseiller: string,
+    accessToken: string
+  ) {
+    const { content: jeunes } = await this.apiClient.get<ItemJeuneJson[]>(
+      `/conseillers/${idConseiller}/jeunes`,
+      accessToken
+    )
+    return jeunes.map(jsonToItemJeune)
+  }
+
+  private async getConseillersDuJeune(
+    idJeune: string,
+    accessToken: string
+  ): Promise<ConseillerHistorique[]> {
+    {
+      try {
+        const { content: historique } = await this.apiClient.get<
+          ConseillerHistoriqueJson[]
+        >(`/jeunes/${idJeune}/conseillers`, accessToken)
+        return historique.map(toConseillerHistorique)
+      } catch (e) {
+        if (e instanceof ApiError && e.status === 404) {
+          return []
+        }
+        throw e
+      }
+    }
+  }
+
   private async getIndicateursJeune(
     idConseiller: string,
     idJeune: string,
@@ -377,16 +397,5 @@ export class JeunesApiService implements JeunesService {
         session!.accessToken
       )
     return jsonToIndicateursSemaine(indicateurs)
-  }
-
-  async getJeunesDeLEtablissement(
-    idEtablissement: string
-  ): Promise<BaseJeune[]> {
-    const session = await getSession()
-    const { content: jeunes } = await this.apiClient.get<BaseJeuneJson[]>(
-      `/etablissements/${idEtablissement}/jeunes`,
-      session!.accessToken
-    )
-    return jeunes.map(jsonToBaseJeune)
   }
 }

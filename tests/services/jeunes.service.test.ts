@@ -435,7 +435,7 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('getJeunesDeLEtablissement', () => {
+  describe('.getJeunesDeLEtablissement', () => {
     it('retourne les bénéficiaires d’un établissement', async () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
@@ -453,6 +453,30 @@ describe('JeunesApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual([uneBaseJeune()])
+    })
+  })
+
+  describe('.getIdentitesBeneficiaires', () => {
+    it('récupère les noms et prénoms des bénéficiaires demandés', async () => {
+      // Given
+      const basesJeunes = [uneBaseJeune(), uneBaseJeune()]
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: basesJeunes,
+      })
+
+      // When
+      const actual = await jeunesService.getIdentitesBeneficiaires([
+        'id-jeune-1',
+        'id-jeune-2',
+        'id-jeune-3',
+      ])
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/conseillers/idConseiller/jeunes/identites?ids=id-jeune-1&ids=id-jeune-2&ids=id-jeune-3',
+        'accessToken'
+      )
+      expect(actual).toEqual(basesJeunes)
     })
   })
 })

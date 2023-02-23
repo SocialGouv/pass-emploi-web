@@ -15,7 +15,7 @@ export function DetailMessageListeDeDiffusion(props: {
   useEffect(() => {
     if (props.message.idsDestinataires.length) {
       jeunesServices
-        .asdfasdf(props.message.idsDestinataires)
+        .getIdentitesBeneficiaires(props.message.idsDestinataires)
         .then(setDestinataires)
     }
   }, [props.message.idsDestinataires])

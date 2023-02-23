@@ -17,7 +17,7 @@ export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
 ): JeunesService {
   const defaults: JeunesService = {
-    asdfasdf: jest.fn(),
+    getIdentitesBeneficiaires: jest.fn(),
     getJeunesDuConseillerServerSide: jest.fn(),
     getJeunesDuConseillerClientSide: jest.fn(),
     getConseillersDuJeuneServerSide: jest.fn(),

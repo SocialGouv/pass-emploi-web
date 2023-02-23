@@ -20,7 +20,7 @@ describe('DetailMessageListeDeDiffusion', () => {
       idsDestinataires: ['id-destinataire-1', 'id-destinataire-2'],
     })
     jeunesService = mockedJeunesService({
-      asdfasdf: jest.fn(async () => [
+      getIdentitesBeneficiaires: jest.fn(async () => [
         {
           id: 'id-destinataire-1',
           prenom: 'Marie',
@@ -55,7 +55,7 @@ describe('DetailMessageListeDeDiffusion', () => {
 
   it('affiche les destinataires du message', async () => {
     // Then
-    expect(jeunesService.asdfasdf).toHaveBeenCalledWith([
+    expect(jeunesService.getIdentitesBeneficiaires).toHaveBeenCalledWith([
       'id-destinataire-1',
       'id-destinataire-2',
     ])
