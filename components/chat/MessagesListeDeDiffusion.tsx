@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
+import HeaderChat from 'components/chat/HeaderChat'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
@@ -14,10 +15,12 @@ import { useDependance } from 'utils/injectionDependances'
 type MessagesListeDeDiffusionProps = {
   liste: ListeDeDiffusion
   onAfficherDetailMessage: (message: MessageListeDiffusion) => void
+  onBack: () => void
 }
 export default function MessagesListeDeDiffusion({
   liste,
   onAfficherDetailMessage,
+  onBack,
 }: MessagesListeDeDiffusionProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
@@ -38,6 +41,12 @@ export default function MessagesListeDeDiffusion({
 
   return (
     <>
+      <HeaderChat
+        titre={liste.titre}
+        labelRetour={'Retour à mes listes de diffusion'}
+        onBack={onBack}
+      />
+
       {!messages && <SpinningLoader />}
 
       {messages && messages.length === 0 && (

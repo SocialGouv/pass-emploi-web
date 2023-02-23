@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
+import HeaderChat from 'components/chat/HeaderChat'
 import { BaseJeune } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { JeunesService } from 'services/jeunes.service'
@@ -8,6 +9,7 @@ import { useDependance } from 'utils/injectionDependances'
 
 export function DetailMessageListeDeDiffusion(props: {
   message: MessageListeDiffusion
+  onBack: () => void
 }) {
   const jeunesServices = useDependance<JeunesService>('jeunesService')
   const [destinataires, setDestinataires] = useState<BaseJeune[]>([])
@@ -22,6 +24,12 @@ export function DetailMessageListeDeDiffusion(props: {
 
   return (
     <>
+      <HeaderChat
+        titre='Détail du message'
+        labelRetour={'Retour aux messages de ma liste'}
+        onBack={props.onBack}
+      />
+
       <span>Le {toShortDate(props.message.creationDate)}</span>
       <div>{props.message.content}</div>
       <span>

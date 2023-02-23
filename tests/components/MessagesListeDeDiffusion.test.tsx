@@ -32,6 +32,7 @@ describe('<MessagesListeDeDiffusion />', () => {
         <MessagesListeDeDiffusion
           liste={listeDeDiffusion}
           onAfficherDetailMessage={afficherDetailMessage}
+          onBack={() => {}}
         />,
         {
           customDependances: { messagesService },

@@ -32,9 +32,10 @@ describe('DetailMessageListeDeDiffusion', () => {
 
     // When
     await act(async () => {
-      renderWithContexts(<DetailMessageListeDeDiffusion message={message} />, {
-        customDependances: { jeunesService },
-      })
+      renderWithContexts(
+        <DetailMessageListeDeDiffusion message={message} onBack={() => {}} />,
+        { customDependances: { jeunesService } }
+      )
     })
   })
 
