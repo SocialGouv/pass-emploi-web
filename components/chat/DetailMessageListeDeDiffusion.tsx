@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
 import HeaderChat from 'components/chat/HeaderChat'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { BaseJeune } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { JeunesService } from 'services/jeunes.service'
@@ -42,6 +43,9 @@ export function DetailMessageListeDeDiffusion(props: {
         <span id='titre-liste-destinataires' className='sr-only'>
           Destinataires du message
         </span>
+
+        <InformationMessage label='Seuls les bénéficiaires actuellement dans votre portefeuille sont listés ci-dessous.' />
+
         <ul aria-describedby='titre-liste-destinataires'>
           {destinataires.map((destinataire) => (
             <li
