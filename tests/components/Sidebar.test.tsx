@@ -39,6 +39,9 @@ describe('<Sidebar/>', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Pilotage' })
     ).toHaveAttribute('href', '/pilotage')
+    expect(
+      within(navigation).getByRole('link', { name: 'Mission Locale' })
+    ).toHaveAttribute('href', '/mission-locale')
     expect(() => within(navigation).getByText('Réaffectation')).toThrow()
   })
 
@@ -67,6 +70,14 @@ describe('<Sidebar/>', () => {
 
     // THEN
     expect(() => screen.getByText('Pilotage')).toThrow()
+  })
+
+  it("n'affiche pas le lien de Mission Locale lorsque le conseiller est Pole emploi", () => {
+    // WHEN
+    renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+
+    // THEN
+    expect(() => screen.getByText('Mission Locale')).toThrow()
   })
 
   it('affiche le lien de réaffectation des jeunes lorsque le conseiller est superviseur', () => {

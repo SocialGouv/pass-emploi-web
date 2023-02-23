@@ -3,6 +3,7 @@ import { ComponentPropsWithoutRef } from 'react'
 import ActionsIcon from 'assets/icons/actions.svg'
 import AddIcon from 'assets/icons/add.svg'
 import AideIcon from 'assets/icons/aide.svg'
+import ArrowCircleRightIcon from 'assets/icons/arrow_circle_right.svg'
 import ArrowDoubleIcon from 'assets/icons/arrow_double.svg'
 import ArrowDownIcon from 'assets/icons/arrow_down.svg'
 import ArrowLeftIcon from 'assets/icons/arrow_left.svg'
@@ -71,6 +72,7 @@ export enum IconName {
   ArrowDown = 'ArrowDown',
   ArrowLeft = 'ArrowLeft',
   ArrowRight = 'ArrowRight',
+  ArrowCircleRight = 'ArrowCircleRight',
   Calendar = 'Calendar',
   Cancel = 'Cancel',
   Board = 'Board',
@@ -136,6 +138,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ArrowDown]: ArrowDownIcon,
   [IconName.ArrowLeft]: ArrowLeftIcon,
   [IconName.ArrowRight]: ArrowRightIcon,
+  [IconName.ArrowCircleRight]: ArrowCircleRightIcon,
   [IconName.Calendar]: CalendarIcon,
   [IconName.Cancel]: CancelIcon,
   [IconName.Check]: CheckIcon,

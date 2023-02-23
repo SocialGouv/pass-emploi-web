@@ -20,6 +20,7 @@ export enum NavItem {
   Raccourci = 'Raccourci,',
   Messagerie = 'Messagerie',
   Pilotage = 'Pilotage',
+  MissionLocale = 'MissionLocale',
 }
 type NavLinksProps = { showLabelsOnSmallScreen: boolean; items: NavItem[] }
 export default function NavLinks({
@@ -58,7 +59,6 @@ export default function NavLinks({
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
-
         {!isPoleEmploi && items.includes(NavItem.Rdvs) && (
           <NavLink
             isActive={isCurrentRoute('/agenda')}
@@ -68,7 +68,6 @@ export default function NavLinks({
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
-
         {items.includes(NavItem.RechercheOffres) && (
           <NavLink
             isActive={
@@ -80,7 +79,6 @@ export default function NavLinks({
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
-
         {!isPoleEmploi && items.includes(NavItem.Pilotage) && (
           <>
             <NavLink
@@ -92,7 +90,17 @@ export default function NavLinks({
             />
           </>
         )}
-
+        {!isPoleEmploi && items.includes(NavItem.MissionLocale) && (
+          <>
+            <NavLink
+              iconName={IconName.ArrowCircleRight}
+              label='Mission Locale'
+              href='/mission-locale'
+              isActive={isCurrentRoute('/mission-locale')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          </>
+        )}
         {isSuperviseur && items.includes(NavItem.Supervision) && (
           <>
             <NavLink
@@ -104,7 +112,6 @@ export default function NavLinks({
             />
           </>
         )}
-
         {items.includes(NavItem.Messagerie) && (
           <>
             <NavLink
@@ -116,7 +123,6 @@ export default function NavLinks({
             />
           </>
         )}
-
         {items.includes(NavItem.Raccourci) && (
           <>
             <NavLink
@@ -128,11 +134,9 @@ export default function NavLinks({
             />
           </>
         )}
-
         {items.includes(NavItem.Actualites) && (
           <ActualitesMenuButton structure={conseiller?.structure} />
         )}
-
         {items.includes(NavItem.Aide) && (
           <NavLink
             href={

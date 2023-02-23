@@ -111,6 +111,11 @@ export interface JeunesService {
   ): Promise<IndicateursSemaine>
 
   getJeunesDeLEtablissement(idEtablissement: string): Promise<BaseJeune[]>
+
+  rechercheJeunesDeLEtablissement(
+    idEtablissement: string,
+    q: string
+  ): Promise<BaseJeune[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -348,6 +353,25 @@ export class JeunesApiService implements JeunesService {
       session!.accessToken
     )
     return jeunes.map(jsonToBaseJeune)
+  }
+
+  async rechercheJeunesDeLEtablissement(
+    idEtablissement: string,
+    q: string
+  ): Promise<BaseJeune[]> {
+    const session = await getSession()
+    const {
+      content: { resultats },
+    } = await this.apiClient.get<{
+      resultats: Array<{
+        jeune: BaseJeune
+      }>
+    }>(
+      `/v2/etablissements/${idEtablissement}/jeunes?q=${q}`,
+      session!.accessToken
+    )
+
+    return resultats.map((informationsDuJeune) => informationsDuJeune.jeune)
   }
 
   private async getJeunesDuConseiller(
