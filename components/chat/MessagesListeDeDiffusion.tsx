@@ -77,7 +77,7 @@ export default function MessagesListeDeDiffusion({
                   className='text-base-regular text-center mb-3'
                   id={'date-messages-' + messagesOfADay.date.toMillis()}
                 >
-                  <span>{displayDate(messagesOfADay.date)}</span>
+                  {displayDate(messagesOfADay.date)}
                 </div>
 
                 <ul
@@ -86,13 +86,18 @@ export default function MessagesListeDeDiffusion({
                   }
                 >
                   {messagesOfADay.messages.map((message) => (
-                    <DisplayMessageListeDeDiffusion
+                    <li
                       key={message.id}
-                      message={message}
-                      onAfficherDetailMessage={() =>
-                        onAfficherDetailMessage(message)
-                      }
-                    />
+                      className='mb-4 px-4'
+                      ref={(e) => e?.scrollIntoView()}
+                    >
+                      <DisplayMessageListeDeDiffusion
+                        message={message}
+                        onAfficherDetailMessage={() =>
+                          onAfficherDetailMessage(message)
+                        }
+                      />
+                    </li>
                   ))}
                 </ul>
               </li>

@@ -87,11 +87,11 @@ describe('<MessagesListeDeDiffusion />', () => {
 
         expect(
           within(listeMessages).getByRole('button', {
-            name: `Voir le détail du message du ${toShortDate(
+            name: `Voir les destinataires du message du ${toShortDate(
               creationDate
             )} à ${creationTime}`,
           })
-        )
+        ).toBeInTheDocument()
       })
     })
   })
@@ -107,7 +107,7 @@ describe('<MessagesListeDeDiffusion />', () => {
     // When
     await userEvent.click(
       screen.getByRole('button', {
-        name: `Voir le détail du message du ${toShortDate(
+        name: `Voir les destinataires du message du ${toShortDate(
           message.creationDate
         )} à ${creationTime}`,
       })
