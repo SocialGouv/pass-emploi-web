@@ -4,6 +4,7 @@ import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeD
 import HeaderChat from 'components/chat/HeaderChat'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { BaseJeune } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { JeunesService } from 'services/jeunes.service'
@@ -15,7 +16,7 @@ export function DetailMessageListeDeDiffusion(props: {
   onBack: () => void
 }) {
   const jeunesServices = useDependance<JeunesService>('jeunesService')
-  const [destinataires, setDestinataires] = useState<BaseJeune[]>([])
+  const [destinataires, setDestinataires] = useState<BaseJeune[]>()
 
   useEffect(() => {
     if (props.message.idsDestinataires.length) {
@@ -45,26 +46,28 @@ export function DetailMessageListeDeDiffusion(props: {
         </span>
 
         <InformationMessage label='Seuls les bénéficiaires actuellement dans votre portefeuille sont listés ci-dessous.' />
-
-        <ul aria-describedby='titre-liste-destinataires'>
-          {destinataires.map((destinataire) => (
-            <li
-              key={destinataire.id}
-              className='mt-2 bg-blanc rounded-base p-3'
-            >
-              Envoyé à{' '}
-              <div className='flex items-center'>
-                <IconComponent
-                  name={IconName.RoundedCheck}
-                  aria-hidden={true}
-                  focusable={false}
-                  className='w-3 h-3 fill-disabled mr-2'
-                />
-                {destinataire.prenom} {destinataire.nom}
-              </div>
-            </li>
-          ))}
-        </ul>
+        {!destinataires && <SpinningLoader />}
+        {destinataires && (
+          <ul aria-describedby='titre-liste-destinataires'>
+            {destinataires.map((destinataire) => (
+              <li
+                key={destinataire.id}
+                className='mt-2 bg-blanc rounded-base p-3'
+              >
+                Envoyé à{' '}
+                <div className='flex items-center'>
+                  <IconComponent
+                    name={IconName.RoundedCheck}
+                    aria-hidden={true}
+                    focusable={false}
+                    className='w-3 h-3 fill-disabled mr-2'
+                  />
+                  {destinataire.prenom} {destinataire.nom}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </>
   )
