@@ -32,6 +32,12 @@ export default function ListeListesDeDiffusion({
           style={ButtonStyle.SECONDARY}
           className='mx-4'
         >
+          <IconComponent
+            name={IconName.Board}
+            focusable={false}
+            aria-hidden={true}
+            className='w-4 h-4 fill-primary mr-3'
+          />
           Gérer mes listes de diffusion
         </ButtonLink>
       </div>

@@ -11,6 +11,9 @@ import { MessagesService } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
+import ButtonLink from '../ui/Button/ButtonLink'
+import { ButtonStyle } from '../ui/Button/Button'
+import IconComponent, { IconName } from '../ui/IconComponent'
 
 type MessagesListeDeDiffusionProps = {
   liste: ListeDeDiffusion
@@ -46,6 +49,22 @@ export default function MessagesListeDeDiffusion({
         labelRetour={'Retour à mes listes de diffusion'}
         onBack={onBack}
       />
+
+      <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+        <ButtonLink
+          href={'/mes-jeunes/listes-de-diffusion/' + liste.id}
+          style={ButtonStyle.TERTIARY}
+          className='mr-auto'
+        >
+          <IconComponent
+            name={IconName.Pen}
+            focusable={false}
+            aria-hidden={true}
+            className='w-4 h-4 fill-primary mr-3'
+          />
+          Modifier ma liste
+        </ButtonLink>
+      </div>
 
       {!messages && <SpinningLoader />}
 
