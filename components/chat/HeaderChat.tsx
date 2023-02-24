@@ -22,14 +22,13 @@ export default function HeaderChat({
       <div className='pb-3 flex items-center justify-between'>
         <button
           className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary'
+          aria-label={labelRetour}
           onClick={onBack}
         >
           <IconComponent
             name={IconName.ArrowLeft}
-            role='img'
+            aria-hidden={true}
             focusable={false}
-            aria-label={labelRetour}
-            title={labelRetour}
             className='w-4 h-4 fill-primary mr-3'
           />
           <span className='text-s-regular'>Retour</span>

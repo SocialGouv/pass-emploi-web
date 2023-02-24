@@ -28,7 +28,7 @@ export default function ListeListesDeDiffusion({
 
       <div className='hidden layout_s:block w-fit ml-4 mb-8'>
         <ButtonLink
-          href={'/mes-jeunes/listes-de-diffusion'}
+          href='/mes-jeunes/listes-de-diffusion'
           style={ButtonStyle.TERTIARY}
           className='mr-auto'
         >
