@@ -479,4 +479,27 @@ describe('JeunesApiService', () => {
       expect(actual).toEqual(basesJeunes)
     })
   })
+
+  describe('.rechercheJeunesDeLEtablissement', () => {
+    it('retourne le resultat de recherche des jeunes d’un etablissment', async () => {
+      // Given
+      const unJeune = uneBaseJeune()
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: { resultats: [{ jeune: unJeune }] },
+      })
+
+      // When
+      const actual = await jeunesService.rechercheJeunesDeLEtablissement(
+        'id-etablissement',
+        'e'
+      )
+
+      // Then
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/etablissements/id-etablissement/jeunes?q=e',
+        'accessToken'
+      )
+      expect(actual).toEqual([unJeune])
+    })
+  })
 })

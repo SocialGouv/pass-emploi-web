@@ -52,6 +52,7 @@ import PeopleIcon from 'assets/icons/people.svg'
 import ProfilIcon from 'assets/icons/profil.svg'
 import RemoveIcon from 'assets/icons/remove.svg'
 import RendezVousIcon from 'assets/icons/rendez-vous.svg'
+import RoundedArrowRightIcon from 'assets/icons/rounded_arrow_right.svg'
 import RoundedCheckIcon from 'assets/icons/rounded_check.svg'
 import RoundedCheckFilledIcon from 'assets/icons/rounded_check_filled.svg'
 import RoundedCloseIcon from 'assets/icons/rounded_close.svg'
@@ -71,6 +72,7 @@ export enum IconName {
   ArrowDown = 'ArrowDown',
   ArrowLeft = 'ArrowLeft',
   ArrowRight = 'ArrowRight',
+  RoundedArrowRight = 'RoundedArrowRight',
   Calendar = 'Calendar',
   Cancel = 'Cancel',
   Board = 'Board',
@@ -136,6 +138,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ArrowDown]: ArrowDownIcon,
   [IconName.ArrowLeft]: ArrowLeftIcon,
   [IconName.ArrowRight]: ArrowRightIcon,
+  [IconName.RoundedArrowRight]: RoundedArrowRightIcon,
   [IconName.Calendar]: CalendarIcon,
   [IconName.Cancel]: CancelIcon,
   [IconName.Check]: CheckIcon,

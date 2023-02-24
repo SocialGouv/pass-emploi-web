@@ -44,7 +44,7 @@ describe('Page Recherche Alternances', () => {
       getCommunesEtDepartements: jest.fn().mockResolvedValue(desLocalites()),
     })
 
-    rendered = renderWithContexts(<RechercheOffres />, {
+    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
       customDependances: {
         offresEmploiService,
         referentielService,
@@ -684,7 +684,7 @@ describe('Page Recherche Alternances', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffres />, {
+      renderWithContexts(<RechercheOffres pageTitle='' />, {
         customDependances: {
           offresEmploiService,
           referentielService,
