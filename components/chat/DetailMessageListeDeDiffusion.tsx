@@ -11,7 +11,10 @@ import { JeunesService } from 'services/jeunes.service'
 import { toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
-export function DetailMessageListeDeDiffusion(props: {
+export function DetailMessageListeDeDiffusion({
+  message,
+  onBack,
+}: {
   message: MessageListeDiffusion
   onBack: () => void
 }) {
@@ -19,27 +22,27 @@ export function DetailMessageListeDeDiffusion(props: {
   const [destinataires, setDestinataires] = useState<BaseJeune[]>()
 
   useEffect(() => {
-    if (props.message.idsDestinataires.length) {
+    if (message.idsDestinataires.length) {
       jeunesServices
-        .getIdentitesBeneficiaires(props.message.idsDestinataires)
+        .getIdentitesBeneficiaires(message.idsDestinataires)
         .then(setDestinataires)
     }
-  }, [props.message.idsDestinataires])
+  }, [message.idsDestinataires])
 
   return (
     <>
       <HeaderChat
         titre='Détail du message'
         labelRetour={'Retour aux messages de ma liste'}
-        onBack={props.onBack}
+        onBack={onBack}
       />
 
       <div className='px-4'>
         <div className='text-center mb-3'>
-          Le {toShortDate(props.message.creationDate)}
+          Le {toShortDate(message.creationDate)}
         </div>
 
-        <DisplayMessageListeDeDiffusion message={props.message} />
+        <DisplayMessageListeDeDiffusion message={message} />
 
         <span id='titre-liste-destinataires' className='sr-only'>
           Destinataires du message
