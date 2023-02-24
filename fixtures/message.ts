@@ -180,6 +180,7 @@ export const unMessageListeDiffusion = (
     creationDate: DateTime.now(),
     iv: 'iv',
     type: TypeMessage.MESSAGE,
+    idsDestinataires: ['id-destinataire-1'],
     infoPiecesJointes: [],
   }
 

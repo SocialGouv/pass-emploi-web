@@ -1,6 +1,7 @@
 import React from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import HeaderChat from 'components/chat/HeaderChat'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -10,13 +11,21 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 type ListeListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
   onAfficherListe: (liste: ListeDeDiffusion) => void
+  onBack: () => void
 }
 export default function ListeListesDeDiffusion({
   listesDeDiffusion,
   onAfficherListe,
+  onBack,
 }: ListeListesDeDiffusionProps) {
   return (
     <>
+      <HeaderChat
+        titre={'Mes listes de diffusion'}
+        labelRetour={'Retour sur ma messagerie'}
+        onBack={onBack}
+      />
+
       <div className='hidden layout_s:block'>
         <ButtonLink
           href={'/mes-jeunes/listes-de-diffusion'}
