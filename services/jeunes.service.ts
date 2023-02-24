@@ -114,7 +114,7 @@ export interface JeunesService {
 
   rechercheJeunesDeLEtablissement(
     idEtablissement: string,
-    q: string
+    recherche: string
   ): Promise<BaseJeune[]>
 }
 
@@ -357,7 +357,7 @@ export class JeunesApiService implements JeunesService {
 
   async rechercheJeunesDeLEtablissement(
     idEtablissement: string,
-    q: string
+    recherche: string
   ): Promise<BaseJeune[]> {
     const session = await getSession()
     const {
@@ -367,11 +367,11 @@ export class JeunesApiService implements JeunesService {
         jeune: BaseJeune
       }>
     }>(
-      `/v2/etablissements/${idEtablissement}/jeunes?q=${q}`,
+      `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}`,
       session!.accessToken
     )
 
-    return resultats.map((informationsDuJeune) => informationsDuJeune.jeune)
+    return resultats.map(({ jeune }) => jeune)
   }
 
   private async getJeunesDuConseiller(

@@ -1,11 +1,11 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
+import { uneBaseJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
-import MissionLocale, { getServerSideProps } from 'pages/mission-locale'
+import MissionLocale, { getServerSideProps } from 'pages/etablissement'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -13,17 +13,11 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 
-describe('Mission Locale', () => {
+describe('Etablissement', () => {
   describe('Client side', () => {
     let jeunesService: JeunesService
-    const unJeune = {
-      id: 'jeune-1',
-      prenom: 'Kenji',
-      nom: 'Jirac',
-    }
+    const unJeune = uneBaseJeune()
     beforeEach(async () => {
-      ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
-
       jeunesService = mockedJeunesService({
         rechercheJeunesDeLEtablissement: jest.fn(async () => [unJeune]),
       })
@@ -95,6 +89,29 @@ describe('Mission Locale', () => {
         within(tableauDeJeunes).getByText(`${unJeune.nom} ${unJeune.prenom}`)
       ).toBeInTheDocument()
     })
+
+    it('affiche le resultat de la recherche dans un tableau', async () => {
+      // Given
+      const inputRechercheJeune = screen.getByLabelText(
+        /Rechercher un bénéficiaire par son nom ou prénom/
+      )
+      const buttonRechercheJeune = screen.getByRole('button', {
+        name: 'Rechercher',
+      })
+
+      ;(
+        jeunesService.rechercheJeunesDeLEtablissement as jest.Mock
+      ).mockResolvedValue([])
+
+      // When
+      await userEvent.type(inputRechercheJeune, 'z')
+      await userEvent.click(buttonRechercheJeune)
+
+      // Then
+      expect(
+        screen.getByText('Aucune bénéficiaire ne correspond à votre recherche.')
+      ).toBeInTheDocument()
+    })
   })
 
   describe('Server side', () => {
@@ -133,7 +150,27 @@ describe('Mission Locale', () => {
     })
 
     describe('quand le conseiller est connecté', () => {
-      it('prépare la page', async () => {
+      it('prépare la page en tant que Pass Emploi', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'PASS_EMPLOI' },
+          },
+        })
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+
+        expect(actual).toEqual({
+          props: {
+            pageTitle: 'Agence',
+          },
+        })
+      })
+
+      it('prépare la page en tant que MILO', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
@@ -148,7 +185,7 @@ describe('Mission Locale', () => {
 
         expect(actual).toEqual({
           props: {
-            pageTitle: 'Mission Locale',
+            pageTitle: 'Mission locale',
           },
         })
       })

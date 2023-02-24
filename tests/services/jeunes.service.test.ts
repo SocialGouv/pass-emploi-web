@@ -483,11 +483,7 @@ describe('JeunesApiService', () => {
   describe('.rechercheJeunesDeLEtablissement', () => {
     it('retourne le resultat de recherche des jeunes d’un etablissment', async () => {
       // Given
-      const unJeune = {
-        id: 'jeune-1',
-        prenom: 'Kenji',
-        nom: 'Jirac',
-      }
+      const unJeune = uneBaseJeune()
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: { resultats: [{ jeune: unJeune }] },
       })

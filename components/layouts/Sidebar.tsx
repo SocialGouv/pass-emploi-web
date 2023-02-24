@@ -24,7 +24,7 @@ export default function Sidebar() {
             NavItem.Profil,
             NavItem.Actualites,
             NavItem.Pilotage,
-            NavItem.MissionLocale,
+            NavItem.Etablissement,
           ]}
         />
       </nav>

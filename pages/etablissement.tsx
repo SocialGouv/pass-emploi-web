@@ -2,6 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
+import EmptyStateImage from 'assets/images/empty_state.svg'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -19,30 +20,28 @@ import { useDependance } from 'utils/injectionDependances'
 
 type MissionLocaleProps = PageProps
 
-const MissionLocale = (_: MissionLocaleProps) => {
+const Etablissement = (_: MissionLocaleProps) => {
   const [conseiller] = useConseiller()
   const jeunesService = useDependance<JeunesService>('jeunesService')
-  const [rechercheJeunes, updateRechercheJeunes] = useState<BaseJeune[]>([])
+  const [resultatsRecherche, setResultatsRecherche] = useState<BaseJeune[]>()
 
-  async function onRechercheJeunes(q: string) {
+  async function rechercherJeunes(recherche: string) {
     if (conseiller?.agence?.id) {
       await jeunesService
-        .rechercheJeunesDeLEtablissement(conseiller.agence.id, q)
-        .then((jeunes) => {
-          updateRechercheJeunes(jeunes)
-        })
+        .rechercheJeunesDeLEtablissement(conseiller.agence.id, recherche)
+        .then(setResultatsRecherche)
     }
   }
 
   return (
     <>
-      <RechercheJeune onSearchFilterBy={(query) => onRechercheJeunes(query)} />
-      {Boolean(rechercheJeunes.length) && (
+      <RechercheJeune onSearchFilterBy={rechercherJeunes} />
+      {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
             asDiv={true}
             caption={{
-              text: `Résultat de recherche (${rechercheJeunes.length})`,
+              text: `Résultat de recherche (${resultatsRecherche!.length})`,
               visible: true,
             }}
           >
@@ -57,19 +56,32 @@ const MissionLocale = (_: MissionLocaleProps) => {
               </TR>
             </THead>
             <TBody>
-              {rechercheJeunes.map((jeune) => (
-                <TR key={jeune.id} label={`${jeune.prenom} ${jeune.nom}`}>
+              {resultatsRecherche!.map((jeune) => (
+                <TR key={jeune.id}>
                   <TD isBold className='rounded-l-base'>
                     <span className='flex items-baseline'>
                       {getNomJeuneComplet(jeune)}
                     </span>
                   </TD>
-                  <TD></TD>
+                  <TD>{/* todo va évoluer quand le tableau sera enrichi*/}</TD>
                 </TR>
               ))}
             </TBody>
           </Table>
         </div>
+      )}
+
+      {resultatsRecherche?.length === 0 && (
+        <>
+          <EmptyStateImage
+            focusable='false'
+            aria-hidden='true'
+            className='m-auto w-[200px] h-[200px]'
+          />
+          <p className='text-base-bold text-center'>
+            Aucune bénéficiaire ne correspond à votre recherche.
+          </p>
+        </>
       )}
     </>
   )
@@ -91,9 +103,12 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      pageTitle: 'Mission Locale',
+      pageTitle:
+        user.structure === StructureConseiller.MILO
+          ? 'Mission locale'
+          : 'Agence',
     },
   }
 }
 
-export default withTransaction(MissionLocale.name, 'page')(MissionLocale)
+export default withTransaction(Etablissement.name, 'page')(Etablissement)
