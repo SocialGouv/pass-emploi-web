@@ -5,7 +5,7 @@ import HeaderChat from 'components/chat/HeaderChat'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseJeune, JeuneChat } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { JeunesService } from 'services/jeunes.service'
 import { toShortDate } from 'utils/date'
@@ -13,21 +13,36 @@ import { useDependance } from 'utils/injectionDependances'
 
 export function DetailMessageListeDeDiffusion({
   message,
+  chats,
   onBack,
 }: {
   message: MessageListeDiffusion
+  chats: JeuneChat[] | undefined
   onBack: () => void
 }) {
   const jeunesServices = useDependance<JeunesService>('jeunesService')
-  const [destinataires, setDestinataires] = useState<BaseJeune[]>()
+  const [destinataires, setDestinataires] = useState<JeuneChat[]>()
+
+  function aLuLeMessage(destinataire: JeuneChat) {
+    return (
+      destinataire.lastJeuneReading &&
+      destinataire.lastJeuneReading > message.creationDate
+    )
+  }
 
   useEffect(() => {
-    if (message.idsDestinataires.length) {
+    function getChatsDestinataires(jeunes: BaseJeune[]): JeuneChat[] {
+      return chats!.filter((jeuneChat) =>
+        jeunes.some((jeune) => jeune.id === jeuneChat.id)
+      )
+    }
+
+    if (message.idsDestinataires.length && chats?.length) {
       jeunesServices
         .getIdentitesBeneficiaires(message.idsDestinataires)
-        .then(setDestinataires)
+        .then((jeunes) => setDestinataires(getChatsDestinataires(jeunes)))
     }
-  }, [message.idsDestinataires])
+  }, [chats, message.idsDestinataires])
 
   return (
     <>
@@ -49,7 +64,9 @@ export function DetailMessageListeDeDiffusion({
         </span>
 
         <InformationMessage label='Seuls les bénéficiaires actuellement dans votre portefeuille sont listés ci-dessous.' />
+
         {!destinataires && <SpinningLoader />}
+
         {destinataires && (
           <ul aria-describedby='titre-liste-destinataires'>
             {destinataires.map((destinataire) => (
@@ -57,13 +74,17 @@ export function DetailMessageListeDeDiffusion({
                 key={destinataire.id}
                 className='mt-2 bg-blanc rounded-base p-3'
               >
-                Envoyé à{' '}
+                {aLuLeMessage(destinataire) ? 'Lu par ' : 'Non lu par '}
                 <div className='flex items-center'>
                   <IconComponent
                     name={IconName.RoundedCheck}
                     aria-hidden={true}
                     focusable={false}
-                    className='w-3 h-3 fill-disabled mr-2'
+                    className={`w-3 h-3 ${
+                      aLuLeMessage(destinataire)
+                        ? 'fill-primary'
+                        : 'fill-disabled'
+                    } mr-2`}
                   />
                   {destinataire.prenom} {destinataire.nom}
                 </div>

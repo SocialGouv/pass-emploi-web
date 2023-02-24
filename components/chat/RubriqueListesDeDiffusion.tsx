@@ -3,16 +3,19 @@ import React, { useState } from 'react'
 import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
 import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
+import { JeuneChat } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { MessageListeDiffusion } from 'interfaces/message'
 
 type RubriqueListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
+  chats: JeuneChat[] | undefined
   onBack: () => void
 }
 
 export default function RubriqueListesDeDiffusion({
   listesDeDiffusion,
+  chats,
   onBack,
 }: RubriqueListesDeDiffusionProps) {
   const [listeSelectionnee, setListeSelectionnee] = useState<
@@ -44,6 +47,7 @@ export default function RubriqueListesDeDiffusion({
         <DetailMessageListeDeDiffusion
           message={messageSelectionne}
           onBack={() => setMessageSelectionne(undefined)}
+          chats={chats}
         />
       )}
     </div>
