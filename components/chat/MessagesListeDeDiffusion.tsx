@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
 import HeaderChat from 'components/chat/HeaderChat'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
@@ -46,6 +49,24 @@ export default function MessagesListeDeDiffusion({
         labelRetour={'Retour à mes listes de diffusion'}
         onBack={onBack}
       />
+
+      <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+        <ButtonLink
+          href={
+            '/mes-jeunes/listes-de-diffusion/edition-liste?idListe=' + liste.id
+          }
+          style={ButtonStyle.TERTIARY}
+          className='mr-auto'
+        >
+          <IconComponent
+            name={IconName.Pen}
+            focusable={false}
+            aria-hidden={true}
+            className='w-4 h-4 fill-primary mr-3'
+          />
+          Modifier ma liste
+        </ButtonLink>
+      </div>
 
       {!messages && <SpinningLoader />}
 

@@ -26,12 +26,18 @@ export default function ListeListesDeDiffusion({
         onBack={onBack}
       />
 
-      <div className='hidden layout_s:block'>
+      <div className='hidden layout_s:block w-fit ml-4 mb-8'>
         <ButtonLink
-          href={'/mes-jeunes/listes-de-diffusion'}
-          style={ButtonStyle.SECONDARY}
-          className='mx-4'
+          href='/mes-jeunes/listes-de-diffusion'
+          style={ButtonStyle.TERTIARY}
+          className='mr-auto'
         >
+          <IconComponent
+            name={IconName.Pen}
+            focusable={false}
+            aria-hidden={true}
+            className='w-4 h-4 fill-primary mr-3'
+          />
           Gérer mes listes de diffusion
         </ButtonLink>
       </div>

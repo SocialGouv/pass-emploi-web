@@ -18,34 +18,37 @@ export default function HeaderChat({
   onClickIcon?: () => void
 }) {
   return (
-    <div className='flex items-center mx-4 pb-6 my-6 border-b border-grey_500 short:hidden'>
-      <button
-        className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-        onClick={onBack}
-      >
-        <IconComponent
-          name={IconName.ChevronLeft}
-          role='img'
-          focusable={false}
-          aria-label={labelRetour}
-          title={labelRetour}
-          className='w-6 h-6 fill-primary'
-        />
-      </button>
-      <h2 className='w-full text-left text-primary text-l-bold'>{titre}</h2>
-      {iconName && (
+    <div className=' items-center mx-4 my-6 short:hidden'>
+      <div className='pb-3 flex items-center justify-between'>
         <button
-          aria-label={iconLabel}
-          className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-          onClick={onClickIcon}
+          className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary'
+          aria-label={labelRetour}
+          onClick={onBack}
         >
           <IconComponent
-            name={iconName}
-            title={iconLabel}
-            className='w-6 h-6 fill-primary'
+            name={IconName.ArrowLeft}
+            aria-hidden={true}
+            focusable={false}
+            className='w-4 h-4 fill-primary mr-3'
           />
+          <span className='text-s-regular'>Retour</span>
         </button>
-      )}
+        {iconName && (
+          <button
+            aria-label={iconLabel}
+            className='border-none rounded-full bg-primary_lighten'
+            onClick={onClickIcon}
+          >
+            <IconComponent
+              name={iconName}
+              title={iconLabel}
+              className='w-6 h-6 fill-primary'
+            />
+          </button>
+        )}
+      </div>
+
+      <h2 className='w-full text-left text-primary text-m-bold'>{titre}</h2>
     </div>
   )
 }
