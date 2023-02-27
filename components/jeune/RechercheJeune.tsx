@@ -28,7 +28,7 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
       >
         Rechercher un bénéficiaire par son nom ou prénom
       </label>
-      <div className='flex mt-1'>
+      <div className='flex mt-3'>
         <ResettableTextInput
           id={'rechercher-jeunes'}
           value={query}
