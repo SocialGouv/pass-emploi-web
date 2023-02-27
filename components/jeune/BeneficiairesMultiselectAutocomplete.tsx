@@ -182,20 +182,24 @@ export default function BeneficiairesMultiselectAutocomplete({
   }
 
   function beneficiairesEtListesSelectionnes() {
-    const beneficiairesFormates = beneficiairesSelectionnes.map(
-      ({ id: idBeneficiaire, value, avecIndication = false }) => ({
+    const beneficiairesFormates = beneficiairesSelectionnes
+      .map(({ id: idBeneficiaire, value, avecIndication = false }) => ({
         id: idBeneficiaire,
         value,
         avecIndication,
         estUneListe: false,
-      })
-    )
-    const listesFormatees = listesSelectionnees.map((liste) => ({
-      id: liste.id,
-      value: getListeInformations(liste),
-      avecIndication: false,
-      estUneListe: true,
-    }))
+      }))
+      .sort((beneficiaire_1, beneficiaire_2) =>
+        beneficiaire_1.value.localeCompare(beneficiaire_2.value)
+      )
+    const listesFormatees = listesSelectionnees
+      .map((liste) => ({
+        id: liste.id,
+        value: getListeInformations(liste),
+        avecIndication: false,
+        estUneListe: true,
+      }))
+      .sort((liste_1, liste_2) => liste_1.value.localeCompare(liste_2.value))
 
     return listesFormatees.concat(beneficiairesFormates)
   }
