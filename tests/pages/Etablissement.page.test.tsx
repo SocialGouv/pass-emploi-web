@@ -24,7 +24,7 @@ describe('Etablissement', () => {
       renderWithContexts(<MissionLocale pageTitle='' />, {
         customDependances: { jeunesService },
         customConseiller: {
-          agence: { nom: 'Mission locale Aubenas', id: 'id-etablissement' },
+          agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
         },
       })
     })
@@ -43,7 +43,7 @@ describe('Etablissement', () => {
       ).toBeInTheDocument()
     })
 
-    it('lance une recherche parmis les jeunes de la mission locale', async () => {
+    it('lance une recherche parmis les jeunes de la Mission Locale', async () => {
       // Given
       const inputRechercheJeune = screen.getByLabelText(
         /Rechercher un bénéficiaire par son nom ou prénom/
@@ -185,7 +185,7 @@ describe('Etablissement', () => {
 
         expect(actual).toEqual({
           props: {
-            pageTitle: 'Mission locale',
+            pageTitle: 'Mission Locale',
           },
         })
       })

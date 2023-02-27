@@ -72,7 +72,7 @@ describe('Agenda', () => {
         // Given
         const conseiller = unConseiller({
           agence: {
-            nom: 'Mission locale Aubenas',
+            nom: 'Mission Locale Aubenas',
             id: 'id-etablissement',
           },
         })
@@ -418,7 +418,7 @@ describe('Agenda', () => {
 
         expect(
           screen.getByRole('button', {
-            name: 'Renseigner votre Mission locale',
+            name: 'Renseigner votre Mission Locale',
           })
         ).toBeInTheDocument()
       })
@@ -427,7 +427,7 @@ describe('Agenda', () => {
         // When
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Renseigner votre Mission locale',
+            name: 'Renseigner votre Mission Locale',
           })
         )
 
@@ -436,7 +436,7 @@ describe('Agenda', () => {
           StructureConseiller.MILO
         )
         expect(
-          screen.getByRole('combobox', { name: /votre Mission locale/ })
+          screen.getByRole('combobox', { name: /votre Mission Locale/ })
         ).toBeInTheDocument()
         agences.forEach((agence) =>
           expect(
@@ -449,12 +449,12 @@ describe('Agenda', () => {
         // Given
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Renseigner votre Mission locale',
+            name: 'Renseigner votre Mission Locale',
           })
         )
         const agence = agences[2]
         const searchAgence = screen.getByRole('combobox', {
-          name: /votre Mission locale/,
+          name: /votre Mission Locale/,
         })
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
@@ -469,7 +469,7 @@ describe('Agenda', () => {
           codeDepartement: '3',
         })
         expect(() =>
-          screen.getByText('Votre Mission locale n’est pas renseignée')
+          screen.getByText('Votre Mission Locale n’est pas renseignée')
         ).toThrow()
         expect(
           screen.getByText('Créer une animation collective')

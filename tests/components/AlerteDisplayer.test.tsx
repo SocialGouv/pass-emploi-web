@@ -302,7 +302,7 @@ describe('AlerteDisplayer', () => {
       })
 
       // Then
-      expect(screen.getByText(/Votre Mission locale/)).toBeInTheDocument()
+      expect(screen.getByText(/Votre Mission Locale/)).toBeInTheDocument()
     })
   })
 

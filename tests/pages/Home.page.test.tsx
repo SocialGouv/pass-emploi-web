@@ -25,7 +25,7 @@ jest.mock('components/Modal')
 
 describe('Home', () => {
   describe('client side', () => {
-    describe('quand le conseiller n’est pas Mission locale', () => {
+    describe('quand le conseiller n’est pas Mission Locale', () => {
       let agences: Agence[]
       let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
       let replace: jest.Mock
@@ -187,7 +187,7 @@ describe('Home', () => {
       })
     })
 
-    describe('quand le conseiller est Mission locale', () => {
+    describe('quand le conseiller est Mission Locale', () => {
       let agences: Agence[]
       let replace: jest.Mock
       let conseillerService: ConseillerService
@@ -212,10 +212,10 @@ describe('Home', () => {
         )
       })
 
-      it('contient un message pour demander la Mission locale du conseiller', () => {
+      it('contient un message pour demander la Mission Locale du conseiller', () => {
         // Then
         expect(
-          screen.getByText(/Une fois votre Mission locale renseignée/)
+          screen.getByText(/Une fois votre Mission Locale renseignée/)
         ).toBeInTheDocument()
       })
 
@@ -226,11 +226,11 @@ describe('Home', () => {
         ).toBeInTheDocument()
       })
 
-      it('contient un input pour choisir une Mission locale', () => {
+      it('contient un input pour choisir une Mission Locale', () => {
         // Then
         expect(
           screen.getByRole('combobox', {
-            name: /Recherchez votre Mission locale/,
+            name: /Recherchez votre Mission Locale/,
           })
         ).toBeInTheDocument()
         agences.forEach((agence) =>
@@ -240,7 +240,7 @@ describe('Home', () => {
         )
       })
 
-      it('filtre les Missions locales selon le département entré', async () => {
+      it('filtre les Missions Locales selon le département entré', async () => {
         // Given
         const codeDepartement = '1'
         const departementInput = screen.getByRole('textbox', {
@@ -287,26 +287,26 @@ describe('Home', () => {
         ).toBeInTheDocument()
       })
 
-      it('contient une option pour dire que la Mission locale n’est pas dans la liste', () => {
+      it('contient une option pour dire que la Mission Locale n’est pas dans la liste', () => {
         // Then
         expect(
           screen.getByRole('option', {
             hidden: true,
-            name: 'Ma mission locale n’apparaît pas dans la liste',
+            name: 'Ma Mission Locale n’apparaît pas dans la liste',
           })
         ).toBeInTheDocument()
       })
 
-      it('affiche un lien vers le support quand la Mission locale n’est pas dans la liste', async () => {
+      it('affiche un lien vers le support quand la Mission Locale n’est pas dans la liste', async () => {
         // Given
         const missionLocaleInput = screen.getByRole('combobox', {
-          name: /Recherchez votre Mission locale/,
+          name: /Recherchez votre Mission Locale/,
         })
 
         // When
         await userEvent.selectOptions(
           missionLocaleInput,
-          'Ma mission locale n’apparaît pas dans la liste'
+          'Ma Mission Locale n’apparaît pas dans la liste'
         )
 
         // Then
@@ -336,7 +336,7 @@ describe('Home', () => {
         })
         await userEvent.type(departementInput, '1')
         const missionLocaleInput = screen.getByRole('combobox', {
-          name: /Recherchez votre Mission locale/,
+          name: /Recherchez votre Mission Locale/,
         })
         await userEvent.selectOptions(missionLocaleInput, 'MLS3F SAINT-LOUIS')
 

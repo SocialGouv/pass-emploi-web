@@ -140,7 +140,7 @@ const ALERTES: DictAlertes = {
 
 const ALERTES_MILO: DictAlertes = {
   ...ALERTES,
-  choixAgence: { title: 'Votre Mission locale a été ajoutée à votre profil' },
+  choixAgence: { title: 'Votre Mission Locale a été ajoutée à votre profil' },
 }
 
 function getAlertesForStructure(structure?: string): DictAlertes {

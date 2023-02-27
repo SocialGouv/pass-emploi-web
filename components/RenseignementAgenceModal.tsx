@@ -27,7 +27,7 @@ export default function RenseignementAgenceModal({
 }: RenseignementAgenceModalProps) {
   const labelAgence =
     structureConseiller === StructureConseiller.MILO
-      ? 'Mission locale'
+      ? 'Mission Locale'
       : 'agence'
 
   return (

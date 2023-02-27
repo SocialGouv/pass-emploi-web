@@ -57,7 +57,7 @@ export default function EncartAgenceRequise({
           Votre agence n’est pas renseignée
         </p>
         <p className='text-base-regular text-warning mb-6'>
-          Pour créer ou voir les animations collectives de votre mission locale
+          Pour créer ou voir les animations collectives de votre Mission Locale
           vous devez la renseigner dans votre profil.
         </p>
         <Button
@@ -66,7 +66,7 @@ export default function EncartAgenceRequise({
           onClick={openAgenceModal}
           className='mx-auto'
         >
-          Renseigner votre Mission locale
+          Renseigner votre Mission Locale
         </Button>
       </div>
 

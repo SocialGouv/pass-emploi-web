@@ -307,7 +307,7 @@ describe('EditionAnimationCollective', () => {
             },
             customConseiller: {
               agence: {
-                nom: 'Mission locale Aubenas',
+                nom: 'Mission Locale Aubenas',
                 id: 'id-etablissement',
               },
             },
@@ -525,7 +525,7 @@ describe('EditionAnimationCollective', () => {
               customDependances: { evenementsService, jeunesService },
               customConseiller: {
                 agence: {
-                  nom: 'Mission locale Aubenas',
+                  nom: 'Mission Locale Aubenas',
                   id: 'id-etablissement',
                 },
               },

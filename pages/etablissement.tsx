@@ -105,7 +105,7 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       pageTitle:
         user.structure === StructureConseiller.MILO
-          ? 'Mission locale'
+          ? 'Mission Locale'
           : 'Agence',
     },
   }

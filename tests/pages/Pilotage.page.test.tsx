@@ -91,7 +91,7 @@ describe('Pilotage', () => {
           {
             customDependances: { actionsService, evenementsService },
             customConseiller: {
-              agence: { nom: 'Mission locale Aubenas', id: 'id-etablissement' },
+              agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
             },
           }
         )
@@ -401,7 +401,7 @@ describe('Pilotage', () => {
 
         expect(
           screen.getByRole('button', {
-            name: 'Renseigner votre Mission locale',
+            name: 'Renseigner votre Mission Locale',
           })
         ).toBeInTheDocument()
       })
@@ -410,7 +410,7 @@ describe('Pilotage', () => {
         // When
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Renseigner votre Mission locale',
+            name: 'Renseigner votre Mission Locale',
           })
         )
 
@@ -430,12 +430,12 @@ describe('Pilotage', () => {
         // Given
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Renseigner votre Mission locale',
+            name: 'Renseigner votre Mission Locale',
           })
         )
         const agence = agences[2]
         const searchAgence = screen.getByRole('combobox', {
-          name: /votre Mission locale/,
+          name: /votre Mission Locale/,
         })
         const submit = screen.getByRole('button', { name: 'Ajouter' })
 
@@ -525,7 +525,7 @@ describe('Server side', () => {
         getConseillerServerSide: jest.fn(async () =>
           unConseiller({
             agence: {
-              nom: 'Mission locale Aubenas',
+              nom: 'Mission Locale Aubenas',
               id: 'id-etablissement',
             },
           })
@@ -587,7 +587,7 @@ describe('Server side', () => {
       ).mockResolvedValue(
         unConseiller({
           agence: {
-            nom: 'Mission locale Aubenas',
+            nom: 'Mission Locale Aubenas',
           },
         })
       )

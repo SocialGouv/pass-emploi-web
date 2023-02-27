@@ -98,7 +98,7 @@ export default function NavLinks({
           <>
             <NavLink
               iconName={IconName.RoundedArrowRight}
-              label={isMilo ? 'Mission locale' : 'Agence'}
+              label={isMilo ? 'Mission Locale' : 'Agence'}
               href='/etablissement'
               isActive={isCurrentRoute('/mission-locale')}
               showLabelOnSmallScreen={showLabelsOnSmallScreen}

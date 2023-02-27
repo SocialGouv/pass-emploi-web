@@ -64,12 +64,12 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Agenda')).toThrow()
   })
 
-  it('quand le conseiller est milo, affiche un lien vers la page Mission locale', () => {
+  it('quand le conseiller est milo, affiche un lien vers la page Mission Locale', () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.MILO })
 
     // THEN
-    expect(screen.getByText('Mission locale')).toBeInTheDocument()
+    expect(screen.getByText('Mission Locale')).toBeInTheDocument()
   })
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller est Pole emploi", () => {

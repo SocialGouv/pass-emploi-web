@@ -38,7 +38,7 @@ function Profil({ referentielAgences }: ProfilProps) {
   const labelAgence = useMemo(() => {
     if (!conseiller) return ''
     return conseiller.structure === StructureConseiller.MILO
-      ? 'Mission locale'
+      ? 'Mission Locale'
       : 'agence'
   }, [conseiller])
 
@@ -112,7 +112,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                 {conseiller.agence && (
                   <div className='mt-4'>
                     <p>
-                      Vous avez besoin de modifier votre Mission locale de
+                      Vous avez besoin de modifier votre Mission Locale de
                       référence ?
                     </p>
 
