@@ -2,10 +2,13 @@ import { act, screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
 
 import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
+import { unJeuneChat } from 'fixtures/jeune'
 import { unMessageListeDiffusion } from 'fixtures/message'
 import { mockedJeunesService } from 'fixtures/services'
+import { BaseJeune } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { JeunesService } from 'services/jeunes.service'
+import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('DetailMessageListeDeDiffusion', () => {
@@ -19,21 +22,40 @@ describe('DetailMessageListeDeDiffusion', () => {
     message = unMessageListeDiffusion({
       idsDestinataires: ['id-destinataire-1', 'id-destinataire-2'],
     })
+    const destinataire1: BaseJeune = {
+      id: 'id-destinataire-1',
+      prenom: 'Marie',
+      nom: 'Curie',
+    }
+    const destinataire2: BaseJeune = {
+      id: 'id-destinataire-2',
+      prenom: 'Ada',
+      nom: 'Lovelace',
+    }
     jeunesService = mockedJeunesService({
       getIdentitesBeneficiaires: jest.fn(async () => [
-        {
-          id: 'id-destinataire-1',
-          prenom: 'Marie',
-          nom: 'Curie',
-        },
-        { id: 'id-destinataire-2', prenom: 'Ada', nom: 'Lovelace' },
+        destinataire1,
+        destinataire2,
       ]),
     })
 
     // When
     await act(async () => {
       renderWithContexts(
-        <DetailMessageListeDeDiffusion message={message} onBack={() => {}} />,
+        <DetailMessageListeDeDiffusion
+          message={message}
+          onBack={() => {}}
+          chats={[
+            unJeuneChat({
+              ...destinataire1,
+              lastJeuneReading: message.creationDate.plus({ day: 1 }),
+            }),
+            unJeuneChat({
+              ...destinataire2,
+              lastJeuneReading: message.creationDate.minus({ day: 1 }),
+            }),
+          ]}
+        />,
         { customDependances: { jeunesService } }
       )
     })
@@ -65,7 +87,11 @@ describe('DetailMessageListeDeDiffusion', () => {
       description: 'Destinataires du message',
     })
     expect(within(destinataires).getAllByRole('listitem')).toHaveLength(2)
-    expect(within(destinataires).getByText('Marie Curie')).toBeInTheDocument()
-    expect(within(destinataires).getByText('Ada Lovelace')).toBeInTheDocument()
+    expect(
+      getByTextContent('Lu par Marie Curie', destinataires)
+    ).toBeInTheDocument()
+    expect(
+      getByTextContent('Non lu par Ada Lovelace', destinataires)
+    ).toBeInTheDocument()
   })
 })
