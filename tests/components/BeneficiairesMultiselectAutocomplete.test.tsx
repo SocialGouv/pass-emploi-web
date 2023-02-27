@@ -146,7 +146,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
         beneficiaires: ['option-1'],
       })
       expect(onUpdate).toHaveBeenCalledWith({
-        beneficiaires: ['option-1', 'option-3'],
+        beneficiaires: ['option-3', 'option-1'],
       })
     })
   })

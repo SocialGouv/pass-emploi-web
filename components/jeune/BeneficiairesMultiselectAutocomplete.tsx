@@ -5,7 +5,7 @@ import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import {
-  getListeInformations,
+  getInformationsListe,
   ListeDeDiffusion,
 } from 'interfaces/liste-de-diffusion'
 
@@ -48,34 +48,29 @@ export default function BeneficiairesMultiselectAutocomplete({
   renderIndication,
   ariaDescribedBy,
 }: BeneficiairesMultiselectAutocompleteProps) {
-  const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] =
+  const options = listesDeDiffusion
+    .map(
+      (liste) =>
+        ({
+          id: liste.id,
+          value: getInformationsListe(liste),
+          estUneListe: true,
+        } as OptionBeneficiaire)
+    )
+    .concat(beneficiaires)
+
+  const [selections, setSelections] =
     useState<OptionBeneficiaire[]>(defaultBeneficiaires)
-  const [listesSelectionnees, setListesSelectionnees] = useState<
-    ListeDeDiffusion[]
-  >([])
   const input = useRef<HTMLInputElement>(null)
 
-  function getBeneficiairesNonSelectionnees(): OptionBeneficiaire[] {
-    return beneficiaires.filter(
-      (benef) =>
-        beneficiairesSelectionnes.findIndex((j) => j.id === benef.id) < 0
+  function getOptionsNonSelectionnees(): OptionBeneficiaire[] {
+    return options.filter(
+      (option) => !selections.some((selection) => selection.id === option.id)
     )
   }
 
-  function getListesDeDiffusionNonSelectionnees(): OptionBeneficiaire[] {
-    const listesDeDiffusionNonSelectionnees = listesDeDiffusion.filter(
-      (uneListe) =>
-        listesSelectionnees.findIndex((l) => l.id === uneListe.id) < 0
-    )
-
-    return listesDeDiffusionNonSelectionnees.map((uneListeDeDiffusion) => ({
-      id: uneListeDeDiffusion.id,
-      value: getListeInformations(uneListeDeDiffusion),
-    }))
-  }
-
-  function rechercheUnBeneficiaire(inputValue: string) {
-    return getBeneficiairesNonSelectionnees().find(
+  function rechercherUneOption(inputValue: string) {
+    return getOptionsNonSelectionnees().find(
       ({ value }) =>
         value.localeCompare(inputValue, undefined, {
           sensitivity: 'base',
@@ -83,68 +78,47 @@ export default function BeneficiairesMultiselectAutocomplete({
     )
   }
 
-  function rechercheUneListeDeDiffusion(value: string) {
-    return listesDeDiffusion.find(
-      (uneListe: ListeDeDiffusion) => value === getListeInformations(uneListe)
-    )
-  }
-
   function buildOptions(): OptionBeneficiaire[] {
-    let beneficiairesNonSelectionnes = getBeneficiairesNonSelectionnees()
-    if (
-      !beneficiairesNonSelectionnes.length &&
-      !getListesDeDiffusionNonSelectionnees().length
-    )
-      return []
-    if (listesDeDiffusion?.length) {
-      const listeFormatee: OptionBeneficiaire[] =
-        getListesDeDiffusionNonSelectionnees()
-      beneficiairesNonSelectionnes = listeFormatee.concat(
-        beneficiairesNonSelectionnes
-      )
-    }
     return [
       {
         id: 'select-all-destinataires',
         value: SELECT_ALL_DESTINATAIRES_OPTION,
       },
-    ].concat(beneficiairesNonSelectionnes)
+    ].concat(getOptionsNonSelectionnees())
   }
 
   function selectionnerOption(inputValue: string) {
     if (disabled) return
 
     if (inputValue === SELECT_ALL_DESTINATAIRES_OPTION) {
-      setBeneficiairesSelectionnes(beneficiaires)
+      setSelections(beneficiaires)
       onUpdate({
-        beneficiaires: beneficiaires.map((beneficiaire) => beneficiaire.id),
+        beneficiaires: beneficiaires.map((option) => option.id),
       })
       input.current!.value = ''
       return
     }
 
-    const listeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)
-    if (listeDeDiffusion) {
-      const updatedListesSelectionnees =
-        listesSelectionnees.concat(listeDeDiffusion)
-      setListesSelectionnees(updatedListesSelectionnees)
-      onUpdate({
-        listesDeDiffusion: updatedListesSelectionnees.map((liste) => liste.id),
-      })
-      input.current!.value = ''
-      return
-    }
+    const optionSelectionnee = rechercherUneOption(inputValue)
 
-    const option = rechercheUnBeneficiaire(inputValue)
-    if (option) {
-      const updatedBeneficiairesSelectionnes =
-        beneficiairesSelectionnes.concat(option)
-      setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
-      onUpdate({
-        beneficiaires: updatedBeneficiairesSelectionnes.map(
-          (beneficiaire) => beneficiaire.id
-        ),
-      })
+    if (optionSelectionnee) {
+      const updatedSelections = [optionSelectionnee, ...selections]
+      setSelections(updatedSelections)
+
+      if (optionSelectionnee.estUneListe) {
+        onUpdate({
+          listesDeDiffusion: updatedSelections
+            .filter((selection) => selection.estUneListe)
+            .map((liste) => liste.id),
+        })
+      } else {
+        onUpdate({
+          beneficiaires: updatedSelections
+            .filter((selection) => !selection.estUneListe)
+            .map((beneficiaire) => beneficiaire.id),
+        })
+      }
+
       input.current!.value = ''
     }
   }
@@ -152,62 +126,48 @@ export default function BeneficiairesMultiselectAutocomplete({
   function deselectionnerOption(idOption: string) {
     if (disabled) return
 
-    const indexListe = listesSelectionnees.findIndex(
-      (uneListeSelectionnee) => uneListeSelectionnee.id === idOption
+    const indexOption = selections.findIndex(
+      (selection) => selection.id === idOption
     )
+    if (indexOption > -1) {
+      const option = selections[indexOption]
+      const updatedSelections = [...selections]
+      updatedSelections.splice(indexOption, 1)
+      setSelections(updatedSelections)
 
-    if (indexListe > -1) {
-      const updatedListesSelectionnees = [...listesSelectionnees]
-      updatedListesSelectionnees.splice(indexListe, 1)
-      setListesSelectionnees(updatedListesSelectionnees)
-      onUpdate({
-        listesDeDiffusion: updatedListesSelectionnees.map((liste) => liste.id),
-      })
-      return
-    }
-
-    const indexBeneficiaire = beneficiairesSelectionnes.findIndex(
-      (j) => j.id === idOption
-    )
-    if (indexBeneficiaire > -1) {
-      const updatedBeneficiairesSelectionnes = [...beneficiairesSelectionnes]
-      updatedBeneficiairesSelectionnes.splice(indexBeneficiaire, 1)
-      setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
-      onUpdate({
-        beneficiaires: updatedBeneficiairesSelectionnes.map(
-          (beneficiaire) => beneficiaire.id
-        ),
-      })
+      if (option.estUneListe) {
+        onUpdate({
+          listesDeDiffusion: updatedSelections
+            .filter((selection) => selection.estUneListe)
+            .map((liste) => liste.id),
+        })
+      } else {
+        onUpdate({
+          beneficiaires: updatedSelections
+            .filter((selection) => !selection.estUneListe)
+            .map((beneficiaire) => beneficiaire.id),
+        })
+      }
     }
   }
 
-  function beneficiairesEtListesSelectionnes() {
-    const beneficiairesFormates = beneficiairesSelectionnes.map(
-      ({ id: idBeneficiaire, value, avecIndication = false }) => ({
-        id: idBeneficiaire,
-        value,
-        avecIndication,
-        estUneListe: false,
-      })
-    )
-    const listesFormatees = listesSelectionnees.map((liste) => ({
-      id: liste.id,
-      value: getListeInformations(liste),
-      avecIndication: false,
-      estUneListe: true,
+  function optionsSelectionnees() {
+    return selections.map((selection) => ({
+      id: selection.id,
+      value: selection.value,
+      estUneListe: selection.estUneListe ?? false,
+      avecIndication: selection.avecIndication ?? false,
     }))
-
-    return listesFormatees.concat(beneficiairesFormates)
   }
 
   function countBeneficiairesUniques() {
-    const idsBeneficiaires = beneficiairesSelectionnes
-      .map((beneficiaire) => beneficiaire.id)
-      .concat(
-        listesSelectionnees.flatMap((liste) =>
-          liste.beneficiaires.map((beneficiaire) => beneficiaire.id)
-        )
-      )
+    const idsBeneficiaires = selections.flatMap((selection) => {
+      if (selection.estUneListe)
+        return listesDeDiffusion
+          .find((liste) => liste.id === selection.id)!
+          .beneficiaires.map((beneficiaire) => beneficiaire.id)
+      return selection.id
+    })
 
     return new Set(idsBeneficiaires).size
   }
@@ -253,9 +213,9 @@ export default function BeneficiairesMultiselectAutocomplete({
         {typeSelection} ({countBeneficiairesUniques()})
       </p>
 
-      {countBeneficiairesUniques() > 0 && (
+      {selections.length > 0 && (
         <Multiselection
-          selection={beneficiairesEtListesSelectionnes()}
+          selection={optionsSelectionnees()}
           typeSelection='beneficiaire'
           unselect={deselectionnerOption}
           renderIndication={renderIndication}

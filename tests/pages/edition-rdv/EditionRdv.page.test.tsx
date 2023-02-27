@@ -619,7 +619,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
-              jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
+              jeunesIds: [jeunesConseiller[2].id, jeunesConseiller[0].id],
               titre: 'Titre de l’événement',
               type: 'ACTIVITES_EXTERIEURES',
               modality: modalites[0],
@@ -646,7 +646,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
-              jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
+              jeunesIds: [jeunesConseiller[2].id, jeunesConseiller[0].id],
               titre: 'Titre de l’événement',
               type: 'AUTRE',
               precision: 'un texte de précision',
@@ -1169,7 +1169,7 @@ describe('EditionRdv', () => {
             expect(evenementsService.updateRendezVous).toHaveBeenCalledWith(
               evenement.id,
               {
-                jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[1].id],
+                jeunesIds: [jeunesConseiller[1].id, jeunesConseiller[0].id],
                 titre: 'Nouveau titre',
                 type: 'AUTRE',
                 modality: modalites[0],

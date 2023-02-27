@@ -10,6 +10,6 @@ export type ListeDeDiffusion = {
   >
 }
 
-export function getListeInformations(l: ListeDeDiffusion): string {
+export function getInformationsListe(l: ListeDeDiffusion): string {
   return `${l.titre} (${l.beneficiaires.length})`
 }
