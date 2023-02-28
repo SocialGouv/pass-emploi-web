@@ -62,7 +62,7 @@ describe('Page Profil conseiller', () => {
         expect(referentielService.getAgencesServerSide).not.toHaveBeenCalled()
       })
 
-      it('en tant que Mission locale avec une agence déjà renseignée charge la page avec les bonnes props sans le referetiel d’agences', async () => {
+      it('en tant que Mission Locale avec une agence déjà renseignée charge la page avec les bonnes props sans le referetiel d’agences', async () => {
         // Given
         const conseiller = unConseiller({
           agence: { nom: 'MLS3F SAINT-LOUIS' },
@@ -82,7 +82,7 @@ describe('Page Profil conseiller', () => {
         })
       })
 
-      it('en tant que Mission locale sans agence déjà renseignée charge la page avec les bonnes props avec le referetiel d’agences', async () => {
+      it('en tant que Mission Locale sans agence déjà renseignée charge la page avec les bonnes props avec le referetiel d’agences', async () => {
         // Given
         const conseiller = unConseiller()
         const structure = 'MILO'
@@ -212,7 +212,7 @@ describe('Page Profil conseiller', () => {
         it('affiche le label correspondant', async () => {
           // Then
           expect(
-            getByDescriptionTerm('Votre Mission locale :')
+            getByDescriptionTerm('Votre Mission Locale :')
           ).toHaveTextContent('MLS3F SAINT-LOUIS')
         })
 
@@ -253,11 +253,11 @@ describe('Page Profil conseiller', () => {
           ).toBeInTheDocument()
         })
 
-        it('contient un input pour choisir une Mission locale', () => {
+        it('contient un input pour choisir une Mission Locale', () => {
           // Then
           expect(
             screen.getByRole('combobox', {
-              name: /Recherchez votre Mission locale/,
+              name: /Recherchez votre Mission Locale/,
             })
           ).toBeInTheDocument()
           agences.forEach((agence) =>
@@ -314,26 +314,26 @@ describe('Page Profil conseiller', () => {
           ).toBeInTheDocument()
         })
 
-        it('contient une option pour dire que la Mission locale n’est pas dans la liste', () => {
+        it('contient une option pour dire que la Mission Locale n’est pas dans la liste', () => {
           // Then
           expect(
             screen.getByRole('option', {
               hidden: true,
-              name: 'Ma mission locale n’apparaît pas dans la liste',
+              name: 'Ma Mission Locale n’apparaît pas dans la liste',
             })
           ).toBeInTheDocument()
         })
 
-        it('affiche un lien vers le support quand la Mission locale n’est pas dans la liste', async () => {
+        it('affiche un lien vers le support quand la Mission Locale n’est pas dans la liste', async () => {
           // Given
           const missionLocaleInput = screen.getByRole('combobox', {
-            name: /Recherchez votre Mission locale/,
+            name: /Recherchez votre Mission Locale/,
           })
 
           // When
           await userEvent.selectOptions(
             missionLocaleInput,
-            'Ma mission locale n’apparaît pas dans la liste'
+            'Ma Mission Locale n’apparaît pas dans la liste'
           )
 
           // Then
@@ -352,7 +352,7 @@ describe('Page Profil conseiller', () => {
           })
           await userEvent.type(departementInput, '1')
           const missionLocaleInput = screen.getByRole('combobox', {
-            name: /Recherchez votre Mission locale/,
+            name: /Recherchez votre Mission Locale/,
           })
           await userEvent.selectOptions(missionLocaleInput, 'MLS3F SAINT-LOUIS')
 

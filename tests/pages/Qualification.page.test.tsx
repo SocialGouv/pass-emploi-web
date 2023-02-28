@@ -220,7 +220,10 @@ describe("Page Qualification d'une action", () => {
           pageTitle=''
           returnTo='/mes-jeunes/jeune-1/actions/id-action-1'
         />,
-        { customDependances: { actionsService }, customAlerte: { alerteSetter } }
+        {
+          customDependances: { actionsService },
+          customAlerte: { alerteSetter },
+        }
       )
     })
 
@@ -290,8 +293,12 @@ describe("Page Qualification d'une action", () => {
         expect(actionsService.qualifier).toHaveBeenCalledWith(
           action.id,
           'SNP_2',
-          DateTime.fromISO('2022-02-15T00:00:00.000+01:00'), // en février, l'offset est +1 (DST)
-          DateTime.fromISO('2022-09-05T00:00:00.000+02:00')
+          {
+            dateDebutModifiee: DateTime.fromISO(
+              '2022-02-15T00:00:00.000+01:00'
+            ), // en février, l'offset est +1 (DST)
+            dateFinModifiee: DateTime.fromISO('2022-09-05T00:00:00.000+02:00'),
+          }
         )
       })
 

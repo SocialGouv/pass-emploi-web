@@ -60,9 +60,10 @@ export type FirebaseMessageGroupe = {
   sentBy: string
   content: string
   iv: string
-  piecesJointes?: InfoFichier[]
   conseillerId: string
   type: TypeMessageFirebase
+  idsBeneficiaires: string[]
+  piecesJointes?: InfoFichier[]
 }
 
 export type InfoOffreFirebase = {
@@ -553,6 +554,7 @@ export function docSnapshotToMessageListeDiffusion(
     creationDate: DateTime.fromMillis(firebaseMessage.creationDate.toMillis()),
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
+    idsDestinataires: firebaseMessage.idsBeneficiaires,
   }
 
   if (message.type === TypeMessage.MESSAGE_PJ) {

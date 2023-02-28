@@ -1,8 +1,11 @@
 export enum AlerteParam {
   // Événements
-  creationEvenement = 'creationEvenement',
-  modificationEvenement = 'modificationEvenement',
-  suppressionEvenement = 'suppressionEvenement',
+  creationRDV = 'creationRDV',
+  modificationRDV = 'modificationRDV',
+  suppressionRDV = 'suppressionRDV',
+  creationAnimationCollective = 'creationAnimationCollective',
+  modificationAnimationCollective = 'modificationAnimationCollective',
+  suppressionAnimationCollective = 'suppressionAnimationCollective',
   clotureAC = 'clotureAC',
   // Bénéficiaires
   recuperationBeneficiaires = 'recuperationBeneficiaires',

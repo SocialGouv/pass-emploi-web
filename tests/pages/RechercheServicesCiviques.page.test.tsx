@@ -275,21 +275,21 @@ describe('Page Recherche Offres', () => {
         screen.getByLabelText('Sélectionner domaine'),
         domainesServiceCivique[2].libelle
       )
-      expect(screen.getByText('[1] critère sélectionné')).toBeInTheDocument()
+      expect(screen.getByText('[1] filtre sélectionné')).toBeInTheDocument()
 
       await userEvent.click(screen.getByLabelText(/Dès que possible/))
       fireEvent.change(
         screen.getByLabelText('Sélectionner une date de début'),
         { target: { value: '2022-11-01' } }
       )
-      expect(screen.getByText('[2] critères sélectionnés')).toBeInTheDocument()
+      expect(screen.getByText('[2] filtres sélectionnés')).toBeInTheDocument()
 
       await saisirCommune('paris 14 (75)')
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
       expect(getByTextContent('Dans un rayon de : 43km')).toBeInTheDocument()
-      expect(screen.getByText('[3] critères sélectionnés')).toBeInTheDocument()
+      expect(screen.getByText('[3] filtres sélectionnés')).toBeInTheDocument()
 
       // When
       await userEvent.click(screen.getByText('Voir moins de critères'))
@@ -635,7 +635,7 @@ describe('Page Recherche Offres', () => {
       // Then
       expect(screen.getByLabelText('Service civique')).toBeChecked()
       expect(screen.getByLabelText(/Localisation/)).toHaveValue('PARIS 14 (75)')
-      expect(screen.getByText('[3] critères sélectionnés')).toBeInTheDocument()
+      expect(screen.getByText('[3] filtres sélectionnés')).toBeInTheDocument()
       await userEvent.click(screen.getByText('Voir plus de critères'))
       expect(screen.getByLabelText(/domaine/)).toHaveValue(
         domainesServiceCivique[2].code

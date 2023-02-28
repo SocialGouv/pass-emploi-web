@@ -4,8 +4,10 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 import {
   AnimationCollective,
+  AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
+  MetadonneesAnimationsCollectives,
   TypeEvenement,
 } from 'interfaces/evenement'
 import {
@@ -17,6 +19,7 @@ import {
   jsonToEvenement,
   jsonToListItem,
 } from 'interfaces/json/evenement'
+import { toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
 export interface EvenementsService {
@@ -36,6 +39,22 @@ export interface EvenementsService {
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<AnimationCollective[]>
+
+  getAnimationsCollectivesACloreClientSide(
+    idEtablissement: string,
+    page: number
+  ): Promise<{
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonnees: MetadonneesAnimationsCollectives
+  }>
+
+  getAnimationsCollectivesACloreServerSide(
+    idEtablissement: string,
+    accessToken: string
+  ): Promise<{
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonnees: MetadonneesAnimationsCollectives
+  }>
 
   getDetailsEvenement(
     idRdv: string,
@@ -102,6 +121,32 @@ export class EvenementsApiService implements EvenementsService {
     )
 
     return animationsCollectivesJson.map(jsonToAnimationCollective)
+  }
+
+  async getAnimationsCollectivesACloreClientSide(
+    idEtablissement: string,
+    page: number
+  ): Promise<{
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonnees: MetadonneesAnimationsCollectives
+  }> {
+    const session = await getSession()
+
+    return this.getAnimationsCollectivesAClore(
+      idEtablissement,
+      page,
+      session!.accessToken
+    )
+  }
+
+  getAnimationsCollectivesACloreServerSide(
+    idEtablissement: string,
+    accessToken: string
+  ): Promise<{
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonnees: MetadonneesAnimationsCollectives
+  }> {
+    return this.getAnimationsCollectivesAClore(idEtablissement, 1, accessToken)
   }
 
   async getDetailsEvenement(
@@ -174,5 +219,37 @@ export class EvenementsApiService implements EvenementsService {
       payload,
       session!.accessToken
     )
+  }
+
+  private async getAnimationsCollectivesAClore(
+    idEtablissement: string,
+    page: number,
+    accessToken: string
+  ): Promise<{
+    animationsCollectives: AnimationCollectivePilotage[]
+    metadonnees: MetadonneesAnimationsCollectives
+  }> {
+    const {
+      content: { pagination, resultats },
+    } = await this.apiClient.get<{
+      pagination: { total: number; limit: number }
+      resultats: AnimationCollectivePilotage[]
+    }>(
+      `/v2/etablissements/${idEtablissement}/animations-collectives?aClore=true&page=${page}`,
+      accessToken
+    )
+
+    const nombrePages = Math.ceil(pagination.total / pagination.limit)
+
+    return {
+      animationsCollectives: resultats.map(({ date, ...ac }) => ({
+        ...ac,
+        date: toShortDate(date),
+      })),
+      metadonnees: {
+        nombreTotal: pagination.total,
+        nombrePages: nombrePages,
+      },
+    }
   }
 }

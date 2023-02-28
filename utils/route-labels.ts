@@ -20,6 +20,8 @@ const routesToLabel = new Map<RegExp, string>([
   [/\/recherche-offres$/, 'Offres'],
   [/\/offres$/, 'Offres'],
   [/\/offres\/[\w-]+\/[\w-]+$/, 'Détail offre'],
+
+  [/\/pilotage$/, 'Pilotage'],
 ])
 
 export default routesToLabel

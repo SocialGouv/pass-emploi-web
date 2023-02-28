@@ -12,6 +12,7 @@ import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
+import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -121,12 +122,18 @@ function FicheJeune({
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
   let initialTracking = pageTracking
-  if (alerte?.key === AlerteParam.creationEvenement)
+  if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
-  if (alerte?.key === AlerteParam.modificationEvenement)
+  if (alerte?.key === AlerteParam.modificationRDV)
     initialTracking += ' - Modification rdv succès'
-  if (alerte?.key === AlerteParam.suppressionEvenement)
+  if (alerte?.key === AlerteParam.suppressionRDV)
     initialTracking += ' - Suppression rdv succès'
+  if (alerte?.key === AlerteParam.creationAnimationCollective)
+    initialTracking += ' - Creation animation collective succès'
+  if (alerte?.key === AlerteParam.modificationAnimationCollective)
+    initialTracking += ' - Modification animation collective succès'
+  if (alerte?.key === AlerteParam.suppressionAnimationCollective)
+    initialTracking += ' - Suppression animation collective succès'
   if (alerte?.key === AlerteParam.creationAction)
     initialTracking += ' - Succès creation action'
   if (alerte?.key === AlerteParam.envoiMessage)
@@ -290,12 +297,12 @@ function FicheJeune({
       {!jeune.isActivated &&
         conseiller?.structure === StructureConseiller.MILO && (
           <div className='mb-8'>
-            <InformationMessage
-              content={[
-                'Le lien d’activation est valable 12h.',
-                'Si le délai est dépassé, veuillez orienter ce bénéficiaire vers l’option : mot de passe oublié.',
-              ]}
-            />
+            <InformationMessage label='Le lien d’activation est valable 12h.'>
+              <p>
+                Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
+                l’option : mot de passe oublié.
+              </p>
+            </InformationMessage>
           </div>
         )}
 
@@ -303,7 +310,7 @@ function FicheJeune({
         <div className='mb-6'>
           <InformationMessage
             iconName={IconName.Clock}
-            content='Ce bénéficiaire a été ajouté temporairement à votre portefeuille en attendant le retour de son conseiller initial.'
+            label='Ce bénéficiaire a été ajouté temporairement à votre portefeuille en attendant le retour de son conseiller initial.'
           />
         </div>
       )}
@@ -336,7 +343,7 @@ function FicheJeune({
                 aria-hidden='true'
                 className='mr-2 w-4 h-4'
               />
-              Créer un événement
+              Créer un rendez-vous
             </ButtonLink>
           )}
 
@@ -351,7 +358,23 @@ function FicheJeune({
                 aria-hidden='true'
                 className='mr-2 w-4 h-4'
               />
-              Créer une nouvelle action
+              Créer une action
+            </ButtonLink>
+          )}
+
+          {!isPoleEmploi && (
+            <ButtonLink
+              href='/agenda?onglet=etablissement'
+              className='ml-4'
+              style={ButtonStyle.TERTIARY}
+            >
+              <IconComponent
+                name={IconName.Add}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Inscrire à une animation collective
             </ButtonLink>
           )}
         </div>

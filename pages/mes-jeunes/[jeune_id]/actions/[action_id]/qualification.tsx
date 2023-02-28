@@ -46,6 +46,10 @@ function PageQualification({
     action.dateFinReelle
   )
 
+  const snpParOrdreAlphabetique = situationsNonProfessionnelles.sort((a, b) =>
+    a.label.localeCompare(b.label)
+  )
+
   const [isQualificationEnCours, setIsQualificationEnCours] =
     useState<boolean>(false)
   const [erreurQualification, setErreurQualification] = useState<
@@ -63,12 +67,10 @@ function PageQualification({
     setErreurQualification(undefined)
     setIsQualificationEnCours(true)
     try {
-      await actionsService.qualifier(
-        action.id,
-        codeSNP!,
-        DateTime.fromISO(dateDebut).startOf('day'),
-        DateTime.fromISO(dateFin!).startOf('day')
-      )
+      await actionsService.qualifier(action.id, codeSNP!, {
+        dateDebutModifiee: DateTime.fromISO(dateDebut).startOf('day'),
+        dateFinModifiee: DateTime.fromISO(dateFin!).startOf('day'),
+      })
       setAlerte(AlerteParam.qualificationSNP)
       await router.push(returnTo)
     } catch (error) {
@@ -94,7 +96,7 @@ function PageQualification({
       )}
 
       <div className='mb-6'>
-        <InformationMessage content='Ces informations seront intégrées sur le dossier i-milo du jeune' />
+        <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du jeune' />
       </div>
 
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
@@ -109,7 +111,7 @@ function PageQualification({
           Type
         </Label>
         <Select id='select-type' required={true} onChange={setCodeSNP}>
-          {situationsNonProfessionnelles.map(({ label, code }) => (
+          {snpParOrdreAlphabetique.map(({ label, code }) => (
             <option key={code} value={code}>
               {label}
             </option>

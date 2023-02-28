@@ -23,7 +23,7 @@ export default function Label({
 
   return (
     <label htmlFor={htmlFor} className='flex flex-wrap text-content_color mb-3'>
-      <span className='text-base-medium mr-2'>
+      <span className='text-base-regular mr-2'>
         {inputRequired && <span aria-hidden={true}>*&nbsp;</span>}
         {mainLabel}
         {withBulleMessageSensible && (

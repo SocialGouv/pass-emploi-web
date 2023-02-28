@@ -4,6 +4,7 @@ import { getSession } from 'next-auth/react'
 import { ApiClient } from 'clients/api.client'
 import {
   Action,
+  ActionPilotage,
   Commentaire,
   EtatQualificationAction,
   MetadonneesActions,
@@ -15,12 +16,14 @@ import {
 import { BaseJeune } from 'interfaces/jeune'
 import {
   ActionJson,
+  ActionPilotageJson,
   ActionsCountJson,
   actionStatusToJson,
   CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
   etatQualificationActionToJson,
   jsonToAction,
+  jsonToActionPilotage,
   jsonToQualification,
   MetadonneesActionsJson,
   QualificationActionJson,
@@ -38,6 +41,16 @@ export interface ActionsService {
     idConseiller: string,
     accessToken: string
   ): Promise<TotalActions[]>
+
+  getActionsAQualifierClientSide(
+    idConseiller: string,
+    page: number
+  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }>
+
+  getActionsAQualifierServerSide(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }>
 
   getActionsJeuneServerSide(
     idJeune: string,
@@ -80,8 +93,10 @@ export interface ActionsService {
   qualifier(
     idAction: string,
     type: string,
-    dateDebutModifiee?: DateTime,
-    dateFinModifiee?: DateTime
+    options?: {
+      dateDebutModifiee?: DateTime
+      dateFinModifiee?: DateTime
+    }
   ): Promise<QualificationAction>
 
   getSituationsNonProfessionnelles(
@@ -128,51 +143,6 @@ export class ActionsApiService implements ActionsService {
     }))
   }
 
-  private async getActionsJeune(
-    idJeune: string,
-    {
-      tri,
-      statuts,
-      etatsQualification,
-      page,
-    }: {
-      page: number
-      statuts: StatutAction[]
-      etatsQualification: EtatQualificationAction[]
-      tri?: string
-    },
-    accessToken: string
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
-    const triActions = tri ?? 'date_echeance_decroissante'
-    const filtresStatuts = statuts
-      .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
-      .join('')
-    const filtresEtatsQualification = etatsQualification
-      .map((etat) => `&etats=${etatQualificationActionToJson(etat)}`)
-      .join('')
-    const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}${filtresEtatsQualification}`
-
-    const {
-      content: { actions: actionsJson, metadonnees },
-    } = await this.apiClient.get<{
-      actions: ActionJson[]
-      metadonnees: MetadonneesActionsJson
-    }>(url, accessToken)
-
-    const nombreActions =
-      statuts.length || etatsQualification.length
-        ? calculeNombreActionsFiltrees(statuts, etatsQualification, metadonnees)
-        : metadonnees.nombreTotal
-    const nombrePages = Math.ceil(
-      nombreActions / metadonnees.nombreActionsParPage
-    )
-
-    return {
-      actions: actionsJson.map(jsonToAction),
-      metadonnees: { nombreTotal: metadonnees.nombreTotal, nombrePages },
-    }
-  }
-
   async getActionsJeuneClientSide(
     idJeune: string,
     options: {
@@ -196,6 +166,22 @@ export class ActionsApiService implements ActionsService {
       { page, statuts: [], etatsQualification: [] },
       accessToken
     )
+  }
+
+  async getActionsAQualifierClientSide(
+    idConseiller: string,
+    page: number
+  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
+    const session = await getSession()
+
+    return this.getActionsAQualifier(idConseiller, page, session!.accessToken)
+  }
+
+  getActionsAQualifierServerSide(
+    idConseiller: string,
+    accessToken: string
+  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
+    return this.getActionsAQualifier(idConseiller, 1, accessToken)
   }
 
   async createAction(
@@ -231,8 +217,10 @@ export class ActionsApiService implements ActionsService {
   async qualifier(
     idAction: string,
     type: string,
-    dateDebutModifiee?: DateTime,
-    dateFinModifiee?: DateTime
+    options?: {
+      dateDebutModifiee?: DateTime
+      dateFinModifiee?: DateTime
+    }
   ): Promise<QualificationAction> {
     const session = await getSession()
 
@@ -240,11 +228,12 @@ export class ActionsApiService implements ActionsService {
       codeQualification: string
       dateDebut?: string
       dateFinReelle?: string
-    } = {
-      codeQualification: type,
-    }
-    if (dateDebutModifiee) payload.dateDebut = dateDebutModifiee.toISO()
-    if (dateFinModifiee) payload.dateFinReelle = dateFinModifiee.toISO()
+    } = { codeQualification: type }
+
+    if (options?.dateDebutModifiee)
+      payload.dateDebut = options.dateDebutModifiee.toISO()
+    if (options?.dateFinModifiee)
+      payload.dateFinReelle = options.dateFinModifiee.toISO()
 
     const { content } = await this.apiClient.post<QualificationActionJson>(
       `/actions/${idAction}/qualifier`,
@@ -293,6 +282,77 @@ export class ActionsApiService implements ActionsService {
     return content.filter(
       (situations) => situations.code !== CODE_QUALIFICATION_NON_SNP
     )
+  }
+
+  private async getActionsJeune(
+    idJeune: string,
+    {
+      tri,
+      statuts,
+      etatsQualification,
+      page,
+    }: {
+      page: number
+      statuts: StatutAction[]
+      etatsQualification: EtatQualificationAction[]
+      tri?: string
+    },
+    accessToken: string
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+    const triActions = tri ?? 'date_echeance_decroissante'
+    const filtresStatuts = statuts
+      .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
+      .join('')
+    const filtresEtatsQualification = etatsQualification
+      .map((etat) => `&etats=${etatQualificationActionToJson(etat)}`)
+      .join('')
+    const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}${filtresEtatsQualification}`
+
+    const {
+      content: { actions: actionsJson, metadonnees },
+    } = await this.apiClient.get<{
+      actions: ActionJson[]
+      metadonnees: MetadonneesActionsJson
+    }>(url, accessToken)
+
+    const nombreActions =
+      statuts.length || etatsQualification.length
+        ? calculeNombreActionsFiltrees(statuts, etatsQualification, metadonnees)
+        : metadonnees.nombreTotal
+    const nombrePages = Math.ceil(
+      nombreActions / metadonnees.nombreActionsParPage
+    )
+
+    return {
+      actions: actionsJson.map(jsonToAction),
+      metadonnees: { nombreTotal: metadonnees.nombreTotal, nombrePages },
+    }
+  }
+
+  private async getActionsAQualifier(
+    idConseiller: string,
+    page: number,
+    accessToken: string
+  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
+    const {
+      content: { pagination, resultats },
+    } = await this.apiClient.get<{
+      pagination: { total: number; limit: number }
+      resultats: ActionPilotageJson[]
+    }>(
+      `/v2/conseillers/${idConseiller}/actions?page=${page}&aQualifier=true`,
+      accessToken
+    )
+
+    const nombrePages = Math.ceil(pagination.total / pagination.limit)
+
+    return {
+      actions: resultats.map(jsonToActionPilotage),
+      metadonnees: {
+        nombreTotal: pagination.total,
+        nombrePages: nombrePages,
+      },
+    }
   }
 }
 

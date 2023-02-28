@@ -29,11 +29,11 @@ interface OptionAgence {
 
 const AGENCE_PAS_DANS_LA_LISTE_OPTION: OptionAgence = {
   id: 'agence-pas-dans-la-liste',
-  value: 'Ma mission locale n’apparaît pas dans la liste',
+  value: 'Ma Mission Locale n’apparaît pas dans la liste',
 }
 
-const CONTACTER_LE_SUPPORT_LABEL = `Vous avez indiqué que votre agence Mission locale est absente de la liste. 
-  Pour faire une demande d’ajout de votre mission locale, vous devez contacter le support.`
+const CONTACTER_LE_SUPPORT_LABEL = `Vous avez indiqué que votre agence Mission Locale est absente de la liste. 
+  Pour faire une demande d’ajout de votre Mission Locale, vous devez contacter le support.`
 
 export function RenseignementAgenceMissionLocaleForm({
   referentielAgences,
@@ -104,7 +104,7 @@ export function RenseignementAgenceMissionLocaleForm({
         <div className={`${container === FormContainer.PAGE ? 'w-[40%]' : ''}`}>
           <Label htmlFor='departement'>
             {{
-              main: 'Département de ma Mission locale',
+              main: 'Département de ma Mission Locale',
               helpText: '(ex : 1, 20, 973)',
             }}
           </Label>
@@ -113,7 +113,7 @@ export function RenseignementAgenceMissionLocaleForm({
 
         <div className={`${container === FormContainer.PAGE ? 'w-[55%]' : ''}`}>
           <Label htmlFor='mission-locale' inputRequired={true}>
-            Recherchez votre Mission locale dans la liste suivante
+            Recherchez votre Mission Locale dans la liste suivante
           </Label>
           <Select
             id='mission-locale'
@@ -132,7 +132,7 @@ export function RenseignementAgenceMissionLocaleForm({
 
       {agenceNestPasDansLaListe() && container !== FormContainer.PAGE && (
         <div className='mt-2'>
-          <InformationMessage content={CONTACTER_LE_SUPPORT_LABEL} />
+          <InformationMessage label={CONTACTER_LE_SUPPORT_LABEL} />
         </div>
       )}
 

@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -20,6 +20,7 @@ import {
   mockedEvenementsService,
   mockedJeunesService,
 } from 'fixtures/services'
+import { StructureConseiller } from 'interfaces/conseiller'
 import FicheJeune, {
   getServerSideProps,
   Onglet,
@@ -68,6 +69,42 @@ describe('Fiche Jeune', () => {
 
         // Then
         expect(setIdJeune).toHaveBeenCalledWith('jeune-1')
+      })
+    })
+
+    describe('pour les conseillers non Pôle Emploi', () => {
+      it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
+        // When
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune()}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: { structure: StructureConseiller.MILO },
+              customDependances: {
+                jeunesService: mockedJeunesService({
+                  getIndicateursJeuneAlleges: jest.fn(async () =>
+                    desIndicateursSemaine()
+                  ),
+                }),
+                agendaService: mockedAgendaService({
+                  recupererAgenda: jest.fn(async () => unAgenda()),
+                }),
+              },
+            }
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Inscrire à une animation collective',
+          })
+        ).toHaveAttribute('href', '/agenda?onglet=etablissement')
       })
     })
   })

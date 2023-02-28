@@ -31,7 +31,7 @@ function StatutActionForm({
 
   return (
     <div className='border-t border-solid border-grey_100 pt-5'>
-      <h2 className='text-m-bold pb-6'>Statut</h2>
+      <h2 className='text-m-bold text-grey_800 pb-6'>Statut</h2>
       <form className='flex flex-raw mb-10'>
         {Object.values(StatutAction).map((status: StatutAction) => (
           <RadioBoxStatut
@@ -48,7 +48,7 @@ function StatutActionForm({
 
       {estAQualifier && (
         <div className='border border-solid border-grey_100 bg-primary_lighten rounded-base p-4 mb-10'>
-          <h2 className='text-m-bold mb-2'>
+          <h2 className='text-m-bold text-grey_800 mb-2'>
             S’agit-il d’une Situation Non Professionnelle ?
           </h2>
           <form className='flex flex-col w-fit' onSubmit={submit}>

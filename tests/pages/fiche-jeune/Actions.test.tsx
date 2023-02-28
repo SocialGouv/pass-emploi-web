@@ -134,7 +134,7 @@ describe('Actions dans la fiche jeune', () => {
 
       // Then
       expect(
-        screen.getByRole('link', { name: 'Créer une nouvelle action' })
+        screen.getByRole('link', { name: 'Créer une action' })
       ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
     })
 

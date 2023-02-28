@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollective,
+  AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
   StatutAnimationCollective,
@@ -17,34 +18,99 @@ export const typesEvenement = (
     {
       code: 'ACTIVITES_EXTERIEURES',
       label: 'Activités extérieures',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'ATELIER',
       label: 'Atelier',
+      categorie: 'CEJ_AC',
     },
     {
       code: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
       label: 'Entretien individuel conseiller',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'ENTRETIEN_PARTENAIRE',
       label: 'Entretien par un partenaire',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'INFORMATION_COLLECTIVE',
       label: 'Information collective',
+      categorie: 'CEJ_AC',
     },
     {
       code: 'VISITE',
       label: 'Visite',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'PRESTATION',
       label: 'Prestation',
+      categorie: 'CEJ_RDV',
     },
     {
       code: 'AUTRE',
       label: 'Autre',
+      categorie: 'CEJ_RDV',
+    },
+    ...overrides,
+  ]
+}
+
+export const typesRdvAnimationsCollectives = (
+  overrides: TypeEvenement[] = []
+): TypeEvenement[] => {
+  return [
+    {
+      code: 'ATELIER',
+      label: 'Atelier',
+      categorie: 'CEJ_AC',
+    },
+
+    {
+      code: 'INFORMATION_COLLECTIVE',
+      label: 'Information collective',
+      categorie: 'CEJ_AC',
+    },
+    ...overrides,
+  ]
+}
+
+export const typesRdvCEJ = (
+  overrides: TypeEvenement[] = []
+): TypeEvenement[] => {
+  return [
+    {
+      code: 'ACTIVITES_EXTERIEURES',
+      label: 'Activités extérieures',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
+      label: 'Entretien individuel conseiller',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'ENTRETIEN_PARTENAIRE',
+      label: 'Entretien par un partenaire',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'VISITE',
+      label: 'Visite',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'PRESTATION',
+      label: 'Prestation',
+      categorie: 'CEJ_RDV',
+    },
+    {
+      code: 'AUTRE',
+      label: 'Autre',
+      categorie: 'CEJ_RDV',
     },
     ...overrides,
   ]
@@ -61,7 +127,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
         nom: 'Jirac',
       },
     ],
-    type: { code: 'AUTRE', label: 'Autre' },
+    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
     precisionType: 'Prise de nouvelles',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
@@ -138,6 +204,78 @@ export function uneAnimationCollective(
   return { ...defaults, ...overrides }
 }
 
+export const uneListeDAnimationCollectiveAClore =
+  (): AnimationCollectivePilotage[] => {
+    return [
+      {
+        id: '1',
+        titre: 'titre 1',
+        date: '21/11/2018',
+        nombreInscrits: 3,
+      },
+      {
+        id: '2',
+        titre: 'titre 2',
+        date: '22/11/2018',
+        nombreInscrits: 12,
+      },
+      {
+        id: '3',
+        titre: 'titre 3',
+        date: '23/11/2018',
+        nombreInscrits: 5,
+      },
+      {
+        id: '4',
+        titre: 'titre 4',
+        date: '24/11/2018',
+        nombreInscrits: 7,
+      },
+      {
+        id: '5',
+        titre: 'titre 5',
+        date: '25/11/2018',
+        nombreInscrits: 9,
+      },
+    ]
+  }
+
+export const uneListeDAnimationCollectiveACloreJson =
+  (): AnimationCollectivePilotage[] => {
+    return [
+      {
+        id: '1',
+        titre: 'titre 1',
+        date: '2018-11-21T06:20:32.232Z',
+        nombreInscrits: 3,
+      },
+      {
+        id: '2',
+        titre: 'titre 2',
+        date: '2018-11-22T06:20:32.232Z',
+        nombreInscrits: 12,
+      },
+      {
+        id: '3',
+        titre: 'titre 3',
+        date: '2018-11-23T06:20:32.232Z',
+        nombreInscrits: 5,
+      },
+      {
+        id: '4',
+        titre: 'titre 4',
+        date: '2018-11-24T06:20:32.232Z',
+        nombreInscrits: 7,
+      },
+      {
+        id: '5',
+        titre: 'titre 5',
+        date: '2018-11-25T06:20:32.232Z',
+        nombreInscrits: 9,
+      },
+    ]
+  }
+
 export function unEvenementJson(
   overrides: Partial<EvenementJson> = {}
 ): EvenementJson {
@@ -150,7 +288,7 @@ export function unEvenementJson(
         nom: 'Jirac',
       },
     ],
-    type: { code: 'AUTRE', label: 'Autre' },
+    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',
@@ -207,7 +345,7 @@ export function unEvenementJeuneJson(
 ): EvenementJeuneJson {
   const defaults: EvenementJeuneJson = {
     id: '1',
-    type: { code: 'AUTRE', label: 'Autre' },
+    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',
@@ -229,4 +367,8 @@ export function unEvenementJeuneJson(
   }
 
   return { ...defaults, ...overrides }
+}
+
+export function isTypeAnimationCollective(type: TypeEvenement): boolean {
+  return type.categorie === 'CEJ_AC'
 }

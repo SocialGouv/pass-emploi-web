@@ -7,20 +7,29 @@ import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { uneAnimationCollective, unEvenementListItem } from 'fixtures/evenement'
-import { mockedEvenementsService } from 'fixtures/services'
+import { uneListeDAgencesMILO } from 'fixtures/referentiel'
+import {
+  mockedConseillerService,
+  mockedEvenementsService,
+  mockedReferentielService,
+} from 'fixtures/services'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
+import { Agence } from 'interfaces/referentiel'
 import Agenda, { getServerSideProps } from 'pages/agenda'
+import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
+import { ReferentielService } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/Modal')
 
 describe('Agenda', () => {
   describe('client side', () => {
-    let rendezVousService: EvenementsService
+    let evenementsService: EvenementsService
     let replace: jest.Mock
 
     beforeEach(() => {
@@ -31,7 +40,7 @@ describe('Agenda', () => {
       replace = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ replace: replace })
 
-      rendezVousService = mockedEvenementsService({
+      evenementsService = mockedEvenementsService({
         getRendezVousConseiller: jest.fn(async (_, dateDebut) => [
           unEvenementListItem({
             date: dateDebut.plus({ day: 3 }).toISO(),
@@ -55,7 +64,6 @@ describe('Agenda', () => {
           }),
         ]),
       })
-      ;(withDependance as jest.Mock).mockReturnValue(rendezVousService)
     })
 
     describe('contenu', () => {
@@ -63,7 +71,7 @@ describe('Agenda', () => {
         // Given
         const conseiller = unConseiller({
           agence: {
-            nom: 'Mission locale Aubenas',
+            nom: 'Mission Locale Aubenas',
             id: 'id-etablissement',
           },
         })
@@ -71,19 +79,10 @@ describe('Agenda', () => {
         // When
         await act(async () => {
           await renderWithContexts(<Agenda pageTitle='' />, {
-            customDependances: { evenementsService: rendezVousService },
+            customDependances: { evenementsService: evenementsService },
             customConseiller: conseiller,
           })
         })
-      })
-
-      it('a un lien pour créer un rendez-vous', () => {
-        // Then
-        expect(
-          screen.getByRole('link', {
-            name: 'Créer un événement',
-          })
-        ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
       })
 
       it('contient 2 onglets', () => {
@@ -151,6 +150,15 @@ describe('Agenda', () => {
           '2022-09-14T23:59:59.999+02:00'
         )
 
+        it('a un lien pour créer un rendez-vous', () => {
+          // Then
+          expect(
+            screen.getByRole('link', {
+              name: 'Créer un rendez-vous',
+            })
+          ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
+        })
+
         it('a deux boutons de navigation', () => {
           // When
           const periodesFutures = screen.getByRole('button', {
@@ -169,7 +177,7 @@ describe('Agenda', () => {
         it('affiche une période de 7 jours à partir de la date du jour', async () => {
           // Then
           expect(
-            rendezVousService.getRendezVousConseiller
+            evenementsService.getRendezVousConseiller
           ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
 
           expect(screen.getByRole('table')).toBeInTheDocument()
@@ -194,7 +202,7 @@ describe('Agenda', () => {
           await userEvent.click(periodePasseeButton)
           // Then
           expect(
-            rendezVousService.getRendezVousConseiller
+            evenementsService.getRendezVousConseiller
           ).toHaveBeenLastCalledWith('1', AOUT_25_0H, AOUT_31_23H)
           expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
 
@@ -202,7 +210,7 @@ describe('Agenda', () => {
           await userEvent.click(buttonPeriodeCourante)
           // Then
           expect(
-            rendezVousService.getRendezVousConseiller
+            evenementsService.getRendezVousConseiller
           ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
@@ -210,7 +218,7 @@ describe('Agenda', () => {
           await userEvent.click(periodeFutureButton)
           // Then
           expect(
-            rendezVousService.getRendezVousConseiller
+            evenementsService.getRendezVousConseiller
           ).toHaveBeenLastCalledWith('1', SEPTEMBRE_8_0H, SEPTEMBRE_14_23H)
           expect(screen.getByText('dimanche 11 septembre')).toBeInTheDocument()
         })
@@ -230,17 +238,24 @@ describe('Agenda', () => {
 
         beforeEach(async () => {
           // When
-          await act(() =>
-            userEvent.click(
-              screen.getByRole('tab', { name: 'Agenda établissement' })
-            )
+          await userEvent.click(
+            screen.getByRole('tab', { name: 'Agenda établissement' })
           )
+        })
+
+        it('a un lien pour créer une animation collective', () => {
+          // Then
+          expect(
+            screen.getByRole('link', {
+              name: 'Créer une animation collective',
+            })
+          ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?type=ac')
         })
 
         it('récupère les événements sur une période de 7 jours à partir de la date du jour', async () => {
           // Then
           expect(
-            rendezVousService.getRendezVousEtablissement
+            evenementsService.getRendezVousEtablissement
           ).toHaveBeenCalledWith(
             'id-etablissement',
             SEPTEMBRE_1_0H,
@@ -313,7 +328,7 @@ describe('Agenda', () => {
           await userEvent.click(periodesPasseesButton)
           // Then
           expect(
-            rendezVousService.getRendezVousEtablissement
+            evenementsService.getRendezVousEtablissement
           ).toHaveBeenLastCalledWith(
             'id-etablissement',
             AOUT_25_0H,
@@ -325,7 +340,7 @@ describe('Agenda', () => {
 
           // Then
           expect(
-            rendezVousService.getRendezVousEtablissement
+            evenementsService.getRendezVousEtablissement
           ).toHaveBeenCalledWith(
             'id-etablissement',
             SEPTEMBRE_1_0H,
@@ -337,7 +352,7 @@ describe('Agenda', () => {
           await userEvent.click(periodesFuturesButton)
           // Then
           expect(
-            rendezVousService.getRendezVousEtablissement
+            evenementsService.getRendezVousEtablissement
           ).toHaveBeenLastCalledWith(
             'id-etablissement',
             SEPTEMBRE_8_0H,
@@ -348,27 +363,122 @@ describe('Agenda', () => {
     })
 
     describe('quand le conseiller n’a pas d’établissement', () => {
-      it('n’affiche pas l’agenda de l’établissement', async () => {
+      let agences: Agence[]
+      let referentielService: ReferentielService
+      let conseillerService: ConseillerService
+
+      beforeEach(async () => {
+        agences = uneListeDAgencesMILO()
+        referentielService = mockedReferentielService({
+          getAgencesClientSide: jest.fn(async () => agences),
+        })
+
+        conseillerService = mockedConseillerService()
+
         // When
         await act(async () => {
           await renderWithContexts(<Agenda pageTitle='' />, {
-            customDependances: { evenementsService: rendezVousService },
+            customDependances: {
+              referentielService,
+              conseillerService,
+              evenementsService,
+            },
+            customConseiller: { structure: StructureConseiller.MILO },
           })
         })
 
+        await userEvent.click(
+          screen.getByRole('tab', { name: 'Agenda établissement' })
+        )
+      })
+
+      it('n’affiche pas l’agenda de l’établissement', async () => {
         // Then
         expect(() =>
           screen.getByRole('tab', {
             name: 'Agenda établissement',
+            selected: true,
+          })
+        ).toBeTruthy()
+
+        expect(() =>
+          screen.getByRole('table', {
+            name: 'Liste des animations collectives de mon établissement',
             selected: false,
           })
         ).toThrow()
+      })
+
+      it('demande de renseigner son agence', async () => {
+        // Then
+        expect(
+          screen.getByText(/Votre Mission Locale n’est pas renseignée/)
+        ).toBeInTheDocument()
+
+        expect(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission Locale',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('permet de renseigner son agence', async () => {
+        // When
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission Locale',
+          })
+        )
+
+        // Then
+        expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
+          StructureConseiller.MILO
+        )
+        expect(
+          screen.getByRole('combobox', { name: /votre Mission Locale/ })
+        ).toBeInTheDocument()
+        agences.forEach((agence) =>
+          expect(
+            screen.getByRole('option', { hidden: true, name: agence.nom })
+          ).toBeInTheDocument()
+        )
+      })
+
+      it('sauvegarde l’agence et affiche la liste des animations collectives de l’agence', async () => {
+        // Given
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Renseigner votre Mission Locale',
+          })
+        )
+        const agence = agences[2]
+        const searchAgence = screen.getByRole('combobox', {
+          name: /votre Mission Locale/,
+        })
+        const submit = screen.getByRole('button', { name: 'Ajouter' })
+
+        // When
+        await userEvent.selectOptions(searchAgence, agence.nom)
+        await userEvent.click(submit)
+
+        // Then
+        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          id: agence.id,
+          nom: agence.nom,
+          codeDepartement: '3',
+        })
+        expect(() =>
+          screen.getByText('Votre Mission Locale n’est pas renseignée')
+        ).toThrow()
+        expect(
+          screen.getByText('Créer une animation collective')
+        ).toBeInTheDocument()
       })
     })
   })
 
   describe('server side', () => {
-    describe('Pour un conseiller Pole Emploi', () => {
+    describe('Pour un conseiller Pôle Emploi', () => {
       it('renvoie une 404', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({

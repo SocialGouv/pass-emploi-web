@@ -2,6 +2,7 @@ import { DateTime, DateTimeFormatOptions } from 'luxon'
 
 export const WEEKDAY_MONTH_LONG: string = 'EEEE d MMMM'
 export const TIME_24_H_SEPARATOR: string = "HH'h'mm"
+export const TIME_24_A11Y_SEPARATOR: string = "HH 'heure' mm"
 export const TIME_24_SIMPLE: string = 'HH:mm'
 export const DATE_DASH_SEPARATOR: string = 'yyyy-MM-dd'
 export const DATETIME_LONG: string = `dd/MM/yyyy 'à' ${TIME_24_H_SEPARATOR}`

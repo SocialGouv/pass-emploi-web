@@ -2,6 +2,8 @@
   width: 100%;
   margin-bottom: 2rem;
 
+  color: theme('colors.content_color');
+
   border: solid 1px theme('colors.content_color');
   border-radius: theme('borderRadius.base');
 
@@ -15,7 +17,6 @@
 }
 
 .invalid {
-  margin-bottom: 1rem;
   color: theme('colors.warning');
   border-color: theme('colors.warning');
 }

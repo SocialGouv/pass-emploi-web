@@ -4,6 +4,7 @@ import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { OngletAgendaConseiller } from 'components/rdv/OngletAgendaConseiller'
 import { OngletAgendaEtablissement } from 'components/rdv/OngletAgendaEtablissement'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -14,8 +15,11 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
+import { ReferentielService } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -32,9 +36,15 @@ interface AgendaProps extends PageProps {
 }
 
 function Agenda({ onglet }: AgendaProps) {
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
   const rendezVousService =
     useDependance<EvenementsService>('evenementsService')
-  const [conseiller] = useConseiller()
+  const referentielService =
+    useDependance<ReferentielService>('referentielService')
+
+  const [conseiller, setConseiller] = useConseiller()
+
   const router = useRouter()
   const [alerte] = useAlerte()
 
@@ -52,12 +62,18 @@ function Agenda({ onglet }: AgendaProps) {
   )
 
   let initialTracking = `Agenda`
-  if (alerte?.key === AlerteParam.creationEvenement)
+  if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
-  if (alerte?.key === AlerteParam.modificationEvenement)
+  if (alerte?.key === AlerteParam.modificationRDV)
     initialTracking += ' - Modification rdv succès'
-  if (alerte?.key === AlerteParam.suppressionEvenement)
+  if (alerte?.key === AlerteParam.suppressionRDV)
     initialTracking += ' - Suppression rdv succès'
+  if (alerte?.key === AlerteParam.creationAnimationCollective)
+    initialTracking += ' - Creation animation collective succès'
+  if (alerte?.key === AlerteParam.modificationAnimationCollective)
+    initialTracking += ' - Modification animation collective succès'
+  if (alerte?.key === AlerteParam.suppressionAnimationCollective)
+    initialTracking += ' - Suppression animation collective succès'
   if (alerte?.key === AlerteParam.envoiMessage)
     initialTracking += ' - Succès envoi message'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
@@ -102,6 +118,19 @@ function Agenda({ onglet }: AgendaProps) {
     )
   }
 
+  async function trackAgenceModal(trackingMessage: string) {
+    setTrackingTitle(initialTracking + ' - ' + trackingMessage)
+  }
+
+  async function renseignerAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...conseiller!, agence })
+    setTrackingTitle(initialTracking + ' - Succès ajout agence')
+  }
+
   function trackNavigation(append?: string) {
     const trackingOnglet = trackingLabelOnglet(currentTab)
     setTrackingTitle(trackingOnglet + (append ? ` - ${append}` : ''))
@@ -111,20 +140,19 @@ function Agenda({ onglet }: AgendaProps) {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
   }
 
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Pop-in sélection agence',
+      nom: '',
+    })
+  }
+
   useMatomo(trackingTitle)
 
   return (
     <>
-      <ButtonLink href='/mes-jeunes/edition-rdv' className='mb-10 w-fit'>
-        <IconComponent
-          name={IconName.Add}
-          focusable={false}
-          aria-hidden={true}
-          className='mr-2 w-4 h-4'
-        />
-        Créer un événement
-      </ButtonLink>
-
       <TabList className='mb-6'>
         <Tab
           label='Mon agenda'
@@ -133,15 +161,14 @@ function Agenda({ onglet }: AgendaProps) {
           onSelectTab={() => switchTab(Onglet.CONSEILLER)}
           iconName={IconName.Calendar}
         />
-        {conseiller?.agence?.id && (
-          <Tab
-            label='Agenda établissement'
-            selected={currentTab === Onglet.ETABLISSEMENT}
-            controls='agenda-etablissement'
-            onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
-            iconName={IconName.Calendar}
-          />
-        )}
+
+        <Tab
+          label='Agenda établissement'
+          selected={currentTab === Onglet.ETABLISSEMENT}
+          controls='agenda-etablissement'
+          onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
+          iconName={IconName.Calendar}
+        />
       </TabList>
 
       {currentTab === Onglet.CONSEILLER && (
@@ -151,6 +178,16 @@ function Agenda({ onglet }: AgendaProps) {
           tabIndex={0}
           id='agenda-conseiller'
         >
+          <ButtonLink href='/mes-jeunes/edition-rdv' className='mb-10 w-fit'>
+            <IconComponent
+              name={IconName.Add}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Créer un rendez-vous
+          </ButtonLink>
+
           <OngletAgendaConseiller
             idConseiller={conseiller?.id}
             recupererRdvs={recupererRdvsConseiller}
@@ -166,11 +203,40 @@ function Agenda({ onglet }: AgendaProps) {
           tabIndex={0}
           id='agenda-etablissement'
         >
-          <OngletAgendaEtablissement
-            idEtablissement={conseiller?.agence?.id}
-            recupererAnimationsCollectives={recupererRdvsEtablissement}
-            trackNavigation={trackNavigation}
-          />
+          {conseiller && conseiller.agence && (
+            <>
+              <ButtonLink
+                href='/mes-jeunes/edition-rdv?type=ac'
+                className='mb-10 w-fit'
+              >
+                <IconComponent
+                  name={IconName.Add}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+                Créer une animation collective
+              </ButtonLink>
+
+              <OngletAgendaEtablissement
+                idEtablissement={conseiller?.agence?.id}
+                recupererAnimationsCollectives={recupererRdvsEtablissement}
+                trackNavigation={trackNavigation}
+              />
+            </>
+          )}
+
+          {conseiller && !conseiller.agence && (
+            <EncartAgenceRequise
+              onContacterSupport={trackContacterSupport}
+              structureConseiller={conseiller.structure}
+              onAgenceChoisie={renseignerAgence}
+              getAgences={referentielService.getAgencesClientSide.bind(
+                referentielService
+              )}
+              onChangeAffichageModal={trackAgenceModal}
+            />
+          )}
         </div>
       )}
     </>

@@ -73,9 +73,13 @@ function Reaffectation(_: ReaffectationProps) {
     setErreurReaffectation(undefined)
   }
 
-  function resetAll() {
+  function resetInitialEmail() {
     editEmailConseillerInitial('')
     setEmailConseillerDestination({ value: '' })
+  }
+
+  function resetAll() {
+    resetInitialEmail()
     setIsReaffectationTemporaire(undefined)
   }
 
@@ -191,7 +195,10 @@ function Reaffectation(_: ReaffectationProps) {
   return (
     <>
       {isReaffectationSuccess && (
-        <SuccessAlert label={'Les jeunes ont été réaffectés avec succès'} />
+        <SuccessAlert
+          label={'Les jeunes ont été réaffectés avec succès'}
+          onAcknowledge={() => setReaffectationSuccess(false)}
+        />
       )}
 
       <div className='mb-10 bg-accent_2_lighten rounded-base p-6'>
@@ -267,7 +274,7 @@ function Reaffectation(_: ReaffectationProps) {
               id={'email-conseiller-initial'}
               value={conseillerInitial.email}
               onChange={editEmailConseillerInitial}
-              onReset={resetAll}
+              onReset={resetInitialEmail}
               type={'email'}
               className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-regular text-primary_darken'
               required={true}

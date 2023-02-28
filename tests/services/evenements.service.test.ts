@@ -4,6 +4,8 @@ import { ApiClient } from 'clients/api.client'
 import {
   typesEvenement,
   uneAnimationCollective,
+  uneListeDAnimationCollectiveAClore,
+  uneListeDAnimationCollectiveACloreJson,
   unEvenement,
   unEvenementJeuneJson,
   unEvenementJson,
@@ -222,7 +224,7 @@ describe('EvenementsApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: [
           unEvenementJeuneJson({
-            type: { code: 'ATELIER', label: 'Atelier' },
+            type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
             futPresent: true,
           }),
         ],
@@ -255,7 +257,11 @@ describe('EvenementsApiService', () => {
         {
           ...unEvenementJson({
             id: 'ac-passee',
-            type: { code: 'whatever', label: 'Information collective' },
+            type: {
+              code: 'whatever',
+              label: 'Information collective',
+              categorie: 'CEJ_AC',
+            },
             date: dateDebut.toISO(),
           }),
           statut: 'A_VENIR',
@@ -263,7 +269,7 @@ describe('EvenementsApiService', () => {
         {
           ...unEvenementJson({
             id: 'ac-future',
-            type: { code: 'whatever', label: 'Atelier' },
+            type: { code: 'whatever', label: 'Atelier', categorie: 'CEJ_AC' },
             date: dateFin.toISO(),
           }),
           statut: 'CLOTUREE',
@@ -300,6 +306,64 @@ describe('EvenementsApiService', () => {
         }),
       ]
       expect(actual).toEqual(animationsCollectives)
+    })
+  })
+
+  describe('.getAnimationsCollectivesACloreClientSide', () => {
+    it('renvoie les animations collectives du conseiller à clore', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          resultats: uneListeDAnimationCollectiveACloreJson(),
+          pagination: { total: 5, limit: 10 },
+        },
+      })
+
+      // WHEN
+      const actual =
+        await evenementsService.getAnimationsCollectivesACloreClientSide(
+          'id-etablissement',
+          2
+        )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=2',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        animationsCollectives: uneListeDAnimationCollectiveAClore(),
+        metadonnees: { nombrePages: 1, nombreTotal: 5 },
+      })
+    })
+  })
+
+  describe('.getAnimationsCollectivesACloreServerSide', () => {
+    it('renvoie les animations collectives de l’établissement à clore', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          resultats: uneListeDAnimationCollectiveACloreJson(),
+          pagination: { total: 5, limit: 10 },
+        },
+      })
+
+      // WHEN
+      const actual =
+        await evenementsService.getAnimationsCollectivesACloreServerSide(
+          'id-etablissement',
+          'accessToken'
+        )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=1',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        animationsCollectives: uneListeDAnimationCollectiveAClore(),
+        metadonnees: { nombrePages: 1, nombreTotal: 5 },
+      })
     })
   })
 

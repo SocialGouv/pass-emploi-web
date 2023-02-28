@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 
 import DisplayMessage from 'components/chat/DisplayMessage'
+import HeaderChat from 'components/chat/HeaderChat'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import FileInput from 'components/ui/Form/FileInput'
@@ -229,47 +230,20 @@ export default function Conversation({
 
   return (
     <div className='h-full flex flex-col bg-grey_100 '>
-      <div className='flex items-center mx-4 pb-6 my-6 border-b border-grey_500 short:hidden'>
-        <button
-          className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-          onClick={onBack}
-        >
-          <IconComponent
-            name={IconName.ChevronLeft}
-            role='img'
-            focusable='false'
-            aria-label='Retour sur ma messagerie'
-            className='w-6 h-6 fill-primary'
-          />
-        </button>
-        <h2 className='w-full text-left text-primary text-l-bold'>
-          Discuter avec {jeuneChat.nom} {jeuneChat.prenom}
-        </h2>
-        <button
-          aria-label={
-            jeuneChat.flaggedByConseiller
-              ? 'Ne plus suivre la conversation'
-              : 'Suivre la conversation'
-          }
-          className='p-3 border-none rounded-full mr-2 bg-primary_lighten'
-          onClick={toggleFlag}
-        >
-          {jeuneChat.flaggedByConseiller && (
-            <IconComponent
-              name={IconName.FlagFilled}
-              title='Ne plus suivre la conversation'
-              className='w-6 h-6 fill-primary'
-            />
-          )}
-          {!jeuneChat.flaggedByConseiller && (
-            <IconComponent
-              name={IconName.Flag}
-              title='Suivre la conversation'
-              className='w-6 h-6 fill-primary'
-            />
-          )}
-        </button>
-      </div>
+      <HeaderChat
+        onBack={onBack}
+        labelRetour='Retour sur ma messagerie'
+        titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
+        iconName={
+          jeuneChat.flaggedByConseiller ? IconName.FlagFilled : IconName.Flag
+        }
+        iconLabel={
+          jeuneChat.flaggedByConseiller
+            ? 'Ne plus suivre la conversation'
+            : 'Suivre la conversation'
+        }
+        onClickIcon={toggleFlag}
+      />
 
       <div
         className='p-4 grow overflow-y-auto short:hidden'
@@ -304,7 +278,6 @@ export default function Conversation({
               />
               Voir messages plus anciens
             </Button>
-
             <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                 <li key={messagesOfADay.date.toMillis()} className='mb-5'>

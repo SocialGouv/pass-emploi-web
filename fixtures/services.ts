@@ -17,6 +17,7 @@ export function mockedJeunesService(
   overrides: Partial<JeunesService> = {}
 ): JeunesService {
   const defaults: JeunesService = {
+    getIdentitesBeneficiaires: jest.fn(),
     getJeunesDuConseillerServerSide: jest.fn(),
     getJeunesDuConseillerClientSide: jest.fn(),
     getConseillersDuJeuneServerSide: jest.fn(),
@@ -34,6 +35,7 @@ export function mockedJeunesService(
     getMetadonneesFavorisJeune: jest.fn(),
     modifierIdentifiantPartenaire: jest.fn(),
     getJeunesDeLEtablissement: jest.fn(),
+    rechercheJeunesDeLEtablissement: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }
@@ -48,6 +50,8 @@ export function mockedActionsService(
     countActionsJeunes: jest.fn(),
     getActionsJeuneServerSide: jest.fn(),
     getActionsJeuneClientSide: jest.fn(),
+    getActionsAQualifierServerSide: jest.fn(),
+    getActionsAQualifierClientSide: jest.fn(),
     updateAction: jest.fn(),
     recupererLesCommentaires: jest.fn(),
     ajouterCommentaire: jest.fn(),
@@ -85,6 +89,8 @@ export function mockedEvenementsService(
     getRendezVousConseiller: jest.fn(),
     getRendezVousJeune: jest.fn(),
     getRendezVousEtablissement: jest.fn(),
+    getAnimationsCollectivesACloreClientSide: jest.fn(),
+    getAnimationsCollectivesACloreServerSide: jest.fn(),
     getDetailsEvenement: jest.fn(),
     getTypesRendezVous: jest.fn(),
     creerEvenement: jest.fn(),

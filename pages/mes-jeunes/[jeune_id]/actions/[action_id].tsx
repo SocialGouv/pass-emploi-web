@@ -96,8 +96,10 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
       const nouvelleQualification = await actionsService.qualifier(
         action.id,
         CODE_QUALIFICATION_NON_SNP,
-        DateTime.fromISO(action.dateEcheance),
-        DateTime.fromISO(action.dateEcheance)
+        {
+          dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
+          dateFinModifiee: DateTime.fromISO(action.dateEcheance),
+        }
       )
       setQualification(nouvelleQualification)
       setAlerte(AlerteParam.qualificationNonSNP)
@@ -153,10 +155,7 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
       )}
 
       <div className='flex items-start justify-between mb-5'>
-        <h2
-          className='text-m-bold text-content_color'
-          title='Intitulé de l’action'
-        >
+        <h2 className='text-m-bold text-grey_800' title='Intitulé de l’action'>
           {action.content}
         </h2>
 
@@ -226,16 +225,18 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   if (user.structure === StructureConseiller.POLE_EMPLOI) {
     return { notFound: true }
   }
+  const { jeune_id, action_id } = context.query
 
   const actionsService = withDependance<ActionsService>('actionsService')
   const actionEtJeune = await actionsService.getAction(
-    context.query.action_id as string,
+    action_id as string,
     accessToken
   )
   if (!actionEtJeune) return { notFound: true }
+  if (jeune_id !== actionEtJeune.jeune.id) return { notFound: true }
 
   const commentaires = await actionsService.recupererLesCommentaires(
-    context.query.action_id as string,
+    action_id as string,
     accessToken
   )
   if (!commentaires) return { notFound: true }

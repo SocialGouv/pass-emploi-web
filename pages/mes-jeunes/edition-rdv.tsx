@@ -8,32 +8,29 @@ import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
-import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { isTypeAnimationCollective } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   estAClore,
   estClos,
   estCreeParSiMILO,
   Evenement,
+  isCodeTypeAnimationCollective,
   Modification,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
-import { ReferentielService } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
-import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -48,6 +45,7 @@ interface EditionRdvProps extends PageProps {
   returnTo: string
   idJeune?: string
   evenement?: Evenement
+  evenementTypeAC?: boolean
 }
 
 function EditionRdv({
@@ -56,20 +54,15 @@ function EditionRdv({
   idJeune,
   returnTo,
   evenement,
+  evenementTypeAC,
 }: EditionRdvProps) {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const evenementsService =
     useDependance<EvenementsService>('evenementsService')
-  const [conseiller, setConseiller] = useConseiller()
-  const referentielService =
-    useDependance<ReferentielService>('referentielService')
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
-  const [_, setAlerte] = useAlerte()
+  const [conseiller] = useConseiller()
 
-  const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
-  const [agences, setAgences] = useState<Agence[]>([])
+  const [_, setAlerte] = useAlerte()
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
@@ -92,29 +85,22 @@ function EditionRdv({
   const [showPlusHistorique, setShowPlusHistorique] = useState<boolean>(false)
 
   let initialTracking: string
-  if (evenement) initialTracking = `Modification rdv`
-  else initialTracking = `Création rdv${idJeune ? ' jeune' : ''}`
+  if (evenement)
+    initialTracking = `Modification ${
+      isCodeTypeAnimationCollective(evenement.type.code)
+        ? 'animation collective'
+        : 'rdv'
+    }`
+  else
+    initialTracking = `Création ${
+      evenementTypeAC ? 'animation collective' : 'rdv'
+    } ${idJeune ? ' jeune' : ''}`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
     e.stopPropagation()
     openDeleteRdvModal()
-  }
-
-  async function openAgenceModal() {
-    if (!agences.length) {
-      setAgences(
-        await referentielService.getAgencesClientSide(conseiller!.structure)
-      )
-    }
-    setShowAgenceModal(true)
-    setTrackingTitle(initialTracking + ' - Pop-in sélection agence')
-  }
-
-  async function closeAgenceModal() {
-    setShowAgenceModal(false)
-    setTrackingTitle(initialTracking)
   }
 
   function openLeavePageModal() {
@@ -141,7 +127,12 @@ function EditionRdv({
 
   function openDeleteRdvModal() {
     setShowDeleteRdvModal(true)
-    setTrackingTitle(initialTracking + ' - Modale suppression rdv')
+    setTrackingTitle(
+      initialTracking +
+        ` - Modale suppression ${
+          evenementTypeAC ? 'animation collective' : 'rdv'
+        }`
+    )
   }
 
   function closeDeleteRdvModal() {
@@ -156,9 +147,7 @@ function EditionRdv({
     return fromEvenement || formHasBeneficiaireAutrePortefeuille
   }
 
-  async function soumettreRendezVous(
-    payload: EvenementFormData
-  ): Promise<void> {
+  async function soumettreEvenement(payload: EvenementFormData): Promise<void> {
     setConfirmBeforeLeaving(false)
     if (!evenement) {
       await creerNouvelEvenement(payload)
@@ -172,7 +161,10 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     const idNouvelEvenement = await evenementsService.creerEvenement(payload)
-    setAlerte(AlerteParam.creationEvenement, idNouvelEvenement)
+    const alertType = evenementTypeAC
+      ? AlerteParam.creationAnimationCollective
+      : AlerteParam.creationRDV
+    setAlerte(alertType, idNouvelEvenement)
   }
 
   async function modifierEvenement(
@@ -180,7 +172,10 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
-    setAlerte(AlerteParam.modificationEvenement)
+    const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+      ? AlerteParam.modificationAnimationCollective
+      : AlerteParam.modificationRDV
+    setAlerte(alertType)
   }
 
   async function supprimerEvenement(): Promise<void> {
@@ -189,7 +184,10 @@ function EditionRdv({
 
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      setAlerte(AlerteParam.suppressionEvenement)
+      const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+        ? AlerteParam.suppressionAnimationCollective
+        : AlerteParam.suppressionRDV
+      setAlerte(alertType)
       await router.push(returnTo)
     } catch (e) {
       setShowDeleteRdvError(true)
@@ -201,25 +199,6 @@ function EditionRdv({
       return jeunesService.getJeunesDeLEtablissement(conseiller.agence.id)
     }
     return Promise.resolve([])
-  }
-
-  async function renseignerAgence(agence: {
-    id?: string
-    nom: string
-  }): Promise<void> {
-    await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence })
-    setTrackingTitle(initialTracking + ' - Succès ajout agence')
-    setShowAgenceModal(false)
-  }
-
-  function trackContacterSupport() {
-    trackEvent({
-      structure: conseiller!.structure,
-      categorie: 'Contact Support',
-      action: 'Pop-in sélection agence',
-      nom: '',
-    })
   }
 
   function togglePlusHistorique() {
@@ -244,13 +223,13 @@ function EditionRdv({
 
       {evenement && estCreeParSiMILO(evenement) && (
         <div className='mb-6'>
-          <InformationMessage content='Pour modifier cet événement vous devez vous rendre dans le système d’information iMilo, il sera ensuite mis à jour dans la demi-heure' />
+          <InformationMessage label='Pour modifier cet événement vous devez vous rendre dans le système d’information iMilo, il sera ensuite mis à jour dans la demi-heure' />
         </div>
       )}
 
       {aDesJeunesDUnAutrePortefeuille() && (
         <div className='mb-6'>
-          <InformationMessage content='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
+          <InformationMessage label='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
       )}
 
@@ -379,10 +358,10 @@ function EditionRdv({
         }
         conseiller={conseiller}
         onChanges={setHasChanges}
-        soumettreRendezVous={soumettreRendezVous}
+        soumettreRendezVous={soumettreEvenement}
         leaveWithChanges={openLeavePageModal}
         showConfirmationModal={showConfirmationModal}
-        renseignerAgence={openAgenceModal}
+        evenementTypeAC={evenementTypeAC}
       />
 
       {showLeavePageModal && (
@@ -401,9 +380,7 @@ function EditionRdv({
       {payloadForConfirmationModal && (
         <ConfirmationUpdateRdvModal
           onCancel={closeConfirmationModal}
-          onConfirmation={() =>
-            soumettreRendezVous(payloadForConfirmationModal)
-          }
+          onConfirmation={() => soumettreEvenement(payloadForConfirmationModal)}
         />
       )}
 
@@ -412,16 +389,10 @@ function EditionRdv({
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={supprimerEvenement}
-        />
-      )}
-
-      {showAgenceModal && agences.length && (
-        <RenseignementAgenceModal
-          structureConseiller={conseiller!.structure}
-          referentielAgences={agences}
-          onAgenceChoisie={renseignerAgence}
-          onContacterSupport={trackContacterSupport}
-          onClose={closeAgenceModal}
+          evenementTypeAC={
+            evenementTypeAC ||
+            isCodeTypeAnimationCollective(evenement?.type.code)
+          }
         />
       )}
     </>
@@ -456,18 +427,33 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     accessToken
   )
 
+  const estUneAC = context.query.type === 'ac'
+
+  const typesRdvCEJ = [...typesRendezVous].filter(
+    (t) => !isTypeAnimationCollective(t)
+  )
+  const typesRdvAC = [...typesRendezVous].filter((t) =>
+    isTypeAnimationCollective(t)
+  )
+
   let redirectTo = context.query.redirectUrl as string
   if (!redirectTo) {
     const referer = context.req.headers.referer
     redirectTo = referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   }
+
   const props: EditionRdvProps = {
     jeunes: [...jeunes].sort(compareJeunesByNom),
-    typesRendezVous: typesRendezVous,
+    typesRendezVous: estUneAC ? typesRdvAC : typesRdvCEJ,
     withoutChat: true,
     returnTo: redirectTo,
-    pageTitle: 'Mes événements - Créer',
-    pageHeader: 'Créer un nouvel événement',
+    pageTitle: `Mes événements - Créer ${
+      estUneAC ? 'une animation collective' : 'un rendez-vous'
+    }`,
+    pageHeader: `${
+      estUneAC ? 'Créer une animation collective' : 'Créer un rendez-vous'
+    }`,
+    evenementTypeAC: estUneAC,
   }
 
   const idRdv = context.query.idRdv as string | undefined
@@ -480,7 +466,11 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     if (!evenement) return { notFound: true }
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
-    props.pageHeader = 'Détail de l’événement'
+    props.pageHeader = `${
+      estUneAC || isCodeTypeAnimationCollective(evenement.type.code)
+        ? 'Détail de l’animation collective'
+        : 'Détail du rendez-vous'
+    }`
   } else if (idJeune) {
     props.idJeune = idJeune
   }

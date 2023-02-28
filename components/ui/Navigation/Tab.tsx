@@ -27,10 +27,10 @@ export default function Tab({
       aria-controls={controls}
       aria-selected={selected}
       onClick={onSelectTab}
-      className={`text-m-regular px-4 pb-2 flex items-center cursor-pointer ${
+      className={`text-m-medium text-grey_800 px-4 pb-2 flex items-center cursor-pointer ${
         selected
-          ? 'border-b-4 border-b-primary text-content_color'
-          : 'hover:border-b-4 hover:border-primary_darken text-grey_800'
+          ? 'text-m-bold border-b-4 border-b-primary'
+          : 'hover:border-b-4 hover:border-primary_darken'
       }`}
     >
       {iconName && (
@@ -48,7 +48,12 @@ export default function Tab({
       {label}
       {count !== undefined && (
         <span className='ml-4'>
-          <Badge count={count} bgColor='primary' />
+          <Badge
+            count={count}
+            textColor='primary'
+            bgColor='primary_ligten'
+            size={6}
+          />
         </span>
       )}
     </li>

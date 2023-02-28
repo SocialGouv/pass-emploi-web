@@ -59,7 +59,7 @@ module.exports = withPWA({
     const { EnvironmentPlugin } = require('webpack')
     config.plugins.push(
       new EnvironmentPlugin({
-        NODE_ENV: 'development',
+        NODE_ENV: 'production',
       })
     )
 

@@ -85,6 +85,7 @@ export default function ChatContainer({ jeunesChats }: ChatContainerProps) {
         {showRubriqueListesDeDiffusion && (
           <RubriqueListesDeDiffusion
             listesDeDiffusion={listesDeDiffusion}
+            chats={jeunesChats}
             onBack={() => setShowRubriqueListesDeDiffusion(false)}
           />
         )}

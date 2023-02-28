@@ -46,7 +46,7 @@ export function CommentairesAction({
 
   return (
     <div className='border-t border-solid border-grey_100 pt-5'>
-      <h2 className='text-m-bold pb-6'>Commentaires</h2>
+      <h2 className='text-m-bold text-grey_800 pb-6'>Commentaires</h2>
       <div className='flex flex-col w-full'>
         {!commentaires?.length && (
           <span className='mb-4'>
@@ -72,7 +72,6 @@ export function CommentairesAction({
           ref={inputRef}
           id='commentaire-action'
           onChange={setNouveauCommentaire}
-          rows={3}
         ></Textarea>
         <Button
           className='self-end'

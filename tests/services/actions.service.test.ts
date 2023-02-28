@@ -7,6 +7,8 @@ import {
   uneAction,
   uneActionJson,
   uneListeDActions,
+  uneListeDActionsAQualifier,
+  uneListeDActionsAQualifierJson,
   uneListeDActionsJson,
 } from 'fixtures/action'
 import {
@@ -366,6 +368,62 @@ describe('ActionsApiService', () => {
     })
   })
 
+  describe('.getActionsAQualifierClientSide', () => {
+    it('renvoie les actions du conseiller à qualifier', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          resultats: uneListeDActionsAQualifierJson(),
+          pagination: { total: 5, limit: 10 },
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.getActionsAQualifierClientSide(
+        'whatever',
+        1
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/conseillers/whatever/actions?page=1&aQualifier=true',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        actions: uneListeDActionsAQualifier(),
+        metadonnees: { nombrePages: 1, nombreTotal: 5 },
+      })
+    })
+  })
+
+  describe('.getActionsAQualifierServerSide', () => {
+    it('renvoie les actions du conseiller à qualifier', async () => {
+      // GIVEN
+      ;(apiClient.get as jest.Mock).mockResolvedValue({
+        content: {
+          resultats: uneListeDActionsAQualifierJson(),
+          pagination: { total: 5, limit: 10 },
+        },
+      })
+
+      // WHEN
+      const actual = await actionsService.getActionsAQualifierServerSide(
+        'whatever',
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v2/conseillers/whatever/actions?page=1&aQualifier=true',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        actions: uneListeDActionsAQualifier(),
+        metadonnees: { nombrePages: 1, nombreTotal: 5 },
+      })
+    })
+  })
+
   describe('.createAction', () => {
     it('crée une nouvelle action', async () => {
       // GIVEN
@@ -481,12 +539,10 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.qualifier(
-        'id-action',
-        'SANTE',
-        DateTime.fromISO('2022-09-05T22:00:00.000Z'),
-        DateTime.fromISO('2022-09-06T22:00:00.000Z')
-      )
+      const actual = await actionsService.qualifier('id-action', 'SANTE', {
+        dateDebutModifiee: DateTime.fromISO('2022-09-05T22:00:00.000Z'),
+        dateFinModifiee: DateTime.fromISO('2022-09-06T22:00:00.000Z'),
+      })
 
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(

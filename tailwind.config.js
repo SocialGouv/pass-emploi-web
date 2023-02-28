@@ -43,6 +43,7 @@ module.exports = {
       accent_3_lighten: '#DFFDFF',
       accent_4: '#6D597A',
       accent_4_lighten: '#F0EDF2',
+      additional_1: '#FCBF49',
       additional_1_lighten: '#FFD88D',
       additional_2: '#15616D',
       additional_2_lighten: '#DDFFED',
@@ -105,9 +106,6 @@ module.exports = {
         // path relative to globals.css
         clock: "url('../assets/icons/clock.svg')",
         location: "url('../assets/icons/location_big.svg')",
-      },
-      fontFamily: {
-        sans: ['Marianne'],
       },
     },
   },
