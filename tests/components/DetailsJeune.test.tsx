@@ -33,7 +33,6 @@ describe('<DetailsJeune>', () => {
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
         onDossierMiloClick={() => {}}
-        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -64,7 +63,6 @@ describe('<DetailsJeune>', () => {
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
         onDossierMiloClick={() => {}}
-        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -83,7 +81,6 @@ describe('<DetailsJeune>', () => {
         jeune={jeune}
         structureConseiller={StructureConseiller.MILO}
         onDossierMiloClick={() => {}}
-        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -106,7 +103,6 @@ describe('<DetailsJeune>', () => {
             jeune={jeune}
             structureConseiller={StructureConseiller.MILO}
             onDossierMiloClick={() => {}}
-            onDeleteJeuneClick={() => {}}
           />,
           { customDependances: { jeunesService } }
         )
@@ -130,7 +126,6 @@ describe('<DetailsJeune>', () => {
               jeune={jeune}
               structureConseiller={StructureConseiller.POLE_EMPLOI}
               onDossierMiloClick={() => {}}
-              onDeleteJeuneClick={() => {}}
             />,
             { customDependances: { jeunesService } }
           )
@@ -158,9 +153,11 @@ describe('<DetailsJeune>', () => {
             jeune={jeune}
             structureConseiller={StructureConseiller.POLE_EMPLOI}
             onDossierMiloClick={() => {}}
-            onDeleteJeuneClick={() => {}}
           />,
-          { customDependances: { jeunesService }, customAlerte: { alerteSetter } }
+          {
+            customDependances: { jeunesService },
+            customAlerte: { alerteSetter },
+          }
         )
       })
 
@@ -237,9 +234,11 @@ describe('<DetailsJeune>', () => {
             jeune={jeune}
             structureConseiller={StructureConseiller.POLE_EMPLOI}
             onDossierMiloClick={() => {}}
-            onDeleteJeuneClick={() => {}}
           />,
-          { customDependances: { jeunesService }, customAlerte: { alerteSetter } }
+          {
+            customDependances: { jeunesService },
+            customAlerte: { alerteSetter },
+          }
         )
       })
 
@@ -317,7 +316,6 @@ describe('<DetailsJeune>', () => {
           jeune={jeune}
           structureConseiller={StructureConseiller.MILO}
           onDossierMiloClick={() => {}}
-          onDeleteJeuneClick={() => {}}
         />,
         { customDependances: { jeunesService } }
       )

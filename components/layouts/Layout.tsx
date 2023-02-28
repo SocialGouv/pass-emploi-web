@@ -12,6 +12,7 @@ import ChatManager from 'components/layouts/ChatManager'
 import Footer from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
+import { MODAL_ROOT_ID } from 'components/Modal'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -107,7 +108,7 @@ export default function Layout({ children }: LayoutProps) {
           setHasMessageNonLu={setHasMessageNonLu}
         />
       </div>
-      <div id='modal-root' />
+      <div id={MODAL_ROOT_ID} />
     </>
   )
 }

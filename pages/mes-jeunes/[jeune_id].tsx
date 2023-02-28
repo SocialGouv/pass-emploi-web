@@ -11,8 +11,9 @@ import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
+import PageActionsPortal from 'components/PageActionsPortal'
 import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
-import { ButtonStyle } from 'components/ui/Button/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -266,27 +267,22 @@ function FicheJeune({
 
   return (
     <>
+      <PageActionsPortal>
+        <Button onClick={openDeleteJeuneModal} style={ButtonStyle.SECONDARY}>
+          <IconComponent
+            name={IconName.Trashcan}
+            focusable={false}
+            aria-hidden={true}
+            className='mr-2 w-4 h-4'
+          />
+          Supprimer ce compte
+        </Button>
+      </PageActionsPortal>
+
       {showSuppressionCompteBeneficiaireError && (
         <FailureAlert
           label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
           onAcknowledge={() => setShowSuppressionCompteBeneficiaireError(false)}
-        />
-      )}
-
-      {showModaleDeleteJeuneActif && (
-        <DeleteJeuneActifModal
-          jeune={jeune}
-          onClose={() => setShowModaleDeleteJeuneActif(false)}
-          motifsSuppression={motifsSuppression}
-          soumettreSuppression={archiverJeuneActif}
-        />
-      )}
-
-      {showModaleDeleteJeuneInactif && (
-        <DeleteJeuneInactifModal
-          jeune={jeune}
-          onClose={() => setShowModaleDeleteJeuneInactif(false)}
-          onDelete={supprimerJeuneInactif}
         />
       )}
 
@@ -320,7 +316,6 @@ function FicheJeune({
           jeune={jeune}
           structureConseiller={conseiller?.structure}
           onDossierMiloClick={trackDossierMiloClick}
-          onDeleteJeuneClick={openDeleteJeuneModal}
         />
       </div>
 
@@ -479,6 +474,23 @@ function FicheJeune({
             metadonneesFavoris={metadonneesFavoris!}
           />
         </div>
+      )}
+
+      {showModaleDeleteJeuneActif && (
+        <DeleteJeuneActifModal
+          jeune={jeune}
+          onClose={() => setShowModaleDeleteJeuneActif(false)}
+          motifsSuppression={motifsSuppression}
+          soumettreSuppression={archiverJeuneActif}
+        />
+      )}
+
+      {showModaleDeleteJeuneInactif && (
+        <DeleteJeuneInactifModal
+          jeune={jeune}
+          onClose={() => setShowModaleDeleteJeuneInactif(false)}
+          onDelete={supprimerJeuneInactif}
+        />
       )}
     </>
   )
