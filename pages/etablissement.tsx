@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -13,7 +14,11 @@ import { TR } from 'components/ui/Table/TR'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
+import { ReferentielService } from 'services/referentiel.service'
+import { trackEvent } from 'utils/analytics/matomo'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
@@ -21,8 +26,16 @@ import { useDependance } from 'utils/injectionDependances'
 type MissionLocaleProps = PageProps
 
 const Etablissement = (_: MissionLocaleProps) => {
-  const [conseiller] = useConseiller()
+  let initialTracking = `Etablissement`
+
+  const [conseiller, setConseiller] = useConseiller()
+  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const referentielService =
+    useDependance<ReferentielService>('referentielService')
   const [resultatsRecherche, setResultatsRecherche] = useState<BaseJeune[]>()
 
   async function rechercherJeunes(recherche: string) {
@@ -33,9 +46,47 @@ const Etablissement = (_: MissionLocaleProps) => {
     }
   }
 
+  async function renseignerAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...conseiller!, agence })
+    setTrackingTitle(initialTracking + ' - Succès ajout agence')
+  }
+
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller!.structure,
+      categorie: 'Contact Support',
+      action: 'Pop-in sélection agence',
+      nom: '',
+    })
+  }
+  async function trackAgenceModal(trackingMessage: string) {
+    setTrackingTitle(initialTracking + ' - ' + trackingMessage)
+  }
+
+  useMatomo(trackingTitle)
+
   return (
     <>
-      <RechercheJeune onSearchFilterBy={rechercherJeunes} />
+      {Boolean(conseiller?.agence) && (
+        <RechercheJeune onSearchFilterBy={rechercherJeunes} />
+      )}
+
+      {conseiller && !conseiller?.agence && (
+        <EncartAgenceRequise
+          onContacterSupport={trackContacterSupport}
+          structureConseiller={conseiller.structure}
+          onAgenceChoisie={renseignerAgence}
+          getAgences={referentielService.getAgencesClientSide.bind(
+            referentielService
+          )}
+          onChangeAffichageModal={trackAgenceModal}
+        />
+      )}
+
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
