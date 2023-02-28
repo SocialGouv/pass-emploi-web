@@ -13,6 +13,8 @@ import IconComponent, { IconName } from './ui/IconComponent'
 
 import styles from 'styles/components/Modal.module.css'
 
+export const MODAL_ROOT_ID = 'modal-root'
+
 interface ModalProps {
   title: string
   onClose: () => void
@@ -133,7 +135,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   )
 
   if (isBrowser) {
-    const modalRoot = document.getElementById('modal-root')
+    const modalRoot = document.getElementById(MODAL_ROOT_ID)
     return modalRoot ? createPortal(modalContainer, modalRoot) : null
   } else {
     return null

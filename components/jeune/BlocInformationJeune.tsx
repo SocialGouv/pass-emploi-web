@@ -1,7 +1,6 @@
 import Link from 'next/link'
-import React, { MouseEventHandler, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { toShortDate } from 'utils/date'
@@ -17,7 +16,6 @@ interface BlocInformationJeuneProps {
   onIdentifiantPartenaireClick: () => void
   urlDossier: string | undefined
   onDossierMiloClick: () => void
-  onDeleteJeuneClick: MouseEventHandler<HTMLButtonElement>
 }
 
 export function BlocInformationJeune({
@@ -31,7 +29,6 @@ export function BlocInformationJeune({
   onIdentifiantPartenaireClick,
   urlDossier,
   onDossierMiloClick,
-  onDeleteJeuneClick,
 }: BlocInformationJeuneProps) {
   const shortCreationDate = useMemo(
     () => toShortDate(creationDate),
@@ -75,13 +72,9 @@ export function BlocInformationJeune({
         )}
       </dl>
 
-      <div className='flex flex-row justify-between items-end mt-4'>
-        <BouttonSupprimerCompte onClick={onDeleteJeuneClick} />
-
-        {structureConseiller !== StructureConseiller.MILO && (
-          <LienVersHistorique idJeune={idJeune} />
-        )}
-      </div>
+      {structureConseiller !== StructureConseiller.MILO && (
+        <LienVersHistorique idJeune={idJeune} />
+      )}
     </div>
   )
 }
@@ -163,22 +156,6 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
         </a>
       </dd>
     </>
-  )
-}
-
-function BouttonSupprimerCompte(props: {
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
-}) {
-  return (
-    <Button onClick={props.onClick} style={ButtonStyle.SECONDARY}>
-      <IconComponent
-        name={IconName.Trashcan}
-        focusable={false}
-        aria-hidden={true}
-        className='mr-2 w-4 h-4'
-      />
-      Supprimer ce compte
-    </Button>
   )
 }
 

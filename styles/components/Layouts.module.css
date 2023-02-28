@@ -40,11 +40,6 @@
   display: none;
 }
 
-.header {
-  padding: 32px 48px;
-  border-bottom: 1px solid theme('colors.primary_lighten');
-}
-
 .content {
   flex-grow: 1;
   margin: auto;

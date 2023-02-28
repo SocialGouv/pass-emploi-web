@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useState } from 'react'
+import React, { useState } from 'react'
 
 import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
@@ -15,14 +15,12 @@ interface DetailsJeuneProps {
   jeune: DetailJeune
   structureConseiller: StructureConseiller | undefined
   onDossierMiloClick: () => void
-  onDeleteJeuneClick: MouseEventHandler<HTMLButtonElement>
 }
 
 export const DetailsJeune = ({
   jeune,
   structureConseiller,
   onDossierMiloClick,
-  onDeleteJeuneClick,
 }: DetailsJeuneProps) => {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const [_, setAlerte] = useAlerte()
@@ -87,7 +85,6 @@ export const DetailsJeune = ({
           onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
           urlDossier={jeune.urlDossier}
           onDossierMiloClick={onDossierMiloClick}
-          onDeleteJeuneClick={onDeleteJeuneClick}
         />
       </div>
 
