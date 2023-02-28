@@ -13,7 +13,7 @@ type ImmersionDetailProps = {
 export default function ImmersionDetail({ offre }: ImmersionDetailProps) {
   return (
     <div className='max-w-2xl mx-auto'>
-      <div className='flex justify-end'>
+      <div className='flex justify-end mb-6'>
         <LienPartageOffre
           titreOffre={offre.titre}
           href={`/offres/immersion/${offre.id}/partage`}
