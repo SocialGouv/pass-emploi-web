@@ -47,7 +47,7 @@ export default function ServiceCiviqueDetail({
 
   return (
     <div className='max-w-2xl mx-auto'>
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between items-center mb-6'>
         <p className='my-2'>
           <span className='sr-only'>Domaine : </span>
           <span className='capitalize'>{offre.domaine}</span>

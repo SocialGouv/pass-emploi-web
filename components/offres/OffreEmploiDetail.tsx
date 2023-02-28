@@ -51,7 +51,7 @@ export default function OffreEmploiDetail({
 
   return (
     <div className='max-w-2xl mx-auto'>
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between items-center mb-6'>
         <p className='text-s-regular'>
           {dateActualisation ? 'Actualisée le ' + dateActualisation : ''}
         </p>
