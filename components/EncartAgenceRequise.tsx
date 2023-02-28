@@ -22,6 +22,10 @@ export default function EncartAgenceRequise({
 }: EncartAgenceRequiseProps): JSX.Element {
   const [agences, setAgences] = useState<Agence[]>([])
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
+  const labelEtablissement =
+    structureConseiller === StructureConseiller.MILO
+      ? 'Mission Locale'
+      : 'agence'
 
   async function openAgenceModal() {
     if (!agences.length) {
@@ -54,11 +58,11 @@ export default function EncartAgenceRequise({
             className='w-4 h-4 mr-2 fill-warning'
             name={IconName.Important}
           />
-          Votre agence n’est pas renseignée
+          Votre {labelEtablissement} n’est pas renseignée
         </p>
         <p className='text-base-regular text-warning mb-6'>
-          Pour créer ou voir les animations collectives de votre Mission Locale
-          vous devez la renseigner dans votre profil.
+          Pour créer ou voir les animations collectives de votre{' '}
+          {labelEtablissement} vous devez la renseigner dans votre profil.
         </p>
         <Button
           type='button'
@@ -66,7 +70,7 @@ export default function EncartAgenceRequise({
           onClick={openAgenceModal}
           className='mx-auto'
         >
-          Renseigner votre Mission Locale
+          Renseigner votre {labelEtablissement}
         </Button>
       </div>
 

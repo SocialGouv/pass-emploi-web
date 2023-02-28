@@ -22,7 +22,6 @@ import { EvenementsService } from 'services/evenements.service'
 import { ReferentielService } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -413,7 +412,7 @@ describe('Agenda', () => {
       it('demande de renseigner son agence', async () => {
         // Then
         expect(
-          screen.getByText(/Votre agence n’est pas renseignée/)
+          screen.getByText(/Votre Mission Locale n’est pas renseignée/)
         ).toBeInTheDocument()
 
         expect(

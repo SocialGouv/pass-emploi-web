@@ -396,7 +396,7 @@ describe('Pilotage', () => {
       it('demande de renseigner son agence', async () => {
         // Then
         expect(
-          screen.getByText(/Votre agence n’est pas renseignée/)
+          screen.getByText(/Votre Mission Locale n’est pas renseignée/)
         ).toBeInTheDocument()
 
         expect(
@@ -450,7 +450,7 @@ describe('Pilotage', () => {
           codeDepartement: '3',
         })
         expect(() =>
-          screen.getByText('Votre agence n’est pas renseignée')
+          screen.getByText('Votre Mission Locale n’est pas renseignée')
         ).toThrow()
         expect(
           screen.getByRole('table', {
