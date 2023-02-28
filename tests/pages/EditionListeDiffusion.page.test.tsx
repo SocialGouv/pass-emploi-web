@@ -109,7 +109,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
               listesDeDiffusionService.creerListeDeDiffusion
             ).toHaveBeenCalledWith({
               titre: 'Liste métiers aéronautique',
-              idsBeneficiaires: [beneficiaires[0].id, beneficiaires[2].id],
+              idsBeneficiaires: [beneficiaires[2].id, beneficiaires[0].id],
             })
           })
 
@@ -310,7 +310,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
             listesDeDiffusionService.modifierListeDeDiffusion
           ).toHaveBeenCalledWith(listeDeDiffusion.id, {
             titre: 'Nouveau titre',
-            idsBeneficiaires: [beneficiaires[0].id, beneficiaires[1].id],
+            idsBeneficiaires: [beneficiaires[1].id, beneficiaires[0].id],
           })
         })
 

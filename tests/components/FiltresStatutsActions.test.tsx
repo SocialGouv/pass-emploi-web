@@ -9,7 +9,7 @@ describe('FiltresStatutsAction', () => {
   beforeEach(async () => {
     // Given
     filtrerActions = jest.fn()
-    render(<FiltresStatutsActions style='' onFiltres={filtrerActions} />)
+    render(<FiltresStatutsActions onFiltres={filtrerActions} />)
 
     // When
     await userEvent.click(screen.getByText('Statut'))

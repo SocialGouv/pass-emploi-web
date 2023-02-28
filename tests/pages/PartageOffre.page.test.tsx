@@ -428,7 +428,7 @@ describe('Page Partage Offre', () => {
             // Then
             expect(messagesService.partagerOffre).toHaveBeenCalledWith({
               offre,
-              idsDestinataires: [jeunes[0].id, jeunes[2].id],
+              idsDestinataires: [jeunes[2].id, jeunes[0].id],
               cleChiffrement: 'cleChiffrement',
               message,
             })
@@ -444,7 +444,7 @@ describe('Page Partage Offre', () => {
             // Then
             expect(messagesService.partagerOffre).toHaveBeenCalledWith({
               offre,
-              idsDestinataires: [jeunes[0].id, jeunes[2].id],
+              idsDestinataires: [jeunes[2].id, jeunes[0].id],
               cleChiffrement: 'cleChiffrement',
               message:
                 'Bonjour, je vous partage une offre d’emploi qui pourrait vous intéresser.',
