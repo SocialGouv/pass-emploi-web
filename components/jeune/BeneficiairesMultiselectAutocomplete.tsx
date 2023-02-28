@@ -125,8 +125,10 @@ export default function BeneficiairesMultiselectAutocomplete({
 
     const listeDeDiffusion = rechercheUneListeDeDiffusion(inputValue)
     if (listeDeDiffusion) {
-      const updatedListesSelectionnees =
-        listesSelectionnees.concat(listeDeDiffusion)
+      const updatedListesSelectionnees = [
+        listeDeDiffusion,
+        ...listesSelectionnees,
+      ]
       setListesSelectionnees(updatedListesSelectionnees)
       onUpdate({
         listesDeDiffusion: updatedListesSelectionnees.map((liste) => liste.id),
@@ -137,8 +139,10 @@ export default function BeneficiairesMultiselectAutocomplete({
 
     const option = rechercheUnBeneficiaire(inputValue)
     if (option) {
-      const updatedBeneficiairesSelectionnes =
-        beneficiairesSelectionnes.concat(option)
+      const updatedBeneficiairesSelectionnes = [
+        option,
+        ...beneficiairesSelectionnes,
+      ]
       setBeneficiairesSelectionnes(updatedBeneficiairesSelectionnes)
       onUpdate({
         beneficiaires: updatedBeneficiairesSelectionnes.map(
