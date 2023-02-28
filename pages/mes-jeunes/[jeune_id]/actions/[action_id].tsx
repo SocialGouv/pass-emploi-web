@@ -8,6 +8,7 @@ import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
 import TagQualificationAction from 'components/action/TagQualificationAction'
+import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -143,6 +144,27 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
 
   return (
     <>
+      <PageActionsPortal>
+        <>
+          {afficherSuppressionAction && (
+            <Button
+              label="Supprimer l'action"
+              onClick={() => deleteAction()}
+              style={ButtonStyle.SECONDARY}
+              disabled={deleteDisabled}
+            >
+              <IconComponent
+                name={IconName.Trashcan}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 mr-2'
+              />
+              Supprimer
+            </Button>
+          )}
+        </>
+      </PageActionsPortal>
+
       {showEchecMessage && (
         <FailureAlert
           label="Une erreur s'est produite, veuillez réessayer ultérieurement"
@@ -154,28 +176,12 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
         <TagQualificationAction statut={statut} qualification={qualification} />
       )}
 
-      <div className='flex items-start justify-between mb-5'>
-        <h2 className='text-m-bold text-grey_800' title='Intitulé de l’action'>
-          {action.content}
-        </h2>
-
-        {afficherSuppressionAction && (
-          <Button
-            label="Supprimer l'action"
-            onClick={() => deleteAction()}
-            style={ButtonStyle.SECONDARY}
-            disabled={deleteDisabled}
-          >
-            <IconComponent
-              name={IconName.Trashcan}
-              aria-hidden={true}
-              focusable={false}
-              className='w-4 h-4 mr-2'
-            />
-            Supprimer
-          </Button>
-        )}
-      </div>
+      <h2
+        className='text-m-bold text-grey_800 mb-5'
+        title='Intitulé de l’action'
+      >
+        {action.content}
+      </h2>
 
       {action.comment && <p className='mb-8'>{action.comment}</p>}
 

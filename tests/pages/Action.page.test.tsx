@@ -24,34 +24,36 @@ import withDependance from 'utils/injectionDependances/withDependance'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('next/router')
+jest.mock('components/PageActionsPortal')
 
 describe("Page Détail d'une action d'un jeune", () => {
   describe('client side', () => {
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let routerPush: Function
+    const action = uneAction()
+    const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
+    const jeune: BaseJeune = {
+      id: 'jeune-1',
+      prenom: 'Nadia',
+      nom: 'Sanfamiye',
+    }
+    let actionsService: ActionsService
+
     beforeEach(() => {
       alerteSetter = jest.fn()
       routerPush = jest.fn()
+
+      actionsService = mockedActionsService({
+        updateAction: jest.fn(async (_, statut) => statut),
+        deleteAction: jest.fn(async () => {}),
+      })
+      ;(useRouter as jest.Mock).mockReturnValue({
+        push: routerPush,
+      })
     })
 
     describe('render', () => {
-      const action = uneAction()
-      const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
-      const jeune: BaseJeune = {
-        id: 'jeune-1',
-        prenom: 'Nadia',
-        nom: 'Sanfamiye',
-      }
-      let actionsService: ActionsService
-
       beforeEach(async () => {
-        actionsService = mockedActionsService({
-          updateAction: jest.fn((_, statut) => Promise.resolve(statut)),
-          deleteAction: jest.fn(),
-        })
-        ;(useRouter as jest.Mock).mockReturnValue({
-          push: routerPush,
-        })
         renderWithContexts(
           <PageAction
             action={action}
@@ -66,7 +68,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         )
       })
 
-      it("Devrait afficher les information d'une action", () => {
+      it("affiche les information d'une action", () => {
         expect(screen.getByText(action.comment)).toBeInTheDocument()
         expect(screen.getByText('15/02/2022')).toBeInTheDocument()
         expect(screen.getByText('16/02/2022')).toBeInTheDocument()
@@ -141,6 +143,33 @@ describe("Page Détail d'une action d'un jeune", () => {
             expect(screen.getByRole('alert')).toBeInTheDocument()
           })
         })
+      })
+    })
+
+    describe('quand l’action n’a pas de commentaires', () => {
+      it('permet de supprimer l’action', async () => {
+        // Given
+        const action = uneAction()
+        renderWithContexts(
+          <PageAction
+            action={action}
+            jeune={jeune}
+            commentaires={[]}
+            pageTitle=''
+          />,
+          {
+            customDependances: { actionsService },
+            customAlerte: { alerteSetter },
+          }
+        )
+
+        // When
+        await userEvent.click(
+          screen.getByRole('button', { name: "Supprimer l'action" })
+        )
+
+        // Then
+        expect(actionsService.deleteAction).toHaveBeenCalledWith(action.id)
       })
     })
 
