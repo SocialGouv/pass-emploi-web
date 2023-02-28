@@ -12,8 +12,7 @@ import {
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
-import MissionLocale, { getServerSideProps } from 'pages/etablissement'
-import Etablissement from 'pages/etablissement'
+import Etablissement, { getServerSideProps } from 'pages/etablissement'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
@@ -26,102 +25,106 @@ jest.mock('components/Modal')
 
 describe('Etablissement', () => {
   describe('Client side', () => {
-    let jeunesService: JeunesService
-    const unJeune = uneBaseJeune()
-    beforeEach(async () => {
-      jeunesService = mockedJeunesService({
-        rechercheJeunesDeLEtablissement: jest.fn(async () => [unJeune]),
+    describe('Render', () => {
+      let jeunesService: JeunesService
+      const unJeune = uneBaseJeune()
+      beforeEach(async () => {
+        jeunesService = mockedJeunesService({
+          rechercheJeunesDeLEtablissement: jest.fn(async () => [unJeune]),
+        })
+        renderWithContexts(<Etablissement pageTitle='' />, {
+          customDependances: { jeunesService },
+          customConseiller: {
+            agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
+          },
+        })
       })
-      renderWithContexts(<MissionLocale pageTitle='' />, {
-        customDependances: { jeunesService },
-        customConseiller: {
-          agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
-        },
-      })
-    })
 
-    it('affiche un champ de recherche', () => {
-      // Then
-      expect(
-        screen.getByLabelText(
+      it('affiche un champ de recherche', () => {
+        // Then
+        expect(
+          screen.getByLabelText(
+            /Rechercher un bénéficiaire par son nom ou prénom/
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', {
+            name: 'Rechercher',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('lance une recherche parmis les jeunes de la Mission Locale', async () => {
+        // Given
+        const inputRechercheJeune = screen.getByLabelText(
           /Rechercher un bénéficiaire par son nom ou prénom/
         )
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('button', {
+        const buttonRechercheJeune = screen.getByRole('button', {
           name: 'Rechercher',
         })
-      ).toBeInTheDocument()
-    })
 
-    it('lance une recherche parmis les jeunes de la Mission Locale', async () => {
-      // Given
-      const inputRechercheJeune = screen.getByLabelText(
-        /Rechercher un bénéficiaire par son nom ou prénom/
-      )
-      const buttonRechercheJeune = screen.getByRole('button', {
-        name: 'Rechercher',
+        // When
+        await userEvent.type(inputRechercheJeune, 'a')
+        await userEvent.click(buttonRechercheJeune)
+
+        // Then
+        expect(
+          jeunesService.rechercheJeunesDeLEtablissement
+        ).toHaveBeenCalledWith('id-etablissement', 'a')
       })
 
-      // When
-      await userEvent.type(inputRechercheJeune, 'a')
-      await userEvent.click(buttonRechercheJeune)
-
-      // Then
-      expect(
-        jeunesService.rechercheJeunesDeLEtablissement
-      ).toHaveBeenCalledWith('id-etablissement', 'a')
-    })
-
-    it('affiche le resultat de la recherche dans un tableau', async () => {
-      // Given
-      const inputRechercheJeune = screen.getByLabelText(
-        /Rechercher un bénéficiaire par son nom ou prénom/
-      )
-      const buttonRechercheJeune = screen.getByRole('button', {
-        name: 'Rechercher',
-      })
-
-      // When
-      await userEvent.type(inputRechercheJeune, 'a')
-      await userEvent.click(buttonRechercheJeune)
-      const tableauDeJeunes = screen.getByRole('table', {
-        name: 'Résultat de recherche (1)',
-      })
-
-      // Then
-      expect(tableauDeJeunes).toBeInTheDocument()
-      expect(
-        within(tableauDeJeunes).getByRole('columnheader', {
-          name: 'Bénéficiaire',
+      it('affiche le resultat de la recherche dans un tableau', async () => {
+        // Given
+        const inputRechercheJeune = screen.getByLabelText(
+          /Rechercher un bénéficiaire par son nom ou prénom/
+        )
+        const buttonRechercheJeune = screen.getByRole('button', {
+          name: 'Rechercher',
         })
-      ).toBeInTheDocument()
-      expect(
-        within(tableauDeJeunes).getByText(`${unJeune.nom} ${unJeune.prenom}`)
-      ).toBeInTheDocument()
-    })
 
-    it('affiche le resultat de la recherche dans un tableau', async () => {
-      // Given
-      const inputRechercheJeune = screen.getByLabelText(
-        /Rechercher un bénéficiaire par son nom ou prénom/
-      )
-      const buttonRechercheJeune = screen.getByRole('button', {
-        name: 'Rechercher',
+        // When
+        await userEvent.type(inputRechercheJeune, 'a')
+        await userEvent.click(buttonRechercheJeune)
+        const tableauDeJeunes = screen.getByRole('table', {
+          name: 'Résultat de recherche (1)',
+        })
+
+        // Then
+        expect(tableauDeJeunes).toBeInTheDocument()
+        expect(
+          within(tableauDeJeunes).getByRole('columnheader', {
+            name: 'Bénéficiaire',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(tableauDeJeunes).getByText(`${unJeune.nom} ${unJeune.prenom}`)
+        ).toBeInTheDocument()
       })
 
-      ;(
-        jeunesService.rechercheJeunesDeLEtablissement as jest.Mock
-      ).mockResolvedValue([])
+      it('affiche le resultat de la recherche dans un tableau', async () => {
+        // Given
+        const inputRechercheJeune = screen.getByLabelText(
+          /Rechercher un bénéficiaire par son nom ou prénom/
+        )
+        const buttonRechercheJeune = screen.getByRole('button', {
+          name: 'Rechercher',
+        })
 
-      // When
-      await userEvent.type(inputRechercheJeune, 'z')
-      await userEvent.click(buttonRechercheJeune)
+        ;(
+          jeunesService.rechercheJeunesDeLEtablissement as jest.Mock
+        ).mockResolvedValue([])
 
-      // Then
-      expect(
-        screen.getByText('Aucune bénéficiaire ne correspond à votre recherche.')
-      ).toBeInTheDocument()
+        // When
+        await userEvent.type(inputRechercheJeune, 'z')
+        await userEvent.click(buttonRechercheJeune)
+
+        // Then
+        expect(
+          screen.getByText(
+            'Aucune bénéficiaire ne correspond à votre recherche.'
+          )
+        ).toBeInTheDocument()
+      })
     })
 
     describe('quand le conseiller n’a pas d’établissement', () => {
@@ -193,7 +196,7 @@ describe('Etablissement', () => {
         )
       })
 
-      it('sauvegarde l’agence et affiche la liste des animations collectives de l’agence', async () => {
+      it('sauvegarde l’agence et affiche la barre de recherche', async () => {
         // Given
         await userEvent.click(
           screen.getByRole('button', {
@@ -219,6 +222,12 @@ describe('Etablissement', () => {
         expect(() =>
           screen.getByText('Votre Mission Locale n’est pas renseignée')
         ).toThrow()
+
+        expect(
+          screen.getByRole('textbox', {
+            name: 'Rechercher un bénéficiaire par son nom ou prénom',
+          })
+        ).toBeInTheDocument()
       })
     })
   })

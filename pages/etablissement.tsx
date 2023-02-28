@@ -26,16 +26,16 @@ import { useDependance } from 'utils/injectionDependances'
 type MissionLocaleProps = PageProps
 
 const Etablissement = (_: MissionLocaleProps) => {
-  let initialTracking = `Etablissement`
-
-  const [conseiller, setConseiller] = useConseiller()
-  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+  const initialTracking = `Etablissement`
 
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const referentielService =
     useDependance<ReferentielService>('referentielService')
+
+  const [conseiller, setConseiller] = useConseiller()
+  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
   const [resultatsRecherche, setResultatsRecherche] = useState<BaseJeune[]>()
 
   async function rechercherJeunes(recherche: string) {
@@ -63,6 +63,7 @@ const Etablissement = (_: MissionLocaleProps) => {
       nom: '',
     })
   }
+
   async function trackAgenceModal(trackingMessage: string) {
     setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
@@ -77,7 +78,6 @@ const Etablissement = (_: MissionLocaleProps) => {
 
       {conseiller && !conseiller?.agence && (
         <EncartAgenceRequise
-          onContacterSupport={trackContacterSupport}
           structureConseiller={conseiller.structure}
           onAgenceChoisie={renseignerAgence}
           getAgences={referentielService.getAgencesClientSide.bind(
