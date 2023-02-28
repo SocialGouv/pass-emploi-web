@@ -14,6 +14,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/PageActionsPortal')
 
 describe('Page Détail Service civique', () => {
   describe('client side', () => {
