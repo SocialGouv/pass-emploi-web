@@ -27,7 +27,7 @@ export function Header({ currentPath, pageHeader, returnTo }: HeaderProps) {
         </div>
       )}
 
-      <div id={PAGE_ACTIONS_ROOT_ID} />
+      <div id={PAGE_ACTIONS_ROOT_ID} className='flex gap-6' />
     </header>
   )
 }
