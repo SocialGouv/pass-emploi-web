@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
+import PageActionsPortal from 'components/PageActionsPortal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -214,6 +215,45 @@ function EditionRdv({
 
   return (
     <>
+      <PageActionsPortal>
+        <>
+          {evenement && !estClos(evenement) && !estCreeParSiMILO(evenement) && (
+            <Button
+              style={ButtonStyle.SECONDARY}
+              onClick={handleDelete}
+              label={`Supprimer l’événement du ${evenement.date}`}
+            >
+              <IconComponent
+                name={IconName.Trashcan}
+                aria-hidden='true'
+                focusable='false'
+                className='mr-2 w-4 h-4'
+              />
+              Supprimer
+            </Button>
+          )}
+
+          {evenement && estAClore(evenement) && (
+            <ButtonLink
+              style={ButtonStyle.PRIMARY}
+              href={`/evenements/${
+                evenement.id
+              }/cloture?redirectUrl=${encodeURIComponent(
+                returnTo + '?onglet=etablissement'
+              )}`}
+            >
+              <IconComponent
+                name={IconName.Clipboard}
+                aria-hidden={true}
+                focusable={false}
+                className='mr-2 w-4 h-4'
+              />
+              Clore
+            </ButtonLink>
+          )}
+        </>
+      </PageActionsPortal>
+
       {showDeleteRdvError && (
         <FailureAlert
           label="Votre événement n'a pas été supprimé, veuillez essayer ultérieurement"
@@ -235,45 +275,6 @@ function EditionRdv({
 
       {evenement && (
         <>
-          <div className='flex'>
-            {!estClos(evenement) && !estCreeParSiMILO(evenement) && (
-              <Button
-                style={ButtonStyle.SECONDARY}
-                onClick={handleDelete}
-                label={`Supprimer l’événement du ${evenement.date}`}
-                className='min-w-fit w-1/4'
-              >
-                <IconComponent
-                  name={IconName.Trashcan}
-                  aria-hidden='true'
-                  focusable='false'
-                  className='mr-2 w-4 h-4'
-                />
-                Supprimer
-              </Button>
-            )}
-
-            {estAClore(evenement) && (
-              <ButtonLink
-                style={ButtonStyle.PRIMARY}
-                href={`/evenements/${
-                  evenement.id
-                }/cloture?redirectUrl=${encodeURIComponent(
-                  returnTo + '?onglet=etablissement'
-                )}`}
-                className='ml-6 min-w-fit w-1/4'
-              >
-                <IconComponent
-                  name={IconName.Clipboard}
-                  aria-hidden={true}
-                  focusable={false}
-                  className='mr-2 w-4 h-4'
-                />
-                Clore
-              </ButtonLink>
-            )}
-          </div>
-
           {estAClore(evenement) && (
             <div className='pt-6'>
               <FailureAlert label='Cet événement est passé et doit être clos' />
