@@ -62,7 +62,7 @@ export default function Pagination({
 
   return (
     <nav aria-label={`pagination ${nomListe ?? ''}`}>
-      <ul className='flex justify-between items-center'>
+      <ul className='flex items-center justify-center gap-1'>
         <PaginationItem
           page={1}
           label='Première page'
@@ -142,7 +142,9 @@ function PaginationItem({
         aria-current={isActive && 'page'}
         title={label}
         disabled={disabled}
-        className={`rounded-full px-3 py-1 fill-primary_darken disabled:cursor-not-allowed disabled:fill-grey_700 disabled:text-grey_700 ${activeStyle} ${hoverStyle}`}
+        className={`rounded-full ${
+          typeof children === 'number' ? 'px-3' : 'px-1'
+        } py-1 fill-primary_darken disabled:cursor-not-allowed disabled:fill-grey_700 disabled:text-grey_700 ${activeStyle} ${hoverStyle}`}
       >
         {children}
       </button>
