@@ -21,10 +21,12 @@ import {
   DetailJeuneJson,
   IndicateursSemaineJson,
   ItemJeuneJson,
+  JeuneEtablissementJson,
   jsonToBaseJeune,
   jsonToDetailJeune,
   jsonToIndicateursSemaine,
   jsonToItemJeune,
+  jsonToJeuneEtablissement,
   jsonToMetadonneesFavoris,
   MetadonneesFavorisJson,
   SuppressionJeuneFormData,
@@ -364,13 +366,13 @@ export class JeunesApiService implements JeunesService {
     const {
       content: { resultats },
     } = await this.apiClient.get<{
-      resultats: JeuneEtablissement[]
+      resultats: JeuneEtablissementJson[]
     }>(
       `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}`,
       session!.accessToken
     )
 
-    return resultats
+    return resultats.map(jsonToJeuneEtablissement)
   }
 
   private async getJeunesDuConseiller(

@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import SituationTag from 'components/jeune/SituationTag'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
@@ -100,11 +101,15 @@ const Etablissement = (_: MissionLocaleProps) => {
             </THead>
             <TBody>
               {resultatsRecherche!.map((jeune) => (
-                <TR key={jeune.jeune.id}>
-                  <TD isBold className='rounded-l-base'>
-                    {getNomJeuneComplet(jeune.jeune)}
-                  </TD>
-                  {isMilo && <TD>{jeune.situationCourante}</TD>}
+                <TR key={jeune.base.id}>
+                  <TD isBold>{getNomJeuneComplet(jeune.base)}</TD>
+                  {isMilo && (
+                    <TD>
+                      {jeune.situation && (
+                        <SituationTag situation={jeune.situation} />
+                      )}
+                    </TD>
+                  )}
                   <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
                   <TD>
                     {jeune.referent.prenom} {jeune.referent.nom}

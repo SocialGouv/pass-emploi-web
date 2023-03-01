@@ -17,7 +17,7 @@ import {
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { CategorieSituation, JeuneFromListe } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { JeunesApiService } from 'services/jeunes.service'
@@ -510,7 +510,7 @@ describe('JeunesApiService', () => {
       )
       expect(actual).toEqual([
         {
-          jeune: {
+          base: {
             id: 'string',
             nom: 'string',
             prenom: 'string',
@@ -520,7 +520,7 @@ describe('JeunesApiService', () => {
             nom: 'string',
             prenom: 'string',
           },
-          situation: 'Emploi',
+          situation: CategorieSituation.EMPLOI,
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
       ])

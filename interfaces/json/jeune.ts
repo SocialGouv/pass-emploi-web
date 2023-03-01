@@ -4,6 +4,7 @@ import {
   DetailJeune,
   EtatSituation,
   IndicateursSemaine,
+  JeuneEtablissement,
   JeuneFromListe,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
@@ -36,6 +37,13 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   dateFinCEJ?: string
   situations?: Situation[]
   idPartenaire?: string
+}
+
+export type JeuneEtablissementJson = {
+  jeune: BaseJeune
+  referent: { id: string; nom: string; prenom: string }
+  situation?: string
+  dateDerniereActivite?: string
 }
 
 export interface MetadonneesFavorisJson {
@@ -154,6 +162,17 @@ export function jsonToDetailJeune({
         etat: toEtatSituation(situation.etat),
       })) ?? [],
     idPartenaire: jeune.idPartenaire ?? '',
+  }
+}
+
+export function jsonToJeuneEtablissement({
+  jeune,
+  ...json
+}: JeuneEtablissementJson): JeuneEtablissement {
+  return {
+    ...json,
+    base: jeune,
+    situation: toCategorieSituation(json.situation),
   }
 }
 

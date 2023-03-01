@@ -10,7 +10,7 @@ import {
   mockedReferentielService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { CategorieSituation } from 'interfaces/jeune'
+import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import Etablissement, { getServerSideProps } from 'pages/etablissement'
 import { ConseillerService } from 'services/conseiller.service'
@@ -27,8 +27,8 @@ jest.mock('components/Modal')
 describe('Etablissement', () => {
   describe('Client side', () => {
     let jeunesService: JeunesService
-    const unJeune = {
-      jeune: {
+    const unJeune: JeuneEtablissement = {
+      base: {
         id: 'id-jeune',
         nom: 'Reportaire',
         prenom: 'Albert',
@@ -38,7 +38,7 @@ describe('Etablissement', () => {
         nom: 'Le Calamar',
         prenom: 'Carlo',
       },
-      situationCourante: CategorieSituation.EMPLOI,
+      situation: CategorieSituation.EMPLOI,
       dateDerniereActivite: '2023-03-01T14:11:38.040Z',
     }
 
@@ -133,11 +133,11 @@ describe('Etablissement', () => {
 
         expect(
           within(tableauDeJeunes).getByText(
-            `${unJeune.jeune.nom} ${unJeune.jeune.prenom}`
+            `${unJeune.base.nom} ${unJeune.base.prenom}`
           )
         ).toBeInTheDocument()
         expect(
-          within(tableauDeJeunes).getByText(unJeune.situationCourante)
+          within(tableauDeJeunes).getByText(unJeune.situation!)
         ).toBeInTheDocument()
         expect(
           within(tableauDeJeunes).getByText(
