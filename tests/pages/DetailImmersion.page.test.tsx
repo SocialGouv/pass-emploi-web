@@ -99,6 +99,13 @@ describe('Page Détail Offre Emploi', () => {
       immersionsService = mockedImmersionsService({
         getImmersionServerSide: jest.fn(async () => unDetailImmersion()),
       })
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        session: {
+          accessToken: 'accessToken',
+        },
+      })
+      ;(withDependance as jest.Mock).mockReturnValue(immersionsService)
     })
 
     it('requiert la connexion', async () => {
@@ -117,19 +124,6 @@ describe('Page Détail Offre Emploi', () => {
     })
 
     it('charge la page avec les détails de l’offre', async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          accessToken: 'accessToken',
-        },
-      })
-      ;(withDependance as jest.Mock).mockImplementation(
-        (dependance: string) => {
-          if (dependance === 'immersionsService') return immersionsService
-        }
-      )
-
       // When
       const actual = await getServerSideProps({
         query: { offre_type: 'immersion', offre_id: 'id-offre' },

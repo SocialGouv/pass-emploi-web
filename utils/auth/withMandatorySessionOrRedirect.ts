@@ -1,8 +1,8 @@
 import apm, { UserObject } from 'elastic-apm-node'
 import { Redirect } from 'next'
+import { GetServerSidePropsContext } from 'next/types'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
-import { GetServerSidePropsContext } from 'next/types'
 
 import { RefreshAccessTokenError } from 'utils/auth/authenticator'
 

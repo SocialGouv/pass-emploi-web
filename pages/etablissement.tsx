@@ -17,7 +17,6 @@ import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -53,15 +52,6 @@ const Etablissement = (_: MissionLocaleProps) => {
     await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller!, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
-  }
-
-  function trackContacterSupport() {
-    trackEvent({
-      structure: conseiller!.structure,
-      categorie: 'Contact Support',
-      action: 'Pop-in sélection agence',
-      nom: '',
-    })
   }
 
   async function trackAgenceModal(trackingMessage: string) {

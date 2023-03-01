@@ -325,6 +325,7 @@ describe('Partage Recherche', () => {
       describe('Offre Emploi', () => {
         beforeEach(() => {
           // Given
+          ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
           renderWithContexts(
             <PartageCritere
               pageTitle='Partager une recherche'
@@ -388,6 +389,7 @@ describe('Partage Recherche', () => {
       describe('Alternance', () => {
         beforeEach(() => {
           // Given
+          ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
           renderWithContexts(
             <PartageCritere
               pageTitle='Partager une recherche'
@@ -449,6 +451,7 @@ describe('Partage Recherche', () => {
       describe('Immersion', () => {
         beforeEach(() => {
           // Given
+          ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
           renderWithContexts(
             <PartageCritere
               pageTitle='Partager une recherche'
@@ -513,6 +516,7 @@ describe('Partage Recherche', () => {
       describe('Service Civique', () => {
         beforeEach(() => {
           // Given
+          ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
           renderWithContexts(
             <PartageCritere
               pageTitle='Partager une recherche'

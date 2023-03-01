@@ -301,6 +301,7 @@ describe('Pilotage', () => {
     describe("quand le conseiller n'a pas d'animation collective à clore", () => {
       it('affiche un message qui le précise', async () => {
         // Given
+        ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
         renderWithContexts(
           <Pilotage
             withoutChat={true}

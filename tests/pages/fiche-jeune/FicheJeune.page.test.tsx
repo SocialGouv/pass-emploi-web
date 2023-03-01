@@ -246,10 +246,20 @@ describe('Fiche Jeune', () => {
 
     describe('Quand on demande une page d’actions spécifique', () => {
       it('récupère la page demandée des actions du jeune', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: {
+            accessToken: 'accessToken',
+            user: { id: 'id-conseiller', structure: 'MILO' },
+          },
+          validSession: true,
+        })
+
         // When
         const actual = await getServerSideProps({
           query: { jeune_id: 'id-jeune', page: 3 },
         } as unknown as GetServerSidePropsContext)
+
         // Then
         expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',

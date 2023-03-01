@@ -19,7 +19,6 @@ import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
-import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -138,15 +137,6 @@ function Agenda({ onglet }: AgendaProps) {
 
   function trackingLabelOnglet(tab: Onglet): string {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
-  }
-
-  function trackContacterSupport() {
-    trackEvent({
-      structure: conseiller!.structure,
-      categorie: 'Contact Support',
-      action: 'Pop-in sélection agence',
-      nom: '',
-    })
   }
 
   useMatomo(trackingTitle)
