@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { getSession, signIn } from 'next-auth/react'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
 import Logo from 'assets/images/logo_app_cej.svg'
