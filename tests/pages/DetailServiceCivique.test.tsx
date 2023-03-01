@@ -123,6 +123,13 @@ describe('Page Détail Service civique', () => {
           unDetailServiceCivique()
         ),
       })
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        session: {
+          accessToken: 'accessToken',
+        },
+      })
+      ;(withDependance as jest.Mock).mockReturnValue(servicesCiviquesService)
     })
 
     it('requiert la connexion', async () => {
@@ -141,21 +148,6 @@ describe('Page Détail Service civique', () => {
     })
 
     it('charge la page avec les détails du service civique', async () => {
-      // Given
-      const offre: DetailServiceCivique = unDetailServiceCivique()
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          accessToken: 'accessToken',
-        },
-      })
-      ;(withDependance as jest.Mock).mockImplementation(
-        (dependance: string) => {
-          if (dependance === 'servicesCiviquesService')
-            return servicesCiviquesService
-        }
-      )
-
       // When
       const actual = await getServerSideProps({
         query: {
@@ -170,7 +162,7 @@ describe('Page Détail Service civique', () => {
       ).toHaveBeenCalledWith('id-service-civique', 'accessToken')
       expect(actual).toEqual({
         props: {
-          offre,
+          offre: unDetailServiceCivique(),
           pageTitle: 'Recherche d’offres - Détail de l’offre',
           pageHeader: 'Offre de service civique',
         },

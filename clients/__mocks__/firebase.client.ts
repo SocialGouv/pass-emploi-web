@@ -2,29 +2,29 @@ import { unChat } from 'fixtures/jeune'
 import { Chat } from 'interfaces/jeune'
 import { Message } from 'interfaces/message'
 
-export const FirebaseClient = jest.fn(() => ({
-  signIn: jest.fn(),
-  signOut: jest.fn(),
-  addMessage: jest.fn(),
-  addMessageOffre: jest.fn(),
-  addFichier: jest.fn(),
-  updateChat: jest.fn(),
-  findAndObserveChatsDuConseiller: jest.fn(
+export class FirebaseClient {
+  signIn = jest.fn()
+  signOut = jest.fn()
+  addMessage = jest.fn()
+  addMessageOffre = jest.fn()
+  addFichier = jest.fn()
+  updateChat = jest.fn()
+  findAndObserveChatsDuConseiller = jest.fn(
     (_idConseiller: string, fn: (chats: { [idJeune: string]: Chat }) => void) =>
       fn({ 'jeune-1': unChat(), 'jeune-2': unChat(), 'jeune-3': unChat() })
-  ),
-  observeChat: jest.fn((_idChat: string, fn: (chat: Chat) => void) =>
+  )
+  observeChat = jest.fn((_idChat: string, fn: (chat: Chat) => void) =>
     fn(unChat())
-  ),
-  observeDerniersMessagesDuChat: jest.fn(
+  )
+  observeDerniersMessagesDuChat = jest.fn(
     (_idChat: string, _nbMessages: number, fn: (messages: Message[]) => void) =>
       fn([])
-  ),
-  getChatsDuConseiller: jest.fn((_idConseiller) => ({
+  )
+  getChatsDuConseiller = jest.fn((_idConseiller) => ({
     'jeune-1': unChat({ chatId: `chat-jeune-1` }),
     'jeune-2': unChat({ chatId: `chat-jeune-2` }),
     'jeune-3': unChat({ chatId: `chat-jeune-3` }),
-  })),
-  countMessagesNotRead: jest.fn(),
-  getMessagesGroupe: jest.fn(),
-}))
+  }))
+  countMessagesNotRead = jest.fn()
+  getMessagesGroupe = jest.fn()
+}

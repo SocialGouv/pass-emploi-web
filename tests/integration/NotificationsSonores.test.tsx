@@ -23,9 +23,10 @@ jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()
-global.Audio = jest.fn().mockImplementation(() => ({
-  play: mockAudio,
-}))
+// @ts-ignore
+global.Audio = class FakeAudio {
+  play = mockAudio
+}
 
 describe('Intégration notifications sonores', () => {
   let updateChatsRef: (chats: JeuneChat[]) => void

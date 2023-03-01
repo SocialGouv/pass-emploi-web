@@ -20,7 +20,6 @@ import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -116,15 +115,6 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller!, agence })
     setTrackingLabel(pageTracking + ' - Succès ajout agence')
-  }
-
-  function trackContacterSupport() {
-    trackEvent({
-      structure: conseiller!.structure,
-      categorie: 'Contact Support',
-      action: 'Pop-in sélection agence',
-      nom: '',
-    })
   }
 
   function trackAgenceModal(trackingMessage: string) {
