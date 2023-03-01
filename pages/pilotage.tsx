@@ -237,7 +237,6 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
         >
           {!animationsCollectivesAffichees && conseiller && (
             <EncartAgenceRequise
-              onContacterSupport={trackContacterSupport}
               structureConseiller={conseiller.structure}
               onAgenceChoisie={renseignerAgence}
               getAgences={referentielService.getAgencesClientSide.bind(

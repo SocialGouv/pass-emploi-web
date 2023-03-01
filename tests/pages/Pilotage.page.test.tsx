@@ -449,9 +449,9 @@ describe('Pilotage', () => {
           nom: agence.nom,
           codeDepartement: '3',
         })
-        expect(() =>
-          screen.getByText('Votre Mission Locale n’est pas renseignée')
-        ).toThrow()
+        expect(
+          screen.queryByText('Votre Mission Locale n’est pas renseignée')
+        ).not.toBeInTheDocument()
         expect(
           screen.getByRole('table', {
             name: 'Liste des animations collectives à clore',

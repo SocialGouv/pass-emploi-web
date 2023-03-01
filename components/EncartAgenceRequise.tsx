@@ -5,12 +5,12 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import { trackEvent } from 'utils/analytics/matomo'
 
 type EncartAgenceRequiseProps = {
   structureConseiller: StructureConseiller
   getAgences: (structure: StructureConseiller) => Promise<Agence[]>
   onAgenceChoisie: (agence: { id?: string; nom: string }) => Promise<void>
-  onContacterSupport: () => void
   onChangeAffichageModal: (trackingMessage: string) => void
 }
 export default function EncartAgenceRequise({
@@ -18,7 +18,6 @@ export default function EncartAgenceRequise({
   getAgences,
   onAgenceChoisie,
   onChangeAffichageModal,
-  onContacterSupport,
 }: EncartAgenceRequiseProps): JSX.Element {
   const [agences, setAgences] = useState<Agence[]>([])
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
@@ -46,6 +45,15 @@ export default function EncartAgenceRequise({
   }): Promise<void> {
     await onAgenceChoisie(agence)
     setShowAgenceModal(false)
+  }
+
+  function trackContacterSupport() {
+    trackEvent({
+      structure: structureConseiller,
+      categorie: 'Contact Support',
+      action: 'Pop-in sélection agence',
+      nom: '',
+    })
   }
 
   return (
@@ -79,7 +87,7 @@ export default function EncartAgenceRequise({
           structureConseiller={structureConseiller}
           referentielAgences={agences}
           onAgenceChoisie={renseignerAgence}
-          onContacterSupport={onContacterSupport}
+          onContacterSupport={trackContacterSupport}
           onClose={closeAgenceModal}
         />
       )}
