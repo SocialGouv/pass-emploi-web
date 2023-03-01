@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { uneBaseJeune } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import {
   mockedConseillerService,
@@ -27,30 +26,34 @@ jest.mock('components/Modal')
 
 describe('Etablissement', () => {
   describe('Client side', () => {
-    describe('Render', () => {
-      let jeunesService: JeunesService
-      const unJeune = {
-        jeune: {
-          id: 'id-jeune',
-          nom: 'Reportaire',
-          prenom: 'Albert',
-        },
-        referent: {
-          id: 'id-conseiller',
-          nom: 'Le Calamar',
-          prenom: 'Carlo',
-        },
-        situationCourante: CategorieSituation.EMPLOI,
-        dateDerniereActivite: '2023-03-01T14:11:38.040Z',
-      }
+    let jeunesService: JeunesService
+    const unJeune = {
+      jeune: {
+        id: 'id-jeune',
+        nom: 'Reportaire',
+        prenom: 'Albert',
+      },
+      referent: {
+        id: 'id-conseiller',
+        nom: 'Le Calamar',
+        prenom: 'Carlo',
+      },
+      situationCourante: CategorieSituation.EMPLOI,
+      dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+    }
 
+    beforeEach(async () => {
+      jeunesService = mockedJeunesService({
+        rechercheJeunesDeLEtablissement: jest.fn(async () => [unJeune]),
+      })
+    })
+
+    describe('Render', () => {
       beforeEach(async () => {
-        jeunesService = mockedJeunesService({
-          rechercheJeunesDeLEtablissement: jest.fn(async () => [unJeune]),
-        })
         renderWithContexts(<Etablissement pageTitle='' />, {
           customDependances: { jeunesService },
           customConseiller: {
+            structure: StructureConseiller.MILO,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
           },
         })
@@ -113,6 +116,22 @@ describe('Etablissement', () => {
           })
         ).toBeInTheDocument()
         expect(
+          within(tableauDeJeunes).getByRole('columnheader', {
+            name: 'Situation',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(tableauDeJeunes).getByRole('columnheader', {
+            name: 'Dernière activité',
+          })
+        ).toBeInTheDocument()
+        expect(
+          within(tableauDeJeunes).getByRole('columnheader', {
+            name: 'Conseiller',
+          })
+        ).toBeInTheDocument()
+
+        expect(
           within(tableauDeJeunes).getByText(
             `${unJeune.jeune.nom} ${unJeune.jeune.prenom}`
           )
@@ -155,6 +174,34 @@ describe('Etablissement', () => {
             'Aucune bénéficiaire ne correspond à votre recherche.'
           )
         ).toBeInTheDocument()
+      })
+    })
+
+    describe('Quand le conseiller n’est pas MILO', () => {
+      it('n’affiche pas la colonne Situation', async () => {
+        // Given
+        renderWithContexts(<Etablissement pageTitle='' />, {
+          customDependances: { jeunesService },
+          customConseiller: {
+            structure: StructureConseiller.PASS_EMPLOI,
+            agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
+          },
+        })
+        const inputRechercheJeune = screen.getByLabelText(
+          /Rechercher un bénéficiaire par son nom ou prénom/
+        )
+        const buttonRechercheJeune = screen.getByRole('button', {
+          name: 'Rechercher',
+        })
+
+        // When
+        await userEvent.type(inputRechercheJeune, 'a')
+        await userEvent.click(buttonRechercheJeune)
+
+        // Then
+        expect(
+          screen.queryByRole('columnheader', { name: 'Situation' })
+        ).not.toBeInTheDocument()
       })
     })
 

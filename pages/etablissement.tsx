@@ -39,6 +39,8 @@ const Etablissement = (_: MissionLocaleProps) => {
   const [resultatsRecherche, setResultatsRecherche] =
     useState<JeuneEtablissement[]>()
 
+  const isMilo = conseiller?.structure === StructureConseiller.MILO
+
   async function rechercherJeunes(recherche: string) {
     if (conseiller?.agence?.id) {
       await jeunesService
@@ -79,13 +81,6 @@ const Etablissement = (_: MissionLocaleProps) => {
         />
       )}
 
-      {/*resultatsRecherche && Boolean(resultatsRecherche?.length) && (
-        <TableauJeunesEtablissement
-          jeunesFiltres={resultatsRecherche}
-          totalJeunes={resultatsRecherche.length}
-        />
-      )*/}
-
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
@@ -98,7 +93,7 @@ const Etablissement = (_: MissionLocaleProps) => {
             <THead>
               <TR isHeader={true}>
                 <TH>Bénéficiaire</TH>
-                <TH>Situation</TH>
+                {isMilo && <TH>Situation</TH>}
                 <TH>Dernière activité</TH>
                 <TH>Conseiller</TH>
               </TR>
@@ -109,7 +104,7 @@ const Etablissement = (_: MissionLocaleProps) => {
                   <TD isBold className='rounded-l-base'>
                     {getNomJeuneComplet(jeune.jeune)}
                   </TD>
-                  <TD>{jeune.situationCourante}</TD>
+                  {isMilo && <TD>{jeune.situationCourante}</TD>}
                   <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
                   <TD>
                     {jeune.referent.prenom} {jeune.referent.nom}
