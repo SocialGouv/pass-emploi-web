@@ -79,6 +79,13 @@ export type JeuneAvecInfosComplementaires = JeuneAvecNbActionsNonTerminees & {
   messagesNonLus: number
 }
 
+export type JeuneEtablissement = {
+  jeune: BaseJeune
+  referent: { id: string; nom: string; prenom: string }
+  situationCourante: CategorieSituation
+  dateDerniereActivite: string
+}
+
 export interface Chat {
   chatId: string
   seenByConseiller: boolean
@@ -145,8 +152,8 @@ export function compareJeunesByLastNameDesc(
 }
 
 export function compareJeunesBySituation(
-  jeune1: JeuneFromListe,
-  jeune2: JeuneFromListe
+  jeune1: JeuneFromListe | JeuneEtablissement,
+  jeune2: JeuneFromListe | JeuneEtablissement
 ): number {
   return `${jeune1.situationCourante}`.localeCompare(
     `${jeune2.situationCourante}`
@@ -154,8 +161,8 @@ export function compareJeunesBySituation(
 }
 
 export function compareJeunesBySituationDesc(
-  jeune1: JeuneFromListe,
-  jeune2: JeuneFromListe
+  jeune1: JeuneFromListe | JeuneEtablissement,
+  jeune2: JeuneFromListe | JeuneEtablissement
 ): number {
   return -compareJeunesBySituation(jeune1, jeune2)
 }

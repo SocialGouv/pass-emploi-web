@@ -12,7 +12,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -20,6 +20,7 @@ import { ReferentielService } from 'services/referentiel.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { toFullDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 type MissionLocaleProps = PageProps
@@ -35,7 +36,8 @@ const Etablissement = (_: MissionLocaleProps) => {
 
   const [conseiller, setConseiller] = useConseiller()
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-  const [resultatsRecherche, setResultatsRecherche] = useState<BaseJeune[]>()
+  const [resultatsRecherche, setResultatsRecherche] =
+    useState<JeuneEtablissement[]>()
 
   async function rechercherJeunes(recherche: string) {
     if (conseiller?.agence?.id) {
@@ -77,6 +79,13 @@ const Etablissement = (_: MissionLocaleProps) => {
         />
       )}
 
+      {/*resultatsRecherche && Boolean(resultatsRecherche?.length) && (
+        <TableauJeunesEtablissement
+          jeunesFiltres={resultatsRecherche}
+          totalJeunes={resultatsRecherche.length}
+        />
+      )*/}
+
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
@@ -88,23 +97,23 @@ const Etablissement = (_: MissionLocaleProps) => {
           >
             <THead>
               <TR isHeader={true}>
-                <TH>
-                  <span className='mr-1'>Bénéficiaire</span>
-                </TH>
-                <TH>
-                  <span className='mr-1'></span>
-                </TH>
+                <TH>Bénéficiaire</TH>
+                <TH>Situation</TH>
+                <TH>Dernière activité</TH>
+                <TH>Conseiller</TH>
               </TR>
             </THead>
             <TBody>
               {resultatsRecherche!.map((jeune) => (
-                <TR key={jeune.id}>
+                <TR key={jeune.jeune.id}>
                   <TD isBold className='rounded-l-base'>
-                    <span className='flex items-baseline'>
-                      {getNomJeuneComplet(jeune)}
-                    </span>
+                    {getNomJeuneComplet(jeune.jeune)}
                   </TD>
-                  <TD>{/* todo va évoluer quand le tableau sera enrichi*/}</TD>
+                  <TD>{jeune.situationCourante}</TD>
+                  <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
+                  <TD>
+                    {jeune.referent.prenom} {jeune.referent.nom}
+                  </TD>
                 </TR>
               ))}
             </TBody>

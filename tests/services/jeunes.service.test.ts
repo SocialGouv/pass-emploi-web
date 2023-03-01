@@ -474,11 +474,27 @@ describe('JeunesApiService', () => {
   })
 
   describe('.rechercheJeunesDeLEtablissement', () => {
-    it('retourne le resultat de recherche des jeunes d’un etablissment', async () => {
+    it('retourne le resultat de recherche des jeunes d’un etablissement', async () => {
       // Given
-      const unJeune = uneBaseJeune()
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: { resultats: [{ jeune: unJeune }] },
+        content: {
+          resultats: [
+            {
+              jeune: {
+                id: 'string',
+                nom: 'string',
+                prenom: 'string',
+              },
+              referent: {
+                id: 'string',
+                nom: 'string',
+                prenom: 'string',
+              },
+              situation: 'Emploi',
+              dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+            },
+          ],
+        },
       })
 
       // When
@@ -492,7 +508,22 @@ describe('JeunesApiService', () => {
         '/v2/etablissements/id-etablissement/jeunes?q=e',
         'accessToken'
       )
-      expect(actual).toEqual([unJeune])
+      expect(actual).toEqual([
+        {
+          jeune: {
+            id: 'string',
+            nom: 'string',
+            prenom: 'string',
+          },
+          referent: {
+            id: 'string',
+            nom: 'string',
+            prenom: 'string',
+          },
+          situation: 'Emploi',
+          dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+        },
+      ])
     })
   })
 })

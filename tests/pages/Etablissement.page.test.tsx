@@ -11,6 +11,7 @@ import {
   mockedReferentielService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { CategorieSituation } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import Etablissement, { getServerSideProps } from 'pages/etablissement'
 import { ConseillerService } from 'services/conseiller.service'
@@ -18,6 +19,7 @@ import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { toFullDate } from 'utils/date'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -27,7 +29,21 @@ describe('Etablissement', () => {
   describe('Client side', () => {
     describe('Render', () => {
       let jeunesService: JeunesService
-      const unJeune = uneBaseJeune()
+      const unJeune = {
+        jeune: {
+          id: 'id-jeune',
+          nom: 'Reportaire',
+          prenom: 'Albert',
+        },
+        referent: {
+          id: 'id-conseiller',
+          nom: 'Le Calamar',
+          prenom: 'Carlo',
+        },
+        situationCourante: CategorieSituation.EMPLOI,
+        dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+      }
+
       beforeEach(async () => {
         jeunesService = mockedJeunesService({
           rechercheJeunesDeLEtablissement: jest.fn(async () => [unJeune]),
@@ -97,11 +113,26 @@ describe('Etablissement', () => {
           })
         ).toBeInTheDocument()
         expect(
-          within(tableauDeJeunes).getByText(`${unJeune.nom} ${unJeune.prenom}`)
+          within(tableauDeJeunes).getByText(
+            `${unJeune.jeune.nom} ${unJeune.jeune.prenom}`
+          )
+        ).toBeInTheDocument()
+        expect(
+          within(tableauDeJeunes).getByText(unJeune.situationCourante)
+        ).toBeInTheDocument()
+        expect(
+          within(tableauDeJeunes).getByText(
+            toFullDate(unJeune.dateDerniereActivite)
+          )
+        ).toBeInTheDocument()
+        expect(
+          within(tableauDeJeunes).getByText(
+            `${unJeune.referent.prenom} ${unJeune.referent.nom}`
+          )
         ).toBeInTheDocument()
       })
 
-      it('affiche le resultat de la recherche dans un tableau', async () => {
+      it(`prévient qu'il n'y a pas de résultat`, async () => {
         // Given
         const inputRechercheJeune = screen.getByLabelText(
           /Rechercher un bénéficiaire par son nom ou prénom/

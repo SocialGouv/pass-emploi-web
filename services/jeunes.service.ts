@@ -8,6 +8,7 @@ import {
   ConseillerHistorique,
   DetailJeune,
   IndicateursSemaine,
+  JeuneEtablissement,
   JeuneFromListe,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
@@ -115,7 +116,7 @@ export interface JeunesService {
   rechercheJeunesDeLEtablissement(
     idEtablissement: string,
     recherche: string
-  ): Promise<BaseJeune[]>
+  ): Promise<JeuneEtablissement[]>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -358,20 +359,18 @@ export class JeunesApiService implements JeunesService {
   async rechercheJeunesDeLEtablissement(
     idEtablissement: string,
     recherche: string
-  ): Promise<BaseJeune[]> {
+  ): Promise<JeuneEtablissement[]> {
     const session = await getSession()
     const {
       content: { resultats },
     } = await this.apiClient.get<{
-      resultats: Array<{
-        jeune: BaseJeune
-      }>
+      resultats: JeuneEtablissement[]
     }>(
       `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}`,
       session!.accessToken
     )
 
-    return resultats.map(({ jeune }) => jeune)
+    return resultats
   }
 
   private async getJeunesDuConseiller(
