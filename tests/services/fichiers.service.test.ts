@@ -2,10 +2,6 @@ import { ApiClient } from 'clients/api.client'
 import { FichiersApiService, FichiersService } from 'services/fichiers.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(async () => ({ accessToken: 'accessToken' })),
-}))
-
 describe('FichierApiService', () => {
   let apiClient: ApiClient
   let fichiersService: FichiersService

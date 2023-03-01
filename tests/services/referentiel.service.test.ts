@@ -15,12 +15,6 @@ import {
 } from 'services/referentiel.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(() => ({
-    accessToken: 'accessToken',
-  })),
-}))
-
 describe('ReferentielApiService', () => {
   let apiClient: ApiClient
   let referentielService: ReferentielService

@@ -21,13 +21,6 @@ import { ActionsApiService } from 'services/actions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(() => ({
-    user: { id: 'id-conseiller' },
-    accessToken: 'accessToken',
-  })),
-}))
-
 describe('ActionsApiService', () => {
   let apiClient: ApiClient
   let actionsService: ActionsApiService
@@ -439,7 +432,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/action',
+        '/conseillers/idConseiller/jeunes/id-jeune/action',
         {
           content: 'content',
           comment: 'comment',
