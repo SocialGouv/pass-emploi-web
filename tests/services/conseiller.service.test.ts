@@ -1,19 +1,7 @@
-import { FakeApiClient } from '../utils/fakeApiClient'
-
 import { ApiClient } from 'clients/api.client'
 import { unConseiller, unConseillerJson } from 'fixtures/conseiller'
 import { ConseillerApiService } from 'services/conseiller.service'
-
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(async () => ({
-    user: {
-      id: 'idConseiller',
-      estSuperviseur: false,
-      structure: 'PASS_EMPLOI',
-    },
-    accessToken: 'accessToken',
-  })),
-}))
+import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
 describe('ConseillerApiService', () => {
   let apiClient: ApiClient

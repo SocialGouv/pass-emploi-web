@@ -24,13 +24,6 @@ import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(async () => ({
-    user: { id: 'idConseiller' },
-    accessToken: 'accessToken',
-  })),
-}))
-
 describe('JeunesApiService', () => {
   let apiClient: ApiClient
   let jeunesService: JeunesApiService

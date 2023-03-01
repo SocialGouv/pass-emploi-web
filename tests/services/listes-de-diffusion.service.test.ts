@@ -10,13 +10,6 @@ import {
 } from 'services/listes-de-diffusion.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(async () => ({
-    user: { id: 'idConseiller' },
-    accessToken: 'accessToken',
-  })),
-}))
-
 describe('ListesDeDiffusionApiService', () => {
   let apiClient: ApiClient
   let listesDeDiffusionService: ListesDeDiffusionService
