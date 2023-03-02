@@ -49,20 +49,21 @@ const Etablissement = (_: MissionLocaleProps) => {
   const isMilo = conseiller?.structure === StructureConseiller.MILO
 
   async function rechercherJeunes(input: string, page: number) {
-    if (
-      conseiller?.agence?.id &&
-      (page !== pageCourante || input !== recherche)
-    ) {
+    if (!input) {
+      setResultatsRecherche(undefined)
+      setMetadonnees(undefined)
+    } else if (rechercheValide(input, page)) {
       const resultats = await jeunesService.rechercheJeunesDeLEtablissement(
-        conseiller.agence.id,
+        conseiller!.agence!.id!,
         input,
         page
       )
       setResultatsRecherche(resultats.jeunes)
       setMetadonnees(resultats.metadonnees)
       setPageCourante(page)
-      setRecherche(input)
     }
+
+    setRecherche(input)
   }
 
   async function renseignerAgence(agence: {
@@ -73,6 +74,13 @@ const Etablissement = (_: MissionLocaleProps) => {
     setConseiller({ ...conseiller!, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
+
+  function rechercheValide(input: string, page: number) {
+    return (
+      conseiller?.agence?.id && (page !== pageCourante || input !== recherche)
+    )
+  }
+
   async function trackAgenceModal(trackingMessage: string) {
     setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
