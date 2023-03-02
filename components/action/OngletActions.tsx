@@ -6,10 +6,10 @@ import Pagination from 'components/ui/Table/Pagination'
 import {
   Action,
   EtatQualificationAction,
-  MetadonneesActions,
   StatutAction,
 } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
+import { MetadonneesPagination } from 'types/pagination'
 
 interface OngletActionsProps {
   afficherActions: boolean
@@ -18,14 +18,14 @@ interface OngletActionsProps {
   actionsInitiales: {
     actions: Action[]
     page: number
-    metadonnees: MetadonneesActions
+    metadonnees: MetadonneesPagination
   }
   getActions: (
     page: number,
     statuts: StatutAction[],
     etatsQualification: EtatQualificationAction[],
     tri: string
-  ) => Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
+  ) => Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }>
 }
 
 export enum TRI {

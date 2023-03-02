@@ -2,11 +2,11 @@ import {
   Action,
   ActionPilotage,
   Commentaire,
-  MetadonneesActions,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
 import { ActionJson, ActionPilotageJson } from 'interfaces/json/action'
+import { MetadonneesPagination } from 'types/pagination'
 
 export const uneAction = (overrides: Partial<Action> = {}): Action => {
   const defaults: Action = {
@@ -253,7 +253,7 @@ export const uneListeDActionsJson = (
 
 export const desActionsInitiales = (): {
   actions: Action[]
-  metadonnees: MetadonneesActions
+  metadonnees: MetadonneesPagination
   page: number
 } => {
   return {

@@ -23,7 +23,6 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import {
   Action,
   EtatQualificationAction,
-  MetadonneesActions,
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
@@ -42,6 +41,7 @@ import { ActionsService } from 'services/actions.service'
 import { AgendaService } from 'services/agenda.service'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
+import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -71,7 +71,7 @@ interface FicheJeuneProps extends PageProps {
   rdvs: EvenementListItem[]
   actionsInitiales: {
     actions: Action[]
-    metadonnees: MetadonneesActions
+    metadonnees: MetadonneesPagination
     page: number
   }
   metadonneesFavoris?: MetadonneesFavoris
@@ -175,7 +175,7 @@ function FicheJeune({
     statuts: StatutAction[],
     etatsQualification: EtatQualificationAction[],
     tri: string
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
     const result = await actionsService.getActionsJeuneClientSide(jeune.id, {
       page,
       statuts,

@@ -2,14 +2,15 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
 import Pagination from 'components/ui/Table/Pagination'
-import { ActionPilotage, MetadonneesActions } from 'interfaces/action'
+import { ActionPilotage } from 'interfaces/action'
+import { MetadonneesPagination } from 'types/pagination'
 
 interface OngletActionsPilotageProps {
   actionsInitiales: ActionPilotage[]
-  metadonneesInitiales: MetadonneesActions
+  metadonneesInitiales: MetadonneesPagination
   getActions: (page: number) => Promise<{
     actions: ActionPilotage[]
-    metadonnees: MetadonneesActions
+    metadonnees: MetadonneesPagination
   }>
 }
 
@@ -20,7 +21,7 @@ export function OngletActionsPilotage({
 }: OngletActionsPilotageProps) {
   const [actions, setActions] = useState<ActionPilotage[]>(actionsInitiales)
   const [metadonnees, setMetadonnees] =
-    useState<MetadonneesActions>(metadonneesInitiales)
+    useState<MetadonneesPagination>(metadonneesInitiales)
 
   const [pageCourante, setPageCourante] = useState<number>(1)
 
