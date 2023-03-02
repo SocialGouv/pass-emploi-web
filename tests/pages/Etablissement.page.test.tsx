@@ -87,7 +87,7 @@ describe('Etablissement', () => {
           })
 
           // When
-          await userEvent.type(inputRechercheJeune, 'a')
+          await userEvent.type(inputRechercheJeune, 'am')
           await userEvent.click(buttonRechercheJeune)
         })
 
@@ -95,7 +95,7 @@ describe('Etablissement', () => {
           // Then
           expect(
             jeunesService.rechercheJeunesDeLEtablissement
-          ).toHaveBeenCalledWith('id-etablissement', 'a', 1)
+          ).toHaveBeenCalledWith('id-etablissement', 'am', 1)
         })
 
         it('affiche le resultat de la recherche dans un tableau', async () => {
@@ -166,7 +166,7 @@ describe('Etablissement', () => {
             // Then
             expect(
               jeunesService.rechercheJeunesDeLEtablissement
-            ).toHaveBeenCalledWith('id-etablissement', 'a', 3)
+            ).toHaveBeenCalledWith('id-etablissement', 'am', 3)
             expect(screen.getByText('Page 3 Albert')).toBeInTheDocument()
           })
 
@@ -178,10 +178,10 @@ describe('Etablissement', () => {
             // Then
             expect(
               jeunesService.rechercheJeunesDeLEtablissement
-            ).toHaveBeenCalledWith('id-etablissement', 'a', 2)
+            ).toHaveBeenCalledWith('id-etablissement', 'am', 2)
             expect(
               jeunesService.rechercheJeunesDeLEtablissement
-            ).toHaveBeenCalledWith('id-etablissement', 'a', 3)
+            ).toHaveBeenCalledWith('id-etablissement', 'am', 3)
 
             expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
               'aria-current',
@@ -218,7 +218,7 @@ describe('Etablissement', () => {
         })
 
         // When
-        await userEvent.type(inputRechercheJeune, 'z')
+        await userEvent.type(inputRechercheJeune, 'am')
         await userEvent.click(buttonRechercheJeune)
 
         // Then
@@ -226,6 +226,28 @@ describe('Etablissement', () => {
           screen.getByText(
             'Aucune bénéficiaire ne correspond à votre recherche.'
           )
+        ).toBeInTheDocument()
+      })
+
+      it(`prévient qu'il faut saisir au moins 2 caractères`, async () => {
+        // Given
+        const inputRechercheJeune = screen.getByLabelText(
+          /Rechercher un bénéficiaire par son nom ou prénom/
+        )
+        const buttonRechercheJeune = screen.getByRole('button', {
+          name: 'Rechercher',
+        })
+
+        // When
+        await userEvent.type(inputRechercheJeune, 'z')
+        await userEvent.click(buttonRechercheJeune)
+
+        // Then
+        expect(
+          jeunesService.rechercheJeunesDeLEtablissement
+        ).toHaveBeenCalledTimes(0)
+        expect(
+          screen.getByText('Veuillez saisir au moins 2 caractères')
         ).toBeInTheDocument()
       })
     })
@@ -248,7 +270,7 @@ describe('Etablissement', () => {
         })
 
         // When
-        await userEvent.type(inputRechercheJeune, 'a')
+        await userEvent.type(inputRechercheJeune, 'am')
         await userEvent.click(buttonRechercheJeune)
 
         // Then

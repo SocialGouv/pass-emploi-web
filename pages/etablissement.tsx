@@ -92,6 +92,7 @@ const Etablissement = (_: MissionLocaleProps) => {
       {Boolean(conseiller?.agence) && (
         <RechercheJeune
           onSearchFilterBy={(input) => rechercherJeunes(input, 1)}
+          minCaracteres={2}
         />
       )}
 
