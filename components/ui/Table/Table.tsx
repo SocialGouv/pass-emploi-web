@@ -1,8 +1,10 @@
 import React, { ReactElement } from 'react'
 
+import { Badge } from 'components/ui/Indicateurs/Badge'
+
 interface TableProps {
   children: Array<ReactElement | false>
-  caption: string | { text: string; visible: true }
+  caption: { text: string; count?: number; visible?: boolean }
   asDiv?: boolean
 }
 
@@ -12,16 +14,33 @@ export default function Table({
   asDiv = false,
 }: TableProps) {
   const style = 'w-full border-spacing-y-2 border-separate'
-  const captionVisible = captionIsVisible(caption)
-  const captionText = captionVisible ? caption.text : caption
   const captionStyle = 'text-m-bold text-grey_800'
+  const captionLabel = caption.count
+    ? `${caption.text} (${caption.count})`
+    : caption.text
+
+  function Caption() {
+    return (
+      <>
+        {caption.text}{' '}
+        {caption.count !== undefined && (
+          <Badge
+            count={caption.count}
+            textColor='primary'
+            bgColor='primary_lighten'
+            size={6}
+          />
+        )}
+      </>
+    )
+  }
 
   if (asDiv)
     return (
-      <div role='table' className={'table ' + style} aria-label={captionText}>
-        {captionVisible && (
+      <div role='table' className={'table ' + style} aria-label={captionLabel}>
+        {caption.visible && (
           <div aria-hidden={true} className={'table-caption ' + captionStyle}>
-            {captionText}
+            <Caption />
           </div>
         )}
         {React.Children.map(
@@ -35,18 +54,13 @@ export default function Table({
       <table className={style}>
         <caption
           className={
-            captionStyle + (captionVisible ? ' text-left' : ' sr-only')
+            captionStyle + (caption.visible ? ' text-left' : ' sr-only')
           }
+          aria-label={captionLabel}
         >
-          {captionText}
+          <Caption />
         </caption>
         {children}
       </table>
     )
-}
-
-function captionIsVisible(
-  caption: string | { text: string; visible: true }
-): caption is { text: string; visible: true } {
-  return Object.prototype.hasOwnProperty.call(caption, 'visible')
 }

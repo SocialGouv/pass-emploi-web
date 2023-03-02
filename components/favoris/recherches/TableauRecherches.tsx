@@ -24,7 +24,7 @@ export default function TableauRecherches({
       )}
 
       {recherches.length > 0 && (
-        <Table caption='Liste des recherches sauvegardées'>
+        <Table caption={{ text: 'Liste des recherches sauvegardées' }}>
           <THead>
             <TR isHeader={true}>
               <TH>Nom de la recherche</TH>

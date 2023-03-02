@@ -174,11 +174,9 @@ export default function TableauJeunes({
           <Table
             asDiv={true}
             caption={{
-              text:
-                'Liste des bénéficiaires' +
-                (totalJeunes === jeunesFiltres.length
-                  ? ` (${totalJeunes})`
-                  : ''),
+              text: 'Liste des bénéficiaires',
+              count:
+                totalJeunes === jeunesFiltres.length ? totalJeunes : undefined,
               visible: true,
             }}
           >

@@ -98,7 +98,8 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
       {listesDiffusion.length > 0 && (
         <Table
           caption={{
-            text: `Listes (${listesDiffusion.length})`,
+            text: 'Listes',
+            count: listesDiffusion.length,
             visible: true,
           }}
           asDiv={true}

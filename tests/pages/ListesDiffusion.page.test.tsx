@@ -90,7 +90,9 @@ describe('Page Listes de Diffusion', () => {
 
       it('affiche le nombre de listes', () => {
         // Then
-        expect(screen.getByText('Listes (2)')).toBeInTheDocument()
+        expect(
+          screen.getByRole('table', { name: 'Listes (2)' })
+        ).toBeInTheDocument()
       })
 
       it('permet de trier les listes par ordre alphabétique inversé', async () => {

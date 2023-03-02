@@ -112,7 +112,8 @@ const Etablissement = (_: MissionLocaleProps) => {
           <Table
             asDiv={true}
             caption={{
-              text: `Résultat de recherche (${resultatsRecherche!.length})`,
+              text: `Résultat de recherche`,
+              count: resultatsRecherche!.length,
               visible: true,
             }}
           >
