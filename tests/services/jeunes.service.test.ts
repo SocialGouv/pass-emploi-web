@@ -478,17 +478,22 @@ describe('JeunesApiService', () => {
       // Given
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: {
+          pagination: {
+            page: 3,
+            limit: 10,
+            total: 51,
+          },
           resultats: [
             {
               jeune: {
-                id: 'string',
-                nom: 'string',
-                prenom: 'string',
+                id: 'jeune-1',
+                nom: 'Reportaire',
+                prenom: 'Albert',
               },
               referent: {
-                id: 'string',
-                nom: 'string',
-                prenom: 'string',
+                id: 'conseiller-1',
+                nom: 'Tavernier',
+                prenom: 'Nils',
               },
               situation: 'Emploi',
               dateDerniereActivite: '2023-03-01T14:11:38.040Z',
@@ -500,30 +505,37 @@ describe('JeunesApiService', () => {
       // When
       const actual = await jeunesService.rechercheJeunesDeLEtablissement(
         'id-etablissement',
-        'e'
+        'e',
+        3
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/etablissements/id-etablissement/jeunes?q=e',
+        '/v2/etablissements/id-etablissement/jeunes?q=e&page=3',
         'accessToken'
       )
-      expect(actual).toEqual([
-        {
-          base: {
-            id: 'string',
-            nom: 'string',
-            prenom: 'string',
-          },
-          referent: {
-            id: 'string',
-            nom: 'string',
-            prenom: 'string',
-          },
-          situation: CategorieSituation.EMPLOI,
-          dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+      expect(actual).toEqual({
+        metadonnees: {
+          nombrePages: 6,
+          nombreTotal: 51,
         },
-      ])
+        jeunes: [
+          {
+            base: {
+              id: 'jeune-1',
+              nom: 'Reportaire',
+              prenom: 'Albert',
+            },
+            referent: {
+              id: 'conseiller-1',
+              nom: 'Tavernier',
+              prenom: 'Nils',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+        ],
+      })
     })
   })
 })

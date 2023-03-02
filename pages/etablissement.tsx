@@ -6,6 +6,7 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import SituationTag from 'components/jeune/SituationTag'
+import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
@@ -18,6 +19,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -37,16 +39,29 @@ const Etablissement = (_: MissionLocaleProps) => {
 
   const [conseiller, setConseiller] = useConseiller()
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
+  const [recherche, setRecherche] = useState<string>()
   const [resultatsRecherche, setResultatsRecherche] =
     useState<JeuneEtablissement[]>()
+  const [metadonnees, setMetadonnees] = useState<MetadonneesPagination>()
+  const [pageCourante, setPageCourante] = useState<number>()
 
   const isMilo = conseiller?.structure === StructureConseiller.MILO
 
-  async function rechercherJeunes(recherche: string) {
-    if (conseiller?.agence?.id) {
-      await jeunesService
-        .rechercheJeunesDeLEtablissement(conseiller.agence.id, recherche)
-        .then(setResultatsRecherche)
+  async function rechercherJeunes(input: string, page: number) {
+    if (
+      conseiller?.agence?.id &&
+      (page !== pageCourante || input !== recherche)
+    ) {
+      const resultats = await jeunesService.rechercheJeunesDeLEtablissement(
+        conseiller.agence.id,
+        input,
+        page
+      )
+      setResultatsRecherche(resultats.jeunes)
+      setMetadonnees(resultats.metadonnees)
+      setPageCourante(page)
+      setRecherche(input)
     }
   }
 
@@ -58,7 +73,6 @@ const Etablissement = (_: MissionLocaleProps) => {
     setConseiller({ ...conseiller!, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
-
   async function trackAgenceModal(trackingMessage: string) {
     setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
@@ -68,7 +82,9 @@ const Etablissement = (_: MissionLocaleProps) => {
   return (
     <>
       {Boolean(conseiller?.agence) && (
-        <RechercheJeune onSearchFilterBy={rechercherJeunes} />
+        <RechercheJeune
+          onSearchFilterBy={(input) => rechercherJeunes(input, 1)}
+        />
       )}
 
       {conseiller && !conseiller?.agence && (
@@ -118,6 +134,15 @@ const Etablissement = (_: MissionLocaleProps) => {
               ))}
             </TBody>
           </Table>
+
+          {metadonnees!.nombrePages > 1 && (
+            <Pagination
+              nomListe='bénéficiaires'
+              pageCourante={pageCourante!}
+              nombreDePages={metadonnees!.nombrePages}
+              allerALaPage={(page) => rechercherJeunes(recherche!, page)}
+            />
+          )}
         </div>
       )}
 

@@ -27,10 +27,10 @@ jest.mock('components/Modal')
 describe('Etablissement', () => {
   describe('Client side', () => {
     let jeunesService: JeunesService
-    const unJeune: JeuneEtablissement = {
+    const unJeune = (page: number): JeuneEtablissement => ({
       base: {
         id: 'id-jeune',
-        nom: 'Reportaire',
+        nom: 'Page ' + page,
         prenom: 'Albert',
       },
       referent: {
@@ -40,11 +40,15 @@ describe('Etablissement', () => {
       },
       situation: CategorieSituation.EMPLOI,
       dateDerniereActivite: '2023-03-01T14:11:38.040Z',
-    }
-
+    })
     beforeEach(async () => {
       jeunesService = mockedJeunesService({
-        rechercheJeunesDeLEtablissement: jest.fn(async () => [unJeune]),
+        rechercheJeunesDeLEtablissement: jest.fn(
+          async (_idEtablissement, _recherche, page: number) => ({
+            jeunes: [unJeune(page)],
+            metadonnees: { nombrePages: 4, nombreTotal: 37 },
+          })
+        ),
       })
     })
 
@@ -89,7 +93,7 @@ describe('Etablissement', () => {
         // Then
         expect(
           jeunesService.rechercheJeunesDeLEtablissement
-        ).toHaveBeenCalledWith('id-etablissement', 'a')
+        ).toHaveBeenCalledWith('id-etablissement', 'a', 1)
       })
 
       it('affiche le resultat de la recherche dans un tableau', async () => {
@@ -132,22 +136,16 @@ describe('Etablissement', () => {
         ).toBeInTheDocument()
 
         expect(
+          within(tableauDeJeunes).getByText(`Page 1 Albert`)
+        ).toBeInTheDocument()
+        expect(within(tableauDeJeunes).getByText('Emploi')).toBeInTheDocument()
+        expect(
           within(tableauDeJeunes).getByText(
-            `${unJeune.base.nom} ${unJeune.base.prenom}`
+            toFullDate('2023-03-01T14:11:38.040Z')
           )
         ).toBeInTheDocument()
         expect(
-          within(tableauDeJeunes).getByText(unJeune.situation!)
-        ).toBeInTheDocument()
-        expect(
-          within(tableauDeJeunes).getByText(
-            toFullDate(unJeune.dateDerniereActivite)
-          )
-        ).toBeInTheDocument()
-        expect(
-          within(tableauDeJeunes).getByText(
-            `${unJeune.referent.prenom} ${unJeune.referent.nom}`
-          )
+          within(tableauDeJeunes).getByText(`Carlo Le Calamar`)
         ).toBeInTheDocument()
       })
 
@@ -162,7 +160,10 @@ describe('Etablissement', () => {
 
         ;(
           jeunesService.rechercheJeunesDeLEtablissement as jest.Mock
-        ).mockResolvedValue([])
+        ).mockResolvedValue({
+          jeunes: [],
+          metadonnes: { nombrePages: 0, nombreTotal: 0 },
+        })
 
         // When
         await userEvent.type(inputRechercheJeune, 'z')
@@ -174,6 +175,78 @@ describe('Etablissement', () => {
             'Aucune bénéficiaire ne correspond à votre recherche.'
           )
         ).toBeInTheDocument()
+      })
+
+      describe('pagination', () => {
+        it('récupère la page demandée', async () => {
+          // Given
+          const inputRechercheJeune = screen.getByLabelText(
+            /Rechercher un bénéficiaire par son nom ou prénom/
+          )
+          const buttonRechercheJeune = screen.getByRole('button', {
+            name: 'Rechercher',
+          })
+          await userEvent.type(inputRechercheJeune, 'a')
+          await userEvent.click(buttonRechercheJeune)
+
+          // When
+          await userEvent.click(screen.getByRole('button', { name: 'Page 3' }))
+
+          // Then
+          expect(
+            jeunesService.rechercheJeunesDeLEtablissement
+          ).toHaveBeenCalledWith('id-etablissement', 'a', 3)
+          expect(screen.getByText('Page 3 Albert')).toBeInTheDocument()
+        })
+
+        it('met à jour la page courante', async () => {
+          // Given
+          const inputRechercheJeune = screen.getByLabelText(
+            /Rechercher un bénéficiaire par son nom ou prénom/
+          )
+          const buttonRechercheJeune = screen.getByRole('button', {
+            name: 'Rechercher',
+          })
+          await userEvent.type(inputRechercheJeune, 'a')
+          await userEvent.click(buttonRechercheJeune)
+
+          // When
+          await userEvent.click(screen.getByLabelText('Page suivante'))
+          await userEvent.click(screen.getByLabelText('Page suivante'))
+
+          // Then
+          expect(
+            jeunesService.rechercheJeunesDeLEtablissement
+          ).toHaveBeenCalledWith('id-etablissement', 'a', 2)
+          expect(
+            jeunesService.rechercheJeunesDeLEtablissement
+          ).toHaveBeenCalledWith('id-etablissement', 'a', 3)
+
+          expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
+            'aria-current',
+            'page'
+          )
+        })
+
+        it('ne recharge pas la page courante', async () => {
+          // Given
+          const inputRechercheJeune = screen.getByLabelText(
+            /Rechercher un bénéficiaire par son nom ou prénom/
+          )
+          const buttonRechercheJeune = screen.getByRole('button', {
+            name: 'Rechercher',
+          })
+          await userEvent.type(inputRechercheJeune, 'a')
+          await userEvent.click(buttonRechercheJeune)
+
+          // When
+          await userEvent.click(screen.getByLabelText(`Page 1`))
+
+          // Then
+          expect(
+            jeunesService.rechercheJeunesDeLEtablissement
+          ).toHaveBeenCalledTimes(1)
+        })
       })
     })
 
