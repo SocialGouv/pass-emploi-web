@@ -7,7 +7,6 @@ import {
   AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
-  MetadonneesAnimationsCollectives,
   TypeEvenement,
 } from 'interfaces/evenement'
 import {
@@ -19,6 +18,7 @@ import {
   jsonToEvenement,
   jsonToListItem,
 } from 'interfaces/json/evenement'
+import { MetadonneesPagination } from 'types/pagination'
 import { toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
@@ -45,7 +45,7 @@ export interface EvenementsService {
     page: number
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }>
 
   getAnimationsCollectivesACloreServerSide(
@@ -53,7 +53,7 @@ export interface EvenementsService {
     accessToken: string
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }>
 
   getDetailsEvenement(
@@ -128,7 +128,7 @@ export class EvenementsApiService implements EvenementsService {
     page: number
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }> {
     const session = await getSession()
 
@@ -144,7 +144,7 @@ export class EvenementsApiService implements EvenementsService {
     accessToken: string
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }> {
     return this.getAnimationsCollectivesAClore(idEtablissement, 1, accessToken)
   }
@@ -227,7 +227,7 @@ export class EvenementsApiService implements EvenementsService {
     accessToken: string
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }> {
     const {
       content: { pagination, resultats },

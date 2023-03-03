@@ -282,11 +282,11 @@ describe('Pilotage', () => {
             pageTitle=''
             actions={{
               donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
             animationsCollectives={{
               donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
           />
         )
@@ -308,11 +308,11 @@ describe('Pilotage', () => {
             pageTitle=''
             actions={{
               donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
             animationsCollectives={{
               donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
           />
         )
@@ -365,7 +365,7 @@ describe('Pilotage', () => {
               pageTitle=''
               actions={{
                 donnees: [],
-                metadonnees: { nombrePages: 1, nombreTotal: 0 },
+                metadonnees: { nombrePages: 0, nombreTotal: 0 },
               }}
             />,
             {

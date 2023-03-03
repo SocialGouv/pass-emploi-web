@@ -138,7 +138,9 @@ export default function TableauActionsJeune({
       {actions.length > 0 && (
         <Table
           asDiv={true}
-          caption={`Liste des actions de ${jeune.prenom} ${jeune.nom}`}
+          caption={{
+            text: `Liste des actions de ${jeune.prenom} ${jeune.nom}`,
+          }}
         >
           <THead>
             <TR isHeader={true}>

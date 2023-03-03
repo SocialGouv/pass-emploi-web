@@ -12,7 +12,6 @@ import {
   BaseOffre,
   BaseOffreEmploi,
   BaseServiceCivique,
-  MetadonneesOffres,
   TypeOffre,
 } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
@@ -31,6 +30,7 @@ import {
   ServicesCiviquesService,
 } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
+import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -140,7 +140,7 @@ function RechercheOffres(_: PageProps) {
 
     setIsSearching(true)
     try {
-      let result: { offres: BaseOffre[]; metadonnees: MetadonneesOffres }
+      let result: { offres: BaseOffre[]; metadonnees: MetadonneesPagination }
       switch (typeOffre) {
         case TypeOffre.EMPLOI:
           result = await rechercherOffresEmploi(page)
@@ -190,7 +190,7 @@ function RechercheOffres(_: PageProps) {
 
   async function rechercherOffresEmploi(page: number): Promise<{
     offres: BaseOffreEmploi[]
-    metadonnees: MetadonneesOffres
+    metadonnees: MetadonneesPagination
   }> {
     if (queryOffresEmploi.idOffre) {
       const offre = await offresEmploiService.getOffreEmploiClientSide(
@@ -210,7 +210,7 @@ function RechercheOffres(_: PageProps) {
 
   async function rechercherAlternances(page: number): Promise<{
     offres: BaseOffreEmploi[]
-    metadonnees: MetadonneesOffres
+    metadonnees: MetadonneesPagination
   }> {
     if (queryOffresEmploi.idOffre) {
       const offre = await offresEmploiService.getOffreEmploiClientSide(
@@ -230,7 +230,7 @@ function RechercheOffres(_: PageProps) {
 
   async function rechercherServicesCiviques(page: number): Promise<{
     offres: BaseServiceCivique[]
-    metadonnees: MetadonneesOffres
+    metadonnees: MetadonneesPagination
   }> {
     return servicesCiviquesService.searchServicesCiviques(
       getQueryServiceCivique(),
@@ -240,7 +240,7 @@ function RechercheOffres(_: PageProps) {
 
   async function rechercherImmersions(page: number): Promise<{
     offres: BaseImmersion[]
-    metadonnees: MetadonneesOffres
+    metadonnees: MetadonneesPagination
   }> {
     return immersionsService.searchImmersions(getQueryImmersion(), page)
   }

@@ -88,8 +88,3 @@ export type DetailImmersion = BaseImmersion & {
     email?: string
   }
 }
-
-export interface MetadonneesOffres {
-  nombrePages: number
-  nombreTotal: number
-}

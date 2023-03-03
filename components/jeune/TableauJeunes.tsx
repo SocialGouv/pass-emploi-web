@@ -1,5 +1,4 @@
-import { DateTime } from 'luxon'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -23,13 +22,7 @@ import {
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
-import {
-  dateIsToday,
-  dateIsYesterday,
-  TIME_24_H_SEPARATOR,
-  toFrenchFormat,
-  toShortDate,
-} from 'utils/date'
+import { toFullDate } from 'utils/date'
 
 enum SortColumn {
   NOM = 'NOM',
@@ -79,25 +72,6 @@ export default function TableauJeunes({
       setSortDesc(!sortDesc)
     }
   }
-
-  const getLastActivity = useCallback(
-    (jeune: JeuneAvecInfosComplementaires): string => {
-      if (!jeune.lastActivity) return ''
-
-      const date = DateTime.fromISO(jeune.lastActivity)
-      let dateString: string
-      if (dateIsToday(date)) {
-        dateString = "Aujourd'hui"
-      } else if (dateIsYesterday(date)) {
-        dateString = 'Hier'
-      } else {
-        dateString = `Le ${toShortDate(date)}`
-      }
-
-      return `${dateString} à ${toFrenchFormat(date, TIME_24_H_SEPARATOR)}`
-    },
-    []
-  )
 
   useEffect(() => {
     function compareJeunes(
@@ -200,11 +174,9 @@ export default function TableauJeunes({
           <Table
             asDiv={true}
             caption={{
-              text:
-                'Liste des bénéficiaires' +
-                (totalJeunes === jeunesFiltres.length
-                  ? ` (${totalJeunes})`
-                  : ''),
+              text: 'Liste des bénéficiaires',
+              count:
+                totalJeunes === jeunesFiltres.length ? totalJeunes : undefined,
               visible: true,
             }}
           >
@@ -309,7 +281,7 @@ export default function TableauJeunes({
                   href={`/mes-jeunes/${jeune.id}`}
                   label={`Accéder à la fiche de ${jeune.prenom} ${
                     jeune.nom
-                  }, dernière activité ${getLastActivity(jeune)}, ${
+                  }, dernière activité ${toFullDate(jeune.lastActivity)}, ${
                     jeune.messagesNonLus
                   } messages non lus`}
                 >
@@ -345,7 +317,7 @@ export default function TableauJeunes({
                   )}
 
                   <TD>
-                    {getLastActivity(jeune)}
+                    {toFullDate(jeune.lastActivity)}
                     {!jeune.isActivated && (
                       <span className='text-warning'>Compte non activé</span>
                     )}

@@ -9,17 +9,15 @@ import { OngletAnimationsCollectivesPilotage } from 'components/pilotage/OngletA
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { ActionPilotage, MetadonneesActions } from 'interfaces/action'
+import { ActionPilotage } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  AnimationCollectivePilotage,
-  MetadonneesAnimationsCollectives,
-} from 'interfaces/evenement'
+import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -42,10 +40,10 @@ const ongletProps: {
 }
 
 type PilotageProps = PageProps & {
-  actions: { donnees: ActionPilotage[]; metadonnees: MetadonneesActions }
+  actions: { donnees: ActionPilotage[]; metadonnees: MetadonneesPagination }
   animationsCollectives?: {
     donnees: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }
   onglet?: Onglet
 }
@@ -72,7 +70,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     useState<
       | {
           donnees: AnimationCollectivePilotage[]
-          metadonnees: MetadonneesAnimationsCollectives
+          metadonnees: MetadonneesPagination
         }
       | undefined
     >(animationsCollectives)
@@ -82,9 +80,10 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     pageTracking + ' - Consultation ' + ongletProps[currentTab].trackingLabel
   )
 
-  async function chargerActions(
-    page: number
-  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
+  async function chargerActions(page: number): Promise<{
+    actions: ActionPilotage[]
+    metadonnees: MetadonneesPagination
+  }> {
     const result = await actionsService.getActionsAQualifierClientSide(
       conseiller!.id,
       page
@@ -96,7 +95,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
 
   async function chargerAnimationsCollectives(page: number): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesActions
+    metadonnees: MetadonneesPagination
   }> {
     const result =
       await evenementsService.getAnimationsCollectivesACloreClientSide(

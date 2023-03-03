@@ -8,12 +8,9 @@ import {
   jsonToServiceCiviqueItem,
   ServiceCiviqueItemJson,
 } from 'interfaces/json/service-civique'
-import {
-  BaseServiceCivique,
-  DetailServiceCivique,
-  MetadonneesOffres,
-} from 'interfaces/offre'
+import { BaseServiceCivique, DetailServiceCivique } from 'interfaces/offre'
 import { Commune } from 'interfaces/referentiel'
+import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
 export type SearchServicesCiviquesQuery = {
@@ -31,7 +28,10 @@ export interface ServicesCiviquesService {
   searchServicesCiviques(
     query: SearchServicesCiviquesQuery,
     page: number
-  ): Promise<{ offres: BaseServiceCivique[]; metadonnees: MetadonneesOffres }>
+  ): Promise<{
+    offres: BaseServiceCivique[]
+    metadonnees: MetadonneesPagination
+  }>
 }
 export class ServicesCiviquesApiService implements ServicesCiviquesService {
   constructor(private readonly apiClient: ApiClient) {}
@@ -54,7 +54,10 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
   async searchServicesCiviques(
     query: SearchServicesCiviquesQuery,
     page: number
-  ): Promise<{ offres: BaseServiceCivique[]; metadonnees: MetadonneesOffres }> {
+  ): Promise<{
+    offres: BaseServiceCivique[]
+    metadonnees: MetadonneesPagination
+  }> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
@@ -67,7 +70,7 @@ export class ServicesCiviquesApiService implements ServicesCiviquesService {
     }>(path + '?' + searchParams, accessToken)
 
     const { pagination, results } = content
-    const metadonnees: MetadonneesOffres = {
+    const metadonnees: MetadonneesPagination = {
       nombreTotal: pagination.total,
       nombrePages: Math.ceil(pagination.total / LIMIT),
     }

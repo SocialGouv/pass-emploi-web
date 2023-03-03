@@ -79,6 +79,13 @@ export type JeuneAvecInfosComplementaires = JeuneAvecNbActionsNonTerminees & {
   messagesNonLus: number
 }
 
+export type JeuneEtablissement = {
+  base: BaseJeune
+  referent: { id: string; nom: string; prenom: string }
+  situation?: CategorieSituation
+  dateDerniereActivite?: string
+}
+
 export interface Chat {
   chatId: string
   seenByConseiller: boolean

@@ -78,7 +78,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
       </div>
 
       <form onSubmit={cloreAnimationCollective} className='mt-6'>
-        <Table caption='Bénéficiaires de l’animation collective'>
+        <Table caption={{ text: 'Bénéficiaires de l’animation collective' }}>
           <THead>
             <TR isHeader={true}>
               <TH>Présence</TH>

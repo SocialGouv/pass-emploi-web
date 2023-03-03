@@ -6,13 +6,9 @@ import {
   ImmersionItemJson,
   jsonToDetailImmersion,
 } from 'interfaces/json/immersion'
-import {
-  BaseImmersion,
-  DetailImmersion,
-  MetadonneesOffres,
-  TypeOffre,
-} from 'interfaces/offre'
+import { BaseImmersion, DetailImmersion, TypeOffre } from 'interfaces/offre'
 import { Commune, Metier } from 'interfaces/referentiel'
+import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
 export type SearchImmersionsQuery = {
@@ -29,7 +25,7 @@ export interface ImmersionsService {
   searchImmersions(
     query: SearchImmersionsQuery,
     page: number
-  ): Promise<{ offres: BaseImmersion[]; metadonnees: MetadonneesOffres }>
+  ): Promise<{ offres: BaseImmersion[]; metadonnees: MetadonneesPagination }>
 }
 
 export class ImmersionsApiService implements ImmersionsService {
@@ -62,7 +58,7 @@ export class ImmersionsApiService implements ImmersionsService {
   async searchImmersions(
     query: SearchImmersionsQuery,
     page: number
-  ): Promise<{ offres: BaseImmersion[]; metadonnees: MetadonneesOffres }> {
+  ): Promise<{ offres: BaseImmersion[]; metadonnees: MetadonneesPagination }> {
     let immersionsJson: ImmersionItemJson[]
     if (this.cache && areSameQueries(this.cache.query, query)) {
       immersionsJson = this.cache.resultsJson
@@ -79,7 +75,7 @@ export class ImmersionsApiService implements ImmersionsService {
       this.cache = { query, resultsJson: immersionsJson }
     }
 
-    const metadonnees: MetadonneesOffres = {
+    const metadonnees: MetadonneesPagination = {
       nombreTotal: immersionsJson.length,
       nombrePages: Math.ceil(immersionsJson.length / this.LIMIT),
     }

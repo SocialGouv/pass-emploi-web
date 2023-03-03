@@ -30,11 +30,6 @@ export type AnimationCollectivePilotage = {
   nombreInscrits: number
 }
 
-export interface MetadonneesAnimationsCollectives {
-  nombrePages: number
-  nombreTotal: number
-}
-
 export type EvenementListItem = {
   id: string
   type: string

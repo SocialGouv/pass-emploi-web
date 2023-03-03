@@ -31,6 +31,22 @@ export function toFrenchFormat(date: DateTime, format: string): string {
   return date.toFormat(format, { locale: 'fr-FR' })
 }
 
+export function toFullDate(dateStr?: string): string {
+  if (!dateStr) return ''
+
+  const dateTime = DateTime.fromISO(dateStr)
+  let dateString: string
+  if (dateIsToday(dateTime)) {
+    dateString = "Aujourd'hui"
+  } else if (dateIsYesterday(dateTime)) {
+    dateString = 'Hier'
+  } else {
+    dateString = `Le ${toShortDate(dateTime)}`
+  }
+
+  return `${dateString} à ${toFrenchFormat(dateTime, TIME_24_H_SEPARATOR)}`
+}
+
 export function compareDates(
   date1: DateTime | undefined,
   date2: DateTime | undefined

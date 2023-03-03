@@ -20,7 +20,10 @@ export default function TableauAnimationsAClore({
   return (
     <>
       {animationsCollectives.length > 0 && (
-        <Table asDiv={true} caption='Liste des animations collectives à clore'>
+        <Table
+          asDiv={true}
+          caption={{ text: 'Liste des animations collectives à clore' }}
+        >
           <THead>
             <TR isHeader={true}>
               <TH>Date</TH>
