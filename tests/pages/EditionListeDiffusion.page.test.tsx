@@ -24,6 +24,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('components/Modal')
+jest.mock('components/PageActionsPortal')
 
 describe('Page d’édition d’une liste de diffusion', () => {
   describe('client side', () => {

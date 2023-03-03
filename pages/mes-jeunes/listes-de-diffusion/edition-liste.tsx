@@ -8,6 +8,7 @@ import { BeneficiaireIndicationReaffectaction } from 'components/jeune/Beneficia
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
+import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
@@ -164,27 +165,30 @@ function EditionListeDiffusion({
 
   return (
     <>
+      <PageActionsPortal>
+        <>
+          {liste && (
+            <Button
+              onClick={() => setShowConfirmationSuppression(true)}
+              style={ButtonStyle.SECONDARY}
+            >
+              <IconComponent
+                name={IconName.Trashcan}
+                focusable={false}
+                aria-hidden={true}
+                className='mr-2 w-4 h-4'
+              />
+              Supprimer
+            </Button>
+          )}
+        </>
+      </PageActionsPortal>
+
       {showErreurSoumission && (
         <FailureAlert
           label='Une erreur s’est produite, veuillez réessayer ultérieurement.'
           onAcknowledge={() => setShowErreurTraitement(false)}
         />
-      )}
-
-      {liste && (
-        <Button
-          onClick={() => setShowConfirmationSuppression(true)}
-          style={ButtonStyle.SECONDARY}
-          className='mb-6'
-        >
-          <IconComponent
-            name={IconName.Trashcan}
-            focusable={false}
-            aria-hidden={true}
-            className='mr-2 w-4 h-4'
-          />
-          Supprimer
-        </Button>
       )}
 
       <p className='text-s-bold text-content_color mb-4'>

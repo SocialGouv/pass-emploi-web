@@ -6,6 +6,7 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import TableauJeunes from 'components/jeune/TableauJeunes'
+import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
@@ -135,6 +136,10 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
 
   return (
     <>
+      <PageActionsPortal>
+        <AjouterJeuneButton structure={conseiller?.structure} />
+      </PageActionsPortal>
+
       {conseiller?.aDesBeneficiairesARecuperer && (
         <div className='bg-primary_lighten rounded-base p-6 mb-6 text-center'>
           <p className='text-base-bold text-primary'>
@@ -165,16 +170,13 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
             <p className='text-base-bold mb-12'>
               Vous n&apos;avez pas encore intégré de jeunes.
             </p>
-
-            <AjouterJeuneButton structure={conseiller?.structure} />
           </div>
         )}
 
       {conseillerJeunes.length > 0 && (
         <>
-          <div className='flex flex-wrap justify-between items-end mb-12'>
+          <div className='mb-12'>
             <RechercheJeune onSearchFilterBy={onSearch} />
-            <AjouterJeuneButton structure={conseiller?.structure} />
           </div>
 
           {!jeunesFiltres && <SpinningLoader />}

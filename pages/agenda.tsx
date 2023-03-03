@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
+import PageActionsPortal from 'components/PageActionsPortal'
 import { OngletAgendaConseiller } from 'components/rdv/OngletAgendaConseiller'
 import { OngletAgendaEtablissement } from 'components/rdv/OngletAgendaEtablissement'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -143,6 +144,30 @@ function Agenda({ onglet }: AgendaProps) {
 
   return (
     <>
+      <PageActionsPortal>
+        <ButtonLink href='/mes-jeunes/edition-rdv'>
+          <IconComponent
+            name={IconName.Add}
+            focusable={false}
+            aria-hidden={true}
+            className='mr-2 w-4 h-4'
+          />
+          Créer un rendez-vous
+        </ButtonLink>
+
+        {conseiller && conseiller.agence && (
+          <ButtonLink href='/mes-jeunes/edition-rdv?type=ac'>
+            <IconComponent
+              name={IconName.Add}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Créer une animation collective
+          </ButtonLink>
+        )}
+      </PageActionsPortal>
+
       <TabList className='mb-6'>
         <Tab
           label='Mon agenda'
@@ -168,16 +193,6 @@ function Agenda({ onglet }: AgendaProps) {
           tabIndex={0}
           id='agenda-conseiller'
         >
-          <ButtonLink href='/mes-jeunes/edition-rdv' className='mb-10 w-fit'>
-            <IconComponent
-              name={IconName.Add}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
-            />
-            Créer un rendez-vous
-          </ButtonLink>
-
           <OngletAgendaConseiller
             idConseiller={conseiller?.id}
             recupererRdvs={recupererRdvsConseiller}
@@ -194,26 +209,11 @@ function Agenda({ onglet }: AgendaProps) {
           id='agenda-etablissement'
         >
           {conseiller && conseiller.agence && (
-            <>
-              <ButtonLink
-                href='/mes-jeunes/edition-rdv?type=ac'
-                className='mb-10 w-fit'
-              >
-                <IconComponent
-                  name={IconName.Add}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='mr-2 w-4 h-4'
-                />
-                Créer une animation collective
-              </ButtonLink>
-
-              <OngletAgendaEtablissement
-                idEtablissement={conseiller?.agence?.id}
-                recupererAnimationsCollectives={recupererRdvsEtablissement}
-                trackNavigation={trackNavigation}
-              />
-            </>
+            <OngletAgendaEtablissement
+              idEtablissement={conseiller?.agence?.id}
+              recupererAnimationsCollectives={recupererRdvsEtablissement}
+              trackNavigation={trackNavigation}
+            />
           )}
 
           {conseiller && !conseiller.agence && (
