@@ -13,6 +13,7 @@ import Footer from 'components/layouts/Footer'
 import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
 import { MODAL_ROOT_ID } from 'components/Modal'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import styles from 'styles/components/Layouts.module.css'
@@ -98,7 +99,9 @@ export default function Layout({ children }: LayoutProps) {
             }`}
           >
             <AlerteDisplayer />
-            {children}
+
+            {!conseiller && <SpinningLoader />}
+            {conseiller && children}
           </main>
 
           <Footer />

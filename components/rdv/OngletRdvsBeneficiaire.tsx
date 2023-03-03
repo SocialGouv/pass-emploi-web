@@ -1,33 +1,35 @@
 import Link from 'next/link'
 import React from 'react'
 
-import IconComponent, { IconName } from '../ui/IconComponent'
-
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import TableauRdv from 'components/rdv/TableauRdv'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { Conseiller, isPoleEmploi } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
 
 interface OngletRdvsBeneficiaireProps {
   rdvs: EvenementListItem[]
   beneficiaire: BaseJeune
-  poleEmploi: boolean
-  idConseiller: string
+  conseiller: Conseiller
 }
 
 export function OngletRdvsBeneficiaire({
-  idConseiller,
-  beneficiaire,
-  poleEmploi,
   rdvs,
+  beneficiaire,
+  conseiller,
 }: OngletRdvsBeneficiaireProps) {
   return (
     <>
-      {!poleEmploi ? (
+      {isPoleEmploi(conseiller) && (
+        <IntegrationPoleEmploi label='convocations' />
+      )}
+
+      {!isPoleEmploi(conseiller) && (
         <>
           <TableauRdv
             rdvs={rdvs}
-            idConseiller={idConseiller}
+            idConseiller={conseiller.id}
             beneficiaireUnique={beneficiaire}
             additionalColumns='Modalité'
           />
@@ -44,8 +46,6 @@ export function OngletRdvsBeneficiaire({
             />
           </Link>
         </>
-      ) : (
-        <IntegrationPoleEmploi label='convocations' />
       )}
     </>
   )

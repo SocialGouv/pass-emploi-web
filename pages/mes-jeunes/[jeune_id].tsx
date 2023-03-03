@@ -26,7 +26,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { isPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import {
   DetailJeune,
@@ -46,7 +46,7 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { useForcedConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -90,7 +90,7 @@ function FicheJeune({
   const agendaService = useDependance<AgendaService>('agendaService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
-  const [conseiller] = useConseiller()
+  const [conseiller] = useForcedConseiller()
   const [alerte, setAlerte] = useAlerte()
 
   const [motifsSuppression, setMotifsSuppression] = useState<
@@ -140,9 +140,6 @@ function FicheJeune({
   if (alerte?.key === AlerteParam.envoiMessage)
     initialTracking += ' - Succès envoi message'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
-
-  const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
-  const isMilo = conseiller?.structure === StructureConseiller.MILO
 
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
@@ -245,7 +242,7 @@ function FicheJeune({
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
-    if (conseiller && !isPoleEmploi && !indicateursSemaine) {
+    if (!isPoleEmploi(conseiller) && !indicateursSemaine) {
       jeunesService
         .getIndicateursJeuneAlleges(
           conseiller.id,
@@ -262,7 +259,6 @@ function FicheJeune({
     indicateursSemaine,
     jeune.id,
     jeunesService,
-    isPoleEmploi,
   ])
 
   return (
@@ -291,7 +287,7 @@ function FicheJeune({
       )}
 
       {!jeune.isActivated &&
-        conseiller?.structure === StructureConseiller.MILO && (
+        conseiller.structure === StructureConseiller.MILO && (
           <div className='mb-8'>
             <InformationMessage label='Le lien d’activation est valable 12h.'>
               <p>
@@ -314,66 +310,62 @@ function FicheJeune({
       <div className='mb-6'>
         <DetailsJeune
           jeune={jeune}
-          structureConseiller={conseiller?.structure}
+          structureConseiller={conseiller.structure}
           onDossierMiloClick={trackDossierMiloClick}
         />
       </div>
 
-      {!isPoleEmploi && (
-        <ResumeIndicateursJeune
-          idJeune={jeune.id}
-          debutDeLaSemaine={debutSemaine}
-          finDeLaSemaine={finSemaine}
-          indicateursSemaine={indicateursSemaine}
-        />
+      {!isPoleEmploi(conseiller) && (
+        <>
+          <ResumeIndicateursJeune
+            idJeune={jeune.id}
+            debutDeLaSemaine={debutSemaine}
+            finDeLaSemaine={finSemaine}
+            indicateursSemaine={indicateursSemaine}
+          />
+
+          <div className='flex justify-between mt-6 mb-4'>
+            <div className='flex'>
+              <ButtonLink href={`/mes-jeunes/edition-rdv?idJeune=${jeune.id}`}>
+                <IconComponent
+                  name={IconName.Add}
+                  focusable='false'
+                  aria-hidden='true'
+                  className='mr-2 w-4 h-4'
+                />
+                Créer un rendez-vous
+              </ButtonLink>
+
+              <ButtonLink
+                href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
+                className='ml-4'
+              >
+                <IconComponent
+                  name={IconName.Add}
+                  focusable='false'
+                  aria-hidden='true'
+                  className='mr-2 w-4 h-4'
+                />
+                Créer une action
+              </ButtonLink>
+
+              <ButtonLink
+                href='/agenda?onglet=etablissement'
+                className='ml-4'
+                style={ButtonStyle.TERTIARY}
+              >
+                <IconComponent
+                  name={IconName.Add}
+                  focusable='false'
+                  aria-hidden='true'
+                  className='mr-2 w-4 h-4'
+                />
+                Inscrire à une animation collective
+              </ButtonLink>
+            </div>
+          </div>
+        </>
       )}
-
-      <div className='flex justify-between mt-6 mb-4'>
-        <div className='flex'>
-          {!isPoleEmploi && (
-            <ButtonLink href={`/mes-jeunes/edition-rdv?idJeune=${jeune.id}`}>
-              <IconComponent
-                name={IconName.Add}
-                focusable='false'
-                aria-hidden='true'
-                className='mr-2 w-4 h-4'
-              />
-              Créer un rendez-vous
-            </ButtonLink>
-          )}
-
-          {!isPoleEmploi && (
-            <ButtonLink
-              href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
-              className='ml-4'
-            >
-              <IconComponent
-                name={IconName.Add}
-                focusable='false'
-                aria-hidden='true'
-                className='mr-2 w-4 h-4'
-              />
-              Créer une action
-            </ButtonLink>
-          )}
-
-          {!isPoleEmploi && (
-            <ButtonLink
-              href='/agenda?onglet=etablissement'
-              className='ml-4'
-              style={ButtonStyle.TERTIARY}
-            >
-              <IconComponent
-                name={IconName.Add}
-                focusable='false'
-                aria-hidden='true'
-                className='mr-2 w-4 h-4'
-              />
-              Inscrire à une animation collective
-            </ButtonLink>
-          )}
-        </div>
-      </div>
 
       <TabList className='mt-10'>
         <Tab
@@ -385,7 +377,7 @@ function FicheJeune({
         />
         <Tab
           label='Actions'
-          count={!isPoleEmploi ? totalActions : undefined}
+          count={!isPoleEmploi(conseiller) ? totalActions : undefined}
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
@@ -393,7 +385,7 @@ function FicheJeune({
         />
         <Tab
           label='Rendez-vous'
-          count={!isPoleEmploi ? rdvs.length : undefined}
+          count={!isPoleEmploi(conseiller) ? rdvs.length : undefined}
           selected={currentTab === Onglet.RDVS}
           controls='liste-rdvs'
           onSelectTab={() => switchTab(Onglet.RDVS)}
@@ -421,7 +413,7 @@ function FicheJeune({
         >
           <OngletAgendaBeneficiaire
             idBeneficiaire={jeune.id}
-            isPoleEmploi={isPoleEmploi}
+            conseiller={conseiller}
             recupererAgenda={recupererAgenda}
             goToActions={() => switchTab(Onglet.ACTIONS)}
           />
@@ -437,10 +429,9 @@ function FicheJeune({
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
           <OngletRdvsBeneficiaire
-            poleEmploi={isPoleEmploi}
+            conseiller={conseiller}
             beneficiaire={jeune}
             rdvs={rdvs}
-            idConseiller={conseiller?.id ?? ''}
           />
         </div>
       )}
@@ -453,8 +444,7 @@ function FicheJeune({
           className='mt-8 pb-8'
         >
           <OngletActions
-            afficherActions={!isPoleEmploi}
-            afficherFiltresEtatsQualification={isMilo}
+            conseiller={conseiller}
             jeune={jeune}
             actionsInitiales={actionsInitiales}
             getActions={chargerActions}
@@ -515,7 +505,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     },
   } = sessionOrRedirect
 
-  const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
+  const userIsPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
   const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
     jeunesService.getJeuneDetails(
@@ -526,14 +516,14 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       context.query.jeune_id as string,
       accessToken
     ),
-    isPoleEmploi
+    userIsPoleEmploi
       ? []
       : rendezVousService.getRendezVousJeune(
           context.query.jeune_id as string,
           PeriodeEvenements.FUTURS,
           accessToken
         ),
-    isPoleEmploi
+    userIsPoleEmploi
       ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
       : actionsService.getActionsJeuneServerSide(
           context.query.jeune_id as string,

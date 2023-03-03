@@ -23,3 +23,10 @@ export interface Conseiller {
   email?: string
   agence?: { nom: string; id?: string }
 }
+
+export function isPoleEmploi(conseiller: Conseiller): boolean {
+  return conseiller.structure === StructureConseiller.POLE_EMPLOI
+}
+export function isMilo(conseiller: Conseiller): boolean {
+  return conseiller.structure === StructureConseiller.MILO
+}
