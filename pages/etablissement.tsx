@@ -52,7 +52,7 @@ const Etablissement = (_: MissionLocaleProps) => {
     if (!input) {
       setResultatsRecherche(undefined)
       setMetadonnees(undefined)
-    } else if (rechercheValide(input, page)) {
+    } else if (nouvelleRecherche(input, page)) {
       const resultats = await jeunesService.rechercheJeunesDeLEtablissement(
         conseiller!.agence!.id!,
         input,
@@ -75,10 +75,8 @@ const Etablissement = (_: MissionLocaleProps) => {
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
 
-  function rechercheValide(input: string, page: number) {
-    return (
-      conseiller?.agence?.id && (page !== pageCourante || input !== recherche)
-    )
+  function nouvelleRecherche(input: string, page: number) {
+    return page !== pageCourante || input !== recherche
   }
 
   async function trackAgenceModal(trackingMessage: string) {

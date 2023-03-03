@@ -18,6 +18,7 @@ export const RechercheJeune = ({
 
   function onReset() {
     setQuery('')
+    setError(undefined)
     onSearchFilterBy('')
   }
 
