@@ -101,6 +101,10 @@ export default function Conversation({
     }
   }
 
+  function getBeneficiaireNomComplet(nom: string, prenom: string) {
+    return `${prenom.toLowerCase()} ${nom.toLowerCase()}`
+  }
+
   const setReadByConseiller = useCallback(
     (idChatToUpdate: string) => {
       messagesService.setReadByConseiller(idChatToUpdate)
@@ -252,7 +256,7 @@ export default function Conversation({
       >
         {!messagesByDay && <SpinningLoader />}
 
-        {messagesByDay && (
+        {messagesByDay && conseiller && (
           <>
             {hasNoMoreMessages && (
               <span
@@ -291,7 +295,12 @@ export default function Conversation({
                         key={message.id}
                         message={message}
                         conseillerNomComplet={getConseillerNomComplet(message)}
+                        beneficiaireNomComplet={getBeneficiaireNomComplet(
+                          jeuneChat.nom,
+                          jeuneChat.prenom
+                        )}
                         lastSeenByJeune={lastSeenByJeune}
+                        conseiller={conseiller}
                       />
                     ))}
                   </ul>
