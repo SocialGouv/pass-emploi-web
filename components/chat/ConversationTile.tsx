@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import Dot from 'components/ui/Dot'
 import IconCheckbox from 'components/ui/Form/IconCheckbox'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { Badge } from 'components/ui/Indicateurs/Badge'
 import { UserType } from 'interfaces/conseiller'
 import { JeuneChat } from 'interfaces/jeune'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
@@ -77,11 +78,11 @@ export function ConversationTile({
               {!isLastMessageSeenByJeune && (
                 <span>
                   Non lu{' '}
-                  <IconComponent
-                    name={IconName.RoundedCheck}
-                    focusable={false}
-                    aria-hidden={true}
-                    className='inline w-3 h-3 fill-primary'
+                  <Badge
+                    count={jeuneChat.newConseillerMessageCount}
+                    textColor='accent_1'
+                    bgColor='accent_1_lighten'
+                    size={6}
                   />
                 </span>
               )}
