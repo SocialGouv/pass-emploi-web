@@ -192,7 +192,7 @@ export default function Conversation({
     const flagged = !jeuneChat.flaggedByConseiller
     messagesService.toggleFlag(jeuneChat.chatId, flagged)
     trackEvent({
-      structure: conseiller!.structure,
+      structure: conseiller.structure,
       categorie: 'Conversation suivie',
       action: 'Conversation',
       nom: flagged.toString(),

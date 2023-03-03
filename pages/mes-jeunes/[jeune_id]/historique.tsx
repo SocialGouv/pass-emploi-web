@@ -46,14 +46,14 @@ function Historique({ idJeune, situations, conseillers }: HistoriqueProps) {
   useMatomo(tracking)
 
   useEffect(() => {
-    if (conseiller && !currentTab) {
+    if (!currentTab) {
       setCurrentTab(
-        conseiller?.structure === StructureConseiller.MILO
+        conseiller.structure === StructureConseiller.MILO
           ? Onglet.SITUATIONS
           : Onglet.CONSEILLERS
       )
     }
-  }, [conseiller, currentTab])
+  }, [currentTab])
 
   useEffect(() => {
     if (currentTab) {
@@ -68,7 +68,7 @@ function Historique({ idJeune, situations, conseillers }: HistoriqueProps) {
   return (
     <>
       <TabList className='mt-10'>
-        {conseiller?.structure === StructureConseiller.MILO && (
+        {conseiller.structure === StructureConseiller.MILO && (
           <Tab
             label='Situations'
             selected={currentTab === Onglet.SITUATIONS}

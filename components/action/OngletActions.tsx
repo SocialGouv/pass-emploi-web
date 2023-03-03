@@ -8,7 +8,7 @@ import {
   EtatQualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import { Conseiller, isMilo, isPoleEmploi } from 'interfaces/conseiller'
+import { Conseiller, estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { MetadonneesPagination } from 'types/pagination'
 
@@ -116,11 +116,11 @@ export function OngletActions({
 
   return (
     <>
-      {isPoleEmploi(conseiller) && (
+      {estPoleEmploi(conseiller) && (
         <IntegrationPoleEmploi label='actions et démarches' />
       )}
 
-      {!isPoleEmploi(conseiller) && (
+      {!estPoleEmploi(conseiller) && (
         <>
           {actionsInitiales.metadonnees.nombreTotal === 0 && (
             <p className='text-base-bold mb-2'>
@@ -131,7 +131,7 @@ export function OngletActions({
           {actionsInitiales.metadonnees.nombreTotal > 0 && (
             <>
               <TableauActionsJeune
-                afficherFiltresEtatsQualification={isMilo(conseiller)}
+                afficherFiltresEtatsQualification={estMilo(conseiller)}
                 jeune={jeune}
                 actions={actionsAffichees}
                 isLoading={isLoading}

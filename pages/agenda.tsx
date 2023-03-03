@@ -127,7 +127,7 @@ function Agenda({ onglet }: AgendaProps) {
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence })
+    setConseiller({ ...conseiller, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
 
@@ -155,7 +155,7 @@ function Agenda({ onglet }: AgendaProps) {
           Créer un rendez-vous
         </ButtonLink>
 
-        {conseiller && conseiller.agence && (
+        {conseiller.agence && (
           <ButtonLink href='/mes-jeunes/edition-rdv?type=ac'>
             <IconComponent
               name={IconName.Add}
@@ -194,7 +194,7 @@ function Agenda({ onglet }: AgendaProps) {
           id='agenda-conseiller'
         >
           <OngletAgendaConseiller
-            idConseiller={conseiller?.id}
+            idConseiller={conseiller.id}
             recupererRdvs={recupererRdvsConseiller}
             trackNavigation={trackNavigation}
           />
@@ -208,15 +208,15 @@ function Agenda({ onglet }: AgendaProps) {
           tabIndex={0}
           id='agenda-etablissement'
         >
-          {conseiller && conseiller.agence && (
+          {conseiller.agence && (
             <OngletAgendaEtablissement
-              idEtablissement={conseiller?.agence?.id}
+              idEtablissement={conseiller.agence?.id}
               recupererAnimationsCollectives={recupererRdvsEtablissement}
               trackNavigation={trackNavigation}
             />
           )}
 
-          {conseiller && !conseiller.agence && (
+          {!conseiller.agence && (
             <EncartAgenceRequise
               structureConseiller={conseiller.structure}
               onAgenceChoisie={renseignerAgence}

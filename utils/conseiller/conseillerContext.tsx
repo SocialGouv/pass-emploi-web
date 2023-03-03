@@ -22,27 +22,24 @@ export function ConseillerProvider({
   )
 }
 
-export function useConseiller(): ConseillerState {
+export function useConseillerPotentiellementPasRecupere(): ConseillerState {
   const conseillerContext = useContext(ConseillerContext)
   if (!conseillerContext) {
-    throw new Error('useConseiller must be used within ConseillerProvider')
+    throw new Error(
+      'useConseillerPotentiellementPasRecupere must be used within ConseillerProvider'
+    )
   }
   return conseillerContext
 }
 
-export function useForcedConseiller(): [
+export function useConseiller(): [
   Conseiller,
   (credentials: Conseiller) => void
 ] {
-  const conseillerContext = useContext(ConseillerContext)
-  if (!conseillerContext) {
-    throw new Error('useConseiller must be used within ConseillerProvider')
-  }
-
-  const [conseiller, setConseiller] = conseillerContext
+  const [conseiller, setConseiller] = useConseillerPotentiellementPasRecupere()
   if (!conseiller) {
     throw new Error(
-      'useForcedConseiller must be used within Layout where conseiller is initialized'
+      'useConseiller must be used within Layout where conseiller is initialized'
     )
   }
 

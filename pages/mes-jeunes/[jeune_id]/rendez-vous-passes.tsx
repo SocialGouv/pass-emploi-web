@@ -25,7 +25,7 @@ function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
   return (
     <TableauRdv
       rdvs={rdvs}
-      idConseiller={conseiller?.id ?? ''}
+      idConseiller={conseiller.id}
       beneficiaireUnique={beneficiaire}
       additionalColumns='Présent'
     />

@@ -9,7 +9,7 @@ import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Agenda, EntreeAgenda } from 'interfaces/agenda'
-import { Conseiller, isPoleEmploi } from 'interfaces/conseiller'
+import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 
 interface OngletAgendaBeneficiaireProps {
@@ -33,7 +33,7 @@ export function OngletAgendaBeneficiaire({
   const [nombreActionsEnRetard, setNombreActionsEnRetard] = useState<number>()
 
   useEffect(() => {
-    if (!isPoleEmploi(conseiller)) {
+    if (!estPoleEmploi(conseiller)) {
       recupererAgenda().then(
         ({
           entrees,
@@ -60,11 +60,11 @@ export function OngletAgendaBeneficiaire({
 
   return (
     <>
-      {isPoleEmploi(conseiller) && (
+      {estPoleEmploi(conseiller) && (
         <IntegrationPoleEmploi label='convocations et démarches' />
       )}
 
-      {!isPoleEmploi(conseiller) && (
+      {!estPoleEmploi(conseiller) && (
         <>
           {!semaines && <SpinningLoader />}
 

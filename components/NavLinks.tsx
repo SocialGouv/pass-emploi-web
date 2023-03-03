@@ -4,7 +4,7 @@ import React from 'react'
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estSuperviseur, estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
@@ -30,22 +30,18 @@ export default function NavLinks({
   const router = useRouter()
   const [conseiller] = useConseiller()
 
-  const isMilo = conseiller?.structure === StructureConseiller.MILO
-  const isPoleEmploi = conseiller?.structure === StructureConseiller.POLE_EMPLOI
-  const isSuperviseur = conseiller?.estSuperviseur
-
   const isCurrentRoute = (href: string) => router.pathname.startsWith(href)
 
   async function trackLogout() {
     trackEvent({
-      structure: conseiller!.structure,
+      structure: conseiller.structure,
       categorie: 'Session',
       action: 'Déconnexion',
       nom: '',
     })
   }
 
-  useLeanBeWidget(conseiller?.structure)
+  useLeanBeWidget(conseiller.structure)
 
   return (
     <>
@@ -60,7 +56,7 @@ export default function NavLinks({
           />
         )}
 
-        {!isPoleEmploi && items.includes(NavItem.Rdvs) && (
+        {!estPoleEmploi(conseiller) && items.includes(NavItem.Rdvs) && (
           <NavLink
             isActive={isCurrentRoute('/agenda')}
             href='/agenda'
@@ -82,7 +78,7 @@ export default function NavLinks({
           />
         )}
 
-        {!isPoleEmploi && items.includes(NavItem.Pilotage) && (
+        {!estPoleEmploi(conseiller) && items.includes(NavItem.Pilotage) && (
           <>
             <NavLink
               iconName={IconName.Board}
@@ -94,62 +90,55 @@ export default function NavLinks({
           </>
         )}
 
-        {!isPoleEmploi && items.includes(NavItem.Etablissement) && (
-          <>
+        {!estPoleEmploi(conseiller) &&
+          items.includes(NavItem.Etablissement) && (
             <NavLink
               iconName={IconName.RoundedArrowRight}
-              label={isMilo ? 'Mission Locale' : 'Agence'}
+              label={estMilo(conseiller) ? 'Mission Locale' : 'Agence'}
               href='/etablissement'
               isActive={isCurrentRoute('/mission-locale')}
               showLabelOnSmallScreen={showLabelsOnSmallScreen}
             />
-          </>
-        )}
+          )}
 
-        {isSuperviseur && items.includes(NavItem.Supervision) && (
-          <>
-            <NavLink
-              iconName={IconName.ArrowRight}
-              label='Réaffectation'
-              href='/reaffectation'
-              isActive={isCurrentRoute('/reaffectation')}
-              showLabelOnSmallScreen={showLabelsOnSmallScreen}
-            />
-          </>
+        {estSuperviseur(conseiller) && items.includes(NavItem.Supervision) && (
+          <NavLink
+            iconName={IconName.ArrowRight}
+            label='Réaffectation'
+            href='/reaffectation'
+            isActive={isCurrentRoute('/reaffectation')}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
         )}
 
         {items.includes(NavItem.Messagerie) && (
-          <>
-            <NavLink
-              iconName={IconName.Note}
-              label='Messagerie'
-              href='/mes-jeunes'
-              isActive={isCurrentRoute('/mes-jeunes')}
-              showLabelOnSmallScreen={showLabelsOnSmallScreen}
-            />
-          </>
+          <NavLink
+            iconName={IconName.Note}
+            label='Messagerie'
+            href='/mes-jeunes'
+            isActive={isCurrentRoute('/mes-jeunes')}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
         )}
 
         {items.includes(NavItem.Raccourci) && (
-          <>
-            <NavLink
-              iconName={IconName.Add}
-              label='Créer un raccourci'
-              href='/raccourci'
-              isActive={isCurrentRoute('/raccourci')}
-              showLabelOnSmallScreen={showLabelsOnSmallScreen}
-            />
-          </>
+          <NavLink
+            iconName={IconName.Add}
+            label='Créer un raccourci'
+            href='/raccourci'
+            isActive={isCurrentRoute('/raccourci')}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
         )}
 
         {items.includes(NavItem.Actualites) && (
-          <ActualitesMenuButton structure={conseiller?.structure} />
+          <ActualitesMenuButton structure={conseiller.structure} />
         )}
 
         {items.includes(NavItem.Aide) && (
           <NavLink
             href={
-              isMilo
+              estMilo(conseiller)
                 ? process.env.FAQ_MILO_EXTERNAL_LINK ?? ''
                 : process.env.FAQ_PE_EXTERNAL_LINK ?? ''
             }
@@ -161,7 +150,7 @@ export default function NavLinks({
         )}
       </div>
       <div className='flex flex-col'>
-        {conseiller && items.includes(NavItem.Profil) && (
+        {items.includes(NavItem.Profil) && (
           <NavLink
             isActive={isCurrentRoute('/profil')}
             href='/profil'

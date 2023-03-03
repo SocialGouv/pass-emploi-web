@@ -35,7 +35,7 @@ function Indicateurs({ idJeune }: IndicateursProps) {
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
-    if (conseiller && !indicateursSemaine) {
+    if (!indicateursSemaine) {
       jeunesService
         .getIndicateursJeuneComplets(
           conseiller.id,
@@ -45,14 +45,7 @@ function Indicateurs({ idJeune }: IndicateursProps) {
         )
         .then(setIndicateursSemaine)
     }
-  }, [
-    conseiller,
-    idJeune,
-    debutSemaine,
-    finSemaine,
-    indicateursSemaine,
-    jeunesService,
-  ])
+  }, [idJeune, debutSemaine, finSemaine, indicateursSemaine, jeunesService])
 
   return (
     <div>

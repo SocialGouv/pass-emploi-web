@@ -60,10 +60,10 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
   )
   const estAQualifier: boolean = useMemo(
     () =>
-      conseiller?.structure === StructureConseiller.MILO &&
+      conseiller.structure === StructureConseiller.MILO &&
       statut === StatutAction.Terminee &&
       !qualification,
-    [conseiller?.structure, qualification, statut]
+    [qualification, statut]
   )
   const afficherSuppressionAction = useMemo(
     () =>
@@ -172,7 +172,7 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
         />
       )}
 
-      {conseiller?.structure === StructureConseiller.MILO && (
+      {conseiller.structure === StructureConseiller.MILO && (
         <TagQualificationAction statut={statut} qualification={qualification} />
       )}
 

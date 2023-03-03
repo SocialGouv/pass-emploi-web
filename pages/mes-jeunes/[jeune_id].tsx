@@ -26,7 +26,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { isPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
+import { estPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import {
   DetailJeune,
@@ -46,7 +46,7 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
-import { useForcedConseiller } from 'utils/conseiller/conseillerContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -90,7 +90,7 @@ function FicheJeune({
   const agendaService = useDependance<AgendaService>('agendaService')
   const router = useRouter()
   const [, setIdCurrentJeune] = useCurrentJeune()
-  const [conseiller] = useForcedConseiller()
+  const [conseiller] = useConseiller()
   const [alerte, setAlerte] = useAlerte()
 
   const [motifsSuppression, setMotifsSuppression] = useState<
@@ -242,7 +242,7 @@ function FicheJeune({
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
-    if (!isPoleEmploi(conseiller) && !indicateursSemaine) {
+    if (!estPoleEmploi(conseiller) && !indicateursSemaine) {
       jeunesService
         .getIndicateursJeuneAlleges(
           conseiller.id,
@@ -315,7 +315,7 @@ function FicheJeune({
         />
       </div>
 
-      {!isPoleEmploi(conseiller) && (
+      {!estPoleEmploi(conseiller) && (
         <>
           <ResumeIndicateursJeune
             idJeune={jeune.id}
@@ -377,7 +377,7 @@ function FicheJeune({
         />
         <Tab
           label='Actions'
-          count={!isPoleEmploi(conseiller) ? totalActions : undefined}
+          count={!estPoleEmploi(conseiller) ? totalActions : undefined}
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
@@ -385,7 +385,7 @@ function FicheJeune({
         />
         <Tab
           label='Rendez-vous'
-          count={!isPoleEmploi(conseiller) ? rdvs.length : undefined}
+          count={!estPoleEmploi(conseiller) ? rdvs.length : undefined}
           selected={currentTab === Onglet.RDVS}
           controls='liste-rdvs'
           onSelectTab={() => switchTab(Onglet.RDVS)}

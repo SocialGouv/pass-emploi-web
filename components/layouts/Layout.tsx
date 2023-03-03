@@ -17,7 +17,7 @@ import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import styles from 'styles/components/Layouts.module.css'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 
 interface LayoutProps {
@@ -32,7 +32,7 @@ export default function Layout({ children }: LayoutProps) {
   const router = useRouter()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
-  const [conseiller, setConseiller] = useConseiller()
+  const [conseiller, setConseiller] = useConseillerPotentiellementPasRecupere()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
@@ -75,42 +75,50 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
-      <div
-        ref={containerRef}
-        className={`${styles.container} ${
-          withChat ? styles.container_with_chat : ''
-        }`}
-      >
-        <Sidebar />
-        <div
-          ref={mainRef}
-          className={`${styles.page} ${withChat ? styles.page_when_chat : ''}`}
-        >
-          <Header
-            currentPath={router.asPath}
-            returnTo={returnTo}
-            pageHeader={pageHeader ?? pageTitle}
-          />
 
-          <main
-            role='main'
-            className={`${styles.content} ${
-              withChat ? styles.content_when_chat : ''
+      {!conseiller && <SpinningLoader />}
+
+      {conseiller && (
+        <div
+          ref={containerRef}
+          className={`${styles.container} ${
+            withChat ? styles.container_with_chat : ''
+          }`}
+        >
+          <Sidebar />
+
+          <div
+            ref={mainRef}
+            className={`${styles.page} ${
+              withChat ? styles.page_when_chat : ''
             }`}
           >
-            <AlerteDisplayer />
+            <Header
+              currentPath={router.asPath}
+              returnTo={returnTo}
+              pageHeader={pageHeader ?? pageTitle}
+            />
 
-            {!conseiller && <SpinningLoader />}
-            {conseiller && children}
-          </main>
+            <main
+              role='main'
+              className={`${styles.content} ${
+                withChat ? styles.content_when_chat : ''
+              }`}
+            >
+              <AlerteDisplayer />
+              {children}
+            </main>
 
-          <Footer />
+            <Footer />
+          </div>
+
+          <ChatManager
+            displayChat={withChat}
+            setHasMessageNonLu={setHasMessageNonLu}
+          />
         </div>
-        <ChatManager
-          displayChat={withChat}
-          setHasMessageNonLu={setHasMessageNonLu}
-        />
-      </div>
+      )}
+
       <div id={MODAL_ROOT_ID} />
     </>
   )

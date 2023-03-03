@@ -46,7 +46,7 @@ const Etablissement = (_: MissionLocaleProps) => {
   const [metadonnees, setMetadonnees] = useState<MetadonneesPagination>()
   const [pageCourante, setPageCourante] = useState<number>()
 
-  const isMilo = conseiller?.structure === StructureConseiller.MILO
+  const isMilo = conseiller.structure === StructureConseiller.MILO
 
   async function rechercherJeunes(input: string, page: number) {
     if (!input) {
@@ -54,7 +54,7 @@ const Etablissement = (_: MissionLocaleProps) => {
       setMetadonnees(undefined)
     } else if (nouvelleRecherche(input, page)) {
       const resultats = await jeunesService.rechercheJeunesDeLEtablissement(
-        conseiller!.agence!.id!,
+        conseiller.agence!.id!,
         input,
         page
       )
@@ -71,7 +71,7 @@ const Etablissement = (_: MissionLocaleProps) => {
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence })
+    setConseiller({ ...conseiller, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
 
@@ -87,14 +87,14 @@ const Etablissement = (_: MissionLocaleProps) => {
 
   return (
     <>
-      {Boolean(conseiller?.agence) && (
+      {Boolean(conseiller.agence) && (
         <RechercheJeune
           onSearchFilterBy={(input) => rechercherJeunes(input, 1)}
           minCaracteres={2}
         />
       )}
 
-      {conseiller && !conseiller?.agence && (
+      {!conseiller.agence && (
         <EncartAgenceRequise
           structureConseiller={conseiller.structure}
           onAgenceChoisie={renseignerAgence}
