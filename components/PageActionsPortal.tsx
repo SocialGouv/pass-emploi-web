@@ -1,10 +1,12 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+
+import { ElementsOnly } from 'types/components'
 
 export const PAGE_ACTIONS_ROOT_ID = 'page-actions-root'
 
 type PageActionsPortalProps = {
-  children: ReactElement | ReactElement[]
+  children: ElementsOnly
 }
 
 export default function PageActionsPortal({
