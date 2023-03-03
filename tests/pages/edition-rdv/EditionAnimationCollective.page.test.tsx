@@ -4,16 +4,17 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import {
+  typesAnimationCollective,
   typesEvenement,
-  typesRdvAnimationsCollectives,
   uneAnimationCollective,
   unEvenement,
 } from 'fixtures/evenement'
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { StatutAnimationCollective, TypeEvenement } from 'interfaces/evenement'
+import { StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
@@ -32,7 +33,7 @@ describe('EditionAnimationCollective', () => {
     let jeunesService: JeunesService
     let evenementsService: EvenementsService
     let jeunes: JeuneFromListe[]
-    let typesRendezVous: TypeEvenement[]
+    let typesRendezVous: TypeEvenementReferentiel[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
@@ -113,7 +114,7 @@ describe('EditionAnimationCollective', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { typesRendezVous: typesRdvAnimationsCollectives() },
+          props: { typesRendezVous: typesAnimationCollective() },
         })
       })
 
@@ -149,8 +150,11 @@ describe('EditionAnimationCollective', () => {
 
       it('récupère l’animation collective concernée', async () => {
         // Given
+        const animationCollective = unEvenement({
+          type: { code: 'ATELIER', label: 'Atelier' },
+        })
         ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
-          uneAnimationCollective()
+          animationCollective
         )
 
         // When
@@ -166,9 +170,10 @@ describe('EditionAnimationCollective', () => {
         )
         expect(actual).toMatchObject({
           props: {
-            evenement: uneAnimationCollective(),
+            evenement: animationCollective,
             pageTitle: 'Mes événements - Modifier',
             pageHeader: 'Détail de l’animation collective',
+            evenementTypeAC: true,
           },
         })
       })
@@ -244,7 +249,7 @@ describe('EditionAnimationCollective', () => {
     let jeunesEtablissement: BaseJeune[]
     let evenementsService: EvenementsService
     let jeunesService: JeunesService
-    let typesRendezVous: TypeEvenement[]
+    let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
@@ -273,7 +278,7 @@ describe('EditionAnimationCollective', () => {
       jeunesService = mockedJeunesService({
         getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
       })
-      typesRendezVous = typesRdvAnimationsCollectives()
+      typesRendezVous = typesAnimationCollective()
 
       alerteSetter = jest.fn()
       push = jest.fn(() => Promise.resolve())
@@ -283,33 +288,31 @@ describe('EditionAnimationCollective', () => {
     describe('quand on veut créer une animation collective', () => {
       beforeEach(async () => {
         // Given
-        typesRendezVous = typesRdvAnimationsCollectives()
-        renderWithContexts(
-          <EditionRdv
-            jeunes={jeunesConseiller}
-            typesRendezVous={typesRendezVous}
-            withoutChat={true}
-            returnTo='/agenda?onglet=etablissement'
-            pageTitle=''
-          />,
-          {
-            customDependances: {
-              evenementsService: evenementsService,
-              jeunesService,
-            },
-            customConseiller: {
-              agence: {
-                nom: 'Mission Locale Aubenas',
-                id: 'id-etablissement',
+        typesRendezVous = typesAnimationCollective()
+        await act(async () => {
+          renderWithContexts(
+            <EditionRdv
+              jeunes={jeunesConseiller}
+              typesRendezVous={typesRendezVous}
+              withoutChat={true}
+              returnTo='/agenda?onglet=etablissement'
+              pageTitle=''
+              evenementTypeAC={true}
+            />,
+            {
+              customDependances: {
+                evenementsService: evenementsService,
+                jeunesService,
               },
-            },
-          }
-        )
-
-        const selectType = screen.getByRole('combobox', {
-          name: 'Type',
+              customConseiller: {
+                agence: {
+                  nom: 'Mission Locale Aubenas',
+                  id: 'id-etablissement',
+                },
+              },
+            }
+          )
         })
-        await userEvent.selectOptions(selectType, 'Atelier')
       })
 
       it('récupère les bénéficiaires de l’établissement', async () => {
@@ -346,10 +349,14 @@ describe('EditionAnimationCollective', () => {
 
       it('les bénéficiaires sont facultatifs', async () => {
         // Given
+        const selectType = screen.getByRole('combobox', {
+          name: 'Type',
+        })
         const inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
         const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
         const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
         const inputTitre = screen.getByLabelText('* Titre')
+        await userEvent.selectOptions(selectType, 'Atelier')
         await userEvent.type(inputDate, '2022-03-03')
         await userEvent.type(inputHoraire, '10:30')
         await userEvent.type(inputDuree, '02:37')
@@ -400,17 +407,20 @@ describe('EditionAnimationCollective', () => {
           delete evenement.statut
 
           // When
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            { customDependances: { evenementsService } }
-          )
+          await act(async () => {
+            renderWithContexts(
+              <EditionRdv
+                jeunes={jeunesConseiller}
+                typesRendezVous={typesRendezVous}
+                withoutChat={true}
+                returnTo='/agenda'
+                evenement={evenement}
+                pageTitle=''
+                evenementTypeAC={true}
+              />,
+              { customDependances: { evenementsService } }
+            )
+          })
 
           // Then
           const cloreButton = screen.queryByRole('link', {
@@ -428,17 +438,20 @@ describe('EditionAnimationCollective', () => {
           })
 
           // When
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            { customDependances: { evenementsService } }
-          )
+          await act(async () => {
+            renderWithContexts(
+              <EditionRdv
+                jeunes={jeunesConseiller}
+                typesRendezVous={typesRendezVous}
+                withoutChat={true}
+                returnTo='/agenda'
+                evenement={evenement}
+                pageTitle=''
+                evenementTypeAC={true}
+              />,
+              { customDependances: { evenementsService } }
+            )
+          })
 
           // Then
           const cloreButton = screen.queryByRole('link', {
@@ -456,17 +469,20 @@ describe('EditionAnimationCollective', () => {
           })
 
           // When
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='https://localhost:3000/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            { customDependances: { evenementsService } }
-          )
+          await act(async () => {
+            renderWithContexts(
+              <EditionRdv
+                jeunes={jeunesConseiller}
+                typesRendezVous={typesRendezVous}
+                withoutChat={true}
+                returnTo='https://localhost:3000/agenda'
+                evenement={evenement}
+                pageTitle=''
+                evenementTypeAC={true}
+              />,
+              { customDependances: { evenementsService } }
+            )
+          })
 
           // Then
           const cloreButton = screen.getByRole('link', {
@@ -499,7 +515,7 @@ describe('EditionAnimationCollective', () => {
         }
         const evenement = unEvenement({
           jeunes: [jeuneAbsent, jeunePresent],
-          type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
+          type: { code: 'ATELIER', label: 'Atelier' },
           statut: StatutAnimationCollective.Close,
         })
 
@@ -512,6 +528,7 @@ describe('EditionAnimationCollective', () => {
               returnTo='/agenda'
               evenement={evenement}
               pageTitle=''
+              evenementTypeAC={true}
             />,
             {
               customDependances: { evenementsService, jeunesService },

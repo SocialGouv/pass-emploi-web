@@ -5,7 +5,6 @@ import { BaseJeune } from 'interfaces/jeune'
 export type TypeEvenement = {
   code: string
   label: string
-  categorie: string
 }
 
 export enum StatutAnimationCollective {

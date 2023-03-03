@@ -7,61 +7,15 @@ import {
   Evenement,
   EvenementListItem,
   StatutAnimationCollective,
-  TypeEvenement,
 } from 'interfaces/evenement'
 import { EvenementJeuneJson, EvenementJson } from 'interfaces/json/evenement'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 
-export const typesEvenement = (
-  overrides: TypeEvenement[] = []
-): TypeEvenement[] => {
-  return [
-    {
-      code: 'ACTIVITES_EXTERIEURES',
-      label: 'Activités extérieures',
-      categorie: 'CEJ_RDV',
-    },
-    {
-      code: 'ATELIER',
-      label: 'Atelier',
-      categorie: 'CEJ_AC',
-    },
-    {
-      code: 'ENTRETIEN_INDIVIDUEL_CONSEILLER',
-      label: 'Entretien individuel conseiller',
-      categorie: 'CEJ_RDV',
-    },
-    {
-      code: 'ENTRETIEN_PARTENAIRE',
-      label: 'Entretien par un partenaire',
-      categorie: 'CEJ_RDV',
-    },
-    {
-      code: 'INFORMATION_COLLECTIVE',
-      label: 'Information collective',
-      categorie: 'CEJ_AC',
-    },
-    {
-      code: 'VISITE',
-      label: 'Visite',
-      categorie: 'CEJ_RDV',
-    },
-    {
-      code: 'PRESTATION',
-      label: 'Prestation',
-      categorie: 'CEJ_RDV',
-    },
-    {
-      code: 'AUTRE',
-      label: 'Autre',
-      categorie: 'CEJ_RDV',
-    },
-    ...overrides,
-  ]
+export function typesEvenement(): TypeEvenementReferentiel[] {
+  return [...typesEvenementCEJ(), ...typesAnimationCollective()]
 }
 
-export const typesRdvAnimationsCollectives = (
-  overrides: TypeEvenement[] = []
-): TypeEvenement[] => {
+export function typesAnimationCollective(): TypeEvenementReferentiel[] {
   return [
     {
       code: 'ATELIER',
@@ -74,13 +28,10 @@ export const typesRdvAnimationsCollectives = (
       label: 'Information collective',
       categorie: 'CEJ_AC',
     },
-    ...overrides,
   ]
 }
 
-export const typesRdvCEJ = (
-  overrides: TypeEvenement[] = []
-): TypeEvenement[] => {
+export function typesEvenementCEJ(): TypeEvenementReferentiel[] {
   return [
     {
       code: 'ACTIVITES_EXTERIEURES',
@@ -112,7 +63,6 @@ export const typesRdvCEJ = (
       label: 'Autre',
       categorie: 'CEJ_RDV',
     },
-    ...overrides,
   ]
 }
 
@@ -127,7 +77,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
         nom: 'Jirac',
       },
     ],
-    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
+    type: { code: 'AUTRE', label: 'Autre' },
     precisionType: 'Prise de nouvelles',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
@@ -288,7 +238,7 @@ export function unEvenementJson(
         nom: 'Jirac',
       },
     ],
-    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
+    type: { code: 'AUTRE', label: 'Autre' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',
@@ -345,7 +295,7 @@ export function unEvenementJeuneJson(
 ): EvenementJeuneJson {
   const defaults: EvenementJeuneJson = {
     id: '1',
-    type: { code: 'AUTRE', label: 'Autre', categorie: 'CEJ_RDV' },
+    type: { code: 'AUTRE', label: 'Autre' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
     modality: 'par téléphone',
@@ -367,8 +317,4 @@ export function unEvenementJeuneJson(
   }
 
   return { ...defaults, ...overrides }
-}
-
-export function isTypeAnimationCollective(type: TypeEvenement): boolean {
-  return type.categorie === 'CEJ_AC'
 }

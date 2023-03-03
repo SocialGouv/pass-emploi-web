@@ -14,7 +14,6 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { isTypeAnimationCollective } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   estAClore,
@@ -23,11 +22,14 @@ import {
   Evenement,
   isCodeTypeAnimationCollective,
   Modification,
-  TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
+import {
+  isTypeAnimationCollective,
+  TypeEvenementReferentiel,
+} from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -42,7 +44,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface EditionRdvProps extends PageProps {
   jeunes: BaseJeune[]
-  typesRendezVous: TypeEvenement[]
+  typesRendezVous: TypeEvenementReferentiel[]
   returnTo: string
   idJeune?: string
   evenement?: Evenement
@@ -88,9 +90,7 @@ function EditionRdv({
   let initialTracking: string
   if (evenement)
     initialTracking = `Modification ${
-      isCodeTypeAnimationCollective(evenement.type.code)
-        ? 'animation collective'
-        : 'rdv'
+      evenementTypeAC ? 'animation collective' : 'rdv'
     }`
   else
     initialTracking = `Création ${
@@ -173,7 +173,7 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
-    const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+    const alertType = evenementTypeAC
       ? AlerteParam.modificationAnimationCollective
       : AlerteParam.modificationRDV
     setAlerte(alertType)
@@ -185,7 +185,7 @@ function EditionRdv({
 
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+      const alertType = evenementTypeAC
         ? AlerteParam.suppressionAnimationCollective
         : AlerteParam.suppressionRDV
       setAlerte(alertType)
@@ -390,10 +390,7 @@ function EditionRdv({
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={supprimerEvenement}
-          evenementTypeAC={
-            evenementTypeAC ||
-            isCodeTypeAnimationCollective(evenement?.type.code)
-          }
+          evenementTypeAC={evenementTypeAC!}
         />
       )}
     </>
@@ -419,23 +416,35 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const evenementsService =
     withDependance<EvenementsService>('evenementsService')
+
   const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
     user.id,
     accessToken
   )
-
   const typesRendezVous = await evenementsService.getTypesRendezVous(
     accessToken
   )
 
-  const estUneAC = context.query.type === 'ac'
+  const idRdv = context.query.idRdv as string | undefined
+  const idJeune = context.query.idJeune as string | undefined
+  const queryParamAc = context.query.type === 'ac'
 
-  const typesRdvCEJ = [...typesRendezVous].filter(
-    (t) => !isTypeAnimationCollective(t)
-  )
-  const typesRdvAC = [...typesRendezVous].filter((t) =>
-    isTypeAnimationCollective(t)
-  )
+  let evenement: Evenement | undefined
+  if (idRdv) {
+    evenement = await evenementsService.getDetailsEvenement(idRdv, accessToken)
+    if (!evenement) return { notFound: true }
+  }
+
+  const estUneAC = evenement
+    ? isCodeTypeAnimationCollective(evenement.type.code)
+    : queryParamAc
+
+  const typesRdvCEJ: TypeEvenementReferentiel[] = []
+  const typesRdvAC: TypeEvenementReferentiel[] = []
+  typesRendezVous.forEach((t) => {
+    if (isTypeAnimationCollective(t)) typesRdvAC.push(t)
+    else typesRdvCEJ.push(t)
+  })
 
   let redirectTo = context.query.redirectUrl as string
   if (!redirectTo) {
@@ -457,21 +466,12 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     evenementTypeAC: estUneAC,
   }
 
-  const idRdv = context.query.idRdv as string | undefined
-  const idJeune = context.query.idJeune as string | undefined
-  if (idRdv) {
-    const evenement = await evenementsService.getDetailsEvenement(
-      idRdv,
-      accessToken
-    )
-    if (!evenement) return { notFound: true }
+  if (evenement) {
     props.evenement = evenement
     props.pageTitle = 'Mes événements - Modifier'
-    props.pageHeader = `${
-      estUneAC || isCodeTypeAnimationCollective(evenement.type.code)
-        ? 'Détail de l’animation collective'
-        : 'Détail du rendez-vous'
-    }`
+    props.pageHeader = estUneAC
+      ? 'Détail de l’animation collective'
+      : 'Détail du rendez-vous'
   } else if (idJeune) {
     props.idJeune = idJeune
   }

@@ -32,3 +32,15 @@ export interface MotifSuppressionJeune {
   motif: string
   description?: string
 }
+
+export type TypeEvenementReferentiel = {
+  code: string
+  label: string
+  categorie: string
+}
+
+export function isTypeAnimationCollective(
+  type: TypeEvenementReferentiel
+): boolean {
+  return type.categorie === 'CEJ_AC'
+}
