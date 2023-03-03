@@ -3,32 +3,29 @@ import React, { useState } from 'react'
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { trackEvent } from 'utils/analytics/matomo'
 
 type EncartAgenceRequiseProps = {
-  structureConseiller: StructureConseiller
+  conseiller: Conseiller
   getAgences: (structure: StructureConseiller) => Promise<Agence[]>
   onAgenceChoisie: (agence: { id?: string; nom: string }) => Promise<void>
   onChangeAffichageModal: (trackingMessage: string) => void
 }
 export default function EncartAgenceRequise({
-  structureConseiller,
+  conseiller,
   getAgences,
   onAgenceChoisie,
   onChangeAffichageModal,
 }: EncartAgenceRequiseProps): JSX.Element {
   const [agences, setAgences] = useState<Agence[]>([])
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
-  const labelEtablissement =
-    structureConseiller === StructureConseiller.MILO
-      ? 'Mission Locale'
-      : 'agence'
+  const labelEtablissement = estMilo(conseiller) ? 'Mission Locale' : 'agence'
 
   async function openAgenceModal() {
     if (!agences.length) {
-      setAgences(await getAgences(structureConseiller))
+      setAgences(await getAgences(conseiller.structure))
     }
     setShowAgenceModal(true)
     onChangeAffichageModal('Pop-in sélection agence')
@@ -49,7 +46,7 @@ export default function EncartAgenceRequise({
 
   function trackContacterSupport() {
     trackEvent({
-      structure: structureConseiller,
+      structure: conseiller.structure,
       categorie: 'Contact Support',
       action: 'Pop-in sélection agence',
       nom: '',
@@ -84,7 +81,7 @@ export default function EncartAgenceRequise({
 
       {showAgenceModal && agences.length > 0 && (
         <RenseignementAgenceModal
-          structureConseiller={structureConseiller}
+          conseiller={conseiller}
           referentielAgences={agences}
           onAgenceChoisie={renseignerAgence}
           onContacterSupport={trackContacterSupport}

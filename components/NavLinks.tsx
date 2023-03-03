@@ -4,7 +4,7 @@ import React from 'react'
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
-import { estSuperviseur, estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { estMilo, estPoleEmploi, estSuperviseur } from 'interfaces/conseiller'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
@@ -41,7 +41,7 @@ export default function NavLinks({
     })
   }
 
-  useLeanBeWidget(conseiller.structure)
+  useLeanBeWidget(conseiller)
 
   return (
     <>
@@ -132,7 +132,7 @@ export default function NavLinks({
         )}
 
         {items.includes(NavItem.Actualites) && (
-          <ActualitesMenuButton structure={conseiller.structure} />
+          <ActualitesMenuButton conseiller={conseiller} />
         )}
 
         {items.includes(NavItem.Aide) && (

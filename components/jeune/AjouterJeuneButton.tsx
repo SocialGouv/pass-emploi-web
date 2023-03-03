@@ -5,7 +5,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StructureConseiller } from 'interfaces/conseiller'
 
 interface AjouterJeuneButtonProps {
-  structure?: StructureConseiller
+  structure: StructureConseiller
 }
 
 export const AjouterJeuneButton = ({ structure }: AjouterJeuneButtonProps) => {

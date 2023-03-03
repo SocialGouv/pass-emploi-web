@@ -26,7 +26,11 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { estPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estPoleEmploi,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import {
   DetailJeune,
@@ -286,17 +290,16 @@ function FicheJeune({
         <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
       )}
 
-      {!jeune.isActivated &&
-        conseiller.structure === StructureConseiller.MILO && (
-          <div className='mb-8'>
-            <InformationMessage label='Le lien d’activation est valable 12h.'>
-              <p>
-                Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
-                l’option : mot de passe oublié.
-              </p>
-            </InformationMessage>
-          </div>
-        )}
+      {!jeune.isActivated && estMilo(conseiller) && (
+        <div className='mb-8'>
+          <InformationMessage label='Le lien d’activation est valable 12h.'>
+            <p>
+              Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
+              l’option : mot de passe oublié.
+            </p>
+          </InformationMessage>
+        </div>
+      )}
 
       {jeune.isReaffectationTemporaire && (
         <div className='mb-6'>
@@ -310,7 +313,7 @@ function FicheJeune({
       <div className='mb-6'>
         <DetailsJeune
           jeune={jeune}
-          structureConseiller={conseiller.structure}
+          conseiller={conseiller}
           onDossierMiloClick={trackDossierMiloClick}
         />
       </div>

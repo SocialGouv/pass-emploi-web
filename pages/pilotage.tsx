@@ -224,7 +224,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
         >
           {!animationsCollectivesAffichees && (
             <EncartAgenceRequise
-              structureConseiller={conseiller.structure}
+              conseiller={conseiller}
               onAgenceChoisie={renseignerAgence}
               getAgences={referentielService.getAgencesClientSide.bind(
                 referentielService

@@ -62,7 +62,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
 
   return (
     <RenseignementAgenceModal
-      structureConseiller={conseiller.structure}
+      conseiller={conseiller}
       referentielAgences={referentielAgences}
       onAgenceChoisie={selectAgence}
       onContacterSupport={trackContacterSupport}

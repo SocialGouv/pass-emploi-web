@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { ChangeEvent, useMemo, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
@@ -12,7 +12,7 @@ import {
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { ConseillerService } from 'services/conseiller.service'
@@ -35,11 +35,8 @@ function Profil({ referentielAgences }: ProfilProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
-  const labelAgence = useMemo(() => {
-    return conseiller.structure === StructureConseiller.MILO
-      ? 'Mission Locale'
-      : 'agence'
-  }, [conseiller])
+  const conseillerEstMilo = estMilo(conseiller)
+  const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
 
   async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
     const conseillerMisAJour = {
@@ -102,7 +99,7 @@ function Profil({ referentielAgences }: ProfilProps) {
           )}
         </dl>
 
-        {conseiller.structure === StructureConseiller.MILO && (
+        {conseillerEstMilo && (
           <>
             {conseiller.agence && (
               <div className='mt-4'>

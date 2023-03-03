@@ -218,7 +218,7 @@ function Agenda({ onglet }: AgendaProps) {
 
           {!conseiller.agence && (
             <EncartAgenceRequise
-              structureConseiller={conseiller.structure}
+              conseiller={conseiller}
               onAgenceChoisie={renseignerAgence}
               getAgences={referentielService.getAgencesClientSide.bind(
                 referentielService
