@@ -33,7 +33,7 @@
     "luxon": "3.2.1",
     "matomo-tracker": "2.2.4",
     "next": "13.2.2",
-    "next-auth": "4.19.2",
+    "next-auth": "4.20.1",
     "next-logger": "3.0.1",
     "next-pwa": "5.6.0",
     "pino": "8.11.0",
