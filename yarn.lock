@@ -8832,9 +8832,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:3.42.0":
-  version: 3.42.0
-  resolution: "elastic-apm-node@npm:3.42.0"
+"elastic-apm-node@npm:3.43.0":
+  version: 3.43.0
+  resolution: "elastic-apm-node@npm:3.43.0"
   dependencies:
     "@elastic/ecs-pino-format": ^1.2.0
     "@opentelemetry/api": ^1.1.0
@@ -8870,7 +8870,7 @@ __metadata:
     sql-summary: ^1.0.1
     traverse: ^0.6.6
     unicode-byte-truncate: ^1.0.0
-  checksum: 1cc75dac631ae3463115a4a760855810d54b4116670ad1dbbcaa910aff1f4a28e07290ee8486c263b0ee80f53261d0140fe92cf2092faf576fff13813d7fd8d4
+  checksum: 709010fe7ca1a133025d64ca476e7471b7bef34327dfa8084fee853fe0bfd96c68354424ecd1d75c79edbcaa50426f739a46f3da612d9ddc173546b3ae6393b5
   languageName: node
   linkType: hard
 
@@ -15113,7 +15113,7 @@ __metadata:
     crypto-js: 4.1.1
     css-loader: ^6.7.3
     dotenv: 16.0.3
-    elastic-apm-node: 3.42.0
+    elastic-apm-node: 3.43.0
     eslint: ^8.31.0
     eslint-config-next: 13.2.2
     eslint-config-prettier: ^8.6.0
