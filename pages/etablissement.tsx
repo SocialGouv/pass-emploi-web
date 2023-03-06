@@ -125,7 +125,13 @@ const Etablissement = (_: MissionLocaleProps) => {
             </THead>
             <TBody>
               {resultatsRecherche!.map((jeune) => (
-                <TR key={jeune.base.id}>
+                <TR
+                  key={jeune.base.id}
+                  href={'mes-jeunes/' + jeune.base.id}
+                  label={
+                    'Accéder à la fiche de ' + getNomJeuneComplet(jeune.base)
+                  }
+                >
                   <TD isBold>{getNomJeuneComplet(jeune.base)}</TD>
                   {conseillerEstMilo && (
                     <TD>
