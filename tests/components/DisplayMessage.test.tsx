@@ -9,7 +9,6 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<DiplayMessage />', () => {
   it('indique un message a été envoyé par le conseiller connecté', async () => {
-    const nomBeneficiaire = 'Lane Trotro'
     const nomConseiller = 'johnny boi'
     const customConseiller = unConseiller({
       structure: StructureConseiller.MILO,
@@ -31,14 +30,13 @@ describe('<DiplayMessage />', () => {
         <DisplayMessage
           message={message}
           conseillerNomComplet={nomConseiller}
-          beneficiaireNomComplet={nomBeneficiaire}
           lastSeenByJeune={message.creationDate.plus({ day: 1 })}
-          conseiller={customConseiller}
+          isConseillerCourant={message.conseillerId === customConseiller.id}
         />
       )
     })
 
     // Then
-    expect(screen.getByText('(vous)')).toBeInTheDocument()
+    expect(screen.getByText('Vous')).toBeInTheDocument()
   })
 })

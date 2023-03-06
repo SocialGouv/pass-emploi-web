@@ -5,24 +5,22 @@ import LienEvenement from 'components/chat/LienEvenement'
 import LienOffre from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
-import { Conseiller, UserType } from 'interfaces/conseiller'
+import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
 import { TIME_24_H_SEPARATOR, toFrenchFormat } from 'utils/date'
 
 interface DisplayMessageProps {
   message: Message
   conseillerNomComplet: string | undefined
-  beneficiaireNomComplet: string | undefined
   lastSeenByJeune: DateTime | undefined
-  conseiller: Conseiller
+  isConseillerCourant: boolean
 }
 
 export default function DisplayMessage({
   message,
   conseillerNomComplet,
-  beneficiaireNomComplet,
+  isConseillerCourant,
   lastSeenByJeune,
-  conseiller,
 }: DisplayMessageProps) {
   const isSentByConseiller =
     message.sentBy === UserType.CONSEILLER.toLowerCase()
@@ -33,40 +31,20 @@ export default function DisplayMessage({
 
   const messageStyleBeneficiaire = 'text-blanc bg-primary_darken mb-1'
 
-  function messageStyleConseiller(nomConseillerAComparer: string) {
-    return isSameConseiller(nomConseillerAComparer)
-      ? 'text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
-      : 'text-accent_2 bg-blanc mt-0 mr-0 mb-1 ml-auto'
-  }
-
-  function isSameConseiller(nomConseillerAComparer: string) {
-    const nomComplet = `${conseiller.firstName.toLowerCase()} ${conseiller.lastName.toLowerCase()}`
-    return nomConseillerAComparer === nomComplet
-  }
+  const messageStyleConseiller = `bg-blanc mt-0 mr-0 mb-1 ml-auto ${
+    isConseillerCourant ? 'text-primary_darken' : 'text-accent_2'
+  }`
 
   return (
     <li className='mb-5' id={message.id} data-testid={message.id}>
       <div
         className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left ${
-          conseillerNomComplet && isSentByConseiller
-            ? messageStyleConseiller(conseillerNomComplet)
-            : messageStyleBeneficiaire
+          isSentByConseiller ? messageStyleConseiller : messageStyleBeneficiaire
         }`}
       >
         {isSentByConseiller && (
           <p className='text-s-bold capitalize mb-1'>
-            {conseillerNomComplet}{' '}
-            <span className='normal-case'>
-              {conseillerNomComplet && isSameConseiller(conseillerNomComplet)
-                ? ' (vous)'
-                : ''}
-            </span>
-          </p>
-        )}
-
-        {!isSentByConseiller && (
-          <p className='text-s-bold capitalize mb-1'>
-            {beneficiaireNomComplet}
+            {isConseillerCourant ? 'Vous' : conseillerNomComplet}
           </p>
         )}
 
