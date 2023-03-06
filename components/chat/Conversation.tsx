@@ -252,7 +252,7 @@ export default function Conversation({
       >
         {!messagesByDay && <SpinningLoader />}
 
-        {messagesByDay && (
+        {messagesByDay && conseiller && (
           <>
             {hasNoMoreMessages && (
               <span
@@ -292,6 +292,9 @@ export default function Conversation({
                         message={message}
                         conseillerNomComplet={getConseillerNomComplet(message)}
                         lastSeenByJeune={lastSeenByJeune}
+                        isConseillerCourant={
+                          message.conseillerId === conseiller.id
+                        }
                       />
                     ))}
                   </ul>
