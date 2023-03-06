@@ -7,7 +7,6 @@ import {
   AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
-  TypeEvenement,
 } from 'interfaces/evenement'
 import {
   AnimationCollectiveJson,
@@ -18,6 +17,7 @@ import {
   jsonToEvenement,
   jsonToListItem,
 } from 'interfaces/json/evenement'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { MetadonneesPagination } from 'types/pagination'
 import { toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
@@ -61,7 +61,7 @@ export interface EvenementsService {
     accessToken: string
   ): Promise<Evenement | undefined>
 
-  getTypesRendezVous(accessToken: string): Promise<TypeEvenement[]>
+  getTypesRendezVous(accessToken: string): Promise<TypeEvenementReferentiel[]>
 
   creerEvenement(newRDV: EvenementFormData): Promise<string>
 
@@ -167,11 +167,12 @@ export class EvenementsApiService implements EvenementsService {
     }
   }
 
-  async getTypesRendezVous(accessToken: string): Promise<TypeEvenement[]> {
-    const { content: types } = await this.apiClient.get<TypeEvenement[]>(
-      '/referentiels/types-rendezvous',
-      accessToken
-    )
+  async getTypesRendezVous(
+    accessToken: string
+  ): Promise<TypeEvenementReferentiel[]> {
+    const { content: types } = await this.apiClient.get<
+      TypeEvenementReferentiel[]
+    >('/referentiels/types-rendezvous', accessToken)
     return types
   }
 

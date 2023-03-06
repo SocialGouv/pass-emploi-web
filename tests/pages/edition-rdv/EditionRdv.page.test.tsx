@@ -4,12 +4,17 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { typesEvenement, typesRdvCEJ, unEvenement } from 'fixtures/evenement'
+import {
+  typesEvenement,
+  typesEvenementCEJ,
+  unEvenement,
+} from 'fixtures/evenement'
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, TypeEvenement } from 'interfaces/evenement'
+import { Evenement } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
@@ -31,7 +36,7 @@ describe('EditionRdv', () => {
     let jeunesService: JeunesService
     let evenementsService: EvenementsService
     let jeunes: JeuneFromListe[]
-    let typesRendezVous: TypeEvenement[]
+    let typesRendezVous: TypeEvenementReferentiel[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
@@ -112,7 +117,7 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { typesRendezVous: typesRdvCEJ() },
+          props: { typesRendezVous: typesEvenementCEJ() },
         })
       })
 
@@ -243,7 +248,7 @@ describe('EditionRdv', () => {
     let jeunesEtablissement: BaseJeune[]
     let evenementsService: EvenementsService
     let jeunesService: JeunesService
-    let typesRendezVous: TypeEvenement[]
+    let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
@@ -318,7 +323,7 @@ describe('EditionRdv', () => {
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
           })
-          typesRendezVous = typesRdvCEJ()
+          typesRendezVous = typesEvenementCEJ()
         })
 
         it('contient une liste pour choisir un type', () => {
@@ -1237,7 +1242,7 @@ describe('EditionRdv', () => {
       beforeEach(async () => {
         const evenement = unEvenement({
           jeunes: [],
-          type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
+          type: { code: 'ATELIER', label: 'Atelier' },
           source: StructureConseiller.MILO,
         })
 

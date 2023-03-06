@@ -26,12 +26,11 @@ import {
   estClos,
   estCreeParSiMILO,
   Evenement,
-  isCodeTypeAnimationCollective,
   TYPE_EVENEMENT,
-  TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
 import {
   DATE_DASH_SEPARATOR,
@@ -43,7 +42,7 @@ import {
 interface EditionRdvFormProps {
   conseiller: Conseiller
   jeunesConseiller: BaseJeune[]
-  typesRendezVous: TypeEvenement[]
+  typesRendezVous: TypeEvenementReferentiel[]
   redirectTo: string
   conseillerIsCreator: boolean
   soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
@@ -148,7 +147,7 @@ export function EditionRdvForm({
   }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
-    if (!isCodeTypeAnimationCollective(codeTypeRendezVous)) {
+    if (!evenementTypeAC) {
       return jeunesConseiller.map((jeune) => ({
         id: jeune.id,
         value: getNomJeuneComplet(jeune),
@@ -336,13 +335,11 @@ export function EditionRdvForm({
   }
 
   function titreIsValid(): boolean {
-    return (
-      !isCodeTypeAnimationCollective(codeTypeRendezVous) || Boolean(titre.value)
-    )
+    return !evenementTypeAC || Boolean(titre.value)
   }
 
   function validateTitre() {
-    if (isCodeTypeAnimationCollective(codeTypeRendezVous) && !titre.value) {
+    if (evenementTypeAC && !titre.value) {
       setTitre({
         ...titre,
         error:
@@ -388,19 +385,13 @@ export function EditionRdvForm({
     )
       return false
 
-    return (
-      isCodeTypeAnimationCollective(codeTypeRendezVous) ||
-      idsBeneficiaires.length > 0
-    )
+    return evenementTypeAC || idsBeneficiaires.length > 0
   }
 
   function validatePresenceParticipants(
     idsBeneficiaires: string[]
   ): string | undefined {
-    if (
-      !isCodeTypeAnimationCollective(codeTypeRendezVous) &&
-      !idsBeneficiaires.length
-    )
+    if (!evenementTypeAC && !idsBeneficiaires.length)
       return "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
   }
 
@@ -462,27 +453,16 @@ export function EditionRdvForm({
     }
   }
 
-  function estUneAc(codeType?: string) {
-    return evenementTypeAC || isCodeTypeAnimationCollective(codeType)
-  }
-
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
   })
 
   useEffect(() => {
-    if (
-      isCodeTypeAnimationCollective(codeTypeRendezVous) &&
-      !jeunesEtablissement.length
-    ) {
+    if (evenementTypeAC) {
       recupererJeunesDeLEtablissement().then(setJeunesEtablissement)
     }
-  }, [
-    codeTypeRendezVous,
-    jeunesEtablissement.length,
-    recupererJeunesDeLEtablissement,
-  ])
+  }, [evenementTypeAC, recupererJeunesDeLEtablissement])
 
   function updateNbMaxParticipants(value: string) {
     const parsed = parseInt(value, 10)
@@ -500,9 +480,7 @@ export function EditionRdvForm({
       <Etape
         numero={1}
         titre={`Type ${
-          estUneAc(codeTypeRendezVous)
-            ? 'd’animation collective'
-            : 'de rendez-vous'
+          evenementTypeAC ? 'd’animation collective' : 'de rendez-vous'
         }`}
       >
         <Label htmlFor='typeEvenement' inputRequired={true}>
@@ -516,8 +494,8 @@ export function EditionRdvForm({
           onChange={handleSelectedTypeRendezVous}
         >
           {Boolean(evenement)
-            ? getTypeDeLevenement(evenement!)
-            : getTypesReferentiel(typesRendezVous)}
+            ? buildOptionTypeDeLevenement(evenement!)
+            : buildOptionsTypesReferentiel(typesRendezVous)}
         </Select>
 
         {showPrecisionType && (
@@ -549,7 +527,7 @@ export function EditionRdvForm({
       </Etape>
 
       <Etape numero={2} titre='Description'>
-        <Label htmlFor='titre' inputRequired={estUneAc(codeTypeRendezVous)}>
+        <Label htmlFor='titre' inputRequired={evenementTypeAC}>
           Titre
         </Label>
         {titre.error && (
@@ -561,7 +539,7 @@ export function EditionRdvForm({
           id='titre'
           type='text'
           defaultValue={titre.value}
-          required={estUneAc(codeTypeRendezVous)}
+          required={evenementTypeAC}
           invalid={Boolean(titre.error)}
           onChange={(value: string) => setTitre({ value })}
           onBlur={validateTitre}
@@ -595,7 +573,7 @@ export function EditionRdvForm({
       </Etape>
 
       <Etape numero={3} titre='Ajout de bénéficiaires'>
-        {estUneAc(codeTypeRendezVous) && (
+        {evenementTypeAC && (
           <>
             <div className='flex items-center mb-8'>
               <label htmlFor='toggle-max-participants' className='mr-4'>
@@ -663,7 +641,7 @@ export function EditionRdvForm({
           defaultBeneficiaires={defaultJeunes}
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
-          required={!estUneAc(codeTypeRendezVous)}
+          required={!evenementTypeAC}
           disabled={
             evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
           }
@@ -872,7 +850,7 @@ export function EditionRdvForm({
               type='submit'
               disabled={!formHasChanges() || !formIsValid()}
             >
-              {estUneAc(codeTypeRendezVous)
+              {evenementTypeAC
                 ? 'Modifier l’animation collective'
                 : 'Modifier le rendez-vous'}
             </Button>
@@ -888,7 +866,7 @@ export function EditionRdvForm({
                 aria-hidden={true}
                 className='mr-2 w-4 h-4'
               />
-              {estUneAc(codeTypeRendezVous)
+              {evenementTypeAC
                 ? 'Créer l’animation collective'
                 : 'Créer le rendez-vous'}
             </Button>
@@ -899,7 +877,9 @@ export function EditionRdvForm({
   )
 }
 
-function getTypesReferentiel(typesRendezVous: TypeEvenement[]) {
+function buildOptionsTypesReferentiel(
+  typesRendezVous: TypeEvenementReferentiel[]
+) {
   return typesRendezVous.map(({ code, label }) => (
     <option key={code} value={code}>
       {label}
@@ -907,7 +887,7 @@ function getTypesReferentiel(typesRendezVous: TypeEvenement[]) {
   ))
 }
 
-function getTypeDeLevenement(evenement: Evenement) {
+function buildOptionTypeDeLevenement(evenement: Evenement) {
   return [
     <option key={evenement.type.code} value={evenement.type.code}>
       {evenement.type.label}
