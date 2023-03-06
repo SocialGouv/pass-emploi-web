@@ -13,7 +13,7 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
@@ -46,7 +46,7 @@ const Etablissement = (_: MissionLocaleProps) => {
   const [metadonnees, setMetadonnees] = useState<MetadonneesPagination>()
   const [pageCourante, setPageCourante] = useState<number>()
 
-  const isMilo = conseiller?.structure === StructureConseiller.MILO
+  const conseillerEstMilo = estMilo(conseiller)
 
   async function rechercherJeunes(input: string, page: number) {
     if (!input) {
@@ -54,7 +54,7 @@ const Etablissement = (_: MissionLocaleProps) => {
       setMetadonnees(undefined)
     } else if (nouvelleRecherche(input, page)) {
       const resultats = await jeunesService.rechercheJeunesDeLEtablissement(
-        conseiller!.agence!.id!,
+        conseiller.agence!.id!,
         input,
         page
       )
@@ -71,7 +71,7 @@ const Etablissement = (_: MissionLocaleProps) => {
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence })
+    setConseiller({ ...conseiller, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
 
@@ -87,16 +87,16 @@ const Etablissement = (_: MissionLocaleProps) => {
 
   return (
     <>
-      {Boolean(conseiller?.agence) && (
+      {Boolean(conseiller.agence) && (
         <RechercheJeune
           onSearchFilterBy={(input) => rechercherJeunes(input, 1)}
           minCaracteres={2}
         />
       )}
 
-      {conseiller && !conseiller?.agence && (
+      {!conseiller.agence && (
         <EncartAgenceRequise
-          structureConseiller={conseiller.structure}
+          conseiller={conseiller}
           onAgenceChoisie={renseignerAgence}
           getAgences={referentielService.getAgencesClientSide.bind(
             referentielService
@@ -118,7 +118,7 @@ const Etablissement = (_: MissionLocaleProps) => {
             <THead>
               <TR isHeader={true}>
                 <TH>Bénéficiaire</TH>
-                {isMilo && <TH>Situation</TH>}
+                {conseillerEstMilo && <TH>Situation</TH>}
                 <TH>Dernière activité</TH>
                 <TH>Conseiller</TH>
               </TR>
@@ -127,7 +127,7 @@ const Etablissement = (_: MissionLocaleProps) => {
               {resultatsRecherche!.map((jeune) => (
                 <TR key={jeune.base.id}>
                   <TD isBold>{getNomJeuneComplet(jeune.base)}</TD>
-                  {isMilo && (
+                  {conseillerEstMilo && (
                     <TD>
                       {jeune.situation && (
                         <SituationTag situation={jeune.situation} />

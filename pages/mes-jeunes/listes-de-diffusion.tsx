@@ -43,7 +43,7 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
     const nouvelOrdre = tri === ALPHABETIQUE ? INVERSE : ALPHABETIQUE
     setTri(nouvelOrdre)
     trackEvent({
-      structure: conseiller!.structure,
+      structure: conseiller.structure,
       categorie: 'Listes de diffusion',
       action: 'Tri',
       nom: nouvelOrdre,

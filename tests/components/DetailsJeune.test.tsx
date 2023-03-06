@@ -2,6 +2,7 @@ import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import { unConseiller } from 'fixtures/conseiller'
 import { unDetailJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -31,7 +32,7 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        structureConseiller={StructureConseiller.MILO}
+        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
       />,
       { customDependances: { jeunesService } }
@@ -61,7 +62,7 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        structureConseiller={StructureConseiller.MILO}
+        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
       />,
       { customDependances: { jeunesService } }
@@ -79,7 +80,7 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        structureConseiller={StructureConseiller.MILO}
+        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
       />,
       { customDependances: { jeunesService } }
@@ -101,7 +102,7 @@ describe('<DetailsJeune>', () => {
         renderWithContexts(
           <DetailsJeune
             jeune={jeune}
-            structureConseiller={StructureConseiller.MILO}
+            conseiller={unConseiller({ structure: StructureConseiller.MILO })}
             onDossierMiloClick={() => {}}
           />,
           { customDependances: { jeunesService } }
@@ -124,7 +125,9 @@ describe('<DetailsJeune>', () => {
           renderWithContexts(
             <DetailsJeune
               jeune={jeune}
-              structureConseiller={StructureConseiller.POLE_EMPLOI}
+              conseiller={unConseiller({
+                structure: StructureConseiller.POLE_EMPLOI,
+              })}
               onDossierMiloClick={() => {}}
             />,
             { customDependances: { jeunesService } }
@@ -151,7 +154,9 @@ describe('<DetailsJeune>', () => {
         renderWithContexts(
           <DetailsJeune
             jeune={jeune}
-            structureConseiller={StructureConseiller.POLE_EMPLOI}
+            conseiller={unConseiller({
+              structure: StructureConseiller.POLE_EMPLOI,
+            })}
             onDossierMiloClick={() => {}}
           />,
           {
@@ -232,7 +237,9 @@ describe('<DetailsJeune>', () => {
         renderWithContexts(
           <DetailsJeune
             jeune={jeune}
-            structureConseiller={StructureConseiller.POLE_EMPLOI}
+            conseiller={unConseiller({
+              structure: StructureConseiller.POLE_EMPLOI,
+            })}
             onDossierMiloClick={() => {}}
           />,
           {
@@ -314,7 +321,7 @@ describe('<DetailsJeune>', () => {
       renderWithContexts(
         <DetailsJeune
           jeune={jeune}
-          structureConseiller={StructureConseiller.MILO}
+          conseiller={unConseiller({ structure: StructureConseiller.MILO })}
           onDossierMiloClick={() => {}}
         />,
         { customDependances: { jeunesService } }

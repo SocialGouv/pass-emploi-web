@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 
 import { trackPage, userStructureDimensionString } from 'utils/analytics/matomo'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
 
 function useMatomo(title: string | undefined) {
-  const [conseiller] = useConseiller()
+  const [conseiller] = useConseillerPotentiellementPasRecupere()
 
   useEffect(() => {
     if (!title) {

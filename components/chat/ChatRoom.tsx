@@ -34,7 +34,7 @@ export default function ChatRoom({
   function toggleFlag(idChat: string, flagged: boolean): void {
     messagesService.toggleFlag(idChat, flagged)
     trackEvent({
-      structure: conseiller!.structure,
+      structure: conseiller.structure,
       categorie: 'Conversation suivie',
       action: 'ChatRoom',
       nom: flagged.toString(),

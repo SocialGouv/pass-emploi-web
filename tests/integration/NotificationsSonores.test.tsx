@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 
@@ -132,12 +133,11 @@ function renderWithNotificationsSonores(
 }
 
 async function toggleNotifications() {
-  const toggleNotifications = screen.getByRole<HTMLInputElement>('checkbox', {
-    name: /notifications sonores/,
-  })
-  await act(async () => {
-    toggleNotifications.click()
-  })
+  await userEvent.click(
+    screen.getByRole<HTMLInputElement>('checkbox', {
+      name: /notifications sonores/,
+    })
+  )
 }
 
 async function unNouveauMessageArrive(

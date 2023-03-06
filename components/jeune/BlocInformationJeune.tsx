@@ -2,7 +2,7 @@ import Link from 'next/link'
 import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller, estMilo } from 'interfaces/conseiller'
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneProps {
@@ -10,7 +10,7 @@ interface BlocInformationJeuneProps {
   creationDate: string
   dateFinCEJ: string | undefined
   email: string | undefined
-  structureConseiller: StructureConseiller | undefined
+  conseiller: Conseiller
   onIdentifiantPartenaireCopie: () => void
   identifiantPartenaire: string | undefined
   onIdentifiantPartenaireClick: () => void
@@ -23,13 +23,14 @@ export function BlocInformationJeune({
   creationDate,
   dateFinCEJ,
   email,
-  structureConseiller,
+  conseiller,
   onIdentifiantPartenaireCopie,
   identifiantPartenaire,
   onIdentifiantPartenaireClick,
   urlDossier,
   onDossierMiloClick,
 }: BlocInformationJeuneProps) {
+  const conseillerEstMilo = estMilo(conseiller)
   const shortCreationDate = useMemo(
     () => toShortDate(creationDate),
     [creationDate]
@@ -48,7 +49,7 @@ export function BlocInformationJeune({
 
         {email && <Email email={email} />}
 
-        {structureConseiller !== StructureConseiller.MILO && (
+        {!conseillerEstMilo && (
           <IndentifiantPartenaire
             identifiantPartenaire={identifiantPartenaire}
             onCopy={onIdentifiantPartenaireCopie}
@@ -60,7 +61,7 @@ export function BlocInformationJeune({
           <DossierExterne href={urlDossier} onClick={onDossierMiloClick} />
         )}
 
-        {structureConseiller === StructureConseiller.MILO && (
+        {conseillerEstMilo && (
           <div className='flex'>
             <dt className='text-base-regular'>Date de fin du CEJ :</dt>
             <dd>
@@ -72,9 +73,7 @@ export function BlocInformationJeune({
         )}
       </dl>
 
-      {structureConseiller !== StructureConseiller.MILO && (
-        <LienVersHistorique idJeune={idJeune} />
-      )}
+      {!conseillerEstMilo && <LienVersHistorique idJeune={idJeune} />}
     </div>
   )
 }

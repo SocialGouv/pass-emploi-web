@@ -196,7 +196,7 @@ function EditionRdv({
   }
 
   function recupererJeunesDeLEtablissement() {
-    if (conseiller?.agence?.id) {
+    if (conseiller.agence?.id) {
       return jeunesService.getJeunesDeLEtablissement(conseiller.agence.id)
     }
     return Promise.resolve([])
@@ -355,7 +355,7 @@ function EditionRdv({
           setFormHasBeneficiaireAutrePortefeuille
         }
         conseillerIsCreator={
-          !evenement || conseiller?.id === evenement.createur.id
+          !evenement || conseiller.id === evenement.createur.id
         }
         conseiller={conseiller}
         onChanges={setHasChanges}

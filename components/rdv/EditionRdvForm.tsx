@@ -41,6 +41,7 @@ import {
 } from 'utils/date'
 
 interface EditionRdvFormProps {
+  conseiller: Conseiller
   jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeEvenement[]
   redirectTo: string
@@ -48,7 +49,6 @@ interface EditionRdvFormProps {
   soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
-  conseiller?: Conseiller
   evenement?: Evenement
   idJeune?: string
   showConfirmationModal: (payload: EvenementFormData) => void
@@ -456,7 +456,7 @@ export function EditionRdvForm({
 
   function emailInvitationText() {
     if (conseillerIsCreator) {
-      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
+      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller.email}`
     } else {
       return "Le créateur de l’événement recevra un mail pour l'informer de la modification."
     }

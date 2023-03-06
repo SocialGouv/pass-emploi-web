@@ -1,20 +1,17 @@
 import React from 'react'
 
-import { StructureConseiller } from '../interfaces/conseiller'
-
-import IconComponent, { IconName } from './ui/IconComponent'
-
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { LeanBe } from 'utils/hooks/useLeanBeWidget'
 
 interface ActualitesMenuButtonProps {
-  structure: StructureConseiller | undefined
+  conseiller: Conseiller
 }
 
-function ActualitesMenuButton({ structure }: ActualitesMenuButtonProps) {
-  const widgetId =
-    structure === StructureConseiller.POLE_EMPLOI
-      ? LeanBe.PE_WIDGET_ID
-      : LeanBe.MILO_WIDGET_ID
+function ActualitesMenuButton({ conseiller }: ActualitesMenuButtonProps) {
+  const widgetId = estPoleEmploi(conseiller)
+    ? LeanBe.PE_WIDGET_ID
+    : LeanBe.MILO_WIDGET_ID
   const classWidget = `SGBF-open-${widgetId} w-full`
   const classMenu =
     'flex p-2 mb-6 items-center layout_base:justify-center rounded-l layout_s:justify-start layout_l:justify-start hover:bg-primary_darken'

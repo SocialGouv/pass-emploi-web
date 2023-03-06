@@ -18,7 +18,7 @@ import {
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import { StructureConseiller, UserType } from 'interfaces/conseiller'
+import { estMilo, StructureConseiller, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
@@ -54,16 +54,16 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
 
   const pageTracking = 'Détail Action'
 
+  const conseillerEstMilo = estMilo(conseiller)
+
   const estARealiser: boolean = useMemo(
     () => statut !== StatutAction.Terminee && statut !== StatutAction.Annulee,
     [statut]
   )
   const estAQualifier: boolean = useMemo(
     () =>
-      conseiller?.structure === StructureConseiller.MILO &&
-      statut === StatutAction.Terminee &&
-      !qualification,
-    [conseiller?.structure, qualification, statut]
+      conseillerEstMilo && statut === StatutAction.Terminee && !qualification,
+    [qualification, statut]
   )
   const afficherSuppressionAction = useMemo(
     () =>
@@ -172,7 +172,7 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
         />
       )}
 
-      {conseiller?.structure === StructureConseiller.MILO && (
+      {conseillerEstMilo && (
         <TagQualificationAction statut={statut} qualification={qualification} />
       )}
 

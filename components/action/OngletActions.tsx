@@ -8,12 +8,12 @@ import {
   EtatQualificationAction,
   StatutAction,
 } from 'interfaces/action'
+import { Conseiller, estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { MetadonneesPagination } from 'types/pagination'
 
 interface OngletActionsProps {
-  afficherActions: boolean
-  afficherFiltresEtatsQualification: boolean
+  conseiller: Conseiller
   jeune: BaseJeune
   actionsInitiales: {
     actions: Action[]
@@ -39,8 +39,7 @@ export function OngletActions({
   actionsInitiales,
   getActions,
   jeune,
-  afficherActions,
-  afficherFiltresEtatsQualification,
+  conseiller,
 }: OngletActionsProps) {
   const [actionsAffichees, setActionsAffichees] = useState<Action[]>(
     actionsInitiales.actions
@@ -117,38 +116,40 @@ export function OngletActions({
 
   return (
     <>
-      {!afficherActions && (
+      {estPoleEmploi(conseiller) && (
         <IntegrationPoleEmploi label='actions et démarches' />
       )}
 
-      {afficherActions && actionsInitiales.metadonnees.nombreTotal === 0 && (
-        <p className='text-base-bold mb-2'>
-          {jeune.prenom} {jeune.nom} n’a pas encore d’action
-        </p>
-      )}
-
-      {afficherActions && actionsInitiales.metadonnees.nombreTotal > 0 && (
+      {!estPoleEmploi(conseiller) && (
         <>
-          <TableauActionsJeune
-            afficherFiltresEtatsQualification={
-              afficherFiltresEtatsQualification
-            }
-            jeune={jeune}
-            actions={actionsAffichees}
-            isLoading={isLoading}
-            onFiltres={filtrerActions}
-            onTri={trierActions}
-            tri={tri}
-          />
-          {nombrePages > 1 && (
-            <div className='mt-6'>
-              <Pagination
-                nomListe='actions'
-                nombreDePages={nombrePages}
-                pageCourante={pageCourante}
-                allerALaPage={changerPage}
+          {actionsInitiales.metadonnees.nombreTotal === 0 && (
+            <p className='text-base-bold mb-2'>
+              {jeune.prenom} {jeune.nom} n’a pas encore d’action
+            </p>
+          )}
+
+          {actionsInitiales.metadonnees.nombreTotal > 0 && (
+            <>
+              <TableauActionsJeune
+                afficherFiltresEtatsQualification={estMilo(conseiller)}
+                jeune={jeune}
+                actions={actionsAffichees}
+                isLoading={isLoading}
+                onFiltres={filtrerActions}
+                onTri={trierActions}
+                tri={tri}
               />
-            </div>
+              {nombrePages > 1 && (
+                <div className='mt-6'>
+                  <Pagination
+                    nomListe='actions'
+                    nombreDePages={nombrePages}
+                    pageCourante={pageCourante}
+                    allerALaPage={changerPage}
+                  />
+                </div>
+              )}
+            </>
           )}
         </>
       )}

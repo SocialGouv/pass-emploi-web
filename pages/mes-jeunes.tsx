@@ -10,7 +10,11 @@ import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estPoleEmploi,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import {
   compareJeunesByNom,
   JeuneAvecInfosComplementaires,
@@ -70,7 +74,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
     try {
       await conseillerService.recupererBeneficiaires()
       setAlerte(AlerteParam.recuperationBeneficiaires)
-      setConseiller({ ...conseiller!, aDesBeneficiairesARecuperer: false })
+      setConseiller({ ...conseiller, aDesBeneficiairesARecuperer: false })
     } finally {
       setIsRecuperationBeneficiairesLoading(false)
     }
@@ -137,10 +141,10 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   return (
     <>
       <PageActionsPortal>
-        <AjouterJeuneButton structure={conseiller?.structure} />
+        <AjouterJeuneButton structure={conseiller.structure} />
       </PageActionsPortal>
 
-      {conseiller?.aDesBeneficiairesARecuperer && (
+      {conseiller.aDesBeneficiairesARecuperer && (
         <div className='bg-primary_lighten rounded-base p-6 mb-6 text-center'>
           <p className='text-base-bold text-primary'>
             {conseillerJeunes.length > 0 &&
@@ -160,7 +164,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
       )}
 
       {conseillerJeunes.length === 0 &&
-        !conseiller?.aDesBeneficiairesARecuperer && (
+        !conseiller.aDesBeneficiairesARecuperer && (
           <div className='mx-auto my-0 flex flex-col items-center'>
             <EmptyStateImage
               aria-hidden='true'
@@ -185,12 +189,8 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
             <TableauJeunes
               jeunesFiltres={jeunesFiltres}
               totalJeunes={conseillerJeunes.length}
-              withActions={
-                conseiller?.structure !== StructureConseiller.POLE_EMPLOI
-              }
-              withSituations={
-                conseiller?.structure === StructureConseiller.MILO
-              }
+              withActions={!estPoleEmploi(conseiller)}
+              withSituations={estMilo(conseiller)}
             />
           )}
         </>

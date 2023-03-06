@@ -59,7 +59,7 @@ export function CommentairesAction({
               <CommentaireAction
                 key={commentaire.id}
                 commentaire={commentaire}
-                idConseiller={conseiller?.id}
+                idConseiller={conseiller.id}
               />
             ))}
           </dl>

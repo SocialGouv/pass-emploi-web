@@ -7,11 +7,11 @@ import {
   RenseignementAgenceMissionLocaleForm,
 } from 'components/RenseignementAgenceMissionLocaleForm'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller, estMilo } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 
 interface RenseignementAgenceModalProps {
-  structureConseiller: string
+  conseiller: Conseiller
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
   onContacterSupport: () => void
@@ -19,23 +19,21 @@ interface RenseignementAgenceModalProps {
 }
 
 export default function RenseignementAgenceModal({
-  structureConseiller,
+  conseiller,
   referentielAgences,
   onAgenceChoisie,
   onContacterSupport,
   onClose,
 }: RenseignementAgenceModalProps) {
-  const labelAgence =
-    structureConseiller === StructureConseiller.MILO
-      ? 'Mission Locale'
-      : 'agence'
+  const conseillerEstMilo = estMilo(conseiller)
+  const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
 
   return (
     <Modal
       title={`Ajoutez votre ${labelAgence} à votre profil`}
       onClose={onClose}
     >
-      {structureConseiller !== StructureConseiller.MILO && (
+      {!conseillerEstMilo && (
         <InformationMessage label='La liste des agences a été mise à jour et les accents sont pris en compte.' />
       )}
 
@@ -45,7 +43,7 @@ export default function RenseignementAgenceModal({
         />
       </div>
 
-      {structureConseiller === StructureConseiller.MILO && (
+      {conseillerEstMilo && (
         <RenseignementAgenceMissionLocaleForm
           referentielAgences={referentielAgences}
           onAgenceChoisie={onAgenceChoisie}
@@ -55,7 +53,7 @@ export default function RenseignementAgenceModal({
         />
       )}
 
-      {structureConseiller !== StructureConseiller.MILO && (
+      {!conseillerEstMilo && (
         <RenseignementAgenceForm
           referentielAgences={referentielAgences}
           onAgenceChoisie={onAgenceChoisie}
