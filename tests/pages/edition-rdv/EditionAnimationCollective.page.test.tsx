@@ -152,6 +152,7 @@ describe('EditionAnimationCollective', () => {
         // Given
         const animationCollective = unEvenement({
           type: { code: 'ATELIER', label: 'Atelier' },
+          jeunes: [{ id: 'id-autre-jeune', prenom: 'Sheldon', nom: 'Cooper' }],
         })
         ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
           animationCollective
@@ -174,6 +175,7 @@ describe('EditionAnimationCollective', () => {
             pageTitle: 'Mes événements - Modifier',
             pageHeader: 'Détail de l’animation collective',
             evenementTypeAC: true,
+            conseillerEstObservateur: false,
           },
         })
       })
@@ -541,6 +543,11 @@ describe('EditionAnimationCollective', () => {
             }
           )
         })
+      })
+
+      it('ne récupère pas les autres bénéficiaires de l’établissement', async () => {
+        // Then
+        expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledTimes(0)
       })
 
       it('empêche toute modification', () => {

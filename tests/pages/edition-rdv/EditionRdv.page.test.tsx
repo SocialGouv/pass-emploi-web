@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
@@ -168,6 +168,8 @@ describe('EditionRdv', () => {
           'id-rdv',
           'accessToken'
         )
+        expect(evenementsService.getTypesRendezVous).not.toHaveBeenCalled()
+
         expect(actual).toMatchObject({
           props: {
             evenement: unEvenement(),
@@ -211,6 +213,34 @@ describe('EditionRdv', () => {
 
         // Then
         expect(actual).toMatchObject({ notFound: true })
+      })
+
+      describe("quand l'utilisateur est observateur", () => {
+        it('prépare la page en lecture seule', async () => {
+          // Given
+          ;(
+            evenementsService.getDetailsEvenement as jest.Mock
+          ).mockResolvedValue(
+            unEvenement({
+              jeunes: [
+                { id: 'id-autre-jeune', prenom: 'Sheldon', nom: 'Cooper' },
+              ],
+            })
+          )
+
+          // When
+          const actual = await getServerSideProps({
+            req: { headers: {} },
+            query: { idRdv: 'id-rdv' },
+          } as unknown as GetServerSidePropsContext)
+
+          // Then
+          expect(actual).toMatchObject({
+            props: {
+              conseillerEstObservateur: true,
+            },
+          })
+        })
       })
     })
 
@@ -877,6 +907,34 @@ describe('EditionRdv', () => {
           screen.getByText('Système d’information MILO')
         ).toBeInTheDocument()
       })
+
+      it('empêche toute modification', () => {
+        // Then
+        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText('Modalité')).toBeDisabled()
+        expect(screen.getByLabelText(/Date/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
+        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
+        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
+        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/ajouter des destinataires/)
+        ).toBeDisabled()
+        expect(
+          screen.queryByRole('button', { name: /Enlever jeune/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Supprimer/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Annuler/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Modifier/ })
+        ).not.toBeInTheDocument()
+      })
     })
 
     describe('quand un id de jeune est spécifié', () => {
@@ -1238,66 +1296,6 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand on consulte un événement provenant d’i-MILO', () => {
-      beforeEach(async () => {
-        const evenement = unEvenement({
-          jeunes: [],
-          type: { code: 'ATELIER', label: 'Atelier' },
-          source: StructureConseiller.MILO,
-        })
-
-        await act(async () => {
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            {
-              customDependances: { evenementsService, jeunesService },
-              customConseiller: {
-                agence: {
-                  nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
-                },
-              },
-            }
-          )
-        })
-      })
-
-      it('empêche toute modification', () => {
-        // Then
-        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Description/)).toBeDisabled()
-        expect(screen.getByLabelText('Modalité')).toBeDisabled()
-        expect(screen.getByLabelText(/Date/)).toBeDisabled()
-        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
-        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
-        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
-        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
-        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
-        expect(
-          screen.getByLabelText(/ajouter des destinataires/)
-        ).toBeDisabled()
-        expect(
-          screen.queryByRole('button', { name: /Enlever jeune/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Supprimer/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Annuler/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Modifier/ })
-        ).not.toBeInTheDocument()
-      })
-    })
-
     describe('quand le conseiller connecté n’est pas le même que celui qui à crée l’événement', () => {
       let evenement: Evenement
       beforeEach(() => {
@@ -1453,6 +1451,61 @@ describe('EditionRdv', () => {
             }
           )
         })
+      })
+    })
+
+    describe('quand le conseiller connecté n’est référent d’aucun bénéficiaire de l’événement', () => {
+      beforeEach(() => {
+        // When
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunesConseiller}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo='https://localhost:3000/agenda'
+            evenement={unEvenement()}
+            conseillerEstObservateur={true}
+            pageTitle=''
+          />,
+          { customDependances: { evenementsService } }
+        )
+      })
+
+      it('affiche encart explicatif de lecture seule', () => {
+        //Then
+        expect(
+          screen.getByText(
+            /Vous pouvez uniquement lire le détail de ce rendez-vous car aucun de vos bénéficiaires n’y est inscrit/
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('empêche toute modification', () => {
+        // Then
+        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText('Modalité')).toBeDisabled()
+        expect(screen.getByLabelText(/Date/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
+        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
+        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
+        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/ajouter des destinataires/)
+        ).toBeDisabled()
+        expect(
+          screen.queryByRole('button', { name: /Enlever jeune/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Supprimer/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Annuler/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Modifier/ })
+        ).not.toBeInTheDocument()
       })
     })
   })
