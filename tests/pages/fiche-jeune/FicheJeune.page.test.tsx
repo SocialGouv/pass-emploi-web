@@ -70,6 +70,44 @@ describe('Fiche Jeune', () => {
         // Then
         expect(setIdJeune).toHaveBeenCalledWith('jeune-1')
       })
+
+      it('restreint l‘accès aux boutons si ce n‘est pas le conseiller du jeune', async () => {
+        // When
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune()}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: { id: 'fake-id' },
+              customDependances: {
+                jeunesService: mockedJeunesService({
+                  getIndicateursJeuneAlleges: jest.fn(async () =>
+                    desIndicateursSemaine()
+                  ),
+                }),
+                agendaService: mockedAgendaService({
+                  recupererAgenda: jest.fn(async () => unAgenda()),
+                }),
+              },
+            }
+          )
+        })
+
+        //Then
+        expect(
+          screen.queryByRole('button', { name: 'Supprimer ce compte' })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('link', { name: 'Créer un rendez-vous' })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('link', { name: 'Créer une action' })
+        ).not.toBeInTheDocument()
+      })
     })
 
     describe('pour les conseillers non Pôle Emploi', () => {

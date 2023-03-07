@@ -37,6 +37,7 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   dateFinCEJ?: string
   situations?: Situation[]
   idPartenaire?: string
+  idConseiller: string
 }
 
 export type JeuneEtablissementJson = {
@@ -155,6 +156,7 @@ export function jsonToDetailJeune({
     ...jeune,
     prenom: firstName,
     nom: lastName,
+    idConseiller: jeune.idConseiller,
     situations:
       jeune.situations?.map((situation) => ({
         ...situation,

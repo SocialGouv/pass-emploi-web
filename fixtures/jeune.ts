@@ -41,6 +41,7 @@ export const unDetailJeune = (
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     situations: [],
+    idConseiller: 'id-conseiller',
   }
   return { ...defaults, ...overrides }
 }
@@ -143,6 +144,7 @@ export const unDetailJeuneJson = (
     email: 'kenji.jirac@email.fr',
     isActivated: true,
     idPartenaire: '1234',
+    idConseiller: 'id-conseiller',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
   }

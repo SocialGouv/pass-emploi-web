@@ -51,6 +51,7 @@ export interface DetailJeune extends BaseJeune {
     dateFin?: string
   }>
   idPartenaire?: string
+  idConseiller: string
 }
 
 export interface MetadonneesFavoris {
