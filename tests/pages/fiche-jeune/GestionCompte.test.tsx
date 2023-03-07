@@ -263,7 +263,7 @@ async function renderFicheJeune(
         pageTitle={''}
       />,
       {
-        customConseiller: { structure: structure },
+        customConseiller: { id: 'id-conseiller', structure: structure },
         customDependances: {
           jeunesService: jeunesService,
           agendaService: mockedAgendaService({

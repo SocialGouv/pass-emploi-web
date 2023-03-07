@@ -147,6 +147,7 @@ export const unDetailJeuneJson = (
     idConseiller: 'id-conseiller',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
+    conseiller: { id: 'id-conseiller' },
   }
   return { ...defaults, ...overrides }
 }
