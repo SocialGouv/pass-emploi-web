@@ -6,6 +6,7 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import SituationTag from 'components/jeune/SituationTag'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -25,7 +26,6 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 type MissionLocaleProps = PageProps
 
@@ -142,14 +142,12 @@ const Etablissement = (_: MissionLocaleProps) => {
                     </TD>
                   )}
                   <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
-                  <TD>
+                  <TD className='flex justify-between items-center'>
                     {jeune.referent.prenom} {jeune.referent.nom}
-                  </TD>
-                  <TD>
                     <IconComponent
                       focusable={false}
                       aria-hidden={true}
-                      className='w-4 h-4 mr-2 fill-warning'
+                      className='w-4 h-4 fill-content_color'
                       name={IconName.ChevronRight}
                     />
                   </TD>

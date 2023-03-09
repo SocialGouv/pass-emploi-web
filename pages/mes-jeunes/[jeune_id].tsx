@@ -242,7 +242,7 @@ function FicheJeune({
   useMatomo(trackingLabel)
 
   useEffect(() => {
-    setIdCurrentJeune(jeune.id)
+    if (!lectureSeule) setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
