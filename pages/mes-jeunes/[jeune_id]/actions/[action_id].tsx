@@ -60,6 +60,7 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
     () => statut !== StatutAction.Terminee && statut !== StatutAction.Annulee,
     [statut]
   )
+
   const estAQualifier: boolean = useMemo(
     () =>
       conseillerEstMilo && statut === StatutAction.Terminee && !qualification,
