@@ -313,6 +313,15 @@ function FicheJeune({
         </div>
       )}
 
+      {lectureSeule && (
+        <div className='mb-6'>
+          <InformationMessage label='Vous êtes en lecture seule'>
+            Vous pouvez uniquement lire la fiche de ce bénéficiaire car il ne
+            fait pas partie de votre portefeuille.
+          </InformationMessage>
+        </div>
+      )}
+
       <div className='mb-6'>
         <DetailsJeune
           jeune={jeune}

@@ -143,6 +143,43 @@ describe('Fiche Jeune', () => {
           screen.queryByRole('link', { name: 'Créer une action' })
         ).not.toBeInTheDocument()
       })
+
+      it('affiche un encart lecture seule si ce n‘est pas le conseiller du jeune', async () => {
+        // When
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune()}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: { id: 'fake-id' },
+              customDependances: {
+                jeunesService: mockedJeunesService({
+                  getIndicateursJeuneAlleges: jest.fn(async () =>
+                    desIndicateursSemaine()
+                  ),
+                }),
+                agendaService: mockedAgendaService({
+                  recupererAgenda: jest.fn(async () => unAgenda()),
+                }),
+              },
+            }
+          )
+        })
+
+        //Then
+        expect(
+          screen.getByText('Vous êtes en lecture seule')
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            'Vous pouvez uniquement lire la fiche de ce bénéficiaire car il ne fait pas partie de votre portefeuille.'
+          )
+        ).toBeInTheDocument()
+      })
     })
 
     describe('pour les conseillers non Pôle Emploi', () => {
