@@ -25,6 +25,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 type MissionLocaleProps = PageProps
 
@@ -143,6 +144,14 @@ const Etablissement = (_: MissionLocaleProps) => {
                   <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
                   <TD>
                     {jeune.referent.prenom} {jeune.referent.nom}
+                  </TD>
+                  <TD>
+                    <IconComponent
+                      focusable={false}
+                      aria-hidden={true}
+                      className='w-4 h-4 mr-2 fill-warning'
+                      name={IconName.ChevronRight}
+                    />
                   </TD>
                 </TR>
               ))}

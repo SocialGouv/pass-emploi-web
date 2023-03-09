@@ -125,9 +125,9 @@ describe('Etablissement', () => {
             })
           ).toBeInTheDocument()
           expect(
-            within(tableauDeJeunes).getByLabelText(
-              'Accéder à la fiche de Page 1 Albert'
-            )
+            screen.getByRole('row', {
+              name: 'Accéder à la fiche de Page 1 Albert',
+            })
           ).toHaveAttribute('href', 'mes-jeunes/id-jeune')
           expect(
             within(tableauDeJeunes).getByText(`Page 1 Albert`)

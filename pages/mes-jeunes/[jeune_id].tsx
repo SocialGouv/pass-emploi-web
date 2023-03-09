@@ -96,6 +96,7 @@ function FicheJeune({
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
   const [alerte, setAlerte] = useAlerte()
+  const lectureSeule = jeune.idConseiller !== conseiller.id
 
   const [motifsSuppression, setMotifsSuppression] = useState<
     MotifSuppressionJeune[]
@@ -267,7 +268,7 @@ function FicheJeune({
 
   return (
     <>
-      {jeune.idConseiller === conseiller.id && (
+      {!lectureSeule && (
         <PageActionsPortal>
           <Button onClick={openDeleteJeuneModal} style={ButtonStyle.SECONDARY}>
             <IconComponent
@@ -331,7 +332,7 @@ function FicheJeune({
 
           <div className='flex justify-between mt-6 mb-4'>
             <div className='flex'>
-              {jeune.idConseiller === conseiller.id && (
+              {!lectureSeule && (
                 <>
                   <ButtonLink
                     href={`/mes-jeunes/edition-rdv?idJeune=${jeune.id}`}
