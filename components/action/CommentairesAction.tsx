@@ -12,12 +12,14 @@ import { useDependance } from 'utils/injectionDependances'
 
 interface CommentairesActionProps {
   idAction: string
+  lectureSeule: boolean
   commentairesInitiaux: Commentaire[]
   onAjout: (estEnSucces: boolean) => void
 }
 
 export function CommentairesAction({
   idAction,
+  lectureSeule,
   commentairesInitiaux,
   onAjout,
 }: CommentairesActionProps) {
@@ -65,29 +67,33 @@ export function CommentairesAction({
           </dl>
         )}
 
-        <Label htmlFor='commentaire-action' withBulleMessageSensible={true}>
-          Commentaire à destination du jeune
-        </Label>
-        <Textarea
-          ref={inputRef}
-          id='commentaire-action'
-          onChange={setNouveauCommentaire}
-        ></Textarea>
-        <Button
-          className='self-end'
-          label='Ajouter un commentaire'
-          onClick={ajouterUnCommentaire}
-          style={ButtonStyle.SECONDARY}
-          disabled={!Boolean(nouveauCommentaire)}
-        >
-          <IconComponent
-            name={IconName.Pen}
-            aria-hidden={true}
-            focusable={false}
-            className='w-4 h-4 mr-4'
-          />
-          Ajouter un commentaire
-        </Button>
+        {!lectureSeule && (
+          <>
+            <Label htmlFor='commentaire-action' withBulleMessageSensible={true}>
+              Commentaire à destination du jeune
+            </Label>
+            <Textarea
+              ref={inputRef}
+              id='commentaire-action'
+              onChange={setNouveauCommentaire}
+            ></Textarea>
+            <Button
+              className='self-end'
+              label='Ajouter un commentaire'
+              onClick={ajouterUnCommentaire}
+              style={ButtonStyle.SECONDARY}
+              disabled={!Boolean(nouveauCommentaire)}
+            >
+              <IconComponent
+                name={IconName.Pen}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 mr-4'
+              />
+              Ajouter un commentaire
+            </Button>
+          </>
+        )}
       </div>
     </div>
   )

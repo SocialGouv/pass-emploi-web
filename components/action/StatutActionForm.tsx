@@ -10,6 +10,7 @@ interface StatutActionFormProps {
   qualifierAction: (isSituationNonProfessionnelle: boolean) => void
   statutCourant: StatutAction
   estAQualifier: boolean
+  lectureSeule: boolean
 }
 
 function StatutActionForm({
@@ -17,6 +18,7 @@ function StatutActionForm({
   qualifierAction,
   statutCourant,
   estAQualifier,
+  lectureSeule,
 }: StatutActionFormProps) {
   const [isSituationNonProfessionnelle, setIsSituationNonProfessionnelle] =
     useState<boolean | undefined>(undefined)
@@ -40,13 +42,14 @@ function StatutActionForm({
             isSelected={statutCourant === status}
             onChange={updateStatutAction}
             isDisabled={
-              statutCourant === StatutAction.Terminee && !estAQualifier
+              (statutCourant === StatutAction.Terminee && !estAQualifier) ||
+              lectureSeule
             }
           />
         ))}
       </form>
 
-      {estAQualifier && (
+      {estAQualifier && !lectureSeule && (
         <div className='border border-solid border-grey_100 bg-primary_lighten rounded-base p-4 mb-10'>
           <h2 className='text-m-bold text-grey_800 mb-2'>
             S’agit-il d’une Situation Non Professionnelle ?

@@ -32,6 +32,7 @@ describe('Etablissement', () => {
         id: 'id-jeune',
         nom: 'Page ' + page,
         prenom: 'Albert',
+        idConseiller: 'id-conseiller',
       },
       referent: {
         id: 'id-conseiller',
