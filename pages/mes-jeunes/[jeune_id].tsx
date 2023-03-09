@@ -78,6 +78,7 @@ interface FicheJeuneProps extends PageProps {
     metadonnees: MetadonneesPagination
     page: number
   }
+  lectureSeule?: boolean
   metadonneesFavoris?: MetadonneesFavoris
   onglet?: Onglet
 }
@@ -88,6 +89,7 @@ function FicheJeune({
   actionsInitiales,
   metadonneesFavoris,
   onglet,
+  lectureSeule,
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -96,7 +98,6 @@ function FicheJeune({
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
   const [alerte, setAlerte] = useAlerte()
-  const lectureSeule = jeune.idConseiller !== conseiller.id
 
   const [motifsSuppression, setMotifsSuppression] = useState<
     MotifSuppressionJeune[]
@@ -265,6 +266,10 @@ function FicheJeune({
     jeune.id,
     jeunesService,
   ])
+
+  // useEffect(() => {
+  //   if (lectureSeule)
+  // }, [])
 
   return (
     <>
@@ -520,13 +525,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     withDependance<EvenementsService>('evenementsService')
   const actionsService = withDependance<ActionsService>('actionsService')
   const {
-    session: {
-      accessToken,
-      user: { structure },
-    },
+    session: { accessToken, user },
   } = sessionOrRedirect
 
-  const userIsPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
+  const userIsPoleEmploi = user.structure === StructureConseiller.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
   const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
     jeunesService.getJeuneDetails(
@@ -581,6 +583,8 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
         props.onglet = Onglet.AGENDA
     }
   }
+
+  if (jeune.idConseiller !== user.id) props.lectureSeule = true
 
   return {
     props,

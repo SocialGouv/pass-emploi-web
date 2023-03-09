@@ -40,7 +40,7 @@ describe('Fiche Jeune', () => {
     describe('pour tous les conseillers', () => {
       it('modifie le currentJeune', async () => {
         // Given
-        let setIdJeune = jest.fn()
+        const setIdJeune = jest.fn()
         const jeune = unDetailJeune()
 
         // When
@@ -72,11 +72,15 @@ describe('Fiche Jeune', () => {
         // Then
         expect(setIdJeune).toHaveBeenCalledWith('jeune-1')
       })
+    })
 
-      it('ne modifie pas le currentJeune si ce n‘est pas le conseiller du jeune', async () => {
+    describe('pour les conseillers non référent', () => {
+      let setIdJeune: (id: string | undefined) => void
+      beforeEach(async () => {
         // Given
-        let setIdJeune = jest.fn()
-        //When
+        setIdJeune = jest.fn()
+
+        // When
         await act(async () => {
           await renderWithContexts(
             <FicheJeune
@@ -84,6 +88,7 @@ describe('Fiche Jeune', () => {
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               pageTitle={''}
+              lectureSeule={true}
             />,
             {
               customConseiller: { id: 'fake-id' },
@@ -101,37 +106,14 @@ describe('Fiche Jeune', () => {
             }
           )
         })
+      })
 
+      it('ne modifie pas le currentJeune', async () => {
         //Then
         expect(setIdJeune).not.toHaveBeenCalled()
       })
 
-      it('restreint l‘accès aux boutons si ce n‘est pas le conseiller du jeune', async () => {
-        // When
-        await act(async () => {
-          await renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune()}
-              rdvs={[]}
-              actionsInitiales={desActionsInitiales()}
-              pageTitle={''}
-            />,
-            {
-              customConseiller: { id: 'fake-id' },
-              customDependances: {
-                jeunesService: mockedJeunesService({
-                  getIndicateursJeuneAlleges: jest.fn(async () =>
-                    desIndicateursSemaine()
-                  ),
-                }),
-                agendaService: mockedAgendaService({
-                  recupererAgenda: jest.fn(async () => unAgenda()),
-                }),
-              },
-            }
-          )
-        })
-
+      it('restreint l‘accès aux boutons', async () => {
         //Then
         expect(
           screen.queryByRole('button', { name: 'Supprimer ce compte' })
@@ -144,32 +126,7 @@ describe('Fiche Jeune', () => {
         ).not.toBeInTheDocument()
       })
 
-      it('affiche un encart lecture seule si ce n‘est pas le conseiller du jeune', async () => {
-        // When
-        await act(async () => {
-          await renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune()}
-              rdvs={[]}
-              actionsInitiales={desActionsInitiales()}
-              pageTitle={''}
-            />,
-            {
-              customConseiller: { id: 'fake-id' },
-              customDependances: {
-                jeunesService: mockedJeunesService({
-                  getIndicateursJeuneAlleges: jest.fn(async () =>
-                    desIndicateursSemaine()
-                  ),
-                }),
-                agendaService: mockedAgendaService({
-                  recupererAgenda: jest.fn(async () => unAgenda()),
-                }),
-              },
-            }
-          )
-        })
-
+      it('affiche un encart lecture seule', async () => {
         //Then
         expect(
           screen.getByText('Vous êtes en lecture seule')
@@ -433,6 +390,35 @@ describe('Fiche Jeune', () => {
         expect(actionsService.getActionsJeuneServerSide).not.toHaveBeenCalled()
         expect(actual).toMatchObject({
           props: { actionsInitiales: { actions: [] } },
+        })
+      })
+    })
+
+    describe('Quand le conseiller est observateur', () => {
+      it('prépare la page en lecture seule', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: {
+            accessToken: 'accessToken',
+            user: { id: 'id-observateur', structure: 'MILO' },
+          },
+          validSession: true,
+        })
+
+        // When
+        const actual = await getServerSideProps({
+          query: { jeune_id: 'id-jeune' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
+        expect(actual).toMatchObject({
+          props: {
+            lectureSeule: true,
+          },
         })
       })
     })
