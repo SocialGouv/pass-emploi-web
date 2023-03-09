@@ -42,6 +42,7 @@ export interface DetailJeune extends BaseJeune {
   creationDate: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
+  idConseiller: string
   email?: string
   urlDossier?: string
   dateFinCEJ?: string

@@ -6,6 +6,7 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import SituationTag from 'components/jeune/SituationTag'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -125,7 +126,13 @@ const Etablissement = (_: MissionLocaleProps) => {
             </THead>
             <TBody>
               {resultatsRecherche!.map((jeune) => (
-                <TR key={jeune.base.id}>
+                <TR
+                  key={jeune.base.id}
+                  href={'mes-jeunes/' + jeune.base.id}
+                  label={
+                    'Accéder à la fiche de ' + getNomJeuneComplet(jeune.base)
+                  }
+                >
                   <TD isBold>{getNomJeuneComplet(jeune.base)}</TD>
                   {conseillerEstMilo && (
                     <TD>
@@ -135,8 +142,14 @@ const Etablissement = (_: MissionLocaleProps) => {
                     </TD>
                   )}
                   <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
-                  <TD>
+                  <TD className='flex justify-between items-center'>
                     {jeune.referent.prenom} {jeune.referent.nom}
+                    <IconComponent
+                      focusable={false}
+                      aria-hidden={true}
+                      className='w-4 h-4 fill-content_color'
+                      name={IconName.ChevronRight}
+                    />
                   </TD>
                 </TR>
               ))}

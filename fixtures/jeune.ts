@@ -41,6 +41,7 @@ export const unDetailJeune = (
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
     situations: [],
+    idConseiller: 'id-conseiller',
   }
   return { ...defaults, ...overrides }
 }
@@ -145,6 +146,7 @@ export const unDetailJeuneJson = (
     idPartenaire: '1234',
     isReaffectationTemporaire: false,
     creationDate: '2021-12-07T17:30:07.756Z',
+    conseiller: { id: 'id-conseiller' },
   }
   return { ...defaults, ...overrides }
 }

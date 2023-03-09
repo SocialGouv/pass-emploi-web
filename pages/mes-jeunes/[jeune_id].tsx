@@ -96,6 +96,7 @@ function FicheJeune({
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
   const [alerte, setAlerte] = useAlerte()
+  const lectureSeule = jeune.idConseiller !== conseiller.id
 
   const [motifsSuppression, setMotifsSuppression] = useState<
     MotifSuppressionJeune[]
@@ -241,7 +242,7 @@ function FicheJeune({
   useMatomo(trackingLabel)
 
   useEffect(() => {
-    setIdCurrentJeune(jeune.id)
+    if (!lectureSeule) setIdCurrentJeune(jeune.id)
   }, [jeune, setIdCurrentJeune])
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
@@ -267,17 +268,19 @@ function FicheJeune({
 
   return (
     <>
-      <PageActionsPortal>
-        <Button onClick={openDeleteJeuneModal} style={ButtonStyle.SECONDARY}>
-          <IconComponent
-            name={IconName.Trashcan}
-            focusable={false}
-            aria-hidden={true}
-            className='mr-2 w-4 h-4'
-          />
-          Supprimer ce compte
-        </Button>
-      </PageActionsPortal>
+      {!lectureSeule && (
+        <PageActionsPortal>
+          <Button onClick={openDeleteJeuneModal} style={ButtonStyle.SECONDARY}>
+            <IconComponent
+              name={IconName.Trashcan}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Supprimer ce compte
+          </Button>
+        </PageActionsPortal>
+      )}
 
       {showSuppressionCompteBeneficiaireError && (
         <FailureAlert
@@ -329,28 +332,34 @@ function FicheJeune({
 
           <div className='flex justify-between mt-6 mb-4'>
             <div className='flex'>
-              <ButtonLink href={`/mes-jeunes/edition-rdv?idJeune=${jeune.id}`}>
-                <IconComponent
-                  name={IconName.Add}
-                  focusable='false'
-                  aria-hidden='true'
-                  className='mr-2 w-4 h-4'
-                />
-                Créer un rendez-vous
-              </ButtonLink>
+              {!lectureSeule && (
+                <>
+                  <ButtonLink
+                    href={`/mes-jeunes/edition-rdv?idJeune=${jeune.id}`}
+                  >
+                    <IconComponent
+                      name={IconName.Add}
+                      focusable='false'
+                      aria-hidden='true'
+                      className='mr-2 w-4 h-4'
+                    />
+                    Créer un rendez-vous
+                  </ButtonLink>
 
-              <ButtonLink
-                href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
-                className='ml-4'
-              >
-                <IconComponent
-                  name={IconName.Add}
-                  focusable='false'
-                  aria-hidden='true'
-                  className='mr-2 w-4 h-4'
-                />
-                Créer une action
-              </ButtonLink>
+                  <ButtonLink
+                    href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
+                    className='ml-4'
+                  >
+                    <IconComponent
+                      name={IconName.Add}
+                      focusable='false'
+                      aria-hidden='true'
+                      className='mr-2 w-4 h-4'
+                    />
+                    Créer une action
+                  </ButtonLink>
+                </>
+              )}
 
               <ButtonLink
                 href='/agenda?onglet=etablissement'
