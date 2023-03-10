@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -37,6 +38,10 @@ describe('Historique', () => {
   const listeConseillers = desConseillersJeune()
 
   describe('client side', () => {
+    beforeEach(async () => {
+      ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    })
+
     describe('quand l’utilisateur est un conseiller Mission Locale', () => {
       describe('pour les Situations', () => {
         it('affiche un onglet dédié', () => {

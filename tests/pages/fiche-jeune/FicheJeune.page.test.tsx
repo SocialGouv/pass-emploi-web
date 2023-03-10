@@ -1,6 +1,7 @@
 import { act, screen } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -37,6 +38,10 @@ jest.mock('utils/injectionDependances/withDependance')
 
 describe('Fiche Jeune', () => {
   describe('client side', () => {
+    beforeEach(async () => {
+      ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    })
+
     describe('pour tous les conseillers', () => {
       it('modifie le currentJeune', async () => {
         // Given

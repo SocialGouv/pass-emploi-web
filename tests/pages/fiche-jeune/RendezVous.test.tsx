@@ -20,6 +20,7 @@ describe('Rendez-vous de la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
       push: jest.fn(),
+      asPath: '/mes-jeunes',
     })
   })
 
@@ -38,7 +39,7 @@ describe('Rendez-vous de la fiche jeune', () => {
       )
       rdvs.forEach((rdv) => {
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
-        expect(screen.getByText(rdv.modality)).toBeInTheDocument()
+        expect(screen.getByText(rdv.modality!)).toBeInTheDocument()
       })
       expect(() =>
         screen.getByRole('table', { name: /Liste des actions de/ })

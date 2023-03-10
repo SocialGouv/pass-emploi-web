@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -20,6 +21,11 @@ export function ResumeIndicateursJeune({
   finDeLaSemaine,
   indicateursSemaine,
 }: ResumeIndicateursJeuneProps) {
+  const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h2 className='text-m-bold text-grey_800'>
@@ -77,15 +83,15 @@ export function ResumeIndicateursJeune({
           </div>
         </div>
       </div>
-      <LienVersIndicateurs idJeune={idJeune} />
+      <LienVersIndicateurs idJeune={idJeune} pathPrefix={pathPrefix} />
     </div>
   )
 }
 
-function LienVersIndicateurs(props: { idJeune: string }) {
+function LienVersIndicateurs(props: { idJeune: string; pathPrefix: string }) {
   return (
     <Link
-      href={`/mes-jeunes/${props.idJeune}/indicateurs`}
+      href={`${props.pathPrefix}/${props.idJeune}/indicateurs`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'
     >
       Voir plus d’indicateurs

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import TagStatutAction from 'components/action/TagStatutAction'
@@ -9,10 +10,15 @@ import { StructureConseiller } from 'interfaces/conseiller'
 
 interface AgendaRowProps {
   entree: EntreeAgenda
-  jeuneId: string
+  idBeneficiaire: string
 }
 
-export default function AgendaRow({ entree, jeuneId }: AgendaRowProps) {
+export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
+  const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   const props: {
     [type in typeof entree.type]: {
       href: string
@@ -21,12 +27,12 @@ export default function AgendaRow({ entree, jeuneId }: AgendaRowProps) {
     }
   } = {
     action: {
-      href: `/mes-jeunes/${jeuneId}/actions/`,
+      href: `${pathPrefix}/${idBeneficiaire}/actions/`,
       iconName: IconName.Actions,
       label: `Consulter l'action ${entree.titre}, de statut ${entree.statut}`,
     },
     evenement: {
-      href: `/mes-jeunes/edition-rdv?idRdv=`,
+      href: `${pathPrefix}/edition-rdv?idRdv=`,
       iconName: IconName.Calendar,
       label: `Consulter l'événement du ${entree.titre}`,
     },

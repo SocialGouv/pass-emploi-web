@@ -30,7 +30,9 @@ export default function NavLinks({
   const router = useRouter()
   const [conseiller] = useConseiller()
 
-  const isCurrentRoute = (href: string) => router.pathname.startsWith(href)
+  function isCurrentRoute(href: string) {
+    return router.asPath.startsWith(href)
+  }
 
   async function trackLogout() {
     trackEvent({
@@ -94,9 +96,9 @@ export default function NavLinks({
           items.includes(NavItem.Etablissement) && (
             <NavLink
               iconName={IconName.RoundedArrowRight}
-              label={estMilo(conseiller) ? 'Mission Locale' : 'Agence'}
+              label='Bénéficiaires'
               href='/etablissement'
-              isActive={isCurrentRoute('/mission-locale')}
+              isActive={isCurrentRoute('/etablissement')}
               showLabelOnSmallScreen={showLabelsOnSmallScreen}
             />
           )}

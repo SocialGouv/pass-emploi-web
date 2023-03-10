@@ -95,6 +95,10 @@ function FicheJeune({
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const agendaService = useDependance<AgendaService>('agendaService')
   const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
   const [alerte, setAlerte] = useAlerte()
@@ -163,7 +167,7 @@ function FicheJeune({
     )
     await router.replace(
       {
-        pathname: `/mes-jeunes/${jeune.id}`,
+        pathname: `${pathPrefix}/${jeune.id}`,
         query: { onglet: ongletProps[tab].queryParam },
       },
       undefined,
@@ -266,10 +270,6 @@ function FicheJeune({
     jeune.id,
     jeunesService,
   ])
-
-  // useEffect(() => {
-  //   if (lectureSeule)
-  // }, [])
 
   return (
     <>
@@ -439,7 +439,6 @@ function FicheJeune({
         >
           <OngletAgendaBeneficiaire
             idBeneficiaire={jeune.id}
-            conseiller={conseiller}
             recupererAgenda={recupererAgenda}
             goToActions={() => switchTab(Onglet.ACTIONS)}
           />

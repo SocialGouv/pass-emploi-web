@@ -1,5 +1,6 @@
 import { act, screen } from '@testing-library/react'
 import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -23,6 +24,10 @@ jest.mock('utils/injectionDependances/withDependance')
 describe('RendezVousPasses', () => {
   describe('client side', () => {
     describe('quand l’utilisateur n’est pas Pôle emploi ', () => {
+      beforeEach(async () => {
+        ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+      })
+
       describe('quand il y a des rendez-vous passés', () => {
         let rdvs: EvenementListItem[]
         beforeEach(async () => {

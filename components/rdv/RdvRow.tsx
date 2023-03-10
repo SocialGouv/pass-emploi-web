@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -30,6 +31,11 @@ export function RdvRow({
   withDate,
   withIndicationPresenceBeneficiaire = false,
 }: RdvRowProps) {
+  const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   const date = useMemo(() => DateTime.fromISO(rdv.date), [rdv.date])
   const shortDate = useMemo(() => toShortDate(date), [date])
   const fullDate = useMemo(
@@ -52,7 +58,7 @@ export function RdvRow({
 
   return (
     <TR
-      href={'/mes-jeunes/edition-rdv?idRdv=' + rdv.id}
+      href={pathPrefix + '/edition-rdv?idRdv=' + rdv.id}
       label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
     >
       <TD

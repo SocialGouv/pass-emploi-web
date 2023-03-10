@@ -31,6 +31,7 @@ describe('Agenda de la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: replace,
       push: jest.fn(),
+      asPath: '/mes-jeunes'
     })
   })
 

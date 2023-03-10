@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -30,6 +31,11 @@ export function BlocInformationJeune({
   urlDossier,
   onDossierMiloClick,
 }: BlocInformationJeuneProps) {
+  const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   const conseillerEstMilo = estMilo(conseiller)
   const shortCreationDate = useMemo(
     () => toShortDate(creationDate),
@@ -73,7 +79,9 @@ export function BlocInformationJeune({
         )}
       </dl>
 
-      {!conseillerEstMilo && <LienVersHistorique idJeune={idJeune} />}
+      {!conseillerEstMilo && (
+        <LienVersHistorique idJeune={idJeune} pathPrefix={pathPrefix} />
+      )}
     </div>
   )
 }
@@ -158,10 +166,10 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
   )
 }
 
-function LienVersHistorique(props: { idJeune: string }) {
+function LienVersHistorique(props: { idJeune: string; pathPrefix: string }) {
   return (
     <Link
-      href={`/mes-jeunes/${props.idJeune}/historique`}
+      href={`${props.pathPrefix}/${props.idJeune}/historique`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
     >
       Voir l’historique des conseillers
