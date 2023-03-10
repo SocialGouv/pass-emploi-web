@@ -142,14 +142,18 @@ const Etablissement = (_: MissionLocaleProps) => {
                     </TD>
                   )}
                   <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
-                  <TD className='flex justify-between items-center'>
-                    {jeune.referent.prenom} {jeune.referent.nom}
-                    <IconComponent
-                      focusable={false}
-                      aria-hidden={true}
-                      className='w-4 h-4 fill-content_color'
-                      name={IconName.ChevronRight}
-                    />
+                  <TD>
+                    <span className='flex items-center'>
+                      <div className='relative w-fit mx-auto'>
+                        {jeune.referent.prenom} {jeune.referent.nom}
+                      </div>
+                      <IconComponent
+                        focusable={false}
+                        aria-hidden={true}
+                        className='w-4 h-4 fill-content_color'
+                        name={IconName.ChevronRight}
+                      />
+                    </span>
                   </TD>
                 </TR>
               ))}
