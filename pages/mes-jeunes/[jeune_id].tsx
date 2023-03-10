@@ -163,7 +163,12 @@ function FicheJeune({
     setCurrentTab(tab)
 
     setTrackingLabel(
-      pageTracking + ' - Consultation ' + ongletProps[tab].trackingLabel
+      pageTracking +
+        ' - Consultation ' +
+        ongletProps[tab].trackingLabel +
+        lectureSeule
+        ? ' - hors portefeuille'
+        : ''
     )
     await router.replace(
       {
