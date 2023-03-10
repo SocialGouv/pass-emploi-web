@@ -45,15 +45,16 @@ interface EditionRdvFormProps {
   typesRendezVous: TypeEvenementReferentiel[]
   redirectTo: string
   conseillerIsCreator: boolean
-  soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
-  leaveWithChanges: () => void
-  onChanges: (hasChanges: boolean) => void
   evenement?: Evenement
   idJeune?: string
+  evenementTypeAC?: boolean
+  lectureSeule?: boolean
+  leaveWithChanges: () => void
+  onChanges: (hasChanges: boolean) => void
+  soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   showConfirmationModal: (payload: EvenementFormData) => void
   recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
   onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
-  evenementTypeAC?: boolean
 }
 
 export function EditionRdvForm({
@@ -71,6 +72,7 @@ export function EditionRdvForm({
   idJeune,
   showConfirmationModal,
   evenementTypeAC,
+  lectureSeule,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
   const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
@@ -147,16 +149,14 @@ export function EditionRdvForm({
   }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
+    if (lectureSeule) return []
+
     if (!evenementTypeAC) {
       return jeunesConseiller.map((jeune) => ({
         id: jeune.id,
         value: getNomJeuneComplet(jeune),
         avecIndication: false,
       }))
-    }
-
-    if (evenement && estClos(evenement)) {
-      return []
     }
 
     return jeunesEtablissement.map((jeune) => ({
@@ -459,10 +459,10 @@ export function EditionRdvForm({
   })
 
   useEffect(() => {
-    if (evenementTypeAC) {
+    if (evenementTypeAC && !lectureSeule) {
       recupererJeunesDeLEtablissement().then(setJeunesEtablissement)
     }
-  }, [evenementTypeAC, recupererJeunesDeLEtablissement])
+  }, [evenementTypeAC, lectureSeule, recupererJeunesDeLEtablissement])
 
   function updateNbMaxParticipants(value: string) {
     const parsed = parseInt(value, 10)
@@ -543,9 +543,7 @@ export function EditionRdvForm({
           invalid={Boolean(titre.error)}
           onChange={(value: string) => setTitre({ value })}
           onBlur={validateTitre}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='description' withBulleMessageSensible={true}>
@@ -566,9 +564,7 @@ export function EditionRdvForm({
           onChange={(value: string) => setDescription({ value })}
           invalid={Boolean(description.error)}
           onBlur={validateDescription}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
       </Etape>
 
@@ -585,10 +581,7 @@ export function EditionRdvForm({
                 onChange={() =>
                   setShowNombreMaxParticipants(!showNombreMaxParticipants)
                 }
-                disabled={
-                  evenement &&
-                  (estClos(evenement) || estCreeParSiMILO(evenement))
-                }
+                disabled={lectureSeule}
               />
             </div>
 
@@ -611,10 +604,7 @@ export function EditionRdvForm({
                   required={true}
                   min={1}
                   invalid={Boolean(nombreMaxParticipants.error)}
-                  disabled={
-                    evenement &&
-                    (estClos(evenement) || estCreeParSiMILO(evenement))
-                  }
+                  disabled={lectureSeule}
                   aria-describedby={
                     Boolean(nombreMaxParticipants.error)
                       ? 'max-participants--error'
@@ -642,9 +632,7 @@ export function EditionRdvForm({
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
           required={!evenementTypeAC}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
           renderIndication={
             evenement && estClos(evenement)
               ? BeneficiaireIndicationPresent
@@ -666,9 +654,7 @@ export function EditionRdvForm({
           id='modalite'
           defaultValue={modalite}
           onChange={setModalite}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         >
           {modalites.map((md) => (
             <option key={md} value={md}>
@@ -692,9 +678,7 @@ export function EditionRdvForm({
           onChange={(value: string) => setDate({ value })}
           onBlur={validateDate}
           invalid={Boolean(date.error)}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='horaire' inputRequired={true}>
@@ -715,9 +699,7 @@ export function EditionRdvForm({
           invalid={Boolean(horaire.error)}
           aria-invalid={horaire.error ? true : undefined}
           aria-describedby={horaire.error ? 'horaire--error' : undefined}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='duree' inputRequired={true}>
@@ -736,9 +718,7 @@ export function EditionRdvForm({
           onChange={(value: string) => setDuree({ value })}
           onBlur={validateDuree}
           invalid={Boolean(duree.error)}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='adresse'>
@@ -750,9 +730,7 @@ export function EditionRdvForm({
           defaultValue={adresse}
           onChange={setAdresse}
           icon='location'
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='organisme'>
@@ -766,9 +744,7 @@ export function EditionRdvForm({
           id='organisme'
           defaultValue={organisme}
           onChange={setOrganisme}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
       </Etape>
 
@@ -795,9 +771,7 @@ export function EditionRdvForm({
               id='presenceConseiller'
               checked={isConseillerPresent}
               disabled={
-                typeEntretienIndividuelConseillerSelected() ||
-                (evenement &&
-                  (estClos(evenement) || estCreeParSiMILO(evenement)))
+                typeEntretienIndividuelConseillerSelected() || lectureSeule
               }
               onChange={handlePresenceConseiller}
             />
@@ -819,8 +793,7 @@ export function EditionRdvForm({
         </div>
       </Etape>
 
-      {(!evenement ||
-        (!estClos(evenement) && !estCreeParSiMILO(evenement))) && (
+      {(!evenement || !lectureSeule) && (
         <div className='flex justify-center'>
           {!formHasChanges() && (
             <ButtonLink

@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 
+import { uneBaseJeune } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollective,
@@ -70,13 +71,7 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
   const defaults: Evenement = {
     id: '1',
     titre: 'Prise de nouvelles par téléphone',
-    jeunes: [
-      {
-        id: '1',
-        prenom: 'Kenji',
-        nom: 'Jirac',
-      },
-    ],
+    jeunes: [uneBaseJeune()],
     type: { code: 'AUTRE', label: 'Autre' },
     precisionType: 'Prise de nouvelles',
     modality: 'par téléphone',
@@ -233,7 +228,7 @@ export function unEvenementJson(
     id: '1',
     jeunes: [
       {
-        id: '1',
+        id: 'jeune-1',
         prenom: 'Kenji',
         nom: 'Jirac',
       },
