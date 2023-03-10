@@ -15,7 +15,8 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
 
   function creationFilAriane(path: string) {
     const liensFilAriane: { label: string; href: string }[] = []
-    const splittedPath = path.split('/').slice(1)
+    const pathWithoutQuery = path.split('?')[0]
+    const splittedPath = pathWithoutQuery.split('/').slice(1)
     let rebuiltPath = ''
 
     const regExps: RegExp[] = Array.from(routesToLabel.keys())
