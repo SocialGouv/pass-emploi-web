@@ -279,8 +279,8 @@ function EditionRdv({
       {evenement && conseillerEstObservateur && (
         <div className='mb-6'>
           <InformationMessage label='Vous êtes en lecture seule'>
-            Vous pouvez uniquement lire le détail de ce rendez-vous car aucun de
-            vos bénéficiaires n’y est inscrit
+            Vous pouvez uniquement lire le détail de ce rendez-vous car aucun
+            bénéficiaire de votre portefeuille n’y est inscrit.
           </InformationMessage>
         </div>
       )}

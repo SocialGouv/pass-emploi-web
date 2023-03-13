@@ -1475,7 +1475,7 @@ describe('EditionRdv', () => {
         //Then
         expect(
           screen.getByText(
-            /Vous pouvez uniquement lire le détail de ce rendez-vous car aucun de vos bénéficiaires n’y est inscrit/
+            /Vous pouvez uniquement lire le détail de ce rendez-vous car aucun bénéficiaire de votre portefeuille n’y est inscrit/
           )
         ).toBeInTheDocument()
       })
