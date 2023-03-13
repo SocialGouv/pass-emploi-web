@@ -162,14 +162,13 @@ function FicheJeune({
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
 
-    setTrackingLabel(
-      pageTracking +
-        ' - Consultation ' +
-        ongletProps[tab].trackingLabel +
-        lectureSeule
-        ? ' - hors portefeuille'
-        : ''
-    )
+    let newTrackingLabel = `${pageTracking} - Consultation ${
+      ongletProps[tab].trackingLabel
+    } ${lectureSeule ? ' - hors portefeuille' : ''}`
+    console.log(newTrackingLabel)
+
+    setTrackingLabel(newTrackingLabel)
+
     await router.replace(
       {
         pathname: `${pathPrefix}/${jeune.id}`,
