@@ -28,9 +28,7 @@ export default function Tab({
       aria-selected={selected}
       onClick={onSelectTab}
       className={`text-m-medium text-grey_800 px-4 pb-2 flex items-center cursor-pointer ${
-        selected
-          ? 'text-m-bold border-b-4 border-b-primary'
-          : 'hover:border-primary_darken border-b-[transparent] border-b-4 hover:font-bold'
+        selected ? 'text-m-bold border-b-4 border-b-primary' : 'hover:font-bold'
       }`}
     >
       {iconName && (
