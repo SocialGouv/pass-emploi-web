@@ -39,9 +39,6 @@ describe('<Sidebar/>', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Pilotage' })
     ).toHaveAttribute('href', '/pilotage')
-    expect(
-      within(navigation).getByRole('link', { name: 'Agence' })
-    ).toHaveAttribute('href', '/etablissement')
     expect(() => within(navigation).getByText('Réaffectation')).toThrow()
   })
 
@@ -62,14 +59,6 @@ describe('<Sidebar/>', () => {
 
     // THEN
     expect(() => screen.getByText('Agenda')).toThrow()
-  })
-
-  it('quand le conseiller est milo, affiche un lien vers la page Mission Locale', () => {
-    // WHEN
-    renderSidebar({ structure: StructureConseiller.MILO })
-
-    // THEN
-    expect(screen.getByText('Mission Locale')).toBeInTheDocument()
   })
 
   it("n'affiche pas le lien de rendez-vous lorsque le conseiller est Pole emploi", () => {

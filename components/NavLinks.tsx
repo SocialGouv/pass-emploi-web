@@ -20,7 +20,6 @@ export enum NavItem {
   Raccourci = 'Raccourci,',
   Messagerie = 'Messagerie',
   Pilotage = 'Pilotage',
-  Etablissement = 'Etablissement',
 }
 type NavLinksProps = { showLabelsOnSmallScreen: boolean; items: NavItem[] }
 export default function NavLinks({
@@ -89,17 +88,6 @@ export default function NavLinks({
             />
           </>
         )}
-
-        {!estPoleEmploi(conseiller) &&
-          items.includes(NavItem.Etablissement) && (
-            <NavLink
-              iconName={IconName.RoundedArrowRight}
-              label={estMilo(conseiller) ? 'Mission Locale' : 'Agence'}
-              href='/etablissement'
-              isActive={isCurrentRoute('/mission-locale')}
-              showLabelOnSmallScreen={showLabelsOnSmallScreen}
-            />
-          )}
 
         {estSuperviseur(conseiller) && items.includes(NavItem.Supervision) && (
           <NavLink
