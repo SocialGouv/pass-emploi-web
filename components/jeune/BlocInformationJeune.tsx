@@ -166,10 +166,16 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
   )
 }
 
-function LienVersHistorique(props: { idJeune: string; pathPrefix: string }) {
+function LienVersHistorique({
+  idJeune,
+  pathPrefix,
+}: {
+  idJeune: string
+  pathPrefix: string
+}) {
   return (
     <Link
-      href={`${props.pathPrefix}/${props.idJeune}/historique`}
+      href={`${pathPrefix}/${idJeune}/historique`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
     >
       Voir l’historique des conseillers

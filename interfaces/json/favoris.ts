@@ -29,14 +29,17 @@ export interface RechercheJson {
 }
 
 export function jsonToOffre(offreJson: OffreJson): Offre {
-  return {
+  const offre: Offre = {
     id: offreJson.idOffre,
-    localisation: offreJson.localisation,
-    organisation: offreJson.organisation,
     titre: offreJson.titre,
     type: jsonToTypeOffre(offreJson.type),
     urlParam: jsonToUrlParam(offreJson.type),
   }
+
+  if (offreJson.organisation) offre.organisation = offreJson.organisation
+  if (offreJson.localisation) offre.localisation = offreJson.localisation
+
+  return offre
 }
 
 export function jsonToTypeOffre(type: TypeOffreJson): string {

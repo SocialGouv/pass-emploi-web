@@ -88,10 +88,16 @@ export function ResumeIndicateursJeune({
   )
 }
 
-function LienVersIndicateurs(props: { idJeune: string; pathPrefix: string }) {
+function LienVersIndicateurs({
+  idJeune,
+  pathPrefix,
+}: {
+  idJeune: string
+  pathPrefix: string
+}) {
   return (
     <Link
-      href={`${props.pathPrefix}/${props.idJeune}/indicateurs`}
+      href={`${pathPrefix}/${idJeune}/indicateurs`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'
     >
       Voir plus d’indicateurs

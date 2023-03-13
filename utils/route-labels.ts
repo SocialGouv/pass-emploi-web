@@ -17,17 +17,20 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, 'Détail action'],
 
   // Établissement
-  [/\/etablissement\/jeunes$/, 'Bénéficiaires'],
-  [/\/etablissement\/jeunes\/(milo|pole-emploi)\/creation-jeune$/, 'Création'],
-  [/\/etablissement\/jeunes\/[\w-]+$/, 'Fiche jeune'],
-  [/\/etablissement\/jeunes\/[\w-]+\/favoris$/, 'Favoris'],
-  [/\/etablissement\/jeunes\/[\w-]+\/historique$/, 'Historique'],
-  [/\/etablissement\/jeunes\/[\w-]+\/indicateurs$/, 'Indicateurs'],
+  [/\/etablissement\/beneficiaires$/, 'Bénéficiaires'],
   [
-    /\/etablissement\/jeunes\/[\w-]+\/rendez-vous-passes$/,
+    /\/etablissement\/beneficiaires\/(milo|pole-emploi)\/creation-jeune$/,
+    'Création',
+  ],
+  [/\/etablissement\/beneficiaires\/[\w-]+$/, 'Fiche jeune'],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/favoris$/, 'Favoris'],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/historique$/, 'Historique'],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/indicateurs$/, 'Indicateurs'],
+  [
+    /\/etablissement\/beneficiaires\/[\w-]+\/rendez-vous-passes$/,
     'Rendez-vous passés',
   ],
-  [/\/etablissement\/jeunes\/[\w-]+\/actions\/[\w-]+$/, 'Détail action'],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/actions\/[\w-]+$/, 'Détail action'],
 
   // Offres
   [/\/recherche-offres$/, 'Offres'],

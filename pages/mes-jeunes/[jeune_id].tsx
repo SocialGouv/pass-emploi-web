@@ -583,7 +583,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     }
   }
 
-  if (jeune.idConseiller !== user.id) props.lectureSeule = true
+  if (jeune.idConseiller !== user.id) {
+    props.lectureSeule = true
+    props.pageTitle = `Établissement - ${jeune.prenom} ${jeune.nom}`
+  }
 
   return {
     props,
