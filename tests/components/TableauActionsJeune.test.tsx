@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
 
 import { TRI } from 'components/action/OngletActions'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
@@ -7,6 +8,10 @@ import { uneAction } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
 
 describe('TableauActionsJeune', () => {
+  beforeEach(async () => {
+    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+  })
+
   describe('Filtre statut', () => {
     beforeEach(async () => {
       // Given

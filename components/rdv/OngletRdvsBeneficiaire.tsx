@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
@@ -19,6 +20,11 @@ export function OngletRdvsBeneficiaire({
   beneficiaire,
   conseiller,
 }: OngletRdvsBeneficiaireProps) {
+  const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   return (
     <>
       {estPoleEmploi(conseiller) && (
@@ -34,7 +40,7 @@ export function OngletRdvsBeneficiaire({
             additionalColumns='Modalité'
           />
           <Link
-            href={`/mes-jeunes/${beneficiaire.id}/rendez-vous-passes`}
+            href={`${pathPrefix}/${beneficiaire.id}/rendez-vous-passes`}
             className='flex justify-end items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
           >
             Voir les événements passés

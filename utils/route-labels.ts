@@ -1,4 +1,4 @@
-const routesToLabel = new Map<RegExp, string>([
+const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   // Agenda
   [/\/mes-jeunes\/edition-rdv\?idRdv=.*$/, 'Fiche événement'],
   [/\/agenda$/, 'Agenda'],
@@ -16,6 +16,22 @@ const routesToLabel = new Map<RegExp, string>([
   [/\/mes-jeunes\/[\w-]+\/rendez-vous-passes$/, 'Rendez-vous passés'],
   [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, 'Détail action'],
 
+  // Établissement
+  [/\/etablissement\/beneficiaires$/, 'Bénéficiaires'],
+  [
+    /\/etablissement\/beneficiaires\/(milo|pole-emploi)\/creation-jeune$/,
+    'Création',
+  ],
+  [/\/etablissement\/beneficiaires\/[\w-]+$/, 'Fiche jeune'],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/favoris$/, 'Favoris'],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/historique$/, 'Historique'],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/indicateurs$/, 'Indicateurs'],
+  [
+    /\/etablissement\/beneficiaires\/[\w-]+\/rendez-vous-passes$/,
+    'Rendez-vous passés',
+  ],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/actions\/[\w-]+$/, 'Détail action'],
+
   // Offres
   [/\/recherche-offres$/, 'Offres'],
   [/\/offres$/, 'Offres'],
@@ -24,4 +40,4 @@ const routesToLabel = new Map<RegExp, string>([
   [/\/pilotage$/, 'Pilotage'],
 ])
 
-export default routesToLabel
+export default mapRoutesToLabels

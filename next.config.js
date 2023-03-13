@@ -43,6 +43,15 @@ module.exports = withPWA({
     defaultLocale: 'fr-FR',
   },
 
+  rewrites: async () => ({
+    beforeFiles: [
+      {
+        source: '/etablissement/beneficiaires/:path*',
+        destination: '/mes-jeunes/:path*',
+      },
+    ],
+  }),
+
   compiler: {
     // https://nextjs.org/docs/advanced-features/compiler#remove-react-properties
     reactRemoveProperties: true,

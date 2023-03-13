@@ -31,6 +31,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(),
       push: push,
+      asPath: '/mes-jeunes'
     })
 
     motifsSuppression = desMotifsDeSuppression()

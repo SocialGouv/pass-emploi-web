@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
 
 import TagStatutAction from 'components/action/TagStatutAction'
@@ -14,6 +15,11 @@ interface ActionRowProps {
 }
 
 export default function ActionRow({ action, jeuneId }: ActionRowProps) {
+  const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   const actionEstEnRetard = useMemo(() => {
     return (
       action.status !== StatutAction.Annulee &&
@@ -32,7 +38,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
 
   return (
     <TR
-      href={`/mes-jeunes/${jeuneId}/actions/${action.id}`}
+      href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
       label={`Détail de l'action ${action.content}`}
     >
       <TD className='rounded-l-base'>

@@ -128,7 +128,7 @@ describe('Etablissement', () => {
             screen.getByRole('row', {
               name: 'Accéder à la fiche de Page 1 Albert',
             })
-          ).toHaveAttribute('href', 'mes-jeunes/id-jeune')
+          ).toHaveAttribute('href', 'etablissement/beneficiaires/id-jeune')
           expect(
             within(tableauDeJeunes).getByText(`Page 1 Albert`)
           ).toBeInTheDocument()
@@ -440,7 +440,8 @@ describe('Etablissement', () => {
 
         expect(actual).toEqual({
           props: {
-            pageTitle: 'Agence',
+            pageTitle: 'Établissement',
+            pageHeader: 'Rechercher un bénéficiaire de mon agence',
           },
         })
       })
@@ -460,7 +461,8 @@ describe('Etablissement', () => {
 
         expect(actual).toEqual({
           props: {
-            pageTitle: 'Mission Locale',
+            pageTitle: 'Établissement',
+            pageHeader: 'Rechercher un bénéficiaire de ma Mission Locale',
           },
         })
       })

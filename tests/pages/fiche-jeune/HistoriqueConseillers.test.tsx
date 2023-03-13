@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import { desActionsInitiales } from 'fixtures/action'
@@ -16,6 +17,10 @@ jest.mock('components/Modal')
 describe('Historique des conseillers dans la fiche jeune', () => {
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
     it('affiche un lien vers l’historique des conseillers du jeune', async () => {
+      // Given
+      ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+
+      // When
       await renderWithContexts(
         <FicheJeune
           jeune={unDetailJeune()}
@@ -27,7 +32,9 @@ describe('Historique des conseillers dans la fiche jeune', () => {
           customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
           customDependances: {
             jeunesService: mockedJeunesService({
-              getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
+              getIndicateursJeuneAlleges: jest.fn(async () =>
+                desIndicateursSemaine()
+              ),
             }),
             agendaService: mockedAgendaService({
               recupererAgenda: jest.fn(async () => unAgenda()),
