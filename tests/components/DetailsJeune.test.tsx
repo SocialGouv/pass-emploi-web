@@ -2,6 +2,7 @@ import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import { unConseiller } from 'fixtures/conseiller'
 import { unDetailJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -31,9 +32,8 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        structureConseiller={StructureConseiller.MILO}
+        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
-        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -62,9 +62,8 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        structureConseiller={StructureConseiller.MILO}
+        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
-        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -81,9 +80,8 @@ describe('<DetailsJeune>', () => {
     renderWithContexts(
       <DetailsJeune
         jeune={jeune}
-        structureConseiller={StructureConseiller.MILO}
+        conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
-        onDeleteJeuneClick={() => {}}
       />,
       { customDependances: { jeunesService } }
     )
@@ -104,9 +102,8 @@ describe('<DetailsJeune>', () => {
         renderWithContexts(
           <DetailsJeune
             jeune={jeune}
-            structureConseiller={StructureConseiller.MILO}
+            conseiller={unConseiller({ structure: StructureConseiller.MILO })}
             onDossierMiloClick={() => {}}
-            onDeleteJeuneClick={() => {}}
           />,
           { customDependances: { jeunesService } }
         )
@@ -128,9 +125,10 @@ describe('<DetailsJeune>', () => {
           renderWithContexts(
             <DetailsJeune
               jeune={jeune}
-              structureConseiller={StructureConseiller.POLE_EMPLOI}
+              conseiller={unConseiller({
+                structure: StructureConseiller.POLE_EMPLOI,
+              })}
               onDossierMiloClick={() => {}}
-              onDeleteJeuneClick={() => {}}
             />,
             { customDependances: { jeunesService } }
           )
@@ -156,11 +154,15 @@ describe('<DetailsJeune>', () => {
         renderWithContexts(
           <DetailsJeune
             jeune={jeune}
-            structureConseiller={StructureConseiller.POLE_EMPLOI}
+            conseiller={unConseiller({
+              structure: StructureConseiller.POLE_EMPLOI,
+            })}
             onDossierMiloClick={() => {}}
-            onDeleteJeuneClick={() => {}}
           />,
-          { customDependances: { jeunesService }, customAlerte: { alerteSetter } }
+          {
+            customDependances: { jeunesService },
+            customAlerte: { alerteSetter },
+          }
         )
       })
 
@@ -235,11 +237,15 @@ describe('<DetailsJeune>', () => {
         renderWithContexts(
           <DetailsJeune
             jeune={jeune}
-            structureConseiller={StructureConseiller.POLE_EMPLOI}
+            conseiller={unConseiller({
+              structure: StructureConseiller.POLE_EMPLOI,
+            })}
             onDossierMiloClick={() => {}}
-            onDeleteJeuneClick={() => {}}
           />,
-          { customDependances: { jeunesService }, customAlerte: { alerteSetter } }
+          {
+            customDependances: { jeunesService },
+            customAlerte: { alerteSetter },
+          }
         )
       })
 
@@ -315,9 +321,8 @@ describe('<DetailsJeune>', () => {
       renderWithContexts(
         <DetailsJeune
           jeune={jeune}
-          structureConseiller={StructureConseiller.MILO}
+          conseiller={unConseiller({ structure: StructureConseiller.MILO })}
           onDossierMiloClick={() => {}}
-          onDeleteJeuneClick={() => {}}
         />,
         { customDependances: { jeunesService } }
       )

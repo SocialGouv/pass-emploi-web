@@ -24,12 +24,6 @@ import { ChatCrypto } from 'utils/chat/chatCrypto'
 
 jest.mock('clients/firebase.client')
 jest.mock('utils/chat/chatCrypto')
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(async () => ({
-    user: { id: 'id-conseiller', structure: 'POLE_EMPLOI' },
-    accessToken: 'accessToken',
-  })),
-}))
 
 describe('MessagesFirebaseAndApiService', () => {
   let firebaseClient: FirebaseClient
@@ -131,7 +125,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Then
       expect(
         firebaseClient.findAndObserveChatsDuConseiller
-      ).toHaveBeenCalledWith('id-conseiller', expect.any(Function))
+      ).toHaveBeenCalledWith('idConseiller', expect.any(Function))
     })
 
     it('calls provided callback with new jeuneChat built from found chat', async () => {
@@ -159,7 +153,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
       // Then
       expect(firebaseClient.getMessagesGroupe).toHaveBeenCalledWith(
-        'id-conseiller',
+        'idConseiller',
         'id-liste'
       )
       expect(actual).toEqual(desMessagesListeDeDiffusionParJour())
@@ -253,7 +247,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
       //Then
       expect(firebaseClient.getChatsDuConseiller).toHaveBeenCalledWith(
-        'id-conseiller'
+        'idConseiller'
       )
       expect(actual).toEqual({
         ['jeune-1']: 1,
@@ -307,7 +301,7 @@ describe('MessagesFirebaseAndApiService', () => {
         expect(firebaseClient.addMessage).toHaveBeenCalledWith(
           jeuneChat.chatId,
           {
-            idConseiller: 'id-conseiller',
+            idConseiller: 'idConseiller',
             message: {
               encryptedText: `Encrypted: ${newMessage}`,
               iv: `IV: ${newMessage}`,
@@ -336,7 +330,7 @@ describe('MessagesFirebaseAndApiService', () => {
       it('notifies of a new message', async () => {
         // Then
         expect(apiClient.post).toHaveBeenCalledWith(
-          `/conseillers/id-conseiller/jeunes/notify-messages`,
+          `/conseillers/idConseiller/jeunes/notify-messages`,
           { idsJeunes: [jeuneChat.id] },
           accessToken
         )
@@ -350,8 +344,8 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE',
             emetteur: {
               type: 'CONSEILLER',
-              structure: 'POLE_EMPLOI',
-              id: 'id-conseiller',
+              structure: 'PASS_EMPLOI',
+              id: 'idConseiller',
             },
           },
           accessToken
@@ -374,7 +368,7 @@ describe('MessagesFirebaseAndApiService', () => {
         expect(firebaseClient.addMessage).toHaveBeenCalledWith(
           jeuneChat.chatId,
           {
-            idConseiller: 'id-conseiller',
+            idConseiller: 'idConseiller',
             message: {
               encryptedText: `Encrypted: ${newMessage}`,
               iv: `IV: ${newMessage}`,
@@ -393,8 +387,8 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE_PJ',
             emetteur: {
               type: 'CONSEILLER',
-              structure: 'POLE_EMPLOI',
-              id: 'id-conseiller',
+              structure: 'PASS_EMPLOI',
+              id: 'idConseiller',
             },
           },
           accessToken
@@ -427,7 +421,7 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(apiClient.post).toHaveBeenCalledWith(
         '/messages',
         {
-          idConseiller: 'id-conseiller',
+          idConseiller: 'idConseiller',
           idsBeneficiaires,
           idsListesDeDiffusion,
           message: `Encrypted: ${newMessageGroupe}`,
@@ -451,7 +445,7 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(apiClient.post).toHaveBeenCalledWith(
         '/messages',
         {
-          idConseiller: 'id-conseiller',
+          idConseiller: 'idConseiller',
           idsBeneficiaires,
           idsListesDeDiffusion,
           message: `Encrypted: ${newMessageGroupe}`,
@@ -497,7 +491,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('récupère les chats du conseiler', () => {
       // Then
       expect(firebaseClient.getChatsDuConseiller).toHaveBeenCalledWith(
-        'id-conseiller'
+        'idConseiller'
       )
     })
 
@@ -507,7 +501,7 @@ describe('MessagesFirebaseAndApiService', () => {
       Object.values(chats).forEach((chat) => {
         expect(firebaseClient.addMessage).toHaveBeenCalledWith(chat.chatId, {
           offre,
-          idConseiller: 'id-conseiller',
+          idConseiller: 'idConseiller',
           message: {
             encryptedText: `Encrypted: ${newMessageGroupe}`,
             iv: `IV: ${newMessageGroupe}`,
@@ -533,7 +527,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('notifie envoi de message pour chaque destinataire', () => {
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
-        `/conseillers/id-conseiller/jeunes/notify-messages`,
+        `/conseillers/idConseiller/jeunes/notify-messages`,
         { idsJeunes: idsJeunes },
         accessToken
       )
@@ -547,8 +541,8 @@ describe('MessagesFirebaseAndApiService', () => {
           type: 'MESSAGE_OFFRE_PARTAGEE',
           emetteur: {
             type: 'CONSEILLER',
-            structure: 'POLE_EMPLOI',
-            id: 'id-conseiller',
+            structure: 'PASS_EMPLOI',
+            id: 'idConseiller',
           },
         },
         accessToken

@@ -7,7 +7,7 @@ import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
@@ -37,23 +37,13 @@ export enum Onglet {
 
 function Historique({ idJeune, situations, conseillers }: HistoriqueProps) {
   const [conseiller] = useConseiller()
-  const [currentTab, setCurrentTab] = useState<Onglet | undefined>()
+  const [currentTab, setCurrentTab] = useState<Onglet | undefined>(
+    estMilo(conseiller) ? Onglet.SITUATIONS : Onglet.CONSEILLERS
+  )
 
   const situationsTracking = 'Détail jeune – Situations'
   const conseillersTracking = 'Détail jeune – Historique conseillers'
   const [tracking, setTracking] = useState<string | undefined>()
-
-  useMatomo(tracking)
-
-  useEffect(() => {
-    if (conseiller && !currentTab) {
-      setCurrentTab(
-        conseiller?.structure === StructureConseiller.MILO
-          ? Onglet.SITUATIONS
-          : Onglet.CONSEILLERS
-      )
-    }
-  }, [conseiller, currentTab])
 
   useEffect(() => {
     if (currentTab) {
@@ -65,10 +55,12 @@ function Historique({ idJeune, situations, conseillers }: HistoriqueProps) {
     }
   }, [currentTab])
 
+  useMatomo(tracking)
+
   return (
     <>
       <TabList className='mt-10'>
-        {conseiller?.structure === StructureConseiller.MILO && (
+        {estMilo(conseiller) && (
           <Tab
             label='Situations'
             selected={currentTab === Onglet.SITUATIONS}

@@ -13,11 +13,13 @@ interface DisplayMessageProps {
   message: Message
   conseillerNomComplet: string | undefined
   lastSeenByJeune: DateTime | undefined
+  isConseillerCourant: boolean
 }
 
 export default function DisplayMessage({
   message,
   conseillerNomComplet,
+  isConseillerCourant,
   lastSeenByJeune,
 }: DisplayMessageProps) {
   const isSentByConseiller =
@@ -27,18 +29,22 @@ export default function DisplayMessage({
     lastSeenByJeune && lastSeenByJeune > message.creationDate
   )
 
+  const messageStyleBeneficiaire = 'text-blanc bg-primary_darken mb-1'
+
+  const messageStyleConseiller = `bg-blanc mt-0 mr-0 mb-1 ml-auto ${
+    isConseillerCourant ? 'text-primary_darken' : 'text-accent_2'
+  }`
+
   return (
     <li className='mb-5' id={message.id} data-testid={message.id}>
       <div
-        className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max ${
-          isSentByConseiller
-            ? 'text-right text-content_color bg-blanc mt-0 mr-0 mb-1 ml-auto'
-            : 'text-left text-blanc bg-primary_darken mb-1'
+        className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left ${
+          isSentByConseiller ? messageStyleConseiller : messageStyleBeneficiaire
         }`}
       >
         {isSentByConseiller && (
-          <p className='text-s-regular capitalize mb-1'>
-            {conseillerNomComplet}
+          <p className='text-s-bold capitalize mb-1'>
+            {isConseillerCourant ? 'Vous' : conseillerNomComplet}
           </p>
         )}
 

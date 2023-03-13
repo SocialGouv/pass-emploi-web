@@ -7,12 +7,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { AgendaApiService, AgendaService } from 'services/agenda.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(() => ({
-    accessToken: 'accessToken',
-  })),
-}))
-
 describe('AgendaService', () => {
   describe('.recupererAgenda', () => {
     let apiClient: ApiClient

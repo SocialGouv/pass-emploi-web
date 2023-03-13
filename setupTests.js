@@ -18,6 +18,16 @@ jest.mock('next/router', () => ({
     },
   },
 }))
+jest.mock('next-auth/react', () => ({
+  getSession: async () => ({
+    user: {
+      id: 'idConseiller',
+      estSuperviseur: false,
+      structure: 'PASS_EMPLOI',
+    },
+    accessToken: 'accessToken',
+  }),
+}))
 
 afterEach(() => {
   sessionStorage.clear()

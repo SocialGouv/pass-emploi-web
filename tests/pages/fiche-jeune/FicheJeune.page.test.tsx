@@ -41,12 +41,13 @@ describe('Fiche Jeune', () => {
       it('modifie le currentJeune', async () => {
         // Given
         let setIdJeune = jest.fn()
+        const jeune = unDetailJeune()
 
         // When
         await act(async () => {
           await renderWithContexts(
             <FicheJeune
-              jeune={unDetailJeune()}
+              jeune={jeune}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               pageTitle={''}
@@ -63,12 +64,121 @@ describe('Fiche Jeune', () => {
                 }),
               },
               customCurrentJeune: { idSetter: setIdJeune },
+              customConseiller: { id: jeune.idConseiller },
             }
           )
         })
 
         // Then
         expect(setIdJeune).toHaveBeenCalledWith('jeune-1')
+      })
+
+      it('ne modifie pas le currentJeune si ce n‘est pas le conseiller du jeune', async () => {
+        // Given
+        let setIdJeune = jest.fn()
+        //When
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune()}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: { id: 'fake-id' },
+              customDependances: {
+                jeunesService: mockedJeunesService({
+                  getIndicateursJeuneAlleges: jest.fn(async () =>
+                    desIndicateursSemaine()
+                  ),
+                }),
+                agendaService: mockedAgendaService({
+                  recupererAgenda: jest.fn(async () => unAgenda()),
+                }),
+              },
+              customCurrentJeune: { idSetter: setIdJeune },
+            }
+          )
+        })
+
+        //Then
+        expect(setIdJeune).not.toHaveBeenCalled()
+      })
+
+      it('restreint l‘accès aux boutons si ce n‘est pas le conseiller du jeune', async () => {
+        // When
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune()}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: { id: 'fake-id' },
+              customDependances: {
+                jeunesService: mockedJeunesService({
+                  getIndicateursJeuneAlleges: jest.fn(async () =>
+                    desIndicateursSemaine()
+                  ),
+                }),
+                agendaService: mockedAgendaService({
+                  recupererAgenda: jest.fn(async () => unAgenda()),
+                }),
+              },
+            }
+          )
+        })
+
+        //Then
+        expect(
+          screen.queryByRole('button', { name: 'Supprimer ce compte' })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('link', { name: 'Créer un rendez-vous' })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('link', { name: 'Créer une action' })
+        ).not.toBeInTheDocument()
+      })
+
+      it('affiche un encart lecture seule si ce n‘est pas le conseiller du jeune', async () => {
+        // When
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune()}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: { id: 'fake-id' },
+              customDependances: {
+                jeunesService: mockedJeunesService({
+                  getIndicateursJeuneAlleges: jest.fn(async () =>
+                    desIndicateursSemaine()
+                  ),
+                }),
+                agendaService: mockedAgendaService({
+                  recupererAgenda: jest.fn(async () => unAgenda()),
+                }),
+              },
+            }
+          )
+        })
+
+        //Then
+        expect(
+          screen.getByText('Vous êtes en lecture seule')
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            'Vous pouvez uniquement lire la fiche de ce bénéficiaire car il ne fait pas partie de votre portefeuille.'
+          )
+        ).toBeInTheDocument()
       })
     })
 
@@ -246,10 +356,20 @@ describe('Fiche Jeune', () => {
 
     describe('Quand on demande une page d’actions spécifique', () => {
       it('récupère la page demandée des actions du jeune', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: {
+            accessToken: 'accessToken',
+            user: { id: 'id-conseiller', structure: 'MILO' },
+          },
+          validSession: true,
+        })
+
         // When
         const actual = await getServerSideProps({
           query: { jeune_id: 'id-jeune', page: 3 },
         } as unknown as GetServerSidePropsContext)
+
         // Then
         expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',

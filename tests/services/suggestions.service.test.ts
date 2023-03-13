@@ -2,13 +2,6 @@ import { ApiClient } from 'clients/api.client'
 import { SuggestionsApiService } from 'services/suggestions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(async () => ({
-    user: { id: 'idConseiller' },
-    accessToken: 'accessToken',
-  })),
-}))
-
 describe('SuggestionsApiService', () => {
   let apiClient: ApiClient
   let suggestionsService: SuggestionsApiService

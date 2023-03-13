@@ -28,11 +28,6 @@ export interface QualificationAction {
   isSituationNonProfessionnelle: boolean
 }
 
-export interface MetadonneesActions {
-  nombrePages: number
-  nombreTotal: number
-}
-
 export interface TotalActions {
   idJeune: string
   nbActionsNonTerminees: number

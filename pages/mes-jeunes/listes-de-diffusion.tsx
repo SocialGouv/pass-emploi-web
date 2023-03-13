@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SortIcon from 'components/ui/SortIcon'
@@ -42,7 +43,7 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
     const nouvelOrdre = tri === ALPHABETIQUE ? INVERSE : ALPHABETIQUE
     setTri(nouvelOrdre)
     trackEvent({
-      structure: conseiller!.structure,
+      structure: conseiller.structure,
       categorie: 'Listes de diffusion',
       action: 'Tri',
       nom: nouvelOrdre,
@@ -69,18 +70,17 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
 
   return (
     <>
-      <ButtonLink
-        href='/mes-jeunes/listes-de-diffusion/edition-liste'
-        className='w-fit mb-6'
-      >
-        <IconComponent
-          name={IconName.Add}
-          focusable={false}
-          aria-hidden={true}
-          className='mr-2 w-4 h-4'
-        />
-        Créer une liste
-      </ButtonLink>
+      <PageActionsPortal>
+        <ButtonLink href='/mes-jeunes/listes-de-diffusion/edition-liste'>
+          <IconComponent
+            name={IconName.Add}
+            focusable={false}
+            aria-hidden={true}
+            className='mr-2 w-4 h-4'
+          />
+          Créer une liste
+        </ButtonLink>
+      </PageActionsPortal>
 
       {listesDiffusion.length === 0 && (
         <div className='mx-auto my-0 flex flex-col items-center'>
@@ -98,7 +98,8 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
       {listesDiffusion.length > 0 && (
         <Table
           caption={{
-            text: `Listes (${listesDiffusion.length})`,
+            text: 'Listes',
+            count: listesDiffusion.length,
             visible: true,
           }}
           asDiv={true}

@@ -7,7 +7,6 @@ import {
   ActionPilotage,
   Commentaire,
   EtatQualificationAction,
-  MetadonneesActions,
   QualificationAction,
   SituationNonProfessionnelle,
   StatutAction,
@@ -29,6 +28,7 @@ import {
   QualificationActionJson,
 } from 'interfaces/json/action'
 import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
+import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
 export interface ActionsService {
@@ -45,18 +45,18 @@ export interface ActionsService {
   getActionsAQualifierClientSide(
     idConseiller: string,
     page: number
-  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }>
+  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesPagination }>
 
   getActionsAQualifierServerSide(
     idConseiller: string,
     accessToken: string
-  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }>
+  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesPagination }>
 
   getActionsJeuneServerSide(
     idJeune: string,
     page: number,
     accessToken: string
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }>
 
   getActionsJeuneClientSide(
     idJeune: string,
@@ -66,7 +66,7 @@ export interface ActionsService {
       etatsQualification: EtatQualificationAction[]
       tri?: string
     }
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }>
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }>
 
   createAction(
     action: { intitule: string; commentaire: string; dateEcheance: string },
@@ -96,6 +96,7 @@ export interface ActionsService {
     options?: {
       dateDebutModifiee?: DateTime
       dateFinModifiee?: DateTime
+      commentaire?: string
     }
   ): Promise<QualificationAction>
 
@@ -151,7 +152,7 @@ export class ActionsApiService implements ActionsService {
       etatsQualification: EtatQualificationAction[]
       tri?: string
     }
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
     const session = await getSession()
     return this.getActionsJeune(idJeune, options, session!.accessToken)
   }
@@ -160,7 +161,7 @@ export class ActionsApiService implements ActionsService {
     idJeune: string,
     page: number,
     accessToken: string
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
     return this.getActionsJeune(
       idJeune,
       { page, statuts: [], etatsQualification: [] },
@@ -171,7 +172,10 @@ export class ActionsApiService implements ActionsService {
   async getActionsAQualifierClientSide(
     idConseiller: string,
     page: number
-  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
+  ): Promise<{
+    actions: ActionPilotage[]
+    metadonnees: MetadonneesPagination
+  }> {
     const session = await getSession()
 
     return this.getActionsAQualifier(idConseiller, page, session!.accessToken)
@@ -180,7 +184,10 @@ export class ActionsApiService implements ActionsService {
   getActionsAQualifierServerSide(
     idConseiller: string,
     accessToken: string
-  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
+  ): Promise<{
+    actions: ActionPilotage[]
+    metadonnees: MetadonneesPagination
+  }> {
     return this.getActionsAQualifier(idConseiller, 1, accessToken)
   }
 
@@ -220,6 +227,7 @@ export class ActionsApiService implements ActionsService {
     options?: {
       dateDebutModifiee?: DateTime
       dateFinModifiee?: DateTime
+      commentaire?: string
     }
   ): Promise<QualificationAction> {
     const session = await getSession()
@@ -228,12 +236,15 @@ export class ActionsApiService implements ActionsService {
       codeQualification: string
       dateDebut?: string
       dateFinReelle?: string
+      commentaireQualification?: string
     } = { codeQualification: type }
 
     if (options?.dateDebutModifiee)
       payload.dateDebut = options.dateDebutModifiee.toISO()
     if (options?.dateFinModifiee)
       payload.dateFinReelle = options.dateFinModifiee.toISO()
+    if (options?.commentaire)
+      payload.commentaireQualification = options.commentaire
 
     const { content } = await this.apiClient.post<QualificationActionJson>(
       `/actions/${idAction}/qualifier`,
@@ -298,7 +309,7 @@ export class ActionsApiService implements ActionsService {
       tri?: string
     },
     accessToken: string
-  ): Promise<{ actions: Action[]; metadonnees: MetadonneesActions }> {
+  ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
     const triActions = tri ?? 'date_echeance_decroissante'
     const filtresStatuts = statuts
       .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
@@ -333,7 +344,10 @@ export class ActionsApiService implements ActionsService {
     idConseiller: string,
     page: number,
     accessToken: string
-  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
+  ): Promise<{
+    actions: ActionPilotage[]
+    metadonnees: MetadonneesPagination
+  }> {
     const {
       content: { pagination, resultats },
     } = await this.apiClient.get<{

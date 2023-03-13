@@ -108,7 +108,10 @@ async function renderFicheJeune(
         pageTitle={''}
       />,
       {
-        customConseiller: { structure: structure },
+        customConseiller: {
+          id: 'id-conseiller',
+          structure: structure,
+        },
         customDependances: {
           jeunesService: mockedJeunesService({
             getIndicateursJeuneAlleges: jest.fn(async () =>

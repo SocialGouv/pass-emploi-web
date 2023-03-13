@@ -14,6 +14,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/PageActionsPortal')
 
 describe('Page Détail Offre Emploi', () => {
   describe('client side', () => {
@@ -155,6 +156,13 @@ describe('Page Détail Offre Emploi', () => {
       offresEmploiService = mockedOffresEmploiService({
         getOffreEmploiServerSide: jest.fn(async () => unDetailOffreEmploi()),
       })
+      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+        validSession: true,
+        session: {
+          accessToken: 'accessToken',
+        },
+      })
+      ;(withDependance as jest.Mock).mockReturnValue(offresEmploiService)
     })
 
     it('requiert la connexion', async () => {
@@ -173,20 +181,6 @@ describe('Page Détail Offre Emploi', () => {
     })
 
     it('charge la page avec les détails de l’offre', async () => {
-      // Given
-      const offre: DetailOffreEmploi = unDetailOffreEmploi()
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          accessToken: 'accessToken',
-        },
-      })
-      ;(withDependance as jest.Mock).mockImplementation(
-        (dependance: string) => {
-          if (dependance === 'offresEmploiService') return offresEmploiService
-        }
-      )
-
       // When
       const actual = await getServerSideProps({
         query: { offre_type: 'emploi', offre_id: 'id-offre' },
@@ -199,7 +193,7 @@ describe('Page Détail Offre Emploi', () => {
       )
       expect(actual).toEqual({
         props: {
-          offre,
+          offre: unDetailOffreEmploi(),
           pageTitle: 'Recherche d’offres - Détail de l’offre',
           pageHeader: 'Offre d’emploi',
         },

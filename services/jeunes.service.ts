@@ -8,6 +8,7 @@ import {
   ConseillerHistorique,
   DetailJeune,
   IndicateursSemaine,
+  JeuneEtablissement,
   JeuneFromListe,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
@@ -20,15 +21,18 @@ import {
   DetailJeuneJson,
   IndicateursSemaineJson,
   ItemJeuneJson,
+  JeuneEtablissementJson,
   jsonToBaseJeune,
   jsonToDetailJeune,
   jsonToIndicateursSemaine,
   jsonToItemJeune,
+  jsonToJeuneEtablissement,
   jsonToMetadonneesFavoris,
   MetadonneesFavorisJson,
   SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
+import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
 export interface JeunesService {
@@ -114,8 +118,12 @@ export interface JeunesService {
 
   rechercheJeunesDeLEtablissement(
     idEtablissement: string,
-    recherche: string
-  ): Promise<BaseJeune[]>
+    recherche: string,
+    page: number
+  ): Promise<{
+    jeunes: JeuneEtablissement[]
+    metadonnees: MetadonneesPagination
+  }>
 }
 
 export class JeunesApiService implements JeunesService {
@@ -357,21 +365,30 @@ export class JeunesApiService implements JeunesService {
 
   async rechercheJeunesDeLEtablissement(
     idEtablissement: string,
-    recherche: string
-  ): Promise<BaseJeune[]> {
+    recherche: string,
+    page: number
+  ): Promise<{
+    jeunes: JeuneEtablissement[]
+    metadonnees: MetadonneesPagination
+  }> {
     const session = await getSession()
     const {
-      content: { resultats },
+      content: { pagination, resultats },
     } = await this.apiClient.get<{
-      resultats: Array<{
-        jeune: BaseJeune
-      }>
+      pagination: { total: number; limit: number }
+      resultats: JeuneEtablissementJson[]
     }>(
-      `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}`,
+      `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}&page=${page}`,
       session!.accessToken
     )
 
-    return resultats.map(({ jeune }) => jeune)
+    return {
+      metadonnees: {
+        nombrePages: Math.ceil(pagination.total / pagination.limit),
+        nombreTotal: pagination.total,
+      },
+      jeunes: resultats.map(jsonToJeuneEtablissement),
+    }
   }
 
   private async getJeunesDuConseiller(

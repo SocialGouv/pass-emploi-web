@@ -1,15 +1,20 @@
-import { act, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { typesEvenement, typesRdvCEJ, unEvenement } from 'fixtures/evenement'
+import {
+  typesEvenement,
+  typesEvenementCEJ,
+  unEvenement,
+} from 'fixtures/evenement'
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
 import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, TypeEvenement } from 'interfaces/evenement'
+import { Evenement } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
@@ -24,13 +29,14 @@ import withDependance from 'utils/injectionDependances/withDependance'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
 jest.mock('components/Modal')
+jest.mock('components/PageActionsPortal')
 
 describe('EditionRdv', () => {
   describe('server side', () => {
     let jeunesService: JeunesService
     let evenementsService: EvenementsService
     let jeunes: JeuneFromListe[]
-    let typesRendezVous: TypeEvenement[]
+    let typesRendezVous: TypeEvenementReferentiel[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
@@ -111,7 +117,7 @@ describe('EditionRdv', () => {
           'accessToken'
         )
         expect(actual).toMatchObject({
-          props: { typesRendezVous: typesRdvCEJ() },
+          props: { typesRendezVous: typesEvenementCEJ() },
         })
       })
 
@@ -162,6 +168,8 @@ describe('EditionRdv', () => {
           'id-rdv',
           'accessToken'
         )
+        expect(evenementsService.getTypesRendezVous).not.toHaveBeenCalled()
+
         expect(actual).toMatchObject({
           props: {
             evenement: unEvenement(),
@@ -206,6 +214,34 @@ describe('EditionRdv', () => {
         // Then
         expect(actual).toMatchObject({ notFound: true })
       })
+
+      describe("quand l'utilisateur est observateur", () => {
+        it('prépare la page en lecture seule', async () => {
+          // Given
+          ;(
+            evenementsService.getDetailsEvenement as jest.Mock
+          ).mockResolvedValue(
+            unEvenement({
+              jeunes: [
+                { id: 'id-autre-jeune', prenom: 'Sheldon', nom: 'Cooper' },
+              ],
+            })
+          )
+
+          // When
+          const actual = await getServerSideProps({
+            req: { headers: {} },
+            query: { idRdv: 'id-rdv' },
+          } as unknown as GetServerSidePropsContext)
+
+          // Then
+          expect(actual).toMatchObject({
+            props: {
+              conseillerEstObservateur: true,
+            },
+          })
+        })
+      })
     })
 
     describe('quand l’utilisateur est Pôle Emploi', () => {
@@ -242,7 +278,7 @@ describe('EditionRdv', () => {
     let jeunesEtablissement: BaseJeune[]
     let evenementsService: EvenementsService
     let jeunesService: JeunesService
-    let typesRendezVous: TypeEvenement[]
+    let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
@@ -317,7 +353,7 @@ describe('EditionRdv', () => {
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
           })
-          typesRendezVous = typesRdvCEJ()
+          typesRendezVous = typesEvenementCEJ()
         })
 
         it('contient une liste pour choisir un type', () => {
@@ -619,7 +655,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
-              jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
+              jeunesIds: [jeunesConseiller[2].id, jeunesConseiller[0].id],
               titre: 'Titre de l’événement',
               type: 'ACTIVITES_EXTERIEURES',
               modality: modalites[0],
@@ -646,7 +682,7 @@ describe('EditionRdv', () => {
 
             // Then
             expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
-              jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[2].id],
+              jeunesIds: [jeunesConseiller[2].id, jeunesConseiller[0].id],
               titre: 'Titre de l’événement',
               type: 'AUTRE',
               precision: 'un texte de précision',
@@ -870,6 +906,34 @@ describe('EditionRdv', () => {
         expect(
           screen.getByText('Système d’information MILO')
         ).toBeInTheDocument()
+      })
+
+      it('empêche toute modification', () => {
+        // Then
+        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText('Modalité')).toBeDisabled()
+        expect(screen.getByLabelText(/Date/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
+        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
+        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
+        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/ajouter des destinataires/)
+        ).toBeDisabled()
+        expect(
+          screen.queryByRole('button', { name: /Enlever jeune/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Supprimer/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Annuler/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Modifier/ })
+        ).not.toBeInTheDocument()
       })
     })
 
@@ -1169,7 +1233,7 @@ describe('EditionRdv', () => {
             expect(evenementsService.updateRendezVous).toHaveBeenCalledWith(
               evenement.id,
               {
-                jeunesIds: [jeunesConseiller[0].id, jeunesConseiller[1].id],
+                jeunesIds: [jeunesConseiller[1].id, jeunesConseiller[0].id],
                 titre: 'Nouveau titre',
                 type: 'AUTRE',
                 modality: modalites[0],
@@ -1229,66 +1293,6 @@ describe('EditionRdv', () => {
           expect(alerteSetter).toHaveBeenCalledWith('suppressionRDV')
           expect(push).toHaveBeenCalledWith('/agenda')
         })
-      })
-    })
-
-    describe('quand on consulte un événement provenant d’i-MILO', () => {
-      beforeEach(async () => {
-        const evenement = unEvenement({
-          jeunes: [],
-          type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
-          source: StructureConseiller.MILO,
-        })
-
-        await act(async () => {
-          renderWithContexts(
-            <EditionRdv
-              jeunes={jeunesConseiller}
-              typesRendezVous={typesRendezVous}
-              withoutChat={true}
-              returnTo='/agenda'
-              evenement={evenement}
-              pageTitle=''
-            />,
-            {
-              customDependances: { evenementsService, jeunesService },
-              customConseiller: {
-                agence: {
-                  nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
-                },
-              },
-            }
-          )
-        })
-      })
-
-      it('empêche toute modification', () => {
-        // Then
-        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Description/)).toBeDisabled()
-        expect(screen.getByLabelText('Modalité')).toBeDisabled()
-        expect(screen.getByLabelText(/Date/)).toBeDisabled()
-        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
-        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
-        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
-        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
-        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
-        expect(
-          screen.getByLabelText(/ajouter des destinataires/)
-        ).toBeDisabled()
-        expect(
-          screen.queryByRole('button', { name: /Enlever jeune/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Supprimer/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Annuler/ })
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('button', { name: /Modifier/ })
-        ).not.toBeInTheDocument()
       })
     })
 
@@ -1447,6 +1451,61 @@ describe('EditionRdv', () => {
             }
           )
         })
+      })
+    })
+
+    describe('quand le conseiller connecté n’est référent d’aucun bénéficiaire de l’événement', () => {
+      beforeEach(() => {
+        // When
+        renderWithContexts(
+          <EditionRdv
+            jeunes={jeunesConseiller}
+            typesRendezVous={typesRendezVous}
+            withoutChat={true}
+            returnTo='https://localhost:3000/agenda'
+            evenement={unEvenement()}
+            conseillerEstObservateur={true}
+            pageTitle=''
+          />,
+          { customDependances: { evenementsService } }
+        )
+      })
+
+      it('affiche encart explicatif de lecture seule', () => {
+        //Then
+        expect(
+          screen.getByText(
+            /Vous pouvez uniquement lire le détail de ce rendez-vous car aucun de vos bénéficiaires n’y est inscrit/
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('empêche toute modification', () => {
+        // Then
+        expect(screen.getByLabelText(/Titre/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText('Modalité')).toBeDisabled()
+        expect(screen.getByLabelText(/Date/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
+        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
+        expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
+        expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
+        expect(
+          screen.getByLabelText(/ajouter des destinataires/)
+        ).toBeDisabled()
+        expect(
+          screen.queryByRole('button', { name: /Enlever jeune/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Supprimer/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Annuler/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /Modifier/ })
+        ).not.toBeInTheDocument()
       })
     })
   })

@@ -15,6 +15,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/PageActionsPortal')
 
 describe('Page Listes de Diffusion', () => {
   describe('client side', () => {
@@ -90,7 +91,9 @@ describe('Page Listes de Diffusion', () => {
 
       it('affiche le nombre de listes', () => {
         // Then
-        expect(screen.getByText('Listes (2)')).toBeInTheDocument()
+        expect(
+          screen.getByRole('table', { name: 'Listes (2)' })
+        ).toBeInTheDocument()
       })
 
       it('permet de trier les listes par ordre alphabétique inversé', async () => {

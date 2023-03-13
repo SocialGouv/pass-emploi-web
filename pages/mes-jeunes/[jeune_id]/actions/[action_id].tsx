@@ -8,6 +8,7 @@ import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
 import TagQualificationAction from 'components/action/TagQualificationAction'
+import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -17,7 +18,7 @@ import {
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import { StructureConseiller, UserType } from 'interfaces/conseiller'
+import { estMilo, StructureConseiller, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
@@ -53,16 +54,17 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
 
   const pageTracking = 'Détail Action'
 
+  const conseillerEstMilo = estMilo(conseiller)
+
   const estARealiser: boolean = useMemo(
     () => statut !== StatutAction.Terminee && statut !== StatutAction.Annulee,
     [statut]
   )
+
   const estAQualifier: boolean = useMemo(
     () =>
-      conseiller?.structure === StructureConseiller.MILO &&
-      statut === StatutAction.Terminee &&
-      !qualification,
-    [conseiller?.structure, qualification, statut]
+      conseillerEstMilo && statut === StatutAction.Terminee && !qualification,
+    [qualification, statut]
   )
   const afficherSuppressionAction = useMemo(
     () =>
@@ -143,6 +145,27 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
 
   return (
     <>
+      <PageActionsPortal>
+        <>
+          {afficherSuppressionAction && (
+            <Button
+              label="Supprimer l'action"
+              onClick={() => deleteAction()}
+              style={ButtonStyle.SECONDARY}
+              disabled={deleteDisabled}
+            >
+              <IconComponent
+                name={IconName.Trashcan}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 mr-2'
+              />
+              Supprimer
+            </Button>
+          )}
+        </>
+      </PageActionsPortal>
+
       {showEchecMessage && (
         <FailureAlert
           label="Une erreur s'est produite, veuillez réessayer ultérieurement"
@@ -150,32 +173,16 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
         />
       )}
 
-      {conseiller?.structure === StructureConseiller.MILO && (
+      {conseillerEstMilo && (
         <TagQualificationAction statut={statut} qualification={qualification} />
       )}
 
-      <div className='flex items-start justify-between mb-5'>
-        <h2 className='text-m-bold text-grey_800' title='Intitulé de l’action'>
-          {action.content}
-        </h2>
-
-        {afficherSuppressionAction && (
-          <Button
-            label="Supprimer l'action"
-            onClick={() => deleteAction()}
-            style={ButtonStyle.SECONDARY}
-            disabled={deleteDisabled}
-          >
-            <IconComponent
-              name={IconName.Trashcan}
-              aria-hidden={true}
-              focusable={false}
-              className='w-4 h-4 mr-2'
-            />
-            Supprimer
-          </Button>
-        )}
-      </div>
+      <h2
+        className='text-m-bold text-grey_800 mb-5'
+        title='Intitulé de l’action'
+      >
+        {action.content}
+      </h2>
 
       {action.comment && <p className='mb-8'>{action.comment}</p>}
 

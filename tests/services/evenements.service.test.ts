@@ -27,13 +27,6 @@ import {
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(async () => ({
-    user: { id: 'id-conseiller' },
-    accessToken: 'accessToken',
-  })),
-}))
-
 describe('EvenementsApiService', () => {
   let apiClient: ApiClient
   let evenementsService: EvenementsService
@@ -224,7 +217,7 @@ describe('EvenementsApiService', () => {
       ;(apiClient.get as jest.Mock).mockResolvedValue({
         content: [
           unEvenementJeuneJson({
-            type: { code: 'ATELIER', label: 'Atelier', categorie: 'CEJ_AC' },
+            type: { code: 'ATELIER', label: 'Atelier' },
             futPresent: true,
           }),
         ],
@@ -260,7 +253,6 @@ describe('EvenementsApiService', () => {
             type: {
               code: 'whatever',
               label: 'Information collective',
-              categorie: 'CEJ_AC',
             },
             date: dateDebut.toISO(),
           }),
@@ -269,7 +261,7 @@ describe('EvenementsApiService', () => {
         {
           ...unEvenementJson({
             id: 'ac-future',
-            type: { code: 'whatever', label: 'Atelier', categorie: 'CEJ_AC' },
+            type: { code: 'whatever', label: 'Atelier' },
             date: dateFin.toISO(),
           }),
           statut: 'CLOTUREE',
@@ -393,7 +385,7 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiClient.post).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/rendezvous',
+        '/conseillers/idConseiller/rendezvous',
         {
           jeunesIds: ['jeune-1', 'jeune-2'],
           modality: modalites[0],

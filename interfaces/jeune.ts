@@ -42,6 +42,7 @@ export interface DetailJeune extends BaseJeune {
   creationDate: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
+  idConseiller: string
   email?: string
   urlDossier?: string
   dateFinCEJ?: string
@@ -77,6 +78,13 @@ export type JeuneAvecNbActionsNonTerminees = JeuneFromListe & {
 
 export type JeuneAvecInfosComplementaires = JeuneAvecNbActionsNonTerminees & {
   messagesNonLus: number
+}
+
+export type JeuneEtablissement = {
+  base: BaseJeune
+  referent: { id: string; nom: string; prenom: string }
+  situation?: CategorieSituation
+  dateDerniereActivite?: string
 }
 
 export interface Chat {

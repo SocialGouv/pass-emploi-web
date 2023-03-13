@@ -17,6 +17,7 @@ import { JeunesService } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('components/Modal')
+jest.mock('components/PageActionsPortal')
 
 describe('Gestion du compte dans la fiche jeune', () => {
   let motifsSuppression: MotifSuppressionJeune[]
@@ -262,7 +263,7 @@ async function renderFicheJeune(
         pageTitle={''}
       />,
       {
-        customConseiller: { structure: structure },
+        customConseiller: { id: 'id-conseiller', structure: structure },
         customDependances: {
           jeunesService: jeunesService,
           agendaService: mockedAgendaService({

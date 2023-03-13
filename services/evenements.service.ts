@@ -7,8 +7,6 @@ import {
   AnimationCollectivePilotage,
   Evenement,
   EvenementListItem,
-  MetadonneesAnimationsCollectives,
-  TypeEvenement,
 } from 'interfaces/evenement'
 import {
   AnimationCollectiveJson,
@@ -19,6 +17,8 @@ import {
   jsonToEvenement,
   jsonToListItem,
 } from 'interfaces/json/evenement'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
+import { MetadonneesPagination } from 'types/pagination'
 import { toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
@@ -45,7 +45,7 @@ export interface EvenementsService {
     page: number
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }>
 
   getAnimationsCollectivesACloreServerSide(
@@ -53,7 +53,7 @@ export interface EvenementsService {
     accessToken: string
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }>
 
   getDetailsEvenement(
@@ -61,7 +61,7 @@ export interface EvenementsService {
     accessToken: string
   ): Promise<Evenement | undefined>
 
-  getTypesRendezVous(accessToken: string): Promise<TypeEvenement[]>
+  getTypesRendezVous(accessToken: string): Promise<TypeEvenementReferentiel[]>
 
   creerEvenement(newRDV: EvenementFormData): Promise<string>
 
@@ -128,7 +128,7 @@ export class EvenementsApiService implements EvenementsService {
     page: number
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }> {
     const session = await getSession()
 
@@ -144,7 +144,7 @@ export class EvenementsApiService implements EvenementsService {
     accessToken: string
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }> {
     return this.getAnimationsCollectivesAClore(idEtablissement, 1, accessToken)
   }
@@ -167,11 +167,12 @@ export class EvenementsApiService implements EvenementsService {
     }
   }
 
-  async getTypesRendezVous(accessToken: string): Promise<TypeEvenement[]> {
-    const { content: types } = await this.apiClient.get<TypeEvenement[]>(
-      '/referentiels/types-rendezvous',
-      accessToken
-    )
+  async getTypesRendezVous(
+    accessToken: string
+  ): Promise<TypeEvenementReferentiel[]> {
+    const { content: types } = await this.apiClient.get<
+      TypeEvenementReferentiel[]
+    >('/referentiels/types-rendezvous', accessToken)
     return types
   }
 
@@ -227,7 +228,7 @@ export class EvenementsApiService implements EvenementsService {
     accessToken: string
   ): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }> {
     const {
       content: { pagination, resultats },

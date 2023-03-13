@@ -1,9 +1,8 @@
 import Link from 'next/link'
-import React, { MouseEventHandler, useMemo } from 'react'
+import React, { useMemo } from 'react'
 
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller, estMilo } from 'interfaces/conseiller'
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneProps {
@@ -11,13 +10,12 @@ interface BlocInformationJeuneProps {
   creationDate: string
   dateFinCEJ: string | undefined
   email: string | undefined
-  structureConseiller: StructureConseiller | undefined
+  conseiller: Conseiller
   onIdentifiantPartenaireCopie: () => void
   identifiantPartenaire: string | undefined
   onIdentifiantPartenaireClick: () => void
   urlDossier: string | undefined
   onDossierMiloClick: () => void
-  onDeleteJeuneClick: MouseEventHandler<HTMLButtonElement>
 }
 
 export function BlocInformationJeune({
@@ -25,14 +23,14 @@ export function BlocInformationJeune({
   creationDate,
   dateFinCEJ,
   email,
-  structureConseiller,
+  conseiller,
   onIdentifiantPartenaireCopie,
   identifiantPartenaire,
   onIdentifiantPartenaireClick,
   urlDossier,
   onDossierMiloClick,
-  onDeleteJeuneClick,
 }: BlocInformationJeuneProps) {
+  const conseillerEstMilo = estMilo(conseiller)
   const shortCreationDate = useMemo(
     () => toShortDate(creationDate),
     [creationDate]
@@ -51,7 +49,7 @@ export function BlocInformationJeune({
 
         {email && <Email email={email} />}
 
-        {structureConseiller !== StructureConseiller.MILO && (
+        {!conseillerEstMilo && (
           <IndentifiantPartenaire
             identifiantPartenaire={identifiantPartenaire}
             onCopy={onIdentifiantPartenaireCopie}
@@ -63,7 +61,7 @@ export function BlocInformationJeune({
           <DossierExterne href={urlDossier} onClick={onDossierMiloClick} />
         )}
 
-        {structureConseiller === StructureConseiller.MILO && (
+        {conseillerEstMilo && (
           <div className='flex'>
             <dt className='text-base-regular'>Date de fin du CEJ :</dt>
             <dd>
@@ -75,13 +73,7 @@ export function BlocInformationJeune({
         )}
       </dl>
 
-      <div className='flex flex-row justify-between items-end mt-4'>
-        <BouttonSupprimerCompte onClick={onDeleteJeuneClick} />
-
-        {structureConseiller !== StructureConseiller.MILO && (
-          <LienVersHistorique idJeune={idJeune} />
-        )}
-      </div>
+      {!conseillerEstMilo && <LienVersHistorique idJeune={idJeune} />}
     </div>
   )
 }
@@ -163,22 +155,6 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
         </a>
       </dd>
     </>
-  )
-}
-
-function BouttonSupprimerCompte(props: {
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
-}) {
-  return (
-    <Button onClick={props.onClick} style={ButtonStyle.SECONDARY}>
-      <IconComponent
-        name={IconName.Trashcan}
-        focusable={false}
-        aria-hidden={true}
-        className='mr-2 w-4 h-4'
-      />
-      Supprimer ce compte
-    </Button>
   )
 }
 

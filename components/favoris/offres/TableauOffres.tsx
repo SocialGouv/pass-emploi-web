@@ -22,7 +22,7 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
       )}
 
       {offres.length > 0 && (
-        <Table asDiv={true} caption='Liste des offres en favoris'>
+        <Table asDiv={true} caption={{ text: 'Liste des offres en favoris' }}>
           <THead>
             <TR isHeader={true}>
               <TH>N°Offre</TH>

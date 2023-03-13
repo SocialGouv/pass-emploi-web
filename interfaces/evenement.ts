@@ -5,7 +5,6 @@ import { BaseJeune } from 'interfaces/jeune'
 export type TypeEvenement = {
   code: string
   label: string
-  categorie: string
 }
 
 export enum StatutAnimationCollective {
@@ -28,11 +27,6 @@ export type AnimationCollectivePilotage = {
   titre: string
   date: string
   nombreInscrits: number
-}
-
-export interface MetadonneesAnimationsCollectives {
-  nombrePages: number
-  nombreTotal: number
 }
 
 export type EvenementListItem = {

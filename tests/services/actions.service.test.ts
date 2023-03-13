@@ -21,13 +21,6 @@ import { ActionsApiService } from 'services/actions.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(() => ({
-    user: { id: 'id-conseiller' },
-    accessToken: 'accessToken',
-  })),
-}))
-
 describe('ActionsApiService', () => {
   let apiClient: ApiClient
   let actionsService: ActionsApiService
@@ -439,7 +432,7 @@ describe('ActionsApiService', () => {
 
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
-        '/conseillers/id-conseiller/jeunes/id-jeune/action',
+        '/conseillers/idConseiller/jeunes/id-jeune/action',
         {
           content: 'content',
           comment: 'comment',
@@ -513,13 +506,17 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await actionsService.qualifier(
         'id-action',
-        CODE_QUALIFICATION_NON_SNP
+        CODE_QUALIFICATION_NON_SNP,
+        { commentaire: 'commentaire' }
       )
 
       // THEN
       expect(apiClient.post).toHaveBeenCalledWith(
         '/actions/id-action/qualifier',
-        { codeQualification: CODE_QUALIFICATION_NON_SNP },
+        {
+          codeQualification: CODE_QUALIFICATION_NON_SNP,
+          commentaireQualification: 'commentaire',
+        },
         'accessToken'
       )
       const expected: QualificationAction = {
@@ -540,6 +537,7 @@ describe('ActionsApiService', () => {
 
       // WHEN
       const actual = await actionsService.qualifier('id-action', 'SANTE', {
+        commentaire: 'commentaire',
         dateDebutModifiee: DateTime.fromISO('2022-09-05T22:00:00.000Z'),
         dateFinModifiee: DateTime.fromISO('2022-09-06T22:00:00.000Z'),
       })
@@ -548,6 +546,7 @@ describe('ActionsApiService', () => {
       expect(apiClient.post).toHaveBeenCalledWith(
         '/actions/id-action/qualifier',
         {
+          commentaireQualification: 'commentaire',
           codeQualification: 'SANTE',
           dateDebut: '2022-09-06T00:00:00.000+02:00',
           dateFinReelle: '2022-09-07T00:00:00.000+02:00',

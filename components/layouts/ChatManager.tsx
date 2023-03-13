@@ -54,7 +54,7 @@ export default function ChatManager({
   }, [chatCredentials, messagesService, setChatCredentials])
 
   useEffect(() => {
-    if (!chatCredentials || !conseiller || !audio) return
+    if (!chatCredentials || !audio) return
     messagesService
       .signIn(chatCredentials.token)
       .then(() => jeunesService.getJeunesDuConseillerClientSide())
@@ -92,18 +92,11 @@ export default function ChatManager({
 
     function doitEmettreUnSon(previousChat: JeuneChat, updatedChat: JeuneChat) {
       return (
-        conseiller?.notificationsSonores &&
+        conseiller.notificationsSonores &&
         aUnNouveauMessage(previousChat, updatedChat)
       )
     }
-  }, [
-    messagesService,
-    chatCredentials,
-    audio,
-    conseiller,
-    setHasMessageNonLu,
-    jeunesService,
-  ])
+  }, [chatCredentials, audio, conseiller.notificationsSonores])
 
   return displayChat ? <ChatContainer jeunesChats={chats} /> : <></>
 }

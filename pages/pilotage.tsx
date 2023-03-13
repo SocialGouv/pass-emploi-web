@@ -9,18 +9,15 @@ import { OngletAnimationsCollectivesPilotage } from 'components/pilotage/OngletA
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { ActionPilotage, MetadonneesActions } from 'interfaces/action'
+import { ActionPilotage } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  AnimationCollectivePilotage,
-  MetadonneesAnimationsCollectives,
-} from 'interfaces/evenement'
+import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
 import { ConseillerService } from 'services/conseiller.service'
 import { EvenementsService } from 'services/evenements.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { trackEvent } from 'utils/analytics/matomo'
+import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -43,10 +40,10 @@ const ongletProps: {
 }
 
 type PilotageProps = PageProps & {
-  actions: { donnees: ActionPilotage[]; metadonnees: MetadonneesActions }
+  actions: { donnees: ActionPilotage[]; metadonnees: MetadonneesPagination }
   animationsCollectives?: {
     donnees: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }
   onglet?: Onglet
 }
@@ -73,7 +70,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     useState<
       | {
           donnees: AnimationCollectivePilotage[]
-          metadonnees: MetadonneesAnimationsCollectives
+          metadonnees: MetadonneesPagination
         }
       | undefined
     >(animationsCollectives)
@@ -83,11 +80,12 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     pageTracking + ' - Consultation ' + ongletProps[currentTab].trackingLabel
   )
 
-  async function chargerActions(
-    page: number
-  ): Promise<{ actions: ActionPilotage[]; metadonnees: MetadonneesActions }> {
+  async function chargerActions(page: number): Promise<{
+    actions: ActionPilotage[]
+    metadonnees: MetadonneesPagination
+  }> {
     const result = await actionsService.getActionsAQualifierClientSide(
-      conseiller!.id,
+      conseiller.id,
       page
     )
 
@@ -97,11 +95,11 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
 
   async function chargerAnimationsCollectives(page: number): Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesActions
+    metadonnees: MetadonneesPagination
   }> {
     const result =
       await evenementsService.getAnimationsCollectivesACloreClientSide(
-        conseiller!.agence!.id!,
+        conseiller.agence!.id!,
         page
       )
 
@@ -114,17 +112,8 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence })
+    setConseiller({ ...conseiller, agence })
     setTrackingLabel(pageTracking + ' - Succès ajout agence')
-  }
-
-  function trackContacterSupport() {
-    trackEvent({
-      structure: conseiller!.structure,
-      categorie: 'Contact Support',
-      action: 'Pop-in sélection agence',
-      nom: '',
-    })
   }
 
   function trackAgenceModal(trackingMessage: string) {
@@ -150,7 +139,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   }
 
   useEffect(() => {
-    if (conseiller?.agence?.id && !animationsCollectivesAffichees) {
+    if (conseiller.agence?.id && !animationsCollectivesAffichees) {
       evenementsService
         .getAnimationsCollectivesACloreClientSide(conseiller.agence.id, 1)
         .then((result) => {
@@ -161,7 +150,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           setTotalAnimationsCollectives(result.metadonnees.nombreTotal)
         })
     }
-  }, [conseiller?.agence?.id])
+  }, [conseiller.agence?.id])
 
   useMatomo(trackingLabel)
 
@@ -178,7 +167,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
               <span className='text-base-bold'> À qualifier</span>
             </dd>
           </div>
-          {conseiller?.agence?.id && (
+          {conseiller.agence?.id && (
             <div>
               <dt className='text-base-bold'>Les animations</dt>
               <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
@@ -201,9 +190,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
         />
         <Tab
           label='Animations à clore'
-          count={
-            conseiller?.agence?.id ? totalAnimationsCollectives : undefined
-          }
+          count={conseiller.agence?.id ? totalAnimationsCollectives : undefined}
           selected={currentTab === Onglet.ANIMATIONS_COLLECTIVES}
           controls='liste-animations-collectives-a-clore'
           onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
@@ -235,10 +222,9 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           id='liste-animations-collectives-a-clore'
           className='mt-8 pb-8 border-b border-primary_lighten'
         >
-          {!animationsCollectivesAffichees && conseiller && (
+          {!animationsCollectivesAffichees && (
             <EncartAgenceRequise
-              onContacterSupport={trackContacterSupport}
-              structureConseiller={conseiller.structure}
+              conseiller={conseiller}
               onAgenceChoisie={renseignerAgence}
               getAgences={referentielService.getAgencesClientSide.bind(
                 referentielService

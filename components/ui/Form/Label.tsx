@@ -1,9 +1,13 @@
 import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
-import { MandatoryNode } from 'types/components'
 
+type ComplexLabel = {
+  main: string
+  helpText: string | string[]
+  precision?: string
+}
 type LabelProps = {
   htmlFor: string
-  children: MandatoryNode | { main: string; helpText: string }
+  children: string | ComplexLabel
   inputRequired?: boolean
   withBulleMessageSensible?: boolean
 }
@@ -13,19 +17,15 @@ export default function Label({
   withBulleMessageSensible = false,
   children,
 }: LabelProps) {
-  const withHelpText = Object.prototype.hasOwnProperty.call(children, 'main')
-  const mainLabel: string = withHelpText
-    ? (children as { main: string }).main
-    : (children as string)
-  const helpText: string | undefined = withHelpText
-    ? (children as { helpText: string }).helpText
-    : undefined
+  const { main, helpText, precision } = isComplexLabel(children)
+    ? children
+    : { main: children, helpText: undefined, precision: undefined }
 
   return (
     <label htmlFor={htmlFor} className='flex flex-wrap text-content_color mb-3'>
-      <span className='text-base-regular mr-2'>
+      <span className='text-base-regular'>
         {inputRequired && <span aria-hidden={true}>*&nbsp;</span>}
-        {mainLabel}
+        {main}
         {withBulleMessageSensible && (
           <span className='ml-2'>
             <BulleMessageSensible />
@@ -33,6 +33,13 @@ export default function Label({
         )}
       </span>
       {helpText && <span className='text-s-regular'> {helpText}</span>}
+      {helpText && <span className='text-xs-regular'> {precision}</span>}
     </label>
   )
+}
+
+function isComplexLabel(
+  children: string | ComplexLabel
+): children is ComplexLabel {
+  return Object.prototype.hasOwnProperty.call(children, 'main')
 }

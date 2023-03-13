@@ -3,71 +3,171 @@ import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
+import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import SituationTag from 'components/jeune/SituationTag'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { StructureConseiller } from 'interfaces/conseiller'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { estMilo, StructureConseiller } from 'interfaces/conseiller'
+import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
+import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
+import { ReferentielService } from 'services/referentiel.service'
+import { MetadonneesPagination } from 'types/pagination'
+import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { toFullDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 
 type MissionLocaleProps = PageProps
 
 const Etablissement = (_: MissionLocaleProps) => {
-  const [conseiller] = useConseiller()
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const [resultatsRecherche, setResultatsRecherche] = useState<BaseJeune[]>()
+  const initialTracking = `Etablissement`
 
-  async function rechercherJeunes(recherche: string) {
-    if (conseiller?.agence?.id) {
-      await jeunesService
-        .rechercheJeunesDeLEtablissement(conseiller.agence.id, recherche)
-        .then(setResultatsRecherche)
+  const conseillerService =
+    useDependance<ConseillerService>('conseillerService')
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+  const referentielService =
+    useDependance<ReferentielService>('referentielService')
+
+  const [conseiller, setConseiller] = useConseiller()
+  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
+  const [recherche, setRecherche] = useState<string>()
+  const [resultatsRecherche, setResultatsRecherche] =
+    useState<JeuneEtablissement[]>()
+  const [metadonnees, setMetadonnees] = useState<MetadonneesPagination>()
+  const [pageCourante, setPageCourante] = useState<number>()
+
+  const conseillerEstMilo = estMilo(conseiller)
+
+  async function rechercherJeunes(input: string, page: number) {
+    if (!input) {
+      setResultatsRecherche(undefined)
+      setMetadonnees(undefined)
+    } else if (nouvelleRecherche(input, page)) {
+      const resultats = await jeunesService.rechercheJeunesDeLEtablissement(
+        conseiller.agence!.id!,
+        input,
+        page
+      )
+      setResultatsRecherche(resultats.jeunes)
+      setMetadonnees(resultats.metadonnees)
+      setPageCourante(page)
     }
+
+    setRecherche(input)
   }
+
+  async function renseignerAgence(agence: {
+    id?: string
+    nom: string
+  }): Promise<void> {
+    await conseillerService.modifierAgence(agence)
+    setConseiller({ ...conseiller, agence })
+    setTrackingTitle(initialTracking + ' - Succès ajout agence')
+  }
+
+  function nouvelleRecherche(input: string, page: number) {
+    return page !== pageCourante || input !== recherche
+  }
+
+  async function trackAgenceModal(trackingMessage: string) {
+    setTrackingTitle(initialTracking + ' - ' + trackingMessage)
+  }
+
+  useMatomo(trackingTitle)
 
   return (
     <>
-      <RechercheJeune onSearchFilterBy={rechercherJeunes} />
+      {Boolean(conseiller.agence) && (
+        <RechercheJeune
+          onSearchFilterBy={(input) => rechercherJeunes(input, 1)}
+          minCaracteres={2}
+        />
+      )}
+
+      {!conseiller.agence && (
+        <EncartAgenceRequise
+          conseiller={conseiller}
+          onAgenceChoisie={renseignerAgence}
+          getAgences={referentielService.getAgencesClientSide.bind(
+            referentielService
+          )}
+          onChangeAffichageModal={trackAgenceModal}
+        />
+      )}
+
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
             asDiv={true}
             caption={{
-              text: `Résultat de recherche (${resultatsRecherche!.length})`,
+              text: `Résultat de recherche`,
+              count: resultatsRecherche!.length,
               visible: true,
             }}
           >
             <THead>
               <TR isHeader={true}>
-                <TH>
-                  <span className='mr-1'>Bénéficiaire</span>
-                </TH>
-                <TH>
-                  <span className='mr-1'></span>
-                </TH>
+                <TH>Bénéficiaire</TH>
+                {conseillerEstMilo && <TH>Situation</TH>}
+                <TH>Dernière activité</TH>
+                <TH>Conseiller</TH>
               </TR>
             </THead>
             <TBody>
               {resultatsRecherche!.map((jeune) => (
-                <TR key={jeune.id}>
-                  <TD isBold className='rounded-l-base'>
-                    <span className='flex items-baseline'>
-                      {getNomJeuneComplet(jeune)}
+                <TR
+                  key={jeune.base.id}
+                  href={'mes-jeunes/' + jeune.base.id}
+                  label={
+                    'Accéder à la fiche de ' + getNomJeuneComplet(jeune.base)
+                  }
+                >
+                  <TD isBold>{getNomJeuneComplet(jeune.base)}</TD>
+                  {conseillerEstMilo && (
+                    <TD>
+                      {jeune.situation && (
+                        <SituationTag situation={jeune.situation} />
+                      )}
+                    </TD>
+                  )}
+                  <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
+                  <TD>
+                    <span className='flex items-center'>
+                      <div className='relative w-fit mx-auto'>
+                        {jeune.referent.prenom} {jeune.referent.nom}
+                      </div>
+                      <IconComponent
+                        focusable={false}
+                        aria-hidden={true}
+                        className='w-4 h-4 fill-content_color'
+                        name={IconName.ChevronRight}
+                      />
                     </span>
                   </TD>
-                  <TD>{/* todo va évoluer quand le tableau sera enrichi*/}</TD>
                 </TR>
               ))}
             </TBody>
           </Table>
+
+          {metadonnees!.nombrePages > 1 && (
+            <Pagination
+              nomListe='bénéficiaires'
+              pageCourante={pageCourante!}
+              nombreDePages={metadonnees!.nombrePages}
+              allerALaPage={(page) => rechercherJeunes(recherche!, page)}
+            />
+          )}
         </div>
       )}
 

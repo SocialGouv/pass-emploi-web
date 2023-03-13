@@ -2,17 +2,15 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import TableauAnimationsAClore from 'components/pilotage/TableauAnimationsAClore'
 import Pagination from 'components/ui/Table/Pagination'
-import {
-  AnimationCollectivePilotage,
-  MetadonneesAnimationsCollectives,
-} from 'interfaces/evenement'
+import { AnimationCollectivePilotage } from 'interfaces/evenement'
+import { MetadonneesPagination } from 'types/pagination'
 
 interface OngletAnimationsCollectivesPilotageProps {
   animationsCollectivesInitiales?: AnimationCollectivePilotage[]
-  metadonneesInitiales?: MetadonneesAnimationsCollectives
+  metadonneesInitiales?: MetadonneesPagination
   getAnimationsCollectives: (page: number) => Promise<{
     animationsCollectives: AnimationCollectivePilotage[]
-    metadonnees: MetadonneesAnimationsCollectives
+    metadonnees: MetadonneesPagination
   }>
 }
 
@@ -25,7 +23,7 @@ export function OngletAnimationsCollectivesPilotage({
     AnimationCollectivePilotage[] | undefined
   >(animationsCollectivesInitiales)
   const [metadonnees, setMetadonnees] = useState<
-    MetadonneesAnimationsCollectives | undefined
+    MetadonneesPagination | undefined
   >(metadonneesInitiales)
 
   const [pageCourante, setPageCourante] = useState<number>(1)

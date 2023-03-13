@@ -1,9 +1,9 @@
-import React, { MouseEventHandler, useState } from 'react'
+import React, { useState } from 'react'
 
 import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
@@ -13,16 +13,14 @@ import { useDependance } from 'utils/injectionDependances'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
-  structureConseiller: StructureConseiller | undefined
+  conseiller: Conseiller
   onDossierMiloClick: () => void
-  onDeleteJeuneClick: MouseEventHandler<HTMLButtonElement>
 }
 
 export const DetailsJeune = ({
   jeune,
-  structureConseiller,
+  conseiller,
   onDossierMiloClick,
-  onDeleteJeuneClick,
 }: DetailsJeuneProps) => {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const [_, setAlerte] = useAlerte()
@@ -68,7 +66,7 @@ export const DetailsJeune = ({
   return (
     <>
       <div className='flex flex-row items-stretch gap-x-6'>
-        {structureConseiller === StructureConseiller.MILO && (
+        {estMilo(conseiller) && (
           <BlocSituation
             idJeune={jeune.id}
             situations={jeune.situations}
@@ -81,13 +79,12 @@ export const DetailsJeune = ({
           creationDate={jeune.creationDate}
           dateFinCEJ={jeune.dateFinCEJ}
           email={jeune.email}
-          structureConseiller={structureConseiller}
+          conseiller={conseiller}
           onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
           identifiantPartenaire={identifiantPartenaire}
           onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
           urlDossier={jeune.urlDossier}
           onDossierMiloClick={onDossierMiloClick}
-          onDeleteJeuneClick={onDeleteJeuneClick}
         />
       </div>
 

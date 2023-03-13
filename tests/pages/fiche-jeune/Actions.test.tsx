@@ -19,13 +19,13 @@ import {
 import {
   Action,
   EtatQualificationAction,
-  MetadonneesActions,
   StatutAction,
 } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import FicheJeune, { Onglet } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { MetadonneesPagination } from 'types/pagination'
 
 describe('Actions dans la fiche jeune', () => {
   const actions = uneListeDActions().concat(
@@ -576,7 +576,7 @@ interface FicheJeuneParams {
   structure: StructureConseiller
   actionsInitiales?: {
     actions: Action[]
-    metadonnees: MetadonneesActions
+    metadonnees: MetadonneesPagination
     page: number
   }
   onglet?: Onglet
@@ -599,10 +599,12 @@ async function renderFicheJeune({
         pageTitle={''}
       />,
       {
-        customConseiller: { structure: structure },
+        customConseiller: { id: 'id-conseiller', structure: structure },
         customDependances: {
           jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
           }),
           agendaService: mockedAgendaService({
             recupererAgenda: jest.fn(async () => unAgenda()),

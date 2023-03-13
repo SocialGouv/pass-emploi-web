@@ -7,12 +7,9 @@ import {
   jsonToOffreEmploiItem,
   OffreEmploiItemJson,
 } from 'interfaces/json/offre-emploi'
-import {
-  BaseOffreEmploi,
-  DetailOffreEmploi,
-  MetadonneesOffres,
-} from 'interfaces/offre'
+import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre'
 import { Commune, Departement } from 'interfaces/referentiel'
+import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
@@ -41,12 +38,12 @@ export interface OffresEmploiService {
   searchOffresEmploi(
     recherche: SearchOffresEmploiQuery,
     page: number
-  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesPagination }>
 
   searchAlternances(
     recherche: SearchOffresEmploiQuery,
     page: number
-  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }>
+  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesPagination }>
 }
 
 export class OffresEmploiApiService implements OffresEmploiService {
@@ -69,14 +66,20 @@ export class OffresEmploiApiService implements OffresEmploiService {
   async searchOffresEmploi(
     recherche: SearchOffresEmploiQuery,
     page: number
-  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+  ): Promise<{
+    offres: BaseOffreEmploi[]
+    metadonnees: MetadonneesPagination
+  }> {
     return this.searchOffres({ recherche, page, alternanceOnly: false })
   }
 
   async searchAlternances(
     recherche: SearchOffresEmploiQuery,
     page: number
-  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+  ): Promise<{
+    offres: BaseOffreEmploi[]
+    metadonnees: MetadonneesPagination
+  }> {
     return this.searchOffres({ recherche, page, alternanceOnly: true })
   }
 
@@ -104,7 +107,10 @@ export class OffresEmploiApiService implements OffresEmploiService {
     recherche: SearchOffresEmploiQuery
     page: number
     alternanceOnly: boolean
-  }): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesOffres }> {
+  }): Promise<{
+    offres: BaseOffreEmploi[]
+    metadonnees: MetadonneesPagination
+  }> {
     const session = await getSession()
     const accessToken = session!.accessToken
 
@@ -117,7 +123,7 @@ export class OffresEmploiApiService implements OffresEmploiService {
     }>(path + '?' + searchUrl, accessToken)
 
     const { pagination, results } = content
-    const metadonnees: MetadonneesOffres = {
+    const metadonnees: MetadonneesPagination = {
       nombreTotal: pagination.total,
       nombrePages: Math.ceil(pagination.total / LIMIT),
     }

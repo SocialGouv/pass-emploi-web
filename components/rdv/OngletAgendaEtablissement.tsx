@@ -132,7 +132,9 @@ export function OngletAgendaEtablissement({
         animationsCollectivesGroupees.length > 0 && (
           <Table
             asDiv={true}
-            caption='Liste des animations collectives de mon établissement'
+            caption={{
+              text: 'Liste des animations collectives de mon établissement',
+            }}
           >
             <THead>
               <TR isHeader={true}>

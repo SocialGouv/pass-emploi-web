@@ -26,12 +26,11 @@ import {
   estClos,
   estCreeParSiMILO,
   Evenement,
-  isCodeTypeAnimationCollective,
   TYPE_EVENEMENT,
-  TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
 import {
   DATE_DASH_SEPARATOR,
@@ -41,20 +40,21 @@ import {
 } from 'utils/date'
 
 interface EditionRdvFormProps {
+  conseiller: Conseiller
   jeunesConseiller: BaseJeune[]
-  typesRendezVous: TypeEvenement[]
+  typesRendezVous: TypeEvenementReferentiel[]
   redirectTo: string
   conseillerIsCreator: boolean
-  soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
-  leaveWithChanges: () => void
-  onChanges: (hasChanges: boolean) => void
-  conseiller?: Conseiller
   evenement?: Evenement
   idJeune?: string
+  evenementTypeAC?: boolean
+  lectureSeule?: boolean
+  leaveWithChanges: () => void
+  onChanges: (hasChanges: boolean) => void
+  soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   showConfirmationModal: (payload: EvenementFormData) => void
   recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
   onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
-  evenementTypeAC?: boolean
 }
 
 export function EditionRdvForm({
@@ -72,6 +72,7 @@ export function EditionRdvForm({
   idJeune,
   showConfirmationModal,
   evenementTypeAC,
+  lectureSeule,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
   const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
@@ -148,16 +149,14 @@ export function EditionRdvForm({
   }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
-    if (!isCodeTypeAnimationCollective(codeTypeRendezVous)) {
+    if (lectureSeule) return []
+
+    if (!evenementTypeAC) {
       return jeunesConseiller.map((jeune) => ({
         id: jeune.id,
         value: getNomJeuneComplet(jeune),
         avecIndication: false,
       }))
-    }
-
-    if (evenement && estClos(evenement)) {
-      return []
     }
 
     return jeunesEtablissement.map((jeune) => ({
@@ -336,13 +335,11 @@ export function EditionRdvForm({
   }
 
   function titreIsValid(): boolean {
-    return (
-      !isCodeTypeAnimationCollective(codeTypeRendezVous) || Boolean(titre.value)
-    )
+    return !evenementTypeAC || Boolean(titre.value)
   }
 
   function validateTitre() {
-    if (isCodeTypeAnimationCollective(codeTypeRendezVous) && !titre.value) {
+    if (evenementTypeAC && !titre.value) {
       setTitre({
         ...titre,
         error:
@@ -388,19 +385,13 @@ export function EditionRdvForm({
     )
       return false
 
-    return (
-      isCodeTypeAnimationCollective(codeTypeRendezVous) ||
-      idsBeneficiaires.length > 0
-    )
+    return evenementTypeAC || idsBeneficiaires.length > 0
   }
 
   function validatePresenceParticipants(
     idsBeneficiaires: string[]
   ): string | undefined {
-    if (
-      !isCodeTypeAnimationCollective(codeTypeRendezVous) &&
-      !idsBeneficiaires.length
-    )
+    if (!evenementTypeAC && !idsBeneficiaires.length)
       return "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
   }
 
@@ -456,14 +447,10 @@ export function EditionRdvForm({
 
   function emailInvitationText() {
     if (conseillerIsCreator) {
-      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller?.email}`
+      return `Intégrer cet événement à mon agenda via l’adresse e-mail suivante : ${conseiller.email}`
     } else {
       return "Le créateur de l’événement recevra un mail pour l'informer de la modification."
     }
-  }
-
-  function estUneAc(codeType?: string) {
-    return evenementTypeAC || isCodeTypeAnimationCollective(codeType)
   }
 
   useEffect(() => {
@@ -472,17 +459,10 @@ export function EditionRdvForm({
   })
 
   useEffect(() => {
-    if (
-      isCodeTypeAnimationCollective(codeTypeRendezVous) &&
-      !jeunesEtablissement.length
-    ) {
+    if (evenementTypeAC && !lectureSeule) {
       recupererJeunesDeLEtablissement().then(setJeunesEtablissement)
     }
-  }, [
-    codeTypeRendezVous,
-    jeunesEtablissement.length,
-    recupererJeunesDeLEtablissement,
-  ])
+  }, [evenementTypeAC, lectureSeule, recupererJeunesDeLEtablissement])
 
   function updateNbMaxParticipants(value: string) {
     const parsed = parseInt(value, 10)
@@ -500,9 +480,7 @@ export function EditionRdvForm({
       <Etape
         numero={1}
         titre={`Type ${
-          estUneAc(codeTypeRendezVous)
-            ? 'd’animation collective'
-            : 'de rendez-vous'
+          evenementTypeAC ? 'd’animation collective' : 'de rendez-vous'
         }`}
       >
         <Label htmlFor='typeEvenement' inputRequired={true}>
@@ -516,8 +494,8 @@ export function EditionRdvForm({
           onChange={handleSelectedTypeRendezVous}
         >
           {Boolean(evenement)
-            ? getTypeDeLevenement(evenement!)
-            : getTypesReferentiel(typesRendezVous)}
+            ? buildOptionTypeDeLevenement(evenement!)
+            : buildOptionsTypesReferentiel(typesRendezVous)}
         </Select>
 
         {showPrecisionType && (
@@ -549,7 +527,7 @@ export function EditionRdvForm({
       </Etape>
 
       <Etape numero={2} titre='Description'>
-        <Label htmlFor='titre' inputRequired={estUneAc(codeTypeRendezVous)}>
+        <Label htmlFor='titre' inputRequired={evenementTypeAC}>
           Titre
         </Label>
         {titre.error && (
@@ -561,13 +539,11 @@ export function EditionRdvForm({
           id='titre'
           type='text'
           defaultValue={titre.value}
-          required={estUneAc(codeTypeRendezVous)}
+          required={evenementTypeAC}
           invalid={Boolean(titre.error)}
           onChange={(value: string) => setTitre({ value })}
           onBlur={validateTitre}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='description' withBulleMessageSensible={true}>
@@ -588,14 +564,12 @@ export function EditionRdvForm({
           onChange={(value: string) => setDescription({ value })}
           invalid={Boolean(description.error)}
           onBlur={validateDescription}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
       </Etape>
 
       <Etape numero={3} titre='Ajout de bénéficiaires'>
-        {estUneAc(codeTypeRendezVous) && (
+        {evenementTypeAC && (
           <>
             <div className='flex items-center mb-8'>
               <label htmlFor='toggle-max-participants' className='mr-4'>
@@ -607,10 +581,7 @@ export function EditionRdvForm({
                 onChange={() =>
                   setShowNombreMaxParticipants(!showNombreMaxParticipants)
                 }
-                disabled={
-                  evenement &&
-                  (estClos(evenement) || estCreeParSiMILO(evenement))
-                }
+                disabled={lectureSeule}
               />
             </div>
 
@@ -633,10 +604,7 @@ export function EditionRdvForm({
                   required={true}
                   min={1}
                   invalid={Boolean(nombreMaxParticipants.error)}
-                  disabled={
-                    evenement &&
-                    (estClos(evenement) || estCreeParSiMILO(evenement))
-                  }
+                  disabled={lectureSeule}
                   aria-describedby={
                     Boolean(nombreMaxParticipants.error)
                       ? 'max-participants--error'
@@ -663,10 +631,8 @@ export function EditionRdvForm({
           defaultBeneficiaires={defaultJeunes}
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
-          required={!estUneAc(codeTypeRendezVous)}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          required={!evenementTypeAC}
+          disabled={lectureSeule}
           renderIndication={
             evenement && estClos(evenement)
               ? BeneficiaireIndicationPresent
@@ -688,9 +654,7 @@ export function EditionRdvForm({
           id='modalite'
           defaultValue={modalite}
           onChange={setModalite}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         >
           {modalites.map((md) => (
             <option key={md} value={md}>
@@ -714,9 +678,7 @@ export function EditionRdvForm({
           onChange={(value: string) => setDate({ value })}
           onBlur={validateDate}
           invalid={Boolean(date.error)}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='horaire' inputRequired={true}>
@@ -737,9 +699,7 @@ export function EditionRdvForm({
           invalid={Boolean(horaire.error)}
           aria-invalid={horaire.error ? true : undefined}
           aria-describedby={horaire.error ? 'horaire--error' : undefined}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='duree' inputRequired={true}>
@@ -758,9 +718,7 @@ export function EditionRdvForm({
           onChange={(value: string) => setDuree({ value })}
           onBlur={validateDuree}
           invalid={Boolean(duree.error)}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='adresse'>
@@ -772,9 +730,7 @@ export function EditionRdvForm({
           defaultValue={adresse}
           onChange={setAdresse}
           icon='location'
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
 
         <Label htmlFor='organisme'>
@@ -788,9 +744,7 @@ export function EditionRdvForm({
           id='organisme'
           defaultValue={organisme}
           onChange={setOrganisme}
-          disabled={
-            evenement && (estClos(evenement) || estCreeParSiMILO(evenement))
-          }
+          disabled={lectureSeule}
         />
       </Etape>
 
@@ -817,9 +771,7 @@ export function EditionRdvForm({
               id='presenceConseiller'
               checked={isConseillerPresent}
               disabled={
-                typeEntretienIndividuelConseillerSelected() ||
-                (evenement &&
-                  (estClos(evenement) || estCreeParSiMILO(evenement)))
+                typeEntretienIndividuelConseillerSelected() || lectureSeule
               }
               onChange={handlePresenceConseiller}
             />
@@ -841,8 +793,7 @@ export function EditionRdvForm({
         </div>
       </Etape>
 
-      {(!evenement ||
-        (!estClos(evenement) && !estCreeParSiMILO(evenement))) && (
+      {(!evenement || !lectureSeule) && (
         <div className='flex justify-center'>
           {!formHasChanges() && (
             <ButtonLink
@@ -872,7 +823,7 @@ export function EditionRdvForm({
               type='submit'
               disabled={!formHasChanges() || !formIsValid()}
             >
-              {estUneAc(codeTypeRendezVous)
+              {evenementTypeAC
                 ? 'Modifier l’animation collective'
                 : 'Modifier le rendez-vous'}
             </Button>
@@ -888,7 +839,7 @@ export function EditionRdvForm({
                 aria-hidden={true}
                 className='mr-2 w-4 h-4'
               />
-              {estUneAc(codeTypeRendezVous)
+              {evenementTypeAC
                 ? 'Créer l’animation collective'
                 : 'Créer le rendez-vous'}
             </Button>
@@ -899,7 +850,9 @@ export function EditionRdvForm({
   )
 }
 
-function getTypesReferentiel(typesRendezVous: TypeEvenement[]) {
+function buildOptionsTypesReferentiel(
+  typesRendezVous: TypeEvenementReferentiel[]
+) {
   return typesRendezVous.map(({ code, label }) => (
     <option key={code} value={code}>
       {label}
@@ -907,7 +860,7 @@ function getTypesReferentiel(typesRendezVous: TypeEvenement[]) {
   ))
 }
 
-function getTypeDeLevenement(evenement: Evenement) {
+function buildOptionTypeDeLevenement(evenement: Evenement) {
   return [
     <option key={evenement.type.code} value={evenement.type.code}>
       {evenement.type.label}

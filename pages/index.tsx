@@ -39,7 +39,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     nom: string
   }): Promise<void> {
     await conseillerService.modifierAgence(agence)
-    setConseiller({ ...conseiller!, agence })
+    setConseiller({ ...conseiller, agence })
     setTrackingLabel('Succès ajout agence')
     setAlerte(AlerteParam.choixAgence)
     redirectToUrl()
@@ -51,7 +51,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
 
   function trackContacterSupport() {
     trackEvent({
-      structure: conseiller!.structure,
+      structure: conseiller.structure,
       categorie: 'Contact Support',
       action: 'Pop-in sélection agence',
       nom: '',
@@ -62,9 +62,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
 
   return (
     <RenseignementAgenceModal
-      structureConseiller={
-        conseiller?.structure ?? StructureConseiller.PASS_EMPLOI
-      }
+      conseiller={conseiller}
       referentielAgences={referentielAgences}
       onAgenceChoisie={selectAgence}
       onContacterSupport={trackContacterSupport}

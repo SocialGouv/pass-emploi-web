@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 
@@ -23,9 +24,10 @@ jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()
-global.Audio = jest.fn().mockImplementation(() => ({
-  play: mockAudio,
-}))
+// @ts-ignore
+global.Audio = class FakeAudio {
+  play = mockAudio
+}
 
 describe('Intégration notifications sonores', () => {
   let updateChatsRef: (chats: JeuneChat[]) => void
@@ -131,12 +133,11 @@ function renderWithNotificationsSonores(
 }
 
 async function toggleNotifications() {
-  const toggleNotifications = screen.getByRole<HTMLInputElement>('checkbox', {
-    name: /notifications sonores/,
-  })
-  await act(async () => {
-    toggleNotifications.click()
-  })
+  await userEvent.click(
+    screen.getByRole<HTMLInputElement>('checkbox', {
+      name: /notifications sonores/,
+    })
+  )
 }
 
 async function unNouveauMessageArrive(

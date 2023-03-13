@@ -1,23 +1,36 @@
 import { FormEvent, useState } from 'react'
 
+import { InputError } from 'components/ui/Form/InputError'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface RechercheJeuneProps {
   onSearchFilterBy: (query: string) => void
+  minCaracteres?: number
 }
 
-export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
+export const RechercheJeune = ({
+  onSearchFilterBy,
+  minCaracteres,
+}: RechercheJeuneProps) => {
   const [query, setQuery] = useState<string>('')
+  const [error, setError] = useState<string>()
 
-  const onReset = () => {
+  function onReset() {
     setQuery('')
+    setError(undefined)
     onSearchFilterBy('')
   }
 
-  const onSubmit = (e: FormEvent) => {
+  function onSubmit(e: FormEvent) {
     e.preventDefault()
-    onSearchFilterBy(query)
+
+    if (minCaracteres && query.length < minCaracteres) {
+      setError(`Veuillez saisir au moins ${minCaracteres} caractères`)
+    } else {
+      setError(undefined)
+      onSearchFilterBy(query)
+    }
   }
 
   return (
@@ -28,12 +41,14 @@ export const RechercheJeune = ({ onSearchFilterBy }: RechercheJeuneProps) => {
       >
         Rechercher un bénéficiaire par son nom ou prénom
       </label>
+      {error && <InputError id='rechercher-jeunes--error'>{error}</InputError>}
       <div className='flex mt-3'>
         <ResettableTextInput
-          id={'rechercher-jeunes'}
+          id='rechercher-jeunes'
           value={query}
           onChange={setQuery}
           onReset={onReset}
+          invalid={Boolean(error)}
           className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
         />
 

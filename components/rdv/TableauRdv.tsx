@@ -60,7 +60,7 @@ export default function TableauRdv({
       )}
 
       {rdvs.length > 0 && (
-        <Table asDiv={true} caption='Liste de mes événements'>
+        <Table asDiv={true} caption={{ text: 'Liste de mes événements' }}>
           <THead>
             <TR isHeader={true}>
               <TH>Horaires</TH>

@@ -192,7 +192,7 @@ export default function Conversation({
     const flagged = !jeuneChat.flaggedByConseiller
     messagesService.toggleFlag(jeuneChat.chatId, flagged)
     trackEvent({
-      structure: conseiller!.structure,
+      structure: conseiller.structure,
       categorie: 'Conversation suivie',
       action: 'Conversation',
       nom: flagged.toString(),
@@ -252,7 +252,7 @@ export default function Conversation({
       >
         {!messagesByDay && <SpinningLoader />}
 
-        {messagesByDay && (
+        {messagesByDay && conseiller && (
           <>
             {hasNoMoreMessages && (
               <span
@@ -292,6 +292,9 @@ export default function Conversation({
                         message={message}
                         conseillerNomComplet={getConseillerNomComplet(message)}
                         lastSeenByJeune={lastSeenByJeune}
+                        isConseillerCourant={
+                          message.conseillerId === conseiller.id
+                        }
                       />
                     ))}
                   </ul>

@@ -1,6 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { signOut } from 'next-auth/react'
 import React, { useEffect } from 'react'
 
 import { MessagesService } from 'services/messages.service'

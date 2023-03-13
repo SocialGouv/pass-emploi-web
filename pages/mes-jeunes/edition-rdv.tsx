@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 
 import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
+import PageActionsPortal from 'components/PageActionsPortal'
 import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -13,7 +14,6 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { isTypeAnimationCollective } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   estAClore,
@@ -22,11 +22,14 @@ import {
   Evenement,
   isCodeTypeAnimationCollective,
   Modification,
-  TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
+import {
+  isTypeAnimationCollective,
+  TypeEvenementReferentiel,
+} from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -41,11 +44,12 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface EditionRdvProps extends PageProps {
   jeunes: BaseJeune[]
-  typesRendezVous: TypeEvenement[]
+  typesRendezVous: TypeEvenementReferentiel[]
   returnTo: string
   idJeune?: string
   evenement?: Evenement
   evenementTypeAC?: boolean
+  conseillerEstObservateur?: boolean
 }
 
 function EditionRdv({
@@ -55,14 +59,20 @@ function EditionRdv({
   returnTo,
   evenement,
   evenementTypeAC,
+  conseillerEstObservateur,
 }: EditionRdvProps) {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const evenementsService =
     useDependance<EvenementsService>('evenementsService')
   const [conseiller] = useConseiller()
-
   const [_, setAlerte] = useAlerte()
+
+  const lectureSeule =
+    evenement &&
+    (conseillerEstObservateur ||
+      estCreeParSiMILO(evenement) ||
+      estClos(evenement))
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
@@ -87,9 +97,7 @@ function EditionRdv({
   let initialTracking: string
   if (evenement)
     initialTracking = `Modification ${
-      isCodeTypeAnimationCollective(evenement.type.code)
-        ? 'animation collective'
-        : 'rdv'
+      evenementTypeAC ? 'animation collective' : 'rdv'
     }`
   else
     initialTracking = `Création ${
@@ -141,6 +149,8 @@ function EditionRdv({
   }
 
   function aDesJeunesDUnAutrePortefeuille(): boolean {
+    if (conseillerEstObservateur) return true
+
     const fromEvenement = evenement?.jeunes.some(
       ({ id }) => !jeunes.some((jeune) => jeune.id === id)
     )
@@ -172,7 +182,7 @@ function EditionRdv({
     payload: EvenementFormData
   ): Promise<void> {
     await evenementsService.updateRendezVous(idEvenement, payload)
-    const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+    const alertType = evenementTypeAC
       ? AlerteParam.modificationAnimationCollective
       : AlerteParam.modificationRDV
     setAlerte(alertType)
@@ -184,7 +194,7 @@ function EditionRdv({
 
     try {
       await evenementsService.supprimerEvenement(evenement!.id)
-      const alertType = isCodeTypeAnimationCollective(evenement?.type.code)
+      const alertType = evenementTypeAC
         ? AlerteParam.suppressionAnimationCollective
         : AlerteParam.suppressionRDV
       setAlerte(alertType)
@@ -195,7 +205,7 @@ function EditionRdv({
   }
 
   function recupererJeunesDeLEtablissement() {
-    if (conseiller?.agence?.id) {
+    if (conseiller.agence?.id) {
       return jeunesService.getJeunesDeLEtablissement(conseiller.agence.id)
     }
     return Promise.resolve([])
@@ -214,6 +224,45 @@ function EditionRdv({
 
   return (
     <>
+      <PageActionsPortal>
+        <>
+          {evenement && !lectureSeule && (
+            <Button
+              style={ButtonStyle.SECONDARY}
+              onClick={handleDelete}
+              label={`Supprimer l’événement du ${evenement.date}`}
+            >
+              <IconComponent
+                name={IconName.Trashcan}
+                aria-hidden='true'
+                focusable='false'
+                className='mr-2 w-4 h-4'
+              />
+              Supprimer
+            </Button>
+          )}
+
+          {evenement && estAClore(evenement) && (
+            <ButtonLink
+              style={ButtonStyle.PRIMARY}
+              href={`/evenements/${
+                evenement.id
+              }/cloture?redirectUrl=${encodeURIComponent(
+                returnTo + '?onglet=etablissement'
+              )}`}
+            >
+              <IconComponent
+                name={IconName.Clipboard}
+                aria-hidden={true}
+                focusable={false}
+                className='mr-2 w-4 h-4'
+              />
+              Clore
+            </ButtonLink>
+          )}
+        </>
+      </PageActionsPortal>
+
       {showDeleteRdvError && (
         <FailureAlert
           label="Votre événement n'a pas été supprimé, veuillez essayer ultérieurement"
@@ -227,7 +276,16 @@ function EditionRdv({
         </div>
       )}
 
-      {aDesJeunesDUnAutrePortefeuille() && (
+      {evenement && conseillerEstObservateur && (
+        <div className='mb-6'>
+          <InformationMessage label='Vous êtes en lecture seule'>
+            Vous pouvez uniquement lire le détail de ce rendez-vous car aucun de
+            vos bénéficiaires n’y est inscrit
+          </InformationMessage>
+        </div>
+      )}
+
+      {!conseillerEstObservateur && aDesJeunesDUnAutrePortefeuille() && (
         <div className='mb-6'>
           <InformationMessage label='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
@@ -235,45 +293,6 @@ function EditionRdv({
 
       {evenement && (
         <>
-          <div className='flex'>
-            {!estClos(evenement) && !estCreeParSiMILO(evenement) && (
-              <Button
-                style={ButtonStyle.SECONDARY}
-                onClick={handleDelete}
-                label={`Supprimer l’événement du ${evenement.date}`}
-                className='min-w-fit w-1/4'
-              >
-                <IconComponent
-                  name={IconName.Trashcan}
-                  aria-hidden='true'
-                  focusable='false'
-                  className='mr-2 w-4 h-4'
-                />
-                Supprimer
-              </Button>
-            )}
-
-            {estAClore(evenement) && (
-              <ButtonLink
-                style={ButtonStyle.PRIMARY}
-                href={`/evenements/${
-                  evenement.id
-                }/cloture?redirectUrl=${encodeURIComponent(
-                  returnTo + '?onglet=etablissement'
-                )}`}
-                className='ml-6 min-w-fit w-1/4'
-              >
-                <IconComponent
-                  name={IconName.Clipboard}
-                  aria-hidden={true}
-                  focusable={false}
-                  className='mr-2 w-4 h-4'
-                />
-                Clore
-              </ButtonLink>
-            )}
-          </div>
-
           {estAClore(evenement) && (
             <div className='pt-6'>
               <FailureAlert label='Cet événement est passé et doit être clos' />
@@ -296,15 +315,14 @@ function EditionRdv({
             </div>
 
             {!estCreeParSiMILO(evenement) &&
-              historiqueModif &&
-              historiqueModif.length > 0 && (
+              Boolean(historiqueModif?.length) && (
                 <div className='mt-4 border border-solid border-grey_100 rounded-base p-4'>
                   <dt className='text-base-bold'>
                     Historique des modifications
                   </dt>
                   <dd className='mt-2'>
                     <ul>
-                      {historiqueModif.map(({ date, auteur }) => (
+                      {historiqueModif!.map(({ date, auteur }) => (
                         <li key={date}>
                           {toFrenchFormat(
                             DateTime.fromISO(date),
@@ -350,18 +368,19 @@ function EditionRdv({
         idJeune={idJeune}
         evenement={evenement}
         redirectTo={returnTo}
+        conseiller={conseiller}
+        conseillerIsCreator={
+          !evenement || conseiller.id === evenement.createur.id
+        }
+        evenementTypeAC={evenementTypeAC}
+        lectureSeule={lectureSeule}
         onBeneficiairesDUnAutrePortefeuille={
           setFormHasBeneficiaireAutrePortefeuille
         }
-        conseillerIsCreator={
-          !evenement || conseiller?.id === evenement.createur.id
-        }
-        conseiller={conseiller}
         onChanges={setHasChanges}
         soumettreRendezVous={soumettreEvenement}
         leaveWithChanges={openLeavePageModal}
         showConfirmationModal={showConfirmationModal}
-        evenementTypeAC={evenementTypeAC}
       />
 
       {showLeavePageModal && (
@@ -389,10 +408,7 @@ function EditionRdv({
           aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={supprimerEvenement}
-          evenementTypeAC={
-            evenementTypeAC ||
-            isCodeTypeAnimationCollective(evenement?.type.code)
-          }
+          evenementTypeAC={evenementTypeAC!}
         />
       )}
     </>
@@ -415,70 +431,113 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
-  const jeunesService = withDependance<JeunesService>('jeunesService')
-  const evenementsService =
-    withDependance<EvenementsService>('evenementsService')
-  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
-    user.id,
-    accessToken
-  )
-
-  const typesRendezVous = await evenementsService.getTypesRendezVous(
-    accessToken
-  )
-
-  const estUneAC = context.query.type === 'ac'
-
-  const typesRdvCEJ = [...typesRendezVous].filter(
-    (t) => !isTypeAnimationCollective(t)
-  )
-  const typesRdvAC = [...typesRendezVous].filter((t) =>
-    isTypeAnimationCollective(t)
-  )
-
   let redirectTo = context.query.redirectUrl as string
   if (!redirectTo) {
     const referer = context.req.headers.referer
     redirectTo = referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   }
 
-  const props: EditionRdvProps = {
-    jeunes: [...jeunes].sort(compareJeunesByNom),
-    typesRendezVous: estUneAC ? typesRdvAC : typesRdvCEJ,
-    withoutChat: true,
-    returnTo: redirectTo,
-    pageTitle: `Mes événements - Créer ${
-      estUneAC ? 'une animation collective' : 'un rendez-vous'
-    }`,
-    pageHeader: `${
-      estUneAC ? 'Créer une animation collective' : 'Créer un rendez-vous'
-    }`,
-    evenementTypeAC: estUneAC,
-  }
+  const jeunesService = withDependance<JeunesService>('jeunesService')
+  const evenementsService =
+    withDependance<EvenementsService>('evenementsService')
+
+  const jeunesConseiller = await jeunesService.getJeunesDuConseillerServerSide(
+    user.id,
+    accessToken
+  )
 
   const idRdv = context.query.idRdv as string | undefined
-  const idJeune = context.query.idJeune as string | undefined
   if (idRdv) {
     const evenement = await evenementsService.getDetailsEvenement(
       idRdv,
       accessToken
     )
     if (!evenement) return { notFound: true }
-    props.evenement = evenement
-    props.pageTitle = 'Mes événements - Modifier'
-    props.pageHeader = `${
-      estUneAC || isCodeTypeAnimationCollective(evenement.type.code)
-        ? 'Détail de l’animation collective'
-        : 'Détail du rendez-vous'
-    }`
-  } else if (idJeune) {
-    props.idJeune = idJeune
-  }
 
-  return { props }
+    return {
+      props: {
+        returnTo: redirectTo,
+        ...buildPropsModificationEvenement(evenement, jeunesConseiller),
+      },
+    }
+  } else {
+    const typesEvenements = await evenementsService.getTypesRendezVous(
+      accessToken
+    )
+    const creationAC = context.query.type === 'ac'
+
+    return {
+      props: {
+        returnTo: redirectTo,
+        ...buildPropsCreationEvenement(
+          jeunesConseiller,
+          typesEvenements,
+          creationAC,
+          context.query.idJeune as string | undefined
+        ),
+      },
+    }
+  }
 }
 
 export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
+
+function buildPropsModificationEvenement(
+  evenement: Evenement,
+  jeunesConseiller: BaseJeune[]
+): Omit<EditionRdvProps, 'returnTo'> {
+  const estUneAC = isCodeTypeAnimationCollective(evenement.type.code)
+  const aUnBeneficiaireInscritALEvenement: boolean = evenement.jeunes.some(
+    (jeuneEvenement) =>
+      jeunesConseiller.some(
+        (jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id
+      )
+  )
+
+  return {
+    jeunes: [...jeunesConseiller].sort(compareJeunesByNom),
+    evenement,
+    typesRendezVous: [],
+    evenementTypeAC: estUneAC,
+    conseillerEstObservateur: !estUneAC && !aUnBeneficiaireInscritALEvenement,
+    withoutChat: true,
+    pageTitle: 'Mes événements - Modifier',
+    pageHeader: estUneAC
+      ? 'Détail de l’animation collective'
+      : 'Détail du rendez-vous',
+  }
+}
+
+function buildPropsCreationEvenement(
+  jeunesConseiller: BaseJeune[],
+  typesEvenements: TypeEvenementReferentiel[],
+  creationAC: boolean,
+  idJeune?: string
+): Omit<EditionRdvProps, 'returnTo'> {
+  const typesRdvCEJ: TypeEvenementReferentiel[] = []
+  const typesRdvAC: TypeEvenementReferentiel[] = []
+  typesEvenements.forEach((t) => {
+    if (isTypeAnimationCollective(t)) typesRdvAC.push(t)
+    else typesRdvCEJ.push(t)
+  })
+
+  const props: Omit<EditionRdvProps, 'returnTo'> = {
+    jeunes: [...jeunesConseiller].sort(compareJeunesByNom),
+    typesRendezVous: creationAC ? typesRdvAC : typesRdvCEJ,
+    withoutChat: true,
+    evenementTypeAC: creationAC,
+    pageTitle: creationAC
+      ? 'Mes événements - Créer une animation collective'
+      : 'Mes événements - Créer un rendez-vous',
+    pageHeader: creationAC
+      ? 'Créer une animation collective'
+      : 'Créer un rendez-vous',
+  }
+
+  if (idJeune) props.idJeune = idJeune
+
+  return props
+}
 
 function comingFromHome(referer: string): boolean {
   return referer.split('?')[0].endsWith('/index')

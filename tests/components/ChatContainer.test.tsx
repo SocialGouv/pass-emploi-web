@@ -17,7 +17,8 @@ import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('components/chat/Conversation', () =>
-  jest.fn(({ jeuneChat }) => <>conversation-{jeuneChat.id}</>)
+  // eslint-disable-next-line react/display-name
+  ({ jeuneChat }: { jeuneChat: JeuneChat }) => <>conversation-{jeuneChat.id}</>
 )
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 

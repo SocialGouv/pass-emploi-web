@@ -11,6 +11,7 @@ interface ResettableTextInputProps {
   type?: string
   className?: string
   required?: boolean
+  invalid?: boolean
 }
 
 const ResettableTextInput = forwardRef(
@@ -24,6 +25,7 @@ const ResettableTextInput = forwardRef(
       type = 'text',
       className,
       required = false,
+      invalid = false,
     }: ResettableTextInputProps,
     ref: ForwardedRef<HTMLInputElement>
   ) => {
@@ -58,6 +60,8 @@ const ResettableTextInput = forwardRef(
           className='flex-1 p-3 bg-blanc rounded-l-base'
           disabled={disabled}
           required={required}
+          aria-describedby={invalid ? id + '--error' : undefined}
+          aria-invalid={invalid || undefined}
         />
         <button
           type='reset'

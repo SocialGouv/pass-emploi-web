@@ -282,11 +282,11 @@ describe('Pilotage', () => {
             pageTitle=''
             actions={{
               donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
             animationsCollectives={{
               donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
           />
         )
@@ -301,17 +301,18 @@ describe('Pilotage', () => {
     describe("quand le conseiller n'a pas d'animation collective à clore", () => {
       it('affiche un message qui le précise', async () => {
         // Given
+        ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
         renderWithContexts(
           <Pilotage
             withoutChat={true}
             pageTitle=''
             actions={{
               donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
             animationsCollectives={{
               donnees: [],
-              metadonnees: { nombrePages: 1, nombreTotal: 0 },
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
           />
         )
@@ -364,7 +365,7 @@ describe('Pilotage', () => {
               pageTitle=''
               actions={{
                 donnees: [],
-                metadonnees: { nombrePages: 1, nombreTotal: 0 },
+                metadonnees: { nombrePages: 0, nombreTotal: 0 },
               }}
             />,
             {
@@ -449,9 +450,9 @@ describe('Pilotage', () => {
           nom: agence.nom,
           codeDepartement: '3',
         })
-        expect(() =>
-          screen.getByText('Votre Mission Locale n’est pas renseignée')
-        ).toThrow()
+        expect(
+          screen.queryByText('Votre Mission Locale n’est pas renseignée')
+        ).not.toBeInTheDocument()
         expect(
           screen.getByRole('table', {
             name: 'Liste des animations collectives à clore',

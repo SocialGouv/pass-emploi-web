@@ -77,9 +77,12 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
         pageTitle={''}
       />,
       {
+        customConseiller: { id: 'id-conseiller' },
         customDependances: {
           jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
           }),
           agendaService: mockedAgendaService({
             recupererAgenda: jest.fn(async () => unAgenda()),

@@ -17,19 +17,12 @@ import {
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { CategorieSituation, JeuneFromListe } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { JeunesApiService } from 'services/jeunes.service'
 import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
-
-jest.mock('next-auth/react', () => ({
-  getSession: jest.fn(async () => ({
-    user: { id: 'idConseiller' },
-    accessToken: 'accessToken',
-  })),
-}))
 
 describe('JeunesApiService', () => {
   let apiClient: ApiClient
@@ -481,25 +474,68 @@ describe('JeunesApiService', () => {
   })
 
   describe('.rechercheJeunesDeLEtablissement', () => {
-    it('retourne le resultat de recherche des jeunes d’un etablissment', async () => {
+    it('retourne le resultat de recherche des jeunes d’un etablissement', async () => {
       // Given
-      const unJeune = uneBaseJeune()
       ;(apiClient.get as jest.Mock).mockResolvedValue({
-        content: { resultats: [{ jeune: unJeune }] },
+        content: {
+          pagination: {
+            page: 3,
+            limit: 10,
+            total: 51,
+          },
+          resultats: [
+            {
+              jeune: {
+                id: 'jeune-1',
+                nom: 'Reportaire',
+                prenom: 'Albert',
+              },
+              referent: {
+                id: 'conseiller-1',
+                nom: 'Tavernier',
+                prenom: 'Nils',
+              },
+              situation: 'Emploi',
+              dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+            },
+          ],
+        },
       })
 
       // When
       const actual = await jeunesService.rechercheJeunesDeLEtablissement(
         'id-etablissement',
-        'e'
+        'e',
+        3
       )
 
       // Then
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v2/etablissements/id-etablissement/jeunes?q=e',
+        '/v2/etablissements/id-etablissement/jeunes?q=e&page=3',
         'accessToken'
       )
-      expect(actual).toEqual([unJeune])
+      expect(actual).toEqual({
+        metadonnees: {
+          nombrePages: 6,
+          nombreTotal: 51,
+        },
+        jeunes: [
+          {
+            base: {
+              id: 'jeune-1',
+              nom: 'Reportaire',
+              prenom: 'Albert',
+            },
+            referent: {
+              id: 'conseiller-1',
+              nom: 'Tavernier',
+              prenom: 'Nils',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+        ],
+      })
     })
   })
 })

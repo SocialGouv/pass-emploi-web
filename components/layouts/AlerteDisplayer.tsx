@@ -15,7 +15,7 @@ export default function AlerteDisplayer({
   hideOnLargeScreen = false,
 }: AlerteDisplayerProps) {
   const [conseiller] = useConseiller()
-  const [alertes, setAlertes] = useState<DictAlertes>(ALERTES)
+  const alertes = getAlertesForStructure(conseiller.structure)
 
   const [alerte, setAlerte] = useAlerte()
   const [alerteAAfficher, setAlerteAAfficher] = useState<
@@ -25,12 +25,6 @@ export default function AlerteDisplayer({
   async function closeAlerte(): Promise<void> {
     setAlerte(undefined)
   }
-
-  useEffect(() => {
-    if (conseiller?.structure) {
-      setAlertes(getAlertesForStructure(conseiller.structure))
-    }
-  }, [conseiller?.structure])
 
   useEffect(() => {
     setAlerteAAfficher(alerte && alertes[alerte.key])
