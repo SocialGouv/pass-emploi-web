@@ -274,8 +274,7 @@ class FirebaseClient {
         (querySnapshot: QuerySnapshot<FirebaseMessage>) => {
           const messages: Message[] =
             querySnapshot.docs.map(docSnapshotToMessage)
-
-          if (!messages || !messages[messages.length - 1]?.creationDate) {
+          if (messages.length && !messages[messages.length - 1].creationDate) {
             return
           }
 

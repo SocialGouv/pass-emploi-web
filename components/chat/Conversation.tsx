@@ -136,14 +136,17 @@ export default function Conversation({
         (messagesGroupesParJour: ByDay<Message>[]) => {
           setMessagesByDay((previousValue) => {
             if (
-              previousValue &&
-              previousValue[0].messages[0].id ===
-                messagesGroupesParJour[0].messages[0].id
+              !messagesGroupesParJour.length ||
+              (previousValue?.length &&
+                previousValue[0].messages[0].id ===
+                  messagesGroupesParJour[0].messages[0].id)
             ) {
               setHasNoMoreMessages(true)
             }
+
             return messagesGroupesParJour
           })
+
           setLoadingMoreMessages(false)
 
           if (document.activeElement === inputRef.current) {
