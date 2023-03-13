@@ -165,7 +165,6 @@ function FicheJeune({
     let newTrackingLabel = `${pageTracking} - Consultation ${
       ongletProps[tab].trackingLabel
     } ${lectureSeule ? ' - hors portefeuille' : ''}`
-    console.log(newTrackingLabel)
 
     setTrackingLabel(newTrackingLabel)
 

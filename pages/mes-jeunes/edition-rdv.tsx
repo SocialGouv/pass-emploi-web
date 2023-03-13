@@ -95,14 +95,14 @@ function EditionRdv({
   const [showPlusHistorique, setShowPlusHistorique] = useState<boolean>(false)
 
   let initialTracking: string
-  if (evenement)
+  if (evenement) {
     initialTracking = `Modification ${
       evenementTypeAC ? 'animation collective' : 'rdv'
-    }`
-  else
+    } ${conseillerEstObservateur ? '- hors portefeuille' : ''}`
+  } else
     initialTracking = `Création ${
       evenementTypeAC ? 'animation collective' : 'rdv'
-    } ${idJeune ? ' jeune' : ''}`
+    } ${idJeune ? ' jeune' : ''} `
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
