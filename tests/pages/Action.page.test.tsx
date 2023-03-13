@@ -32,7 +32,7 @@ describe("Page Détail d'une action d'un jeune", () => {
     let routerPush: Function
     const action = uneAction()
     const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
-    const jeune: BaseJeune = {
+    const jeune: BaseJeune & { idConseiller: string } = {
       id: 'jeune-1',
       prenom: 'Nadia',
       nom: 'Sanfamiye',
@@ -179,7 +179,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         ).toBeInTheDocument()
         expect(
           screen.getByText(
-            'Vous pouvez uniquement lire la fiche de ce bénéficiaire car il ne fait pas partie de votre portefeuille.'
+            'Vous pouvez uniquement lire le détail de l’action de ce bénéficiaire car il ne fait pas partie de votre portefeuille.'
           )
         ).toBeInTheDocument()
       })
@@ -192,7 +192,6 @@ describe("Page Détail d'une action d'un jeune", () => {
       })
 
       it("n'affiche pas l'encart de création de commentaire", async () => {
-        console.log(jeune.idConseiller)
         expect(() =>
           screen.getByText('Commentaire à destination du jeune')
         ).toThrow()
@@ -240,7 +239,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         const actionAQualifier = uneAction({
           status: StatutAction.Terminee,
         })
-        const jeune: BaseJeune = {
+        const jeune: BaseJeune & { idConseiller: string } = {
           id: 'jeune-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
@@ -354,7 +353,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         const actionAQualifier = uneAction({
           status: StatutAction.Terminee,
         })
-        const jeune: BaseJeune = {
+        const jeune: BaseJeune & { idConseiller: string } = {
           id: 'jeune-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
@@ -444,7 +443,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         })
         const action: Action = uneAction()
         const commentaires = [unCommentaire()]
-        const jeune: BaseJeune = {
+        const jeune: BaseJeune & { idConseiller: string } = {
           id: 'jeune-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
@@ -518,7 +517,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         })
         const action: Action = uneAction()
         const commentaires = [unCommentaire()]
-        const jeune: BaseJeune = {
+        const jeune: BaseJeune & { idConseiller: string } = {
           id: 'jeune-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',

@@ -183,8 +183,8 @@ function PageAction({
       {lectureSeule && (
         <div className='mb-6'>
           <InformationMessage label='Vous êtes en lecture seule'>
-            Vous pouvez uniquement lire la fiche de ce bénéficiaire car il ne
-            fait pas partie de votre portefeuille.
+            Vous pouvez uniquement lire le détail de l’action de ce bénéficiaire
+            car il ne fait pas partie de votre portefeuille.
           </InformationMessage>
         </div>
       )}
@@ -267,15 +267,17 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   if (!commentaires) return { notFound: true }
 
   const { action, jeune } = actionEtJeune
-  console.log(jeune)
+
   const lectureSeule = jeune.idConseiller !== user.id
-  console.log('>>>', jeune.idConseiller, user.id)
+
   const props: PageActionProps = {
     action,
     jeune,
     commentaires,
     lectureSeule,
-    pageTitle: `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
+    pageTitle: `${
+      lectureSeule ? 'Etablissement' : 'Portefeuille'
+    } - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
     pageHeader: 'Détails de l’action',
   }
 

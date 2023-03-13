@@ -12,15 +12,15 @@ import { useDependance } from 'utils/injectionDependances'
 
 interface CommentairesActionProps {
   idAction: string
-  lectureSeule: boolean
   commentairesInitiaux: Commentaire[]
+  lectureSeule: boolean
   onAjout: (estEnSucces: boolean) => void
 }
 
 export function CommentairesAction({
   idAction,
-  lectureSeule,
   commentairesInitiaux,
+  lectureSeule,
   onAjout,
 }: CommentairesActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
