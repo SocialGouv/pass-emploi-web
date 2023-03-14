@@ -873,7 +873,7 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('événements issus d’i-MILO', () => {
+    describe('événements issus d’i-milo', () => {
       beforeEach(() => {
         // Given
         const evenement = unEvenement({ source: StructureConseiller.MILO })

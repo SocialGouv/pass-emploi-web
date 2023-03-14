@@ -340,7 +340,7 @@ describe('Agenda de la fiche jeune', () => {
         })
       })
 
-      describe('si le bénéficiaire a des rendez-vous créés par i-MILO', () => {
+      describe('si le bénéficiaire a des rendez-vous créés par i-milo', () => {
         it('indique le caractère non modifiable de l’événement', async () => {
           // Given
           agendaService = mockedAgendaService({

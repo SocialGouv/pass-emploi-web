@@ -144,7 +144,7 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
           onClick={props.onClick}
           rel='noopener noreferrer'
         >
-          Dossier jeune i-Milo
+          Dossier jeune i-milo
           <IconComponent
             name={IconName.Launch}
             focusable='false'

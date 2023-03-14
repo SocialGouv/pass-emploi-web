@@ -93,7 +93,7 @@ export default function DossierJeuneMilo({
               </p>
               <ol className='text-base-regular text-warning'>
                 <li className='mb-3.5'>
-                  1. Renseignez l&apos;e-mail du jeune sur son profil i-Milo
+                  1. Renseignez l&apos;e-mail du jeune sur son profil i-milo
                 </li>
                 <li className='mb-3.5'>
                   2. Rafraîchissez ensuite cette page ou saisissez à nouveau le

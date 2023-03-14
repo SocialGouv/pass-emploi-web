@@ -45,7 +45,7 @@ describe('Rendez-vous de la fiche jeune', () => {
       ).toThrow()
     })
 
-    it('indique caractère non modifiable d’un rendez-vous issu d’i-Milo', async () => {
+    it('indique caractère non modifiable d’un rendez-vous issu d’i-milo', async () => {
       // Given
       await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
 

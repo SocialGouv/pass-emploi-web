@@ -132,11 +132,11 @@ function PageQualification({
       <div className='mb-6'>
         <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du jeune'>
           <p>
-            Les informations saisies sont partagées avec I-MILO, et doivent en
+            Les informations saisies sont partagées avec i-milo, et doivent en
             respecter les Conditions Générales d’utilisation. Elles ne doivent
             comporter aucune donnée personnelle non autorisée par{' '}
             <strong>l’arrêté du 17 novembre 2021</strong> relatif au traitement
-            automatisé de données à caractère personnel dénommé « I-MILO »
+            automatisé de données à caractère personnel dénommé « i-milo »
           </p>
           <span className='hover:text-primary_darken'>
             <ExternalLink
@@ -166,7 +166,7 @@ function PageQualification({
           {{
             main: "Intitulé et description de l'action",
             helpText:
-              'Vous retrouverez ce résumé dans les détails de la situation non-professionnelle sur i-milo, dans le champ « Commentaire ».',
+              'Vous retrouverez ce résumé dans les détails de la situation non professionnelle sur i-milo, dans le champ « Commentaire ».',
             precision: '255 caractères maximum',
           }}
         </Label>

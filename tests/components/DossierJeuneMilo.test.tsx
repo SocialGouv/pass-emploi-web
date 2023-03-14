@@ -69,7 +69,7 @@ describe('<DossierMilo', () => {
       ).toBeInTheDocument()
       expect(
         screen.getByText(
-          "1. Renseignez l'e-mail du jeune sur son profil i-Milo"
+          "1. Renseignez l'e-mail du jeune sur son profil i-milo"
         )
       ).toBeInTheDocument()
       expect(

@@ -43,7 +43,7 @@ describe('<DetailsJeune>', () => {
       screen.getByText('pas encore connecté', { exact: false })
     ).toThrow()
     expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
-    expect(screen.getByText('Dossier jeune i-Milo')).toHaveAttribute(
+    expect(screen.getByText('Dossier jeune i-milo')).toHaveAttribute(
       'href',
       'https://dossier-milo.fr'
     )
@@ -87,7 +87,7 @@ describe('<DetailsJeune>', () => {
     )
 
     // Then
-    expect(screen.queryByText('Dossier jeune i-Milo')).toBeNull()
+    expect(screen.queryByText('Dossier jeune i-milo')).toBeNull()
   })
 
   describe('Date de fin du CEJ', () => {
