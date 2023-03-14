@@ -1,7 +1,5 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 
 import {
   typesAnimationCollective,
@@ -15,6 +13,8 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
@@ -78,7 +78,7 @@ describe('EditionAnimationCollective', () => {
         })
       })
 
-      it('récupère la liste des jeunes du conseiller', async () => {
+      it('prépare la page', async () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: { referer: '/agenda?onglet=etablissement' } },
@@ -86,12 +86,8 @@ describe('EditionAnimationCollective', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(
-          jeunesService.getJeunesDuConseillerServerSide
-        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
         expect(actual).toEqual({
           props: {
-            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
             pageTitle: 'Mes événements - Créer une animation collective',
             pageHeader: 'Créer une animation collective',
@@ -175,7 +171,6 @@ describe('EditionAnimationCollective', () => {
             pageTitle: 'Mes événements - Modifier',
             pageHeader: 'Détail de l’animation collective',
             evenementTypeAC: true,
-            conseillerEstObservateur: false,
           },
         })
       })
@@ -294,7 +289,6 @@ describe('EditionAnimationCollective', () => {
         await act(async () => {
           renderWithContexts(
             <EditionRdv
-              jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
               returnTo='/agenda?onglet=etablissement'
@@ -412,7 +406,6 @@ describe('EditionAnimationCollective', () => {
           await act(async () => {
             renderWithContexts(
               <EditionRdv
-                jeunes={jeunesConseiller}
                 typesRendezVous={typesRendezVous}
                 withoutChat={true}
                 returnTo='/agenda'
@@ -443,7 +436,6 @@ describe('EditionAnimationCollective', () => {
           await act(async () => {
             renderWithContexts(
               <EditionRdv
-                jeunes={jeunesConseiller}
                 typesRendezVous={typesRendezVous}
                 withoutChat={true}
                 returnTo='/agenda'
@@ -474,7 +466,6 @@ describe('EditionAnimationCollective', () => {
           await act(async () => {
             renderWithContexts(
               <EditionRdv
-                jeunes={jeunesConseiller}
                 typesRendezVous={typesRendezVous}
                 withoutChat={true}
                 returnTo='https://localhost:3000/agenda'
@@ -524,7 +515,6 @@ describe('EditionAnimationCollective', () => {
         await act(async () => {
           renderWithContexts(
             <EditionRdv
-              jeunes={jeunesConseiller}
               typesRendezVous={typesRendezVous}
               withoutChat={true}
               returnTo='/agenda'

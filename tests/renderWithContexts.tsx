@@ -2,6 +2,7 @@ import { render, RenderResult } from '@testing-library/react'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
+import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
 import {
   mockedActionsService,
   mockedAgendaService,
@@ -75,7 +76,10 @@ export default function renderWithContexts(
 
   const conseiller = unConseiller(customConseiller)
 
-  const portefeuille = { ...customPortefeuille }
+  const portefeuille = {
+    ...customPortefeuille,
+    value: customPortefeuille?.value ?? desItemsJeunes().map(extractBaseJeune),
+  }
 
   const currentJeune = { ...customCurrentJeune }
 

@@ -14,7 +14,7 @@ import {
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
+import { compareJeunesByNom, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -169,7 +169,7 @@ describe('<Layout />', () => {
       // Then
       expect(messagesService.observeConseillerChats).toHaveBeenCalledWith(
         'cleChiffrement',
-        jeunes.map(extractBaseJeune),
+        jeunes.map(extractBaseJeune).sort(compareJeunesByNom),
         expect.any(Function)
       )
     })
@@ -246,7 +246,6 @@ describe('<Layout />', () => {
               messagesService,
             },
             customConseiller: unConseiller({ notificationsSonores: false }),
-            customPortefeuille: { value: jeunes.map(extractBaseJeune) },
           }
         )
       })
@@ -284,7 +283,6 @@ describe('<Layout />', () => {
               conseillerService,
               messagesService,
             },
-            customPortefeuille: { value: jeunes.map(extractBaseJeune) },
           }
         )
       })

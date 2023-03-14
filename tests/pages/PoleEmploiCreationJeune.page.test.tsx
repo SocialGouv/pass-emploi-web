@@ -31,7 +31,7 @@ describe('PoleEmploiCreationJeune', () => {
     renderWithContexts(<PoleEmploiCreationJeune />, {
       customDependances: { jeunesService },
       customAlerte: { alerteSetter },
-      customPortefeuille: { value: portefeuille, setter: portefeuilleSetter },
+      customPortefeuille: { setter: portefeuilleSetter },
     })
 
     submitButton = screen.getByRole('button', {

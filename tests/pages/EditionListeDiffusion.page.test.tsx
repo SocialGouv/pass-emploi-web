@@ -48,7 +48,6 @@ describe('Page d’édition d’une liste de diffusion', () => {
       beforeEach(() => {
         renderWithContexts(
           <EditionListeDiffusion
-            beneficiaires={beneficiaires}
             pageTitle=''
             returnTo='/mes-jeunes/listes-de-diffusion'
           />,
@@ -202,7 +201,6 @@ describe('Page d’édition d’une liste de diffusion', () => {
         })
         renderWithContexts(
           <EditionListeDiffusion
-            beneficiaires={beneficiaires}
             pageTitle=''
             returnTo='/mes-jeunes/listes-de-diffusion'
             liste={listeDeDiffusion}
@@ -381,7 +379,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         })
       })
 
-      it('récupère la liste des jeunes du conseiller', async () => {
+      it('prépare la page', async () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: {} },
@@ -389,12 +387,8 @@ describe('Page d’édition d’une liste de diffusion', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(
-          jeunesService.getJeunesDuConseillerServerSide
-        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
         expect(actual).toEqual({
           props: {
-            beneficiaires: [jeunes[2], jeunes[0], jeunes[1]],
             pageTitle: 'Créer - Listes de diffusion - Portefeuille',
             pageHeader: 'Créer une nouvelle liste',
             returnTo: '/mes-jeunes/listes-de-diffusion',

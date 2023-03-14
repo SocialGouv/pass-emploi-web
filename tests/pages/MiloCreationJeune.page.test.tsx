@@ -19,10 +19,7 @@ describe('MiloCreationJeune', () => {
           dossier={null}
           erreurMessageHttpMilo=''
           pageTitle=''
-        />,
-        {
-          customPortefeuille: { value: desItemsJeunes().map(extractBaseJeune) },
-        }
+        />
       )
     })
 
@@ -64,10 +61,7 @@ describe('MiloCreationJeune', () => {
           dossier={null}
           erreurMessageHttpMilo={messageErreur}
           pageTitle=''
-        />,
-        {
-          customPortefeuille: { value: desItemsJeunes().map(extractBaseJeune) },
-        }
+        />
       )
 
       // Then
@@ -105,7 +99,7 @@ describe('MiloCreationJeune', () => {
         {
           customDependances: { conseillerService },
           customAlerte: { alerteSetter: setAlerte },
-          customPortefeuille: { value: portefeuille, setter: setPortefeuille },
+          customPortefeuille: { setter: setPortefeuille },
         }
       )
     })

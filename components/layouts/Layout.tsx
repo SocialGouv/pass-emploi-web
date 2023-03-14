@@ -14,6 +14,7 @@ import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
 import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
+import { compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -73,7 +74,9 @@ export default function Layout({ children }: LayoutProps) {
       ]).then(([conseillerRecupere, beneficiaires]) => {
         setConseiller(conseillerRecupere)
         setPortefeuille(
-          beneficiaires.map(({ id, nom, prenom }) => ({ id, nom, prenom }))
+          beneficiaires
+            .map(({ id, nom, prenom }) => ({ id, nom, prenom }))
+            .sort(compareJeunesByNom)
         )
       })
     } else {

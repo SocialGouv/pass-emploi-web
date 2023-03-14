@@ -293,10 +293,7 @@ async function renderFicheJeune(
             recupererAgenda: jest.fn(async () => unAgenda()),
           }),
         },
-        customPortefeuille: {
-          value: portefeuille,
-          setter: portefeuilleSetter,
-        },
+        customPortefeuille: { setter: portefeuilleSetter },
         customAlerte: { alerteSetter },
       }
     )

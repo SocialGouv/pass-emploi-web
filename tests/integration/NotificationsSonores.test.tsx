@@ -128,7 +128,6 @@ function renderWithNotificationsSonores(
       customConseiller: unConseiller({
         notificationsSonores: notificationsSonores,
       }),
-      customPortefeuille: { value: desItemsJeunes().map(extractBaseJeune) },
     }
   )
 }

@@ -16,15 +16,10 @@ import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
-import {
-  BaseJeune,
-  compareJeunesByNom,
-  getNomJeuneComplet,
-} from 'interfaces/jeune'
+import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
 import {
   ListeDeDiffusionFormData,
   ListesDeDiffusionService,
@@ -34,15 +29,14 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type EditionListeDiffusionProps = PageProps & {
-  beneficiaires: BaseJeune[]
   returnTo: string
   liste?: ListeDeDiffusion
 }
 
 function EditionListeDiffusion({
-  beneficiaires,
   returnTo,
   liste,
 }: EditionListeDiffusionProps) {
@@ -52,6 +46,7 @@ function EditionListeDiffusion({
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
+  const [portefeuille] = usePortefeuille()
   const defaultBeneficiaires = getDefaultBeneficiaires()
   const [idsBeneficiaires, setIdsBeneficiaires] = useState<
     ValueWithError<string[]>
@@ -77,11 +72,11 @@ function EditionListeDiffusion({
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
   ): boolean {
-    return beneficiaires.some(({ id }) => idBeneficiaireAVerifier === id)
+    return portefeuille.some(({ id }) => idBeneficiaireAVerifier === id)
   }
 
   function buildOptionsBeneficiaires(): OptionBeneficiaire[] {
-    return beneficiaires.map((beneficiaire) => ({
+    return portefeuille.map((beneficiaire) => ({
       id: beneficiaire.id,
       value: getNomJeuneComplet(beneficiaire),
     }))
@@ -266,19 +261,12 @@ export const getServerSideProps: GetServerSideProps<
   if (!sessionOrRedirect.validSession)
     return { redirect: sessionOrRedirect.redirect }
 
-  const { user, accessToken } = sessionOrRedirect.session
-  const jeunesService: JeunesService =
-    withDependance<JeunesService>('jeunesService')
-  const beneficiaires = await jeunesService.getJeunesDuConseillerServerSide(
-    user.id,
-    accessToken
-  )
+  const { accessToken } = sessionOrRedirect.session
   const listesDeDiffusionService = withDependance<ListesDeDiffusionService>(
     'listesDeDiffusionService'
   )
 
   const props: EditionListeDiffusionProps = {
-    beneficiaires: [...beneficiaires].sort(compareJeunesByNom),
     pageTitle: 'Créer - Listes de diffusion - Portefeuille',
     pageHeader: 'Créer une nouvelle liste',
     returnTo: '/mes-jeunes/listes-de-diffusion',
