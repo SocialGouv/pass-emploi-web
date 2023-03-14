@@ -47,9 +47,10 @@ function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
     }
   }, [idJeune, debutSemaine, finSemaine, indicateursSemaine, jeunesService])
 
-  useMatomo(
-    `Détail jeune – Indicateurs ${lectureSeule ? '- hors portefeuille' : ''}`
-  )
+  const tracking = `Détail jeune – Indicateurs ${
+    lectureSeule ? '- hors portefeuille' : ''
+  }`
+  useMatomo(tracking)
 
   return (
     <div>
