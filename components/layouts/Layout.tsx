@@ -16,9 +16,11 @@ import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
+import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
+import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleContext'
 
 interface LayoutProps {
   children: ReactElement<PageProps>
@@ -32,7 +34,11 @@ export default function Layout({ children }: LayoutProps) {
   const router = useRouter()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
+  const jeunesService = useDependance<JeunesService>('jeunesService')
+
   const [conseiller, setConseiller] = useConseillerPotentiellementPasRecupere()
+  const [portefeuille, setPortefeuille] =
+    usePortefeuillePotentiellementPasRecupere()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
@@ -61,7 +67,15 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     if (!conseiller) {
-      conseillerService.getConseillerClientSide().then(setConseiller)
+      Promise.all([
+        conseillerService.getConseillerClientSide(),
+        jeunesService.getJeunesDuConseillerClientSide(),
+      ]).then(([conseillerRecupere, beneficiaires]) => {
+        setConseiller(conseillerRecupere)
+        setPortefeuille(
+          beneficiaires.map(({ id, nom, prenom }) => ({ id, nom, prenom }))
+        )
+      })
     } else {
       const userAPM = {
         id: conseiller.id,
@@ -78,7 +92,7 @@ export default function Layout({ children }: LayoutProps) {
 
       {!conseiller && <SpinningLoader />}
 
-      {conseiller && (
+      {conseiller && portefeuille && (
         <div
           ref={containerRef}
           className={`${styles.container} ${

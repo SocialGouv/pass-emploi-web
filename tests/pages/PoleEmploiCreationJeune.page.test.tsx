@@ -3,7 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
 
+import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
+import { BaseJeune } from 'interfaces/jeune'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { JeunesService } from 'services/jeunes.service'
@@ -13,17 +15,23 @@ describe('PoleEmploiCreationJeune', () => {
   let jeunesService: JeunesService
   let submitButton: HTMLElement
 
-  let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let push: Function
+  let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+  let portefeuilleSetter: (updatedBeneficiaires: BaseJeune[]) => void
+  let portefeuille: BaseJeune[]
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     jeunesService = mockedJeunesService()
-    alerteSetter = jest.fn()
     push = jest.fn(() => Promise.resolve())
     ;(useRouter as jest.Mock).mockReturnValue({ push })
+    alerteSetter = jest.fn()
+    portefeuilleSetter = jest.fn()
+    portefeuille = desItemsJeunes().map(extractBaseJeune)
+
     renderWithContexts(<PoleEmploiCreationJeune />, {
       customDependances: { jeunesService },
       customAlerte: { alerteSetter },
+      customPortefeuille: { value: portefeuille, setter: portefeuilleSetter },
     })
 
     submitButton = screen.getByRole('button', {
@@ -123,11 +131,7 @@ describe('PoleEmploiCreationJeune', () => {
       // Given
       ;(
         jeunesService.createCompteJeunePoleEmploi as Mock<any>
-      ).mockResolvedValue({
-        id: 'un-id',
-        firstName: 'Nadia',
-        lastName: 'Sanfamiye',
-      })
+      ).mockResolvedValue(uneBaseJeune())
 
       // When
       await userEvent.click(submitButton)
@@ -140,7 +144,14 @@ describe('PoleEmploiCreationJeune', () => {
         email: 'nadia.sanfamiye@poleemploi.fr',
       })
 
-      expect(alerteSetter).toHaveBeenCalledWith('creationBeneficiaire', 'un-id')
+      expect(portefeuilleSetter).toHaveBeenCalledWith([
+        ...portefeuille,
+        uneBaseJeune(),
+      ])
+      expect(alerteSetter).toHaveBeenCalledWith(
+        'creationBeneficiaire',
+        'jeune-1'
+      )
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
 

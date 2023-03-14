@@ -67,7 +67,7 @@ export interface MessagesService {
 
   observeConseillerChats(
     cleChiffrement: string,
-    jeunes: Array<BaseJeune & { isActivated: boolean }>,
+    jeunes: BaseJeune[],
     updateChats: (chats: JeuneChat[]) => void
   ): Promise<() => void>
 
@@ -136,7 +136,7 @@ export class MessagesFirebaseAndApiService implements MessagesService {
 
   async observeConseillerChats(
     cleChiffrement: string,
-    jeunes: Array<BaseJeune & { isActivated: boolean }>,
+    jeunes: BaseJeune[],
     updateChats: (chats: JeuneChat[]) => void
   ): Promise<() => void> {
     const session = await getSession()

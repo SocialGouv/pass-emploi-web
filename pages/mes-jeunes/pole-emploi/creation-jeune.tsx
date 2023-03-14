@@ -13,6 +13,7 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface PoleEmploiCreationJeuneProps extends PageProps {}
 
@@ -20,6 +21,7 @@ function PoleEmploiCreationJeune(): JSX.Element {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+  const [portefeuille, setPortefeuille] = usePortefeuille()
 
   const [creationError, setCreationError] = useState<string>('')
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
@@ -30,12 +32,14 @@ function PoleEmploiCreationJeune(): JSX.Element {
     setCreationError('')
     setCreationEnCours(true)
     try {
-      const { id } = await jeunesService.createCompteJeunePoleEmploi({
+      const beneficiaireCree = await jeunesService.createCompteJeunePoleEmploi({
         firstName: newJeune.prenom,
         lastName: newJeune.nom,
         email: newJeune.email,
       })
-      setAlerte(AlerteParam.creationBeneficiaire, id)
+
+      setPortefeuille(portefeuille.concat(beneficiaireCree))
+      setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
       await router.push('/mes-jeunes')
     } catch (error) {
       setCreationError(

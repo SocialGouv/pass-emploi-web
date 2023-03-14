@@ -16,6 +16,7 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { Container, useDependance } from 'utils/injectionDependances'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface MiloCreationJeuneProps extends PageProps {
   dossierId: string
@@ -32,6 +33,7 @@ function MiloCreationJeune({
     useDependance<ConseillerService>('conseillerService')
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+  const [portefeuille, setPortefeuille] = usePortefeuille()
 
   const [etape, setEtape] = useState(1)
   const [erreurMessage, setErreurMessage] = useState<string>(
@@ -40,8 +42,10 @@ function MiloCreationJeune({
 
   async function creerCompteJeune(newJeune: JeuneMiloFormData): Promise<void> {
     try {
-      const { id } = await conseillerService.createCompteJeuneMilo(newJeune)
-      setAlerte(AlerteParam.creationBeneficiaire, id)
+      const jeuneCree = await conseillerService.createCompteJeuneMilo(newJeune)
+
+      setPortefeuille(portefeuille.concat(jeuneCree))
+      setAlerte(AlerteParam.creationBeneficiaire, jeuneCree.id)
       await router.push('/mes-jeunes')
     } catch (error) {
       setErreurMessage((error as Error).message)

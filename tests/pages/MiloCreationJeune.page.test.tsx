@@ -2,9 +2,12 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
+import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
 import { unDossierMilo } from 'fixtures/milo'
 import { mockedConseillerService } from 'fixtures/services'
+import { BaseJeune } from 'interfaces/jeune'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
+import { ConseillerService } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('MiloCreationJeune', () => {
@@ -16,7 +19,10 @@ describe('MiloCreationJeune', () => {
           dossier={null}
           erreurMessageHttpMilo=''
           pageTitle=''
-        />
+        />,
+        {
+          customPortefeuille: { value: desItemsJeunes().map(extractBaseJeune) },
+        }
       )
     })
 
@@ -58,7 +64,10 @@ describe('MiloCreationJeune', () => {
           dossier={null}
           erreurMessageHttpMilo={messageErreur}
           pageTitle=''
-        />
+        />,
+        {
+          customPortefeuille: { value: desItemsJeunes().map(extractBaseJeune) },
+        }
       )
 
       // Then
@@ -67,16 +76,24 @@ describe('MiloCreationJeune', () => {
   })
 
   describe('quand on clique sur le bouton créer un compte', () => {
-    it('devrait revenir sur la page des jeunes du conseiller', async () => {
+    let conseillerService: ConseillerService
+    let push: Function
+    let setAlerte: () => void
+    let setPortefeuille: (updatedBeneficiaires: BaseJeune[]) => void
+    let portefeuille: BaseJeune[]
+    beforeEach(async () => {
       // Given
-      const conseillerService = mockedConseillerService({
-        createCompteJeuneMilo: jest.fn((_) => Promise.resolve({ id: 'un-id' })),
+      conseillerService = mockedConseillerService({
+        createCompteJeuneMilo: jest.fn(async () => uneBaseJeune()),
       })
-      const push = jest.fn(() => Promise.resolve())
-      const setAlerte = jest.fn()
+
+      push = jest.fn(() => Promise.resolve())
+      setAlerte = jest.fn()
+      setPortefeuille = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
       const dossier = unDossierMilo()
+      portefeuille = desItemsJeunes().map(extractBaseJeune)
 
       renderWithContexts(
         <MiloCreationJeune
@@ -88,14 +105,16 @@ describe('MiloCreationJeune', () => {
         {
           customDependances: { conseillerService },
           customAlerte: { alerteSetter: setAlerte },
+          customPortefeuille: { value: portefeuille, setter: setPortefeuille },
         }
       )
+    })
 
+    it('devrait revenir sur la page des jeunes du conseiller', async () => {
       // When
       const createCompteButton = screen.getByRole('button', {
         name: 'Créer le compte',
       })
-
       await userEvent.click(createCompteButton)
 
       // Then
@@ -106,28 +125,18 @@ describe('MiloCreationJeune', () => {
         prenom: 'Kenji',
       })
 
-      expect(setAlerte).toHaveBeenCalledWith('creationBeneficiaire', 'un-id')
+      expect(setPortefeuille).toHaveBeenCalledWith([
+        ...portefeuille,
+        uneBaseJeune(),
+      ])
+      expect(setAlerte).toHaveBeenCalledWith('creationBeneficiaire', 'jeune-1')
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       // Given
-      const conseillerService = mockedConseillerService({
-        createCompteJeuneMilo: jest.fn((_) =>
-          Promise.reject({ message: "un message d'erreur" })
-        ),
-      })
-
-      const dossier = unDossierMilo({ email: 'incorrectemail' })
-
-      renderWithContexts(
-        <MiloCreationJeune
-          dossierId='1'
-          dossier={dossier}
-          erreurMessageHttpMilo={''}
-          pageTitle=''
-        />,
-        { customDependances: { conseillerService } }
+      ;(conseillerService.createCompteJeuneMilo as jest.Mock).mockRejectedValue(
+        { message: "un message d'erreur" }
       )
 
       // When
