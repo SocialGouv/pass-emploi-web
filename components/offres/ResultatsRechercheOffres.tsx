@@ -42,7 +42,7 @@ export default function ResultatsRechercheOffre({
                         ...offre,
                         typeContrat:
                           offre.typeContrat === 'MIS'
-                            ? 'INTERIM'
+                            ? 'INTERIM  '
                             : offre.typeContrat,
                       }}
                       withPartage={true}
