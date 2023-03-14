@@ -116,10 +116,9 @@ describe('<Layout />', () => {
       expect(
         screen.getByRole('link', { name: 'Portefeuille' })
       ).toHaveAttribute('href', '/mes-jeunes')
-      expect(screen.getByRole('link', { name: 'Fiche jeune' })).toHaveAttribute(
-        'href',
-        '/mes-jeunes/id-jeune'
-      )
+      expect(
+        screen.getByRole('link', { name: 'Fiche bénéficiaire' })
+      ).toHaveAttribute('href', '/mes-jeunes/id-jeune')
       expect(
         screen.getByRole('link', { name: 'Détail action' })
       ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')

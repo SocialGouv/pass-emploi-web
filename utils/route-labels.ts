@@ -1,3 +1,10 @@
+const labelFicheBeneficiaire = 'Fiche bénéficiaire'
+const labelFavoris = 'Favoris'
+const labelHistorique = 'Historique'
+const labelIndicateurs = 'Indicateurs'
+const labelRdvPasses = 'Rendez-vous passés'
+const labelAction = 'Détail action'
+
 const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   // Agenda
   [/\/mes-jeunes\/edition-rdv\?idRdv=.*$/, 'Fiche événement'],
@@ -9,28 +16,24 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   // Portefeuille
   [/\/mes-jeunes$/, 'Portefeuille'],
   [/\/mes-jeunes\/(milo|pole-emploi)\/creation-jeune$/, 'Création'],
-  [/\/mes-jeunes\/[\w-]+$/, 'Fiche jeune'],
-  [/\/mes-jeunes\/[\w-]+\/favoris$/, 'Favoris'],
-  [/\/mes-jeunes\/[\w-]+\/historique$/, 'Historique'],
-  [/\/mes-jeunes\/[\w-]+\/indicateurs$/, 'Indicateurs'],
-  [/\/mes-jeunes\/[\w-]+\/rendez-vous-passes$/, 'Rendez-vous passés'],
-  [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, 'Détail action'],
+  [/\/mes-jeunes\/[\w-]+$/, labelFicheBeneficiaire],
+  [/\/mes-jeunes\/[\w-]+\/favoris$/, labelFavoris],
+  [/\/mes-jeunes\/[\w-]+\/historique$/, labelHistorique],
+  [/\/mes-jeunes\/[\w-]+\/indicateurs$/, labelIndicateurs],
+  [/\/mes-jeunes\/[\w-]+\/rendez-vous-passes$/, labelRdvPasses],
+  [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, labelAction],
 
   // Établissement
   [/\/etablissement\/beneficiaires$/, 'Bénéficiaires'],
-  [
-    /\/etablissement\/beneficiaires\/(milo|pole-emploi)\/creation-jeune$/,
-    'Création',
-  ],
-  [/\/etablissement\/beneficiaires\/[\w-]+$/, 'Fiche jeune'],
-  [/\/etablissement\/beneficiaires\/[\w-]+\/favoris$/, 'Favoris'],
-  [/\/etablissement\/beneficiaires\/[\w-]+\/historique$/, 'Historique'],
-  [/\/etablissement\/beneficiaires\/[\w-]+\/indicateurs$/, 'Indicateurs'],
+  [/\/etablissement\/beneficiaires\/[\w-]+$/, labelFicheBeneficiaire],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/favoris$/, labelFavoris],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/historique$/, labelHistorique],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/indicateurs$/, labelIndicateurs],
   [
     /\/etablissement\/beneficiaires\/[\w-]+\/rendez-vous-passes$/,
-    'Rendez-vous passés',
+    labelRdvPasses,
   ],
-  [/\/etablissement\/beneficiaires\/[\w-]+\/actions\/[\w-]+$/, 'Détail action'],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/actions\/[\w-]+$/, labelAction],
 
   // Offres
   [/\/recherche-offres$/, 'Offres'],
