@@ -28,9 +28,7 @@ export default function Tab({
       aria-selected={selected}
       onClick={onSelectTab}
       className={`text-m-medium text-grey_800 px-4 pb-2 flex items-center cursor-pointer ${
-        selected
-          ? 'text-m-bold border-b-4 border-b-primary'
-          : 'hover:border-b-4 hover:border-primary_darken'
+        selected ? 'text-m-bold border-b-4 border-b-primary' : 'hover:font-bold'
       }`}
     >
       {iconName && (
@@ -51,7 +49,7 @@ export default function Tab({
           <Badge
             count={count}
             textColor='primary'
-            bgColor='primary_ligten'
+            bgColor='primary_lighten'
             size={6}
           />
         </span>
