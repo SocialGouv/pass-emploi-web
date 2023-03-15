@@ -179,6 +179,7 @@ describe('Historique', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',
+            user: { id: 'id-conseiller' },
           },
           validSession: true,
         })
@@ -198,6 +199,7 @@ describe('Historique', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'jeune-1',
+            lectureSeule: false,
             pageTitle: `Portefeuille - Kenji Jirac - Historique`,
             pageHeader: 'Historique',
             situations: expect.arrayContaining(listeSituations),
@@ -234,6 +236,7 @@ function renderHistorique(
       situations={situations}
       conseillers={conseillers}
       pageTitle={''}
+      lectureSeule={false}
     />,
     { customConseiller: { structure: structure } }
   )

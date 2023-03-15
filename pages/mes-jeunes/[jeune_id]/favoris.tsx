@@ -96,10 +96,7 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
   const {
-    session: {
-      accessToken,
-      user: { id },
-    },
+    session: { accessToken, user },
   } = sessionOrRedirect
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
@@ -107,15 +104,13 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
 
   const jeuneId = context.query.jeune_id as string
 
-  const [beneficiaire] = await Promise.all([
-    jeunesService.getJeuneDetails(jeuneId, accessToken),
-  ])
+  const beneficiaire = await jeunesService.getJeuneDetails(jeuneId, accessToken)
 
   if (!beneficiaire) {
     return { notFound: true }
   }
 
-  const lectureSeule = beneficiaire.idConseiller !== id
+  const lectureSeule = beneficiaire.idConseiller !== user.id
 
   try {
     const offres = await favorisService.getOffres(jeuneId, accessToken)
@@ -125,7 +120,7 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
     )
     return {
       props: {
-        lectureSeule: lectureSeule,
+        lectureSeule,
         offres,
         recherches,
         pageTitle: 'Favoris',

@@ -135,10 +135,7 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const {
-    session: {
-      accessToken,
-      user: { id },
-    },
+    session: { accessToken, user },
   } = sessionOrRedirect
 
   const [jeune, conseillers] = await Promise.all([
@@ -156,14 +153,14 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
     return { notFound: true }
   }
 
-  const lectureSeule = jeune.idConseiller !== id
+  const lectureSeule = jeune.idConseiller !== user.id
 
   return {
     props: {
       idJeune: jeune.id,
       situations: jeune.situations,
-      conseillers: conseillers,
-      lectureSeule: lectureSeule,
+      conseillers,
+      lectureSeule,
       pageTitle: `${lectureSeule ? 'Etablissement' : 'Portefeuille'} - ${
         jeune.prenom
       } ${jeune.nom} - Historique`,

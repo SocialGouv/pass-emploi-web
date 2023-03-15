@@ -195,9 +195,10 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
 
   const idBeneficiaire = context.query.jeune_id as string
 
-  const [beneficiaire] = await Promise.all([
-    jeunesService.getJeuneDetails(idBeneficiaire, accessToken),
-  ])
+  const beneficiaire = await jeunesService.getJeuneDetails(
+    idBeneficiaire,
+    accessToken
+  )
 
   if (!beneficiaire) {
     return { notFound: true }
@@ -208,7 +209,7 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
   return {
     props: {
       idJeune: context.query.jeune_id as string,
-      lectureSeule: lectureSeule,
+      lectureSeule,
       pageTitle: `${
         lectureSeule ? 'Etablissement' : 'Portefeuille'
       } - Bénéficiaire - Indicateurs`,
