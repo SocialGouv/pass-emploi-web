@@ -32,10 +32,11 @@ describe("Page Détail d'une action d'un jeune", () => {
     let routerPush: Function
     const action = uneAction()
     const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
-    const jeune: BaseJeune = {
+    const jeune: BaseJeune & { idConseiller: string } = {
       id: 'jeune-1',
       prenom: 'Nadia',
       nom: 'Sanfamiye',
+      idConseiller: 'id-conseiller',
     }
     let actionsService: ActionsService
 
@@ -60,6 +61,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             jeune={jeune}
             commentaires={commentaires}
             pageTitle=''
+            lectureSeule={false}
           />,
           {
             customDependances: { actionsService },
@@ -146,6 +148,64 @@ describe("Page Détail d'une action d'un jeune", () => {
       })
     })
 
+    describe("quand le conseiller n'est pas le conseiller du jeune", () => {
+      let actionsService: ActionsService
+      actionsService = mockedActionsService({
+        updateAction: jest.fn(async (_, statut) => statut),
+        deleteAction: jest.fn(async () => {}),
+      })
+
+      beforeEach(async () => {
+        renderWithContexts(
+          <PageAction
+            action={action}
+            jeune={jeune}
+            commentaires={commentaires}
+            pageTitle=''
+            lectureSeule={true}
+          />,
+          {
+            customDependances: { actionsService },
+            customAlerte: { alerteSetter },
+            customConseiller: { id: 'fake-id' },
+          }
+        )
+      })
+
+      it('affiche un encart lecture seule si ce n‘est pas le conseiller du jeune', async () => {
+        //Then
+        expect(
+          screen.getByText('Vous êtes en lecture seule')
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            'Vous pouvez uniquement lire le détail de l’action de ce bénéficiaire car il ne fait pas partie de votre portefeuille.'
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('désactive tous les boutons radio', async () => {
+        const radioButtons = screen.getAllByRole('radio')
+        radioButtons.forEach((radioBtn) => {
+          expect(radioBtn).toHaveAttribute('disabled')
+        })
+      })
+
+      it("n'affiche pas l'encart de création de commentaire", async () => {
+        expect(() =>
+          screen.getByText('Commentaire à destination du jeune')
+        ).toThrow()
+        expect(() => screen.getByLabelText('Ajouter un commentaire')).toThrow()
+        expect(() => screen.getByText('Ajouter un commentaire')).toThrow()
+      })
+
+      it("n'affiche pas l'encart: s’agit-il d’une SNP ?", async () => {
+        expect(() =>
+          screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
+        ).toThrow()
+      })
+    })
+
     describe('quand l’action n’a pas de commentaires', () => {
       it('permet de supprimer l’action', async () => {
         // Given
@@ -156,6 +216,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             jeune={jeune}
             commentaires={[]}
             pageTitle=''
+            lectureSeule={false}
           />,
           {
             customDependances: { actionsService },
@@ -178,10 +239,11 @@ describe("Page Détail d'une action d'un jeune", () => {
         const actionAQualifier = uneAction({
           status: StatutAction.Terminee,
         })
-        const jeune: BaseJeune = {
+        const jeune: BaseJeune & { idConseiller: string } = {
           id: 'jeune-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
         }
         let actionsService: ActionsService
         beforeEach(async () => {
@@ -199,6 +261,7 @@ describe("Page Détail d'une action d'un jeune", () => {
               jeune={jeune}
               commentaires={[]}
               pageTitle=''
+              lectureSeule={false}
             />,
             {
               customDependances: { actionsService },
@@ -290,10 +353,11 @@ describe("Page Détail d'une action d'un jeune", () => {
         const actionAQualifier = uneAction({
           status: StatutAction.Terminee,
         })
-        const jeune: BaseJeune = {
+        const jeune: BaseJeune & { idConseiller: string } = {
           id: 'jeune-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
         }
         beforeEach(async () => {
           renderWithContexts(
@@ -302,6 +366,7 @@ describe("Page Détail d'une action d'un jeune", () => {
               jeune={jeune}
               commentaires={[]}
               pageTitle=''
+              lectureSeule={false}
             />,
             {
               customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
@@ -373,15 +438,16 @@ describe("Page Détail d'une action d'un jeune", () => {
           validSession: true,
           session: {
             accessToken: 'accessToken',
-            user: { structure: 'MILO' },
+            user: { structure: 'MILO', id: 'id-conseiller' },
           },
         })
         const action: Action = uneAction()
         const commentaires = [unCommentaire()]
-        const jeune: BaseJeune = {
+        const jeune: BaseJeune & { idConseiller: string } = {
           id: 'jeune-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
         }
         const actionsService: ActionsService = mockedActionsService({
           getAction: jest.fn(async () => ({ action, jeune })),
@@ -402,6 +468,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           'accessToken'
         )
         const pageTitle = `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`
+        const lectureSeule = false
         expect(actual).toEqual({
           props: {
             action,
@@ -409,6 +476,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             commentaires,
             pageTitle,
             pageHeader: 'Détails de l’action',
+            lectureSeule,
           },
         })
       })
@@ -449,10 +517,11 @@ describe("Page Détail d'une action d'un jeune", () => {
         })
         const action: Action = uneAction()
         const commentaires = [unCommentaire()]
-        const jeune: BaseJeune = {
+        const jeune: BaseJeune & { idConseiller: string } = {
           id: 'jeune-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
         }
         const actionsService: ActionsService = mockedActionsService({
           getAction: jest.fn(async () => ({ action, jeune })),

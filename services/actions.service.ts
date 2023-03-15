@@ -35,7 +35,9 @@ export interface ActionsService {
   getAction(
     idAction: string,
     accessToken: string
-  ): Promise<{ action: Action; jeune: BaseJeune } | undefined>
+  ): Promise<
+    { action: Action; jeune: BaseJeune & { idConseiller: string } } | undefined
+  >
 
   countActionsJeunes(
     idConseiller: string,
@@ -111,17 +113,18 @@ export class ActionsApiService implements ActionsService {
   async getAction(
     idAction: string,
     accessToken: string
-  ): Promise<{ action: Action; jeune: BaseJeune } | undefined> {
+  ): Promise<
+    { action: Action; jeune: BaseJeune & { idConseiller: string } } | undefined
+  > {
     try {
       const {
         content: { jeune, ...actionJson },
-      } = await this.apiClient.get<ActionJson & { jeune: BaseJeuneJson }>(
-        `/actions/${idAction}`,
-        accessToken
-      )
+      } = await this.apiClient.get<
+        ActionJson & { jeune: BaseJeuneJson & { idConseiller: string } }
+      >(`/actions/${idAction}`, accessToken)
       return {
         action: jsonToAction(actionJson),
-        jeune: jsonToBaseJeune(jeune),
+        jeune: { ...jsonToBaseJeune(jeune), idConseiller: jeune.idConseiller },
       }
     } catch (e) {
       if (e instanceof ApiError) return undefined

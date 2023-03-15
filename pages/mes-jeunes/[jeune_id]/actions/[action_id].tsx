@@ -12,6 +12,7 @@ import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import {
   Action,
   Commentaire,
@@ -35,11 +36,17 @@ import withDependance from 'utils/injectionDependances/withDependance'
 interface PageActionProps extends PageProps {
   action: Action
   jeune: BaseJeune
+  lectureSeule: boolean
   commentaires: Commentaire[]
   pageTitle: string
 }
 
-function PageAction({ action, jeune, commentaires }: PageActionProps) {
+function PageAction({
+  action,
+  jeune,
+  commentaires,
+  lectureSeule,
+}: PageActionProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const router = useRouter()
   const [conseiller] = useConseiller()
@@ -173,6 +180,15 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
         />
       )}
 
+      {lectureSeule && (
+        <div className='mb-6'>
+          <InformationMessage label='Vous êtes en lecture seule'>
+            Vous pouvez uniquement lire le détail de l’action de ce bénéficiaire
+            car il ne fait pas partie de votre portefeuille.
+          </InformationMessage>
+        </div>
+      )}
+
       {conseillerEstMilo && (
         <TagQualificationAction statut={statut} qualification={qualification} />
       )}
@@ -207,12 +223,14 @@ function PageAction({ action, jeune, commentaires }: PageActionProps) {
         }
         statutCourant={statut}
         estAQualifier={estAQualifier}
+        lectureSeule={lectureSeule}
       />
       <HistoriqueAction action={action} />
       <CommentairesAction
         idAction={action.id}
         commentairesInitiaux={commentaires}
         onAjout={onAjoutCommentaire}
+        lectureSeule={lectureSeule}
       />
     </>
   )
@@ -249,11 +267,17 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   if (!commentaires) return { notFound: true }
 
   const { action, jeune } = actionEtJeune
+
+  const lectureSeule = jeune.idConseiller !== user.id
+
   const props: PageActionProps = {
     action,
     jeune,
     commentaires,
-    pageTitle: `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
+    lectureSeule,
+    pageTitle: `${
+      lectureSeule ? 'Etablissement' : 'Portefeuille'
+    } - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
     pageHeader: 'Détails de l’action',
   }
 
