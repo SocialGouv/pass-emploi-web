@@ -59,7 +59,9 @@ function PageAction({
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
-  const pageTracking = 'Détail Action'
+  const pageTracking = `Détail Action${
+    lectureSeule ? ' - hors portefeuille' : ''
+  }`
 
   const conseillerEstMilo = estMilo(conseiller)
 
@@ -253,10 +255,12 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const { jeune_id, action_id } = context.query
 
   const actionsService = withDependance<ActionsService>('actionsService')
+
   const actionEtJeune = await actionsService.getAction(
     action_id as string,
     accessToken
   )
+
   if (!actionEtJeune) return { notFound: true }
   if (jeune_id !== actionEtJeune.jeune.id) return { notFound: true }
 

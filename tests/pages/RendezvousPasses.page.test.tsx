@@ -48,7 +48,11 @@ describe('RendezVousPasses', () => {
 
           await act(async () => {
             await renderWithContexts(
-              <RendezVousPasses beneficiaire={uneBaseJeune()} rdvs={rdvs} />
+              <RendezVousPasses
+                beneficiaire={uneBaseJeune()}
+                lectureSeule={false}
+                rdvs={rdvs}
+              />
             )
           })
         })
@@ -99,7 +103,11 @@ describe('RendezVousPasses', () => {
           // When
           await act(async () => {
             await renderWithContexts(
-              <RendezVousPasses beneficiaire={uneBaseJeune()} rdvs={[]} />,
+              <RendezVousPasses
+                beneficiaire={uneBaseJeune()}
+                lectureSeule={false}
+                rdvs={[]}
+              />,
               {}
             )
           })
@@ -178,6 +186,7 @@ describe('RendezVousPasses', () => {
             beneficiaire: unDetailJeune(),
             rdvs: [unEvenementListItem()],
             pageTitle: 'Rendez-vous passés de Jirac Kenji',
+            lectureSeule: false,
           },
         })
       })

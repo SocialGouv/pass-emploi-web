@@ -14,13 +14,21 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 interface RendezVousPassesProps {
   beneficiaire: BaseJeune
+  lectureSeule: boolean
   rdvs: EvenementListItem[]
 }
 
-function RendezVousPasses({ beneficiaire, rdvs }: RendezVousPassesProps) {
+function RendezVousPasses({
+  beneficiaire,
+  lectureSeule,
+  rdvs,
+}: RendezVousPassesProps) {
   const [conseiller] = useConseiller()
 
-  useMatomo('Détail jeune - Rendez-vous passés')
+  const trackingLabel = `Détail jeune - Rendez-vous passés ${
+    lectureSeule ? ' - hors portefeuille' : ''
+  }`
+  useMatomo(trackingLabel)
 
   return (
     <TableauRdv
@@ -47,7 +55,7 @@ export const getServerSideProps: GetServerSideProps<
   const {
     session: {
       accessToken,
-      user: { structure },
+      user: { structure, id },
     },
   } = sessionOrRedirect
 
@@ -68,9 +76,12 @@ export const getServerSideProps: GetServerSideProps<
     return { notFound: true }
   }
 
+  const lectureSeule = beneficiaire.idConseiller !== id
+
   return {
     props: {
       beneficiaire,
+      lectureSeule,
       rdvs,
       pageTitle: 'Rendez-vous passés de ' + getNomJeuneComplet(beneficiaire),
     },
