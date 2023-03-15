@@ -96,9 +96,9 @@ function EditionRdv({
 
   let initialTracking: string
   if (evenement) {
-    initialTracking = `Modification ${
-      evenementTypeAC ? 'animation collective' : 'rdv'
-    } ${conseillerEstObservateur ? '- hors portefeuille' : ''}`
+    initialTracking = `Modification${
+      evenementTypeAC ? ' animation collective' : ' rdv'
+    } ${conseillerEstObservateur ? ' - hors portefeuille' : ''}`
   } else
     initialTracking = `Création ${
       evenementTypeAC ? 'animation collective' : 'rdv'

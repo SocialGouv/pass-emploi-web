@@ -47,11 +47,11 @@ function Historique({
     estMilo(conseiller) ? Onglet.SITUATIONS : Onglet.CONSEILLERS
   )
 
-  const situationsTracking = `Détail jeune – Situations ${
-    lectureSeule ? '- hors portefeuille' : ''
+  const situationsTracking = `Détail jeune – Situations${
+    lectureSeule ? ' - hors portefeuille' : ''
   }`
-  const conseillersTracking = `Détail jeune – Historique conseillers ${
-    lectureSeule ? '- hors portefeuille' : ''
+  const conseillersTracking = `Détail jeune – Historique conseillers${
+    lectureSeule ? ' - hors portefeuille' : ''
   }`
 
   const [tracking, setTracking] = useState<string | undefined>()

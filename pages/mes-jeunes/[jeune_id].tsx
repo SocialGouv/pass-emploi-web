@@ -129,9 +129,10 @@ function FicheJeune({
   const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
   const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
 
-  const pageTracking: string = jeune.isActivated
+  let pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
+  if (lectureSeule) pageTracking += ' - hors portefeuille'
   let initialTracking = pageTracking
   if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
@@ -162,11 +163,9 @@ function FicheJeune({
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
 
-    let newTrackingLabel = `${pageTracking} - Consultation ${
-      ongletProps[tab].trackingLabel
-    } ${lectureSeule ? ' - hors portefeuille' : ''}`
-
-    setTrackingLabel(newTrackingLabel)
+    setTrackingLabel(
+      `${pageTracking} - Consultation ${ongletProps[tab].trackingLabel}`
+    )
 
     await router.replace(
       {

@@ -28,11 +28,11 @@ export enum Onglet {
 
 function Favoris({ offres, recherches, lectureSeule }: FavorisProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.OFFRES)
-  const favorisTracking = `Détail jeune – Favoris ${
-    lectureSeule ? '- hors portefeuille' : ''
+  const favorisTracking = `Détail jeune – Favoris${
+    lectureSeule ? ' - hors portefeuille' : ''
   }`
-  const recherchesTracking = `Détail jeune – Recherches ${
-    lectureSeule ? '- hors portefeuille' : ''
+  const recherchesTracking = `Détail jeune – Recherches${
+    lectureSeule ? ' - hors portefeuille' : ''
   }`
   const [tracking, setTracking] = useState<string>(favorisTracking)
 

@@ -7,7 +7,8 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { unCommentaire, uneAction } from 'fixtures/action'
-import { mockedActionsService } from 'fixtures/services'
+import { unDetailJeune } from 'fixtures/jeune'
+import { mockedActionsService, mockedJeunesService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
@@ -60,6 +61,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             action={action}
             jeune={jeune}
             commentaires={commentaires}
+            lectureSeule={false}
             pageTitle=''
             lectureSeule={false}
           />,
@@ -215,6 +217,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             action={action}
             jeune={jeune}
             commentaires={[]}
+            lectureSeule={false}
             pageTitle=''
             lectureSeule={false}
           />,
@@ -260,6 +263,7 @@ describe("Page Détail d'une action d'un jeune", () => {
               action={actionAQualifier}
               jeune={jeune}
               commentaires={[]}
+              lectureSeule={false}
               pageTitle=''
               lectureSeule={false}
             />,
@@ -365,6 +369,7 @@ describe("Page Détail d'une action d'un jeune", () => {
               action={actionAQualifier}
               jeune={jeune}
               commentaires={[]}
+              lectureSeule={false}
               pageTitle=''
               lectureSeule={false}
             />,
@@ -453,7 +458,13 @@ describe("Page Détail d'une action d'un jeune", () => {
           getAction: jest.fn(async () => ({ action, jeune })),
           recupererLesCommentaires: jest.fn(async () => commentaires),
         })
-        ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+        const jeunesService = mockedJeunesService({
+          getJeuneDetails: jest.fn(async () => unDetailJeune()),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'jeunesService') return jeunesService
+          if (dependance === 'actionsService') return actionsService
+        })
 
         // When
         const actual: GetServerSidePropsResult<any> = await getServerSideProps({
@@ -474,6 +485,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             action,
             jeune,
             commentaires,
+            lectureSeule: false,
             pageTitle,
             pageHeader: 'Détails de l’action',
             lectureSeule,

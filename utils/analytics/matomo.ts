@@ -82,7 +82,6 @@ function trackPage({ structure, customTitle }: TrackPageSettings): void {
     push(['setCustomDimension', 2, structure])
 
     push(['setDocumentTitle', customTitle || document.title])
-    console.log('>>>', customTitle)
     push(['deleteCustomVariables', 'page'])
 
     push(['trackPageView'])
