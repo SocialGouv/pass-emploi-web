@@ -45,12 +45,15 @@ describe('Page Recherche Offres Emploi', () => {
       getCommunesEtDepartements: jest.fn().mockResolvedValue(desLocalites()),
     })
 
-    rendered = renderWithContexts(<RechercheOffres />, {
-      customDependances: {
-        offresEmploiService,
-        referentielService,
-      },
-    })
+    rendered = renderWithContexts(
+      <RechercheOffres pageTitle={'Recherche offres'} />,
+      {
+        customDependances: {
+          offresEmploiService,
+          referentielService,
+        },
+      }
+    )
     await userEvent.click(screen.getByRole('radio', { name: 'Offre d’emploi' }))
   })
 
@@ -558,10 +561,10 @@ describe('Page Recherche Offres Emploi', () => {
         }).parentElement!
         expect(within(offreCard).getByText('Emploi')).toBeInTheDocument()
         expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
         expect(
           within(offreCard).getByText(offre.typeContrat)
         ).toBeInTheDocument()
-        expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
         expect(
           within(offreCard).getByText(offre.nomEntreprise!)
         ).toBeInTheDocument()
@@ -700,7 +703,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffres />, {
+      renderWithContexts(<RechercheOffres pageTitle={'Recherche offre'} />, {
         customDependances: {
           offresEmploiService,
           referentielService,
