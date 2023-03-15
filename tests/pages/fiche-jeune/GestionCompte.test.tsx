@@ -24,13 +24,13 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
-let portefeuille: BaseJeune[]
 describe('Gestion du compte dans la fiche jeune', () => {
   let motifsSuppression: MotifSuppressionJeune[]
   let jeunesService: JeunesService
   let alerteSetter: jest.Mock
   let portefeuilleSetter: (updatedBeneficiaires: BaseJeune[]) => void
   let push: jest.Mock
+  let portefeuille: BaseJeune[]
 
   beforeEach(async () => {
     push = jest.fn()

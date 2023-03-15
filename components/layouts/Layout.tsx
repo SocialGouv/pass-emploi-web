@@ -73,11 +73,10 @@ export default function Layout({ children }: LayoutProps) {
         jeunesService.getJeunesDuConseillerClientSide(),
       ]).then(([conseillerRecupere, beneficiaires]) => {
         setConseiller(conseillerRecupere)
-        setPortefeuille(
-          beneficiaires
-            .map(({ id, nom, prenom }) => ({ id, nom, prenom }))
-            .sort(compareJeunesByNom)
-        )
+        const beneficiairesParOrdreAlphabetique = beneficiaires
+          .map(({ id, nom, prenom }) => ({ id, nom, prenom }))
+          .sort(compareJeunesByNom)
+        setPortefeuille(beneficiairesParOrdreAlphabetique)
       })
     } else {
       const userAPM = {

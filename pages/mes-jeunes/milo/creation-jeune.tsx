@@ -40,12 +40,16 @@ function MiloCreationJeune({
     erreurMessageHttpMilo
   )
 
-  async function creerCompteJeune(newJeune: JeuneMiloFormData): Promise<void> {
+  async function creerCompteJeune(
+    beneficiaireData: JeuneMiloFormData
+  ): Promise<void> {
     try {
-      const jeuneCree = await conseillerService.createCompteJeuneMilo(newJeune)
+      const beneficiaireCree = await conseillerService.createCompteJeuneMilo(
+        beneficiaireData
+      )
 
-      setPortefeuille(portefeuille.concat(jeuneCree))
-      setAlerte(AlerteParam.creationBeneficiaire, jeuneCree.id)
+      setPortefeuille(portefeuille.concat(beneficiaireCree))
+      setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
       await router.push('/mes-jeunes')
     } catch (error) {
       setErreurMessage((error as Error).message)
