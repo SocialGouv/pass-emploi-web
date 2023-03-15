@@ -561,15 +561,6 @@ describe('Page Recherche Offres Emploi', () => {
         }).parentElement!
         expect(within(offreCard).getByText('Emploi')).toBeInTheDocument()
         expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
-        if (offre.typeContrat === 'MIS') {
-          expect(
-            within(offreCard).getByText(offre.typeContrat)
-          ).toBeInTheDocument()
-        } else {
-          expect(
-            within(offreCard).getByText(offre.typeContrat)
-          ).toBeInTheDocument()
-        }
         expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
         expect(
           within(offreCard).getByText(offre.nomEntreprise!)
@@ -582,6 +573,23 @@ describe('Page Recherche Offres Emploi', () => {
             name: 'Détail de l’offre ' + offre.titre,
           })
         ).toHaveAttribute('href', '/offres/emploi/' + offre.id)
+      })
+    })
+
+    it('affiche INTERIM si l‘offre est de type MIS et le type de contrat sinon', async () => {
+      offresEmploi.forEach((offre) => {
+        const offreCard = within(offresList).getByRole('heading', {
+          level: 3,
+          name: 'Offre n°' + offre.id,
+        }).parentElement!
+
+        if (offre.typeContrat === 'MIS') {
+          expect(within(offreCard).getByText('INTERIM')).toBeInTheDocument()
+        } else {
+          expect(
+            within(offreCard).getByText(offre.typeContrat)
+          ).toBeInTheDocument()
+        }
       })
     })
 
