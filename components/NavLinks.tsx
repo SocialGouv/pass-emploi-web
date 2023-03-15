@@ -5,7 +5,7 @@ import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import { estMilo, estPoleEmploi, estSuperviseur } from 'interfaces/conseiller'
-import { trackEvent } from 'utils/analytics/matomo'
+import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
 
@@ -41,6 +41,19 @@ export default function NavLinks({
       action: 'Déconnexion',
       nom: '',
     })
+  }
+
+  async function trackActualite() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Actualite',
+      action: 'Click',
+      nom: '',
+    })
+  }
+
+  async function trackAide() {
+    trackPage({ structure: conseiller.structure, customTitle: 'Aide' })
   }
 
   useLeanBeWidget(conseiller)
@@ -134,7 +147,10 @@ export default function NavLinks({
         )}
 
         {items.includes(NavItem.Actualites) && (
-          <ActualitesMenuButton conseiller={conseiller} />
+          <ActualitesMenuButton
+            conseiller={conseiller}
+            onClick={trackActualite}
+          />
         )}
 
         {items.includes(NavItem.Aide) && (
@@ -148,6 +164,7 @@ export default function NavLinks({
             iconName={IconName.Aide}
             isExternal={true}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            onClick={trackAide}
           />
         )}
       </div>

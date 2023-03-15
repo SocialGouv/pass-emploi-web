@@ -6,15 +6,19 @@ import { LeanBe } from 'utils/hooks/useLeanBeWidget'
 
 interface ActualitesMenuButtonProps {
   conseiller: Conseiller
+  onClick: () => void
 }
 
-function ActualitesMenuButton({ conseiller }: ActualitesMenuButtonProps) {
+function ActualitesMenuButton({
+  conseiller,
+  onClick,
+}: ActualitesMenuButtonProps) {
   const widgetId = estPoleEmploi(conseiller)
     ? LeanBe.PE_WIDGET_ID
     : LeanBe.MILO_WIDGET_ID
   const classWidget = `SGBF-open-${widgetId} w-full`
   const classMenu =
-    'flex p-2 mb-6 items-center layout_base:justify-center rounded-l layout_s:justify-start layout_l:justify-start hover:bg-primary_darken'
+    'flex p-2 mb-6 items-center layout_base:justify-center rounded-l layout_s:justify-start layout_l:justify-start hover:cursor-pointer hover:bg-primary_darken'
   return (
     <>
       <div
@@ -24,6 +28,7 @@ function ActualitesMenuButton({ conseiller }: ActualitesMenuButtonProps) {
           padding: '0.5rem',
           marginBottom: '1.5rem',
         }}
+        onClick={onClick}
       >
         <IconComponent
           focusable='false'
