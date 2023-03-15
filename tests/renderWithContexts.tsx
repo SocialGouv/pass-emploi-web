@@ -2,6 +2,7 @@ import { render, RenderResult } from '@testing-library/react'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
+import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
 import {
   mockedActionsService,
   mockedAgendaService,
@@ -19,6 +20,7 @@ import {
   mockedSuggestionsService,
 } from 'fixtures/services'
 import { Conseiller } from 'interfaces/conseiller'
+import { BaseJeune } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
@@ -26,12 +28,17 @@ import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 import { Dependencies } from 'utils/injectionDependances/container'
+import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
 export default function renderWithContexts(
   children: JSX.Element,
   options: {
     customDependances?: Partial<Dependencies>
     customConseiller?: Partial<Conseiller>
+    customPortefeuille?: Partial<{
+      value: BaseJeune[]
+      setter: (portefeuille: BaseJeune[]) => void
+    }>
     customCurrentJeune?: Partial<{
       id: string
       idSetter: (id: string | undefined) => void
@@ -45,6 +52,7 @@ export default function renderWithContexts(
   const {
     customDependances,
     customConseiller,
+    customPortefeuille,
     customCurrentJeune,
     customAlerte,
   } = options
@@ -68,12 +76,24 @@ export default function renderWithContexts(
 
   const conseiller = unConseiller(customConseiller)
 
+  const portefeuille = {
+    ...customPortefeuille,
+    value: customPortefeuille?.value ?? desItemsJeunes().map(extractBaseJeune),
+  }
+
   const currentJeune = { ...customCurrentJeune }
 
   const alerte = { ...customAlerte }
 
   const withContexts = (element: JSX.Element) =>
-    provideContexts(element, dependances, conseiller, currentJeune, alerte)
+    provideContexts(
+      element,
+      dependances,
+      conseiller,
+      portefeuille,
+      currentJeune,
+      alerte
+    )
 
   const renderResult: RenderResult = render(withContexts(children))
 
@@ -88,6 +108,10 @@ function provideContexts(
   children: JSX.Element,
   dependances: Dependencies,
   conseiller: Conseiller,
+  portefeuille: Partial<{
+    value: BaseJeune[]
+    setter: (portefeuille: BaseJeune[]) => void
+  }>,
   currentJeune: Partial<{
     id: string
     idSetter: (id: string | undefined) => void
@@ -100,24 +124,29 @@ function provideContexts(
   return (
     <DIProvider dependances={dependances}>
       <ConseillerProvider conseillerForTests={conseiller}>
-        <ChatCredentialsProvider
-          credentialsForTests={{
-            token: 'firebaseToken',
-            cleChiffrement: 'cleChiffrement',
-          }}
+        <PortefeuilleProvider
+          beneficiairesForTests={portefeuille.value}
+          setterForTests={portefeuille.setter}
         >
-          <CurrentJeuneProvider
-            idForTests={currentJeune.id}
-            setterForTests={currentJeune.idSetter}
+          <ChatCredentialsProvider
+            credentialsForTests={{
+              token: 'firebaseToken',
+              cleChiffrement: 'cleChiffrement',
+            }}
           >
-            <AlerteProvider
-              alerteForTests={alerte.alerte}
-              setterForTests={alerte.alerteSetter}
+            <CurrentJeuneProvider
+              idForTests={currentJeune.id}
+              setterForTests={currentJeune.idSetter}
             >
-              {children}
-            </AlerteProvider>
-          </CurrentJeuneProvider>
-        </ChatCredentialsProvider>
+              <AlerteProvider
+                alerteForTests={alerte.alerte}
+                setterForTests={alerte.alerteSetter}
+              >
+                {children}
+              </AlerteProvider>
+            </CurrentJeuneProvider>
+          </ChatCredentialsProvider>
+        </PortefeuilleProvider>
       </ConseillerProvider>
     </DIProvider>
   )

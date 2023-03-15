@@ -5,11 +5,16 @@ import React from 'react'
 
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
+import {
+  desIndicateursSemaine,
+  desItemsJeunes,
+  extractBaseJeune,
+  unDetailJeune,
+} from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { mockedAgendaService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { DetailJeune } from 'interfaces/jeune'
+import { BaseJeune, DetailJeune } from 'interfaces/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -23,16 +28,20 @@ describe('Gestion du compte dans la fiche jeune', () => {
   let motifsSuppression: MotifSuppressionJeune[]
   let jeunesService: JeunesService
   let alerteSetter: jest.Mock
+  let portefeuilleSetter: (updatedBeneficiaires: BaseJeune[]) => void
   let push: jest.Mock
+  let portefeuille: BaseJeune[]
 
   beforeEach(async () => {
-    alerteSetter = jest.fn()
     push = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(),
       push: push,
-      asPath: '/mes-jeunes'
+      asPath: '/mes-jeunes',
     })
+    alerteSetter = jest.fn()
+    portefeuilleSetter = jest.fn()
+    portefeuille = desItemsJeunes().map(extractBaseJeune)
 
     motifsSuppression = desMotifsDeSuppression()
 
@@ -63,6 +72,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
           StructureConseiller.PASS_EMPLOI,
           unDetailJeune({ isActivated: true }),
           jeunesService,
+          portefeuilleSetter,
           alerteSetter
         )
         const deleteButton = screen.getByText('Supprimer ce compte')
@@ -164,6 +174,11 @@ describe('Gestion du compte dans la fiche jeune', () => {
             motif: 'Demande du jeune de sortir du dispositif',
             commentaire: undefined,
           })
+
+          expect(portefeuilleSetter).toHaveBeenCalledWith([
+            portefeuille[1],
+            portefeuille[2],
+          ])
           expect(alerteSetter).toHaveBeenCalledWith('suppressionBeneficiaire')
           expect(push).toHaveBeenCalledWith('/mes-jeunes')
         })
@@ -177,6 +192,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
           StructureConseiller.PASS_EMPLOI,
           unDetailJeune({ isActivated: false }),
           jeunesService,
+          portefeuilleSetter,
           alerteSetter
         )
         const deleteButton = screen.getByText('Supprimer ce compte')
@@ -210,6 +226,11 @@ describe('Gestion du compte dans la fiche jeune', () => {
         expect(jeunesService.supprimerJeuneInactif).toHaveBeenCalledWith(
           'jeune-1'
         )
+
+        expect(portefeuilleSetter).toHaveBeenCalledWith([
+          portefeuille[1],
+          portefeuille[2],
+        ])
         expect(alerteSetter).toHaveBeenCalledWith('suppressionBeneficiaire')
         expect(push).toHaveBeenCalledWith('/mes-jeunes')
       })
@@ -253,6 +274,7 @@ async function renderFicheJeune(
   structure: StructureConseiller,
   jeune: DetailJeune,
   jeunesService: JeunesService,
+  portefeuilleSetter?: (updatedBeneficiaires: BaseJeune[]) => void,
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
   await act(async () => {
@@ -271,6 +293,7 @@ async function renderFicheJeune(
             recupererAgenda: jest.fn(async () => unAgenda()),
           }),
         },
+        customPortefeuille: { setter: portefeuilleSetter },
         customAlerte: { alerteSetter },
       }
     )

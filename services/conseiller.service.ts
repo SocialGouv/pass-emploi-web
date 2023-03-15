@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
 import { Conseiller } from 'interfaces/conseiller'
-import { DossierMilo } from 'interfaces/jeune'
+import { BaseJeune, DossierMilo } from 'interfaces/jeune'
 import { ConseillerJson, jsonToConseiller } from 'interfaces/json/conseiller'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { ApiError } from 'utils/httpClient'
@@ -27,7 +27,7 @@ export interface ConseillerService {
     accessToken: string
   ): Promise<DossierMilo | undefined>
 
-  createCompteJeuneMilo(newJeune: JeuneMiloFormData): Promise<{ id: string }>
+  createCompteJeuneMilo(newJeune: JeuneMiloFormData): Promise<BaseJeune>
 
   recupererBeneficiaires(): Promise<void>
 }
@@ -105,18 +105,14 @@ export class ConseillerApiService implements ConseillerService {
     return dossier
   }
 
-  async createCompteJeuneMilo(
-    newJeune: JeuneMiloFormData
-  ): Promise<{ id: string }> {
+  async createCompteJeuneMilo(newJeune: JeuneMiloFormData): Promise<BaseJeune> {
     const session = await getSession()
-    const {
-      content: { id },
-    } = await this.apiClient.post<{ id: string }>(
+    const { content } = await this.apiClient.post<BaseJeune>(
       `/conseillers/milo/jeunes`,
       { ...newJeune, idConseiller: session!.user.id },
       session!.accessToken
     )
-    return { id }
+    return content
   }
 
   async recupererBeneficiaires(): Promise<void> {

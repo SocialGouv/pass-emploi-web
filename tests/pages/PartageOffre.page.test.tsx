@@ -16,7 +16,7 @@ import {
   mockedOffresEmploiService,
   mockedServicesCiviquesService,
 } from 'fixtures/services'
-import { BaseJeune, JeuneFromListe } from 'interfaces/jeune'
+import { BaseJeune } from 'interfaces/jeune'
 import {
   DetailImmersion,
   DetailOffre,
@@ -61,7 +61,6 @@ describe('Page Partage Offre', () => {
       let offreEmploi: DetailOffreEmploi
       let serviceCivique: DetailServiceCivique
       let immersion: DetailImmersion
-      let jeunes: JeuneFromListe[]
       let offresEmploiService: OffresEmploiService
       let servicesCiviquesService: ServicesCiviquesService
       let immersionsService: ImmersionsService
@@ -71,7 +70,6 @@ describe('Page Partage Offre', () => {
         offreEmploi = unDetailOffreEmploi()
         serviceCivique = unDetailServiceCivique()
         immersion = unDetailImmersion()
-        jeunes = desItemsJeunes()
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
@@ -118,7 +116,6 @@ describe('Page Partage Offre', () => {
         expect(actual).toEqual({
           props: {
             offre: offreEmploi,
-            jeunes: expect.arrayContaining([]),
             pageTitle: 'Recherche d’offres - Partager offre',
             pageHeader: 'Partager une offre',
             returnTo: 'referer-url',
@@ -141,7 +138,6 @@ describe('Page Partage Offre', () => {
         expect(actual).toEqual({
           props: {
             offre: serviceCivique,
-            jeunes: expect.arrayContaining([]),
             pageTitle: 'Recherche d’offres - Partager offre',
             pageHeader: 'Partager une offre',
             returnTo: 'referer-url',
@@ -165,27 +161,12 @@ describe('Page Partage Offre', () => {
         expect(actual).toEqual({
           props: {
             offre: immersion,
-            jeunes: expect.arrayContaining([]),
             pageTitle: 'Recherche d’offres - Partager offre',
             pageHeader: 'Partager une offre',
             returnTo: 'referer-url',
             withoutChat: true,
           },
         })
-      })
-
-      it('charge les jeunes du conseiller', async () => {
-        // When
-        const actual = await getServerSideProps({
-          req: { headers: { referer: 'referer-url' } },
-          query: { offre_type: 'emploi', offre_id: 'offre-id' },
-        } as unknown as GetServerSidePropsContext)
-
-        // Then
-        expect(
-          jeunesService.getJeunesDuConseillerServerSide
-        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
-        expect(actual).toMatchObject({ props: { jeunes } })
       })
 
       it("renvoie une 404 si l'offre n'existe pas", async () => {
@@ -213,7 +194,6 @@ describe('Page Partage Offre', () => {
         renderWithContexts(
           <PartageOffre
             offre={offre}
-            jeunes={[]}
             withoutChat={true}
             pageTitle=''
             returnTo='/return/to'
@@ -244,7 +224,6 @@ describe('Page Partage Offre', () => {
         renderWithContexts(
           <PartageOffre
             offre={offre}
-            jeunes={[]}
             withoutChat={true}
             pageTitle=''
             returnTo='/return/to'
@@ -275,7 +254,6 @@ describe('Page Partage Offre', () => {
         renderWithContexts(
           <PartageOffre
             offre={offre}
-            jeunes={[]}
             withoutChat={true}
             pageTitle=''
             returnTo='/return/to'
@@ -301,7 +279,6 @@ describe('Page Partage Offre', () => {
         renderWithContexts(
           <PartageOffre
             offre={offre}
-            jeunes={[]}
             withoutChat={true}
             pageTitle=''
             returnTo='/return/to'
@@ -342,7 +319,6 @@ describe('Page Partage Offre', () => {
         renderWithContexts(
           <PartageOffre
             offre={offre}
-            jeunes={jeunes}
             withoutChat={true}
             pageTitle=''
             returnTo='/return/to'

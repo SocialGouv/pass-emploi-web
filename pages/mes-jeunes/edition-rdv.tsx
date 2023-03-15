@@ -23,7 +23,6 @@ import {
   isCodeTypeAnimationCollective,
   Modification,
 } from 'interfaces/evenement'
-import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import {
@@ -41,32 +40,40 @@ import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface EditionRdvProps extends PageProps {
-  jeunes: BaseJeune[]
   typesRendezVous: TypeEvenementReferentiel[]
   returnTo: string
   idJeune?: string
   evenement?: Evenement
   evenementTypeAC?: boolean
-  conseillerEstObservateur?: boolean
 }
 
 function EditionRdv({
-  jeunes,
   typesRendezVous,
   idJeune,
   returnTo,
   evenement,
   evenementTypeAC,
-  conseillerEstObservateur,
 }: EditionRdvProps) {
   const router = useRouter()
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const evenementsService =
     useDependance<EvenementsService>('evenementsService')
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
   const [_, setAlerte] = useAlerte()
+
+  const aUnBeneficiaireInscritALEvenement: boolean =
+    Boolean(evenement) &&
+    evenement!.jeunes.some((jeuneEvenement) =>
+      portefeuille.some(
+        (jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id
+      )
+    )
+  const conseillerEstObservateur =
+    !evenementTypeAC && !aUnBeneficiaireInscritALEvenement
 
   const lectureSeule =
     evenement &&
@@ -152,7 +159,7 @@ function EditionRdv({
     if (conseillerEstObservateur) return true
 
     const fromEvenement = evenement?.jeunes.some(
-      ({ id }) => !jeunes.some((jeune) => jeune.id === id)
+      ({ id }) => !portefeuille.some((jeune) => jeune.id === id)
     )
     return fromEvenement || formHasBeneficiaireAutrePortefeuille
   }
@@ -362,7 +369,7 @@ function EditionRdv({
       )}
 
       <EditionRdvForm
-        jeunesConseiller={jeunes}
+        jeunesConseiller={portefeuille}
         recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
         typesRendezVous={typesRendezVous}
         idJeune={idJeune}
@@ -437,14 +444,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     redirectTo = referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
   }
 
-  const jeunesService = withDependance<JeunesService>('jeunesService')
   const evenementsService =
     withDependance<EvenementsService>('evenementsService')
-
-  const jeunesConseiller = await jeunesService.getJeunesDuConseillerServerSide(
-    user.id,
-    accessToken
-  )
 
   const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
@@ -457,7 +458,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     return {
       props: {
         returnTo: redirectTo,
-        ...buildPropsModificationEvenement(evenement, jeunesConseiller),
+        ...buildPropsModificationEvenement(evenement),
       },
     }
   } else {
@@ -470,7 +471,6 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
       props: {
         returnTo: redirectTo,
         ...buildPropsCreationEvenement(
-          jeunesConseiller,
           typesEvenements,
           creationAC,
           context.query.idJeune as string | undefined
@@ -483,23 +483,14 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
 
 function buildPropsModificationEvenement(
-  evenement: Evenement,
-  jeunesConseiller: BaseJeune[]
+  evenement: Evenement
 ): Omit<EditionRdvProps, 'returnTo'> {
   const estUneAC = isCodeTypeAnimationCollective(evenement.type.code)
-  const aUnBeneficiaireInscritALEvenement: boolean = evenement.jeunes.some(
-    (jeuneEvenement) =>
-      jeunesConseiller.some(
-        (jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id
-      )
-  )
 
   return {
-    jeunes: [...jeunesConseiller].sort(compareJeunesByNom),
     evenement,
     typesRendezVous: [],
     evenementTypeAC: estUneAC,
-    conseillerEstObservateur: !estUneAC && !aUnBeneficiaireInscritALEvenement,
     withoutChat: true,
     pageTitle: 'Mes événements - Modifier',
     pageHeader: estUneAC
@@ -509,7 +500,6 @@ function buildPropsModificationEvenement(
 }
 
 function buildPropsCreationEvenement(
-  jeunesConseiller: BaseJeune[],
   typesEvenements: TypeEvenementReferentiel[],
   creationAC: boolean,
   idJeune?: string
@@ -522,7 +512,6 @@ function buildPropsCreationEvenement(
   })
 
   const props: Omit<EditionRdvProps, 'returnTo'> = {
-    jeunes: [...jeunesConseiller].sort(compareJeunesByNom),
     typesRendezVous: creationAC ? typesRdvAC : typesRdvCEJ,
     withoutChat: true,
     evenementTypeAC: creationAC,

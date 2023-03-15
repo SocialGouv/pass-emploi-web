@@ -8,13 +8,13 @@ import ChatContainer from 'components/chat/ChatContainer'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
+import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import {
   mockedConseillerService,
   mockedJeunesService,
   mockedMessagesService,
 } from 'fixtures/services'
-import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
+import { compareJeunesByNom, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
@@ -23,6 +23,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
+import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatContainer', () => jest.fn(() => <></>))
@@ -76,7 +77,11 @@ describe('<Layout />', () => {
       ),
     })
     messagesService = mockedMessagesService({
-      signIn: jest.fn(() => Promise.resolve()),
+      getChatCredentials: jest.fn(async () => ({
+        token: 'tokenFirebase',
+        cleChiffrement: 'cleChiffrement',
+      })),
+      signIn: jest.fn(async () => {}),
       observeConseillerChats: jest.fn((jeune, _cle, fn) => {
         updateChatsRef = fn
         updateChatsRef(jeunesChats)
@@ -87,19 +92,28 @@ describe('<Layout />', () => {
 
   describe('cas nominal', () => {
     beforeEach(async () => {
+      const dependances = {
+        jeunesService,
+        conseillerService,
+        messagesService,
+      }
+
       await act(async () => {
-        await renderWithContexts(
-          <Layout>
-            <FakeComponent pageTitle='un titre' pageHeader='Titre de la page' />
-          </Layout>,
-          {
-            customDependances: {
-              jeunesService,
-              conseillerService,
-              messagesService,
-            },
-            customConseiller: { notificationsSonores: true },
-          }
+        render(
+          <DIProvider dependances={dependances}>
+            <ConseillerProvider>
+              <PortefeuilleProvider>
+                <ChatCredentialsProvider>
+                  <Layout>
+                    <FakeComponent
+                      pageTitle='un titre'
+                      pageHeader='Titre de la page'
+                    />
+                  </Layout>
+                </ChatCredentialsProvider>
+              </PortefeuilleProvider>
+            </ConseillerProvider>
+          </DIProvider>
         )
       })
     })
@@ -129,9 +143,9 @@ describe('<Layout />', () => {
       expect(AlerteDisplayer).toHaveBeenCalledWith({}, {})
     })
 
-    it('signs into chat', () => {
+    it('récupère le conseiller', async () => {
       // Then
-      expect(messagesService.signIn).toHaveBeenCalled()
+      expect(conseillerService.getConseillerClientSide).toHaveBeenCalledWith()
     })
 
     it('récupère la liste des jeunes du conseiller', () => {
@@ -141,11 +155,21 @@ describe('<Layout />', () => {
       ).toHaveBeenCalledWith()
     })
 
+    it('récupère les informations pour contacter firebase', async () => {
+      // Then
+      expect(messagesService.getChatCredentials).toHaveBeenCalledWith()
+    })
+
+    it('signs into chat', () => {
+      // Then
+      expect(messagesService.signIn).toHaveBeenCalledWith('tokenFirebase')
+    })
+
     it('subscribes to chats', () => {
       // Then
       expect(messagesService.observeConseillerChats).toHaveBeenCalledWith(
         'cleChiffrement',
-        jeunes,
+        jeunes.map(extractBaseJeune).sort(compareJeunesByNom),
         expect.any(Function)
       )
     })
@@ -204,42 +228,6 @@ describe('<Layout />', () => {
 
       // Then
       expect(mockAudio).toHaveBeenCalledTimes(0)
-    })
-  })
-
-  describe("quand le conseiller n'a pas éte récupéré", () => {
-    it('récupère le conseiller', async () => {
-      // When
-      await act(async () => {
-        render(
-          <DIProvider
-            dependances={{
-              jeunesService,
-              conseillerService,
-              messagesService,
-            }}
-          >
-            <ConseillerProvider>
-              <ChatCredentialsProvider
-                credentialsForTests={{
-                  token: 'firebaseToken',
-                  cleChiffrement: 'cleChiffrement',
-                }}
-              >
-                <Layout>
-                  <FakeComponent
-                    pageTitle='un titre'
-                    pageHeader='Titre de la page'
-                  />
-                </Layout>
-              </ChatCredentialsProvider>
-            </ConseillerProvider>
-          </DIProvider>
-        )
-      })
-
-      // Then
-      expect(conseillerService.getConseillerClientSide).toHaveBeenCalledWith()
     })
   })
 

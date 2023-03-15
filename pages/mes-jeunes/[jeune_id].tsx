@@ -53,6 +53,7 @@ import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export enum Onglet {
   AGENDA = 'AGENDA',
@@ -99,6 +100,7 @@ function FicheJeune({
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
+  const [portefeuille, setPortefeuille] = usePortefeuille()
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
   const [alerte, setAlerte] = useAlerte()
@@ -221,6 +223,8 @@ function FicheJeune({
   ): Promise<void> {
     try {
       await jeunesService.archiverJeune(jeune.id, payload)
+
+      removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
       await router.push('/mes-jeunes')
     } catch (e) {
@@ -234,6 +238,8 @@ function FicheJeune({
   async function supprimerJeuneInactif(): Promise<void> {
     try {
       await jeunesService.supprimerJeuneInactif(jeune.id)
+
+      removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
       await router.push('/mes-jeunes')
     } catch (e) {
@@ -242,6 +248,15 @@ function FicheJeune({
     } finally {
       setShowModaleDeleteJeuneInactif(false)
     }
+  }
+
+  function removeBeneficiaireFromPortefeuille(idBeneficiaire: string): void {
+    const updatedPortefeuille = [...portefeuille]
+    const index = updatedPortefeuille.findIndex(
+      ({ id }) => id === idBeneficiaire
+    )
+    updatedPortefeuille.splice(index, 1)
+    setPortefeuille(updatedPortefeuille)
   }
 
   useMatomo(trackingLabel)

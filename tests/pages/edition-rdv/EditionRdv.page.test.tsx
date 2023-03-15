@@ -33,9 +33,7 @@ jest.mock('components/PageActionsPortal')
 
 describe('EditionRdv', () => {
   describe('server side', () => {
-    let jeunesService: JeunesService
     let evenementsService: EvenementsService
-    let jeunes: JeuneFromListe[]
     let typesRendezVous: TypeEvenementReferentiel[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
@@ -66,22 +64,15 @@ describe('EditionRdv', () => {
           },
         })
 
-        jeunes = desItemsJeunes()
         typesRendezVous = typesEvenement()
 
-        jeunesService = mockedJeunesService({
-          getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
-        })
         evenementsService = mockedEvenementsService({
           getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
         })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'evenementsService') return evenementsService
-        })
+        ;(withDependance as jest.Mock).mockReturnValue(evenementsService)
       })
 
-      it('récupère la liste des jeunes du conseiller', async () => {
+      it('prépare la page', async () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: {} },
@@ -89,12 +80,8 @@ describe('EditionRdv', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(
-          jeunesService.getJeunesDuConseillerServerSide
-        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
         expect(actual).toEqual({
           props: {
-            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
             pageTitle: 'Mes événements - Créer un rendez-vous',
             pageHeader: 'Créer un rendez-vous',
@@ -214,34 +201,6 @@ describe('EditionRdv', () => {
         // Then
         expect(actual).toMatchObject({ notFound: true })
       })
-
-      describe("quand l'utilisateur est observateur", () => {
-        it('prépare la page en lecture seule', async () => {
-          // Given
-          ;(
-            evenementsService.getDetailsEvenement as jest.Mock
-          ).mockResolvedValue(
-            unEvenement({
-              jeunes: [
-                { id: 'id-autre-jeune', prenom: 'Sheldon', nom: 'Cooper' },
-              ],
-            })
-          )
-
-          // When
-          const actual = await getServerSideProps({
-            req: { headers: {} },
-            query: { idRdv: 'id-rdv' },
-          } as unknown as GetServerSidePropsContext)
-
-          // Then
-          expect(actual).toMatchObject({
-            props: {
-              conseillerEstObservateur: true,
-            },
-          })
-        })
-      })
     })
 
     describe('quand l’utilisateur est Pôle Emploi', () => {
@@ -319,7 +278,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='/agenda?onglet=conseiller'
@@ -881,7 +839,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='https://localhost:3000/agenda'
@@ -946,7 +903,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='/agenda'
@@ -996,7 +952,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='/agenda'
@@ -1319,7 +1274,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='/agenda'
@@ -1459,15 +1413,16 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='https://localhost:3000/agenda'
             evenement={unEvenement()}
-            conseillerEstObservateur={true}
             pageTitle=''
           />,
-          { customDependances: { evenementsService } }
+          {
+            customDependances: { evenementsService },
+            customPortefeuille: { value: [] },
+          }
         )
       })
 

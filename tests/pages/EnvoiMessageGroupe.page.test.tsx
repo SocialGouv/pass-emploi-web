@@ -7,7 +7,6 @@ import { desItemsJeunes } from 'fixtures/jeune'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
   mockedFichiersService,
-  mockedJeunesService,
   mockedListesDeDiffusionService,
   mockedMessagesService,
 } from 'fixtures/services'
@@ -18,7 +17,6 @@ import EnvoiMessageGroupe, {
 } from 'pages/mes-jeunes/envoi-message-groupe'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
-import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import { MessagesService } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -65,7 +63,6 @@ describe('EnvoiMessageGroupe', () => {
       renderWithContexts(
         <EnvoiMessageGroupe
           pageTitle={''}
-          jeunes={jeunes}
           listesDiffusion={listesDeDiffusion}
           withoutChat={true}
           returnTo='/mes-jeunes'
@@ -89,6 +86,7 @@ describe('EnvoiMessageGroupe', () => {
         name: 'Envoyer',
       })
     })
+
     describe("quand le formulaire n'a pas encore été soumis", () => {
       it('devrait afficher les champs pour envoyer un message', () => {
         // Then
@@ -370,7 +368,6 @@ describe('EnvoiMessageGroupe', () => {
     describe("quand l'utilisateur est connecté", () => {
       let jeunes: JeuneFromListe[]
       let listesDeDiffusion: ListeDeDiffusion[]
-      let jeunesService: JeunesService
       let listesDeDiffusionService: ListesDeDiffusionService
       beforeEach(() => {
         // Given
@@ -383,40 +380,12 @@ describe('EnvoiMessageGroupe', () => {
         })
         jeunes = desItemsJeunes()
         listesDeDiffusion = desListesDeDiffusion()
-        jeunesService = mockedJeunesService({
-          getJeunesDuConseillerServerSide: jest.fn(async () => jeunes),
-        })
         listesDeDiffusionService = mockedListesDeDiffusionService({
           getListesDeDiffusionServerSide: jest.fn(
             async () => listesDeDiffusion
           ),
         })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'listesDeDiffusionService')
-            return listesDeDiffusionService
-        })
-      })
-
-      it('récupère la liste des jeunes du conseiller', async () => {
-        // When
-        const actual = await getServerSideProps({
-          req: { headers: { referer: 'http://localhost:3000/agenda' } },
-        } as GetServerSidePropsContext)
-
-        // Then
-        expect(
-          jeunesService.getJeunesDuConseillerServerSide
-        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
-        expect(actual).toEqual({
-          props: {
-            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
-            listesDiffusion: listesDeDiffusion,
-            withoutChat: true,
-            pageTitle: 'Message multi-destinataires',
-            returnTo: 'http://localhost:3000/agenda',
-          },
-        })
+        ;(withDependance as jest.Mock).mockReturnValue(listesDeDiffusionService)
       })
 
       it('récupère les listes de diffusion du conseiller', async () => {
@@ -431,7 +400,6 @@ describe('EnvoiMessageGroupe', () => {
         ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
         expect(actual).toEqual({
           props: {
-            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             listesDiffusion: listesDeDiffusion,
             withoutChat: true,
             pageTitle: 'Message multi-destinataires',
@@ -454,7 +422,6 @@ describe('EnvoiMessageGroupe', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             listesDiffusion: listesDeDiffusion,
             withoutChat: true,
             pageTitle: 'Message multi-destinataires',

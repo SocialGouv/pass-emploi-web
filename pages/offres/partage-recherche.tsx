@@ -12,17 +12,16 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomJeuneComplet } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
 import { SuggestionsService } from 'services/suggestions.service'
 import { useAlerte } from 'utils/alerteContext'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type CriteresRecherche =
   | CriteresRechercheOffreEmploiProps
@@ -53,7 +52,6 @@ type CriteresRechercheServiceCiviqueProps = CriteresRechercheBase & {
 }
 
 type PartageRechercheProps = PageProps & {
-  jeunes: BaseJeune[]
   type: TypeOffre
   criteresRecherche: CriteresRecherche
   withoutChat: true
@@ -61,7 +59,6 @@ type PartageRechercheProps = PageProps & {
 }
 
 function PartageRecherche({
-  jeunes,
   type,
   criteresRecherche,
   returnTo,
@@ -70,6 +67,7 @@ function PartageRecherche({
     useDependance<SuggestionsService>('suggestionsService')
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+  const [portefeuille] = usePortefeuille()
 
   const [idsDestinataires, setIdsDestinataires] = useState<
     ValueWithError<string[]>
@@ -82,7 +80,7 @@ function PartageRecherche({
   )
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
-    return jeunes.map((jeune) => ({
+    return portefeuille.map((jeune) => ({
       id: jeune.id,
       value: getNomJeuneComplet(jeune),
     }))
@@ -264,13 +262,6 @@ export const getServerSideProps: GetServerSideProps<
   const typeOffre = context.query.type as TypeOffre
   if (!typeOffre) return { notFound: true }
 
-  const { user, accessToken } = sessionOrRedirect.session
-  const jeunesService = withDependance<JeunesService>('jeunesService')
-  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
-    user.id,
-    accessToken
-  )
-
   const referer = context.req.headers.referer
   const redirectTo = referer ?? '/recherche-offres'
   let criteresRecherche: CriteresRecherche
@@ -308,7 +299,6 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      jeunes,
       type: typeOffre,
       criteresRecherche: criteresRecherche,
       withoutChat: true,
