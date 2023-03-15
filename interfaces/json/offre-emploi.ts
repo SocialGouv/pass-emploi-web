@@ -70,6 +70,7 @@ export function jsonToOffreEmploiItem(
   if (json.duree) offreEmploiItem.duree = json.duree
   if (json.localisation?.nom)
     offreEmploiItem.localisation = json.localisation?.nom
+  if (json.typeContrat === 'MIS') offreEmploiItem.typeContrat = 'INTERIM'
 
   return offreEmploiItem
 }

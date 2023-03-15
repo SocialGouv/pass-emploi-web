@@ -32,31 +32,20 @@ export default function ResultatsRechercheOffre({
         <>
           <ResultTitle total={nbTotal} />
           <ul aria-describedby='result-title'>
-            {offres.map((offre) => {
-              return (
-                <li key={`${offre.type}-${offre.id}`} className='mb-4'>
-                  {(offre.type === TypeOffre.EMPLOI ||
-                    offre.type === TypeOffre.ALTERNANCE) && (
-                    <OffreEmploiCard
-                      offre={{
-                        ...offre,
-                        typeContrat:
-                          offre.typeContrat === 'MIS'
-                            ? 'INTERIM  '
-                            : offre.typeContrat,
-                      }}
-                      withPartage={true}
-                    />
-                  )}
-                  {offre.type === TypeOffre.SERVICE_CIVIQUE && (
-                    <ServiceCiviqueCard offre={offre} withPartage={true} />
-                  )}
-                  {offre.type === TypeOffre.IMMERSION && (
-                    <ImmersionCard offre={offre} withPartage={true} />
-                  )}
-                </li>
-              )
-            })}
+            {offres.map((offre) => (
+              <li key={`${offre.type}-${offre.id}`} className='mb-4'>
+                {(offre.type === TypeOffre.EMPLOI ||
+                  offre.type === TypeOffre.ALTERNANCE) && (
+                  <OffreEmploiCard offre={offre} withPartage={true} />
+                )}
+                {offre.type === TypeOffre.SERVICE_CIVIQUE && (
+                  <ServiceCiviqueCard offre={offre} withPartage={true} />
+                )}
+                {offre.type === TypeOffre.IMMERSION && (
+                  <ImmersionCard offre={offre} withPartage={true} />
+                )}
+              </li>
+            ))}
           </ul>
         </>
       )}
