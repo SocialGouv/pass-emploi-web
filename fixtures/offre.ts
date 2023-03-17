@@ -173,7 +173,7 @@ export function listeBaseOffresEmploi(): BaseOffreEmploi[] {
       titre: 'Mécanicien automobile (H/F)',
       nomEntreprise: 'Entreprise',
       localisation: 'Adresse',
-      typeContrat: 'INTERIM',
+      typeContrat: 'Interim',
       duree: 'Temps plein',
     },
   ]
