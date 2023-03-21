@@ -60,7 +60,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: '/index?redirectUrl=redirectUrl' },
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'pe-conseiller' }
       )
     })
@@ -77,7 +77,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: '/index?redirectUrl=redirectUrl' },
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'similo-conseiller' }
       )
     })
@@ -174,7 +174,7 @@ describe('Login', () => {
       // Then
       expect(signIn).toHaveBeenCalledWith(
         'keycloak',
-        { callbackUrl: '/index?redirectUrl=redirectUrl' },
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
         { kc_idp_hint: '' }
       )
     })
