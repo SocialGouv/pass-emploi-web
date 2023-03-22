@@ -38,7 +38,7 @@ describe('<Conversation />', () => {
         (_idChat, _cle, pages, fn: (messages: ByDay<Message>[]) => void) => {
           const messagesPagines = messagesParJour.map((jour) => ({ ...jour }))
           messagesPagines[0].messages = [
-            unMessage({ id: 'message-page-' + pages }),
+            unMessage({ id: 'message-page-' + Math.min(pages, 2) }),
             ...messagesPagines[0].messages,
           ]
           fn(messagesPagines)
@@ -108,6 +108,27 @@ describe('<Conversation />', () => {
       3,
       expect.any(Function)
     )
+  })
+
+  it('informe qu’il n’y a pas de messages plus anciens', async () => {
+    // When
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Voir messages plus anciens',
+      })
+    )
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Voir messages plus anciens',
+      })
+    )
+
+    // Then
+    expect(screen.getByText('Aucun message plus ancien')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Voir messages plus anciens' })
+    ).not.toBeInTheDocument()
   })
 
   it('marque la conversation en "lu"', async () => {
