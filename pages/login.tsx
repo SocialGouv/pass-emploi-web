@@ -32,7 +32,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
       const redirectUrl: string = router.query.redirectUrl as string
       try {
         const callbackUrl: string = redirectUrl
-          ? '/index?' + new URLSearchParams({ redirectUrl })
+          ? '/?' + new URLSearchParams({ redirectUrl })
           : '/'
         await signIn(
           'keycloak',
@@ -116,7 +116,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
 
   if (session) {
     const redirectUrl: string =
-      (context.query.redirectUrl as string) ?? `/index${querySource || ''}`
+      (context.query.redirectUrl as string) ?? `/${querySource || ''}`
 
     return {
       redirect: {

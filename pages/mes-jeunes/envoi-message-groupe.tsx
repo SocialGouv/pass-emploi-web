@@ -375,7 +375,7 @@ export const getServerSideProps: GetServerSideProps<
   const referer: string | undefined = context.req.headers.referer
 
   const previousUrl =
-    referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
+    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   return {
     props: {
       jeunes: [...jeunes].sort(compareJeunesByNom),
@@ -392,6 +392,6 @@ export default withTransaction(
   'page'
 )(EnvoiMessageGroupe)
 
-function comingFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/index')
+function redirectedFromHome(referer: string): boolean {
+  return referer.split('?')[0].endsWith('/')
 }

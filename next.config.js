@@ -38,6 +38,16 @@ module.exports = withPWA({
     SUPPORT_MAIL: process.env.SUPPORT_MAIL,
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/index',
+        destination: '/',
+        permanent: true,
+      },
+    ]
+  },
+
   i18n: {
     locales: ['fr-FR'],
     defaultLocale: 'fr-FR',

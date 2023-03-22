@@ -202,6 +202,26 @@ describe('Page Partage Offre', () => {
         // Then
         expect(actual).toEqual({ notFound: true })
       })
+
+      it('ignore le referer si besoin', async () => {
+        // When
+        const actual = await getServerSideProps({
+          req: {
+            headers: {
+              referer:
+                'http://localhost:3000/?redirectUrl=%2Foffres%2Femploi%2Foffre-id%2Fpartage',
+            },
+          },
+          query: { offre_type: 'emploi', offre_id: 'offre-id' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toMatchObject({
+          props: {
+            returnTo: '/recherche-offres',
+          },
+        })
+      })
     })
   })
 
