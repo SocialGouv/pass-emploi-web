@@ -206,7 +206,8 @@ export const getServerSideProps: GetServerSideProps<
     accessToken
   )
   const referer = context.req.headers.referer
-  const redirectTo = referer ?? '/recherche-offres'
+  const redirectTo =
+    referer && !redirectedFromHome(referer) ? referer : '/recherche-offres'
   return {
     props: {
       offre,
@@ -230,6 +231,10 @@ function getDefaultMessage(typeOffre: TypeOffre): string {
     case TypeOffre.ALTERNANCE:
       return "Bonjour, je vous partage une offre d'alternance qui pourrait vous intéresser."
   }
+}
+
+function redirectedFromHome(referer: string): boolean {
+  return referer.split('?')[0].endsWith('/')
 }
 
 export default withTransaction(PartageOffre.name, 'page')(PartageOffre)

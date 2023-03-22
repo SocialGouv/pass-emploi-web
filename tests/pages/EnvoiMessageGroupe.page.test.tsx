@@ -446,7 +446,7 @@ describe('EnvoiMessageGroupe', () => {
           req: {
             headers: {
               referer:
-                'http://localhost:3000/index?redirectUrl=%2Fmes-jeunes%2Fenvoi-message-groupe',
+                'http://localhost:3000/?redirectUrl=%2Fmes-jeunes%2Fenvoi-message-groupe',
             },
           },
         } as GetServerSidePropsContext)

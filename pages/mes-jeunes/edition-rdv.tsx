@@ -434,7 +434,8 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   let redirectTo = context.query.redirectUrl as string
   if (!redirectTo) {
     const referer = context.req.headers.referer
-    redirectTo = referer && !comingFromHome(referer) ? referer : '/mes-jeunes'
+    redirectTo =
+      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   }
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
@@ -539,6 +540,6 @@ function buildPropsCreationEvenement(
   return props
 }
 
-function comingFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/index')
+function redirectedFromHome(referer: string): boolean {
+  return referer.split('?')[0].endsWith('/')
 }
