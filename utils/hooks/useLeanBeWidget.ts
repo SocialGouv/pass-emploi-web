@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 
 export namespace LeanBe {
-  export const MILO_WIDGET_ID = '6311adec35e9790013bdfdf6'
+  export const MILO_WIDGET_ID = '29a33359-e654-4b66-b9e6-39e92956b74c'
   export const PE_WIDGET_ID = '6311e7ab83faaf001224e4e8'
 }
 
