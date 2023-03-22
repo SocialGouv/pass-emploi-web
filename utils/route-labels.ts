@@ -24,7 +24,7 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, labelAction],
 
   // Établissement
-  [/\/etablissement\/beneficiaires$/, 'Bénéficiaires'],
+  [/\/etablissement$/, 'Bénéficiaires'],
   [/\/etablissement\/beneficiaires\/[\w-]+$/, labelFicheBeneficiaire],
   [/\/etablissement\/beneficiaires\/[\w-]+\/favoris$/, labelFavoris],
   [/\/etablissement\/beneficiaires\/[\w-]+\/historique$/, labelHistorique],
@@ -40,7 +40,9 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/offres$/, 'Offres'],
   [/\/offres\/[\w-]+\/[\w-]+$/, 'Détail offre'],
 
+  [/\/reaffectation$/, 'Réaffectation'],
   [/\/pilotage$/, 'Pilotage'],
+  [/\/profil$/, 'Profil'],
 ])
 
 export default mapRoutesToLabels
