@@ -267,8 +267,9 @@ export function EditionRdvForm({
     if (!precisionType.value) {
       setPrecisionType({
         value: precisionType.value,
-        error:
-          "Le champ Préciser n'est pas renseigné. Veuillez préciser le type d’événement.",
+        error: `Le champ “Préciser” est vide. Précisez le type ${
+          evenementTypeAC ? 'd’animation collective.' : 'de rendez-vous.'
+        }`,
       })
     }
   }
@@ -282,7 +283,7 @@ export function EditionRdvForm({
       setDate({
         ...date,
         error:
-          "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa",
+          'Le champ “Date” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.',
       })
     }
   }
@@ -292,17 +293,11 @@ export function EditionRdvForm({
   }
 
   function validateHoraire() {
-    if (!horaire.value) {
+    if (!horaireIsValid()) {
       setHoraire({
         ...horaire,
         error:
-          "Le champ heure n'est pas renseigné. Veuillez renseigner une heure.",
-      })
-    } else if (!horaireIsValid()) {
-      setHoraire({
-        ...horaire,
-        error:
-          "Le champ heure n'est pas valide. Veuillez respecter le format hh:mm",
+          'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.',
       })
     }
   }
@@ -312,17 +307,11 @@ export function EditionRdvForm({
   }
 
   function validateDuree() {
-    if (!duree.value) {
+    if (!dureeIsValid()) {
       setDuree({
         ...duree,
         error:
-          "Le champ durée n'est pas renseigné. Veuillez renseigner une durée.",
-      })
-    } else if (!dureeIsValid()) {
-      setDuree({
-        ...duree,
-        error:
-          "Le champ durée n'est pas valide. Veuillez respecter le format hh:mm",
+          'Le champ “Durée” est invalide. Le format attendu est hh:mm, par exemple : 00:30 pour 30 minutes.',
       })
     }
   }
@@ -342,8 +331,7 @@ export function EditionRdvForm({
     if (evenementTypeAC && !titre.value) {
       setTitre({
         ...titre,
-        error:
-          'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.',
+        error: 'Le champ “Titre” est vide. Renseignez un titre.',
       })
     } else {
       setTitre({ value: titre.value })
@@ -359,7 +347,7 @@ export function EditionRdvForm({
       setDescription({
         ...description,
         error:
-          'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.',
+          'Vous avez dépassé le nombre maximal de caractères. Retirez des caractères.',
       })
     }
   }
@@ -373,7 +361,7 @@ export function EditionRdvForm({
       setNombreMaxParticipants({
         ...nombreMaxParticipants,
         error:
-          "Aucun nombre maximum de participants n'est renseigné. Veuillez renseigner une valeur.",
+          'Le champ “Nombre maximum de participants” est vide. Renseignez une valeur, par exemple : 18.',
       })
     }
   }
@@ -392,7 +380,7 @@ export function EditionRdvForm({
     idsBeneficiaires: string[]
   ): string | undefined {
     if (!evenementTypeAC && !idsBeneficiaires.length)
-      return "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+      return "Aucun bénéficiaire n'est renseigné. Sélectionnez au moins un bénéficiaire."
   }
 
   function typeEntretienIndividuelConseillerSelected() {
@@ -637,7 +625,6 @@ export function EditionRdvForm({
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
           required={!evenementTypeAC}
-          needsHelpText={false}
           disabled={lectureSeule}
           renderIndication={
             evenement && estClos(evenement)

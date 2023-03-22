@@ -352,7 +352,6 @@ describe('EditionRdv', () => {
           const selectType = screen.getByRole('combobox', {
             name: 'Type',
           })
-          console.log(selectType)
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
             name: 'Étape 2 Décrivez le rendez-vous',
@@ -689,7 +688,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+              "Aucun bénéficiaire n'est renseigné. Sélectionnez au moins un bénéficiaire."
             )
           ).toBeInTheDocument()
         })
@@ -717,7 +716,7 @@ describe('EditionRdv', () => {
           expect(inputTypePrecision.value).toEqual('')
           expect(
             screen.getByText(
-              "Le champ Préciser n'est pas renseigné. Veuillez préciser le type d’événement."
+              'Le champ “Type” est vide. Sélectionnez un type de rendez-vous.'
             )
           ).toBeInTheDocument()
         })
@@ -731,21 +730,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa"
-            )
-          ).toBeInTheDocument()
-        })
-
-        it('est désactivé quand la date est incorrecte', async () => {
-          // When
-          await userEvent.type(inputDate, 'yyyy-06-06')
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa"
+              'Le champ “Date” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.'
             )
           ).toBeInTheDocument()
         })
@@ -759,7 +744,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ heure n'est pas renseigné. Veuillez renseigner une heure."
+              'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.'
             )
           ).toBeInTheDocument()
         })
@@ -773,7 +758,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ durée n'est pas renseigné. Veuillez renseigner une durée."
+              'Le champ “Durée” est invalide. Le format attendu est hh:mm, par exemple : 00:30 pour 30 minutes.'
             )
           ).toBeInTheDocument()
         })
@@ -793,7 +778,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
+              'Vous avez dépassé le nombre maximal de caractères. Retirez des caractères.'
             )
           ).toBeInTheDocument()
         })

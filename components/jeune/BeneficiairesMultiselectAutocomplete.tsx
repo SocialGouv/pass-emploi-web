@@ -225,10 +225,7 @@ export default function BeneficiairesMultiselectAutocomplete({
   return (
     <>
       <Label htmlFor={id} inputRequired={required}>
-        {{
-          main: labelText(),
-          helpText: '',
-        }}
+        {labelText()}
       </Label>
       {error && (
         <InputError id={id + '--error'} className='mt-2'>

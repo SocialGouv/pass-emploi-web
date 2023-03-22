@@ -1,5 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
 
 import {
   typesAnimationCollective,
@@ -13,8 +15,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
@@ -337,9 +337,7 @@ describe('EditionAnimationCollective', () => {
 
         // Then
         expect(
-          screen.getByText(
-            'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.'
-          )
+          screen.getByText('Le champ “Titre” est vide. Renseignez un titre.')
         ).toBeInTheDocument()
       })
 
