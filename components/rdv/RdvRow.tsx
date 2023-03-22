@@ -131,7 +131,7 @@ export function RdvRow({
                 name={IconName.RoundedCheckFilled}
                 aria-hidden={true}
                 focusable={false}
-                className='h-3 fill-primary'
+                className='h-6 fill-primary'
               />
             </>
           )}
@@ -142,7 +142,7 @@ export function RdvRow({
                 name={IconName.Ko}
                 aria-hidden={true}
                 focusable={false}
-                className='h-3'
+                className='h-6'
               />
             </>
           )}
