@@ -479,8 +479,8 @@ export function EditionRdvForm({
 
       <Etape
         numero={1}
-        titre={`Type ${
-          evenementTypeAC ? 'd’animation collective' : 'de rendez-vous'
+        titre={`Sélectionnez ${
+          evenementTypeAC ? 'une animation collective' : 'un rendez-vous'
         }`}
       >
         <Label htmlFor='typeEvenement' inputRequired={true}>
@@ -526,7 +526,12 @@ export function EditionRdvForm({
         )}
       </Etape>
 
-      <Etape numero={2} titre='Description'>
+      <Etape
+        numero={2}
+        titre={`Décrivez ${
+          evenementTypeAC ? 'l’animation collective' : 'le rendez-vous'
+        }`}
+      >
         <Label htmlFor='titre' inputRequired={evenementTypeAC}>
           Titre
         </Label>
@@ -548,7 +553,7 @@ export function EditionRdvForm({
 
         <Label htmlFor='description' withBulleMessageSensible={true}>
           {{
-            main: 'Description',
+            main: 'Commentaire',
             helpText: '250 caractères maximum',
           }}
         </Label>
@@ -568,12 +573,12 @@ export function EditionRdvForm({
         />
       </Etape>
 
-      <Etape numero={3} titre='Ajout de bénéficiaires'>
+      <Etape numero={3} titre='Ajoutez des bénéficiaires'>
         {evenementTypeAC && (
           <>
             <div className='flex items-center mb-8'>
               <label htmlFor='toggle-max-participants' className='mr-4'>
-                Définir un nombre maximum de participants
+                Définissez un nombre maximum de participants
               </label>
               <Switch
                 id='toggle-max-participants'
@@ -632,6 +637,7 @@ export function EditionRdvForm({
           onUpdate={updateIdsJeunes}
           error={idsJeunes.error}
           required={!evenementTypeAC}
+          needsHelpText={false}
           disabled={lectureSeule}
           renderIndication={
             evenement && estClos(evenement)
@@ -648,7 +654,7 @@ export function EditionRdvForm({
         />
       </Etape>
 
-      <Etape numero={4} titre='Lieu et date'>
+      <Etape numero={4} titre='Ajoutez les modalités pratiques'>
         <Label htmlFor='modalite'>Modalité</Label>
         <Select
           id='modalite'
@@ -663,7 +669,7 @@ export function EditionRdvForm({
           ))}
         </Select>
         <Label htmlFor='date' inputRequired={true}>
-          {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
+          Date format : jj/mm/aaaa
         </Label>
         {date.error && (
           <InputError id='date--error' className='mb-2'>
@@ -682,7 +688,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='horaire' inputRequired={true}>
-          {{ main: 'Heure', helpText: '(format : hh:mm)' }}
+          Heure format : hh:mm
         </Label>
         {horaire.error && (
           <InputError id='horaire--error' className='mb-2'>
@@ -703,7 +709,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='duree' inputRequired={true}>
-          {{ main: 'Durée', helpText: '(format : hh:mm)' }}
+          Durée format : hh:mm
         </Label>
         {duree.error && (
           <InputError id='duree--error' className='mb-2'>
@@ -721,9 +727,7 @@ export function EditionRdvForm({
           disabled={lectureSeule}
         />
 
-        <Label htmlFor='adresse'>
-          {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
-        </Label>
+        <Label htmlFor='adresse'>Adresse exemple : 12 rue Duc, Brest</Label>
         <Input
           type='text'
           id='adresse'
@@ -734,10 +738,7 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='organisme'>
-          {{
-            main: 'Organisme',
-            helpText: 'Ex : prestataire, entreprise, etc.',
-          }}
+          Organisme exemple : prestataire, entreprise, etc.
         </Label>
         <Input
           type='text'
@@ -748,7 +749,7 @@ export function EditionRdvForm({
         />
       </Etape>
 
-      <Etape numero={5} titre='Gestion des accès'>
+      <Etape numero={5} titre='Définissez la gestion des accès'>
         {evenement && !conseillerIsCreator && (
           <div className='mb-6'>
             <InformationMessage

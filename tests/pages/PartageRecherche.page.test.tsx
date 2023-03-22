@@ -234,7 +234,7 @@ describe('Partage Recherche', () => {
 
         //Given
         inputSearchJeune = screen.getByRole('combobox', {
-          name: 'Rechercher et ajouter des destinataires Nom et prénom',
+          name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
         })
 
         submitButton = screen.getByRole('button', {
@@ -310,7 +310,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
 
           submitButton = screen.getByRole('button', {
@@ -373,7 +373,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
 
           submitButton = screen.getByRole('button', {
@@ -435,7 +435,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
 
           submitButton = screen.getByRole('button', {
@@ -497,7 +497,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
 
           submitButton = screen.getByRole('button', {

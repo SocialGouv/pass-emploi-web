@@ -306,7 +306,7 @@ describe('EditionRdv', () => {
 
         beforeEach(() => {
           etape = screen.getByRole('group', {
-            name: 'Étape 1 Type de rendez-vous',
+            name: 'Étape 1 Sélectionnez un rendez-vous',
           })
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
@@ -352,8 +352,11 @@ describe('EditionRdv', () => {
           const selectType = screen.getByRole('combobox', {
             name: 'Type',
           })
+          console.log(selectType)
           await userEvent.selectOptions(selectType, 'Activités extérieures')
-          etape = screen.getByRole('group', { name: 'Étape 2 Description' })
+          etape = screen.getByRole('group', {
+            name: 'Étape 2 Décrivez le rendez-vous',
+          })
         })
 
         it('contient un champ pour renseigner un titre', () => {
@@ -366,7 +369,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour saisir une description', () => {
           // Then
           const inputDescription = within(etape).getByRole('textbox', {
-            name: /Description/,
+            name: /Commentaire/,
           })
           expect(inputDescription).toBeInTheDocument()
           expect(inputDescription).not.toHaveAttribute('required')
@@ -382,14 +385,14 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: 'Étape 3 Ajout de bénéficiaires',
+            name: 'Étape 3 Ajoutez des bénéficiaires',
           })
         })
 
         it('contient une liste pour choisir un jeune', () => {
           // Then
           const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
           const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -429,7 +432,9 @@ describe('EditionRdv', () => {
             name: 'Type',
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
-          etape = screen.getByRole('group', { name: 'Étape 4 Lieu et date' })
+          etape = screen.getByRole('group', {
+            name: 'Étape 4 Ajoutez les modalités pratiques',
+          })
         })
         it('contient une liste pour choisir une modalité', () => {
           // Then
@@ -447,7 +452,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la date', () => {
           // Then
           const inputDate = within(etape).getByLabelText(
-            '* Date (format : jj/mm/aaaa)'
+            '* Date format : jj/mm/aaaa'
           )
           expect(inputDate).toBeInTheDocument()
           expect(inputDate).toHaveAttribute('required', '')
@@ -457,7 +462,7 @@ describe('EditionRdv', () => {
         it("contient un champ pour choisir l'horaire", () => {
           // Then
           const inputHoraire = within(etape).getByLabelText(
-            '* Heure (format : hh:mm)'
+            '* Heure format : hh:mm'
           )
           expect(inputHoraire).toBeInTheDocument()
           expect(inputHoraire).toHaveAttribute('required', '')
@@ -467,7 +472,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la durée', () => {
           // Then
           const inputDuree = within(etape).getByLabelText(
-            '* Durée (format : hh:mm)'
+            '* Durée format : hh:mm'
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')
@@ -477,7 +482,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer l’adresse si besoin', () => {
           // Then
           const inputAdresse = within(etape).getByLabelText(
-            'Adresse Ex : 12 rue duc, Brest'
+            'Adresse exemple : 12 rue Duc, Brest'
           )
           expect(inputAdresse).toBeInTheDocument()
           expect(inputAdresse).toHaveAttribute('type', 'text')
@@ -486,7 +491,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer un organisme si besoin', () => {
           // Then
           const inputOrganisme = within(etape).getByLabelText(
-            'Organisme Ex : prestataire, entreprise, etc.'
+            'Organisme exemple : prestataire, entreprise, etc.'
           )
           expect(inputOrganisme).toBeInTheDocument()
           expect(inputOrganisme).toHaveAttribute('type', 'text')
@@ -503,7 +508,7 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: 'Étape 5 Gestion des accès',
+            name: 'Étape 5 Définissez la gestion des accès',
           })
         })
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
@@ -572,17 +577,17 @@ describe('EditionRdv', () => {
           await userEvent.selectOptions(selectType, typesRendezVous[0].code)
 
           selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
           })
-          inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
-          inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
-          inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+          inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
+          inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
+          inputDuree = screen.getByLabelText('* Durée format : hh:mm')
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
-            name: /Description/,
+            name: /Commentaire/,
           })
 
           buttonValider = screen.getByRole('button', {
@@ -868,7 +873,7 @@ describe('EditionRdv', () => {
       it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText(/Commentaire/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
         expect(screen.getByLabelText(/Heure/)).toBeDisabled()
@@ -877,7 +882,9 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
         expect(
-          screen.getByLabelText(/ajouter des destinataires/)
+          screen.getByLabelText(
+            /Recherchez et ajoutez un ou plusieurs bénéficiaires/
+          )
         ).toBeDisabled()
         expect(
           screen.queryByRole('button', { name: /Enlever jeune/ })
@@ -1065,7 +1072,7 @@ describe('EditionRdv', () => {
           'Prise de nouvelles par téléphone'
         )
         expect(
-          screen.getByLabelText<HTMLInputElement>(/Description/).value
+          screen.getByLabelText<HTMLInputElement>(/Commentaire/).value
         ).toEqual('Rendez-vous avec Kenji')
       })
 
@@ -1090,7 +1097,7 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           // Given
           const searchJeune = screen.getByRole('combobox', {
-            name: /ajouter des destinataires/,
+            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
           })
           const beneficiaires = screen.getByRole('region', {
             name: /Bénéficiaires/,
@@ -1105,16 +1112,14 @@ describe('EditionRdv', () => {
           const selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
           })
-          const inputDate = screen.getByLabelText(
-            '* Date (format : jj/mm/aaaa)'
-          )
-          const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
-          const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+          const inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
+          const inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
+          const inputDuree = screen.getByLabelText('* Durée format : hh:mm')
           const inputTitre = screen.getByRole('textbox', {
             name: 'Titre',
           })
           const inputDescription = screen.getByRole('textbox', {
-            name: /Description/,
+            name: /Commentaire/,
           })
 
           buttonValider = screen.getByRole('button', {
@@ -1355,7 +1360,7 @@ describe('EditionRdv', () => {
       describe('quand on modifie le rendez-vous', () => {
         beforeEach(async () => {
           const inputDescription =
-            screen.getByLabelText<HTMLInputElement>(/Description/)
+            screen.getByLabelText<HTMLInputElement>(/Commentaire/)
           await userEvent.clear(inputDescription)
           await userEvent.type(
             inputDescription,
@@ -1438,7 +1443,7 @@ describe('EditionRdv', () => {
       it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText(/Commentaire/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
         expect(screen.getByLabelText(/Heure/)).toBeDisabled()
@@ -1447,7 +1452,9 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
         expect(
-          screen.getByLabelText(/ajouter des destinataires/)
+          screen.getByLabelText(
+            /Recherchez et ajoutez un ou plusieurs bénéficiaires/
+          )
         ).toBeDisabled()
         expect(
           screen.queryByRole('button', { name: /Enlever jeune/ })

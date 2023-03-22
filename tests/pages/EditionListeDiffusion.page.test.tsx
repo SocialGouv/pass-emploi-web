@@ -66,7 +66,9 @@ describe('Page d’édition d’une liste de diffusion', () => {
           })
         ).toHaveProperty('required', true)
         expect(
-          screen.getByRole('combobox', { name: /des destinataires/ })
+          screen.getByRole('combobox', {
+            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
+          })
         ).toHaveAttribute('aria-required', 'true')
 
         expect(
@@ -82,7 +84,9 @@ describe('Page d’édition d’une liste de diffusion', () => {
       describe('formulaire rempli', () => {
         beforeEach(async () => {
           const titreInput = screen.getByLabelText(/\* Titre/)
-          const destinatairesSelect = screen.getByLabelText(/des destinataires/)
+          const destinatairesSelect = screen.getByLabelText(
+            /Recherchez et ajoutez un ou plusieurs bénéficiaires/
+          )
           const creationButton = screen.getByRole('button', {
             name: 'Créer la liste',
           })
@@ -293,7 +297,9 @@ describe('Page d’édition d’une liste de diffusion', () => {
             screen.getByText(/Enlever beneficiaire Chirac Jacques/)
           )
           await userEvent.type(
-            screen.getByLabelText(/des destinataires/),
+            screen.getByLabelText(
+              /Recherchez et ajoutez un ou plusieurs bénéficiaires/
+            ),
             getNomJeuneComplet(beneficiaires[1])
           )
 

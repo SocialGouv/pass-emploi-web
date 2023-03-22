@@ -216,18 +216,18 @@ export default function BeneficiairesMultiselectAutocomplete({
     return new Set(idsBeneficiaires).size
   }
 
-  function getHelpText() {
+  function labelText() {
     return listesDeDiffusion?.length > 0
-      ? 'Nom et prénom du bénéficiaire ou nom de votre liste de diffusion'
-      : 'Nom et prénom'
+      ? 'Recherchez et ajoutez un ou plusieurs bénéficiaires et/ou listes de diffusion'
+      : 'Recherchez et ajoutez un ou plusieurs bénéficiaires'
   }
 
   return (
     <>
       <Label htmlFor={id} inputRequired={required}>
         {{
-          main: 'Rechercher et ajouter des destinataires',
-          helpText: getHelpText(),
+          main: labelText(),
+          helpText: '',
         }}
       </Label>
       {error && (
