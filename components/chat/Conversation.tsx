@@ -258,29 +258,26 @@ export default function Conversation({
         {messagesByDay && conseiller && (
           <>
             {hasNoMoreMessages && (
-              <span
-                id='no-more-messages'
-                className='text-xs-regular text-center block'
-              >
+              <span className='text-xs-regular text-center block mb-3'>
                 Aucun message plus ancien
               </span>
             )}
-            <Button
-              onClick={chargerPlusDeMessages}
-              style={ButtonStyle.TERTIARY}
-              className='mx-auto mb-3'
-              isLoading={loadingMoreMessages}
-              disabled={hasNoMoreMessages}
-              describedBy='no-more-messages'
-            >
-              <IconComponent
-                name={IconName.ChevronUp}
-                aria-hidden={true}
-                focusable={false}
-                className='w-4 h-4 fill-[currentColor] mr-2'
-              />
-              Voir messages plus anciens
-            </Button>
+            {!hasNoMoreMessages && (
+              <Button
+                onClick={chargerPlusDeMessages}
+                style={ButtonStyle.TERTIARY}
+                className='mx-auto mb-3'
+                isLoading={loadingMoreMessages}
+              >
+                <IconComponent
+                  name={IconName.ChevronUp}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='w-4 h-4 fill-[currentColor] mr-2'
+                />
+                Voir messages plus anciens
+              </Button>
+            )}
             <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                 <li key={messagesOfADay.date.toMillis()} className='mb-5'>
