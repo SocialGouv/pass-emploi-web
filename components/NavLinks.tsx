@@ -146,7 +146,7 @@ export default function NavLinks({
           />
         )}
 
-        {items.includes(NavItem.Actualites) && (
+        {process.env.ENABLE_LEANBE && items.includes(NavItem.Actualites) && (
           <ActualitesMenuButton
             conseiller={conseiller}
             onClick={trackActualite}
