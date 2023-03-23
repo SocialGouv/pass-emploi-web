@@ -23,8 +23,10 @@ export default function NavLink({
   showLabelOnSmallScreen = false,
   onClick,
 }: NavLinkProps) {
-  const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start ${
-    isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
+  const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start transition-all box-border border-2  ${
+    isActive
+      ? 'bg-primary_lighten border-blanc'
+      : 'border-primary hover:border-2 hover:border-blanc'
   }`
 
   const linkContent: JSX.Element = (
