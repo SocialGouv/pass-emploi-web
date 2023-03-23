@@ -139,8 +139,8 @@ export function EditionRdvForm({
     value: evenement?.nombreMaxParticipants,
   })
   const nbMaxParticipantsDepasse =
-    nombreMaxParticipants.value &&
-    idsJeunes.value.length > nombreMaxParticipants.value
+    Boolean(nombreMaxParticipants.value) &&
+    idsJeunes.value.length > nombreMaxParticipants.value!
 
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
@@ -656,7 +656,10 @@ export function EditionRdvForm({
           ))}
         </Select>
         <Label htmlFor='date' inputRequired={true}>
-          Date format : jj/mm/aaaa
+          {{
+            main: 'Date',
+            helpText: 'format : jj/mm/aaaa',
+          }}
         </Label>
         {date.error && (
           <InputError id='date--error' className='mb-2'>
@@ -675,7 +678,10 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='horaire' inputRequired={true}>
-          Heure format : hh:mm
+          {{
+            main: 'Heure',
+            helpText: 'format : hh:mm',
+          }}
         </Label>
         {horaire.error && (
           <InputError id='horaire--error' className='mb-2'>
@@ -696,7 +702,10 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='duree' inputRequired={true}>
-          Durée format : hh:mm
+          {{
+            main: 'Durée',
+            helpText: 'format : hh:mm',
+          }}
         </Label>
         {duree.error && (
           <InputError id='duree--error' className='mb-2'>
@@ -714,7 +723,12 @@ export function EditionRdvForm({
           disabled={lectureSeule}
         />
 
-        <Label htmlFor='adresse'>Adresse exemple : 12 rue Duc, Brest</Label>
+        <Label htmlFor='adresse'>
+          {{
+            main: 'Adresse',
+            helpText: 'exemple : 12 rue Duc, Brest',
+          }}
+        </Label>
         <Input
           type='text'
           id='adresse'
@@ -725,7 +739,10 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='organisme'>
-          Organisme exemple : prestataire, entreprise, etc.
+          {{
+            main: 'Organisme',
+            helpText: 'exemple : prestataire, entreprise, etc.',
+          }}
         </Label>
         <Input
           type='text'

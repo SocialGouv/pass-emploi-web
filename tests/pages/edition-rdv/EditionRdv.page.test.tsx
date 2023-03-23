@@ -716,7 +716,7 @@ describe('EditionRdv', () => {
           expect(inputTypePrecision.value).toEqual('')
           expect(
             screen.getByText(
-              'Le champ “Type” est vide. Sélectionnez un type de rendez-vous.'
+              'Le champ “Préciser” est vide. Précisez le type de rendez-vous.'
             )
           ).toBeInTheDocument()
         })
