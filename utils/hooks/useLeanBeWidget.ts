@@ -2,16 +2,11 @@ import { useEffect } from 'react'
 
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 
-export namespace LeanBe {
-  export const MILO_WIDGET_ID = '29a33359-e654-4b66-b9e6-39e92956b74c'
-  export const PE_WIDGET_ID = '6311e7ab83faaf001224e4e8'
-}
-
 export function useLeanBeWidget(conseiller: Conseiller) {
   useEffect(() => {
     const widgetId = estPoleEmploi(conseiller)
-      ? LeanBe.PE_WIDGET_ID
-      : LeanBe.MILO_WIDGET_ID
+      ? process.env.LEANBE_PE_WIDGET_ID
+      : process.env.LEANBE_MILO_WIDGET_ID
     const script = document.createElement('script')
     script.append(
       'window.SGBFWidgetLoader = window.SGBFWidgetLoader || {ids:[],call:function(w,d,s,l,id) {\n' +

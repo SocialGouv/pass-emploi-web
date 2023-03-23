@@ -29,6 +29,10 @@ module.exports = withPWA({
     APP: process.env.APP,
     APM_URL: process.env.APM_URL,
     APM_IS_ACTIVE: process.env.APM_IS_ACTIVE,
+    // LEANBE
+    ENABLE_LEANBE: process.env.ENABLE_LEANBE === 'true',
+    LEANBE_MILO_WIDGET_ID: process.env.LEANBE_MILO_WIDGET_ID,
+    LEANBE_PE_WIDGET_ID: process.env.LEANBE_PE_WIDGET_ID,
     // OTHER
     ENVIRONMENT: process.env.ENVIRONMENT,
     MATOMO_SOCIALGOUV_URL: process.env.MATOMO_SOCIALGOUV_URL,
