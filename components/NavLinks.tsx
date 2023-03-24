@@ -66,7 +66,11 @@ export default function NavLinks({
             isActive={isCurrentRoute('/mes-jeunes')}
             href='/mes-jeunes'
             label='Portefeuille'
-            iconName={IconName.People}
+            iconName={
+              isCurrentRoute('/mes-jeunes')
+                ? IconName.People
+                : IconName.PeopleOutline
+            }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
@@ -76,7 +80,11 @@ export default function NavLinks({
             isActive={isCurrentRoute('/agenda')}
             href='/agenda'
             label='Agenda'
-            iconName={IconName.RendezVous}
+            iconName={
+              isCurrentRoute('/agenda')
+                ? IconName.Calendar
+                : IconName.CalendarOutline
+            }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
@@ -88,7 +96,11 @@ export default function NavLinks({
             }
             href='/recherche-offres'
             label='Offres'
-            iconName={IconName.Search}
+            iconName={
+              isCurrentRoute('/recherche-offres') || isCurrentRoute('/offres')
+                ? IconName.SearchNav
+                : IconName.SearchNavOutline
+            }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
@@ -96,7 +108,11 @@ export default function NavLinks({
         {!estPoleEmploi(conseiller) && items.includes(NavItem.Pilotage) && (
           <>
             <NavLink
-              iconName={IconName.Board}
+              iconName={
+                isCurrentRoute('/pilotage')
+                  ? IconName.Board
+                  : IconName.BoardOutline
+              }
               label='Pilotage'
               href='/pilotage'
               isActive={isCurrentRoute('/pilotage')}
@@ -108,7 +124,11 @@ export default function NavLinks({
         {!estPoleEmploi(conseiller) &&
           items.includes(NavItem.Etablissement) && (
             <NavLink
-              iconName={IconName.RoundedArrowRight}
+              iconName={
+                isCurrentRoute('/etablissement')
+                  ? IconName.RoundedArrowRight
+                  : IconName.RoundedArrowRightOutline
+              }
               label='Bénéficiaires'
               href='/etablissement'
               isActive={isCurrentRoute('/etablissement')}
@@ -174,7 +194,11 @@ export default function NavLinks({
             isActive={isCurrentRoute('/profil')}
             href='/profil'
             label={`${conseiller.firstName} ${conseiller.lastName}`}
-            iconName={IconName.Profil}
+            iconName={
+              isCurrentRoute('/profil')
+                ? IconName.Profil
+                : IconName.ProfilOutline
+            }
             className='break-all'
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
