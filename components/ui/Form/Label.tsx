@@ -32,8 +32,8 @@ export default function Label({
           </span>
         )}
       </span>
-      {helpText && <span className='text-s-regular'> {helpText}</span>}
-      {helpText && <span className='text-xs-regular'> {precision}</span>}
+      {helpText && <span className='text-s-regular ml-2'> {helpText}</span>}
+      {helpText && <span className='text-xs-regular ml-2'> {precision}</span>}
     </label>
   )
 }

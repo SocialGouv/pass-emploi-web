@@ -1,5 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
 
 import {
   typesAnimationCollective,
@@ -13,8 +15,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { EvenementsService } from 'services/evenements.service'
@@ -337,9 +337,7 @@ describe('EditionAnimationCollective', () => {
 
         // Then
         expect(
-          screen.getByText(
-            'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.'
-          )
+          screen.getByText('Le champ “Titre” est vide. Renseignez un titre.')
         ).toBeInTheDocument()
       })
 
@@ -348,9 +346,9 @@ describe('EditionAnimationCollective', () => {
         const selectType = screen.getByRole('combobox', {
           name: 'Type',
         })
-        const inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
-        const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
-        const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+        const inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
+        const inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
+        const inputDuree = screen.getByLabelText('* Durée format : hh:mm')
         const inputTitre = screen.getByLabelText('* Titre')
         await userEvent.selectOptions(selectType, 'Atelier')
         await userEvent.type(inputDate, '2022-03-03')
@@ -366,7 +364,7 @@ describe('EditionAnimationCollective', () => {
 
         // Then
         const selectJeunes = screen.getByRole('combobox', {
-          name: 'Rechercher et ajouter des destinataires Nom et prénom',
+          name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
         })
         expect(selectJeunes).toHaveAttribute('aria-required', 'false')
         expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
@@ -379,7 +377,9 @@ describe('EditionAnimationCollective', () => {
       it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
         // Given
         await userEvent.type(
-          screen.getByLabelText(/ajouter des destinataires/),
+          screen.getByLabelText(
+            /Recherchez et ajoutez un ou plusieurs bénéficiaires/
+          ),
           getNomJeuneComplet(jeunesAutreConseiller[0])
         )
 
@@ -543,7 +543,7 @@ describe('EditionAnimationCollective', () => {
       it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText(/Commentaire/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
         expect(screen.getByLabelText(/Heure/)).toBeDisabled()
@@ -552,7 +552,9 @@ describe('EditionAnimationCollective', () => {
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
         expect(
-          screen.getByLabelText(/ajouter des destinataires/)
+          screen.getByLabelText(
+            /Recherchez et ajoutez un ou plusieurs bénéficiaires/
+          )
         ).toBeDisabled()
         expect(
           screen.queryByText(/bénéficiaires est facultatif/)
