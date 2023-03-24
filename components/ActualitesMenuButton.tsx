@@ -18,7 +18,7 @@ function ActualitesMenuButton({
     : LeanBe.MILO_WIDGET_ID
   const classWidget = `SGBF-open-${widgetId} w-full`
   const classMenu =
-    'flex p-2 mb-6 items-center layout_base:justify-center rounded-l layout_s:justify-start layout_l:justify-start hover:cursor-pointer hover:bg-primary_darken'
+    'flex p-2 mb-6 items-center layout_base:justify-center rounded-l layout_s:justify-start layout_l:justify-start border-2 border-primary transition-all hover:cursor-pointer hover:border-blanc'
   return (
     <>
       <div
