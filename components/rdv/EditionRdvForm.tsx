@@ -278,8 +278,26 @@ export function EditionRdvForm({
     return Boolean(date.value && regexDate.test(date.value))
   }
 
+  function dateIsInInterval(
+    oneYearBefore: DateTime,
+    twoYearsAfter: DateTime
+  ): boolean {
+    const userDate = DateTime.fromFormat(date.value!, 'yyyy-MM-dd')
+    return Boolean(userDate > oneYearBefore && userDate < twoYearsAfter)
+  }
+
   function validateDate() {
-    if (!dateIsValid()) {
+    const oneYearBefore = DateTime.now().minus({ year: 1 })
+    const twoYearsAfter = DateTime.now().plus({ year: 2 })
+
+    if (date.value && !dateIsInInterval(oneYearBefore, twoYearsAfter)) {
+      setDate({
+        ...date,
+        error: `La date est invalide. Le date attendue est comprise entre le ${oneYearBefore.toFormat(
+          'dd/MM/yyyy'
+        )} et le ${twoYearsAfter.toFormat('dd/MM/yyyy')}.`,
+      })
+    } else if (!dateIsValid()) {
       setDate({
         ...date,
         error:
