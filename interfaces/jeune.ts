@@ -100,7 +100,7 @@ export interface Chat {
   lastMessageIv: string | undefined
 }
 
-export type JeuneChat = BaseJeune & { isActivated: boolean } & Chat
+export type JeuneChat = BaseJeune & Chat
 
 export interface DossierMilo {
   id: string

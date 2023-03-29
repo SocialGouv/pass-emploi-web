@@ -121,7 +121,7 @@ describe('<ChatContainer />', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Voir les messages envoyés à mes listes de diffusion',
+          name: 'Voir mes listes de diffusion',
         })
       )
 

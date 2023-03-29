@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
 
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { unConseiller } from 'fixtures/conseiller'
@@ -16,6 +17,7 @@ describe('<DetailsJeune>', () => {
   let jeunesService: JeunesService
 
   beforeEach(() => {
+    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
     jeunesService = mockedJeunesService({
       modifierIdentifiantPartenaire: jest.fn(() => Promise.resolve()),
     })

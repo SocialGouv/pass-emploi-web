@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
+import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import {
   mockedConseillerService,
   mockedJeunesService,

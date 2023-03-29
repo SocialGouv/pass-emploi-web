@@ -28,6 +28,7 @@ type HistoriqueProps = PageProps & {
     dateFin?: string
   }>
   conseillers: ConseillerHistorique[]
+  lectureSeule: boolean
 }
 
 export enum Onglet {
@@ -35,14 +36,24 @@ export enum Onglet {
   CONSEILLERS = 'CONSEILLERS',
 }
 
-function Historique({ idJeune, situations, conseillers }: HistoriqueProps) {
+function Historique({
+  idJeune,
+  situations,
+  conseillers,
+  lectureSeule,
+}: HistoriqueProps) {
   const [conseiller] = useConseiller()
   const [currentTab, setCurrentTab] = useState<Onglet | undefined>(
     estMilo(conseiller) ? Onglet.SITUATIONS : Onglet.CONSEILLERS
   )
 
-  const situationsTracking = 'Détail jeune – Situations'
-  const conseillersTracking = 'Détail jeune – Historique conseillers'
+  const situationsTracking = `Détail jeune – Situations${
+    lectureSeule ? ' - hors portefeuille' : ''
+  }`
+  const conseillersTracking = `Détail jeune – Historique conseillers${
+    lectureSeule ? ' - hors portefeuille' : ''
+  }`
+
   const [tracking, setTracking] = useState<string | undefined>()
 
   useEffect(() => {
@@ -124,7 +135,7 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
 
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const {
-    session: { accessToken },
+    session: { accessToken, user },
   } = sessionOrRedirect
 
   const [jeune, conseillers] = await Promise.all([
@@ -142,12 +153,17 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
     return { notFound: true }
   }
 
+  const lectureSeule = jeune.idConseiller !== user.id
+
   return {
     props: {
       idJeune: jeune.id,
       situations: jeune.situations,
-      conseillers: conseillers,
-      pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom} - Historique`,
+      conseillers,
+      lectureSeule,
+      pageTitle: `${lectureSeule ? 'Etablissement' : 'Portefeuille'} - ${
+        jeune.prenom
+      } ${jeune.nom} - Historique`,
       pageHeader: 'Historique',
     },
   }

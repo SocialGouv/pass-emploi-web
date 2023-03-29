@@ -9,12 +9,14 @@ import TabList from 'components/ui/Navigation/TabList'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
 import { FavorisService } from 'services/favoris.service'
+import { JeunesService } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
 import withDependance from 'utils/injectionDependances/withDependance'
 
 interface FavorisProps extends PageProps {
+  lectureSeule: boolean
   offres: Offre[]
   recherches: Recherche[]
 }
@@ -24,10 +26,14 @@ export enum Onglet {
   RECHERCHES = 'RECHERCHES',
 }
 
-function Favoris({ offres, recherches }: FavorisProps) {
+function Favoris({ offres, recherches, lectureSeule }: FavorisProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.OFFRES)
-  const favorisTracking = 'Détail jeune – Favoris'
-  const recherchesTracking = 'Détail jeune – Recherches'
+  const favorisTracking = `Détail jeune – Favoris${
+    lectureSeule ? ' - hors portefeuille' : ''
+  }`
+  const recherchesTracking = `Détail jeune – Recherches${
+    lectureSeule ? ' - hors portefeuille' : ''
+  }`
   const [tracking, setTracking] = useState<string>(favorisTracking)
 
   async function switchTab(tab: Onglet) {
@@ -90,12 +96,21 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
   const {
-    session: { accessToken },
+    session: { accessToken, user },
   } = sessionOrRedirect
 
+  const jeunesService = withDependance<JeunesService>('jeunesService')
   const favorisService = withDependance<FavorisService>('favorisService')
 
   const jeuneId = context.query.jeune_id as string
+
+  const beneficiaire = await jeunesService.getJeuneDetails(jeuneId, accessToken)
+
+  if (!beneficiaire) {
+    return { notFound: true }
+  }
+
+  const lectureSeule = beneficiaire.idConseiller !== user.id
 
   try {
     const offres = await favorisService.getOffres(jeuneId, accessToken)
@@ -104,7 +119,12 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
       accessToken
     )
     return {
-      props: { offres, recherches, pageTitle: 'Favoris' },
+      props: {
+        lectureSeule,
+        offres,
+        recherches,
+        pageTitle: 'Favoris',
+      },
     }
   } catch (error) {
     if (error instanceof ApiError && error.status === 403) {

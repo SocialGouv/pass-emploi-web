@@ -2,19 +2,22 @@ import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
-import { LeanBe } from 'utils/hooks/useLeanBeWidget'
 
 interface ActualitesMenuButtonProps {
   conseiller: Conseiller
+  onClick: () => void
 }
 
-function ActualitesMenuButton({ conseiller }: ActualitesMenuButtonProps) {
+function ActualitesMenuButton({
+  conseiller,
+  onClick,
+}: ActualitesMenuButtonProps) {
   const widgetId = estPoleEmploi(conseiller)
-    ? LeanBe.PE_WIDGET_ID
-    : LeanBe.MILO_WIDGET_ID
+    ? process.env.LEANBE_PE_WIDGET_ID
+    : process.env.LEANBE_MILO_WIDGET_ID
   const classWidget = `SGBF-open-${widgetId} w-full`
   const classMenu =
-    'flex p-2 mb-6 items-center layout_base:justify-center rounded-l layout_s:justify-start layout_l:justify-start hover:bg-primary_darken'
+    'flex p-2 mb-6 items-center layout_base:justify-center rounded-l layout_s:justify-start layout_l:justify-start border-2 border-primary transition-all hover:cursor-pointer hover:border-blanc'
   return (
     <>
       <div
@@ -24,11 +27,12 @@ function ActualitesMenuButton({ conseiller }: ActualitesMenuButtonProps) {
           padding: '0.5rem',
           marginBottom: '1.5rem',
         }}
+        onClick={onClick}
       >
         <IconComponent
           focusable='false'
           aria-hidden='true'
-          className='mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 fill-blanc'
+          className='inline mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 fill-blanc'
           name={IconName.InfoOutline}
         />
         <span className='text-md text-left sr-only layout_l:not-sr-only break-words text-blanc'>

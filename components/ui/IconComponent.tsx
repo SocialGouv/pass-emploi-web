@@ -8,7 +8,9 @@ import ArrowDownIcon from 'assets/icons/arrow_down.svg'
 import ArrowLeftIcon from 'assets/icons/arrow_left.svg'
 import ArrowRightIcon from 'assets/icons/arrow_right.svg'
 import FileIcon from 'assets/icons/attach_file.svg'
+import BoardIconOutline from 'assets/icons/board-outline.svg'
 import BoardIcon from 'assets/icons/board.svg'
+import CalendarOutlineIcon from 'assets/icons/calendar-outline.svg'
 import CalendarIcon from 'assets/icons/calendar.svg'
 import CancelIcon from 'assets/icons/cancel.svg'
 import CheckIcon from 'assets/icons/check.svg'
@@ -48,15 +50,20 @@ import NoteIcon from 'assets/icons/note.svg'
 import PartageIcon from 'assets/icons/partage.svg'
 import PenIcon from 'assets/icons/pen.svg'
 import PendingIcon from 'assets/icons/pending.svg'
+import PeopleOutlineIcon from 'assets/icons/people-outline.svg'
 import PeopleIcon from 'assets/icons/people.svg'
+import ProfilOutlineIcon from 'assets/icons/profil-outline.svg'
 import ProfilIcon from 'assets/icons/profil.svg'
 import RemoveIcon from 'assets/icons/remove.svg'
 import RendezVousIcon from 'assets/icons/rendez-vous.svg'
+import RoundedArrowRightOutlineIcon from 'assets/icons/rounded_arrow_right-outline.svg'
 import RoundedArrowRightIcon from 'assets/icons/rounded_arrow_right.svg'
 import RoundedCheckIcon from 'assets/icons/rounded_check.svg'
 import RoundedCheckFilledIcon from 'assets/icons/rounded_check_filled.svg'
 import RoundedCloseIcon from 'assets/icons/rounded_close.svg'
 import RoundedCloseFilledIcon from 'assets/icons/rounded_close_filled.svg'
+import SearchNavIconOutline from 'assets/icons/search-nav-outline.svg'
+import SearchNavIcon from 'assets/icons/search-nav.svg'
 import SearchIcon from 'assets/icons/search.svg'
 import SendIcon from 'assets/icons/send.svg'
 import SpinnerIcon from 'assets/icons/spinner.svg'
@@ -73,9 +80,12 @@ export enum IconName {
   ArrowLeft = 'ArrowLeft',
   ArrowRight = 'ArrowRight',
   RoundedArrowRight = 'RoundedArrowRight',
+  RoundedArrowRightOutline = 'RoundedArrowRightOutline',
   Calendar = 'Calendar',
+  CalendarOutline = 'CalendarOutline',
   Cancel = 'Cancel',
   Board = 'Board',
+  BoardOutline = 'BoardOutline',
   Check = 'Check',
   ChevronDown = 'ChevronDown',
   ChevronFirst = 'ChevronFirst',
@@ -115,7 +125,9 @@ export enum IconName {
   Partage = 'Partage',
   Pending = 'Pending',
   People = 'People',
+  PeopleOutline = 'PeopleOutline',
   Profil = 'Profil',
+  ProfilOutline = 'ProfilOutline',
   Pen = 'Pen',
   Remove = 'Remove',
   RendezVous = 'RendezVous',
@@ -123,7 +135,9 @@ export enum IconName {
   RoundedCloseFilled = 'RoundedCloseFilled',
   RoundedCheck = 'RoundedCheck',
   RoundedCheckFilled = 'RoundedCheckFilled',
-  Search = 'Search',
+  Search = 'SearchIcon',
+  SearchNav = 'SearchNavIcon',
+  SearchNavOutline = 'SearchNavIconOutline',
   Send = 'Send',
   Spinner = 'Spinner',
   Suitcase = 'Suitcase',
@@ -138,10 +152,13 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ArrowDown]: ArrowDownIcon,
   [IconName.ArrowLeft]: ArrowLeftIcon,
   [IconName.ArrowRight]: ArrowRightIcon,
+  [IconName.RoundedArrowRightOutline]: RoundedArrowRightOutlineIcon,
   [IconName.RoundedArrowRight]: RoundedArrowRightIcon,
   [IconName.Calendar]: CalendarIcon,
+  [IconName.CalendarOutline]: CalendarOutlineIcon,
   [IconName.Cancel]: CancelIcon,
   [IconName.Check]: CheckIcon,
+  [IconName.BoardOutline]: BoardIconOutline,
   [IconName.Board]: BoardIcon,
   [IconName.ChevronDown]: ChevronDownIcon,
   [IconName.ChevronFirst]: ChevronFirstIcon,
@@ -182,7 +199,9 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Pending]: PendingIcon,
   [IconName.Partage]: PartageIcon,
   [IconName.People]: PeopleIcon,
+  [IconName.PeopleOutline]: PeopleOutlineIcon,
   [IconName.Profil]: ProfilIcon,
+  [IconName.ProfilOutline]: ProfilOutlineIcon,
   [IconName.Remove]: RemoveIcon,
   [IconName.RendezVous]: RendezVousIcon,
   [IconName.RoundedClose]: RoundedCloseIcon,
@@ -191,6 +210,8 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.RoundedCheck]: RoundedCheckIcon,
   [IconName.RoundedCheckFilled]: RoundedCheckFilledIcon,
   [IconName.Search]: SearchIcon,
+  [IconName.SearchNavOutline]: SearchNavIconOutline,
+  [IconName.SearchNav]: SearchNavIcon,
   [IconName.Send]: SendIcon,
   [IconName.Spinner]: SpinnerIcon,
   [IconName.Suitcase]: SuitcaseIcon,

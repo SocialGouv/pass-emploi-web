@@ -23,16 +23,14 @@ export default function NavLink({
   showLabelOnSmallScreen = false,
   onClick,
 }: NavLinkProps) {
-  const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start ${
-    isActive ? 'bg-primary_lighten' : 'hover:bg-primary_darken'
+  const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start transition-all border-2  ${
+    isActive
+      ? 'bg-primary_lighten border-blanc'
+      : 'border-primary hover:border-blanc'
   }`
 
   const linkContent: JSX.Element = (
     <>
-      {isActive && (
-        <span className='text-[24px] font-bold leading-6 text-primary'>·</span>
-      )}
-
       {showLabelOnSmallScreen && (
         <>
           <IconComponent

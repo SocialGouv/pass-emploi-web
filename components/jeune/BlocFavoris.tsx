@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -14,6 +15,11 @@ export function BlocFavoris({
   idJeune,
   metadonneesFavoris: { offres, recherches, autoriseLePartage },
 }: BlocFavorisProps) {
+  const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   return (
     <div className='border border-solid rounded-base w-full p-4 mt-3 border-grey_100'>
       <dl>
@@ -21,7 +27,9 @@ export function BlocFavoris({
 
         <RecherchesSauvegardees total={recherches.total} />
 
-        {autoriseLePartage && <LienVersFavoris idJeune={idJeune} />}
+        {autoriseLePartage && (
+          <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />
+        )}
       </dl>
     </div>
   )
@@ -65,11 +73,17 @@ function RecherchesSauvegardees({ total }: { total: number }) {
   )
 }
 
-function LienVersFavoris({ idJeune }: { idJeune: string }) {
+function LienVersFavoris({
+  idJeune,
+  pathPrefix,
+}: {
+  idJeune: string
+  pathPrefix: string
+}) {
   return (
     <div className='flex justify-end mt-4'>
       <Link
-        href={`/mes-jeunes/${idJeune}/favoris`}
+        href={`${pathPrefix}/${idJeune}/favoris`}
         className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
       >
         Voir la liste des favoris

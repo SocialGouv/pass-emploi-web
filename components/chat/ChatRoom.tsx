@@ -111,9 +111,7 @@ export default function ChatRoom({
           aria-hidden={true}
           focusable={false}
         />
-        <span className='grow text-left'>
-          Voir les messages envoyés à mes listes de diffusion
-        </span>
+        <span className='grow text-left'>Voir mes listes de diffusion</span>
         <IconComponent
           name={IconName.ChevronRight}
           className='mr-2 h-6 w-6 fill-[currentColor]'

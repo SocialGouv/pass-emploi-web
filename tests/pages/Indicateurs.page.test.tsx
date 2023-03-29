@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { desIndicateursSemaine } from 'fixtures/jeune'
+import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
 import { mockedJeunesService } from 'fixtures/services'
 import Indicateurs, {
   getServerSideProps,
@@ -33,7 +33,7 @@ describe('Indicateurs', () => {
       // Given
       await act(async () => {
         await renderWithContexts(
-          <Indicateurs idJeune='id-jeune' pageTitle='' />,
+          <Indicateurs idJeune='id-jeune' lectureSeule={false} pageTitle='' />,
           {
             customDependances: { jeunesService },
           }
@@ -113,10 +113,14 @@ describe('Indicateurs', () => {
     describe('quand le conseiller est connecté', () => {
       it('récupère le titre de la page, et les id du jeune et du conseiller', async () => {
         // Given
+        const jeunesService = mockedJeunesService({
+          getJeuneDetails: jest.fn(async () => unDetailJeune()),
+        })
+        ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
-            user: { structure: 'MILO' },
+            user: { structure: 'MILO', id: 'id-conseiller' },
           },
         })
 
@@ -129,6 +133,7 @@ describe('Indicateurs', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
+            lectureSeule: false,
             pageTitle: 'Portefeuille - Bénéficiaire - Indicateurs',
             pageHeader: 'Indicateurs',
           },

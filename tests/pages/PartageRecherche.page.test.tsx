@@ -4,23 +4,16 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { desItemsJeunes } from 'fixtures/jeune'
-import {
-  mockedJeunesService,
-  mockedSuggestionsService,
-} from 'fixtures/services'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { mockedSuggestionsService } from 'fixtures/services'
 import { TypeOffre } from 'interfaces/offre'
 import PartageCritere, {
   getServerSideProps,
 } from 'pages/offres/partage-recherche'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
 import { SuggestionsService } from 'services/suggestions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
@@ -53,11 +46,8 @@ describe('Partage Recherche', () => {
     })
 
     describe('quand l’utilisateur est connecté', () => {
-      let jeunes: JeuneFromListe[]
-      let jeunesService: JeunesService
       beforeEach(() => {
         // Given
-        jeunes = desItemsJeunes()
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
@@ -65,12 +55,6 @@ describe('Partage Recherche', () => {
             accessToken: 'accessToken',
           },
         })
-        jeunesService = mockedJeunesService({
-          getJeunesDuConseillerServerSide: jest.fn(async () =>
-            desItemsJeunes()
-          ),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
       })
 
       it('renvoie une 404 si le type de suggestion n’est pas renseigné', async () => {
@@ -81,20 +65,6 @@ describe('Partage Recherche', () => {
 
         // Then
         expect(actual).toEqual({ notFound: true })
-      })
-
-      it('charge les jeunes du conseiller', async () => {
-        // When
-        const actual = await getServerSideProps({
-          req: { headers: { referer: 'referer-url' } },
-          query: { type: TypeOffre.EMPLOI },
-        } as unknown as GetServerSidePropsContext)
-
-        // Then
-        expect(
-          jeunesService.getJeunesDuConseillerServerSide
-        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
-        expect(actual).toMatchObject({ props: { jeunes } })
       })
 
       it('charge la page avec les détails de suggestion d’offre d’emploi', async () => {
@@ -114,7 +84,6 @@ describe('Partage Recherche', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            jeunes: expect.arrayContaining([]),
             type: TypeOffre.EMPLOI,
             criteresRecherche: {
               titre: TITRE,
@@ -147,7 +116,6 @@ describe('Partage Recherche', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            jeunes: expect.arrayContaining([]),
             type: TypeOffre.ALTERNANCE,
             criteresRecherche: {
               titre: TITRE,
@@ -181,7 +149,6 @@ describe('Partage Recherche', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            jeunes: expect.arrayContaining([]),
             type: TypeOffre.IMMERSION,
             criteresRecherche: {
               titre: TITRE,
@@ -214,7 +181,6 @@ describe('Partage Recherche', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            jeunes: expect.arrayContaining([]),
             type: TypeOffre.SERVICE_CIVIQUE,
             criteresRecherche: {
               titre: TITRE,
@@ -249,7 +215,6 @@ describe('Partage Recherche', () => {
         renderWithContexts(
           <PartageCritere
             pageTitle='Partager une recherche'
-            jeunes={desItemsJeunes()}
             type={TypeOffre.EMPLOI}
             criteresRecherche={{
               titre: TITRE,
@@ -269,7 +234,7 @@ describe('Partage Recherche', () => {
 
         //Given
         inputSearchJeune = screen.getByRole('combobox', {
-          name: 'Rechercher et ajouter des destinataires Nom et prénom',
+          name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
         })
 
         submitButton = screen.getByRole('button', {
@@ -329,7 +294,6 @@ describe('Partage Recherche', () => {
           renderWithContexts(
             <PartageCritere
               pageTitle='Partager une recherche'
-              jeunes={desItemsJeunes()}
               type={TypeOffre.EMPLOI}
               criteresRecherche={{
                 titre: TITRE,
@@ -346,7 +310,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
 
           submitButton = screen.getByRole('button', {
@@ -393,7 +357,6 @@ describe('Partage Recherche', () => {
           renderWithContexts(
             <PartageCritere
               pageTitle='Partager une recherche'
-              jeunes={desItemsJeunes()}
               type={TypeOffre.ALTERNANCE}
               criteresRecherche={{
                 titre: TITRE,
@@ -410,7 +373,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
 
           submitButton = screen.getByRole('button', {
@@ -455,7 +418,6 @@ describe('Partage Recherche', () => {
           renderWithContexts(
             <PartageCritere
               pageTitle='Partager une recherche'
-              jeunes={desItemsJeunes()}
               type={TypeOffre.IMMERSION}
               criteresRecherche={{
                 titre: TITRE,
@@ -473,7 +435,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
 
           submitButton = screen.getByRole('button', {
@@ -520,7 +482,6 @@ describe('Partage Recherche', () => {
           renderWithContexts(
             <PartageCritere
               pageTitle='Partager une recherche'
-              jeunes={desItemsJeunes()}
               type={TypeOffre.SERVICE_CIVIQUE}
               criteresRecherche={{
                 titre: TITRE,
@@ -536,7 +497,7 @@ describe('Partage Recherche', () => {
 
           //Given
           inputSearchJeune = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
 
           submitButton = screen.getByRole('button', {

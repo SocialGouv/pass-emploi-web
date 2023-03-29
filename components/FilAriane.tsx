@@ -2,9 +2,9 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import routesToLabel from 'utils/route-labels'
+import mapRoutesToLabels from 'utils/route-labels'
 
-interface FilArianeProps {
+type FilArianeProps = {
   currentPath: string
 }
 
@@ -19,14 +19,14 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
     const splittedPath = pathWithoutQuery.split('/').slice(1)
     let rebuiltPath = ''
 
-    const regExps: RegExp[] = Array.from(routesToLabel.keys())
+    const regExps: RegExp[] = Array.from(mapRoutesToLabels.keys())
     splittedPath.forEach((fragmentPath) => {
       rebuiltPath += `/${fragmentPath}`
 
       const route = regExps.find((regex) => regex.test(rebuiltPath))
       if (route) {
         liensFilAriane.push({
-          label: routesToLabel.get(route) ?? fragmentPath,
+          label: mapRoutesToLabels.get(route) ?? fragmentPath,
           href: rebuiltPath,
         })
       }
