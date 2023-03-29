@@ -37,7 +37,7 @@ export default function OffreCard({
 
         <Link
           href={hrefDetail}
-          className='absolute right-6 bottom-6 flex items-center text-s-regular hover:text-primary'
+          className='absolute right-6 bottom-6 flex items-center text-s-regular underline hover:text-primary'
           onClick={(e) => e.stopPropagation()}
           aria-label={`Détail de l’offre ${titreLien}`}
         >

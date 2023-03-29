@@ -167,6 +167,15 @@ export function listeBaseOffresEmploi(): BaseOffreEmploi[] {
       typeContrat: 'CDI',
       duree: 'Temps plein',
     },
+    {
+      type: TypeOffre.EMPLOI,
+      id: '7495640',
+      titre: 'Mécanicien automobile (H/F)',
+      nomEntreprise: 'Entreprise',
+      localisation: 'Adresse',
+      typeContrat: 'Interim',
+      duree: 'Temps plein',
+    },
   ]
 }
 
@@ -194,6 +203,14 @@ export function listeOffresEmploiJson(): OffreEmploiItemJson[] {
       nomEntreprise: 'Entreprise',
       localisation: { nom: 'Adresse' },
       typeContrat: 'CDI',
+      duree: 'Temps plein',
+    },
+    {
+      id: '7495640',
+      titre: 'Mécanicien automobile (H/F)',
+      nomEntreprise: 'Entreprise',
+      localisation: { nom: 'Adresse' },
+      typeContrat: 'MIS',
       duree: 'Temps plein',
     },
   ]

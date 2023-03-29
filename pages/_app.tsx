@@ -19,6 +19,7 @@ import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { Container, DIProvider } from 'utils/injectionDependances'
 import { initRum } from 'utils/monitoring/init-rum'
+import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
 const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
 const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
@@ -80,15 +81,17 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
               </div>
             </>
           ) : (
-            <ChatCredentialsProvider>
-              <CurrentJeuneProvider>
-                <AlerteProvider>
-                  <Layout>
-                    <Component {...pageProps} />
-                  </Layout>
-                </AlerteProvider>
-              </CurrentJeuneProvider>
-            </ChatCredentialsProvider>
+            <PortefeuilleProvider>
+              <ChatCredentialsProvider>
+                <CurrentJeuneProvider>
+                  <AlerteProvider>
+                    <Layout>
+                      <Component {...pageProps} />
+                    </Layout>
+                  </AlerteProvider>
+                </CurrentJeuneProvider>
+              </ChatCredentialsProvider>
+            </PortefeuilleProvider>
           )}
         </ConseillerProvider>
       </DIProvider>

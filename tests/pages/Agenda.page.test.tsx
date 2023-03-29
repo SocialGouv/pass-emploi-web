@@ -39,7 +39,10 @@ describe('Agenda', () => {
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1_14H)
 
       replace = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ replace: replace })
+      ;(useRouter as jest.Mock).mockReturnValue({
+        replace: replace,
+        asPath: '/mes-jeunes',
+      })
 
       evenementsService = mockedEvenementsService({
         getRendezVousConseiller: jest.fn(async (_, dateDebut) => [

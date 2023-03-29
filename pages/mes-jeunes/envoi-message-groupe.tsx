@@ -19,16 +19,11 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { InfoFichier } from 'interfaces/fichier'
-import {
-  BaseJeune,
-  compareJeunesByNom,
-  getNomJeuneComplet,
-} from 'interfaces/jeune'
+import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FichiersService } from 'services/fichiers.service'
-import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import {
   FormNouveauMessageGroupe,
@@ -42,15 +37,14 @@ import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface EnvoiMessageGroupeProps extends PageProps {
-  jeunes: BaseJeune[]
   listesDiffusion: ListeDeDiffusion[]
   returnTo: string
 }
 
 function EnvoiMessageGroupe({
-  jeunes,
   listesDiffusion,
   returnTo,
 }: EnvoiMessageGroupeProps) {
@@ -60,6 +54,7 @@ function EnvoiMessageGroupe({
   const fichiersService = useDependance<FichiersService>('fichiersService')
   const [_, setAlerte] = useAlerte()
 
+  const [portefeuille] = usePortefeuille()
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [selectedListesIds, setSelectedListesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
@@ -79,7 +74,7 @@ function EnvoiMessageGroupe({
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
-    return jeunes.map((jeune) => ({
+    return portefeuille.map((jeune) => ({
       id: jeune.id,
       value: getNomJeuneComplet(jeune),
     }))
@@ -353,18 +348,12 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const jeunesService = withDependance<JeunesService>('jeunesService')
   const listesDeDiffusionService = withDependance<ListesDeDiffusionService>(
     'listesDeDiffusionService'
   )
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-
-  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
-    user.id,
-    accessToken
-  )
 
   const listesDeDiffusion =
     await listesDeDiffusionService.getListesDeDiffusionServerSide(
@@ -378,7 +367,6 @@ export const getServerSideProps: GetServerSideProps<
     referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   return {
     props: {
-      jeunes: [...jeunes].sort(compareJeunesByNom),
       listesDiffusion: listesDeDiffusion,
       withoutChat: true,
       pageTitle: 'Message multi-destinataires',

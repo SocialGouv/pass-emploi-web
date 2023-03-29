@@ -9,27 +9,27 @@ import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Agenda, EntreeAgenda } from 'interfaces/agenda'
-import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
+import { estPoleEmploi } from 'interfaces/conseiller'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 
 interface OngletAgendaBeneficiaireProps {
   idBeneficiaire: string
-  conseiller: Conseiller
   recupererAgenda: () => Promise<Agenda>
   goToActions: () => void
 }
 
 export function OngletAgendaBeneficiaire({
   idBeneficiaire,
-  conseiller,
   recupererAgenda,
   goToActions,
 }: OngletAgendaBeneficiaireProps) {
+  const [conseiller] = useConseiller()
+
   const [semaines, setSemaines] = useState<{
     courante: SemaineAgenda
     suivante: SemaineAgenda
   }>()
-
   const [nombreActionsEnRetard, setNombreActionsEnRetard] = useState<number>()
 
   useEffect(() => {

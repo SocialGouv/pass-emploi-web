@@ -72,7 +72,7 @@ export interface JeunesService {
     firstName: string
     lastName: string
     email: string
-  }): Promise<{ id: string }>
+  }): Promise<BaseJeune>
 
   reaffecter(
     idConseillerInitial: string,
@@ -194,16 +194,14 @@ export class JeunesApiService implements JeunesService {
     firstName: string
     lastName: string
     email: string
-  }): Promise<{ id: string }> {
+  }): Promise<BaseJeune> {
     const session = await getSession()
-    const {
-      content: { id },
-    } = await this.apiClient.post<{ id: string }>(
+    const { content } = await this.apiClient.post<BaseJeuneJson>(
       `/conseillers/pole-emploi/jeunes`,
       { ...newJeune, idConseiller: session!.user.id },
       session!.accessToken
     )
-    return { id }
+    return jsonToBaseJeune(content)
   }
 
   async getJeunesDuConseillerParEmail(

@@ -33,9 +33,7 @@ jest.mock('components/PageActionsPortal')
 
 describe('EditionRdv', () => {
   describe('server side', () => {
-    let jeunesService: JeunesService
     let evenementsService: EvenementsService
-    let jeunes: JeuneFromListe[]
     let typesRendezVous: TypeEvenementReferentiel[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
@@ -66,22 +64,15 @@ describe('EditionRdv', () => {
           },
         })
 
-        jeunes = desItemsJeunes()
         typesRendezVous = typesEvenement()
 
-        jeunesService = mockedJeunesService({
-          getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
-        })
         evenementsService = mockedEvenementsService({
           getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
         })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'evenementsService') return evenementsService
-        })
+        ;(withDependance as jest.Mock).mockReturnValue(evenementsService)
       })
 
-      it('récupère la liste des jeunes du conseiller', async () => {
+      it('prépare la page', async () => {
         // When
         const actual = await getServerSideProps({
           req: { headers: {} },
@@ -89,12 +80,8 @@ describe('EditionRdv', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(
-          jeunesService.getJeunesDuConseillerServerSide
-        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
         expect(actual).toEqual({
           props: {
-            jeunes: [jeunes[2], jeunes[0], jeunes[1]],
             withoutChat: true,
             pageTitle: 'Mes événements - Créer un rendez-vous',
             pageHeader: 'Créer un rendez-vous',
@@ -232,34 +219,6 @@ describe('EditionRdv', () => {
         // Then
         expect(actual).toMatchObject({ notFound: true })
       })
-
-      describe("quand l'utilisateur est observateur", () => {
-        it('prépare la page en lecture seule', async () => {
-          // Given
-          ;(
-            evenementsService.getDetailsEvenement as jest.Mock
-          ).mockResolvedValue(
-            unEvenement({
-              jeunes: [
-                { id: 'id-autre-jeune', prenom: 'Sheldon', nom: 'Cooper' },
-              ],
-            })
-          )
-
-          // When
-          const actual = await getServerSideProps({
-            req: { headers: {} },
-            query: { idRdv: 'id-rdv' },
-          } as unknown as GetServerSidePropsContext)
-
-          // Then
-          expect(actual).toMatchObject({
-            props: {
-              conseillerEstObservateur: true,
-            },
-          })
-        })
-      })
     })
 
     describe('quand l’utilisateur est Pôle Emploi', () => {
@@ -337,7 +296,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='/agenda?onglet=conseiller'
@@ -366,7 +324,7 @@ describe('EditionRdv', () => {
 
         beforeEach(() => {
           etape = screen.getByRole('group', {
-            name: 'Étape 1 Type de rendez-vous',
+            name: 'Étape 1 Sélectionnez un rendez-vous',
           })
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
@@ -413,7 +371,9 @@ describe('EditionRdv', () => {
             name: 'Type',
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
-          etape = screen.getByRole('group', { name: 'Étape 2 Description' })
+          etape = screen.getByRole('group', {
+            name: 'Étape 2 Décrivez le rendez-vous',
+          })
         })
 
         it('contient un champ pour renseigner un titre', () => {
@@ -426,7 +386,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour saisir une description', () => {
           // Then
           const inputDescription = within(etape).getByRole('textbox', {
-            name: /Description/,
+            name: /Commentaire/,
           })
           expect(inputDescription).toBeInTheDocument()
           expect(inputDescription).not.toHaveAttribute('required')
@@ -442,14 +402,14 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: 'Étape 3 Ajout de bénéficiaires',
+            name: 'Étape 3 Ajoutez des bénéficiaires',
           })
         })
 
         it('contient une liste pour choisir un jeune', () => {
           // Then
           const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
           const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -489,7 +449,9 @@ describe('EditionRdv', () => {
             name: 'Type',
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
-          etape = screen.getByRole('group', { name: 'Étape 4 Lieu et date' })
+          etape = screen.getByRole('group', {
+            name: 'Étape 4 Ajoutez les modalités pratiques',
+          })
         })
         it('contient une liste pour choisir une modalité', () => {
           // Then
@@ -507,7 +469,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la date', () => {
           // Then
           const inputDate = within(etape).getByLabelText(
-            '* Date (format : jj/mm/aaaa)'
+            '* Date format : jj/mm/aaaa'
           )
           expect(inputDate).toBeInTheDocument()
           expect(inputDate).toHaveAttribute('required', '')
@@ -517,7 +479,7 @@ describe('EditionRdv', () => {
         it("contient un champ pour choisir l'horaire", () => {
           // Then
           const inputHoraire = within(etape).getByLabelText(
-            '* Heure (format : hh:mm)'
+            '* Heure format : hh:mm'
           )
           expect(inputHoraire).toBeInTheDocument()
           expect(inputHoraire).toHaveAttribute('required', '')
@@ -527,7 +489,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour choisir la durée', () => {
           // Then
           const inputDuree = within(etape).getByLabelText(
-            '* Durée (format : hh:mm)'
+            '* Durée format : hh:mm'
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')
@@ -537,7 +499,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer l’adresse si besoin', () => {
           // Then
           const inputAdresse = within(etape).getByLabelText(
-            'Adresse Ex : 12 rue duc, Brest'
+            'Adresse exemple : 12 rue Duc, Brest'
           )
           expect(inputAdresse).toBeInTheDocument()
           expect(inputAdresse).toHaveAttribute('type', 'text')
@@ -546,7 +508,7 @@ describe('EditionRdv', () => {
         it('contient un champ pour indiquer un organisme si besoin', () => {
           // Then
           const inputOrganisme = within(etape).getByLabelText(
-            'Organisme Ex : prestataire, entreprise, etc.'
+            'Organisme exemple : prestataire, entreprise, etc.'
           )
           expect(inputOrganisme).toBeInTheDocument()
           expect(inputOrganisme).toHaveAttribute('type', 'text')
@@ -563,7 +525,7 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: 'Étape 5 Gestion des accès',
+            name: 'Étape 5 Définissez la gestion des accès',
           })
         })
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {
@@ -632,17 +594,17 @@ describe('EditionRdv', () => {
           await userEvent.selectOptions(selectType, typesRendezVous[0].code)
 
           selectJeunes = screen.getByRole('combobox', {
-            name: 'Rechercher et ajouter des destinataires Nom et prénom',
+            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
           })
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
           })
-          inputDate = screen.getByLabelText('* Date (format : jj/mm/aaaa)')
-          inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
-          inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+          inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
+          inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
+          inputDuree = screen.getByLabelText('* Durée format : hh:mm')
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
-            name: /Description/,
+            name: /Commentaire/,
           })
 
           buttonValider = screen.getByRole('button', {
@@ -744,7 +706,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+              "Aucun bénéficiaire n'est renseigné. Sélectionnez au moins un bénéficiaire."
             )
           ).toBeInTheDocument()
         })
@@ -772,7 +734,7 @@ describe('EditionRdv', () => {
           expect(inputTypePrecision.value).toEqual('')
           expect(
             screen.getByText(
-              "Le champ Préciser n'est pas renseigné. Veuillez préciser le type d’événement."
+              'Le champ “Préciser” est vide. Précisez le type de rendez-vous.'
             )
           ).toBeInTheDocument()
         })
@@ -786,21 +748,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa"
-            )
-          ).toBeInTheDocument()
-        })
-
-        it('est désactivé quand la date est incorrecte', async () => {
-          // When
-          await userEvent.type(inputDate, 'yyyy-06-06')
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa"
+              'Le champ “Date” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.'
             )
           ).toBeInTheDocument()
         })
@@ -814,7 +762,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ heure n'est pas renseigné. Veuillez renseigner une heure."
+              'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.'
             )
           ).toBeInTheDocument()
         })
@@ -828,7 +776,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              "Le champ durée n'est pas renseigné. Veuillez renseigner une durée."
+              'Le champ “Durée” est invalide. Le format attendu est hh:mm, par exemple : 00:30 pour 30 minutes.'
             )
           ).toBeInTheDocument()
         })
@@ -848,7 +796,7 @@ describe('EditionRdv', () => {
           expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
-              'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
+              'Vous avez dépassé le nombre maximal de caractères. Retirez des caractères.'
             )
           ).toBeInTheDocument()
         })
@@ -899,7 +847,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='https://localhost:3000/agenda'
@@ -929,7 +876,7 @@ describe('EditionRdv', () => {
       it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText(/Commentaire/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
         expect(screen.getByLabelText(/Heure/)).toBeDisabled()
@@ -938,7 +885,9 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
         expect(
-          screen.getByLabelText(/ajouter des destinataires/)
+          screen.getByLabelText(
+            /Recherchez et ajoutez un ou plusieurs bénéficiaires/
+          )
         ).toBeDisabled()
         expect(
           screen.queryByRole('button', { name: /Enlever jeune/ })
@@ -964,7 +913,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='/agenda'
@@ -1014,7 +962,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='/agenda'
@@ -1128,7 +1075,7 @@ describe('EditionRdv', () => {
           'Prise de nouvelles par téléphone'
         )
         expect(
-          screen.getByLabelText<HTMLInputElement>(/Description/).value
+          screen.getByLabelText<HTMLInputElement>(/Commentaire/).value
         ).toEqual('Rendez-vous avec Kenji')
       })
 
@@ -1153,7 +1100,7 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           // Given
           const searchJeune = screen.getByRole('combobox', {
-            name: /ajouter des destinataires/,
+            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
           })
           const beneficiaires = screen.getByRole('region', {
             name: /Bénéficiaires/,
@@ -1168,16 +1115,14 @@ describe('EditionRdv', () => {
           const selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
           })
-          const inputDate = screen.getByLabelText(
-            '* Date (format : jj/mm/aaaa)'
-          )
-          const inputHoraire = screen.getByLabelText('* Heure (format : hh:mm)')
-          const inputDuree = screen.getByLabelText('* Durée (format : hh:mm)')
+          const inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
+          const inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
+          const inputDuree = screen.getByLabelText('* Durée format : hh:mm')
           const inputTitre = screen.getByRole('textbox', {
             name: 'Titre',
           })
           const inputDescription = screen.getByRole('textbox', {
-            name: /Description/,
+            name: /Commentaire/,
           })
 
           buttonValider = screen.getByRole('button', {
@@ -1337,7 +1282,6 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='/agenda'
@@ -1419,7 +1363,7 @@ describe('EditionRdv', () => {
       describe('quand on modifie le rendez-vous', () => {
         beforeEach(async () => {
           const inputDescription =
-            screen.getByLabelText<HTMLInputElement>(/Description/)
+            screen.getByLabelText<HTMLInputElement>(/Commentaire/)
           await userEvent.clear(inputDescription)
           await userEvent.type(
             inputDescription,
@@ -1477,15 +1421,16 @@ describe('EditionRdv', () => {
         // When
         renderWithContexts(
           <EditionRdv
-            jeunes={jeunesConseiller}
             typesRendezVous={typesRendezVous}
             withoutChat={true}
             returnTo='https://localhost:3000/agenda'
             evenement={unEvenement()}
-            conseillerEstObservateur={true}
             pageTitle=''
           />,
-          { customDependances: { evenementsService } }
+          {
+            customDependances: { evenementsService },
+            customPortefeuille: { value: [] },
+          }
         )
       })
 
@@ -1493,7 +1438,7 @@ describe('EditionRdv', () => {
         //Then
         expect(
           screen.getByText(
-            /Vous pouvez uniquement lire le détail de ce rendez-vous car aucun de vos bénéficiaires n’y est inscrit/
+            /Vous pouvez uniquement lire le détail de ce rendez-vous car aucun bénéficiaire de votre portefeuille n’y est inscrit/
           )
         ).toBeInTheDocument()
       })
@@ -1501,7 +1446,7 @@ describe('EditionRdv', () => {
       it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Description/)).toBeDisabled()
+        expect(screen.getByLabelText(/Commentaire/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
         expect(screen.getByLabelText(/Heure/)).toBeDisabled()
@@ -1510,7 +1455,9 @@ describe('EditionRdv', () => {
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
         expect(
-          screen.getByLabelText(/ajouter des destinataires/)
+          screen.getByLabelText(
+            /Recherchez et ajoutez un ou plusieurs bénéficiaires/
+          )
         ).toBeDisabled()
         expect(
           screen.queryByRole('button', { name: /Enlever jeune/ })

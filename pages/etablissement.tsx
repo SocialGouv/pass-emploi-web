@@ -128,7 +128,7 @@ const Etablissement = (_: MissionLocaleProps) => {
               {resultatsRecherche!.map((jeune) => (
                 <TR
                   key={jeune.base.id}
-                  href={'mes-jeunes/' + jeune.base.id}
+                  href={'etablissement/beneficiaires/' + jeune.base.id}
                   label={
                     'Accéder à la fiche de ' + getNomJeuneComplet(jeune.base)
                   }
@@ -203,10 +203,12 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      pageTitle:
-        user.structure === StructureConseiller.MILO
-          ? 'Mission Locale'
-          : 'Agence',
+      pageTitle: 'Établissement',
+      pageHeader:
+        'Rechercher un bénéficiaire de ' +
+        (user.structure === StructureConseiller.MILO
+          ? 'ma Mission Locale'
+          : 'mon agence'),
     },
   }
 }

@@ -34,6 +34,7 @@ import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
 import {
   DATE_DASH_SEPARATOR,
+  dateIsInInterval,
   TIME_24_SIMPLE,
   toFrenchFormat,
   toFrenchString,
@@ -139,8 +140,8 @@ export function EditionRdvForm({
     value: evenement?.nombreMaxParticipants,
   })
   const nbMaxParticipantsDepasse =
-    nombreMaxParticipants.value &&
-    idsJeunes.value.length > nombreMaxParticipants.value
+    Boolean(nombreMaxParticipants.value) &&
+    idsJeunes.value.length > nombreMaxParticipants.value!
 
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
@@ -267,62 +268,68 @@ export function EditionRdvForm({
     if (!precisionType.value) {
       setPrecisionType({
         value: precisionType.value,
-        error:
-          "Le champ Préciser n'est pas renseigné. Veuillez préciser le type d’événement.",
+        error: `Le champ “Préciser” est vide. Précisez le type ${
+          evenementTypeAC ? 'd’animation collective.' : 'de rendez-vous.'
+        }`,
       })
     }
   }
 
   function dateIsValid(): boolean {
-    return Boolean(date.value && regexDate.test(date.value))
+    return Boolean(date.value && regexDate.test(date.value!))
   }
 
   function validateDate() {
-    if (!dateIsValid()) {
+    const unAnAvant = DateTime.now().minus({ year: 1 })
+    const deuxAnsApres = DateTime.now().plus({ year: 2 })
+
+    if (
+      date.value &&
+      !dateIsInInterval(
+        DateTime.fromFormat(date.value!, 'yyyy-MM-dd'),
+        unAnAvant,
+        deuxAnsApres
+      )
+    ) {
+      setDate({
+        ...date,
+        error: `La date est invalide. Le date attendue est comprise entre le ${unAnAvant.toFormat(
+          'dd/MM/yyyy'
+        )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`,
+      })
+    } else if (!dateIsValid()) {
       setDate({
         ...date,
         error:
-          "Le champ date n'est pas valide. Veuillez respecter le format jj/mm/aaaa",
+          'Le champ “Date” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.',
       })
     }
   }
 
   function horaireIsValid() {
-    return Boolean(horaire.value && regexHoraire.test(horaire.value))
+    return Boolean(horaire.value && regexHoraire.test(horaire.value!))
   }
 
   function validateHoraire() {
-    if (!horaire.value) {
+    if (!horaireIsValid()) {
       setHoraire({
         ...horaire,
         error:
-          "Le champ heure n'est pas renseigné. Veuillez renseigner une heure.",
-      })
-    } else if (!horaireIsValid()) {
-      setHoraire({
-        ...horaire,
-        error:
-          "Le champ heure n'est pas valide. Veuillez respecter le format hh:mm",
+          'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.',
       })
     }
   }
 
   function dureeIsValid(): boolean {
-    return Boolean(duree.value && regexDuree.test(duree.value))
+    return Boolean(duree.value && regexDuree.test(duree.value!))
   }
 
   function validateDuree() {
-    if (!duree.value) {
+    if (!dureeIsValid()) {
       setDuree({
         ...duree,
         error:
-          "Le champ durée n'est pas renseigné. Veuillez renseigner une durée.",
-      })
-    } else if (!dureeIsValid()) {
-      setDuree({
-        ...duree,
-        error:
-          "Le champ durée n'est pas valide. Veuillez respecter le format hh:mm",
+          'Le champ “Durée” est invalide. Le format attendu est hh:mm, par exemple : 00:30 pour 30 minutes.',
       })
     }
   }
@@ -342,8 +349,7 @@ export function EditionRdvForm({
     if (evenementTypeAC && !titre.value) {
       setTitre({
         ...titre,
-        error:
-          'Le champ Titre n’est pas renseigné. Veuillez renseigner un titre.',
+        error: 'Le champ “Titre” est vide. Renseignez un titre.',
       })
     } else {
       setTitre({ value: titre.value })
@@ -351,7 +357,7 @@ export function EditionRdvForm({
   }
 
   function descriptionIsValid(): boolean {
-    return !description.value || description.value.length < 250
+    return !description.value || description.value!.length < 250
   }
 
   function validateDescription() {
@@ -359,7 +365,7 @@ export function EditionRdvForm({
       setDescription({
         ...description,
         error:
-          'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.',
+          'Vous avez dépassé le nombre maximal de caractères. Retirez des caractères.',
       })
     }
   }
@@ -373,7 +379,7 @@ export function EditionRdvForm({
       setNombreMaxParticipants({
         ...nombreMaxParticipants,
         error:
-          "Aucun nombre maximum de participants n'est renseigné. Veuillez renseigner une valeur.",
+          'Le champ “Nombre maximum de participants” est vide. Renseignez une valeur, par exemple : 18.',
       })
     }
   }
@@ -392,7 +398,7 @@ export function EditionRdvForm({
     idsBeneficiaires: string[]
   ): string | undefined {
     if (!evenementTypeAC && !idsBeneficiaires.length)
-      return "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+      return "Aucun bénéficiaire n'est renseigné. Sélectionnez au moins un bénéficiaire."
   }
 
   function typeEntretienIndividuelConseillerSelected() {
@@ -479,8 +485,8 @@ export function EditionRdvForm({
 
       <Etape
         numero={1}
-        titre={`Type ${
-          evenementTypeAC ? 'd’animation collective' : 'de rendez-vous'
+        titre={`Sélectionnez ${
+          evenementTypeAC ? 'une animation collective' : 'un rendez-vous'
         }`}
       >
         <Label htmlFor='typeEvenement' inputRequired={true}>
@@ -526,7 +532,12 @@ export function EditionRdvForm({
         )}
       </Etape>
 
-      <Etape numero={2} titre='Description'>
+      <Etape
+        numero={2}
+        titre={`Décrivez ${
+          evenementTypeAC ? 'l’animation collective' : 'le rendez-vous'
+        }`}
+      >
         <Label htmlFor='titre' inputRequired={evenementTypeAC}>
           Titre
         </Label>
@@ -548,7 +559,7 @@ export function EditionRdvForm({
 
         <Label htmlFor='description' withBulleMessageSensible={true}>
           {{
-            main: 'Description',
+            main: 'Commentaire',
             helpText: '250 caractères maximum',
           }}
         </Label>
@@ -568,12 +579,12 @@ export function EditionRdvForm({
         />
       </Etape>
 
-      <Etape numero={3} titre='Ajout de bénéficiaires'>
+      <Etape numero={3} titre='Ajoutez des bénéficiaires'>
         {evenementTypeAC && (
           <>
             <div className='flex items-center mb-8'>
               <label htmlFor='toggle-max-participants' className='mr-4'>
-                Définir un nombre maximum de participants
+                Définissez un nombre maximum de participants
               </label>
               <Switch
                 id='toggle-max-participants'
@@ -648,7 +659,7 @@ export function EditionRdvForm({
         />
       </Etape>
 
-      <Etape numero={4} titre='Lieu et date'>
+      <Etape numero={4} titre='Ajoutez les modalités pratiques'>
         <Label htmlFor='modalite'>Modalité</Label>
         <Select
           id='modalite'
@@ -663,7 +674,10 @@ export function EditionRdvForm({
           ))}
         </Select>
         <Label htmlFor='date' inputRequired={true}>
-          {{ main: 'Date', helpText: ' (format : jj/mm/aaaa)' }}
+          {{
+            main: 'Date',
+            helpText: 'format : jj/mm/aaaa',
+          }}
         </Label>
         {date.error && (
           <InputError id='date--error' className='mb-2'>
@@ -682,7 +696,10 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='horaire' inputRequired={true}>
-          {{ main: 'Heure', helpText: '(format : hh:mm)' }}
+          {{
+            main: 'Heure',
+            helpText: 'format : hh:mm',
+          }}
         </Label>
         {horaire.error && (
           <InputError id='horaire--error' className='mb-2'>
@@ -703,7 +720,10 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='duree' inputRequired={true}>
-          {{ main: 'Durée', helpText: '(format : hh:mm)' }}
+          {{
+            main: 'Durée',
+            helpText: 'format : hh:mm',
+          }}
         </Label>
         {duree.error && (
           <InputError id='duree--error' className='mb-2'>
@@ -722,7 +742,10 @@ export function EditionRdvForm({
         />
 
         <Label htmlFor='adresse'>
-          {{ main: 'Adresse', helpText: 'Ex : 12 rue duc, Brest' }}
+          {{
+            main: 'Adresse',
+            helpText: 'exemple : 12 rue Duc, Brest',
+          }}
         </Label>
         <Input
           type='text'
@@ -736,7 +759,7 @@ export function EditionRdvForm({
         <Label htmlFor='organisme'>
           {{
             main: 'Organisme',
-            helpText: 'Ex : prestataire, entreprise, etc.',
+            helpText: 'exemple : prestataire, entreprise, etc.',
           }}
         </Label>
         <Input
@@ -748,7 +771,7 @@ export function EditionRdvForm({
         />
       </Etape>
 
-      <Etape numero={5} titre='Gestion des accès'>
+      <Etape numero={5} titre='Définissez la gestion des accès'>
         {evenement && !conseillerIsCreator && (
           <div className='mb-6'>
             <InformationMessage

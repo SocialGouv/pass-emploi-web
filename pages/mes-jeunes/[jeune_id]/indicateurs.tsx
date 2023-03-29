@@ -14,12 +14,14 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchString } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
+import withDependance from 'utils/injectionDependances/withDependance'
 
 type IndicateursProps = PageProps & {
   idJeune: string
+  lectureSeule: boolean
 }
 
-function Indicateurs({ idJeune }: IndicateursProps) {
+function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const [conseiller] = useConseiller()
 
@@ -30,8 +32,6 @@ function Indicateurs({ idJeune }: IndicateursProps) {
   const aujourdHui = useMemo(() => DateTime.now(), [])
   const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
   const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
-
-  useMatomo('Détail jeune – Indicateurs')
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
@@ -46,6 +46,11 @@ function Indicateurs({ idJeune }: IndicateursProps) {
         .then(setIndicateursSemaine)
     }
   }, [idJeune, debutSemaine, finSemaine, indicateursSemaine, jeunesService])
+
+  const tracking = `Détail jeune – Indicateurs${
+    lectureSeule ? ' - hors portefeuille' : ''
+  }`
+  useMatomo(tracking)
 
   return (
     <div>
@@ -179,17 +184,35 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  const jeunesService = withDependance<JeunesService>('jeunesService')
+
   const {
-    session: { user },
+    session: { accessToken, user },
   } = sessionOrRedirect
   if (user.structure === StructureConseiller.POLE_EMPLOI) {
     return { notFound: true }
   }
 
+  const idBeneficiaire = context.query.jeune_id as string
+
+  const beneficiaire = await jeunesService.getJeuneDetails(
+    idBeneficiaire,
+    accessToken
+  )
+
+  if (!beneficiaire) {
+    return { notFound: true }
+  }
+
+  const lectureSeule = beneficiaire.idConseiller !== user.id
+
   return {
     props: {
       idJeune: context.query.jeune_id as string,
-      pageTitle: `Portefeuille - Bénéficiaire - Indicateurs`,
+      lectureSeule,
+      pageTitle: `${
+        lectureSeule ? 'Etablissement' : 'Portefeuille'
+      } - Bénéficiaire - Indicateurs`,
       pageHeader: 'Indicateurs',
     },
   }

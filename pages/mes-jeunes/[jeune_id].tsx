@@ -53,6 +53,7 @@ import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export enum Onglet {
   AGENDA = 'AGENDA',
@@ -78,6 +79,7 @@ interface FicheJeuneProps extends PageProps {
     metadonnees: MetadonneesPagination
     page: number
   }
+  lectureSeule?: boolean
   metadonneesFavoris?: MetadonneesFavoris
   onglet?: Onglet
 }
@@ -88,15 +90,20 @@ function FicheJeune({
   actionsInitiales,
   metadonneesFavoris,
   onglet,
+  lectureSeule,
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const agendaService = useDependance<AgendaService>('agendaService')
   const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
+  const [portefeuille, setPortefeuille] = usePortefeuille()
   const [, setIdCurrentJeune] = useCurrentJeune()
   const [conseiller] = useConseiller()
   const [alerte, setAlerte] = useAlerte()
-  const lectureSeule = jeune.idConseiller !== conseiller.id
 
   const [motifsSuppression, setMotifsSuppression] = useState<
     MotifSuppressionJeune[]
@@ -124,9 +131,10 @@ function FicheJeune({
   const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
   const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
 
-  const pageTracking: string = jeune.isActivated
+  let pageTracking: string = jeune.isActivated
     ? 'Détail jeune'
     : 'Détail jeune - Non Activé'
+  if (lectureSeule) pageTracking += ' - hors portefeuille'
   let initialTracking = pageTracking
   if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
@@ -158,11 +166,12 @@ function FicheJeune({
     setCurrentTab(tab)
 
     setTrackingLabel(
-      pageTracking + ' - Consultation ' + ongletProps[tab].trackingLabel
+      `${pageTracking} - Consultation ${ongletProps[tab].trackingLabel}`
     )
+
     await router.replace(
       {
-        pathname: `/mes-jeunes/${jeune.id}`,
+        pathname: `${pathPrefix}/${jeune.id}`,
         query: { onglet: ongletProps[tab].queryParam },
       },
       undefined,
@@ -216,6 +225,8 @@ function FicheJeune({
   ): Promise<void> {
     try {
       await jeunesService.archiverJeune(jeune.id, payload)
+
+      removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
       await router.push('/mes-jeunes')
     } catch (e) {
@@ -229,6 +240,8 @@ function FicheJeune({
   async function supprimerJeuneInactif(): Promise<void> {
     try {
       await jeunesService.supprimerJeuneInactif(jeune.id)
+
+      removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
       await router.push('/mes-jeunes')
     } catch (e) {
@@ -237,6 +250,15 @@ function FicheJeune({
     } finally {
       setShowModaleDeleteJeuneInactif(false)
     }
+  }
+
+  function removeBeneficiaireFromPortefeuille(idBeneficiaire: string): void {
+    const updatedPortefeuille = [...portefeuille]
+    const index = updatedPortefeuille.findIndex(
+      ({ id }) => id === idBeneficiaire
+    )
+    updatedPortefeuille.splice(index, 1)
+    setPortefeuille(updatedPortefeuille)
   }
 
   useMatomo(trackingLabel)
@@ -434,7 +456,6 @@ function FicheJeune({
         >
           <OngletAgendaBeneficiaire
             idBeneficiaire={jeune.id}
-            conseiller={conseiller}
             recupererAgenda={recupererAgenda}
             goToActions={() => switchTab(Onglet.ACTIONS)}
           />
@@ -520,13 +541,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     withDependance<EvenementsService>('evenementsService')
   const actionsService = withDependance<ActionsService>('actionsService')
   const {
-    session: {
-      accessToken,
-      user: { structure },
-    },
+    session: { accessToken, user },
   } = sessionOrRedirect
 
-  const userIsPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
+  const userIsPoleEmploi = user.structure === StructureConseiller.POLE_EMPLOI
   const page = parseInt(context.query.page as string, 10) || 1
   const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
     jeunesService.getJeuneDetails(
@@ -580,6 +598,11 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
       default:
         props.onglet = Onglet.AGENDA
     }
+  }
+
+  if (jeune.idConseiller !== user.id) {
+    props.lectureSeule = true
+    props.pageTitle = `Établissement - ${jeune.prenom} ${jeune.nom}`
   }
 
   return {
