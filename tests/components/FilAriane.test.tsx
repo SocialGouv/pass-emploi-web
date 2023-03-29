@@ -11,10 +11,9 @@ describe('<FilAriane/>', () => {
       expect(
         screen.getByRole('link', { name: 'Portefeuille' })
       ).toHaveAttribute('href', '/mes-jeunes')
-      expect(screen.getByRole('link', { name: 'Fiche jeune' })).toHaveAttribute(
-        'href',
-        '/mes-jeunes/id-jeune'
-      )
+      expect(
+        screen.getByRole('link', { name: 'Fiche bénéficiaire' })
+      ).toHaveAttribute('href', '/mes-jeunes/id-jeune')
     })
 
     it('Affiche le fil d’ariane pour une route de niveau 3', () => {
@@ -22,7 +21,7 @@ describe('<FilAriane/>', () => {
       render(<FilAriane currentPath='/mes-jeunes/id-jeune/actions/id-action' />)
       // Then
       expect(screen.getByText('Portefeuille')).toBeInTheDocument()
-      expect(screen.getByText('Fiche jeune')).toBeInTheDocument()
+      expect(screen.getByText('Fiche bénéficiaire')).toBeInTheDocument()
       expect(screen.getAllByRole('link').length).toEqual(3)
       expect(
         screen.getByRole('link', { name: 'Détail action' })

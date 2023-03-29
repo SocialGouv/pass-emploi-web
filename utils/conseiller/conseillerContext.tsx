@@ -3,7 +3,10 @@ import { createContext, ReactNode, useContext, useState } from 'react'
 import { Conseiller } from 'interfaces/conseiller'
 
 type MaybeConseiller = Conseiller | undefined
-type ConseillerState = [MaybeConseiller, (credentials: MaybeConseiller) => void]
+type ConseillerState = [
+  MaybeConseiller,
+  (updatedConseiller: MaybeConseiller) => void
+]
 
 const ConseillerContext = createContext<ConseillerState | undefined>(undefined)
 
@@ -34,7 +37,7 @@ export function useConseillerPotentiellementPasRecupere(): ConseillerState {
 
 export function useConseiller(): [
   Conseiller,
-  (credentials: Conseiller) => void
+  (updatedConseiller: Conseiller) => void
 ] {
   const [conseiller, setConseiller] = useConseillerPotentiellementPasRecupere()
   if (!conseiller) {

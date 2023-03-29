@@ -10,7 +10,7 @@ describe('<LienRetour/>', () => {
     )
     // Then
     expect(
-      screen.getByRole('link', { name: 'Retour à Fiche jeune' })
+      screen.getByRole('link', { name: 'Retour à Fiche bénéficiaire' })
     ).toHaveAttribute('href', 'http://localhost:3000/mes-jeunes/id-jeune')
   })
 

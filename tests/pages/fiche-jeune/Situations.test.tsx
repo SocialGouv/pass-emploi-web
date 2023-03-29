@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import { desActionsInitiales } from 'fixtures/action'
@@ -12,6 +13,10 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Situations dans la fiche jeune', () => {
   describe('quand l’utilisateur est un conseiller MILO', () => {
+    beforeEach(async () => {
+      ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    })
+
     describe('quand le jeune n’a aucune situation', () => {
       it('affiche les informations concernant la situation du jeune', async () => {
         // Given
@@ -78,7 +83,9 @@ async function renderFicheJeune(
         customConseiller: { structure: StructureConseiller.MILO },
         customDependances: {
           jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
           }),
           agendaService: mockedAgendaService({
             recupererAgenda: jest.fn(async () => unAgenda()),

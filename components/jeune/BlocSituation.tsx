@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import SituationTag from 'components/jeune/SituationTag'
@@ -20,6 +21,11 @@ export function BlocSituation({
   situations,
   versionResumee,
 }: BlocSituationProps) {
+  const router = useRouter()
+  const pathPrefix = router.asPath.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
+
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       {versionResumee && (
@@ -42,7 +48,9 @@ export function BlocSituation({
         </ol>
       )}
 
-      {versionResumee && <LienVersHistorique idJeune={idJeune} />}
+      {versionResumee && (
+        <LienVersHistorique idJeune={idJeune} pathPrefix={pathPrefix} />
+      )}
     </div>
   )
 }
@@ -89,10 +97,16 @@ function Situation({
   )
 }
 
-function LienVersHistorique({ idJeune }: { idJeune: string }) {
+function LienVersHistorique({
+  idJeune,
+  pathPrefix,
+}: {
+  idJeune: string
+  pathPrefix: string
+}) {
   return (
     <Link
-      href={`/mes-jeunes/${idJeune}/historique`}
+      href={`${pathPrefix}/${idJeune}/historique`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
     >
       Voir le détail des situations

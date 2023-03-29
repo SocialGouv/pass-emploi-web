@@ -42,7 +42,7 @@ export function EntreesAgendaParJourDeLaSemaine({
                   <AgendaRow
                     key={entree.id}
                     entree={entree}
-                    jeuneId={idBeneficiaire}
+                    idBeneficiaire={idBeneficiaire}
                   />
                 ))}
               </ol>

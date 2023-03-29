@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
@@ -37,6 +38,10 @@ describe('Historique', () => {
   const listeConseillers = desConseillersJeune()
 
   describe('client side', () => {
+    beforeEach(async () => {
+      ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    })
+
     describe('quand l’utilisateur est un conseiller Mission Locale', () => {
       describe('pour les Situations', () => {
         it('affiche un onglet dédié', () => {
@@ -174,6 +179,7 @@ describe('Historique', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',
+            user: { id: 'id-conseiller' },
           },
           validSession: true,
         })
@@ -193,6 +199,7 @@ describe('Historique', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'jeune-1',
+            lectureSeule: false,
             pageTitle: `Portefeuille - Kenji Jirac - Historique`,
             pageHeader: 'Historique',
             situations: expect.arrayContaining(listeSituations),
@@ -229,6 +236,7 @@ function renderHistorique(
       situations={situations}
       conseillers={conseillers}
       pageTitle={''}
+      lectureSeule={false}
     />,
     { customConseiller: { structure: structure } }
   )

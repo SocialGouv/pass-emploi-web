@@ -136,14 +136,17 @@ export default function Conversation({
         (messagesGroupesParJour: ByDay<Message>[]) => {
           setMessagesByDay((previousValue) => {
             if (
-              previousValue &&
-              previousValue[0].messages[0].id ===
-                messagesGroupesParJour[0].messages[0].id
+              !messagesGroupesParJour.length ||
+              (previousValue?.length &&
+                previousValue[0].messages[0].id ===
+                  messagesGroupesParJour[0].messages[0].id)
             ) {
               setHasNoMoreMessages(true)
             }
+
             return messagesGroupesParJour
           })
+
           setLoadingMoreMessages(false)
 
           if (document.activeElement === inputRef.current) {
@@ -255,29 +258,26 @@ export default function Conversation({
         {messagesByDay && conseiller && (
           <>
             {hasNoMoreMessages && (
-              <span
-                id='no-more-messages'
-                className='text-xs-regular text-center block'
-              >
+              <span className='text-xs-regular text-center block mb-3'>
                 Aucun message plus ancien
               </span>
             )}
-            <Button
-              onClick={chargerPlusDeMessages}
-              style={ButtonStyle.TERTIARY}
-              className='mx-auto mb-3'
-              isLoading={loadingMoreMessages}
-              disabled={hasNoMoreMessages}
-              describedBy='no-more-messages'
-            >
-              <IconComponent
-                name={IconName.ChevronUp}
-                aria-hidden={true}
-                focusable={false}
-                className='w-4 h-4 fill-[currentColor] mr-2'
-              />
-              Voir messages plus anciens
-            </Button>
+            {!hasNoMoreMessages && (
+              <Button
+                onClick={chargerPlusDeMessages}
+                style={ButtonStyle.TERTIARY}
+                className='mx-auto mb-3'
+                isLoading={loadingMoreMessages}
+              >
+                <IconComponent
+                  name={IconName.ChevronUp}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='w-4 h-4 fill-[currentColor] mr-2'
+                />
+                Voir messages plus anciens
+              </Button>
+            )}
             <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                 <li key={messagesOfADay.date.toMillis()} className='mb-5'>

@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
-import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
@@ -20,10 +20,10 @@ export default function ChatManager({
   setHasMessageNonLu,
 }: ChatManagerProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
-  const jeunesService = useDependance<JeunesService>('jeunesService')
 
-  const [chatCredentials, setChatCredentials] = useChatCredentials()
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
+  const [chatCredentials, setChatCredentials] = useChatCredentials()
 
   const [chats, setChats] = useState<JeuneChat[]>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
@@ -49,21 +49,23 @@ export default function ChatManager({
 
   useEffect(() => {
     if (!chatCredentials) {
-      messagesService.getChatCredentials().then(setChatCredentials)
+      messagesService
+        .getChatCredentials()
+        .then((credentials) =>
+          messagesService.signIn(credentials.token).then(() => credentials)
+        )
+        .then(setChatCredentials)
     }
-  }, [chatCredentials, messagesService, setChatCredentials])
+  }, [chatCredentials])
 
   useEffect(() => {
-    if (!chatCredentials || !audio) return
+    if (!chatCredentials || !audio || !portefeuille) return
+
     messagesService
-      .signIn(chatCredentials.token)
-      .then(() => jeunesService.getJeunesDuConseillerClientSide())
-      .then((jeunes) =>
-        messagesService.observeConseillerChats(
-          chatCredentials.cleChiffrement,
-          jeunes,
-          updateChats
-        )
+      .observeConseillerChats(
+        chatCredentials.cleChiffrement,
+        portefeuille,
+        updateChats
       )
       .then((destructor) => (destructorRef.current = destructor))
 
@@ -96,7 +98,7 @@ export default function ChatManager({
         aUnNouveauMessage(previousChat, updatedChat)
       )
     }
-  }, [chatCredentials, audio, conseiller.notificationsSonores])
+  }, [portefeuille, chatCredentials, audio, conseiller.notificationsSonores])
 
   return displayChat ? <ChatContainer jeunesChats={chats} /> : <></>
 }

@@ -5,7 +5,7 @@ import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import { estMilo, estPoleEmploi, estSuperviseur } from 'interfaces/conseiller'
-import { trackEvent } from 'utils/analytics/matomo'
+import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
 
@@ -20,6 +20,7 @@ export enum NavItem {
   Raccourci = 'Raccourci,',
   Messagerie = 'Messagerie',
   Pilotage = 'Pilotage',
+  Etablissement = 'Etablissement',
 }
 type NavLinksProps = { showLabelsOnSmallScreen: boolean; items: NavItem[] }
 export default function NavLinks({
@@ -29,7 +30,9 @@ export default function NavLinks({
   const router = useRouter()
   const [conseiller] = useConseiller()
 
-  const isCurrentRoute = (href: string) => router.pathname.startsWith(href)
+  function isCurrentRoute(href: string) {
+    return router.asPath.startsWith(href)
+  }
 
   async function trackLogout() {
     trackEvent({
@@ -38,6 +41,19 @@ export default function NavLinks({
       action: 'Déconnexion',
       nom: '',
     })
+  }
+
+  async function trackActualite() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Actualite',
+      action: 'Click',
+      nom: '',
+    })
+  }
+
+  async function trackAide() {
+    trackPage({ structure: conseiller.structure, customTitle: 'Aide' })
   }
 
   useLeanBeWidget(conseiller)
@@ -50,7 +66,11 @@ export default function NavLinks({
             isActive={isCurrentRoute('/mes-jeunes')}
             href='/mes-jeunes'
             label='Portefeuille'
-            iconName={IconName.People}
+            iconName={
+              isCurrentRoute('/mes-jeunes')
+                ? IconName.People
+                : IconName.PeopleOutline
+            }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
@@ -60,7 +80,11 @@ export default function NavLinks({
             isActive={isCurrentRoute('/agenda')}
             href='/agenda'
             label='Agenda'
-            iconName={IconName.RendezVous}
+            iconName={
+              isCurrentRoute('/agenda')
+                ? IconName.Calendar
+                : IconName.CalendarOutline
+            }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
@@ -72,7 +96,11 @@ export default function NavLinks({
             }
             href='/recherche-offres'
             label='Offres'
-            iconName={IconName.Search}
+            iconName={
+              isCurrentRoute('/recherche-offres') || isCurrentRoute('/offres')
+                ? IconName.SearchNav
+                : IconName.SearchNavOutline
+            }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
@@ -80,7 +108,11 @@ export default function NavLinks({
         {!estPoleEmploi(conseiller) && items.includes(NavItem.Pilotage) && (
           <>
             <NavLink
-              iconName={IconName.Board}
+              iconName={
+                isCurrentRoute('/pilotage')
+                  ? IconName.Board
+                  : IconName.BoardOutline
+              }
               label='Pilotage'
               href='/pilotage'
               isActive={isCurrentRoute('/pilotage')}
@@ -88,6 +120,21 @@ export default function NavLinks({
             />
           </>
         )}
+
+        {!estPoleEmploi(conseiller) &&
+          items.includes(NavItem.Etablissement) && (
+            <NavLink
+              iconName={
+                isCurrentRoute('/etablissement')
+                  ? IconName.RoundedArrowRight
+                  : IconName.RoundedArrowRightOutline
+              }
+              label='Bénéficiaires'
+              href='/etablissement'
+              isActive={isCurrentRoute('/etablissement')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          )}
 
         {estSuperviseur(conseiller) && items.includes(NavItem.Supervision) && (
           <NavLink
@@ -119,8 +166,11 @@ export default function NavLinks({
           />
         )}
 
-        {items.includes(NavItem.Actualites) && (
-          <ActualitesMenuButton conseiller={conseiller} />
+        {process.env.ENABLE_LEANBE && items.includes(NavItem.Actualites) && (
+          <ActualitesMenuButton
+            conseiller={conseiller}
+            onClick={trackActualite}
+          />
         )}
 
         {items.includes(NavItem.Aide) && (
@@ -134,6 +184,7 @@ export default function NavLinks({
             iconName={IconName.Aide}
             isExternal={true}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            onClick={trackAide}
           />
         )}
       </div>
@@ -143,7 +194,11 @@ export default function NavLinks({
             isActive={isCurrentRoute('/profil')}
             href='/profil'
             label={`${conseiller.firstName} ${conseiller.lastName}`}
-            iconName={IconName.Profil}
+            iconName={
+              isCurrentRoute('/profil')
+                ? IconName.Profil
+                : IconName.ProfilOutline
+            }
             className='break-all'
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />

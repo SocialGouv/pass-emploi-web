@@ -235,7 +235,6 @@ export const unJeuneChat = (overrides: Partial<JeuneChat> = {}): JeuneChat => {
     id: 'jeune-1',
     prenom: 'Kenji',
     nom: 'Jirac',
-    isActivated: true,
     ...unChat(),
     chatId: 'idChat',
   }

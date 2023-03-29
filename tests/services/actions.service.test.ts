@@ -43,6 +43,7 @@ describe('ActionsApiService', () => {
                 id: 'jeune-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
+                idConseiller: 'id-conseiller',
               },
             },
           }
@@ -54,7 +55,12 @@ describe('ActionsApiService', () => {
       // THEN
       expect(actual).toStrictEqual({
         action,
-        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+        jeune: {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        },
       })
     })
 
@@ -70,6 +76,7 @@ describe('ActionsApiService', () => {
                 id: 'jeune-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
+                idConseiller: 'id-conseiller',
               },
             },
           }
@@ -81,7 +88,12 @@ describe('ActionsApiService', () => {
       // THEN
       expect(actual).toStrictEqual({
         action,
-        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+        jeune: {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        },
       })
     })
 
@@ -97,6 +109,7 @@ describe('ActionsApiService', () => {
                 id: 'jeune-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
+                idConseiller: 'id-conseiller',
               },
             },
           }
@@ -108,7 +121,12 @@ describe('ActionsApiService', () => {
       // THEN
       expect(actual).toStrictEqual({
         action,
-        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+        jeune: {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        },
       })
     })
 
@@ -137,6 +155,7 @@ describe('ActionsApiService', () => {
                 id: 'jeune-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
+                idConseiller: 'id-conseiller',
               },
             },
           }
@@ -148,7 +167,12 @@ describe('ActionsApiService', () => {
       // THEN
       expect(actual).toStrictEqual({
         action,
-        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+        jeune: {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        },
       })
     })
 
@@ -177,6 +201,7 @@ describe('ActionsApiService', () => {
                 id: 'jeune-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
+                idConseiller: 'id-conseiller',
               },
             },
           }
@@ -188,7 +213,12 @@ describe('ActionsApiService', () => {
       // THEN
       expect(actual).toStrictEqual({
         action,
-        jeune: { id: 'jeune-1', prenom: 'Nadia', nom: 'Sanfamiye' },
+        jeune: {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        },
       })
     })
 

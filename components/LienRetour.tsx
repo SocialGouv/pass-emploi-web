@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import routesToLabel from 'utils/route-labels'
+import mapRoutesToLabels from 'utils/route-labels'
 
 interface LienRetourProps {
   returnUrlOrPath: string
@@ -9,14 +9,14 @@ interface LienRetourProps {
 
 export default function LienRetour({ returnUrlOrPath }: LienRetourProps) {
   function getLabelLienRetour(pathOrUrl: string): string | undefined {
-    const regExps: RegExp[] = Array.from(routesToLabel.keys())
+    const regExps: RegExp[] = Array.from(mapRoutesToLabels.keys())
     const path = pathOrUrl.startsWith('http')
       ? new URL(pathOrUrl).pathname
       : pathOrUrl
 
     const route = regExps.find((regex) => regex.test(path))
     if (route) {
-      return routesToLabel.get(route) ?? pathOrUrl
+      return mapRoutesToLabels.get(route) ?? pathOrUrl
     }
   }
 

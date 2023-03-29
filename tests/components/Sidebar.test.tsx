@@ -12,7 +12,7 @@ describe('<Sidebar/>', () => {
   beforeEach(() => {
     routerPush = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({
-      pathname: '',
+      asPath: '',
       push: routerPush,
     })
   })
@@ -39,6 +39,9 @@ describe('<Sidebar/>', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Pilotage' })
     ).toHaveAttribute('href', '/pilotage')
+    expect(
+      within(navigation).getByRole('link', { name: 'Bénéficiaires' })
+    ).toHaveAttribute('href', '/etablissement')
     expect(() => within(navigation).getByText('Réaffectation')).toThrow()
   })
 

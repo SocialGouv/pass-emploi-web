@@ -5,7 +5,12 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { mockedFavorisService } from 'fixtures/services'
+import {
+  desConseillersJeune,
+  desIndicateursSemaine,
+  unDetailJeune,
+} from 'fixtures/jeune'
+import { mockedFavorisService, mockedJeunesService } from 'fixtures/services'
 import Favoris, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/favoris'
@@ -22,7 +27,14 @@ describe('Favoris', () => {
 
   describe('client side', () => {
     beforeEach(async () => {
-      render(<Favoris offres={offres} recherches={recherches} pageTitle={''} />)
+      render(
+        <Favoris
+          offres={offres}
+          recherches={recherches}
+          pageTitle={''}
+          lectureSeule={false}
+        />
+      )
     })
 
     it('affiche la liste des offres du jeune', () => {
@@ -110,7 +122,13 @@ describe('Favoris', () => {
           getOffres: jest.fn(async () => offres),
           getRecherchesSauvegardees: jest.fn(async () => recherches),
         })
-        ;(withDependance as jest.Mock).mockReturnValue(favorisService)
+        const jeunesService = mockedJeunesService({
+          getJeuneDetails: jest.fn(async () => unDetailJeune()),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'jeunesService') return jeunesService
+          if (dependance === 'favorisService') return favorisService
+        })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',
@@ -135,6 +153,7 @@ describe('Favoris', () => {
         )
         expect(actual).toEqual({
           props: {
+            lectureSeule: false,
             offres: offres,
             recherches: recherches,
             pageTitle: 'Favoris',
@@ -155,7 +174,14 @@ describe('Favoris', () => {
             throw new ApiError(403, 'erreur')
           }),
         })
-        ;(withDependance as jest.Mock).mockReturnValue(favorisService)
+
+        const jeunesService = mockedJeunesService({
+          getJeuneDetails: jest.fn(async () => unDetailJeune()),
+        })
+        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
+          if (dependance === 'jeunesService') return jeunesService
+          if (dependance === 'favorisService') return favorisService
+        })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',

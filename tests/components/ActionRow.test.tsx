@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import ActionRow from 'components/action/ActionRow'
@@ -7,6 +8,10 @@ import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 
 describe('<ActionRow/>', () => {
+  beforeEach(async () => {
+    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+  })
+
   it("devrait afficher les informations des actions d'un jeune", () => {
     const action = uneAction()
     render(<ActionRow action={action} jeuneId={'1'} />)

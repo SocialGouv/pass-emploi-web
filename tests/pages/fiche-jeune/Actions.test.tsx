@@ -46,6 +46,7 @@ describe('Actions dans la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: replace,
       push: jest.fn(),
+      asPath: '/mes-jeunes',
     })
   })
 

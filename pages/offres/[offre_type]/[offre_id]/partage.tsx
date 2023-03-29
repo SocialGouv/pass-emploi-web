@@ -16,12 +16,11 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ImmersionsService } from 'services/immersions.service'
-import { JeunesService } from 'services/jeunes.service'
 import { MessagesService } from 'services/messages.service'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
@@ -31,20 +30,21 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type PartageOffresProps = PageProps & {
   offre: DetailOffre
-  jeunes: BaseJeune[]
   withoutChat: true
   returnTo: string
 }
 
-function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
+function PartageOffre({ offre, returnTo }: PartageOffresProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
+  const [portefeuille] = usePortefeuille()
   const [idsDestinataires, setIdsDestinataires] = useState<
     ValueWithError<string[]>
   >({ value: [] })
@@ -57,7 +57,7 @@ function PartageOffre({ offre, jeunes, returnTo }: PartageOffresProps) {
   )
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
-    return jeunes.map((jeune) => ({
+    return portefeuille.map((jeune) => ({
       id: jeune.id,
       value: getNomJeuneComplet(jeune),
     }))
@@ -166,7 +166,7 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const { user, accessToken } = sessionOrRedirect.session
+  const { accessToken } = sessionOrRedirect.session
   const offresEmploiService = withDependance<OffresEmploiService>(
     'offresEmploiService'
   )
@@ -175,7 +175,6 @@ export const getServerSideProps: GetServerSideProps<
   )
   const immersionsService =
     withDependance<ImmersionsService>('immersionsService')
-  const jeunesService = withDependance<JeunesService>('jeunesService')
   const typeOffre = context.query.offre_type as string
 
   let offre: DetailOffre | undefined
@@ -201,17 +200,12 @@ export const getServerSideProps: GetServerSideProps<
   }
   if (!offre) return { notFound: true }
 
-  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
-    user.id,
-    accessToken
-  )
   const referer = context.req.headers.referer
   const redirectTo =
     referer && !redirectedFromHome(referer) ? referer : '/recherche-offres'
   return {
     props: {
       offre,
-      jeunes,
       pageTitle: 'Recherche d’offres - Partager offre',
       pageHeader: 'Partager une offre',
       withoutChat: true,

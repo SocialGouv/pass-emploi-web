@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/dom'
 import { render, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import TableauRdv from 'components/rdv/TableauRdv'
@@ -14,6 +15,10 @@ import {
 } from 'utils/date'
 
 describe('<TableauRdv>', () => {
+  beforeEach(async () => {
+    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+  })
+
   it("affiche un message lorsqu'il n'y a pas de rendez-vous", () => {
     // When
     render(<TableauRdv rdvs={[]} idConseiller='1' />)
