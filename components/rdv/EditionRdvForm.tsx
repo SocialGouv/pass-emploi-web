@@ -34,6 +34,7 @@ import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
 import {
   DATE_DASH_SEPARATOR,
+  dateIsInInterval,
   TIME_24_SIMPLE,
   toFrenchFormat,
   toFrenchString,
@@ -279,7 +280,24 @@ export function EditionRdvForm({
   }
 
   function validateDate() {
-    if (!dateIsValid()) {
+    const unAnAvant = DateTime.now().minus({ year: 1 })
+    const deuxAnsApres = DateTime.now().plus({ year: 2 })
+
+    if (
+      date.value &&
+      !dateIsInInterval(
+        DateTime.fromFormat(date.value, 'yyyy-MM-dd'),
+        unAnAvant,
+        deuxAnsApres
+      )
+    ) {
+      setDate({
+        ...date,
+        error: `La date est invalide. Le date attendue est comprise entre le ${unAnAvant.toFormat(
+          'dd/MM/yyyy'
+        )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`,
+      })
+    } else if (!dateIsValid()) {
       setDate({
         ...date,
         error:
