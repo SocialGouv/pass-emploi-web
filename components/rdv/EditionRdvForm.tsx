@@ -34,6 +34,7 @@ import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
 import {
   DATE_DASH_SEPARATOR,
+  dateIsInInterval,
   TIME_24_SIMPLE,
   toFrenchFormat,
   toFrenchString,
@@ -275,27 +276,26 @@ export function EditionRdvForm({
   }
 
   function dateIsValid(): boolean {
-    return Boolean(date.value && regexDate.test(date.value))
-  }
-
-  function dateIsInInterval(
-    oneYearBefore: DateTime,
-    twoYearsAfter: DateTime
-  ): boolean {
-    const userDate = DateTime.fromFormat(date.value!, 'yyyy-MM-dd')
-    return Boolean(userDate > oneYearBefore && userDate < twoYearsAfter)
+    return Boolean(date.value && regexDate.test(date.value!))
   }
 
   function validateDate() {
-    const oneYearBefore = DateTime.now().minus({ year: 1 })
-    const twoYearsAfter = DateTime.now().plus({ year: 2 })
+    const unAnAvant = DateTime.now().minus({ year: 1 })
+    const deuxAnsApres = DateTime.now().plus({ year: 2 })
 
-    if (date.value && !dateIsInInterval(oneYearBefore, twoYearsAfter)) {
+    if (
+      date.value &&
+      !dateIsInInterval(
+        DateTime.fromFormat(date.value!, 'yyyy-MM-dd'),
+        unAnAvant,
+        deuxAnsApres
+      )
+    ) {
       setDate({
         ...date,
-        error: `La date est invalide. Le date attendue est comprise entre le ${oneYearBefore.toFormat(
+        error: `La date est invalide. Le date attendue est comprise entre le ${unAnAvant.toFormat(
           'dd/MM/yyyy'
-        )} et le ${twoYearsAfter.toFormat('dd/MM/yyyy')}.`,
+        )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`,
       })
     } else if (!dateIsValid()) {
       setDate({
@@ -307,7 +307,7 @@ export function EditionRdvForm({
   }
 
   function horaireIsValid() {
-    return Boolean(horaire.value && regexHoraire.test(horaire.value))
+    return Boolean(horaire.value && regexHoraire.test(horaire.value!))
   }
 
   function validateHoraire() {
@@ -321,7 +321,7 @@ export function EditionRdvForm({
   }
 
   function dureeIsValid(): boolean {
-    return Boolean(duree.value && regexDuree.test(duree.value))
+    return Boolean(duree.value && regexDuree.test(duree.value!))
   }
 
   function validateDuree() {
@@ -357,7 +357,7 @@ export function EditionRdvForm({
   }
 
   function descriptionIsValid(): boolean {
-    return !description.value || description.value.length < 250
+    return !description.value || description.value!.length < 250
   }
 
   function validateDescription() {
