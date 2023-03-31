@@ -60,3 +60,11 @@ export function compareDatesDesc(
 ): number {
   return -compareDates(date1, date2)
 }
+
+export function dateIsInInterval(
+  date: DateTime,
+  dateMin: DateTime,
+  dateMax: DateTime
+) {
+  return Boolean(date > dateMin && date < dateMax)
+}
