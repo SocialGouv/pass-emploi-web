@@ -280,7 +280,7 @@ export function EditionRdvForm({
   }
 
   function validateDate() {
-    const unAnAvant = DateTime.now().minus({ year: 1 })
+    const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
 
     if (
@@ -293,9 +293,11 @@ export function EditionRdvForm({
     ) {
       setDate({
         ...date,
-        error: `La date est invalide. Le date attendue est comprise entre le ${unAnAvant.toFormat(
+        error: `La date est invalide. Le date attendue est comprise entre le ${unAnAvant
+          .plus({ day: 1 })
+          .toFormat('dd/MM/yyyy')} et le ${deuxAnsApres.toFormat(
           'dd/MM/yyyy'
-        )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`,
+        )}.`,
       })
     } else if (!dateIsValid()) {
       setDate({
