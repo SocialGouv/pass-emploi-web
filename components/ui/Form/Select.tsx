@@ -8,6 +8,7 @@ type SelectProps = {
   defaultValue?: string
   required?: boolean
   disabled?: boolean
+  onBlur?: () => void
   children: ReactNode
 }
 
@@ -17,6 +18,7 @@ export default function Select({
   defaultValue = '',
   required = false,
   disabled = false,
+  onBlur,
   children,
 }: SelectProps) {
   return (
@@ -27,6 +29,7 @@ export default function Select({
       disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
       className={`${styles.input} truncate`}
+      onBlur={onBlur}
     >
       {required && <option aria-hidden hidden disabled value='' />}
       {!required && <option value='' />}

@@ -1,5 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -141,7 +142,7 @@ describe('NouvelleAction', () => {
       it('contient une liste des actions prédéfinies', () => {
         // Then
         const select = screen.getByRole('combobox', {
-          name: 'Choisir une action prédéfinie',
+          name: /Action prédéfinie/,
         })
 
         expect(select).toHaveAttribute('required', '')
@@ -155,41 +156,37 @@ describe('NouvelleAction', () => {
       it('contient un champ pour saisir un commentaire', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: /Description de l'action/ })
+          screen.getByRole('textbox', { name: /Commentaire/ })
         ).not.toHaveAttribute('required')
       })
 
       it('contient un champ pour saisir une date d’échéance', () => {
         // Then
-        expect(
-          screen.getByLabelText(/Définir une date d’échéance/)
-        ).toHaveAttribute('required')
+        expect(screen.getByLabelText(/Date d’échéance/)).toHaveAttribute(
+          'required'
+        )
       })
 
       describe('action prédéfinie remplie', () => {
         let selectAction: HTMLSelectElement
         let submit: HTMLButtonElement
+
         beforeEach(async () => {
           // Given
           selectAction = screen.getByRole('combobox', {
-            name: /Choisir une action/,
+            name: /Action prédéfinie/,
           })
-          const description = screen.getByRole('textbox', {
-            name: /Description/,
-          })
+        })
 
-          const dateEcheance = screen.getByLabelText(/date d’échéance/)
+        it("requiert la sélection d'une action", async () => {
+          const dateEcheance = screen.getByLabelText(/Date d’échéance/)
           submit = screen.getByRole('button', { name: 'Créer l’action' })
 
+          await userEvent.type(dateEcheance, '2022-07-30')
           await userEvent.selectOptions(
             selectAction,
             actionsPredefinies[1].titre
           )
-          await userEvent.type(description, 'Commentaire action')
-          await userEvent.type(dateEcheance, '2022-07-30')
-        })
-
-        it("requiert la sélection d'une action", async () => {
           // When
           fireEvent.change(selectAction, { target: { value: '' } })
           await userEvent.click(submit)
@@ -199,8 +196,72 @@ describe('NouvelleAction', () => {
           expect(actionsService.createAction).not.toHaveBeenCalled()
         })
 
+        it("affiche un message d'erreur quand type d’action prédéfinie est vide", async () => {
+          // When
+          expect(selectAction).toBeInTheDocument()
+          await userEvent.click(selectAction)
+          await userEvent.tab()
+
+          // Then
+          expect(selectAction.value).toEqual('')
+          expect(
+            screen.getByText('Le champ “Titre” est vide. Renseignez un titre.')
+          ).toBeInTheDocument()
+        })
+
+        it("affiche un message d'erreur quand date d'echeance n'est pas au bon format", async () => {
+          const dateEcheance = screen.getByLabelText(/Date d’échéance/)
+
+          await userEvent.clear(dateEcheance)
+          await userEvent.tab()
+
+          // Then
+          expect(
+            screen.getByText(
+              'Le champ “Date d’échéance” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.'
+            )
+          ).toBeInTheDocument()
+        })
+
+        it("affiche un message d'erreur quand date d'echeance n'est pas dans l'interval", async () => {
+          const dateEcheance = screen.getByLabelText(/Date d’échéance/)
+          await userEvent.type(dateEcheance, '2000-07-30')
+          await userEvent.tab()
+
+          const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
+          const deuxAnsApres = DateTime.now().plus({ year: 2 })
+
+          // Then
+          expect(
+            screen.getByText(
+              `Le champ “Date d’échéance” est invalide. Le date attendue est comprise entre le ${unAnAvant.toFormat(
+                'dd/MM/yyyy'
+              )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`
+            )
+          ).toBeInTheDocument()
+        })
+
         describe('formulaire valide', () => {
           beforeEach(async () => {
+            // Given
+            await userEvent.selectOptions(
+              selectAction,
+              actionsPredefinies[1].titre
+            )
+
+            const description = screen.getByRole('textbox', {
+              name: /Commentaire/,
+            })
+            await userEvent.type(description, 'Commentaire action')
+
+            const dateEcheance = screen.getByLabelText(/Date d’échéance/)
+
+            await userEvent.type(dateEcheance, '2022-07-30')
+
+            const submit = screen.getByRole('button', {
+              name: 'Créer l’action',
+            })
+
             // When
             await userEvent.click(submit)
           })
@@ -232,7 +293,7 @@ describe('NouvelleAction', () => {
       beforeEach(async () => {
         // Given
         const switchTab = screen.getByRole('tab', {
-          name: 'Action personnalisée',
+          name: /Action personnalisée/,
         })
         await userEvent.click(switchTab)
       })
@@ -240,7 +301,7 @@ describe('NouvelleAction', () => {
       it("contient un champ pour saisir l'intitule de l'action", () => {
         // Then
         const intitule = screen.getByRole('textbox', {
-          name: "Intitulé de l'action",
+          name: "Titre de l'action",
         })
         expect(intitule).toHaveAttribute('required', '')
         expect(intitule).toHaveAttribute('type', 'text')
@@ -249,15 +310,15 @@ describe('NouvelleAction', () => {
       it('contient un champ pour saisir une description', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: /Description de l'action/ })
+          screen.getByRole('textbox', { name: /Commentaire/ })
         ).not.toHaveAttribute('required')
       })
 
       it('contient un champ pour saisir une date d’échéance', () => {
         // Then
-        expect(
-          screen.getByLabelText(/Définir une date d’échéance/)
-        ).toHaveAttribute('required')
+        expect(screen.getByLabelText(/Date d’échéance/)).toHaveAttribute(
+          'required'
+        )
       })
 
       describe('action personnalisée remplie', () => {
@@ -265,11 +326,11 @@ describe('NouvelleAction', () => {
         let submit: HTMLButtonElement
         beforeEach(async () => {
           // Given
-          intitule = screen.getByRole('textbox', { name: /Intitulé/ })
+          intitule = screen.getByRole('textbox', { name: /Titre/ })
           const description = screen.getByRole('textbox', {
-            name: /Description/,
+            name: /Commentaire/,
           })
-          const dateEcheance = screen.getByLabelText(/date d’échéance/)
+          const dateEcheance = screen.getByLabelText(/Date d’échéance/)
 
           submit = screen.getByRole('button', { name: 'Créer l’action' })
 
