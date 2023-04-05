@@ -216,7 +216,7 @@ export default function BeneficiairesMultiselectAutocomplete({
     return new Set(idsBeneficiaires).size
   }
 
-  function labelText() {
+  function labelHelpText() {
     return listesDeDiffusion?.length > 0
       ? 'Recherchez et ajoutez un ou plusieurs bénéficiaires et/ou listes de diffusion'
       : 'Recherchez et ajoutez un ou plusieurs bénéficiaires'
@@ -225,7 +225,10 @@ export default function BeneficiairesMultiselectAutocomplete({
   return (
     <>
       <Label htmlFor={id} inputRequired={required}>
-        {labelText()}
+        {{
+          main: typeSelection,
+          helpText: labelHelpText(),
+        }}
       </Label>
       {error && (
         <InputError id={id + '--error'} className='mt-2'>

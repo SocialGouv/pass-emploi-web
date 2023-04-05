@@ -358,7 +358,7 @@ describe('Page Partage Offre', () => {
 
         // Then
         const selectJeune = within(etape).getByRole('combobox', {
-          name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
+          name: /Bénéficiaires/,
         })
         const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -405,7 +405,7 @@ describe('Page Partage Offre', () => {
           // Given
 
           const selectJeune = screen.getByRole('combobox', {
-            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
+            name: /Bénéficiaires/,
           })
           inputMessage = screen.getByRole('textbox', { name: /Message/ })
           buttonValider = screen.getByRole('button', { name: 'Envoyer' })

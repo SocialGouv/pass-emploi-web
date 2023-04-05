@@ -364,7 +364,7 @@ describe('EditionAnimationCollective', () => {
 
         // Then
         const selectJeunes = screen.getByRole('combobox', {
-          name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
+          name: /Bénéficiaires/,
         })
         expect(selectJeunes).toHaveAttribute('aria-required', 'false')
         expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
