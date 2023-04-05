@@ -10,7 +10,6 @@ import React, {
 import DisplayMessage from 'components/chat/DisplayMessage'
 import HeaderChat from 'components/chat/HeaderChat'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -309,7 +308,7 @@ export default function Conversation({
         {uploadedFileError && (
           <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
         )}
-        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-1'>
+        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-3'>
           <span
             id='piece-jointe--desc'
             className='self-center text-xs-regular short:hidden'
@@ -328,7 +327,7 @@ export default function Conversation({
           />
 
           <div
-            className='p-4 bg-blanc rounded-base border text-base-bold border-primary focus-within:outline focus-within:outline-1'
+            className='p-4 bg-blanc rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
             onClick={() => inputRef.current!.focus()}
           >
             {uploadedFileInfo && (
@@ -359,19 +358,19 @@ export default function Conversation({
             <textarea
               ref={inputRef}
               id='input-new-message'
-              className='w-full outline-none'
+              className='w-full outline-none text-base-regular'
               onFocus={() => setReadByConseiller(jeuneChat.chatId)}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Écrivez votre message ici...'
               rows={5}
             />
           </div>
-          <div>
+          <div className='relative'>
             <button
               type='submit'
               aria-label='Envoyer le message'
               disabled={!newMessage && !Boolean(uploadedFileInfo)}
-              className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed'
+              className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed absolute bottom-0'
             >
               <IconComponent
                 name={IconName.Send}
@@ -380,9 +379,6 @@ export default function Conversation({
                 className='m-auto w-6 h-6 fill-blanc'
               />
             </button>
-            <span className='flex justify-center mt-3'>
-              <BulleMessageSensible />
-            </span>
           </div>
         </div>
       </form>
