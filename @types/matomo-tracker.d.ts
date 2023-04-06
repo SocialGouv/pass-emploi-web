@@ -10,6 +10,7 @@ declare module 'matomo-tracker' {
       urlref?: string
       dimension1: 'conseiller'
       dimension2: string
+      dimension3: string
     }): void
   }
 }
