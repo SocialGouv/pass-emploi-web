@@ -207,7 +207,7 @@ function EnvoiMessageGroupe({
           Tous les champs sont obligatoires
         </div>
 
-        <Etape numero={1} titre='Destinataires'>
+        <Etape numero={1} titre='Sélectionnez des destinataires'>
           <BeneficiairesMultiselectAutocomplete
             id={'select-beneficiaires'}
             beneficiaires={buildOptionsJeunes()}
