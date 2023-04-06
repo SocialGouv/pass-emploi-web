@@ -196,7 +196,7 @@ describe('NouvelleAction', () => {
           expect(actionsService.createAction).not.toHaveBeenCalled()
         })
 
-        it("affiche un message d'erreur quand type d’action prédéfinie est vide", async () => {
+        it("affiche un message d'erreur quand le type d’action prédéfinie est vide", async () => {
           // When
           expect(selectAction).toBeInTheDocument()
           await userEvent.click(selectAction)
@@ -205,11 +205,13 @@ describe('NouvelleAction', () => {
           // Then
           expect(selectAction.value).toEqual('')
           expect(
-            screen.getByText('Le champ “Titre” est vide. Renseignez un titre.')
+            screen.getByText(
+              'Le champ “Action prédéfinie" est vide. Renseignez une action.'
+            )
           ).toBeInTheDocument()
         })
 
-        it("affiche un message d'erreur quand date d'echeance n'est pas au bon format", async () => {
+        it("affiche un message d'erreur quand la date d'échéance n'est pas au bon format", async () => {
           const dateEcheance = screen.getByLabelText(/Date d’échéance/)
 
           await userEvent.clear(dateEcheance)
@@ -223,7 +225,7 @@ describe('NouvelleAction', () => {
           ).toBeInTheDocument()
         })
 
-        it("affiche un message d'erreur quand date d'echeance n'est pas dans l'interval", async () => {
+        it("affiche un message d'erreur quand date d'echeance n'est pas dans l'interval: un an avant, deux ans après", async () => {
           const dateEcheance = screen.getByLabelText(/Date d’échéance/)
           await userEvent.type(dateEcheance, '2000-07-30')
           await userEvent.tab()

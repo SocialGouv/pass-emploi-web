@@ -60,6 +60,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   function switchTab() {
     const newTab = currentTab === 'predefinie' ? 'personnalisee' : 'predefinie'
     setCurrentTab(newTab)
+    setIntitule({ value: intitule?.value })
     setTrackingTitle(`Actions jeune – Création action ${tabsLabel[currentTab]}`)
   }
 
@@ -79,7 +80,11 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     if (intitule.value === undefined) {
       setIntitule({
         ...intitule,
-        error: 'Le champ “Titre” est vide. Renseignez un titre.',
+        error: `${
+          currentTab === 'predefinie'
+            ? 'Le champ “Action prédéfinie" est vide. Renseignez une action.'
+            : 'Le champ “Titre de l’action" est vide. Renseignez un titre.'
+        }`,
       })
     }
     return Boolean(intitule.value)
@@ -223,11 +228,17 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
             <Label htmlFor='intitule-action-personnalisee' inputRequired={true}>
               Titre de l&apos;action
             </Label>
+            {intitule.error && (
+              <InputError id='intitule--error' className='mb-2'>
+                {intitule.error}
+              </InputError>
+            )}
             <Input
               type='text'
               id='intitule-action-personnalisee'
               required={true}
               onChange={(value: string) => setIntitule({ value })}
+              onBlur={intituleEstValide}
             />
 
             <Label
@@ -249,12 +260,18 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
             >
               Date d’échéance
             </Label>
+            {dateEcheance.error && (
+              <InputError id='date-echeance--error' className='mb-2'>
+                {dateEcheance.error}
+              </InputError>
+            )}
             <Input
               type='date'
               id='date-echeance-action-personnalisee'
               required={true}
               defaultValue={dateEcheance.value}
               onChange={(value: string) => setDateEcheance({ value })}
+              onBlur={dateEcheanceEstValide}
             />
           </div>
         )}
