@@ -303,7 +303,7 @@ function Reaffectation(_: ReaffectationProps) {
         {Boolean(conseillerInitial.error) && (
           <div className='flex col-start-1 row-start-3'>
             <IconComponent
-              name={IconName.Important}
+              name={IconName.Error}
               focusable={false}
               aria-hidden={true}
               className='fill-warning w-6 h-6 mr-2'
@@ -343,7 +343,7 @@ function Reaffectation(_: ReaffectationProps) {
         {Boolean(emailConseillerDestination.error) && (
           <div className='flex col-start-2 row-start-3'>
             <IconComponent
-              name={IconName.Important}
+              name={IconName.Error}
               focusable={false}
               aria-hidden={true}
               className='fill-warning w-6 h-6 mr-2'
@@ -378,7 +378,7 @@ function Reaffectation(_: ReaffectationProps) {
             {Boolean(erreurReaffectation) && (
               <div className='absolute flex mt-3'>
                 <IconComponent
-                  name={IconName.Important}
+                  name={IconName.Error}
                   focusable={false}
                   aria-hidden={true}
                   className='fill-warning w-6 h-6 mr-2 flex-shrink-0'

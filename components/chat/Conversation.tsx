@@ -238,7 +238,9 @@ export default function Conversation({
         labelRetour='Retour sur ma messagerie'
         titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
         iconName={
-          jeuneChat.flaggedByConseiller ? IconName.FlagFilled : IconName.Flag
+          jeuneChat.flaggedByConseiller
+            ? IconName.BookmarkFill
+            : IconName.BookmarkOutline
         }
         iconLabel={
           jeuneChat.flaggedByConseiller
@@ -344,7 +346,7 @@ export default function Conversation({
                   onClick={deleteFile}
                 >
                   <IconComponent
-                    name={IconName.RoundedClose}
+                    name={IconName.Close}
                     aria-hidden='true'
                     focusable='false'
                     className='w-6 h-6 ml-2 fill-primary stroke-primary'

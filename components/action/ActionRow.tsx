@@ -72,7 +72,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
           >
             {actionEstEnRetard ? (
               <IconComponent
-                name={IconName.ImportantOutline}
+                name={IconName.Error}
                 aria-label='en retard'
                 aria-hidden='true'
                 focusable='false'

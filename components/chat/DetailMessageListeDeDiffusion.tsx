@@ -77,7 +77,7 @@ export function DetailMessageListeDeDiffusion({
                 {aLuLeMessage(destinataire) ? 'Lu par ' : 'Non lu par '}
                 <div className='flex items-center'>
                   <IconComponent
-                    name={IconName.RoundedCheck}
+                    name={IconName.CheckCircleOutline}
                     aria-hidden={true}
                     focusable={false}
                     className={`w-3 h-3 ${

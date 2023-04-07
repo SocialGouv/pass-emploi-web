@@ -106,7 +106,7 @@ export default function ChatRoom({
         onClick={onAccesListesDiffusion}
       >
         <IconComponent
-          name={IconName.People}
+          name={IconName.PeopleFill}
           className='mr-2 h-6 w-6'
           aria-hidden={true}
           focusable={false}

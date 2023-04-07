@@ -84,7 +84,7 @@ export function RdvRow({
         {!withIndicationPresenceBeneficiaire && (
           <>
             <IconComponent
-              name={IconName.Location}
+              name={IconName.LocationOn}
               focusable={false}
               aria-hidden={true}
               className='inline mr-2 h-6 w-6 fill-primary'
@@ -105,9 +105,7 @@ export function RdvRow({
               <>
                 <IconComponent
                   name={
-                    rdv.futPresent
-                      ? IconName.RoundedCheckFilled
-                      : IconName.RoundedCloseFilled
+                    rdv.futPresent ? IconName.CheckCircleFill : IconName.Close
                   }
                   focusable={false}
                   aria-hidden={true}
@@ -128,7 +126,7 @@ export function RdvRow({
             <>
               <span className='sr-only'>oui</span>
               <IconComponent
-                name={IconName.RoundedCheckFilled}
+                name={IconName.CheckCircleFill}
                 aria-hidden={true}
                 focusable={false}
                 className='h-6 fill-primary'
@@ -139,7 +137,7 @@ export function RdvRow({
             <>
               <span className='sr-only'>non</span>
               <IconComponent
-                name={IconName.Ko}
+                name={IconName.Cancel}
                 aria-hidden={true}
                 focusable={false}
                 className='h-6'

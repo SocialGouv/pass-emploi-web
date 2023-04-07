@@ -68,7 +68,7 @@ export function ConversationTile({
                 <span>
                   Lu{' '}
                   <IconComponent
-                    name={IconName.RoundedCheckFilled}
+                    name={IconName.CheckCircleFill}
                     focusable={false}
                     aria-hidden={true}
                     className='inline w-3 h-3 fill-primary'
@@ -93,8 +93,8 @@ export function ConversationTile({
       <IconCheckbox
         id={`${id}--flag`}
         checked={jeuneChat.flaggedByConseiller}
-        checkedIconName={IconName.FlagFilled}
-        uncheckedIconName={IconName.Flag}
+        checkedIconName={IconName.BookmarkFill}
+        uncheckedIconName={IconName.BookmarkOutline}
         checkedLabel='Ne plus suivre la conversation'
         uncheckedLabel='Suivre la conversation'
         onChange={toggleFollowMessage}

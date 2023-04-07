@@ -84,7 +84,7 @@ export default function ServiceCiviqueDetail({
                   <dd className='mt-6'>
                     <DataTag
                       text={`${offre.codeDepartement} - ${offre.ville}`}
-                      iconName={IconName.Location}
+                      iconName={IconName.LocationOn}
                     />
                   </dd>
                 </>
@@ -96,7 +96,7 @@ export default function ServiceCiviqueDetail({
                   <dd className='mt-2'>
                     <DataTag
                       text={'Commence le ' + dateDeDebutFormate}
-                      iconName={IconName.Calendar}
+                      iconName={IconName.EventFill}
                     />
                   </dd>
                 </>
@@ -108,7 +108,7 @@ export default function ServiceCiviqueDetail({
                   <dd className='mt-2'>
                     <DataTag
                       text={'Termine le ' + dateDeFinFormate}
-                      iconName={IconName.Calendar}
+                      iconName={IconName.EventFill}
                     />
                   </dd>
                 </>

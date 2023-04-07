@@ -68,7 +68,7 @@ export default function NavLinks({
             label='Portefeuille'
             iconName={
               isCurrentRoute('/mes-jeunes')
-                ? IconName.People
+                ? IconName.PeopleFill
                 : IconName.PeopleOutline
             }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
@@ -82,8 +82,8 @@ export default function NavLinks({
             label='Agenda'
             iconName={
               isCurrentRoute('/agenda')
-                ? IconName.Calendar
-                : IconName.CalendarOutline
+                ? IconName.EventFill
+                : IconName.EventOutline
             }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
@@ -98,8 +98,8 @@ export default function NavLinks({
             label='Offres'
             iconName={
               isCurrentRoute('/recherche-offres') || isCurrentRoute('/offres')
-                ? IconName.SearchNav
-                : IconName.SearchNavOutline
+                ? IconName.PageViewFill
+                : IconName.PageViewOutline
             }
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
@@ -110,8 +110,8 @@ export default function NavLinks({
             <NavLink
               iconName={
                 isCurrentRoute('/pilotage')
-                  ? IconName.Board
-                  : IconName.BoardOutline
+                  ? IconName.LeaderboardFill
+                  : IconName.LeaderboardOutline
               }
               label='Pilotage'
               href='/pilotage'
@@ -126,8 +126,8 @@ export default function NavLinks({
             <NavLink
               iconName={
                 isCurrentRoute('/etablissement')
-                  ? IconName.RoundedArrowRight
-                  : IconName.RoundedArrowRightOutline
+                  ? IconName.ArrowCircleRightFill
+                  : IconName.ArrowCircleRightOutline
               }
               label='Bénéficiaires'
               href='/etablissement'
@@ -138,7 +138,7 @@ export default function NavLinks({
 
         {estSuperviseur(conseiller) && items.includes(NavItem.Supervision) && (
           <NavLink
-            iconName={IconName.ArrowRight}
+            iconName={IconName.ArrowForward}
             label='Réaffectation'
             href='/reaffectation'
             isActive={isCurrentRoute('/reaffectation')}
@@ -148,7 +148,7 @@ export default function NavLinks({
 
         {items.includes(NavItem.Messagerie) && (
           <NavLink
-            iconName={IconName.Note}
+            iconName={IconName.ChatFill}
             label='Messagerie'
             href='/mes-jeunes'
             isActive={isCurrentRoute('/mes-jeunes')}
@@ -181,7 +181,7 @@ export default function NavLinks({
                 : process.env.FAQ_PE_EXTERNAL_LINK ?? ''
             }
             label='Aide'
-            iconName={IconName.Aide}
+            iconName={IconName.Help}
             isExternal={true}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
             onClick={trackAide}
@@ -196,8 +196,8 @@ export default function NavLinks({
             label={`${conseiller.firstName} ${conseiller.lastName}`}
             iconName={
               isCurrentRoute('/profil')
-                ? IconName.Profil
-                : IconName.ProfilOutline
+                ? IconName.AccountCircleFill
+                : IconName.AccountCircleOutline
             }
             className='break-all'
             showLabelOnSmallScreen={showLabelsOnSmallScreen}

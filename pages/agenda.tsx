@@ -174,7 +174,7 @@ function Agenda({ onglet }: AgendaProps) {
           selected={currentTab === Onglet.CONSEILLER}
           controls='agenda-conseiller'
           onSelectTab={() => switchTab(Onglet.CONSEILLER)}
-          iconName={IconName.Calendar}
+          iconName={IconName.EventFill}
         />
 
         <Tab
@@ -182,7 +182,7 @@ function Agenda({ onglet }: AgendaProps) {
           selected={currentTab === Onglet.ETABLISSEMENT}
           controls='agenda-etablissement'
           onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
-          iconName={IconName.Calendar}
+          iconName={IconName.EventFill}
         />
       </TabList>
 

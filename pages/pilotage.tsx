@@ -186,7 +186,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions-à-qualifier'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
-          iconName={IconName.Calendar}
+          iconName={IconName.EventFill}
         />
         <Tab
           label='Animations à clore'
@@ -194,7 +194,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           selected={currentTab === Onglet.ANIMATIONS_COLLECTIVES}
           controls='liste-animations-collectives-a-clore'
           onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
-          iconName={IconName.Calendar}
+          iconName={IconName.EventFill}
         />
       </TabList>
 

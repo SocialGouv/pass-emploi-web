@@ -9,7 +9,7 @@ export default function SortIcon({
 }) {
   return (
     <IconComponent
-      name={isSorted ? IconName.ArrowDown : IconName.ArrowDouble}
+      name={isSorted ? IconName.ArrowDownard : IconName.SwapVert}
       focusable='false'
       aria-hidden='true'
       className={`w-6 h-6 ml-2 ${isDesc ? 'rotate-180' : ''}`}
