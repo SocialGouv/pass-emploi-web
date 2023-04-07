@@ -111,11 +111,15 @@ export default function BeneficiairesMultiselectAutocomplete({
     ].concat(beneficiairesNonSelectionnes)
   }
 
+  function selectionneBeneficiairesDuConseiller() {
+    return beneficiaires.filter((beneficiaire) => !beneficiaire.avecIndication)
+  }
+
   function selectionnerOption(inputValue: string) {
     if (disabled) return
 
     if (inputValue === SELECT_ALL_DESTINATAIRES_OPTION) {
-      setBeneficiairesSelectionnes(beneficiaires)
+      setBeneficiairesSelectionnes(selectionneBeneficiairesDuConseiller())
       onUpdate({
         beneficiaires: beneficiaires.map((beneficiaire) => beneficiaire.id),
       })
