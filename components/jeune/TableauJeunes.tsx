@@ -266,7 +266,7 @@ export default function TableauJeunes({
                     }`}
                   >
                     <span className='mr-1'>
-                      Messages non lus par les jeunes
+                      Messages non lus par les bénéficiaires
                     </span>
                     <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                   </button>
