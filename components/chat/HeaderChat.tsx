@@ -49,10 +49,10 @@ export default function HeaderChat({
         )}
       </div>
       <div className='flex'>
-        <span className='flex justify-center mr-2'>
-          <BulleMessageSensible />
-        </span>
-        <h2 className='w-full text-left text-primary text-m-bold'>{titre}</h2>
+        <BulleMessageSensible />
+        <h2 className='w-full text-left text-primary text-m-bold ml-2'>
+          {titre}
+        </h2>
       </div>
     </div>
   )
