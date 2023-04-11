@@ -26,7 +26,7 @@ export default function HeaderChat({
           onClick={onBack}
         >
           <IconComponent
-            name={IconName.ArrowLeft}
+            name={IconName.ArrowBackward}
             aria-hidden={true}
             focusable={false}
             className='w-4 h-4 fill-primary mr-3'

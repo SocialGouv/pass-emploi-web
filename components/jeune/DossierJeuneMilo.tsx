@@ -129,7 +129,7 @@ export default function DossierJeuneMilo({
           className='flex items-center text-base-bold text-primary_darken mr-6'
         >
           <IconComponent
-            name={IconName.ArrowLeft}
+            name={IconName.ArrowBackward}
             className='mr-2.5 w-3 h-3'
             role='img'
             focusable='false'

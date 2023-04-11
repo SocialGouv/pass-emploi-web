@@ -52,7 +52,7 @@ export default function FileInput({
       />
       <label htmlFor={id} className={'cursor-pointer ' + styleLabel}>
         <IconComponent
-          name={IconName.File}
+          name={IconName.AttachFile}
           aria-hidden={true}
           focusable={false}
           className={styleIcone + (isLoading ? ' animate-spin' : '')}

@@ -26,7 +26,7 @@ export default function ExternalLink({
     >
       {label}
       <IconComponent
-        name={iconName ?? IconName.Launch}
+        name={iconName ?? IconName.OpenInNew}
         className='ml-1.5 w-3 h-3 fill-[currentColor]'
         focusable='false'
         aria-hidden={true}

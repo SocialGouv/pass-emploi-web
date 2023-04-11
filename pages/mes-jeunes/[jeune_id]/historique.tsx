@@ -77,7 +77,7 @@ function Historique({
             selected={currentTab === Onglet.SITUATIONS}
             controls='liste-situations'
             onSelectTab={() => setCurrentTab(Onglet.SITUATIONS)}
-            iconName={IconName.Calendar}
+            iconName={IconName.EventFill}
           />
         )}
         <Tab
@@ -85,7 +85,7 @@ function Historique({
           selected={currentTab === Onglet.CONSEILLERS}
           controls='liste-conseillers'
           onSelectTab={() => setCurrentTab(Onglet.CONSEILLERS)}
-          iconName={IconName.Actions}
+          iconName={IconName.ChecklistRtlFill}
         />
       </TabList>
 

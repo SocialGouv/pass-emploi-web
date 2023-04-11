@@ -23,7 +23,7 @@ export function CommentaireAction({
       <dt className='flex items-center pb-2'>
         {commentaire.createur.id !== idConseiller && (
           <IconComponent
-            name={IconName.Profil}
+            name={IconName.AccountCircleFill}
             aria-hidden={true}
             focusable={false}
             className='w-4 h-4 mr-2 inline'

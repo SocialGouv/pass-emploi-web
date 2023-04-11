@@ -85,7 +85,15 @@ import LogoutIcon from 'assets/new_icons/navigations/logout.svg'
 import MenuIcon from 'assets/new_icons/navigations/menu.svg'
 import OpenInNewIcon from 'assets/new_icons/navigations/open_in_new.svg'
 import SwapVertIcon from 'assets/new_icons/navigations/swap_vert.svg'
+import NoteIcon from 'assets/new_icons/note.svg'
+import NumberCircleOneIcon from 'assets/new_icons/numbers/number_circle_1.svg'
+import NumberCircleTwoIcon from 'assets/new_icons/numbers/number_circle_2.svg'
+import NumberCircleThreeIcon from 'assets/new_icons/numbers/number_circle_3.svg'
+import NumberCircleFourIcon from 'assets/new_icons/numbers/number_circle_4.svg'
+import NumberCircleFiveIcon from 'assets/new_icons/numbers/number_circle_5.svg'
 import NumberCircleSixIcon from 'assets/new_icons/numbers/number_circle_6.svg'
+import PendingIcon from 'assets/new_icons/pending.svg'
+import RemoveIcon from 'assets/new_icons/remove.svg'
 import SpinnerIcon from 'assets/new_icons/spinner.svg'
 import SuitcaseIcon from 'assets/new_icons/suitcase.svg'
 
@@ -157,6 +165,11 @@ export enum IconName {
   FavoritFill = 'FavoritFill',
   PeopleFill = 'PeopleFill',
   PeopleOutline = 'PeopleOutline',
+  NumberCircleOne = 'NumberCircleOne',
+  NumberCircleTwo = 'NumberCircleTwo',
+  NumberCircleThree = 'NumberCircleThree',
+  NumberCircleFour = 'NumberCircleFour',
+  NumberCircleFive = 'NumberCircleFive',
   NumberCircleSix = 'NumberCircleSix',
   Info = 'Info',
   Add = 'Add',
@@ -178,6 +191,9 @@ export enum IconName {
   Suitcase = 'Suitcase',
   DecorativePoint = 'DecorativePoint',
   Contract = 'Contract',
+  Pending = 'Pending',
+  Remove = 'Remove',
+  Note = 'Note',
 }
 
 const iconsByName: { [key in IconName]: any } = {
@@ -231,6 +247,11 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Mail]: MailIcon,
   [IconName.Menu]: MenuIcon,
   [IconName.Notifications]: NotificationsIcon,
+  [IconName.NumberCircleOne]: NumberCircleOneIcon,
+  [IconName.NumberCircleTwo]: NumberCircleTwoIcon,
+  [IconName.NumberCircleThree]: NumberCircleThreeIcon,
+  [IconName.NumberCircleFour]: NumberCircleFourIcon,
+  [IconName.NumberCircleFive]: NumberCircleFiveIcon,
   [IconName.NumberCircleSix]: NumberCircleSixIcon,
   [IconName.OpenInNew]: OpenInNewIcon,
   [IconName.OutgoingMail]: OutgoingMailIcon,
@@ -269,6 +290,9 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Suitcase]: SuitcaseIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
   [IconName.Contract]: ContractIcon,
+  [IconName.Pending]: PendingIcon,
+  [IconName.Remove]: RemoveIcon,
+  [IconName.Note]: NoteIcon,
 }
 
 type IconComponentProps = ComponentPropsWithoutRef<'svg'> & {
