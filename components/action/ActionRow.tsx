@@ -76,7 +76,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
                 aria-label='en retard'
                 aria-hidden='true'
                 focusable='false'
-                className='h-3 mr-1'
+                className='h-3 mr-1 fill-warning'
               />
             ) : (
               <></>

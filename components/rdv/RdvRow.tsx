@@ -140,7 +140,7 @@ export function RdvRow({
                 name={IconName.Cancel}
                 aria-hidden={true}
                 focusable={false}
-                className='h-6'
+                className='h-6 fill-grey_700'
               />
             </>
           )}

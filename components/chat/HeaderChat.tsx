@@ -29,7 +29,7 @@ export default function HeaderChat({
             name={IconName.ArrowBackward}
             aria-hidden={true}
             focusable={false}
-            className='w-4 h-4 fill-primary mr-3'
+            className='w-5 h-5 fill-primary mr-3'
           />
           <span className='text-s-regular'>Retour</span>
         </button>
@@ -42,7 +42,7 @@ export default function HeaderChat({
             <IconComponent
               name={iconName}
               title={iconLabel}
-              className='w-6 h-6 fill-primary'
+              className='w-8 h-8 fill-primary'
             />
           </button>
         )}

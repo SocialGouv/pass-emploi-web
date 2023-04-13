@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
 
-import RefreshIcon from 'assets/icons/refresh.svg'
+import RefreshIcon from 'assets/icons/actions/refresh.svg'
 import Button from 'components/ui/Button/Button'
 import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'

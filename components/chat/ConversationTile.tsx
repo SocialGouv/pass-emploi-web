@@ -98,7 +98,7 @@ export function ConversationTile({
         checkedLabel='Ne plus suivre la conversation'
         uncheckedLabel='Suivre la conversation'
         onChange={toggleFollowMessage}
-        className='absolute top-3 right-3 w-4 h-4 fill-primary'
+        className='absolute top-3 right-3 w-5 h-5 fill-primary'
       />
     </div>
   )

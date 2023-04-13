@@ -13,7 +13,7 @@ export default function SortIcon({
         isSorted
           ? isDesc
             ? IconName.ArrowUpward
-            : IconName.ArrowDownard
+            : IconName.ArrowDownward
           : IconName.SwapVert
       }
       focusable='false'

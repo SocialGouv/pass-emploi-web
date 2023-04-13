@@ -77,7 +77,7 @@ export function OngletAgendaBeneficiaire({
                       name={IconName.Error}
                       focusable={false}
                       aria-hidden={true}
-                      className='w-[16px] h-[16px] m-auto accent-warning'
+                      className='w-[16px] h-[16px] m-auto fill-warning'
                     />
                     <p>Actions en retard ({nombreActionsEnRetard})</p>
                   </div>

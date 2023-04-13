@@ -441,7 +441,7 @@ function FicheJeune({
             selected={currentTab === Onglet.FAVORIS}
             controls='liste-favoris'
             onSelectTab={() => switchTab(Onglet.FAVORIS)}
-            iconName={IconName.FavoritFill}
+            iconName={IconName.FavoriteFill}
           />
         )}
       </TabList>
