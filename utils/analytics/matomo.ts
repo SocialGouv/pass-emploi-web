@@ -13,6 +13,7 @@ interface InitSettings {
 interface TrackPageSettings {
   structure: string
   customTitle?: string
+  avecBeneficiaires?: string
 }
 
 interface TrackEventSettings {
@@ -58,7 +59,11 @@ function init({
   }
 }
 
-function trackPage({ structure, customTitle }: TrackPageSettings): void {
+function trackPage({
+  structure,
+  customTitle,
+  avecBeneficiaires,
+}: TrackPageSettings): void {
   window._paq = window._paq !== null ? window._paq : []
 
   let previousPath = ''
@@ -80,6 +85,7 @@ function trackPage({ structure, customTitle }: TrackPageSettings): void {
     push(['setCustomUrl', pathname])
     push(['setCustomDimension', 1, 'conseiller'])
     push(['setCustomDimension', 2, structure])
+    push(['setCustomDimension', 8, avecBeneficiaires || ''])
 
     push(['setDocumentTitle', customTitle || document.title])
     push(['deleteCustomVariables', 'page'])
@@ -97,6 +103,8 @@ function trackEvent(trackEventSettings: TrackEventSettings): void {
     2,
     userStructureDimensionString(trackEventSettings.structure),
   ])
+  push(['setCustomDimension', 8, 'avecBeneficiaires'])
+
   push([
     'trackEvent',
     trackEventSettings.categorie,
@@ -112,6 +120,7 @@ function trackSSR({
   customTitle,
   pathname,
   refererUrl,
+  avecBeneficiaires,
 }: Required<TrackPageSettings> & {
   pathname: string
   refererUrl?: string
@@ -134,6 +143,7 @@ function trackSSR({
     urlref: refererUrl,
     dimension1: 'conseiller',
     dimension2: structure,
+    dimension3: avecBeneficiaires,
   })
 }
 

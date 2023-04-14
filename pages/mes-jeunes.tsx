@@ -136,7 +136,9 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
       })
   }, [chatCredentials, conseillerJeunes, messagesService])
 
-  useMatomo(trackingTitle)
+  const adesBeneficiaires = conseillerJeunes.length === 0 ? 'non' : 'oui'
+
+  useMatomo(trackingTitle, adesBeneficiaires)
 
   return (
     <>
