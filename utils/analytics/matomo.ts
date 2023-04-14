@@ -85,8 +85,7 @@ function trackPage({
     push(['setCustomUrl', pathname])
     push(['setCustomDimension', 1, 'conseiller'])
     push(['setCustomDimension', 2, structure])
-    push(['setCustomDimension', 3, avecBeneficiaires || ''])
-    console.log('lalalaalaaa', avecBeneficiaires)
+    push(['setCustomDimension', 8, avecBeneficiaires || ''])
 
     push(['setDocumentTitle', customTitle || document.title])
     push(['deleteCustomVariables', 'page'])
@@ -104,7 +103,7 @@ function trackEvent(trackEventSettings: TrackEventSettings): void {
     2,
     userStructureDimensionString(trackEventSettings.structure),
   ])
-  push(['setCustomDimension', 3, 'avecBeneficiaires'])
+  push(['setCustomDimension', 8, 'avecBeneficiaires'])
 
   push([
     'trackEvent',
