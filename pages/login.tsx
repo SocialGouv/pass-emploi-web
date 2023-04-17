@@ -51,6 +51,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
     const provider = router?.query.provider
     switch (provider) {
       case 'pe':
+      case 'pe-brsa':
       case 'similo':
         signin(`${provider}-conseiller`)
     }
@@ -82,9 +83,14 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
             handleSubmit={(event) => handleSignin(event, 'similo-conseiller')}
           />
           <FormButton
-            label='Connexion conseiller Pôle emploi'
+            label='Connexion conseiller Pôle emploi CEJ'
             className='pt-4 whitespace-nowrap'
             handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
+          />
+          <FormButton
+            label='Connexion conseiller Pôle emploi BRSA'
+            className='pt-4 whitespace-nowrap'
+            handleSubmit={(event) => handleSignin(event, 'pe-brsa-conseiller')}
           />
 
           {ssoPassEmploiEstActif && (
