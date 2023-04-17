@@ -85,7 +85,7 @@ function trackPage({
     push(['setCustomUrl', pathname])
     push(['setCustomDimension', 1, 'conseiller'])
     push(['setCustomDimension', 2, structure])
-    push(['setCustomDimension', 8, avecBeneficiaires || ''])
+    push(['setCustomDimension', 8, avecBeneficiaires || 'non'])
 
     push(['setDocumentTitle', customTitle || document.title])
     push(['deleteCustomVariables', 'page'])
