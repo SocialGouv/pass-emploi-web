@@ -2,6 +2,7 @@ export enum StructureConseiller {
   MILO = 'MILO',
   POLE_EMPLOI = 'POLE_EMPLOI',
   PASS_EMPLOI = 'PASS_EMPLOI',
+  POLE_EMPLOI_BRSA = 'POLE_EMPLOI_BRSA',
 }
 
 export enum UserType {

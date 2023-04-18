@@ -28,7 +28,6 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
   const [conseiller, setConseiller] = useConseiller()
-  alert('je suis conseiller ' + conseiller.structure)
   const [_, setAlerte] = useAlerte()
 
   const [trackingLabel, setTrackingLabel] = useState<string>(

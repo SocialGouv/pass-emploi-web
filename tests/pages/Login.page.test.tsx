@@ -33,25 +33,30 @@ describe('Login', () => {
       expect(heading).toBeInTheDocument()
     })
 
-    it('devrait avoir deux boutons', () => {
+    it('devrait avoir trois boutons', () => {
       const miloButton = screen.getByRole('button', {
         name: 'Connexion conseiller Mission Locale',
       })
-      const poleEButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi',
+      const poleEmploiCEJButton = screen.getByRole('button', {
+        name: 'Connexion conseiller Pôle emploi CEJ',
       })
+      const poleEmploiBRSAButton = screen.getByRole('button', {
+        name: 'Connexion conseiller Pôle emploi BRSA',
+      })
+
       const buttonsNb = screen.getAllByRole('button')
 
       //THEN
       expect(miloButton).toBeInTheDocument()
-      expect(poleEButton).toBeInTheDocument()
-      expect(buttonsNb.length).toEqual(2)
+      expect(poleEmploiCEJButton).toBeInTheDocument()
+      expect(poleEmploiBRSAButton).toBeInTheDocument()
+      expect(buttonsNb.length).toEqual(3)
     })
 
-    it("permet de s'identifier en tant que conseiller PE", async () => {
+    it("permet de s'identifier en tant que conseiller PE CEJ", async () => {
       // Given
       const peButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi',
+        name: 'Connexion conseiller Pôle emploi CEJ',
       })
 
       // When
@@ -62,6 +67,23 @@ describe('Login', () => {
         'keycloak',
         { callbackUrl: '/?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'pe-conseiller' }
+      )
+    })
+
+    it("permet de s'identifier en tant que conseiller PE BRSA", async () => {
+      // Given
+      const peBRSAButton = screen.getByRole('button', {
+        name: 'Connexion conseiller Pôle emploi BRSA',
+      })
+
+      // When
+      await userEvent.click(peBRSAButton)
+
+      // Then
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
+        { kc_idp_hint: 'pe-brsa-conseiller' }
       )
     })
 
@@ -139,7 +161,7 @@ describe('Login', () => {
       render(<Login ssoPassEmploiEstActif={true} isFromEmail={false} />)
     })
 
-    it('devrait avoir trois boutons', () => {
+    it('devrait avoir quatre boutons', () => {
       //GIVEN
       const passEButton = screen.getByRole('button', {
         name: 'Authentification pass emploi',
@@ -149,8 +171,11 @@ describe('Login', () => {
         name: 'Connexion conseiller Mission Locale',
       })
 
-      const poleEButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi',
+      const poleEmploiCEJButton = screen.getByRole('button', {
+        name: 'Connexion conseiller Pôle emploi CEJ',
+      })
+      const poleEmploiBRSAButton = screen.getByRole('button', {
+        name: 'Connexion conseiller Pôle emploi BRSA',
       })
 
       const buttonsNb = screen.getAllByRole('button')
@@ -158,8 +183,9 @@ describe('Login', () => {
       //THEN
       expect(passEButton).toBeInTheDocument()
       expect(miloButton).toBeInTheDocument()
-      expect(poleEButton).toBeInTheDocument()
-      expect(buttonsNb.length).toEqual(3)
+      expect(poleEmploiCEJButton).toBeInTheDocument()
+      expect(poleEmploiBRSAButton).toBeInTheDocument()
+      expect(buttonsNb.length).toEqual(4)
     })
 
     it("permet de s'identifier en tant que conseiller Pass emploi", async () => {
