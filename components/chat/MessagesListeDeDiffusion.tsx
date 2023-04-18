@@ -59,7 +59,7 @@ export default function MessagesListeDeDiffusion({
           className='mr-auto'
         >
           <IconComponent
-            name={IconName.Pen}
+            name={IconName.Edit}
             focusable={false}
             aria-hidden={true}
             className='w-4 h-4 fill-primary mr-3'

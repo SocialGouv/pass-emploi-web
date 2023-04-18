@@ -294,7 +294,7 @@ function FicheJeune({
         <PageActionsPortal>
           <Button onClick={openDeleteJeuneModal} style={ButtonStyle.SECONDARY}>
             <IconComponent
-              name={IconName.Trashcan}
+              name={IconName.Delete}
               focusable={false}
               aria-hidden={true}
               className='mr-2 w-4 h-4'
@@ -329,7 +329,7 @@ function FicheJeune({
       {jeune.isReaffectationTemporaire && (
         <div className='mb-6'>
           <InformationMessage
-            iconName={IconName.Clock}
+            iconName={IconName.Schedule}
             label='Ce bénéficiaire a été ajouté temporairement à votre portefeuille en attendant le retour de son conseiller initial.'
           />
         </div>
@@ -416,7 +416,7 @@ function FicheJeune({
           selected={currentTab === Onglet.AGENDA}
           controls='agenda'
           onSelectTab={() => switchTab(Onglet.AGENDA)}
-          iconName={IconName.Calendar}
+          iconName={IconName.EventFill}
         />
         <Tab
           label='Actions'
@@ -424,7 +424,7 @@ function FicheJeune({
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions'
           onSelectTab={() => switchTab(Onglet.ACTIONS)}
-          iconName={IconName.Actions}
+          iconName={IconName.ChecklistRtlFill}
         />
         <Tab
           label='Rendez-vous'
@@ -432,7 +432,7 @@ function FicheJeune({
           selected={currentTab === Onglet.RDVS}
           controls='liste-rdvs'
           onSelectTab={() => switchTab(Onglet.RDVS)}
-          iconName={IconName.Calendar}
+          iconName={IconName.EventFill}
         />
         {metadonneesFavoris && (
           <Tab
@@ -441,7 +441,7 @@ function FicheJeune({
             selected={currentTab === Onglet.FAVORIS}
             controls='liste-favoris'
             onSelectTab={() => switchTab(Onglet.FAVORIS)}
-            iconName={IconName.Favorite}
+            iconName={IconName.FavoriteFill}
           />
         )}
       </TabList>

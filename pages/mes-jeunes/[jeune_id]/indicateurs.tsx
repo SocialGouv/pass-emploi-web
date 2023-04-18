@@ -89,14 +89,14 @@ function IndicateursActions({
           label='En retard'
           bgColor='alert_lighten'
           textColor='content_color'
-          iconName={IconName.ImportantOutline}
+          iconName={IconName.Error}
         />
         <TileIndicateur
           valeur={actions?.terminees.toString() ?? '-'}
           label={actions?.terminees !== 1 ? 'Terminées' : 'Terminée'}
           bgColor='accent_2_lighten'
           textColor='accent_2'
-          iconName={IconName.RoundedCheck}
+          iconName={IconName.CheckCircleFill}
         />
         <TileIndicateur
           valeur={actions?.aEcheance.toString() ?? '-'}

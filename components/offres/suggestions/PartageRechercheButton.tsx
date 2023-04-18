@@ -139,7 +139,7 @@ export default function PartageRechercheButton({
                 style={ButtonStyle.SECONDARY}
               >
                 <IconComponent
-                  name={IconName.Partage}
+                  name={IconName.Share}
                   className='w-4 h-4 mr-3'
                   focusable={false}
                   aria-hidden={true}
@@ -153,7 +153,7 @@ export default function PartageRechercheButton({
                 onClick={() => setErrorMessage(true)}
               >
                 <IconComponent
-                  name={IconName.Partage}
+                  name={IconName.Share}
                   className='w-4 h-4 mr-3'
                   focusable={false}
                   aria-hidden={true}

@@ -164,7 +164,7 @@ function PageAction({
               disabled={deleteDisabled}
             >
               <IconComponent
-                name={IconName.Trashcan}
+                name={IconName.Delete}
                 aria-hidden={true}
                 focusable={false}
                 className='w-4 h-4 mr-2'
@@ -207,10 +207,10 @@ function PageAction({
       {estARealiser && (
         <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-l mb-8'>
           <IconComponent
-            name={IconName.Clock}
+            name={IconName.Schedule}
             aria-hidden='true'
             focusable='false'
-            className='h-5 w-5 mr-1 stroke-accent_2'
+            className='h-5 w-5 mr-1 fill-accent_2'
           />
           <span>
             À réaliser pour le : <b>{dateEcheance}</b>

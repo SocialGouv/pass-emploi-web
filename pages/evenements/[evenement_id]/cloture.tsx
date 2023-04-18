@@ -145,7 +145,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
 
           <Button type='submit'>
             <IconComponent
-              name={IconName.RoundedCheck}
+              name={IconName.CheckCircleFill}
               focusable={false}
               aria-hidden={true}
               className='mr-2 w-4 h-4'

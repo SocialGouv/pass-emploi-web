@@ -104,8 +104,8 @@ module.exports = {
     extend: {
       backgroundImage: {
         // path relative to globals.css
-        clock: "url('../assets/icons/clock.svg')",
-        location: "url('../assets/icons/location_big.svg')",
+        clock: "url('../assets/icons/informations/schedule.svg')",
+        location: "url('../assets/icons/informations/location_on.svg')",
       },
     },
   },

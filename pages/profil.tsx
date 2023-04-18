@@ -114,7 +114,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                     <ExternalLink
                       href={'mailto:' + process.env.SUPPORT_MAIL}
                       label={'contacter le support'}
-                      iconName={IconName.Email}
+                      iconName={IconName.OutgoingMail}
                       onClick={trackContacterSupportClick}
                     />
                   </span>
@@ -193,7 +193,7 @@ function Email(props: { email: string }) {
   return (
     <span className='text-primary'>
       <IconComponent
-        name={IconName.Email}
+        name={IconName.OutgoingMail}
         aria-hidden={true}
         focusable={false}
         className='inline w-4 h-4 mr-2 fill-primary'

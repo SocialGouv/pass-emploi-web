@@ -36,7 +36,7 @@ export default function ImmersionCard({
         <dt className='sr-only'>Ville</dt>
         <dd className='flex items-center text-s-regular text-grey_800 mb-5'>
           <IconComponent
-            name={IconName.Location}
+            name={IconName.LocationOn}
             className='w-4 h-4 mr-3 fill-primary'
             focusable={false}
             aria-hidden={true}

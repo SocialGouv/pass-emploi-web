@@ -29,15 +29,15 @@ export function Etape(props: EtapeProps) {
   function getIconNumero(numero: NumeroEtape): IconName {
     switch (numero) {
       case 1:
-        return IconName.Chiffre1
+        return IconName.NumberCircleOne
       case 2:
-        return IconName.Chiffre2
+        return IconName.NumberCircleTwo
       case 3:
-        return IconName.Chiffre3
+        return IconName.NumberCircleThree
       case 4:
-        return IconName.Chiffre4
+        return IconName.NumberCircleFour
       case 5:
-        return IconName.Chiffre5
+        return IconName.NumberCircleFive
     }
   }
 }

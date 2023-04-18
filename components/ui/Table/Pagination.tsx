@@ -70,7 +70,7 @@ export default function Pagination({
           disabled={pageCourante <= 1}
         >
           <IconComponent
-            name={IconName.ChevronFirst}
+            name={IconName.FirstPage}
             className={`fill-inherit w-6 h-6`}
           />
         </PaginationItem>
@@ -104,7 +104,7 @@ export default function Pagination({
           disabled={pageCourante >= dernierePage}
         >
           <IconComponent
-            name={IconName.ChevronLast}
+            name={IconName.LastPage}
             className={`fill-inherit w-6 h-6`}
           />
         </PaginationItem>

@@ -169,7 +169,7 @@ export function RenseignementAgenceMissionLocaleForm({
             onClick={onContacterSupport}
           >
             <IconComponent
-              name={IconName.Email}
+              name={IconName.Mail}
               aria-hidden={true}
               focusable={false}
               className='inline w-4 h-4 mr-2'

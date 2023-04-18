@@ -19,7 +19,7 @@ export default function OnboardingMobileModal({
       <>
         <h3 className='flex text-base-bold'>
           <IconComponent
-            name={IconName.Comment}
+            name={IconName.ChatFill}
             focusable={false}
             aria-hidden={true}
             className='shrink-0 w-5 h-5 fill-primary mr-3'

@@ -48,7 +48,7 @@ export default function SuggestionCard({
         )}
         <dt className='sr-only'>Localité</dt>
         <dd className='mt-4'>
-          <DataTag text={labelLocalite} iconName={IconName.Location} />
+          <DataTag text={labelLocalite} iconName={IconName.LocationOn} />
         </dd>
       </dl>
     </div>

@@ -91,7 +91,7 @@ function Email(props: { email: string }) {
     <div className='flex items-center'>
       <dt>
         <IconComponent
-          name={IconName.Email}
+          name={IconName.Mail}
           aria-label='e-mail'
           aria-hidden={false}
           focusable={false}
@@ -129,7 +129,7 @@ function IndentifiantPartenaire(props: {
         onClick={props.onClick}
       >
         <IconComponent
-          name={IconName.Pen}
+          name={IconName.Edit}
           aria-hidden={true}
           focusable={false}
           className='w-4 h-4 mr-1 fill-primary'
@@ -154,11 +154,11 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
         >
           Dossier jeune i-milo
           <IconComponent
-            name={IconName.Launch}
+            name={IconName.OpenInNew}
             focusable='false'
             role='img'
             title='ouvrir'
-            className='ml-2 w-3 h-3 fill-primary'
+            className='ml-2 w-4 h-4 fill-primary'
           />
         </a>
       </dd>

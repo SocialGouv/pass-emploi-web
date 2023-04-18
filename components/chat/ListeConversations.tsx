@@ -1,6 +1,6 @@
 import React from 'react'
 
-import MessageGroupeIcon from 'assets/icons/forward_to_inbox.svg'
+import MessageGroupeIcon from 'assets/icons/actions/outgoing_mail.svg'
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
 import { ButtonStyle } from 'components/ui/Button/Button'
@@ -71,7 +71,7 @@ export default function ListeConversations({
           <MessageGroupeIcon
             aria-hidden='true'
             focusable='false'
-            className='shrink-0 mr-2'
+            className='w-4 shrink-0 mr-2'
           />
           Message multi-destinataires
         </ButtonLink>

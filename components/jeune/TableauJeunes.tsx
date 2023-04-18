@@ -293,7 +293,7 @@ export default function TableauJeunes({
                           className='self-center mr-2'
                         >
                           <IconComponent
-                            name={IconName.Clock}
+                            name={IconName.Schedule}
                             aria-hidden={true}
                             focusable={false}
                             className='w-4 h-4'

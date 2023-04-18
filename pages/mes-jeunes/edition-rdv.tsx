@@ -240,7 +240,7 @@ function EditionRdv({
               label={`Supprimer l’événement du ${evenement.date}`}
             >
               <IconComponent
-                name={IconName.Trashcan}
+                name={IconName.Delete}
                 aria-hidden='true'
                 focusable='false'
                 className='mr-2 w-4 h-4'
@@ -259,7 +259,7 @@ function EditionRdv({
               )}`}
             >
               <IconComponent
-                name={IconName.Clipboard}
+                name={IconName.Description}
                 aria-hidden={true}
                 focusable={false}
                 className='mr-2 w-4 h-4'

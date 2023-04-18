@@ -41,7 +41,7 @@ export default function ImmersionDetail({ offre }: ImmersionDetailProps) {
 
             <dt className='sr-only'>Ville</dt>
             <dd className='mt-2'>
-              <DataTag text={offre.ville} iconName={IconName.Location} />
+              <DataTag text={offre.ville} iconName={IconName.LocationOn} />
             </dd>
           </dl>
 

@@ -9,7 +9,7 @@ export function BeneficiaireListeItem({ value }: BeneficiaireIndicationProps) {
   return (
     <div className='flex items-center'>
       <IconComponent
-        name={IconName.People}
+        name={IconName.PeopleFill}
         focusable={false}
         aria-label={infoLabel}
         className='w-6 h-6 fill-primary mr-2'

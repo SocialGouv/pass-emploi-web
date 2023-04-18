@@ -28,12 +28,12 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
   } = {
     action: {
       href: `${pathPrefix}/${idBeneficiaire}/actions/`,
-      iconName: IconName.Actions,
+      iconName: IconName.ChecklistRtlFill,
       label: `Consulter l'action ${entree.titre}, de statut ${entree.statut}`,
     },
     evenement: {
       href: `${pathPrefix}/edition-rdv?idRdv=`,
-      iconName: IconName.Calendar,
+      iconName: IconName.EventFill,
       label: `Consulter l'événement du ${entree.titre}`,
     },
   }

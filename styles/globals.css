@@ -27,8 +27,9 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background: url(../assets/icons/expand_more.svg) center right 1rem no-repeat
+  background: url(../assets/icons/navigation/chevron_down.svg) center right .5rem no-repeat
     theme('colors.blanc');
+  background-size: 2rem;
   cursor: pointer;
 }
 

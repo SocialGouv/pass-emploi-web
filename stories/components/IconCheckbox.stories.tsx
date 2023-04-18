@@ -33,7 +33,7 @@ const Template: ComponentStory<typeof IconCheckbox> = (args) => (
 
 export const Default = Template.bind({})
 Default.args = {
-  checkedIconName: IconName.FlagFilled,
+  checkedIconName: IconName.Flag,
   uncheckedIconName: IconName.Flag,
   checkedLabel: 'Désactiver',
   uncheckedLabel: 'Activer',
