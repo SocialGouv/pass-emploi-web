@@ -76,15 +76,15 @@ export function ConversationTile({
                 </span>
               )}
               {!isLastMessageSeenByJeune && (
-                <span>
-                  Non lu{' '}
+                <>
+                  <span>Non lu </span>
                   <Badge
                     count={jeuneChat.newConseillerMessageCount}
                     textColor='accent_1'
                     bgColor='accent_1_lighten'
                     size={6}
                   />
-                </span>
+                </>
               )}
             </>
           )}
