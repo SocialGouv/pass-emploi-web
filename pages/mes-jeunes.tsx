@@ -11,9 +11,11 @@ import Button from 'components/ui/Button/Button'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
 import {
+  estUserPoleEmploi,
   estMilo,
-  estPoleEmploi,
+  estPoleEmploiCEJ,
   StructureConseiller,
+  estPoleEmploi,
 } from 'interfaces/conseiller'
 import {
   compareJeunesByNom,
@@ -220,7 +222,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   )
 
   let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
-  if (user.structure === StructureConseiller.POLE_EMPLOI) {
+  if (estUserPoleEmploi(user)) {
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
       ...jeune,
       nbActionsNonTerminees: 0,

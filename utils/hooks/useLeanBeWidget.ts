@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 
-import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
+import { Conseiller, estPoleEmploiCEJ } from 'interfaces/conseiller'
 
 export function useLeanBeWidget(conseiller: Conseiller) {
   useEffect(() => {
-    const widgetId = estPoleEmploi(conseiller)
+    const widgetId = estPoleEmploiCEJ(conseiller)
       ? process.env.LEANBE_PE_WIDGET_ID
       : process.env.LEANBE_MILO_WIDGET_ID
     const script = document.createElement('script')

@@ -4,7 +4,12 @@ import React from 'react'
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
-import { estMilo, estPoleEmploi, estSuperviseur } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estSuperviseur,
+  estPoleEmploi,
+  estPoleEmploiBRSA,
+} from 'interfaces/conseiller'
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
@@ -166,12 +171,14 @@ export default function NavLinks({
           />
         )}
 
-        {process.env.ENABLE_LEANBE && items.includes(NavItem.Actualites) && (
-          <ActualitesMenuButton
-            conseiller={conseiller}
-            onClick={trackActualite}
-          />
-        )}
+        {process.env.ENABLE_LEANBE &&
+          items.includes(NavItem.Actualites) &&
+          !estPoleEmploiBRSA(conseiller) && (
+            <ActualitesMenuButton
+              conseiller={conseiller}
+              onClick={trackActualite}
+            />
+          )}
 
         {items.includes(NavItem.Aide) && (
           <NavLink

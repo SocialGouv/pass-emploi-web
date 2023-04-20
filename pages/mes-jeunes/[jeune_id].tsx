@@ -27,9 +27,9 @@ import {
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
+  estUserPoleEmploi,
   estMilo,
   estPoleEmploi,
-  StructureConseiller,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import {
@@ -544,7 +544,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     session: { accessToken, user },
   } = sessionOrRedirect
 
-  const userIsPoleEmploi = user.structure === StructureConseiller.POLE_EMPLOI
+  const userIsPoleEmploi = estUserPoleEmploi(user)
   const page = parseInt(context.query.page as string, 10) || 1
   const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
     jeunesService.getJeuneDetails(
