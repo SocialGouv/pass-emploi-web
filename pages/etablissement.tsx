@@ -14,7 +14,11 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { estMilo, StructureConseiller } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  estMilo,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
@@ -198,8 +202,7 @@ export const getServerSideProps: GetServerSideProps<
   const {
     session: { user },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI)
-    return { notFound: true }
+  if (estUserPoleEmploi(user)) return { notFound: true }
 
   return {
     props: {

@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 import { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
 import { IndicateursSemaine } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
@@ -189,7 +189,7 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
   const {
     session: { accessToken, user },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI) {
+  if (estUserPoleEmploi(user)) {
     return { notFound: true }
   }
 

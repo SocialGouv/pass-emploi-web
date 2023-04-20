@@ -13,7 +13,7 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -169,7 +169,7 @@ export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI)
+  if (estUserPoleEmploi(user))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }

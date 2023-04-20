@@ -63,7 +63,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             commentaires={commentaires}
             lectureSeule={false}
             pageTitle=''
-            lectureSeule={false}
           />,
           {
             customDependances: { actionsService },
@@ -219,7 +218,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             commentaires={[]}
             lectureSeule={false}
             pageTitle=''
-            lectureSeule={false}
           />,
           {
             customDependances: { actionsService },
@@ -265,7 +263,6 @@ describe("Page Détail d'une action d'un jeune", () => {
               commentaires={[]}
               lectureSeule={false}
               pageTitle=''
-              lectureSeule={false}
             />,
             {
               customDependances: { actionsService },
@@ -371,7 +368,6 @@ describe("Page Détail d'une action d'un jeune", () => {
               commentaires={[]}
               lectureSeule={false}
               pageTitle=''
-              lectureSeule={false}
             />,
             {
               customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
@@ -488,7 +484,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             lectureSeule: false,
             pageTitle,
             pageHeader: 'Détails de l’action',
-            lectureSeule,
           },
         })
       })

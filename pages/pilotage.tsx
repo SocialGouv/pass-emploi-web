@@ -10,7 +10,7 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { ActionsService } from 'services/actions.service'
@@ -259,8 +259,7 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
   const {
     session: { accessToken, user },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI)
-    return { notFound: true }
+  if (estUserPoleEmploi(user)) return { notFound: true }
 
   const actionsService = withDependance<ActionsService>('actionsService')
   const conseillerService =

@@ -19,7 +19,12 @@ import {
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import { estMilo, StructureConseiller, UserType } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  estMilo,
+  StructureConseiller,
+  UserType,
+} from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
@@ -249,7 +254,7 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI) {
+  if (estUserPoleEmploi(user)) {
     return { notFound: true }
   }
   const { jeune_id, action_id } = context.query
