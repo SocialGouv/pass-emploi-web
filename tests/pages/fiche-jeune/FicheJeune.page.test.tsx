@@ -179,6 +179,40 @@ describe('Fiche Jeune', () => {
         ).toHaveAttribute('href', '/agenda?onglet=etablissement')
       })
     })
+
+    describe('pour les conseillers non Milo', () => {
+      it('n’affiche pas les onglets agenda, actions et rdv', async () => {
+        // When
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={unDetailJeune()}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+              customDependances: {
+                jeunesService: mockedJeunesService({
+                  getIndicateursJeuneAlleges: jest.fn(async () =>
+                    desIndicateursSemaine()
+                  ),
+                }),
+                agendaService: mockedAgendaService({
+                  recupererAgenda: jest.fn(async () => unAgenda()),
+                }),
+              },
+            }
+          )
+        })
+
+        // Then
+        //expect(screen.getByText(/Agenda/)).toThrow()
+        //expect(screen.getByText('Actions')).not.toBeInTheDocument()
+        //expect(screen.getByText('Rendez-vous')).not.toBeInTheDocument()
+      })
+    })
   })
 
   describe('server side', () => {

@@ -6,6 +6,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
 import { OngletAgendaBeneficiaire } from 'components/agenda-jeune/OngletAgendaBeneficiaire'
+import { OngletOffres } from 'components/favoris/offres/OngletOffres'
+import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
 import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
@@ -32,6 +34,7 @@ import {
   estPoleEmploi,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
+import { Offre, Recherche } from 'interfaces/favoris'
 import {
   DetailJeune,
   IndicateursSemaine,
@@ -44,6 +47,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import { AgendaService } from 'services/agenda.service'
 import { EvenementsService } from 'services/evenements.service'
+import { FavorisService } from 'services/favoris.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
@@ -51,6 +55,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -60,6 +65,11 @@ export enum Onglet {
   ACTIONS = 'ACTIONS',
   RDVS = 'RDVS',
   FAVORIS = 'FAVORIS',
+}
+
+export enum OngletFavoris {
+  OFFRES = 'OFFRES',
+  RECHERCHES = 'RECHERCHES',
 }
 
 const ongletProps: {
@@ -82,6 +92,12 @@ interface FicheJeuneProps extends PageProps {
   lectureSeule?: boolean
   metadonneesFavoris?: MetadonneesFavoris
   onglet?: Onglet
+  offresPE?: Offre[]
+}
+
+interface FavorisProps extends PageProps {
+  offres: Offre[]
+  recherches: Recherche[]
 }
 
 function FicheJeune({
@@ -91,6 +107,7 @@ function FicheJeune({
   metadonneesFavoris,
   onglet,
   lectureSeule,
+  offresPE,
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -110,6 +127,9 @@ function FicheJeune({
   >([])
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.AGENDA)
+  const [currentFavorisTab, setCurrentFavorisTab] = useState<OngletFavoris>(
+    OngletFavoris.OFFRES
+  )
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
@@ -179,6 +199,10 @@ function FicheJeune({
         shallow: true,
       }
     )
+  }
+
+  async function switchFavorisTab(tab: OngletFavoris) {
+    setCurrentFavorisTab(tab)
   }
 
   async function chargerActions(
@@ -407,105 +431,159 @@ function FicheJeune({
               </ButtonLink>
             </div>
           </div>
+
+          <TabList className='mt-10'>
+            <Tab
+              label='Agenda'
+              selected={currentTab === Onglet.AGENDA}
+              controls='agenda'
+              onSelectTab={() => switchTab(Onglet.AGENDA)}
+              iconName={IconName.EventFill}
+            />
+            <Tab
+              label='Actions'
+              count={!estPoleEmploi(conseiller) ? totalActions : undefined}
+              selected={currentTab === Onglet.ACTIONS}
+              controls='liste-actions'
+              onSelectTab={() => switchTab(Onglet.ACTIONS)}
+              iconName={IconName.ChecklistRtlFill}
+            />
+            <Tab
+              label='Rendez-vous'
+              count={!estPoleEmploi(conseiller) ? rdvs.length : undefined}
+              selected={currentTab === Onglet.RDVS}
+              controls='liste-rdvs'
+              onSelectTab={() => switchTab(Onglet.RDVS)}
+              iconName={IconName.EventFill}
+            />
+            {metadonneesFavoris && (
+              <Tab
+                label='Favoris'
+                count={totalFavoris}
+                selected={currentTab === Onglet.FAVORIS}
+                controls='liste-favoris'
+                onSelectTab={() => switchTab(Onglet.FAVORIS)}
+                iconName={IconName.FavoriteFill}
+              />
+            )}
+          </TabList>
+
+          {currentTab === Onglet.AGENDA && (
+            <div
+              role='tabpanel'
+              aria-labelledby='agenda--tab'
+              tabIndex={0}
+              id='agenda'
+              className='mt-8 pb-8 border-b border-primary_lighten'
+            >
+              <OngletAgendaBeneficiaire
+                idBeneficiaire={jeune.id}
+                recupererAgenda={recupererAgenda}
+                goToActions={() => switchTab(Onglet.ACTIONS)}
+              />
+            </div>
+          )}
+
+          {currentTab === Onglet.RDVS && (
+            <div
+              role='tabpanel'
+              aria-labelledby='liste-rdvs--tab'
+              tabIndex={0}
+              id='liste-rdvs'
+              className='mt-8 pb-8 border-b border-primary_lighten'
+            >
+              <OngletRdvsBeneficiaire
+                conseiller={conseiller}
+                beneficiaire={jeune}
+                rdvs={rdvs}
+              />
+            </div>
+          )}
+          {currentTab === Onglet.ACTIONS && (
+            <div
+              role='tabpanel'
+              aria-labelledby='liste-actions--tab'
+              tabIndex={0}
+              id='liste-actions'
+              className='mt-8 pb-8'
+            >
+              <OngletActions
+                conseiller={conseiller}
+                jeune={jeune}
+                actionsInitiales={actionsInitiales}
+                getActions={chargerActions}
+              />
+            </div>
+          )}
+          {currentTab === Onglet.FAVORIS && (
+            <div
+              role='tabpanel'
+              aria-labelledby='liste-favoris--tab'
+              tabIndex={0}
+              id='liste-favoris'
+              className='mt-8 pb-8'
+            >
+              <BlocFavoris
+                idJeune={jeune.id}
+                metadonneesFavoris={metadonneesFavoris!}
+              />
+            </div>
+          )}
         </>
       )}
 
-      <TabList className='mt-10'>
-        <Tab
-          label='Agenda'
-          selected={currentTab === Onglet.AGENDA}
-          controls='agenda'
-          onSelectTab={() => switchTab(Onglet.AGENDA)}
-          iconName={IconName.EventFill}
-        />
-        <Tab
-          label='Actions'
-          count={!estPoleEmploi(conseiller) ? totalActions : undefined}
-          selected={currentTab === Onglet.ACTIONS}
-          controls='liste-actions'
-          onSelectTab={() => switchTab(Onglet.ACTIONS)}
-          iconName={IconName.ChecklistRtlFill}
-        />
-        <Tab
-          label='Rendez-vous'
-          count={!estPoleEmploi(conseiller) ? rdvs.length : undefined}
-          selected={currentTab === Onglet.RDVS}
-          controls='liste-rdvs'
-          onSelectTab={() => switchTab(Onglet.RDVS)}
-          iconName={IconName.EventFill}
-        />
-        {metadonneesFavoris && (
-          <Tab
-            label='Favoris'
-            count={totalFavoris}
-            selected={currentTab === Onglet.FAVORIS}
-            controls='liste-favoris'
-            onSelectTab={() => switchTab(Onglet.FAVORIS)}
-            iconName={IconName.FavoriteFill}
-          />
-        )}
-      </TabList>
+      {estPoleEmploi(conseiller) && (
+        <>
+          {metadonneesFavoris?.autoriseLePartage && (
+            <>
+              <TabList className='mt-10'>
+                <Tab
+                  label='Offres'
+                  count={offresPE?.length}
+                  selected={currentFavorisTab === OngletFavoris.OFFRES}
+                  controls='liste-offres'
+                  onSelectTab={() => switchFavorisTab(OngletFavoris.OFFRES)}
+                />
+                {/*<Tab*/}
+                {/*  label='Recherches'*/}
+                {/*  count={recherches?.length}*/}
+                {/*  selected={currentFavorisTab === OngletFavoris.RECHERCHES}*/}
+                {/*  controls='liste-recherches'*/}
+                {/*  onSelectTab={() => switchFavorisTab(OngletFavoris.RECHERCHES)}*/}
+                {/*/>*/}
+              </TabList>
 
-      {currentTab === Onglet.AGENDA && (
-        <div
-          role='tabpanel'
-          aria-labelledby='agenda--tab'
-          tabIndex={0}
-          id='agenda'
-          className='mt-8 pb-8 border-b border-primary_lighten'
-        >
-          <OngletAgendaBeneficiaire
-            idBeneficiaire={jeune.id}
-            recupererAgenda={recupererAgenda}
-            goToActions={() => switchTab(Onglet.ACTIONS)}
-          />
-        </div>
-      )}
-
-      {currentTab === Onglet.RDVS && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-rdvs--tab'
-          tabIndex={0}
-          id='liste-rdvs'
-          className='mt-8 pb-8 border-b border-primary_lighten'
-        >
-          <OngletRdvsBeneficiaire
-            conseiller={conseiller}
-            beneficiaire={jeune}
-            rdvs={rdvs}
-          />
-        </div>
-      )}
-      {currentTab === Onglet.ACTIONS && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-actions--tab'
-          tabIndex={0}
-          id='liste-actions'
-          className='mt-8 pb-8'
-        >
-          <OngletActions
-            conseiller={conseiller}
-            jeune={jeune}
-            actionsInitiales={actionsInitiales}
-            getActions={chargerActions}
-          />
-        </div>
-      )}
-      {currentTab === Onglet.FAVORIS && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-favoris--tab'
-          tabIndex={0}
-          id='liste-favoris'
-          className='mt-8 pb-8'
-        >
-          <BlocFavoris
-            idJeune={jeune.id}
-            metadonneesFavoris={metadonneesFavoris!}
-          />
-        </div>
+              {currentFavorisTab === OngletFavoris.OFFRES && (
+                <div
+                  role='tabpanel'
+                  aria-labelledby='liste-offres--tab'
+                  tabIndex={0}
+                  id='liste-offres'
+                  className='mt-8 pb-8'
+                >
+                  <OngletOffres offres={offresPE!} />
+                </div>
+              )}
+              {/*{currentTab === OngletFavoris.RECHERCHES && (*/}
+              {/*  <div*/}
+              {/*    role='tabpanel'*/}
+              {/*    aria-labelledby='liste-recherches--tab'*/}
+              {/*    tabIndex={0}*/}
+              {/*    id='liste-recherches'*/}
+              {/*    className='mt-8 pb-8'*/}
+              {/*  >*/}
+              {/*    <OngletRecherches recherches={recherches} />*/}
+              {/*  </div>*/}
+              {/*)}*/}
+            </>
+          )}{' '}
+          {!metadonneesFavoris?.autoriseLePartage && (
+            <BlocFavoris
+              idJeune={jeune.id}
+              metadonneesFavoris={metadonneesFavoris!}
+            />
+          )}
+        </>
       )}
 
       {showModaleDeleteJeuneActif && (
@@ -539,6 +617,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
     withDependance<EvenementsService>('evenementsService')
+  const favorisService = withDependance<FavorisService>('favorisService')
   const actionsService = withDependance<ActionsService>('actionsService')
   const {
     session: { accessToken, user },
@@ -546,30 +625,56 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const userIsPoleEmploi = estUserPoleEmploi(user)
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
-    jeunesService.getJeuneDetails(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    jeunesService.getMetadonneesFavorisJeune(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    userIsPoleEmploi
-      ? []
-      : rendezVousService.getRendezVousJeune(
-          context.query.jeune_id as string,
-          PeriodeEvenements.FUTURS,
-          accessToken
-        ),
-    userIsPoleEmploi
-      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : actionsService.getActionsJeuneServerSide(
-          context.query.jeune_id as string,
-          page,
-          accessToken
-        ),
-  ])
+  const [jeune, metadonneesFavoris, rdvs, actions, offresPE] =
+    await Promise.all([
+      jeunesService.getJeuneDetails(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      jeunesService.getMetadonneesFavorisJeune(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      userIsPoleEmploi
+        ? []
+        : rendezVousService.getRendezVousJeune(
+            context.query.jeune_id as string,
+            PeriodeEvenements.FUTURS,
+            accessToken
+          ),
+      userIsPoleEmploi
+        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+        : actionsService.getActionsJeuneServerSide(
+            context.query.jeune_id as string,
+            page,
+            accessToken
+          ),
+      userIsPoleEmploi
+        ? favorisService.getOffres(
+            context.query.jeune_id as string,
+            accessToken
+          )
+        : [],
+    ])
+
+  // const jeuneId = context.query.jeune_id as string
+
+  // try {
+  //   console.log('entre dans le try')
+  //
+  //   const offres = await favorisService.getOffres(jeuneId, accessToken)
+  //   const recherches = await favorisService.getRecherchesSauvegardees(
+  //     jeuneId,
+  //     accessToken
+  //   )
+  //   console.log(offres)
+  // } catch (error) {
+  //   console.log('entre dans le catch')
+  //   if (error instanceof ApiError && error.status === 403) {
+  //     return { redirect: { destination: '/mes-jeunes', permanent: false } }
+  //   }
+  //   throw error
+  // }
 
   if (!jeune) {
     return { notFound: true }
@@ -582,6 +687,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
+    offresPE,
   }
 
   if (context.query.onglet) {
