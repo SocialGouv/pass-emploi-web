@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { getSession, signIn } from 'next-auth/react'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
-import Logo from 'assets/images/logo_app_cej.svg'
+import Logo from 'assets/images/logo_PassEmploi.svg'
 import OnboardingMobileModal from 'components/OnboardingMobileModal'
 import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
