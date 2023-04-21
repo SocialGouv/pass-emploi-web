@@ -10,6 +10,7 @@
     "dev": "node server.js | pino-pretty",
     "watch": "yarn dev",
     "build": "NODE_ENV=production next build",
+    "build-source-map": "NODE_ENV=production next build && source-map-explorer .next/static/**/*.js",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "test": "TZ=Europe/Paris jest --config jest.config.js --coverage",
@@ -27,6 +28,7 @@
     "dotenv": "16.0.3",
     "elastic-apm-node": "3.46.0",
     "firebase": "9.22.0",
+    "global": "^4.4.0",
     "html-react-parser": "3.0.16",
     "jsonwebtoken": "9.0.0",
     "lodash.isequal": "4.5.0",
@@ -39,7 +41,8 @@
     "pino": "8.14.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-router-dom": "6.11.2"
+    "react-router-dom": "6.11.2",
+    "source-map-explorer": "^2.5.3"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.3.0",

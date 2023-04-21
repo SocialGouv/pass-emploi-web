@@ -11,6 +11,7 @@ module.exports = withBundleAnalyzer(
   withPWA({
     reactStrictMode: true,
     swcMinify: true,
+    productionBrowserSourceMaps: true,
     env: {
       // API
       API_ENDPOINT: process.env.API_ENDPOINT,
