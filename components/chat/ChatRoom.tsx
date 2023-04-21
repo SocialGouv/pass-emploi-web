@@ -62,7 +62,7 @@ export default function ChatRoom({
 
   return (
     <>
-      <div className='relative bg-blanc shadow-base mb-6 layout_s:bg-grey_100 layout_s:shadow-none layout_s:mx-4 layout_s:border-b layout_s:border-grey_500'>
+      <div className='relative bg-blanc shadow-base mb-6 layout_s:bg-primary_lighten layout_s:shadow-none layout_s:mx-4 layout_base:mt-6'>
         <nav
           role='navigation'
           aria-label='Menu principal'
@@ -85,7 +85,7 @@ export default function ChatRoom({
           </button>
         </nav>
 
-        <h2 className='text-m-bold text-primary text-center m-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
+        <h2 className='text-l-bold text-primary text-center my-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
           Messagerie
         </h2>
       </div>
