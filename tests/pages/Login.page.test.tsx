@@ -26,6 +26,17 @@ describe('Login', () => {
       //GIVEN
       const heading = screen.getByRole('heading', {
         level: 1,
+        name: 'Pass emploi',
+      })
+
+      //THEN
+      expect(heading).toBeInTheDocument()
+    })
+
+    it('devrait afficher un titre de niveau 2', () => {
+      //GIVEN
+      const heading = screen.getByRole('heading', {
+        level: 2,
         name: "Connectez-vous à l'espace conseiller",
       })
 
@@ -137,9 +148,12 @@ describe('Login', () => {
       render(<Login isFromEmail={false} />)
 
       // Then
-      expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
-        'Bienvenue sur l’espace mobile du conseiller'
-      )
+      expect(
+        screen.getByRole('heading', {
+          level: 2,
+          name: 'Bienvenue sur l’espace mobile du conseiller',
+        })
+      ).toBeInTheDocument()
       expect(screen.getByRole('heading', { level: 3 })).toHaveAccessibleName(
         'Un accès dedié à vos conversations'
       )
