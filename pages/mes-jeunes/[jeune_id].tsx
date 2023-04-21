@@ -6,13 +6,12 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
 import { OngletAgendaBeneficiaire } from 'components/agenda-jeune/OngletAgendaBeneficiaire'
-import { OngletOffres } from 'components/favoris/offres/OngletOffres'
-import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches'
 import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
+import { TableauFavoris } from 'components/jeune/TableauFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
 import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -65,11 +64,6 @@ export enum Onglet {
   ACTIONS = 'ACTIONS',
   RDVS = 'RDVS',
   FAVORIS = 'FAVORIS',
-}
-
-export enum OngletFavoris {
-  OFFRES = 'OFFRES',
-  RECHERCHES = 'RECHERCHES',
 }
 
 const ongletProps: {
@@ -129,9 +123,6 @@ function FicheJeune({
   >([])
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.AGENDA)
-  const [currentFavorisTab, setCurrentFavorisTab] = useState<OngletFavoris>(
-    OngletFavoris.OFFRES
-  )
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
@@ -201,10 +192,6 @@ function FicheJeune({
         shallow: true,
       }
     )
-  }
-
-  async function switchFavorisTab(tab: OngletFavoris) {
-    setCurrentFavorisTab(tab)
   }
 
   async function chargerActions(
@@ -527,7 +514,7 @@ function FicheJeune({
             >
               <BlocFavoris
                 idJeune={jeune.id}
-                metadonneesFavoris={metadonneesFavoris!}
+                metadonneesFavoris={metadonneesFavoris}
               />
             </div>
           )}
@@ -537,52 +524,16 @@ function FicheJeune({
       {estPoleEmploi(conseiller) && (
         <>
           {metadonneesFavoris?.autoriseLePartage && (
-            <>
-              <TabList className='mt-10'>
-                <Tab
-                  label='Offres'
-                  count={offresPE?.length}
-                  selected={currentFavorisTab === OngletFavoris.OFFRES}
-                  controls='liste-offres'
-                  onSelectTab={() => switchFavorisTab(OngletFavoris.OFFRES)}
-                />
-                <Tab
-                  label='Recherches'
-                  count={recherchesPE?.length}
-                  selected={currentFavorisTab === OngletFavoris.RECHERCHES}
-                  controls='liste-recherches'
-                  onSelectTab={() => switchFavorisTab(OngletFavoris.RECHERCHES)}
-                />
-              </TabList>
-
-              {currentFavorisTab === OngletFavoris.OFFRES && (
-                <div
-                  role='tabpanel'
-                  aria-labelledby='liste-offres--tab'
-                  tabIndex={0}
-                  id='liste-offres'
-                  className='mt-8 pb-8'
-                >
-                  <OngletOffres offres={offresPE!} />
-                </div>
-              )}
-              {currentFavorisTab === OngletFavoris.RECHERCHES && (
-                <div
-                  role='tabpanel'
-                  aria-labelledby='liste-recherches--tab'
-                  tabIndex={0}
-                  id='liste-recherches'
-                  className='mt-8 pb-8'
-                >
-                  <OngletRecherches recherches={recherchesPE} />
-                </div>
-              )}
-            </>
-          )}{' '}
+            <TableauFavoris
+              offres={offresPE}
+              recherches={recherchesPE}
+              lectureSeule={lectureSeule}
+            />
+          )}
           {!metadonneesFavoris?.autoriseLePartage && (
             <BlocFavoris
               idJeune={jeune.id}
-              metadonneesFavoris={metadonneesFavoris!}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )}
         </>
