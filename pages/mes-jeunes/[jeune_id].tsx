@@ -93,6 +93,7 @@ interface FicheJeuneProps extends PageProps {
   metadonneesFavoris?: MetadonneesFavoris
   onglet?: Onglet
   offresPE?: Offre[]
+  recherchesPE?: Recherche[]
 }
 
 interface FavorisProps extends PageProps {
@@ -108,6 +109,7 @@ function FicheJeune({
   onglet,
   lectureSeule,
   offresPE,
+  recherchesPE,
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -544,13 +546,13 @@ function FicheJeune({
                   controls='liste-offres'
                   onSelectTab={() => switchFavorisTab(OngletFavoris.OFFRES)}
                 />
-                {/*<Tab*/}
-                {/*  label='Recherches'*/}
-                {/*  count={recherches?.length}*/}
-                {/*  selected={currentFavorisTab === OngletFavoris.RECHERCHES}*/}
-                {/*  controls='liste-recherches'*/}
-                {/*  onSelectTab={() => switchFavorisTab(OngletFavoris.RECHERCHES)}*/}
-                {/*/>*/}
+                <Tab
+                  label='Recherches'
+                  count={recherchesPE?.length}
+                  selected={currentFavorisTab === OngletFavoris.RECHERCHES}
+                  controls='liste-recherches'
+                  onSelectTab={() => switchFavorisTab(OngletFavoris.RECHERCHES)}
+                />
               </TabList>
 
               {currentFavorisTab === OngletFavoris.OFFRES && (
@@ -564,17 +566,17 @@ function FicheJeune({
                   <OngletOffres offres={offresPE!} />
                 </div>
               )}
-              {/*{currentTab === OngletFavoris.RECHERCHES && (*/}
-              {/*  <div*/}
-              {/*    role='tabpanel'*/}
-              {/*    aria-labelledby='liste-recherches--tab'*/}
-              {/*    tabIndex={0}*/}
-              {/*    id='liste-recherches'*/}
-              {/*    className='mt-8 pb-8'*/}
-              {/*  >*/}
-              {/*    <OngletRecherches recherches={recherches} />*/}
-              {/*  </div>*/}
-              {/*)}*/}
+              {currentFavorisTab === OngletFavoris.RECHERCHES && (
+                <div
+                  role='tabpanel'
+                  aria-labelledby='liste-recherches--tab'
+                  tabIndex={0}
+                  id='liste-recherches'
+                  className='mt-8 pb-8'
+                >
+                  <OngletRecherches recherches={recherchesPE} />
+                </div>
+              )}
             </>
           )}{' '}
           {!metadonneesFavoris?.autoriseLePartage && (
@@ -625,7 +627,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   const userIsPoleEmploi = estUserPoleEmploi(user)
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, metadonneesFavoris, rdvs, actions, offresPE] =
+  const [jeune, metadonneesFavoris, rdvs, actions, offresPE, recherchesPE] =
     await Promise.all([
       jeunesService.getJeuneDetails(
         context.query.jeune_id as string,
@@ -655,26 +657,13 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
             accessToken
           )
         : [],
+      userIsPoleEmploi
+        ? favorisService.getRecherchesSauvegardees(
+            context.query.jeune_id as string,
+            accessToken
+          )
+        : [],
     ])
-
-  // const jeuneId = context.query.jeune_id as string
-
-  // try {
-  //   console.log('entre dans le try')
-  //
-  //   const offres = await favorisService.getOffres(jeuneId, accessToken)
-  //   const recherches = await favorisService.getRecherchesSauvegardees(
-  //     jeuneId,
-  //     accessToken
-  //   )
-  //   console.log(offres)
-  // } catch (error) {
-  //   console.log('entre dans le catch')
-  //   if (error instanceof ApiError && error.status === 403) {
-  //     return { redirect: { destination: '/mes-jeunes', permanent: false } }
-  //   }
-  //   throw error
-  // }
 
   if (!jeune) {
     return { notFound: true }
@@ -688,6 +677,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
     offresPE,
+    recherchesPE,
   }
 
   if (context.query.onglet) {

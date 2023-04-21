@@ -9,6 +9,7 @@ import { desActionsInitiales, uneAction } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desConseillersJeune,
   desIndicateursSemaine,
@@ -20,8 +21,10 @@ import {
   mockedAgendaService,
   mockedEvenementsService,
   mockedJeunesService,
+  mockedFavorisService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune, {
   getServerSideProps,
   Onglet,
@@ -181,36 +184,43 @@ describe('Fiche Jeune', () => {
     })
 
     describe('pour les conseillers non Milo', () => {
+      let offresPE, recherchesPE, metadonneesFavoris
+      beforeEach(async () => {
+        //Given
+        metadonneesFavoris = uneMetadonneeFavoris()
+        offresPE = uneListeDOffres()
+        recherchesPE = uneListeDeRecherches()
+      })
       it('n’affiche pas les onglets agenda, actions et rdv', async () => {
         // When
-        await act(async () => {
-          await renderWithContexts(
-            <FicheJeune
-              jeune={unDetailJeune()}
-              rdvs={[]}
-              actionsInitiales={desActionsInitiales()}
-              pageTitle={''}
-            />,
-            {
-              customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-              customDependances: {
-                jeunesService: mockedJeunesService({
-                  getIndicateursJeuneAlleges: jest.fn(async () =>
-                    desIndicateursSemaine()
-                  ),
-                }),
-                agendaService: mockedAgendaService({
-                  recupererAgenda: jest.fn(async () => unAgenda()),
-                }),
-              },
-            }
-          )
-        })
+        await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
 
         // Then
-        //expect(screen.getByText(/Agenda/)).toThrow()
-        //expect(screen.getByText('Actions')).not.toBeInTheDocument()
-        //expect(screen.getByText('Rendez-vous')).not.toBeInTheDocument()
+        expect(() => screen.getByText('Agenda')).toThrow()
+        expect(() => screen.getByText('Actions')).toThrow()
+        expect(() => screen.getByText('Rendez-vous')).toThrow()
+      })
+
+      it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
+        // When
+        await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+
+        // Then
+        expect(screen.getByText('Offres')).toBeInTheDocument()
+        expect(screen.getByText('Recherches')).toBeInTheDocument()
+      })
+
+      it('affiche le récapitulatif mais pas les onglets si le bénéficiaire a refusé le partage', async () => {
+        // When
+        metadonneesFavoris.autoriseLePartage = false
+        await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+
+        // Then
+        expect(screen.getByText(/Offre d’emploi/)).toBeInTheDocument()
+        expect(screen.getByText(/Alternance/)).toBeInTheDocument()
+        expect(screen.getByText(/Service civique/)).toBeInTheDocument()
+        expect(screen.getByText(/Immersion/)).toBeInTheDocument()
+        expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
       })
     })
   })
@@ -463,3 +473,36 @@ describe('Fiche Jeune', () => {
     })
   })
 })
+
+async function renderFicheJeune(
+  metadonnees: Metadonnees,
+  offresPE: Offres[],
+  recherchesPE: Recherche[]
+) {
+  await act(async () => {
+    await renderWithContexts(
+      <FicheJeune
+        jeune={unDetailJeune()}
+        rdvs={[]}
+        actionsInitiales={desActionsInitiales()}
+        pageTitle={''}
+        metadonneesFavoris={metadonnees}
+        offresPE={offresPE}
+        recherchesPE={recherchesPE}
+      />,
+      {
+        customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+        customDependances: {
+          jeunesService: mockedJeunesService({
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
+          }),
+          agendaService: mockedAgendaService({
+            recupererAgenda: jest.fn(async () => unAgenda()),
+          }),
+        },
+      }
+    )
+  })
+}
