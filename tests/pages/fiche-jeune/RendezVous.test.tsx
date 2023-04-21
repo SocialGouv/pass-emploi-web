@@ -6,8 +6,17 @@ import React from 'react'
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { desEvenementsListItems } from 'fixtures/evenement'
-import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
-import { mockedAgendaService, mockedJeunesService } from 'fixtures/services'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import {
+  desIndicateursSemaine,
+  unDetailJeune,
+  uneMetadonneeFavoris,
+} from 'fixtures/jeune'
+import {
+  mockedAgendaService,
+  mockedFavorisService,
+  mockedJeunesService,
+} from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
@@ -26,7 +35,7 @@ describe('Rendez-vous de la fiche jeune', () => {
 
   describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
     beforeEach(async () => {
-      await renderFicheJeune(StructureConseiller.MILO, rdvs)
+      await renderFicheJeuneMILO(StructureConseiller.MILO, rdvs)
     })
 
     it('affiche la liste des rendez-vous du jeune', async () => {
@@ -73,20 +82,23 @@ describe('Rendez-vous de la fiche jeune', () => {
   })
 
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
+    let offresPE, recherchesPE, metadonneesFavoris
     beforeEach(async () => {
-      await renderFicheJeune(StructureConseiller.POLE_EMPLOI, [])
+      metadonneesFavoris = uneMetadonneeFavoris()
+      offresPE = uneListeDOffres()
+      recherchesPE = uneListeDeRecherches()
+      await renderFicheJeunePE(
+        StructureConseiller.POLE_EMPLOI,
+        [],
+        metadonneesFavoris,
+        offresPE,
+        recherchesPE
+      )
     })
 
     it("n'affiche pas la liste des rendez-vous du jeune", async () => {
-      // Given
-      await userEvent.click(screen.getByRole('tab', { name: /Rendez-vous/ }))
-
       // Then
-      expect(
-        screen.getByText(
-          'Gérez les convocations de ce bénéficiaire depuis vos outils Pôle emploi.'
-        )
-      ).toBeInTheDocument()
+      expect(() => screen.getByText(/Rendez-vous/)).toThrow()
     })
 
     it('ne permet pas la prise de rendez-vous', async () => {
@@ -96,7 +108,7 @@ describe('Rendez-vous de la fiche jeune', () => {
   })
 })
 
-async function renderFicheJeune(
+async function renderFicheJeuneMILO(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = []
 ) {
@@ -121,6 +133,50 @@ async function renderFicheJeune(
           }),
           agendaService: mockedAgendaService({
             recupererAgenda: jest.fn(async () => unAgenda()),
+          }),
+          favorisService: mockedFavorisService({
+            getOffres: jest.fn(async () => uneListeDOffres()),
+          }),
+        },
+      }
+    )
+  })
+}
+
+async function renderFicheJeunePE(
+  structure: StructureConseiller,
+  rdvs: EvenementListItem[] = [],
+  metadonnees: Metadonnees,
+  offresPE: Offres[],
+  recherchesPE: Recherche[]
+) {
+  await act(async () => {
+    await renderWithContexts(
+      <FicheJeune
+        jeune={unDetailJeune()}
+        rdvs={rdvs}
+        actionsInitiales={desActionsInitiales()}
+        pageTitle={''}
+        metadonneesFavoris={metadonnees}
+        offresPE={offresPE}
+        recherchesPE={recherchesPE}
+      />,
+      {
+        customConseiller: {
+          id: 'id-conseiller',
+          structure: structure,
+        },
+        customDependances: {
+          jeunesService: mockedJeunesService({
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
+          }),
+          agendaService: mockedAgendaService({
+            recupererAgenda: jest.fn(async () => unAgenda()),
+          }),
+          favorisService: mockedFavorisService({
+            getOffres: jest.fn(async () => uneListeDOffres()),
           }),
         },
       }

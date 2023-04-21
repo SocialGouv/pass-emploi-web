@@ -20,13 +20,10 @@ export class FavorisApiService implements FavorisService {
   constructor(private readonly apiClient: ApiClient) {}
 
   async getOffres(idJeune: string, accessToken: string): Promise<Offre[]> {
-    console.log('entre dans getOffres')
     const { content: offresJson } = await this.apiClient.get<OffreJson[]>(
       `/jeunes/${idJeune}/favoris`,
       accessToken
     )
-    console.log('a récupéré les offres')
-    console.log(this.apiClient)
     return offresJson.map(jsonToOffre)
   }
 

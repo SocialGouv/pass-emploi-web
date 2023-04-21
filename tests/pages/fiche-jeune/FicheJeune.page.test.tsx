@@ -31,6 +31,7 @@ import FicheJeune, {
 } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
 import { EvenementsService } from 'services/evenements.service'
+import { FavorisService } from 'services/favoris.service'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -232,6 +233,7 @@ describe('Fiche Jeune', () => {
     let jeunesService: JeunesService
     let evenementsService: EvenementsService
     let actionsService: ActionsService
+    let favorisService: FavorisService
     beforeEach(() => {
       jeunesService = mockedJeunesService({
         getJeuneDetails: jest.fn(async () => unDetailJeune()),
@@ -254,10 +256,14 @@ describe('Fiche Jeune', () => {
           metadonnees: { nombreTotal: 14, nombrePages: 2 },
         })),
       })
+      favorisService = mockedFavorisService({
+        getOffres: jest.fn(async () => uneListeDOffres()),
+      })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
         if (dependance === 'jeunesService') return jeunesService
         if (dependance === 'evenementsService') return evenementsService
         if (dependance === 'actionsService') return actionsService
+        if (dependance === 'favorisService') return favorisService
       })
     })
 
@@ -309,6 +315,8 @@ describe('Fiche Jeune', () => {
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),
             metadonneesFavoris: expect.arrayContaining([]),
+            offresPE: expect.arrayContaining([]),
+            recherchesPE: expect.arrayContaining([]),
           },
         })
       })

@@ -4,7 +4,12 @@ import React from 'react'
 
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import {
+  desIndicateursSemaine,
+  unDetailJeune,
+  uneMetadonneeFavoris,
+} from 'fixtures/jeune'
 import { mockedAgendaService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
@@ -19,7 +24,9 @@ describe('Historique des conseillers dans la fiche jeune', () => {
     it('affiche un lien vers l’historique des conseillers du jeune', async () => {
       // Given
       ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
-
+      const metadonneesFavoris = uneMetadonneeFavoris()
+      const offresPE = uneListeDOffres()
+      const recherchesPE = uneListeDeRecherches()
       // When
       await renderWithContexts(
         <FicheJeune
@@ -27,6 +34,9 @@ describe('Historique des conseillers dans la fiche jeune', () => {
           rdvs={[]}
           actionsInitiales={desActionsInitiales()}
           pageTitle={''}
+          metadonneesFavoris={metadonneesFavoris}
+          offresPE={offresPE}
+          recherchesPE={recherchesPE}
         />,
         {
           customConseiller: { structure: StructureConseiller.POLE_EMPLOI },

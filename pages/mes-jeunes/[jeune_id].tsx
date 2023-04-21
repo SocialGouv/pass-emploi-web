@@ -54,7 +54,6 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -88,11 +87,6 @@ interface FicheJeuneProps extends PageProps {
   onglet?: Onglet
   offresPE?: Offre[]
   recherchesPE?: Recherche[]
-}
-
-interface FavorisProps extends PageProps {
-  offres: Offre[]
-  recherches: Recherche[]
 }
 
 function FicheJeune({
@@ -165,7 +159,11 @@ function FicheJeune({
     initialTracking += ' - Succès creation action'
   if (alerte?.key === AlerteParam.envoiMessage)
     initialTracking += ' - Succès envoi message'
-  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+  const [trackingLabel, setTrackingLabel] = useState<string>(
+    estMilo(conseiller) || !metadonneesFavoris?.autoriseLePartage
+      ? initialTracking
+      : ''
+  )
 
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
@@ -504,7 +502,7 @@ function FicheJeune({
               />
             </div>
           )}
-          {currentTab === Onglet.FAVORIS && (
+          {currentTab === Onglet.FAVORIS && metadonneesFavoris && (
             <div
               role='tabpanel'
               aria-labelledby='liste-favoris--tab'
@@ -523,14 +521,21 @@ function FicheJeune({
 
       {estPoleEmploi(conseiller) && (
         <>
-          {metadonneesFavoris?.autoriseLePartage && (
-            <TableauFavoris
-              offres={offresPE}
-              recherches={recherchesPE}
-              lectureSeule={lectureSeule}
-            />
-          )}
-          {!metadonneesFavoris?.autoriseLePartage && (
+          <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
+          <p className='text-base-regular'>
+            Retrouvez les offres et recherches que votre bénéficiaire a mises en
+            favoris.
+          </p>
+          {metadonneesFavoris?.autoriseLePartage &&
+            offresPE &&
+            recherchesPE && (
+              <TableauFavoris
+                offres={offresPE}
+                recherches={recherchesPE}
+                lectureSeule={lectureSeule}
+              />
+            )}
+          {metadonneesFavoris && !metadonneesFavoris?.autoriseLePartage && (
             <BlocFavoris
               idJeune={jeune.id}
               metadonneesFavoris={metadonneesFavoris}

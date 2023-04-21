@@ -5,7 +5,6 @@ import { OngletRecherches } from 'components/favoris/recherches/OngletRecherches
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { Onglet } from 'pages/mes-jeunes/[jeune_id]/favoris'
 import useMatomo from 'utils/analytics/useMatomo'
 
 type TableauFavorisProps = {
@@ -14,7 +13,7 @@ type TableauFavorisProps = {
   lectureSeule?: boolean
 }
 
-export enum Onglet {
+export enum OngletFavoris {
   OFFRES = 'OFFRES',
   RECHERCHES = 'RECHERCHES',
 }
@@ -24,7 +23,9 @@ export function TableauFavoris({
   recherches,
   lectureSeule,
 }: TableauFavorisProps) {
-  const [currentTab, setCurrentTab] = useState<Onglet>(Onglet.OFFRES)
+  const [currentTab, setCurrentTab] = useState<OngletFavoris>(
+    OngletFavoris.OFFRES
+  )
   const favorisTracking = `Détail jeune – Favoris${
     lectureSeule ? ' - hors portefeuille' : ''
   }`
@@ -33,9 +34,11 @@ export function TableauFavoris({
   }`
   const [tracking, setTracking] = useState<string>(favorisTracking)
 
-  async function switchTab(tab: Onglet) {
+  async function switchTab(tab: OngletFavoris) {
     setCurrentTab(tab)
-    setTracking(tab === Onglet.OFFRES ? favorisTracking : recherchesTracking)
+    setTracking(
+      tab === OngletFavoris.OFFRES ? favorisTracking : recherchesTracking
+    )
   }
 
   useMatomo(tracking)
@@ -46,19 +49,19 @@ export function TableauFavoris({
         <Tab
           label='Offres'
           count={offres.length}
-          selected={currentTab === Onglet.OFFRES}
+          selected={currentTab === OngletFavoris.OFFRES}
           controls='liste-offres'
-          onSelectTab={() => switchTab(Onglet.OFFRES)}
+          onSelectTab={() => switchTab(OngletFavoris.OFFRES)}
         />
         <Tab
           label='Recherches'
           count={recherches.length}
-          selected={currentTab === Onglet.RECHERCHES}
+          selected={currentTab === OngletFavoris.RECHERCHES}
           controls='liste-recherches'
-          onSelectTab={() => switchTab(Onglet.RECHERCHES)}
+          onSelectTab={() => switchTab(OngletFavoris.RECHERCHES)}
         />
       </TabList>
-      {currentTab === Onglet.OFFRES && (
+      {currentTab === OngletFavoris.OFFRES && (
         <div
           role='tabpanel'
           aria-labelledby='liste-offres--tab'
@@ -69,7 +72,7 @@ export function TableauFavoris({
           <OngletOffres offres={offres} />
         </div>
       )}
-      {currentTab === Onglet.RECHERCHES && (
+      {currentTab === OngletFavoris.RECHERCHES && (
         <div
           role='tabpanel'
           aria-labelledby='liste-recherches--tab'
