@@ -12,9 +12,14 @@ import {
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { estMilo, StructureConseiller } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estPoleEmploiBRSA,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
+import { textesBRSA, textesCEJ } from 'lang/textes'
 import { ConseillerService } from 'services/conseiller.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -153,18 +158,31 @@ function Profil({ referentielAgences }: ProfilProps) {
 
       <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
         <h2 className='text-m-bold text-grey_800 mb-4'>
-          Application CEJ jeune - mode démo
+          {estPoleEmploiBRSA(conseiller) && textesBRSA.profilTitreSection3}
+          {!estPoleEmploiBRSA(conseiller) && textesCEJ.profilTitreSection3}
         </h2>
-        <p className='mb-4'>
-          Le mode démo vous permet de visualiser l’application CEJ utilisée par
-          vos bénéficiaires.
-        </p>
-        <p className='mb-4'>
-          Pour accéder au mode démo, vous devez télécharger l’application sur le
-          store de votre choix, l’ouvrir puis
-          <b> appuyer 3 fois sur le logo </b>“Contrat d’Engagement Jeune”
-          visible sur la page de connexion.
-        </p>
+        {estPoleEmploiBRSA(conseiller) && (
+          <p className='mb-4'>{textesBRSA.introModeDemoTexte}</p>
+        )}
+        {!estPoleEmploiBRSA(conseiller) && (
+          <p className='mb-4'>{textesCEJ.introModeDemoTexte}</p>
+        )}
+        {estPoleEmploiBRSA(conseiller) && (
+          <p className='mb-4'>
+            Pour accéder au mode démo, vous devez télécharger l’application sur
+            le store de votre choix, l’ouvrir puis
+            <strong> appuyer 3 fois sur le logo </strong>“Pass emploi” visible
+            sur la page de connexion.
+          </p>
+        )}
+        {!estPoleEmploiBRSA(conseiller) && (
+          <p className='mb-4'>
+            Pour accéder au mode démo, vous devez télécharger l’application sur
+            le store de votre choix, l’ouvrir puis
+            <strong> appuyer 3 fois sur le logo </strong>“Contrat d’Engagement
+            Jeune” visible sur la page de connexion.
+          </p>
+        )}
         <p>
           L’application est disponible sur Google Play Store et sur l’App Store.
         </p>

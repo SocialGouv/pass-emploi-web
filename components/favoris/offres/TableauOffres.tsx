@@ -17,7 +17,7 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
     <>
       {offres.length === 0 && (
         <p className='text-base-regular mb-2'>
-          Votre jeune n’a pas d’offre mise en favoris
+          Votre bénéficiaire n’a pas d’offre mise en favoris
         </p>
       )}
 
