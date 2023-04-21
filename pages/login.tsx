@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { getSession, signIn } from 'next-auth/react'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
-import Logo from 'assets/images/logo_PassEmploi.svg'
+import Logo from 'assets/images/logo_pass_emploi.svg'
 import OnboardingMobileModal from 'components/OnboardingMobileModal'
 import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
@@ -66,40 +66,55 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
   return (
     <div className={`${styles.login} w-full h-screen relative`}>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-        <Logo
-          focusable='false'
-          aria-hidden={true}
-          className='m-auto h-56 w-56'
-        />
+        <h1>
+          <span className='sr-only'>Pass emploi</span>
+          <Logo
+            className='m-auto h-20 fill-blanc'
+            focusable={false}
+            aria-hidden={true}
+          />
+        </h1>
 
         <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-base'>
-          <h1 className='text-m-bold text-primary_darken text-center mb-[24px]'>
+          <h2 className='text-m-bold text-primary_darken text-center mb-[24px]'>
             Connectez-vous à l&apos;espace conseiller
-          </h1>
-
-          <FormButton
-            label='Connexion conseiller Mission Locale'
-            className='whitespace-nowrap'
-            handleSubmit={(event) => handleSignin(event, 'similo-conseiller')}
-          />
-          <FormButton
-            label='Connexion conseiller Pôle emploi CEJ'
-            className='pt-4 whitespace-nowrap'
-            handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
-          />
-          <FormButton
-            label='Connexion conseiller Pôle emploi BRSA'
-            className='pt-4 whitespace-nowrap'
-            handleSubmit={(event) => handleSignin(event, 'pe-brsa-conseiller')}
-          />
-
-          {ssoPassEmploiEstActif && (
-            <FormButton
-              className='mt-4 whitespace-nowrap'
-              label='Authentification pass emploi'
-              handleSubmit={(event) => handleSignin(event)}
-            />
-          )}
+          </h2>
+          <ul>
+            <li>
+              <FormButton
+                label='Connexion conseiller Mission Locale'
+                className='whitespace-nowrap'
+                handleSubmit={(event) =>
+                  handleSignin(event, 'similo-conseiller')
+                }
+              />
+            </li>
+            <li>
+              <FormButton
+                label='Connexion conseiller Pôle emploi CEJ'
+                className='pt-4 whitespace-nowrap'
+                handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
+              />
+            </li>
+            <li>
+              <FormButton
+                label='Connexion conseiller Pôle emploi BRSA'
+                className='pt-4 whitespace-nowrap'
+                handleSubmit={(event) =>
+                  handleSignin(event, 'pe-brsa-conseiller')
+                }
+              />
+            </li>
+            {ssoPassEmploiEstActif && (
+              <li>
+                <FormButton
+                  className='mt-4 whitespace-nowrap'
+                  label='Authentification pass emploi'
+                  handleSubmit={(event) => handleSignin(event)}
+                />
+              </li>
+            )}
+          </ul>
 
           {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>
