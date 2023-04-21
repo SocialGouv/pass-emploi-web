@@ -172,6 +172,16 @@ describe('Page Profil conseiller', () => {
           conseiller.notificationsSonores
         )
       })
+
+      it('affiche les informations du mode démo', () => {
+        //THEN
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Application CEJ jeune - mode démo',
+          })
+        ).toBeInTheDocument()
+      })
     })
 
     describe('quand il manque des informations', () => {
@@ -378,6 +388,30 @@ describe('Page Profil conseiller', () => {
           // Then
           expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
         })
+      })
+    })
+
+    describe('quand le conseiller est PE BRSA', () => {
+      it('affiche les informations du mode démo pour BRSA', async () => {
+        // Given
+        conseiller = unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI_BRSA,
+          email: 'pe-brsa@pole-emploi.fr',
+        })
+
+        // When
+        await act(async () => {
+          renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
+            customConseiller: conseiller,
+          })
+        })
+        //THEN
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Application Pass emploi - mode démo',
+          })
+        ).toBeInTheDocument()
       })
     })
 

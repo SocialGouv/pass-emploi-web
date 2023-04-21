@@ -143,7 +143,7 @@ describe('<ChatRoom />', () => {
       // Then
       expect(
         screen.getByText(
-          'Vous devriez avoir des jeunes inscrits pour discuter avec eux'
+          'Vous devriez avoir des bénéficiaires inscrits pour discuter avec eux'
         )
       ).toBeInTheDocument()
     })

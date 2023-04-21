@@ -165,7 +165,7 @@ export default function TableauJeunes({
     <>
       {sortedJeunes.length === 0 && (
         <p className='mt-32 text-base-bold text-center text-primary'>
-          Aucun jeune trouvé
+          Aucun bénéficiaire trouvé
         </p>
       )}
 
