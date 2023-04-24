@@ -206,6 +206,24 @@ describe('Page Profil conseiller', () => {
     })
 
     describe('quand le conseiller est MILO', () => {
+      it('n’affiche pas le bouton de suppression de compte', async () => {
+        // Given
+        const conseiller = unConseiller({
+          structure: StructureConseiller.MILO,
+        })
+
+        // When
+        await act(async () => {
+          renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
+            customConseiller: conseiller,
+            customDependances: { conseillerService },
+          })
+        })
+
+        // Then
+        expect(() => screen.getByText('Supprimer mon compte')).toThrow()
+      })
+
       describe('si son agence est déjà renseignée', () => {
         beforeEach(async () => {
           // Given
@@ -240,7 +258,7 @@ describe('Page Profil conseiller', () => {
         })
       })
 
-      describe('si son agence est n’est pas encore renseignée', () => {
+      describe('si son agence n’est pas encore renseignée', () => {
         const agences = uneListeDAgencesMILO()
         beforeEach(async () => {
           // Given

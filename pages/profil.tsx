@@ -1,5 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import { router } from 'next/client'
+import { useRouter } from 'next/router'
 import React, { ChangeEvent, useState } from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
@@ -41,14 +43,17 @@ function Profil({ referentielAgences }: ProfilProps) {
     useDependance<ConseillerService>('conseillerService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
+  const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
-  const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
   const conseillerEstMilo = estMilo(conseiller)
-  const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
   const [showModaleSuppressionCompte, setShowModaleSuppressionCompte] =
     useState(false)
-  const [portefeuilleVide, setPortefeuilleVide] = useState(false)
+  const [portefeuilleAvecBeneficiaires, setPortefeuilleAvecBeneficiaires] =
+    useState<Boolean>(false)
+
+  const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
+  const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
   async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
     const conseillerMisAJour = {
@@ -78,14 +83,21 @@ function Profil({ referentielAgences }: ProfilProps) {
     if (conseiller) {
       jeunesService.getJeunesDuConseillerClientSide().then((beneficiaires) => {
         Boolean(beneficiaires.length > 0)
-          ? setPortefeuilleVide(true)
-          : setPortefeuilleVide(false)
+          ? setPortefeuilleAvecBeneficiaires(true)
+          : setPortefeuilleAvecBeneficiaires(false)
       })
     }
   }
 
-  function supprimerCompteConseiller() {
-    alert('ok')
+  async function supprimerCompteConseiller(): Promise<void> {
+    try {
+      // await conseillerService.supprimerConseiller(conseiller.id)
+      alert(`Votre compte conseiller ${labelAgence} a bien été supprimé`)
+      // await router.push('/api/auth/federated-logout')
+      await router.push('/login')
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   function trackContacterSupportClick() {
@@ -128,25 +140,28 @@ function Profil({ referentielAgences }: ProfilProps) {
           )}
         </dl>
 
-        <Button
-          className='mt-4'
-          onClick={openDeleteConseillerModal}
-          style={ButtonStyle.TERTIARY}
-        >
-          <IconComponent
-            name={IconName.Delete}
-            focusable={false}
-            aria-hidden={true}
-            className='mr-2 w-4 h-4'
-          />
-          Supprimer mon compte
-        </Button>
+        {!conseillerEstMilo && (
+          <Button
+            className='mt-4'
+            onClick={openDeleteConseillerModal}
+            style={ButtonStyle.TERTIARY}
+          >
+            <IconComponent
+              name={IconName.Delete}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Supprimer mon compte
+          </Button>
+        )}
+
         {showModaleSuppressionCompte && (
           <ConfirmationDeleteConseillerModal
             conseiller={conseiller}
             onConfirmation={supprimerCompteConseiller}
             onCancel={() => setShowModaleSuppressionCompte(false)}
-            portefeuille={portefeuilleVide}
+            portefeuille={portefeuilleAvecBeneficiaires}
           />
         )}
 
