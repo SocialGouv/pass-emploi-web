@@ -182,6 +182,10 @@ describe('Page Profil conseiller', () => {
           })
         ).toBeInTheDocument()
       })
+
+      it('affiche un bouton pour supprimer le compte', () =>
+        // Then
+        expect(screen.getByText('Supprimer mon compte')).toBeInTheDocument())
     })
 
     describe('quand il manque des informations', () => {
