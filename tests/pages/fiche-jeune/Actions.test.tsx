@@ -66,7 +66,7 @@ describe('Actions dans la fiche jeune', () => {
       ).toThrow()
       expect(
         screen.getByText(
-          'Gérez les actions et démarches de ce jeune depuis vos outils Pôle emploi.'
+          'Gérez les actions et démarches de ce bénéficiaire depuis vos outils Pôle emploi.'
         )
       ).toBeInTheDocument()
     })

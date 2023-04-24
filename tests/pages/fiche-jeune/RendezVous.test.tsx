@@ -84,7 +84,7 @@ describe('Rendez-vous de la fiche jeune', () => {
       // Then
       expect(
         screen.getByText(
-          'Gérez les convocations de ce jeune depuis vos outils Pôle emploi.'
+          'Gérez les convocations de ce bénéficiaire depuis vos outils Pôle emploi.'
         )
       ).toBeInTheDocument()
     })

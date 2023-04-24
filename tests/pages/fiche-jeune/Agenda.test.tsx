@@ -31,7 +31,7 @@ describe('Agenda de la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: replace,
       push: jest.fn(),
-      asPath: '/mes-jeunes'
+      asPath: '/mes-jeunes',
     })
   })
 
@@ -59,7 +59,7 @@ describe('Agenda de la fiche jeune', () => {
       // Then
       expect(
         screen.getByText(
-          'Gérez les convocations et démarches de ce jeune depuis vos outils Pôle emploi.'
+          'Gérez les convocations et démarches de ce bénéficiaire depuis vos outils Pôle emploi.'
         )
       ).toBeInTheDocument()
 
