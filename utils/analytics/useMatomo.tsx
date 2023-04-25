@@ -13,9 +13,6 @@ function useMatomo(
     if (!title) {
       return
     }
-    if (!avecBeneficiaires) {
-      return
-    }
 
     const structure = !conseiller
       ? 'visiteur'

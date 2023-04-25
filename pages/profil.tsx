@@ -1,6 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import { router } from 'next/client'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, useState } from 'react'
 
@@ -8,6 +7,8 @@ import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
 import ConfirmationDeleteConseillerModal from 'components/ConfirmationDeleteConseillerModal'
+import ConfirmationSuppressionCompteConseillerModal from 'components/ConfirmationSuppressionCompteConseillerModal'
+import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
@@ -24,9 +25,11 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
+import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -44,11 +47,16 @@ function Profil({ referentielAgences }: ProfilProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const router = useRouter()
+  const [_, setAlerte] = useAlerte()
   const [conseiller, setConseiller] = useConseiller()
 
   const conseillerEstMilo = estMilo(conseiller)
   const [showModaleSuppressionCompte, setShowModaleSuppressionCompte] =
     useState(false)
+  const [
+    showModaleConfirmationSuppression,
+    setShowModaleConfirmationSuppression,
+  ] = useState(false)
   const [portefeuilleAvecBeneficiaires, setPortefeuilleAvecBeneficiaires] =
     useState<Boolean>(false)
 
@@ -92,9 +100,10 @@ function Profil({ referentielAgences }: ProfilProps) {
   async function supprimerCompteConseiller(): Promise<void> {
     try {
       // await conseillerService.supprimerConseiller(conseiller.id)
-      alert(`Votre compte conseiller ${labelAgence} a bien été supprimé`)
-      // await router.push('/api/auth/federated-logout')
-      await router.push('/login')
+      setShowModaleSuppressionCompte(false)
+      alert('bien spprimé....')
+      // setShowModaleConfirmationSuppression(true)
+      await router.push('/api/auth/federated-logout')
     } catch (e) {
       console.error(e)
     }
@@ -164,6 +173,10 @@ function Profil({ referentielAgences }: ProfilProps) {
             portefeuille={portefeuilleAvecBeneficiaires}
           />
         )}
+
+        {/*{showModaleConfirmationSuppression && (*/}
+        {/*  <ConfirmationSuppressionCompteConseillerModal />*/}
+        {/*)}*/}
 
         {conseillerEstMilo && (
           <>
