@@ -10,6 +10,7 @@ import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import { ResumeFavorisJeune } from 'components/jeune/ResumeFavorisJeune'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { TableauFavoris } from 'components/jeune/TableauFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
@@ -159,10 +160,15 @@ function FicheJeune({
     initialTracking += ' - Succès creation action'
   if (alerte?.key === AlerteParam.envoiMessage)
     initialTracking += ' - Succès envoi message'
-  const [trackingLabel, setTrackingLabel] = useState<string>(
-    estMilo(conseiller) || !metadonneesFavoris?.autoriseLePartage
+
+  function getInitialTracking() {
+    return estMilo(conseiller) || !metadonneesFavoris?.autoriseLePartage
       ? initialTracking
       : ''
+  }
+
+  const [trackingLabel, setTrackingLabel] = useState<string>(
+    getInitialTracking()
   )
 
   const totalFavoris = metadonneesFavoris
@@ -521,25 +527,24 @@ function FicheJeune({
 
       {estPoleEmploi(conseiller) && (
         <>
-          <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
-          <p className='text-base-regular'>
-            Retrouvez les offres et recherches que votre bénéficiaire a mises en
-            favoris.
-          </p>
-          {metadonneesFavoris?.autoriseLePartage &&
+          {!metadonneesFavoris?.autoriseLePartage &&
             offresPE &&
             recherchesPE && (
-              <TableauFavoris
-                offres={offresPE}
-                recherches={recherchesPE}
-                lectureSeule={lectureSeule}
-              />
+              <>
+                <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
+                <p className='text-base-regular'>
+                  Retrouvez les offres et recherches que votre bénéficiaire a
+                  mises en favoris.
+                </p>
+                <TableauFavoris
+                  offres={offresPE}
+                  recherches={recherchesPE}
+                  lectureSeule={lectureSeule}
+                />
+              </>
             )}
-          {metadonneesFavoris && !metadonneesFavoris?.autoriseLePartage && (
-            <BlocFavoris
-              idJeune={jeune.id}
-              metadonneesFavoris={metadonneesFavoris}
-            />
+          {metadonneesFavoris && metadonneesFavoris?.autoriseLePartage && (
+            <ResumeFavorisJeune metadonneesFavoris={metadonneesFavoris} />
           )}
         </>
       )}

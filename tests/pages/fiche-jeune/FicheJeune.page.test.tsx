@@ -221,7 +221,6 @@ describe('Fiche Jeune', () => {
         expect(screen.getByText(/Alternance/)).toBeInTheDocument()
         expect(screen.getByText(/Service civique/)).toBeInTheDocument()
         expect(screen.getByText(/Immersion/)).toBeInTheDocument()
-        expect(screen.getByText(/Recherches sauvegardées/)).toBeInTheDocument()
       })
     })
   })
