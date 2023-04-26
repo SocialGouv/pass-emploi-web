@@ -23,25 +23,33 @@ export function ResumeFavorisJeune({
           <ul className='flex gap-2'>
             <TileIndicateur
               valeur={offres.nombreOffresEmploi}
-              label='Offres d’emploi'
+              label={offres.nombreOffresEmploi > 1 ? 'Emplois' : 'Emploi'}
               bgColor='alert_lighten'
               textColor='content_color'
             />
             <TileIndicateur
               valeur={offres.nombreOffresAlternance}
-              label='Alternance'
+              label={
+                offres.nombreOffresAlternance > 1 ? 'Alternances' : 'Alternance'
+              }
               bgColor='alert_lighten'
               textColor='content_color'
             />
             <TileIndicateur
               valeur={offres.nombreOffresServiceCivique}
-              label='Service civique'
+              label={
+                offres.nombreOffresServiceCivique > 1
+                  ? 'Services civiques'
+                  : 'Service civique'
+              }
               bgColor='alert_lighten'
               textColor='content_color'
             />
             <TileIndicateur
               valeur={offres.nombreOffresImmersion}
-              label='Immersion'
+              label={
+                offres.nombreOffresImmersion > 1 ? 'Immersions' : 'Immersion'
+              }
               bgColor='alert_lighten'
               textColor='content_color'
             />
@@ -52,7 +60,7 @@ export function ResumeFavorisJeune({
           <div className='flex gap-2'>
             <TileIndicateur
               valeur={recherches.total}
-              label='Recherches sauvegardées'
+              label={recherches.total > 1 ? 'Alertes' : 'Alerte'}
               bgColor='primary_lighten'
               textColor='primary_darken'
             />
