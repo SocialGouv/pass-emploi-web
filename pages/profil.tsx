@@ -1,14 +1,18 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import React, { ChangeEvent, useState } from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
+import ConfirmationDeleteConseillerModal from 'components/ConfirmationDeleteConseillerModal'
+import ConfirmationSuppressionCompteConseillerModal from 'components/ConfirmationSuppressionCompteConseillerModal'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
 } from 'components/RenseignementAgenceMissionLocaleForm'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
@@ -21,6 +25,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
 import { ConseillerService } from 'services/conseiller.service'
+import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -36,12 +41,23 @@ type ProfilProps = PageProps & {
 function Profil({ referentielAgences }: ProfilProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
+  const jeunesService = useDependance<JeunesService>('jeunesService')
 
+  const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
-  const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
   const conseillerEstMilo = estMilo(conseiller)
+  const [showModaleSuppressionCompte, setShowModaleSuppressionCompte] =
+    useState(false)
+  const [
+    showModaleConfirmationSuppression,
+    setShowModaleConfirmationSuppression,
+  ] = useState(false)
+  const [portefeuilleAvecBeneficiaires, setPortefeuilleAvecBeneficiaires] =
+    useState<Boolean>(false)
+
   const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
+  const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
   async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
     const conseillerMisAJour = {
@@ -62,6 +78,34 @@ function Profil({ referentielAgences }: ProfilProps) {
     await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel('Profil - Succès ajout agence')
+  }
+
+  function openDeleteConseillerModal(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowModaleSuppressionCompte(true)
+    if (conseiller) {
+      jeunesService.getJeunesDuConseillerClientSide().then((beneficiaires) => {
+        Boolean(beneficiaires.length > 0)
+          ? setPortefeuilleAvecBeneficiaires(true)
+          : setPortefeuilleAvecBeneficiaires(false)
+      })
+    }
+  }
+
+  async function supprimerCompteConseiller(): Promise<void> {
+    try {
+      await conseillerService.supprimerConseiller(conseiller.id)
+      setShowModaleSuppressionCompte(false)
+      setTimeout(async () => {
+        setShowModaleConfirmationSuppression(true)
+      }, 10)
+      setTimeout(async () => {
+        await router.push('/api/auth/federated-logout')
+      }, 3000)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   function trackContacterSupportClick() {
@@ -103,6 +147,35 @@ function Profil({ referentielAgences }: ProfilProps) {
             </div>
           )}
         </dl>
+
+        {!conseillerEstMilo && (
+          <Button
+            className='mt-4'
+            onClick={openDeleteConseillerModal}
+            style={ButtonStyle.TERTIARY}
+          >
+            <IconComponent
+              name={IconName.Delete}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Supprimer mon compte
+          </Button>
+        )}
+
+        {showModaleSuppressionCompte && (
+          <ConfirmationDeleteConseillerModal
+            conseiller={conseiller}
+            onConfirmation={supprimerCompteConseiller}
+            onCancel={() => setShowModaleSuppressionCompte(false)}
+            portefeuilleAvecBeneficiaires={portefeuilleAvecBeneficiaires}
+          />
+        )}
+
+        {showModaleConfirmationSuppression && (
+          <ConfirmationSuppressionCompteConseillerModal />
+        )}
 
         {conseillerEstMilo && (
           <>

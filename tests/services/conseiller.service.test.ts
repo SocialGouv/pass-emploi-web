@@ -96,4 +96,20 @@ describe('ConseillerApiService', () => {
       )
     })
   })
+
+  describe('.supprimerConseiller', () => {
+    it('supprime le conseiller', async () => {
+      // Given
+      const accessToken = 'accessToken'
+
+      // When
+      await conseillerService.supprimerConseiller('id-conseiller')
+
+      // Then
+      expect(apiClient.delete).toHaveBeenCalledWith(
+        '/conseillers/id-conseiller',
+        accessToken
+      )
+    })
+  })
 })

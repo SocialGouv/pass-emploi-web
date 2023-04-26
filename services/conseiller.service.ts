@@ -30,6 +30,8 @@ export interface ConseillerService {
   createCompteJeuneMilo(newJeune: JeuneMiloFormData): Promise<BaseJeune>
 
   recupererBeneficiaires(): Promise<void>
+
+  supprimerConseiller(idConseiller: string): Promise<void>
 }
 
 export class ConseillerApiService implements ConseillerService {
@@ -120,6 +122,14 @@ export class ConseillerApiService implements ConseillerService {
     await this.apiClient.post(
       `/conseillers/${session!.user.id}/recuperer-mes-jeunes`,
       {},
+      session!.accessToken
+    )
+  }
+
+  async supprimerConseiller(idConseiller: string): Promise<void> {
+    const session = await getSession()
+    await this.apiClient.delete(
+      `/conseillers/${idConseiller}`,
       session!.accessToken
     )
   }
