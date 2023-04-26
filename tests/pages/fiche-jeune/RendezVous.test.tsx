@@ -19,6 +19,8 @@ import {
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
+import { Recherche } from 'interfaces/favoris'
+import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -33,9 +35,9 @@ describe('Rendez-vous de la fiche jeune', () => {
     })
   })
 
-  describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur n'est pas un conseiller Pôle emploi", () => {
     beforeEach(async () => {
-      await renderFicheJeuneMILO(StructureConseiller.MILO, rdvs)
+      await renderFicheJeune(StructureConseiller.MILO, rdvs)
     })
 
     it('affiche la liste des rendez-vous du jeune', async () => {
@@ -82,7 +84,9 @@ describe('Rendez-vous de la fiche jeune', () => {
   })
 
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
-    let offresPE, recherchesPE, metadonneesFavoris
+    let offresPE: Offre[],
+      recherchesPE: Recherche[],
+      metadonneesFavoris: MetadonneesFavoris
     beforeEach(async () => {
       metadonneesFavoris = uneMetadonneeFavoris()
       offresPE = uneListeDOffres()
@@ -108,7 +112,7 @@ describe('Rendez-vous de la fiche jeune', () => {
   })
 })
 
-async function renderFicheJeuneMILO(
+async function renderFicheJeune(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = []
 ) {

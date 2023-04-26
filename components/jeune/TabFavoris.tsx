@@ -7,7 +7,7 @@ import TabList from 'components/ui/Navigation/TabList'
 import { Offre, Recherche } from 'interfaces/favoris'
 import useMatomo from 'utils/analytics/useMatomo'
 
-type TableauFavorisProps = {
+type TabFavorisProps = {
   offres: Offre[]
   recherches: Recherche[]
   lectureSeule?: boolean
@@ -18,11 +18,11 @@ export enum OngletFavoris {
   RECHERCHES = 'RECHERCHES',
 }
 
-export function TableauFavoris({
+export function TabFavoris({
   offres,
   recherches,
   lectureSeule,
-}: TableauFavorisProps) {
+}: TabFavorisProps) {
   const [currentTab, setCurrentTab] = useState<OngletFavoris>(
     OngletFavoris.OFFRES
   )

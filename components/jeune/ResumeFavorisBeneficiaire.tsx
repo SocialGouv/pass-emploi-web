@@ -7,7 +7,7 @@ type ResumeFavorisJeuneProps = {
   metadonneesFavoris: MetadonneesFavoris
 }
 
-export function ResumeFavorisJeune({
+export function ResumeFavorisBeneficiaire({
   metadonneesFavoris: { offres, recherches },
 }: ResumeFavorisJeuneProps) {
   return (
@@ -22,13 +22,13 @@ export function ResumeFavorisJeune({
           <h3 className='mb-2'>Offres</h3>
           <ul className='flex gap-2'>
             <TileIndicateur
-              valeur={offres.nombreOffresEmploi}
+              valeur={offres.nombreOffresEmploi.toString()}
               label={offres.nombreOffresEmploi > 1 ? 'Emplois' : 'Emploi'}
               bgColor='alert_lighten'
               textColor='content_color'
             />
             <TileIndicateur
-              valeur={offres.nombreOffresAlternance}
+              valeur={offres.nombreOffresAlternance.toString()}
               label={
                 offres.nombreOffresAlternance > 1 ? 'Alternances' : 'Alternance'
               }
@@ -36,7 +36,7 @@ export function ResumeFavorisJeune({
               textColor='content_color'
             />
             <TileIndicateur
-              valeur={offres.nombreOffresServiceCivique}
+              valeur={offres.nombreOffresServiceCivique.toString()}
               label={
                 offres.nombreOffresServiceCivique > 1
                   ? 'Services civiques'
@@ -46,7 +46,7 @@ export function ResumeFavorisJeune({
               textColor='content_color'
             />
             <TileIndicateur
-              valeur={offres.nombreOffresImmersion}
+              valeur={offres.nombreOffresImmersion.toString()}
               label={
                 offres.nombreOffresImmersion > 1 ? 'Immersions' : 'Immersion'
               }
@@ -59,7 +59,7 @@ export function ResumeFavorisJeune({
           <h3 className='mb-2'>Recherches</h3>
           <div className='flex gap-2'>
             <TileIndicateur
-              valeur={recherches.total}
+              valeur={recherches.total.toString()}
               label={recherches.total > 1 ? 'Alertes' : 'Alerte'}
               bgColor='primary_lighten'
               textColor='primary_darken'

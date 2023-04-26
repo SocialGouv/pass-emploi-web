@@ -10,9 +10,9 @@ import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
-import { ResumeFavorisJeune } from 'components/jeune/ResumeFavorisJeune'
+import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
-import { TableauFavoris } from 'components/jeune/TableauFavoris'
+import { TabFavoris } from 'components/jeune/TabFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
 import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -161,15 +161,7 @@ function FicheJeune({
   if (alerte?.key === AlerteParam.envoiMessage)
     initialTracking += ' - Succès envoi message'
 
-  function getInitialTracking() {
-    return estMilo(conseiller) || !metadonneesFavoris?.autoriseLePartage
-      ? initialTracking
-      : ''
-  }
-
-  const [trackingLabel, setTrackingLabel] = useState<string>(
-    getInitialTracking()
-  )
+  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
@@ -527,7 +519,7 @@ function FicheJeune({
 
       {estPoleEmploi(conseiller) && (
         <>
-          {!metadonneesFavoris?.autoriseLePartage &&
+          {metadonneesFavoris?.autoriseLePartage &&
             offresPE &&
             recherchesPE && (
               <>
@@ -536,15 +528,17 @@ function FicheJeune({
                   Retrouvez les offres et recherches que votre bénéficiaire a
                   mises en favoris.
                 </p>
-                <TableauFavoris
+                <TabFavoris
                   offres={offresPE}
                   recherches={recherchesPE}
                   lectureSeule={lectureSeule}
                 />
               </>
             )}
-          {metadonneesFavoris && metadonneesFavoris?.autoriseLePartage && (
-            <ResumeFavorisJeune metadonneesFavoris={metadonneesFavoris} />
+          {metadonneesFavoris && !metadonneesFavoris?.autoriseLePartage && (
+            <ResumeFavorisBeneficiaire
+              metadonneesFavoris={metadonneesFavoris}
+            />
           )}
         </>
       )}

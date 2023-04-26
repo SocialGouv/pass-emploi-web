@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React from 'react'
 
-import { TableauFavoris } from 'components/jeune/TableauFavoris'
+import { TabFavoris } from 'components/jeune/TabFavoris'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
 import { FavorisService } from 'services/favoris.service'
@@ -19,7 +19,7 @@ interface FavorisProps extends PageProps {
 
 function Favoris({ offres, recherches, lectureSeule }: FavorisProps) {
   return (
-    <TableauFavoris
+    <TabFavoris
       offres={offres}
       recherches={recherches}
       lectureSeule={lectureSeule}

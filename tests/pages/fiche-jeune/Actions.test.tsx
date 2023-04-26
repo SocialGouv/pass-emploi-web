@@ -29,6 +29,8 @@ import {
 } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
+import { Offre, Recherche } from 'interfaces/favoris'
+import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune, { Onglet } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -57,8 +59,10 @@ describe('Actions dans la fiche jeune', () => {
     })
   })
 
-  describe("quand l'utilisateur est un conseiller Pole emploi", () => {
-    let offresPE, recherchesPE, metadonneesFavoris
+  describe("quand l'utilisateur est un conseiller Pôle emploi", () => {
+    let offresPE: Offre[],
+      recherchesPE: Recherche[],
+      metadonneesFavoris: MetadonneesFavoris
     beforeEach(async () => {
       metadonneesFavoris = uneMetadonneeFavoris()
       offresPE = uneListeDOffres()
@@ -81,7 +85,7 @@ describe('Actions dans la fiche jeune', () => {
     })
   })
 
-  describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur n'est pas un conseiller Pôle emploi", () => {
     let setIdJeune: (id: string | undefined) => void
     beforeEach(async () => {
       // Given

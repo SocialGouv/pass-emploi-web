@@ -24,6 +24,7 @@ import {
   mockedFavorisService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune, {
   getServerSideProps,
@@ -185,7 +186,9 @@ describe('Fiche Jeune', () => {
     })
 
     describe('pour les conseillers non Milo', () => {
-      let offresPE, recherchesPE, metadonneesFavoris
+      let offresPE: Offre[],
+        recherchesPE: Recherche[],
+        metadonneesFavoris: MetadonneesFavoris
       beforeEach(async () => {
         //Given
         metadonneesFavoris = uneMetadonneeFavoris()
@@ -211,16 +214,19 @@ describe('Fiche Jeune', () => {
         expect(screen.getByText('Recherches')).toBeInTheDocument()
       })
 
-      it('affiche le récapitulatif mais pas les onglets si le bénéficiaire a refusé le partage', async () => {
-        // When
+      it('affiche le récapitulatif des favoris si le bénéficiaire a refusé le partage', async () => {
+        // Given
         metadonneesFavoris.autoriseLePartage = false
+
+        //When
         await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
 
         // Then
-        expect(screen.getByText(/Offre d’emploi/)).toBeInTheDocument()
-        expect(screen.getByText(/Alternance/)).toBeInTheDocument()
-        expect(screen.getByText(/Service civique/)).toBeInTheDocument()
-        expect(screen.getByText(/Immersion/)).toBeInTheDocument()
+        expect(screen.getByText(/Emplois/)).toBeInTheDocument()
+        expect(screen.getByText(/Alternances/)).toBeInTheDocument()
+        expect(screen.getByText(/Services civiques/)).toBeInTheDocument()
+        expect(screen.getByText(/Immersions/)).toBeInTheDocument()
+        expect(screen.getByText(/Alertes/)).toBeInTheDocument()
       })
     })
   })
