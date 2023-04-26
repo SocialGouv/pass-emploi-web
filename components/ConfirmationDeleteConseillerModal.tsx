@@ -24,7 +24,7 @@ export default function ConfirmationDeleteConseillerModal({
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)
 
-  const labelStructure = estPoleEmploiBRSA(conseiller) ? 'BRSA' : 'CEJ'
+  const labelStructure = !estPoleEmploiBRSA(conseiller) ? 'CEJ' : 'BRSA'
   return (
     <Modal
       title={`Suppression de votre compte conseiller ${labelStructure} ${conseiller.firstName} ${conseiller.lastName}`}

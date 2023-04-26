@@ -17,7 +17,7 @@ export const MODAL_ROOT_ID = 'modal-root'
 
 interface ModalProps {
   title: string
-  onClose: () => void
+  onClose?: () => void
   children: ReactNode
   titleIcon?: IconName
 }
@@ -70,7 +70,9 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   function handleClose(e: KeyboardEvent | MouseEvent) {
     e.preventDefault()
     if (previousFocusedElement.current) previousFocusedElement.current.focus()
-    onClose()
+    if (onClose) {
+      onClose()
+    }
   }
 
   function keyListener(e: KeyboardEvent) {
@@ -87,22 +89,25 @@ const Modal = forwardRef((props: ModalProps, ref) => {
 
   const modalTemplate = (
     <div className='rounded-base bg-blanc max-w-[620px] p-3' ref={modalRef}>
-      <div className='flex justify-end'>
-        <button
-          type='button'
-          onClick={handleClose}
-          ref={focusOnRender}
-          className='p-2 border-none hover:bg-primary_lighten hover:rounded-l'
-        >
-          <IconComponent
-            name={IconName.Close}
-            role='img'
-            focusable='false'
-            aria-label='Fermer la fenêtre'
-            className='w-6 h-6 fill-content_color'
-          />
-        </button>
-      </div>
+      {onClose && (
+        <div className='flex justify-end'>
+          <button
+            type='button'
+            onClick={handleClose}
+            ref={focusOnRender}
+            className='p-2 border-none hover:bg-primary_lighten hover:rounded-l'
+          >
+            <IconComponent
+              name={IconName.Close}
+              role='img'
+              focusable='false'
+              aria-label='Fermer la fenêtre'
+              className='w-6 h-6 fill-content_color'
+            />
+          </button>
+        </div>
+      )}
+
       <div className='px-6 pb-6'>
         {titleIcon && (
           <IconComponent

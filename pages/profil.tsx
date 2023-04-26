@@ -8,7 +8,6 @@ import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
 import ConfirmationDeleteConseillerModal from 'components/ConfirmationDeleteConseillerModal'
 import ConfirmationSuppressionCompteConseillerModal from 'components/ConfirmationSuppressionCompteConseillerModal'
-import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
@@ -25,11 +24,9 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
-import { AlerteParam } from 'referentiel/alerteParam'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
-import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -47,7 +44,6 @@ function Profil({ referentielAgences }: ProfilProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
 
   const router = useRouter()
-  const [_, setAlerte] = useAlerte()
   const [conseiller, setConseiller] = useConseiller()
 
   const conseillerEstMilo = estMilo(conseiller)
@@ -99,11 +95,14 @@ function Profil({ referentielAgences }: ProfilProps) {
 
   async function supprimerCompteConseiller(): Promise<void> {
     try {
-      // await conseillerService.supprimerConseiller(conseiller.id)
+      await conseillerService.supprimerConseiller(conseiller.id)
       setShowModaleSuppressionCompte(false)
-      alert('bien spprimé....')
-      // setShowModaleConfirmationSuppression(true)
-      await router.push('/api/auth/federated-logout')
+      setTimeout(async () => {
+        setShowModaleConfirmationSuppression(true)
+      }, 10)
+      setTimeout(async () => {
+        await router.push('/api/auth/federated-logout')
+      }, 3000)
     } catch (e) {
       console.error(e)
     }
@@ -174,9 +173,9 @@ function Profil({ referentielAgences }: ProfilProps) {
           />
         )}
 
-        {/*{showModaleConfirmationSuppression && (*/}
-        {/*  <ConfirmationSuppressionCompteConseillerModal />*/}
-        {/*)}*/}
+        {showModaleConfirmationSuppression && (
+          <ConfirmationSuppressionCompteConseillerModal />
+        )}
 
         {conseillerEstMilo && (
           <>
