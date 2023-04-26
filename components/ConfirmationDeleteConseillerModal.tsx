@@ -11,14 +11,14 @@ interface ConfirmationDeleteConseillerModalProps {
   onConfirmation: () => void
   onCancel: () => void
   conseiller: Conseiller
-  portefeuille: boolean
+  portefeuilleAvecBeneficiaires: boolean
 }
 
 export default function ConfirmationDeleteConseillerModal({
   onCancel,
   onConfirmation,
   conseiller,
-  portefeuille,
+  portefeuilleAvecBeneficiaires,
 }: ConfirmationDeleteConseillerModalProps) {
   const modalRef = useRef<{
     closeModal: (e: KeyboardEvent | MouseEvent) => void
@@ -33,19 +33,19 @@ export default function ConfirmationDeleteConseillerModal({
       ref={modalRef}
     >
       <div className='px-20 text-center'>
-        {portefeuille && (
+        {!portefeuilleAvecBeneficiaires && (
           <InformationMessage label='Attention, cette opération est définitive. Une fois confirmée, toutes les informations liées à votre compte seront supprimées et irrécupérables.' />
         )}
-        {!portefeuille && (
+        {portefeuilleAvecBeneficiaires && (
           <InformationMessage label='Afin de procéder à la suppression de votre compte, votre portefeuille doit avoir été transféré. Merci de contacter votre superviseur puis renouveler la suppression.' />
         )}
-        {portefeuille && (
+        {!portefeuilleAvecBeneficiaires && (
           <p className='mt-6'>Souhaitez-vous confirmer la suppression ?</p>
         )}
       </div>
 
       <div className='mt-14 flex justify-center'>
-        {portefeuille && (
+        {!portefeuilleAvecBeneficiaires && (
           <>
             <Button
               type='button'
@@ -60,7 +60,7 @@ export default function ConfirmationDeleteConseillerModal({
             </Button>
           </>
         )}
-        {!portefeuille && (
+        {portefeuilleAvecBeneficiaires && (
           <Button
             type='button'
             style={ButtonStyle.PRIMARY}

@@ -449,12 +449,11 @@ describe('Page Profil conseiller', () => {
     })
 
     describe('Supprimer un compte', () => {
-      describe('en tant que PE avec bénéficiaires', () => {
+      describe('en tant que PE sans bénéficiaires', () => {
         beforeEach(async () => {
           // Given
-          jeunes = desItemsJeunes()
           jeunesService = mockedJeunesService({
-            getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
+            getJeunesDuConseillerClientSide: jest.fn(async () => []),
           })
           push = jest.fn(() => Promise.resolve())
           ;(useRouter as jest.Mock).mockReturnValue({ push })
@@ -487,12 +486,16 @@ describe('Page Profil conseiller', () => {
           expect(
             screen.getByText(/Attention, cette opération/)
           ).toBeInTheDocument()
-          expect(screen.getByText('Confirmer')).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Confirmer' })
+          ).toBeInTheDocument()
         })
 
         it('lors de la confirmation, supprime le conseiller et redirige vers la page de connexion', async () => {
           // Given
-          const confirmerSuppressionButton = screen.getByText('Confirmer')
+          const confirmerSuppressionButton = screen.getByRole('button', {
+            name: 'Confirmer',
+          })
 
           // When
           await userEvent.click(confirmerSuppressionButton)
@@ -500,8 +503,8 @@ describe('Page Profil conseiller', () => {
 
           // Then
           expect(
-            screen.getByText('Votre compte conseiller a bien été supprimé')
-          )
+            screen.getByText('Vous allez être redirigé dans quelques secondes')
+          ).toBeInTheDocument()
           expect(conseillerService.supprimerConseiller).toHaveBeenCalledWith(
             conseiller.id
           )
@@ -511,11 +514,12 @@ describe('Page Profil conseiller', () => {
         })
       })
 
-      describe('en tant que PE sans bénéficiaires', () => {
+      describe('en tant que PE avec bénéficiaires', () => {
         it('affiche une modale avec les bonnes informations', async () => {
           // Given
+          jeunes = desItemsJeunes()
           jeunesService = mockedJeunesService({
-            getJeunesDuConseillerClientSide: jest.fn(async () => []),
+            getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
           })
 
           // When

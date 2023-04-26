@@ -169,7 +169,7 @@ function Profil({ referentielAgences }: ProfilProps) {
             conseiller={conseiller}
             onConfirmation={supprimerCompteConseiller}
             onCancel={() => setShowModaleSuppressionCompte(false)}
-            portefeuille={portefeuilleAvecBeneficiaires}
+            portefeuilleAvecBeneficiaires={portefeuilleAvecBeneficiaires}
           />
         )}
 
