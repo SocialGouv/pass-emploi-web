@@ -20,7 +20,7 @@ describe('Favoris dans la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
       push: jest.fn(),
-      asPath: '/mes-jeunes'
+      asPath: '/mes-jeunes',
     })
   })
 

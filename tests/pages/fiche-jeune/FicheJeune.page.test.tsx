@@ -9,6 +9,7 @@ import { desActionsInitiales, uneAction } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desConseillersJeune,
   desIndicateursSemaine,
@@ -20,14 +21,18 @@ import {
   mockedAgendaService,
   mockedEvenementsService,
   mockedJeunesService,
+  mockedFavorisService,
 } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { Recherche } from 'interfaces/favoris'
+import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune, {
   getServerSideProps,
   Onglet,
 } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
 import { EvenementsService } from 'services/evenements.service'
+import { FavorisService } from 'services/favoris.service'
 import { JeunesService } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -179,6 +184,51 @@ describe('Fiche Jeune', () => {
         ).toHaveAttribute('href', '/agenda?onglet=etablissement')
       })
     })
+
+    describe('pour les conseillers non Milo', () => {
+      let offresPE: Offre[],
+        recherchesPE: Recherche[],
+        metadonneesFavoris: MetadonneesFavoris
+      beforeEach(async () => {
+        //Given
+        metadonneesFavoris = uneMetadonneeFavoris()
+        offresPE = uneListeDOffres()
+        recherchesPE = uneListeDeRecherches()
+      })
+      it('n’affiche pas les onglets agenda, actions et rdv', async () => {
+        // When
+        await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+
+        // Then
+        expect(() => screen.getByText('Agenda')).toThrow()
+        expect(() => screen.getByText('Actions')).toThrow()
+        expect(() => screen.getByText('Rendez-vous')).toThrow()
+      })
+
+      it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
+        // When
+        await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+
+        // Then
+        expect(screen.getByText('Offres')).toBeInTheDocument()
+        expect(screen.getByText('Recherches')).toBeInTheDocument()
+      })
+
+      it('affiche le récapitulatif des favoris si le bénéficiaire a refusé le partage', async () => {
+        // Given
+        metadonneesFavoris.autoriseLePartage = false
+
+        //When
+        await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+
+        // Then
+        expect(screen.getByText(/Emplois/)).toBeInTheDocument()
+        expect(screen.getByText(/Alternances/)).toBeInTheDocument()
+        expect(screen.getByText(/Services civiques/)).toBeInTheDocument()
+        expect(screen.getByText(/Immersions/)).toBeInTheDocument()
+        expect(screen.getByText(/Alertes/)).toBeInTheDocument()
+      })
+    })
   })
 
   describe('server side', () => {
@@ -188,6 +238,7 @@ describe('Fiche Jeune', () => {
     let jeunesService: JeunesService
     let evenementsService: EvenementsService
     let actionsService: ActionsService
+    let favorisService: FavorisService
     beforeEach(() => {
       jeunesService = mockedJeunesService({
         getJeuneDetails: jest.fn(async () => unDetailJeune()),
@@ -210,10 +261,14 @@ describe('Fiche Jeune', () => {
           metadonnees: { nombreTotal: 14, nombrePages: 2 },
         })),
       })
+      favorisService = mockedFavorisService({
+        getOffres: jest.fn(async () => uneListeDOffres()),
+      })
       ;(withDependance as jest.Mock).mockImplementation((dependance) => {
         if (dependance === 'jeunesService') return jeunesService
         if (dependance === 'evenementsService') return evenementsService
         if (dependance === 'actionsService') return actionsService
+        if (dependance === 'favorisService') return favorisService
       })
     })
 
@@ -265,6 +320,8 @@ describe('Fiche Jeune', () => {
             rdvs: expect.arrayContaining([]),
             actionsInitiales: expect.arrayContaining([]),
             metadonneesFavoris: expect.arrayContaining([]),
+            offresPE: expect.arrayContaining([]),
+            recherchesPE: expect.arrayContaining([]),
           },
         })
       })
@@ -429,3 +486,36 @@ describe('Fiche Jeune', () => {
     })
   })
 })
+
+async function renderFicheJeune(
+  metadonnees: Metadonnees,
+  offresPE: Offres[],
+  recherchesPE: Recherche[]
+) {
+  await act(async () => {
+    await renderWithContexts(
+      <FicheJeune
+        jeune={unDetailJeune()}
+        rdvs={[]}
+        actionsInitiales={desActionsInitiales()}
+        pageTitle={''}
+        metadonneesFavoris={metadonnees}
+        offresPE={offresPE}
+        recherchesPE={recherchesPE}
+      />,
+      {
+        customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+        customDependances: {
+          jeunesService: mockedJeunesService({
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
+          }),
+          agendaService: mockedAgendaService({
+            recupererAgenda: jest.fn(async () => unAgenda()),
+          }),
+        },
+      }
+    )
+  })
+}
