@@ -54,7 +54,7 @@ function Profil({ referentielAgences }: ProfilProps) {
     setShowModaleConfirmationSuppression,
   ] = useState(false)
   const [portefeuilleAvecBeneficiaires, setPortefeuilleAvecBeneficiaires] =
-    useState<Boolean>(false)
+    useState<boolean>(false)
 
   const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
   const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
