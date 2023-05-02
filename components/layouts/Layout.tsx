@@ -149,16 +149,14 @@ export default function Layout({ children }: LayoutProps) {
               <ChatManager
                 displayChat={withChat}
                 setHasMessageNonLu={setHasMessageNonLu}
+                pageEstMessagerie={true}
               />
 
               <div ref={mainRef} className={styles.page}>
-                <Header
-                  currentPath={router.asPath}
-                  returnTo={returnTo}
-                  pageHeader={pageHeader ?? pageTitle}
-                />
-
-                <main role='main' className={styles.content}>
+                <main
+                  role='main'
+                  className={`${styles.content} ${styles.messagerie_full_screen}`}
+                >
                   <AlerteDisplayer />
                   {children}
                 </main>

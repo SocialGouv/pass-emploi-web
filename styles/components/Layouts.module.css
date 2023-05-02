@@ -53,6 +53,12 @@
   padding: 40px 1rem;
 }
 
+.content.messagerie_full_screen {
+  max-width: 100%;
+  padding: 0;
+  overflow: auto;
+}
+
 .content.content_when_chat {
   max-width: 100%;
   padding: 1rem;

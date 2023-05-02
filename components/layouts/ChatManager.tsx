@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
+import ChatContainer2 from 'components/chat/ChatContainer2'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { MessagesService } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -13,11 +14,13 @@ const CHEMIN_DU_SON = '/sounds/notification.mp3'
 interface ChatManagerProps {
   displayChat: boolean
   setHasMessageNonLu: (value: boolean) => void
+  pageEstMessagerie?: boolean
 }
 
 export default function ChatManager({
   displayChat,
   setHasMessageNonLu,
+  pageEstMessagerie,
 }: ChatManagerProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
 
@@ -100,5 +103,13 @@ export default function ChatManager({
     }
   }, [portefeuille, chatCredentials, audio, conseiller.notificationsSonores])
 
-  return displayChat ? <ChatContainer jeunesChats={chats} /> : <></>
+  return displayChat ? (
+    pageEstMessagerie ? (
+      <ChatContainer2 jeunesChats={chats} />
+    ) : (
+      <ChatContainer jeunesChats={chats} />
+    )
+  ) : (
+    <></>
+  )
 }
