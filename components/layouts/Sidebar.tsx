@@ -10,8 +10,8 @@ export default function Sidebar() {
       <Logo
         role='img'
         focusable={false}
-        aria-label='Pass emploi'
-        title='Pass emploi'
+        aria-label='pass emploi'
+        title='pass emploi'
         className='mb-8 mx-auto fill-blanc'
       />
       <nav

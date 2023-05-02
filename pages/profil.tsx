@@ -244,7 +244,7 @@ function Profil({ referentielAgences }: ProfilProps) {
           <p className='mb-4'>
             Pour accéder au mode démo, vous devez télécharger l’application sur
             le store de votre choix, l’ouvrir puis
-            <strong> appuyer 3 fois sur le logo </strong>“Pass emploi” visible
+            <strong> appuyer 3 fois sur le logo </strong>“pass emploi” visible
             sur la page de connexion.
           </p>
         )}
