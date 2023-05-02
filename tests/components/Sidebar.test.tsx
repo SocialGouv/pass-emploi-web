@@ -90,6 +90,25 @@ describe('<Sidebar/>', () => {
       '/reaffectation'
     )
   })
+
+  it("n'affiche pas le lien de Messagerie lorsque le conseiller est MILO", () => {
+    // WHEN
+    renderSidebar({ structure: StructureConseiller.MILO })
+
+    // THEN
+    expect(() => screen.getByText('Messagerie')).toThrow()
+  })
+
+  it('affiche le lien de Messagerie lorsque le conseiller est Pôle emploi', () => {
+    // WHEN
+    renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+
+    // THEN
+    const navigation = screen.getByRole('navigation')
+    expect(
+      within(navigation).getByRole('link', { name: 'Messagerie' })
+    ).toHaveAttribute('href', '/messagerie')
+  })
 })
 
 function renderSidebar(conseiller?: Partial<Conseiller>) {

@@ -13,6 +13,7 @@ import SendIcon from 'assets/icons/actions/send.svg'
 import ShareIcon from 'assets/icons/actions/share.svg'
 import ContractIcon from 'assets/icons/custom/contract.svg'
 import DecorativePointIcon from 'assets/icons/custom/decorative_point.svg'
+import ForumIcon from 'assets/icons/custom/forum.svg'
 import NoteIcon from 'assets/icons/custom/note.svg'
 import PendingIcon from 'assets/icons/custom/pending.svg'
 import RemoveIcon from 'assets/icons/custom/remove.svg'
@@ -106,6 +107,7 @@ export enum IconName {
   FavoriteFill = 'FavoriteFill',
   FirstPage = 'FirstPage',
   Flag = 'Flag',
+  Forum = 'Forum',
   Help = 'Help',
   Info = 'Info',
   LastPage = 'LastPage',
@@ -173,6 +175,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.FavoriteFill]: FavoriteFillIcon,
   [IconName.FirstPage]: FirstPageIcon,
   [IconName.Flag]: FlagIcon,
+  [IconName.Forum]: ForumIcon,
   [IconName.LastPage]: LastPageIcon,
   [IconName.LeaderboardFill]: LeaderboardFillIcon,
   [IconName.LeaderboardOutline]: LeaderboardOutlineIcon,

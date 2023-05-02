@@ -151,12 +151,16 @@ export default function NavLinks({
           />
         )}
 
-        {items.includes(NavItem.Messagerie) && (
+        {estPoleEmploi(conseiller) && items.includes(NavItem.Messagerie) && (
           <NavLink
-            iconName={IconName.ChatFill}
+            iconName={
+              isCurrentRoute('/messagerie')
+                ? IconName.ChatFill
+                : IconName.ChatOutline
+            }
             label='Messagerie'
-            href='/mes-jeunes'
-            isActive={isCurrentRoute('/mes-jeunes')}
+            href='/messagerie'
+            isActive={isCurrentRoute('/messagerie')}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}

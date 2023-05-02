@@ -18,6 +18,11 @@
     );
 }
 
+.container.messagerie_full_screen {
+  grid-template-areas: 'sidebar chat page';
+  grid-template-columns: var(--sidebar-width) var(--chat-width) var(--page-width-when-chat);
+}
+
 .sidebar {
   grid-area: sidebar;
   display: none;
