@@ -24,16 +24,16 @@ export function ResumeFavorisBeneficiaire({
             <TileIndicateur
               valeur={offres.nombreOffresEmploi.toString()}
               label={offres.nombreOffresEmploi > 1 ? 'Emplois' : 'Emploi'}
-              bgColor='alert_lighten'
-              textColor='content_color'
+              bgColor='primary_lighten'
+              textColor='primary_darken'
             />
             <TileIndicateur
               valeur={offres.nombreOffresAlternance.toString()}
               label={
                 offres.nombreOffresAlternance > 1 ? 'Alternances' : 'Alternance'
               }
-              bgColor='alert_lighten'
-              textColor='content_color'
+              bgColor='primary_lighten'
+              textColor='primary_darken'
             />
             <TileIndicateur
               valeur={offres.nombreOffresServiceCivique.toString()}
@@ -42,16 +42,16 @@ export function ResumeFavorisBeneficiaire({
                   ? 'Services civiques'
                   : 'Service civique'
               }
-              bgColor='alert_lighten'
-              textColor='content_color'
+              bgColor='primary_lighten'
+              textColor='primary_darken'
             />
             <TileIndicateur
               valeur={offres.nombreOffresImmersion.toString()}
               label={
                 offres.nombreOffresImmersion > 1 ? 'Immersions' : 'Immersion'
               }
-              bgColor='alert_lighten'
-              textColor='content_color'
+              bgColor='primary_lighten'
+              textColor='primary_darken'
             />
           </ul>
         </div>
