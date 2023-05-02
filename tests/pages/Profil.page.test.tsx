@@ -442,7 +442,7 @@ describe('Page Profil conseiller', () => {
         expect(
           screen.getByRole('heading', {
             level: 2,
-            name: 'Application Pass emploi - mode démo',
+            name: 'Application pass emploi - mode démo',
           })
         ).toBeInTheDocument()
       })

@@ -26,7 +26,7 @@ describe('Login', () => {
       //GIVEN
       const heading = screen.getByRole('heading', {
         level: 1,
-        name: 'Pass emploi',
+        name: 'pass emploi',
       })
 
       //THEN
@@ -202,7 +202,7 @@ describe('Login', () => {
       expect(buttonsNb.length).toEqual(4)
     })
 
-    it("permet de s'identifier en tant que conseiller Pass emploi", async () => {
+    it("permet de s'identifier en tant que conseiller pass emploi", async () => {
       // Given
       const peButton = screen.getByRole('button', {
         name: 'Authentification pass emploi',

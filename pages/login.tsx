@@ -67,7 +67,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
     <div className={`${styles.login} w-full h-screen relative`}>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
         <h1>
-          <span className='sr-only'>Pass emploi</span>
+          <span className='sr-only'>pass emploi</span>
           <Logo
             className='m-auto h-20 fill-blanc'
             focusable={false}

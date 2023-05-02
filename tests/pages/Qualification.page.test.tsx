@@ -231,7 +231,7 @@ describe("Page Qualification d'une action", () => {
       // Then
       expect(
         screen.getByText(
-          'Ces informations seront intégrées sur le dossier i-milo du jeune'
+          'Ces informations seront intégrées sur le dossier i-milo du bénéficiaire'
         )
       ).toBeInTheDocument()
       expect(

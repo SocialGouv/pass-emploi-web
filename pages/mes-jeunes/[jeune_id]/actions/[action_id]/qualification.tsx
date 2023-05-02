@@ -130,7 +130,7 @@ function PageQualification({
       )}
 
       <div className='mb-6'>
-        <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du jeune'>
+        <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du bénéficiaire'>
           <p>
             Les informations saisies sont partagées avec i-milo, et doivent en
             respecter les Conditions Générales d’utilisation. Elles ne doivent
