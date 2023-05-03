@@ -19,7 +19,7 @@ describe('Login', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      render(<Login isFromEmail={false} />)
+      render(<Login ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
     })
 
     it('devrait afficher un titre de niveau 1', () => {
@@ -145,7 +145,7 @@ describe('Login', () => {
       })
 
       // When
-      render(<Login isFromEmail={false} />)
+      render(<Login ssssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
 
       // Then
       expect(
@@ -172,7 +172,13 @@ describe('Login', () => {
 
   describe('quand la connexion pass emploi est activée', () => {
     beforeEach(async () => {
-      render(<Login ssoPassEmploiEstActif={true} isFromEmail={false} />)
+      render(
+        <Login
+          ssoPoleEmploiBRSAEstActif={true}
+          ssoPassEmploiEstActif={true}
+          isFromEmail={false}
+        />
+      )
     })
 
     it('devrait avoir quatre boutons', () => {
