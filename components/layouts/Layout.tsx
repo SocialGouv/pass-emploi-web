@@ -125,7 +125,7 @@ export default function Layout({ children }: LayoutProps) {
               {children}
             </main>
 
-            <Footer />
+            <Footer conseiller={conseiller} />
           </div>
 
           <ChatManager

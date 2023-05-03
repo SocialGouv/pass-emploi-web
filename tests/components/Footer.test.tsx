@@ -3,35 +3,94 @@ import { render, RenderResult } from '@testing-library/react'
 import React from 'react'
 
 import Footer from 'components/layouts/Footer'
+import { unConseiller } from 'fixtures/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
+import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<Footer/>', () => {
   let component: RenderResult
-  it('affiche les liens du footer', () => {
-    // GIVEN
+  it('affiche les liens par défaut du footer ', () => {
+    // GIVEN & WHEN
     component = render(<Footer />)
-
-    // WHEN
 
     // THEN
     expect(
       screen.getByRole('link', {
         name: "Niveau d'accessibilité: non conforme (nouvelle fenêtre)",
       })
-    ).toBeInTheDocument()
+    ).toHaveAttribute(
+      'href',
+      'https://doc.pass-emploi.beta.gouv.fr/legal/web_accessibilite/'
+    )
     expect(
       screen.getByRole('link', {
         name: "Conditions Générales d'Utilisation (nouvelle fenêtre)",
       })
-    ).toBeInTheDocument()
+    ).toHaveAttribute(
+      'href',
+      'https://doc.pass-emploi.beta.gouv.fr/legal/web_conditions_generales'
+    )
     expect(
       screen.getByRole('link', {
         name: 'Mentions légales (nouvelle fenêtre)',
       })
-    ).toBeInTheDocument()
+    ).toHaveAttribute(
+      'href',
+      'https://doc.pass-emploi.beta.gouv.fr/legal/web_mentions_legales'
+    )
     expect(
       screen.getByRole('link', {
         name: 'Politique de confidentialité (nouvelle fenêtre)',
       })
-    ).toBeInTheDocument()
+    ).toHaveAttribute(
+      'href',
+      'https://doc.pass-emploi.beta.gouv.fr/legal/web_politique_de_confidentialite'
+    )
+  })
+
+  it('affiche les liens du footer pour PE BRSA', () => {
+    // GIVEN
+    const conseiller = unConseiller({
+      structure: StructureConseiller.POLE_EMPLOI_BRSA,
+    })
+
+    // WHEN
+    component = renderWithContexts(<Footer conseiller={conseiller} />, {
+      customConseiller: conseiller,
+    })
+
+    //THEN
+    expect(
+      screen.getByRole('link', {
+        name: "Niveau d'accessibilité: non conforme (nouvelle fenêtre)",
+      })
+    ).toHaveAttribute(
+      'href',
+      'https://doc.pass-emploi.beta.gouv.fr/legal/web_pass_emploi_accessibilite/'
+    )
+    expect(
+      screen.getByRole('link', {
+        name: "Conditions Générales d'Utilisation (nouvelle fenêtre)",
+      })
+    ).toHaveAttribute(
+      'href',
+      'https://doc.pass-emploi.beta.gouv.fr/legal/web_pass_emploi_conditions_generales'
+    )
+    expect(
+      screen.getByRole('link', {
+        name: 'Mentions légales (nouvelle fenêtre)',
+      })
+    ).toHaveAttribute(
+      'href',
+      'https://doc.pass-emploi.beta.gouv.fr/legal/pass_emploi_mentions_legales/'
+    )
+    expect(
+      screen.getByRole('link', {
+        name: 'Politique de confidentialité (nouvelle fenêtre)',
+      })
+    ).toHaveAttribute(
+      'href',
+      'https://doc.pass-emploi.beta.gouv.fr/legal/web_pass_emploi_politique_de_confidentialite'
+    )
   })
 })

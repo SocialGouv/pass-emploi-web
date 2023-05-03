@@ -13,8 +13,6 @@ import { TotalActions } from 'interfaces/action'
 import {
   estUserPoleEmploi,
   estMilo,
-  estPoleEmploiCEJ,
-  StructureConseiller,
   estPoleEmploi,
 } from 'interfaces/conseiller'
 import {
