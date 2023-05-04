@@ -143,6 +143,7 @@ describe('Page Profil conseiller', () => {
 
     beforeEach(async () => {
       conseillerService = mockedConseillerService()
+      process.env = Object.assign(process.env, { ENABLE_PE_BRSA_SSO: 'true' })
     })
 
     describe('contenu', () => {

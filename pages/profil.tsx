@@ -148,7 +148,7 @@ function Profil({ referentielAgences }: ProfilProps) {
           )}
         </dl>
 
-        {!conseillerEstMilo && (
+        {process.env.ENABLE_PE_BRSA_SSO && !conseillerEstMilo && (
           <Button
             className='mt-4'
             onClick={openDeleteConseillerModal}
