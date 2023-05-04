@@ -15,8 +15,8 @@ export function ShowRubriqueListeDeDiffusionProvider({
   setterForTests,
 }: {
   children: ReactNode
-  valueForTests?: string
-  setterForTests?: (idCurrentJeune: string | undefined) => void
+  valueForTests?: boolean | undefined
+  setterForTests?: (showRubriqueListeDeDiffusion: boolean | undefined) => void
 }) {
   const [
     showRubriqueListeDeDiffusion,

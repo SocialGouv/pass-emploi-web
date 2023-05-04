@@ -17,7 +17,7 @@ export function ListeDeDiffusionSelectionneeProvider({
   setterForTests,
 }: {
   children: ReactNode
-  valueForTests?: string
+  valueForTests?: ListeDeDiffusion | undefined
   setterForTests?: (
     listeDeDiffusionSelectionnee: ListeDeDiffusion | undefined
   ) => void
