@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import React from 'react'
 
 import ConversationImage from 'assets/images/conversation.svg'
+import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
@@ -28,6 +29,12 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
+  }
+  const {
+    session: { user },
+  } = sessionOrRedirect
+  if (estMilo(user)) {
+    return { notFound: true }
   }
 
   const props: PageProps = {
