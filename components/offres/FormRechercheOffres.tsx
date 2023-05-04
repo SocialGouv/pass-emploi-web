@@ -121,15 +121,17 @@ export default function FormRechercheOffres({
               id='type-offre--emploi'
               label='Offre d’emploi'
             />
-            <RadioBox
-              isSelected={typeOffre === TypeOffre.ALTERNANCE}
-              onChange={() => setTypeOffre(TypeOffre.ALTERNANCE)}
-              name='type-offre'
-              id='type-offre--alternance'
-              label='Alternance'
-            />
+
             {!estPoleEmploiBRSA(conseiller) && (
               <>
+                <RadioBox
+                  isSelected={typeOffre === TypeOffre.ALTERNANCE}
+                  onChange={() => setTypeOffre(TypeOffre.ALTERNANCE)}
+                  name='type-offre'
+                  id='type-offre--alternance'
+                  label='Alternance'
+                />
+
                 <RadioBox
                   isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
                   onChange={() => setTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
@@ -137,15 +139,15 @@ export default function FormRechercheOffres({
                   id='type-offre--service-civique'
                   label='Service civique'
                 />
-                <RadioBox
-                  isSelected={typeOffre === TypeOffre.IMMERSION}
-                  onChange={() => setTypeOffre(TypeOffre.IMMERSION)}
-                  name='type-offre'
-                  id='type-offre--immersion'
-                  label='Immersion'
-                />
               </>
             )}
+            <RadioBox
+              isSelected={typeOffre === TypeOffre.IMMERSION}
+              onChange={() => setTypeOffre(TypeOffre.IMMERSION)}
+              name='type-offre'
+              id='type-offre--immersion'
+              label='Immersion'
+            />
           </div>
         </Etape>
 
