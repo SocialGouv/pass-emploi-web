@@ -17,7 +17,6 @@ import {
 import { BaseOffreEmploi } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
 import RechercheOffres from 'pages/recherche-offres'
-import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
 import { OffresEmploiService } from 'services/offres-emploi.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'

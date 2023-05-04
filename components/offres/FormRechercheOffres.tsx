@@ -10,12 +10,14 @@ import RechercheServicesCiviquesSecondaire from 'components/offres/RechercheServ
 import Button from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { TypeOffre } from 'interfaces/offre'
 import { Commune, Localite, Metier } from 'interfaces/referentiel'
 import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 
 type FormRechercheOffresProps = {
@@ -49,6 +51,7 @@ export default function FormRechercheOffres({
   stateQueryImmersions,
   stateTypeOffre,
 }: FormRechercheOffresProps) {
+  const [conseiller] = useConseiller()
   const [showForm, setShowForm] = useState<boolean>(true)
   const [showFilters, setShowFilters] = useState<boolean>(true)
   const [showMoreFilters, setShowMoreFilters] = useState<boolean>(false)
@@ -125,20 +128,24 @@ export default function FormRechercheOffres({
               id='type-offre--alternance'
               label='Alternance'
             />
-            <RadioBox
-              isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
-              onChange={() => setTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
-              name='type-offre'
-              id='type-offre--service-civique'
-              label='Service civique'
-            />
-            <RadioBox
-              isSelected={typeOffre === TypeOffre.IMMERSION}
-              onChange={() => setTypeOffre(TypeOffre.IMMERSION)}
-              name='type-offre'
-              id='type-offre--immersion'
-              label='Immersion'
-            />
+            {!estPoleEmploiBRSA(conseiller) && (
+              <>
+                <RadioBox
+                  isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
+                  onChange={() => setTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
+                  name='type-offre'
+                  id='type-offre--service-civique'
+                  label='Service civique'
+                />
+                <RadioBox
+                  isSelected={typeOffre === TypeOffre.IMMERSION}
+                  onChange={() => setTypeOffre(TypeOffre.IMMERSION)}
+                  name='type-offre'
+                  id='type-offre--immersion'
+                  label='Immersion'
+                />
+              </>
+            )}
           </div>
         </Etape>
 
