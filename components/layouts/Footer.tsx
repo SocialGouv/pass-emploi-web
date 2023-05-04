@@ -1,12 +1,19 @@
 import React, { useState } from 'react'
 
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { liens } from 'referentiel/liens'
+import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
+import { liensBRSA, liensCEJ } from 'referentiel/liens'
 import styles from 'styles/components/Layouts.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 
-export default function Footer() {
+type FooterProps = {
+  conseiller?: Conseiller
+}
+
+export default function Footer({ conseiller }: FooterProps) {
   const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)
+  const liens =
+    conseiller && estPoleEmploiBRSA(conseiller) ? liensBRSA : liensCEJ
 
   useMatomo(labelMatomo)
 
