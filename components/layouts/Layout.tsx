@@ -4,7 +4,13 @@
 
 import { apm } from '@elastic/apm-rum'
 import { useRouter } from 'next/router'
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import React, {
+  createContext,
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import AppHead from 'components/AppHead'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
@@ -19,6 +25,8 @@ import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
+import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
+import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleContext'
@@ -140,30 +148,34 @@ export default function Layout({ children }: LayoutProps) {
           )}
 
           {pageCouranteEstMessagerie() && (
-            <div
-              ref={containerRef}
-              className={`${styles.container} ${styles.messagerie_full_screen}`}
-            >
-              <Sidebar />
-
-              <ChatManager
-                displayChat={withChat}
-                setHasMessageNonLu={setHasMessageNonLu}
-                pageEstMessagerie={true}
-              />
-
-              <div ref={mainRef} className={styles.page}>
-                <main
-                  role='main'
-                  className={`${styles.content} ${styles.messagerie_full_screen}`}
+            <ShowRubriqueListeDeDiffusionProvider>
+              <ListeDeDiffusionSelectionneeProvider>
+                <div
+                  ref={containerRef}
+                  className={`${styles.container} ${styles.messagerie_full_screen}`}
                 >
-                  <AlerteDisplayer />
-                  {children}
-                </main>
+                  <Sidebar />
 
-                <Footer />
-              </div>
-            </div>
+                  <ChatManager
+                    displayChat={withChat}
+                    setHasMessageNonLu={setHasMessageNonLu}
+                    pageEstMessagerie={true}
+                  />
+
+                  <div ref={mainRef} className={styles.page}>
+                    <main
+                      role='main'
+                      className={`${styles.content} ${styles.messagerie_full_screen}`}
+                    >
+                      <AlerteDisplayer />
+                      {children}
+                    </main>
+
+                    <Footer />
+                  </div>
+                </div>
+              </ListeDeDiffusionSelectionneeProvider>
+            </ShowRubriqueListeDeDiffusionProvider>
           )}
         </>
       )}

@@ -11,36 +11,42 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 type ListeListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
   onAfficherListe: (liste: ListeDeDiffusion) => void
-  onBack: () => void
+  onBack?: () => void
+  messagerieFullScreen?: boolean
 }
 export default function ListeListesDeDiffusion({
   listesDeDiffusion,
   onAfficherListe,
   onBack,
+  messagerieFullScreen,
 }: ListeListesDeDiffusionProps) {
   return (
     <>
-      <HeaderChat
-        titre={'Mes listes de diffusion'}
-        labelRetour={'Retour sur ma messagerie'}
-        onBack={onBack}
-      />
-
-      <div className='hidden layout_s:block w-fit ml-4 mb-8'>
-        <ButtonLink
-          href='/mes-jeunes/listes-de-diffusion'
-          style={ButtonStyle.TERTIARY}
-          className='mr-auto'
-        >
-          <IconComponent
-            name={IconName.Edit}
-            focusable={false}
-            aria-hidden={true}
-            className='w-4 h-4 fill-primary mr-3'
+      {!messagerieFullScreen && (
+        <>
+          <HeaderChat
+            titre={'Mes listes de diffusion'}
+            labelRetour={'Retour sur ma messagerie'}
+            onBack={onBack!}
           />
-          Gérer mes listes de diffusion
-        </ButtonLink>
-      </div>
+
+          <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+            <ButtonLink
+              href='/mes-jeunes/listes-de-diffusion'
+              style={ButtonStyle.TERTIARY}
+              className='mr-auto'
+            >
+              <IconComponent
+                name={IconName.Edit}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 fill-primary mr-3'
+              />
+              Gérer mes listes de diffusion
+            </ButtonLink>
+          </div>
+        </>
+      )}
 
       {!listesDeDiffusion && <SpinningLoader />}
 
@@ -81,6 +87,24 @@ export default function ListeListesDeDiffusion({
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {messagerieFullScreen && (
+        <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+          <ButtonLink
+            href='/mes-jeunes/listes-de-diffusion'
+            style={ButtonStyle.TERTIARY}
+            className='mr-auto'
+          >
+            <IconComponent
+              name={IconName.Edit}
+              focusable={false}
+              aria-hidden={true}
+              className='w-4 h-4 fill-primary mr-3'
+            />
+            Gérer mes listes de diffusion
+          </ButtonLink>
         </div>
       )}
     </>

@@ -15,10 +15,12 @@ export function DetailMessageListeDeDiffusion({
   message,
   chats,
   onBack,
+  messagerieFullScreen,
 }: {
   message: MessageListeDiffusion
   chats: JeuneChat[] | undefined
   onBack: () => void
+  messagerieFullScreen?: boolean
 }) {
   const jeunesServices = useDependance<JeunesService>('jeunesService')
   const [destinataires, setDestinataires] = useState<JeuneChat[]>()
@@ -46,13 +48,15 @@ export function DetailMessageListeDeDiffusion({
 
   return (
     <>
-      <HeaderChat
-        titre='Détail du message'
-        labelRetour={'Retour aux messages de ma liste'}
-        onBack={onBack}
-      />
+      {!messagerieFullScreen && (
+        <HeaderChat
+          titre='Détail du message'
+          labelRetour={'Retour aux messages de ma liste'}
+          onBack={onBack}
+        />
+      )}
 
-      <div className='px-4'>
+      <div className={`px-4 ${messagerieFullScreen ? 'w-1/2' : ''}`}>
         <div className='text-center mb-3'>
           Le {toShortDate(message.creationDate)}
         </div>

@@ -19,11 +19,13 @@ type MessagesListeDeDiffusionProps = {
   liste: ListeDeDiffusion
   onAfficherDetailMessage: (message: MessageListeDiffusion) => void
   onBack: () => void
+  messagerieFullScreen?: boolean
 }
 export default function MessagesListeDeDiffusion({
   liste,
   onAfficherDetailMessage,
   onBack,
+  messagerieFullScreen,
 }: MessagesListeDeDiffusionProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
@@ -44,29 +46,34 @@ export default function MessagesListeDeDiffusion({
 
   return (
     <>
-      <HeaderChat
-        titre={liste.titre}
-        labelRetour={'Retour à mes listes de diffusion'}
-        onBack={onBack}
-      />
-
-      <div className='hidden layout_s:block w-fit ml-4 mb-8'>
-        <ButtonLink
-          href={
-            '/mes-jeunes/listes-de-diffusion/edition-liste?idListe=' + liste.id
-          }
-          style={ButtonStyle.TERTIARY}
-          className='mr-auto'
-        >
-          <IconComponent
-            name={IconName.Edit}
-            focusable={false}
-            aria-hidden={true}
-            className='w-4 h-4 fill-primary mr-3'
+      {!messagerieFullScreen && (
+        <>
+          <HeaderChat
+            titre={liste.titre}
+            labelRetour={'Retour à mes listes de diffusion'}
+            onBack={onBack}
           />
-          Modifier ma liste
-        </ButtonLink>
-      </div>
+
+          <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+            <ButtonLink
+              href={
+                '/mes-jeunes/listes-de-diffusion/edition-liste?idListe=' +
+                liste.id
+              }
+              style={ButtonStyle.TERTIARY}
+              className='mr-auto'
+            >
+              <IconComponent
+                name={IconName.Edit}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 fill-primary mr-3'
+              />
+              Modifier ma liste
+            </ButtonLink>
+          </div>
+        </>
+      )}
 
       {!messages && <SpinningLoader />}
 
@@ -89,7 +96,7 @@ export default function MessagesListeDeDiffusion({
             Messages envoyés à la liste de diffusion
           </span>
           <ul
-            className='overflow-y-auto'
+            className={`overflow-y-auto ${messagerieFullScreen ? 'w-1/2' : ''}`}
             aria-describedby='description-messages'
           >
             {messages.map((messagesOfADay: ByDay<MessageListeDiffusion>) => (

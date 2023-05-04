@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
-import ChatContainer2 from 'components/chat/ChatContainer2'
+import ChatContainerFullScreen from 'components/messagerie/ChatContainerFullScreen'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { MessagesService } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -105,7 +105,7 @@ export default function ChatManager({
 
   return displayChat ? (
     pageEstMessagerie ? (
-      <ChatContainer2 jeunesChats={chats} />
+      <ChatContainerFullScreen jeunesChats={chats} />
     ) : (
       <ChatContainer jeunesChats={chats} />
     )
