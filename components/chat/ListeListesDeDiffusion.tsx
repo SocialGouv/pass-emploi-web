@@ -5,6 +5,7 @@ import HeaderChat from 'components/chat/HeaderChat'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { Badge } from 'components/ui/Indicateurs/Badge'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
@@ -69,7 +70,14 @@ export default function ListeListesDeDiffusion({
             id='listes-de-diffusion'
             className='text-m-medium text-primary mb-4'
           >
-            Listes ({listesDeDiffusion.length})
+            Listes
+            <Badge
+              count={listesDeDiffusion.length}
+              textColor='primary'
+              bgColor='primary_lighten'
+              size={6}
+              style='ml-2'
+            />
           </h3>
           <ul
             aria-describedby='listes-de-diffusion'
@@ -91,11 +99,10 @@ export default function ListeListesDeDiffusion({
       )}
 
       {messagerieFullScreen && (
-        <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+        <div className='hidden layout_s:block w-fit mx-auto'>
           <ButtonLink
             href='/mes-jeunes/listes-de-diffusion'
             style={ButtonStyle.TERTIARY}
-            className='mr-auto'
           >
             <IconComponent
               name={IconName.Edit}

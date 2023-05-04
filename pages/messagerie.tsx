@@ -3,16 +3,13 @@ import { GetServerSideProps } from 'next'
 import React, { useEffect, useRef, useState } from 'react'
 
 import ConversationImage from 'assets/images/conversation.svg'
-import EmptyStateImage from 'assets/images/empty_state.svg'
 import Conversation from 'components/chat/Conversation'
 import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
-import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
-import PageActionsPortal from 'components/PageActionsPortal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/conseiller'
 import {
   compareJeuneChat,
   ConseillerHistorique,
@@ -157,7 +154,7 @@ function Messagerie(_: PageProps) {
           )}
           {listeSelectionnee && (
             <>
-              <div className='h-full bg-grey_100'>
+              <div className='h-full bg-grey_100 px-6'>
                 {!messageSelectionne && (
                   <>
                     <div className=' items-center px-4 py-6 short:hidden pb-3 flex items-center justify-between'>
