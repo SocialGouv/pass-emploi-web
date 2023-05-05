@@ -77,7 +77,7 @@ function getColorStyleClassName(style: ButtonStyle): string {
     case ButtonStyle.WARNING:
       return styles.buttonWarning
     case ButtonStyle.PRIMARY_BRSA:
-      return styles.buttonPrimaryDarken
+      return styles.buttonPrimaryDarkenBRSA
     case undefined:
     default:
       return ButtonStyle.PRIMARY

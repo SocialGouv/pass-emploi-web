@@ -111,15 +111,15 @@
 * Button Primary Darken (thème BRSA)
 */
 
-.buttonPrimaryDarken {
+.buttonPrimaryDarkenBRSA {
   background-color: theme('colors.primary_darken');
   color: theme('colors.blanc');
   border: 1px solid transparent;
   box-shadow: theme('boxShadow.base');
 }
 
-.buttonPrimaryDarken:hover,
-.buttonPrimaryDarken:active {
+.buttonPrimaryDarkenBRSA:hover,
+.buttonPrimaryDarkenBRSA:active {
   background-color: theme('colors.primary_darken_brsa');
   color: theme('colors.blanc');
   border: 1px solid theme('colors.primary_darken_brsa');
