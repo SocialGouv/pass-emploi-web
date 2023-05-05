@@ -26,22 +26,27 @@ describe('Login', () => {
       //GIVEN
       const heading = screen.getByRole('heading', {
         level: 1,
-        name: 'pass emploi',
+        name: "Connectez-vous à l'espace conseiller",
       })
 
       //THEN
       expect(heading).toBeInTheDocument()
     })
 
-    it('devrait afficher un titre de niveau 2', () => {
+    it('devrait afficher deux titres de niveau 2', () => {
       //GIVEN
-      const heading = screen.getByRole('heading', {
+      const headingCEJ = screen.getByRole('heading', {
         level: 2,
-        name: "Connectez-vous à l'espace conseiller",
+        name: 'Contrat d’engagement jeune',
+      })
+      const headingBRSA = screen.getByRole('heading', {
+        level: 2,
+        name: 'pass emploi',
       })
 
       //THEN
-      expect(heading).toBeInTheDocument()
+      expect(headingCEJ).toBeInTheDocument()
+      expect(headingBRSA).toBeInTheDocument()
     })
 
     it('devrait avoir trois boutons', () => {
