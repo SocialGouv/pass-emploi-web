@@ -56,7 +56,7 @@ export function DetailMessageListeDeDiffusion({
         />
       )}
 
-      <div className={`px-4 ${messagerieFullScreen ? 'w-1/2' : ''}`}>
+      <div className='px-4'>
         <div className='text-center mb-3'>
           Le {toShortDate(message.creationDate)}
         </div>

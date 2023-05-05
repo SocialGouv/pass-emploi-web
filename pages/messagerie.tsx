@@ -154,28 +154,11 @@ function Messagerie(_: PageProps) {
           )}
           {listeSelectionnee && (
             <>
-              <div className='h-full bg-grey_100 px-6'>
+              <div className='h-full px-6'>
                 {!messageSelectionne && (
                   <>
                     <div className=' items-center px-4 py-6 short:hidden pb-3 flex items-center justify-between'>
                       <div>
-                        <div className='flex items-center justify-between'>
-                          <button
-                            className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary'
-                            aria-label={
-                              'Retour sur la gestion de mes listes de diffusion'
-                            }
-                            onClick={() => setListeSelectionnee(undefined)}
-                          >
-                            <IconComponent
-                              name={IconName.ArrowBackward}
-                              aria-hidden={true}
-                              focusable={false}
-                              className='w-5 h-5 fill-primary mr-3'
-                            />
-                            <span className='text-s-regular'>Retour</span>
-                          </button>
-                        </div>
                         <h2 className='text-l-bold text-primary text-center my-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
                           {listeSelectionnee.titre}
                         </h2>
@@ -201,7 +184,7 @@ function Messagerie(_: PageProps) {
                       </div>
                     </div>
 
-                    <div className='flex flex-col bg-grey_100 justify-center overflow-y-auto'>
+                    <div className='flex flex-col justify-center overflow-y-auto'>
                       <MessagesListeDeDiffusion
                         liste={listeSelectionnee}
                         onAfficherDetailMessage={setMessageSelectionne}

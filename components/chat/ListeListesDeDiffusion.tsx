@@ -5,7 +5,6 @@ import HeaderChat from 'components/chat/HeaderChat'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Badge } from 'components/ui/Indicateurs/Badge'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
@@ -70,14 +69,7 @@ export default function ListeListesDeDiffusion({
             id='listes-de-diffusion'
             className='text-m-medium text-primary mb-4'
           >
-            Listes
-            <Badge
-              count={listesDeDiffusion.length}
-              textColor='primary'
-              bgColor='primary_lighten'
-              size={6}
-              style='ml-2'
-            />
+            Listes ({listesDeDiffusion.length})
           </h3>
           <ul
             aria-describedby='listes-de-diffusion'

@@ -38,7 +38,7 @@ describe('<RubriqueListesDeDiffusion />', () => {
         'Mes listes de diffusion'
       )
       const listes = screen.getByRole('list', {
-        description: 'Listes 2',
+        description: 'Listes (2)',
       })
       expect(within(listes).getAllByRole('listitem')).toHaveLength(
         listesDeDiffusion.length

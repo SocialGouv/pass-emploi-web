@@ -96,9 +96,7 @@ export default function MessagesListeDeDiffusion({
             Messages envoyés à la liste de diffusion
           </span>
           <ul
-            className={`overflow-y-auto ${
-              messagerieFullScreen ? 'w-1/2 p-4' : ''
-            }`}
+            className='overflow-y-auto p-4'
             aria-describedby='description-messages'
           >
             {messages.map((messagesOfADay: ByDay<MessageListeDiffusion>) => (
@@ -126,6 +124,7 @@ export default function MessagesListeDeDiffusion({
                         onAfficherDetailMessage={() =>
                           onAfficherDetailMessage(message)
                         }
+                        messagerieFullScreen={messagerieFullScreen}
                       />
                     </li>
                   ))}
