@@ -6,6 +6,8 @@ import React, { ChangeEvent, useState } from 'react'
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
+import QrcodeAppStoreBRSA from 'assets/images/qrcode_app_store_brsa.svg'
+import QrcodePlayStoreBRSA from 'assets/images/qrcode_play_store_brsa.svg'
 import ConfirmationDeleteConseillerModal from 'components/ConfirmationDeleteConseillerModal'
 import ConfirmationSuppressionCompteConseillerModal from 'components/ConfirmationSuppressionCompteConseillerModal'
 import {
@@ -148,7 +150,7 @@ function Profil({ referentielAgences }: ProfilProps) {
           )}
         </dl>
 
-        {!conseillerEstMilo && (
+        {process.env.ENABLE_PE_BRSA_SSO && !conseillerEstMilo && (
           <Button
             className='mt-4'
             onClick={openDeleteConseillerModal}
@@ -244,7 +246,7 @@ function Profil({ referentielAgences }: ProfilProps) {
           <p className='mb-4'>
             Pour accéder au mode démo, vous devez télécharger l’application sur
             le store de votre choix, l’ouvrir puis
-            <strong> appuyer 3 fois sur le logo </strong>“Pass emploi” visible
+            <strong> appuyer 3 fois sur le logo </strong>“pass emploi” visible
             sur la page de connexion.
           </p>
         )}
@@ -261,17 +263,33 @@ function Profil({ referentielAgences }: ProfilProps) {
         </p>
         <div className='flex justify-evenly mt-8'>
           <div className='flex flex-col items-center'>
-            <QrcodeAppStore
-              focusable='false'
-              aria-label='QR code pour l’App Store'
-            />
+            {estPoleEmploiBRSA(conseiller) && (
+              <QrcodeAppStoreBRSA
+                focusable='false'
+                aria-label='QR code pour l’App Store'
+              />
+            )}
+            {!estPoleEmploiBRSA(conseiller) && (
+              <QrcodeAppStore
+                focusable='false'
+                aria-label='QR code pour l’App Store'
+              />
+            )}
             <p className='text-s-bold'>App Store</p>
           </div>
           <div className='flex flex-col items-center'>
-            <QrcodePlayStore
-              focusable='false'
-              aria-label='QR code pour Google Play'
-            />
+            {estPoleEmploiBRSA(conseiller) && (
+              <QrcodePlayStoreBRSA
+                focusable='false'
+                aria-label='QR code pour l’App Store'
+              />
+            )}
+            {!estPoleEmploiBRSA(conseiller) && (
+              <QrcodePlayStore
+                focusable='false'
+                aria-label='QR code pour Google Play'
+              />
+            )}
             <p className='text-s-bold'>Google Play</p>
           </div>
         </div>

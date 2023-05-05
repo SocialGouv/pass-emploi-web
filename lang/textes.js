@@ -1,13 +1,13 @@
 export const textesBRSA = {
   // PARTAGE RECHERCHE
   partageRechercheTexteInfo:
-    'Ces critères apparaîtront dans la section favoris, catégorie recherches sauvegardées, du bénéficiaire de l’application Pass emploi.',
+    'Ces critères apparaîtront dans la section favoris, catégorie recherches sauvegardées, du bénéficiaire de l’application pass emploi.',
   // PROFIL
-  profilTitreSection3: 'Application Pass emploi - mode démo',
+  profilTitreSection3: 'Application pass emploi - mode démo',
   introModeDemoTexte:
-    'Le mode démo vous permet de visualiser l’application Pass emploi utilisée par vos bénéficiaires.',
+    'Le mode démo vous permet de visualiser l’application pass emploi utilisée par vos bénéficiaires.',
   accederModeDemoTexte:
-    'Pour accéder au mode démo, vous devez télécharger l’application sur le store de votre choix, l’ouvrir puis appuyer 3 fois sur le logo “Pass emploi” visible sur la page de connexion.',
+    'Pour accéder au mode démo, vous devez télécharger l’application sur le store de votre choix, l’ouvrir puis appuyer 3 fois sur le logo “pass emploi” visible sur la page de connexion.',
 }
 
 export const textesCEJ = {

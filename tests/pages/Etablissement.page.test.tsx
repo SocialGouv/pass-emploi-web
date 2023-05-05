@@ -426,7 +426,7 @@ describe('Etablissement', () => {
     })
 
     describe('quand le conseiller est connecté', () => {
-      it('prépare la page en tant que Pass Emploi', async () => {
+      it('prépare la page en tant que pass emploi', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,

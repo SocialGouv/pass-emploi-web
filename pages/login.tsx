@@ -11,11 +11,16 @@ import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface LoginProps {
+  ssoPoleEmploiBRSAEstActif?: boolean
   ssoPassEmploiEstActif?: boolean
   isFromEmail: boolean
 }
 
-function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
+function Login({
+  ssoPassEmploiEstActif,
+  ssoPoleEmploiBRSAEstActif,
+  isFromEmail,
+}: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
@@ -67,7 +72,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
     <div className={`${styles.login} w-full h-screen relative`}>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
         <h1>
-          <span className='sr-only'>Pass emploi</span>
+          <span className='sr-only'>pass emploi</span>
           <Logo
             className='m-auto h-20 fill-blanc'
             focusable={false}
@@ -96,15 +101,17 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
                 handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
               />
             </li>
-            <li>
-              <FormButton
-                label='Connexion conseiller Pôle emploi BRSA'
-                className='pt-4 whitespace-nowrap'
-                handleSubmit={(event) =>
-                  handleSignin(event, 'pe-brsa-conseiller')
-                }
-              />
-            </li>
+            {ssoPoleEmploiBRSAEstActif && (
+              <li>
+                <FormButton
+                  label='Connexion conseiller Pôle emploi BRSA'
+                  className='pt-4 whitespace-nowrap'
+                  handleSubmit={(event) =>
+                    handleSignin(event, 'pe-brsa-conseiller')
+                  }
+                />
+              </li>
+            )}
             {ssoPassEmploiEstActif && (
               <li>
                 <FormButton
@@ -154,6 +161,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
 
   return {
     props: {
+      ssoPoleEmploiBRSAEstActif: process.env.ENABLE_PE_BRSA_SSO,
       ssoPassEmploiEstActif: process.env.ENABLE_PASS_EMPLOI_SSO,
       isFromEmail: isFromEmail,
     },

@@ -143,6 +143,7 @@ describe('Page Profil conseiller', () => {
 
     beforeEach(async () => {
       conseillerService = mockedConseillerService()
+      process.env = Object.assign(process.env, { ENABLE_PE_BRSA_SSO: 'true' })
     })
 
     describe('contenu', () => {
@@ -442,7 +443,7 @@ describe('Page Profil conseiller', () => {
         expect(
           screen.getByRole('heading', {
             level: 2,
-            name: 'Application Pass emploi - mode démo',
+            name: 'Application pass emploi - mode démo',
           })
         ).toBeInTheDocument()
       })

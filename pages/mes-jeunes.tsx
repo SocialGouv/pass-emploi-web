@@ -13,8 +13,6 @@ import { TotalActions } from 'interfaces/action'
 import {
   estUserPoleEmploi,
   estMilo,
-  estPoleEmploiCEJ,
-  StructureConseiller,
   estPoleEmploi,
 } from 'interfaces/conseiller'
 import {
@@ -176,7 +174,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
               className='w-[360px] h-[200px] mb-16'
             />
             <p className='text-base-bold mb-12'>
-              Vous n&apos;avez pas encore intégré de jeunes.
+              Vous n&apos;avez pas encore intégré de bénéficiaires.
             </p>
           </div>
         )}
