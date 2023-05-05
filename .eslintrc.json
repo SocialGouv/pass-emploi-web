@@ -8,7 +8,6 @@
       "files": ["*.ts", "*.tsx"],
       "parserOptions": { "project": "./tsconfig.*?.json" },
       "rules": {
-        "treatUndefinedAsUnspecified": false,
         "import/no-unresolved": "error",
         "import/order": [
           "error",
