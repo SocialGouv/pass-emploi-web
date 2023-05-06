@@ -66,7 +66,7 @@ export default function Button({
   )
 }
 
-function getColorStyleClassName(style: ButtonStyle) {
+function getColorStyleClassName(style: ButtonStyle): string {
   switch (style) {
     case ButtonStyle.PRIMARY:
       return styles.buttonPrimary
@@ -78,6 +78,7 @@ function getColorStyleClassName(style: ButtonStyle) {
       return styles.buttonWarning
     case ButtonStyle.PRIMARY_BRSA:
       return styles.buttonPrimaryDarkenBRSA
+    case undefined:
     default:
       return ButtonStyle.PRIMARY
   }
