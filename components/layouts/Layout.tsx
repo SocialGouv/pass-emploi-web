@@ -4,13 +4,7 @@
 
 import { apm } from '@elastic/apm-rum'
 import { useRouter } from 'next/router'
-import React, {
-  createContext,
-  ReactElement,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
@@ -103,53 +97,52 @@ export default function Layout({ children }: LayoutProps) {
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
 
       {!conseiller && <SpinningLoader />}
-
-      {conseiller && portefeuille && (
-        <>
-          {!pageCouranteEstMessagerie() && (
-            <div
-              ref={containerRef}
-              className={`${styles.container} ${
-                withChat ? styles.container_with_chat : ''
-              }`}
-            >
-              <Sidebar />
-
-              <div
-                ref={mainRef}
-                className={`${styles.page} ${
-                  withChat ? styles.page_when_chat : ''
-                }`}
-              >
-                <Header
-                  currentPath={router.asPath}
-                  returnTo={returnTo}
-                  pageHeader={pageHeader ?? pageTitle}
-                />
-
-                <main
-                  role='main'
-                  className={`${styles.content} ${
-                    withChat ? styles.content_when_chat : ''
+      <ShowRubriqueListeDeDiffusionProvider>
+        <ListeDeDiffusionSelectionneeProvider>
+          {conseiller && portefeuille && (
+            <>
+              {!pageCouranteEstMessagerie() && (
+                <div
+                  ref={containerRef}
+                  className={`${styles.container} ${
+                    withChat ? styles.container_with_chat : ''
                   }`}
                 >
-                  <AlerteDisplayer />
-                  {children}
-                </main>
+                  <Sidebar />
 
-                <Footer />
-              </div>
+                  <div
+                    ref={mainRef}
+                    className={`${styles.page} ${
+                      withChat ? styles.page_when_chat : ''
+                    }`}
+                  >
+                    <Header
+                      currentPath={router.asPath}
+                      returnTo={returnTo}
+                      pageHeader={pageHeader ?? pageTitle}
+                    />
 
-              <ChatManager
-                displayChat={withChat}
-                setHasMessageNonLu={setHasMessageNonLu}
-              />
-            </div>
-          )}
+                    <main
+                      role='main'
+                      className={`${styles.content} ${
+                        withChat ? styles.content_when_chat : ''
+                      }`}
+                    >
+                      <AlerteDisplayer />
+                      {children}
+                    </main>
 
-          {pageCouranteEstMessagerie() && (
-            <ShowRubriqueListeDeDiffusionProvider>
-              <ListeDeDiffusionSelectionneeProvider>
+                    <Footer />
+                  </div>
+
+                  <ChatManager
+                    displayChat={withChat}
+                    setHasMessageNonLu={setHasMessageNonLu}
+                  />
+                </div>
+              )}
+
+              {pageCouranteEstMessagerie() && (
                 <div
                   ref={containerRef}
                   className={`${styles.container} ${styles.messagerie_full_screen}`}
@@ -174,11 +167,11 @@ export default function Layout({ children }: LayoutProps) {
                     <Footer />
                   </div>
                 </div>
-              </ListeDeDiffusionSelectionneeProvider>
-            </ShowRubriqueListeDeDiffusionProvider>
+              )}
+            </>
           )}
-        </>
-      )}
+        </ListeDeDiffusionSelectionneeProvider>
+      </ShowRubriqueListeDeDiffusionProvider>
       <div id={MODAL_ROOT_ID} />
     </>
   )

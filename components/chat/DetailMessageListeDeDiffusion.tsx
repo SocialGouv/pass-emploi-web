@@ -61,7 +61,10 @@ export function DetailMessageListeDeDiffusion({
           Le {toShortDate(message.creationDate)}
         </div>
 
-        <DisplayMessageListeDeDiffusion message={message} />
+        <DisplayMessageListeDeDiffusion
+          message={message}
+          messagerieFullScreen={messagerieFullScreen}
+        />
 
         <span id='titre-liste-destinataires' className='sr-only'>
           Destinataires du message
@@ -81,7 +84,11 @@ export function DetailMessageListeDeDiffusion({
                 {aLuLeMessage(destinataire) ? 'Lu par ' : 'Non lu par '}
                 <div className='flex items-center'>
                   <IconComponent
-                    name={IconName.CheckCircleOutline}
+                    name={
+                      aLuLeMessage(destinataire)
+                        ? IconName.CheckCircleFill
+                        : IconName.CheckCircleOutline
+                    }
                     aria-hidden={true}
                     focusable={false}
                     className={`w-3 h-3 ${

@@ -9,7 +9,7 @@ import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { estMilo } from 'interfaces/conseiller'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   compareJeuneChat,
   ConseillerHistorique,
@@ -45,8 +45,7 @@ function Messagerie(_: PageProps) {
 
   const [portefeuille] = usePortefeuille()
   const [chatCredentials, setChatCredentials] = useChatCredentials()
-  const [showRubriqueListesDeDiffusion, setShowRubriqueListesDeDiffusion] =
-    useShowRubriqueListeDeDiffusion()
+  const [showRubriqueListesDeDiffusion] = useShowRubriqueListeDeDiffusion()
   const [listeSelectionnee, setListeSelectionnee] =
     useListeDeDiffusionSelectionnee()
   const destructorRef = useRef<() => void>(() => undefined)
@@ -199,7 +198,7 @@ function Messagerie(_: PageProps) {
                     <div className=' items-center mx-4 py-6 mb-6 short:hidden'>
                       <div className='pb-3 flex items-center justify-between'>
                         <button
-                          className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary'
+                          className='border-none rounded-full mr-2 flex items-center hover:text-primary'
                           aria-label={'Retour sur ma liste de diffusion'}
                           onClick={() => setMessageSelectionne(undefined)}
                         >
@@ -245,7 +244,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const {
     session: { user },
   } = sessionOrRedirect
-  if (estMilo(user)) {
+
+  if (user.structure === StructureConseiller.MILO) {
     return { notFound: true }
   }
 

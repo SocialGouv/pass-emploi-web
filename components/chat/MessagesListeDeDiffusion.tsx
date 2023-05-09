@@ -78,7 +78,7 @@ export default function MessagesListeDeDiffusion({
       {!messages && <SpinningLoader />}
 
       {messages && messages.length === 0 && (
-        <div className='bg-grey_100 flex flex-col justify-center items-center'>
+        <div className='flex flex-col justify-center items-center'>
           <EmptyStateImage
             focusable='false'
             aria-hidden='true'

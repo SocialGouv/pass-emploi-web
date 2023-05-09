@@ -59,7 +59,7 @@ export default function DisplayMessageListeDeDiffusion({
         )}
       </div>
 
-      <p className='text-xs-medium text-content text-right'>
+      <p className='text-xs-medium text-content text-right mb-1'>
         <span aria-label={'Envoyé à ' + a11yTime}>Envoyé à {creationTime}</span>
       </p>
     </>

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
-import ChatContainerFullScreen from 'components/messagerie/ChatContainerFullScreen'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import { MessagesService } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -104,11 +103,10 @@ export default function ChatManager({
   }, [portefeuille, chatCredentials, audio, conseiller.notificationsSonores])
 
   return displayChat ? (
-    pageEstMessagerie ? (
-      <ChatContainerFullScreen jeunesChats={chats} />
-    ) : (
-      <ChatContainer jeunesChats={chats} />
-    )
+    <ChatContainer
+      jeunesChats={chats}
+      messagerieFullScreen={pageEstMessagerie}
+    />
   ) : (
     <></>
   )
