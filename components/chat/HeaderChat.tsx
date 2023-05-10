@@ -1,5 +1,6 @@
 import React from 'react'
 
+import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function HeaderChat({
@@ -26,10 +27,10 @@ export default function HeaderChat({
           onClick={onBack}
         >
           <IconComponent
-            name={IconName.ArrowLeft}
+            name={IconName.ArrowBackward}
             aria-hidden={true}
             focusable={false}
-            className='w-4 h-4 fill-primary mr-3'
+            className='w-5 h-5 fill-primary mr-3'
           />
           <span className='text-s-regular'>Retour</span>
         </button>
@@ -42,13 +43,17 @@ export default function HeaderChat({
             <IconComponent
               name={iconName}
               title={iconLabel}
-              className='w-6 h-6 fill-primary'
+              className='w-8 h-8 fill-primary'
             />
           </button>
         )}
       </div>
-
-      <h2 className='w-full text-left text-primary text-m-bold'>{titre}</h2>
+      <div className='flex'>
+        <BulleMessageSensible />
+        <h2 className='w-full text-left text-primary text-m-bold ml-2'>
+          {titre}
+        </h2>
+      </div>
     </div>
   )
 }

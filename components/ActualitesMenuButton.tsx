@@ -1,7 +1,7 @@
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
+import { Conseiller, estPoleEmploiCEJ } from 'interfaces/conseiller'
 
 interface ActualitesMenuButtonProps {
   conseiller: Conseiller
@@ -12,7 +12,7 @@ function ActualitesMenuButton({
   conseiller,
   onClick,
 }: ActualitesMenuButtonProps) {
-  const widgetId = estPoleEmploi(conseiller)
+  const widgetId = estPoleEmploiCEJ(conseiller)
     ? process.env.LEANBE_PE_WIDGET_ID
     : process.env.LEANBE_MILO_WIDGET_ID
   const classWidget = `SGBF-open-${widgetId} w-full`
@@ -33,7 +33,7 @@ function ActualitesMenuButton({
           focusable='false'
           aria-hidden='true'
           className='inline mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 fill-blanc'
-          name={IconName.InfoOutline}
+          name={IconName.Info}
         />
         <span className='text-md text-left sr-only layout_l:not-sr-only break-words text-blanc'>
           Actualités

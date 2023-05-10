@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ErrorIcon from 'assets/icons/error_outline.svg'
+import ErrorIcon from 'assets/icons/informations/error.svg'
 
 interface InputErrorProps {
   children: string
@@ -10,7 +10,11 @@ interface InputErrorProps {
 
 export const InputError = ({ id, children, className }: InputErrorProps) => (
   <div id={id} className={`${className ?? ''} flex items-center`}>
-    <ErrorIcon focusable={false} aria-hidden={true} className='mr-1 shrink-0' />
+    <ErrorIcon
+      focusable={false}
+      aria-hidden={true}
+      className='w-4 h-4 mr-1 shrink-0 fill-warning'
+    />
     <p className='text-warning text-s-regular'>{children}</p>
   </div>
 )

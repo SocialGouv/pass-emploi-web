@@ -1,221 +1,214 @@
 import { ComponentPropsWithoutRef } from 'react'
 
-import ActionsIcon from 'assets/icons/actions.svg'
-import AddIcon from 'assets/icons/add.svg'
-import AideIcon from 'assets/icons/aide.svg'
-import ArrowDoubleIcon from 'assets/icons/arrow_double.svg'
-import ArrowDownIcon from 'assets/icons/arrow_down.svg'
-import ArrowLeftIcon from 'assets/icons/arrow_left.svg'
-import ArrowRightIcon from 'assets/icons/arrow_right.svg'
-import FileIcon from 'assets/icons/attach_file.svg'
-import BoardIconOutline from 'assets/icons/board-outline.svg'
-import BoardIcon from 'assets/icons/board.svg'
-import CalendarOutlineIcon from 'assets/icons/calendar-outline.svg'
-import CalendarIcon from 'assets/icons/calendar.svg'
-import CancelIcon from 'assets/icons/cancel.svg'
-import CheckIcon from 'assets/icons/check.svg'
-import ChevronDownIcon from 'assets/icons/chevron_down.svg'
-import ChevronFirstIcon from 'assets/icons/chevron_first.svg'
-import ChevronLastIcon from 'assets/icons/chevron_last.svg'
-import ChevronLeftIcon from 'assets/icons/chevron_left.svg'
-import ChevronRightIcon from 'assets/icons/chevron_right.svg'
-import ChevronUpIcon from 'assets/icons/chevron_up.svg'
-import Chiffre1Icon from 'assets/icons/chiffre_1.svg'
-import Chiffre2Icon from 'assets/icons/chiffre_2.svg'
-import Chiffre3Icon from 'assets/icons/chiffre_3.svg'
-import Chiffre4Icon from 'assets/icons/chiffre_4.svg'
-import Chiffre5Icon from 'assets/icons/chiffre_5.svg'
-import ClipboardIcon from 'assets/icons/clipboard.svg'
-import ClockIcon from 'assets/icons/clock.svg'
-import CloseIcon from 'assets/icons/close.svg'
-import CommentIcon from 'assets/icons/comment.svg'
-import ContratIcon from 'assets/icons/contrat.svg'
-import DecorativePointIcon from 'assets/icons/decorative_point.svg'
-import EmailIcon from 'assets/icons/email.svg'
-import EuroIcon from 'assets/icons/euro.svg'
-import FavoriteIcon from 'assets/icons/favorite.svg'
-import FlagIcon from 'assets/icons/flag.svg'
-import FlagFilledIcon from 'assets/icons/flag_filled.svg'
-import ImportantIcon from 'assets/icons/important.svg'
-import ImportantOutlineIcon from 'assets/icons/important_outline.svg'
-import InfoIcon from 'assets/icons/information.svg'
-import InfoOutlineIcon from 'assets/icons/information_outline.svg'
-import KoIcon from 'assets/icons/ko.svg'
-import LaunchIcon from 'assets/icons/launch.svg'
-import LocationIcon from 'assets/icons/location.svg'
-import LockIcon from 'assets/icons/lock.svg'
-import LogoutIcon from 'assets/icons/logout.svg'
-import MenuIcon from 'assets/icons/menu.svg'
-import NoteIcon from 'assets/icons/note.svg'
-import PartageIcon from 'assets/icons/partage.svg'
-import PenIcon from 'assets/icons/pen.svg'
-import PendingIcon from 'assets/icons/pending.svg'
-import PeopleOutlineIcon from 'assets/icons/people-outline.svg'
-import PeopleIcon from 'assets/icons/people.svg'
-import ProfilOutlineIcon from 'assets/icons/profil-outline.svg'
-import ProfilIcon from 'assets/icons/profil.svg'
-import RemoveIcon from 'assets/icons/remove.svg'
-import RendezVousIcon from 'assets/icons/rendez-vous.svg'
-import RoundedArrowRightOutlineIcon from 'assets/icons/rounded_arrow_right-outline.svg'
-import RoundedArrowRightIcon from 'assets/icons/rounded_arrow_right.svg'
-import RoundedCheckIcon from 'assets/icons/rounded_check.svg'
-import RoundedCheckFilledIcon from 'assets/icons/rounded_check_filled.svg'
-import RoundedCloseIcon from 'assets/icons/rounded_close.svg'
-import RoundedCloseFilledIcon from 'assets/icons/rounded_close_filled.svg'
-import SearchNavIconOutline from 'assets/icons/search-nav-outline.svg'
-import SearchNavIcon from 'assets/icons/search-nav.svg'
-import SearchIcon from 'assets/icons/search.svg'
-import SendIcon from 'assets/icons/send.svg'
-import SpinnerIcon from 'assets/icons/spinner.svg'
-import SuitcaseIcon from 'assets/icons/suitcase.svg'
-import TrashcanIcon from 'assets/icons/trashcan.svg'
-import WarningIcon from 'assets/icons/warning.svg'
+import AddIcon from 'assets/icons/actions/add.svg'
+import ArrowForwardIcon from 'assets/icons/actions/arrow_forward.svg'
+import AttachFileIcon from 'assets/icons/actions/attach_file.svg'
+import BookmarkFillIcon from 'assets/icons/actions/bookmark_fill.svg'
+import BookmarkOutlineIcon from 'assets/icons/actions/bookmark_outline.svg'
+import DeleteIcon from 'assets/icons/actions/delete.svg'
+import EditIcon from 'assets/icons/actions/edit.svg'
+import OutgoingMailIcon from 'assets/icons/actions/outgoing_mail.svg'
+import SearchIcon from 'assets/icons/actions/search.svg'
+import SendIcon from 'assets/icons/actions/send.svg'
+import ShareIcon from 'assets/icons/actions/share.svg'
+import ContractIcon from 'assets/icons/custom/contract.svg'
+import DecorativePointIcon from 'assets/icons/custom/decorative_point.svg'
+import NoteIcon from 'assets/icons/custom/note.svg'
+import PendingIcon from 'assets/icons/custom/pending.svg'
+import RemoveIcon from 'assets/icons/custom/remove.svg'
+import SpinnerIcon from 'assets/icons/custom/spinner.svg'
+import SuitcaseIcon from 'assets/icons/custom/suitcase.svg'
+import AccountCircleFillIcon from 'assets/icons/informations/account_circle_fill.svg'
+import AccountCircleOutlineIcon from 'assets/icons/informations/account_circle_outline.svg'
+import ArrowCircleRightFillIcon from 'assets/icons/informations/arrow_circle_right_fill.svg'
+import ArrowCircleRightOutlineIcon from 'assets/icons/informations/arrow_circle_right_outline.svg'
+import CancelIcon from 'assets/icons/informations/cancel.svg'
+import ChatFillIcon from 'assets/icons/informations/chat_fill.svg'
+import ChatOutlineIcon from 'assets/icons/informations/chat_outline.svg'
+import CheckIcon from 'assets/icons/informations/check.svg'
+import CheckCircleFillIcon from 'assets/icons/informations/check_circle_fill.svg'
+import CheckCircleOutlineIcon from 'assets/icons/informations/check_circle_outline.svg'
+import ChecklistRtlFillIcon from 'assets/icons/informations/checklist_rtl_fill.svg'
+import DescriptionIcon from 'assets/icons/informations/description.svg'
+import ErrorIcon from 'assets/icons/informations/error.svg'
+import EuroIcon from 'assets/icons/informations/euro.svg'
+import EventFillIcon from 'assets/icons/informations/event_fill.svg'
+import EventOutlineIcon from 'assets/icons/informations/event_outline.svg'
+import FavoriteFillIcon from 'assets/icons/informations/favorite_fill.svg'
+import FlagIcon from 'assets/icons/informations/flag.svg'
+import HelpIcon from 'assets/icons/informations/help.svg'
+import InfoIcon from 'assets/icons/informations/info.svg'
+import LeaderboardFillIcon from 'assets/icons/informations/leaderboard_fill.svg'
+import LeaderboardOutlineIcon from 'assets/icons/informations/leaderboard_outline.svg'
+import LocationOnIcon from 'assets/icons/informations/location_on.svg'
+import LockIcon from 'assets/icons/informations/lock.svg'
+import MailIcon from 'assets/icons/informations/mail.svg'
+import PageViewFillIcon from 'assets/icons/informations/page_view_fill.svg'
+import PageViewOutlineIcon from 'assets/icons/informations/page_view_outline.svg'
+import PeopleFillIcon from 'assets/icons/informations/people_fill.svg'
+import PeopleOutlineIcon from 'assets/icons/informations/people_outline.svg'
+import ScheduleIcon from 'assets/icons/informations/schedule.svg'
+import WarningIcon from 'assets/icons/informations/warning.svg'
+import ArrowBackwardIcon from 'assets/icons/navigation/arrow_backward.svg'
+import ArrowDownwardIcon from 'assets/icons/navigation/arrow_downward.svg'
+import ArrowUpwardIcon from 'assets/icons/navigation/arrow_upward.svg'
+import ChevronDownIcon from 'assets/icons/navigation/chevron_down.svg'
+import ChevronLeftIcon from 'assets/icons/navigation/chevron_left.svg'
+import ChevronRightIcon from 'assets/icons/navigation/chevron_right.svg'
+import ChevronUpIcon from 'assets/icons/navigation/chevron_up.svg'
+import CloseIcon from 'assets/icons/navigation/close.svg'
+import FirstPageIcon from 'assets/icons/navigation/first_page.svg'
+import LastPageIcon from 'assets/icons/navigation/last_page.svg'
+import LogoutIcon from 'assets/icons/navigation/logout.svg'
+import MenuIcon from 'assets/icons/navigation/menu.svg'
+import OpenInNewIcon from 'assets/icons/navigation/open_in_new.svg'
+import SwapVertIcon from 'assets/icons/navigation/swap_vert.svg'
+import NumberCircleOneIcon from 'assets/icons/numbers/number_circle_1.svg'
+import NumberCircleTwoIcon from 'assets/icons/numbers/number_circle_2.svg'
+import NumberCircleThreeIcon from 'assets/icons/numbers/number_circle_3.svg'
+import NumberCircleFourIcon from 'assets/icons/numbers/number_circle_4.svg'
+import NumberCircleFiveIcon from 'assets/icons/numbers/number_circle_5.svg'
 
 export enum IconName {
-  Actions = 'Actions',
+  AccountCircleFill = 'AccountCircleFill',
+  AccountCircleOutline = 'AccountCircleOutline',
   Add = 'Add',
-  Aide = 'Aide',
-  ArrowDouble = 'ArrowDouble',
-  ArrowDown = 'ArrowDown',
-  ArrowLeft = 'ArrowLeft',
-  ArrowRight = 'ArrowRight',
-  RoundedArrowRight = 'RoundedArrowRight',
-  RoundedArrowRightOutline = 'RoundedArrowRightOutline',
-  Calendar = 'Calendar',
-  CalendarOutline = 'CalendarOutline',
+  ArrowBackward = 'ArrowBackward',
+  ArrowCircleRightFill = 'ArrowCircleRightFill',
+  ArrowCircleRightOutline = 'ArrowCircleRightOutline',
+  ArrowDownward = 'ArrowDownward',
+  ArrowForward = 'ArrowForward',
+  ArrowUpward = 'ArrowUpward',
+  AttachFile = 'AttachFile',
+  BookmarkFill = 'BookmarkFill',
+  BookmarkOutline = 'BookmarkOutline',
   Cancel = 'Cancel',
-  Board = 'Board',
-  BoardOutline = 'BoardOutline',
+  ChatFill = 'ChatFill',
+  ChatOutline = 'ChatOutline',
   Check = 'Check',
+  CheckCircleFill = 'CheckCircleFill',
+  CheckCircleOutline = 'CheckCircleOutline',
+  ChecklistRtlFill = 'ChecklistRtlFill',
   ChevronDown = 'ChevronDown',
-  ChevronFirst = 'ChevronFirst',
-  ChevronLast = 'ChevronLast',
   ChevronLeft = 'ChevronLeft',
   ChevronRight = 'ChevronRight',
   ChevronUp = 'ChevronUp',
-  Chiffre1 = 'Chiffre1',
-  Chiffre2 = 'Chiffre2',
-  Chiffre3 = 'Chiffre3',
-  Chiffre4 = 'Chiffre4',
-  Chiffre5 = 'Chiffre5',
-  Clipboard = 'Clipboard',
-  Clock = 'Clock',
   Close = 'Close',
-  Comment = 'Comment',
-  Contrat = 'Contrat',
+  Contract = 'Contract',
   DecorativePoint = 'DecorativePoint',
-  Trashcan = 'Trashcan',
-  Email = 'Email',
+  Delete = 'Delete',
+  Description = 'Description',
+  Edit = 'Edit',
   Euro = 'Euro',
-  Favorite = 'Favorite',
-  File = 'File',
+  Error = 'Error',
+  EventFill = 'EventFill',
+  EventOutline = 'EventOutline',
+  FavoriteFill = 'FavoriteFill',
+  FirstPage = 'FirstPage',
   Flag = 'Flag',
-  FlagFilled = 'FlagFilled',
-  Important = 'Important',
-  ImportantOutline = 'ImportantOutline',
+  Help = 'Help',
   Info = 'Info',
-  InfoOutline = 'InfoOutline',
-  Ko = 'Ko',
-  Launch = 'Launch',
-  Location = 'Location',
+  LastPage = 'LastPage',
+  LeaderboardFill = 'LeaderboardFill',
+  LeaderboardOutline = 'LeaderboardOutline',
+  LocationOn = 'LocationOn',
   Lock = 'Lock',
   Logout = 'Logout',
+  Mail = 'Mail',
   Menu = 'Menu',
   Note = 'Note',
-  Partage = 'Partage',
+  NumberCircleOne = 'NumberCircleOne',
+  NumberCircleTwo = 'NumberCircleTwo',
+  NumberCircleThree = 'NumberCircleThree',
+  NumberCircleFour = 'NumberCircleFour',
+  NumberCircleFive = 'NumberCircleFive',
+  OpenInNew = 'OpenInNew',
+  OutgoingMail = 'OutgoingMail',
+  PageViewFill = 'PageViewFill',
+  PageViewOutline = 'PageViewOutline',
   Pending = 'Pending',
-  People = 'People',
+  PeopleFill = 'PeopleFill',
   PeopleOutline = 'PeopleOutline',
-  Profil = 'Profil',
-  ProfilOutline = 'ProfilOutline',
-  Pen = 'Pen',
   Remove = 'Remove',
-  RendezVous = 'RendezVous',
-  RoundedClose = 'RoundedClose',
-  RoundedCloseFilled = 'RoundedCloseFilled',
-  RoundedCheck = 'RoundedCheck',
-  RoundedCheckFilled = 'RoundedCheckFilled',
-  Search = 'SearchIcon',
-  SearchNav = 'SearchNavIcon',
-  SearchNavOutline = 'SearchNavIconOutline',
+  Schedule = 'Schedule',
+  Search = 'Search',
   Send = 'Send',
+  Share = 'Share',
   Spinner = 'Spinner',
   Suitcase = 'Suitcase',
+  SwapVert = 'SwapVert',
   Warning = 'Warning',
 }
 
 const iconsByName: { [key in IconName]: any } = {
-  [IconName.Actions]: ActionsIcon,
-  [IconName.Add]: AddIcon,
-  [IconName.Aide]: AideIcon,
-  [IconName.ArrowDouble]: ArrowDoubleIcon,
-  [IconName.ArrowDown]: ArrowDownIcon,
-  [IconName.ArrowLeft]: ArrowLeftIcon,
-  [IconName.ArrowRight]: ArrowRightIcon,
-  [IconName.RoundedArrowRightOutline]: RoundedArrowRightOutlineIcon,
-  [IconName.RoundedArrowRight]: RoundedArrowRightIcon,
-  [IconName.Calendar]: CalendarIcon,
-  [IconName.CalendarOutline]: CalendarOutlineIcon,
-  [IconName.Cancel]: CancelIcon,
+  [IconName.AccountCircleFill]: AccountCircleFillIcon,
+  [IconName.AccountCircleOutline]: AccountCircleOutlineIcon,
+  [IconName.ArrowBackward]: ArrowBackwardIcon,
+  [IconName.ArrowCircleRightFill]: ArrowCircleRightFillIcon,
+  [IconName.ArrowCircleRightOutline]: ArrowCircleRightOutlineIcon,
+  [IconName.ArrowDownward]: ArrowDownwardIcon,
+  [IconName.ArrowForward]: ArrowForwardIcon,
+  [IconName.ArrowUpward]: ArrowUpwardIcon,
+  [IconName.BookmarkFill]: BookmarkFillIcon,
+  [IconName.BookmarkOutline]: BookmarkOutlineIcon,
+  [IconName.ChatFill]: ChatFillIcon,
+  [IconName.ChatOutline]: ChatOutlineIcon,
   [IconName.Check]: CheckIcon,
-  [IconName.BoardOutline]: BoardIconOutline,
-  [IconName.Board]: BoardIcon,
+  [IconName.CheckCircleFill]: CheckCircleFillIcon,
+  [IconName.CheckCircleOutline]: CheckCircleOutlineIcon,
+  [IconName.ChecklistRtlFill]: ChecklistRtlFillIcon,
   [IconName.ChevronDown]: ChevronDownIcon,
-  [IconName.ChevronFirst]: ChevronFirstIcon,
-  [IconName.ChevronLast]: ChevronLastIcon,
   [IconName.ChevronLeft]: ChevronLeftIcon,
   [IconName.ChevronRight]: ChevronRightIcon,
   [IconName.ChevronUp]: ChevronUpIcon,
-  [IconName.Chiffre1]: Chiffre1Icon,
-  [IconName.Chiffre2]: Chiffre2Icon,
-  [IconName.Chiffre3]: Chiffre3Icon,
-  [IconName.Chiffre4]: Chiffre4Icon,
-  [IconName.Chiffre5]: Chiffre5Icon,
-  [IconName.Clock]: ClockIcon,
   [IconName.Close]: CloseIcon,
-  [IconName.Clipboard]: ClipboardIcon,
-  [IconName.Comment]: CommentIcon,
-  [IconName.Contrat]: ContratIcon,
+  [IconName.Contract]: ContractIcon,
   [IconName.DecorativePoint]: DecorativePointIcon,
-  [IconName.Trashcan]: TrashcanIcon,
-  [IconName.Email]: EmailIcon,
+  [IconName.Delete]: DeleteIcon,
+  [IconName.Description]: DescriptionIcon,
+  [IconName.Edit]: EditIcon,
   [IconName.Euro]: EuroIcon,
-  [IconName.Favorite]: FavoriteIcon,
-  [IconName.File]: FileIcon,
+  [IconName.EventFill]: EventFillIcon,
+  [IconName.EventOutline]: EventOutlineIcon,
+  [IconName.FavoriteFill]: FavoriteFillIcon,
+  [IconName.FirstPage]: FirstPageIcon,
   [IconName.Flag]: FlagIcon,
-  [IconName.FlagFilled]: FlagFilledIcon,
-  [IconName.Important]: ImportantIcon,
-  [IconName.ImportantOutline]: ImportantOutlineIcon,
-  [IconName.Info]: InfoIcon,
-  [IconName.InfoOutline]: InfoOutlineIcon,
-  [IconName.Ko]: KoIcon,
-  [IconName.Launch]: LaunchIcon,
-  [IconName.Location]: LocationIcon,
+  [IconName.LastPage]: LastPageIcon,
+  [IconName.LeaderboardFill]: LeaderboardFillIcon,
+  [IconName.LeaderboardOutline]: LeaderboardOutlineIcon,
+  [IconName.LocationOn]: LocationOnIcon,
   [IconName.Lock]: LockIcon,
   [IconName.Logout]: LogoutIcon,
+  [IconName.Mail]: MailIcon,
   [IconName.Menu]: MenuIcon,
-  [IconName.Note]: NoteIcon,
-  [IconName.Pen]: PenIcon,
-  [IconName.Pending]: PendingIcon,
-  [IconName.Partage]: PartageIcon,
-  [IconName.People]: PeopleIcon,
+  [IconName.NumberCircleOne]: NumberCircleOneIcon,
+  [IconName.NumberCircleTwo]: NumberCircleTwoIcon,
+  [IconName.NumberCircleThree]: NumberCircleThreeIcon,
+  [IconName.NumberCircleFour]: NumberCircleFourIcon,
+  [IconName.NumberCircleFive]: NumberCircleFiveIcon,
+  [IconName.OpenInNew]: OpenInNewIcon,
+  [IconName.OutgoingMail]: OutgoingMailIcon,
+  [IconName.PageViewFill]: PageViewFillIcon,
+  [IconName.PageViewOutline]: PageViewOutlineIcon,
+  [IconName.PeopleFill]: PeopleFillIcon,
   [IconName.PeopleOutline]: PeopleOutlineIcon,
-  [IconName.Profil]: ProfilIcon,
-  [IconName.ProfilOutline]: ProfilOutlineIcon,
-  [IconName.Remove]: RemoveIcon,
-  [IconName.RendezVous]: RendezVousIcon,
-  [IconName.RoundedClose]: RoundedCloseIcon,
-  [IconName.RoundedCloseFilled]: RoundedCloseFilledIcon,
-  [IconName.RoundedCheck]: RoundedCheckIcon,
-  [IconName.RoundedCheck]: RoundedCheckIcon,
-  [IconName.RoundedCheckFilled]: RoundedCheckFilledIcon,
+  [IconName.Schedule]: ScheduleIcon,
+  [IconName.Share]: ShareIcon,
+  [IconName.SwapVert]: SwapVertIcon,
+  [IconName.Info]: InfoIcon,
+  [IconName.Add]: AddIcon,
+  [IconName.AttachFile]: AttachFileIcon,
+  [IconName.Cancel]: CancelIcon,
+  [IconName.Error]: ErrorIcon,
+  [IconName.Help]: HelpIcon,
+  [IconName.Warning]: WarningIcon,
   [IconName.Search]: SearchIcon,
-  [IconName.SearchNavOutline]: SearchNavIconOutline,
-  [IconName.SearchNav]: SearchNavIcon,
   [IconName.Send]: SendIcon,
   [IconName.Spinner]: SpinnerIcon,
   [IconName.Suitcase]: SuitcaseIcon,
-  [IconName.Warning]: WarningIcon,
+  [IconName.Pending]: PendingIcon,
+  [IconName.Remove]: RemoveIcon,
+  [IconName.Note]: NoteIcon,
 }
 
 type IconComponentProps = ComponentPropsWithoutRef<'svg'> & {

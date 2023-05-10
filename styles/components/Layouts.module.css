@@ -64,7 +64,7 @@
   grid-area: chat;
   display: flex;
   flex-direction: column;
-  background-color: theme('colors.grey_100');
+  background-color: theme('colors.primary_lighten');
 }
 
 @media screen and (min-width: theme('screens.layout_s')) {

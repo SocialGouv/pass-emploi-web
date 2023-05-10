@@ -77,7 +77,7 @@ describe('EnvoiMessageGroupe', () => {
       )
 
       inputSearchJeune = screen.getByRole('combobox', {
-        name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires et/ou listes de diffusion',
+        name: /Destinataires/,
       })
       inputMessage = screen.getByLabelText('* Message')
       fileInput = screen.getByLabelText('Ajouter une pièce jointe')

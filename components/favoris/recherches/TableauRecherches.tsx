@@ -19,7 +19,7 @@ export default function TableauRecherches({
     <>
       {recherches.length === 0 && (
         <p className='text-base-regular mb-2'>
-          Votre jeune n’a pas de recherche sauvegardée
+          Votre bénéficiaire n’a pas de recherche sauvegardée
         </p>
       )}
 

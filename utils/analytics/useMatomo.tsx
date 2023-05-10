@@ -3,7 +3,10 @@ import { useEffect } from 'react'
 import { trackPage, userStructureDimensionString } from 'utils/analytics/matomo'
 import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
 
-function useMatomo(title: string | undefined) {
+function useMatomo(
+  title: string | undefined,
+  avecBeneficiaires?: string | undefined
+) {
   const [conseiller] = useConseillerPotentiellementPasRecupere()
 
   useEffect(() => {
@@ -18,6 +21,7 @@ function useMatomo(title: string | undefined) {
     trackPage({
       structure: structure,
       customTitle: title,
+      avecBeneficiaires: avecBeneficiaires,
     })
   }, [conseiller, title])
 }

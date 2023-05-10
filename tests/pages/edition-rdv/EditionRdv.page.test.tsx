@@ -409,7 +409,7 @@ describe('EditionRdv', () => {
         it('contient une liste pour choisir un jeune', () => {
           // Then
           const selectJeune = within(etape).getByRole('combobox', {
-            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
+            name: /Bénéficiaires/,
           })
           const options = within(etape).getByRole('listbox', { hidden: true })
 
@@ -594,7 +594,7 @@ describe('EditionRdv', () => {
           await userEvent.selectOptions(selectType, typesRendezVous[0].code)
 
           selectJeunes = screen.getByRole('combobox', {
-            name: 'Recherchez et ajoutez un ou plusieurs bénéficiaires',
+            name: /Bénéficiaires/,
           })
           selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',

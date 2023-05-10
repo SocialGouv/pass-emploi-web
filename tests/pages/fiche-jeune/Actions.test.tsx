@@ -10,10 +10,16 @@ import {
   uneListeDActions,
 } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import {
+  desIndicateursSemaine,
+  unDetailJeune,
+  uneMetadonneeFavoris,
+} from 'fixtures/jeune'
 import {
   mockedActionsService,
   mockedAgendaService,
+  mockedFavorisService,
   mockedJeunesService,
 } from 'fixtures/services'
 import {
@@ -22,6 +28,9 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { EvenementListItem } from 'interfaces/evenement'
+import { Offre, Recherche } from 'interfaces/favoris'
+import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune, { Onglet } from 'pages/mes-jeunes/[jeune_id]'
 import { ActionsService } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -50,37 +59,33 @@ describe('Actions dans la fiche jeune', () => {
     })
   })
 
-  describe("quand l'utilisateur est un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur est un conseiller Pôle emploi", () => {
+    let offresPE: Offre[],
+      recherchesPE: Recherche[],
+      metadonneesFavoris: MetadonneesFavoris
+    beforeEach(async () => {
+      metadonneesFavoris = uneMetadonneeFavoris()
+      offresPE = uneListeDOffres()
+      recherchesPE = uneListeDeRecherches()
+      await renderFicheJeunePE(
+        StructureConseiller.POLE_EMPLOI,
+        [],
+        metadonneesFavoris,
+        offresPE,
+        recherchesPE
+      )
+    })
     it("n'affiche pas de lien vers les actions du jeune", async () => {
-      // Given
-      await renderFicheJeune({ structure: StructureConseiller.POLE_EMPLOI })
-
-      // When
-      await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
-
-      // Then
-      expect(() =>
-        screen.getByRole('link', {
-          name: 'Voir la liste des actions du jeune',
-        })
-      ).toThrow()
-      expect(
-        screen.getByText(
-          'Gérez les actions et démarches de ce jeune depuis vos outils Pôle emploi.'
-        )
-      ).toBeInTheDocument()
+      expect(() => screen.getByText(/Actions/)).toThrow()
     })
 
     it('ne permet pas la création d’action', async () => {
-      // Given
-      await renderFicheJeune({ structure: StructureConseiller.POLE_EMPLOI })
-
       // Then
       expect(() => screen.getByText('Créer une nouvelle action')).toThrow()
     })
   })
 
-  describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur n'est pas un conseiller Pôle emploi", () => {
     let setIdJeune: (id: string | undefined) => void
     beforeEach(async () => {
       // Given
@@ -91,7 +96,7 @@ describe('Actions dans la fiche jeune', () => {
 
     it('affiche les actions du jeune', async () => {
       // Given
-      await renderFicheJeune({
+      await renderFicheJeuneMILO({
         structure: StructureConseiller.MILO,
         actionsInitiales: {
           actions,
@@ -131,7 +136,7 @@ describe('Actions dans la fiche jeune', () => {
 
     it('permet la création d’une action', async () => {
       // When
-      await renderFicheJeune({ structure: StructureConseiller.MILO })
+      await renderFicheJeuneMILO({ structure: StructureConseiller.MILO })
 
       // Then
       expect(
@@ -142,7 +147,7 @@ describe('Actions dans la fiche jeune', () => {
     describe("quand le jeune n'a pas d'action", () => {
       it('affiche un message qui le précise', async () => {
         // Given
-        await renderFicheJeune({ structure: StructureConseiller.MILO })
+        await renderFicheJeuneMILO({ structure: StructureConseiller.MILO })
 
         // When
         await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
@@ -155,7 +160,7 @@ describe('Actions dans la fiche jeune', () => {
     describe('quand on revient sur la page depuis le détail d’une action', () => {
       it('ouvre l’onglet des actions', async () => {
         // Given
-        await renderFicheJeune({
+        await renderFicheJeuneMILO({
           structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
@@ -185,7 +190,7 @@ describe('Actions dans la fiche jeune', () => {
         })
         pageCourante = 4
 
-        await renderFicheJeune({
+        await renderFicheJeuneMILO({
           structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
@@ -268,7 +273,7 @@ describe('Actions dans la fiche jeune', () => {
         })
         pageCourante = 1
 
-        await renderFicheJeune({
+        await renderFicheJeuneMILO({
           structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
@@ -337,7 +342,7 @@ describe('Actions dans la fiche jeune', () => {
         })
         pageCourante = 1
 
-        await renderFicheJeune({
+        await renderFicheJeuneMILO({
           structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
@@ -417,7 +422,7 @@ describe('Actions dans la fiche jeune', () => {
         })
         pageCourante = 1
 
-        await renderFicheJeune({
+        await renderFicheJeuneMILO({
           structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
@@ -501,7 +506,7 @@ describe('Actions dans la fiche jeune', () => {
         })
         pageCourante = 1
 
-        await renderFicheJeune({
+        await renderFicheJeuneMILO({
           structure: StructureConseiller.MILO,
           actionsInitiales: {
             actions,
@@ -584,7 +589,7 @@ interface FicheJeuneParams {
   actionsService?: ActionsService
 }
 
-async function renderFicheJeune({
+async function renderFicheJeuneMILO({
   structure,
   actionsInitiales,
   onglet,
@@ -611,6 +616,47 @@ async function renderFicheJeune({
             recupererAgenda: jest.fn(async () => unAgenda()),
           }),
           actionsService: actionsService ?? mockedActionsService(),
+        },
+      }
+    )
+  })
+}
+
+async function renderFicheJeunePE(
+  structure: StructureConseiller,
+  rdvs: EvenementListItem[] = [],
+  metadonnees: Metadonnees,
+  offresPE: Offres[],
+  recherchesPE: Recherche[]
+) {
+  await act(async () => {
+    await renderWithContexts(
+      <FicheJeune
+        jeune={unDetailJeune()}
+        rdvs={rdvs}
+        actionsInitiales={desActionsInitiales()}
+        pageTitle={''}
+        metadonneesFavoris={metadonnees}
+        offresPE={offresPE}
+        recherchesPE={recherchesPE}
+      />,
+      {
+        customConseiller: {
+          id: 'id-conseiller',
+          structure: structure,
+        },
+        customDependances: {
+          jeunesService: mockedJeunesService({
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
+          }),
+          agendaService: mockedAgendaService({
+            recupererAgenda: jest.fn(async () => unAgenda()),
+          }),
+          favorisService: mockedFavorisService({
+            getOffres: jest.fn(async () => uneListeDOffres()),
+          }),
         },
       }
     )

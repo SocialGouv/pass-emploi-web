@@ -85,7 +85,7 @@ export function CommentairesAction({
               disabled={!Boolean(nouveauCommentaire)}
             >
               <IconComponent
-                name={IconName.Pen}
+                name={IconName.Edit}
                 aria-hidden={true}
                 focusable={false}
                 className='w-4 h-4 mr-4'

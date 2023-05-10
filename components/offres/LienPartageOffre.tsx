@@ -16,7 +16,7 @@ export default function LienPartageOffre({
   return (
     <ButtonLink href={href} style={style}>
       <IconComponent
-        name={IconName.Partage}
+        name={IconName.Share}
         className='w-4 h-4 mr-3'
         focusable={false}
         aria-hidden={true}

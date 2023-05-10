@@ -68,7 +68,7 @@ export function ConversationTile({
                 <span>
                   Lu{' '}
                   <IconComponent
-                    name={IconName.RoundedCheckFilled}
+                    name={IconName.CheckCircleFill}
                     focusable={false}
                     aria-hidden={true}
                     className='inline w-3 h-3 fill-primary'
@@ -76,15 +76,15 @@ export function ConversationTile({
                 </span>
               )}
               {!isLastMessageSeenByJeune && (
-                <span>
-                  Non lu{' '}
+                <>
+                  <span>Non lu </span>
                   <Badge
                     count={jeuneChat.newConseillerMessageCount}
                     textColor='accent_1'
                     bgColor='accent_1_lighten'
                     size={6}
                   />
-                </span>
+                </>
               )}
             </>
           )}
@@ -93,12 +93,12 @@ export function ConversationTile({
       <IconCheckbox
         id={`${id}--flag`}
         checked={jeuneChat.flaggedByConseiller}
-        checkedIconName={IconName.FlagFilled}
-        uncheckedIconName={IconName.Flag}
+        checkedIconName={IconName.BookmarkFill}
+        uncheckedIconName={IconName.BookmarkOutline}
         checkedLabel='Ne plus suivre la conversation'
         uncheckedLabel='Suivre la conversation'
         onChange={toggleFollowMessage}
-        className='absolute top-3 right-3 w-4 h-4 fill-primary'
+        className='absolute top-3 right-3 w-5 h-5 fill-primary'
       />
     </div>
   )

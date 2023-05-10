@@ -33,6 +33,8 @@ module.exports = withPWA({
     ENABLE_LEANBE: process.env.ENABLE_LEANBE === 'true',
     LEANBE_MILO_WIDGET_ID: process.env.LEANBE_MILO_WIDGET_ID,
     LEANBE_PE_WIDGET_ID: process.env.LEANBE_PE_WIDGET_ID,
+    //BRSA
+    ENABLE_PE_BRSA_SSO: process.env.ENABLE_PE_BRSA_SSO === 'true',
     // OTHER
     ENVIRONMENT: process.env.ENVIRONMENT,
     MATOMO_SOCIALGOUV_URL: process.env.MATOMO_SOCIALGOUV_URL,

@@ -83,6 +83,7 @@ describe('Fiche Jeune MiLo', () => {
               customTitle: 'Détail jeune par numéro dossier',
               pathname: '/mes-jeunes/milo/numero-dossier',
               refererUrl: 'referer-url',
+              avecBeneficiaires: 'oui',
             })
             expect(actual).toEqual({
               redirect: {
@@ -112,6 +113,7 @@ describe('Fiche Jeune MiLo', () => {
               customTitle: 'Détail jeune par numéro dossier en erreur',
               pathname: '/mes-jeunes/milo/dossier-inexistant',
               refererUrl: 'referer-url',
+              avecBeneficiaires: 'non',
             })
             expect(actual).toEqual({
               redirect: { destination: '/mes-jeunes', permanent: false },

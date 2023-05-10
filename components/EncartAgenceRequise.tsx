@@ -61,7 +61,7 @@ export default function EncartAgenceRequise({
             focusable={false}
             aria-hidden={true}
             className='w-4 h-4 mr-2 fill-warning'
-            name={IconName.Important}
+            name={IconName.Error}
           />
           Votre {labelEtablissement} n’est pas renseignée
         </p>

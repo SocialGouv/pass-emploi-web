@@ -34,6 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     customTitle: `Détail jeune par numéro dossier${
       !Boolean(idJeune) ? ' en erreur' : ''
     }`,
+    avecBeneficiaires: idJeune ? 'oui' : 'non',
     pathname: `/mes-jeunes/milo/${numeroDossier}`,
     refererUrl: context.req.headers.referer,
   })

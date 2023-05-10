@@ -2,6 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
+import { Session } from 'next-auth'
 import React, { useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
@@ -12,7 +13,11 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { StructureConseiller } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  estPoleEmploiCEJ,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -174,7 +179,7 @@ function Agenda({ onglet }: AgendaProps) {
           selected={currentTab === Onglet.CONSEILLER}
           controls='agenda-conseiller'
           onSelectTab={() => switchTab(Onglet.CONSEILLER)}
-          iconName={IconName.Calendar}
+          iconName={IconName.EventFill}
         />
 
         <Tab
@@ -182,7 +187,7 @@ function Agenda({ onglet }: AgendaProps) {
           selected={currentTab === Onglet.ETABLISSEMENT}
           controls='agenda-etablissement'
           onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
-          iconName={IconName.Calendar}
+          iconName={IconName.EventFill}
         />
       </TabList>
 
@@ -243,7 +248,7 @@ export const getServerSideProps: GetServerSideProps<AgendaProps> = async (
   const {
     session: { user },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI) {
+  if (estUserPoleEmploi(user)) {
     return { notFound: true }
   }
 

@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 import { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
 import { IndicateursSemaine } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
@@ -89,14 +89,14 @@ function IndicateursActions({
           label='En retard'
           bgColor='alert_lighten'
           textColor='content_color'
-          iconName={IconName.ImportantOutline}
+          iconName={IconName.Error}
         />
         <TileIndicateur
           valeur={actions?.terminees.toString() ?? '-'}
           label={actions?.terminees !== 1 ? 'Terminées' : 'Terminée'}
           bgColor='accent_2_lighten'
           textColor='accent_2'
-          iconName={IconName.RoundedCheck}
+          iconName={IconName.CheckCircleFill}
         />
         <TileIndicateur
           valeur={actions?.aEcheance.toString() ?? '-'}
@@ -189,7 +189,7 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
   const {
     session: { accessToken, user },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI) {
+  if (estUserPoleEmploi(user)) {
     return { notFound: true }
   }
 

@@ -1,5 +1,5 @@
-import IconSettingsChrome from 'assets/icons/settings_chrome.svg'
-import IconSettingsSafari from 'assets/icons/settings_safari.svg'
+import IconSettingsChrome from 'assets/icons/custom/settings_chrome.svg'
+import IconSettingsSafari from 'assets/icons/custom/settings_safari.svg'
 
 export function TutorielRaccourci() {
   return (

@@ -12,14 +12,17 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
+import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
+import { textesCEJ, textesBRSA } from 'lang/textes'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { SuggestionsService } from 'services/suggestions.service'
 import { useAlerte } from 'utils/alerteContext'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -67,6 +70,7 @@ function PartageRecherche({
     useDependance<SuggestionsService>('suggestionsService')
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
   const [idsDestinataires, setIdsDestinataires] = useState<
@@ -211,10 +215,12 @@ function PartageRecherche({
         labelLocalite={criteresRecherche.labelLocalite}
         labelMetier={getLabelMetier()}
       />
-      <p className='mt-8'>
-        Ces critères apparaitrons dans la section favoris, catégorie recherches
-        sauvegardées, du bénéficiaire de l’application CEJ.
-      </p>
+      {estPoleEmploiBRSA(conseiller) && (
+        <p className='mt-8'>{textesBRSA.partageRechercheTexteInfo}</p>
+      )}
+      {!estPoleEmploiBRSA(conseiller) && (
+        <p className='mt-8'>{textesCEJ.partageRechercheTexteInfo}</p>
+      )}
       <form onSubmit={partagerCriteresRecherche} className='mt-8'>
         <Etape numero={1} titre='Destinataires'>
           <BeneficiairesMultiselectAutocomplete

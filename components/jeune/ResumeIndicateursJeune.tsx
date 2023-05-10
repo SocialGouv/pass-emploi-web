@@ -60,14 +60,14 @@ export function ResumeIndicateursJeune({
               }
               bgColor='accent_2_lighten'
               textColor='accent_2'
-              iconName={IconName.RoundedCheck}
+              iconName={IconName.CheckCircleFill}
             />
             <TileIndicateur
               valeur={indicateursSemaine?.actions.enRetard.toString() ?? '-'}
               label='En retard'
               bgColor='alert_lighten'
               textColor='content_color'
-              iconName={IconName.ImportantOutline}
+              iconName={IconName.Error}
             />
           </ul>
         </div>

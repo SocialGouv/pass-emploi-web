@@ -71,7 +71,7 @@ describe('Mes Jeunes', () => {
         })
       })
 
-      it("affiche la liste des jeunes s'il en a", async () => {
+      it("affiche la liste des bénéficiaires s'il en a", async () => {
         //THEN
         expect(screen.getAllByRole('row')).toHaveLength(jeunes.length + 1)
         jeunes.forEach((jeune) => {
@@ -82,7 +82,7 @@ describe('Mes Jeunes', () => {
         expect(screen.getAllByText('2')).toHaveLength(jeunes.length)
 
         expect(() =>
-          screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+          screen.getByText("Vous n'avez pas encore intégré de bénéficiaires.")
         ).toThrow()
         expect(() => screen.getByText(/transférés temporairement/)).toThrow()
       })
@@ -285,7 +285,7 @@ describe('Mes Jeunes', () => {
         ).toThrow()
       })
 
-      it('affiche un message invitant à ajouter des jeunes', async () => {
+      it('affiche un message invitant à ajouter des bénéficiaires', async () => {
         // GIVEN
         await act(() => {
           renderWithContexts(
@@ -296,7 +296,7 @@ describe('Mes Jeunes', () => {
 
         //THEN
         expect(
-          screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+          screen.getByText("Vous n'avez pas encore intégré de bénéficiaires.")
         ).toBeInTheDocument()
         expect(() => screen.getAllByRole('row')).toThrow()
       })
@@ -315,10 +315,10 @@ describe('Mes Jeunes', () => {
           })
         })
 
-        it("n'affiche pas de message invitant à ajouter des jeunes", () => {
+        it("n'affiche pas de message invitant à ajouter des bénéficiaires", () => {
           //THEN
           expect(() =>
-            screen.getByText("Vous n'avez pas encore intégré de jeunes.")
+            screen.getByText("Vous n'avez pas encore intégré de bénéficiaires.")
           ).toThrow()
           expect(() => screen.getAllByRole('row')).toThrow()
         })

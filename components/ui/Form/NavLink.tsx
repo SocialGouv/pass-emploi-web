@@ -94,10 +94,10 @@ export default function NavLink({
         >
           {linkContent}
           <IconComponent
-            name={IconName.Launch}
+            name={IconName.OpenInNew}
             aria-hidden={true}
             focusable={false}
-            className='mx-2 w-3 h-3 fill-blanc hidden layout_l:block'
+            className='mx-2 w-4 h-4 fill-blanc hidden layout_l:block'
           />
         </a>
       )}

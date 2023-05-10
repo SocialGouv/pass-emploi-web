@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Exclamation from '../../assets/icons/exclamation.svg'
+import Exclamation from '../../assets/icons/informations/error.svg'
 
 interface IntegrationPoleEmploiProps {
   label: string
@@ -20,7 +20,7 @@ export const IntegrationPoleEmploi = ({
         Cette fonctionnalité n&apos;est pas encore disponible.
       </p>
       <p className='text-s-regular'>
-        Gérez les {label} de ce jeune depuis vos outils Pôle emploi.
+        Gérez les {label} de ce bénéficiaire depuis vos outils Pôle emploi.
       </p>
     </div>
   </div>

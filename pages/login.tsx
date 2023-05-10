@@ -4,18 +4,25 @@ import { useRouter } from 'next/router'
 import { getSession, signIn } from 'next-auth/react'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
-import Logo from 'assets/images/logo_app_cej.svg'
+import LogoCEJ from 'assets/images/logo_app_cej.svg'
+import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
 import OnboardingMobileModal from 'components/OnboardingMobileModal'
+import { ButtonStyle } from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
 
 interface LoginProps {
+  ssoPoleEmploiBRSAEstActif?: boolean
   ssoPassEmploiEstActif?: boolean
   isFromEmail: boolean
 }
 
-function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
+function Login({
+  ssoPassEmploiEstActif,
+  ssoPoleEmploiBRSAEstActif,
+  isFromEmail,
+}: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
 
@@ -51,6 +58,7 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
     const provider = router?.query.provider
     switch (provider) {
       case 'pe':
+      case 'pe-brsa':
       case 'similo':
         signin(`${provider}-conseiller`)
     }
@@ -65,36 +73,71 @@ function Login({ ssoPassEmploiEstActif, isFromEmail }: LoginProps) {
   return (
     <div className={`${styles.login} w-full h-screen relative`}>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-        <Logo
-          focusable='false'
-          aria-hidden={true}
-          className='m-auto h-56 w-56'
-        />
+        <h1 className='text-m-bold text-primary_darken text-center mb-[24px]'>
+          Connectez-vous à l&apos;espace conseiller
+        </h1>
 
         <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-base'>
-          <h1 className='text-m-bold text-primary_darken text-center mb-[24px]'>
-            Connectez-vous à l&apos;espace conseiller
-          </h1>
-
-          <FormButton
-            label='Connexion conseiller Mission Locale'
-            className='whitespace-nowrap'
-            handleSubmit={(event) => handleSignin(event, 'similo-conseiller')}
-          />
-          <FormButton
-            label='Connexion conseiller Pôle emploi'
-            className='pt-4 whitespace-nowrap'
-            handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
-          />
-
-          {ssoPassEmploiEstActif && (
-            <FormButton
-              className='mt-4 whitespace-nowrap'
-              label='Authentification pass emploi'
-              handleSubmit={(event) => handleSignin(event)}
+          <h2>
+            <span className='sr-only'>Contrat d’engagement jeune</span>
+            <LogoCEJ
+              className='m-auto h-[64px] w-[120px] fill-primary_darken'
+              focusable={false}
+              aria-hidden={true}
             />
-          )}
+          </h2>
+          <ul>
+            <li>
+              <FormButton
+                label='Connexion conseiller Mission Locale'
+                className='mt-6 whitespace-nowrap'
+                handleSubmit={(event) =>
+                  handleSignin(event, 'similo-conseiller')
+                }
+              />
+            </li>
+            <li>
+              <FormButton
+                label='Connexion conseiller Pôle emploi CEJ'
+                className='pt-4 whitespace-nowrap'
+                handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
+              />
+            </li>
+            {ssoPassEmploiEstActif && (
+              <li>
+                <FormButton
+                  className='mt-4 whitespace-nowrap'
+                  label='Authentification pass emploi'
+                  handleSubmit={(event) => handleSignin(event)}
+                />
+              </li>
+            )}
+          </ul>
 
+          {ssoPoleEmploiBRSAEstActif && (
+            <>
+              <h2>
+                <span className='sr-only'>pass emploi</span>
+                <LogoPassEmploi
+                  className='m-auto mt-8 h-20 fill-primary_darken'
+                  focusable={false}
+                  aria-hidden={true}
+                />
+              </h2>
+              <ul>
+                <li>
+                  <FormButton
+                    label='Connexion conseiller Pôle emploi BRSA'
+                    className='whitespace-nowrap'
+                    style={ButtonStyle.PRIMARY_BRSA}
+                    handleSubmit={(event) =>
+                      handleSignin(event, 'pe-brsa-conseiller')
+                    }
+                  />
+                </li>
+              </ul>
+            </>
+          )}
           {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>
       </div>
@@ -133,6 +176,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async (
 
   return {
     props: {
+      ssoPoleEmploiBRSAEstActif: process.env.ENABLE_PE_BRSA_SSO,
       ssoPassEmploiEstActif: process.env.ENABLE_PASS_EMPLOI_SSO,
       isFromEmail: isFromEmail,
     },

@@ -20,7 +20,7 @@ export default function InformationMessage({
           name={iconName ?? IconName.Info}
           focusable={false}
           aria-hidden={true}
-          className='mr-2 w-6 h-6 shrink-0'
+          className='mr-2 w-6 h-6 fill-primary shrink-0'
         />
 
         <p className='text-base-bold'>{label}</p>

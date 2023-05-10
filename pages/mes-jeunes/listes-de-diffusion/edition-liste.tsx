@@ -168,7 +168,7 @@ function EditionListeDiffusion({
               style={ButtonStyle.SECONDARY}
             >
               <IconComponent
-                name={IconName.Trashcan}
+                name={IconName.Delete}
                 focusable={false}
                 aria-hidden={true}
                 className='mr-2 w-4 h-4'

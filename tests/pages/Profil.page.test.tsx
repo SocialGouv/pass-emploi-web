@@ -1,17 +1,22 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { unConseiller } from 'fixtures/conseiller'
+import { desItemsJeunes } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import {
   mockedConseillerService,
+  mockedJeunesService,
   mockedReferentielService,
 } from 'fixtures/services'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { JeuneFromListe } from 'interfaces/jeune'
 import Profil, { getServerSideProps } from 'pages/profil'
 import { ConseillerService } from 'services/conseiller.service'
+import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -20,6 +25,7 @@ import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('utils/injectionDependances/withDependance')
+jest.mock('components/Modal')
 
 describe('Page Profil conseiller', () => {
   describe('server side', () => {
@@ -62,7 +68,7 @@ describe('Page Profil conseiller', () => {
         expect(referentielService.getAgencesServerSide).not.toHaveBeenCalled()
       })
 
-      it('en tant que Mission Locale avec une agence déjà renseignée charge la page avec les bonnes props sans le referetiel d’agences', async () => {
+      it('en tant que Mission Locale avec une agence déjà renseignée charge la page avec les bonnes props sans le référentiel d’agences', async () => {
         // Given
         const conseiller = unConseiller({
           agence: { nom: 'MLS3F SAINT-LOUIS' },
@@ -82,7 +88,7 @@ describe('Page Profil conseiller', () => {
         })
       })
 
-      it('en tant que Mission Locale sans agence déjà renseignée charge la page avec les bonnes props avec le referetiel d’agences', async () => {
+      it('en tant que Mission Locale sans agence déjà renseignée charge la page avec les bonnes props avec le référentiel d’agences', async () => {
         // Given
         const conseiller = unConseiller()
         const structure = 'MILO'
@@ -130,11 +136,16 @@ describe('Page Profil conseiller', () => {
 
   describe('client side', () => {
     let conseillerService: ConseillerService
+    let jeunesService: JeunesService
     let conseiller: Conseiller
+    let jeunes: JeuneFromListe[]
+    let push: Function
 
-    beforeEach(() => {
+    beforeEach(async () => {
       conseillerService = mockedConseillerService()
+      process.env = Object.assign(process.env, { ENABLE_PE_BRSA_SSO: 'true' })
     })
+
     describe('contenu', () => {
       beforeEach(async () => {
         // Given
@@ -147,6 +158,7 @@ describe('Page Profil conseiller', () => {
         await act(async () => {
           renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
             customConseiller: conseiller,
+            customDependances: { conseillerService },
           })
         })
       })
@@ -172,6 +184,20 @@ describe('Page Profil conseiller', () => {
           conseiller.notificationsSonores
         )
       })
+
+      it('affiche les informations du mode démo', () => {
+        //THEN
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Application CEJ jeune - mode démo',
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('affiche un bouton pour supprimer le compte', () =>
+        // Then
+        expect(screen.getByText('Supprimer mon compte')).toBeInTheDocument())
     })
 
     describe('quand il manque des informations', () => {
@@ -192,6 +218,24 @@ describe('Page Profil conseiller', () => {
     })
 
     describe('quand le conseiller est MILO', () => {
+      it('n’affiche pas le bouton de suppression de compte', async () => {
+        // Given
+        const conseiller = unConseiller({
+          structure: StructureConseiller.MILO,
+        })
+
+        // When
+        await act(async () => {
+          renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
+            customConseiller: conseiller,
+            customDependances: { conseillerService },
+          })
+        })
+
+        // Then
+        expect(() => screen.getByText('Supprimer mon compte')).toThrow()
+      })
+
       describe('si son agence est déjà renseignée', () => {
         beforeEach(async () => {
           // Given
@@ -226,7 +270,7 @@ describe('Page Profil conseiller', () => {
         })
       })
 
-      describe('si son agence est n’est pas encore renseignée', () => {
+      describe('si son agence n’est pas encore renseignée', () => {
         const agences = uneListeDAgencesMILO()
         beforeEach(async () => {
           // Given
@@ -377,6 +421,131 @@ describe('Page Profil conseiller', () => {
 
           // Then
           expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
+        })
+      })
+    })
+
+    describe('quand le conseiller est PE BRSA', () => {
+      it('affiche les informations du mode démo pour BRSA', async () => {
+        // Given
+        conseiller = unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI_BRSA,
+          email: 'pe-brsa@pole-emploi.fr',
+        })
+
+        // When
+        await act(async () => {
+          renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
+            customConseiller: conseiller,
+          })
+        })
+        //THEN
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Application pass emploi - mode démo',
+          })
+        ).toBeInTheDocument()
+      })
+    })
+
+    describe('Supprimer un compte', () => {
+      describe('en tant que PE sans bénéficiaires', () => {
+        beforeEach(async () => {
+          // Given
+          jeunesService = mockedJeunesService({
+            getJeunesDuConseillerClientSide: jest.fn(async () => []),
+          })
+          push = jest.fn(() => Promise.resolve())
+          ;(useRouter as jest.Mock).mockReturnValue({ push })
+
+          conseiller = unConseiller({
+            email: 'conseiller@pole-emploi.fr',
+            structure: StructureConseiller.POLE_EMPLOI_BRSA,
+          })
+
+          // When
+          await act(async () => {
+            renderWithContexts(
+              <Profil referentielAgences={[]} pageTitle='' />,
+              {
+                customConseiller: conseiller,
+                customDependances: { jeunesService, conseillerService },
+              }
+            )
+          })
+
+          const supprimerConseillerButton = screen.getByRole('button', {
+            name: 'Supprimer mon compte',
+          })
+
+          await userEvent.click(supprimerConseillerButton)
+        })
+
+        it('affiche une modale avec les bonnes informations', async () => {
+          // Then
+          expect(
+            screen.getByText(/Attention, cette opération/)
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Confirmer' })
+          ).toBeInTheDocument()
+        })
+
+        it('lors de la confirmation, supprime le conseiller et redirige vers la page de connexion', async () => {
+          // Given
+          const confirmerSuppressionButton = screen.getByRole('button', {
+            name: 'Confirmer',
+          })
+
+          // When
+          await userEvent.click(confirmerSuppressionButton)
+          await act(() => new Promise((r) => setTimeout(r, 500)))
+
+          // Then
+          expect(
+            screen.getByText('Vous allez être redirigé dans quelques secondes')
+          ).toBeInTheDocument()
+          expect(conseillerService.supprimerConseiller).toHaveBeenCalledWith(
+            conseiller.id
+          )
+          await act(() => new Promise((r) => setTimeout(r, 3000)))
+
+          expect(push).toHaveBeenCalledWith('/api/auth/federated-logout')
+        })
+      })
+
+      describe('en tant que PE avec bénéficiaires', () => {
+        it('affiche une modale avec les bonnes informations', async () => {
+          // Given
+          jeunes = desItemsJeunes()
+          jeunesService = mockedJeunesService({
+            getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
+          })
+
+          // When
+          await act(async () => {
+            renderWithContexts(
+              <Profil referentielAgences={[]} pageTitle='' />,
+              {
+                customConseiller: conseiller,
+                customDependances: { jeunesService, conseillerService },
+              }
+            )
+          })
+
+          const supprimerConseillerButton = screen.getByRole('button', {
+            name: 'Supprimer mon compte',
+          })
+          await userEvent.click(supprimerConseillerButton)
+          // Then
+          expect(screen.getByText('Retour')).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              /Afin de procéder à la suppression de votre compte, votre portefeuille doit avoir été transféré./
+            )
+          ).toBeInTheDocument()
+          expect(() => screen.getByText('Confirmer')).toThrow()
         })
       })
     })

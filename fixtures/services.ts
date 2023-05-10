@@ -112,6 +112,7 @@ export function mockedConseillerService(
     getDossierJeune: jest.fn(),
     createCompteJeuneMilo: jest.fn(),
     recupererBeneficiaires: jest.fn(),
+    supprimerConseiller: jest.fn(),
   }
   return { ...defaults, ...overrides }
 }

@@ -6,11 +6,21 @@ import React from 'react'
 
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
-import { mockedAgendaService, mockedJeunesService } from 'fixtures/services'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import {
+  desIndicateursSemaine,
+  unDetailJeune,
+  uneMetadonneeFavoris,
+} from 'fixtures/jeune'
+import {
+  mockedAgendaService,
+  mockedFavorisService,
+  mockedJeunesService,
+} from 'fixtures/services'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { EvenementListItem } from 'interfaces/evenement'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { AgendaService } from 'services/agenda.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -31,43 +41,61 @@ describe('Agenda de la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: replace,
       push: jest.fn(),
-      asPath: '/mes-jeunes'
-    })
-  })
-
-  describe('pour tous les conseillers', () => {
-    it('affiche un onglet Agenda', async () => {
-      // Given
-      agendaService = mockedAgendaService()
-
-      // When
-      await renderFicheJeune(StructureConseiller.POLE_EMPLOI, agendaService)
-
-      // Then
-      expect(screen.getByRole('tab', { name: /Agenda/ })).toBeInTheDocument()
+      asPath: '/mes-jeunes',
     })
   })
 
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
-    it("n'affiche pas l’agenda du bénéficiaire (et ne tente pas de le récupérer)", async () => {
+    it('ne tente pas de récupérer l’agenda du bénéficiaire', async () => {
       // Given
       agendaService = mockedAgendaService()
+      const metadonneesFavoris = uneMetadonneeFavoris()
+      const offresPE = uneListeDOffres()
+      const recherchesPE = uneListeDeRecherches()
 
       // When
-      await renderFicheJeune(StructureConseiller.POLE_EMPLOI, agendaService)
+      await renderFicheJeunePE(
+        StructureConseiller.POLE_EMPLOI,
+        agendaService,
+        metadonneesFavoris,
+        offresPE,
+        recherchesPE
+      )
 
       // Then
-      expect(
-        screen.getByText(
-          'Gérez les convocations et démarches de ce jeune depuis vos outils Pôle emploi.'
-        )
-      ).toBeInTheDocument()
-
       expect(agendaService.recupererAgenda).not.toHaveBeenCalled()
     })
   })
 
   describe('quand l’utilisateur n’est pas un conseiller Pole emploi', () => {
+    it('affiche un onglet Agenda', async () => {
+      // Given
+      agendaService = mockedAgendaService({
+        recupererAgenda: jest.fn(async () =>
+          unAgenda({
+            entrees: [
+              {
+                id: '1',
+                date: UNE_DATE_SEMAINE_SUIVANTE,
+                type: 'evenement',
+                titre: '12h00 - Autre',
+              } as EntreeAgenda,
+            ],
+            metadata: {
+              dateDeDebut: DateTime.fromISO('2022-01-01T14:00:00.000+02:00'),
+              dateDeFin: DateTime.fromISO('2022-01-15T14:00:00.000+02:00'),
+              actionsEnRetard: 8,
+            },
+          })
+        ),
+      })
+
+      // When
+      await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
+
+      // Then
+      expect(screen.getByRole('tab', { name: /Agenda/ })).toBeInTheDocument()
+    })
     describe('affiche l’agenda du bénéficiaire', () => {
       it('affiche les actions en retard dans la vue agenda ', async () => {
         // Given
@@ -91,7 +119,7 @@ describe('Agenda de la fiche jeune', () => {
           ),
         })
         // When
-        await renderFicheJeune(StructureConseiller.MILO, agendaService)
+        await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
         const voirActionsEnRetard = screen.getByRole('button', {
           name: 'Voir les actions',
         })
@@ -124,7 +152,7 @@ describe('Agenda de la fiche jeune', () => {
         })
 
         // When
-        await renderFicheJeune(StructureConseiller.MILO, agendaService)
+        await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
 
         // Then
         const semaineEnCours = screen.getByRole('region', {
@@ -164,7 +192,7 @@ describe('Agenda de la fiche jeune', () => {
         })
 
         // When
-        await renderFicheJeune(StructureConseiller.MILO, agendaService)
+        await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
 
         // Then
         const semaineSuivante = screen.getByRole('region', {
@@ -212,7 +240,7 @@ describe('Agenda de la fiche jeune', () => {
           })
 
           // When
-          await renderFicheJeune(StructureConseiller.MILO, agendaService)
+          await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
 
           // Then
           const semaineEnCours = screen.getByRole('region', {
@@ -284,7 +312,7 @@ describe('Agenda de la fiche jeune', () => {
           })
 
           // When
-          await renderFicheJeune(StructureConseiller.MILO, agendaService)
+          await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
 
           // Then
           const semaineEnCours = screen.getByRole('region', {
@@ -361,7 +389,7 @@ describe('Agenda de la fiche jeune', () => {
           })
 
           // When
-          await renderFicheJeune(StructureConseiller.MILO, agendaService)
+          await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
 
           // Then
           expect(screen.getByText('Non modifiable')).toBeInTheDocument()
@@ -371,7 +399,7 @@ describe('Agenda de la fiche jeune', () => {
   })
 })
 
-async function renderFicheJeune(
+async function renderFicheJeuneMILO(
   structure: StructureConseiller,
   agendaService: AgendaService
 ) {
@@ -392,6 +420,47 @@ async function renderFicheJeune(
             ),
           }),
           agendaService: agendaService,
+        },
+      }
+    )
+  })
+}
+
+async function renderFicheJeunePE(
+  structure: StructureConseiller,
+  rdvs: EvenementListItem[] = [],
+  metadonnees: Metadonnees,
+  offresPE: Offres[],
+  recherchesPE: Recherche[]
+) {
+  await act(async () => {
+    await renderWithContexts(
+      <FicheJeune
+        jeune={unDetailJeune()}
+        rdvs={rdvs}
+        actionsInitiales={desActionsInitiales()}
+        pageTitle={''}
+        metadonneesFavoris={metadonnees}
+        offresPE={offresPE}
+        recherchesPE={recherchesPE}
+      />,
+      {
+        customConseiller: {
+          id: 'id-conseiller',
+          structure: structure,
+        },
+        customDependances: {
+          jeunesService: mockedJeunesService({
+            getIndicateursJeuneAlleges: jest.fn(async () =>
+              desIndicateursSemaine()
+            ),
+          }),
+          agendaService: mockedAgendaService({
+            recupererAgenda: jest.fn(async () => unAgenda()),
+          }),
+          favorisService: mockedFavorisService({
+            getOffres: jest.fn(async () => uneListeDOffres()),
+          }),
         },
       }
     )

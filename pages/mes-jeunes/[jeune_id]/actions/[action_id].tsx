@@ -19,7 +19,12 @@ import {
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import { estMilo, StructureConseiller, UserType } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  estMilo,
+  StructureConseiller,
+  UserType,
+} from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
@@ -164,7 +169,7 @@ function PageAction({
               disabled={deleteDisabled}
             >
               <IconComponent
-                name={IconName.Trashcan}
+                name={IconName.Delete}
                 aria-hidden={true}
                 focusable={false}
                 className='w-4 h-4 mr-2'
@@ -207,10 +212,10 @@ function PageAction({
       {estARealiser && (
         <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-l mb-8'>
           <IconComponent
-            name={IconName.Clock}
+            name={IconName.Schedule}
             aria-hidden='true'
             focusable='false'
-            className='h-5 w-5 mr-1 stroke-accent_2'
+            className='h-5 w-5 mr-1 fill-accent_2'
           />
           <span>
             À réaliser pour le : <b>{dateEcheance}</b>
@@ -249,7 +254,7 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI) {
+  if (estUserPoleEmploi(user)) {
     return { notFound: true }
   }
   const { jeune_id, action_id } = context.query

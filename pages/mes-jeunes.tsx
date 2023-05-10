@@ -11,9 +11,9 @@ import Button from 'components/ui/Button/Button'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
 import {
+  estUserPoleEmploi,
   estMilo,
   estPoleEmploi,
-  StructureConseiller,
 } from 'interfaces/conseiller'
 import {
   compareJeunesByNom,
@@ -136,7 +136,9 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
       })
   }, [chatCredentials, conseillerJeunes, messagesService])
 
-  useMatomo(trackingTitle)
+  const adesBeneficiaires = conseillerJeunes.length === 0 ? 'non' : 'oui'
+
+  useMatomo(trackingTitle, adesBeneficiaires)
 
   return (
     <>
@@ -172,7 +174,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
               className='w-[360px] h-[200px] mb-16'
             />
             <p className='text-base-bold mb-12'>
-              Vous n&apos;avez pas encore intégré de jeunes.
+              Vous n&apos;avez pas encore intégré de bénéficiaires.
             </p>
           </div>
         )}
@@ -218,7 +220,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   )
 
   let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
-  if (user.structure === StructureConseiller.POLE_EMPLOI) {
+  if (estUserPoleEmploi(user)) {
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
       ...jeune,
       nbActionsNonTerminees: 0,

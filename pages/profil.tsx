@@ -1,21 +1,33 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import React, { ChangeEvent, useState } from 'react'
 
 import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
 import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
 
+import QrcodeAppStoreBRSA from 'assets/images/qrcode_app_store_brsa.svg'
+import QrcodePlayStoreBRSA from 'assets/images/qrcode_play_store_brsa.svg'
+import ConfirmationDeleteConseillerModal from 'components/ConfirmationDeleteConseillerModal'
+import ConfirmationSuppressionCompteConseillerModal from 'components/ConfirmationSuppressionCompteConseillerModal'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
 } from 'components/RenseignementAgenceMissionLocaleForm'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { estMilo, StructureConseiller } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estPoleEmploiBRSA,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
+import { textesBRSA, textesCEJ } from 'lang/textes'
 import { ConseillerService } from 'services/conseiller.service'
+import { JeunesService } from 'services/jeunes.service'
 import { ReferentielService } from 'services/referentiel.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -31,12 +43,23 @@ type ProfilProps = PageProps & {
 function Profil({ referentielAgences }: ProfilProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
+  const jeunesService = useDependance<JeunesService>('jeunesService')
 
+  const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
-  const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
   const conseillerEstMilo = estMilo(conseiller)
+  const [showModaleSuppressionCompte, setShowModaleSuppressionCompte] =
+    useState(false)
+  const [
+    showModaleConfirmationSuppression,
+    setShowModaleConfirmationSuppression,
+  ] = useState(false)
+  const [portefeuilleAvecBeneficiaires, setPortefeuilleAvecBeneficiaires] =
+    useState<boolean>(false)
+
   const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
+  const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
 
   async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
     const conseillerMisAJour = {
@@ -57,6 +80,34 @@ function Profil({ referentielAgences }: ProfilProps) {
     await conseillerService.modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel('Profil - Succès ajout agence')
+  }
+
+  function openDeleteConseillerModal(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    setShowModaleSuppressionCompte(true)
+    if (conseiller) {
+      jeunesService.getJeunesDuConseillerClientSide().then((beneficiaires) => {
+        Boolean(beneficiaires.length > 0)
+          ? setPortefeuilleAvecBeneficiaires(true)
+          : setPortefeuilleAvecBeneficiaires(false)
+      })
+    }
+  }
+
+  async function supprimerCompteConseiller(): Promise<void> {
+    try {
+      await conseillerService.supprimerConseiller(conseiller.id)
+      setShowModaleSuppressionCompte(false)
+      setTimeout(async () => {
+        setShowModaleConfirmationSuppression(true)
+      }, 10)
+      setTimeout(async () => {
+        await router.push('/api/auth/federated-logout')
+      }, 3000)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   function trackContacterSupportClick() {
@@ -99,6 +150,35 @@ function Profil({ referentielAgences }: ProfilProps) {
           )}
         </dl>
 
+        {process.env.ENABLE_PE_BRSA_SSO && !conseillerEstMilo && (
+          <Button
+            className='mt-4'
+            onClick={openDeleteConseillerModal}
+            style={ButtonStyle.TERTIARY}
+          >
+            <IconComponent
+              name={IconName.Delete}
+              focusable={false}
+              aria-hidden={true}
+              className='mr-2 w-4 h-4'
+            />
+            Supprimer mon compte
+          </Button>
+        )}
+
+        {showModaleSuppressionCompte && (
+          <ConfirmationDeleteConseillerModal
+            conseiller={conseiller}
+            onConfirmation={supprimerCompteConseiller}
+            onCancel={() => setShowModaleSuppressionCompte(false)}
+            portefeuilleAvecBeneficiaires={portefeuilleAvecBeneficiaires}
+          />
+        )}
+
+        {showModaleConfirmationSuppression && (
+          <ConfirmationSuppressionCompteConseillerModal />
+        )}
+
         {conseillerEstMilo && (
           <>
             {conseiller.agence && (
@@ -114,7 +194,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                     <ExternalLink
                       href={'mailto:' + process.env.SUPPORT_MAIL}
                       label={'contacter le support'}
-                      iconName={IconName.Email}
+                      iconName={IconName.OutgoingMail}
                       onClick={trackContacterSupportClick}
                     />
                   </span>
@@ -153,34 +233,63 @@ function Profil({ referentielAgences }: ProfilProps) {
 
       <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
         <h2 className='text-m-bold text-grey_800 mb-4'>
-          Application CEJ jeune - mode démo
+          {estPoleEmploiBRSA(conseiller) && textesBRSA.profilTitreSection3}
+          {!estPoleEmploiBRSA(conseiller) && textesCEJ.profilTitreSection3}
         </h2>
-        <p className='mb-4'>
-          Le mode démo vous permet de visualiser l’application CEJ utilisée par
-          vos bénéficiaires.
-        </p>
-        <p className='mb-4'>
-          Pour accéder au mode démo, vous devez télécharger l’application sur le
-          store de votre choix, l’ouvrir puis
-          <b> appuyer 3 fois sur le logo </b>“Contrat d’Engagement Jeune”
-          visible sur la page de connexion.
-        </p>
+        {estPoleEmploiBRSA(conseiller) && (
+          <p className='mb-4'>{textesBRSA.introModeDemoTexte}</p>
+        )}
+        {!estPoleEmploiBRSA(conseiller) && (
+          <p className='mb-4'>{textesCEJ.introModeDemoTexte}</p>
+        )}
+        {estPoleEmploiBRSA(conseiller) && (
+          <p className='mb-4'>
+            Pour accéder au mode démo, vous devez télécharger l’application sur
+            le store de votre choix, l’ouvrir puis
+            <strong> appuyer 3 fois sur le logo </strong>“pass emploi” visible
+            sur la page de connexion.
+          </p>
+        )}
+        {!estPoleEmploiBRSA(conseiller) && (
+          <p className='mb-4'>
+            Pour accéder au mode démo, vous devez télécharger l’application sur
+            le store de votre choix, l’ouvrir puis
+            <strong> appuyer 3 fois sur le logo </strong>“Contrat d’Engagement
+            Jeune” visible sur la page de connexion.
+          </p>
+        )}
         <p>
           L’application est disponible sur Google Play Store et sur l’App Store.
         </p>
         <div className='flex justify-evenly mt-8'>
           <div className='flex flex-col items-center'>
-            <QrcodeAppStore
-              focusable='false'
-              aria-label='QR code pour l’App Store'
-            />
+            {estPoleEmploiBRSA(conseiller) && (
+              <QrcodeAppStoreBRSA
+                focusable='false'
+                aria-label='QR code pour l’App Store'
+              />
+            )}
+            {!estPoleEmploiBRSA(conseiller) && (
+              <QrcodeAppStore
+                focusable='false'
+                aria-label='QR code pour l’App Store'
+              />
+            )}
             <p className='text-s-bold'>App Store</p>
           </div>
           <div className='flex flex-col items-center'>
-            <QrcodePlayStore
-              focusable='false'
-              aria-label='QR code pour Google Play'
-            />
+            {estPoleEmploiBRSA(conseiller) && (
+              <QrcodePlayStoreBRSA
+                focusable='false'
+                aria-label='QR code pour l’App Store'
+              />
+            )}
+            {!estPoleEmploiBRSA(conseiller) && (
+              <QrcodePlayStore
+                focusable='false'
+                aria-label='QR code pour Google Play'
+              />
+            )}
             <p className='text-s-bold'>Google Play</p>
           </div>
         </div>
@@ -193,7 +302,7 @@ function Email(props: { email: string }) {
   return (
     <span className='text-primary'>
       <IconComponent
-        name={IconName.Email}
+        name={IconName.OutgoingMail}
         aria-hidden={true}
         focusable={false}
         className='inline w-4 h-4 mr-2 fill-primary'

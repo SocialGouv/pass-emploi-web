@@ -14,7 +14,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
 import {
   estAClore,
   estClos,
@@ -240,7 +240,7 @@ function EditionRdv({
               label={`Supprimer l’événement du ${evenement.date}`}
             >
               <IconComponent
-                name={IconName.Trashcan}
+                name={IconName.Delete}
                 aria-hidden='true'
                 focusable='false'
                 className='mr-2 w-4 h-4'
@@ -259,7 +259,7 @@ function EditionRdv({
               )}`}
             >
               <IconComponent
-                name={IconName.Clipboard}
+                name={IconName.Description}
                 aria-hidden={true}
                 focusable={false}
                 className='mr-2 w-4 h-4'
@@ -433,7 +433,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (user.structure === StructureConseiller.POLE_EMPLOI)
+  if (estUserPoleEmploi(user))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }

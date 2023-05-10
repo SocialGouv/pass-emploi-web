@@ -1,4 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
@@ -6,12 +7,14 @@ import React, { FormEvent, useState } from 'react'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
+import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
+import { ValueWithError } from 'components/ValueWithError'
 import { ActionPredefinie } from 'interfaces/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -20,6 +23,7 @@ import { ReferentielService } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { dateIsInInterval } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -39,10 +43,15 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     personnalisee: 'personnalisée',
   }
   const [currentTab, setCurrentTab] = useState<Tab>('predefinie')
-  const [intitule, setIntitule] = useState<string>('')
+  const [intitule, setIntitule] = useState<ValueWithError<string | undefined>>({
+    value: undefined,
+  })
   const [commentaire, setDescription] = useState<string>('')
-  const [dateEcheance, setDateEcheance] = useState<string>('')
+  const [dateEcheance, setDateEcheance] = useState<
+    ValueWithError<string | undefined>
+  >({ value: undefined })
   const INPUT_MAX_LENGTH = 250
+  const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
 
   const [trackingTitle, setTrackingTitle] = useState<string>(
     `Actions jeune – Création action ${tabsLabel[currentTab]}`
@@ -51,6 +60,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   function switchTab() {
     const newTab = currentTab === 'predefinie' ? 'personnalisee' : 'predefinie'
     setCurrentTab(newTab)
+    setIntitule({ value: intitule?.value })
     setTrackingTitle(`Actions jeune – Création action ${tabsLabel[currentTab]}`)
   }
 
@@ -59,7 +69,53 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   }
 
   function formulaireEstValide(): boolean {
-    return Boolean(intitule) && Boolean(dateEcheance)
+    return Boolean(intitule.value) && dateIsValid()
+  }
+
+  function dateIsValid(): boolean {
+    return Boolean(dateEcheance.value && regexDate.test(dateEcheance.value))
+  }
+
+  function intituleEstValide() {
+    if (intitule.value === undefined) {
+      setIntitule({
+        ...intitule,
+        error: `${
+          currentTab === 'predefinie'
+            ? 'Le champ “Action prédéfinie" est vide. Renseignez une action.'
+            : 'Le champ “Titre de l’action" est vide. Renseignez un titre.'
+        }`,
+      })
+    }
+    return Boolean(intitule.value)
+  }
+
+  function dateEcheanceEstValide() {
+    const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
+    const deuxAnsApres = DateTime.now().plus({ year: 2 })
+
+    if (
+      dateEcheance.value &&
+      !dateIsInInterval(
+        DateTime.fromFormat(dateEcheance.value, 'yyyy-MM-dd'),
+        unAnAvant,
+        deuxAnsApres
+      )
+    ) {
+      setDateEcheance({
+        ...dateEcheance,
+        error: `Le champ “Date d’échéance” est invalide. Le date attendue est comprise entre le ${unAnAvant.toFormat(
+          'dd/MM/yyyy'
+        )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`,
+      })
+    } else if (!dateIsValid()) {
+      setDateEcheance({
+        ...dateEcheance,
+        error:
+          'Le champ “Date d’échéance” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.',
+      })
+    }
+    return Boolean(intitule.value)
   }
 
   async function creerAction(e: FormEvent) {
@@ -67,9 +123,9 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     if (!formulaireEstValide()) return
 
     const action = {
-      intitule,
+      intitule: intitule.value!,
       commentaire,
-      dateEcheance,
+      dateEcheance: dateEcheance.value!,
     }
     await actionsService.createAction(action, idJeune)
     setAlerte(AlerteParam.creationAction)
@@ -105,12 +161,21 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
             className='mt-5'
           >
             <Label htmlFor='intitule-action-predefinie' inputRequired={true}>
-              Choisir une action prédéfinie
+              {{
+                main: 'Action prédéfinie',
+                helpText: 'Sélectionner dans la liste',
+              }}
             </Label>
+            {intitule.error && (
+              <InputError id='intitule--error' className='mb-2'>
+                {intitule.error}
+              </InputError>
+            )}
             <Select
               id='intitule-action-predefinie'
               required={true}
-              onChange={setIntitule}
+              onChange={(value: string) => setIntitule({ value })}
+              onBlur={intituleEstValide}
             >
               {actionsPredefinies.map(({ id, titre }) => (
                 <option key={id}>{titre}</option>
@@ -121,7 +186,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               htmlFor='commentaire-action-predefinie'
               withBulleMessageSensible={true}
             >
-              Description de l&apos;action
+              Commentaire
             </Label>
             <Textarea
               id='commentaire-action-predefinie'
@@ -134,14 +199,20 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               htmlFor='date-echeance-action-predefinie'
               inputRequired={true}
             >
-              Définir une date d’échéance
+              Date d’échéance
             </Label>
+            {dateEcheance.error && (
+              <InputError id='date-echeance--error' className='mb-2'>
+                {dateEcheance.error}
+              </InputError>
+            )}
             <Input
               type='date'
               id='date-echeance-action-predefinie'
               required={true}
-              defaultValue={dateEcheance}
-              onChange={setDateEcheance}
+              defaultValue={dateEcheance.value}
+              onChange={(value: string) => setDateEcheance({ value })}
+              onBlur={dateEcheanceEstValide}
             />
           </div>
         )}
@@ -155,20 +226,26 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
             className='mt-5'
           >
             <Label htmlFor='intitule-action-personnalisee' inputRequired={true}>
-              Intitulé de l&apos;action
+              Titre de l&apos;action
             </Label>
+            {intitule.error && (
+              <InputError id='intitule--error' className='mb-2'>
+                {intitule.error}
+              </InputError>
+            )}
             <Input
               type='text'
               id='intitule-action-personnalisee'
               required={true}
-              onChange={setIntitule}
+              onChange={(value: string) => setIntitule({ value })}
+              onBlur={intituleEstValide}
             />
 
             <Label
               htmlFor='commentaire-action-personnalisee'
               withBulleMessageSensible={true}
             >
-              Description de l&apos;action
+              Commentaire
             </Label>
             <Textarea
               id='commentaire-action-personnalisee'
@@ -181,14 +258,20 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               htmlFor='date-echeance-action-personnalisee'
               inputRequired={true}
             >
-              Définir une date d’échéance
+              Date d’échéance
             </Label>
+            {dateEcheance.error && (
+              <InputError id='date-echeance--error' className='mb-2'>
+                {dateEcheance.error}
+              </InputError>
+            )}
             <Input
               type='date'
               id='date-echeance-action-personnalisee'
               required={true}
-              defaultValue={dateEcheance}
-              onChange={setDateEcheance}
+              defaultValue={dateEcheance.value}
+              onChange={(value: string) => setDateEcheance({ value })}
+              onBlur={dateEcheanceEstValide}
             />
           </div>
         )}

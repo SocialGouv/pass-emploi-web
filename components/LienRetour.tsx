@@ -27,7 +27,7 @@ export default function LienRetour({ returnUrlOrPath }: LienRetourProps) {
         className='flex items-center text-s-regular text-content_color underline hover:text-primary_darken'
       >
         <IconComponent
-          name={IconName.ArrowLeft}
+          name={IconName.ArrowBackward}
           aria-hidden={true}
           focusable={false}
           className='w-4 h-4 fill-[currentColor] mr-3'

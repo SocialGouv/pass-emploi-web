@@ -85,7 +85,7 @@ export default function OffreEmploiDetail({
                 <dd className='mt-6'>
                   <DataTag
                     text={offre.localisation}
-                    iconName={IconName.Location}
+                    iconName={IconName.LocationOn}
                   />
                 </dd>
               </>
@@ -95,7 +95,7 @@ export default function OffreEmploiDetail({
             <dd className='mt-2'>
               <DataTag
                 text={offre.typeContratLibelle}
-                iconName={IconName.Contrat}
+                iconName={IconName.Contract}
               />
             </dd>
 
@@ -112,7 +112,7 @@ export default function OffreEmploiDetail({
               <>
                 <dt className='sr-only'>Horaires</dt>
                 <dd className='mt-2'>
-                  <DataTag text={offre.horaires} iconName={IconName.Clock} />
+                  <DataTag text={offre.horaires} iconName={IconName.Schedule} />
                 </dd>
               </>
             )}
@@ -168,7 +168,7 @@ export default function OffreEmploiDetail({
                     {offre.experience.libelle}
                     {offre.experience.exigee && (
                       <IconComponent
-                        name={IconName.Important}
+                        name={IconName.Error}
                         title='Expérience exigée'
                         aria-label='Expérience exigée'
                         focusable={false}

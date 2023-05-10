@@ -10,7 +10,9 @@ import { BlocFavoris } from 'components/jeune/BlocFavoris'
 import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
 import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
+import { TabFavoris } from 'components/jeune/TabFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
 import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -27,11 +29,12 @@ import {
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
+  estUserPoleEmploi,
   estMilo,
   estPoleEmploi,
-  StructureConseiller,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
+import { Offre, Recherche } from 'interfaces/favoris'
 import {
   DetailJeune,
   IndicateursSemaine,
@@ -44,6 +47,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { ActionsService } from 'services/actions.service'
 import { AgendaService } from 'services/agenda.service'
 import { EvenementsService } from 'services/evenements.service'
+import { FavorisService } from 'services/favoris.service'
 import { JeunesService } from 'services/jeunes.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
@@ -82,6 +86,8 @@ interface FicheJeuneProps extends PageProps {
   lectureSeule?: boolean
   metadonneesFavoris?: MetadonneesFavoris
   onglet?: Onglet
+  offresPE?: Offre[]
+  recherchesPE?: Recherche[]
 }
 
 function FicheJeune({
@@ -91,6 +97,8 @@ function FicheJeune({
   metadonneesFavoris,
   onglet,
   lectureSeule,
+  offresPE,
+  recherchesPE,
 }: FicheJeuneProps) {
   const actionsService = useDependance<ActionsService>('actionsService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -152,6 +160,7 @@ function FicheJeune({
     initialTracking += ' - Succès creation action'
   if (alerte?.key === AlerteParam.envoiMessage)
     initialTracking += ' - Succès envoi message'
+
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   const totalFavoris = metadonneesFavoris
@@ -294,7 +303,7 @@ function FicheJeune({
         <PageActionsPortal>
           <Button onClick={openDeleteJeuneModal} style={ButtonStyle.SECONDARY}>
             <IconComponent
-              name={IconName.Trashcan}
+              name={IconName.Delete}
               focusable={false}
               aria-hidden={true}
               className='mr-2 w-4 h-4'
@@ -329,7 +338,7 @@ function FicheJeune({
       {jeune.isReaffectationTemporaire && (
         <div className='mb-6'>
           <InformationMessage
-            iconName={IconName.Clock}
+            iconName={IconName.Schedule}
             label='Ce bénéficiaire a été ajouté temporairement à votre portefeuille en attendant le retour de son conseiller initial.'
           />
         </div>
@@ -407,105 +416,131 @@ function FicheJeune({
               </ButtonLink>
             </div>
           </div>
+
+          <TabList className='mt-10'>
+            <Tab
+              label='Agenda'
+              selected={currentTab === Onglet.AGENDA}
+              controls='agenda'
+              onSelectTab={() => switchTab(Onglet.AGENDA)}
+              iconName={IconName.EventFill}
+            />
+            <Tab
+              label='Actions'
+              count={!estPoleEmploi(conseiller) ? totalActions : undefined}
+              selected={currentTab === Onglet.ACTIONS}
+              controls='liste-actions'
+              onSelectTab={() => switchTab(Onglet.ACTIONS)}
+              iconName={IconName.ChecklistRtlFill}
+            />
+            <Tab
+              label='Rendez-vous'
+              count={!estPoleEmploi(conseiller) ? rdvs.length : undefined}
+              selected={currentTab === Onglet.RDVS}
+              controls='liste-rdvs'
+              onSelectTab={() => switchTab(Onglet.RDVS)}
+              iconName={IconName.EventFill}
+            />
+            {metadonneesFavoris && (
+              <Tab
+                label='Favoris'
+                count={totalFavoris}
+                selected={currentTab === Onglet.FAVORIS}
+                controls='liste-favoris'
+                onSelectTab={() => switchTab(Onglet.FAVORIS)}
+                iconName={IconName.FavoriteFill}
+              />
+            )}
+          </TabList>
+
+          {currentTab === Onglet.AGENDA && (
+            <div
+              role='tabpanel'
+              aria-labelledby='agenda--tab'
+              tabIndex={0}
+              id='agenda'
+              className='mt-8 pb-8 border-b border-primary_lighten'
+            >
+              <OngletAgendaBeneficiaire
+                idBeneficiaire={jeune.id}
+                recupererAgenda={recupererAgenda}
+                goToActions={() => switchTab(Onglet.ACTIONS)}
+              />
+            </div>
+          )}
+
+          {currentTab === Onglet.RDVS && (
+            <div
+              role='tabpanel'
+              aria-labelledby='liste-rdvs--tab'
+              tabIndex={0}
+              id='liste-rdvs'
+              className='mt-8 pb-8 border-b border-primary_lighten'
+            >
+              <OngletRdvsBeneficiaire
+                conseiller={conseiller}
+                beneficiaire={jeune}
+                rdvs={rdvs}
+              />
+            </div>
+          )}
+          {currentTab === Onglet.ACTIONS && (
+            <div
+              role='tabpanel'
+              aria-labelledby='liste-actions--tab'
+              tabIndex={0}
+              id='liste-actions'
+              className='mt-8 pb-8'
+            >
+              <OngletActions
+                conseiller={conseiller}
+                jeune={jeune}
+                actionsInitiales={actionsInitiales}
+                getActions={chargerActions}
+              />
+            </div>
+          )}
+          {currentTab === Onglet.FAVORIS && metadonneesFavoris && (
+            <div
+              role='tabpanel'
+              aria-labelledby='liste-favoris--tab'
+              tabIndex={0}
+              id='liste-favoris'
+              className='mt-8 pb-8'
+            >
+              <BlocFavoris
+                idJeune={jeune.id}
+                metadonneesFavoris={metadonneesFavoris}
+              />
+            </div>
+          )}
         </>
       )}
 
-      <TabList className='mt-10'>
-        <Tab
-          label='Agenda'
-          selected={currentTab === Onglet.AGENDA}
-          controls='agenda'
-          onSelectTab={() => switchTab(Onglet.AGENDA)}
-          iconName={IconName.Calendar}
-        />
-        <Tab
-          label='Actions'
-          count={!estPoleEmploi(conseiller) ? totalActions : undefined}
-          selected={currentTab === Onglet.ACTIONS}
-          controls='liste-actions'
-          onSelectTab={() => switchTab(Onglet.ACTIONS)}
-          iconName={IconName.Actions}
-        />
-        <Tab
-          label='Rendez-vous'
-          count={!estPoleEmploi(conseiller) ? rdvs.length : undefined}
-          selected={currentTab === Onglet.RDVS}
-          controls='liste-rdvs'
-          onSelectTab={() => switchTab(Onglet.RDVS)}
-          iconName={IconName.Calendar}
-        />
-        {metadonneesFavoris && (
-          <Tab
-            label='Favoris'
-            count={totalFavoris}
-            selected={currentTab === Onglet.FAVORIS}
-            controls='liste-favoris'
-            onSelectTab={() => switchTab(Onglet.FAVORIS)}
-            iconName={IconName.Favorite}
-          />
-        )}
-      </TabList>
-
-      {currentTab === Onglet.AGENDA && (
-        <div
-          role='tabpanel'
-          aria-labelledby='agenda--tab'
-          tabIndex={0}
-          id='agenda'
-          className='mt-8 pb-8 border-b border-primary_lighten'
-        >
-          <OngletAgendaBeneficiaire
-            idBeneficiaire={jeune.id}
-            recupererAgenda={recupererAgenda}
-            goToActions={() => switchTab(Onglet.ACTIONS)}
-          />
-        </div>
-      )}
-
-      {currentTab === Onglet.RDVS && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-rdvs--tab'
-          tabIndex={0}
-          id='liste-rdvs'
-          className='mt-8 pb-8 border-b border-primary_lighten'
-        >
-          <OngletRdvsBeneficiaire
-            conseiller={conseiller}
-            beneficiaire={jeune}
-            rdvs={rdvs}
-          />
-        </div>
-      )}
-      {currentTab === Onglet.ACTIONS && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-actions--tab'
-          tabIndex={0}
-          id='liste-actions'
-          className='mt-8 pb-8'
-        >
-          <OngletActions
-            conseiller={conseiller}
-            jeune={jeune}
-            actionsInitiales={actionsInitiales}
-            getActions={chargerActions}
-          />
-        </div>
-      )}
-      {currentTab === Onglet.FAVORIS && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-favoris--tab'
-          tabIndex={0}
-          id='liste-favoris'
-          className='mt-8 pb-8'
-        >
-          <BlocFavoris
-            idJeune={jeune.id}
-            metadonneesFavoris={metadonneesFavoris!}
-          />
-        </div>
+      {estPoleEmploi(conseiller) && (
+        <>
+          {metadonneesFavoris?.autoriseLePartage &&
+            offresPE &&
+            recherchesPE && (
+              <>
+                <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
+                <p className='text-base-regular'>
+                  Retrouvez les offres et recherches que votre bénéficiaire a
+                  mises en favoris.
+                </p>
+                <TabFavoris
+                  offres={offresPE}
+                  recherches={recherchesPE}
+                  lectureSeule={lectureSeule}
+                />
+              </>
+            )}
+          {metadonneesFavoris && !metadonneesFavoris?.autoriseLePartage && (
+            <ResumeFavorisBeneficiaire
+              metadonneesFavoris={metadonneesFavoris}
+            />
+          )}
+        </>
       )}
 
       {showModaleDeleteJeuneActif && (
@@ -539,37 +574,51 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const jeunesService = withDependance<JeunesService>('jeunesService')
   const rendezVousService =
     withDependance<EvenementsService>('evenementsService')
+  const favorisService = withDependance<FavorisService>('favorisService')
   const actionsService = withDependance<ActionsService>('actionsService')
   const {
     session: { accessToken, user },
   } = sessionOrRedirect
 
-  const userIsPoleEmploi = user.structure === StructureConseiller.POLE_EMPLOI
+  const userIsPoleEmploi = estUserPoleEmploi(user)
   const page = parseInt(context.query.page as string, 10) || 1
-  const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
-    jeunesService.getJeuneDetails(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    jeunesService.getMetadonneesFavorisJeune(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-    userIsPoleEmploi
-      ? []
-      : rendezVousService.getRendezVousJeune(
-          context.query.jeune_id as string,
-          PeriodeEvenements.FUTURS,
-          accessToken
-        ),
-    userIsPoleEmploi
-      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : actionsService.getActionsJeuneServerSide(
-          context.query.jeune_id as string,
-          page,
-          accessToken
-        ),
-  ])
+  const [jeune, metadonneesFavoris, rdvs, actions, offresPE, recherchesPE] =
+    await Promise.all([
+      jeunesService.getJeuneDetails(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      jeunesService.getMetadonneesFavorisJeune(
+        context.query.jeune_id as string,
+        accessToken
+      ),
+      userIsPoleEmploi
+        ? []
+        : rendezVousService.getRendezVousJeune(
+            context.query.jeune_id as string,
+            PeriodeEvenements.FUTURS,
+            accessToken
+          ),
+      userIsPoleEmploi
+        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+        : actionsService.getActionsJeuneServerSide(
+            context.query.jeune_id as string,
+            page,
+            accessToken
+          ),
+      userIsPoleEmploi
+        ? favorisService.getOffres(
+            context.query.jeune_id as string,
+            accessToken
+          )
+        : [],
+      userIsPoleEmploi
+        ? favorisService.getRecherchesSauvegardees(
+            context.query.jeune_id as string,
+            accessToken
+          )
+        : [],
+    ])
 
   if (!jeune) {
     return { notFound: true }
@@ -582,6 +631,8 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
+    offresPE,
+    recherchesPE,
   }
 
   if (context.query.onglet) {

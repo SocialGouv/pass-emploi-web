@@ -28,6 +28,7 @@ module.exports = {
       primary: '#3B69D1',
       primary_lighten: '#EEF1F8',
       primary_darken: '#274996',
+      primary_darken_brsa: '#172B5A',
       success: '#0D7F50',
       success_lighten: '#E5F6EF',
       success_darken: '#033C24',
@@ -104,8 +105,8 @@ module.exports = {
     extend: {
       backgroundImage: {
         // path relative to globals.css
-        clock: "url('../assets/icons/clock.svg')",
-        location: "url('../assets/icons/location_big.svg')",
+        clock: "url('../assets/icons/informations/schedule.svg')",
+        location: "url('../assets/icons/informations/location_on.svg')",
       },
     },
   },

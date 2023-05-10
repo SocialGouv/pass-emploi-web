@@ -165,7 +165,7 @@ export default function TableauJeunes({
     <>
       {sortedJeunes.length === 0 && (
         <p className='mt-32 text-base-bold text-center text-primary'>
-          Aucun jeune trouvé
+          Aucun bénéficiaire trouvé
         </p>
       )}
 
@@ -266,7 +266,7 @@ export default function TableauJeunes({
                     }`}
                   >
                     <span className='mr-1'>
-                      Messages non lus par les jeunes
+                      Messages non lus par les bénéficiaires
                     </span>
                     <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                   </button>
@@ -293,7 +293,7 @@ export default function TableauJeunes({
                           className='self-center mr-2'
                         >
                           <IconComponent
-                            name={IconName.Clock}
+                            name={IconName.Schedule}
                             aria-hidden={true}
                             focusable={false}
                             className='w-4 h-4'
