@@ -25,8 +25,8 @@ export default function NavLink({
 }: NavLinkProps) {
   const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start transition-all border-2  ${
     isActive
-      ? 'bg-primary_lighten border-blanc'
-      : 'border-primary hover:border-blanc'
+      ? 'bg-primary_lighten border-blanc text-base-bold'
+      : 'border-primary hover:border-blanc text-base-medium'
   }`
 
   const linkContent: JSX.Element = (
@@ -43,9 +43,9 @@ export default function NavLink({
           />
 
           <span
-            className={`text-base-medium text-left break-words ${
-              className ?? ''
-            } ${isActive ? 'text-primary' : 'text-blanc'}`}
+            className={`text-left break-words ${className ?? ''} ${
+              isActive ? 'text-primary' : 'text-blanc'
+            }`}
           >
             {label}
           </span>
@@ -64,7 +64,7 @@ export default function NavLink({
           />
 
           <span
-            className={`text-base-medium text-left sr-only layout_l:not-sr-only break-words ${
+            className={`text-left sr-only layout_l:not-sr-only break-words ${
               className ?? ''
             } ${isActive ? 'text-primary' : 'text-blanc'}`}
           >
