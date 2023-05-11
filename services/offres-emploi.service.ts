@@ -8,7 +8,7 @@ import {
   jsonToOffreEmploiItem,
   OffreEmploiItemJson,
 } from 'interfaces/json/offre-emploi'
-import { BaseOffreEmploi, DetailOffreEmploi, TypeOffre } from 'interfaces/offre'
+import { BaseOffreEmploi, DetailOffreEmploi } from 'interfaces/offre'
 import { Commune, Departement } from 'interfaces/referentiel'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
@@ -78,7 +78,6 @@ export class OffresEmploiApiService implements OffresEmploiService {
     return this.searchOffres({
       recherche,
       page,
-      // filtreOffres: FiltreOffres.EMPLOI, // TODO  retirer et mettre dans searchOffres pour appliquer le filtre en fonction de la structure conseiller
     })
   }
 
@@ -115,7 +114,7 @@ export class OffresEmploiApiService implements OffresEmploiService {
   private async searchOffres({
     recherche,
     page,
-    filtreOffres = null,
+    filtreOffres,
   }: {
     recherche: SearchOffresEmploiQuery
     page: number
