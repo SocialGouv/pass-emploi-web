@@ -50,11 +50,11 @@ export default function renderWithContexts(
       alerte: Alerte
       alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     }>
-    customShowRubriqueListeDeDiffusion: Partial<{
+    customShowRubriqueListeDeDiffusion?: Partial<{
       value: boolean | undefined
       setter: (showRubriqueListeDeDiffusion: boolean | undefined) => void
     }>
-    customListeDeDiffusionSelectionnee: Partial<{
+    customListeDeDiffusionSelectionnee?: Partial<{
       value: ListeDeDiffusion | undefined
       setter: (
         listeDeDiffusionSelectionnee: ListeDeDiffusion | undefined
