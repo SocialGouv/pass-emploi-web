@@ -151,7 +151,7 @@ export default function NavLinks({
           />
         )}
 
-        {estPoleEmploi(conseiller) && items.includes(NavItem.Messagerie) && (
+        {!estMilo(conseiller) && items.includes(NavItem.Messagerie) && (
           <NavLink
             iconName={
               isCurrentRoute('/messagerie')

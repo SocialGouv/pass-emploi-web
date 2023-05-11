@@ -32,14 +32,12 @@ type ConversationProps = {
   conseillers: ConseillerHistorique[]
   jeuneChat: JeuneChat
   onBack: () => void
-  pageEstMessagerie?: boolean
 }
 
 export default function Conversation({
   jeuneChat,
   conseillers,
   onBack,
-  pageEstMessagerie,
 }: ConversationProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
   const fichiersService = useDependance<FichiersService>('fichiersService')
@@ -233,11 +231,7 @@ export default function Conversation({
   }, [jeuneChat.chatId])
 
   return (
-    <div
-      className={`h-full flex flex-col bg-grey_100 ${
-        pageEstMessagerie ? 'px-6' : ''
-      }`}
-    >
+    <div className='h-full flex flex-col bg-grey_100'>
       <HeaderChat
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'

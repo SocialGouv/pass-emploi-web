@@ -99,7 +99,7 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Messagerie')).toThrow()
   })
 
-  it('affiche le lien de Messagerie lorsque le conseiller est Pôle emploi', () => {
+  it('affiche le lien de Messagerie lorsque le conseiller n’est pas MILO (PE, BRSA, Pass emploi)', () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 

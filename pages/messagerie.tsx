@@ -129,12 +129,13 @@ function Messagerie(_: PageProps) {
           )}
 
           {currentChat && (
-            <Conversation
-              onBack={() => setIdCurrentJeune(undefined)}
-              jeuneChat={currentChat}
-              conseillers={conseillers}
-              pageEstMessagerie={true}
-            />
+            <div className='px-6 bg-grey_100'>
+              <Conversation
+                onBack={() => setIdCurrentJeune(undefined)}
+                jeuneChat={currentChat}
+                conseillers={conseillers}
+              />
+            </div>
           )}
         </>
       )}
@@ -251,7 +252,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 
   const props: PageProps = {
     pageTitle: 'Messagerie',
-    pageHeader: 'Messagerie',
   }
 
   return { props }

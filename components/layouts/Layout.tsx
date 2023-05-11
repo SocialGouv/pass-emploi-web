@@ -90,7 +90,7 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [conseiller])
 
-  const pageCouranteEstMessagerie = () => router.pathname === '/messagerie'
+  const pageCouranteEstMessagerie = router.pathname === '/messagerie'
 
   return (
     <>
@@ -101,7 +101,7 @@ export default function Layout({ children }: LayoutProps) {
         <ListeDeDiffusionSelectionneeProvider>
           {conseiller && portefeuille && (
             <>
-              {!pageCouranteEstMessagerie() && (
+              {!pageCouranteEstMessagerie && (
                 <div
                   ref={containerRef}
                   className={`${styles.container} ${
@@ -142,7 +142,7 @@ export default function Layout({ children }: LayoutProps) {
                 </div>
               )}
 
-              {pageCouranteEstMessagerie() && (
+              {pageCouranteEstMessagerie && (
                 <div
                   ref={containerRef}
                   className={`${styles.container} ${styles.messagerie_full_screen}`}
@@ -163,7 +163,6 @@ export default function Layout({ children }: LayoutProps) {
                       <AlerteDisplayer />
                       {children}
                     </main>
-
                     <Footer />
                   </div>
                 </div>

@@ -102,7 +102,6 @@ export default function renderWithContexts(
 
   const showRubriqueListeDeDiffusion = { ...customShowRubriqueListeDeDiffusion }
   const listeDeDiffusionSelectionnee = { ...customListeDeDiffusionSelectionnee }
-
   const withContexts = (element: JSX.Element) =>
     provideContexts(
       element,

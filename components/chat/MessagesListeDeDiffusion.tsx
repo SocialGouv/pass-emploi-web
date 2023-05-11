@@ -56,10 +56,7 @@ export default function MessagesListeDeDiffusion({
 
           <div className='hidden layout_s:block w-fit ml-4 mb-8'>
             <ButtonLink
-              href={
-                '/mes-jeunes/listes-de-diffusion/edition-liste?idListe=' +
-                liste.id
-              }
+              href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
               style={ButtonStyle.TERTIARY}
               className='mr-auto'
             >
