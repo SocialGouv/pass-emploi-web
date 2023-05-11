@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import Conversation from 'components/chat/Conversation'
+import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
+import HeaderListeListesDeDiffusion from 'components/messagerie/HeaderListeListesDeDiffusion'
 import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -11,13 +13,19 @@ import { JeunesService } from 'services/jeunes.service'
 import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
 import styles from 'styles/components/Layouts.module.css'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
+import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
+import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { useDependance } from 'utils/injectionDependances'
 
 interface ChatContainerProps {
   jeunesChats: JeuneChat[] | undefined
+  messagerieFullScreen?: boolean
 }
 
-export default function ChatContainer({ jeunesChats }: ChatContainerProps) {
+export default function ChatContainer({
+  jeunesChats,
+  messagerieFullScreen,
+}: ChatContainerProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
     'listesDeDiffusionService'
@@ -28,9 +36,10 @@ export default function ChatContainer({ jeunesChats }: ChatContainerProps) {
     undefined
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
+  const [, setListeSelectionnee] = useListeDeDiffusionSelectionnee()
 
   const [showRubriqueListesDeDiffusion, setShowRubriqueListesDeDiffusion] =
-    useState<boolean>(false)
+    useShowRubriqueListeDeDiffusion()
   const [listesDeDiffusion, setListesDeDiffusion] =
     useState<ListeDeDiffusion[]>()
 
@@ -74,32 +83,66 @@ export default function ChatContainer({ jeunesChats }: ChatContainerProps) {
   return (
     <>
       <aside className={styles.chatRoom}>
-        {currentChat && (
-          <Conversation
-            onBack={() => setIdCurrentJeune(undefined)}
-            jeuneChat={currentChat}
-            conseillers={conseillers}
-          />
+        {messagerieFullScreen && (
+          <>
+            {showRubriqueListesDeDiffusion && (
+              <>
+                <HeaderListeListesDeDiffusion
+                  onBack={() => {
+                    setShowRubriqueListesDeDiffusion(false)
+                    setListeSelectionnee(undefined)
+                  }}
+                />
+                <ListeListesDeDiffusion
+                  listesDeDiffusion={listesDeDiffusion}
+                  onAfficherListe={setListeSelectionnee}
+                  messagerieFullScreen={true}
+                />
+              </>
+            )}
+            {!showRubriqueListesDeDiffusion && (
+              <ChatRoom
+                jeunesChats={jeunesChats}
+                showMenu={showMenu}
+                onOuvertureMenu={() => setShowMenu(true)}
+                onAccesListesDiffusion={() =>
+                  setShowRubriqueListesDeDiffusion(true)
+                }
+                onAccesConversation={setIdCurrentJeune}
+              />
+            )}
+          </>
         )}
 
-        {showRubriqueListesDeDiffusion && (
-          <RubriqueListesDeDiffusion
-            listesDeDiffusion={listesDeDiffusion}
-            chats={jeunesChats}
-            onBack={() => setShowRubriqueListesDeDiffusion(false)}
-          />
-        )}
+        {!messagerieFullScreen && (
+          <>
+            {currentChat && (
+              <Conversation
+                onBack={() => setIdCurrentJeune(undefined)}
+                jeuneChat={currentChat}
+                conseillers={conseillers}
+              />
+            )}
+            {showRubriqueListesDeDiffusion && (
+              <RubriqueListesDeDiffusion
+                listesDeDiffusion={listesDeDiffusion}
+                chats={jeunesChats}
+                onBack={() => setShowRubriqueListesDeDiffusion(false)}
+              />
+            )}
 
-        {!currentChat && !showRubriqueListesDeDiffusion && (
-          <ChatRoom
-            jeunesChats={jeunesChats}
-            showMenu={showMenu}
-            onOuvertureMenu={() => setShowMenu(true)}
-            onAccesListesDiffusion={() =>
-              setShowRubriqueListesDeDiffusion(true)
-            }
-            onAccesConversation={setIdCurrentJeune}
-          />
+            {!currentChat && !showRubriqueListesDeDiffusion && (
+              <ChatRoom
+                jeunesChats={jeunesChats}
+                showMenu={showMenu}
+                onOuvertureMenu={() => setShowMenu(true)}
+                onAccesListesDiffusion={() =>
+                  setShowRubriqueListesDeDiffusion(true)
+                }
+                onAccesConversation={setIdCurrentJeune}
+              />
+            )}
+          </>
         )}
       </aside>
 

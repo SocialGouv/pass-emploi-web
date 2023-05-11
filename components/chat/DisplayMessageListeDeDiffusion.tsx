@@ -14,18 +14,24 @@ import {
 interface DisplayMessageListeDeDiffusionProps {
   message: MessageListeDiffusion
   onAfficherDetailMessage?: () => void
+  messagerieFullScreen?: boolean
 }
 
 export default function DisplayMessageListeDeDiffusion({
   message,
   onAfficherDetailMessage,
+  messagerieFullScreen,
 }: DisplayMessageListeDeDiffusionProps) {
   const creationTime = toFrenchFormat(message.creationDate, TIME_24_H_SEPARATOR)
   const a11yTime = toFrenchFormat(message.creationDate, TIME_24_A11Y_SEPARATOR)
 
   return (
     <>
-      <div className='text-base-regular break-words p-4 rounded-base text-content_color bg-blanc mb-1'>
+      <div
+        className={`text-base-regular break-words p-4 rounded-base text-content_color ${
+          messagerieFullScreen ? 'bg-grey_100' : 'bg-blanc'
+        } mb-1`}
+      >
         <TexteAvecLien texte={message.content} lighten={false} />
 
         {message.type === TypeMessage.MESSAGE_PJ &&
@@ -53,7 +59,7 @@ export default function DisplayMessageListeDeDiffusion({
         )}
       </div>
 
-      <p className='text-xs-medium text-content text-right'>
+      <p className='text-xs-medium text-content text-right mb-1'>
         <span aria-label={'Envoyé à ' + a11yTime}>Envoyé à {creationTime}</span>
       </p>
     </>

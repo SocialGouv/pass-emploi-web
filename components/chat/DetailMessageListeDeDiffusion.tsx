@@ -15,10 +15,12 @@ export function DetailMessageListeDeDiffusion({
   message,
   chats,
   onBack,
+  messagerieFullScreen,
 }: {
   message: MessageListeDiffusion
   chats: JeuneChat[] | undefined
   onBack: () => void
+  messagerieFullScreen?: boolean
 }) {
   const jeunesServices = useDependance<JeunesService>('jeunesService')
   const [destinataires, setDestinataires] = useState<JeuneChat[]>()
@@ -46,18 +48,23 @@ export function DetailMessageListeDeDiffusion({
 
   return (
     <>
-      <HeaderChat
-        titre='Détail du message'
-        labelRetour={'Retour aux messages de ma liste'}
-        onBack={onBack}
-      />
+      {!messagerieFullScreen && (
+        <HeaderChat
+          titre='Détail du message'
+          labelRetour={'Retour aux messages de ma liste'}
+          onBack={onBack}
+        />
+      )}
 
       <div className='px-4'>
         <div className='text-center mb-3'>
           Le {toShortDate(message.creationDate)}
         </div>
 
-        <DisplayMessageListeDeDiffusion message={message} />
+        <DisplayMessageListeDeDiffusion
+          message={message}
+          messagerieFullScreen={messagerieFullScreen}
+        />
 
         <span id='titre-liste-destinataires' className='sr-only'>
           Destinataires du message
@@ -77,7 +84,11 @@ export function DetailMessageListeDeDiffusion({
                 {aLuLeMessage(destinataire) ? 'Lu par ' : 'Non lu par '}
                 <div className='flex items-center'>
                   <IconComponent
-                    name={IconName.CheckCircleOutline}
+                    name={
+                      aLuLeMessage(destinataire)
+                        ? IconName.CheckCircleFill
+                        : IconName.CheckCircleOutline
+                    }
                     aria-hidden={true}
                     focusable={false}
                     className={`w-3 h-3 ${
