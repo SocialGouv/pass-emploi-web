@@ -129,7 +129,7 @@ function Messagerie(_: PageProps) {
           )}
 
           {currentChat && (
-            <div className='px-6 bg-grey_100'>
+            <div className='px-6 bg-grey_100 h-full'>
               <Conversation
                 onBack={() => setIdCurrentJeune(undefined)}
                 jeuneChat={currentChat}
