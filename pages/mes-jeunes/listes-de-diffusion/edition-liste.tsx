@@ -16,7 +16,7 @@ import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -62,8 +62,10 @@ function EditionListeDiffusion({
   const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
 
   function hasChanges(): boolean {
-    const previousIds = liste!.beneficiaires.map(({ id }) => id).sort()
-    const currentIds = [...idsBeneficiaires.value].sort()
+    const previousIds = liste!.beneficiaires
+      .map(({ id }) => id)
+      .sort(compareParId)
+    const currentIds = [...idsBeneficiaires.value].sort(compareParId)
     return (
       previousIds.toString() !== currentIds.toString() || liste!.titre !== titre
     )
