@@ -41,6 +41,7 @@ import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 interface EditionRdvProps extends PageProps {
   typesRendezVous: TypeEvenementReferentiel[]
@@ -527,8 +528,4 @@ function buildPropsCreationEvenement(
   if (idJeune) props.idJeune = idJeune
 
   return props
-}
-
-function redirectedFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/')
 }

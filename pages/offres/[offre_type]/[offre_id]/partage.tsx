@@ -31,6 +31,7 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 type PartageOffresProps = PageProps & {
   offre: DetailOffre
@@ -225,10 +226,6 @@ function getDefaultMessage(typeOffre: TypeOffre): string {
     case TypeOffre.ALTERNANCE:
       return "Bonjour, je vous partage une offre d'alternance qui pourrait vous intéresser."
   }
-}
-
-function redirectedFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/')
 }
 
 export default withTransaction(PartageOffre.name, 'page')(PartageOffre)

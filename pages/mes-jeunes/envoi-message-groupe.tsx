@@ -38,6 +38,7 @@ import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 interface EnvoiMessageGroupeProps extends PageProps {
   listesDiffusion: ListeDeDiffusion[]
@@ -379,7 +380,3 @@ export default withTransaction(
   EnvoiMessageGroupe.name,
   'page'
 )(EnvoiMessageGroupe)
-
-function redirectedFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/')
-}

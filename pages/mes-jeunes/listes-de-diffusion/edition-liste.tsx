@@ -30,6 +30,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 type EditionListeDiffusionProps = PageProps & {
   returnTo: string
@@ -301,7 +302,3 @@ export default withTransaction(
   EditionListeDiffusion.name,
   'page'
 )(EditionListeDiffusion)
-
-function redirectedFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/')
-}
