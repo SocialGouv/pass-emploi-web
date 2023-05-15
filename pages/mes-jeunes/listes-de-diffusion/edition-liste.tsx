@@ -266,10 +266,17 @@ export const getServerSideProps: GetServerSideProps<
     'listesDeDiffusionService'
   )
 
+  const referer: string | undefined = context.req.headers.referer
+
+  const previousUrl =
+    referer && !redirectedFromHome(referer)
+      ? referer
+      : '/mes-jeunes/listes-de-diffusion'
+
   const props: EditionListeDiffusionProps = {
     pageTitle: 'Créer - Listes de diffusion - Portefeuille',
     pageHeader: 'Créer une nouvelle liste',
-    returnTo: '/mes-jeunes/listes-de-diffusion',
+    returnTo: previousUrl,
     withoutChat: true,
   }
 
@@ -294,3 +301,7 @@ export default withTransaction(
   EditionListeDiffusion.name,
   'page'
 )(EditionListeDiffusion)
+
+function redirectedFromHome(referer: string): boolean {
+  return referer.split('?')[0].endsWith('/')
+}
