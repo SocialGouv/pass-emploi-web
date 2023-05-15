@@ -208,6 +208,10 @@ export function getNomJeuneComplet(j: BaseJeune): string {
   return `${j.nom} ${j.prenom}`
 }
 
+export function compareParId(idA: string, idB: string): number {
+  return idA.localeCompare(idB)
+}
+
 function comparerParMessageNonLu(a: JeuneChat, b: JeuneChat): number {
   if (a.seenByConseiller && !b.seenByConseiller) return 1
   if (!a.seenByConseiller && b.seenByConseiller) return -1
