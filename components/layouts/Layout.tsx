@@ -132,7 +132,7 @@ export default function Layout({ children }: LayoutProps) {
                       {children}
                     </main>
 
-                    <Footer />
+                    <Footer conseiller={conseiller} />
                   </div>
 
                   <ChatManager
@@ -163,7 +163,7 @@ export default function Layout({ children }: LayoutProps) {
                       <AlerteDisplayer />
                       {children}
                     </main>
-                    <Footer />
+                    <Footer conseiller={conseiller} />
                   </div>
                 </div>
               )}
