@@ -1,24 +1,27 @@
-import { render, screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import React from 'react'
 
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { unDossierMilo } from 'fixtures/milo'
 import getByDescriptionTerm from 'tests/querySelector'
+import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<DossierMilo', () => {
   describe("quand l'e-mail du jeune est renseigné", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       //GIVEN
       const dossier = unDossierMilo()
 
       //WHEN
-      render(
-        <DossierJeuneMilo
-          dossier={dossier}
-          onCreateCompte={jest.fn()}
-          erreurMessageHttpPassEmploi=''
-        />
-      )
+      await act(() => {
+        renderWithContexts(
+          <DossierJeuneMilo
+            dossier={dossier}
+            onCreateCompte={jest.fn()}
+            erreurMessageHttpPassEmploi=''
+          />
+        )
+      })
     })
 
     it("affiche les informations d'un dossier jeune avec e-mail", () => {
@@ -43,18 +46,20 @@ describe('<DossierMilo', () => {
   })
 
   describe("quand l'e-mail du jeune n'est pas renseigné", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       //GIVEN
       const dossier = unDossierMilo({ email: undefined })
 
       //WHEN
-      render(
-        <DossierJeuneMilo
-          dossier={dossier}
-          onCreateCompte={jest.fn()}
-          erreurMessageHttpPassEmploi=''
-        />
-      )
+      await act(() => {
+        renderWithContexts(
+          <DossierJeuneMilo
+            dossier={dossier}
+            onCreateCompte={jest.fn()}
+            erreurMessageHttpPassEmploi=''
+          />
+        )
+      })
     })
 
     it('le champ e-mail doit être vide', () => {

@@ -35,6 +35,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type ProfilProps = PageProps & {
   referentielAgences: Agence[]
@@ -47,6 +48,7 @@ function Profil({ referentielAgences }: ProfilProps) {
 
   const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
 
   const conseillerEstMilo = estMilo(conseiller)
   const [showModaleSuppressionCompte, setShowModaleSuppressionCompte] =
@@ -60,6 +62,7 @@ function Profil({ referentielAgences }: ProfilProps) {
 
   const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
   const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
     const conseillerMisAJour = {
@@ -119,7 +122,7 @@ function Profil({ referentielAgences }: ProfilProps) {
     })
   }
 
-  useMatomo(trackingLabel)
+  useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
     <>

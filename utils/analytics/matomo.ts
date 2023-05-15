@@ -78,6 +78,7 @@ function trackPage({
 
   // In order to ensure that the page title had been updated,
   // we delayed pushing the tracking to the next tick.
+
   setTimeout(() => {
     if (previousPath) {
       push(['setReferrerUrl', `${previousPath}`])

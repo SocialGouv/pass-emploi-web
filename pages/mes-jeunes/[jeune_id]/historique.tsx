@@ -19,6 +19,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type HistoriqueProps = PageProps & {
   idJeune: string
@@ -43,6 +44,7 @@ function Historique({
   lectureSeule,
 }: HistoriqueProps) {
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
   const [currentTab, setCurrentTab] = useState<Onglet | undefined>(
     estMilo(conseiller) ? Onglet.SITUATIONS : Onglet.CONSEILLERS
   )
@@ -55,6 +57,7 @@ function Historique({
   }`
 
   const [tracking, setTracking] = useState<string | undefined>()
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   useEffect(() => {
     if (currentTab) {
@@ -66,7 +69,7 @@ function Historique({
     }
   }, [currentTab])
 
-  useMatomo(tracking)
+  useMatomo(tracking, aDesBeneficiaires)
 
   return (
     <>

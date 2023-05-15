@@ -3,6 +3,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DeleteJeuneInactifModalProps {
   jeune: BaseJeune
@@ -15,7 +16,10 @@ export default function DeleteJeuneInactifModal({
   onClose,
   onDelete,
 }: DeleteJeuneInactifModalProps) {
-  useMatomo('Détail Jeune - Pop-in confirmation suppression')
+  const [portefeuille] = usePortefeuille()
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
+  useMatomo('Détail Jeune - Pop-in confirmation suppression', aDesBeneficiaires)
 
   return (
     <Modal

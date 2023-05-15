@@ -13,13 +13,17 @@ import { ServicesCiviquesService } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type DetailOffreProps = PageProps & {
   offre: _DetailOffre
 }
 
 function DetailOffre({ offre }: DetailOffreProps) {
+  const [portefeuille] = usePortefeuille()
   const [labelMatomo, setLabelMatomo] = useState<string>('Détail offre')
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function getDetailOffre() {
     switch (offre.type) {
@@ -37,7 +41,7 @@ function DetailOffre({ offre }: DetailOffreProps) {
     }
   }
 
-  useMatomo(labelMatomo)
+  useMatomo(labelMatomo, aDesBeneficiaires)
 
   return getDetailOffre()
 }
