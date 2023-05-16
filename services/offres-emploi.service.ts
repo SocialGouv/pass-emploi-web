@@ -129,7 +129,7 @@ export class OffresEmploiApiService implements OffresEmploiService {
     const LIMIT = 10
     const path = '/offres-emploi'
 
-    const filtreOffresEmploi: FiltreOffres =
+    const filtreOffresEmploi: FiltreOffres | undefined =
       session?.user.structure === StructureConseiller.POLE_EMPLOI_BRSA
         ? FiltreOffres.EMPLOI
         : filtreOffres
@@ -157,7 +157,7 @@ function buildSearchParams(
   recherche: SearchOffresEmploiQuery,
   page: number,
   limit: number,
-  filtreOffres: FiltreOffres
+  filtreOffres?: FiltreOffres
 ): string {
   const searchParams = new URLSearchParams({
     page: page.toString(10),
