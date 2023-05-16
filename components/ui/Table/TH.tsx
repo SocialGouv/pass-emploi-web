@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react'
 interface THProps {
   children: ReactNode
   asDiv?: boolean
+  estCliquable?: boolean
   className?: string
 }
 
@@ -10,8 +11,11 @@ export function TH({
   children,
   asDiv = false,
   className = '',
+  estCliquable = false,
 }: THProps): JSX.Element {
-  const style = 'text-s-medium text-left text-content_color p-4 ' + className
+  const style = `text-s-medium text-left text-content_color ${
+    estCliquable ? '' : 'p-4'
+  } ${className}`
 
   if (asDiv)
     return (

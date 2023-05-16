@@ -64,7 +64,7 @@ export default function FiltresStatutsActions({
         aria-expanded={afficherFiltresStatuts}
         onClick={() => setAfficherFiltresStatuts(!afficherFiltresStatuts)}
         aria-label='Statut - Filtrer les actions'
-        className='flex items-center'
+        className='flex items-center p-4 w-full h-full'
       >
         Statut
         <IconComponent

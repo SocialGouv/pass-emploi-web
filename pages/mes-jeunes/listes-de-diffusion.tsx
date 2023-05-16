@@ -106,7 +106,10 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
         >
           <THead>
             <TR isHeader={true}>
-              <TH className='rounded-l hover:bg-primary_lighten'>
+              <TH
+                className='rounded-l hover:bg-primary_lighten'
+                estCliquable={true}
+              >
                 <button
                   className='flex border-none items-center w-full'
                   onClick={inverserTri}

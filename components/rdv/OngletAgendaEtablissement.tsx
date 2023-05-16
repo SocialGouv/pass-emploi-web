@@ -141,7 +141,7 @@ export function OngletAgendaEtablissement({
                 <TH>Horaires</TH>
                 <TH>Titre</TH>
                 <TH>Type</TH>
-                <TH>
+                <TH estCliquable={true}>
                   <FiltresStatutAnimationsCollectives
                     onFiltres={setStatutsValides}
                     defaultValue={statutsValides}
