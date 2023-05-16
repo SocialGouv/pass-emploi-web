@@ -1,5 +1,6 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
 
 import { unDetailServiceCivique } from 'fixtures/offre'
 import { mockedServicesCiviquesService } from 'fixtures/services'
@@ -9,6 +10,7 @@ import DetailOffre, {
 } from 'pages/offres/[offre_type]/[offre_id]'
 import { ServicesCiviquesService } from 'services/services-civiques.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -20,12 +22,16 @@ describe('Page Détail Service civique', () => {
   describe('client side', () => {
     let offre: DetailServiceCivique
 
-    beforeEach(() => {
+    beforeEach(async () => {
       // Given
       offre = unDetailServiceCivique()
 
       // When
-      render(<DetailOffre offre={offre} pageTitle={'Détail de l’offre'} />)
+      await act(() => {
+        renderWithContexts(
+          <DetailOffre offre={offre} pageTitle={'Détail de l’offre'} />
+        )
+      })
     })
 
     it('permet de partager le service civique', () => {

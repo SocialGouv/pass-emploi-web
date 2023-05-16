@@ -23,6 +23,11 @@ interface TrackEventSettings {
   nom: string
 }
 
+const numeroDimensionAvecBeneficiaires = process.env
+  .MATOMO_DIMENSIONS_CONSEILLER_BENEFICIAIRES_STAGING
+  ? 8
+  : 3
+
 // to push custom events
 function push(args: (number[] | string[] | number | string)[]): void {
   if (!window._paq) {
@@ -78,6 +83,7 @@ function trackPage({
 
   // In order to ensure that the page title had been updated,
   // we delayed pushing the tracking to the next tick.
+
   setTimeout(() => {
     if (previousPath) {
       push(['setReferrerUrl', `${previousPath}`])
@@ -85,7 +91,12 @@ function trackPage({
     push(['setCustomUrl', pathname])
     push(['setCustomDimension', 1, 'conseiller'])
     push(['setCustomDimension', 2, structure])
-    push(['setCustomDimension', 8, avecBeneficiaires || 'non'])
+
+    push([
+      'setCustomDimension',
+      numeroDimensionAvecBeneficiaires,
+      avecBeneficiaires || 'non',
+    ])
 
     push(['setDocumentTitle', customTitle || document.title])
     push(['deleteCustomVariables', 'page'])
@@ -103,7 +114,11 @@ function trackEvent(trackEventSettings: TrackEventSettings): void {
     2,
     userStructureDimensionString(trackEventSettings.structure),
   ])
-  push(['setCustomDimension', 8, 'avecBeneficiaires'])
+  push([
+    'setCustomDimension',
+    numeroDimensionAvecBeneficiaires,
+    'avecBeneficiaires',
+  ])
 
   push([
     'trackEvent',

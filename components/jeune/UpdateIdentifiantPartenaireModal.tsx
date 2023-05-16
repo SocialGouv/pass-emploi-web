@@ -5,6 +5,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import useMatomo from 'utils/analytics/useMatomo'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface UpdateIdentifiantPartenaireModalProps {
   identifiantPartenaire: string | undefined
@@ -17,9 +18,11 @@ export default function UpdateIdentifiantPartenaireModal({
   updateIdentifiantPartenaire,
   onClose,
 }: UpdateIdentifiantPartenaireModalProps) {
+  const [portefeuille] = usePortefeuille()
   const [getIdentifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
   >(identifiantPartenaire)
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function identifiantPartenaireEstValide() {
     return (
@@ -38,7 +41,8 @@ export default function UpdateIdentifiantPartenaireModal({
   useMatomo(
     identifiantPartenaire
       ? 'Détail jeune - modification identifiant PE'
-      : 'Détail jeune - ajout identifiant PE'
+      : 'Détail jeune - ajout identifiant PE',
+    aDesBeneficiaires
   )
 
   const titre = identifiantPartenaire

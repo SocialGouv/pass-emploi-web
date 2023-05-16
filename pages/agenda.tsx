@@ -2,7 +2,6 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
-import { Session } from 'next-auth'
 import React, { useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
@@ -13,11 +12,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import {
-  estUserPoleEmploi,
-  estPoleEmploiCEJ,
-  StructureConseiller,
-} from 'interfaces/conseiller'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -29,6 +24,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 enum Onglet {
   CONSEILLER = 'CONSEILLER',
@@ -49,9 +45,12 @@ function Agenda({ onglet }: AgendaProps) {
     useDependance<ReferentielService>('referentielService')
 
   const [conseiller, setConseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
 
   const router = useRouter()
   const [alerte] = useAlerte()
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   const ongletProps: {
     [key in Onglet]: { queryParam: string; trackingLabel: string }
@@ -145,7 +144,7 @@ function Agenda({ onglet }: AgendaProps) {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
   }
 
-  useMatomo(trackingTitle)
+  useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>

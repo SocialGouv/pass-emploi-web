@@ -1,6 +1,8 @@
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
 
+import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { unDetailImmersion } from 'fixtures/offre'
 import { mockedImmersionsService } from 'fixtures/services'
 import { DetailImmersion } from 'interfaces/offre'
@@ -9,6 +11,7 @@ import DetailOffre, {
 } from 'pages/offres/[offre_type]/[offre_id]'
 import { ImmersionsService } from 'services/immersions.service'
 import getByDescriptionTerm from 'tests/querySelector'
+import renderWithContexts from 'tests/renderWithContexts'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import withDependance from 'utils/injectionDependances/withDependance'
 
@@ -20,12 +23,16 @@ describe('Page Détail Offre Emploi', () => {
   describe('client side', () => {
     let offre: DetailImmersion
 
-    beforeEach(() => {
+    beforeEach(async () => {
       // Given
       offre = unDetailImmersion()
 
       // When
-      render(<DetailOffre offre={offre} pageTitle={'Détail de l’offre'} />)
+      await act(() => {
+        renderWithContexts(
+          <DetailOffre offre={offre} pageTitle={'Détail de l’offre'} />
+        )
+      })
     })
 
     it("permet de partager l'offre", () => {

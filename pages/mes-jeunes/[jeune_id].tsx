@@ -162,6 +162,7 @@ function FicheJeune({
     initialTracking += ' - Succès envoi message'
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
@@ -270,7 +271,7 @@ function FicheJeune({
     setPortefeuille(updatedPortefeuille)
   }
 
-  useMatomo(trackingLabel)
+  useMatomo(trackingLabel, aDesBeneficiaires)
 
   useEffect(() => {
     if (!lectureSeule) setIdCurrentJeune(jeune.id)

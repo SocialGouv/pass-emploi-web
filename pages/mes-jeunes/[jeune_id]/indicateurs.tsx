@@ -15,6 +15,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchString } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type IndicateursProps = PageProps & {
   idJeune: string
@@ -24,6 +25,7 @@ type IndicateursProps = PageProps & {
 function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
 
   const [indicateursSemaine, setIndicateursSemaine] = useState<
     IndicateursSemaine | undefined
@@ -50,7 +52,9 @@ function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
   const tracking = `Détail jeune – Indicateurs${
     lectureSeule ? ' - hors portefeuille' : ''
   }`
-  useMatomo(tracking)
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
+  useMatomo(tracking, aDesBeneficiaires)
 
   return (
     <div>

@@ -26,6 +26,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { dateIsInInterval } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface EditionActionProps extends PageProps {
   idJeune: string
@@ -36,6 +37,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   const router = useRouter()
   const actionsService = useDependance<ActionsService>('actionsService')
   const [_, setAlerte] = useAlerte()
+  const [portefeuille] = usePortefeuille()
 
   type Tab = 'predefinie' | 'personnalisee'
   const tabsLabel: { [key in Tab]: string } = {
@@ -56,6 +58,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   const [trackingTitle, setTrackingTitle] = useState<string>(
     `Actions jeune – Création action ${tabsLabel[currentTab]}`
   )
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function switchTab() {
     const newTab = currentTab === 'predefinie' ? 'personnalisee' : 'predefinie'
@@ -132,7 +135,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     await router.push(`/mes-jeunes/${idJeune}?onglet=actions`)
   }
 
-  useMatomo(trackingTitle)
+  useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>

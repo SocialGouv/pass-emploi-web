@@ -30,6 +30,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type MissionLocaleProps = PageProps
 
@@ -43,6 +44,7 @@ const Etablissement = (_: MissionLocaleProps) => {
     useDependance<ReferentielService>('referentielService')
 
   const [conseiller, setConseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
   const [recherche, setRecherche] = useState<string>()
@@ -52,6 +54,8 @@ const Etablissement = (_: MissionLocaleProps) => {
   const [pageCourante, setPageCourante] = useState<number>()
 
   const conseillerEstMilo = estMilo(conseiller)
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   async function rechercherJeunes(input: string, page: number) {
     if (!input) {
@@ -88,7 +92,7 @@ const Etablissement = (_: MissionLocaleProps) => {
     setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
 
-  useMatomo(trackingTitle)
+  useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>

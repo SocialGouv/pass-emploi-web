@@ -58,6 +58,8 @@ function Messagerie(_: PageProps) {
     MessageListeDiffusion | undefined
   >()
 
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
   useEffect(() => {
     if (showRubriqueListesDeDiffusion && !listesDeDiffusion) {
       listesDeDiffusionService
@@ -113,7 +115,7 @@ function Messagerie(_: PageProps) {
     }
   }, [portefeuille, chatCredentials])
 
-  useMatomo(trackingTitle)
+  useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>
