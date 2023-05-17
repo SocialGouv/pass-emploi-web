@@ -111,7 +111,7 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
                 estCliquable={true}
               >
                 <button
-                  className='flex border-none items-center w-full'
+                  className='flex border-none items-center w-full h-full p-4'
                   onClick={inverserTri}
                   aria-label={`Trier les listes de diffusion par ordre alphabétique ${
                     tri === ALPHABETIQUE ? 'inversé' : ''

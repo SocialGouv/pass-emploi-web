@@ -141,7 +141,10 @@ export function OngletAgendaEtablissement({
                 <TH>Horaires</TH>
                 <TH>Titre</TH>
                 <TH>Type</TH>
-                <TH estCliquable={true}>
+                <TH
+                  estCliquable={true}
+                  className='rounded-base hover:bg-primary_lighten'
+                >
                   <FiltresStatutAnimationsCollectives
                     onFiltres={setStatutsValides}
                     defaultValue={statutsValides}
