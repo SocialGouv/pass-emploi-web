@@ -9,6 +9,7 @@ import {
   estSuperviseur,
   estPoleEmploi,
   estPoleEmploiBRSA,
+  StructureConseiller,
 } from 'interfaces/conseiller'
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -37,6 +38,17 @@ export default function NavLinks({
 
   function isCurrentRoute(href: string) {
     return router.asPath.startsWith(href)
+  }
+
+  function getAideHref(structure: StructureConseiller): string {
+    switch (structure) {
+      case StructureConseiller.MILO:
+        return process.env.FAQ_MILO_EXTERNAL_LINK ?? ''
+      case StructureConseiller.POLE_EMPLOI:
+        return process.env.FAQ_PE_EXTERNAL_LINK ?? ''
+      case StructureConseiller.POLE_EMPLOI_BRSA:
+        return process.env.FAQ_PE_BRSA_EXTERNAL_LINK ?? ''
+    }
   }
 
   async function trackLogout() {
@@ -186,11 +198,7 @@ export default function NavLinks({
 
         {items.includes(NavItem.Aide) && (
           <NavLink
-            href={
-              estMilo(conseiller)
-                ? process.env.FAQ_MILO_EXTERNAL_LINK ?? ''
-                : process.env.FAQ_PE_EXTERNAL_LINK ?? ''
-            }
+            href={getAideHref(conseiller.structure)}
             label='Aide'
             iconName={IconName.Help}
             isExternal={true}
