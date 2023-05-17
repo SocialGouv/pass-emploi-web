@@ -48,6 +48,9 @@ export default function NavLinks({
         return process.env.FAQ_PE_EXTERNAL_LINK ?? ''
       case StructureConseiller.POLE_EMPLOI_BRSA:
         return process.env.FAQ_PE_BRSA_EXTERNAL_LINK ?? ''
+      case undefined:
+      default:
+        return ''
     }
   }
 
