@@ -3172,10 +3172,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.6.1":
-  version: 1.6.1
-  resolution: "@remix-run/router@npm:1.6.1"
-  checksum: 4ca65d9c7d6fa277227ad8fd4ef53bebab99460b714d835b609c998f9a7e7c33a964ce2b8af853b50025a60d9113968f256abc5f71f451939ff14a5187d327fe
+"@remix-run/router@npm:1.6.2":
+  version: 1.6.2
+  resolution: "@remix-run/router@npm:1.6.2"
+  checksum: 5969d313bff6ba5c75917910090cebafda84b9d3b4b453fae6b3d60fea9f938078578ffca769c532ab7ce252cd4a207b78d1024d7c727ab80dd572e62fd3b3f2
   languageName: node
   linkType: hard
 
@@ -9697,14 +9697,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-visitor-keys@npm:^3.3.0":
-  version: 3.4.0
-  resolution: "eslint-visitor-keys@npm:3.4.0"
-  checksum: 33159169462d3989321a1ec1e9aaaf6a24cc403d5d347e9886d1b5bfe18ffa1be73bdc6203143a28a606b142b1af49787f33cff0d6d0813eb5f2e8d2e1a6043c
-  languageName: node
-  linkType: hard
-
-"eslint-visitor-keys@npm:^3.4.1":
+"eslint-visitor-keys@npm:^3.3.0, eslint-visitor-keys@npm:^3.4.1":
   version: 3.4.1
   resolution: "eslint-visitor-keys@npm:3.4.1"
   checksum: f05121d868202736b97de7d750847a328fcfa8593b031c95ea89425333db59676ac087fa905eba438d0a3c5769632f828187e0c1a0d271832a2153c1d3661c2c
@@ -15415,7 +15408,7 @@ __metadata:
     prettier: ^2.8.8
     react: 18.2.0
     react-dom: 18.2.0
-    react-router-dom: 6.11.1
+    react-router-dom: 6.11.2
     style-loader: ^3.3.2
     tailwindcss: 3.3.2
     ts-loader: ^9.4.2
@@ -15649,7 +15642,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:8.14.1":
+"pino@npm:8.14.1, pino@npm:^8.11.0":
   version: 8.14.1
   resolution: "pino@npm:8.14.1"
   dependencies:
@@ -15684,27 +15677,6 @@ __metadata:
   bin:
     pino: bin.js
   checksum: eb13e12e3a3d682abe4a4da426455a9f4e041e55e4fa57d72d9677ee8d188a9c952f69347e728a3761c8262cdce76ef24bee29e1a53ab15aa9c5e851099163d0
-  languageName: node
-  linkType: hard
-
-"pino@npm:^8.11.0":
-  version: 8.12.1
-  resolution: "pino@npm:8.12.1"
-  dependencies:
-    atomic-sleep: ^1.0.0
-    fast-redact: ^3.1.1
-    on-exit-leak-free: ^2.1.0
-    pino-abstract-transport: v1.0.0
-    pino-std-serializers: ^6.0.0
-    process-warning: ^2.0.0
-    quick-format-unescaped: ^4.0.3
-    real-require: ^0.2.0
-    safe-stable-stringify: ^2.3.1
-    sonic-boom: ^3.1.0
-    thread-stream: ^2.0.0
-  bin:
-    pino: bin.js
-  checksum: 2e1689ea43dc42340f6316d311c0b41b8dc08ab8b75b3f182a7c0c14598d6501e96d26403bc3912b6b9478d37d272414e345e03c3aed1e2e42908aea317aa5fd
   languageName: node
   linkType: hard
 
@@ -16583,27 +16555,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:6.11.1":
-  version: 6.11.1
-  resolution: "react-router-dom@npm:6.11.1"
+"react-router-dom@npm:6.11.2":
+  version: 6.11.2
+  resolution: "react-router-dom@npm:6.11.2"
   dependencies:
-    "@remix-run/router": 1.6.1
-    react-router: 6.11.1
+    "@remix-run/router": 1.6.2
+    react-router: 6.11.2
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: 44566e10cb1ff475c73be47425dba66e8e834e695e80c572c63ca82543ad03d41f4a1d8e974bf998143150f497792f74ba99714b1219df1c923c62a3b67f187b
+  checksum: ba44ff37f2956bc18991f2eedb32a3fa46d35832f61ded6c5d167e853ca289868fca6635467866280c73bc3da00dce8437dbbec57da100c0a3e3e3850af00b83
   languageName: node
   linkType: hard
 
-"react-router@npm:6.11.1":
-  version: 6.11.1
-  resolution: "react-router@npm:6.11.1"
+"react-router@npm:6.11.2":
+  version: 6.11.2
+  resolution: "react-router@npm:6.11.2"
   dependencies:
-    "@remix-run/router": 1.6.1
+    "@remix-run/router": 1.6.2
   peerDependencies:
     react: ">=16.8"
-  checksum: c5cafbaac13564d0e325f84ce6e4cbc42de5c381b0f619209f3b101d2b6eae4a8f9ee87b492875e869909dd9bb549d05d2f677085708f79622b872bd45d14bbb
+  checksum: e47f875dca70033a3b42704cb5ec076b60f9629a5cdc3be613707f3d5a5706123fb80301037455c285c6d5a1011b443e1784e0103969ebfac7071648d360c413
   languageName: node
   linkType: hard
 
