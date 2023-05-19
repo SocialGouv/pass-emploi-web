@@ -77,7 +77,7 @@ function Login({
           Connectez-vous à l&apos;espace conseiller
         </h1>
 
-        <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-base'>
+        <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-l drop-shadow-lg'>
           <h2>
             <span className='sr-only'>Contrat d’engagement jeune</span>
             <LogoCEJ
@@ -109,6 +109,7 @@ function Login({
                   className='mt-4 whitespace-nowrap'
                   label='Authentification pass emploi'
                   handleSubmit={(event) => handleSignin(event)}
+                  style={ButtonStyle.TERTIARY}
                 />
               </li>
             )}
