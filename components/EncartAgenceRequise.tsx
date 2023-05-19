@@ -1,12 +1,17 @@
+import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
-import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { trackEvent } from 'utils/analytics/matomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const RenseignementAgenceModal = dynamic(
+  import('../components/RenseignementAgenceModal'),
+  { ssr: false }
+)
 
 type EncartAgenceRequiseProps = {
   conseiller: Conseiller

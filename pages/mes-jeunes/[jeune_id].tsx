@@ -1,14 +1,13 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
 import { OngletAgendaBeneficiaire } from 'components/agenda-jeune/OngletAgendaBeneficiaire'
 import { BlocFavoris } from 'components/jeune/BlocFavoris'
-import DeleteJeuneActifModal from 'components/jeune/DeleteJeuneActifModal'
-import DeleteJeuneInactifModal from 'components/jeune/DeleteJeuneInactifModal'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
@@ -65,6 +64,15 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const DeleteJeuneActifModal = dynamic(
+  import('components/jeune/DeleteJeuneActifModal'),
+  { ssr: false }
+)
+const DeleteJeuneInactifModal = dynamic(
+  import('components/jeune/DeleteJeuneInactifModal'),
+  { ssr: false }
+)
 
 export enum Onglet {
   AGENDA = 'AGENDA',

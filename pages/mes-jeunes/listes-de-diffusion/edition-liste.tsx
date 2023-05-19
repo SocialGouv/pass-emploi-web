@@ -1,9 +1,9 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
-import ConfirmationDeleteListeDiffusion from 'components/ConfirmationDeleteListeDiffusionModal'
 import { BeneficiaireIndicationReaffectaction } from 'components/jeune/BeneficiaireIndications'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -31,6 +31,11 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
+
+const ConfirmationDeleteListeDiffusionModal = dynamic(
+  import('components/ConfirmationDeleteListeDiffusionModal'),
+  { ssr: false }
+)
 
 type EditionListeDiffusionProps = PageProps & {
   returnTo: string
@@ -250,7 +255,7 @@ function EditionListeDiffusion({
       </form>
 
       {showConfirmationSuppression && (
-        <ConfirmationDeleteListeDiffusion
+        <ConfirmationDeleteListeDiffusionModal
           onConfirmation={supprimerListe}
           onCancel={() => setShowConfirmationSuppression(false)}
         />

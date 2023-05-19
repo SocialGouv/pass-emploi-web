@@ -1,16 +1,21 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { getSession, signIn } from 'next-auth/react'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'
 import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
-import OnboardingMobileModal from 'components/OnboardingMobileModal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
 import useMatomo from 'utils/analytics/useMatomo'
+
+const OnboardingMobileModal = dynamic(
+  import('components/OnboardingMobileModal'),
+  { ssr: false }
+)
 
 interface LoginProps {
   ssoPoleEmploiBRSAEstActif?: boolean

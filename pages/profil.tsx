@@ -1,5 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, useState } from 'react'
 
@@ -7,8 +8,6 @@ import QrcodeAppStore from 'assets/images/qrcode_app_store.svg'
 import QrcodeAppStoreBRSA from 'assets/images/qrcode_app_store_brsa.svg'
 import QrcodePlayStore from 'assets/images/qrcode_play_store.svg'
 import QrcodePlayStoreBRSA from 'assets/images/qrcode_play_store_brsa.svg'
-import ConfirmationDeleteConseillerModal from 'components/ConfirmationDeleteConseillerModal'
-import ConfirmationSuppressionCompteConseillerModal from 'components/ConfirmationSuppressionCompteConseillerModal'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
@@ -37,6 +36,15 @@ import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const ConfirmationDeleteConseillerModal = dynamic(
+  () => import('components/ConfirmationDeleteConseillerModal'),
+  { ssr: false }
+)
+const ConfirmationSuppressionCompteConseillerModal = dynamic(
+  () => import('components/ConfirmationSuppressionCompteConseillerModal'),
+  { ssr: false }
+)
 
 type ProfilProps = PageProps & {
   referentielAgences: Agence[]

@@ -1,20 +1,18 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import ConfirmationUpdateRdvModal from 'components/ConfirmationUpdateRdvModal'
-import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import PageActionsPortal from 'components/PageActionsPortal'
-import DeleteRdvModal from 'components/rdv/DeleteRdvModal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   estAClore,
   estClos,
@@ -45,6 +43,18 @@ import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
+
+const ConfirmationUpdateRdvModal = dynamic(
+  import('components/ConfirmationUpdateRdvModal'),
+  { ssr: false }
+)
+const LeavePageConfirmationModal = dynamic(
+  import('components/LeavePageConfirmationModal'),
+  { ssr: false }
+)
+const DeleteRdvModal = dynamic(import('components/rdv/DeleteRdvModal'), {
+  ssr: false,
+})
 
 interface EditionRdvProps extends PageProps {
   typesRendezVous: TypeEvenementReferentiel[]
