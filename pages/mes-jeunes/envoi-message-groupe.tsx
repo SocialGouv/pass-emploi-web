@@ -1,5 +1,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { MouseEvent, useState } from 'react'
@@ -7,7 +8,6 @@ import React, { MouseEvent, useState } from 'react'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
-import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -36,6 +36,11 @@ import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
+
+const LeavePageConfirmationModal = dynamic(
+  import('components/LeavePageConfirmationModal'),
+  { ssr: false }
+)
 
 interface EnvoiMessageGroupeProps extends PageProps {
   listesDiffusion: ListeDeDiffusion[]

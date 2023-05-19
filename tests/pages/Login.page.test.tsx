@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { signIn } from 'next-auth/react'
@@ -150,7 +150,9 @@ describe('Login', () => {
       })
 
       // When
-      render(<Login ssssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
+      await act(async () => {
+        render(<Login ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
+      })
 
       // Then
       expect(
