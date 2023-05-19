@@ -77,7 +77,7 @@ function Login({
           Connectez-vous à l&apos;espace conseiller
         </h1>
 
-        <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-base'>
+        <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-l drop-shadow-lg'>
           <h2>
             <span className='sr-only'>Contrat d’engagement jeune</span>
             <LogoCEJ
@@ -86,11 +86,11 @@ function Login({
               aria-hidden={true}
             />
           </h2>
-          <ul>
+          <ul className='mt-6'>
             <li>
               <FormButton
                 label='Connexion conseiller Mission Locale'
-                className='mt-6 whitespace-nowrap'
+                className='whitespace-nowrap'
                 handleSubmit={(event) =>
                   handleSignin(event, 'similo-conseiller')
                 }
@@ -99,7 +99,7 @@ function Login({
             <li>
               <FormButton
                 label='Connexion conseiller Pôle emploi CEJ'
-                className='pt-4 whitespace-nowrap'
+                className='mt-4 whitespace-nowrap'
                 handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
               />
             </li>
@@ -109,6 +109,7 @@ function Login({
                   className='mt-4 whitespace-nowrap'
                   label='Authentification pass emploi'
                   handleSubmit={(event) => handleSignin(event)}
+                  style={ButtonStyle.TERTIARY}
                 />
               </li>
             )}
@@ -116,10 +117,10 @@ function Login({
 
           {ssoPoleEmploiBRSAEstActif && (
             <>
-              <h2>
+              <h2 className='mt-16'>
                 <span className='sr-only'>pass emploi</span>
                 <LogoPassEmploi
-                  className='m-auto mt-8 h-20 fill-primary_darken'
+                  className='m-auto fill-primary_darken'
                   focusable={false}
                   aria-hidden={true}
                 />
@@ -128,7 +129,7 @@ function Login({
                 <li>
                   <FormButton
                     label='Connexion conseiller Pôle emploi BRSA'
-                    className='whitespace-nowrap'
+                    className='mt-6 whitespace-nowrap'
                     style={ButtonStyle.PRIMARY_BRSA}
                     handleSubmit={(event) =>
                       handleSignin(event, 'pe-brsa-conseiller')
