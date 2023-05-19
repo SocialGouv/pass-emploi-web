@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 type ShowRubriqueListeDeDiffusionState = [
   boolean | undefined,
@@ -25,12 +25,11 @@ export function ShowRubriqueListeDeDiffusionProvider({
     valueForTests
   )
   const setter = setterForTests ?? setShowRubriqueListeDeDiffusion
-  const value: ShowRubriqueListeDeDiffusionState = useMemo(
-    () => [showRubriqueListeDeDiffusion, setter],
-    [showRubriqueListeDeDiffusion, setter]
-  )
+
   return (
-    <ShowRubriqueListeDeDiffusion.Provider value={value}>
+    <ShowRubriqueListeDeDiffusion.Provider
+      value={[showRubriqueListeDeDiffusion, setter]}
+    >
       {children}
     </ShowRubriqueListeDeDiffusion.Provider>
   )

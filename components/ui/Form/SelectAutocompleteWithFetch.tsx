@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { InputError } from 'components/ui/Form/InputError'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
@@ -26,13 +26,11 @@ export default function SelectAutocompleteWithFetch<T>({
   disabled = false,
 }: SelectAutocompleteWithFetchProps<T>) {
   const [entites, setEntites] = useState<WithSimplifiedLabel<T>[]>([])
-  const options: Array<{ id: string; value: string }> = useMemo(
-    () =>
-      entites.map((entite) => ({
-        id: (entite as any)[fieldNames.id],
-        value: entite.upperCaseAlphaLabel,
-      })),
-    [entites]
+  const options: Array<{ id: string; value: string }> = entites.map(
+    (entite) => ({
+      id: (entite as any)[fieldNames.id],
+      value: entite.upperCaseAlphaLabel,
+    })
   )
   const [input, setInput] = useState<{ value?: string; error?: string }>({
     value: defaultValue && toUpperCaseAlpha(defaultValue),

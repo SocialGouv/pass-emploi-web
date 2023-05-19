@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import Dot from 'components/ui/Dot'
 import IconCheckbox from 'components/ui/Form/IconCheckbox'
@@ -21,17 +21,17 @@ export function ConversationTile({
   onClick,
   onToggleFlag,
 }: ConversationTileProps) {
-  const lastMessageSentAt: string | undefined = useMemo(
-    () =>
-      jeuneChat.lastMessageSentAt &&
-      toFrenchFormat(jeuneChat.lastMessageSentAt, `'le' ${DATETIME_LONG}`),
-    [jeuneChat.lastMessageSentAt]
-  )
-  const isLastMessageSeenByJeune: boolean | undefined = useMemo(() => {
+  const lastMessageSentAt: string | undefined =
+    jeuneChat.lastMessageSentAt &&
+    toFrenchFormat(jeuneChat.lastMessageSentAt, `'le' ${DATETIME_LONG}`)
+
+  const isLastMessageSeenByJeune = checkIfLastMessageSeenByJeune()
+
+  function checkIfLastMessageSeenByJeune(): boolean | undefined {
     if (!jeuneChat.lastMessageSentAt) return
     if (!jeuneChat.lastJeuneReading) return false
     return jeuneChat.lastMessageSentAt < jeuneChat.lastJeuneReading
-  }, [jeuneChat.lastJeuneReading, jeuneChat.lastMessageSentAt])
+  }
 
   function toggleFollowMessage() {
     onToggleFlag(!jeuneChat.flaggedByConseiller)

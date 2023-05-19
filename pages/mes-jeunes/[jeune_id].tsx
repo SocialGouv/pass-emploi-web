@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { OngletActions } from 'components/action/OngletActions'
 import { OngletAgendaBeneficiaire } from 'components/agenda-jeune/OngletAgendaBeneficiaire'
@@ -29,9 +29,9 @@ import {
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
-  estUserPoleEmploi,
   estMilo,
   estPoleEmploi,
+  estUserPoleEmploi,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
@@ -135,9 +135,9 @@ function FicheJeune({
     setShowSuppressionCompteBeneficiaireError,
   ] = useState<boolean>(false)
 
-  const aujourdHui = useMemo(() => DateTime.now(), [])
-  const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
-  const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
+  const aujourdHui = DateTime.now()
+  const debutSemaine = aujourdHui.startOf('week')
+  const finSemaine = aujourdHui.endOf('week')
 
   let pageTracking: string = jeune.isActivated
     ? 'Détail jeune'

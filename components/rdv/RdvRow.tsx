@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
@@ -36,16 +36,13 @@ export function RdvRow({
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
-  const date = useMemo(() => DateTime.fromISO(rdv.date), [rdv.date])
-  const shortDate = useMemo(() => toShortDate(date), [date])
-  const fullDate = useMemo(
-    () => toFrenchFormat(date, WEEKDAY_MONTH_LONG),
-    [date]
-  )
-  const timeAndDuration = useMemo(
-    () => `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.duree} min`,
-    [date, rdv.duree]
-  )
+  const date = DateTime.fromISO(rdv.date)
+  const shortDate = toShortDate(date)
+  const fullDate = toFrenchFormat(date, WEEKDAY_MONTH_LONG)
+  const timeAndDuration = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${
+    rdv.duree
+  } min`
+
   const labelBeneficiaires = beneficiaireUnique
     ? getNomJeuneComplet(beneficiaireUnique)
     : rdv.labelBeneficiaires

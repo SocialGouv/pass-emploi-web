@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
@@ -19,12 +19,7 @@ import {
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import {
-  estUserPoleEmploi,
-  estMilo,
-  StructureConseiller,
-  UserType,
-} from 'interfaces/conseiller'
+import { estMilo, estUserPoleEmploi, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
@@ -73,28 +68,18 @@ function PageAction({
 
   const conseillerEstMilo = estMilo(conseiller)
 
-  const estARealiser: boolean = useMemo(
-    () => statut !== StatutAction.Terminee && statut !== StatutAction.Annulee,
-    [statut]
-  )
+  const estARealiser =
+    statut !== StatutAction.Terminee && statut !== StatutAction.Annulee
+  const estAQualifier =
+    conseillerEstMilo && statut === StatutAction.Terminee && !qualification
 
-  const estAQualifier: boolean = useMemo(
-    () =>
-      conseillerEstMilo && statut === StatutAction.Terminee && !qualification,
-    [qualification, statut]
-  )
-  const afficherSuppressionAction = useMemo(
-    () =>
-      action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-      !Boolean(action.qualification) &&
-      commentaires.length === 0 &&
-      statut !== StatutAction.Terminee,
-    [action.creatorType, action.qualification, commentaires.length, statut]
-  )
-  const dateEcheance: string = useMemo(
-    () => toShortDate(action.dateEcheance),
-    [action.dateEcheance]
-  )
+  const afficherSuppressionAction =
+    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+    !Boolean(action.qualification) &&
+    commentaires.length === 0 &&
+    statut !== StatutAction.Terminee
+
+  const dateEcheance = toShortDate(action.dateEcheance)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(

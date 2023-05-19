@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
@@ -29,12 +29,11 @@ export function ListeDeDiffusionSelectionneeProvider({
     valueForTests
   )
   const setter = setterForTests ?? setListeDeDiffusionSelectionnee
-  const value: ListeDeDiffusionSelectionneeState = useMemo(
-    () => [listeDeDiffusionSelectionnee, setter],
-    [listeDeDiffusionSelectionnee, setter]
-  )
+
   return (
-    <ListeDeDiffusionSelectionnee.Provider value={value}>
+    <ListeDeDiffusionSelectionnee.Provider
+      value={[listeDeDiffusionSelectionnee, setter]}
+    >
       {children}
     </ListeDeDiffusionSelectionnee.Provider>
   )

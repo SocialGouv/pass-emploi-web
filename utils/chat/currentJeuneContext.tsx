@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 type CurrentJeuneState = [
   string | undefined,
@@ -22,12 +22,9 @@ export function CurrentJeuneProvider({
     string | undefined
   >(idForTests)
   const setter = setterForTests ?? setIdCurrentJeune
-  const value: CurrentJeuneState = useMemo(
-    () => [idCurrentJeune, setter],
-    [idCurrentJeune, setter]
-  )
+
   return (
-    <CurrentJeuneContext.Provider value={value}>
+    <CurrentJeuneContext.Provider value={[idCurrentJeune, setter]}>
       {children}
     </CurrentJeuneContext.Provider>
   )
