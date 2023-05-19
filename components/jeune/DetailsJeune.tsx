@@ -1,14 +1,19 @@
+import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
 import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
-import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiantPartenaireModal'
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modifierIdentifiantPartenaire } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
+
+const UpdateIdentifiantPartenaireModal = dynamic(
+  import('components/jeune/UpdateIdentifiantPartenaireModal'),
+  { ssr: false }
+)
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
