@@ -12,6 +12,7 @@ export const AjouterJeuneButton = ({ structure }: AjouterJeuneButtonProps) => {
       case StructureConseiller.MILO:
         return '/mes-jeunes/milo/creation-jeune'
       case StructureConseiller.POLE_EMPLOI:
+      case StructureConseiller.POLE_EMPLOI_BRSA:
         return '/mes-jeunes/pole-emploi/creation-jeune'
     }
   }
