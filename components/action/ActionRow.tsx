@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import TagStatutAction from 'components/action/TagStatutAction'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -20,21 +20,12 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
-  const actionEstEnRetard = useMemo(() => {
-    return (
-      action.status !== StatutAction.Annulee &&
-      action.status !== StatutAction.Terminee &&
-      DateTime.fromISO(action.dateEcheance) < DateTime.now()
-    )
-  }, [action])
-  const creationDate = useMemo(
-    () => toShortDate(action.creationDate),
-    [action.creationDate]
-  )
-  const dateEcheance: string = useMemo(
-    () => toShortDate(action.dateEcheance),
-    [action.dateEcheance]
-  )
+  const actionEstEnRetard =
+    action.status !== StatutAction.Annulee &&
+    action.status !== StatutAction.Terminee &&
+    DateTime.fromISO(action.dateEcheance) < DateTime.now()
+  const creationDate = toShortDate(action.creationDate)
+  const dateEcheance = toShortDate(action.dateEcheance)
 
   return (
     <TR

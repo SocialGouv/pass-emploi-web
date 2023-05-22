@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { AlerteParam } from 'referentiel/alerteParam'
 
@@ -26,9 +26,11 @@ export function AlerteProvider({
   const defaultSetter = (key: AlerteParam | undefined, target?: string) =>
     setAlerte(key && { key, target })
   const setter = setterForTests ?? defaultSetter
-  const value: AlerteState = useMemo(() => [alerte, setter], [alerte, setter])
+
   return (
-    <AlerteContext.Provider value={value}>{children}</AlerteContext.Provider>
+    <AlerteContext.Provider value={[alerte, setter]}>
+      {children}
+    </AlerteContext.Provider>
   )
 }
 

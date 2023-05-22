@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useMemo, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -54,10 +54,11 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
-  const formIsValid = useMemo(
-    () => idsDestinataires.value.length > 0,
-    [idsDestinataires]
-  )
+  const formIsValid = checkIfFormValid()
+
+  function checkIfFormValid(): boolean {
+    return idsDestinataires.value.length > 0
+  }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({

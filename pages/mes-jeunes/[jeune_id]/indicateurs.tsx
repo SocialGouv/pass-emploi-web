@@ -1,11 +1,11 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { IndicateursSemaine } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { JeunesService } from 'services/jeunes.service'
@@ -31,9 +31,9 @@ function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
     IndicateursSemaine | undefined
   >()
 
-  const aujourdHui = useMemo(() => DateTime.now(), [])
-  const debutSemaine = useMemo(() => aujourdHui.startOf('week'), [aujourdHui])
-  const finSemaine = useMemo(() => aujourdHui.endOf('week'), [aujourdHui])
+  const aujourdHui = DateTime.now()
+  const debutSemaine = aujourdHui.startOf('week')
+  const finSemaine = aujourdHui.endOf('week')
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
