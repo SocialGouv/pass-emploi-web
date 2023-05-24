@@ -3,18 +3,16 @@ import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/react'
 import React, { useEffect } from 'react'
 
-import { MessagesService } from 'services/messages.service'
-import { useDependance } from 'utils/injectionDependances'
+import { signOut as chatSignOut } from 'services/messages.service'
 
 function Logout() {
   const router = useRouter()
-  const messagesService = useDependance<MessagesService>('messagesService')
 
   useEffect(() => {
     async function logout() {
       try {
         await Promise.all([
-          messagesService.signOut(),
+          chatSignOut(),
           signOut({ redirect: false, callbackUrl: '/login' }),
         ])
       } finally {
@@ -23,7 +21,7 @@ function Logout() {
     }
 
     logout()
-  }, [messagesService, router])
+  }, [router])
 
   return null
 }

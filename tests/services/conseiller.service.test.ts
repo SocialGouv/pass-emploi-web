@@ -1,23 +1,22 @@
-import { ApiClient } from 'clients/api.client'
+import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import { unConseiller, unConseillerJson } from 'fixtures/conseiller'
-import { ConseillerApiService } from 'services/conseiller.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
+import {
+  getConseillerClientSide,
+  modifierAgence,
+  modifierNotificationsSonores,
+  recupererBeneficiaires,
+  supprimerConseiller,
+} from 'services/conseiller.service'
+
+jest.mock('clients/api.client')
 
 describe('ConseillerApiService', () => {
-  let apiClient: ApiClient
-  let conseillerService: ConseillerApiService
-  beforeEach(async () => {
-    // Given
-    apiClient = new FakeApiClient()
-    conseillerService = new ConseillerApiService(apiClient)
-  })
-
   describe('.getConseillerClientSide', () => {
     it('renvoie les informations d’un conseiller', async () => {
       // Given
       const idConseiller = 'idConseiller'
       const accessToken = 'accessToken'
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: unConseillerJson({
           agence: {
             nom: 'Milo Marseille',
@@ -27,10 +26,10 @@ describe('ConseillerApiService', () => {
       })
 
       // When
-      const actual = await conseillerService.getConseillerClientSide()
+      const actual = await getConseillerClientSide()
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/${idConseiller}`,
         accessToken
       )
@@ -43,10 +42,10 @@ describe('ConseillerApiService', () => {
   describe('.modifierAgence', () => {
     it("modifie le conseiller avec l'id de l'agence", async () => {
       // When
-      await conseillerService.modifierAgence({ id: 'id-agence', nom: 'Agence' })
+      await modifierAgence({ id: 'id-agence', nom: 'Agence' })
 
       // Then
-      expect(apiClient.put).toHaveBeenCalledWith(
+      expect(apiPut).toHaveBeenCalledWith(
         '/conseillers/idConseiller',
         { agence: { id: 'id-agence' } },
         'accessToken'
@@ -55,10 +54,10 @@ describe('ConseillerApiService', () => {
 
     it("modifie le conseiller avec le nom de l'agence", async () => {
       // When
-      await conseillerService.modifierAgence({ nom: 'Agence libre' })
+      await modifierAgence({ nom: 'Agence libre' })
 
       // Then
-      expect(apiClient.put).toHaveBeenCalledWith(
+      expect(apiPut).toHaveBeenCalledWith(
         '/conseillers/idConseiller',
         { agence: { nom: 'Agence libre' } },
         'accessToken'
@@ -69,13 +68,10 @@ describe('ConseillerApiService', () => {
   describe('.modifierNotificationsSonores', () => {
     it("modifie le conseiller avec l'activation des notifications sonores", async () => {
       // When
-      await conseillerService.modifierNotificationsSonores(
-        'id-conseiller',
-        true
-      )
+      await modifierNotificationsSonores('id-conseiller', true)
 
       // Then
-      expect(apiClient.put).toHaveBeenCalledWith(
+      expect(apiPut).toHaveBeenCalledWith(
         '/conseillers/id-conseiller',
         { notificationsSonores: true },
         'accessToken'
@@ -86,10 +82,10 @@ describe('ConseillerApiService', () => {
   describe('.recupererBeneficiaires', () => {
     it('récupère les bénéficiaires transférés temporairement', async () => {
       // When
-      await conseillerService.recupererBeneficiaires()
+      await recupererBeneficiaires()
 
       // Then
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(apiPost).toHaveBeenCalledWith(
         '/conseillers/idConseiller/recuperer-mes-jeunes',
         {},
         'accessToken'
@@ -103,10 +99,10 @@ describe('ConseillerApiService', () => {
       const accessToken = 'accessToken'
 
       // When
-      await conseillerService.supprimerConseiller('id-conseiller')
+      await supprimerConseiller('id-conseiller')
 
       // Then
-      expect(apiClient.delete).toHaveBeenCalledWith(
+      expect(apiDelete).toHaveBeenCalledWith(
         '/conseillers/id-conseiller',
         accessToken
       )

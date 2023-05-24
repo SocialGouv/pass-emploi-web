@@ -1,4 +1,4 @@
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import {
   listeBaseImmersions,
   listeImmersionsJson,
@@ -6,38 +6,27 @@ import {
   unDetailImmersionJson,
 } from 'fixtures/offre'
 import { uneCommune, unMetier } from 'fixtures/referentiel'
-import { TypeOffre } from 'interfaces/offre'
 import {
-  ImmersionsApiService,
-  ImmersionsService,
+  getImmersionServerSide,
+  searchImmersions,
 } from 'services/immersions.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
+jest.mock('clients/api.client')
+
 describe('ImmersionsApiService', () => {
-  let apiClient: ApiClient
-  let immersionsService: ImmersionsService
-
-  beforeEach(() => {
-    apiClient = new FakeApiClient()
-    immersionsService = new ImmersionsApiService(apiClient)
-  })
-
   describe('.getImmersionServerSide', () => {
     it("renvoie l'immersion si elle est trouvée en base", async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: unDetailImmersionJson(),
       })
 
       // When
-      const actual = await immersionsService.getImmersionServerSide(
-        'ID_IMMERSION',
-        'accessToken'
-      )
+      const actual = await getImmersionServerSide('ID_IMMERSION', 'accessToken')
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-immersion/ID_IMMERSION',
         'accessToken'
       )
@@ -46,15 +35,12 @@ describe('ImmersionsApiService', () => {
 
     it('renvoie undefined si l’immersion n’est pas trouvée en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockRejectedValue(
+      ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'immersion non trouvée')
       )
 
       // When
-      const actual = await immersionsService.getImmersionServerSide(
-        'ID_IMMERSION',
-        'accessToken'
-      )
+      const actual = await getImmersionServerSide('ID_IMMERSION', 'accessToken')
 
       // Then
       expect(actual).toStrictEqual(undefined)
@@ -64,7 +50,7 @@ describe('ImmersionsApiService', () => {
   describe('.searchImmersions', () => {
     beforeEach(() => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: [
           ...listeImmersionsJson({ page: 1 }),
           ...listeImmersionsJson({ page: 2 }),
@@ -75,7 +61,7 @@ describe('ImmersionsApiService', () => {
 
     it('renvoie une liste des 10 premieres immersions', async () => {
       // When
-      const actual = await immersionsService.searchImmersions(
+      const actual = await searchImmersions(
         {
           commune: uneCommune(),
           metier: unMetier(),
@@ -85,7 +71,7 @@ describe('ImmersionsApiService', () => {
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-immersion?lat=48.830108&lon=2.323026&distance=52&rome=M1805',
         'accessToken'
       )
@@ -101,27 +87,27 @@ describe('ImmersionsApiService', () => {
 
     it('cache les données pour la pagination', async () => {
       // Given
-      await immersionsService.searchImmersions(
+      await searchImmersions(
         {
           commune: uneCommune(),
           metier: unMetier(),
-          rayon: 52,
+          rayon: 35,
         },
         1
       )
 
       // When
-      const actual = await immersionsService.searchImmersions(
+      const actual = await searchImmersions(
         {
           commune: uneCommune(),
           metier: unMetier(),
-          rayon: 52,
+          rayon: 35,
         },
         1
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledTimes(1)
+      expect(apiGet).toHaveBeenCalledTimes(1)
       expect(actual).toEqual({
         offres: [
           ...listeBaseImmersions({ page: 1 }),
@@ -133,7 +119,7 @@ describe('ImmersionsApiService', () => {
 
     it('met à jour le cache si la requête change', async () => {
       // Given
-      await immersionsService.searchImmersions(
+      await searchImmersions(
         {
           commune: uneCommune(),
           metier: unMetier(),
@@ -143,7 +129,7 @@ describe('ImmersionsApiService', () => {
       )
 
       // When
-      const actual = await immersionsService.searchImmersions(
+      const actual = await searchImmersions(
         {
           commune: uneCommune(),
           metier: unMetier(),
@@ -153,7 +139,7 @@ describe('ImmersionsApiService', () => {
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledTimes(2)
+      expect(apiGet).toHaveBeenCalledTimes(2)
       expect(actual).toEqual({
         offres: [
           ...listeBaseImmersions({ page: 1 }),
@@ -165,7 +151,7 @@ describe('ImmersionsApiService', () => {
 
     it('renvoie la page demandée', async () => {
       // When
-      const actual = await immersionsService.searchImmersions(
+      const actual = await searchImmersions(
         {
           commune: uneCommune(),
           metier: unMetier(),
@@ -175,7 +161,7 @@ describe('ImmersionsApiService', () => {
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledTimes(1)
+      expect(apiGet).toHaveBeenCalledTimes(1)
       expect(actual).toEqual({
         offres: [...listeBaseImmersions({ page: 3 })],
         metadonnees: { nombreTotal: 15, nombrePages: 2 },

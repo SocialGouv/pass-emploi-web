@@ -17,12 +17,6 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import {
-  mockedActionsService,
-  mockedAgendaService,
-  mockedFavorisService,
-  mockedJeunesService,
-} from 'fixtures/services'
-import {
   Action,
   EtatQualificationAction,
   StatutAction,
@@ -32,9 +26,17 @@ import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune, { Onglet } from 'pages/mes-jeunes/[jeune_id]'
-import { ActionsService } from 'services/actions.service'
+import { getActionsJeuneClientSide } from 'services/actions.service'
+import { recupererAgenda } from 'services/agenda.service'
+import { getOffres } from 'services/favoris.service'
+import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { MetadonneesPagination } from 'types/pagination'
+
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
+jest.mock('services/favoris.service')
+jest.mock('services/actions.service')
 
 describe('Actions dans la fiche jeune', () => {
   const actions = uneListeDActions().concat(
@@ -92,6 +94,11 @@ describe('Actions dans la fiche jeune', () => {
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
       setIdJeune = jest.fn()
+      ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+        desIndicateursSemaine()
+      )
+      ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+      ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
     })
 
     it('affiche les actions du jeune', async () => {
@@ -178,16 +185,15 @@ describe('Actions dans la fiche jeune', () => {
     })
 
     describe('pagination actions', () => {
-      let actionsService: ActionsService
       let pageCourante: number
       beforeEach(async () => {
         // Given
-        actionsService = mockedActionsService({
-          getActionsJeuneClientSide: jest.fn(async (_, { page }) => ({
+        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+          async (_, { page }) => ({
             actions: [uneAction({ content: `Action page ${page}` })],
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
-          })),
-        })
+          })
+        )
         pageCourante = 4
 
         await renderFicheJeuneMILO({
@@ -198,7 +204,6 @@ describe('Actions dans la fiche jeune', () => {
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
           onglet: Onglet.ACTIONS,
-          actionsService: actionsService,
         })
       })
 
@@ -207,15 +212,12 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 2,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_echeance_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 2,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_echeance_decroissante',
+        })
         expect(screen.getByText('Action page 2')).toBeInTheDocument()
       })
 
@@ -225,25 +227,19 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page précédente'))
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: pageCourante - 1,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_echeance_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: pageCourante - 1,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_echeance_decroissante',
+        })
 
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: pageCourante - 2,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_echeance_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: pageCourante - 2,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_echeance_decroissante',
+        })
         expect(
           screen.getByLabelText(`Page ${pageCourante - 2}`)
         ).toHaveAttribute('aria-current', 'page')
@@ -254,23 +250,20 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledTimes(
-          0
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledTimes(0)
       })
     })
 
     describe('filtrer les actions par status', () => {
-      let actionsService: ActionsService
       let pageCourante: number
       beforeEach(async () => {
         // Given
-        actionsService = mockedActionsService({
-          getActionsJeuneClientSide: jest.fn(async () => ({
+        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+          async () => ({
             actions: [uneAction({ content: 'Action filtrée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
-          })),
-        })
+          })
+        )
         pageCourante = 1
 
         await renderFicheJeuneMILO({
@@ -281,7 +274,6 @@ describe('Actions dans la fiche jeune', () => {
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
           onglet: Onglet.ACTIONS,
-          actionsService: actionsService,
         })
 
         // When
@@ -293,15 +285,12 @@ describe('Actions dans la fiche jeune', () => {
 
       it('filtre les actions', () => {
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 1,
-            statuts: [StatutAction.Commencee, StatutAction.ARealiser],
-            etatsQualification: [],
-            tri: 'date_echeance_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 1,
+          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          etatsQualification: [],
+          tri: 'date_echeance_decroissante',
+        })
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
       })
 
@@ -317,29 +306,25 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 2,
-            statuts: [StatutAction.Commencee, StatutAction.ARealiser],
-            etatsQualification: [],
-            tri: 'date_echeance_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 2,
+          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          etatsQualification: [],
+          tri: 'date_echeance_decroissante',
+        })
       })
     })
 
     describe('filtrer les actions par etat de qualification', () => {
-      let actionsService: ActionsService
       let pageCourante: number
       beforeEach(async () => {
         // Given
-        actionsService = mockedActionsService({
-          getActionsJeuneClientSide: jest.fn(async () => ({
+        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+          async () => ({
             actions: [uneAction({ content: 'Action filtrée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
-          })),
-        })
+          })
+        )
         pageCourante = 1
 
         await renderFicheJeuneMILO({
@@ -350,7 +335,6 @@ describe('Actions dans la fiche jeune', () => {
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
           onglet: Onglet.ACTIONS,
-          actionsService: actionsService,
         })
 
         // When
@@ -366,18 +350,15 @@ describe('Actions dans la fiche jeune', () => {
 
       it('filtre les actions', () => {
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 1,
-            statuts: [],
-            etatsQualification: [
-              EtatQualificationAction.AQualifier,
-              EtatQualificationAction.Qualifiee,
-            ],
-            tri: 'date_echeance_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 1,
+          statuts: [],
+          etatsQualification: [
+            EtatQualificationAction.AQualifier,
+            EtatQualificationAction.Qualifiee,
+          ],
+          tri: 'date_echeance_decroissante',
+        })
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
       })
 
@@ -393,33 +374,29 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 2,
-            statuts: [],
-            etatsQualification: [
-              EtatQualificationAction.AQualifier,
-              EtatQualificationAction.Qualifiee,
-            ],
-            tri: 'date_echeance_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 2,
+          statuts: [],
+          etatsQualification: [
+            EtatQualificationAction.AQualifier,
+            EtatQualificationAction.Qualifiee,
+          ],
+          tri: 'date_echeance_decroissante',
+        })
       })
     })
 
     describe('trier les actions par date de création', () => {
-      let actionsService: ActionsService
       let pageCourante: number
       let headerColonneDate: HTMLButtonElement
       beforeEach(async () => {
         // Given
-        actionsService = mockedActionsService({
-          getActionsJeuneClientSide: jest.fn(async () => ({
+        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+          async () => ({
             actions: [uneAction({ content: 'Action triée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
-          })),
-        })
+          })
+        )
         pageCourante = 1
 
         await renderFicheJeuneMILO({
@@ -430,7 +407,6 @@ describe('Actions dans la fiche jeune', () => {
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
           onglet: Onglet.ACTIONS,
-          actionsService: actionsService,
         })
 
         headerColonneDate = screen.getByRole('button', { name: /Créée le/ })
@@ -442,24 +418,18 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(headerColonneDate)
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 1,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_croissante',
-          }
-        )
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 1,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 1,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_croissante',
+        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 1,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_decroissante',
+        })
         expect(screen.getByText('Action triée')).toBeInTheDocument()
       })
 
@@ -480,30 +450,26 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 2,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 2,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_decroissante',
+        })
       })
     })
 
     describe("trier les actions par date d'échéance", () => {
-      let actionsService: ActionsService
       let pageCourante: number
       let headerColonneDate: HTMLButtonElement
       beforeEach(async () => {
         // Given
-        actionsService = mockedActionsService({
-          getActionsJeuneClientSide: jest.fn(async () => ({
+        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+          async () => ({
             actions: [uneAction({ content: 'Action triée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
-          })),
-        })
+          })
+        )
         pageCourante = 1
 
         await renderFicheJeuneMILO({
@@ -514,7 +480,6 @@ describe('Actions dans la fiche jeune', () => {
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
           onglet: Onglet.ACTIONS,
-          actionsService: actionsService,
         })
 
         headerColonneDate = screen.getByRole('button', { name: /Échéance/ })
@@ -526,24 +491,18 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(headerColonneDate)
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 1,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_echeance_croissante',
-          }
-        )
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 1,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_echeance_decroissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 1,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_echeance_croissante',
+        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 1,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_echeance_decroissante',
+        })
         expect(screen.getByText('Action triée')).toBeInTheDocument()
       })
 
@@ -564,15 +523,12 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(actionsService.getActionsJeuneClientSide).toHaveBeenCalledWith(
-          'jeune-1',
-          {
-            page: 2,
-            statuts: [],
-            etatsQualification: [],
-            tri: 'date_echeance_croissante',
-          }
-        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 2,
+          statuts: [],
+          etatsQualification: [],
+          tri: 'date_echeance_croissante',
+        })
       })
     })
   })
@@ -586,14 +542,12 @@ interface FicheJeuneParams {
     page: number
   }
   onglet?: Onglet
-  actionsService?: ActionsService
 }
 
 async function renderFicheJeuneMILO({
   structure,
   actionsInitiales,
   onglet,
-  actionsService,
 }: FicheJeuneParams) {
   await act(async () => {
     await renderWithContexts(
@@ -606,17 +560,6 @@ async function renderFicheJeuneMILO({
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-          actionsService: actionsService ?? mockedActionsService(),
-        },
       }
     )
   })
@@ -625,8 +568,8 @@ async function renderFicheJeuneMILO({
 async function renderFicheJeunePE(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = [],
-  metadonnees: Metadonnees,
-  offresPE: Offres[],
+  metadonnees: MetadonneesFavoris,
+  offresPE: Offre[],
   recherchesPE: Recherche[]
 ) {
   await act(async () => {
@@ -644,19 +587,6 @@ async function renderFicheJeunePE(
         customConseiller: {
           id: 'id-conseiller',
           structure: structure,
-        },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-          favorisService: mockedFavorisService({
-            getOffres: jest.fn(async () => uneListeDOffres()),
-          }),
         },
       }
     )

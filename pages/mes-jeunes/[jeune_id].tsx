@@ -44,19 +44,27 @@ import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
-import { AgendaService } from 'services/agenda.service'
-import { EvenementsService } from 'services/evenements.service'
-import { FavorisService } from 'services/favoris.service'
-import { JeunesService } from 'services/jeunes.service'
+import {
+  getActionsJeuneClientSide,
+  getActionsJeuneServerSide,
+} from 'services/actions.service'
+import { recupererAgenda as _recupererAgenda } from 'services/agenda.service'
+import { getRendezVousJeune } from 'services/evenements.service'
+import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
+import {
+  archiverJeune,
+  getIndicateursJeuneAlleges,
+  getJeuneDetails,
+  getMetadonneesFavorisJeune,
+  getMotifsSuppression,
+  supprimerJeuneInactif as _supprimerJeuneInactif,
+} from 'services/jeunes.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export enum Onglet {
@@ -100,9 +108,6 @@ function FicheJeune({
   offresPE,
   recherchesPE,
 }: FicheJeuneProps) {
-  const actionsService = useDependance<ActionsService>('actionsService')
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const agendaService = useDependance<AgendaService>('agendaService')
   const router = useRouter()
   const pathPrefix = router.asPath.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
@@ -197,7 +202,7 @@ function FicheJeune({
     etatsQualification: EtatQualificationAction[],
     tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-    const result = await actionsService.getActionsJeuneClientSide(jeune.id, {
+    const result = await getActionsJeuneClientSide(jeune.id, {
       page,
       statuts,
       etatsQualification,
@@ -209,7 +214,7 @@ function FicheJeune({
   }
 
   async function recupererAgenda(): Promise<Agenda> {
-    return agendaService.recupererAgenda(jeune.id, DateTime.now())
+    return _recupererAgenda(jeune.id, DateTime.now())
   }
 
   async function openDeleteJeuneModal(e: React.MouseEvent<HTMLElement>) {
@@ -220,7 +225,7 @@ function FicheJeune({
       setShowModaleDeleteJeuneActif(true)
 
       if (motifsSuppression.length === 0) {
-        const result = await jeunesService.getMotifsSuppression()
+        const result = await getMotifsSuppression()
         setMotifsSuppression(result)
       }
     }
@@ -234,7 +239,7 @@ function FicheJeune({
     payload: SuppressionJeuneFormData
   ): Promise<void> {
     try {
-      await jeunesService.archiverJeune(jeune.id, payload)
+      await archiverJeune(jeune.id, payload)
 
       removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
@@ -249,7 +254,7 @@ function FicheJeune({
 
   async function supprimerJeuneInactif(): Promise<void> {
     try {
-      await jeunesService.supprimerJeuneInactif(jeune.id)
+      await _supprimerJeuneInactif(jeune.id)
 
       removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
@@ -280,23 +285,14 @@ function FicheJeune({
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
     if (!estPoleEmploi(conseiller) && !indicateursSemaine) {
-      jeunesService
-        .getIndicateursJeuneAlleges(
-          conseiller.id,
-          jeune.id,
-          debutSemaine,
-          finSemaine
-        )
-        .then(setIndicateursSemaine)
+      getIndicateursJeuneAlleges(
+        conseiller.id,
+        jeune.id,
+        debutSemaine,
+        finSemaine
+      ).then(setIndicateursSemaine)
     }
-  }, [
-    conseiller,
-    debutSemaine,
-    finSemaine,
-    indicateursSemaine,
-    jeune.id,
-    jeunesService,
-  ])
+  }, [conseiller, debutSemaine, finSemaine, indicateursSemaine, jeune.id])
 
   return (
     <>
@@ -572,11 +568,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const jeunesService = withDependance<JeunesService>('jeunesService')
-  const rendezVousService =
-    withDependance<EvenementsService>('evenementsService')
-  const favorisService = withDependance<FavorisService>('favorisService')
-  const actionsService = withDependance<ActionsService>('actionsService')
   const {
     session: { accessToken, user },
   } = sessionOrRedirect
@@ -585,36 +576,27 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const page = parseInt(context.query.page as string, 10) || 1
   const [jeune, metadonneesFavoris, rdvs, actions, offresPE, recherchesPE] =
     await Promise.all([
-      jeunesService.getJeuneDetails(
-        context.query.jeune_id as string,
-        accessToken
-      ),
-      jeunesService.getMetadonneesFavorisJeune(
-        context.query.jeune_id as string,
-        accessToken
-      ),
+      getJeuneDetails(context.query.jeune_id as string, accessToken),
+      getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
       userIsPoleEmploi
         ? []
-        : rendezVousService.getRendezVousJeune(
+        : getRendezVousJeune(
             context.query.jeune_id as string,
             PeriodeEvenements.FUTURS,
             accessToken
           ),
       userIsPoleEmploi
         ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-        : actionsService.getActionsJeuneServerSide(
+        : getActionsJeuneServerSide(
             context.query.jeune_id as string,
             page,
             accessToken
           ),
       userIsPoleEmploi
-        ? favorisService.getOffres(
-            context.query.jeune_id as string,
-            accessToken
-          )
+        ? getOffres(context.query.jeune_id as string, accessToken)
         : [],
       userIsPoleEmploi
-        ? favorisService.getRecherchesSauvegardees(
+        ? getRecherchesSauvegardees(
             context.query.jeune_id as string,
             accessToken
           )

@@ -5,17 +5,13 @@ import React from 'react'
 import ChatContainer from 'components/chat/ChatContainer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import {
-  mockedJeunesService,
-  mockedListesDeDiffusionService,
-  mockedMessagesService,
-} from 'fixtures/services'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { JeunesService } from 'services/jeunes.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
-import { MessagesService } from 'services/messages.service'
+import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
+import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/jeunes.service')
+jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/chat/Conversation', () =>
   // eslint-disable-next-line react/display-name
   ({ jeuneChat }: { jeuneChat: JeuneChat }) => <>conversation-{jeuneChat.id}</>
@@ -25,22 +21,15 @@ jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 describe('<ChatContainer />', () => {
   const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
   let jeunesChats: JeuneChat[]
-  let jeunesService: JeunesService
-  let messagesService: MessagesService
-  let listesDeDiffusionService: ListesDeDiffusionService
+
   let conseillers: ConseillerHistorique[]
   beforeEach(async () => {
-    jeunesService = mockedJeunesService({
-      getConseillersDuJeuneClientSide: jest.fn((_) =>
-        Promise.resolve(conseillers)
-      ),
-    })
-    messagesService = mockedMessagesService()
-    listesDeDiffusionService = mockedListesDeDiffusionService({
-      getListesDeDiffusionClientSide: jest.fn(async () =>
-        desListesDeDiffusion()
-      ),
-    })
+    ;(getConseillersDuJeuneClientSide as jest.Mock).mockResolvedValue(
+      conseillers
+    )
+    ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
+      desListesDeDiffusion()
+    )
     jeunesChats = [
       unJeuneChat({
         ...jeunes[0],
@@ -63,13 +52,7 @@ describe('<ChatContainer />', () => {
   describe('Messagerie', () => {
     it('affiche la messagerie', async () => {
       // When
-      renderWithContexts(<ChatContainer jeunesChats={jeunesChats} />, {
-        customDependances: {
-          jeunesService,
-          messagesService,
-          listesDeDiffusionService,
-        },
-      })
+      renderWithContexts(<ChatContainer jeunesChats={jeunesChats} />, {})
 
       // Then
       expect(
@@ -86,7 +69,6 @@ describe('<ChatContainer />', () => {
       // When
       await act(async () => {
         renderWithContexts(<ChatContainer jeunesChats={jeunesChats} />, {
-          customDependances: { jeunesService, messagesService },
           customCurrentJeune: { id: jeunes[2].id },
         })
       })
@@ -108,13 +90,7 @@ describe('<ChatContainer />', () => {
 
   describe('listes de diffusion', () => {
     beforeEach(async () => {
-      renderWithContexts(<ChatContainer jeunesChats={[]} />, {
-        customDependances: {
-          jeunesService,
-          messagesService,
-          listesDeDiffusionService,
-        },
-      })
+      renderWithContexts(<ChatContainer jeunesChats={[]} />, {})
     })
 
     it('permet d’accéder aux messages envoyés aux listes de diffusion', async () => {
@@ -147,9 +123,7 @@ describe('<ChatContainer />', () => {
       )
 
       // Then
-      expect(
-        listesDeDiffusionService.getListesDeDiffusionClientSide
-      ).toHaveBeenCalledTimes(1)
+      expect(getListesDeDiffusionClientSide).toHaveBeenCalledTimes(1)
     })
   })
 })

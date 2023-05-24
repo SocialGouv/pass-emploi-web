@@ -5,16 +5,24 @@ import React from 'react'
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
-import { mockedAgendaService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
+import { recupererAgenda } from 'services/agenda.service'
+import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
+
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
 
 describe('Situations dans la fiche jeune', () => {
   describe('quand l’utilisateur est un conseiller MILO', () => {
     beforeEach(async () => {
       ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+      ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+        desIndicateursSemaine()
+      )
+      ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
     })
 
     describe('quand le jeune n’a aucune situation', () => {
@@ -81,16 +89,6 @@ async function renderFicheJeune(
       />,
       {
         customConseiller: { structure: StructureConseiller.MILO },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-        },
       }
     )
   })

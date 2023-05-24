@@ -10,13 +10,15 @@ import {
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
-import { mockedAgendaService, mockedJeunesService } from 'fixtures/services'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
+import { recupererAgenda } from 'services/agenda.service'
+import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
 jest.mock('components/Modal')
 
 describe('Indicateurs dans la fiche jeune', () => {
@@ -26,6 +28,10 @@ describe('Indicateurs dans la fiche jeune', () => {
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
       ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+      ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+        desIndicateursSemaine()
+      )
+      ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
 
       // When
       await act(async () => {
@@ -37,18 +43,7 @@ describe('Indicateurs dans la fiche jeune', () => {
             pageTitle={''}
             metadonneesFavoris={uneMetadonneeFavoris()}
           />,
-          {
-            customDependances: {
-              jeunesService: mockedJeunesService({
-                getIndicateursJeuneAlleges: jest.fn(async () =>
-                  desIndicateursSemaine()
-                ),
-              }),
-              agendaService: mockedAgendaService({
-                recupererAgenda: jest.fn(async () => unAgenda()),
-              }),
-            },
-          }
+          {}
         )
       })
     })

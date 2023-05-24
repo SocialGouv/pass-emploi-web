@@ -47,7 +47,9 @@ module.exports = withBundleAnalyzer(
       MATOMO_SOCIALGOUV_URL: process.env.MATOMO_SOCIALGOUV_URL,
       MATOMO_SOCIALGOUV_SITE_ID: process.env.MATOMO_SOCIALGOUV_SITE_ID,
       MATOMO_DIMENSIONS_CONSEILLER_BENEFICIAIRES_STAGING:
-        process.env.MATOMO_DIMENSIONS_CONSEILLER_BENEFICIAIRES_STAGING === 'true',FAQ_MILO_EXTERNAL_LINK: process.env.FAQ_MILO_EXTERNAL_LINK,
+        process.env.MATOMO_DIMENSIONS_CONSEILLER_BENEFICIAIRES_STAGING ===
+        'true',
+      FAQ_MILO_EXTERNAL_LINK: process.env.FAQ_MILO_EXTERNAL_LINK,
       FAQ_PE_EXTERNAL_LINK: process.env.FAQ_PE_EXTERNAL_LINK,
       FAQ_PE_BRSA_EXTERNAL_LINK: process.env.FAQ_PE_BRSA_EXTERNAL_LINK,
       SUPPORT_MAIL: process.env.SUPPORT_MAIL,
@@ -98,7 +100,6 @@ module.exports = withBundleAnalyzer(
           NODE_ENV: 'production',
         })
       )
-
       return config
     },
   })

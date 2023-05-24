@@ -3,19 +3,18 @@ import { Account } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 
 import { StructureConseiller } from 'interfaces/conseiller'
-import Authenticator from 'utils/auth/authenticator'
-import HttpClient from 'utils/httpClient'
+import { handleJWTAndRefresh } from 'utils/auth/authenticator'
+import { fetchJson } from 'utils/httpClient'
+
+jest.mock('utils/httpClient')
 
 describe('Authenticator', () => {
-  let authenticator: Authenticator
-  let httpClient: HttpClient
   let accessToken: string
   let refreshToken: string
   let now: DateTime
 
   beforeEach(() => {
-    httpClient = { fetchJson: jest.fn(), fetchNoContent: jest.fn() }
-    authenticator = new Authenticator(httpClient)
+    // httpClient = { fetchJson: jest.fn(), fetchNoContent: jest.fn() }
     now = DateTime.now()
     jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
@@ -35,7 +34,7 @@ describe('Authenticator', () => {
 
         // When
         const jwt = jwtFixture()
-        const actual = await authenticator.handleJWTAndRefresh({
+        const actual = await handleJWTAndRefresh({
           jwt: jwt,
           account: accountFixture({
             accessToken,
@@ -64,7 +63,7 @@ describe('Authenticator', () => {
           ...jwtFixture(),
           expiresAtTimestamp: now.plus({ second: 20 }).toMillis(),
         }
-        const actual = await authenticator.handleJWTAndRefresh({
+        const actual = await handleJWTAndRefresh({
           jwt,
           account: undefined,
         })
@@ -83,7 +82,7 @@ describe('Authenticator', () => {
           }
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
-          ;(httpClient.fetchJson as jest.Mock).mockResolvedValueOnce({
+          ;(fetchJson as jest.Mock).mockResolvedValueOnce({
             content: {
               access_token: nouvelAccessToken,
               refresh_token: nouveauRefreshToken,
@@ -92,7 +91,7 @@ describe('Authenticator', () => {
           })
 
           // When
-          const actual = await authenticator.handleJWTAndRefresh({
+          const actual = await handleJWTAndRefresh({
             jwt,
           })
 
@@ -119,7 +118,7 @@ describe('Authenticator', () => {
 
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
-          ;(httpClient.fetchJson as jest.Mock).mockResolvedValueOnce({
+          ;(fetchJson as jest.Mock).mockResolvedValueOnce({
             content: {
               access_token: nouvelAccessToken,
               refresh_token: nouveauRefreshToken,
@@ -128,7 +127,7 @@ describe('Authenticator', () => {
           })
 
           // When
-          const actual = await authenticator.handleJWTAndRefresh({
+          const actual = await handleJWTAndRefresh({
             jwt,
           })
 

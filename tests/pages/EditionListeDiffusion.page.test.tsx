@@ -5,31 +5,32 @@ import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
-import {
-  mockedJeunesService,
-  mockedListesDeDiffusionService,
-} from 'fixtures/services'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import EditionListeDiffusion, {
   getServerSideProps,
 } from 'pages/mes-jeunes/listes-de-diffusion/edition-liste'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import {
+  creerListeDeDiffusion,
+  modifierListeDeDiffusion,
+  recupererListeDeDiffusion,
+  supprimerListeDeDiffusion,
+} from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
-jest.mock('utils/injectionDependances/withDependance')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('services/listes-de-diffusion.service')
+jest.mock('services/jeunes.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('Page d’édition d’une liste de diffusion', () => {
   describe('client side', () => {
     let beneficiaires: BaseJeune[]
-    let listesDeDiffusionService: ListesDeDiffusionService
+
     let alerteSetter: (alert: AlerteParam | undefined) => void
     let routerPush: jest.Mock
 
@@ -38,8 +39,6 @@ describe('Page d’édition d’une liste de diffusion', () => {
       alerteSetter = jest.fn()
       routerPush = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
-
-      listesDeDiffusionService = mockedListesDeDiffusionService()
 
       beneficiaires = desItemsJeunes()
     })
@@ -52,7 +51,6 @@ describe('Page d’édition d’une liste de diffusion', () => {
             returnTo='/mes-jeunes/listes-de-diffusion'
           />,
           {
-            customDependances: { listesDeDiffusionService },
             customAlerte: { alerteSetter },
           }
         )
@@ -109,9 +107,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         describe('quand le formulaire est validé', () => {
           it('crée la liste', async () => {
             // Then
-            expect(
-              listesDeDiffusionService.creerListeDeDiffusion
-            ).toHaveBeenCalledWith({
+            expect(creerListeDeDiffusion).toHaveBeenCalledWith({
               titre: 'Liste métiers aéronautique',
               idsBeneficiaires: [beneficiaires[2].id, beneficiaires[0].id],
             })
@@ -167,9 +163,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
         it('affiche un message d’erreur si la création échoue', async () => {
           // Given
-          ;(
-            listesDeDiffusionService.creerListeDeDiffusion as jest.Mock
-          ).mockRejectedValue({})
+          ;(creerListeDeDiffusion as jest.Mock).mockRejectedValue({})
 
           // When
           await userEvent.click(screen.getByText('Créer la liste'))
@@ -210,7 +204,6 @@ describe('Page d’édition d’une liste de diffusion', () => {
             liste={listeDeDiffusion}
           />,
           {
-            customDependances: { listesDeDiffusionService },
             customAlerte: { alerteSetter },
           }
         )
@@ -222,9 +215,9 @@ describe('Page d’édition d’une liste de diffusion', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
 
         // Then
-        expect(
-          listesDeDiffusionService.supprimerListeDeDiffusion
-        ).toHaveBeenCalledWith(listeDeDiffusion.id)
+        expect(supprimerListeDeDiffusion).toHaveBeenCalledWith(
+          listeDeDiffusion.id
+        )
         expect(alerteSetter).toHaveBeenCalledWith(
           AlerteParam.suppressionListeDiffusion
         )
@@ -311,12 +304,13 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
         it('modifie la liste', async () => {
           // Then
-          expect(
-            listesDeDiffusionService.modifierListeDeDiffusion
-          ).toHaveBeenCalledWith(listeDeDiffusion.id, {
-            titre: 'Nouveau titre',
-            idsBeneficiaires: [beneficiaires[1].id, beneficiaires[0].id],
-          })
+          expect(modifierListeDeDiffusion).toHaveBeenCalledWith(
+            listeDeDiffusion.id,
+            {
+              titre: 'Nouveau titre',
+              idsBeneficiaires: [beneficiaires[1].id, beneficiaires[0].id],
+            }
+          )
         })
 
         it('affiche un message de succès', async () => {
@@ -353,8 +347,6 @@ describe('Page d’édition d’une liste de diffusion', () => {
     })
 
     describe("quand l'utilisateur est connecté", () => {
-      let jeunesService: JeunesService
-      let listesDeDiffusionService: ListesDeDiffusionService
       let jeunes: JeuneFromListe[]
       let listeDeDiffusion: ListeDeDiffusion
 
@@ -370,19 +362,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
         jeunes = desItemsJeunes()
         listeDeDiffusion = uneListeDeDiffusion()
-        jeunesService = mockedJeunesService({
-          getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
-        })
-        listesDeDiffusionService = mockedListesDeDiffusionService({
-          recupererListeDeDiffusion: jest
-            .fn()
-            .mockResolvedValue(listeDeDiffusion),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'listesDeDiffusionService')
-            return listesDeDiffusionService
-        })
+        ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
+          jeunes
+        )
+        ;(recupererListeDeDiffusion as jest.Mock).mockResolvedValue(
+          listeDeDiffusion
+        )
       })
 
       it('prépare la page', async () => {
@@ -411,9 +396,10 @@ describe('Page d’édition d’une liste de diffusion', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(
-          listesDeDiffusionService.recupererListeDeDiffusion
-        ).toHaveBeenCalledWith('1', 'accessToken')
+        expect(recupererListeDeDiffusion).toHaveBeenCalledWith(
+          '1',
+          'accessToken'
+        )
 
         expect(actual).toMatchObject({
           props: {

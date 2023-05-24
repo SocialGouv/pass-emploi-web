@@ -5,22 +5,18 @@ import { useRouter } from 'next/router'
 import { DetailsJeune } from 'components/jeune/DetailsJeune'
 import { unConseiller } from 'fixtures/conseiller'
 import { unDetailJeune } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
+import { modifierIdentifiantPartenaire } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/jeunes.service')
 jest.mock('components/Modal')
 
 describe('<DetailsJeune>', () => {
-  let jeunesService: JeunesService
-
   beforeEach(() => {
     ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
-    jeunesService = mockedJeunesService({
-      modifierIdentifiantPartenaire: jest.fn(() => Promise.resolve()),
-    })
+    ;(modifierIdentifiantPartenaire as jest.Mock).mockResolvedValue(undefined)
   })
 
   it("devrait afficher les informations de la fiche d'une jeune", () => {
@@ -36,8 +32,7 @@ describe('<DetailsJeune>', () => {
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
-      />,
-      { customDependances: { jeunesService } }
+      />
     )
 
     // Then
@@ -66,8 +61,7 @@ describe('<DetailsJeune>', () => {
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
-      />,
-      { customDependances: { jeunesService } }
+      />
     )
 
     // Then
@@ -84,8 +78,7 @@ describe('<DetailsJeune>', () => {
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
         onDossierMiloClick={() => {}}
-      />,
-      { customDependances: { jeunesService } }
+      />
     )
 
     // Then
@@ -106,8 +99,7 @@ describe('<DetailsJeune>', () => {
             jeune={jeune}
             conseiller={unConseiller({ structure: StructureConseiller.MILO })}
             onDossierMiloClick={() => {}}
-          />,
-          { customDependances: { jeunesService } }
+          />
         )
 
         // Then
@@ -131,8 +123,7 @@ describe('<DetailsJeune>', () => {
                 structure: StructureConseiller.POLE_EMPLOI,
               })}
               onDossierMiloClick={() => {}}
-            />,
-            { customDependances: { jeunesService } }
+            />
           )
 
           // Then
@@ -162,7 +153,6 @@ describe('<DetailsJeune>', () => {
             onDossierMiloClick={() => {}}
           />,
           {
-            customDependances: { jeunesService },
             customAlerte: { alerteSetter },
           }
         )
@@ -219,9 +209,10 @@ describe('<DetailsJeune>', () => {
           )
 
           // Then
-          expect(
-            jeunesService.modifierIdentifiantPartenaire
-          ).toHaveBeenCalledWith('jeune-1', '12345')
+          expect(modifierIdentifiantPartenaire).toHaveBeenCalledWith(
+            'jeune-1',
+            '12345'
+          )
           expect(alerteSetter).toHaveBeenCalledWith(
             'modificationIdentifiantPartenaire'
           )
@@ -245,7 +236,6 @@ describe('<DetailsJeune>', () => {
             onDossierMiloClick={() => {}}
           />,
           {
-            customDependances: { jeunesService },
             customAlerte: { alerteSetter },
           }
         )
@@ -302,9 +292,10 @@ describe('<DetailsJeune>', () => {
           )
 
           // Then
-          expect(
-            jeunesService.modifierIdentifiantPartenaire
-          ).toHaveBeenCalledWith('jeune-1', '123456789')
+          expect(modifierIdentifiantPartenaire).toHaveBeenCalledWith(
+            'jeune-1',
+            '123456789'
+          )
           expect(alerteSetter).toHaveBeenCalledWith(
             'modificationIdentifiantPartenaire'
           )
@@ -325,8 +316,7 @@ describe('<DetailsJeune>', () => {
           jeune={jeune}
           conseiller={unConseiller({ structure: StructureConseiller.MILO })}
           onDossierMiloClick={() => {}}
-        />,
-        { customDependances: { jeunesService } }
+        />
       )
 
       // Then

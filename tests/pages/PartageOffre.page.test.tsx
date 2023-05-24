@@ -9,13 +9,6 @@ import {
   unDetailOffreEmploi,
   unDetailServiceCivique,
 } from 'fixtures/offre'
-import {
-  mockedImmersionsService,
-  mockedJeunesService,
-  mockedMessagesService,
-  mockedOffresEmploiService,
-  mockedServicesCiviquesService,
-} from 'fixtures/services'
 import { BaseJeune } from 'interfaces/jeune'
 import {
   DetailImmersion,
@@ -28,17 +21,20 @@ import PartageOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_type]/[offre_id]/partage'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ImmersionsService } from 'services/immersions.service'
-import { JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
-import { OffresEmploiService } from 'services/offres-emploi.service'
-import { ServicesCiviquesService } from 'services/services-civiques.service'
+import { getImmersionServerSide } from 'services/immersions.service'
+import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import { partagerOffre } from 'services/messages.service'
+import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
+import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/offres-emploi.service')
+jest.mock('services/services-civiques.service')
+jest.mock('services/immersions.service')
+jest.mock('services/jeunes.service')
+jest.mock('services/messages.service')
 
 describe('Page Partage Offre', () => {
   describe('server side', () => {
@@ -61,10 +57,7 @@ describe('Page Partage Offre', () => {
       let offreEmploi: DetailOffreEmploi
       let serviceCivique: DetailServiceCivique
       let immersion: DetailImmersion
-      let offresEmploiService: OffresEmploiService
-      let servicesCiviquesService: ServicesCiviquesService
-      let immersionsService: ImmersionsService
-      let jeunesService: JeunesService
+
       beforeEach(() => {
         // Given
         offreEmploi = unDetailOffreEmploi()
@@ -77,28 +70,13 @@ describe('Page Partage Offre', () => {
             accessToken: 'accessToken',
           },
         })
-        offresEmploiService = mockedOffresEmploiService({
-          getOffreEmploiServerSide: jest.fn(async () => offreEmploi),
-        })
-        servicesCiviquesService = mockedServicesCiviquesService({
-          getServiceCiviqueServerSide: jest.fn(async () => serviceCivique),
-        })
-        immersionsService = mockedImmersionsService({
-          getImmersionServerSide: jest.fn(async () => immersion),
-        })
-        jeunesService = mockedJeunesService({
-          getJeunesDuConseillerServerSide: jest.fn(async () =>
-            desItemsJeunes()
-          ),
-        })
-        ;(withDependance as jest.Mock).mockImplementation(
-          (dependance: string) => {
-            if (dependance === 'offresEmploiService') return offresEmploiService
-            if (dependance === 'servicesCiviquesService')
-              return servicesCiviquesService
-            if (dependance === 'immersionsService') return immersionsService
-            if (dependance === 'jeunesService') return jeunesService
-          }
+        ;(getOffreEmploiServerSide as jest.Mock).mockResolvedValue(offreEmploi)
+        ;(getServiceCiviqueServerSide as jest.Mock).mockResolvedValue(
+          serviceCivique
+        )
+        ;(getImmersionServerSide as jest.Mock).mockResolvedValue(immersion)
+        ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
+          desItemsJeunes()
         )
       })
 
@@ -110,9 +88,10 @@ describe('Page Partage Offre', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(
-          offresEmploiService.getOffreEmploiServerSide
-        ).toHaveBeenCalledWith('offre-id', 'accessToken')
+        expect(getOffreEmploiServerSide).toHaveBeenCalledWith(
+          'offre-id',
+          'accessToken'
+        )
         expect(actual).toEqual({
           props: {
             offre: offreEmploi,
@@ -132,9 +111,10 @@ describe('Page Partage Offre', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(
-          servicesCiviquesService.getServiceCiviqueServerSide
-        ).toHaveBeenCalledWith('offre-id', 'accessToken')
+        expect(getServiceCiviqueServerSide).toHaveBeenCalledWith(
+          'offre-id',
+          'accessToken'
+        )
         expect(actual).toEqual({
           props: {
             offre: serviceCivique,
@@ -154,7 +134,7 @@ describe('Page Partage Offre', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(immersionsService.getImmersionServerSide).toHaveBeenCalledWith(
+        expect(getImmersionServerSide).toHaveBeenCalledWith(
           'offre-id',
           'accessToken'
         )
@@ -171,9 +151,7 @@ describe('Page Partage Offre', () => {
 
       it("renvoie une 404 si l'offre n'existe pas", async () => {
         // Given
-        ;(
-          offresEmploiService.getOffreEmploiServerSide as jest.Mock
-        ).mockResolvedValue(undefined)
+        ;(getOffreEmploiServerSide as jest.Mock).mockResolvedValue(undefined)
 
         // When
         const actual = await getServerSideProps({
@@ -321,7 +299,6 @@ describe('Page Partage Offre', () => {
     describe('commun', () => {
       let offre: DetailOffre
       let jeunes: BaseJeune[]
-      let messagesService: MessagesService
 
       let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
       let push: Function
@@ -332,9 +309,7 @@ describe('Page Partage Offre', () => {
 
         offre = unDetailOffreEmploi()
         jeunes = desItemsJeunes()
-        messagesService = mockedMessagesService({
-          partagerOffre: jest.fn(async () => {}),
-        })
+        ;(partagerOffre as jest.Mock).mockResolvedValue({})
 
         renderWithContexts(
           <PartageOffre
@@ -344,7 +319,6 @@ describe('Page Partage Offre', () => {
             returnTo='/return/to'
           />,
           {
-            customDependances: { messagesService },
             customAlerte: { alerteSetter },
           }
         )
@@ -422,7 +396,7 @@ describe('Page Partage Offre', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(messagesService.partagerOffre).toHaveBeenCalledWith({
+            expect(partagerOffre).toHaveBeenCalledWith({
               offre,
               idsDestinataires: [jeunes[2].id, jeunes[0].id],
               cleChiffrement: 'cleChiffrement',
@@ -438,7 +412,7 @@ describe('Page Partage Offre', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(messagesService.partagerOffre).toHaveBeenCalledWith({
+            expect(partagerOffre).toHaveBeenCalledWith({
               offre,
               idsDestinataires: [jeunes[2].id, jeunes[0].id],
               cleChiffrement: 'cleChiffrement',

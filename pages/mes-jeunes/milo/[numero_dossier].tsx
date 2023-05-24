@@ -1,10 +1,9 @@
 import { GetServerSideProps } from 'next'
 
 import { StructureConseiller } from 'interfaces/conseiller'
-import { JeunesService } from 'services/jeunes.service'
+import { getIdJeuneMilo } from 'services/jeunes.service'
 import { trackSSR } from 'utils/analytics/matomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 function MiloFicheJeune() {
   return null
@@ -22,11 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const numeroDossier = context.query.numero_dossier as string
-  const jeunesServices = withDependance<JeunesService>('jeunesService')
-  const idJeune = await jeunesServices.getIdJeuneMilo(
-    numeroDossier,
-    accessToken
-  )
+  const idJeune = await getIdJeuneMilo(numeroDossier, accessToken)
 
   const destination = idJeune ? `/mes-jeunes/${idJeune}` : '/mes-jeunes'
   trackSSR({

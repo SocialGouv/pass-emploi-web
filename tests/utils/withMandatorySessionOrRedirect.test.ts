@@ -2,7 +2,7 @@ import { GetServerSidePropsContext } from 'next/types'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('next-auth/react', () => ({ getSession: jest.fn() }))
 

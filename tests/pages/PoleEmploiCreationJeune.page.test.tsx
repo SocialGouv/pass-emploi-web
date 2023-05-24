@@ -4,15 +4,15 @@ import { Mock } from 'jest-mock'
 import { useRouter } from 'next/router'
 
 import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
 import { BaseJeune } from 'interfaces/jeune'
 import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
+import { createCompteJeunePoleEmploi } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/jeunes.service')
+
 describe('PoleEmploiCreationJeune', () => {
-  let jeunesService: JeunesService
   let submitButton: HTMLElement
 
   let push: Function
@@ -21,7 +21,6 @@ describe('PoleEmploiCreationJeune', () => {
   let portefeuille: BaseJeune[]
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
-    jeunesService = mockedJeunesService()
     push = jest.fn(() => Promise.resolve())
     ;(useRouter as jest.Mock).mockReturnValue({ push })
     alerteSetter = jest.fn()
@@ -29,7 +28,6 @@ describe('PoleEmploiCreationJeune', () => {
     portefeuille = desItemsJeunes().map(extractBaseJeune)
 
     renderWithContexts(<PoleEmploiCreationJeune />, {
-      customDependances: { jeunesService },
       customAlerte: { alerteSetter },
       customPortefeuille: { setter: portefeuilleSetter },
     })
@@ -75,9 +73,7 @@ describe('PoleEmploiCreationJeune', () => {
         expect(
           screen.getByText('Veuillez renseigner le prénom du jeune')
         ).toBeInTheDocument()
-        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(
-          0
-        )
+        expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
       })
 
       it('demande le remplissage du nom', async () => {
@@ -92,9 +88,7 @@ describe('PoleEmploiCreationJeune', () => {
         expect(
           screen.getByText('Veuillez renseigner le nom du jeune')
         ).toBeInTheDocument()
-        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(
-          0
-        )
+        expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
       })
 
       it("demande le remplissage de l'email", async () => {
@@ -109,9 +103,7 @@ describe('PoleEmploiCreationJeune', () => {
         expect(
           screen.getByText("Veuillez renseigner l'e-mail du jeune")
         ).toBeInTheDocument()
-        expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(
-          0
-        )
+        expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
       })
     })
   })
@@ -129,16 +121,16 @@ describe('PoleEmploiCreationJeune', () => {
 
     it('devrait revenir sur la page des jeunes du conseiller', async () => {
       // Given
-      ;(
-        jeunesService.createCompteJeunePoleEmploi as Mock<any>
-      ).mockResolvedValue(uneBaseJeune())
+      ;(createCompteJeunePoleEmploi as Mock<any>).mockResolvedValue(
+        uneBaseJeune()
+      )
 
       // When
       await userEvent.click(submitButton)
 
       // Then
-      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
-      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledWith({
+      expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
+      expect(createCompteJeunePoleEmploi).toHaveBeenCalledWith({
         firstName: 'Nadia',
         lastName: 'Sanfamiye',
         email: 'nadia.sanfamiye@poleemploi.fr',
@@ -157,9 +149,7 @@ describe('PoleEmploiCreationJeune', () => {
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       // Given
-      ;(
-        jeunesService.createCompteJeunePoleEmploi as Mock<any>
-      ).mockRejectedValue({
+      ;(createCompteJeunePoleEmploi as Mock<any>).mockRejectedValue({
         message: "un message d'erreur",
       })
 
@@ -167,7 +157,7 @@ describe('PoleEmploiCreationJeune', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(jeunesService.createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
+      expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })
   })

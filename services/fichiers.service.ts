@@ -1,43 +1,29 @@
 import { getSession } from 'next-auth/react'
 
-import { ApiClient } from 'clients/api.client'
+import { apiDelete, apiPostFile } from 'clients/api.client'
 import { InfoFichier } from 'interfaces/fichier'
 
-export interface FichiersService {
-  uploadFichier(
-    idsJeunes: string[],
-    idsListesDeDiffusion: string[],
-    fichier: File
-  ): Promise<InfoFichier>
+export async function uploadFichier(
+  idsJeunes: string[],
+  idsListesDeDiffusion: string[],
+  fichier: File
+): Promise<InfoFichier> {
+  const session = await getSession()
 
-  deleteFichier(idFichier: string): Promise<void>
+  const formData = new FormData()
+  idsJeunes.forEach((idJeune) => {
+    formData.append('jeunesIds', idJeune)
+  })
+  idsListesDeDiffusion.forEach((idListe) => {
+    formData.append('listesDeDiffusionIds', idListe)
+  })
+  formData.append('fichier', fichier)
+  formData.append('nom', fichier.name)
+
+  return apiPostFile(`/fichiers`, formData, session!.accessToken)
 }
 
-export class FichiersApiService implements FichiersService {
-  constructor(private readonly apiClient: ApiClient) {}
-
-  async uploadFichier(
-    idsJeunes: string[],
-    idsListesDeDiffusion: string[],
-    fichier: File
-  ): Promise<InfoFichier> {
-    const session = await getSession()
-
-    const formData = new FormData()
-    idsJeunes.forEach((idJeune) => {
-      formData.append('jeunesIds', idJeune)
-    })
-    idsListesDeDiffusion.forEach((idListe) => {
-      formData.append('listesDeDiffusionIds', idListe)
-    })
-    formData.append('fichier', fichier)
-    formData.append('nom', fichier.name)
-
-    return this.apiClient.postFile(`/fichiers`, formData, session!.accessToken)
-  }
-
-  async deleteFichier(idFichier: string): Promise<void> {
-    const session = await getSession()
-    return this.apiClient.delete(`/fichiers/${idFichier}`, session!.accessToken)
-  }
+export async function deleteFichier(idFichier: string): Promise<void> {
+  const session = await getSession()
+  return apiDelete(`/fichiers/${idFichier}`, session!.accessToken)
 }

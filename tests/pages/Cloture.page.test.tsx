@@ -5,24 +5,24 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { unEvenement } from 'fixtures/evenement'
-import { mockedEvenementsService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import Cloture, {
   getServerSideProps,
 } from 'pages/evenements/[evenement_id]/cloture'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { EvenementsService } from 'services/evenements.service'
+import {
+  cloreAnimationCollective,
+  getDetailsEvenement,
+} from 'services/evenements.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/evenements.service')
 
 describe('Cloture', () => {
   describe('client side', () => {
-    let evenementsService: EvenementsService
     const animationCollective = unEvenement()
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -34,7 +34,6 @@ describe('Cloture', () => {
       ;(useRouter as jest.Mock).mockReturnValue({
         push: routerPush,
       })
-      evenementsService = mockedEvenementsService()
 
       // When
       renderWithContexts(
@@ -45,7 +44,6 @@ describe('Cloture', () => {
           returnTo={`/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl`}
         />,
         {
-          customDependances: { evenementsService },
           customAlerte: { alerteSetter },
         }
       )
@@ -113,7 +111,7 @@ describe('Cloture', () => {
 
       it('clôt l’animation collective', async () => {
         // Then
-        expect(evenementsService.cloreAnimationCollective).toHaveBeenCalledWith(
+        expect(cloreAnimationCollective).toHaveBeenCalledWith(
           animationCollective.id,
           [animationCollective.jeunes[0].id]
         )
@@ -130,8 +128,6 @@ describe('Cloture', () => {
   })
 
   describe('server side', () => {
-    let evenementsService: EvenementsService
-
     describe("quand l'utilisateur n'est pas connecté", () => {
       it('requiert la connexion', async () => {
         // Given
@@ -159,15 +155,9 @@ describe('Cloture', () => {
             accessToken: 'accessToken',
           },
         })
-
-        evenementsService = mockedEvenementsService({
-          getDetailsEvenement: jest.fn(async () =>
-            unEvenement({ statut: StatutAnimationCollective.AClore })
-          ),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'evenementsService') return evenementsService
-        })
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
+          unEvenement({ statut: StatutAnimationCollective.AClore })
+        )
       })
 
       it('récupère l’animation collective concernée', async () => {
@@ -181,7 +171,7 @@ describe('Cloture', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(evenementsService.getDetailsEvenement).toHaveBeenCalledWith(
+        expect(getDetailsEvenement).toHaveBeenCalledWith(
           'id-animation-collective',
           'accessToken'
         )
@@ -200,9 +190,7 @@ describe('Cloture', () => {
 
       it("renvoie une 404 si l’animation collective n'existe pas", async () => {
         // Given
-        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
-          undefined
-        )
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(undefined)
 
         // When
         const actual = await getServerSideProps({
@@ -216,7 +204,7 @@ describe('Cloture', () => {
 
       it("renvoie une 404 si l’animation collective n'est pas à clore", async () => {
         // Given
-        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
           unEvenement({ statut: StatutAnimationCollective.AVenir })
         )
 

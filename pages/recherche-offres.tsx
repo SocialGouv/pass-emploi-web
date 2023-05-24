@@ -17,17 +17,23 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import {
-  ImmersionsService,
+  searchImmersions,
   SearchImmersionsQuery,
 } from 'services/immersions.service'
 import {
-  OffresEmploiService,
+  getOffreEmploiClientSide,
+  searchAlternances,
+  searchOffresEmploi,
   SearchOffresEmploiQuery,
 } from 'services/offres-emploi.service'
-import { ReferentielService } from 'services/referentiel.service'
 import {
+  getCommunes,
+  getCommunesEtDepartements,
+  getMetiers,
+} from 'services/referentiel.service'
+import {
+  searchServicesCiviques,
   SearchServicesCiviquesQuery,
-  ServicesCiviquesService,
 } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
 import { MetadonneesPagination } from 'types/pagination'
@@ -35,20 +41,9 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
-import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function RechercheOffres(_: PageProps) {
-  const referentielService =
-    useDependance<ReferentielService>('referentielService')
-  const offresEmploiService = useDependance<OffresEmploiService>(
-    'offresEmploiService'
-  )
-  const servicesCiviquesService = useDependance<ServicesCiviquesService>(
-    'servicesCiviquesService'
-  )
-  const immersionsService =
-    useDependance<ImmersionsService>('immersionsService')
   const [alerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
 
@@ -197,9 +192,7 @@ function RechercheOffres(_: PageProps) {
     metadonnees: MetadonneesPagination
   }> {
     if (queryOffresEmploi.idOffre) {
-      const offre = await offresEmploiService.getOffreEmploiClientSide(
-        queryOffresEmploi.idOffre
-      )
+      const offre = await getOffreEmploiClientSide(queryOffresEmploi.idOffre)
 
       return {
         offres: offre ? [offre] : [],
@@ -209,7 +202,7 @@ function RechercheOffres(_: PageProps) {
         },
       }
     }
-    return offresEmploiService.searchOffresEmploi(getQueryOffreEmploi(), page)
+    return searchOffresEmploi(getQueryOffreEmploi(), page)
   }
 
   async function rechercherAlternances(page: number): Promise<{
@@ -217,9 +210,7 @@ function RechercheOffres(_: PageProps) {
     metadonnees: MetadonneesPagination
   }> {
     if (queryOffresEmploi.idOffre) {
-      const offre = await offresEmploiService.getOffreEmploiClientSide(
-        queryOffresEmploi.idOffre
-      )
+      const offre = await getOffreEmploiClientSide(queryOffresEmploi.idOffre)
 
       return {
         offres: offre ? [offre] : [],
@@ -229,24 +220,21 @@ function RechercheOffres(_: PageProps) {
         },
       }
     }
-    return offresEmploiService.searchAlternances(getQueryOffreEmploi(), page)
+    return searchAlternances(getQueryOffreEmploi(), page)
   }
 
   async function rechercherServicesCiviques(page: number): Promise<{
     offres: BaseServiceCivique[]
     metadonnees: MetadonneesPagination
   }> {
-    return servicesCiviquesService.searchServicesCiviques(
-      getQueryServiceCivique(),
-      page
-    )
+    return searchServicesCiviques(getQueryServiceCivique(), page)
   }
 
   async function rechercherImmersions(page: number): Promise<{
     offres: BaseImmersion[]
     metadonnees: MetadonneesPagination
   }> {
-    return immersionsService.searchImmersions(getQueryImmersion(), page)
+    return searchImmersions(getQueryImmersion(), page)
   }
 
   function nettoyerResultats() {
@@ -269,11 +257,9 @@ function RechercheOffres(_: PageProps) {
       )}
       <FormRechercheOffres
         hasResults={isSearching || offres !== undefined}
-        fetchMetiers={referentielService.getMetiers.bind(referentielService)}
-        fetchCommunes={referentielService.getCommunes.bind(referentielService)}
-        fetchCommunesEtDepartements={referentielService.getCommunesEtDepartements.bind(
-          referentielService
-        )}
+        fetchMetiers={getMetiers}
+        fetchCommunes={getCommunes}
+        fetchCommunesEtDepartements={getCommunesEtDepartements}
         stateTypeOffre={[typeOffre, switchTypeOffre]}
         stateQueryOffresEmploi={[queryOffresEmploi, updateQueryEmplois]}
         stateQueryServicesCiviques={[

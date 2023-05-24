@@ -1,15 +1,11 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import { Agenda, AgendaMetadata, EntreeAgenda } from 'interfaces/agenda'
 import { ActionJson, actionJsonToEntree } from 'interfaces/json/action'
 import { EvenementJeuneJson, rdvJsonToEntree } from 'interfaces/json/evenement'
 import { compareDates } from 'utils/date'
-
-export interface AgendaService {
-  recupererAgenda(idJeune: string, maintenant: DateTime): Promise<Agenda>
-}
 
 type DesRdvEtDesActions = {
   actions: ActionJson[]
@@ -23,27 +19,23 @@ type AgendaMetadataJson = {
   actionsEnRetard: string
 }
 
-export class AgendaApiService implements AgendaService {
-  constructor(private readonly apiClient: ApiClient) {}
+export async function recupererAgenda(
+  idJeune: string,
+  maintenant: DateTime
+): Promise<Agenda> {
+  const session = await getSession()
+  const maintenantUrlEncode = encodeURIComponent(maintenant.toISO())
 
-  async recupererAgenda(
-    idJeune: string,
-    maintenant: DateTime
-  ): Promise<Agenda> {
-    const session = await getSession()
-    const maintenantUrlEncode = encodeURIComponent(maintenant.toISO())
+  const {
+    content: { actions, rendezVous, metadata },
+  } = await apiGet<DesRdvEtDesActions>(
+    `/jeunes/${idJeune}/home/agenda?maintenant=${maintenantUrlEncode}`,
+    session!.accessToken
+  )
 
-    const {
-      content: { actions, rendezVous, metadata },
-    } = await this.apiClient.get<DesRdvEtDesActions>(
-      `/jeunes/${idJeune}/home/agenda?maintenant=${maintenantUrlEncode}`,
-      session!.accessToken
-    )
-
-    return {
-      entrees: fusionneEtTriActionsEtRendezVous(actions, rendezVous),
-      metadata: jsonToMetadata(metadata),
-    }
+  return {
+    entrees: fusionneEtTriActionsEtRendezVous(actions, rendezVous),
+    metadata: jsonToMetadata(metadata),
   }
 }
 

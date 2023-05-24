@@ -1,10 +1,9 @@
 import { GetServerSidePropsContext } from 'next/types'
 
 import { getServerSideProps } from 'pages/offres'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
 jest.mock('utils/analytics/matomo')
 
 describe('Fiche Jeune MiLo', () => {

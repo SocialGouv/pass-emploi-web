@@ -1,6 +1,6 @@
 import { getSession } from 'next-auth/react'
 
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   DetailOffreEmploiJson,
@@ -30,127 +30,101 @@ export type SearchOffresEmploiQuery = {
   typesContrats?: Array<TypeContrat>
 }
 
-export interface OffresEmploiService {
-  getOffreEmploiServerSide(
-    idOffreEmploi: string,
-    accessToken: string
-  ): Promise<DetailOffreEmploi | undefined>
-
-  getOffreEmploiClientSide(
-    idOffreEmploi: string
-  ): Promise<DetailOffreEmploi | undefined>
-
-  searchOffresEmploi(
-    recherche: SearchOffresEmploiQuery,
-    page: number
-  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesPagination }>
-
-  searchAlternances(
-    recherche: SearchOffresEmploiQuery,
-    page: number
-  ): Promise<{ offres: BaseOffreEmploi[]; metadonnees: MetadonneesPagination }>
+export async function getOffreEmploiServerSide(
+  idOffreEmploi: string,
+  accessToken: string
+): Promise<DetailOffreEmploi | undefined> {
+  return getOffreEmploi(idOffreEmploi, accessToken)
 }
 
-export class OffresEmploiApiService implements OffresEmploiService {
-  constructor(private readonly apiClient: ApiClient) {}
+export async function getOffreEmploiClientSide(
+  idOffreEmploi: string
+): Promise<DetailOffreEmploi | undefined> {
+  const session = await getSession()
+  return getOffreEmploi(idOffreEmploi, session!.accessToken)
+}
 
-  async getOffreEmploiServerSide(
-    idOffreEmploi: string,
-    accessToken: string
-  ): Promise<DetailOffreEmploi | undefined> {
-    return this.getOffreEmploi(idOffreEmploi, accessToken)
-  }
-
-  async getOffreEmploiClientSide(
-    idOffreEmploi: string
-  ): Promise<DetailOffreEmploi | undefined> {
-    const session = await getSession()
-    return this.getOffreEmploi(idOffreEmploi, session!.accessToken)
-  }
-
-  async searchOffresEmploi(
-    recherche: SearchOffresEmploiQuery,
-    page: number
-  ): Promise<{
-    offres: BaseOffreEmploi[]
-    metadonnees: MetadonneesPagination
-  }> {
-    return this.searchOffres({
-      recherche,
-      page,
-    })
-  }
-
-  async searchAlternances(
-    recherche: SearchOffresEmploiQuery,
-    page: number
-  ): Promise<{
-    offres: BaseOffreEmploi[]
-    metadonnees: MetadonneesPagination
-  }> {
-    return this.searchOffres({
-      recherche,
-      page,
-      filtreOffres: FiltreOffres.ALTERNANCE,
-    })
-  }
-
-  private async getOffreEmploi(idOffreEmploi: string, accessToken: string) {
-    try {
-      const { content: offreEmploiJson } =
-        await this.apiClient.get<DetailOffreEmploiJson>(
-          `/offres-emploi/${idOffreEmploi}`,
-          accessToken
-        )
-      return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
-        return undefined
-      }
-      throw e
-    }
-  }
-
-  private async searchOffres({
+export async function searchOffresEmploi(
+  recherche: SearchOffresEmploiQuery,
+  page: number
+): Promise<{
+  offres: BaseOffreEmploi[]
+  metadonnees: MetadonneesPagination
+}> {
+  return searchOffres({
     recherche,
     page,
-    filtreOffres,
-  }: {
-    recherche: SearchOffresEmploiQuery
-    page: number
-    filtreOffres?: FiltreOffres
-  }): Promise<{
-    offres: BaseOffreEmploi[]
-    metadonnees: MetadonneesPagination
-  }> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
+  })
+}
 
-    const LIMIT = 10
-    const path = '/offres-emploi'
+export async function searchAlternances(
+  recherche: SearchOffresEmploiQuery,
+  page: number
+): Promise<{
+  offres: BaseOffreEmploi[]
+  metadonnees: MetadonneesPagination
+}> {
+  return searchOffres({
+    recherche,
+    page,
+    filtreOffres: FiltreOffres.ALTERNANCE,
+  })
+}
 
-    const filtreOffresEmploi: FiltreOffres | undefined =
-      session?.user.structure === StructureConseiller.POLE_EMPLOI_BRSA
-        ? FiltreOffres.EMPLOI
-        : filtreOffres
-    const searchUrl = buildSearchParams(
-      recherche,
-      page,
-      LIMIT,
-      filtreOffresEmploi
+async function getOffreEmploi(idOffreEmploi: string, accessToken: string) {
+  try {
+    const { content: offreEmploiJson } = await apiGet<DetailOffreEmploiJson>(
+      `/offres-emploi/${idOffreEmploi}`,
+      accessToken
     )
-    const { content } = await this.apiClient.get<{
-      pagination: { total: number }
-      results: OffreEmploiItemJson[]
-    }>(path + '?' + searchUrl, accessToken)
-
-    const { pagination, results } = content
-    const metadonnees: MetadonneesPagination = {
-      nombreTotal: pagination.total,
-      nombrePages: Math.ceil(pagination.total / LIMIT),
+    return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) {
+      return undefined
     }
-    return { metadonnees, offres: results.map(jsonToOffreEmploiItem) }
+    throw e
   }
+}
+
+async function searchOffres({
+  recherche,
+  page,
+  filtreOffres,
+}: {
+  recherche: SearchOffresEmploiQuery
+  page: number
+  filtreOffres?: FiltreOffres
+}): Promise<{
+  offres: BaseOffreEmploi[]
+  metadonnees: MetadonneesPagination
+}> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+
+  const LIMIT = 10
+  const path = '/offres-emploi'
+
+  const filtreOffresEmploi: FiltreOffres | undefined =
+    session?.user.structure === StructureConseiller.POLE_EMPLOI_BRSA
+      ? FiltreOffres.EMPLOI
+      : filtreOffres
+  const searchUrl = buildSearchParams(
+    recherche,
+    page,
+    LIMIT,
+    filtreOffresEmploi
+  )
+  const { content } = await apiGet<{
+    pagination: { total: number }
+    results: OffreEmploiItemJson[]
+  }>(path + '?' + searchUrl, accessToken)
+
+  const { pagination, results } = content
+  const metadonnees: MetadonneesPagination = {
+    nombreTotal: pagination.total,
+    nombrePages: Math.ceil(pagination.total / LIMIT),
+  }
+  return { metadonnees, offres: results.map(jsonToOffreEmploiItem) }
 }
 
 function buildSearchParams(

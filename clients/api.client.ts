@@ -1,115 +1,91 @@
 import { InfoFichier } from 'interfaces/fichier'
-import HttpClient from 'utils/httpClient'
+import { fetchJson, fetchNoContent } from 'utils/httpClient'
 
-export interface ApiClient {
-  get<T>(
-    path: string,
-    accessToken: string
-  ): Promise<{ content: T; headers: Headers }>
-  post<T>(
-    path: string,
-    payload: { [key: string]: any },
-    accessToken: string
-  ): Promise<{ content: T; headers: Headers }>
-  postFile(
-    path: string,
-    payload: FormData,
-    accessToken: string
-  ): Promise<InfoFichier>
-  put(
-    path: string,
-    payload: { [key: string]: any },
-    accessToken: string
-  ): Promise<void>
-  delete(path: string, accessToken: string): Promise<void>
+const apiPrefix = process.env.API_ENDPOINT
+
+export async function apiGet<T>(
+  path: string,
+  accessToken: string
+): Promise<{ content: T; headers: Headers }> {
+  const headers = new Headers({
+    Authorization: `Bearer ${accessToken}`,
+  })
+
+  return fetchJson(`${apiPrefix}${path}`, {
+    headers,
+  })
 }
 
-export class ApiHttpClient implements ApiClient {
-  private readonly apiPrefix?: string
+export async function apiPost<T = void>(
+  path: string,
+  payload: { [key: string]: any },
+  accessToken: string
+): Promise<{ content: T; headers: Headers }> {
+  const headers = new Headers({
+    Authorization: `Bearer ${accessToken}`,
+    'content-type': 'application/json',
+  })
 
-  constructor(private readonly httpClient: HttpClient) {
-    this.apiPrefix = process.env.API_ENDPOINT
+  const reqInit: RequestInit = {
+    method: 'POST',
+    headers,
   }
+  if (payload && Object.keys(payload).length !== 0)
+    reqInit.body = JSON.stringify(payload)
 
-  async get<T>(
-    path: string,
-    accessToken: string
-  ): Promise<{ content: T; headers: Headers }> {
-    const headers = new Headers({
-      Authorization: `Bearer ${accessToken}`,
-    })
+  return fetchJson(`${apiPrefix}${path}`, reqInit)
+}
 
-    return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, {
-      headers,
-    })
+export async function apiPostFile(
+  path: string,
+  payload: FormData,
+  accessToken: string
+): Promise<InfoFichier> {
+  const headers = new Headers({
+    Authorization: `Bearer ${accessToken}`,
+  })
+
+  const reqInit: RequestInit = {
+    method: 'POST',
+    headers,
   }
+  if (payload) reqInit.body = payload
 
-  async post<T = void>(
-    path: string,
-    payload: { [key: string]: any },
-    accessToken: string
-  ): Promise<{ content: T; headers: Headers }> {
-    const headers = new Headers({
-      Authorization: `Bearer ${accessToken}`,
-      'content-type': 'application/json',
-    })
+  const { content }: { content: InfoFichier } = await fetchJson(
+    `${apiPrefix}${path}`,
+    reqInit
+  )
+  return content
+}
 
-    const reqInit: RequestInit = {
-      method: 'POST',
-      headers,
-    }
-    if (payload && Object.keys(payload).length !== 0)
-      reqInit.body = JSON.stringify(payload)
+export async function apiPut(
+  path: string,
+  payload: { [key: string]: any },
+  accessToken: string
+): Promise<void> {
+  const headers = new Headers({
+    Authorization: `Bearer ${accessToken}`,
+    'content-type': 'application/json',
+  })
 
-    return this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
-  }
+  return fetchNoContent(`${apiPrefix}${path}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(payload),
+  })
+}
 
-  async postFile(
-    path: string,
-    payload: FormData,
-    accessToken: string
-  ): Promise<InfoFichier> {
-    const headers = new Headers({
-      Authorization: `Bearer ${accessToken}`,
-    })
+export async function apiDelete(
+  path: string,
+  accessToken: string
+): Promise<void> {
+  const headers = new Headers({
+    Authorization: `bearer ${accessToken}`,
+    'content-type': 'application/json',
+  })
 
-    const reqInit: RequestInit = {
-      method: 'POST',
-      headers,
-    }
-    if (payload) reqInit.body = payload
-
-    const { content }: { content: InfoFichier } =
-      await this.httpClient.fetchJson(`${this.apiPrefix}${path}`, reqInit)
-    return content
-  }
-
-  async put(
-    path: string,
-    payload: { [key: string]: any },
-    accessToken: string
-  ): Promise<void> {
-    const headers = new Headers({
-      Authorization: `Bearer ${accessToken}`,
-      'content-type': 'application/json',
-    })
-
-    return this.httpClient.fetchNoContent(`${this.apiPrefix}${path}`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify(payload),
-    })
-  }
-
-  async delete(path: string, accessToken: string): Promise<void> {
-    const headers = new Headers({
-      Authorization: `bearer ${accessToken}`,
-      'content-type': 'application/json',
-    })
-
-    await this.httpClient.fetchNoContent(`${this.apiPrefix}${path}`, {
-      method: 'DELETE',
-      headers,
-    })
-  }
+  await fetchNoContent(`${apiPrefix}${path}`, {
+    method: 'DELETE',
+    headers,
+  })
 }

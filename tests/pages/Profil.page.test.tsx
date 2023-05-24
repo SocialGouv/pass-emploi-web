@@ -7,24 +7,25 @@ import { GetServerSidePropsContext } from 'next/types'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import {
-  mockedConseillerService,
-  mockedJeunesService,
-  mockedReferentielService,
-} from 'fixtures/services'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { JeuneFromListe } from 'interfaces/jeune'
 import Profil, { getServerSideProps } from 'pages/profil'
-import { ConseillerService } from 'services/conseiller.service'
-import { JeunesService } from 'services/jeunes.service'
-import { ReferentielService } from 'services/referentiel.service'
+import {
+  getConseillerServerSide,
+  modifierAgence,
+  modifierNotificationsSonores,
+  supprimerConseiller,
+} from 'services/conseiller.service'
+import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
+import { getAgencesServerSide } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/conseiller.service')
+jest.mock('services/referentiel.service')
+jest.mock('services/jeunes.service')
 jest.mock('components/Modal')
 
 describe('Page Profil conseiller', () => {
@@ -46,8 +47,6 @@ describe('Page Profil conseiller', () => {
 
     describe("quand l'utilisateur est connecté", () => {
       let actual: GetServerSidePropsResult<any>
-      let conseillerService: ConseillerService
-      let referentielService: ReferentielService
 
       it('en tant que Pôle Emploi charge la page avec les bonnes props', async () => {
         // Given
@@ -65,7 +64,7 @@ describe('Page Profil conseiller', () => {
             pageHeader: 'Profil',
           },
         })
-        expect(referentielService.getAgencesServerSide).not.toHaveBeenCalled()
+        expect(getAgencesServerSide).not.toHaveBeenCalled()
       })
 
       it('en tant que Mission Locale avec une agence déjà renseignée charge la page avec les bonnes props sans le référentiel d’agences', async () => {
@@ -117,17 +116,10 @@ describe('Page Profil conseiller', () => {
             user: { id: 'id-conseiller', structure: structure },
           },
         })
-
-        conseillerService = mockedConseillerService({
-          getConseillerServerSide: jest.fn(async () => conseiller),
-        })
-        referentielService = mockedReferentielService({
-          getAgencesServerSide: jest.fn(async () => uneListeDAgencesMILO()),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'conseillerService') return conseillerService
-          if (dependance === 'referentielService') return referentielService
-        })
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
+        ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
+          uneListeDAgencesMILO()
+        )
 
         actual = await getServerSideProps({} as GetServerSidePropsContext)
       }
@@ -135,14 +127,11 @@ describe('Page Profil conseiller', () => {
   })
 
   describe('client side', () => {
-    let conseillerService: ConseillerService
-    let jeunesService: JeunesService
     let conseiller: Conseiller
     let jeunes: JeuneFromListe[]
     let push: Function
 
     beforeEach(async () => {
-      conseillerService = mockedConseillerService()
       process.env = Object.assign(process.env, { ENABLE_PE_BRSA_SSO: 'true' })
     })
 
@@ -158,7 +147,6 @@ describe('Page Profil conseiller', () => {
         await act(async () => {
           renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
             customConseiller: conseiller,
-            customDependances: { conseillerService },
           })
         })
       })
@@ -228,7 +216,6 @@ describe('Page Profil conseiller', () => {
         await act(async () => {
           renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
             customConseiller: conseiller,
-            customDependances: { conseillerService },
           })
         })
 
@@ -284,7 +271,6 @@ describe('Page Profil conseiller', () => {
               <Profil referentielAgences={agences} pageTitle='' />,
               {
                 customConseiller: conseiller,
-                customDependances: { conseillerService },
               }
             )
           })
@@ -405,7 +391,7 @@ describe('Page Profil conseiller', () => {
           await userEvent.click(submit)
 
           // Then
-          expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          expect(modifierAgence).toHaveBeenCalledWith({
             id: '443',
             nom: 'MLS3F SAINT-LOUIS',
             codeDepartement: '1',
@@ -420,7 +406,7 @@ describe('Page Profil conseiller', () => {
           await userEvent.click(submit)
 
           // Then
-          expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
+          expect(modifierAgence).not.toHaveBeenCalled()
         })
       })
     })
@@ -453,9 +439,7 @@ describe('Page Profil conseiller', () => {
       describe('en tant que PE sans bénéficiaires', () => {
         beforeEach(async () => {
           // Given
-          jeunesService = mockedJeunesService({
-            getJeunesDuConseillerClientSide: jest.fn(async () => []),
-          })
+          ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue([])
           push = jest.fn(() => Promise.resolve())
           ;(useRouter as jest.Mock).mockReturnValue({ push })
 
@@ -470,7 +454,6 @@ describe('Page Profil conseiller', () => {
               <Profil referentielAgences={[]} pageTitle='' />,
               {
                 customConseiller: conseiller,
-                customDependances: { jeunesService, conseillerService },
               }
             )
           })
@@ -506,9 +489,7 @@ describe('Page Profil conseiller', () => {
           expect(
             screen.getByText('Vous allez être redirigé dans quelques secondes')
           ).toBeInTheDocument()
-          expect(conseillerService.supprimerConseiller).toHaveBeenCalledWith(
-            conseiller.id
-          )
+          expect(supprimerConseiller).toHaveBeenCalledWith(conseiller.id)
           await act(() => new Promise((r) => setTimeout(r, 3000)))
 
           expect(push).toHaveBeenCalledWith('/api/auth/federated-logout')
@@ -519,9 +500,9 @@ describe('Page Profil conseiller', () => {
         it('affiche une modale avec les bonnes informations', async () => {
           // Given
           jeunes = desItemsJeunes()
-          jeunesService = mockedJeunesService({
-            getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
-          })
+          ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(
+            jeunes
+          )
 
           // When
           await act(async () => {
@@ -529,7 +510,6 @@ describe('Page Profil conseiller', () => {
               <Profil referentielAgences={[]} pageTitle='' />,
               {
                 customConseiller: conseiller,
-                customDependances: { jeunesService, conseillerService },
               }
             )
           })
@@ -560,7 +540,6 @@ describe('Page Profil conseiller', () => {
         await act(async () => {
           renderWithContexts(<Profil referentielAgences={[]} pageTitle='' />, {
             customConseiller: conseiller,
-            customDependances: { conseillerService },
           })
         })
 
@@ -572,9 +551,10 @@ describe('Page Profil conseiller', () => {
 
       it('met à jour côté API', async () => {
         // Then
-        expect(
-          conseillerService.modifierNotificationsSonores
-        ).toHaveBeenCalledWith(conseiller.id, !conseiller.notificationsSonores)
+        expect(modifierNotificationsSonores).toHaveBeenCalledWith(
+          conseiller.id,
+          !conseiller.notificationsSonores
+        )
       })
     })
   })

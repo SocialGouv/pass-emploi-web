@@ -6,10 +6,11 @@ import React from 'react'
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { unCommentaire } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
-import { mockedActionsService } from 'fixtures/services'
 import { Commentaire } from 'interfaces/action'
-import { ActionsService } from 'services/actions.service'
+import { ajouterCommentaire } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
+
+jest.mock('services/actions.service')
 
 describe('<CommentairesAction/>', () => {
   let onAjoutStub = jest.fn()
@@ -50,13 +51,11 @@ describe('<CommentairesAction/>', () => {
   describe('quand il y a des commentaires', () => {
     describe('render', () => {
       let commentaires: Commentaire[]
-      let actionsService: ActionsService
+
       beforeEach(() => {
         // Given
         commentaires = [commentaireDuConseiller, commentaireDuJeune]
-        actionsService = mockedActionsService({
-          ajouterCommentaire: jest.fn(async () => nouveauCommentaire),
-        })
+        ;(ajouterCommentaire as jest.Mock).mockResolvedValue(nouveauCommentaire)
 
         // When
         renderWithContexts(
@@ -64,10 +63,10 @@ describe('<CommentairesAction/>', () => {
             idAction={'id-action'}
             commentairesInitiaux={commentaires}
             onAjout={onAjoutStub}
+            lectureSeule={false}
           />,
           {
             customConseiller: unConseiller({ id: 'id-conseiller' }),
-            customDependances: { actionsService },
           }
         )
       })
@@ -114,10 +113,7 @@ describe('<CommentairesAction/>', () => {
 
         it('le crée et met à jour la liste', () => {
           // Then
-          expect(actionsService.ajouterCommentaire).toHaveBeenCalledWith(
-            'id-action',
-            'test'
-          )
+          expect(ajouterCommentaire).toHaveBeenCalledWith('id-action', 'test')
           expect(
             screen.getByText(commentaireDuJeune.message)
           ).toBeInTheDocument()
@@ -143,6 +139,7 @@ describe('<CommentairesAction/>', () => {
             idAction={'id-action'}
             commentairesInitiaux={[]}
             onAjout={onAjoutStub}
+            lectureSeule={false}
           />
         )
 

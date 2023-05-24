@@ -6,10 +6,9 @@ import UpdateIdentifiantPartenaireModal from 'components/jeune/UpdateIdentifiant
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
+import { modifierIdentifiantPartenaire } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
-import { useDependance } from 'utils/injectionDependances'
 
 interface DetailsJeuneProps {
   jeune: DetailJeune
@@ -22,7 +21,6 @@ export const DetailsJeune = ({
   conseiller,
   onDossierMiloClick,
 }: DetailsJeuneProps) => {
-  const jeunesService = useDependance<JeunesService>('jeunesService')
   const [_, setAlerte] = useAlerte()
 
   const [identifiantPartenaire, setIdentifiantPartenaire] = useState<
@@ -44,8 +42,7 @@ export const DetailsJeune = ({
   async function updateIdentifiantPartenaire(
     nouvelleValeur: string
   ): Promise<void> {
-    jeunesService
-      .modifierIdentifiantPartenaire(jeune.id, nouvelleValeur)
+    modifierIdentifiantPartenaire(jeune.id, nouvelleValeur)
       .then(() => {
         setIdentifiantPartenaire(nouvelleValeur)
         setShowIdentifiantPartenaireModal(false)

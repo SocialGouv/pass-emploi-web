@@ -3,35 +3,23 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
-import {
-  mockedConseillerService,
-  mockedMessagesService,
-} from 'fixtures/services'
 import MesJeunes from 'pages/mes-jeunes'
-import { ConseillerService } from 'services/conseiller.service'
-import { MessagesService } from 'services/messages.service'
+import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-describe('Recherche', () => {
-  let messagesService: MessagesService
-  let conseillerService: ConseillerService
+jest.mock('services/messages.service')
 
+describe('Recherche', () => {
   beforeEach(async () => {
     //GIVEN
     const jeunes = desJeunesAvecActionsNonTerminees()
 
-    messagesService = mockedMessagesService({
-      signIn: jest.fn(() => Promise.resolve()),
-      countMessagesNotRead: jest.fn(() => Promise.resolve({})),
-    })
-    conseillerService = mockedConseillerService()
+    ;(signIn as jest.Mock).mockResolvedValue(undefined)
+    ;(countMessagesNotRead as jest.Mock).mockResolvedValue({})
 
     await act(() => {
       renderWithContexts(
-        <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
-        {
-          customDependances: { messagesService, conseillerService },
-        }
+        <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />
       )
     })
   })

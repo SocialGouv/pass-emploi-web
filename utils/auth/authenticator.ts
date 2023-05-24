@@ -4,7 +4,7 @@ import { Account } from 'next-auth'
 import { HydratedJWT, JWT } from 'next-auth/jwt'
 
 import { UserRole, UserType } from 'interfaces/conseiller'
-import HttpClient from 'utils/httpClient'
+import { fetchJson } from 'utils/httpClient'
 
 function secondsToTimestamp(seconds: number): number {
   return seconds * 1000
@@ -18,98 +18,88 @@ interface RefreshedTokens {
 
 export const RefreshAccessTokenError = 'RefreshAccessTokenError'
 
-export default class Authenticator {
-  private readonly issuerPrefix?: string
+const issuerPrefix = process.env.KEYCLOAK_ISSUER
 
-  constructor(private readonly httpClient: HttpClient) {
-    this.issuerPrefix = process.env.KEYCLOAK_ISSUER
+export async function handleJWTAndRefresh({
+  jwt,
+  account,
+}: {
+  jwt: JWT | HydratedJWT
+  account?: Account | null
+}): Promise<HydratedJWT> {
+  if (account) return hydrateJwtAtFirstSignin(account, jwt)
+
+  const hydratedJWT = jwt as HydratedJWT
+  const tokenIsExpired = hydratedJWT.expiresAtTimestamp
+    ? DateTime.now() >
+      DateTime.fromMillis(hydratedJWT.expiresAtTimestamp).minus({
+        second: 15,
+      })
+    : false
+
+  if (tokenIsExpired) {
+    return refreshAccessToken(hydratedJWT)
   }
+  return hydratedJWT
+}
 
-  async handleJWTAndRefresh({
-    jwt,
-    account,
-  }: {
-    jwt: JWT | HydratedJWT
-    account?: Account | null
-  }): Promise<HydratedJWT> {
-    if (account) return Authenticator.hydrateJwtAtFirstSignin(account, jwt)
-
-    const hydratedJWT = jwt as HydratedJWT
-    const tokenIsExpired = hydratedJWT.expiresAtTimestamp
-      ? DateTime.now() >
-        DateTime.fromMillis(hydratedJWT.expiresAtTimestamp).minus({
-          second: 15,
-        })
-      : false
-
-    if (tokenIsExpired) {
-      return this.refreshAccessToken(hydratedJWT)
-    }
-    return hydratedJWT
-  }
-
-  private async refreshAccessToken(jwt: HydratedJWT) {
-    try {
-      const refreshedTokens = await this.fetchRefreshedTokens(jwt.refreshToken)
-
-      return {
-        ...jwt,
-        accessToken: refreshedTokens.access_token,
-        refreshToken: refreshedTokens.refresh_token ?? jwt.refreshToken, // Garde l'ancien refresh_token
-        expiresAtTimestamp: refreshedTokens.expires_in
-          ? DateTime.now()
-              .plus({ second: refreshedTokens.expires_in })
-              .toMillis()
-          : jwt.expiresAtTimestamp,
-      }
-    } catch (error) {
-      return {
-        ...jwt,
-        error: RefreshAccessTokenError,
-      }
-    }
-  }
-
-  private async fetchRefreshedTokens(
-    refreshToken?: string
-  ): Promise<RefreshedTokens> {
-    const url = `${this.issuerPrefix}/protocol/openid-connect/token`
-    const body = new URLSearchParams({
-      client_id: process.env.KEYCLOAK_ID ?? '',
-      client_secret: process.env.KEYCLOAK_SECRET ?? '',
-      grant_type: 'refresh_token',
-      refresh_token: `${refreshToken}`,
-    })
-
-    const { content: tokens } = await this.httpClient.fetchJson(url, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      method: 'POST',
-      body,
-    })
-    return tokens
-  }
-
-  private static async hydrateJwtAtFirstSignin(
-    { access_token, expires_at, refresh_token }: Account,
-    jwt: JWT
-  ): Promise<HydratedJWT> {
-    const { userId, userStructure, userRoles, userType } = decode(
-      <string>access_token
-    ) as JwtPayload
+async function refreshAccessToken(jwt: HydratedJWT) {
+  try {
+    const refreshedTokens = await fetchRefreshedTokens(jwt.refreshToken)
 
     return {
       ...jwt,
-      accessToken: access_token,
-      refreshToken: refresh_token,
-      idConseiller: userId,
-      structureConseiller: userStructure,
-      estConseiller: userType === UserType.CONSEILLER,
-      estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
-      expiresAtTimestamp: expires_at
-        ? secondsToTimestamp(expires_at)
-        : undefined,
+      accessToken: refreshedTokens.access_token,
+      refreshToken: refreshedTokens.refresh_token ?? jwt.refreshToken, // Garde l'ancien refresh_token
+      expiresAtTimestamp: refreshedTokens.expires_in
+        ? DateTime.now().plus({ second: refreshedTokens.expires_in }).toMillis()
+        : jwt.expiresAtTimestamp,
     }
+  } catch (error) {
+    return {
+      ...jwt,
+      error: RefreshAccessTokenError,
+    }
+  }
+}
+
+async function fetchRefreshedTokens(
+  refreshToken?: string
+): Promise<RefreshedTokens> {
+  const url = `${issuerPrefix}/protocol/openid-connect/token`
+  const body = new URLSearchParams({
+    client_id: process.env.KEYCLOAK_ID ?? '',
+    client_secret: process.env.KEYCLOAK_SECRET ?? '',
+    grant_type: 'refresh_token',
+    refresh_token: `${refreshToken}`,
+  })
+
+  const { content: tokens } = await fetchJson(url, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    method: 'POST',
+    body,
+  })
+  return tokens
+}
+
+async function hydrateJwtAtFirstSignin(
+  { access_token, expires_at, refresh_token }: Account,
+  jwt: JWT
+): Promise<HydratedJWT> {
+  const { userId, userStructure, userRoles, userType } = decode(
+    <string>access_token
+  ) as JwtPayload
+
+  return {
+    ...jwt,
+    accessToken: access_token,
+    refreshToken: refresh_token,
+    idConseiller: userId,
+    structureConseiller: userStructure,
+    estConseiller: userType === UserType.CONSEILLER,
+    estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
+    expiresAtTimestamp: expires_at ? secondsToTimestamp(expires_at) : undefined,
   }
 }

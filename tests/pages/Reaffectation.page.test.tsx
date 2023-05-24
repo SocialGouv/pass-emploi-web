@@ -1,33 +1,27 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { desItemsJeunes } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
 import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
-import { JeunesService } from 'services/jeunes.service'
+import {
+  getJeunesDuConseillerParEmail,
+  reaffecter,
+} from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('services/jeunes.service')
 
 describe('Reaffectation', () => {
   describe('client side', () => {
-    let jeunesService: JeunesService
-
     beforeEach(async () => {
-      // Given
-      ;(jeunesService = mockedJeunesService()),
-        // When
-        await act(() => {
-          renderWithContexts(
-            <Reaffectation withoutChat={true} pageTitle='' />,
-            {
-              customDependances: { jeunesService },
-            }
-          )
-        })
+      // When
+      await act(() => {
+        renderWithContexts(<Reaffectation withoutChat={true} pageTitle='' />)
+      })
     })
 
     it('affiche les 4 étapes de réaffectation', async () => {
@@ -119,9 +113,10 @@ describe('Reaffectation', () => {
         // GIVEN
         emailInput = screen.getByLabelText('* E-mail conseiller initial')
         const submitRecherche = screen.getByTitle('Rechercher')
-        ;(
-          jeunesService.getJeunesDuConseillerParEmail as jest.Mock
-        ).mockResolvedValue({ idConseiller: idConseillerInitial, jeunes })
+        ;(getJeunesDuConseillerParEmail as jest.Mock).mockResolvedValue({
+          idConseiller: idConseillerInitial,
+          jeunes,
+        })
         await userEvent.click(screen.getByLabelText('Définitif'))
         await userEvent.type(emailInput, emailConseillerInitial)
 
@@ -131,9 +126,9 @@ describe('Reaffectation', () => {
 
       it('récupère les jeunes du conseiller', async () => {
         // THEN
-        expect(
-          jeunesService.getJeunesDuConseillerParEmail
-        ).toHaveBeenCalledWith(emailConseillerInitial)
+        expect(getJeunesDuConseillerParEmail).toHaveBeenCalledWith(
+          emailConseillerInitial
+        )
       })
 
       it('affiche les jeunes du conseiller', async () => {
@@ -213,7 +208,7 @@ describe('Reaffectation', () => {
           await userEvent.click(submitReaffecter)
 
           // THEN
-          expect(jeunesService.reaffecter).toHaveBeenCalledWith(
+          expect(reaffecter).toHaveBeenCalledWith(
             idConseillerInitial,
             emailConseillerDestination,
             [jeunes[0].id, jeunes[2].id],

@@ -8,7 +8,6 @@ import React from 'react'
 
 import { unCommentaire, uneAction } from 'fixtures/action'
 import { unDetailJeune } from 'fixtures/jeune'
-import { mockedActionsService, mockedJeunesService } from 'fixtures/services'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
@@ -17,14 +16,22 @@ import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
+import {
+  ajouterCommentaire,
+  deleteAction,
+  getAction,
+  qualifier,
+  recupererLesCommentaires,
+  updateAction,
+} from 'services/actions.service'
+import { getJeuneDetails } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
 jest.mock('next/router')
+jest.mock('services/actions.service')
+jest.mock('services/jeunes.service')
 jest.mock('components/PageActionsPortal')
 
 describe("Page Détail d'une action d'un jeune", () => {
@@ -39,16 +46,14 @@ describe("Page Détail d'une action d'un jeune", () => {
       nom: 'Sanfamiye',
       idConseiller: 'id-conseiller',
     }
-    let actionsService: ActionsService
 
     beforeEach(() => {
       alerteSetter = jest.fn()
       routerPush = jest.fn()
-
-      actionsService = mockedActionsService({
-        updateAction: jest.fn(async (_, statut) => statut),
-        deleteAction: jest.fn(async () => {}),
-      })
+      ;(updateAction as jest.Mock).mockImplementation(
+        async (_, statut) => statut
+      )
+      ;(deleteAction as jest.Mock).mockResolvedValue({})
       ;(useRouter as jest.Mock).mockReturnValue({
         push: routerPush,
       })
@@ -65,7 +70,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             pageTitle=''
           />,
           {
-            customDependances: { actionsService },
             customAlerte: { alerteSetter },
           }
         )
@@ -87,7 +91,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           await userEvent.click(statutRadio)
 
           // Then
-          expect(actionsService.updateAction).toHaveBeenCalledWith(
+          expect(updateAction).toHaveBeenCalledWith(
             action.id,
             StatutAction.Commencee
           )
@@ -98,9 +102,9 @@ describe("Page Détail d'une action d'un jeune", () => {
         describe("quand c'est un succès", () => {
           it('affiche un message de succès', async () => {
             // Given
-            actionsService.ajouterCommentaire = jest
-              .fn()
-              .mockResolvedValue(unCommentaire())
+            ;(ajouterCommentaire as jest.Mock).mockResolvedValue(
+              unCommentaire()
+            )
             const textbox = screen.getByRole('textbox')
             fireEvent.change(textbox, { target: { value: 'test' } })
             const submitButton = screen.getByRole('button', {
@@ -111,7 +115,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             await userEvent.click(submitButton)
 
             // Then
-            expect(actionsService.ajouterCommentaire).toHaveBeenCalledWith(
+            expect(ajouterCommentaire).toHaveBeenCalledWith(
               'id-action-1',
               'test'
             )
@@ -132,7 +136,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         describe("quand c'est un échec", () => {
           it('affiche une alerte', async () => {
             // Given
-            actionsService.ajouterCommentaire = jest.fn().mockRejectedValue({})
+            ;(ajouterCommentaire as jest.Mock).mockRejectedValue({})
             const textbox = screen.getByRole('textbox')
             fireEvent.change(textbox, { target: { value: 'test' } })
             const submitButton = screen.getByRole('button', {
@@ -150,11 +154,10 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     describe("quand le conseiller n'est pas le conseiller du jeune", () => {
-      let actionsService: ActionsService
-      actionsService = mockedActionsService({
-        updateAction: jest.fn(async (_, statut) => statut),
-        deleteAction: jest.fn(async () => {}),
-      })
+      ;(updateAction as jest.Mock).mockImplementation(
+        async (_, statut) => statut
+      )
+      ;(deleteAction as jest.Mock).mockResolvedValue({})
 
       beforeEach(async () => {
         renderWithContexts(
@@ -166,7 +169,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             lectureSeule={true}
           />,
           {
-            customDependances: { actionsService },
             customAlerte: { alerteSetter },
             customConseiller: { id: 'fake-id' },
           }
@@ -220,7 +222,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             pageTitle=''
           />,
           {
-            customDependances: { actionsService },
             customAlerte: { alerteSetter },
           }
         )
@@ -231,7 +232,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         )
 
         // Then
-        expect(actionsService.deleteAction).toHaveBeenCalledWith(action.id)
+        expect(deleteAction).toHaveBeenCalledWith(action.id)
       })
     })
 
@@ -246,13 +247,11 @@ describe("Page Détail d'une action d'un jeune", () => {
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
         }
-        let actionsService: ActionsService
+
         beforeEach(async () => {
-          actionsService = mockedActionsService({
-            qualifier: jest.fn().mockResolvedValue({
-              libelle: 'PAS Situation Non Professionnelle',
-              isSituationNonProfessionnelle: false,
-            }),
+          ;(qualifier as jest.Mock).mockResolvedValue({
+            libelle: 'PAS Situation Non Professionnelle',
+            isSituationNonProfessionnelle: false,
           })
           ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
@@ -265,7 +264,6 @@ describe("Page Détail d'une action d'un jeune", () => {
               pageTitle=''
             />,
             {
-              customDependances: { actionsService },
               customConseiller: { structure: StructureConseiller.MILO },
               customAlerte: { alerteSetter },
             }
@@ -294,7 +292,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           })
 
           it("qualifie l'action", () => {
-            expect(actionsService.qualifier).toHaveBeenCalledWith(
+            expect(qualifier).toHaveBeenCalledWith(
               actionAQualifier.id,
               CODE_QUALIFICATION_NON_SNP,
               {
@@ -450,17 +448,9 @@ describe("Page Détail d'une action d'un jeune", () => {
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
         }
-        const actionsService: ActionsService = mockedActionsService({
-          getAction: jest.fn(async () => ({ action, jeune })),
-          recupererLesCommentaires: jest.fn(async () => commentaires),
-        })
-        const jeunesService = mockedJeunesService({
-          getJeuneDetails: jest.fn(async () => unDetailJeune()),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'actionsService') return actionsService
-        })
+        ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
+        ;(recupererLesCommentaires as jest.Mock).mockResolvedValue(commentaires)
+        ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
 
         // When
         const actual: GetServerSidePropsResult<any> = await getServerSideProps({
@@ -470,10 +460,7 @@ describe("Page Détail d'une action d'un jeune", () => {
             jeune_id: 'jeune-1',
           },
         } as unknown as GetServerSidePropsContext) // Then
-        expect(actionsService.getAction).toHaveBeenCalledWith(
-          'id-action',
-          'accessToken'
-        )
+        expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
         const pageTitle = `Portefeuille - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`
         const lectureSeule = false
         expect(actual).toEqual({
@@ -498,10 +485,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             user: { structure: 'MILO' },
           },
         })
-        const actionsService: ActionsService = mockedActionsService({
-          getAction: jest.fn(async () => undefined),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(actionsService)
 
         // When
         let actual: GetServerSidePropsResult<any> = await getServerSideProps({
@@ -530,11 +513,8 @@ describe("Page Détail d'une action d'un jeune", () => {
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
         }
-        const actionsService: ActionsService = mockedActionsService({
-          getAction: jest.fn(async () => ({ action, jeune })),
-          recupererLesCommentaires: jest.fn(async () => commentaires),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+        ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
+        ;(recupererLesCommentaires as jest.Mock).mockResolvedValue(commentaires)
 
         // When
         let actual: GetServerSidePropsResult<any> = await getServerSideProps({

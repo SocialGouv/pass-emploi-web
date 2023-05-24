@@ -18,13 +18,12 @@ import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { ConseillerService } from 'services/conseiller.service'
-import { JeunesService } from 'services/jeunes.service'
+import { getConseillerClientSide } from 'services/conseiller.service'
+import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleContext'
 
 interface LayoutProps {
@@ -37,10 +36,7 @@ export default function Layout({ children }: LayoutProps) {
   } = children
 
   const router = useRouter()
-  const { theme, setTheme } = useTheme()
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
-  const jeunesService = useDependance<JeunesService>('jeunesService')
+  const { setTheme } = useTheme()
 
   const [conseiller, setConseiller] = useConseillerPotentiellementPasRecupere()
   const [portefeuille, setPortefeuille] =
@@ -49,7 +45,6 @@ export default function Layout({ children }: LayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
-  const [, setMounted] = useState(false)
 
   const withChat = !withoutChat
 
@@ -75,8 +70,8 @@ export default function Layout({ children }: LayoutProps) {
   useEffect(() => {
     if (!conseiller) {
       Promise.all([
-        conseillerService.getConseillerClientSide(),
-        jeunesService.getJeunesDuConseillerClientSide(),
+        getConseillerClientSide(),
+        getJeunesDuConseillerClientSide(),
       ]).then(([conseillerRecupere, beneficiaires]) => {
         setConseiller(conseillerRecupere)
         const beneficiairesParOrdreAlphabetique = beneficiaires
