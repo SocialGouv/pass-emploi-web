@@ -31,7 +31,6 @@
   overflow-x: hidden; /* Disable horizontal scroll */
   padding: 24px 12px;
   text-align: center;
-  background-color: theme('colors.primary');
 }
 
 .page {

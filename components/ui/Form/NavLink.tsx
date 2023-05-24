@@ -25,7 +25,7 @@ export default function NavLink({
 }: NavLinkProps) {
   const linkStyle = `flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start transition-all border-2  ${
     isActive
-      ? 'bg-primary_lighten border-blanc text-base-bold'
+      ? 'bg-primary_lighten border-blanc text-base-bold dark:bg-primary_darken'
       : 'border-primary hover:border-blanc text-base-medium'
   }`
 
