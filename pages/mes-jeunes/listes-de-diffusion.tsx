@@ -23,6 +23,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type ListesDiffusionProps = PageProps & {
   listesDiffusion: ListeDeDiffusion[]
@@ -31,6 +32,7 @@ type ListesDiffusionProps = PageProps & {
 function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   const [conseiller] = useConseiller()
   const [alerte] = useAlerte()
+  const [portefeuille] = usePortefeuille()
 
   const ALPHABETIQUE = 'ASC'
   const INVERSE = 'DESC'
@@ -38,6 +40,8 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
   const [tri, setTri] = useState<typeof ALPHABETIQUE | typeof INVERSE>(
     ALPHABETIQUE
   )
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function inverserTri() {
     const nouvelOrdre = tri === ALPHABETIQUE ? INVERSE : ALPHABETIQUE
@@ -66,7 +70,7 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
     tracking += ' - Modification succès'
   if (alerte?.key === AlerteParam.suppressionListeDiffusion)
     tracking += ' - Suppression succès'
-  useMatomo(tracking)
+  useMatomo(tracking, aDesBeneficiaires)
 
   return (
     <>
@@ -106,9 +110,12 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
         >
           <THead>
             <TR isHeader={true}>
-              <TH className='rounded-l hover:bg-primary_lighten'>
+              <TH
+                className='rounded-l hover:bg-primary_lighten'
+                estCliquable={true}
+              >
                 <button
-                  className='flex border-none items-center w-full'
+                  className='flex border-none items-center w-full h-full p-4'
                   onClick={inverserTri}
                   aria-label={`Trier les listes de diffusion par ordre alphabétique ${
                     tri === ALPHABETIQUE ? 'inversé' : ''

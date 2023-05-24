@@ -52,6 +52,7 @@ export default function Sidebar() {
             NavItem.Actualites,
             NavItem.Pilotage,
             NavItem.Etablissement,
+            NavItem.Messagerie,
           ]}
         />
       </nav>

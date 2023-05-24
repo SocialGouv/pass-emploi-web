@@ -16,7 +16,7 @@ import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -30,6 +30,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 type EditionListeDiffusionProps = PageProps & {
   returnTo: string
@@ -61,9 +62,13 @@ function EditionListeDiffusion({
 
   const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
 
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
   function hasChanges(): boolean {
-    const previousIds = liste!.beneficiaires.map(({ id }) => id).sort()
-    const currentIds = [...idsBeneficiaires.value].sort()
+    const previousIds = liste!.beneficiaires
+      .map(({ id }) => id)
+      .sort(compareParId)
+    const currentIds = [...idsBeneficiaires.value].sort(compareParId)
     return (
       previousIds.toString() !== currentIds.toString() || liste!.titre !== titre
     )
@@ -156,7 +161,10 @@ function EditionListeDiffusion({
     }
   }
 
-  useMatomo(liste ? 'Modification liste diffusion' : 'Création liste diffusion')
+  useMatomo(
+    liste ? 'Modification liste diffusion' : 'Création liste diffusion',
+    aDesBeneficiaires
+  )
 
   return (
     <>
@@ -266,10 +274,17 @@ export const getServerSideProps: GetServerSideProps<
     'listesDeDiffusionService'
   )
 
+  const referer: string | undefined = context.req.headers.referer
+
+  const previousUrl =
+    referer && !redirectedFromHome(referer)
+      ? referer
+      : '/mes-jeunes/listes-de-diffusion'
+
   const props: EditionListeDiffusionProps = {
     pageTitle: 'Créer - Listes de diffusion - Portefeuille',
     pageHeader: 'Créer une nouvelle liste',
-    returnTo: '/mes-jeunes/listes-de-diffusion',
+    returnTo: previousUrl,
     withoutChat: true,
   }
 

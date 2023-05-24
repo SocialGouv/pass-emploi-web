@@ -38,6 +38,7 @@ import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 interface EnvoiMessageGroupeProps extends PageProps {
   listesDiffusion: ListeDeDiffusion[]
@@ -72,6 +73,7 @@ function EnvoiMessageGroupe({
 
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({
@@ -174,8 +176,11 @@ function EnvoiMessageGroupe({
     setTrackingLabel(initialTracking)
   }
 
-  useMatomo(trackingLabel)
-  useMatomo(showLeavePageModal ? 'Message - Modale Annulation' : undefined)
+  useMatomo(trackingLabel, aDesBeneficiaires)
+  useMatomo(
+    showLeavePageModal ? 'Message - Modale Annulation' : undefined,
+    aDesBeneficiaires
+  )
 
   useLeavePageModal(
     formHasChanges() && confirmBeforeLeaving,
@@ -379,7 +384,3 @@ export default withTransaction(
   EnvoiMessageGroupe.name,
   'page'
 )(EnvoiMessageGroupe)
-
-function redirectedFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/')
-}

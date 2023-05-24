@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useMemo, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -31,6 +31,7 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 type PartageOffresProps = PageProps & {
   offre: DetailOffre
@@ -51,10 +52,13 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
   const [message, setMessage] = useState<string | undefined>()
   const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)
 
-  const formIsValid = useMemo(
-    () => idsDestinataires.value.length > 0,
-    [idsDestinataires]
-  )
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
+  const formIsValid = checkIfFormValid()
+
+  function checkIfFormValid(): boolean {
+    return idsDestinataires.value.length > 0
+  }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({
@@ -109,7 +113,7 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
     }
   }
 
-  useMatomo('Partage offre')
+  useMatomo('Partage offre', aDesBeneficiaires)
 
   return (
     <>
@@ -225,10 +229,6 @@ function getDefaultMessage(typeOffre: TypeOffre): string {
     case TypeOffre.ALTERNANCE:
       return "Bonjour, je vous partage une offre d'alternance qui pourrait vous intéresser."
   }
-}
-
-function redirectedFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/')
 }
 
 export default withTransaction(PartageOffre.name, 'page')(PartageOffre)

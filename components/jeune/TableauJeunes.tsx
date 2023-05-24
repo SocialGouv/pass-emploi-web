@@ -159,7 +159,8 @@ export default function TableauJeunes({
   useMatomo(matomoTitle())
 
   const columnHeaderStyle = 'rounded-l hover:bg-primary_lighten'
-  const columnHeaderButtonStyle = 'flex border-none items-center w-full'
+  const columnHeaderButtonStyle =
+    'flex border-none items-center w-full h-full p-4'
 
   return (
     <>
@@ -182,7 +183,7 @@ export default function TableauJeunes({
           >
             <THead>
               <TR isHeader={true}>
-                <TH className={columnHeaderStyle}>
+                <TH className={columnHeaderStyle} estCliquable={true}>
                   <button
                     className={columnHeaderButtonStyle}
                     onClick={() => sortJeunes(SortColumn.NOM)}
@@ -198,7 +199,7 @@ export default function TableauJeunes({
                   </button>
                 </TH>
                 {withSituations && (
-                  <TH className={columnHeaderStyle}>
+                  <TH className={columnHeaderStyle} estCliquable={true}>
                     <button
                       className={columnHeaderButtonStyle}
                       onClick={() => sortJeunes(SortColumn.SITUATION)}
@@ -214,7 +215,7 @@ export default function TableauJeunes({
                     </button>
                   </TH>
                 )}
-                <TH className={columnHeaderStyle}>
+                <TH className={columnHeaderStyle} estCliquable={true}>
                   <button
                     className={columnHeaderButtonStyle}
                     onClick={() => sortJeunes(SortColumn.DERNIERE_ACTIVITE)}
@@ -235,7 +236,7 @@ export default function TableauJeunes({
                 </TH>
 
                 {withActions && (
-                  <TH className={columnHeaderStyle}>
+                  <TH className={columnHeaderStyle} estCliquable={true}>
                     <button
                       className={`${columnHeaderButtonStyle} mx-auto`}
                       onClick={() =>
@@ -254,7 +255,7 @@ export default function TableauJeunes({
                   </TH>
                 )}
 
-                <TH className={columnHeaderStyle}>
+                <TH className={columnHeaderStyle} estCliquable={true}>
                   <button
                     className={`${columnHeaderButtonStyle} mx-auto`}
                     onClick={() => sortJeunes(SortColumn.MESSAGES)}

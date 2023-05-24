@@ -28,6 +28,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { ApiError } from 'utils/httpClient'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type QualificationProps = PageProps & {
   action: Action
@@ -43,6 +44,7 @@ function PageQualification({
   const router = useRouter()
   const actionsService = useDependance<ActionsService>('actionsService')
   const [_, setAlerte] = useAlerte()
+  const [portefeuille] = usePortefeuille()
 
   const [commentaire, setCommentaire] = useState<ValueWithError>({
     value: action.content + (action.comment && ' - ' + action.comment),
@@ -66,6 +68,7 @@ function PageQualification({
   const [labelMatomo, setLabelMatomo] = useState<string | undefined>(
     'Création Situation Non Professionnelle'
   )
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function isCommentaireValid(): boolean {
     return Boolean(commentaire.value) && commentaire.value.length <= 255
@@ -118,7 +121,7 @@ function PageQualification({
     }
   }
 
-  useMatomo(labelMatomo)
+  useMatomo(labelMatomo, aDesBeneficiaires)
 
   return (
     <form onSubmit={qualifierAction}>

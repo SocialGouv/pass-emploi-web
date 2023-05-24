@@ -40,6 +40,8 @@ function MiloCreationJeune({
     erreurMessageHttpMilo
   )
 
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
   async function creerCompteJeune(
     beneficiaireData: JeuneMiloFormData
   ): Promise<void> {
@@ -59,7 +61,8 @@ function MiloCreationJeune({
   useMatomo(
     erreurMessageHttpMilo
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
-      : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune'
+      : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune',
+    aDesBeneficiaires
   )
 
   useEffect(() => {

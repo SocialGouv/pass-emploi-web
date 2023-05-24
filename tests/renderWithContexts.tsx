@@ -21,10 +21,13 @@ import {
 } from 'fixtures/services'
 import { Conseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
+import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
+import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { DIProvider } from 'utils/injectionDependances'
 import { Dependencies } from 'utils/injectionDependances/container'
@@ -47,6 +50,16 @@ export default function renderWithContexts(
       alerte: Alerte
       alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     }>
+    customShowRubriqueListeDeDiffusion?: Partial<{
+      value: boolean | undefined
+      setter: (showRubriqueListeDeDiffusion: boolean | undefined) => void
+    }>
+    customListeDeDiffusionSelectionnee?: Partial<{
+      value: ListeDeDiffusion | undefined
+      setter: (
+        listeDeDiffusionSelectionnee: ListeDeDiffusion | undefined
+      ) => void
+    }>
   } = {}
 ): RenderResult {
   const {
@@ -55,6 +68,8 @@ export default function renderWithContexts(
     customPortefeuille,
     customCurrentJeune,
     customAlerte,
+    customShowRubriqueListeDeDiffusion,
+    customListeDeDiffusionSelectionnee,
   } = options
   const dependances: Dependencies = {
     actionsService: mockedActionsService(),
@@ -85,6 +100,8 @@ export default function renderWithContexts(
 
   const alerte = { ...customAlerte }
 
+  const showRubriqueListeDeDiffusion = { ...customShowRubriqueListeDeDiffusion }
+  const listeDeDiffusionSelectionnee = { ...customListeDeDiffusionSelectionnee }
   const withContexts = (element: JSX.Element) =>
     provideContexts(
       element,
@@ -92,7 +109,9 @@ export default function renderWithContexts(
       conseiller,
       portefeuille,
       currentJeune,
-      alerte
+      alerte,
+      showRubriqueListeDeDiffusion,
+      listeDeDiffusionSelectionnee
     )
 
   const renderResult: RenderResult = render(withContexts(children))
@@ -119,6 +138,14 @@ function provideContexts(
   alerte: Partial<{
     alerte: Alerte
     alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+  }>,
+  showRubriqueListeDeDiffusion: Partial<{
+    value: boolean | undefined
+    setter: (showRubriqueListeDeDiffusion: boolean | undefined) => void
+  }>,
+  listeDeDiffusionSelectionnee: Partial<{
+    value: ListeDeDiffusion | undefined
+    setter: (listeDeDiffusionSelectionnee: ListeDeDiffusion | undefined) => void
   }>
 ) {
   return (
@@ -142,7 +169,17 @@ function provideContexts(
                 alerteForTests={alerte.alerte}
                 setterForTests={alerte.alerteSetter}
               >
-                {children}
+                <ShowRubriqueListeDeDiffusionProvider
+                  valueForTests={showRubriqueListeDeDiffusion.value}
+                  setterForTests={showRubriqueListeDeDiffusion.setter}
+                >
+                  <ListeDeDiffusionSelectionneeProvider
+                    setterForTests={listeDeDiffusionSelectionnee.setter}
+                    valueForTests={listeDeDiffusionSelectionnee.value}
+                  >
+                    {children}
+                  </ListeDeDiffusionSelectionneeProvider>
+                </ShowRubriqueListeDeDiffusionProvider>
               </AlerteProvider>
             </CurrentJeuneProvider>
           </ChatCredentialsProvider>

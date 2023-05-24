@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import { RdvRow } from 'components/rdv/RdvRow'
@@ -33,13 +33,9 @@ export default function TableauRdv({
   beneficiaireUnique,
   additionalColumns = 'Modalité',
 }: TableauRdvProps) {
-  const rdvsAffiches = useMemo(
-    () =>
-      withIntercalaires
-        ? insertIntercalaires(rdvs, ({ date }) => DateTime.fromISO(date))
-        : rdvs,
-    [rdvs, withIntercalaires]
-  )
+  const rdvsAffiches = withIntercalaires
+    ? insertIntercalaires(rdvs, ({ date }) => DateTime.fromISO(date))
+    : rdvs
 
   const informationLabel =
     'L’information de présence est connue uniquement pour les informations collectives et les ateliers.'

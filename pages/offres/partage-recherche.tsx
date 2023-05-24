@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useMemo, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -17,7 +17,7 @@ import { getNomJeuneComplet } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
-import { textesCEJ, textesBRSA } from 'lang/textes'
+import { textesBRSA, textesCEJ } from 'lang/textes'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { SuggestionsService } from 'services/suggestions.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -78,10 +78,11 @@ function PartageRecherche({
   >({ value: [] })
   const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)
 
-  const formIsValid = useMemo(
-    () => idsDestinataires.value.length > 0,
-    [idsDestinataires]
-  )
+  const formIsValid = checkIfFormValid()
+
+  function checkIfFormValid(): boolean {
+    return idsDestinataires.value.length > 0
+  }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({

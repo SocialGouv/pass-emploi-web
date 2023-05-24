@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Commentaire } from 'interfaces/action'
@@ -14,10 +14,11 @@ export function CommentaireAction({
   commentaire,
   idConseiller,
 }: CommentaireActionProps) {
-  const commentaireDateTime: string = useMemo(
-    () => toFrenchFormat(DateTime.fromISO(commentaire.date), DATETIME_LONG),
-    [commentaire.date]
+  const commentaireDateTime = toFrenchFormat(
+    DateTime.fromISO(commentaire.date),
+    DATETIME_LONG
   )
+
   return (
     <>
       <dt className='flex items-center pb-2'>

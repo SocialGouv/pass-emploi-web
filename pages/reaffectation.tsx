@@ -23,11 +23,13 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type ReaffectationProps = PageProps
 
 function Reaffectation(_: ReaffectationProps) {
   const jeunesService = useDependance<JeunesService>('jeunesService')
+  const [portefeuille] = usePortefeuille()
 
   const [conseillerInitial, setConseillerInitial] = useState<{
     email: string
@@ -57,6 +59,8 @@ function Reaffectation(_: ReaffectationProps) {
   const [trackingTitle, setTrackingTitle] = useState<string>(
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
   )
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function editEmailConseillerInitial(value: string) {
     setConseillerInitial({ email: value })
@@ -190,7 +194,7 @@ function Reaffectation(_: ReaffectationProps) {
     }
   }
 
-  useMatomo(trackingTitle)
+  useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>

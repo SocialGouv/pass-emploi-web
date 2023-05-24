@@ -84,6 +84,7 @@ export default function TableauActionsJeune({
   }
 
   const headerColumnWithButtonHover = 'rounded-base hover:bg-primary_lighten'
+  const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
 
   function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
     setStatutsValides(statutsSelectionnes)
@@ -145,11 +146,11 @@ export default function TableauActionsJeune({
           <THead>
             <TR isHeader={true}>
               <TH>Intitulé de l’action</TH>
-              <TH className={headerColumnWithButtonHover}>
+              <TH className={headerColumnWithButtonHover} estCliquable={true}>
                 <button
                   onClick={trierParDateCreation}
                   aria-label='Créée le - trier les actions'
-                  className='flex items-center'
+                  className={columnHeaderButtonStyle}
                 >
                   Créée le
                   <SortIcon
@@ -158,11 +159,11 @@ export default function TableauActionsJeune({
                   />
                 </button>
               </TH>
-              <TH className={headerColumnWithButtonHover}>
+              <TH className={headerColumnWithButtonHover} estCliquable={true}>
                 <button
                   onClick={trierParDateEcheance}
                   aria-label='Échéance - trier les actions'
-                  className='flex items-center'
+                  className={columnHeaderButtonStyle}
                 >
                   Échéance
                   <SortIcon
@@ -171,7 +172,7 @@ export default function TableauActionsJeune({
                   />
                 </button>
               </TH>
-              <TH className={headerColumnWithButtonHover}>
+              <TH className={headerColumnWithButtonHover} estCliquable={true}>
                 <FiltresStatutsActions
                   defaultValue={statutsValides}
                   onFiltres={filtrerActionsParStatuts}

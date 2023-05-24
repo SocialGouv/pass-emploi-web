@@ -1,6 +1,7 @@
 import { getSession } from 'next-auth/react'
 
 import { ApiClient } from 'clients/api.client'
+import { StructureConseiller } from 'interfaces/conseiller'
 import {
   DetailOffreEmploiJson,
   jsonToDetailOffreEmploi,
@@ -12,6 +13,10 @@ import { Commune, Departement } from 'interfaces/referentiel'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
+enum FiltreOffres {
+  ALTERNANCE = 'ALTERNANCE',
+  EMPLOI = 'EMPLOI',
+}
 export type TypeContrat = 'CDI' | 'CDD-interim-saisonnier' | 'autre'
 export type Duree = 'Temps plein' | 'Temps partiel'
 export type SearchOffresEmploiQuery = {
@@ -70,7 +75,10 @@ export class OffresEmploiApiService implements OffresEmploiService {
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesPagination
   }> {
-    return this.searchOffres({ recherche, page, alternanceOnly: false })
+    return this.searchOffres({
+      recherche,
+      page,
+    })
   }
 
   async searchAlternances(
@@ -80,7 +88,11 @@ export class OffresEmploiApiService implements OffresEmploiService {
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesPagination
   }> {
-    return this.searchOffres({ recherche, page, alternanceOnly: true })
+    return this.searchOffres({
+      recherche,
+      page,
+      filtreOffres: FiltreOffres.ALTERNANCE,
+    })
   }
 
   private async getOffreEmploi(idOffreEmploi: string, accessToken: string) {
@@ -102,11 +114,11 @@ export class OffresEmploiApiService implements OffresEmploiService {
   private async searchOffres({
     recherche,
     page,
-    alternanceOnly,
+    filtreOffres,
   }: {
     recherche: SearchOffresEmploiQuery
     page: number
-    alternanceOnly: boolean
+    filtreOffres?: FiltreOffres
   }): Promise<{
     offres: BaseOffreEmploi[]
     metadonnees: MetadonneesPagination
@@ -116,7 +128,17 @@ export class OffresEmploiApiService implements OffresEmploiService {
 
     const LIMIT = 10
     const path = '/offres-emploi'
-    const searchUrl = buildSearchParams(recherche, page, LIMIT, alternanceOnly)
+
+    const filtreOffresEmploi: FiltreOffres | undefined =
+      session?.user.structure === StructureConseiller.POLE_EMPLOI_BRSA
+        ? FiltreOffres.EMPLOI
+        : filtreOffres
+    const searchUrl = buildSearchParams(
+      recherche,
+      page,
+      LIMIT,
+      filtreOffresEmploi
+    )
     const { content } = await this.apiClient.get<{
       pagination: { total: number }
       results: OffreEmploiItemJson[]
@@ -135,13 +157,16 @@ function buildSearchParams(
   recherche: SearchOffresEmploiQuery,
   page: number,
   limit: number,
-  alternanceOnly: boolean
+  filtreOffres?: FiltreOffres
 ): string {
   const searchParams = new URLSearchParams({
     page: page.toString(10),
     limit: limit.toString(10),
   })
-  if (alternanceOnly) searchParams.set('alternance', 'true')
+  if (filtreOffres === FiltreOffres.ALTERNANCE)
+    searchParams.set('alternance', 'true')
+  if (filtreOffres === FiltreOffres.EMPLOI)
+    searchParams.set('alternance', 'false')
 
   const {
     durees,

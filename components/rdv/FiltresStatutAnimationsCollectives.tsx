@@ -78,7 +78,7 @@ export default function FiltresStatutAnimationsCollectives({
           )
         }
         aria-label='Statut - Filtrer les animations collectives'
-        className='flex items-center'
+        className='flex items-center p-4 w-full h-full'
       >
         Statut
         <IconComponent

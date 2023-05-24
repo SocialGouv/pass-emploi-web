@@ -10,6 +10,7 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { DossierMilo } from 'interfaces/jeune'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
@@ -22,7 +23,10 @@ export default function DossierJeuneMilo({
   onCreateCompte,
   erreurMessageHttpPassEmploi,
 }: DossierJeuneMiloProps) {
+  const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   const addJeune = async () => {
     if (!creationEnCours) {
@@ -39,15 +43,18 @@ export default function DossierJeuneMilo({
       })
     }
   }
+
   useMatomo(
     dossier.email
       ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
-      : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
+      : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email',
+    aDesBeneficiaires
   )
 
   useMatomo(
     erreurMessageHttpPassEmploi &&
-      'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
+      'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur',
+    aDesBeneficiaires
   )
 
   return (

@@ -2,6 +2,7 @@
 import ProgressBar from '@badrap/bar-of-progress'
 import localFont from '@next/font/local'
 import { AppProps as NextAppProps } from 'next/app'
+import type { NextWebVitalsMetric } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
@@ -52,6 +53,12 @@ export const fontMarianne = localFont({
   ],
   fallback: ['arial'],
 })
+
+export function reportWebVitals(metric: NextWebVitalsMetric) {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('>>>', metric)
+  }
+}
 
 export default function CustomApp({ Component, pageProps }: NextAppProps) {
   const router = useRouter()

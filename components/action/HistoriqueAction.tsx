@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import InfoAction from 'components/action/InfoAction'
 import { Action } from 'interfaces/action'
@@ -9,14 +9,8 @@ interface HistoriqueActionProps {
 }
 
 export function HistoriqueAction({ action }: HistoriqueActionProps) {
-  const lastUpdate = useMemo(
-    () => toShortDate(action.lastUpdate),
-    [action.lastUpdate]
-  )
-  const creationDate = useMemo(
-    () => toShortDate(action.creationDate),
-    [action.creationDate]
-  )
+  const lastUpdate = toShortDate(action.lastUpdate)
+  const creationDate = toShortDate(action.creationDate)
 
   return (
     <div className='border border-solid border-grey_100 rounded-base p-4 mb-5'>

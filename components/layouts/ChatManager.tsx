@@ -13,11 +13,13 @@ const CHEMIN_DU_SON = '/sounds/notification.mp3'
 interface ChatManagerProps {
   displayChat: boolean
   setHasMessageNonLu: (value: boolean) => void
+  pageEstMessagerie?: boolean
 }
 
 export default function ChatManager({
   displayChat,
   setHasMessageNonLu,
+  pageEstMessagerie,
 }: ChatManagerProps) {
   const messagesService = useDependance<MessagesService>('messagesService')
 
@@ -100,5 +102,12 @@ export default function ChatManager({
     }
   }, [portefeuille, chatCredentials, audio, conseiller.notificationsSonores])
 
-  return displayChat ? <ChatContainer jeunesChats={chats} /> : <></>
+  return displayChat ? (
+    <ChatContainer
+      jeunesChats={chats}
+      messagerieFullScreen={pageEstMessagerie}
+    />
+  ) : (
+    <></>
+  )
 }

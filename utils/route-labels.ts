@@ -43,6 +43,9 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/reaffectation$/, 'Réaffectation'],
   [/\/pilotage$/, 'Pilotage'],
   [/\/profil$/, 'Profil'],
+
+  // Messagerie
+  [/\/messagerie$/, 'Messagerie'],
 ])
 
 export default mapRoutesToLabels

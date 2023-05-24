@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
@@ -19,12 +19,7 @@ import {
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import {
-  estUserPoleEmploi,
-  estMilo,
-  StructureConseiller,
-  UserType,
-} from 'interfaces/conseiller'
+import { estMilo, estUserPoleEmploi, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
@@ -37,6 +32,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface PageActionProps extends PageProps {
   action: Action
@@ -55,6 +51,7 @@ function PageAction({
   const actionsService = useDependance<ActionsService>('actionsService')
   const router = useRouter()
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
   const [alerte, setAlerte] = useAlerte()
 
   const [qualification, setQualification] = useState<
@@ -67,31 +64,22 @@ function PageAction({
   const pageTracking = `Détail Action${
     lectureSeule ? ' - hors portefeuille' : ''
   }`
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   const conseillerEstMilo = estMilo(conseiller)
 
-  const estARealiser: boolean = useMemo(
-    () => statut !== StatutAction.Terminee && statut !== StatutAction.Annulee,
-    [statut]
-  )
+  const estARealiser =
+    statut !== StatutAction.Terminee && statut !== StatutAction.Annulee
+  const estAQualifier =
+    conseillerEstMilo && statut === StatutAction.Terminee && !qualification
 
-  const estAQualifier: boolean = useMemo(
-    () =>
-      conseillerEstMilo && statut === StatutAction.Terminee && !qualification,
-    [qualification, statut]
-  )
-  const afficherSuppressionAction = useMemo(
-    () =>
-      action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-      !Boolean(action.qualification) &&
-      commentaires.length === 0 &&
-      statut !== StatutAction.Terminee,
-    [action.creatorType, action.qualification, commentaires.length, statut]
-  )
-  const dateEcheance: string = useMemo(
-    () => toShortDate(action.dateEcheance),
-    [action.dateEcheance]
-  )
+  const afficherSuppressionAction =
+    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
+    !Boolean(action.qualification) &&
+    commentaires.length === 0 &&
+    statut !== StatutAction.Terminee
+
+  const dateEcheance = toShortDate(action.dateEcheance)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const nouveauStatut = await actionsService.updateAction(
@@ -154,7 +142,8 @@ function PageAction({
   useMatomo(
     alerte && alerte.key === AlerteParam.envoiMessage
       ? `${pageTracking} - Succès envoi message`
-      : pageTracking
+      : pageTracking,
+    aDesBeneficiaires
   )
 
   return (

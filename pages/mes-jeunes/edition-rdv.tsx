@@ -41,6 +41,7 @@ import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 interface EditionRdvProps extends PageProps {
   typesRendezVous: TypeEvenementReferentiel[]
@@ -111,6 +112,7 @@ function EditionRdv({
       evenementTypeAC ? 'animation collective' : 'rdv'
     } ${idJeune ? ' jeune' : ''} `
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
@@ -227,7 +229,7 @@ function EditionRdv({
 
   useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
 
-  useMatomo(trackingTitle)
+  useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>
@@ -527,8 +529,4 @@ function buildPropsCreationEvenement(
   if (idJeune) props.idJeune = idJeune
 
   return props
-}
-
-function redirectedFromHome(referer: string): boolean {
-  return referer.split('?')[0].endsWith('/')
 }

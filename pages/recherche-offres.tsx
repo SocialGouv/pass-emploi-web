@@ -36,6 +36,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 import { useDependance } from 'utils/injectionDependances'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function RechercheOffres(_: PageProps) {
   const referentielService =
@@ -49,6 +50,7 @@ function RechercheOffres(_: PageProps) {
   const immersionsService =
     useDependance<ImmersionsService>('immersionsService')
   const [alerte] = useAlerte()
+  const [portefeuille] = usePortefeuille()
 
   const RAYON_DEFAULT = 10
   const [typeOffre, setTypeOffre] = useSessionStorage<TypeOffre | undefined>(
@@ -94,6 +96,8 @@ function RechercheOffres(_: PageProps) {
   if (alerte?.key === AlerteParam.suggestionRecherche)
     initialTracking += ' - Partage critères recherche succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function switchTypeOffre(type: TypeOffre) {
     nettoyerResultats()
@@ -253,7 +257,7 @@ function RechercheOffres(_: PageProps) {
     setSearchError(undefined)
   }
 
-  useMatomo(trackingTitle)
+  useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>

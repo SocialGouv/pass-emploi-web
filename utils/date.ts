@@ -1,4 +1,5 @@
-import { DateTime, DateTimeFormatOptions } from 'luxon'
+import { DateTime } from 'luxon'
+import { DateTimeFormatOptions } from 'luxon/src/misc'
 
 export const WEEKDAY_MONTH_LONG: string = 'EEEE d MMMM'
 export const TIME_24_H_SEPARATOR: string = "HH'h'mm"

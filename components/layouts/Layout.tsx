@@ -19,6 +19,8 @@ import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
 import { JeunesService } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
+import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
+import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleContext'
@@ -88,53 +90,87 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [conseiller])
 
+  const pageCouranteEstMessagerie = router.pathname === '/messagerie'
+
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
 
       {!conseiller && <SpinningLoader />}
+      <ShowRubriqueListeDeDiffusionProvider>
+        <ListeDeDiffusionSelectionneeProvider>
+          {conseiller && portefeuille && (
+            <>
+              {!pageCouranteEstMessagerie && (
+                <div
+                  ref={containerRef}
+                  className={`${styles.container} ${
+                    withChat ? styles.container_with_chat : ''
+                  }`}
+                >
+                  <Sidebar />
 
-      {conseiller && portefeuille && (
-        <div
-          ref={containerRef}
-          className={`${styles.container} ${
-            withChat ? styles.container_with_chat : ''
-          }`}
-        >
-          <Sidebar />
+                  <div
+                    ref={mainRef}
+                    className={`${styles.page} ${
+                      withChat ? styles.page_when_chat : ''
+                    }`}
+                  >
+                    <Header
+                      currentPath={router.asPath}
+                      returnTo={returnTo}
+                      pageHeader={pageHeader ?? pageTitle}
+                    />
 
-          <div
-            ref={mainRef}
-            className={`${styles.page} ${
-              withChat ? styles.page_when_chat : ''
-            }`}
-          >
-            <Header
-              currentPath={router.asPath}
-              returnTo={returnTo}
-              pageHeader={pageHeader ?? pageTitle}
-            />
+                    <main
+                      role='main'
+                      className={`${styles.content} ${
+                        withChat ? styles.content_when_chat : ''
+                      }`}
+                    >
+                      <AlerteDisplayer />
+                      {children}
+                    </main>
 
-            <main
-              role='main'
-              className={`${styles.content} ${
-                withChat ? styles.content_when_chat : ''
-              }`}
-            >
-              <AlerteDisplayer />
-              {children}
-            </main>
+                    <Footer conseiller={conseiller} />
+                  </div>
 
-            <Footer conseiller={conseiller} />
-          </div>
+                  <ChatManager
+                    displayChat={withChat}
+                    setHasMessageNonLu={setHasMessageNonLu}
+                  />
+                </div>
+              )}
 
-          <ChatManager
-            displayChat={withChat}
-            setHasMessageNonLu={setHasMessageNonLu}
-          />
-        </div>
-      )}
+              {pageCouranteEstMessagerie && (
+                <div
+                  ref={containerRef}
+                  className={`${styles.container} ${styles.messagerie_full_screen}`}
+                >
+                  <Sidebar />
 
+                  <ChatManager
+                    displayChat={withChat}
+                    setHasMessageNonLu={setHasMessageNonLu}
+                    pageEstMessagerie={true}
+                  />
+
+                  <div ref={mainRef} className={styles.page}>
+                    <main
+                      role='main'
+                      className={`${styles.content} ${styles.messagerie_full_screen}`}
+                    >
+                      <AlerteDisplayer />
+                      {children}
+                    </main>
+                    <Footer conseiller={conseiller} />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </ListeDeDiffusionSelectionneeProvider>
+      </ShowRubriqueListeDeDiffusionProvider>
       <div id={MODAL_ROOT_ID} />
     </>
   )

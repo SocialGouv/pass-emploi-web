@@ -11,6 +11,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface RendezVousPassesProps {
   beneficiaire: BaseJeune
@@ -24,11 +25,14 @@ function RendezVousPasses({
   rdvs,
 }: RendezVousPassesProps) {
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
 
   const trackingLabel = `Détail jeune - Rendez-vous passés ${
     lectureSeule ? ' - hors portefeuille' : ''
   }`
-  useMatomo(trackingLabel)
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
+  useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
     <TableauRdv

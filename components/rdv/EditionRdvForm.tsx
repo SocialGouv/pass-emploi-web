@@ -28,7 +28,7 @@ import {
   Evenement,
   TYPE_EVENEMENT,
 } from 'interfaces/evenement'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { BaseJeune, compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
@@ -215,8 +215,8 @@ export function EditionRdvForm({
       )
     }
 
-    const previousIds = evenement.jeunes.map(({ id }) => id).sort()
-    const currentIds = [...idsJeunes.value].sort()
+    const previousIds = evenement.jeunes.map(({ id }) => id).sort(compareParId)
+    const currentIds = [...idsJeunes.value].sort(compareParId)
     return (
       previousIds.toString() !== currentIds.toString() ||
       modalite !== evenement.modality ||

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useMemo } from 'react'
+import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Conseiller, estMilo } from 'interfaces/conseiller'
@@ -37,10 +37,7 @@ export function BlocInformationJeune({
     : '/mes-jeunes'
 
   const conseillerEstMilo = estMilo(conseiller)
-  const shortCreationDate = useMemo(
-    () => toShortDate(creationDate),
-    [creationDate]
-  )
+  const shortCreationDate = toShortDate(creationDate)
 
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>

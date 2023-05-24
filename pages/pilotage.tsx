@@ -23,6 +23,7 @@ import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionO
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useDependance } from 'utils/injectionDependances'
 import withDependance from 'utils/injectionDependances/withDependance'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export enum Onglet {
   ACTIONS = 'ACTIONS',
@@ -57,6 +58,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
   const [conseiller, setConseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
   const router = useRouter()
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.ACTIONS)
@@ -79,6 +81,8 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   const [trackingLabel, setTrackingLabel] = useState<string>(
     pageTracking + ' - Consultation ' + ongletProps[currentTab].trackingLabel
   )
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   async function chargerActions(page: number): Promise<{
     actions: ActionPilotage[]
@@ -152,7 +156,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     }
   }, [conseiller.agence?.id])
 
-  useMatomo(trackingLabel)
+  useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
     <>

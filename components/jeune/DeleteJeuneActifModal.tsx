@@ -13,6 +13,7 @@ import { BaseJeune } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import useMatomo from 'utils/analytics/useMatomo'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DeleteJeuneActifModalProps {
   jeune: BaseJeune
@@ -27,6 +28,8 @@ export default function DeleteJeuneActifModal({
   onClose,
   soumettreSuppression,
 }: DeleteJeuneActifModalProps) {
+  const [portefeuille] = usePortefeuille()
+
   const [showModalEtape1, setShowModalEtape1] = useState<boolean>(true)
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
 
@@ -41,6 +44,7 @@ export default function DeleteJeuneActifModal({
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Détail Jeune - Pop-in confirmation suppression'
   )
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function openModalEtape2() {
     setShowModalEtape1(false)
@@ -88,7 +92,7 @@ export default function DeleteJeuneActifModal({
     ({ motif }) => motif === motifSuppressionJeune
   )?.description
 
-  useMatomo(trackingLabel)
+  useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
     <>
