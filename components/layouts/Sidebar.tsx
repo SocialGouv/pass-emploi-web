@@ -14,7 +14,12 @@ export default function Sidebar() {
     conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
 
   return (
-    <div className={styles.sidebar}>
+    <div
+      // className={`${styles.sidebar} ${
+      //   estConseillerBRSA ? 'bg-primary_darken' : 'bg-primary'
+      // }`}
+      className={`${styles.sidebar} dark:bg-primary_darken bg-primary`}
+    >
       {estConseillerBRSA && (
         <Logo
           role='img'
