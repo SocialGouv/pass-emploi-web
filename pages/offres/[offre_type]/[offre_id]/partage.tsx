@@ -20,16 +20,14 @@ import { getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ImmersionsService } from 'services/immersions.service'
-import { MessagesService } from 'services/messages.service'
-import { OffresEmploiService } from 'services/offres-emploi.service'
-import { ServicesCiviquesService } from 'services/services-civiques.service'
+import { getImmersionServerSide } from 'services/immersions.service'
+import { partagerOffre } from 'services/messages.service'
+import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
+import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -40,7 +38,6 @@ type PartageOffresProps = PageProps & {
 }
 
 function PartageOffre({ offre, returnTo }: PartageOffresProps) {
-  const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
@@ -88,7 +85,7 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
     const messageDefault = getDefaultMessage(offre.type)
 
     try {
-      await messagesService.partagerOffre({
+      await partagerOffre({
         offre,
         idsDestinataires: idsDestinataires.value,
         cleChiffrement: chatCredentials!.cleChiffrement,
@@ -171,32 +168,24 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const { accessToken } = sessionOrRedirect.session
-  const offresEmploiService = withDependance<OffresEmploiService>(
-    'offresEmploiService'
-  )
-  const servicesCiviquesService = withDependance<ServicesCiviquesService>(
-    'servicesCiviquesService'
-  )
-  const immersionsService =
-    withDependance<ImmersionsService>('immersionsService')
   const typeOffre = context.query.offre_type as string
 
   let offre: DetailOffre | undefined
   switch (typeOffre) {
     case 'emploi':
-      offre = await offresEmploiService.getOffreEmploiServerSide(
+      offre = await getOffreEmploiServerSide(
         context.query.offre_id as string,
         accessToken
       )
       break
     case 'service-civique':
-      offre = await servicesCiviquesService.getServiceCiviqueServerSide(
+      offre = await getServiceCiviqueServerSide(
         context.query.offre_id as string,
         accessToken
       )
       break
     case 'immersion':
-      offre = await immersionsService.getImmersionServerSide(
+      offre = await getImmersionServerSide(
         context.query.offre_id as string,
         accessToken
       )

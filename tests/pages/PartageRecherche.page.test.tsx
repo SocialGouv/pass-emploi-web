@@ -4,19 +4,23 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { mockedSuggestionsService } from 'fixtures/services'
 import { TypeOffre } from 'interfaces/offre'
 import PartageCritere, {
   getServerSideProps,
 } from 'pages/offres/partage-recherche'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { SuggestionsService } from 'services/suggestions.service'
+import {
+  partagerRechercheAlternance,
+  partagerRechercheImmersion,
+  partagerRechercheOffreEmploi,
+  partagerRechercheServiceCivique,
+} from 'services/suggestions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/suggestions.service')
 
 describe('Partage Recherche', () => {
   const TITRE = 'Prof - Marseille 06'
@@ -198,7 +202,6 @@ describe('Partage Recherche', () => {
   })
 
   describe('client side', () => {
-    let suggestionsService: SuggestionsService
     let inputSearchJeune: HTMLSelectElement
     let submitButton: HTMLButtonElement
 
@@ -209,8 +212,6 @@ describe('Partage Recherche', () => {
         alerteSetter = jest.fn()
         push = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ push })
-
-        suggestionsService = mockedSuggestionsService()
 
         renderWithContexts(
           <PartageCritere
@@ -227,7 +228,6 @@ describe('Partage Recherche', () => {
             returnTo=''
           />,
           {
-            customDependances: { suggestionsService: suggestionsService },
             customAlerte: { alerteSetter },
           }
         )
@@ -304,8 +304,7 @@ describe('Partage Recherche', () => {
               }}
               withoutChat={true}
               returnTo=''
-            />,
-            { customDependances: { suggestionsService: suggestionsService } }
+            />
           )
 
           //Given
@@ -338,9 +337,7 @@ describe('Partage Recherche', () => {
           await userEvent.click(submitButton)
 
           // Then
-          expect(
-            suggestionsService.partagerRechercheOffreEmploi
-          ).toHaveBeenCalledWith({
+          expect(partagerRechercheOffreEmploi).toHaveBeenCalledWith({
             idsJeunes: ['jeune-2', 'jeune-1'],
             titre: TITRE,
             motsCles: MOTS_CLES,
@@ -367,8 +364,7 @@ describe('Partage Recherche', () => {
               }}
               withoutChat={true}
               returnTo=''
-            />,
-            { customDependances: { suggestionsService: suggestionsService } }
+            />
           )
 
           //Given
@@ -399,9 +395,7 @@ describe('Partage Recherche', () => {
           await userEvent.click(submitButton)
 
           // Then
-          expect(
-            suggestionsService.partagerRechercheAlternance
-          ).toHaveBeenCalledWith({
+          expect(partagerRechercheAlternance).toHaveBeenCalledWith({
             idsJeunes: ['jeune-2', 'jeune-1'],
             titre: TITRE,
             motsCles: MOTS_CLES,
@@ -429,8 +423,7 @@ describe('Partage Recherche', () => {
               }}
               withoutChat={true}
               returnTo=''
-            />,
-            { customDependances: { suggestionsService: suggestionsService } }
+            />
           )
 
           //Given
@@ -461,9 +454,7 @@ describe('Partage Recherche', () => {
           await userEvent.click(submitButton)
 
           // Then
-          expect(
-            suggestionsService.partagerRechercheImmersion
-          ).toHaveBeenCalledWith({
+          expect(partagerRechercheImmersion).toHaveBeenCalledWith({
             idsJeunes: ['jeune-2', 'jeune-1'],
             titre: TITRE,
             labelMetier: LABEL_METIER,
@@ -491,8 +482,7 @@ describe('Partage Recherche', () => {
               }}
               withoutChat={true}
               returnTo=''
-            />,
-            { customDependances: { suggestionsService: suggestionsService } }
+            />
           )
 
           //Given
@@ -524,9 +514,7 @@ describe('Partage Recherche', () => {
           await userEvent.click(submitButton)
 
           // Then
-          expect(
-            suggestionsService.partagerRechercheServiceCivique
-          ).toHaveBeenCalledWith({
+          expect(partagerRechercheServiceCivique).toHaveBeenCalledWith({
             idsJeunes: ['jeune-2', 'jeune-1'],
             titre: TITRE,
             labelLocalite: LABEL_LOCALITE,

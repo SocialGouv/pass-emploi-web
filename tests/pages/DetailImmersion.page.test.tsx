@@ -1,22 +1,19 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import { unDetailImmersion } from 'fixtures/offre'
-import { mockedImmersionsService } from 'fixtures/services'
 import { DetailImmersion } from 'interfaces/offre'
 import DetailOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_type]/[offre_id]'
-import { ImmersionsService } from 'services/immersions.service'
+import { getImmersionServerSide } from 'services/immersions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/immersions.service')
 jest.mock('components/PageActionsPortal')
 
 describe('Page Détail Offre Emploi', () => {
@@ -102,18 +99,16 @@ describe('Page Détail Offre Emploi', () => {
   })
 
   describe('server side', () => {
-    let immersionsService: ImmersionsService
     beforeEach(() => {
-      immersionsService = mockedImmersionsService({
-        getImmersionServerSide: jest.fn(async () => unDetailImmersion()),
-      })
+       ;(getImmersionServerSide as jest.Mock).mockResolvedValue(
+        unDetailImmersion()
+      )
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
         validSession: true,
         session: {
           accessToken: 'accessToken',
         },
       })
-      ;(withDependance as jest.Mock).mockReturnValue(immersionsService)
     })
 
     it('requiert la connexion', async () => {
@@ -138,7 +133,7 @@ describe('Page Détail Offre Emploi', () => {
       } as unknown as GetServerSidePropsContext)
 
       // Then
-      expect(immersionsService.getImmersionServerSide).toHaveBeenCalledWith(
+      expect(getImmersionServerSide).toHaveBeenCalledWith(
         'id-offre',
         'accessToken'
       )
@@ -153,9 +148,7 @@ describe('Page Détail Offre Emploi', () => {
 
     it("renvoie une 404 si l'offre n'existe pas", async () => {
       // Given
-      ;(
-        immersionsService.getImmersionServerSide as jest.Mock
-      ).mockResolvedValue(undefined)
+      ;(getImmersionServerSide as jest.Mock).mockResolvedValue(undefined)
 
       // When
       const actual = await getServerSideProps({

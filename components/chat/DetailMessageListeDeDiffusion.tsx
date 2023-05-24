@@ -7,9 +7,8 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { BaseJeune, JeuneChat } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
-import { JeunesService } from 'services/jeunes.service'
+import { getIdentitesBeneficiaires } from 'services/jeunes.service'
 import { toShortDate } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
 
 export function DetailMessageListeDeDiffusion({
   message,
@@ -22,7 +21,6 @@ export function DetailMessageListeDeDiffusion({
   onBack: () => void
   messagerieFullScreen?: boolean
 }) {
-  const jeunesServices = useDependance<JeunesService>('jeunesService')
   const [destinataires, setDestinataires] = useState<JeuneChat[]>()
 
   function aLuLeMessage(destinataire: JeuneChat) {
@@ -40,9 +38,9 @@ export function DetailMessageListeDeDiffusion({
     }
 
     if (message.idsDestinataires.length && chats?.length) {
-      jeunesServices
-        .getIdentitesBeneficiaires(message.idsDestinataires)
-        .then((jeunes) => setDestinataires(getChatsDestinataires(jeunes)))
+      getIdentitesBeneficiaires(message.idsDestinataires).then((jeunes) =>
+        setDestinataires(getChatsDestinataires(jeunes))
+      )
     }
   }, [chats, message.idsDestinataires])
 

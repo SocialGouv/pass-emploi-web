@@ -18,25 +18,18 @@ import {
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { PageProps } from 'interfaces/pageProps'
-import { JeunesService } from 'services/jeunes.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
-import { MessagesService } from 'services/messages.service'
+import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
+import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
+import { observeConseillerChats } from 'services/messages.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
-import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function Messagerie(_: PageProps) {
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const messagesService = useDependance<MessagesService>('messagesService')
-  const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
-    'listesDeDiffusionService'
-  )
-
   const trackingTitle = 'Messagerie'
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
@@ -44,7 +37,7 @@ function Messagerie(_: PageProps) {
   )
 
   const [portefeuille] = usePortefeuille()
-  const [chatCredentials, setChatCredentials] = useChatCredentials()
+  const [chatCredentials] = useChatCredentials()
   const [showRubriqueListesDeDiffusion] = useShowRubriqueListeDeDiffusion()
   const [listeSelectionnee, setListeSelectionnee] =
     useListeDeDiffusionSelectionnee()
@@ -62,21 +55,15 @@ function Messagerie(_: PageProps) {
 
   useEffect(() => {
     if (showRubriqueListesDeDiffusion && !listesDeDiffusion) {
-      listesDeDiffusionService
-        .getListesDeDiffusionClientSide()
-        .then(setListesDeDiffusion)
+      getListesDeDiffusionClientSide().then(setListesDeDiffusion)
     }
-  }, [
-    listesDeDiffusionService,
-    listesDeDiffusion,
-    showRubriqueListesDeDiffusion,
-  ])
+  }, [listesDeDiffusion, showRubriqueListesDeDiffusion])
 
   useEffect(() => {
     if (idCurrentJeune) {
-      jeunesService
-        .getConseillersDuJeuneClientSide(idCurrentJeune)
-        .then((conseillersJeunes) => setConseillers(conseillersJeunes))
+      getConseillersDuJeuneClientSide(idCurrentJeune).then(
+        (conseillersJeunes) => setConseillers(conseillersJeunes)
+      )
 
       if (chats) {
         setCurrentChat(chats.find((chat) => chat.id === idCurrentJeune))
@@ -84,29 +71,16 @@ function Messagerie(_: PageProps) {
     } else {
       setCurrentChat(undefined)
     }
-  }, [jeunesService, idCurrentJeune, chats])
-
-  useEffect(() => {
-    if (!chatCredentials) {
-      messagesService
-        .getChatCredentials()
-        .then((credentials) =>
-          messagesService.signIn(credentials.token).then(() => credentials)
-        )
-        .then(setChatCredentials)
-    }
-  }, [chatCredentials])
+  }, [idCurrentJeune, chats])
 
   useEffect(() => {
     if (!chatCredentials || !portefeuille) return
 
-    messagesService
-      .observeConseillerChats(
-        chatCredentials.cleChiffrement,
-        portefeuille,
-        updateChats
-      )
-      .then((destructor) => (destructorRef.current = destructor))
+    observeConseillerChats(
+      chatCredentials.cleChiffrement,
+      portefeuille,
+      updateChats
+    ).then((destructor) => (destructorRef.current = destructor))
 
     return () => destructorRef.current()
 
@@ -159,7 +133,7 @@ function Messagerie(_: PageProps) {
               <div className='h-full px-6'>
                 {!messageSelectionne && (
                   <>
-                    <div className=' items-center px-4 py-6 short:hidden pb-3 flex items-center justify-between'>
+                    <div className='items-center px-4 py-6 short:hidden pb-3 flex justify-between'>
                       <div>
                         <h2 className='text-l-bold text-primary text-center my-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
                           {listeSelectionnee.titre}

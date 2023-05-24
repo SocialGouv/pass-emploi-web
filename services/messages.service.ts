@@ -2,11 +2,19 @@ import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
-import { ApiClient } from 'clients/api.client'
+import { apiPost } from 'clients/api.client'
 import {
+  addMessage,
   CreateFirebaseMessage,
   CreateFirebaseMessageWithOffre,
-  FirebaseClient,
+  findAndObserveChatsDuConseiller,
+  getChatsDuConseiller,
+  getMessagesGroupe,
+  observeChat,
+  observeDerniersMessagesDuChat,
+  signIn as _signIn,
+  signOut as _signOut,
+  updateChat,
 } from 'clients/firebase.client'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
@@ -19,7 +27,7 @@ import {
   TypeMessage,
 } from 'interfaces/message'
 import { BaseOffre } from 'interfaces/offre'
-import { ChatCrypto } from 'utils/chat/chatCrypto'
+import { decrypt, encrypt, encryptWithCustomIv } from 'utils/chat/chatCrypto'
 import { toShortDate } from 'utils/date'
 
 type FormNouveauMessage = {
@@ -50,442 +58,376 @@ type MessageType =
   | 'MESSAGE_ENVOYE_MULTIPLE_PJ'
   | 'MESSAGE_OFFRE_PARTAGEE'
 
-export interface MessagesService {
-  getChatCredentials(): Promise<ChatCredentials>
-
-  signIn(token: string): Promise<void>
-
-  signOut(): Promise<void>
-
-  sendNouveauMessage(params: FormNouveauMessageIndividuel): void
-
-  sendNouveauMessageGroupe(params: FormNouveauMessageGroupe): Promise<void>
-
-  setReadByConseiller(idChat: string): void
-
-  toggleFlag(idChat: string, flagged: boolean): void
-
-  observeConseillerChats(
-    cleChiffrement: string,
-    jeunes: BaseJeune[],
-    updateChats: (chats: JeuneChat[]) => void
-  ): Promise<() => void>
-
-  observeDerniersMessages(
-    idChat: string,
-    cleChiffrement: string,
-    pages: number,
-    onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
-  ): () => void
-
-  getMessagesListeDeDiffusion(
-    idListeDiffusion: string,
-    cleChiffrement: string
-  ): Promise<ByDay<MessageListeDiffusion>[]>
-
-  observeJeuneReadingDate(
-    idChat: string,
-    onJeuneReadingDate: (date: DateTime) => void
-  ): () => void
-
-  countMessagesNotRead(
-    idsJeunes: string[]
-  ): Promise<{ [idJeune: string]: number }>
-
-  partagerOffre(options: FormPartageOffre): Promise<void>
+export async function getChatCredentials(): Promise<ChatCredentials> {
+  const session = await getSession()
+  const {
+    content: { token, cle: cleChiffrement },
+  } = await apiPost<{
+    token: string
+    cle: string
+  }>('/auth/firebase/token', {}, session!.accessToken)
+  return { token: token, cleChiffrement }
 }
 
-export class MessagesFirebaseAndApiService implements MessagesService {
-  constructor(
-    private readonly firebaseClient: FirebaseClient,
-    private readonly chatCrypto: ChatCrypto,
-    private readonly apiClient: ApiClient
-  ) {}
+export async function signIn(token: string): Promise<void> {
+  await _signIn(token)
+}
 
-  async getChatCredentials(): Promise<ChatCredentials> {
-    const session = await getSession()
-    const {
-      content: { token, cle: cleChiffrement },
-    } = await this.apiClient.post<{
-      token: string
-      cle: string
-    }>('/auth/firebase/token', {}, session!.accessToken)
-    return { token: token, cleChiffrement }
-  }
+export async function signOut(): Promise<void> {
+  await _signOut()
+}
 
-  async signIn(token: string): Promise<void> {
-    await this.firebaseClient.signIn(token)
-  }
+export async function setReadByConseiller(idChat: string): Promise<void> {
+  await updateChat(idChat, {
+    seenByConseiller: true,
+    lastConseillerReading: DateTime.now(),
+  })
+}
 
-  async signOut(): Promise<void> {
-    await this.firebaseClient.signOut()
-  }
+export async function toggleFlag(
+  idChat: string,
+  flagged: boolean
+): Promise<void> {
+  await updateChat(idChat, {
+    flaggedByConseiller: flagged,
+  })
+}
 
-  async setReadByConseiller(idChat: string): Promise<void> {
-    await this.firebaseClient.updateChat(idChat, {
-      seenByConseiller: true,
-      lastConseillerReading: DateTime.now(),
-    })
-  }
-
-  async toggleFlag(idChat: string, flagged: boolean): Promise<void> {
-    await this.firebaseClient.updateChat(idChat, {
-      flaggedByConseiller: flagged,
-    })
-  }
-
-  async observeConseillerChats(
-    cleChiffrement: string,
-    jeunes: BaseJeune[],
-    updateChats: (chats: JeuneChat[]) => void
-  ): Promise<() => void> {
-    const session = await getSession()
-    return this.firebaseClient.findAndObserveChatsDuConseiller(
-      session!.user.id,
-      (chats: { [idJeune: string]: Chat }) => {
-        const newChats = jeunes
-          .filter((jeune) => Boolean(chats[jeune.id]))
-          .map((jeune) => {
-            const chat = chats[jeune.id]
-            const newJeuneChat: JeuneChat = {
-              ...jeune,
-              ...chat,
-              lastMessageContent: chat.lastMessageIv
-                ? this.chatCrypto.decrypt(
-                    {
-                      encryptedText: chat.lastMessageContent ?? '',
-                      iv: chat.lastMessageIv,
-                    },
-                    cleChiffrement
-                  )
-                : chat.lastMessageContent,
-            }
-            return newJeuneChat
-          })
-
-        updateChats(newChats)
-      }
-    )
-  }
-
-  observeDerniersMessages(
-    idChat: string,
-    cleChiffrement: string,
-    pages: number,
-    onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
-  ): () => void {
-    const NB_MESSAGES_PAR_PAGE = 10
-    return this.firebaseClient.observeDerniersMessagesDuChat(
-      idChat,
-      pages * NB_MESSAGES_PAR_PAGE,
-      (messagesAntechronologiques: Message[]) => {
-        const messagesGroupesParJour: ByDay<Message>[] =
-          this.grouperMessagesParJour(
-            [...messagesAntechronologiques].reverse(),
-            cleChiffrement
-          )
-        onMessagesGroupesParJour(messagesGroupesParJour)
-      }
-    )
-  }
-
-  observeJeuneReadingDate(
-    idChat: string,
-    onJeuneReadingDate: (date: DateTime) => void
-  ): () => void {
-    return this.firebaseClient.observeChat(idChat, (chat: Chat) => {
-      const lastJeuneReadingDate = chat.lastJeuneReading
-      if (lastJeuneReadingDate) {
-        onJeuneReadingDate(lastJeuneReadingDate)
-      }
-    })
-  }
-
-  async getMessagesListeDeDiffusion(
-    idListeDiffusion: string,
-    cleChiffrement: string
-  ): Promise<ByDay<MessageListeDiffusion>[]> {
-    const session = await getSession()
-    const messages = await this.firebaseClient.getMessagesGroupe(
-      session!.user.id,
-      idListeDiffusion
-    )
-
-    return this.grouperMessagesParJour(messages, cleChiffrement)
-  }
-
-  async countMessagesNotRead(
-    idsJeunes: string[]
-  ): Promise<{ [idJeune: string]: number }> {
-    const session = await getSession()
-
-    const chats = await this.firebaseClient.getChatsDuConseiller(
-      session!.user.id
-    )
-    return idsJeunes.reduce((mappedCounts, idJeune) => {
-      mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
-      return mappedCounts
-    }, {} as { [idJeune: string]: number })
-  }
-
-  async sendNouveauMessage({
-    cleChiffrement,
-    infoPieceJointe,
-    jeuneChat,
-    newMessage,
-  }: FormNouveauMessageIndividuel) {
-    const now = DateTime.now()
-    const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
-    const session = await getSession()
-
-    const nouveauMessage: CreateFirebaseMessage = {
-      idConseiller: session!.user.id,
-      message: encryptedMessage,
-      date: now,
-    }
-
-    let type: MessageType = 'MESSAGE_ENVOYE'
-    if (infoPieceJointe) {
-      nouveauMessage.infoPieceJointe = {
-        ...infoPieceJointe,
-        nom: this.chatCrypto.encryptWithCustomIv(
-          infoPieceJointe.nom,
-          cleChiffrement,
-          encryptedMessage.iv
-        ),
-      }
-      type = 'MESSAGE_ENVOYE_PJ'
-    }
-
-    await Promise.all([
-      this.firebaseClient.addMessage(jeuneChat.chatId, nouveauMessage),
-      this.firebaseClient.updateChat(jeuneChat.chatId, {
-        lastMessageContent: encryptedMessage.encryptedText,
-        lastMessageIv: encryptedMessage.iv,
-        lastMessageSentAt: now,
-        lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
-        newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
-        seenByConseiller: true,
-        lastConseillerReading: now,
-      }),
-    ])
-
-    await Promise.all([
-      this.notifierNouveauMessage(
-        session!.user.id,
-        [jeuneChat.id],
-        session!.accessToken
-      ),
-      this.evenementNouveauMessage(
-        type,
-        session!.user.structure,
-        session!.user.id,
-        session!.accessToken
-      ),
-    ])
-  }
-
-  async sendNouveauMessageGroupe({
-    cleChiffrement,
-    idsBeneficiaires,
-    idsListesDeDiffusion,
-    infoPieceJointe,
-    newMessage,
-  }: FormNouveauMessageGroupe) {
-    const session = await getSession()
-    const encryptedMessage = this.chatCrypto.encrypt(newMessage, cleChiffrement)
-
-    let encryptedPieceJointe
-    if (infoPieceJointe) {
-      encryptedPieceJointe = {
-        ...infoPieceJointe,
-        nom: this.chatCrypto.encryptWithCustomIv(
-          infoPieceJointe.nom,
-          cleChiffrement,
-          encryptedMessage.iv
-        ),
-      }
-    }
-
-    await this.apiClient.post(
-      '/messages',
-      {
-        message: encryptedMessage.encryptedText,
-        iv: encryptedMessage.iv,
-        idsBeneficiaires: idsBeneficiaires,
-        idsListesDeDiffusion,
-        idConseiller: session!.user.id,
-        infoPieceJointe: encryptedPieceJointe
-          ? encryptedPieceJointe
-          : undefined,
-      },
-      session!.accessToken
-    )
-  }
-
-  async partagerOffre({
-    cleChiffrement,
-    idsDestinataires,
-    message,
-    offre,
-  }: FormPartageOffre) {
-    const session = await getSession()
-    const now = DateTime.now()
-    const encryptedMessage = this.chatCrypto.encrypt(message, cleChiffrement)
-    const nouveauMessage: CreateFirebaseMessageWithOffre = {
-      idConseiller: session!.user.id,
-      message: encryptedMessage,
-      offre: offre,
-      date: now,
-    }
-
-    await this.envoyerMessage(
-      idsDestinataires,
-      nouveauMessage,
-      'MESSAGE_OFFRE_PARTAGEE',
-      session!,
-      now
-    )
-  }
-
-  private async envoyerMessage(
-    idsDestinataires: string[],
-    nouveauMessage: CreateFirebaseMessage | CreateFirebaseMessageWithOffre,
-    type: MessageType,
-    session: Session,
-    date: DateTime
-  ) {
-    const chats = await this.firebaseClient.getChatsDuConseiller(
-      session.user.id
-    )
-    const chatsDestinataires = Object.entries(chats)
-      .filter(([idJeune]) => idsDestinataires.includes(idJeune))
-      .map(([_, chat]) => chat)
-
-    await Promise.all([
-      chatsDestinataires.map((chat) =>
-        Promise.all([
-          this.firebaseClient.addMessage(chat.chatId, nouveauMessage),
-          this.firebaseClient.updateChat(chat.chatId, {
-            lastMessageContent: nouveauMessage.message.encryptedText,
-            lastMessageIv: nouveauMessage.message.iv,
-            lastMessageSentAt: date,
-            lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
-            newConseillerMessageCount: chat.newConseillerMessageCount + 1,
-          }),
-        ])
-      ),
-    ])
-
-    await Promise.all([
-      this.notifierNouveauMessage(
-        session.user.id,
-        idsDestinataires,
-        session.accessToken
-      ),
-      this.evenementNouveauMessage(
-        type,
-        session.user.structure,
-        session.user.id,
-        session.accessToken
-      ),
-    ])
-  }
-
-  private async notifierNouveauMessage(
-    idConseiller: string,
-    idsJeunes: string[],
-    accessToken: string
-  ): Promise<void> {
-    await this.apiClient.post(
-      `/conseillers/${idConseiller}/jeunes/notify-messages`,
-      { idsJeunes: idsJeunes },
-      accessToken
-    )
-  }
-
-  private async evenementNouveauMessage(
-    type: MessageType,
-    structure: string,
-    idConseiller: string,
-    accessToken: string
-  ): Promise<void> {
-    await this.apiClient.post(
-      '/evenements',
-      {
-        type,
-        emetteur: {
-          type: UserType.CONSEILLER,
-          structure: structure,
-          id: idConseiller,
-        },
-      },
-      accessToken
-    )
-  }
-
-  private grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
-    messages: T[],
-    cleChiffrement: string
-  ): ByDay<T>[] {
-    const messagesByDay: { [day: string]: ByDay<T> } = {}
-
-    messages
-      .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
-      .forEach((message) => {
-        if (message.iv) {
-          message = {
-            ...message,
-            ...this.decryptContentAndFilename(
-              {
-                iv: message.iv,
-                content: message.content,
-                infoPiecesJointes: message.infoPiecesJointes,
-              },
-              cleChiffrement
-            ),
+export async function observeConseillerChats(
+  cleChiffrement: string,
+  jeunes: BaseJeune[],
+  updateChats: (chats: JeuneChat[]) => void
+): Promise<() => void> {
+  const session = await getSession()
+  return findAndObserveChatsDuConseiller(
+    session!.user.id,
+    (chats: { [idJeune: string]: Chat }) => {
+      const newChats = jeunes
+        .filter((jeune) => Boolean(chats[jeune.id]))
+        .map((jeune) => {
+          const chat = chats[jeune.id]
+          const newJeuneChat: JeuneChat = {
+            ...jeune,
+            ...chat,
+            lastMessageContent: chat.lastMessageIv
+              ? decrypt(
+                  {
+                    encryptedText: chat.lastMessageContent ?? '',
+                    iv: chat.lastMessageIv,
+                  },
+                  cleChiffrement
+                )
+              : chat.lastMessageContent,
           }
-        }
+          return newJeuneChat
+        })
 
-        const day = toShortDate(message.creationDate)
-        const messagesOfDay = messagesByDay[day] ?? {
-          date: message.creationDate,
-          messages: [],
-        }
-        messagesOfDay.messages.push(message)
-        messagesByDay[day] = messagesOfDay
-      })
+      updateChats(newChats)
+    }
+  )
+}
 
-    return Object.values(messagesByDay)
+export function observeDerniersMessages(
+  idChat: string,
+  cleChiffrement: string,
+  pages: number,
+  onMessagesGroupesParJour: (messagesGroupesParJour: ByDay<Message>[]) => void
+): () => void {
+  const NB_MESSAGES_PAR_PAGE = 10
+  return observeDerniersMessagesDuChat(
+    idChat,
+    pages * NB_MESSAGES_PAR_PAGE,
+    (messagesAntechronologiques: Message[]) => {
+      const messagesGroupesParJour: ByDay<Message>[] = grouperMessagesParJour(
+        [...messagesAntechronologiques].reverse(),
+        cleChiffrement
+      )
+      onMessagesGroupesParJour(messagesGroupesParJour)
+    }
+  )
+}
+
+export function observeJeuneReadingDate(
+  idChat: string,
+  onJeuneReadingDate: (date: DateTime) => void
+): () => void {
+  return observeChat(idChat, (chat: Chat) => {
+    const lastJeuneReadingDate = chat.lastJeuneReading
+    if (lastJeuneReadingDate) {
+      onJeuneReadingDate(lastJeuneReadingDate)
+    }
+  })
+}
+
+export async function getMessagesListeDeDiffusion(
+  idListeDiffusion: string,
+  cleChiffrement: string
+): Promise<ByDay<MessageListeDiffusion>[]> {
+  const session = await getSession()
+  const messages = await getMessagesGroupe(session!.user.id, idListeDiffusion)
+
+  return grouperMessagesParJour(messages, cleChiffrement)
+}
+
+export async function countMessagesNotRead(
+  idsJeunes: string[]
+): Promise<{ [idJeune: string]: number }> {
+  const session = await getSession()
+
+  const chats = await getChatsDuConseiller(session!.user.id)
+  return idsJeunes.reduce((mappedCounts, idJeune) => {
+    mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
+    return mappedCounts
+  }, {} as { [idJeune: string]: number })
+}
+
+export async function sendNouveauMessage({
+  cleChiffrement,
+  infoPieceJointe,
+  jeuneChat,
+  newMessage,
+}: FormNouveauMessageIndividuel) {
+  const now = DateTime.now()
+  const encryptedMessage = encrypt(newMessage, cleChiffrement)
+  const session = await getSession()
+
+  const nouveauMessage: CreateFirebaseMessage = {
+    idConseiller: session!.user.id,
+    message: encryptedMessage,
+    date: now,
   }
 
-  private decryptContentAndFilename(
-    message: { iv: string; content: string; infoPiecesJointes?: InfoFichier[] },
-    cleChiffrement: string
-  ): { content: string; infoPiecesJointes?: InfoFichier[] } {
-    const iv = message.iv
-    const decryptedMessage: {
-      content: string
-      infoPiecesJointes?: InfoFichier[]
-    } = {
-      content: this.chatCrypto.decrypt(
-        { encryptedText: message.content, iv },
-        cleChiffrement
+  let type: MessageType = 'MESSAGE_ENVOYE'
+  if (infoPieceJointe) {
+    nouveauMessage.infoPieceJointe = {
+      ...infoPieceJointe,
+      nom: encryptWithCustomIv(
+        infoPieceJointe.nom,
+        cleChiffrement,
+        encryptedMessage.iv
       ),
     }
+    type = 'MESSAGE_ENVOYE_PJ'
+  }
 
-    if (message.infoPiecesJointes?.length) {
-      decryptedMessage.infoPiecesJointes = message.infoPiecesJointes.map(
-        ({ id, nom }) => ({
-          id,
-          nom: this.chatCrypto.decrypt(
-            { encryptedText: nom, iv },
+  await Promise.all([
+    addMessage(jeuneChat.chatId, nouveauMessage),
+    updateChat(jeuneChat.chatId, {
+      lastMessageContent: encryptedMessage.encryptedText,
+      lastMessageIv: encryptedMessage.iv,
+      lastMessageSentAt: now,
+      lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
+      newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
+      seenByConseiller: true,
+      lastConseillerReading: now,
+    }),
+  ])
+
+  await Promise.all([
+    notifierNouveauMessage(
+      session!.user.id,
+      [jeuneChat.id],
+      session!.accessToken
+    ),
+    evenementNouveauMessage(
+      type,
+      session!.user.structure,
+      session!.user.id,
+      session!.accessToken
+    ),
+  ])
+}
+
+export async function sendNouveauMessageGroupe({
+  cleChiffrement,
+  idsBeneficiaires,
+  idsListesDeDiffusion,
+  infoPieceJointe,
+  newMessage,
+}: FormNouveauMessageGroupe) {
+  const session = await getSession()
+  const encryptedMessage = encrypt(newMessage, cleChiffrement)
+
+  let encryptedPieceJointe
+  if (infoPieceJointe) {
+    encryptedPieceJointe = {
+      ...infoPieceJointe,
+      nom: encryptWithCustomIv(
+        infoPieceJointe.nom,
+        cleChiffrement,
+        encryptedMessage.iv
+      ),
+    }
+  }
+
+  await apiPost(
+    '/messages',
+    {
+      message: encryptedMessage.encryptedText,
+      iv: encryptedMessage.iv,
+      idsBeneficiaires: idsBeneficiaires,
+      idsListesDeDiffusion,
+      idConseiller: session!.user.id,
+      infoPieceJointe: encryptedPieceJointe ? encryptedPieceJointe : undefined,
+    },
+    session!.accessToken
+  )
+}
+
+export async function partagerOffre({
+  cleChiffrement,
+  idsDestinataires,
+  message,
+  offre,
+}: FormPartageOffre) {
+  const session = await getSession()
+  const now = DateTime.now()
+  const encryptedMessage = encrypt(message, cleChiffrement)
+  const nouveauMessage: CreateFirebaseMessageWithOffre = {
+    idConseiller: session!.user.id,
+    message: encryptedMessage,
+    offre: offre,
+    date: now,
+  }
+
+  await envoyerMessage(
+    idsDestinataires,
+    nouveauMessage,
+    'MESSAGE_OFFRE_PARTAGEE',
+    session!,
+    now
+  )
+}
+
+async function envoyerMessage(
+  idsDestinataires: string[],
+  nouveauMessage: CreateFirebaseMessage | CreateFirebaseMessageWithOffre,
+  type: MessageType,
+  session: Session,
+  date: DateTime
+) {
+  const chats = await getChatsDuConseiller(session.user.id)
+  const chatsDestinataires = Object.entries(chats)
+    .filter(([idJeune]) => idsDestinataires.includes(idJeune))
+    .map(([_, chat]) => chat)
+
+  await Promise.all([
+    chatsDestinataires.map((chat) =>
+      Promise.all([
+        addMessage(chat.chatId, nouveauMessage),
+        updateChat(chat.chatId, {
+          lastMessageContent: nouveauMessage.message.encryptedText,
+          lastMessageIv: nouveauMessage.message.iv,
+          lastMessageSentAt: date,
+          lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
+          newConseillerMessageCount: chat.newConseillerMessageCount + 1,
+        }),
+      ])
+    ),
+  ])
+
+  await Promise.all([
+    notifierNouveauMessage(
+      session.user.id,
+      idsDestinataires,
+      session.accessToken
+    ),
+    evenementNouveauMessage(
+      type,
+      session.user.structure,
+      session.user.id,
+      session.accessToken
+    ),
+  ])
+}
+
+async function notifierNouveauMessage(
+  idConseiller: string,
+  idsJeunes: string[],
+  accessToken: string
+): Promise<void> {
+  await apiPost(
+    `/conseillers/${idConseiller}/jeunes/notify-messages`,
+    { idsJeunes: idsJeunes },
+    accessToken
+  )
+}
+
+async function evenementNouveauMessage(
+  type: MessageType,
+  structure: string,
+  idConseiller: string,
+  accessToken: string
+): Promise<void> {
+  await apiPost(
+    '/evenements',
+    {
+      type,
+      emetteur: {
+        type: UserType.CONSEILLER,
+        structure: structure,
+        id: idConseiller,
+      },
+    },
+    accessToken
+  )
+}
+
+function grouperMessagesParJour<T extends Message | MessageListeDiffusion>(
+  messages: T[],
+  cleChiffrement: string
+): ByDay<T>[] {
+  const messagesByDay: { [day: string]: ByDay<T> } = {}
+
+  messages
+    .filter((message) => message.type !== TypeMessage.NOUVEAU_CONSEILLER)
+    .forEach((message) => {
+      if (message.iv) {
+        message = {
+          ...message,
+          ...decryptContentAndFilename(
+            {
+              iv: message.iv,
+              content: message.content,
+              infoPiecesJointes: message.infoPiecesJointes,
+            },
             cleChiffrement
           ),
-        })
-      )
-    }
+        }
+      }
 
-    return decryptedMessage
+      const day = toShortDate(message.creationDate)
+      const messagesOfDay = messagesByDay[day] ?? {
+        date: message.creationDate,
+        messages: [],
+      }
+      messagesOfDay.messages.push(message)
+      messagesByDay[day] = messagesOfDay
+    })
+
+  return Object.values(messagesByDay)
+}
+
+function decryptContentAndFilename(
+  message: { iv: string; content: string; infoPiecesJointes?: InfoFichier[] },
+  cleChiffrement: string
+): { content: string; infoPiecesJointes?: InfoFichier[] } {
+  const iv = message.iv
+  const decryptedMessage: {
+    content: string
+    infoPiecesJointes?: InfoFichier[]
+  } = {
+    content: decrypt({ encryptedText: message.content, iv }, cleChiffrement),
   }
+
+  if (message.infoPiecesJointes?.length) {
+    decryptedMessage.infoPiecesJointes = message.infoPiecesJointes.map(
+      ({ id, nom }) => ({
+        id,
+        nom: decrypt({ encryptedText: nom, iv }, cleChiffrement),
+      })
+    )
+  }
+
+  return decryptedMessage
 }

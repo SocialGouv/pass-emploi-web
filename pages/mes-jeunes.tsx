@@ -11,9 +11,9 @@ import Button from 'components/ui/Button/Button'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
 import {
-  estUserPoleEmploi,
   estMilo,
   estPoleEmploi,
+  estUserPoleEmploi,
 } from 'interfaces/conseiller'
 import {
   compareJeunesByNom,
@@ -22,17 +22,15 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
-import { ConseillerService } from 'services/conseiller.service'
-import { JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
+import { countActionsJeunes } from 'services/actions.service'
+import { recupererBeneficiaires as _recupererBeneficiaires } from 'services/conseiller.service'
+import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 interface MesJeunesProps extends PageProps {
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
@@ -41,9 +39,6 @@ interface MesJeunesProps extends PageProps {
 
 function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   const [chatCredentials] = useChatCredentials()
-  const messagesService = useDependance<MessagesService>('messagesService')
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
   const [alerte, setAlerte] = useAlerte()
 
   const [conseiller, setConseiller] = useConseiller()
@@ -72,7 +67,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   async function recupererBeneficiaires(): Promise<void> {
     setIsRecuperationBeneficiairesLoading(true)
     try {
-      await conseillerService.recupererBeneficiaires()
+      await _recupererBeneficiaires()
       setAlerte(AlerteParam.recuperationBeneficiaires)
       setConseiller({ ...conseiller, aDesBeneficiairesARecuperer: false })
     } finally {
@@ -113,11 +108,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   useEffect(() => {
     if (!chatCredentials || !conseillerJeunes.length) return
 
-    messagesService
-      .signIn(chatCredentials.token)
-      .then(() =>
-        messagesService.countMessagesNotRead(conseillerJeunes.map((j) => j.id))
-      )
+    countMessagesNotRead(conseillerJeunes.map((j) => j.id))
       .catch(() =>
         conseillerJeunes.reduce(
           (mappedCounts, jeune) => ({ ...mappedCounts, [jeune.id]: 0 }),
@@ -134,7 +125,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
         setJeunes(jeunesAvecMessagesNonLus)
         setJeunesFiltres(jeunesAvecMessagesNonLus)
       })
-  }, [chatCredentials, conseillerJeunes, messagesService])
+  }, [chatCredentials, conseillerJeunes])
 
   const adesBeneficiaires = conseillerJeunes.length === 0 ? 'non' : 'oui'
 
@@ -212,12 +203,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  const jeunesService = withDependance<JeunesService>('jeunesService')
-  const actionsService = withDependance<ActionsService>('actionsService')
-  const jeunes = await jeunesService.getJeunesDuConseillerServerSide(
-    user.id,
-    accessToken
-  )
+  const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
 
   let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
   if (estUserPoleEmploi(user)) {
@@ -226,8 +212,10 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       nbActionsNonTerminees: 0,
     }))
   } else {
-    const totauxActions: TotalActions[] =
-      await actionsService.countActionsJeunes(user.id, accessToken)
+    const totauxActions: TotalActions[] = await countActionsJeunes(
+      user.id,
+      accessToken
+    )
 
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
       const totalJeune = totauxActions.find(

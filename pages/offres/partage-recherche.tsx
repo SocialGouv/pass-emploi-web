@@ -19,11 +19,15 @@ import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { SuggestionsService } from 'services/suggestions.service'
+import {
+  partagerRechercheOffreEmploi as _partagerRechercheOffreEmploi,
+  partagerRechercheAlternance as _partagerRechercheAlternance,
+  partagerRechercheImmersion as _partagerRechercheImmersion,
+  partagerRechercheServiceCivique as _partagerRechercheServiceCivique,
+} from 'services/suggestions.service'
 import { useAlerte } from 'utils/alerteContext'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type CriteresRecherche =
@@ -66,8 +70,6 @@ function PartageRecherche({
   criteresRecherche,
   returnTo,
 }: PartageRechercheProps) {
-  const suggestionsService =
-    useDependance<SuggestionsService>('suggestionsService')
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
@@ -148,7 +150,7 @@ function PartageRecherche({
     const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
-    await suggestionsService.partagerRechercheOffreEmploi({
+    await _partagerRechercheOffreEmploi({
       idsJeunes: idsDestinataires.value,
       titre,
       motsCles,
@@ -163,7 +165,7 @@ function PartageRecherche({
     const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
-    await suggestionsService.partagerRechercheAlternance({
+    await _partagerRechercheAlternance({
       idsJeunes: idsDestinataires.value,
       titre,
       motsCles,
@@ -184,7 +186,7 @@ function PartageRecherche({
       longitude,
     } = criteresRecherche as CriteresRechercheImmersionProps
 
-    await suggestionsService.partagerRechercheImmersion({
+    await _partagerRechercheImmersion({
       idsJeunes: idsDestinataires.value,
       titre,
       labelMetier,
@@ -199,7 +201,7 @@ function PartageRecherche({
     const { titre, labelLocalite, latitude, longitude } =
       criteresRecherche as CriteresRechercheServiceCiviqueProps
 
-    await suggestionsService.partagerRechercheServiceCivique({
+    await _partagerRechercheServiceCivique({
       idsJeunes: idsDestinataires.value,
       titre,
       labelLocalite,

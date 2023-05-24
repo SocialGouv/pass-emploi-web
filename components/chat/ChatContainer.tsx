@@ -9,13 +9,12 @@ import NavLinks, { NavItem } from 'components/NavLinks'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { JeunesService } from 'services/jeunes.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
+import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import styles from 'styles/components/Layouts.module.css'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
-import { useDependance } from 'utils/injectionDependances'
 
 interface ChatContainerProps {
   jeunesChats: JeuneChat[] | undefined
@@ -26,11 +25,6 @@ export default function ChatContainer({
   jeunesChats,
   messagerieFullScreen,
 }: ChatContainerProps) {
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
-    'listesDeDiffusionService'
-  )
-
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
   const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
     undefined
@@ -48,21 +42,15 @@ export default function ChatContainer({
 
   useEffect(() => {
     if (showRubriqueListesDeDiffusion && !listesDeDiffusion) {
-      listesDeDiffusionService
-        .getListesDeDiffusionClientSide()
-        .then(setListesDeDiffusion)
+      getListesDeDiffusionClientSide().then(setListesDeDiffusion)
     }
-  }, [
-    listesDeDiffusionService,
-    listesDeDiffusion,
-    showRubriqueListesDeDiffusion,
-  ])
+  }, [listesDeDiffusion, showRubriqueListesDeDiffusion])
 
   useEffect(() => {
     if (idCurrentJeune) {
-      jeunesService
-        .getConseillersDuJeuneClientSide(idCurrentJeune)
-        .then((conseillersJeunes) => setConseillers(conseillersJeunes))
+      getConseillersDuJeuneClientSide(idCurrentJeune).then(
+        (conseillersJeunes) => setConseillers(conseillersJeunes)
+      )
 
       if (jeunesChats) {
         setCurrentChat(
@@ -72,7 +60,7 @@ export default function ChatContainer({
     } else {
       setCurrentChat(undefined)
     }
-  }, [jeunesService, idCurrentJeune, jeunesChats])
+  }, [idCurrentJeune, jeunesChats])
 
   useEffect(() => {
     if (showMenu) {

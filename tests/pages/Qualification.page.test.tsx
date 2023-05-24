@@ -6,7 +6,6 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desSituationsNonProfessionnelles, uneAction } from 'fixtures/action'
-import { mockedActionsService } from 'fixtures/services'
 import {
   Action,
   SituationNonProfessionnelle,
@@ -16,13 +15,16 @@ import PageQualification, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]/qualification'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
+import {
+  getAction,
+  getSituationsNonProfessionnelles,
+  qualifier,
+} from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/actions.service')
 jest.mock('next/router')
 
 describe("Page Qualification d'une action", () => {
@@ -74,10 +76,7 @@ describe("Page Qualification d'une action", () => {
 
       describe("quand l'action n'existe pas", () => {
         it('renvoie une 404', async () => {
-          const actionsService: ActionsService = mockedActionsService({
-            getAction: jest.fn(async () => undefined),
-          })
-          ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+          ;(getAction as jest.Mock).mockResolvedValue(undefined)
 
           // When
           const actual: GetServerSidePropsResult<any> =
@@ -92,17 +91,14 @@ describe("Page Qualification d'une action", () => {
 
       describe("quand l'action n'est pas terminée", () => {
         it('renvoie une 404', async () => {
-          const actionsService: ActionsService = mockedActionsService({
-            getAction: jest.fn(async () => ({
-              action: uneAction(),
-              jeune: {
-                id: 'jeune-1',
-                prenom: 'Nadia',
-                nom: 'Sanfamiye',
-              },
-            })),
+          ;(getAction as jest.Mock).mockResolvedValue({
+            action: uneAction(),
+            jeune: {
+              id: 'jeune-1',
+              prenom: 'Nadia',
+              nom: 'Sanfamiye',
+            },
           })
-          ;(withDependance as jest.Mock).mockReturnValue(actionsService)
 
           // When
           const actual: GetServerSidePropsResult<any> =
@@ -117,23 +113,20 @@ describe("Page Qualification d'une action", () => {
 
       describe("quand l'action est qualifiée", () => {
         it('renvoie une 404', async () => {
-          const actionsService: ActionsService = mockedActionsService({
-            getAction: jest.fn(async () => ({
-              action: uneAction({
-                status: StatutAction.Terminee,
-                qualification: {
-                  libelle: 'Santé',
-                  isSituationNonProfessionnelle: true,
-                },
-              }),
-              jeune: {
-                id: 'jeune-1',
-                prenom: 'Nadia',
-                nom: 'Sanfamiye',
+          ;(getAction as jest.Mock).mockResolvedValue({
+            action: uneAction({
+              status: StatutAction.Terminee,
+              qualification: {
+                libelle: 'Santé',
+                isSituationNonProfessionnelle: true,
               },
-            })),
+            }),
+            jeune: {
+              id: 'jeune-1',
+              prenom: 'Nadia',
+              nom: 'Sanfamiye',
+            },
           })
-          ;(withDependance as jest.Mock).mockReturnValue(actionsService)
 
           // When
           const actual: GetServerSidePropsResult<any> =
@@ -152,20 +145,17 @@ describe("Page Qualification d'une action", () => {
           const action = uneAction({ status: StatutAction.Terminee })
           const situationsNonProfessionnelles =
             desSituationsNonProfessionnelles()
-          const actionsService: ActionsService = mockedActionsService({
-            getAction: jest.fn(async () => ({
-              action,
-              jeune: {
-                id: 'jeune-1',
-                prenom: 'Nadia',
-                nom: 'Sanfamiye',
-              },
-            })),
-            getSituationsNonProfessionnelles: jest.fn(
-              async () => situationsNonProfessionnelles
-            ),
+          ;(getAction as jest.Mock).mockResolvedValue({
+            action,
+            jeune: {
+              id: 'jeune-1',
+              prenom: 'Nadia',
+              nom: 'Sanfamiye',
+            },
           })
-          ;(withDependance as jest.Mock).mockReturnValue(actionsService)
+          ;(getSituationsNonProfessionnelles as jest.Mock).mockResolvedValue(
+            situationsNonProfessionnelles
+          )
 
           // When
           const actual = await getServerSideProps({
@@ -173,13 +163,10 @@ describe("Page Qualification d'une action", () => {
           } as unknown as GetServerSidePropsContext)
 
           // Then
-          expect(actionsService.getAction).toHaveBeenCalledWith(
-            action.id,
+          expect(getAction).toHaveBeenCalledWith(action.id, 'accessToken')
+          expect(getSituationsNonProfessionnelles).toHaveBeenCalledWith(
             'accessToken'
           )
-          expect(
-            actionsService.getSituationsNonProfessionnelles
-          ).toHaveBeenCalledWith('accessToken')
           expect(actual).toEqual({
             props: {
               action,
@@ -198,7 +185,6 @@ describe("Page Qualification d'une action", () => {
   describe('client side', () => {
     let action: Action
     let situationsNonProfessionnelles: SituationNonProfessionnelle[]
-    let actionsService: ActionsService
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: jest.Mock
@@ -206,7 +192,6 @@ describe("Page Qualification d'une action", () => {
       // Given
       action = uneAction({ dateFinReelle: '2022-09-02T11:00:00.000Z' })
       situationsNonProfessionnelles = desSituationsNonProfessionnelles()
-      actionsService = mockedActionsService()
 
       alerteSetter = jest.fn()
       push = jest.fn()
@@ -221,7 +206,6 @@ describe("Page Qualification d'une action", () => {
           returnTo='/mes-jeunes/jeune-1/actions/id-action-1'
         />,
         {
-          customDependances: { actionsService },
           customAlerte: { alerteSetter },
         }
       )
@@ -328,17 +312,13 @@ describe("Page Qualification d'une action", () => {
         )
 
         // Then
-        expect(actionsService.qualifier).toHaveBeenCalledWith(
-          action.id,
-          'SNP_2',
-          {
-            commentaire: 'Nouveau commentaire modifié',
-            dateDebutModifiee: DateTime.fromISO(
-              '2022-02-15T00:00:00.000+01:00' // en février, l'offset est +1 (DST)
-            ),
-            dateFinModifiee: DateTime.fromISO('2022-09-05T00:00:00.000+02:00'),
-          }
-        )
+        expect(qualifier).toHaveBeenCalledWith(action.id, 'SNP_2', {
+          commentaire: 'Nouveau commentaire modifié',
+          dateDebutModifiee: DateTime.fromISO(
+            '2022-02-15T00:00:00.000+01:00' // en février, l'offset est +1 (DST)
+          ),
+          dateFinModifiee: DateTime.fromISO('2022-09-05T00:00:00.000+02:00'),
+        })
       })
 
       it("redirige vers le détail de l'action", async () => {

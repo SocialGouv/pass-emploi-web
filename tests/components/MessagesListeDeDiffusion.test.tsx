@@ -5,24 +5,23 @@ import React from 'react'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
-import { mockedMessagesService } from 'fixtures/services'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
-import { MessagesService } from 'services/messages.service'
+import { getMessagesListeDeDiffusion } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { TIME_24_A11Y_SEPARATOR, toFrenchFormat, toShortDate } from 'utils/date'
 
+jest.mock('services/messages.service')
+
 describe('<MessagesListeDeDiffusion />', () => {
   let messages: ByDay<MessageListeDiffusion>[]
-  let messagesService: MessagesService
+
   let listeDeDiffusion: ListeDeDiffusion
   let afficherDetailMessage: (message: MessageListeDiffusion) => void
   beforeEach(async () => {
     // Given
     messages = desMessagesListeDeDiffusionParJour()
-    messagesService = mockedMessagesService({
-      getMessagesListeDeDiffusion: jest.fn(async () => messages),
-    })
+    ;(getMessagesListeDeDiffusion as jest.Mock).mockResolvedValue(messages)
     listeDeDiffusion = uneListeDeDiffusion()
     afficherDetailMessage = jest.fn()
 
@@ -33,18 +32,15 @@ describe('<MessagesListeDeDiffusion />', () => {
           liste={listeDeDiffusion}
           onAfficherDetailMessage={afficherDetailMessage}
           onBack={() => {}}
-        />,
-        {
-          customDependances: { messagesService },
-        }
+        />
       )
     })
   })
 
   it('charge les messages envoyé à la liste de diffusion', async () => {
     // Then
-    expect(messagesService.getMessagesListeDeDiffusion).toHaveBeenCalledTimes(1)
-    expect(messagesService.getMessagesListeDeDiffusion).toHaveBeenCalledWith(
+    expect(getMessagesListeDeDiffusion).toHaveBeenCalledTimes(1)
+    expect(getMessagesListeDeDiffusion).toHaveBeenCalledWith(
       listeDeDiffusion.id,
       'cleChiffrement'
     )

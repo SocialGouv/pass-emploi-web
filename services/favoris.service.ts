@@ -1,4 +1,4 @@
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
   jsonToOffre,
@@ -7,34 +7,25 @@ import {
   RechercheJson,
 } from 'interfaces/json/favoris'
 
-export interface FavorisService {
-  getOffres(idJeune: string, accessToken: string): Promise<Offre[]>
-
-  getRecherchesSauvegardees(
-    idJeune: string,
-    accessToken: string
-  ): Promise<Recherche[]>
+export async function getOffres(
+  idJeune: string,
+  accessToken: string
+): Promise<Offre[]> {
+  const { content: offresJson } = await apiGet<OffreJson[]>(
+    `/jeunes/${idJeune}/favoris`,
+    accessToken
+  )
+  return offresJson.map(jsonToOffre)
 }
 
-export class FavorisApiService implements FavorisService {
-  constructor(private readonly apiClient: ApiClient) {}
+export async function getRecherchesSauvegardees(
+  idJeune: string,
+  accessToken: string
+): Promise<Recherche[]> {
+  const { content: recherchesJson } = await apiGet<RechercheJson[]>(
+    `/jeunes/${idJeune}/recherches`,
+    accessToken
+  )
 
-  async getOffres(idJeune: string, accessToken: string): Promise<Offre[]> {
-    const { content: offresJson } = await this.apiClient.get<OffreJson[]>(
-      `/jeunes/${idJeune}/favoris`,
-      accessToken
-    )
-    return offresJson.map(jsonToOffre)
-  }
-
-  async getRecherchesSauvegardees(
-    idJeune: string,
-    accessToken: string
-  ): Promise<Recherche[]> {
-    const { content: recherchesJson } = await this.apiClient.get<
-      RechercheJson[]
-    >(`/jeunes/${idJeune}/recherches`, accessToken)
-
-    return recherchesJson.map(jsonToRecherche)
-  }
+  return recherchesJson.map(jsonToRecherche)
 }

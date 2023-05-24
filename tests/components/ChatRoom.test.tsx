@@ -5,19 +5,18 @@ import React from 'react'
 import ChatRoom from 'components/chat/ChatRoom'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { mockedMessagesService } from 'fixtures/services'
 import { BaseJeune, JeuneChat } from 'interfaces/jeune'
-import { MessagesService } from 'services/messages.service'
+import { toggleFlag } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/messages.service')
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 
 describe('<ChatRoom />', () => {
   const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
   let jeunesChats: JeuneChat[]
-  let messagesService: MessagesService
+
   beforeEach(async () => {
-    messagesService = mockedMessagesService()
     jeunesChats = [
       unJeuneChat({
         ...jeunes[0],
@@ -49,9 +48,7 @@ describe('<ChatRoom />', () => {
           onAccesListesDiffusion={() => {}}
           onOuvertureMenu={() => {}}
         />,
-        {
-          customDependances: { messagesService },
-        }
+        {}
       )
     })
 
@@ -116,10 +113,7 @@ describe('<ChatRoom />', () => {
         await userEvent.click(flagConversation!)
 
         // Then
-        expect(messagesService.toggleFlag).toHaveBeenCalledWith(
-          `chat-${jeune.id}`,
-          false
-        )
+        expect(toggleFlag).toHaveBeenCalledWith(`chat-${jeune.id}`, false)
       })
     })
   })
@@ -135,9 +129,7 @@ describe('<ChatRoom />', () => {
           onAccesListesDiffusion={() => {}}
           onOuvertureMenu={() => {}}
         />,
-        {
-          customDependances: { messagesService },
-        }
+        {}
       )
 
       // Then
@@ -161,9 +153,7 @@ describe('<ChatRoom />', () => {
           onAccesListesDiffusion={() => {}}
           onOuvertureMenu={() => {}}
         />,
-        {
-          customDependances: { messagesService },
-        }
+        {}
       )
 
       // When

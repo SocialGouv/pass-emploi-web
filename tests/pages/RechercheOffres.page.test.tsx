@@ -3,23 +3,18 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { mockedOffresEmploiService } from 'fixtures/services'
 import RechercheOffres, { getServerSideProps } from 'pages/recherche-offres'
-import { OffresEmploiService } from 'services/offres-emploi.service'
+import { searchOffresEmploi } from 'services/offres-emploi.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('services/offres-emploi.service')
 
 describe('Page Recherche Offres', () => {
   describe('client side', () => {
-    let offresEmploiService: OffresEmploiService
     beforeEach(() => {
-      offresEmploiService = mockedOffresEmploiService({})
-
-      renderWithContexts(<RechercheOffres pageTitle='' />, {
-        customDependances: { offresEmploiService },
-      })
+      renderWithContexts(<RechercheOffres pageTitle='' />, {})
     })
 
     it('nécessite de selectionner un type d’offre', () => {
@@ -54,9 +49,7 @@ describe('Page Recherche Offres', () => {
       await userEvent.click(
         screen.getByRole('radio', { name: 'Offre d’emploi' })
       )
-      ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockRejectedValue(
-        'whatever'
-      )
+      ;(searchOffresEmploi as jest.Mock).mockRejectedValue('whatever')
 
       // When
       const submitButton = screen.getByRole('button', { name: 'Rechercher' })
@@ -73,7 +66,7 @@ describe('Page Recherche Offres', () => {
       await userEvent.click(
         screen.getByRole('radio', { name: 'Offre d’emploi' })
       )
-      ;(offresEmploiService.searchOffresEmploi as jest.Mock).mockResolvedValue({
+      ;(searchOffresEmploi as jest.Mock).mockResolvedValue({
         metadonnees: { nombreTotal: 0, nombrePages: 0 },
         offres: [],
       })

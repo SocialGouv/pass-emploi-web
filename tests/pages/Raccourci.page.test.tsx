@@ -3,10 +3,10 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { getServerSideProps } from 'pages/raccourci'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+
 jest.mock('next/router')
 
 describe("Page Détail d'une action d'un jeune", () => {

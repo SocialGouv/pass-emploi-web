@@ -7,12 +7,11 @@ import OffreEmploiDetail from 'components/offres/OffreEmploiDetail'
 import ServiceCiviqueDetail from 'components/offres/ServiceCiviqueDetail'
 import { DetailOffre as _DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
-import { ImmersionsService } from 'services/immersions.service'
-import { OffresEmploiService } from 'services/offres-emploi.service'
-import { ServicesCiviquesService } from 'services/services-civiques.service'
+import { getImmersionServerSide } from 'services/immersions.service'
+import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
+import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type DetailOffreProps = PageProps & {
@@ -55,21 +54,13 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
   }
 
   const { accessToken } = sessionOrRedirect.session
-  const offresEmploiService = withDependance<OffresEmploiService>(
-    'offresEmploiService'
-  )
-  const servicesCiviquesService = withDependance<ServicesCiviquesService>(
-    'servicesCiviquesService'
-  )
-  const immersionsService =
-    withDependance<ImmersionsService>('immersionsService')
   const typeOffre = context.query.offre_type as string
 
   let offre: _DetailOffre | undefined
   let header: string
   switch (typeOffre) {
     case 'emploi':
-      offre = await offresEmploiService.getOffreEmploiServerSide(
+      offre = await getOffreEmploiServerSide(
         context.query.offre_id as string,
         accessToken
       )
@@ -79,14 +70,14 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
           : 'Offre d’emploi'
       break
     case 'service-civique':
-      offre = await servicesCiviquesService.getServiceCiviqueServerSide(
+      offre = await getServiceCiviqueServerSide(
         context.query.offre_id as string,
         accessToken
       )
       header = 'Offre de service civique'
       break
     case 'immersion':
-      offre = await immersionsService.getImmersionServerSide(
+      offre = await getImmersionServerSide(
         context.query.offre_id as string,
         accessToken
       )

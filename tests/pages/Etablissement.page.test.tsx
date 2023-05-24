@@ -4,35 +4,30 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import {
-  mockedConseillerService,
-  mockedJeunesService,
-  mockedReferentielService,
-} from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import Etablissement, { getServerSideProps } from 'pages/etablissement'
-import { ConseillerService } from 'services/conseiller.service'
-import { JeunesService } from 'services/jeunes.service'
-import { ReferentielService } from 'services/referentiel.service'
+import { modifierAgence } from 'services/conseiller.service'
+import { rechercheJeunesDeLEtablissement } from 'services/jeunes.service'
+import { getAgencesClientSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { toFullDate } from 'utils/date'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/jeunes.service')
+jest.mock('services/referentiel.service')
+jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
 
 describe('Etablissement', () => {
   describe('Client side', () => {
-    let jeunesService: JeunesService
     const unJeune = (page: number): JeuneEtablissement => ({
       base: {
         id: 'id-jeune',
         nom: 'Page ' + page,
         prenom: 'Albert',
-        idConseiller: 'id-conseiller',
       },
       referent: {
         id: 'id-conseiller',
@@ -43,20 +38,17 @@ describe('Etablissement', () => {
       dateDerniereActivite: '2023-03-01T14:11:38.040Z',
     })
     beforeEach(async () => {
-      jeunesService = mockedJeunesService({
-        rechercheJeunesDeLEtablissement: jest.fn(
-          async (_idEtablissement, _recherche, page: number) => ({
-            jeunes: [unJeune(page)],
-            metadonnees: { nombrePages: 4, nombreTotal: 37 },
-          })
-        ),
-      })
+      ;(rechercheJeunesDeLEtablissement as jest.Mock).mockImplementation(
+        async (_idEtablissement, _recherche, page: number) => ({
+          jeunes: [unJeune(page)],
+          metadonnees: { nombrePages: 4, nombreTotal: 37 },
+        })
+      )
     })
 
     describe('Render', () => {
       beforeEach(async () => {
         renderWithContexts(<Etablissement pageTitle='' />, {
-          customDependances: { jeunesService },
           customConseiller: {
             structure: StructureConseiller.MILO,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
@@ -94,9 +86,11 @@ describe('Etablissement', () => {
 
         it('lance une recherche parmis les jeunes de la Mission Locale', async () => {
           // Then
-          expect(
-            jeunesService.rechercheJeunesDeLEtablissement
-          ).toHaveBeenCalledWith('id-etablissement', 'am', 1)
+          expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledWith(
+            'id-etablissement',
+            'am',
+            1
+          )
         })
 
         it('affiche le resultat de la recherche dans un tableau', async () => {
@@ -153,9 +147,7 @@ describe('Etablissement', () => {
           )
 
           // Then
-          expect(
-            jeunesService.rechercheJeunesDeLEtablissement
-          ).toHaveBeenCalledTimes(1)
+          expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledTimes(1)
           expect(
             screen.queryByText(/Résultat de recherche/)
           ).not.toBeInTheDocument()
@@ -169,9 +161,11 @@ describe('Etablissement', () => {
             )
 
             // Then
-            expect(
-              jeunesService.rechercheJeunesDeLEtablissement
-            ).toHaveBeenCalledWith('id-etablissement', 'am', 3)
+            expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledWith(
+              'id-etablissement',
+              'am',
+              3
+            )
             expect(screen.getByText('Page 3 Albert')).toBeInTheDocument()
           })
 
@@ -181,12 +175,16 @@ describe('Etablissement', () => {
             await userEvent.click(screen.getByLabelText('Page suivante'))
 
             // Then
-            expect(
-              jeunesService.rechercheJeunesDeLEtablissement
-            ).toHaveBeenCalledWith('id-etablissement', 'am', 2)
-            expect(
-              jeunesService.rechercheJeunesDeLEtablissement
-            ).toHaveBeenCalledWith('id-etablissement', 'am', 3)
+            expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledWith(
+              'id-etablissement',
+              'am',
+              2
+            )
+            expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledWith(
+              'id-etablissement',
+              'am',
+              3
+            )
 
             expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
               'aria-current',
@@ -199,9 +197,7 @@ describe('Etablissement', () => {
             await userEvent.click(screen.getByLabelText(`Page 1`))
 
             // Then
-            expect(
-              jeunesService.rechercheJeunesDeLEtablissement
-            ).toHaveBeenCalledTimes(1)
+            expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledTimes(1)
           })
         })
       })
@@ -215,9 +211,7 @@ describe('Etablissement', () => {
           name: 'Rechercher',
         })
 
-        ;(
-          jeunesService.rechercheJeunesDeLEtablissement as jest.Mock
-        ).mockResolvedValue({
+        ;(rechercheJeunesDeLEtablissement as jest.Mock).mockResolvedValue({
           jeunes: [],
           metadonnes: { nombrePages: 0, nombreTotal: 0 },
         })
@@ -248,9 +242,7 @@ describe('Etablissement', () => {
         await userEvent.click(buttonRechercheJeune)
 
         // Then
-        expect(
-          jeunesService.rechercheJeunesDeLEtablissement
-        ).toHaveBeenCalledTimes(0)
+        expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledTimes(0)
         expect(
           screen.getByText('Veuillez saisir au moins 2 caractères')
         ).toBeInTheDocument()
@@ -261,7 +253,6 @@ describe('Etablissement', () => {
       it('n’affiche pas la colonne Situation', async () => {
         // Given
         renderWithContexts(<Etablissement pageTitle='' />, {
-          customDependances: { jeunesService },
           customConseiller: {
             structure: StructureConseiller.PASS_EMPLOI,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
@@ -287,24 +278,14 @@ describe('Etablissement', () => {
 
     describe('quand le conseiller n’a pas d’établissement', () => {
       let agences: Agence[]
-      let referentielService: ReferentielService
-      let conseillerService: ConseillerService
 
       beforeEach(async () => {
         agences = uneListeDAgencesMILO()
-        referentielService = mockedReferentielService({
-          getAgencesClientSide: jest.fn(async () => agences),
-        })
-
-        conseillerService = mockedConseillerService()
+        ;(getAgencesClientSide as jest.Mock).mockResolvedValue(agences)
 
         // When
         await act(async () => {
           await renderWithContexts(<Etablissement pageTitle='' />, {
-            customDependances: {
-              referentielService,
-              conseillerService,
-            },
             customConseiller: { structure: StructureConseiller.MILO },
           })
         })
@@ -341,7 +322,7 @@ describe('Etablissement', () => {
         )
 
         // Then
-        expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
+        expect(getAgencesClientSide).toHaveBeenCalledWith(
           StructureConseiller.MILO
         )
         expect(
@@ -372,7 +353,7 @@ describe('Etablissement', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+        expect(modifierAgence).toHaveBeenCalledWith({
           id: agence.id,
           nom: agence.nom,
           codeDepartement: '3',

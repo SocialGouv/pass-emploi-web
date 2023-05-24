@@ -9,22 +9,23 @@ import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import {
-  mockedConseillerService,
-  mockedJeunesService,
-  mockedMessagesService,
-} from 'fixtures/services'
 import { compareJeunesByNom, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { ConseillerService } from 'services/conseiller.service'
-import { JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
+import { getConseillerClientSide } from 'services/conseiller.service'
+import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
+import {
+  getChatCredentials,
+  observeConseillerChats,
+  signIn,
+} from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
+jest.mock('services/jeunes.service')
+jest.mock('services/conseiller.service')
+jest.mock('services/messages.service')
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatContainer', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
@@ -40,9 +41,7 @@ describe('<Layout />', () => {
   let updateChatsRef: (chats: JeuneChat[]) => void
   const jeunes: JeuneFromListe[] = desItemsJeunes()
   let jeunesChats: JeuneChat[]
-  let jeunesService: JeunesService
-  let conseillerService: ConseillerService
-  let messagesService: MessagesService
+
   beforeEach(async () => {
     const now = DateTime.now()
     jest.spyOn(DateTime, 'now').mockReturnValue(now)
@@ -68,52 +67,40 @@ describe('<Layout />', () => {
       asPath: '/mes-jeunes/id-jeune/actions/id-action',
       route: '/mes-jeunes/[jeune_id]/actions/[action_id]',
     })
-    jeunesService = mockedJeunesService({
-      getJeunesDuConseillerClientSide: jest.fn(async () => jeunes),
+    ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(jeunes)
+    ;(getConseillerClientSide as jest.Mock).mockResolvedValue(
+      unConseiller({ notificationsSonores: true })
+    )
+    ;(getChatCredentials as jest.Mock).mockResolvedValue({
+      token: 'tokenFirebase',
+      cleChiffrement: 'cleChiffrement',
     })
-    conseillerService = mockedConseillerService({
-      getConseillerClientSide: jest.fn(async () =>
-        unConseiller({ notificationsSonores: true })
-      ),
-    })
-    messagesService = mockedMessagesService({
-      getChatCredentials: jest.fn(async () => ({
-        token: 'tokenFirebase',
-        cleChiffrement: 'cleChiffrement',
-      })),
-      signIn: jest.fn(async () => {}),
-      observeConseillerChats: jest.fn((jeune, _cle, fn) => {
+    ;(signIn as jest.Mock).mockResolvedValue({})
+    ;(observeConseillerChats as jest.Mock).mockImplementation(
+      (jeune, _cle, fn) => {
         updateChatsRef = fn
         updateChatsRef(jeunesChats)
         return Promise.resolve(() => {})
-      }),
-    })
+      }
+    )
   })
 
   describe('cas nominal', () => {
     beforeEach(async () => {
-      const dependances = {
-        jeunesService,
-        conseillerService,
-        messagesService,
-      }
-
       await act(async () => {
         render(
-          <DIProvider dependances={dependances}>
-            <ConseillerProvider>
-              <PortefeuilleProvider>
-                <ChatCredentialsProvider>
-                  <Layout>
-                    <FakeComponent
-                      pageTitle='un titre'
-                      pageHeader='Titre de la page'
-                    />
-                  </Layout>
-                </ChatCredentialsProvider>
-              </PortefeuilleProvider>
-            </ConseillerProvider>
-          </DIProvider>
+          <ConseillerProvider>
+            <PortefeuilleProvider>
+              <ChatCredentialsProvider>
+                <Layout>
+                  <FakeComponent
+                    pageTitle='un titre'
+                    pageHeader='Titre de la page'
+                  />
+                </Layout>
+              </ChatCredentialsProvider>
+            </PortefeuilleProvider>
+          </ConseillerProvider>
         )
       })
     })
@@ -145,29 +132,27 @@ describe('<Layout />', () => {
 
     it('récupère le conseiller', async () => {
       // Then
-      expect(conseillerService.getConseillerClientSide).toHaveBeenCalledWith()
+      expect(getConseillerClientSide).toHaveBeenCalledWith()
     })
 
     it('récupère la liste des jeunes du conseiller', () => {
       // Then
-      expect(
-        jeunesService.getJeunesDuConseillerClientSide
-      ).toHaveBeenCalledWith()
+      expect(getJeunesDuConseillerClientSide).toHaveBeenCalledWith()
     })
 
     it('récupère les informations pour contacter firebase', async () => {
       // Then
-      expect(messagesService.getChatCredentials).toHaveBeenCalledWith()
+      expect(getChatCredentials).toHaveBeenCalledWith()
     })
 
     it('signs into chat', () => {
       // Then
-      expect(messagesService.signIn).toHaveBeenCalledWith('tokenFirebase')
+      expect(signIn).toHaveBeenCalledWith('tokenFirebase')
     })
 
     it('subscribes to chats', () => {
       // Then
-      expect(messagesService.observeConseillerChats).toHaveBeenCalledWith(
+      expect(observeConseillerChats).toHaveBeenCalledWith(
         'cleChiffrement',
         jeunes.map(extractBaseJeune).sort(compareJeunesByNom),
         expect.any(Function)
@@ -240,11 +225,6 @@ describe('<Layout />', () => {
             <FakeComponent pageTitle='un titre' />
           </Layout>,
           {
-            customDependances: {
-              jeunesService,
-              conseillerService,
-              messagesService,
-            },
             customConseiller: unConseiller({ notificationsSonores: false }),
           }
         )
@@ -277,13 +257,7 @@ describe('<Layout />', () => {
               returnTo='/mes-jeunes/id-jeune/actions/id-action'
             />
           </Layout>,
-          {
-            customDependances: {
-              jeunesService,
-              conseillerService,
-              messagesService,
-            },
-          }
+          {}
         )
       })
 

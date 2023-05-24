@@ -4,22 +4,19 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import {
-  mockedActionsService,
-  mockedReferentielService,
-} from 'fixtures/services'
 import { ActionPredefinie } from 'interfaces/action'
 import NouvelleAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
+import { createAction } from 'services/actions.service'
+import { getActionsPredefinies } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/referentiel.service')
+jest.mock('services/actions.service')
 
 describe('NouvelleAction', () => {
   describe('server side', () => {
@@ -54,10 +51,9 @@ describe('NouvelleAction', () => {
             titre: 'Identifier ses atouts et ses compétences',
           },
         ]
-        const referentielService = mockedReferentielService({
-          getActionsPredefinies: jest.fn(async () => actionsPredefinies),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(referentielService)
+        ;(getActionsPredefinies as jest.Mock).mockResolvedValue(
+          actionsPredefinies
+        )
 
         // When
         const actual = await getServerSideProps({
@@ -65,9 +61,7 @@ describe('NouvelleAction', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(referentielService.getActionsPredefinies).toHaveBeenCalledWith(
-          'accessToken'
-        )
+        expect(getActionsPredefinies).toHaveBeenCalledWith('accessToken')
         expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
@@ -83,7 +77,6 @@ describe('NouvelleAction', () => {
   })
 
   describe('client side', () => {
-    let actionsService: ActionsService
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
     let actionsPredefinies: ActionPredefinie[]
@@ -92,7 +85,6 @@ describe('NouvelleAction', () => {
       alerteSetter = jest.fn()
       push = jest.fn(async () => {})
       ;(useRouter as jest.Mock).mockReturnValue({ push })
-      actionsService = mockedActionsService()
       actionsPredefinies = [
         {
           id: 'action-predefinie-1',
@@ -111,7 +103,6 @@ describe('NouvelleAction', () => {
           pageTitle=''
         />,
         {
-          customDependances: { actionsService },
           customAlerte: { alerteSetter },
         }
       )
@@ -193,7 +184,7 @@ describe('NouvelleAction', () => {
 
           // Then
           expect(submit).toHaveAttribute('disabled', '')
-          expect(actionsService.createAction).not.toHaveBeenCalled()
+          expect(createAction).not.toHaveBeenCalled()
         })
 
         it("affiche un message d'erreur quand le type d’action prédéfinie est vide", async () => {
@@ -270,7 +261,7 @@ describe('NouvelleAction', () => {
 
           it("crée l'action", () => {
             // Then
-            expect(actionsService.createAction).toHaveBeenCalledWith(
+            expect(createAction).toHaveBeenCalledWith(
               {
                 intitule: actionsPredefinies[1].titre,
                 commentaire: 'Commentaire action',
@@ -348,7 +339,7 @@ describe('NouvelleAction', () => {
 
           // Then
           expect(submit).toHaveAttribute('disabled', '')
-          expect(actionsService.createAction).not.toHaveBeenCalled()
+          expect(createAction).not.toHaveBeenCalled()
         })
 
         describe('formulaire valide', () => {
@@ -359,7 +350,7 @@ describe('NouvelleAction', () => {
 
           it("crée l'action", () => {
             // Then
-            expect(actionsService.createAction).toHaveBeenCalledWith(
+            expect(createAction).toHaveBeenCalledWith(
               {
                 intitule: 'Intitulé action',
                 commentaire: 'Commentaire action',

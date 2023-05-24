@@ -11,11 +11,13 @@ import { DossierMilo } from 'interfaces/jeune'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ConseillerService } from 'services/conseiller.service'
+import {
+  createCompteJeuneMilo,
+  getDossierJeune,
+} from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { Container, useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface MiloCreationJeuneProps extends PageProps {
@@ -29,8 +31,6 @@ function MiloCreationJeune({
   dossier,
   erreurMessageHttpMilo,
 }: MiloCreationJeuneProps) {
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [portefeuille, setPortefeuille] = usePortefeuille()
@@ -46,9 +46,7 @@ function MiloCreationJeune({
     beneficiaireData: JeuneMiloFormData
   ): Promise<void> {
     try {
-      const beneficiaireCree = await conseillerService.createCompteJeuneMilo(
-        beneficiaireData
-      )
+      const beneficiaireCree = await createCompteJeuneMilo(beneficiaireData)
 
       setPortefeuille(portefeuille.concat(beneficiaireCree))
       setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
@@ -143,10 +141,9 @@ export const getServerSideProps: GetServerSideProps<
   const dossierId = context.query.dossierId as string
 
   if (dossierId) {
-    const { conseillerService } = Container.getDIContainer().dependances
     try {
       dossier =
-        (await conseillerService.getDossierJeune(
+        (await getDossierJeune(
           dossierId,
           sessionOrRedirect.session.accessToken
         )) || null

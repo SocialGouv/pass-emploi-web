@@ -18,17 +18,18 @@ import {
   JeuneFromListe,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { JeunesService } from 'services/jeunes.service'
+import {
+  getJeunesDuConseillerParEmail,
+  reaffecter,
+} from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { useDependance } from 'utils/injectionDependances'
 import isEmailValid from 'utils/isEmailValid'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type ReaffectationProps = PageProps
 
 function Reaffectation(_: ReaffectationProps) {
-  const jeunesService = useDependance<JeunesService>('jeunesService')
   const [portefeuille] = usePortefeuille()
 
   const [conseillerInitial, setConseillerInitial] = useState<{
@@ -112,9 +113,7 @@ function Reaffectation(_: ReaffectationProps) {
     setRechercheJeunesEnabled(false)
     try {
       const { idConseiller, jeunes: jeunesDuConseiller } =
-        await jeunesService.getJeunesDuConseillerParEmail(
-          conseillerInitial.email
-        )
+        await getJeunesDuConseillerParEmail(conseillerInitial.email)
       setRechercheJeunesSubmitted(true)
       if (jeunesDuConseiller.length > 0) {
         setJeunes([...jeunesDuConseiller].sort(compareJeunesByNom))
@@ -154,7 +153,7 @@ function Reaffectation(_: ReaffectationProps) {
 
     setReaffectationEnCours(true)
     try {
-      await jeunesService.reaffecter(
+      await reaffecter(
         conseillerInitial.id,
         emailConseillerDestination.value,
         idsJeunesSelected,

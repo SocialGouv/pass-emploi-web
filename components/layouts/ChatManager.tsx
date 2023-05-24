@@ -2,10 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
-import { MessagesService } from 'services/messages.service'
+import {
+  getChatCredentials,
+  observeConseillerChats,
+  signIn,
+} from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const CHEMIN_DU_SON = '/sounds/notification.mp3'
@@ -21,8 +24,6 @@ export default function ChatManager({
   setHasMessageNonLu,
   pageEstMessagerie,
 }: ChatManagerProps) {
-  const messagesService = useDependance<MessagesService>('messagesService')
-
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [chatCredentials, setChatCredentials] = useChatCredentials()
@@ -51,10 +52,9 @@ export default function ChatManager({
 
   useEffect(() => {
     if (!chatCredentials) {
-      messagesService
-        .getChatCredentials()
+      getChatCredentials()
         .then((credentials) =>
-          messagesService.signIn(credentials.token).then(() => credentials)
+          signIn(credentials.token).then(() => credentials)
         )
         .then(setChatCredentials)
     }
@@ -63,13 +63,11 @@ export default function ChatManager({
   useEffect(() => {
     if (!chatCredentials || !audio || !portefeuille) return
 
-    messagesService
-      .observeConseillerChats(
-        chatCredentials.cleChiffrement,
-        portefeuille,
-        updateChats
-      )
-      .then((destructor) => (destructorRef.current = destructor))
+    observeConseillerChats(
+      chatCredentials.cleChiffrement,
+      portefeuille,
+      updateChats
+    ).then((destructor) => (destructorRef.current = destructor))
 
     return () => destructorRef.current()
 

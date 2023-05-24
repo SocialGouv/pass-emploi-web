@@ -6,7 +6,6 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
@@ -16,13 +15,15 @@ import {
 import Historique, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/historique'
-import { JeunesService } from 'services/jeunes.service'
+import {
+  getConseillersDuJeuneServerSide,
+  getJeuneDetails,
+} from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/jeunes.service')
 
 describe('Historique', () => {
   const listeSituations = [
@@ -140,19 +141,13 @@ describe('Historique', () => {
   })
 
   describe('server side', () => {
-    let jeunesService: JeunesService
     beforeEach(() => {
-      jeunesService = mockedJeunesService({
-        getJeuneDetails: jest.fn(async () =>
-          unDetailJeune({ situations: listeSituations })
-        ),
-        getConseillersDuJeuneServerSide: jest.fn(async () =>
-          desConseillersJeune()
-        ),
-      })
-      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-        if (dependance === 'jeunesService') return jeunesService
-      })
+      ;(getJeuneDetails as jest.Mock).mockResolvedValue(
+        unDetailJeune({ situations: listeSituations })
+      )
+      ;(getConseillersDuJeuneServerSide as jest.Mock).mockResolvedValue(
+        desConseillersJeune()
+      )
     })
 
     describe('Quand la session est invalide', () => {
@@ -192,10 +187,7 @@ describe('Historique', () => {
 
       it('récupère l’id et la situation du jeune', async () => {
         // Then
-        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
-          'id-jeune',
-          'accessToken'
-        )
+        expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
         expect(actual).toEqual({
           props: {
             idJeune: 'jeune-1',
@@ -210,9 +202,10 @@ describe('Historique', () => {
 
       it('récupère les conseillers du jeune', async () => {
         // Then
-        expect(
-          jeunesService.getConseillersDuJeuneServerSide
-        ).toHaveBeenCalledWith('id-jeune', 'accessToken')
+        expect(getConseillersDuJeuneServerSide).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken'
+        )
         expect(actual).toMatchObject({
           props: { conseillers: desConseillersJeune() },
         })

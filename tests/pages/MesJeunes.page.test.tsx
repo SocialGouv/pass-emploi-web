@@ -11,12 +11,6 @@ import {
   desJeunesAvecActionsNonTerminees,
   unJeuneAvecActionsNonTerminees,
 } from 'fixtures/jeune'
-import {
-  mockedActionsService,
-  mockedConseillerService,
-  mockedJeunesService,
-  mockedMessagesService,
-} from 'fixtures/services'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
@@ -25,39 +19,35 @@ import {
 } from 'interfaces/jeune'
 import MesJeunes, { getServerSideProps } from 'pages/mes-jeunes'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
-import { JeunesService } from 'services/jeunes.service'
+import { countActionsJeunes } from 'services/actions.service'
+import { recupererBeneficiaires } from 'services/conseiller.service'
+import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { Dependencies } from 'utils/injectionDependances/container'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/messages.service')
+jest.mock('services/conseiller.service')
+jest.mock('services/jeunes.service')
+jest.mock('services/actions.service')
 jest.mock('components/PageActionsPortal')
 
 describe('Mes Jeunes', () => {
   describe('client side', () => {
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-    let dependances: Pick<Dependencies, 'messagesService' | 'conseillerService'>
     const jeunes = desJeunesAvecActionsNonTerminees()
     beforeEach(() => {
       alerteSetter = jest.fn()
-
-      dependances = {
-        messagesService: mockedMessagesService({
-          signIn: jest.fn(() => Promise.resolve()),
-          countMessagesNotRead: jest.fn((ids: string[]) =>
-            Promise.resolve(
-              ids.reduce(
-                (mapped, id) => ({ ...mapped, [id]: 2 }),
-                {} as { [id: string]: number }
-              )
-            )
-          ),
-        }),
-        conseillerService: mockedConseillerService(),
-      }
+      ;(signIn as jest.Mock).mockResolvedValue(undefined)
+      ;(countMessagesNotRead as jest.Mock).mockImplementation((ids: string[]) =>
+        Promise.resolve(
+          ids.reduce(
+            (mapped, id) => ({ ...mapped, [id]: 2 }),
+            {} as { [id: string]: number }
+          )
+        )
+      )
     })
 
     describe('Contenu de page', () => {
@@ -65,8 +55,7 @@ describe('Mes Jeunes', () => {
         // WHEN
         await act(() => {
           renderWithContexts(
-            <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
-            { customDependances: dependances }
+            <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />
           )
         })
       })
@@ -145,7 +134,6 @@ describe('Mes Jeunes', () => {
           renderWithContexts(
             <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
             {
-              customDependances: dependances,
               customConseiller: conseiller,
               customAlerte: { alerteSetter },
             }
@@ -172,9 +160,7 @@ describe('Mes Jeunes', () => {
         await userEvent.click(boutonRecuperationBeneficiaires)
 
         // Then
-        expect(
-          dependances.conseillerService.recupererBeneficiaires
-        ).toHaveBeenCalledWith()
+        expect(recupererBeneficiaires).toHaveBeenCalledWith()
         expect(alerteSetter).toHaveBeenCalledWith('recuperationBeneficiaires')
       })
     })
@@ -192,7 +178,6 @@ describe('Mes Jeunes', () => {
           renderWithContexts(
             <MesJeunes conseillerJeunes={[jeune]} isFromEmail pageTitle='' />,
             {
-              customDependances: dependances,
               customConseiller: { structure: StructureConseiller.MILO },
             }
           )
@@ -236,7 +221,6 @@ describe('Mes Jeunes', () => {
           renderWithContexts(
             <MesJeunes conseillerJeunes={[jeune]} isFromEmail pageTitle='' />,
             {
-              customDependances: dependances,
               customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
             }
           )
@@ -272,8 +256,7 @@ describe('Mes Jeunes', () => {
         // GIVEN
         await act(() => {
           renderWithContexts(
-            <MesJeunes conseillerJeunes={[]} isFromEmail pageTitle='' />,
-            { customDependances: dependances }
+            <MesJeunes conseillerJeunes={[]} isFromEmail pageTitle='' />
           )
         })
 
@@ -289,8 +272,7 @@ describe('Mes Jeunes', () => {
         // GIVEN
         await act(() => {
           renderWithContexts(
-            <MesJeunes conseillerJeunes={[]} isFromEmail pageTitle='' />,
-            { customDependances: dependances }
+            <MesJeunes conseillerJeunes={[]} isFromEmail pageTitle='' />
           )
         })
 
@@ -310,7 +292,7 @@ describe('Mes Jeunes', () => {
           await act(() => {
             renderWithContexts(
               <MesJeunes conseillerJeunes={[]} isFromEmail pageTitle='' />,
-              { customDependances: dependances, customConseiller: conseiller }
+              { customConseiller: conseiller }
             )
           })
         })
@@ -337,15 +319,12 @@ describe('Mes Jeunes', () => {
     describe('quand la récupération des messages non lus échoue', () => {
       it('affiche la liste des jeunes', async () => {
         // GIVEN
-        ;(
-          dependances.messagesService.countMessagesNotRead as jest.Mock
-        ).mockRejectedValue(new Error())
+        ;(countMessagesNotRead as jest.Mock).mockRejectedValue(new Error())
 
         // WHEN
         await act(() => {
           renderWithContexts(
-            <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />,
-            { customDependances: dependances }
+            <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />
           )
         })
 
@@ -356,25 +335,15 @@ describe('Mes Jeunes', () => {
   })
 
   describe('server side', () => {
-    let jeunesService: JeunesService
-    let actionsService: ActionsService
     beforeEach(() => {
       const jeunes = desItemsJeunes()
-      jeunesService = mockedJeunesService({
-        getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
-      })
-      actionsService = mockedActionsService({
-        countActionsJeunes: jest.fn().mockResolvedValue(
-          jeunes.map((j) => ({
-            idJeune: j.id,
-            nbActionsNonTerminees: 7,
-          }))
-        ),
-      })
-      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-        if (dependance === 'jeunesService') return jeunesService
-        if (dependance === 'actionsService') return actionsService
-      })
+      ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(jeunes)
+      ;(countActionsJeunes as jest.Mock).mockResolvedValue(
+        jeunes.map((j) => ({
+          idJeune: j.id,
+          nbActionsNonTerminees: 7,
+        }))
+      )
     })
 
     it("vérifie qu'il y a un utilisateur connecté", async () => {
@@ -408,9 +377,10 @@ describe('Mes Jeunes', () => {
       await getServerSideProps({ query: {} } as GetServerSidePropsContext)
 
       // Then
-      expect(
-        jeunesService.getJeunesDuConseillerServerSide
-      ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
+      expect(getJeunesDuConseillerServerSide).toHaveBeenCalledWith(
+        'id-conseiller',
+        'accessToken'
+      )
     })
 
     describe('pour un conseiller Pole emploi', () => {
@@ -433,7 +403,7 @@ describe('Mes Jeunes', () => {
 
       it('ne récupère pas les actions des jeunes', () => {
         // Then
-        expect(actionsService.countActionsJeunes).not.toHaveBeenCalled()
+        expect(countActionsJeunes).not.toHaveBeenCalled()
       })
 
       it("renvoie les jeunes sans leur nombre d'actions", () => {
@@ -471,7 +441,7 @@ describe('Mes Jeunes', () => {
 
       it('récupère les actions des jeunes', () => {
         // Then
-        expect(actionsService.countActionsJeunes).toHaveBeenCalledWith(
+        expect(countActionsJeunes).toHaveBeenCalledWith(
           'id-conseiller',
           'accessToken'
         )

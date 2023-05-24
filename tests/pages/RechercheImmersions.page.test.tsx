@@ -15,23 +15,19 @@ import {
   uneCommune,
   unMetier,
 } from 'fixtures/referentiel'
-import {
-  mockedImmersionsService,
-  mockedReferentielService,
-} from 'fixtures/services'
 import { BaseImmersion } from 'interfaces/offre'
 import { Commune, Metier } from 'interfaces/referentiel'
 import RechercheOffres from 'pages/recherche-offres'
-import { ImmersionsService } from 'services/immersions.service'
-import { ReferentielService } from 'services/referentiel.service'
+import { searchImmersions } from 'services/immersions.service'
+import { getCommunes, getMetiers } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('services/immersions.service')
+jest.mock('services/referentiel.service')
 
 describe('Page Recherche Immersions', () => {
-  let immersionsService: ImmersionsService
-  let referentielService: ReferentielService
   let immersions: BaseImmersion[]
   let metiers: Metier[]
   let communes: Commune[]
@@ -41,20 +37,14 @@ describe('Page Recherche Immersions', () => {
     metiers = desMetiers()
     communes = desCommunes()
     immersions = listeBaseImmersions()
-    immersionsService = mockedImmersionsService({
-      searchImmersions: jest.fn(async () => ({
-        offres: immersions,
-        metadonnees: { nombrePages: 4, nombreTotal: 37 },
-      })),
+    ;(searchImmersions as jest.Mock).mockResolvedValue({
+      offres: immersions,
+      metadonnees: { nombrePages: 4, nombreTotal: 37 },
     })
-    referentielService = mockedReferentielService({
-      getMetiers: jest.fn(async () => metiers),
-      getCommunes: jest.fn(async () => communes),
-    })
+    ;(getMetiers as jest.Mock).mockResolvedValue(metiers)
+    ;(getCommunes as jest.Mock).mockResolvedValue(communes)
 
-    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
-      customDependances: { referentielService, immersionsService },
-    })
+    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {})
     await userEvent.click(screen.getByRole('radio', { name: 'Immersion' }))
   })
 
@@ -88,8 +78,8 @@ describe('Page Recherche Immersions', () => {
 
       // Then
       expect(inputMetier).toHaveValue('DEVELOPPEUSE')
-      expect(referentielService.getMetiers).toHaveBeenCalledTimes(1)
-      expect(referentielService.getMetiers).toHaveBeenCalledWith('DEVELOPPEUSE')
+      expect(getMetiers).toHaveBeenCalledTimes(1)
+      expect(getMetiers).toHaveBeenCalledWith('DEVELOPPEUSE')
     })
 
     it('récupère les métiers à la saisie', async () => {
@@ -97,8 +87,8 @@ describe('Page Recherche Immersions', () => {
       await saisirMetier('Développeuse')
 
       // Then
-      expect(referentielService.getMetiers).toHaveBeenCalledTimes(1)
-      expect(referentielService.getMetiers).toHaveBeenCalledWith('DEVELOPPEUSE')
+      expect(getMetiers).toHaveBeenCalledTimes(1)
+      expect(getMetiers).toHaveBeenCalledWith('DEVELOPPEUSE')
       expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(
         metiers.length
       )
@@ -131,7 +121,7 @@ describe('Page Recherche Immersions', () => {
       expect(
         screen.getByText('Veuillez saisir un métier correct.')
       ).toBeInTheDocument()
-      expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(0)
+      expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
 
     it('affiche une erreur quand le métier est incorrect', async () => {
@@ -153,7 +143,7 @@ describe('Page Recherche Immersions', () => {
       expect(
         screen.getByText('Veuillez saisir un métier correct.')
       ).toBeInTheDocument()
-      expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(0)
+      expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -167,10 +157,8 @@ describe('Page Recherche Immersions', () => {
 
       // Then
       expect(inputLocalisation).toHaveValue('L HAY LES ROSES')
-      expect(referentielService.getCommunes).toHaveBeenCalledTimes(1)
-      expect(referentielService.getCommunes).toHaveBeenCalledWith(
-        'L HAY LES ROSES'
-      )
+      expect(getCommunes).toHaveBeenCalledTimes(1)
+      expect(getCommunes).toHaveBeenCalledWith('L HAY LES ROSES')
     })
 
     it('récupère les communes à la saisie', async () => {
@@ -178,8 +166,8 @@ describe('Page Recherche Immersions', () => {
       await saisirCommune('Paris')
 
       // Then
-      expect(referentielService.getCommunes).toHaveBeenCalledTimes(1)
-      expect(referentielService.getCommunes).toHaveBeenCalledWith('PARIS')
+      expect(getCommunes).toHaveBeenCalledTimes(1)
+      expect(getCommunes).toHaveBeenCalledWith('PARIS')
       expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(
         communes.length
       )
@@ -212,7 +200,7 @@ describe('Page Recherche Immersions', () => {
       expect(
         screen.getByText('Veuillez saisir une commune correcte.')
       ).toBeInTheDocument()
-      expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(0)
+      expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
 
     it('affiche une erreur quand la localisation est incorrecte', async () => {
@@ -234,7 +222,7 @@ describe('Page Recherche Immersions', () => {
       expect(
         screen.getByText('Veuillez saisir une commune correcte.')
       ).toBeInTheDocument()
-      expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(0)
+      expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -362,7 +350,7 @@ describe('Page Recherche Immersions', () => {
 
       // Then
       expect(submitButton).toHaveAttribute('disabled')
-      expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(0)
+      expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
 
     it('requiert le métier', async () => {
@@ -376,7 +364,7 @@ describe('Page Recherche Immersions', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(0)
+      expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
 
     it('requiert la commune', async () => {
@@ -390,7 +378,7 @@ describe('Page Recherche Immersions', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(0)
+      expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
 
     it('construit la recherche', async () => {
@@ -405,7 +393,7 @@ describe('Page Recherche Immersions', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(immersionsService.searchImmersions).toHaveBeenCalledWith(
+      expect(searchImmersions).toHaveBeenCalledWith(
         {
           metier: unMetier(),
           commune: uneCommune(),
@@ -427,7 +415,7 @@ describe('Page Recherche Immersions', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
 
       // Then
-      expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(0)
+      expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -530,12 +518,10 @@ describe('Page Recherche Immersions', () => {
 
     describe('pagination', () => {
       beforeEach(() => {
-        ;(immersionsService.searchImmersions as jest.Mock).mockImplementation(
-          (_query, page) => ({
-            metadonnees: { nombreTotal: 37, nombrePages: 4 },
-            offres: [uneBaseImmersion({ titre: 'Immersion page ' + page })],
-          })
-        )
+        ;(searchImmersions as jest.Mock).mockImplementation((_query, page) => ({
+          metadonnees: { nombreTotal: 37, nombrePages: 4 },
+          offres: [uneBaseImmersion({ titre: 'Immersion page ' + page })],
+        }))
       })
 
       it('met à jour les offres avec la page demandée ', async () => {
@@ -543,7 +529,7 @@ describe('Page Recherche Immersions', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(immersionsService.searchImmersions).toHaveBeenCalledWith(
+        expect(searchImmersions).toHaveBeenCalledWith(
           {
             metier: unMetier(),
             commune: uneCommune(),
@@ -560,7 +546,7 @@ describe('Page Recherche Immersions', () => {
         await userEvent.click(screen.getByLabelText('Page suivante'))
 
         // Then
-        expect(immersionsService.searchImmersions).toHaveBeenCalledWith(
+        expect(searchImmersions).toHaveBeenCalledWith(
           {
             metier: unMetier(),
             commune: uneCommune(),
@@ -568,7 +554,7 @@ describe('Page Recherche Immersions', () => {
           },
           2
         )
-        expect(immersionsService.searchImmersions).toHaveBeenCalledWith(
+        expect(searchImmersions).toHaveBeenCalledWith(
           {
             metier: unMetier(),
             commune: uneCommune(),
@@ -588,7 +574,7 @@ describe('Page Recherche Immersions', () => {
         await userEvent.click(screen.getByLabelText(`Page 1`))
 
         // Then
-        expect(immersionsService.searchImmersions).toHaveBeenCalledTimes(1)
+        expect(searchImmersions).toHaveBeenCalledTimes(1)
       })
     })
   })
@@ -607,9 +593,7 @@ describe('Page Recherche Immersions', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffres pageTitle='' />, {
-        customDependances: { referentielService, immersionsService },
-      })
+      renderWithContexts(<RechercheOffres pageTitle='' />, {})
 
       // Then
       expect(screen.getByLabelText('Immersion')).toBeChecked()

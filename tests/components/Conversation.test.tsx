@@ -6,19 +6,25 @@ import React from 'react'
 import Conversation from 'components/chat/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour, unMessage } from 'fixtures/message'
-import { mockedMessagesService } from 'fixtures/services'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ByDay, Message } from 'interfaces/message'
-import { FichiersService } from 'services/fichiers.service'
-import { MessagesService } from 'services/messages.service'
+import { deleteFichier, uploadFichier } from 'services/fichiers.service'
+import {
+  observeDerniersMessages,
+  observeJeuneReadingDate,
+  sendNouveauMessage,
+  setReadByConseiller,
+} from 'services/messages.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toShortDate } from 'utils/date'
 
+jest.mock('services/messages.service')
+jest.mock('services/fichiers.service')
+
 describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
-  let messagesService: MessagesService
-  let fichiersService: FichiersService
+
   let conseillersJeunes: ConseillerHistorique[]
   let rerender: (children: JSX.Element) => void
   const messagesParJour = desMessagesParJour()
@@ -27,34 +33,29 @@ describe('<Conversation />', () => {
     jeuneChat = unJeuneChat()
     conseillersJeunes = desConseillersJeune()
     unsubscribe = jest.fn()
-    messagesService = mockedMessagesService({
-      observeJeuneReadingDate: jest.fn(
-        (idChat: string, fn: (date: DateTime) => void) => {
-          fn(DateTime.now())
-          return () => {}
-        }
-      ),
-      observeDerniersMessages: jest.fn(
-        (_idChat, _cle, pages, fn: (messages: ByDay<Message>[]) => void) => {
-          const messagesPagines = messagesParJour.map((jour) => ({ ...jour }))
-          messagesPagines[0].messages = [
-            unMessage({ id: 'message-page-' + Math.min(pages, 2) }),
-            ...messagesPagines[0].messages,
-          ]
-          fn(messagesPagines)
-          return unsubscribe
-        }
-      ),
-      sendNouveauMessage: jest.fn(() => {
-        return Promise.resolve()
-      }),
+    ;(observeJeuneReadingDate as jest.Mock).mockImplementation(
+      (idChat: string, fn: (date: DateTime) => void) => {
+        fn(DateTime.now())
+        return () => {}
+      }
+    )
+    ;(observeDerniersMessages as jest.Mock).mockImplementation(
+      (_idChat, _cle, pages, fn: (messages: ByDay<Message>[]) => void) => {
+        const messagesPagines = messagesParJour.map((jour) => ({ ...jour }))
+        messagesPagines[0].messages = [
+          unMessage({ id: 'message-page-' + Math.min(pages, 2) }),
+          ...messagesPagines[0].messages,
+        ]
+        fn(messagesPagines)
+        return unsubscribe
+      }
+    )
+    ;(sendNouveauMessage as jest.Mock).mockResolvedValue(undefined)
+    ;(uploadFichier as jest.Mock).mockResolvedValue({
+      id: 'id-fichier',
+      nom: 'imageupload.png',
     })
-    fichiersService = {
-      uploadFichier: jest
-        .fn()
-        .mockResolvedValue({ id: 'id-fichier', nom: 'imageupload.png' }),
-      deleteFichier: jest.fn().mockResolvedValue(undefined),
-    }
+    ;(deleteFichier as jest.Mock).mockResolvedValue(undefined)
 
     await act(async () => {
       const renderResult = renderWithContexts(
@@ -62,8 +63,7 @@ describe('<Conversation />', () => {
           jeuneChat={jeuneChat}
           conseillers={conseillersJeunes}
           onBack={jest.fn()}
-        />,
-        { customDependances: { messagesService, fichiersService } }
+        />
       )
       rerender = renderResult.rerender
     })
@@ -71,7 +71,7 @@ describe('<Conversation />', () => {
 
   it('s’abonne au message de la conversation', async () => {
     // Then
-    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
+    expect(observeDerniersMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
       'cleChiffrement',
       1,
@@ -95,14 +95,14 @@ describe('<Conversation />', () => {
 
     // Then
     expect(unsubscribe).toHaveBeenCalledTimes(2)
-    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
+    expect(observeDerniersMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
       'cleChiffrement',
       2,
       expect.any(Function)
     )
 
-    expect(messagesService.observeDerniersMessages).toHaveBeenCalledWith(
+    expect(observeDerniersMessages).toHaveBeenCalledWith(
       jeuneChat.chatId,
       'cleChiffrement',
       3,
@@ -133,14 +133,12 @@ describe('<Conversation />', () => {
 
   it('marque la conversation en "lu"', async () => {
     // Then
-    expect(messagesService.setReadByConseiller).toHaveBeenCalledWith(
-      jeuneChat.chatId
-    )
+    expect(setReadByConseiller).toHaveBeenCalledWith(jeuneChat.chatId)
   })
 
   it('s’abonne à "jeuneReading"', async () => {
     // Then
-    expect(messagesService.observeJeuneReadingDate).toHaveBeenCalledWith(
+    expect(observeJeuneReadingDate).toHaveBeenCalledWith(
       jeuneChat.chatId,
       expect.any(Function)
     )
@@ -277,9 +275,7 @@ describe('<Conversation />', () => {
       })
 
       // Then
-      expect(messagesService.setReadByConseiller).toHaveBeenCalledWith(
-        jeuneChat.chatId
-      )
+      expect(setReadByConseiller).toHaveBeenCalledWith(jeuneChat.chatId)
     })
 
     it('envoie un nouveau message', async () => {
@@ -292,7 +288,7 @@ describe('<Conversation />', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith({
+      expect(sendNouveauMessage).toHaveBeenCalledWith({
         jeuneChat: jeuneChat,
         newMessage: newMessage,
         cleChiffrement: 'cleChiffrement',
@@ -323,11 +319,7 @@ describe('<Conversation />', () => {
         screen.getByLabelText('Supprimer la pièce jointe imageupload.png')
       ).toBeInTheDocument()
       expect(fileInput).toHaveAttribute('disabled', '')
-      expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
-        ['jeune-1'],
-        [],
-        file
-      )
+      expect(uploadFichier).toHaveBeenCalledWith(['jeune-1'], [], file)
     })
 
     it('on peut supprimer la pièce jointe ', async () => {
@@ -338,7 +330,7 @@ describe('<Conversation />', () => {
       // When
       await userEvent.click(boutonDeleteFichier)
       // Then
-      expect(fichiersService.deleteFichier).toHaveBeenCalledWith('id-fichier')
+      expect(deleteFichier).toHaveBeenCalledWith('id-fichier')
       expect(() => screen.getByText('imageupload.png')).toThrow()
     })
 
@@ -346,7 +338,7 @@ describe('<Conversation />', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(messagesService.sendNouveauMessage).toHaveBeenCalledWith(
+      expect(sendNouveauMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           infoPieceJointe: { id: 'id-fichier', nom: 'imageupload.png' },
         })

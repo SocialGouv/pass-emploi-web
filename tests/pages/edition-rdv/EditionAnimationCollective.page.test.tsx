@@ -10,28 +10,33 @@ import {
   unEvenement,
 } from 'fixtures/evenement'
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
-import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { EvenementsService } from 'services/evenements.service'
-import { JeunesService } from 'services/jeunes.service'
+import {
+  creerEvenement,
+  getDetailsEvenement,
+  getTypesRendezVous,
+  supprimerEvenement,
+} from 'services/evenements.service'
+import {
+  getJeunesDeLEtablissement,
+  getJeunesDuConseillerServerSide,
+} from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/jeunes.service')
+jest.mock('services/evenements.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('EditionAnimationCollective', () => {
   describe('server side', () => {
-    let jeunesService: JeunesService
-    let evenementsService: EvenementsService
     let jeunes: JeuneFromListe[]
     let typesRendezVous: TypeEvenementReferentiel[]
 
@@ -65,17 +70,10 @@ describe('EditionAnimationCollective', () => {
 
         jeunes = desItemsJeunes()
         typesRendezVous = typesEvenement()
-
-        jeunesService = mockedJeunesService({
-          getJeunesDuConseillerServerSide: jest.fn().mockResolvedValue(jeunes),
-        })
-        evenementsService = mockedEvenementsService({
-          getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'evenementsService') return evenementsService
-        })
+        ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
+          jeunes
+        )
+        ;(getTypesRendezVous as jest.Mock).mockResolvedValue(typesRendezVous)
       })
 
       it('prépare la page', async () => {
@@ -106,9 +104,7 @@ describe('EditionAnimationCollective', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(evenementsService.getTypesRendezVous).toHaveBeenCalledWith(
-          'accessToken'
-        )
+        expect(getTypesRendezVous).toHaveBeenCalledWith('accessToken')
         expect(actual).toMatchObject({
           props: { typesRendezVous: typesAnimationCollective() },
         })
@@ -150,7 +146,7 @@ describe('EditionAnimationCollective', () => {
           type: { code: 'ATELIER', label: 'Atelier' },
           jeunes: [{ id: 'id-autre-jeune', prenom: 'Sheldon', nom: 'Cooper' }],
         })
-        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
           animationCollective
         )
 
@@ -161,7 +157,7 @@ describe('EditionAnimationCollective', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(evenementsService.getDetailsEvenement).toHaveBeenCalledWith(
+        expect(getDetailsEvenement).toHaveBeenCalledWith(
           'id-rdv',
           'accessToken'
         )
@@ -177,7 +173,7 @@ describe('EditionAnimationCollective', () => {
 
       it('récupère l’url de redirection s’il y en a une', async () => {
         // Given
-        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
           uneAnimationCollective()
         )
 
@@ -197,9 +193,7 @@ describe('EditionAnimationCollective', () => {
 
       it("renvoie une 404 si l’animation collective n'existe pas", async () => {
         // Given
-        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
-          undefined
-        )
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(undefined)
 
         // When
         const actual = await getServerSideProps({
@@ -244,8 +238,7 @@ describe('EditionAnimationCollective', () => {
     let jeunesConseiller: JeuneFromListe[]
     let jeunesAutreConseiller: BaseJeune[]
     let jeunesEtablissement: BaseJeune[]
-    let evenementsService: EvenementsService
-    let jeunesService: JeunesService
+
     let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -266,15 +259,13 @@ describe('EditionAnimationCollective', () => {
         ...jeunesConseiller.map(({ id, nom, prenom }) => ({ id, nom, prenom })),
         ...jeunesAutreConseiller,
       ]
-      evenementsService = mockedEvenementsService({
-        supprimerEvenement: jest.fn(async () => undefined),
-        creerEvenement: jest.fn(
-          async () => '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
-        ),
-      })
-      jeunesService = mockedJeunesService({
-        getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
-      })
+      ;(supprimerEvenement as jest.Mock).mockResolvedValue(undefined)
+      ;(creerEvenement as jest.Mock).mockResolvedValue(
+        '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
+      )
+      ;(getJeunesDeLEtablissement as jest.Mock).mockResolvedValue(
+        jeunesEtablissement
+      )
       typesRendezVous = typesAnimationCollective()
 
       alerteSetter = jest.fn()
@@ -296,10 +287,6 @@ describe('EditionAnimationCollective', () => {
               evenementTypeAC={true}
             />,
             {
-              customDependances: {
-                evenementsService: evenementsService,
-                jeunesService,
-              },
               customConseiller: {
                 agence: {
                   nom: 'Mission Locale Aubenas',
@@ -313,7 +300,7 @@ describe('EditionAnimationCollective', () => {
 
       it('récupère les bénéficiaires de l’établissement', async () => {
         // Then
-        expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledWith(
+        expect(getJeunesDeLEtablissement).toHaveBeenCalledWith(
           'id-etablissement'
         )
         jeunesEtablissement.forEach((jeune) =>
@@ -367,7 +354,7 @@ describe('EditionAnimationCollective', () => {
           name: /Bénéficiaires/,
         })
         expect(selectJeunes).toHaveAttribute('aria-required', 'false')
-        expect(evenementsService.creerEvenement).toHaveBeenCalledWith(
+        expect(creerEvenement).toHaveBeenCalledWith(
           expect.objectContaining({
             jeunesIds: [],
           })
@@ -412,8 +399,7 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
-              />,
-              { customDependances: { evenementsService } }
+              />
             )
           })
 
@@ -442,8 +428,7 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
-              />,
-              { customDependances: { evenementsService } }
+              />
             )
           })
 
@@ -472,8 +457,7 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
-              />,
-              { customDependances: { evenementsService } }
+              />
             )
           })
 
@@ -523,7 +507,6 @@ describe('EditionAnimationCollective', () => {
               evenementTypeAC={true}
             />,
             {
-              customDependances: { evenementsService, jeunesService },
               customConseiller: {
                 agence: {
                   nom: 'Mission Locale Aubenas',
@@ -537,7 +520,7 @@ describe('EditionAnimationCollective', () => {
 
       it('ne récupère pas les autres bénéficiaires de l’établissement', async () => {
         // Then
-        expect(jeunesService.getJeunesDeLEtablissement).toHaveBeenCalledTimes(0)
+        expect(getJeunesDeLEtablissement).toHaveBeenCalledTimes(0)
       })
 
       it('empêche toute modification', () => {

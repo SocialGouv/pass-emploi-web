@@ -1,4 +1,4 @@
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import {
   desCommunes,
   desCommunesJson,
@@ -10,24 +10,21 @@ import {
 } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
-  ReferentielApiService,
-  ReferentielService,
+  getActionsPredefinies,
+  getAgencesClientSide,
+  getAgencesServerSide,
+  getCommunes,
+  getCommunesEtDepartements,
+  getMetiers,
 } from 'services/referentiel.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
+
+jest.mock('clients/api.client')
 
 describe('ReferentielApiService', () => {
-  let apiClient: ApiClient
-  let referentielService: ReferentielService
-  beforeEach(async () => {
-    // Given
-    apiClient = new FakeApiClient()
-    referentielService = new ReferentielApiService(apiClient)
-  })
-
   describe('.getAgencesServerSide', () => {
     let structure: StructureConseiller
     beforeEach(() => {
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url === `/referentiels/agences?structure=MILO`)
           return { content: uneListeDAgencesMILO() }
         if (url === `/referentiels/agences?structure=POLE_EMPLOI`)
@@ -39,10 +36,7 @@ describe('ReferentielApiService', () => {
       // Given
       structure = StructureConseiller.MILO
       // WHEN
-      const actual = await referentielService.getAgencesServerSide(
-        structure,
-        'accessToken'
-      )
+      const actual = await getAgencesServerSide(structure, 'accessToken')
 
       // THEN
       expect(actual).toStrictEqual(uneListeDAgencesMILO())
@@ -52,10 +46,7 @@ describe('ReferentielApiService', () => {
       // Given
       structure = StructureConseiller.POLE_EMPLOI
       // WHEN
-      const actual = await referentielService.getAgencesServerSide(
-        structure,
-        'accessToken'
-      )
+      const actual = await getAgencesServerSide(structure, 'accessToken')
 
       // THEN
       expect(actual).toStrictEqual(uneListeDAgencesPoleEmploi())
@@ -65,7 +56,7 @@ describe('ReferentielApiService', () => {
   describe('.getAgencesClientSide', () => {
     let structure: StructureConseiller
     beforeEach(() => {
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url === `/referentiels/agences?structure=MILO`)
           return { content: uneListeDAgencesMILO() }
         if (url === `/referentiels/agences?structure=POLE_EMPLOI`)
@@ -77,7 +68,7 @@ describe('ReferentielApiService', () => {
       // Given
       structure = StructureConseiller.MILO
       // WHEN
-      const actual = await referentielService.getAgencesClientSide(structure)
+      const actual = await getAgencesClientSide(structure)
 
       // THEN
       expect(actual).toStrictEqual(uneListeDAgencesMILO())
@@ -87,7 +78,7 @@ describe('ReferentielApiService', () => {
       // Given
       structure = StructureConseiller.POLE_EMPLOI
       // WHEN
-      const actual = await referentielService.getAgencesClientSide(structure)
+      const actual = await getAgencesClientSide(structure)
 
       // THEN
       expect(actual).toStrictEqual(uneListeDAgencesPoleEmploi())
@@ -97,17 +88,15 @@ describe('ReferentielApiService', () => {
   describe('.getCommunesEtDepartements', () => {
     it('retourne un référentiel de communes et départements avec des codes uniques', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: [...desLocalitesJson(), ...desLocalitesJson()],
       })
 
       // When
-      const actual = await referentielService.getCommunesEtDepartements(
-        'Hauts de seine'
-      )
+      const actual = await getCommunesEtDepartements('Hauts de seine')
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/communes-et-departements?recherche=Hauts%20de%20seine',
         'accessToken'
       )
@@ -118,15 +107,15 @@ describe('ReferentielApiService', () => {
   describe('.getCommunes', () => {
     it('retourne un référentiel de communes avec des codes uniques', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: [...desCommunesJson(), ...desCommunesJson()],
       })
 
       // When
-      const actual = await referentielService.getCommunes("L'Haÿ-les-Roses")
+      const actual = await getCommunes("L'Haÿ-les-Roses")
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         "/referentiels/communes-et-departements?villesOnly=true&recherche=L'Ha%C3%BF-les-Roses",
         'accessToken'
       )
@@ -137,15 +126,15 @@ describe('ReferentielApiService', () => {
   describe('.getMetiers', () => {
     it('retourne un référentiel de métiers', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: desMetiers(),
       })
 
       // When
-      const actual = await referentielService.getMetiers('Développeuse')
+      const actual = await getMetiers('Développeuse')
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/metiers?recherche=D%C3%A9veloppeuse',
         'accessToken'
       )
@@ -156,7 +145,7 @@ describe('ReferentielApiService', () => {
   describe('.getActionsPredefinies', () => {
     it('retourne les actions prédéfinies', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: [
           {
             id: 'action-predefinie-1',
@@ -166,12 +155,10 @@ describe('ReferentielApiService', () => {
       })
 
       // When
-      const actual = await referentielService.getActionsPredefinies(
-        'accessToken'
-      )
+      const actual = await getActionsPredefinies('accessToken')
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/actions-predefinies',
         'accessToken'
       )

@@ -12,21 +12,28 @@ import {
   unDetailJeune,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { mockedAgendaService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune, DetailJeune } from 'interfaces/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
+import { recupererAgenda } from 'services/agenda.service'
+import {
+  archiverJeune,
+  getIndicateursJeuneAlleges,
+  getMotifsSuppression,
+  supprimerJeuneInactif,
+} from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('Gestion du compte dans la fiche jeune', () => {
   let motifsSuppression: MotifSuppressionJeune[]
-  let jeunesService: JeunesService
+
   let alerteSetter: jest.Mock
   let portefeuilleSetter: (updatedBeneficiaires: BaseJeune[]) => void
   let push: jest.Mock
@@ -44,21 +51,17 @@ describe('Gestion du compte dans la fiche jeune', () => {
     portefeuille = desItemsJeunes().map(extractBaseJeune)
 
     motifsSuppression = desMotifsDeSuppression()
-
-    jeunesService = mockedJeunesService({
-      getMotifsSuppression: jest.fn(async () => motifsSuppression),
-      getIndicateursJeuneAlleges: jest.fn(async () => desIndicateursSemaine()),
-    })
+    ;(getMotifsSuppression as jest.Mock).mockResolvedValue(motifsSuppression)
+    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+      desIndicateursSemaine()
+    )
+    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
   })
 
   describe('pour tous les conseillers', () => {
     it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
       // Given
-      await renderFicheJeune(
-        StructureConseiller.PASS_EMPLOI,
-        unDetailJeune(),
-        jeunesService
-      )
+      await renderFicheJeune(StructureConseiller.PASS_EMPLOI, unDetailJeune())
 
       // Then
       const deleteButton = screen.getByText('Supprimer ce compte')
@@ -71,7 +74,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
         await renderFicheJeune(
           StructureConseiller.PASS_EMPLOI,
           unDetailJeune({ isActivated: true }),
-          jeunesService,
           portefeuilleSetter,
           alerteSetter
         )
@@ -170,7 +172,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
           await userEvent.click(supprimerButtonModal)
 
           // Then
-          expect(jeunesService.archiverJeune).toHaveBeenCalledWith('jeune-1', {
+          expect(archiverJeune).toHaveBeenCalledWith('jeune-1', {
             motif: 'Demande du jeune de sortir du dispositif',
             commentaire: undefined,
           })
@@ -191,7 +193,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
         await renderFicheJeune(
           StructureConseiller.PASS_EMPLOI,
           unDetailJeune({ isActivated: false }),
-          jeunesService,
           portefeuilleSetter,
           alerteSetter
         )
@@ -223,9 +224,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         await userEvent.click(supprimerButtonModal)
 
         // Then
-        expect(jeunesService.supprimerJeuneInactif).toHaveBeenCalledWith(
-          'jeune-1'
-        )
+        expect(supprimerJeuneInactif).toHaveBeenCalledWith('jeune-1')
 
         expect(portefeuilleSetter).toHaveBeenCalledWith([
           portefeuille[1],
@@ -241,8 +240,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         // Given
         await renderFicheJeune(
           StructureConseiller.PASS_EMPLOI,
-          unDetailJeune({ isReaffectationTemporaire: true }),
-          jeunesService
+          unDetailJeune({ isReaffectationTemporaire: true })
         )
 
         // Then
@@ -257,8 +255,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         // Given
         await renderFicheJeune(
           StructureConseiller.MILO,
-          unDetailJeune({ isActivated: false }),
-          jeunesService
+          unDetailJeune({ isActivated: false })
         )
 
         // Then
@@ -273,7 +270,6 @@ describe('Gestion du compte dans la fiche jeune', () => {
 async function renderFicheJeune(
   structure: StructureConseiller,
   jeune: DetailJeune,
-  jeunesService: JeunesService,
   portefeuilleSetter?: (updatedBeneficiaires: BaseJeune[]) => void,
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
@@ -287,12 +283,6 @@ async function renderFicheJeune(
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
-        customDependances: {
-          jeunesService: jeunesService,
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-        },
         customPortefeuille: { setter: portefeuilleSetter },
         customAlerte: { alerteSetter },
       }

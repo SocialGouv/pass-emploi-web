@@ -4,16 +4,17 @@ import { DateTime } from 'luxon'
 import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
 import { unJeuneChat } from 'fixtures/jeune'
 import { unMessageListeDiffusion } from 'fixtures/message'
-import { mockedJeunesService } from 'fixtures/services'
 import { BaseJeune } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
-import { JeunesService } from 'services/jeunes.service'
+import { getIdentitesBeneficiaires } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/jeunes.service')
+
 describe('DetailMessageListeDeDiffusion', () => {
   let message: MessageListeDiffusion
-  let jeunesService: JeunesService
+
   beforeEach(async () => {
     // Given
     jest
@@ -32,12 +33,10 @@ describe('DetailMessageListeDeDiffusion', () => {
       prenom: 'Ada',
       nom: 'Lovelace',
     }
-    jeunesService = mockedJeunesService({
-      getIdentitesBeneficiaires: jest.fn(async () => [
-        destinataire1,
-        destinataire2,
-      ]),
-    })
+    ;(getIdentitesBeneficiaires as jest.Mock).mockResolvedValue([
+      destinataire1,
+      destinataire2,
+    ])
 
     // When
     await act(async () => {
@@ -55,8 +54,7 @@ describe('DetailMessageListeDeDiffusion', () => {
               lastJeuneReading: message.creationDate.minus({ day: 1 }),
             }),
           ]}
-        />,
-        { customDependances: { jeunesService } }
+        />
       )
     })
   })
@@ -78,7 +76,7 @@ describe('DetailMessageListeDeDiffusion', () => {
 
   it('affiche les destinataires du message', async () => {
     // Then
-    expect(jeunesService.getIdentitesBeneficiaires).toHaveBeenCalledWith([
+    expect(getIdentitesBeneficiaires).toHaveBeenCalledWith([
       'id-destinataire-1',
       'id-destinataire-2',
     ])

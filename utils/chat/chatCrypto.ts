@@ -8,40 +8,38 @@ export interface EncryptedTextWithInitializationVector {
   iv: string
 }
 
-export class ChatCrypto {
-  encrypt(
-    message: string,
-    cleChiffrement: string
-  ): EncryptedTextWithInitializationVector {
-    const key = Utf8.parse(cleChiffrement)
-    const iv = WordArray.random(16)
-    const encrypted = AES.encrypt(message, key, { iv })
+export function encrypt(
+  message: string,
+  cleChiffrement: string
+): EncryptedTextWithInitializationVector {
+  const key = Utf8.parse(cleChiffrement)
+  const iv = WordArray.random(16)
+  const encrypted = AES.encrypt(message, key, { iv })
 
-    return {
-      encryptedText: encrypted.ciphertext.toString(Base64),
-      iv: encrypted.iv.toString(Base64),
-    }
+  return {
+    encryptedText: encrypted.ciphertext.toString(Base64),
+    iv: encrypted.iv.toString(Base64),
   }
+}
 
-  encryptWithCustomIv(
-    message: string,
-    cleChiffrement: string,
-    customIv: string
-  ): string {
-    const key = Utf8.parse(cleChiffrement)
-    const iv = Base64.parse(customIv)
-    const encrypted = AES.encrypt(message, key, { iv })
+export function encryptWithCustomIv(
+  message: string,
+  cleChiffrement: string,
+  customIv: string
+): string {
+  const key = Utf8.parse(cleChiffrement)
+  const iv = Base64.parse(customIv)
+  const encrypted = AES.encrypt(message, key, { iv })
 
-    return encrypted.ciphertext.toString(Base64)
-  }
+  return encrypted.ciphertext.toString(Base64)
+}
 
-  decrypt(
-    encryptedText: EncryptedTextWithInitializationVector,
-    cleChiffrement: string
-  ): string {
-    const key = Utf8.parse(cleChiffrement)
-    return AES.decrypt(encryptedText.encryptedText, key, {
-      iv: Base64.parse(encryptedText.iv),
-    }).toString(Utf8)
-  }
+export function decrypt(
+  encryptedText: EncryptedTextWithInitializationVector,
+  cleChiffrement: string
+): string {
+  const key = Utf8.parse(cleChiffrement)
+  return AES.decrypt(encryptedText.encryptedText, key, {
+    iv: Base64.parse(encryptedText.iv),
+  }).toString(Utf8)
 }
