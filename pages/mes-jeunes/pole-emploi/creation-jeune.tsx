@@ -8,17 +8,15 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { JeunesService } from 'services/jeunes.service'
+import { createCompteJeunePoleEmploi } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface PoleEmploiCreationJeuneProps extends PageProps {}
 
 function PoleEmploiCreationJeune(): JSX.Element {
-  const jeunesService = useDependance<JeunesService>('jeunesService')
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [portefeuille, setPortefeuille] = usePortefeuille()
@@ -32,7 +30,7 @@ function PoleEmploiCreationJeune(): JSX.Element {
     setCreationError('')
     setCreationEnCours(true)
     try {
-      const beneficiaireCree = await jeunesService.createCompteJeunePoleEmploi({
+      const beneficiaireCree = await createCompteJeunePoleEmploi({
         firstName: newJeune.prenom,
         lastName: newJeune.nom,
         email: newJeune.email,

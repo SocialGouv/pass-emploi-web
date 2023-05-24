@@ -1,58 +1,51 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import React from 'react'
 
-import ChatRoom from 'components/chat/ChatRoom'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
-import {
-  mockedJeunesService,
-  mockedListesDeDiffusionService,
-  mockedMessagesService,
-} from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { Message } from 'interfaces/message'
+import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import Messagerie from 'pages/messagerie'
-import { JeunesService } from 'services/jeunes.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
-import { MessagesService } from 'services/messages.service'
+import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
+import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
+import {
+  getMessagesListeDeDiffusion,
+  observeConseillerChats,
+} from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/jeunes.service')
+jest.mock('services/messages.service')
+jest.mock('services/listes-de-diffusion.service')
 
 describe('Messagerie', () => {
   describe('client side', () => {
     const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
     let jeunesChats: JeuneChat[]
-    let jeunesService: JeunesService
-    let messagesService: MessagesService
-    let listesDeDiffusionService: ListesDeDiffusionService
+
     let conseillers: ConseillerHistorique[]
     let updateChatsRef: (chats: JeuneChat[]) => void
-    let messages: Message[]
+    let messages: ByDay<MessageListeDiffusion>[]
 
     beforeEach(async () => {
-      jeunesService = mockedJeunesService({
-        getConseillersDuJeuneClientSide: jest.fn((_) =>
-          Promise.resolve(conseillers)
-        ),
-      })
+      ;(getConseillersDuJeuneClientSide as jest.Mock).mockResolvedValue(
+        conseillers
+      )
       messages = desMessagesListeDeDiffusionParJour()
-      messagesService = mockedMessagesService({
-        observeConseillerChats: jest.fn((jeune, _cle, fn) => {
+      ;(observeConseillerChats as jest.Mock).mockImplementation(
+        (jeune, _cle, fn) => {
           updateChatsRef = fn
           updateChatsRef(jeunesChats)
           return Promise.resolve(() => {})
-        }),
-        getMessagesListeDeDiffusion: jest.fn(async () => messages),
-      })
-      listesDeDiffusionService = mockedListesDeDiffusionService({
-        getListesDeDiffusionClientSide: jest.fn(async () =>
-          desListesDeDiffusion()
-        ),
-      })
+        }
+      )
+      ;(getMessagesListeDeDiffusion as jest.Mock).mockResolvedValue(messages)
+      ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
+        desListesDeDiffusion()
+      )
       jeunesChats = [
         unJeuneChat({
           ...jeunes[0],
@@ -76,15 +69,11 @@ describe('Messagerie', () => {
       it('affiche un message de bienvenue au landing sur la page', async () => {
         //When
         await renderWithContexts(<Messagerie pageTitle='' />, {
-          customDependances: {
-            jeunesService,
-            messagesService,
-            listesDeDiffusionService,
-          },
           customConseiller: {
             structure: StructureConseiller.POLE_EMPLOI,
           },
         })
+
         //Then
         expect(
           screen.getByText('Bienvenue dans votre espace de messagerie.')
@@ -97,11 +86,6 @@ describe('Messagerie', () => {
         //When
         await act(async () => {
           renderWithContexts(<Messagerie pageTitle='' />, {
-            customDependances: {
-              jeunesService,
-              messagesService,
-              listesDeDiffusionService,
-            },
             customConseiller: {
               structure: StructureConseiller.POLE_EMPLOI,
             },
@@ -113,25 +97,22 @@ describe('Messagerie', () => {
           screen.getByText('Veuillez sélectionner une liste de diffusion.')
         ).toBeInTheDocument()
       })
+
       describe('quand une liste est sélectionée', () => {
         beforeEach(async () => {
           //Given
-          const listeSelectionnee =
-            await listesDeDiffusionService.getListesDeDiffusionClientSide()
+          const listeSelectionnee = desListesDeDiffusion()[0]
 
           //When
           await act(async () => {
             renderWithContexts(<Messagerie pageTitle='' />, {
-              customDependances: {
-                jeunesService,
-                messagesService,
-                listesDeDiffusionService,
-              },
               customConseiller: {
                 structure: StructureConseiller.POLE_EMPLOI,
               },
               customShowRubriqueListeDeDiffusion: { value: true },
-              customListeDeDiffusionSelectionnee: { value: listeSelectionnee },
+              customListeDeDiffusionSelectionnee: {
+                value: listeSelectionnee,
+              },
             })
           })
         })

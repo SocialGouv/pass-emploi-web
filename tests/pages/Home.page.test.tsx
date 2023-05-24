@@ -8,19 +8,21 @@ import {
   uneListeDAgencesMILO,
   uneListeDAgencesPoleEmploi,
 } from 'fixtures/referentiel'
-import { mockedConseillerService } from 'fixtures/services'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import Home, { getServerSideProps } from 'pages/index'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ConseillerService } from 'services/conseiller.service'
-import { ReferentielService } from 'services/referentiel.service'
+import {
+  getConseillerServerSide,
+  modifierAgence,
+} from 'services/conseiller.service'
+import { getAgencesServerSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/conseiller.service')
+jest.mock('services/referentiel.service')
 jest.mock('components/Modal')
 
 describe('Home', () => {
@@ -29,14 +31,13 @@ describe('Home', () => {
       let agences: Agence[]
       let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
       let replace: jest.Mock
-      let conseillerService: ConseillerService
+
       beforeEach(() => {
         // Given
         alerteSetter = jest.fn()
         replace = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ replace })
         agences = uneListeDAgencesPoleEmploi()
-        conseillerService = mockedConseillerService()
 
         // When
         renderWithContexts(
@@ -47,7 +48,6 @@ describe('Home', () => {
           />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-            customDependances: { conseillerService },
             customAlerte: { alerteSetter },
           }
         )
@@ -109,7 +109,7 @@ describe('Home', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+        expect(modifierAgence).toHaveBeenCalledWith({
           id: agence.id,
           nom: 'Agence Pôle emploi THIERS',
           codeDepartement: '3',
@@ -133,7 +133,7 @@ describe('Home', () => {
         expect(
           screen.getByText('Sélectionner une agence dans la liste')
         ).toBeInTheDocument()
-        expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
+        expect(modifierAgence).not.toHaveBeenCalled()
         expect(replace).not.toHaveBeenCalled()
       })
 
@@ -164,7 +164,7 @@ describe('Home', () => {
           await userEvent.click(submit)
 
           // Then
-          expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+          expect(modifierAgence).toHaveBeenCalledWith({
             nom: 'Agence libre',
           })
         })
@@ -182,7 +182,7 @@ describe('Home', () => {
 
           // Then
           expect(screen.getByText('Saisir une agence')).toBeInTheDocument()
-          expect(conseillerService.modifierAgence).toHaveBeenCalledTimes(0)
+          expect(modifierAgence).toHaveBeenCalledTimes(0)
         })
       })
     })
@@ -190,13 +190,12 @@ describe('Home', () => {
     describe('quand le conseiller est Mission Locale', () => {
       let agences: Agence[]
       let replace: jest.Mock
-      let conseillerService: ConseillerService
+
       beforeEach(() => {
         // Given
         replace = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ replace })
         agences = uneListeDAgencesMILO()
-        conseillerService = mockedConseillerService()
 
         // When
         renderWithContexts(
@@ -207,7 +206,6 @@ describe('Home', () => {
           />,
           {
             customConseiller: { structure: StructureConseiller.MILO },
-            customDependances: { conseillerService },
           }
         )
       })
@@ -345,7 +343,7 @@ describe('Home', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+        expect(modifierAgence).toHaveBeenCalledWith({
           id: '443',
           nom: 'MLS3F SAINT-LOUIS',
           codeDepartement: '1',
@@ -360,15 +358,13 @@ describe('Home', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(conseillerService.modifierAgence).not.toHaveBeenCalled()
+        expect(modifierAgence).not.toHaveBeenCalled()
         expect(replace).not.toHaveBeenCalled()
       })
     })
   })
 
   describe('server side', () => {
-    let conseillerService: ConseillerService
-    let referentielService: ReferentielService
     it('nécessite une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -398,12 +394,9 @@ describe('Home', () => {
         const conseillerAvecAgence: Conseiller = unConseiller({
           agence: { nom: 'MLS3F SAINT-LOUIS', id: 'id-agence' },
         })
-        conseillerService = mockedConseillerService({
-          getConseillerServerSide: jest.fn(async () => conseillerAvecAgence),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'conseillerService') return conseillerService
-        })
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
+          conseillerAvecAgence
+        )
       })
 
       it('redirige vers la liste des jeunes', async () => {
@@ -443,22 +436,10 @@ describe('Home', () => {
 
         const conseiller = unConseiller()
 
-        conseillerService = mockedConseillerService({
-          getConseillerServerSide: jest.fn(async () => conseiller),
-        })
-
-        referentielService = {
-          getAgencesServerSide: jest.fn(async () => uneListeDAgencesMILO()),
-          getAgencesClientSide: jest.fn(async () => uneListeDAgencesMILO()),
-          getCommunesEtDepartements: jest.fn(),
-          getCommunes: jest.fn(),
-          getActionsPredefinies: jest.fn(),
-          getMetiers: jest.fn(),
-        }
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'conseillerService') return conseillerService
-          if (dependance === 'referentielService') return referentielService
-        })
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
+        ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
+          uneListeDAgencesMILO()
+        )
       })
 
       it('renvoie les props nécessaires pour demander l’agence', async () => {

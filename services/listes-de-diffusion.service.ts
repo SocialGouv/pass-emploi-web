@@ -1,6 +1,6 @@
 import { getSession } from 'next-auth/react'
 
-import { ApiClient } from 'clients/api.client'
+import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
 export type ListeDeDiffusionFormData = {
@@ -8,99 +8,73 @@ export type ListeDeDiffusionFormData = {
   idsBeneficiaires: string[]
 }
 
-export interface ListesDeDiffusionService {
-  getListesDeDiffusionClientSide(): Promise<ListeDeDiffusion[]>
-
-  getListesDeDiffusionServerSide(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<ListeDeDiffusion[]>
-
-  recupererListeDeDiffusion(
-    id: string,
-    accessToken: string
-  ): Promise<ListeDeDiffusion>
-
-  creerListeDeDiffusion(nouvelleListe: ListeDeDiffusionFormData): Promise<void>
-
-  modifierListeDeDiffusion(
-    idListe: string,
-    modifications: ListeDeDiffusionFormData
-  ): Promise<void>
-
-  supprimerListeDeDiffusion(idListe: string): Promise<void>
+export async function getListesDeDiffusionClientSide(): Promise<
+  ListeDeDiffusion[]
+> {
+  const session = await getSession()
+  return getListesDeDiffusion(session!.user.id, session!.accessToken)
 }
 
-export class ListesDeDiffusionApiService implements ListesDeDiffusionService {
-  constructor(private readonly apiClient: ApiClient) {}
+export async function getListesDeDiffusionServerSide(
+  idConseiller: string,
+  accessToken: string
+): Promise<ListeDeDiffusion[]> {
+  return getListesDeDiffusion(idConseiller, accessToken)
+}
 
-  async getListesDeDiffusionClientSide (): Promise<ListeDeDiffusion[]> {
-    const session = await getSession()
-    return this.getListesDeDiffusion(session!.user.id, session!.accessToken)
-  }
+export async function recupererListeDeDiffusion(
+  id: string,
+  accessToken: string
+): Promise<ListeDeDiffusion> {
+  const { content: listeDeDiffusion } = await apiGet<ListeDeDiffusion>(
+    `/listes-de-diffusion/${id}`,
+    accessToken
+  )
+  return listeDeDiffusion
+}
 
-  async getListesDeDiffusionServerSide(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<ListeDeDiffusion[]> {
-    return this.getListesDeDiffusion(idConseiller, accessToken)
-  }
+export async function creerListeDeDiffusion({
+  titre,
+  idsBeneficiaires,
+}: ListeDeDiffusionFormData): Promise<void> {
+  const session = await getSession()
+  const { user, accessToken } = session!
 
-  async recupererListeDeDiffusion(
-    id: string,
-    accessToken: string
-  ): Promise<ListeDeDiffusion> {
-    const { content: listeDeDiffusion } =
-      await this.apiClient.get<ListeDeDiffusion>(
-        `/listes-de-diffusion/${id}`,
-        accessToken
-      )
-    return listeDeDiffusion
-  }
+  await apiPost(
+    `/conseillers/${user.id}/listes-de-diffusion`,
+    { titre, idsBeneficiaires },
+    accessToken
+  )
+}
 
-  async creerListeDeDiffusion({
-    titre,
-    idsBeneficiaires,
-  }: ListeDeDiffusionFormData): Promise<void> {
-    const session = await getSession()
-    const { user, accessToken } = session!
+export async function modifierListeDeDiffusion(
+  idListe: string,
+  { titre, idsBeneficiaires }: ListeDeDiffusionFormData
+): Promise<void> {
+  const session = await getSession()
 
-    await this.apiClient.post(
-      `/conseillers/${user.id}/listes-de-diffusion`,
-      { titre, idsBeneficiaires },
-      accessToken
-    )
-  }
+  await apiPut(
+    '/listes-de-diffusion/' + idListe,
+    { titre, idsBeneficiaires },
+    session!.accessToken
+  )
+}
 
-  async modifierListeDeDiffusion(
-    idListe: string,
-    { titre, idsBeneficiaires }: ListeDeDiffusionFormData
-  ): Promise<void> {
-    const session = await getSession()
+export async function supprimerListeDeDiffusion(
+  idListe: string
+): Promise<void> {
+  const session = await getSession()
 
-    await this.apiClient.put(
-      '/listes-de-diffusion/' + idListe,
-      { titre, idsBeneficiaires },
-      session!.accessToken
-    )
-  }
+  await apiDelete('/listes-de-diffusion/' + idListe, session!.accessToken)
+}
 
-  async supprimerListeDeDiffusion(idListe: string): Promise<void> {
-    const session = await getSession()
-
-    await this.apiClient.delete(
-      '/listes-de-diffusion/' + idListe,
-      session!.accessToken
-    )
-  }
-
-  private async getListesDeDiffusion(
-    idConseiller: string,
-    accessToken: string
-  ): Promise<ListeDeDiffusion[]> {
-    const { content: listesDeDiffusion } = await this.apiClient.get<
-      ListeDeDiffusion[]
-    >(`/conseillers/${idConseiller}/listes-de-diffusion`, accessToken)
-    return listesDeDiffusion
-  }
+async function getListesDeDiffusion(
+  idConseiller: string,
+  accessToken: string
+): Promise<ListeDeDiffusion[]> {
+  const { content: listesDeDiffusion } = await apiGet<ListeDeDiffusion[]>(
+    `/conseillers/${idConseiller}/listes-de-diffusion`,
+    accessToken
+  )
+  return listesDeDiffusion
 }

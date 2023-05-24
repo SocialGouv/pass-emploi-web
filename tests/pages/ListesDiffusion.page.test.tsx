@@ -3,18 +3,16 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { mockedListesDeDiffusionService } from 'fixtures/services'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import ListesDiffusion, {
   getServerSideProps,
 } from 'pages/mes-jeunes/listes-de-diffusion'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/PageActionsPortal')
 
 describe('Page Listes de Diffusion', () => {
@@ -163,19 +161,16 @@ describe('Page Listes de Diffusion', () => {
         validSession: true,
         session: { accessToken: 'access-token', user: { id: 'id-conseiller' } },
       })
-      const listesDeDiffusionService: ListesDeDiffusionService =
-        mockedListesDeDiffusionService({
-          getListesDeDiffusionServerSide: jest.fn(async () => []),
-        })
-      ;(withDependance as jest.Mock).mockReturnValue(listesDeDiffusionService)
+      ;(getListesDeDiffusionServerSide as jest.Mock).mockResolvedValue([])
 
       // When
       const actual = await getServerSideProps({} as GetServerSidePropsContext)
 
       // Then
-      expect(
-        listesDeDiffusionService.getListesDeDiffusionServerSide
-      ).toHaveBeenCalledWith('id-conseiller', 'access-token')
+      expect(getListesDeDiffusionServerSide).toHaveBeenCalledWith(
+        'id-conseiller',
+        'access-token'
+      )
       expect(actual).toEqual({
         props: {
           pageTitle: 'Listes de diffusion - Portefeuille',

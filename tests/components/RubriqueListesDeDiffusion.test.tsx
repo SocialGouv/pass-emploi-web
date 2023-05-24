@@ -4,9 +4,11 @@ import React from 'react'
 
 import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { mockedMessagesService } from 'fixtures/services'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { getMessagesListeDeDiffusion } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+
+jest.mock('services/messages.service')
 
 describe('<RubriqueListesDeDiffusion />', () => {
   let listesDeDiffusion: ListeDeDiffusion[]
@@ -14,6 +16,7 @@ describe('<RubriqueListesDeDiffusion />', () => {
   describe('quand le conseiller a des listes de diffusion', () => {
     beforeEach(async () => {
       // Given
+      ;(getMessagesListeDeDiffusion as jest.Mock).mockResolvedValue([])
       listesDeDiffusion = desListesDeDiffusion()
 
       // When
@@ -21,14 +24,9 @@ describe('<RubriqueListesDeDiffusion />', () => {
         <RubriqueListesDeDiffusion
           listesDeDiffusion={listesDeDiffusion}
           onBack={() => {}}
+          chats={[]}
         />,
-        {
-          customDependances: {
-            messagesService: mockedMessagesService({
-              getMessagesListeDeDiffusion: jest.fn(async () => []),
-            }),
-          },
-        }
+        {}
       )
     })
 
@@ -100,7 +98,11 @@ describe('<RubriqueListesDeDiffusion />', () => {
     it('prévient le conseiller qu’il n’a pas de liste', async () => {
       // When
       render(
-        <RubriqueListesDeDiffusion listesDeDiffusion={[]} onBack={() => {}} />
+        <RubriqueListesDeDiffusion
+          listesDeDiffusion={[]}
+          onBack={() => {}}
+          chats={[]}
+        />
       )
 
       // Then

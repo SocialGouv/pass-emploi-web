@@ -8,28 +8,33 @@ import { uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import {
-  mockedActionsService,
-  mockedConseillerService,
-  mockedEvenementsService,
-  mockedReferentielService,
-} from 'fixtures/services'
 import { ActionPilotage } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
 import Pilotage, { getServerSideProps } from 'pages/pilotage'
-import { ActionsService } from 'services/actions.service'
-import { ConseillerService } from 'services/conseiller.service'
-import { EvenementsService } from 'services/evenements.service'
-import { ReferentielService } from 'services/referentiel.service'
+import {
+  getActionsAQualifierClientSide,
+  getActionsAQualifierServerSide,
+} from 'services/actions.service'
+import {
+  getConseillerServerSide,
+  modifierAgence,
+} from 'services/conseiller.service'
+import {
+  getAnimationsCollectivesACloreClientSide,
+  getAnimationsCollectivesACloreServerSide,
+} from 'services/evenements.service'
+import { getAgencesClientSide } from 'services/referentiel.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/actions.service')
+jest.mock('services/evenements.service')
+jest.mock('services/referentiel.service')
+jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
 
 describe('Pilotage', () => {
@@ -37,13 +42,12 @@ describe('Pilotage', () => {
     describe('contenu', () => {
       let actions: ActionPilotage[]
       let animationsCollectives: AnimationCollectivePilotage[]
-      let actionsService: ActionsService
-      let evenementsService: EvenementsService
+
       beforeEach(async () => {
         actions = uneListeDActionsAQualifier()
         animationsCollectives = uneListeDAnimationCollectiveAClore()
-        actionsService = mockedActionsService({
-          getActionsAQualifierClientSide: jest.fn(async (_, page) => ({
+        ;(getActionsAQualifierClientSide as jest.Mock).mockImplementation(
+          async (_, page) => ({
             actions: [
               {
                 id: 'action-page-' + page,
@@ -57,23 +61,21 @@ describe('Pilotage', () => {
               },
             ],
             metadonnees: { nombrePages: 3, nombreTotal: 25 },
-          })),
-        })
-        evenementsService = mockedEvenementsService({
-          getAnimationsCollectivesACloreClientSide: jest.fn(
-            async (_, page) => ({
-              animationsCollectives: [
-                {
-                  id: 'evenement-page-' + page,
-                  titre: 'Animation page ' + page,
-                  date: '2018-11-21T06:20:32.232Z',
-                  nombreInscrits: 5,
-                },
-              ],
-              metadonnees: { nombrePages: 3, nombreTotal: 25 },
-            })
-          ),
-        })
+          })
+        )
+        ;(
+          getAnimationsCollectivesACloreClientSide as jest.Mock
+        ).mockImplementation(async (_, page) => ({
+          animationsCollectives: [
+            {
+              id: 'evenement-page-' + page,
+              titre: 'Animation page ' + page,
+              date: '2018-11-21T06:20:32.232Z',
+              nombreInscrits: 5,
+            },
+          ],
+          metadonnees: { nombrePages: 3, nombreTotal: 25 },
+        }))
         ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
         renderWithContexts(
@@ -89,7 +91,6 @@ describe('Pilotage', () => {
             }}
           />,
           {
-            customDependances: { actionsService, evenementsService },
             customConseiller: {
               agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
             },
@@ -161,9 +162,7 @@ describe('Pilotage', () => {
           await userEvent.click(screen.getByLabelText('Page 2'))
 
           // Then
-          expect(
-            actionsService.getActionsAQualifierClientSide
-          ).toHaveBeenCalledWith('1', 2)
+          expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', 2)
           expect(screen.getByText('Action page 2')).toBeInTheDocument()
         })
 
@@ -265,9 +264,10 @@ describe('Pilotage', () => {
           await userEvent.click(screen.getByLabelText('Page 2'))
 
           // Then
-          expect(
-            evenementsService.getAnimationsCollectivesACloreClientSide
-          ).toHaveBeenCalledWith('id-etablissement', 2)
+          expect(getAnimationsCollectivesACloreClientSide).toHaveBeenCalledWith(
+            'id-etablissement',
+            2
+          )
           expect(screen.getByText('Animation page 2')).toBeInTheDocument()
         })
       })
@@ -331,31 +331,23 @@ describe('Pilotage', () => {
 
     describe('quand le conseiller n’a pas renseigné son agence', () => {
       let agences: Agence[]
-      let referentielService: ReferentielService
-      let conseillerService: ConseillerService
 
       beforeEach(async () => {
         agences = uneListeDAgencesMILO()
-        referentielService = mockedReferentielService({
-          getAgencesClientSide: jest.fn(async () => agences),
-        })
-        conseillerService = mockedConseillerService()
-        const evenementsService = mockedEvenementsService({
-          getAnimationsCollectivesACloreClientSide: jest.fn(
-            async (_, page) => ({
-              animationsCollectives: [
-                {
-                  id: 'evenement-page-' + page,
-                  titre: 'Animation page ' + page,
-                  date: '2018-11-21T06:20:32.232Z',
-                  nombreInscrits: 5,
-                },
-              ],
-              metadonnees: { nombrePages: 3, nombreTotal: 25 },
-            })
-          ),
-        })
-
+        ;(getAgencesClientSide as jest.Mock).mockResolvedValue(agences)
+        ;(
+          getAnimationsCollectivesACloreClientSide as jest.Mock
+        ).mockImplementation(async (_, page) => ({
+          animationsCollectives: [
+            {
+              id: 'evenement-page-' + page,
+              titre: 'Animation page ' + page,
+              date: '2018-11-21T06:20:32.232Z',
+              nombreInscrits: 5,
+            },
+          ],
+          metadonnees: { nombrePages: 3, nombreTotal: 25 },
+        }))
         ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
         // When
@@ -369,11 +361,6 @@ describe('Pilotage', () => {
               }}
             />,
             {
-              customDependances: {
-                referentielService,
-                conseillerService,
-                evenementsService,
-              },
               customConseiller: { structure: StructureConseiller.MILO },
             }
           )
@@ -416,7 +403,7 @@ describe('Pilotage', () => {
         )
 
         // Then
-        expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
+        expect(getAgencesClientSide).toHaveBeenCalledWith(
           StructureConseiller.MILO
         )
         expect(screen.getByRole('combobox')).toBeInTheDocument()
@@ -445,7 +432,7 @@ describe('Pilotage', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+        expect(modifierAgence).toHaveBeenCalledWith({
           id: agence.id,
           nom: agence.nom,
           codeDepartement: '3',
@@ -499,9 +486,6 @@ describe('Server side', () => {
   })
 
   describe('quand le conseiller est connecté', () => {
-    let actionsService: ActionsService
-    let conseillerService: ConseillerService
-    let evenementsService: EvenementsService
     beforeEach(async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -512,39 +496,29 @@ describe('Server side', () => {
           user: { id: 'conseiller-id' },
         },
       })
-
-      actionsService = mockedActionsService({
-        getActionsAQualifierServerSide: jest.fn(async () => ({
-          actions: uneListeDActionsAQualifier(),
-          metadonnees: {
-            nombreTotal: 5,
-            nombrePages: 1,
+      ;(getActionsAQualifierServerSide as jest.Mock).mockResolvedValue({
+        actions: uneListeDActionsAQualifier(),
+        metadonnees: {
+          nombreTotal: 5,
+          nombrePages: 1,
+        },
+      })
+      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
+        unConseiller({
+          agence: {
+            nom: 'Mission Locale Aubenas',
+            id: 'id-etablissement',
           },
-        })),
-      })
-      conseillerService = mockedConseillerService({
-        getConseillerServerSide: jest.fn(async () =>
-          unConseiller({
-            agence: {
-              nom: 'Mission Locale Aubenas',
-              id: 'id-etablissement',
-            },
-          })
-        ),
-      })
-      evenementsService = mockedEvenementsService({
-        getAnimationsCollectivesACloreServerSide: jest.fn(async () => ({
-          animationsCollectives: uneListeDAnimationCollectiveAClore(),
-          metadonnees: {
-            nombreTotal: 5,
-            nombrePages: 1,
-          },
-        })),
-      })
-      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-        if (dependance === 'actionsService') return actionsService
-        if (dependance === 'conseillerService') return conseillerService
-        if (dependance === 'evenementsService') return evenementsService
+        })
+      )
+      ;(
+        getAnimationsCollectivesACloreServerSide as jest.Mock
+      ).mockResolvedValue({
+        animationsCollectives: uneListeDAnimationCollectiveAClore(),
+        metadonnees: {
+          nombreTotal: 5,
+          nombrePages: 1,
+        },
       })
     })
 
@@ -555,16 +529,18 @@ describe('Server side', () => {
       } as unknown as GetServerSidePropsContext)
 
       // Then
-      expect(
-        actionsService.getActionsAQualifierServerSide
-      ).toHaveBeenCalledWith('conseiller-id', 'accessToken')
-      expect(conseillerService.getConseillerServerSide).toHaveBeenCalledWith(
+      expect(getActionsAQualifierServerSide).toHaveBeenCalledWith(
+        'conseiller-id',
+        'accessToken'
+      )
+      expect(getConseillerServerSide).toHaveBeenCalledWith(
         { id: 'conseiller-id' },
         'accessToken'
       )
-      expect(
-        evenementsService.getAnimationsCollectivesACloreServerSide
-      ).toHaveBeenCalledWith('id-etablissement', 'accessToken')
+      expect(getAnimationsCollectivesACloreServerSide).toHaveBeenCalledWith(
+        'id-etablissement',
+        'accessToken'
+      )
       expect(actual).toEqual({
         props: {
           pageTitle: 'Pilotage',
@@ -583,9 +559,7 @@ describe('Server side', () => {
 
     it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
       // Given
-      ;(
-        conseillerService.getConseillerServerSide as jest.Mock
-      ).mockResolvedValue(
+      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
         unConseiller({
           agence: {
             nom: 'Mission Locale Aubenas',
@@ -599,9 +573,7 @@ describe('Server side', () => {
       } as unknown as GetServerSidePropsContext)
 
       // Then
-      expect(
-        evenementsService.getAnimationsCollectivesACloreServerSide
-      ).not.toHaveBeenCalled()
+      expect(getAnimationsCollectivesACloreServerSide).not.toHaveBeenCalled()
       expect(actual).toEqual({
         props: {
           pageTitle: 'Pilotage',

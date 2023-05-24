@@ -1,6 +1,6 @@
 import { getSession } from 'next-auth/react'
 
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import {
   DetailImmersionJson,
   ImmersionItemJson,
@@ -17,79 +17,63 @@ export type SearchImmersionsQuery = {
   rayon: number
 }
 
-export interface ImmersionsService {
-  getImmersionServerSide(
-    idImmersion: string,
-    accessToken: string
-  ): Promise<DetailImmersion | undefined>
-  searchImmersions(
-    query: SearchImmersionsQuery,
-    page: number
-  ): Promise<{ offres: BaseImmersion[]; metadonnees: MetadonneesPagination }>
+let cache:
+  | { query: SearchImmersionsQuery; resultsJson: ImmersionItemJson[] }
+  | undefined
+const LIMIT = 10
+
+export async function getImmersionServerSide(
+  idImmersion: string,
+  accessToken: string
+): Promise<DetailImmersion | undefined> {
+  try {
+    const { content: immersionJson } = await apiGet<DetailImmersionJson>(
+      `/offres-immersion/${idImmersion}`,
+      accessToken
+    )
+    return jsonToDetailImmersion(immersionJson)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) {
+      return undefined
+    }
+    throw e
+  }
 }
 
-export class ImmersionsApiService implements ImmersionsService {
-  private cache:
-    | { query: SearchImmersionsQuery; resultsJson: ImmersionItemJson[] }
-    | undefined
-  private LIMIT = 10
+export async function searchImmersions(
+  query: SearchImmersionsQuery,
+  page: number
+): Promise<{ offres: BaseImmersion[]; metadonnees: MetadonneesPagination }> {
+  let immersionsJson: ImmersionItemJson[]
+  if (cache && areSameQueries(cache.query, query)) {
+    immersionsJson = cache.resultsJson
+  } else {
+    const session = await getSession()
 
-  constructor(private readonly apiClient: ApiClient) {}
-
-  async getImmersionServerSide(
-    idImmersion: string,
-    accessToken: string
-  ): Promise<DetailImmersion | undefined> {
-    try {
-      const { content: immersionJson } =
-        await this.apiClient.get<DetailImmersionJson>(
-          `/offres-immersion/${idImmersion}`,
-          accessToken
-        )
-      return jsonToDetailImmersion(immersionJson)
-    } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
-        return undefined
-      }
-      throw e
-    }
+    const path = '/offres-immersion?'
+    const searchParams = buildSearchParams(query)
+    const result = await apiGet<ImmersionItemJson[]>(
+      path + searchParams,
+      session!.accessToken
+    )
+    immersionsJson = result.content
+    cache = { query, resultsJson: immersionsJson }
   }
 
-  async searchImmersions(
-    query: SearchImmersionsQuery,
-    page: number
-  ): Promise<{ offres: BaseImmersion[]; metadonnees: MetadonneesPagination }> {
-    let immersionsJson: ImmersionItemJson[]
-    if (this.cache && areSameQueries(this.cache.query, query)) {
-      immersionsJson = this.cache.resultsJson
-    } else {
-      const session = await getSession()
+  const metadonnees: MetadonneesPagination = {
+    nombreTotal: immersionsJson.length,
+    nombrePages: Math.ceil(immersionsJson.length / LIMIT),
+  }
 
-      const path = '/offres-immersion?'
-      const searchParams = buildSearchParams(query)
-      const result = await this.apiClient.get<ImmersionItemJson[]>(
-        path + searchParams,
-        session!.accessToken
-      )
-      immersionsJson = result.content
-      this.cache = { query, resultsJson: immersionsJson }
-    }
-
-    const metadonnees: MetadonneesPagination = {
-      nombreTotal: immersionsJson.length,
-      nombrePages: Math.ceil(immersionsJson.length / this.LIMIT),
-    }
-
-    return {
-      metadonnees,
-      offres: immersionsJson
-        .slice(this.LIMIT * (page - 1), page * this.LIMIT)
-        .map(({ metier, ...immersion }) => ({
-          type: TypeOffre.IMMERSION,
-          titre: metier,
-          ...immersion,
-        })),
-    }
+  return {
+    metadonnees,
+    offres: immersionsJson
+      .slice(LIMIT * (page - 1), page * LIMIT)
+      .map(({ metier, ...immersion }) => ({
+        type: TypeOffre.IMMERSION,
+        titre: metier,
+        ...immersion,
+      })),
   }
 }
 

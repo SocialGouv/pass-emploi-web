@@ -10,10 +10,14 @@ import {
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
-import { mockedAgendaService, mockedJeunesService } from 'fixtures/services'
 import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
+import { recupererAgenda } from 'services/agenda.service'
+import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
+
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
 
 describe('Favoris dans la fiche jeune', () => {
   beforeEach(async () => {
@@ -22,6 +26,10 @@ describe('Favoris dans la fiche jeune', () => {
       push: jest.fn(),
       asPath: '/mes-jeunes',
     })
+    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+      desIndicateursSemaine()
+    )
+    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
   })
 
   it('affiche les informations des favoris du jeune', async () => {
@@ -79,16 +87,6 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
       />,
       {
         customConseiller: { id: 'id-conseiller' },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-        },
       }
     )
   })

@@ -3,22 +3,6 @@ import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
-import {
-  mockedActionsService,
-  mockedAgendaService,
-  mockedConseillerService,
-  mockedEvenementsService,
-  mockedFavorisService,
-  mockedFichiersService,
-  mockedImmersionsService,
-  mockedJeunesService,
-  mockedListesDeDiffusionService,
-  mockedMessagesService,
-  mockedOffresEmploiService,
-  mockedReferentielService,
-  mockedServicesCiviquesService,
-  mockedSuggestionsService,
-} from 'fixtures/services'
 import { Conseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -29,14 +13,11 @@ import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
 import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { DIProvider } from 'utils/injectionDependances'
-import { Dependencies } from 'utils/injectionDependances/container'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
 export default function renderWithContexts(
   children: JSX.Element,
   options: {
-    customDependances?: Partial<Dependencies>
     customConseiller?: Partial<Conseiller>
     customPortefeuille?: Partial<{
       value: BaseJeune[]
@@ -63,7 +44,6 @@ export default function renderWithContexts(
   } = {}
 ): RenderResult {
   const {
-    customDependances,
     customConseiller,
     customPortefeuille,
     customCurrentJeune,
@@ -71,24 +51,6 @@ export default function renderWithContexts(
     customShowRubriqueListeDeDiffusion,
     customListeDeDiffusionSelectionnee,
   } = options
-  const dependances: Dependencies = {
-    actionsService: mockedActionsService(),
-    referentielService: mockedReferentielService(),
-    conseillerService: mockedConseillerService(),
-    fichiersService: mockedFichiersService(),
-    jeunesService: mockedJeunesService(),
-    messagesService: mockedMessagesService(),
-    evenementsService: mockedEvenementsService(),
-    favorisService: mockedFavorisService(),
-    offresEmploiService: mockedOffresEmploiService(),
-    servicesCiviquesService: mockedServicesCiviquesService(),
-    immersionsService: mockedImmersionsService(),
-    suggestionsService: mockedSuggestionsService(),
-    agendaService: mockedAgendaService(),
-    listesDeDiffusionService: mockedListesDeDiffusionService(),
-    ...customDependances,
-  }
-
   const conseiller = unConseiller(customConseiller)
 
   const portefeuille = {
@@ -105,7 +67,6 @@ export default function renderWithContexts(
   const withContexts = (element: JSX.Element) =>
     provideContexts(
       element,
-      dependances,
       conseiller,
       portefeuille,
       currentJeune,
@@ -125,7 +86,6 @@ export default function renderWithContexts(
 
 function provideContexts(
   children: JSX.Element,
-  dependances: Dependencies,
   conseiller: Conseiller,
   portefeuille: Partial<{
     value: BaseJeune[]
@@ -149,42 +109,40 @@ function provideContexts(
   }>
 ) {
   return (
-    <DIProvider dependances={dependances}>
-      <ConseillerProvider conseillerForTests={conseiller}>
-        <PortefeuilleProvider
-          beneficiairesForTests={portefeuille.value}
-          setterForTests={portefeuille.setter}
+    <ConseillerProvider conseillerForTests={conseiller}>
+      <PortefeuilleProvider
+        beneficiairesForTests={portefeuille.value}
+        setterForTests={portefeuille.setter}
+      >
+        <ChatCredentialsProvider
+          credentialsForTests={{
+            token: 'firebaseToken',
+            cleChiffrement: 'cleChiffrement',
+          }}
         >
-          <ChatCredentialsProvider
-            credentialsForTests={{
-              token: 'firebaseToken',
-              cleChiffrement: 'cleChiffrement',
-            }}
+          <CurrentJeuneProvider
+            idForTests={currentJeune.id}
+            setterForTests={currentJeune.idSetter}
           >
-            <CurrentJeuneProvider
-              idForTests={currentJeune.id}
-              setterForTests={currentJeune.idSetter}
+            <AlerteProvider
+              alerteForTests={alerte.alerte}
+              setterForTests={alerte.alerteSetter}
             >
-              <AlerteProvider
-                alerteForTests={alerte.alerte}
-                setterForTests={alerte.alerteSetter}
+              <ShowRubriqueListeDeDiffusionProvider
+                valueForTests={showRubriqueListeDeDiffusion.value}
+                setterForTests={showRubriqueListeDeDiffusion.setter}
               >
-                <ShowRubriqueListeDeDiffusionProvider
-                  valueForTests={showRubriqueListeDeDiffusion.value}
-                  setterForTests={showRubriqueListeDeDiffusion.setter}
+                <ListeDeDiffusionSelectionneeProvider
+                  setterForTests={listeDeDiffusionSelectionnee.setter}
+                  valueForTests={listeDeDiffusionSelectionnee.value}
                 >
-                  <ListeDeDiffusionSelectionneeProvider
-                    setterForTests={listeDeDiffusionSelectionnee.setter}
-                    valueForTests={listeDeDiffusionSelectionnee.value}
-                  >
-                    {children}
-                  </ListeDeDiffusionSelectionneeProvider>
-                </ShowRubriqueListeDeDiffusionProvider>
-              </AlerteProvider>
-            </CurrentJeuneProvider>
-          </ChatCredentialsProvider>
-        </PortefeuilleProvider>
-      </ConseillerProvider>
-    </DIProvider>
+                  {children}
+                </ListeDeDiffusionSelectionneeProvider>
+              </ShowRubriqueListeDeDiffusionProvider>
+            </AlerteProvider>
+          </CurrentJeuneProvider>
+        </ChatCredentialsProvider>
+      </PortefeuilleProvider>
+    </ConseillerProvider>
   )
 }

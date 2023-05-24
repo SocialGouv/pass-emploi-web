@@ -21,14 +21,15 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import {
+  creerListeDeDiffusion,
   ListeDeDiffusionFormData,
-  ListesDeDiffusionService,
+  modifierListeDeDiffusion,
+  recupererListeDeDiffusion,
+  supprimerListeDeDiffusion,
 } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -41,9 +42,6 @@ function EditionListeDiffusion({
   returnTo,
   liste,
 }: EditionListeDiffusionProps) {
-  const listesDeDiffusionService = useDependance<ListesDeDiffusionService>(
-    'listesDeDiffusionService'
-  )
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
@@ -134,7 +132,7 @@ function EditionListeDiffusion({
   }
 
   async function creerListe(payload: ListeDeDiffusionFormData) {
-    await listesDeDiffusionService.creerListeDeDiffusion(payload)
+    await creerListeDeDiffusion(payload)
     setAlerte(AlerteParam.creationListeDiffusion)
   }
 
@@ -142,14 +140,14 @@ function EditionListeDiffusion({
     idListe: string,
     payload: ListeDeDiffusionFormData
   ) {
-    await listesDeDiffusionService.modifierListeDeDiffusion(idListe, payload)
+    await modifierListeDeDiffusion(idListe, payload)
     setAlerte(AlerteParam.modificationListeDiffusion)
   }
 
   async function supprimerListe() {
     setIsLoading(true)
     try {
-      await listesDeDiffusionService.supprimerListeDeDiffusion(liste!.id)
+      await supprimerListeDeDiffusion(liste!.id)
       setAlerte(AlerteParam.suppressionListeDiffusion)
       // FIXME : dirty fix, problème de rafraichissement de la liste
       await router.push(returnTo + '?misc=' + Math.random())
@@ -270,9 +268,6 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
 
   const { accessToken } = sessionOrRedirect.session
-  const listesDeDiffusionService = withDependance<ListesDeDiffusionService>(
-    'listesDeDiffusionService'
-  )
 
   const referer: string | undefined = context.req.headers.referer
 
@@ -290,7 +285,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const idListe = context.query.idListe
   if (idListe) {
-    const liste = await listesDeDiffusionService.recupererListeDeDiffusion(
+    const liste = await recupererListeDeDiffusion(
       idListe as string,
       accessToken
     )

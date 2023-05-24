@@ -4,17 +4,19 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
-import { mockedJeunesService } from 'fixtures/services'
 import Indicateurs, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/indicateurs'
+import {
+  getIndicateursJeuneComplets,
+  getJeuneDetails,
+} from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/jeunes.service')
 
 describe('Indicateurs', () => {
   describe('client side', () => {
@@ -23,20 +25,14 @@ describe('Indicateurs', () => {
     beforeEach(async () => {
       // Given
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
-      const jeunesService = mockedJeunesService({
-        getIndicateursJeuneComplets: jest.fn(async () =>
-          desIndicateursSemaine()
-        ),
-      })
-      ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
+      ;(getIndicateursJeuneComplets as jest.Mock).mockResolvedValue(
+        desIndicateursSemaine()
+      )
 
       // Given
       await act(async () => {
         await renderWithContexts(
-          <Indicateurs idJeune='id-jeune' lectureSeule={false} pageTitle='' />,
-          {
-            customDependances: { jeunesService },
-          }
+          <Indicateurs idJeune='id-jeune' lectureSeule={false} pageTitle='' />
         )
       })
     })
@@ -113,10 +109,7 @@ describe('Indicateurs', () => {
     describe('quand le conseiller est connecté', () => {
       it('récupère le titre de la page, et les id du jeune et du conseiller', async () => {
         // Given
-        const jeunesService = mockedJeunesService({
-          getJeuneDetails: jest.fn(async () => unDetailJeune()),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
+        ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { ApiClient } from 'clients/api.client'
+import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   desSituationsNonProfessionnelles,
   unCommentaire,
@@ -17,24 +17,30 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
-import { ActionsApiService } from 'services/actions.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
+import {
+  ajouterCommentaire,
+  createAction,
+  deleteAction,
+  getAction,
+  getActionsAQualifierClientSide,
+  getActionsAQualifierServerSide,
+  getActionsJeuneClientSide,
+  getActionsJeuneServerSide,
+  getSituationsNonProfessionnelles,
+  qualifier,
+  recupererLesCommentaires,
+  updateAction,
+} from 'services/actions.service'
 import { ApiError } from 'utils/httpClient'
 
-describe('ActionsApiService', () => {
-  let apiClient: ApiClient
-  let actionsService: ActionsApiService
-  beforeEach(async () => {
-    // Given
-    apiClient = new FakeApiClient()
-    actionsService = new ActionsApiService(apiClient)
-  })
+jest.mock('clients/api.client')
 
+describe('ActionsApiService', () => {
   describe('.getAction', () => {
     it('renvoie une action non commencée', async () => {
       // GIVEN
       const action = uneAction({ status: StatutAction.ARealiser })
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
             content: {
@@ -50,7 +56,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getAction(action.id, 'accessToken')
+      const actual = await getAction(action.id, 'accessToken')
 
       // THEN
       expect(actual).toStrictEqual({
@@ -67,7 +73,7 @@ describe('ActionsApiService', () => {
     it('renvoie une action commencée', async () => {
       // GIVEN
       const action = uneAction({ status: StatutAction.Commencee })
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
             content: {
@@ -83,7 +89,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getAction(action.id, 'accessToken')
+      const actual = await getAction(action.id, 'accessToken')
 
       // THEN
       expect(actual).toStrictEqual({
@@ -100,7 +106,7 @@ describe('ActionsApiService', () => {
     it('renvoie une action terminée', async () => {
       // GIVEN
       const action = uneAction({ status: StatutAction.Terminee })
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url === `/actions/${action.id}`)
           return {
             content: {
@@ -116,7 +122,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getAction(action.id, 'accessToken')
+      const actual = await getAction(action.id, 'accessToken')
 
       // THEN
       expect(actual).toStrictEqual({
@@ -139,7 +145,7 @@ describe('ActionsApiService', () => {
           isSituationNonProfessionnelle: true,
         },
       })
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url === `/actions/${action.id}`)
           return {
             content: {
@@ -162,7 +168,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getAction(action.id, 'accessToken')
+      const actual = await getAction(action.id, 'accessToken')
 
       // THEN
       expect(actual).toStrictEqual({
@@ -185,7 +191,7 @@ describe('ActionsApiService', () => {
           isSituationNonProfessionnelle: false,
         },
       })
-      ;(apiClient.get as jest.Mock).mockImplementation((url: string) => {
+      ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url === `/actions/${action.id}`)
           return {
             content: {
@@ -208,7 +214,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getAction(action.id, 'accessToken')
+      const actual = await getAction(action.id, 'accessToken')
 
       // THEN
       expect(actual).toStrictEqual({
@@ -224,12 +230,12 @@ describe('ActionsApiService', () => {
 
     it('ne renvoie pas une action inexistante', async () => {
       // GIVEN
-      ;(apiClient.get as jest.Mock).mockRejectedValue(
+      ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'Action non trouvée')
       )
 
       // WHEN
-      const actual = await actionsService.getAction('action-id', 'accessToken')
+      const actual = await getAction('action-id', 'accessToken')
 
       // THEN
       expect(actual).toEqual(undefined)
@@ -240,7 +246,7 @@ describe('ActionsApiService', () => {
     it('renvoie les actions du jeune', async () => {
       // GIVEN
       const actions = uneListeDActions()
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
           metadonnees: { nombreTotal: 82, nombreActionsParPage: 10 },
@@ -248,18 +254,15 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsJeuneClientSide(
-        'whatever',
-        {
-          tri: 'date_decroissante',
-          page: 1,
-          statuts: [],
-          etatsQualification: [],
-        }
-      )
+      const actual = await getActionsJeuneClientSide('whatever', {
+        tri: 'date_decroissante',
+        page: 1,
+        statuts: [],
+        etatsQualification: [],
+      })
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante',
         'accessToken'
       )
@@ -271,7 +274,7 @@ describe('ActionsApiService', () => {
 
     it('parse le paramètre pour filtrer les actions par statut et compte le nombre de pages', async () => {
       // GIVEN
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
           metadonnees: {
@@ -289,18 +292,15 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsJeuneClientSide(
-        'whatever',
-        {
-          tri: 'date_decroissante',
-          page: 1,
-          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
-          etatsQualification: [],
-        }
-      )
+      const actual = await getActionsJeuneClientSide('whatever', {
+        tri: 'date_decroissante',
+        page: 1,
+        statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+        etatsQualification: [],
+      })
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
         'accessToken'
       )
@@ -315,7 +315,7 @@ describe('ActionsApiService', () => {
 
     it('parse le paramètre pour filtrer les actions par état de qualification et compte le nombre de pages', async () => {
       // GIVEN
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
           metadonnees: {
@@ -333,21 +333,18 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsJeuneClientSide(
-        'whatever',
-        {
-          tri: 'date_decroissante',
-          page: 1,
-          statuts: [],
-          etatsQualification: [
-            EtatQualificationAction.AQualifier,
-            EtatQualificationAction.Qualifiee,
-          ],
-        }
-      )
+      const actual = await getActionsJeuneClientSide('whatever', {
+        tri: 'date_decroissante',
+        page: 1,
+        statuts: [],
+        etatsQualification: [
+          EtatQualificationAction.AQualifier,
+          EtatQualificationAction.Qualifiee,
+        ],
+      })
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&etats=A_QUALIFIER&etats=QUALIFIEE',
         'accessToken'
       )
@@ -365,7 +362,7 @@ describe('ActionsApiService', () => {
     it('renvoie les actions du jeune', async () => {
       // GIVEN
       const actions = uneListeDActions()
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
           metadonnees: { nombreTotal: 82, nombreActionsParPage: 10 },
@@ -373,14 +370,14 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsJeuneServerSide(
+      const actual = await getActionsJeuneServerSide(
         'whatever',
         1,
         'accessToken'
       )
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante',
         'accessToken'
       )
@@ -394,7 +391,7 @@ describe('ActionsApiService', () => {
   describe('.getActionsAQualifierClientSide', () => {
     it('renvoie les actions du conseiller à qualifier', async () => {
       // GIVEN
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           resultats: uneListeDActionsAQualifierJson(),
           pagination: { total: 5, limit: 10 },
@@ -402,13 +399,10 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsAQualifierClientSide(
-        'whatever',
-        1
-      )
+      const actual = await getActionsAQualifierClientSide('whatever', 1)
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/conseillers/whatever/actions?page=1&aQualifier=true',
         'accessToken'
       )
@@ -422,7 +416,7 @@ describe('ActionsApiService', () => {
   describe('.getActionsAQualifierServerSide', () => {
     it('renvoie les actions du conseiller à qualifier', async () => {
       // GIVEN
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           resultats: uneListeDActionsAQualifierJson(),
           pagination: { total: 5, limit: 10 },
@@ -430,13 +424,13 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.getActionsAQualifierServerSide(
+      const actual = await getActionsAQualifierServerSide(
         'whatever',
         'accessToken'
       )
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/conseillers/whatever/actions?page=1&aQualifier=true',
         'accessToken'
       )
@@ -451,7 +445,7 @@ describe('ActionsApiService', () => {
     it('crée une nouvelle action', async () => {
       // GIVEN
       // WHEN
-      await actionsService.createAction(
+      await createAction(
         {
           intitule: 'content',
           commentaire: 'comment',
@@ -461,7 +455,7 @@ describe('ActionsApiService', () => {
       )
 
       // THEN
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(apiPost).toHaveBeenCalledWith(
         '/conseillers/idConseiller/jeunes/id-jeune/action',
         {
           content: 'content',
@@ -476,13 +470,10 @@ describe('ActionsApiService', () => {
   describe('.updateAction', () => {
     it('met à jour une action non commencée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction(
-        'id-action',
-        StatutAction.ARealiser
-      )
+      const actual = await updateAction('id-action', StatutAction.ARealiser)
 
       // THEN
-      expect(apiClient.put).toHaveBeenCalledWith(
+      expect(apiPut).toHaveBeenCalledWith(
         '/actions/id-action',
         { status: 'not_started' },
         'accessToken'
@@ -492,13 +483,10 @@ describe('ActionsApiService', () => {
 
     it('met à jour une action commencée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction(
-        'id-action',
-        StatutAction.Commencee
-      )
+      const actual = await updateAction('id-action', StatutAction.Commencee)
 
       // THEN
-      expect(apiClient.put).toHaveBeenCalledWith(
+      expect(apiPut).toHaveBeenCalledWith(
         '/actions/id-action',
         { status: 'in_progress' },
         'accessToken'
@@ -508,13 +496,10 @@ describe('ActionsApiService', () => {
 
     it('met à jour une action terminée', async () => {
       // WHEN
-      const actual = await actionsService.updateAction(
-        'id-action',
-        StatutAction.Terminee
-      )
+      const actual = await updateAction('id-action', StatutAction.Terminee)
 
       // THEN
-      expect(apiClient.put).toHaveBeenCalledWith(
+      expect(apiPut).toHaveBeenCalledWith(
         '/actions/id-action',
         { status: 'done' },
         'accessToken'
@@ -526,7 +511,7 @@ describe('ActionsApiService', () => {
   describe('.qualifier', () => {
     it('qualifie une action', async () => {
       // Given
-      ;(apiClient.post as jest.Mock).mockResolvedValue({
+      ;(apiPost as jest.Mock).mockResolvedValue({
         content: {
           libelle: 'Non-SNP',
           code: CODE_QUALIFICATION_NON_SNP,
@@ -534,14 +519,12 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.qualifier(
-        'id-action',
-        CODE_QUALIFICATION_NON_SNP,
-        { commentaire: 'commentaire' }
-      )
+      const actual = await qualifier('id-action', CODE_QUALIFICATION_NON_SNP, {
+        commentaire: 'commentaire',
+      })
 
       // THEN
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(apiPost).toHaveBeenCalledWith(
         '/actions/id-action/qualifier',
         {
           codeQualification: CODE_QUALIFICATION_NON_SNP,
@@ -558,7 +541,7 @@ describe('ActionsApiService', () => {
 
     it('qualifie une action avec une date de début et date de fin', async () => {
       // Given
-      ;(apiClient.post as jest.Mock).mockResolvedValue({
+      ;(apiPost as jest.Mock).mockResolvedValue({
         content: {
           libelle: 'Santé',
           code: 'SANTE',
@@ -566,14 +549,14 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await actionsService.qualifier('id-action', 'SANTE', {
+      const actual = await qualifier('id-action', 'SANTE', {
         commentaire: 'commentaire',
         dateDebutModifiee: DateTime.fromISO('2022-09-05T22:00:00.000Z'),
         dateFinModifiee: DateTime.fromISO('2022-09-06T22:00:00.000Z'),
       })
 
       // THEN
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(apiPost).toHaveBeenCalledWith(
         '/actions/id-action/qualifier',
         {
           commentaireQualification: 'commentaire',
@@ -594,10 +577,10 @@ describe('ActionsApiService', () => {
   describe('.deleteAction', () => {
     it("supprime l'action", async () => {
       // WHEN
-      await actionsService.deleteAction('id-action')
+      await deleteAction('id-action')
 
       // THEN
-      expect(apiClient.delete).toHaveBeenCalledWith(
+      expect(apiDelete).toHaveBeenCalledWith(
         '/actions/id-action',
         'accessToken'
       )
@@ -608,15 +591,12 @@ describe('ActionsApiService', () => {
     it('ajoute un commentaire à une action', async () => {
       // GIVEN
       const commentaire = unCommentaire()
-      ;(apiClient.post as jest.Mock).mockResolvedValue({ content: commentaire })
+      ;(apiPost as jest.Mock).mockResolvedValue({ content: commentaire })
       // WHEN
-      const result = await actionsService.ajouterCommentaire(
-        'id-action',
-        'comment'
-      )
+      const result = await ajouterCommentaire('id-action', 'comment')
 
       // THEN
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(apiPost).toHaveBeenCalledWith(
         '/actions/id-action/commentaires',
         {
           commentaire: 'comment',
@@ -631,17 +611,14 @@ describe('ActionsApiService', () => {
     it("retourne les commentaires d'une action", async () => {
       // GIVEN
       const commentaire = unCommentaire()
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: [commentaire],
       })
       // WHEN
-      const result = await actionsService.recupererLesCommentaires(
-        'id-action',
-        'accessToken'
-      )
+      const result = await recupererLesCommentaires('id-action', 'accessToken')
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/actions/id-action/commentaires',
         'accessToken'
       )
@@ -653,17 +630,15 @@ describe('ActionsApiService', () => {
     it('retourne la liste des situations non professionnelles', async () => {
       // GIVEN
       const situationsNonProfessionnelles = desSituationsNonProfessionnelles()
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: situationsNonProfessionnelles,
       })
 
       // WHEN
-      const result = await actionsService.getSituationsNonProfessionnelles(
-        'accessToken'
-      )
+      const result = await getSituationsNonProfessionnelles('accessToken')
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/qualifications-actions/types',
         'accessToken'
       )

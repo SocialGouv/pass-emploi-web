@@ -6,9 +6,8 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Commentaire } from 'interfaces/action'
-import { ActionsService } from 'services/actions.service'
+import { ajouterCommentaire } from 'services/actions.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
 
 interface CommentairesActionProps {
   idAction: string
@@ -23,7 +22,6 @@ export function CommentairesAction({
   lectureSeule,
   onAjout,
 }: CommentairesActionProps) {
-  const actionsService = useDependance<ActionsService>('actionsService')
   const [commentaires, setCommentaires] =
     useState<Commentaire[]>(commentairesInitiaux)
   const [nouveauCommentaire, setNouveauCommentaire] = useState<string>('')
@@ -31,8 +29,7 @@ export function CommentairesAction({
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   function ajouterUnCommentaire() {
-    actionsService
-      .ajouterCommentaire(idAction, nouveauCommentaire)
+    ajouterCommentaire(idAction, nouveauCommentaire)
       .then((commentaireCree) => {
         const commentairesMisAJour = [...commentaires, commentaireCree]
         setCommentaires(commentairesMisAJour)

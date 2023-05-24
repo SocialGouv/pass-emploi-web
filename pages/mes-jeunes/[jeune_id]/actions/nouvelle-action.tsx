@@ -18,14 +18,12 @@ import { ValueWithError } from 'components/ValueWithError'
 import { ActionPredefinie } from 'interfaces/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
-import { ReferentielService } from 'services/referentiel.service'
+import { createAction } from 'services/actions.service'
+import { getActionsPredefinies } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { dateIsInInterval } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface EditionActionProps extends PageProps {
@@ -35,7 +33,6 @@ interface EditionActionProps extends PageProps {
 
 function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   const router = useRouter()
-  const actionsService = useDependance<ActionsService>('actionsService')
   const [_, setAlerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
 
@@ -130,7 +127,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
       commentaire,
       dateEcheance: dateEcheance.value!,
     }
-    await actionsService.createAction(action, idJeune)
+    await createAction(action, idJeune)
     setAlerte(AlerteParam.creationAction)
     await router.push(`/mes-jeunes/${idJeune}?onglet=actions`)
   }
@@ -313,11 +310,8 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const referentielService =
-    withDependance<ReferentielService>('referentielService')
-
   const idJeune = context.query.jeune_id as string
-  const actionsPredefinies = await referentielService.getActionsPredefinies(
+  const actionsPredefinies = await getActionsPredefinies(
     sessionOrRedirect.session.accessToken
   )
   return {

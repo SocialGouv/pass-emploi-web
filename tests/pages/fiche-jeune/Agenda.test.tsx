@@ -12,18 +12,19 @@ import {
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
-import {
-  mockedAgendaService,
-  mockedFavorisService,
-  mockedJeunesService,
-} from 'fixtures/services'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
+import { Offre, Recherche } from 'interfaces/favoris'
+import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
-import { AgendaService } from 'services/agenda.service'
+import { recupererAgenda } from 'services/agenda.service'
+import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
+
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
 
 describe('Agenda de la fiche jeune', () => {
   const UNE_DATE_SEMAINE_EN_COURS = DateTime.local(2022, 1, 3)
@@ -32,7 +33,6 @@ describe('Agenda de la fiche jeune', () => {
   const LUNDI_JANVIER_3 = DateTime.local(2022, 1, 3)
   const SAMEDI_JANVIER_8 = DateTime.local(2022, 1, 8)
 
-  let agendaService: AgendaService
   let replace: jest.Mock
 
   beforeEach(() => {
@@ -43,12 +43,15 @@ describe('Agenda de la fiche jeune', () => {
       push: jest.fn(),
       asPath: '/mes-jeunes',
     })
+    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+      desIndicateursSemaine()
+    )
+    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
   })
 
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
     it('ne tente pas de récupérer l’agenda du bénéficiaire', async () => {
       // Given
-      agendaService = mockedAgendaService()
       const metadonneesFavoris = uneMetadonneeFavoris()
       const offresPE = uneListeDOffres()
       const recherchesPE = uneListeDeRecherches()
@@ -56,22 +59,49 @@ describe('Agenda de la fiche jeune', () => {
       // When
       await renderFicheJeunePE(
         StructureConseiller.POLE_EMPLOI,
-        agendaService,
+        [],
         metadonneesFavoris,
         offresPE,
         recherchesPE
       )
 
       // Then
-      expect(agendaService.recupererAgenda).not.toHaveBeenCalled()
+      expect(recupererAgenda).not.toHaveBeenCalled()
     })
   })
 
   describe('quand l’utilisateur n’est pas un conseiller Pole emploi', () => {
     it('affiche un onglet Agenda', async () => {
       // Given
-      agendaService = mockedAgendaService({
-        recupererAgenda: jest.fn(async () =>
+      ;(recupererAgenda as jest.Mock).mockResolvedValue(
+        unAgenda({
+          entrees: [
+            {
+              id: '1',
+              date: UNE_DATE_SEMAINE_SUIVANTE,
+              type: 'evenement',
+              titre: '12h00 - Autre',
+            } as EntreeAgenda,
+          ],
+          metadata: {
+            dateDeDebut: DateTime.fromISO('2022-01-01T14:00:00.000+02:00'),
+            dateDeFin: DateTime.fromISO('2022-01-15T14:00:00.000+02:00'),
+            actionsEnRetard: 8,
+          },
+        })
+      )
+
+      // When
+      await renderFicheJeuneMILO(StructureConseiller.MILO)
+
+      // Then
+      expect(screen.getByRole('tab', { name: /Agenda/ })).toBeInTheDocument()
+    })
+
+    describe('affiche l’agenda du bénéficiaire', () => {
+      it('affiche les actions en retard dans la vue agenda ', async () => {
+        // Given
+        ;(recupererAgenda as jest.Mock).mockResolvedValue(
           unAgenda({
             entrees: [
               {
@@ -87,39 +117,10 @@ describe('Agenda de la fiche jeune', () => {
               actionsEnRetard: 8,
             },
           })
-        ),
-      })
+        )
 
-      // When
-      await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
-
-      // Then
-      expect(screen.getByRole('tab', { name: /Agenda/ })).toBeInTheDocument()
-    })
-    describe('affiche l’agenda du bénéficiaire', () => {
-      it('affiche les actions en retard dans la vue agenda ', async () => {
-        // Given
-        agendaService = mockedAgendaService({
-          recupererAgenda: jest.fn(async () =>
-            unAgenda({
-              entrees: [
-                {
-                  id: '1',
-                  date: UNE_DATE_SEMAINE_SUIVANTE,
-                  type: 'evenement',
-                  titre: '12h00 - Autre',
-                } as EntreeAgenda,
-              ],
-              metadata: {
-                dateDeDebut: DateTime.fromISO('2022-01-01T14:00:00.000+02:00'),
-                dateDeFin: DateTime.fromISO('2022-01-15T14:00:00.000+02:00'),
-                actionsEnRetard: 8,
-              },
-            })
-          ),
-        })
         // When
-        await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
+        await renderFicheJeuneMILO(StructureConseiller.MILO)
         const voirActionsEnRetard = screen.getByRole('button', {
           name: 'Voir les actions',
         })
@@ -136,23 +137,21 @@ describe('Agenda de la fiche jeune', () => {
       })
       it('avec un message si le bénéficiaire n’a rien sur la semaine en cours', async () => {
         // Given
-        agendaService = mockedAgendaService({
-          recupererAgenda: jest.fn(async () =>
-            unAgenda({
-              entrees: [
-                {
-                  id: '1',
-                  date: UNE_DATE_SEMAINE_SUIVANTE,
-                  type: 'evenement',
-                  titre: '12h00 - Autre',
-                } as EntreeAgenda,
-              ],
-            })
-          ),
-        })
+        ;(recupererAgenda as jest.Mock).mockResolvedValue(
+          unAgenda({
+            entrees: [
+              {
+                id: '1',
+                date: UNE_DATE_SEMAINE_SUIVANTE,
+                type: 'evenement',
+                titre: '12h00 - Autre',
+              } as EntreeAgenda,
+            ],
+          })
+        )
 
         // When
-        await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
+        await renderFicheJeuneMILO(StructureConseiller.MILO)
 
         // Then
         const semaineEnCours = screen.getByRole('region', {
@@ -176,23 +175,21 @@ describe('Agenda de la fiche jeune', () => {
 
       it('avec un message si le bénéficiaire n’a rien sur la semaine suivante', async () => {
         // Given
-        agendaService = mockedAgendaService({
-          recupererAgenda: jest.fn(async () =>
-            unAgenda({
-              entrees: [
-                {
-                  id: '1',
-                  date: UNE_DATE_SEMAINE_EN_COURS,
-                  type: 'evenement',
-                  titre: '12h00 - Autre',
-                } as EntreeAgenda,
-              ],
-            })
-          ),
-        })
+        ;(recupererAgenda as jest.Mock).mockResolvedValue(
+          unAgenda({
+            entrees: [
+              {
+                id: '1',
+                date: UNE_DATE_SEMAINE_EN_COURS,
+                type: 'evenement',
+                titre: '12h00 - Autre',
+              } as EntreeAgenda,
+            ],
+          })
+        )
 
         // When
-        await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
+        await renderFicheJeuneMILO(StructureConseiller.MILO)
 
         // Then
         const semaineSuivante = screen.getByRole('region', {
@@ -217,30 +214,28 @@ describe('Agenda de la fiche jeune', () => {
       describe('si le bénéficiaire a des actions et des rendez-vous', () => {
         it('ils sont séparés par semaine', async () => {
           // Given
-          agendaService = mockedAgendaService({
-            recupererAgenda: jest.fn(async () =>
-              unAgenda({
-                entrees: [
-                  {
-                    id: 'id-action-1',
-                    date: UNE_DATE_SEMAINE_EN_COURS,
-                    type: 'action',
-                    titre: 'Identifier ses atouts et ses compétences',
-                    statut: StatutAction.ARealiser,
-                  } as EntreeAgenda,
-                  {
-                    id: '1',
-                    date: UNE_DATE_SEMAINE_SUIVANTE,
-                    type: 'evenement',
-                    titre: '12h00 - Autre',
-                  } as EntreeAgenda,
-                ],
-              })
-            ),
-          })
+          ;(recupererAgenda as jest.Mock).mockResolvedValue(
+            unAgenda({
+              entrees: [
+                {
+                  id: 'id-action-1',
+                  date: UNE_DATE_SEMAINE_EN_COURS,
+                  type: 'action',
+                  titre: 'Identifier ses atouts et ses compétences',
+                  statut: StatutAction.ARealiser,
+                } as EntreeAgenda,
+                {
+                  id: '1',
+                  date: UNE_DATE_SEMAINE_SUIVANTE,
+                  type: 'evenement',
+                  titre: '12h00 - Autre',
+                } as EntreeAgenda,
+              ],
+            })
+          )
 
           // When
-          await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
+          await renderFicheJeuneMILO(StructureConseiller.MILO)
 
           // Then
           const semaineEnCours = screen.getByRole('region', {
@@ -277,42 +272,40 @@ describe('Agenda de la fiche jeune', () => {
 
         it('ils sont groupés par jour', async () => {
           // Given
-          agendaService = mockedAgendaService({
-            recupererAgenda: jest.fn(async () =>
-              unAgenda({
-                entrees: [
-                  {
-                    id: 'id-action-1',
-                    date: SAMEDI_JANVIER_1,
-                    type: 'action',
-                    titre: 'Action du samedi 1',
-                    statut: StatutAction.ARealiser,
-                  } as EntreeAgenda,
-                  {
-                    id: '1',
-                    date: SAMEDI_JANVIER_1,
-                    type: 'evenement',
-                    titre: '12h00 - Rdv du samedi 1',
-                  } as EntreeAgenda,
-                  {
-                    id: '1',
-                    date: LUNDI_JANVIER_3,
-                    type: 'evenement',
-                    titre: '15h00 - Rdv du lundi 3',
-                  } as EntreeAgenda,
-                  {
-                    id: '1',
-                    date: SAMEDI_JANVIER_8,
-                    type: 'evenement',
-                    titre: 'Action du samedi 8',
-                  } as EntreeAgenda,
-                ],
-              })
-            ),
-          })
+          ;(recupererAgenda as jest.Mock).mockResolvedValue(
+            unAgenda({
+              entrees: [
+                {
+                  id: 'id-action-1',
+                  date: SAMEDI_JANVIER_1,
+                  type: 'action',
+                  titre: 'Action du samedi 1',
+                  statut: StatutAction.ARealiser,
+                } as EntreeAgenda,
+                {
+                  id: '1',
+                  date: SAMEDI_JANVIER_1,
+                  type: 'evenement',
+                  titre: '12h00 - Rdv du samedi 1',
+                } as EntreeAgenda,
+                {
+                  id: '1',
+                  date: LUNDI_JANVIER_3,
+                  type: 'evenement',
+                  titre: '15h00 - Rdv du lundi 3',
+                } as EntreeAgenda,
+                {
+                  id: '1',
+                  date: SAMEDI_JANVIER_8,
+                  type: 'evenement',
+                  titre: 'Action du samedi 8',
+                } as EntreeAgenda,
+              ],
+            })
+          )
 
           // When
-          await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
+          await renderFicheJeuneMILO(StructureConseiller.MILO)
 
           // Then
           const semaineEnCours = screen.getByRole('region', {
@@ -372,24 +365,22 @@ describe('Agenda de la fiche jeune', () => {
       describe('si le bénéficiaire a des rendez-vous créés par i-milo', () => {
         it('indique le caractère non modifiable de l’événement', async () => {
           // Given
-          agendaService = mockedAgendaService({
-            recupererAgenda: jest.fn(async () =>
-              unAgenda({
-                entrees: [
-                  {
-                    id: '1',
-                    date: LUNDI_JANVIER_3,
-                    type: 'evenement',
-                    titre: '15h00 - Rdv du lundi 3',
-                    source: StructureConseiller.MILO,
-                  } as EntreeAgenda,
-                ],
-              })
-            ),
-          })
+          ;(recupererAgenda as jest.Mock).mockResolvedValue(
+            unAgenda({
+              entrees: [
+                {
+                  id: '1',
+                  date: LUNDI_JANVIER_3,
+                  type: 'evenement',
+                  titre: '15h00 - Rdv du lundi 3',
+                  source: StructureConseiller.MILO,
+                } as EntreeAgenda,
+              ],
+            })
+          )
 
           // When
-          await renderFicheJeuneMILO(StructureConseiller.MILO, agendaService)
+          await renderFicheJeuneMILO(StructureConseiller.MILO)
 
           // Then
           expect(screen.getByText('Non modifiable')).toBeInTheDocument()
@@ -399,10 +390,7 @@ describe('Agenda de la fiche jeune', () => {
   })
 })
 
-async function renderFicheJeuneMILO(
-  structure: StructureConseiller,
-  agendaService: AgendaService
-) {
+async function renderFicheJeuneMILO(structure: StructureConseiller) {
   await act(async () => {
     await renderWithContexts(
       <FicheJeune
@@ -413,14 +401,6 @@ async function renderFicheJeuneMILO(
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: agendaService,
-        },
       }
     )
   })
@@ -429,8 +409,8 @@ async function renderFicheJeuneMILO(
 async function renderFicheJeunePE(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = [],
-  metadonnees: Metadonnees,
-  offresPE: Offres[],
+  metadonnees: MetadonneesFavoris,
+  offresPE: Offre[],
   recherchesPE: Recherche[]
 ) {
   await act(async () => {
@@ -448,19 +428,6 @@ async function renderFicheJeunePE(
         customConseiller: {
           id: 'id-conseiller',
           structure: structure,
-        },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-          favorisService: mockedFavorisService({
-            getOffres: jest.fn(async () => uneListeDOffres()),
-          }),
         },
       }
     )

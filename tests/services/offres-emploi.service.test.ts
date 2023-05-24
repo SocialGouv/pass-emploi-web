@@ -1,4 +1,4 @@
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import {
   listeAlternancesJson,
   listeBaseAlternances,
@@ -10,36 +10,31 @@ import {
 import { unDepartement, uneCommune } from 'fixtures/referentiel'
 import { TypeOffre } from 'interfaces/offre'
 import {
-  OffresEmploiApiService,
-  OffresEmploiService,
+  getOffreEmploiClientSide,
+  getOffreEmploiServerSide,
+  searchAlternances,
+  searchOffresEmploi,
 } from 'services/offres-emploi.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
+jest.mock('clients/api.client')
+
 describe('OffresEmploiApiService', () => {
-  let apiClient: ApiClient
-  let offresEmploiService: OffresEmploiService
-
-  beforeEach(() => {
-    apiClient = new FakeApiClient()
-    offresEmploiService = new OffresEmploiApiService(apiClient)
-  })
-
   describe('.getOffreEmploiServerSide', () => {
     it('renvoie l’offre d’emploi si elle est trouvée en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: unDetailOffreJson(),
       })
 
       // When
-      const actual = await offresEmploiService.getOffreEmploiServerSide(
+      const actual = await getOffreEmploiServerSide(
         'ID_OFFRE_EMPLOI',
         'accessToken'
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi/ID_OFFRE_EMPLOI',
         'accessToken'
       )
@@ -48,18 +43,18 @@ describe('OffresEmploiApiService', () => {
 
     it('renvoie l’alternance si elle est trouvée en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: unDetailOffreJson({ alternance: true }),
       })
 
       // When
-      const actual = await offresEmploiService.getOffreEmploiServerSide(
+      const actual = await getOffreEmploiServerSide(
         'ID_OFFRE_EMPLOI',
         'accessToken'
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi/ID_OFFRE_EMPLOI',
         'accessToken'
       )
@@ -70,12 +65,12 @@ describe('OffresEmploiApiService', () => {
 
     it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockRejectedValue(
+      ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'offre d’emploi non trouvée')
       )
 
       // When
-      const actual = await offresEmploiService.getOffreEmploiServerSide(
+      const actual = await getOffreEmploiServerSide(
         'ID_OFFRE_EMPLOI',
         'accessToken'
       )
@@ -88,17 +83,15 @@ describe('OffresEmploiApiService', () => {
   describe('.getOffreEmploiClientSide', () => {
     it('renvoie l’offre d’emploi si elle est trouvée en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: unDetailOffreJson(),
       })
 
       // When
-      const actual = await offresEmploiService.getOffreEmploiClientSide(
-        'ID_OFFRE_EMPLOI'
-      )
+      const actual = await getOffreEmploiClientSide('ID_OFFRE_EMPLOI')
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi/ID_OFFRE_EMPLOI',
         'accessToken'
       )
@@ -107,17 +100,15 @@ describe('OffresEmploiApiService', () => {
 
     it('renvoie l’alternance si elle est trouvée en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: unDetailOffreJson({ alternance: true }),
       })
 
       // When
-      const actual = await offresEmploiService.getOffreEmploiClientSide(
-        'ID_OFFRE_EMPLOI'
-      )
+      const actual = await getOffreEmploiClientSide('ID_OFFRE_EMPLOI')
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi/ID_OFFRE_EMPLOI',
         'accessToken'
       )
@@ -128,14 +119,12 @@ describe('OffresEmploiApiService', () => {
 
     it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockRejectedValue(
+      ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'offre d’emploi non trouvée')
       )
 
       // When
-      const actual = await offresEmploiService.getOffreEmploiClientSide(
-        'ID_OFFRE_EMPLOI'
-      )
+      const actual = await getOffreEmploiClientSide('ID_OFFRE_EMPLOI')
 
       // Then
       expect(actual).toStrictEqual(undefined)
@@ -145,7 +134,7 @@ describe('OffresEmploiApiService', () => {
   describe('.searchOffresEmploi', () => {
     beforeEach(() => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           pagination: { total: 35 },
           results: listeOffresEmploiJson(),
@@ -155,10 +144,10 @@ describe('OffresEmploiApiService', () => {
 
     it('renvoie une liste paginée d’offres d’emploi', async () => {
       // When
-      const actual = await offresEmploiService.searchOffresEmploi({}, 3)
+      const actual = await searchOffresEmploi({}, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10',
         'accessToken'
       )
@@ -173,10 +162,10 @@ describe('OffresEmploiApiService', () => {
       const query = 'prof industrie'
 
       // When
-      await offresEmploiService.searchOffresEmploi({ motsCles: query }, 3)
+      await searchOffresEmploi({ motsCles: query }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&q=prof%20industrie',
         'accessToken'
       )
@@ -184,13 +173,13 @@ describe('OffresEmploiApiService', () => {
 
     it('parse le département', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi(
+      await searchOffresEmploi(
         { departement: unDepartement({ code: '75' }) },
         3
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&departement=75',
         'accessToken'
       )
@@ -198,13 +187,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse la commune', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi(
-        { commune: uneCommune({ code: '35238' }) },
-        3
-      )
+      await searchOffresEmploi({ commune: uneCommune({ code: '35238' }) }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&commune=35238',
         'accessToken'
       )
@@ -212,13 +198,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse les types de contrat', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi(
-        { typesContrats: ['CDI', 'autre'] },
-        3
-      )
+      await searchOffresEmploi({ typesContrats: ['CDI', 'autre'] }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&contrat=CDI&contrat=autre',
         'accessToken'
       )
@@ -226,13 +209,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse les durées', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi(
-        { durees: ['Temps plein', 'Temps partiel'] },
-        3
-      )
+      await searchOffresEmploi({ durees: ['Temps plein', 'Temps partiel'] }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&duree=1&duree=2',
         'accessToken'
       )
@@ -240,10 +220,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse la distance', async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({ rayon: 32 }, 3)
+      await searchOffresEmploi({ rayon: 32 }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&rayon=32',
         'accessToken'
       )
@@ -251,10 +231,10 @@ describe('OffresEmploiApiService', () => {
 
     it("parse l'experience", async () => {
       // When
-      await offresEmploiService.searchOffresEmploi({ debutantAccepte: true }, 3)
+      await searchOffresEmploi({ debutantAccepte: true }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&debutantAccepte=true',
         'accessToken'
       )
@@ -264,7 +244,7 @@ describe('OffresEmploiApiService', () => {
   describe('.searchAlternances', () => {
     beforeEach(() => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           pagination: { total: 35 },
           results: listeAlternancesJson(),
@@ -274,10 +254,10 @@ describe('OffresEmploiApiService', () => {
 
     it('renvoie une liste paginée d’alternances', async () => {
       // When
-      const actual = await offresEmploiService.searchAlternances({}, 3)
+      const actual = await searchAlternances({}, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true',
         'accessToken'
       )
@@ -292,10 +272,10 @@ describe('OffresEmploiApiService', () => {
       const query = 'prof industrie'
 
       // When
-      await offresEmploiService.searchAlternances({ motsCles: query }, 3)
+      await searchAlternances({ motsCles: query }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&q=prof%20industrie',
         'accessToken'
       )
@@ -303,13 +283,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse le département', async () => {
       // When
-      await offresEmploiService.searchAlternances(
-        { departement: unDepartement({ code: '75' }) },
-        3
-      )
+      await searchAlternances({ departement: unDepartement({ code: '75' }) }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&departement=75',
         'accessToken'
       )
@@ -317,13 +294,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse la commune', async () => {
       // When
-      await offresEmploiService.searchAlternances(
-        { commune: uneCommune({ code: '35238' }) },
-        3
-      )
+      await searchAlternances({ commune: uneCommune({ code: '35238' }) }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&commune=35238',
         'accessToken'
       )
@@ -331,13 +305,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse les types de contrat', async () => {
       // When
-      await offresEmploiService.searchAlternances(
-        { typesContrats: ['CDI', 'autre'] },
-        3
-      )
+      await searchAlternances({ typesContrats: ['CDI', 'autre'] }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&contrat=CDI&contrat=autre',
         'accessToken'
       )
@@ -345,13 +316,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse les durées', async () => {
       // When
-      await offresEmploiService.searchAlternances(
-        { durees: ['Temps plein', 'Temps partiel'] },
-        3
-      )
+      await searchAlternances({ durees: ['Temps plein', 'Temps partiel'] }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&duree=1&duree=2',
         'accessToken'
       )
@@ -359,10 +327,10 @@ describe('OffresEmploiApiService', () => {
 
     it('parse la distance', async () => {
       // When
-      await offresEmploiService.searchAlternances({ rayon: 32 }, 3)
+      await searchAlternances({ rayon: 32 }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&rayon=32',
         'accessToken'
       )
@@ -370,10 +338,10 @@ describe('OffresEmploiApiService', () => {
 
     it("parse l'experience", async () => {
       // When
-      await offresEmploiService.searchAlternances({ debutantAccepte: true }, 3)
+      await searchAlternances({ debutantAccepte: true }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&debutantAccepte=true',
         'accessToken'
       )

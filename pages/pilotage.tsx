@@ -10,19 +10,26 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage } from 'interfaces/action'
-import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { ActionsService } from 'services/actions.service'
-import { ConseillerService } from 'services/conseiller.service'
-import { EvenementsService } from 'services/evenements.service'
-import { ReferentielService } from 'services/referentiel.service'
+import {
+  getActionsAQualifierClientSide,
+  getActionsAQualifierServerSide,
+} from 'services/actions.service'
+import {
+  getConseillerServerSide,
+  modifierAgence,
+} from 'services/conseiller.service'
+import {
+  getAnimationsCollectivesACloreClientSide,
+  getAnimationsCollectivesACloreServerSide,
+} from 'services/evenements.service'
+import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export enum Onglet {
@@ -50,13 +57,6 @@ type PilotageProps = PageProps & {
 }
 
 function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
-  const actionsService = useDependance<ActionsService>('actionsService')
-  const referentielService =
-    useDependance<ReferentielService>('referentielService')
-  const evenementsService =
-    useDependance<EvenementsService>('evenementsService')
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const router = useRouter()
@@ -88,10 +88,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     actions: ActionPilotage[]
     metadonnees: MetadonneesPagination
   }> {
-    const result = await actionsService.getActionsAQualifierClientSide(
-      conseiller.id,
-      page
-    )
+    const result = await getActionsAQualifierClientSide(conseiller.id, page)
 
     setTotalActions(result.metadonnees.nombreTotal)
     return result
@@ -101,11 +98,10 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     animationsCollectives: AnimationCollectivePilotage[]
     metadonnees: MetadonneesPagination
   }> {
-    const result =
-      await evenementsService.getAnimationsCollectivesACloreClientSide(
-        conseiller.agence!.id!,
-        page
-      )
+    const result = await getAnimationsCollectivesACloreClientSide(
+      conseiller.agence!.id!,
+      page
+    )
 
     setTotalAnimationsCollectives(result.metadonnees.nombreTotal)
     return result
@@ -115,7 +111,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     id?: string
     nom: string
   }): Promise<void> {
-    await conseillerService.modifierAgence(agence)
+    await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel(pageTracking + ' - Succès ajout agence')
   }
@@ -144,15 +140,15 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
 
   useEffect(() => {
     if (conseiller.agence?.id && !animationsCollectivesAffichees) {
-      evenementsService
-        .getAnimationsCollectivesACloreClientSide(conseiller.agence.id, 1)
-        .then((result) => {
+      getAnimationsCollectivesACloreClientSide(conseiller.agence.id, 1).then(
+        (result) => {
           setAnimationsCollectivesAffichees({
             donnees: result.animationsCollectives,
             metadonnees: result.metadonnees,
           })
           setTotalAnimationsCollectives(result.metadonnees.nombreTotal)
-        })
+        }
+      )
     }
   }, [conseiller.agence?.id])
 
@@ -230,9 +226,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
             <EncartAgenceRequise
               conseiller={conseiller}
               onAgenceChoisie={renseignerAgence}
-              getAgences={referentielService.getAgencesClientSide.bind(
-                referentielService
-              )}
+              getAgences={getAgencesClientSide}
               onChangeAffichageModal={trackAgenceModal}
             />
           )}
@@ -265,23 +259,15 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
   } = sessionOrRedirect
   if (estUserPoleEmploi(user)) return { notFound: true }
 
-  const actionsService = withDependance<ActionsService>('actionsService')
-  const conseillerService =
-    withDependance<ConseillerService>('conseillerService')
-  const evenementsService =
-    withDependance<EvenementsService>('evenementsService')
-
   const [actions, evenements] = await Promise.all([
-    actionsService.getActionsAQualifierServerSide(user.id, accessToken),
-    conseillerService
-      .getConseillerServerSide(user, accessToken)
-      .then((conseiller) => {
-        if (!conseiller?.agence?.id) return
-        return evenementsService.getAnimationsCollectivesACloreServerSide(
-          conseiller.agence.id,
-          accessToken
-        )
-      }),
+    getActionsAQualifierServerSide(user.id, accessToken),
+    getConseillerServerSide(user, accessToken).then((conseiller) => {
+      if (!conseiller?.agence?.id) return
+      return getAnimationsCollectivesACloreServerSide(
+        conseiller.agence.id,
+        accessToken
+      )
+    }),
   ])
 
   const props: PilotageProps = {

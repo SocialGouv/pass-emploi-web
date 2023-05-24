@@ -10,7 +10,6 @@ import {
   unEvenement,
 } from 'fixtures/evenement'
 import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
-import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
@@ -18,22 +17,27 @@ import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import EditionRdv, { getServerSideProps } from 'pages/mes-jeunes/edition-rdv'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
-import { EvenementsService } from 'services/evenements.service'
-import { JeunesService } from 'services/jeunes.service'
+import {
+  creerEvenement,
+  getDetailsEvenement,
+  getTypesRendezVous,
+  supprimerEvenement,
+  updateRendezVous,
+} from 'services/evenements.service'
+import { getJeunesDeLEtablissement } from 'services/jeunes.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
+jest.mock('services/evenements.service')
+jest.mock('services/jeunes.service')
 
 describe('EditionRdv', () => {
   describe('server side', () => {
-    let evenementsService: EvenementsService
     let typesRendezVous: TypeEvenementReferentiel[]
 
     describe("quand l'utilisateur n'est pas connecté", () => {
@@ -65,11 +69,7 @@ describe('EditionRdv', () => {
         })
 
         typesRendezVous = typesEvenement()
-
-        evenementsService = mockedEvenementsService({
-          getTypesRendezVous: jest.fn().mockResolvedValue(typesRendezVous),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(evenementsService)
+        ;(getTypesRendezVous as jest.Mock).mockResolvedValue(typesRendezVous)
       })
 
       it('prépare la page', async () => {
@@ -100,9 +100,7 @@ describe('EditionRdv', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(evenementsService.getTypesRendezVous).toHaveBeenCalledWith(
-          'accessToken'
-        )
+        expect(getTypesRendezVous).toHaveBeenCalledWith('accessToken')
         expect(actual).toMatchObject({
           props: { typesRendezVous: typesEvenementCEJ() },
         })
@@ -158,9 +156,7 @@ describe('EditionRdv', () => {
 
       it('récupère le rendez-vous concerné', async () => {
         // Given
-        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
-          unEvenement()
-        )
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(unEvenement())
 
         // When
         const actual = await getServerSideProps({
@@ -169,11 +165,11 @@ describe('EditionRdv', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(evenementsService.getDetailsEvenement).toHaveBeenCalledWith(
+        expect(getDetailsEvenement).toHaveBeenCalledWith(
           'id-rdv',
           'accessToken'
         )
-        expect(evenementsService.getTypesRendezVous).not.toHaveBeenCalled()
+        expect(getTypesRendezVous).not.toHaveBeenCalled()
 
         expect(actual).toMatchObject({
           props: {
@@ -186,9 +182,7 @@ describe('EditionRdv', () => {
 
       it('récupère l’url de redirection s’il y en a une', async () => {
         // Given
-        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
-          unEvenement()
-        )
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(unEvenement())
 
         // When
         const actual = await getServerSideProps({
@@ -206,9 +200,7 @@ describe('EditionRdv', () => {
 
       it("renvoie une 404 si le rendez-vous n'existe pas", async () => {
         // Given
-        ;(evenementsService.getDetailsEvenement as jest.Mock).mockResolvedValue(
-          undefined
-        )
+        ;(getDetailsEvenement as jest.Mock).mockResolvedValue(undefined)
 
         // When
         const actual = await getServerSideProps({
@@ -253,8 +245,6 @@ describe('EditionRdv', () => {
     let jeunesConseiller: JeuneFromListe[]
     let jeunesAutreConseiller: BaseJeune[]
     let jeunesEtablissement: BaseJeune[]
-    let evenementsService: EvenementsService
-    let jeunesService: JeunesService
     let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -275,15 +265,13 @@ describe('EditionRdv', () => {
         ...jeunesConseiller.map(({ id, nom, prenom }) => ({ id, nom, prenom })),
         ...jeunesAutreConseiller,
       ]
-      evenementsService = mockedEvenementsService({
-        supprimerEvenement: jest.fn(async () => undefined),
-        creerEvenement: jest.fn(
-          async () => '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
-        ),
-      })
-      jeunesService = mockedJeunesService({
-        getJeunesDeLEtablissement: jest.fn(async () => jeunesEtablissement),
-      })
+      ;(supprimerEvenement as jest.Mock).mockResolvedValue(undefined)
+      ;(creerEvenement as jest.Mock).mockResolvedValue(
+        '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
+      )
+      ;(getJeunesDeLEtablissement as jest.Mock).mockResolvedValue(
+        jeunesEtablissement
+      )
       typesRendezVous = typesEvenement()
 
       alerteSetter = jest.fn()
@@ -302,7 +290,6 @@ describe('EditionRdv', () => {
             pageTitle=''
           />,
           {
-            customDependances: { evenementsService: evenementsService },
             customConseiller: { email: 'fake@email.com' },
             customAlerte: { alerteSetter },
           }
@@ -634,7 +621,7 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
+            expect(creerEvenement).toHaveBeenCalledWith({
               jeunesIds: [jeunesConseiller[2].id, jeunesConseiller[0].id],
               titre: 'Titre de l’événement',
               type: 'ACTIVITES_EXTERIEURES',
@@ -661,7 +648,7 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(evenementsService.creerEvenement).toHaveBeenCalledWith({
+            expect(creerEvenement).toHaveBeenCalledWith({
               jeunesIds: [jeunesConseiller[2].id, jeunesConseiller[0].id],
               titre: 'Titre de l’événement',
               type: 'AUTRE',
@@ -852,8 +839,7 @@ describe('EditionRdv', () => {
             returnTo='https://localhost:3000/agenda'
             evenement={evenement}
             pageTitle=''
-          />,
-          { customDependances: { evenementsService } }
+          />
         )
       })
 
@@ -918,8 +904,7 @@ describe('EditionRdv', () => {
             returnTo='/agenda'
             idJeune={idJeune}
             pageTitle=''
-          />,
-          { customDependances: { evenementsService: evenementsService } }
+          />
         )
         const selectType = screen.getByRole('combobox', {
           name: 'Type',
@@ -969,7 +954,6 @@ describe('EditionRdv', () => {
             pageTitle=''
           />,
           {
-            customDependances: { evenementsService: evenementsService },
             customAlerte: { alerteSetter },
           }
         )
@@ -980,7 +964,7 @@ describe('EditionRdv', () => {
         expect(getByDescriptionTerm('Type de l’événement')).toHaveTextContent(
           'Autre'
         )
-        expect(getByDescriptionTerm('Créé(e) par : ')).toHaveTextContent(
+        expect(getByDescriptionTerm('Créé(e) par :')).toHaveTextContent(
           'Nils Tavernier'
         )
       })
@@ -1193,23 +1177,20 @@ describe('EditionRdv', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(evenementsService.updateRendezVous).toHaveBeenCalledWith(
-              evenement.id,
-              {
-                jeunesIds: [jeunesConseiller[1].id, jeunesConseiller[0].id],
-                titre: 'Nouveau titre',
-                type: 'AUTRE',
-                modality: modalites[0],
-                precision: 'Prise de nouvelles',
-                date: '2022-03-03T10:30:00.000+01:00',
-                adresse: '36 rue de marseille, 93200 Saint-Denis',
-                organisme: 'S.A.R.L',
-                duration: 157,
-                comment: 'Lorem ipsum dolor sit amet',
-                presenceConseiller: false,
-                invitation: true,
-              }
-            )
+            expect(updateRendezVous).toHaveBeenCalledWith(evenement.id, {
+              jeunesIds: [jeunesConseiller[1].id, jeunesConseiller[0].id],
+              titre: 'Nouveau titre',
+              type: 'AUTRE',
+              modality: modalites[0],
+              precision: 'Prise de nouvelles',
+              date: '2022-03-03T10:30:00.000+01:00',
+              adresse: '36 rue de marseille, 93200 Saint-Denis',
+              organisme: 'S.A.R.L',
+              duration: 157,
+              comment: 'Lorem ipsum dolor sit amet',
+              presenceConseiller: false,
+              invitation: true,
+            })
           })
 
           it('redirige vers la page précédente', async () => {
@@ -1250,9 +1231,7 @@ describe('EditionRdv', () => {
           await userEvent.click(deleteButtonFromModal)
 
           // Then
-          expect(evenementsService.supprimerEvenement).toHaveBeenCalledWith(
-            evenement.id
-          )
+          expect(supprimerEvenement).toHaveBeenCalledWith(evenement.id)
           expect(alerteSetter).toHaveBeenCalledWith('suppressionRDV')
           expect(push).toHaveBeenCalledWith('/agenda')
         })
@@ -1287,8 +1266,7 @@ describe('EditionRdv', () => {
             returnTo='/agenda'
             evenement={evenement}
             pageTitle=''
-          />,
-          { customDependances: { evenementsService: evenementsService } }
+          />
         )
       })
 
@@ -1382,7 +1360,7 @@ describe('EditionRdv', () => {
               'Vous avez modifié un événement dont vous n’êtes pas le créateur'
             )
           ).toBeInTheDocument()
-          expect(evenementsService.updateRendezVous).not.toHaveBeenCalled()
+          expect(updateRendezVous).not.toHaveBeenCalled()
         })
 
         it('modifie le rendez-vous après la modale', async () => {
@@ -1395,23 +1373,20 @@ describe('EditionRdv', () => {
           await userEvent.click(boutonConfirmer)
 
           // Then
-          expect(evenementsService.updateRendezVous).toHaveBeenCalledWith(
-            evenement.id,
-            {
-              jeunesIds: [jeunesConseiller[0].id, 'jeune-autre-conseiller'],
-              type: 'AUTRE',
-              titre: 'Prise de nouvelles par téléphone',
-              modality: modalites[2],
-              precision: 'Prise de nouvelles',
-              date: '2021-10-21T12:00:00.000+02:00',
-              adresse: '36 rue de marseille, 93200 Saint-Denis',
-              organisme: 'S.A.R.L',
-              duration: 125,
-              comment: 'modification de la description',
-              presenceConseiller: false,
-              invitation: true,
-            }
-          )
+          expect(updateRendezVous).toHaveBeenCalledWith(evenement.id, {
+            jeunesIds: [jeunesConseiller[0].id, 'jeune-autre-conseiller'],
+            type: 'AUTRE',
+            titre: 'Prise de nouvelles par téléphone',
+            modality: modalites[2],
+            precision: 'Prise de nouvelles',
+            date: '2021-10-21T12:00:00.000+02:00',
+            adresse: '36 rue de marseille, 93200 Saint-Denis',
+            organisme: 'S.A.R.L',
+            duration: 125,
+            comment: 'modification de la description',
+            presenceConseiller: false,
+            invitation: true,
+          })
         })
       })
     })
@@ -1428,7 +1403,6 @@ describe('EditionRdv', () => {
             pageTitle=''
           />,
           {
-            customDependances: { evenementsService },
             customPortefeuille: { value: [] },
           }
         )

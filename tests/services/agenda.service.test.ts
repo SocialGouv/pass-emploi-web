@@ -1,26 +1,19 @@
 import { DateTime } from 'luxon'
 
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import { uneListeDActionsJson } from 'fixtures/action'
 import { uneListeDEvenementJson } from 'fixtures/evenement'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { AgendaApiService, AgendaService } from 'services/agenda.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
+import { recupererAgenda } from 'services/agenda.service'
+
+jest.mock('clients/api.client')
 
 describe('AgendaService', () => {
   describe('.recupererAgenda', () => {
-    let apiClient: ApiClient
-    let agendaService: AgendaService
-    beforeEach(async () => {
-      // Given
-      apiClient = new FakeApiClient()
-      agendaService = new AgendaApiService(apiClient)
-    })
-
     it('renvoie des actions et des items rendez-vous', async () => {
       // Given
       const maintenant = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
           rendezVous: uneListeDEvenementJson(),
@@ -33,10 +26,10 @@ describe('AgendaService', () => {
       })
 
       // When
-      const actual = await agendaService.recupererAgenda('jeune-1', maintenant)
+      const actual = await recupererAgenda('jeune-1', maintenant)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/jeunes/jeune-1/home/agenda?maintenant=2022-09-01T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )

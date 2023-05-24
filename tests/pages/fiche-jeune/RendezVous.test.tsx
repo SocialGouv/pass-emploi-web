@@ -12,17 +12,19 @@ import {
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
-import {
-  mockedAgendaService,
-  mockedFavorisService,
-  mockedJeunesService,
-} from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
-import { Recherche } from 'interfaces/favoris'
+import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
+import { recupererAgenda } from 'services/agenda.service'
+import { getOffres } from 'services/favoris.service'
+import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
+
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
+jest.mock('services/favoris.service')
 
 describe('Rendez-vous de la fiche jeune', () => {
   const rdvs = desEvenementsListItems()
@@ -33,6 +35,11 @@ describe('Rendez-vous de la fiche jeune', () => {
       push: jest.fn(),
       asPath: '/mes-jeunes',
     })
+    ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+      desIndicateursSemaine()
+    )
+    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+    ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
   })
 
   describe("quand l'utilisateur n'est pas un conseiller Pôle emploi", () => {
@@ -129,19 +136,6 @@ async function renderFicheJeune(
           id: 'id-conseiller',
           structure: structure,
         },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-          favorisService: mockedFavorisService({
-            getOffres: jest.fn(async () => uneListeDOffres()),
-          }),
-        },
       }
     )
   })
@@ -150,8 +144,8 @@ async function renderFicheJeune(
 async function renderFicheJeunePE(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = [],
-  metadonnees: Metadonnees,
-  offresPE: Offres[],
+  metadonnees: MetadonneesFavoris,
+  offresPE: Offre[],
   recherchesPE: Recherche[]
 ) {
   await act(async () => {
@@ -169,19 +163,6 @@ async function renderFicheJeunePE(
         customConseiller: {
           id: 'id-conseiller',
           structure: structure,
-        },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-          favorisService: mockedFavorisService({
-            getOffres: jest.fn(async () => uneListeDOffres()),
-          }),
         },
       }
     )

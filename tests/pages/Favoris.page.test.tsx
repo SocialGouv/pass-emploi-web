@@ -5,21 +5,18 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import {
-  desConseillersJeune,
-  desIndicateursSemaine,
-  unDetailJeune,
-} from 'fixtures/jeune'
-import { mockedFavorisService, mockedJeunesService } from 'fixtures/services'
+import { unDetailJeune } from 'fixtures/jeune'
 import Favoris, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/favoris'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
+import { getJeuneDetails } from 'services/jeunes.service'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/favoris.service')
+jest.mock('services/jeunes.service')
 
 describe('Favoris', () => {
   const offres = uneListeDOffres()
@@ -118,17 +115,9 @@ describe('Favoris', () => {
     describe('Quand la session est valide', () => {
       it('récupère les offres et les recherches du jeune', async () => {
         // Given
-        const favorisService = mockedFavorisService({
-          getOffres: jest.fn(async () => offres),
-          getRecherchesSauvegardees: jest.fn(async () => recherches),
-        })
-        const jeunesService = mockedJeunesService({
-          getJeuneDetails: jest.fn(async () => unDetailJeune()),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'favorisService') return favorisService
-        })
+        ;(getOffres as jest.Mock).mockResolvedValue(offres)
+        ;(getRecherchesSauvegardees as jest.Mock).mockResolvedValue(recherches)
+        ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',
@@ -143,11 +132,8 @@ describe('Favoris', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(favorisService.getOffres).toHaveBeenCalledWith(
-          'id-jeune',
-          'accessToken'
-        )
-        expect(favorisService.getRecherchesSauvegardees).toHaveBeenCalledWith(
+        expect(getOffres).toHaveBeenCalledWith('id-jeune', 'accessToken')
+        expect(getRecherchesSauvegardees).toHaveBeenCalledWith(
           'id-jeune',
           'accessToken'
         )
@@ -166,22 +152,11 @@ describe('Favoris', () => {
       let actual: GetServerSidePropsResult<any>
       it('redirige vers la page d’accueil', async () => {
         // Given
-        const favorisService = mockedFavorisService({
-          getOffres: jest.fn(() => {
-            throw new ApiError(403, 'erreur')
-          }),
-          getRecherchesSauvegardees: jest.fn(() => {
-            throw new ApiError(403, 'erreur')
-          }),
-        })
-
-        const jeunesService = mockedJeunesService({
-          getJeuneDetails: jest.fn(async () => unDetailJeune()),
-        })
-        ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-          if (dependance === 'jeunesService') return jeunesService
-          if (dependance === 'favorisService') return favorisService
-        })
+        ;(getOffres as jest.Mock).mockRejectedValue(new ApiError(403, 'erreur'))
+        ;(getRecherchesSauvegardees as jest.Mock).mockRejectedValue(
+          new ApiError(403, 'erreur')
+        )
+        ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',

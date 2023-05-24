@@ -5,19 +5,16 @@ import { useRouter } from 'next/router'
 
 import Layout from 'components/layouts/Layout'
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import {
-  mockedConseillerService,
-  mockedJeunesService,
-  mockedMessagesService,
-} from 'fixtures/services'
-import { JeuneChat, JeuneFromListe } from 'interfaces/jeune'
+import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
+import { BaseJeune, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import Profil from 'pages/profil'
-import { ConseillerService } from 'services/conseiller.service'
-import { JeunesService } from 'services/jeunes.service'
-import { MessagesService } from 'services/messages.service'
+import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
+import { observeConseillerChats, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/messages.service')
+jest.mock('services/jeunes.service')
+jest.mock('services/conseiller.service')
 jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
@@ -32,9 +29,7 @@ global.Audio = class FakeAudio {
 describe('Intégration notifications sonores', () => {
   let updateChatsRef: (chats: JeuneChat[]) => void
   const jeunes: JeuneFromListe[] = desItemsJeunes()
-  let jeunesService: JeunesService
-  let conseillerService: ConseillerService
-  let messagesService: MessagesService
+
   beforeEach(async () => {
     const now = DateTime.now()
     jest.spyOn(DateTime, 'now').mockReturnValue(now)
@@ -42,15 +37,12 @@ describe('Intégration notifications sonores', () => {
       asPath: '/path/to/page',
       route: '/path/to/page',
     })
-
-    jeunesService = mockedJeunesService()
-    conseillerService = mockedConseillerService()
-    messagesService = mockedMessagesService({
-      signIn: jest.fn(() => Promise.resolve()),
-      observeConseillerChats: jest.fn((_cleChiffrement, jeunes, fn) => {
+    ;(signIn as jest.Mock).mockResolvedValue(undefined)
+    ;(observeConseillerChats as jest.Mock).mockImplementation(
+      (_cleChiffrement, jeunes, fn) => {
         updateChatsRef = fn
         updateChatsRef(
-          jeunes.map((jeune) =>
+          jeunes.map((jeune: BaseJeune) =>
             unJeuneChat({
               ...jeune,
               chatId: `chat-${jeune.id}`,
@@ -59,23 +51,16 @@ describe('Intégration notifications sonores', () => {
           )
         )
         return Promise.resolve(() => {})
-      }),
-    })
-    ;(
-      jeunesService.getJeunesDuConseillerClientSide as jest.Mock
-    ).mockResolvedValue(jeunes)
+      }
+    )
+    ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(jeunes)
   })
 
   describe('quand le conseiller active ses notification', () => {
     it("il reçoit bien une notification lors d'un nouveau message.", async () => {
       // Given
       await act(() => {
-        renderWithNotificationsSonores(
-          jeunesService,
-          conseillerService,
-          messagesService,
-          false
-        )
+        renderWithNotificationsSonores(false)
       })
       await unNouveauMessageArrive(updateChatsRef, jeunes)
       expect(mockAudio).toHaveBeenCalledTimes(0)
@@ -93,12 +78,7 @@ describe('Intégration notifications sonores', () => {
     it("il ne reçoit pas de notification lors d'un nouveau message.", async () => {
       // Given
       await act(() => {
-        renderWithNotificationsSonores(
-          jeunesService,
-          conseillerService,
-          messagesService,
-          true
-        )
+        renderWithNotificationsSonores(true)
       })
       await unNouveauMessageArrive(updateChatsRef, jeunes)
       expect(mockAudio).toHaveBeenCalledTimes(1)
@@ -113,18 +93,12 @@ describe('Intégration notifications sonores', () => {
   })
 })
 
-function renderWithNotificationsSonores(
-  jeunesService: JeunesService,
-  conseillerService: ConseillerService,
-  messagesService: MessagesService,
-  notificationsSonores: boolean
-) {
+function renderWithNotificationsSonores(notificationsSonores: boolean) {
   renderWithContexts(
     <Layout>
       <Profil referentielAgences={[]} pageTitle={'Profil'} />
     </Layout>,
     {
-      customDependances: { jeunesService, conseillerService, messagesService },
       customConseiller: unConseiller({
         notificationsSonores: notificationsSonores,
       }),
