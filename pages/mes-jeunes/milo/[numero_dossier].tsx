@@ -3,13 +3,15 @@ import { GetServerSideProps } from 'next'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getIdJeuneMilo } from 'services/jeunes.service'
 import { trackSSR } from 'utils/analytics/matomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 
 function MiloFicheJeune() {
   return null
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

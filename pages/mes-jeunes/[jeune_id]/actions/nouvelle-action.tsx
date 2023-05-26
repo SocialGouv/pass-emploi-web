@@ -22,7 +22,6 @@ import { createAction } from 'services/actions.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { dateIsInInterval } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -305,6 +304,9 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
 export const getServerSideProps: GetServerSideProps<
   EditionActionProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

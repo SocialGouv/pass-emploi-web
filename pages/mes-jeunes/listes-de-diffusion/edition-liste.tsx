@@ -29,7 +29,6 @@ import {
 } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -263,6 +262,9 @@ function EditionListeDiffusion({
 export const getServerSideProps: GetServerSideProps<
   EditionListeDiffusionProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession)
     return { redirect: sessionOrRedirect.redirect }

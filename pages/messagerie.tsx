@@ -22,7 +22,6 @@ import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { observeConseillerChats } from 'services/messages.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSelectionneeContext'
@@ -214,6 +213,9 @@ function Messagerie(_: PageProps) {
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

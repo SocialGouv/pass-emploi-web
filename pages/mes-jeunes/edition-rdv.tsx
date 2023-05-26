@@ -40,7 +40,6 @@ import {
 import { getJeunesDeLEtablissement } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
@@ -315,7 +314,7 @@ function EditionRdv({
               <dd className='text-base-bold'>{evenement.type.label}</dd>
 
               <div className='mt-2'>
-                <dt className='inline'>Créé(e) par : </dt>
+                <dt className='inline'>Créé(e) par :</dt>
                 <dd className='inline text-s-bold'>
                   {estCreeParSiMILO(evenement) && 'Système d’information MILO'}
                   {!estCreeParSiMILO(evenement) &&
@@ -428,6 +427,9 @@ function EditionRdv({
 export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
