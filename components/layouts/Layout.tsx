@@ -3,16 +3,12 @@
  */
 
 import { apm } from '@elastic/apm-rum'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useTheme } from 'next-themes'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
-import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
-import ChatManager from 'components/layouts/ChatManager'
-import Footer from 'components/layouts/Footer'
-import { Header } from 'components/layouts/Header'
-import Sidebar from 'components/layouts/Sidebar'
 import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { estPoleEmploiBRSA } from 'interfaces/conseiller'
@@ -25,6 +21,16 @@ import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusio
 import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
 import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleContext'
+
+const ChatManager = dynamic(import('components/layouts/ChatManager'), {
+  ssr: false,
+})
+const Sidebar = dynamic(import('components/layouts/Sidebar'), { ssr: false })
+const Header = dynamic(import('components/layouts/Header'), { ssr: false })
+const Footer = dynamic(import('components/layouts/Footer'), { ssr: false })
+const AlerteDisplayer = dynamic(import('components/layouts/AlerteDisplayer'), {
+  ssr: false,
+})
 
 interface LayoutProps {
   children: ReactElement<PageProps>
