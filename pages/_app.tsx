@@ -1,9 +1,10 @@
 // eslint import/order: 0
 import ProgressBar from '@badrap/bar-of-progress'
 import localFont from '@next/font/local'
-import { AppProps as NextAppProps } from 'next/app'
 import type { NextWebVitalsMetric } from 'next/app'
+import { AppProps as NextAppProps } from 'next/app'
 import Router, { useRouter } from 'next/router'
+import { ThemeProvider } from 'next-themes'
 import React, { useEffect } from 'react'
 
 // /!\ Garder les imports du CSS au début
@@ -92,9 +93,11 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
               <ChatCredentialsProvider>
                 <CurrentJeuneProvider>
                   <AlerteProvider>
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
+                    <ThemeProvider>
+                      <Layout>
+                        <Component {...pageProps} />
+                      </Layout>
+                    </ThemeProvider>
                   </AlerteProvider>
                 </CurrentJeuneProvider>
               </ChatCredentialsProvider>

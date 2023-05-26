@@ -14721,6 +14721,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"next-themes@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "next-themes@npm:0.2.1"
+  peerDependencies:
+    next: "*"
+    react: "*"
+    react-dom: "*"
+  checksum: ebc248b956138e73436c4ed0a0f0a877a0a48a33156db577029b8b8469e48b5c777d61abf2baeb75953378febea74e067a4869ff90b4a3e94fce123289b862ba
+  languageName: node
+  linkType: hard
+
 "next@npm:13.4.4":
   version: 13.4.4
   resolution: "next@npm:13.4.4"
@@ -15696,6 +15707,7 @@ __metadata:
     next-auth: 4.22.1
     next-logger: 3.0.2
     next-pwa: 5.6.0
+    next-themes: ^0.2.1
     pino: 8.14.1
     pino-pretty: ^10.0.0
     postcss: ^8.4.23
