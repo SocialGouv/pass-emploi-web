@@ -31,7 +31,6 @@ import {
 } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
@@ -343,6 +342,9 @@ function EnvoiMessageGroupe({
 export const getServerSideProps: GetServerSideProps<
   EnvoiMessageGroupeProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

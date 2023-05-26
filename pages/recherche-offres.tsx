@@ -39,7 +39,6 @@ import { FormValues } from 'types/form'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -290,6 +289,9 @@ function RechercheOffres(_: PageProps) {
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

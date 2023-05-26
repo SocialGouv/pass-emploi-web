@@ -6,7 +6,7 @@ import { getSession } from 'next-auth/react'
 
 import { RefreshAccessTokenError } from 'utils/auth/authenticator'
 
-export async function withMandatorySessionOrRedirect({
+export default async function withMandatorySessionOrRedirect({
   req,
   resolvedUrl,
 }: GetServerSidePropsContext): Promise<

@@ -23,7 +23,6 @@ import {
   getDetailsEvenement,
 } from 'services/evenements.service'
 import { useAlerte } from 'utils/alerteContext'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 
 interface ClotureProps extends PageProps {
   returnTo: string
@@ -157,6 +156,9 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
 export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

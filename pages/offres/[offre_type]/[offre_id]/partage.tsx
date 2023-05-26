@@ -26,7 +26,6 @@ import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
 import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
@@ -162,6 +161,9 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
 export const getServerSideProps: GetServerSideProps<
   PartageOffresProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

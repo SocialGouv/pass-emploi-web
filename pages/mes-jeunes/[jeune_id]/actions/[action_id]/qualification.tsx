@@ -28,7 +28,6 @@ import {
 } from 'services/actions.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -265,6 +264,9 @@ function PageQualification({
 export const getServerSideProps: GetServerSideProps<
   QualificationProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
