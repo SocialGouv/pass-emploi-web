@@ -4,6 +4,7 @@
 
 import { apm } from '@elastic/apm-rum'
 import { useRouter } from 'next/router'
+import { useTheme } from 'next-themes'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
@@ -14,6 +15,7 @@ import { Header } from 'components/layouts/Header'
 import Sidebar from 'components/layouts/Sidebar'
 import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
+import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { ConseillerService } from 'services/conseiller.service'
@@ -35,6 +37,7 @@ export default function Layout({ children }: LayoutProps) {
   } = children
 
   const router = useRouter()
+  const [, setTheme] = useTheme()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -46,6 +49,7 @@ export default function Layout({ children }: LayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
+  const [, setMounted] = useState(false)
 
   const withChat = !withoutChat
 
@@ -90,6 +94,19 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [conseiller])
 
+  // useEffect only runs on the client, so now we can safely show the UI
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (conseiller && estPoleEmploiBRSA(conseiller)) {
+      setTheme('brsa')
+    } else {
+      setTheme('light')
+    }
+  }, [conseiller, conseiller?.structure, setTheme])
+
   const pageCouranteEstMessagerie = router.pathname === '/messagerie'
 
   return (
@@ -121,7 +138,6 @@ export default function Layout({ children }: LayoutProps) {
                       returnTo={returnTo}
                       pageHeader={pageHeader ?? pageTitle}
                     />
-
                     <main
                       role='main'
                       className={`${styles.content} ${
