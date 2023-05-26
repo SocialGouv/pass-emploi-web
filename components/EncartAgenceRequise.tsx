@@ -6,6 +6,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { trackEvent } from 'utils/analytics/matomo'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type EncartAgenceRequiseProps = {
   conseiller: Conseiller
@@ -19,9 +20,11 @@ export default function EncartAgenceRequise({
   onAgenceChoisie,
   onChangeAffichageModal,
 }: EncartAgenceRequiseProps): JSX.Element {
+  const [portefeuille] = usePortefeuille()
   const [agences, setAgences] = useState<Agence[]>([])
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
   const labelEtablissement = estMilo(conseiller) ? 'Mission Locale' : 'agence'
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   async function openAgenceModal() {
     if (!agences.length) {
@@ -50,6 +53,7 @@ export default function EncartAgenceRequise({
       categorie: 'Contact Support',
       action: 'Pop-in sélection agence',
       nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
     })
   }
 

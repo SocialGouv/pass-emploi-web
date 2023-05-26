@@ -119,6 +119,7 @@ function Profil({ referentielAgences }: ProfilProps) {
       categorie: 'Contact Support',
       action: 'Profil',
       nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
     })
   }
 

@@ -198,6 +198,7 @@ export default function Conversation({
       categorie: 'Conversation suivie',
       action: 'Conversation',
       nom: flagged.toString(),
+      avecBeneficiaires: jeuneChat.chatId ? 'oui' : 'non',
     })
   }
 
