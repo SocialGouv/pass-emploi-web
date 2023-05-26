@@ -38,6 +38,7 @@ export default function ChatRoom({
       categorie: 'Conversation suivie',
       action: 'ChatRoom',
       nom: flagged.toString(),
+      avecBeneficiaires: idChat ? 'oui' : 'non',
     })
   }
 

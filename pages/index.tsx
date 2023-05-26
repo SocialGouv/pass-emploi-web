@@ -58,6 +58,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
       categorie: 'Contact Support',
       action: 'Pop-in sélection agence',
       nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
     })
   }
 

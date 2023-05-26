@@ -31,6 +31,8 @@ export const DetailsJeune = ({
   const [showIdentifiantPartenaireModal, setShowIdentifiantPartenaireModal] =
     useState<boolean>(false)
 
+  const aDesBeneficiaires = jeune.id ? 'oui' : 'non'
+
   function openIdentifiantPartenaireModal() {
     setShowIdentifiantPartenaireModal(true)
   }
@@ -60,6 +62,7 @@ export const DetailsJeune = ({
       categorie: 'fiche jeune',
       action: 'copie identifiant pe',
       nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
     })
   }
 
