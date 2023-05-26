@@ -7,7 +7,6 @@ import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import { getJeuneDetails } from 'services/jeunes.service'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
 
 interface FavorisProps extends PageProps {
@@ -29,6 +28,9 @@ function Favoris({ offres, recherches, lectureSeule }: FavorisProps) {
 export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

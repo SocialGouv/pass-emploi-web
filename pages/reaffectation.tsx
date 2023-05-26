@@ -23,7 +23,6 @@ import {
   reaffecter,
 } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import isEmailValid from 'utils/isEmailValid'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -476,6 +475,9 @@ function Reaffectation(_: ReaffectationProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

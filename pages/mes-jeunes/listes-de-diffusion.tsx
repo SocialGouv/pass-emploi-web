@@ -20,7 +20,6 @@ import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.ser
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -181,6 +180,9 @@ function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
 export const getServerSideProps: GetServerSideProps<
   ListesDiffusionProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

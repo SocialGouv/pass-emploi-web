@@ -26,7 +26,6 @@ import {
   partagerRechercheServiceCivique as _partagerRechercheServiceCivique,
 } from 'services/suggestions.service'
 import { useAlerte } from 'utils/alerteContext'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -263,6 +262,9 @@ function PartageRecherche({
 export const getServerSideProps: GetServerSideProps<
   PartageRechercheProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

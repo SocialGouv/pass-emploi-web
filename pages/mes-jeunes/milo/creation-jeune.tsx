@@ -17,7 +17,6 @@ import {
 } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface MiloCreationJeuneProps extends PageProps {
@@ -120,6 +119,9 @@ function MiloCreationJeune({
 export const getServerSideProps: GetServerSideProps<
   MiloCreationJeuneProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
 
   if (!sessionOrRedirect.validSession) {

@@ -4,7 +4,6 @@ import { GetServerSideProps } from 'next'
 import { TutorielRaccourci } from 'components/TutorielRaccourci'
 import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 
 type RaccourciProps = PageProps & {
   withoutChat: true
@@ -19,6 +18,9 @@ const Raccourci = () => {
 export const getServerSideProps: GetServerSideProps<RaccourciProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

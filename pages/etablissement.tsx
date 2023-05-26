@@ -26,7 +26,6 @@ import { rechercheJeunesDeLEtablissement } from 'services/jeunes.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -189,6 +188,9 @@ const Etablissement = (_: MissionLocaleProps) => {
 export const getServerSideProps: GetServerSideProps<
   MissionLocaleProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

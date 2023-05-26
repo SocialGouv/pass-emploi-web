@@ -28,7 +28,6 @@ import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
@@ -195,6 +194,9 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
 export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

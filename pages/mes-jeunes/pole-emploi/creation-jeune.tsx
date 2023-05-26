@@ -11,7 +11,6 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { createCompteJeunePoleEmploi } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface PoleEmploiCreationJeuneProps extends PageProps {}
@@ -62,6 +61,9 @@ function PoleEmploiCreationJeune(): JSX.Element {
 export const getServerSideProps: GetServerSideProps<
   PoleEmploiCreationJeuneProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
 
   if (!sessionOrRedirect.validSession) {

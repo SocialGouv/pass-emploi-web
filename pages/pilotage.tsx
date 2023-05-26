@@ -28,7 +28,6 @@ import {
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -249,6 +248,9 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
 export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
