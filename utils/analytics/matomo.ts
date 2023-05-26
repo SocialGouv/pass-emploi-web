@@ -21,6 +21,7 @@ interface TrackEventSettings {
   categorie: string
   action: string
   nom: string
+  avecBeneficiaires: string
 }
 
 const numeroDimensionAvecBeneficiaires = process.env
@@ -117,7 +118,7 @@ function trackEvent(trackEventSettings: TrackEventSettings): void {
   push([
     'setCustomDimension',
     numeroDimensionAvecBeneficiaires,
-    'avecBeneficiaires',
+    trackEventSettings.avecBeneficiaires,
   ])
 
   push([
