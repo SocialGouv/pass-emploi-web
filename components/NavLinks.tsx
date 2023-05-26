@@ -14,6 +14,7 @@ import {
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export enum NavItem {
   Jeunes = 'Jeunes',
@@ -35,6 +36,9 @@ export default function NavLinks({
 }: NavLinksProps) {
   const router = useRouter()
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function isCurrentRoute(href: string) {
     return router.asPath.startsWith(href)
@@ -60,6 +64,7 @@ export default function NavLinks({
       categorie: 'Session',
       action: 'Déconnexion',
       nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
     })
   }
 
@@ -69,6 +74,7 @@ export default function NavLinks({
       categorie: 'Actualite',
       action: 'Click',
       nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
     })
   }
 
