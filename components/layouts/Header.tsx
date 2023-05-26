@@ -10,7 +10,11 @@ interface HeaderProps {
   pageHeader: string
 }
 
-export function Header({ currentPath, pageHeader, returnTo }: HeaderProps) {
+export default function Header({
+  currentPath,
+  pageHeader,
+  returnTo,
+}: HeaderProps) {
   return (
     <header className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'>
       {!returnTo && (
