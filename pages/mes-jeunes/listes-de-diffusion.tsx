@@ -51,6 +51,7 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
       categorie: 'Listes de diffusion',
       action: 'Tri',
       nom: nouvelOrdre,
+      avecBeneficiaires: aDesBeneficiaires,
     })
   }
 
