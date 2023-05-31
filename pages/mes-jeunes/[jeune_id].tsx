@@ -43,18 +43,11 @@ import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  getActionsJeuneClientSide,
-  getActionsJeuneServerSide,
-} from 'services/actions.service'
+import { getActionsJeuneClientSide } from 'services/actions.service'
 import { recupererAgenda as _recupererAgenda } from 'services/agenda.service'
-import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import {
   archiverJeune,
   getIndicateursJeuneAlleges,
-  getJeuneDetails,
-  getMetadonneesFavorisJeune,
   getMotifsSuppression,
   supprimerJeuneInactif as _supprimerJeuneInactif,
 } from 'services/jeunes.service'
@@ -287,7 +280,7 @@ function FicheJeune({
 
   useEffect(() => {
     if (!lectureSeule) setIdCurrentJeune(jeune.id)
-  }, [jeune, setIdCurrentJeune])
+  }, [jeune, lectureSeule])
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
@@ -577,13 +570,22 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-
   const {
     session: { accessToken, user },
   } = sessionOrRedirect
 
   const userIsPoleEmploi = estUserPoleEmploi(user)
   const page = parseInt(context.query.page as string, 10) || 1
+
+  const { getJeuneDetails, getMetadonneesFavorisJeune } = await import(
+    'services/jeunes.service'
+  )
+  const { getRendezVousJeune } = await import('services/evenements.service')
+  const { getActionsJeuneServerSide } = await import('services/actions.service')
+  const { getOffres, getRecherchesSauvegardees } = await import(
+    'services/favoris.service'
+  )
+
   const [jeune, metadonneesFavoris, rdvs, actions, offresPE, recherchesPE] =
     await Promise.all([
       getJeuneDetails(context.query.jeune_id as string, accessToken),

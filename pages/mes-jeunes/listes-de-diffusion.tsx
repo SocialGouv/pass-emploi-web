@@ -16,7 +16,6 @@ import { TR } from 'components/ui/Table/TR'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -188,6 +187,10 @@ export const getServerSideProps: GetServerSideProps<
     return { redirect: sessionOrRedirect.redirect }
   }
   const { user, accessToken } = sessionOrRedirect.session
+
+  const { getListesDeDiffusionServerSide } = await import(
+    'services/listes-de-diffusion.service'
+  )
   const listesDeDiffusion = await getListesDeDiffusionServerSide(
     user.id,
     accessToken

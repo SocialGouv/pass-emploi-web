@@ -24,7 +24,6 @@ import {
   creerListeDeDiffusion,
   ListeDeDiffusionFormData,
   modifierListeDeDiffusion,
-  recupererListeDeDiffusion,
   supprimerListeDeDiffusion,
 } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -292,6 +291,9 @@ export const getServerSideProps: GetServerSideProps<
 
   const idListe = context.query.idListe
   if (idListe) {
+    const { recupererListeDeDiffusion } = await import(
+      'services/listes-de-diffusion.service'
+    )
     const liste = await recupererListeDeDiffusion(
       idListe as string,
       accessToken

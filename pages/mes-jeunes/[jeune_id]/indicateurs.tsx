@@ -8,10 +8,7 @@ import TileIndicateur from 'components/ui/TileIndicateur'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { IndicateursSemaine } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import {
-  getIndicateursJeuneComplets,
-  getJeuneDetails,
-} from 'services/jeunes.service'
+import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchString } from 'utils/date'
@@ -196,7 +193,7 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
   }
 
   const idBeneficiaire = context.query.jeune_id as string
-
+  const { getJeuneDetails } = await import('services/jeunes.service')
   const beneficiaire = await getJeuneDetails(idBeneficiaire, accessToken)
 
   if (!beneficiaire) {

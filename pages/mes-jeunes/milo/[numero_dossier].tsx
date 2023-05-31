@@ -1,8 +1,6 @@
 import { GetServerSideProps } from 'next'
 
 import { StructureConseiller } from 'interfaces/conseiller'
-import { getIdJeuneMilo } from 'services/jeunes.service'
-import { trackSSR } from 'utils/analytics/matomo'
 
 function MiloFicheJeune() {
   return null
@@ -23,9 +21,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const numeroDossier = context.query.numero_dossier as string
+
+  const { getIdJeuneMilo } = await import('services/jeunes.service')
   const idJeune = await getIdJeuneMilo(numeroDossier, accessToken)
 
-  const destination = idJeune ? `/mes-jeunes/${idJeune}` : '/mes-jeunes'
+  const { trackSSR } = await import('utils/analytics/matomo')
   trackSSR({
     structure: StructureConseiller.MILO,
     customTitle: `Détail jeune par numéro dossier${
@@ -35,6 +35,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     pathname: `/mes-jeunes/milo/${numeroDossier}`,
     refererUrl: context.req.headers.referer,
   })
+
+  const destination = idJeune ? `/mes-jeunes/${idJeune}` : '/mes-jeunes'
   return { redirect: { destination, permanent: false } }
 }
 

@@ -25,13 +25,11 @@ import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
 import {
-  getConseillerServerSide,
   modifierAgence,
   modifierNotificationsSonores,
   supprimerConseiller,
 } from 'services/conseiller.service'
 import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
-import { getAgencesServerSide } from 'services/referentiel.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -339,11 +337,17 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
   let referentielAgences: Agence[] = []
 
   if (user.structure === StructureConseiller.MILO) {
+    const { getConseillerServerSide } = await import(
+      'services/conseiller.service'
+    )
     const conseiller = await getConseillerServerSide(user, accessToken)
     if (!conseiller) {
       throw new Error(`Conseiller ${user.id} inexistant`)
     }
 
+    const { getAgencesServerSide } = await import(
+      'services/referentiel.service'
+    )
     if (!conseiller.agence) {
       referentielAgences = await getAgencesServerSide(
         user.structure,

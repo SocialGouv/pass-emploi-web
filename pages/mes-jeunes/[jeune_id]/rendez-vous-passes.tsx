@@ -5,8 +5,6 @@ import TableauRdv from 'components/rdv/TableauRdv'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
-import { getRendezVousJeune } from 'services/evenements.service'
-import { getJeuneDetails } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -63,6 +61,8 @@ export const getServerSideProps: GetServerSideProps<
   const isPoleEmploi = structure === StructureConseiller.POLE_EMPLOI
   const idBeneficiaire = context.query.jeune_id as string
 
+  const { getJeuneDetails } = await import('services/jeunes.service')
+  const { getRendezVousJeune } = await import('services/evenements.service')
   const [beneficiaire, rdvs] = await Promise.all([
     getJeuneDetails(idBeneficiaire, accessToken),
     isPoleEmploi

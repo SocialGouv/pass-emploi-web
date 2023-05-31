@@ -26,9 +26,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import {
   deleteAction as _deleteAction,
-  getAction,
   qualifier,
-  recupererLesCommentaires,
   updateAction,
 } from 'services/actions.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -249,6 +247,9 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   }
   const { jeune_id, action_id } = context.query
 
+  const { getAction, recupererLesCommentaires } = await import(
+    'services/actions.service'
+  )
   const actionEtJeune = await getAction(action_id as string, accessToken)
 
   if (!actionEtJeune) return { notFound: true }

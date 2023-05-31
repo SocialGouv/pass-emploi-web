@@ -14,10 +14,6 @@ import {
   EtatSituation,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import {
-  getConseillersDuJeuneServerSide,
-  getJeuneDetails,
-} from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -139,11 +135,13 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-
   const {
     session: { accessToken, user },
   } = sessionOrRedirect
 
+  const { getJeuneDetails, getConseillersDuJeuneServerSide } = await import(
+    'services/jeunes.service'
+  )
   const [jeune, conseillers] = await Promise.all([
     getJeuneDetails(context.query.jeune_id as string, accessToken),
     getConseillersDuJeuneServerSide(
