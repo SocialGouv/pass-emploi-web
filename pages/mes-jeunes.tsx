@@ -22,9 +22,7 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { countActionsJeunes } from 'services/actions.service'
 import { recupererBeneficiaires as _recupererBeneficiaires } from 'services/conseiller.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -201,10 +199,13 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
+
+  const { getJeunesDuConseillerServerSide } = await import(
+    'services/jeunes.service'
+  )
   const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
 
   let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
@@ -214,6 +215,7 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
       nbActionsNonTerminees: 0,
     }))
   } else {
+    const { countActionsJeunes } = await import('services/actions.service')
     const totauxActions: TotalActions[] = await countActionsJeunes(
       user.id,
       accessToken

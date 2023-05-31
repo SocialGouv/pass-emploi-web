@@ -30,8 +30,6 @@ import {
 import { AlerteParam } from 'referentiel/alerteParam'
 import {
   creerEvenement,
-  getDetailsEvenement,
-  getTypesRendezVous,
   supprimerEvenement as _supprimerEvenement,
   updateRendezVous,
 } from 'services/evenements.service'
@@ -462,6 +460,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
   const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
+    const { getDetailsEvenement } = await import('services/evenements.service')
     const evenement = await getDetailsEvenement(idRdv, accessToken)
     if (!evenement) return { notFound: true }
 
@@ -472,6 +471,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
       },
     }
   } else {
+    const { getTypesRendezVous } = await import('services/evenements.service')
     const typesEvenements = await getTypesRendezVous(accessToken)
     const creationAC = context.query.type === 'ac'
 

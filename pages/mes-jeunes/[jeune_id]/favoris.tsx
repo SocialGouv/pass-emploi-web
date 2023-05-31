@@ -5,8 +5,6 @@ import React from 'react'
 import { TabFavoris } from 'components/jeune/TabFavoris'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
-import { getJeuneDetails } from 'services/jeunes.service'
 import { ApiError } from 'utils/httpClient'
 
 interface FavorisProps extends PageProps {
@@ -41,6 +39,7 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
 
   const jeuneId = context.query.jeune_id as string
 
+  const { getJeuneDetails } = await import('services/jeunes.service')
   const beneficiaire = await getJeuneDetails(jeuneId, accessToken)
 
   if (!beneficiaire) {
@@ -50,6 +49,9 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
   const lectureSeule = beneficiaire.idConseiller !== user.id
 
   try {
+    const { getOffres, getRecherchesSauvegardees } = await import(
+      'services/favoris.service'
+    )
     const offres = await getOffres(jeuneId, accessToken)
     const recherches = await getRecherchesSauvegardees(jeuneId, accessToken)
     return {

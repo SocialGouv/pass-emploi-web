@@ -19,7 +19,6 @@ import { ActionPredefinie } from 'interfaces/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { createAction } from 'services/actions.service'
-import { getActionsPredefinies } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { dateIsInInterval } from 'utils/date'
@@ -313,6 +312,8 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const idJeune = context.query.jeune_id as string
+
+  const { getActionsPredefinies } = await import('services/referentiel.service')
   const actionsPredefinies = await getActionsPredefinies(
     sessionOrRedirect.session.accessToken
   )

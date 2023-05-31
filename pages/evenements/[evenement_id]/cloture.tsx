@@ -18,10 +18,7 @@ import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  cloreAnimationCollective as _cloreAnimationCollective,
-  getDetailsEvenement,
-} from 'services/evenements.service'
+import { cloreAnimationCollective as _cloreAnimationCollective } from 'services/evenements.service'
 import { useAlerte } from 'utils/alerteContext'
 
 interface ClotureProps extends PageProps {
@@ -172,6 +169,7 @@ export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
+  const { getDetailsEvenement } = await import('services/evenements.service')
   const evenement = await getDetailsEvenement(
     context.query.evenement_id as string,
     accessToken

@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { getSession, signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'
@@ -160,6 +160,7 @@ function Login({
 export const getServerSideProps: GetServerSideProps<{}> = async (
   context
 ): Promise<GetServerSidePropsResult<{}>> => {
+  const { getSession } = await import('next-auth/react')
   const session = await getSession({ req: context.req })
   const querySource = context.query.source && `?source=${context.query.source}`
 
