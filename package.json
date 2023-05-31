@@ -29,7 +29,7 @@
     "elastic-apm-node": "3.46.0",
     "firebase": "9.22.1",
     "global": "^4.4.0",
-    "html-react-parser": "3.0.16",
+    "html-react-parser": "4.0.0",
     "jsonwebtoken": "9.0.0",
     "lodash.isequal": "4.5.0",
     "luxon": "3.3.0",
