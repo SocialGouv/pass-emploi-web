@@ -14,7 +14,7 @@ interface OngletActionsPilotageProps {
   }>
 }
 
-export function OngletActionsPilotage({
+export default function OngletActionsPilotage({
   actionsInitiales,
   metadonneesInitiales,
   getActions,

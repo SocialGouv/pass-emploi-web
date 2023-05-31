@@ -78,23 +78,28 @@ describe('Pilotage', () => {
         }))
         ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
-        renderWithContexts(
-          <Pilotage
-            pageTitle=''
-            actions={{
-              donnees: uneListeDActionsAQualifier(),
-              metadonnees: { nombrePages: 3, nombreTotal: 25 },
-            }}
-            animationsCollectives={{
-              donnees: uneListeDAnimationCollectiveAClore(),
-              metadonnees: { nombrePages: 3, nombreTotal: 25 },
-            }}
-          />,
-          {
-            customConseiller: {
-              agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
-            },
-          }
+        await act(async () =>
+          renderWithContexts(
+            <Pilotage
+              pageTitle=''
+              actions={{
+                donnees: uneListeDActionsAQualifier(),
+                metadonnees: { nombrePages: 3, nombreTotal: 25 },
+              }}
+              animationsCollectives={{
+                donnees: uneListeDAnimationCollectiveAClore(),
+                metadonnees: { nombrePages: 3, nombreTotal: 25 },
+              }}
+            />,
+            {
+              customConseiller: {
+                agence: {
+                  nom: 'Mission Locale Aubenas',
+                  id: 'id-etablissement',
+                },
+              },
+            }
+          )
         )
       })
 
