@@ -6,7 +6,7 @@ import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { EvenementListItem } from 'interfaces/evenement'
 
 type OngletAgendaConseillerProps = {
-  idConseiller: string | undefined
+  idConseiller: string
   recupererRdvs: (
     idConseiller: string,
     dateDebut: DateTime,
@@ -14,7 +14,8 @@ type OngletAgendaConseillerProps = {
   ) => Promise<EvenementListItem[]>
   trackNavigation: (append?: string) => void
 }
-export function OngletAgendaConseiller({
+
+export default function OngletAgendaConseiller({
   idConseiller,
   recupererRdvs,
   trackNavigation,
@@ -28,16 +29,14 @@ export function OngletAgendaConseiller({
 
   return (
     <>
-      {idConseiller && (
-        <SelecteurPeriode
-          onNouvellePeriode={chargerRdvs}
-          nombreJours={7}
-          trackNavigation={trackNavigation}
-        />
-      )}
+      <SelecteurPeriode
+        onNouvellePeriode={chargerRdvs}
+        nombreJours={7}
+        trackNavigation={trackNavigation}
+      />
 
       <TableauRdv
-        idConseiller={idConseiller ?? ''}
+        idConseiller={idConseiller}
         rdvs={rdvs ?? []}
         withIntercalaires={true}
       />
