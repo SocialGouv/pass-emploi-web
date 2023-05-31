@@ -21,11 +21,7 @@ import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  getAction,
-  getSituationsNonProfessionnelles,
-  qualifier,
-} from 'services/actions.service'
+import { qualifier } from 'services/actions.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { ApiError } from 'utils/httpClient'
@@ -279,6 +275,9 @@ export const getServerSideProps: GetServerSideProps<
     return { notFound: true }
   }
 
+  const { getAction, getSituationsNonProfessionnelles } = await import(
+    'services/actions.service'
+  )
   const [actionContent, situationsNonProfessionnelles] = await Promise.all([
     getAction(context.query.action_id as string, accessToken),
     getSituationsNonProfessionnelles(accessToken),

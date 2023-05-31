@@ -11,10 +11,7 @@ import { DossierMilo } from 'interfaces/jeune'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  createCompteJeuneMilo,
-  getDossierJeune,
-} from 'services/conseiller.service'
+import { createCompteJeuneMilo } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -144,6 +141,7 @@ export const getServerSideProps: GetServerSideProps<
 
   if (dossierId) {
     try {
+      const { getDossierJeune } = await import('services/conseiller.service')
       dossier =
         (await getDossierJeune(
           dossierId,

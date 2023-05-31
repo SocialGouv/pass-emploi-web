@@ -20,10 +20,7 @@ import { getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getImmersionServerSide } from 'services/immersions.service'
 import { partagerOffre } from 'services/messages.service'
-import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
-import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -175,18 +172,27 @@ export const getServerSideProps: GetServerSideProps<
   let offre: DetailOffre | undefined
   switch (typeOffre) {
     case 'emploi':
+      const { getOffreEmploiServerSide } = await import(
+        'services/offres-emploi.service'
+      )
       offre = await getOffreEmploiServerSide(
         context.query.offre_id as string,
         accessToken
       )
       break
     case 'service-civique':
+      const { getServiceCiviqueServerSide } = await import(
+        'services/services-civiques.service'
+      )
       offre = await getServiceCiviqueServerSide(
         context.query.offre_id as string,
         accessToken
       )
       break
     case 'immersion':
+      const { getImmersionServerSide } = await import(
+        'services/immersions.service'
+      )
       offre = await getImmersionServerSide(
         context.query.offre_id as string,
         accessToken
