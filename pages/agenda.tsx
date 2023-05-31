@@ -1,13 +1,12 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import PageActionsPortal from 'components/PageActionsPortal'
-import { OngletAgendaConseiller } from 'components/rdv/OngletAgendaConseiller'
-import { OngletAgendaEtablissement } from 'components/rdv/OngletAgendaEtablissement'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
@@ -26,6 +25,13 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const OngletAgendaConseiller = dynamic(
+  import('components/rdv/OngletAgendaConseiller')
+)
+const OngletAgendaEtablissement = dynamic(
+  import('components/rdv/OngletAgendaEtablissement')
+)
 
 enum Onglet {
   CONSEILLER = 'CONSEILLER',
@@ -200,7 +206,7 @@ function Agenda({ onglet }: AgendaProps) {
         >
           {conseiller.agence && (
             <OngletAgendaEtablissement
-              idEtablissement={conseiller.agence?.id}
+              idEtablissement={conseiller.agence.id!}
               recupererAnimationsCollectives={recupererRdvsEtablissement}
               trackNavigation={trackNavigation}
             />
