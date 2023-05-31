@@ -1,21 +1,29 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { liensBRSA, liensCEJ } from 'referentiel/liens'
 import styles from 'styles/components/Layouts.module.css'
-import useMatomo from 'utils/analytics/useMatomo'
+import { trackPage, userStructureDimensionString } from 'utils/analytics/matomo'
 
 type FooterProps = {
   conseiller?: Conseiller
 }
 
 export default function Footer({ conseiller }: FooterProps) {
-  const [labelMatomo, setLabelMatomo] = useState<string | undefined>(undefined)
   const liens =
     conseiller && estPoleEmploiBRSA(conseiller) ? liensBRSA : liensCEJ
 
-  useMatomo(labelMatomo)
+  function trackExternalLink(label: string) {
+    const structure = !conseiller
+      ? 'visiteur'
+      : userStructureDimensionString(conseiller.structure)
+
+    trackPage({
+      structure: structure,
+      customTitle: label,
+    })
+  }
 
   return (
     <footer role='contentinfo' className={styles.footer}>
@@ -29,7 +37,7 @@ export default function Footer({ conseiller }: FooterProps) {
               key={url}
               href={url}
               label={label}
-              onClick={() => setLabelMatomo(label)}
+              onClick={() => trackExternalLink(label)}
             />
           </li>
         ))}
