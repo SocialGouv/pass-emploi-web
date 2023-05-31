@@ -5,7 +5,6 @@ import { AppProps as NextAppProps } from 'next/app'
 import type { NextWebVitalsMetric } from 'next/app'
 import dynamic from 'next/dynamic'
 import Router, { useRouter } from 'next/router'
-import { ThemeProvider } from 'next-themes'
 import React, { useEffect } from 'react'
 
 // /!\ Garder les imports du CSS au début
@@ -14,15 +13,12 @@ import 'styles/typography.css'
 
 import AppHead from 'components/AppHead'
 import Footer from 'components/layouts/Footer'
-import { AlerteProvider } from 'utils/alerteContext'
 import { init } from 'utils/analytics/matomo'
-import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
-import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
-import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { initRum } from 'utils/monitoring/init-rum'
-import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
-const Layout = dynamic(import('components/layouts/Layout'))
+const ContextProviders = dynamic(import('utils/ContextProviders'), {
+  ssr: false,
+})
 
 const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
 const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
@@ -82,33 +78,22 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
           font-family: ${fontMarianne.style.fontFamily};
         }
       `}</style>
-      <ConseillerProvider>
-        {!shouldUseLayout && (
-          <>
-            <AppHead titre='' hasMessageNonLu={false} />
-            <div className='flex flex-col justify-center h-screen'>
-              <Component {...pageProps} />
-              {isLoginPage && <Footer />}
-            </div>
-          </>
-        )}
 
-        {shouldUseLayout && (
-          <PortefeuilleProvider>
-            <ChatCredentialsProvider>
-              <CurrentJeuneProvider>
-                <AlerteProvider>
-                  <ThemeProvider defaultTheme={'cej'} themes={['cej', 'brsa']}>
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
-                  </ThemeProvider>
-                </AlerteProvider>
-              </CurrentJeuneProvider>
-            </ChatCredentialsProvider>
-          </PortefeuilleProvider>
-        )}
-      </ConseillerProvider>
+      {!shouldUseLayout && (
+        <>
+          <AppHead titre='' hasMessageNonLu={false} />
+          <div className='flex flex-col justify-center h-screen'>
+            <Component {...pageProps} />
+            {isLoginPage && <Footer />}
+          </div>
+        </>
+      )}
+
+      {shouldUseLayout && (
+        <ContextProviders>
+          <Component {...pageProps} />
+        </ContextProviders>
+      )}
     </>
   )
 }

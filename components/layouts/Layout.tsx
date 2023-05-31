@@ -17,8 +17,6 @@ import { PageProps } from 'interfaces/pageProps'
 import { getConseillerClientSide } from 'services/conseiller.service'
 import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
-import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
-import { ShowRubriqueListeDeDiffusionProvider } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
 import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleContext'
 
@@ -110,79 +108,78 @@ export default function Layout({ children }: LayoutProps) {
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
 
       {!conseiller && <SpinningLoader />}
-      <ShowRubriqueListeDeDiffusionProvider>
-        <ListeDeDiffusionSelectionneeProvider>
-          {conseiller && portefeuille && (
-            <>
-              {!pageCouranteEstMessagerie && (
-                <div
-                  ref={containerRef}
-                  className={`${styles.container} ${
-                    withChat ? styles.container_with_chat : ''
+
+      {conseiller && portefeuille && (
+        <>
+          {!pageCouranteEstMessagerie && (
+            <div
+              ref={containerRef}
+              className={`${styles.container} ${
+                withChat ? styles.container_with_chat : ''
+              }`}
+            >
+              <Sidebar />
+
+              <div
+                ref={mainRef}
+                className={`${styles.page} ${
+                  withChat ? styles.page_when_chat : ''
+                }`}
+              >
+                <Header
+                  currentPath={router.asPath}
+                  returnTo={returnTo}
+                  pageHeader={pageHeader ?? pageTitle}
+                />
+
+                <main
+                  role='main'
+                  className={`${styles.content} ${
+                    withChat ? styles.content_when_chat : ''
                   }`}
                 >
-                  <Sidebar />
+                  <AlerteDisplayer />
+                  {children}
+                </main>
 
-                  <div
-                    ref={mainRef}
-                    className={`${styles.page} ${
-                      withChat ? styles.page_when_chat : ''
-                    }`}
-                  >
-                    <Header
-                      currentPath={router.asPath}
-                      returnTo={returnTo}
-                      pageHeader={pageHeader ?? pageTitle}
-                    />
-                    <main
-                      role='main'
-                      className={`${styles.content} ${
-                        withChat ? styles.content_when_chat : ''
-                      }`}
-                    >
-                      <AlerteDisplayer />
-                      {children}
-                    </main>
+                <Footer conseiller={conseiller} />
+              </div>
 
-                    <Footer conseiller={conseiller} />
-                  </div>
-
-                  <ChatManager
-                    displayChat={withChat}
-                    setHasMessageNonLu={setHasMessageNonLu}
-                  />
-                </div>
-              )}
-
-              {pageCouranteEstMessagerie && (
-                <div
-                  ref={containerRef}
-                  className={`${styles.container} ${styles.messagerie_full_screen}`}
-                >
-                  <Sidebar />
-
-                  <ChatManager
-                    displayChat={withChat}
-                    setHasMessageNonLu={setHasMessageNonLu}
-                    pageEstMessagerie={true}
-                  />
-
-                  <div ref={mainRef} className={styles.page}>
-                    <main
-                      role='main'
-                      className={`${styles.content} ${styles.messagerie_full_screen}`}
-                    >
-                      <AlerteDisplayer />
-                      {children}
-                    </main>
-                    <Footer conseiller={conseiller} />
-                  </div>
-                </div>
-              )}
-            </>
+              <ChatManager
+                displayChat={withChat}
+                setHasMessageNonLu={setHasMessageNonLu}
+              />
+            </div>
           )}
-        </ListeDeDiffusionSelectionneeProvider>
-      </ShowRubriqueListeDeDiffusionProvider>
+
+          {pageCouranteEstMessagerie && (
+            <div
+              ref={containerRef}
+              className={`${styles.container} ${styles.messagerie_full_screen}`}
+            >
+              <Sidebar />
+
+              <ChatManager
+                displayChat={withChat}
+                setHasMessageNonLu={setHasMessageNonLu}
+                pageEstMessagerie={true}
+              />
+
+              <div ref={mainRef} className={styles.page}>
+                <main
+                  role='main'
+                  className={`${styles.content} ${styles.messagerie_full_screen}`}
+                >
+                  <AlerteDisplayer />
+                  {children}
+                </main>
+                <Footer conseiller={conseiller} />
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
       <div id={MODAL_ROOT_ID} />
     </>
   )

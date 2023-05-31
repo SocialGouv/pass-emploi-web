@@ -10,7 +10,7 @@ import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
-import useMatomo from 'utils/analytics/useMatomo'
+import { trackPage } from 'utils/analytics/matomo'
 
 const OnboardingMobileModal = dynamic(
   import('components/OnboardingMobileModal'),
@@ -71,9 +71,12 @@ function Login({
 
   useEffect(() => {
     if (window.innerWidth < MIN_DESKTOP_WIDTH) setAfficherOnboarding(true)
-  }, [])
 
-  useMatomo(isFromEmail ? 'Connexion - Origine email' : 'Connexion')
+    trackPage({
+      structure: 'visiteur',
+      customTitle: isFromEmail ? 'Connexion - Origine email' : 'Connexion',
+    })
+  }, [])
 
   return (
     <div className={`${styles.login} w-full h-screen relative`}>
