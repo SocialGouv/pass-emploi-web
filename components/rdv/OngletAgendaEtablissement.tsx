@@ -30,7 +30,7 @@ import {
 } from 'utils/date'
 
 type OngletAgendaEtablissementProps = {
-  idEtablissement: string | undefined
+  idEtablissement: string
   recupererAnimationsCollectives: (
     idEtablissement: string,
     dateDebut: DateTime,
@@ -39,7 +39,7 @@ type OngletAgendaEtablissementProps = {
   trackNavigation: (append?: string) => void
 }
 
-export function OngletAgendaEtablissement({
+export default function OngletAgendaEtablissement({
   idEtablissement,
   recupererAnimationsCollectives,
   trackNavigation,
@@ -92,13 +92,11 @@ export function OngletAgendaEtablissement({
 
   return (
     <>
-      {idEtablissement && (
-        <SelecteurPeriode
-          onNouvellePeriode={chargerEvenementsPeriode}
-          nombreJours={7}
-          trackNavigation={trackNavigation}
-        />
-      )}
+      <SelecteurPeriode
+        onNouvellePeriode={chargerEvenementsPeriode}
+        nombreJours={7}
+        trackNavigation={trackNavigation}
+      />
 
       {!animationsCollectivesGroupees && <SpinningLoader />}
 
