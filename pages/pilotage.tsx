@@ -1,11 +1,9 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import EncartAgenceRequise from 'components/EncartAgenceRequise'
-import { OngletActionsPilotage } from 'components/pilotage/OngletActionsPilotage'
-import { OngletAnimationsCollectivesPilotage } from 'components/pilotage/OngletAnimationsCollectivesPilotage'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
@@ -21,6 +19,14 @@ import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const OngletActionsPilotage = dynamic(
+  import('components/pilotage/OngletActionsPilotage')
+)
+const OngletAnimationsCollectivesPilotage = dynamic(
+  import('components/pilotage/OngletAnimationsCollectivesPilotage')
+)
+const EncartAgenceRequise = dynamic(import('components/EncartAgenceRequise'))
 
 export enum Onglet {
   ACTIONS = 'ACTIONS',
