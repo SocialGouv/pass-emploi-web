@@ -21,11 +21,11 @@ interface DetailsJeuneProps {
   onDossierMiloClick: () => void
 }
 
-export const DetailsJeune = ({
+export default function DetailsJeune({
   jeune,
   conseiller,
   onDossierMiloClick,
-}: DetailsJeuneProps) => {
+}: DetailsJeuneProps) {
   const [_, setAlerte] = useAlerte()
 
   const [identifiantPartenaire, setIdentifiantPartenaire] = useState<

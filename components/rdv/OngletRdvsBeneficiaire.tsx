@@ -15,7 +15,7 @@ interface OngletRdvsBeneficiaireProps {
   conseiller: Conseiller
 }
 
-export function OngletRdvsBeneficiaire({
+export default function OngletRdvsBeneficiaire({
   rdvs,
   beneficiaire,
   conseiller,
