@@ -19,7 +19,7 @@ interface OngletAgendaBeneficiaireProps {
   goToActions: () => void
 }
 
-export function OngletAgendaBeneficiaire({
+export default function OngletAgendaBeneficiaire({
   idBeneficiaire,
   recupererAgenda,
   goToActions,

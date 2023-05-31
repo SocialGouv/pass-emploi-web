@@ -5,15 +5,11 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { OngletActions } from 'components/action/OngletActions'
-import { OngletAgendaBeneficiaire } from 'components/agenda-jeune/OngletAgendaBeneficiaire'
-import { BlocFavoris } from 'components/jeune/BlocFavoris'
-import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import DetailsJeune from 'components/jeune/DetailsJeune'
 import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { TabFavoris } from 'components/jeune/TabFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
-import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -66,6 +62,15 @@ const DeleteJeuneInactifModal = dynamic(
   import('components/jeune/DeleteJeuneInactifModal'),
   { ssr: false }
 )
+
+const OngletActions = dynamic(import('components/action/OngletActions'))
+const OngletAgendaBeneficiaire = dynamic(
+  import('components/agenda-jeune/OngletAgendaBeneficiaire')
+)
+const OngletRdvsBeneficiaire = dynamic(
+  import('components/rdv/OngletRdvsBeneficiaire')
+)
+const BlocFavoris = dynamic(import('components/jeune/BlocFavoris'))
 
 export enum Onglet {
   AGENDA = 'AGENDA',
@@ -481,6 +486,7 @@ function FicheJeune({
               />
             </div>
           )}
+
           {currentTab === Onglet.ACTIONS && (
             <div
               role='tabpanel'
@@ -497,6 +503,7 @@ function FicheJeune({
               />
             </div>
           )}
+
           {currentTab === Onglet.FAVORIS && metadonneesFavoris && (
             <div
               role='tabpanel'
