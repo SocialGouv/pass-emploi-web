@@ -14,7 +14,7 @@ interface OngletAnimationsCollectivesPilotageProps {
   }>
 }
 
-export function OngletAnimationsCollectivesPilotage({
+export default function OngletAnimationsCollectivesPilotage({
   animationsCollectivesInitiales,
   metadonneesInitiales,
   getAnimationsCollectives,
