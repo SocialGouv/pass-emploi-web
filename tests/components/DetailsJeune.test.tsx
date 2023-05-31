@@ -2,7 +2,7 @@ import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 
-import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import DetailsJeune from 'components/jeune/DetailsJeune'
 import { unConseiller } from 'fixtures/conseiller'
 import { unDetailJeune } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
