@@ -20,12 +20,7 @@ import { compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  creerListeDeDiffusion,
-  ListeDeDiffusionFormData,
-  modifierListeDeDiffusion,
-  supprimerListeDeDiffusion,
-} from 'services/listes-de-diffusion.service'
+import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -135,6 +130,9 @@ function EditionListeDiffusion({
   }
 
   async function creerListe(payload: ListeDeDiffusionFormData) {
+    const { creerListeDeDiffusion } = await import(
+      'services/listes-de-diffusion.service'
+    )
     await creerListeDeDiffusion(payload)
     setAlerte(AlerteParam.creationListeDiffusion)
   }
@@ -143,6 +141,9 @@ function EditionListeDiffusion({
     idListe: string,
     payload: ListeDeDiffusionFormData
   ) {
+    const { modifierListeDeDiffusion } = await import(
+      'services/listes-de-diffusion.service'
+    )
     await modifierListeDeDiffusion(idListe, payload)
     setAlerte(AlerteParam.modificationListeDiffusion)
   }
@@ -150,6 +151,9 @@ function EditionListeDiffusion({
   async function supprimerListe() {
     setIsLoading(true)
     try {
+      const { supprimerListeDeDiffusion } = await import(
+        'services/listes-de-diffusion.service'
+      )
       await supprimerListeDeDiffusion(liste!.id)
       setAlerte(AlerteParam.suppressionListeDiffusion)
       // FIXME : dirty fix, problème de rafraichissement de la liste

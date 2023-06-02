@@ -11,7 +11,6 @@ import { DossierMilo } from 'interfaces/jeune'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { createCompteJeuneMilo } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -42,6 +41,9 @@ function MiloCreationJeune({
     beneficiaireData: JeuneMiloFormData
   ): Promise<void> {
     try {
+      const { createCompteJeuneMilo } = await import(
+        'services/conseiller.service'
+      )
       const beneficiaireCree = await createCompteJeuneMilo(beneficiaireData)
 
       setPortefeuille(portefeuille.concat(beneficiaireCree))

@@ -28,11 +28,6 @@ import {
   TypeEvenementReferentiel,
 } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  creerEvenement,
-  supprimerEvenement as _supprimerEvenement,
-  updateRendezVous,
-} from 'services/evenements.service'
 import { getJeunesDeLEtablissement } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -187,6 +182,7 @@ function EditionRdv({
   async function creerNouvelEvenement(
     payload: EvenementFormData
   ): Promise<void> {
+    const { creerEvenement } = await import('services/evenements.service')
     const idNouvelEvenement = await creerEvenement(payload)
     const alertType = evenementTypeAC
       ? AlerteParam.creationAnimationCollective
@@ -198,6 +194,7 @@ function EditionRdv({
     idEvenement: string,
     payload: EvenementFormData
   ): Promise<void> {
+    const { updateRendezVous } = await import('services/evenements.service')
     await updateRendezVous(idEvenement, payload)
     const alertType = evenementTypeAC
       ? AlerteParam.modificationAnimationCollective
@@ -210,6 +207,9 @@ function EditionRdv({
     setShowDeleteRdvModal(false)
 
     try {
+      const { supprimerEvenement: _supprimerEvenement } = await import(
+        'services/evenements.service'
+      )
       await _supprimerEvenement(evenement!.id)
       const alertType = evenementTypeAC
         ? AlerteParam.suppressionAnimationCollective

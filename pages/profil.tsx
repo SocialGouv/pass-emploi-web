@@ -24,12 +24,6 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
-import {
-  modifierAgence,
-  modifierNotificationsSonores,
-  supprimerConseiller,
-} from 'services/conseiller.service'
-import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -72,6 +66,10 @@ function Profil({ referentielAgences }: ProfilProps) {
       ...conseiller,
       notificationsSonores: e.target.checked,
     }
+
+    const { modifierNotificationsSonores } = await import(
+      'services/conseiller.service'
+    )
     await modifierNotificationsSonores(
       conseiller.id,
       conseillerMisAJour.notificationsSonores
@@ -83,26 +81,30 @@ function Profil({ referentielAgences }: ProfilProps) {
     id?: string
     nom: string
   }): Promise<void> {
+    const { modifierAgence } = await import('services/conseiller.service')
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel('Profil - Succès ajout agence')
   }
 
-  function openDeleteConseillerModal(e: React.MouseEvent<HTMLElement>) {
+  async function openDeleteConseillerModal(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
     e.stopPropagation()
     setShowModaleSuppressionCompte(true)
     if (conseiller) {
-      getJeunesDuConseillerClientSide().then((beneficiaires) => {
-        Boolean(beneficiaires.length > 0)
-          ? setPortefeuilleAvecBeneficiaires(true)
-          : setPortefeuilleAvecBeneficiaires(false)
-      })
+      const { getJeunesDuConseillerClientSide } = await import(
+        'services/jeunes.service'
+      )
+      const beneficiaires = await getJeunesDuConseillerClientSide()
+      setPortefeuilleAvecBeneficiaires(beneficiaires.length > 0)
     }
   }
 
   async function supprimerCompteConseiller(): Promise<void> {
     try {
+      const { supprimerConseiller } = await import(
+        'services/conseiller.service'
+      )
       await supprimerConseiller(conseiller.id)
       setShowModaleSuppressionCompte(false)
       setTimeout(async () => {
