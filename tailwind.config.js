@@ -5,6 +5,7 @@
  */
 
 module.exports = {
+  darkMode: 'false',
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
@@ -25,9 +26,9 @@ module.exports = {
      */
     colors: {
       blanc: '#FFFFFF',
-      primary: '#3B69D1',
+      primary: 'var(--primary)',
       primary_lighten: '#EEF1F8',
-      primary_darken: '#274996',
+      primary_darken: 'var(--primary-darken)',
       primary_darken_brsa: '#172B5A',
       success: '#0D7F50',
       success_lighten: '#E5F6EF',
