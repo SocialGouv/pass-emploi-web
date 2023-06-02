@@ -14721,7 +14721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-themes@npm:^0.2.1":
+"next-themes@npm:0.2.1":
   version: 0.2.1
   resolution: "next-themes@npm:0.2.1"
   peerDependencies:
@@ -15707,7 +15707,7 @@ __metadata:
     next-auth: 4.22.1
     next-logger: 3.0.2
     next-pwa: 5.6.0
-    next-themes: ^0.2.1
+    next-themes: 0.2.1
     pino: 8.14.1
     pino-pretty: ^10.0.0
     postcss: ^8.4.23

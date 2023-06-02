@@ -93,7 +93,10 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
               <ChatCredentialsProvider>
                 <CurrentJeuneProvider>
                   <AlerteProvider>
-                    <ThemeProvider>
+                    <ThemeProvider
+                      defaultTheme={'cej'}
+                      themes={['cej', 'brsa']}
+                    >
                       <Layout>
                         <Component {...pageProps} />
                       </Layout>
