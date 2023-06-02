@@ -11,8 +11,6 @@ import { ActionPilotage } from 'interfaces/action'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { getActionsAQualifierClientSide } from 'services/actions.service'
-import { modifierAgence } from 'services/conseiller.service'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
@@ -84,6 +82,9 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     actions: ActionPilotage[]
     metadonnees: MetadonneesPagination
   }> {
+    const { getActionsAQualifierClientSide } = await import(
+      'services/actions.service'
+    )
     const result = await getActionsAQualifierClientSide(conseiller.id, page)
 
     setTotalActions(result.metadonnees.nombreTotal)
@@ -107,6 +108,7 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
     id?: string
     nom: string
   }): Promise<void> {
+    const { modifierAgence } = await import('services/conseiller.service')
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel(pageTracking + ' - Succès ajout agence')

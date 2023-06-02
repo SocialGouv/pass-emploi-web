@@ -18,10 +18,6 @@ import {
   JeuneFromListe,
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import {
-  getJeunesDuConseillerParEmail,
-  reaffecter,
-} from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import isEmailValid from 'utils/isEmailValid'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -111,6 +107,9 @@ function Reaffectation(_: ReaffectationProps) {
 
     setRechercheJeunesEnabled(false)
     try {
+      const { getJeunesDuConseillerParEmail } = await import(
+        'services/jeunes.service'
+      )
       const { idConseiller, jeunes: jeunesDuConseiller } =
         await getJeunesDuConseillerParEmail(conseillerInitial.email)
       setRechercheJeunesSubmitted(true)
@@ -152,6 +151,7 @@ function Reaffectation(_: ReaffectationProps) {
 
     setReaffectationEnCours(true)
     try {
+      const { reaffecter } = await import('services/jeunes.service')
       await reaffecter(
         conseillerInitial.id,
         emailConseillerDestination.value,

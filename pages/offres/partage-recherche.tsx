@@ -19,12 +19,6 @@ import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  partagerRechercheOffreEmploi as _partagerRechercheOffreEmploi,
-  partagerRechercheAlternance as _partagerRechercheAlternance,
-  partagerRechercheImmersion as _partagerRechercheImmersion,
-  partagerRechercheServiceCivique as _partagerRechercheServiceCivique,
-} from 'services/suggestions.service'
 import { useAlerte } from 'utils/alerteContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -149,6 +143,8 @@ function PartageRecherche({
     const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
+    const { partagerRechercheOffreEmploi: _partagerRechercheOffreEmploi } =
+      await import('services/suggestions.service')
     await _partagerRechercheOffreEmploi({
       idsJeunes: idsDestinataires.value,
       titre,
@@ -164,6 +160,8 @@ function PartageRecherche({
     const { titre, motsCles, typeLocalite, labelLocalite, codeLocalite } =
       criteresRecherche as CriteresRechercheOffreEmploiProps
 
+    const { partagerRechercheAlternance: _partagerRechercheAlternance } =
+      await import('services/suggestions.service')
     await _partagerRechercheAlternance({
       idsJeunes: idsDestinataires.value,
       titre,
@@ -185,6 +183,8 @@ function PartageRecherche({
       longitude,
     } = criteresRecherche as CriteresRechercheImmersionProps
 
+    const { partagerRechercheImmersion: _partagerRechercheImmersion } =
+      await import('services/suggestions.service')
     await _partagerRechercheImmersion({
       idsJeunes: idsDestinataires.value,
       titre,
@@ -200,6 +200,9 @@ function PartageRecherche({
     const { titre, labelLocalite, latitude, longitude } =
       criteresRecherche as CriteresRechercheServiceCiviqueProps
 
+    const {
+      partagerRechercheServiceCivique: _partagerRechercheServiceCivique,
+    } = await import('services/suggestions.service')
     await _partagerRechercheServiceCivique({
       idsJeunes: idsDestinataires.value,
       titre,

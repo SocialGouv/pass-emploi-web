@@ -18,7 +18,6 @@ import { ValueWithError } from 'components/ValueWithError'
 import { ActionPredefinie } from 'interfaces/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { createAction } from 'services/actions.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { dateIsInInterval } from 'utils/date'
@@ -125,6 +124,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
       commentaire,
       dateEcheance: dateEcheance.value!,
     }
+    const { createAction } = await import('services/actions.service')
     await createAction(action, idJeune)
     setAlerte(AlerteParam.creationAction)
     await router.push(`/mes-jeunes/${idJeune}?onglet=actions`)

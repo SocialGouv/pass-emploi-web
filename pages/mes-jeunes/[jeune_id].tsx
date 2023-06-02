@@ -39,14 +39,7 @@ import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getActionsJeuneClientSide } from 'services/actions.service'
-import { recupererAgenda as _recupererAgenda } from 'services/agenda.service'
-import {
-  archiverJeune,
-  getIndicateursJeuneAlleges,
-  getMotifsSuppression,
-  supprimerJeuneInactif as _supprimerJeuneInactif,
-} from 'services/jeunes.service'
+import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -207,6 +200,9 @@ function FicheJeune({
     etatsQualification: EtatQualificationAction[],
     tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
+    const { getActionsJeuneClientSide } = await import(
+      'services/actions.service'
+    )
     const result = await getActionsJeuneClientSide(jeune.id, {
       page,
       statuts,
@@ -219,6 +215,9 @@ function FicheJeune({
   }
 
   async function recupererAgenda(): Promise<Agenda> {
+    const { recupererAgenda: _recupererAgenda } = await import(
+      'services/agenda.service'
+    )
     return _recupererAgenda(jeune.id, DateTime.now())
   }
 
@@ -230,6 +229,7 @@ function FicheJeune({
       setShowModaleDeleteJeuneActif(true)
 
       if (motifsSuppression.length === 0) {
+        const { getMotifsSuppression } = await import('services/jeunes.service')
         const result = await getMotifsSuppression()
         setMotifsSuppression(result)
       }
@@ -244,6 +244,7 @@ function FicheJeune({
     payload: SuppressionJeuneFormData
   ): Promise<void> {
     try {
+      const { archiverJeune } = await import('services/jeunes.service')
       await archiverJeune(jeune.id, payload)
 
       removeBeneficiaireFromPortefeuille(jeune.id)
@@ -259,6 +260,9 @@ function FicheJeune({
 
   async function supprimerJeuneInactif(): Promise<void> {
     try {
+      const { supprimerJeuneInactif: _supprimerJeuneInactif } = await import(
+        'services/jeunes.service'
+      )
       await _supprimerJeuneInactif(jeune.id)
 
       removeBeneficiaireFromPortefeuille(jeune.id)
