@@ -37,7 +37,7 @@ export default function Layout({ children }: LayoutProps) {
   } = children
 
   const router = useRouter()
-  const [, setTheme] = useTheme()
+  const { theme, setTheme } = useTheme()
   const conseillerService =
     useDependance<ConseillerService>('conseillerService')
   const jeunesService = useDependance<JeunesService>('jeunesService')
@@ -94,16 +94,11 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [conseiller])
 
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   useEffect(() => {
     if (conseiller && estPoleEmploiBRSA(conseiller)) {
       setTheme('brsa')
     } else {
-      setTheme('light')
+      setTheme('cej')
     }
   }, [conseiller, conseiller?.structure, setTheme])
 
