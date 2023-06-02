@@ -15,14 +15,12 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import {
-  estUserPoleEmploi,
   estMilo,
+  estUserPoleEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
 import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { modifierAgence } from 'services/conseiller.service'
-import { rechercheJeunesDeLEtablissement } from 'services/jeunes.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -54,6 +52,9 @@ const Etablissement = (_: MissionLocaleProps) => {
       setResultatsRecherche(undefined)
       setMetadonnees(undefined)
     } else if (nouvelleRecherche(input, page)) {
+      const { rechercheJeunesDeLEtablissement } = await import(
+        'services/jeunes.service'
+      )
       const resultats = await rechercheJeunesDeLEtablissement(
         conseiller.agence!.id!,
         input,
@@ -71,6 +72,7 @@ const Etablissement = (_: MissionLocaleProps) => {
     id?: string
     nom: string
   }): Promise<void> {
+    const { modifierAgence } = await import('services/conseiller.service')
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')

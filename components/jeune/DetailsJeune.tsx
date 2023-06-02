@@ -6,7 +6,6 @@ import { BlocSituation } from 'components/jeune/BlocSituation'
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { modifierIdentifiantPartenaire } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 
@@ -47,6 +46,9 @@ export default function DetailsJeune({
   async function updateIdentifiantPartenaire(
     nouvelleValeur: string
   ): Promise<void> {
+    const { modifierIdentifiantPartenaire } = await import(
+      'services/jeunes.service'
+    )
     modifierIdentifiantPartenaire(jeune.id, nouvelleValeur)
       .then(() => {
         setIdentifiantPartenaire(nouvelleValeur)

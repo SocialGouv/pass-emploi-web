@@ -18,16 +18,10 @@ import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ByDay, Message } from 'interfaces/message'
 import {
-  deleteFichier,
-  uploadFichier as _uploadFichier,
-} from 'services/fichiers.service'
-import {
   FormNouveauMessageIndividuel,
   observeDerniersMessages,
   observeJeuneReadingDate,
-  sendNouveauMessage as _sendNouveauMessage,
   setReadByConseiller,
-  toggleFlag as _toggleFlag,
 } from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -88,6 +82,9 @@ export default function Conversation({
 
     if (uploadedFileInfo) formNouveauMessage.infoPieceJointe = uploadedFileInfo
 
+    const { sendNouveauMessage: _sendNouveauMessage } = await import(
+      'services/messages.service'
+    )
     _sendNouveauMessage(formNouveauMessage)
 
     setUploadedFileInfo(undefined)
@@ -159,6 +156,10 @@ export default function Conversation({
 
     try {
       setIsFileUploading(true)
+
+      const { uploadFichier: _uploadFichier } = await import(
+        'services/fichiers.service'
+      )
       const infoFichier = await _uploadFichier(
         [jeuneChat.id],
         [],
@@ -174,11 +175,15 @@ export default function Conversation({
 
   async function deleteFile() {
     setUploadedFileInfo(undefined)
+    const { deleteFichier } = await import('services/fichiers.service')
     await deleteFichier(uploadedFileInfo!.id)
   }
 
   async function toggleFlag() {
     const flagged = !jeuneChat.flaggedByConseiller
+    const { toggleFlag: _toggleFlag } = await import(
+      'services/messages.service'
+    )
     _toggleFlag(jeuneChat.chatId, flagged)
     trackEvent({
       structure: conseiller.structure,

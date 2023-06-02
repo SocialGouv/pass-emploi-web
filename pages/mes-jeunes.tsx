@@ -22,7 +22,6 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { recupererBeneficiaires as _recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -64,6 +63,9 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   async function recupererBeneficiaires(): Promise<void> {
     setIsRecuperationBeneficiairesLoading(true)
     try {
+      const { recupererBeneficiaires: _recupererBeneficiaires } = await import(
+        'services/conseiller.service'
+      )
       await _recupererBeneficiaires()
       setAlerte(AlerteParam.recuperationBeneficiaires)
       setConseiller({ ...conseiller, aDesBeneficiairesARecuperer: false })

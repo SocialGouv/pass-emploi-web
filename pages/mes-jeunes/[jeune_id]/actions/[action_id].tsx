@@ -24,11 +24,6 @@ import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  deleteAction as _deleteAction,
-  qualifier,
-  updateAction,
-} from 'services/actions.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -82,6 +77,7 @@ function PageAction({
   const dateEcheance = toShortDate(action.dateEcheance)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
+    const { updateAction } = await import('services/actions.service')
     const nouveauStatut = await updateAction(action.id, statutChoisi)
     setStatut(nouveauStatut)
   }
@@ -94,6 +90,7 @@ function PageAction({
         `/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`
       )
     } else {
+      const { qualifier } = await import('services/actions.service')
       const nouvelleQualification = await qualifier(
         action.id,
         CODE_QUALIFICATION_NON_SNP,
@@ -109,6 +106,9 @@ function PageAction({
 
   async function deleteAction(): Promise<void> {
     setDeleteDisabled(true)
+    const { deleteAction: _deleteAction } = await import(
+      'services/actions.service'
+    )
     _deleteAction(action.id)
       .then(() => {
         setAlerte(AlerteParam.suppressionAction)

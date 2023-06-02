@@ -20,7 +20,6 @@ import { getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { partagerOffre } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -81,6 +80,7 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
     const messageDefault = getDefaultMessage(offre.type)
 
     try {
+      const { partagerOffre } = await import('services/messages.service')
       await partagerOffre({
         offre,
         idsDestinataires: idsDestinataires.value,

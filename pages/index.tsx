@@ -8,7 +8,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { modifierAgence } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -35,6 +34,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     id?: string
     nom: string
   }): Promise<void> {
+    const { modifierAgence } = await import('services/conseiller.service')
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel('Succès ajout agence')
