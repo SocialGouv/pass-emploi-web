@@ -31,7 +31,6 @@ export default function AppHead({ titre, hasMessageNonLu }: AppHeadProps) {
         rel='icon'
         href={`/${hasMessageNonLu ? 'favicon_notif' : 'favicon'}.png`}
       />
-      <link rel='manifest' href='/manifest.webmanifest' />
     </Head>
   )
 }
