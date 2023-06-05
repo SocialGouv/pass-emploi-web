@@ -18,7 +18,6 @@ import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { cloreAnimationCollective as _cloreAnimationCollective } from 'services/evenements.service'
 import { useAlerte } from 'utils/alerteContext'
 
 interface ClotureProps extends PageProps {
@@ -51,6 +50,9 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
 
   async function cloreAnimationCollective(event: FormEvent) {
     event.preventDefault()
+
+    const { cloreAnimationCollective: _cloreAnimationCollective } =
+      await import('services/evenements.service')
 
     await _cloreAnimationCollective(evenement.id, idsSelectionnes)
 

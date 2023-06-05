@@ -8,7 +8,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { createCompteJeunePoleEmploi } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -29,6 +28,9 @@ function PoleEmploiCreationJeune(): JSX.Element {
     setCreationError('')
     setCreationEnCours(true)
     try {
+      const { createCompteJeunePoleEmploi } = await import(
+        'services/jeunes.service'
+      )
       const beneficiaireCree = await createCompteJeunePoleEmploi({
         firstName: newJeune.prenom,
         lastName: newJeune.nom,

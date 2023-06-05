@@ -5,7 +5,6 @@ import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { JeuneChat } from 'interfaces/jeune'
-import { toggleFlag as _toggleFlag } from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
@@ -28,7 +27,10 @@ export default function ChatRoom({
 
   const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
 
-  function toggleFlag(idChat: string, flagged: boolean): void {
+  async function toggleFlag(idChat: string, flagged: boolean): Promise<void> {
+    const { toggleFlag: _toggleFlag } = await import(
+      'services/messages.service'
+    )
     _toggleFlag(idChat, flagged)
     trackEvent({
       structure: conseiller.structure,

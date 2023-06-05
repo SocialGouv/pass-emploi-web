@@ -15,11 +15,6 @@ import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { modifierAgence } from 'services/conseiller.service'
-import {
-  getRendezVousConseiller,
-  getRendezVousEtablissement,
-} from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -98,19 +93,25 @@ function Agenda({ onglet }: AgendaProps) {
     )
   }
 
-  function recupererRdvsConseiller(
+  async function recupererRdvsConseiller(
     idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<EvenementListItem[]> {
+    const { getRendezVousConseiller } = await import(
+      'services/evenements.service'
+    )
     return getRendezVousConseiller(idConseiller, dateDebut, dateFin)
   }
 
-  function recupererRdvsEtablissement(
+  async function recupererRdvsEtablissement(
     idEtablissement: string,
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<AnimationCollective[]> {
+    const { getRendezVousEtablissement } = await import(
+      'services/evenements.service'
+    )
     return getRendezVousEtablissement(idEtablissement, dateDebut, dateFin)
   }
 
@@ -122,6 +123,7 @@ function Agenda({ onglet }: AgendaProps) {
     id?: string
     nom: string
   }): Promise<void> {
+    const { modifierAgence } = await import('services/conseiller.service')
     await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')

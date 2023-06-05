@@ -23,11 +23,7 @@ import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { uploadFichier } from 'services/fichiers.service'
-import {
-  FormNouveauMessageGroupe,
-  sendNouveauMessageGroupe,
-} from 'services/messages.service'
+import { FormNouveauMessageGroupe } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -123,6 +119,7 @@ function EnvoiMessageGroupe({
     let fileInfo: InfoFichier | undefined
     try {
       if (pieceJointe) {
+        const { uploadFichier } = await import('services/fichiers.service')
         fileInfo = await uploadFichier(
           selectedJeunesIds,
           selectedListesIds,
@@ -152,6 +149,9 @@ function EnvoiMessageGroupe({
       }
       if (fileInfo) formNouveauMessage.infoPieceJointe = fileInfo
 
+      const { sendNouveauMessageGroupe } = await import(
+        'services/messages.service'
+      )
       await sendNouveauMessageGroupe(formNouveauMessage)
 
       setAlerte(AlerteParam.envoiMessage)

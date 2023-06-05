@@ -16,25 +16,9 @@ import {
 } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  searchImmersions,
-  SearchImmersionsQuery,
-} from 'services/immersions.service'
-import {
-  getOffreEmploiClientSide,
-  searchAlternances,
-  searchOffresEmploi,
-  SearchOffresEmploiQuery,
-} from 'services/offres-emploi.service'
-import {
-  getCommunes,
-  getCommunesEtDepartements,
-  getMetiers,
-} from 'services/referentiel.service'
-import {
-  searchServicesCiviques,
-  SearchServicesCiviquesQuery,
-} from 'services/services-civiques.service'
+import { SearchImmersionsQuery } from 'services/immersions.service'
+import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
+import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
@@ -195,6 +179,9 @@ function RechercheOffres(_: PageProps) {
     metadonnees: MetadonneesPagination
   }> {
     if (queryOffresEmploi.idOffre) {
+      const { getOffreEmploiClientSide } = await import(
+        'services/offres-emploi.service'
+      )
       const offre = await getOffreEmploiClientSide(queryOffresEmploi.idOffre)
 
       return {
@@ -205,6 +192,10 @@ function RechercheOffres(_: PageProps) {
         },
       }
     }
+
+    const { searchOffresEmploi } = await import(
+      'services/offres-emploi.service'
+    )
     return searchOffresEmploi(getQueryOffreEmploi(), page)
   }
 
@@ -213,6 +204,9 @@ function RechercheOffres(_: PageProps) {
     metadonnees: MetadonneesPagination
   }> {
     if (queryOffresEmploi.idOffre) {
+      const { getOffreEmploiClientSide } = await import(
+        'services/offres-emploi.service'
+      )
       const offre = await getOffreEmploiClientSide(queryOffresEmploi.idOffre)
 
       return {
@@ -223,6 +217,8 @@ function RechercheOffres(_: PageProps) {
         },
       }
     }
+
+    const { searchAlternances } = await import('services/offres-emploi.service')
     return searchAlternances(getQueryOffreEmploi(), page)
   }
 
@@ -230,6 +226,9 @@ function RechercheOffres(_: PageProps) {
     offres: BaseServiceCivique[]
     metadonnees: MetadonneesPagination
   }> {
+    const { searchServicesCiviques } = await import(
+      'services/services-civiques.service'
+    )
     return searchServicesCiviques(getQueryServiceCivique(), page)
   }
 
@@ -237,7 +236,28 @@ function RechercheOffres(_: PageProps) {
     offres: BaseImmersion[]
     metadonnees: MetadonneesPagination
   }> {
+    const { searchImmersions } = await import('services/immersions.service')
     return searchImmersions(getQueryImmersion(), page)
+  }
+
+  async function fetchMetiers(query: string) {
+    const { getMetiers: _getMetiers } = await import(
+      'services/referentiel.service'
+    )
+    return _getMetiers(query)
+  }
+
+  async function fetchCommunes(query: string) {
+    const { getCommunes: _getCommunes } = await import(
+      'services/referentiel.service'
+    )
+    return _getCommunes(query)
+  }
+
+  async function fetchCommunesEtDepartements(query: string) {
+    const { getCommunesEtDepartements: _getCommunesEtDepartements } =
+      await import('services/referentiel.service')
+    return _getCommunesEtDepartements(query)
   }
 
   function nettoyerResultats() {
@@ -261,9 +281,9 @@ function RechercheOffres(_: PageProps) {
 
       <FormRechercheOffres
         hasResults={isSearching || offres !== undefined}
-        fetchMetiers={getMetiers}
-        fetchCommunes={getCommunes}
-        fetchCommunesEtDepartements={getCommunesEtDepartements}
+        fetchMetiers={fetchMetiers}
+        fetchCommunes={fetchCommunes}
+        fetchCommunesEtDepartements={fetchCommunesEtDepartements}
         stateTypeOffre={[typeOffre, switchTypeOffre]}
         stateQueryOffresEmploi={[queryOffresEmploi, updateQueryEmplois]}
         stateQueryServicesCiviques={[

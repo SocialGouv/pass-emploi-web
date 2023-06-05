@@ -6,7 +6,6 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Commentaire } from 'interfaces/action'
-import { ajouterCommentaire } from 'services/actions.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 interface CommentairesActionProps {
@@ -28,7 +27,8 @@ export function CommentairesAction({
   const [conseiller] = useConseiller()
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  function ajouterUnCommentaire() {
+  async function ajouterUnCommentaire() {
+    const { ajouterCommentaire } = await import('services/actions.service')
     ajouterCommentaire(idAction, nouveauCommentaire)
       .then((commentaireCree) => {
         const commentairesMisAJour = [...commentaires, commentaireCree]

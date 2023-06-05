@@ -21,7 +21,6 @@ import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { qualifier } from 'services/actions.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { ApiError } from 'utils/httpClient'
@@ -99,6 +98,7 @@ function PageQualification({
     setErreurQualification(undefined)
     setIsQualificationEnCours(true)
     try {
+      const { qualifier } = await import('services/actions.service')
       await qualifier(action.id, codeSNP!, {
         commentaire: commentaire.value,
         dateDebutModifiee: DateTime.fromISO(dateDebut).startOf('day'),
