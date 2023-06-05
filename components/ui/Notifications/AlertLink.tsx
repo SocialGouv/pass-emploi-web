@@ -13,6 +13,7 @@ export default function AlertLink({ href, label, onClick }: AlertLinkProps) {
   return (
     <Link
       href={href}
+      prefetch={false}
       className='flex items-center text-base-regular whitespace-nowrap underline text-success fill-success hover:text-success_darken'
       onClick={onClick}
     >

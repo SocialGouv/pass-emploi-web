@@ -24,6 +24,7 @@ export default function ButtonLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       className={`${className ? className : ''} text-s-bold ${
         styles.button
       } ${getColorStyleClassName(style)}`}

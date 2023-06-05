@@ -133,6 +133,7 @@ export default function DossierJeuneMilo({
       <div className='flex items-center mt-14'>
         <Link
           href={'/mes-jeunes/milo/creation-jeune'}
+          prefetch={false}
           className='flex items-center text-base-bold text-primary_darken mr-6'
         >
           <IconComponent

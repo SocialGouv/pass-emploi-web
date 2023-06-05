@@ -18,6 +18,7 @@ export function TR(props: TRProps | TRLinkProps) {
     return (
       <Link
         href={href}
+        prefetch={false}
         role='row'
         aria-label={label}
         title={label}

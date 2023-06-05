@@ -33,6 +33,7 @@ export default function LienOffre({
       >
         <Link
           href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
+          prefetch={false}
           className='underline text-[inherit]'
         >
           Voir l’offre <span className='sr-only'>{infoOffre.titre}</span>

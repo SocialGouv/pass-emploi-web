@@ -220,6 +220,7 @@ function EnvoiMessageGroupe({
           />
           <Link
             href='/mes-jeunes/listes-de-diffusion'
+            prefetch={false}
             className='flex items-center pt-2 text-s-regular text-content_color underline hover:text-primary_darken'
           >
             Gérer mes listes de diffusion

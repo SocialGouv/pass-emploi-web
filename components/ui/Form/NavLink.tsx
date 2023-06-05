@@ -78,7 +78,12 @@ export default function NavLink({
   return (
     <>
       {!isExternal && (
-        <Link href={href} className={linkStyle} onClick={onClick}>
+        <Link
+          href={href}
+          prefetch={false}
+          className={linkStyle}
+          onClick={onClick}
+        >
           {linkContent}
         </Link>
       )}

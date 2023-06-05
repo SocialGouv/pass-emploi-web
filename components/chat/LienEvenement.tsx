@@ -24,6 +24,7 @@ export default function LienEvenement({
       >
         <Link
           href={`/mes-jeunes/edition-rdv?idRdv=${infoEvenement.id}`}
+          prefetch={false}
           className='underline text-[inherit]'
         >
           Voir l’événement

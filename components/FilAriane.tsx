@@ -49,6 +49,7 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
               <>
                 <Link
                   href={href}
+                  prefetch={false}
                   className='text-s-regular text-content_color underline hover:text-primary_darken'
                 >
                   {label}
@@ -64,6 +65,7 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
             {index === ariane.length - 1 && (
               <Link
                 href={href}
+                prefetch={false}
                 aria-current='page'
                 className='text-s-regular text-content_color'
               >

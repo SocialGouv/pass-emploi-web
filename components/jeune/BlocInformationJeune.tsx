@@ -173,6 +173,7 @@ function LienVersHistorique({
   return (
     <Link
       href={`${pathPrefix}/${idJeune}/historique`}
+      prefetch={false}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
     >
       Voir l’historique des conseillers

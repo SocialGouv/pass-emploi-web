@@ -84,6 +84,7 @@ function LienVersFavoris({
     <div className='flex justify-end mt-4'>
       <Link
         href={`${pathPrefix}/${idJeune}/favoris`}
+        prefetch={false}
         className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
       >
         Voir la liste des favoris

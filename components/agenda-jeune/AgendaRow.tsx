@@ -43,6 +43,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
     <li className='mt-4 text-base-regular rounded-base shadow-base hover:bg-primary_lighten'>
       <Link
         href={href + entree.id}
+        prefetch={false}
         aria-label={label}
         className='p-4 flex w-full gap-5'
       >
