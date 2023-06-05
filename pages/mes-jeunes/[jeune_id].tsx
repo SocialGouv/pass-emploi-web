@@ -5,15 +5,11 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import { OngletActions } from 'components/action/OngletActions'
-import { OngletAgendaBeneficiaire } from 'components/agenda-jeune/OngletAgendaBeneficiaire'
-import { BlocFavoris } from 'components/jeune/BlocFavoris'
-import { DetailsJeune } from 'components/jeune/DetailsJeune'
+import DetailsJeune from 'components/jeune/DetailsJeune'
 import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { TabFavoris } from 'components/jeune/TabFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
-import { OngletRdvsBeneficiaire } from 'components/rdv/OngletRdvsBeneficiaire'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -43,18 +39,11 @@ import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  getActionsJeuneClientSide,
-  getActionsJeuneServerSide,
-} from 'services/actions.service'
+import { getActionsJeuneClientSide } from 'services/actions.service'
 import { recupererAgenda as _recupererAgenda } from 'services/agenda.service'
-import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import {
   archiverJeune,
   getIndicateursJeuneAlleges,
-  getJeuneDetails,
-  getMetadonneesFavorisJeune,
   getMotifsSuppression,
   supprimerJeuneInactif as _supprimerJeuneInactif,
 } from 'services/jeunes.service'
@@ -73,6 +62,15 @@ const DeleteJeuneInactifModal = dynamic(
   import('components/jeune/DeleteJeuneInactifModal'),
   { ssr: false }
 )
+
+const OngletActions = dynamic(import('components/action/OngletActions'))
+const OngletAgendaBeneficiaire = dynamic(
+  import('components/agenda-jeune/OngletAgendaBeneficiaire')
+)
+const OngletRdvsBeneficiaire = dynamic(
+  import('components/rdv/OngletRdvsBeneficiaire')
+)
+const BlocFavoris = dynamic(import('components/jeune/BlocFavoris'))
 
 export enum Onglet {
   AGENDA = 'AGENDA',
@@ -287,7 +285,7 @@ function FicheJeune({
 
   useEffect(() => {
     if (!lectureSeule) setIdCurrentJeune(jeune.id)
-  }, [jeune, setIdCurrentJeune])
+  }, [jeune, lectureSeule])
 
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
@@ -488,6 +486,7 @@ function FicheJeune({
               />
             </div>
           )}
+
           {currentTab === Onglet.ACTIONS && (
             <div
               role='tabpanel'
@@ -504,6 +503,7 @@ function FicheJeune({
               />
             </div>
           )}
+
           {currentTab === Onglet.FAVORIS && metadonneesFavoris && (
             <div
               role='tabpanel'
@@ -577,13 +577,22 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-
   const {
     session: { accessToken, user },
   } = sessionOrRedirect
 
   const userIsPoleEmploi = estUserPoleEmploi(user)
   const page = parseInt(context.query.page as string, 10) || 1
+
+  const { getJeuneDetails, getMetadonneesFavorisJeune } = await import(
+    'services/jeunes.service'
+  )
+  const { getRendezVousJeune } = await import('services/evenements.service')
+  const { getActionsJeuneServerSide } = await import('services/actions.service')
+  const { getOffres, getRecherchesSauvegardees } = await import(
+    'services/favoris.service'
+  )
+
   const [jeune, metadonneesFavoris, rdvs, actions, offresPE, recherchesPE] =
     await Promise.all([
       getJeuneDetails(context.query.jeune_id as string, accessToken),

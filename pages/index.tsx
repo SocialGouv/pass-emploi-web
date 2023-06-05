@@ -8,11 +8,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  getConseillerServerSide,
-  modifierAgence,
-} from 'services/conseiller.service'
-import { getAgencesServerSide } from 'services/referentiel.service'
+import { modifierAgence } from 'services/conseiller.service'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -92,6 +88,9 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     ? `?source=${context.query.source}`
     : ''
 
+  const { getConseillerServerSide } = await import(
+    'services/conseiller.service'
+  )
   const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
@@ -111,6 +110,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     }
   }
 
+  const { getAgencesServerSide } = await import('services/referentiel.service')
   const referentielAgences = await getAgencesServerSide(
     user.structure,
     accessToken

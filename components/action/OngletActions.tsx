@@ -35,7 +35,7 @@ export enum TRI {
   dateEcheanceCroissante = 'date_echeance_croissante',
 }
 
-export function OngletActions({
+export default function OngletActions({
   actionsInitiales,
   getActions,
   jeune,

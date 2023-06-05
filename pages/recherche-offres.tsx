@@ -1,10 +1,10 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import isEqual from 'lodash.isequal'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
-import ResultatsRechercheOffre from 'components/offres/ResultatsRechercheOffres'
 import PartageRechercheButton from 'components/offres/suggestions/PartageRechercheButton'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
@@ -41,6 +41,10 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const ResultatsRechercheOffre = dynamic(
+  import('components/offres/ResultatsRechercheOffres')
+)
 
 function RechercheOffres(_: PageProps) {
   const [alerte] = useAlerte()
@@ -254,6 +258,7 @@ function RechercheOffres(_: PageProps) {
           onAcknowledge={() => setSearchError(undefined)}
         />
       )}
+
       <FormRechercheOffres
         hasResults={isSearching || offres !== undefined}
         fetchMetiers={getMetiers}
@@ -268,20 +273,24 @@ function RechercheOffres(_: PageProps) {
         stateQueryImmersions={[queryImmersions, updateQueryImmersions]}
         onNouvelleRecherche={rechercherPremierePage}
       />
+
       <PartageRechercheButton
         typeOffre={typeOffre}
         suggestionOffreEmploi={getQueryOffreEmploi()}
         suggestionImmersion={getQueryImmersion()}
         suggestionServiceCivique={getQueryServiceCivique()}
       />
-      <ResultatsRechercheOffre
-        isSearching={isSearching}
-        offres={offres}
-        pageCourante={pageCourante}
-        nbTotal={nbTotalOffres}
-        nbPages={nbPages}
-        onChangerPage={(page) => rechercherOffres({ page })}
-      />
+
+      {(isSearching || offres) && (
+        <ResultatsRechercheOffre
+          isSearching={isSearching}
+          offres={offres}
+          pageCourante={pageCourante}
+          nbTotal={nbTotalOffres}
+          nbPages={nbPages}
+          onChangerPage={(page) => rechercherOffres({ page })}
+        />
+      )}
     </>
   )
 }

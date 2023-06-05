@@ -11,7 +11,7 @@ type BlocFavorisProps = {
   metadonneesFavoris: MetadonneesFavoris
 }
 
-export function BlocFavoris({
+export default function BlocFavoris({
   idJeune,
   metadonneesFavoris: { offres, recherches, autoriseLePartage },
 }: BlocFavorisProps) {

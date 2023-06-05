@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { getSession, signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import React, { FormEvent, useCallback, useEffect, useState } from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'
@@ -10,7 +10,7 @@ import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
 import styles from 'styles/components/Login.module.css'
-import useMatomo from 'utils/analytics/useMatomo'
+import { trackPage } from 'utils/analytics/matomo'
 
 const OnboardingMobileModal = dynamic(
   import('components/OnboardingMobileModal'),
@@ -71,9 +71,12 @@ function Login({
 
   useEffect(() => {
     if (window.innerWidth < MIN_DESKTOP_WIDTH) setAfficherOnboarding(true)
-  }, [])
 
-  useMatomo(isFromEmail ? 'Connexion - Origine email' : 'Connexion')
+    trackPage({
+      structure: 'visiteur',
+      customTitle: isFromEmail ? 'Connexion - Origine email' : 'Connexion',
+    })
+  }, [])
 
   return (
     <div className={`${styles.login} w-full h-screen relative`}>
@@ -160,6 +163,7 @@ function Login({
 export const getServerSideProps: GetServerSideProps<{}> = async (
   context
 ): Promise<GetServerSidePropsResult<{}>> => {
+  const { getSession } = await import('next-auth/react')
   const session = await getSession({ req: context.req })
   const querySource = context.query.source && `?source=${context.query.source}`
 

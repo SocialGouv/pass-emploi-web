@@ -24,7 +24,6 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { uploadFichier } from 'services/fichiers.service'
-import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
 import {
   FormNouveauMessageGroupe,
   sendNouveauMessageGroupe,
@@ -351,14 +350,17 @@ export const getServerSideProps: GetServerSideProps<
     'utils/auth/withMandatorySessionOrRedirect'
   )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
+
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
 
+  const { getListesDeDiffusionServerSide } = await import(
+    'services/listes-de-diffusion.service'
+  )
   const listesDeDiffusion = await getListesDeDiffusionServerSide(
     user.id,
     accessToken

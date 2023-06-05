@@ -1,11 +1,9 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-import EncartAgenceRequise from 'components/EncartAgenceRequise'
-import { OngletActionsPilotage } from 'components/pilotage/OngletActionsPilotage'
-import { OngletAnimationsCollectivesPilotage } from 'components/pilotage/OngletAnimationsCollectivesPilotage'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
@@ -13,23 +11,22 @@ import { ActionPilotage } from 'interfaces/action'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import {
-  getActionsAQualifierClientSide,
-  getActionsAQualifierServerSide,
-} from 'services/actions.service'
-import {
-  getConseillerServerSide,
-  modifierAgence,
-} from 'services/conseiller.service'
-import {
-  getAnimationsCollectivesACloreClientSide,
-  getAnimationsCollectivesACloreServerSide,
-} from 'services/evenements.service'
+import { getActionsAQualifierClientSide } from 'services/actions.service'
+import { modifierAgence } from 'services/conseiller.service'
+import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const OngletActionsPilotage = dynamic(
+  import('components/pilotage/OngletActionsPilotage')
+)
+const OngletAnimationsCollectivesPilotage = dynamic(
+  import('components/pilotage/OngletAnimationsCollectivesPilotage')
+)
+const EncartAgenceRequise = dynamic(import('components/EncartAgenceRequise'))
 
 export enum Onglet {
   ACTIONS = 'ACTIONS',
@@ -261,6 +258,15 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
   } = sessionOrRedirect
   if (estUserPoleEmploi(user)) return { notFound: true }
 
+  const { getActionsAQualifierServerSide } = await import(
+    'services/actions.service'
+  )
+  const { getConseillerServerSide } = await import(
+    'services/conseiller.service'
+  )
+  const { getAnimationsCollectivesACloreServerSide } = await import(
+    'services/evenements.service'
+  )
   const [actions, evenements] = await Promise.all([
     getActionsAQualifierServerSide(user.id, accessToken),
     getConseillerServerSide(user, accessToken).then((conseiller) => {

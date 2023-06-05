@@ -7,9 +7,6 @@ import OffreEmploiDetail from 'components/offres/OffreEmploiDetail'
 import ServiceCiviqueDetail from 'components/offres/ServiceCiviqueDetail'
 import { DetailOffre as _DetailOffre, TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
-import { getImmersionServerSide } from 'services/immersions.service'
-import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
-import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -62,6 +59,9 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
   let header: string
   switch (typeOffre) {
     case 'emploi':
+      const { getOffreEmploiServerSide } = await import(
+        'services/offres-emploi.service'
+      )
       offre = await getOffreEmploiServerSide(
         context.query.offre_id as string,
         accessToken
@@ -72,6 +72,9 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
           : 'Offre d’emploi'
       break
     case 'service-civique':
+      const { getServiceCiviqueServerSide } = await import(
+        'services/services-civiques.service'
+      )
       offre = await getServiceCiviqueServerSide(
         context.query.offre_id as string,
         accessToken
@@ -79,6 +82,9 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
       header = 'Offre de service civique'
       break
     case 'immersion':
+      const { getImmersionServerSide } = await import(
+        'services/immersions.service'
+      )
       offre = await getImmersionServerSide(
         context.query.offre_id as string,
         accessToken
