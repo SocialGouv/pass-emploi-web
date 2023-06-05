@@ -19,7 +19,8 @@ export function ChatCredentialsProvider({
   children: ReactNode
   credentialsForTests?: ChatCredentials
 }) {
-  const chatCredentialsState = useState<MaybeChatCredentials>(credentialsForTests)
+  const chatCredentialsState =
+    useState<MaybeChatCredentials>(credentialsForTests)
   return (
     <ChatCredentialsContext.Provider value={chatCredentialsState}>
       {children}

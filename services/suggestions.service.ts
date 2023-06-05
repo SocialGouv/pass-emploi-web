@@ -1,151 +1,109 @@
 import { getSession } from 'next-auth/react'
 
-import { ApiClient } from 'clients/api.client'
+import { apiPost } from 'clients/api.client'
 
-export interface SuggestionsService {
-  partagerRechercheOffreEmploi(query: {
-    idsJeunes: string[]
-    titre: string
-    motsCles: string
-    labelLocalite: string
-    codeDepartement?: string
-    codeCommune?: string
-  }): Promise<void>
-
-  partagerRechercheAlternance(query: {
-    idsJeunes: string[]
-    titre: string
-    motsCles: string
-    labelLocalite: string
-    codeDepartement?: string
-    codeCommune?: string
-  }): Promise<void>
-
-  partagerRechercheImmersion(query: {
-    idsJeunes: string[]
-    titre: string
-    labelMetier: string
-    codeMetier: string
-    labelLocalite: string
-    latitude: number
-    longitude: number
-  }): Promise<void>
-
-  partagerRechercheServiceCivique(query: {
-    idsJeunes: string[]
-    titre: string
-    labelLocalite: string
-    latitude: number
-    longitude: number
-  }): Promise<void>
+export async function partagerRechercheOffreEmploi(query: {
+  idsJeunes: string[]
+  titre: string
+  motsCles: string
+  labelLocalite: string
+  codeDepartement?: string
+  codeCommune?: string
+}): Promise<void> {
+  const alternanceOnly = false
+  await envoyerSuggestionOffreEmploiOuAlternance(query, alternanceOnly)
 }
 
-export class SuggestionsApiService implements SuggestionsService {
-  constructor(private readonly apiClient: ApiClient) {}
+export async function partagerRechercheAlternance(query: {
+  idsJeunes: string[]
+  titre: string
+  motsCles: string
+  labelLocalite: string
+  codeDepartement?: string
+  codeCommune?: string
+}): Promise<void> {
+  const alternanceOnly = true
+  await envoyerSuggestionOffreEmploiOuAlternance(query, alternanceOnly)
+}
 
-  async partagerRechercheOffreEmploi(query: {
-    idsJeunes: string[]
-    titre: string
-    motsCles: string
-    labelLocalite: string
-    codeDepartement?: string
-    codeCommune?: string
-  }): Promise<void> {
-    const alternanceOnly = false
-    await this.envoyerSuggestionOffreEmploiOuAlternance(query, alternanceOnly)
-  }
+export async function partagerRechercheImmersion(query: {
+  idsJeunes: string[]
+  titre: string
+  labelMetier: string
+  codeMetier: string
+  labelLocalite: string
+  latitude: number
+  longitude: number
+}): Promise<void> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
 
-  async partagerRechercheAlternance(query: {
-    idsJeunes: string[]
-    titre: string
-    motsCles: string
-    labelLocalite: string
-    codeDepartement?: string
-    codeCommune?: string
-  }): Promise<void> {
-    const alternanceOnly = true
-    await this.envoyerSuggestionOffreEmploiOuAlternance(query, alternanceOnly)
-  }
-
-  async partagerRechercheImmersion(query: {
-    idsJeunes: string[]
-    titre: string
-    labelMetier: string
-    codeMetier: string
-    labelLocalite: string
-    latitude: number
-    longitude: number
-  }): Promise<void> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
-    const idConseiller = session!.user.id
-
-    await this.apiClient.post(
-      `/conseillers/${idConseiller}/recherches/suggestions/immersions`,
-      {
-        idsJeunes: query.idsJeunes,
-        titre: query.titre,
-        metier: query.labelMetier,
-        rome: query.codeMetier,
-        localisation: query.labelLocalite,
-        lat: query.latitude,
-        lon: query.longitude,
-      },
-      accessToken
-    )
-  }
-
-  async partagerRechercheServiceCivique(query: {
-    idsJeunes: string[]
-    titre: string
-    labelLocalite: string
-    latitude: number
-    longitude: number
-  }): Promise<void> {
-    const session = await getSession()
-    const accessToken = session!.accessToken
-    const idConseiller = session!.user.id
-
-    await this.apiClient.post(
-      `/conseillers/${idConseiller}/recherches/suggestions/services-civique`,
-      {
-        idsJeunes: query.idsJeunes,
-        titre: query.titre,
-        localisation: query.labelLocalite,
-        lat: query.latitude,
-        lon: query.longitude,
-      },
-      accessToken
-    )
-  }
-
-  private async envoyerSuggestionOffreEmploiOuAlternance(
-    query: {
-      idsJeunes: string[]
-      titre: string
-      motsCles: string
-      labelLocalite: string
-      codeDepartement?: string
-      codeCommune?: string
+  await apiPost(
+    `/conseillers/${idConseiller}/recherches/suggestions/immersions`,
+    {
+      idsJeunes: query.idsJeunes,
+      titre: query.titre,
+      metier: query.labelMetier,
+      rome: query.codeMetier,
+      localisation: query.labelLocalite,
+      lat: query.latitude,
+      lon: query.longitude,
     },
-    alternanceOnly: boolean
-  ) {
-    const session = await getSession()
-    const accessToken = session!.accessToken
-    const idConseiller = session!.user.id
+    accessToken
+  )
+}
 
-    await this.apiClient.post(
-      `/conseillers/${idConseiller}/recherches/suggestions/offres-emploi`,
-      {
-        idsJeunes: query.idsJeunes,
-        titre: query.titre,
-        q: query.motsCles,
-        localisation: query.labelLocalite,
-        departement: query.codeDepartement,
-        commune: query.codeCommune,
-        alternance: alternanceOnly,
-      },
-      accessToken
-    )
-  }
+export async function partagerRechercheServiceCivique(query: {
+  idsJeunes: string[]
+  titre: string
+  labelLocalite: string
+  latitude: number
+  longitude: number
+}): Promise<void> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
+
+  await apiPost(
+    `/conseillers/${idConseiller}/recherches/suggestions/services-civique`,
+    {
+      idsJeunes: query.idsJeunes,
+      titre: query.titre,
+      localisation: query.labelLocalite,
+      lat: query.latitude,
+      lon: query.longitude,
+    },
+    accessToken
+  )
+}
+
+async function envoyerSuggestionOffreEmploiOuAlternance(
+  query: {
+    idsJeunes: string[]
+    titre: string
+    motsCles: string
+    labelLocalite: string
+    codeDepartement?: string
+    codeCommune?: string
+  },
+  alternanceOnly: boolean
+) {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
+
+  await apiPost(
+    `/conseillers/${idConseiller}/recherches/suggestions/offres-emploi`,
+    {
+      idsJeunes: query.idsJeunes,
+      titre: query.titre,
+      q: query.motsCles,
+      localisation: query.labelLocalite,
+      departement: query.codeDepartement,
+      commune: query.codeCommune,
+      alternance: alternanceOnly,
+    },
+    accessToken
+  )
 }

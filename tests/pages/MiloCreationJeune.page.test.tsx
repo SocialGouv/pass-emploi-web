@@ -4,11 +4,12 @@ import { useRouter } from 'next/router'
 
 import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
 import { unDossierMilo } from 'fixtures/milo'
-import { mockedConseillerService } from 'fixtures/services'
 import { BaseJeune } from 'interfaces/jeune'
 import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
-import { ConseillerService } from 'services/conseiller.service'
+import { createCompteJeuneMilo } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
+
+jest.mock('services/conseiller.service')
 
 describe('MiloCreationJeune', () => {
   describe("quand le dossier n'a pas encore été saisi", () => {
@@ -70,16 +71,13 @@ describe('MiloCreationJeune', () => {
   })
 
   describe('quand on clique sur le bouton créer un compte', () => {
-    let conseillerService: ConseillerService
     let push: Function
     let setAlerte: () => void
     let setPortefeuille: (updatedBeneficiaires: BaseJeune[]) => void
     let portefeuille: BaseJeune[]
     beforeEach(async () => {
       // Given
-      conseillerService = mockedConseillerService({
-        createCompteJeuneMilo: jest.fn(async () => uneBaseJeune()),
-      })
+      ;(createCompteJeuneMilo as jest.Mock).mockResolvedValue(uneBaseJeune())
 
       push = jest.fn(() => Promise.resolve())
       setAlerte = jest.fn()
@@ -97,7 +95,6 @@ describe('MiloCreationJeune', () => {
           pageTitle=''
         />,
         {
-          customDependances: { conseillerService },
           customAlerte: { alerteSetter: setAlerte },
           customPortefeuille: { setter: setPortefeuille },
         }
@@ -112,7 +109,7 @@ describe('MiloCreationJeune', () => {
       await userEvent.click(createCompteButton)
 
       // Then
-      expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledWith({
+      expect(createCompteJeuneMilo).toHaveBeenCalledWith({
         email: 'kenji-faux-mail@mail.com',
         idDossier: '1234',
         nom: 'GIRAC',
@@ -129,9 +126,9 @@ describe('MiloCreationJeune', () => {
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       // Given
-      ;(conseillerService.createCompteJeuneMilo as jest.Mock).mockRejectedValue(
-        { message: "un message d'erreur" }
-      )
+      ;(createCompteJeuneMilo as jest.Mock).mockRejectedValue({
+        message: "un message d'erreur",
+      })
 
       // When
       const createCompteButton = screen.getByRole('button', {
@@ -141,7 +138,7 @@ describe('MiloCreationJeune', () => {
       await userEvent.click(createCompteButton)
 
       // Then
-      expect(conseillerService.createCompteJeuneMilo).toHaveBeenCalledTimes(1)
+      expect(createCompteJeuneMilo).toHaveBeenCalledTimes(1)
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })
   })

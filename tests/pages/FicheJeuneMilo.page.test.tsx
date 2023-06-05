@@ -1,15 +1,13 @@
 import { GetServerSidePropsContext } from 'next/types'
 
-import { mockedJeunesService } from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getServerSideProps } from 'pages/mes-jeunes/milo/[numero_dossier]'
-import { JeunesService } from 'services/jeunes.service'
+import { getIdJeuneMilo } from 'services/jeunes.service'
 import { trackSSR } from 'utils/analytics/matomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/jeunes.service')
 jest.mock('utils/analytics/matomo')
 
 describe('Fiche Jeune MiLo', () => {
@@ -53,23 +51,18 @@ describe('Fiche Jeune MiLo', () => {
       })
 
       describe('Pour un conseiller MiLo', () => {
-        let jeunesService: JeunesService
         beforeEach(() => {
           // Given
           ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
             validSession: true,
             session: { user: { structure: StructureConseiller.MILO } },
           })
-          jeunesService = mockedJeunesService()
-          ;(withDependance as jest.Mock).mockReturnValue(jeunesService)
         })
 
         describe('Quand le jeune existe', () => {
           it('redirige vers la fiche du jeune', async () => {
             // Given
-            ;(jeunesService.getIdJeuneMilo as jest.Mock).mockResolvedValue(
-              'id-jeune'
-            )
+            ;(getIdJeuneMilo as jest.Mock).mockResolvedValue('id-jeune')
 
             // When
             const actual = await getServerSideProps({
@@ -97,9 +90,7 @@ describe('Fiche Jeune MiLo', () => {
         describe("Quand le jeune n'existe pas", () => {
           it('redirige vers la liste des jeunes', async () => {
             // Given
-            ;(jeunesService.getIdJeuneMilo as jest.Mock).mockResolvedValue(
-              undefined
-            )
+            ;(getIdJeuneMilo as jest.Mock).mockResolvedValue(undefined)
 
             // When
             const actual = await getServerSideProps({

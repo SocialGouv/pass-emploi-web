@@ -15,25 +15,24 @@ import {
   uneBaseServiceCivique,
 } from 'fixtures/offre'
 import { desCommunes, desLocalites, uneCommune } from 'fixtures/referentiel'
-import {
-  mockedReferentielService,
-  mockedServicesCiviquesService,
-} from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseServiceCivique } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
 import RechercheOffres from 'pages/recherche-offres'
 import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
-import { ReferentielService } from 'services/referentiel.service'
-import { ServicesCiviquesService } from 'services/services-civiques.service'
+import {
+  getCommunes,
+  getCommunesEtDepartements,
+} from 'services/referentiel.service'
+import { searchServicesCiviques } from 'services/services-civiques.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('services/referentiel.service')
+jest.mock('services/services-civiques.service')
 
 describe('Page Recherche Offres Service civique', () => {
-  let servicesCiviquesService: ServicesCiviquesService
-  let referentielService: ReferentielService
   let servicesCiviques: BaseServiceCivique[]
   let communes: Localite[]
 
@@ -43,23 +42,16 @@ describe('Page Recherche Offres Service civique', () => {
     beforeEach(async () => {
       communes = desCommunes()
       servicesCiviques = listeBaseServicesCiviques()
-      referentielService = mockedReferentielService({
-        getCommunesEtDepartements: jest.fn().mockResolvedValue(desLocalites()),
-        getCommunes: jest.fn().mockResolvedValue(desCommunes()),
-      })
-      servicesCiviquesService = mockedServicesCiviquesService({
-        searchServicesCiviques: jest.fn().mockResolvedValue({
-          metadonnees: { nombreTotal: 37, nombrePages: 4 },
-          offres: servicesCiviques,
-        }),
+      ;(getCommunesEtDepartements as jest.Mock).mockResolvedValue(
+        desLocalites()
+      )
+      ;(getCommunes as jest.Mock).mockResolvedValue(desCommunes())
+      ;(searchServicesCiviques as jest.Mock).mockResolvedValue({
+        metadonnees: { nombreTotal: 37, nombrePages: 4 },
+        offres: servicesCiviques,
       })
 
-      rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
-        customDependances: {
-          referentielService,
-          servicesCiviquesService,
-        },
-      })
+      rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {})
       await userEvent.click(
         screen.getByRole('radio', { name: 'Service civique' })
       )
@@ -92,10 +84,8 @@ describe('Page Recherche Offres Service civique', () => {
 
         // Then
         expect(inputLocalisation).toHaveValue('EPINAY SUR SEINE')
-        expect(referentielService.getCommunes).toHaveBeenCalledTimes(1)
-        expect(referentielService.getCommunes).toHaveBeenCalledWith(
-          'EPINAY SUR SEINE'
-        )
+        expect(getCommunes).toHaveBeenCalledTimes(1)
+        expect(getCommunes).toHaveBeenCalledWith('EPINAY SUR SEINE')
       })
 
       it('récupère les communes à la saisie', async () => {
@@ -103,10 +93,8 @@ describe('Page Recherche Offres Service civique', () => {
         await saisirCommune('Epinay-sur-Seine')
 
         // Then
-        expect(referentielService.getCommunes).toHaveBeenCalledTimes(1)
-        expect(referentielService.getCommunes).toHaveBeenCalledWith(
-          'EPINAY SUR SEINE'
-        )
+        expect(getCommunes).toHaveBeenCalledTimes(1)
+        expect(getCommunes).toHaveBeenCalledWith('EPINAY SUR SEINE')
         expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(
           communes.length
         )
@@ -139,9 +127,7 @@ describe('Page Recherche Offres Service civique', () => {
         expect(
           screen.getByText('Veuillez saisir une commune correcte.')
         ).toBeInTheDocument()
-        expect(
-          servicesCiviquesService.searchServicesCiviques
-        ).toHaveBeenCalledTimes(0)
+        expect(searchServicesCiviques).toHaveBeenCalledTimes(0)
       })
     })
 
@@ -369,9 +355,7 @@ describe('Page Recherche Offres Service civique', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(
-          servicesCiviquesService.searchServicesCiviques
-        ).toHaveBeenCalledWith({}, 1)
+        expect(searchServicesCiviques).toHaveBeenCalledWith({}, 1)
       })
 
       it('construit la recherche avec une commune', async () => {
@@ -385,9 +369,7 @@ describe('Page Recherche Offres Service civique', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(
-          servicesCiviquesService.searchServicesCiviques
-        ).toHaveBeenCalledWith(
+        expect(searchServicesCiviques).toHaveBeenCalledWith(
           {
             commune: uneCommune(),
             rayon: 10,
@@ -420,9 +402,7 @@ describe('Page Recherche Offres Service civique', () => {
         )
 
         // Then
-        expect(
-          servicesCiviquesService.searchServicesCiviques
-        ).toHaveBeenCalledWith(
+        expect(searchServicesCiviques).toHaveBeenCalledWith(
           {
             commune: uneCommune(),
             domaine: domainesServiceCivique[2].code,
@@ -460,9 +440,7 @@ describe('Page Recherche Offres Service civique', () => {
         )
 
         // Then
-        expect(
-          servicesCiviquesService.searchServicesCiviques
-        ).toHaveBeenCalledWith({}, 1)
+        expect(searchServicesCiviques).toHaveBeenCalledWith({}, 1)
       })
     })
 
@@ -565,12 +543,12 @@ describe('Page Recherche Offres Service civique', () => {
 
       describe('pagination', () => {
         beforeEach(() => {
-          ;(
-            servicesCiviquesService.searchServicesCiviques as jest.Mock
-          ).mockImplementation((_query, page) => ({
-            metadonnees: { nombreTotal: 37, nombrePages: 4 },
-            offres: [uneBaseServiceCivique({ titre: 'Offre page ' + page })],
-          }))
+          ;(searchServicesCiviques as jest.Mock).mockImplementation(
+            (_query, page) => ({
+              metadonnees: { nombreTotal: 37, nombrePages: 4 },
+              offres: [uneBaseServiceCivique({ titre: 'Offre page ' + page })],
+            })
+          )
         })
 
         it('met à jour les offres avec la page demandée ', async () => {
@@ -578,9 +556,7 @@ describe('Page Recherche Offres Service civique', () => {
           await userEvent.click(screen.getByLabelText('Page 2'))
 
           // Then
-          expect(
-            servicesCiviquesService.searchServicesCiviques
-          ).toHaveBeenCalledWith({}, 2)
+          expect(searchServicesCiviques).toHaveBeenCalledWith({}, 2)
           expect(screen.getByText('Offre page 2')).toBeInTheDocument()
         })
 
@@ -590,12 +566,8 @@ describe('Page Recherche Offres Service civique', () => {
           await userEvent.click(screen.getByLabelText('Page suivante'))
 
           // Then
-          expect(
-            servicesCiviquesService.searchServicesCiviques
-          ).toHaveBeenCalledWith({}, 2)
-          expect(
-            servicesCiviquesService.searchServicesCiviques
-          ).toHaveBeenCalledWith({}, 3)
+          expect(searchServicesCiviques).toHaveBeenCalledWith({}, 2)
+          expect(searchServicesCiviques).toHaveBeenCalledWith({}, 3)
 
           expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
             'aria-current',
@@ -608,9 +580,7 @@ describe('Page Recherche Offres Service civique', () => {
           await userEvent.click(screen.getByLabelText(`Page 1`))
 
           // Then
-          expect(
-            servicesCiviquesService.searchServicesCiviques
-          ).toHaveBeenCalledTimes(1)
+          expect(searchServicesCiviques).toHaveBeenCalledTimes(1)
         })
       })
     })
@@ -639,12 +609,7 @@ describe('Page Recherche Offres Service civique', () => {
 
         // When
         rendered.unmount()
-        renderWithContexts(<RechercheOffres pageTitle='' />, {
-          customDependances: {
-            referentielService,
-            servicesCiviquesService,
-          },
-        })
+        renderWithContexts(<RechercheOffres pageTitle='' />, {})
 
         // Then
         expect(screen.getByLabelText('Service civique')).toBeChecked()

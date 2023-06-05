@@ -23,20 +23,17 @@ import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { FichiersService } from 'services/fichiers.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { uploadFichier } from 'services/fichiers.service'
+import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
 import {
   FormNouveauMessageGroupe,
-  MessagesService,
+  sendNouveauMessageGroupe,
 } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -51,8 +48,6 @@ function EnvoiMessageGroupe({
 }: EnvoiMessageGroupeProps) {
   const [chatCredentials] = useChatCredentials()
   const router = useRouter()
-  const messagesService = useDependance<MessagesService>('messagesService')
-  const fichiersService = useDependance<FichiersService>('fichiersService')
   const [_, setAlerte] = useAlerte()
 
   const [portefeuille] = usePortefeuille()
@@ -124,7 +119,7 @@ function EnvoiMessageGroupe({
     let fileInfo: InfoFichier | undefined
     try {
       if (pieceJointe) {
-        fileInfo = await fichiersService.uploadFichier(
+        fileInfo = await uploadFichier(
           selectedJeunesIds,
           selectedListesIds,
           pieceJointe
@@ -153,8 +148,7 @@ function EnvoiMessageGroupe({
       }
       if (fileInfo) formNouveauMessage.infoPieceJointe = fileInfo
 
-      await messagesService.signIn(chatCredentials!.token)
-      await messagesService.sendNouveauMessageGroupe(formNouveauMessage)
+      await sendNouveauMessageGroupe(formNouveauMessage)
 
       setAlerte(AlerteParam.envoiMessage)
       await router.push(returnTo)
@@ -348,23 +342,22 @@ function EnvoiMessageGroupe({
 export const getServerSideProps: GetServerSideProps<
   EnvoiMessageGroupeProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
 
-  const listesDeDiffusionService = withDependance<ListesDeDiffusionService>(
-    'listesDeDiffusionService'
-  )
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
 
-  const listesDeDiffusion =
-    await listesDeDiffusionService.getListesDeDiffusionServerSide(
-      user.id,
-      accessToken
-    )
+  const listesDeDiffusion = await getListesDeDiffusionServerSide(
+    user.id,
+    accessToken
+  )
 
   const referer: string | undefined = context.req.headers.referer
 

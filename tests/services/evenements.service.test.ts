@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { ApiClient } from 'clients/api.client'
+import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   typesEvenement,
   uneAnimationCollective,
@@ -21,35 +21,37 @@ import {
 } from 'interfaces/json/evenement'
 import { modalites } from 'referentiel/evenement'
 import {
-  EvenementsApiService,
-  EvenementsService,
+  cloreAnimationCollective,
+  creerEvenement,
+  getAnimationsCollectivesACloreClientSide,
+  getAnimationsCollectivesACloreServerSide,
+  getDetailsEvenement,
+  getRendezVousConseiller,
+  getRendezVousEtablissement,
+  getRendezVousJeune,
+  getTypesRendezVous,
+  supprimerEvenement,
+  updateRendezVous,
 } from 'services/evenements.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
 import { ApiError } from 'utils/httpClient'
 
-describe('EvenementsApiService', () => {
-  let apiClient: ApiClient
-  let evenementsService: EvenementsService
-  beforeEach(async () => {
-    // Given
-    apiClient = new FakeApiClient()
-    evenementsService = new EvenementsApiService(apiClient)
-  })
+jest.mock('clients/api.client')
 
+describe('EvenementsApiService', () => {
   describe('.getTypesRendezVous', () => {
     it('renvoie les types de rendez-vous ', async () => {
       // Given
       const accessToken = 'accessToken'
       const typesRendezVous = typesEvenement()
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: typesRendezVous,
       })
 
       // When
-      const actual = await evenementsService.getTypesRendezVous(accessToken)
+      const actual = await getTypesRendezVous(accessToken)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/types-rendezvous',
         accessToken
       )
@@ -60,35 +62,26 @@ describe('EvenementsApiService', () => {
   describe('.getDetailEvenement', () => {
     it('renvoie les détails de l’événement', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: unEvenementJson({ nombreMaxParticipants: 10 }),
       })
 
       // When
-      const actual = await evenementsService.getDetailsEvenement(
-        'id-rdv',
-        'accessToken'
-      )
+      const actual = await getDetailsEvenement('id-rdv', 'accessToken')
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
-        '/rendezvous/id-rdv',
-        'accessToken'
-      )
+      expect(apiGet).toHaveBeenCalledWith('/rendezvous/id-rdv', 'accessToken')
       expect(actual).toEqual(unEvenement({ nombreMaxParticipants: 10 }))
     })
 
     it("renvoie undefined si l’événement n'existe pas", async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockRejectedValue(
+      ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'Rdv non trouvé')
       )
 
       // When
-      const actual = await evenementsService.getDetailsEvenement(
-        'id-rdv',
-        'accessToken'
-      )
+      const actual = await getDetailsEvenement('id-rdv', 'accessToken')
 
       // Then
       expect(actual).toEqual(undefined)
@@ -115,10 +108,10 @@ describe('EvenementsApiService', () => {
       }
 
       // When
-      await evenementsService.updateRendezVous('id-rdv', rdvFormData)
+      await updateRendezVous('id-rdv', rdvFormData)
 
       // Then
-      expect(apiClient.put).toHaveBeenCalledWith(
+      expect(apiPut).toHaveBeenCalledWith(
         '/rendezvous/id-rdv',
         {
           jeunesIds: ['jeune-1', 'jeune-2'],
@@ -158,7 +151,7 @@ describe('EvenementsApiService', () => {
           ],
         }),
       ]
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: listeRdvs,
       })
 
@@ -166,14 +159,14 @@ describe('EvenementsApiService', () => {
       const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
 
       // When
-      const actual = await evenementsService.getRendezVousConseiller(
+      const actual = await getRendezVousConseiller(
         idConseiller,
         dateDebut,
         dateFin
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         `/v2/conseillers/idConseiller/rendezvous?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
         'accessToken'
       )
@@ -190,19 +183,15 @@ describe('EvenementsApiService', () => {
       const accessToken = 'accessToken'
       const idJeune = 'id-jeune'
       const periode = 'PASSES'
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: [unEvenementJeuneJson()],
       })
 
       // When
-      const actual = await evenementsService.getRendezVousJeune(
-        'id-jeune',
-        'PASSES',
-        accessToken
-      )
+      const actual = await getRendezVousJeune('id-jeune', 'PASSES', accessToken)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         `/jeunes/${idJeune}/rendezvous?periode=${periode}`,
         accessToken
       )
@@ -214,7 +203,7 @@ describe('EvenementsApiService', () => {
     it('renvoie les rendez-vous avec présence du bénéficiaire', async () => {
       // Given
       const accessToken = 'accessToken'
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: [
           unEvenementJeuneJson({
             type: { code: 'ATELIER', label: 'Atelier' },
@@ -224,11 +213,7 @@ describe('EvenementsApiService', () => {
       })
 
       // When
-      const actual = await evenementsService.getRendezVousJeune(
-        'id-jeune',
-        'PASSES',
-        accessToken
-      )
+      const actual = await getRendezVousJeune('id-jeune', 'PASSES', accessToken)
 
       // Then
       const expected = unEvenementListItem({
@@ -267,19 +252,19 @@ describe('EvenementsApiService', () => {
           statut: 'CLOTUREE',
         },
       ]
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: animationsCollectivesJson,
       })
 
       // When
-      const actual = await evenementsService.getRendezVousEtablissement(
+      const actual = await getRendezVousEtablissement(
         'id-etablissement',
         dateDebut,
         dateFin
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         `/etablissements/id-etablissement/animations-collectives?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
         'accessToken'
       )
@@ -304,7 +289,7 @@ describe('EvenementsApiService', () => {
   describe('.getAnimationsCollectivesACloreClientSide', () => {
     it('renvoie les animations collectives du conseiller à clore', async () => {
       // GIVEN
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           resultats: uneListeDAnimationCollectiveACloreJson(),
           pagination: { total: 5, limit: 10 },
@@ -312,14 +297,13 @@ describe('EvenementsApiService', () => {
       })
 
       // WHEN
-      const actual =
-        await evenementsService.getAnimationsCollectivesACloreClientSide(
-          'id-etablissement',
-          2
-        )
+      const actual = await getAnimationsCollectivesACloreClientSide(
+        'id-etablissement',
+        2
+      )
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=2',
         'accessToken'
       )
@@ -333,7 +317,7 @@ describe('EvenementsApiService', () => {
   describe('.getAnimationsCollectivesACloreServerSide', () => {
     it('renvoie les animations collectives de l’établissement à clore', async () => {
       // GIVEN
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           resultats: uneListeDAnimationCollectiveACloreJson(),
           pagination: { total: 5, limit: 10 },
@@ -341,14 +325,13 @@ describe('EvenementsApiService', () => {
       })
 
       // WHEN
-      const actual =
-        await evenementsService.getAnimationsCollectivesACloreServerSide(
-          'id-etablissement',
-          'accessToken'
-        )
+      const actual = await getAnimationsCollectivesACloreServerSide(
+        'id-etablissement',
+        'accessToken'
+      )
 
       // THEN
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/etablissements/id-etablissement/animations-collectives?aClore=true&page=1',
         'accessToken'
       )
@@ -376,15 +359,15 @@ describe('EvenementsApiService', () => {
         comment: 'Lorem ipsum dolor sit amet',
         nombreMaxParticipants: 10,
       }
-      ;(apiClient.post as jest.Mock).mockResolvedValue({
+      ;(apiPost as jest.Mock).mockResolvedValue({
         content: { id: 'id-nouvel-evenement' },
       })
 
       // When
-      const result = await evenementsService.creerEvenement(rdvFormData)
+      const result = await creerEvenement(rdvFormData)
 
       // Then
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(apiPost).toHaveBeenCalledWith(
         '/conseillers/idConseiller/rendezvous',
         {
           jeunesIds: ['jeune-1', 'jeune-2'],
@@ -409,10 +392,10 @@ describe('EvenementsApiService', () => {
   describe('.supprimerEvenement', () => {
     it('supprime un événement', async () => {
       // When
-      await evenementsService.supprimerEvenement('idEvenement')
+      await supprimerEvenement('idEvenement')
 
       // Then
-      expect(apiClient.delete).toHaveBeenCalledWith(
+      expect(apiDelete).toHaveBeenCalledWith(
         '/rendezvous/idEvenement',
         'accessToken'
       )
@@ -425,10 +408,10 @@ describe('EvenementsApiService', () => {
       const idsJeunes = ['jeune-1', 'jeune-2']
 
       // When
-      await evenementsService.cloreAnimationCollective('id-rdv', idsJeunes)
+      await cloreAnimationCollective('id-rdv', idsJeunes)
 
       // Then
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(apiPost).toHaveBeenCalledWith(
         '/etablissements/animations-collectives/id-rdv/cloturer',
         {
           idsJeunes: ['jeune-1', 'jeune-2'],

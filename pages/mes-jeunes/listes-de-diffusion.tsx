@@ -16,13 +16,11 @@ import { TR } from 'components/ui/Table/TR'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
+import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type ListesDiffusionProps = PageProps & {
@@ -182,19 +180,18 @@ function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
 export const getServerSideProps: GetServerSideProps<
   ListesDiffusionProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-  const listesDeDiffusionService = withDependance<ListesDeDiffusionService>(
-    'listesDeDiffusionService'
-  )
   const { user, accessToken } = sessionOrRedirect.session
-  const listesDeDiffusion =
-    await listesDeDiffusionService.getListesDeDiffusionServerSide(
-      user.id,
-      accessToken
-    )
+  const listesDeDiffusion = await getListesDeDiffusionServerSide(
+    user.id,
+    accessToken
+  )
   return {
     props: {
       pageTitle: 'Listes de diffusion - Portefeuille',

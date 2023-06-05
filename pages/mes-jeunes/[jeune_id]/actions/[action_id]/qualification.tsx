@@ -21,13 +21,14 @@ import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
+import {
+  getAction,
+  getSituationsNonProfessionnelles,
+  qualifier,
+} from 'services/actions.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type QualificationProps = PageProps & {
@@ -42,7 +43,6 @@ function PageQualification({
   returnTo,
 }: QualificationProps) {
   const router = useRouter()
-  const actionsService = useDependance<ActionsService>('actionsService')
   const [_, setAlerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
 
@@ -103,7 +103,7 @@ function PageQualification({
     setErreurQualification(undefined)
     setIsQualificationEnCours(true)
     try {
-      await actionsService.qualifier(action.id, codeSNP!, {
+      await qualifier(action.id, codeSNP!, {
         commentaire: commentaire.value,
         dateDebutModifiee: DateTime.fromISO(dateDebut).startOf('day'),
         dateFinModifiee: DateTime.fromISO(dateFin!).startOf('day'),
@@ -264,6 +264,9 @@ function PageQualification({
 export const getServerSideProps: GetServerSideProps<
   QualificationProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -276,10 +279,9 @@ export const getServerSideProps: GetServerSideProps<
     return { notFound: true }
   }
 
-  const actionsService = withDependance<ActionsService>('actionsService')
   const [actionContent, situationsNonProfessionnelles] = await Promise.all([
-    actionsService.getAction(context.query.action_id as string, accessToken),
-    actionsService.getSituationsNonProfessionnelles(accessToken),
+    getAction(context.query.action_id as string, accessToken),
+    getSituationsNonProfessionnelles(accessToken),
   ])
 
   if (!actionContent) return { notFound: true }

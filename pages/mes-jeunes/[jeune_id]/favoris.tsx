@@ -5,11 +5,9 @@ import React from 'react'
 import { TabFavoris } from 'components/jeune/TabFavoris'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { PageProps } from 'interfaces/pageProps'
-import { FavorisService } from 'services/favoris.service'
-import { JeunesService } from 'services/jeunes.service'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
+import { getJeuneDetails } from 'services/jeunes.service'
 import { ApiError } from 'utils/httpClient'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 interface FavorisProps extends PageProps {
   lectureSeule: boolean
@@ -30,6 +28,9 @@ function Favoris({ offres, recherches, lectureSeule }: FavorisProps) {
 export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -38,12 +39,9 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
     session: { accessToken, user },
   } = sessionOrRedirect
 
-  const jeunesService = withDependance<JeunesService>('jeunesService')
-  const favorisService = withDependance<FavorisService>('favorisService')
-
   const jeuneId = context.query.jeune_id as string
 
-  const beneficiaire = await jeunesService.getJeuneDetails(jeuneId, accessToken)
+  const beneficiaire = await getJeuneDetails(jeuneId, accessToken)
 
   if (!beneficiaire) {
     return { notFound: true }
@@ -52,11 +50,8 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
   const lectureSeule = beneficiaire.idConseiller !== user.id
 
   try {
-    const offres = await favorisService.getOffres(jeuneId, accessToken)
-    const recherches = await favorisService.getRecherchesSauvegardees(
-      jeuneId,
-      accessToken
-    )
+    const offres = await getOffres(jeuneId, accessToken)
+    const recherches = await getRecherchesSauvegardees(jeuneId, accessToken)
     return {
       props: {
         lectureSeule,

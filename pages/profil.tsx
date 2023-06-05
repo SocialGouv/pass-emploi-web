@@ -3,10 +3,9 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, useState } from 'react'
 
-import QrcodeAppStore from '../assets/images/qrcode_app_store.svg'
-import QrcodePlayStore from '../assets/images/qrcode_play_store.svg'
-
+import QrcodeAppStore from 'assets/images/qrcode_app_store.svg'
 import QrcodeAppStoreBRSA from 'assets/images/qrcode_app_store_brsa.svg'
+import QrcodePlayStore from 'assets/images/qrcode_play_store.svg'
 import QrcodePlayStoreBRSA from 'assets/images/qrcode_play_store_brsa.svg'
 import ConfirmationDeleteConseillerModal from 'components/ConfirmationDeleteConseillerModal'
 import ConfirmationSuppressionCompteConseillerModal from 'components/ConfirmationSuppressionCompteConseillerModal'
@@ -26,15 +25,17 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
-import { ConseillerService } from 'services/conseiller.service'
-import { JeunesService } from 'services/jeunes.service'
-import { ReferentielService } from 'services/referentiel.service'
+import {
+  getConseillerServerSide,
+  modifierAgence,
+  modifierNotificationsSonores,
+  supprimerConseiller,
+} from 'services/conseiller.service'
+import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
+import { getAgencesServerSide } from 'services/referentiel.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type ProfilProps = PageProps & {
@@ -42,10 +43,6 @@ type ProfilProps = PageProps & {
 }
 
 function Profil({ referentielAgences }: ProfilProps) {
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-
   const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -69,7 +66,7 @@ function Profil({ referentielAgences }: ProfilProps) {
       ...conseiller,
       notificationsSonores: e.target.checked,
     }
-    await conseillerService.modifierNotificationsSonores(
+    await modifierNotificationsSonores(
       conseiller.id,
       conseillerMisAJour.notificationsSonores
     )
@@ -80,7 +77,7 @@ function Profil({ referentielAgences }: ProfilProps) {
     id?: string
     nom: string
   }): Promise<void> {
-    await conseillerService.modifierAgence(agence)
+    await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel('Profil - Succès ajout agence')
   }
@@ -90,7 +87,7 @@ function Profil({ referentielAgences }: ProfilProps) {
     e.stopPropagation()
     setShowModaleSuppressionCompte(true)
     if (conseiller) {
-      jeunesService.getJeunesDuConseillerClientSide().then((beneficiaires) => {
+      getJeunesDuConseillerClientSide().then((beneficiaires) => {
         Boolean(beneficiaires.length > 0)
           ? setPortefeuilleAvecBeneficiaires(true)
           : setPortefeuilleAvecBeneficiaires(false)
@@ -100,7 +97,7 @@ function Profil({ referentielAgences }: ProfilProps) {
 
   async function supprimerCompteConseiller(): Promise<void> {
     try {
-      await conseillerService.supprimerConseiller(conseiller.id)
+      await supprimerConseiller(conseiller.id)
       setShowModaleSuppressionCompte(false)
       setTimeout(async () => {
         setShowModaleConfirmationSuppression(true)
@@ -319,6 +316,9 @@ function Email(props: { email: string }) {
 export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -331,20 +331,13 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
   let referentielAgences: Agence[] = []
 
   if (user.structure === StructureConseiller.MILO) {
-    const conseillerService =
-      withDependance<ConseillerService>('conseillerService')
-    const conseiller = await conseillerService.getConseillerServerSide(
-      user,
-      accessToken
-    )
+    const conseiller = await getConseillerServerSide(user, accessToken)
     if (!conseiller) {
       throw new Error(`Conseiller ${user.id} inexistant`)
     }
 
     if (!conseiller.agence) {
-      const agenceService =
-        withDependance<ReferentielService>('referentielService')
-      referentielAgences = await agenceService.getAgencesServerSide(
+      referentielAgences = await getAgencesServerSide(
         user.structure,
         accessToken
       )

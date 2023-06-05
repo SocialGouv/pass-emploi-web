@@ -16,35 +16,41 @@ import {
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
-import {
-  mockedActionsService,
-  mockedAgendaService,
-  mockedEvenementsService,
-  mockedJeunesService,
-  mockedFavorisService,
-} from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { Recherche } from 'interfaces/favoris'
+import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune, {
   getServerSideProps,
   Onglet,
 } from 'pages/mes-jeunes/[jeune_id]'
-import { ActionsService } from 'services/actions.service'
-import { EvenementsService } from 'services/evenements.service'
-import { FavorisService } from 'services/favoris.service'
-import { JeunesService } from 'services/jeunes.service'
+import { getActionsJeuneServerSide } from 'services/actions.service'
+import { recupererAgenda } from 'services/agenda.service'
+import { getRendezVousJeune } from 'services/evenements.service'
+import { getOffres } from 'services/favoris.service'
+import {
+  getConseillersDuJeuneServerSide,
+  getIndicateursJeuneAlleges,
+  getJeuneDetails,
+  getMetadonneesFavorisJeune,
+} from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
+jest.mock('services/evenements.service')
+jest.mock('services/actions.service')
+jest.mock('services/favoris.service')
 
 describe('Fiche Jeune', () => {
   describe('client side', () => {
     beforeEach(async () => {
       ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+      ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+        desIndicateursSemaine()
+      )
+      ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
     })
 
     describe('pour tous les conseillers', () => {
@@ -63,16 +69,6 @@ describe('Fiche Jeune', () => {
               pageTitle={''}
             />,
             {
-              customDependances: {
-                jeunesService: mockedJeunesService({
-                  getIndicateursJeuneAlleges: jest.fn(async () =>
-                    desIndicateursSemaine()
-                  ),
-                }),
-                agendaService: mockedAgendaService({
-                  recupererAgenda: jest.fn(async () => unAgenda()),
-                }),
-              },
               customCurrentJeune: { idSetter: setIdJeune },
               customConseiller: { id: jeune.idConseiller },
             }
@@ -102,16 +98,6 @@ describe('Fiche Jeune', () => {
             />,
             {
               customConseiller: { id: 'fake-id' },
-              customDependances: {
-                jeunesService: mockedJeunesService({
-                  getIndicateursJeuneAlleges: jest.fn(async () =>
-                    desIndicateursSemaine()
-                  ),
-                }),
-                agendaService: mockedAgendaService({
-                  recupererAgenda: jest.fn(async () => unAgenda()),
-                }),
-              },
               customCurrentJeune: { idSetter: setIdJeune },
             }
           )
@@ -162,16 +148,6 @@ describe('Fiche Jeune', () => {
             />,
             {
               customConseiller: { structure: StructureConseiller.MILO },
-              customDependances: {
-                jeunesService: mockedJeunesService({
-                  getIndicateursJeuneAlleges: jest.fn(async () =>
-                    desIndicateursSemaine()
-                  ),
-                }),
-                agendaService: mockedAgendaService({
-                  recupererAgenda: jest.fn(async () => unAgenda()),
-                }),
-              },
             }
           )
         })
@@ -235,41 +211,26 @@ describe('Fiche Jeune', () => {
     const rdvAVenir = unEvenementListItem({
       date: DateTime.now().plus({ day: 1 }).toISO(),
     })
-    let jeunesService: JeunesService
-    let evenementsService: EvenementsService
-    let actionsService: ActionsService
-    let favorisService: FavorisService
+
     beforeEach(() => {
-      jeunesService = mockedJeunesService({
-        getJeuneDetails: jest.fn(async () => unDetailJeune()),
-        getConseillersDuJeuneServerSide: jest.fn(async () =>
-          desConseillersJeune()
-        ),
-        getMetadonneesFavorisJeune: jest.fn(async () => uneMetadonneeFavoris()),
+      ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
+      ;(getConseillersDuJeuneServerSide as jest.Mock).mockResolvedValue(
+        desConseillersJeune()
+      )
+      ;(getMetadonneesFavorisJeune as jest.Mock).mockResolvedValue(
+        uneMetadonneeFavoris()
+      )
+      ;(getRendezVousJeune as jest.Mock).mockResolvedValue([rdvAVenir])
+      ;(getActionsJeuneServerSide as jest.Mock).mockResolvedValue({
+        actions: [
+          uneAction({ creationDate: now.toISO() }),
+          uneAction({ creationDate: datePasseeLoin.toISO() }),
+          uneAction({ creationDate: dateFuture.toISO() }),
+          uneAction({ creationDate: dateFutureLoin.toISO() }),
+        ],
+        metadonnees: { nombreTotal: 14, nombrePages: 2 },
       })
-      evenementsService = mockedEvenementsService({
-        getRendezVousJeune: jest.fn(async () => [rdvAVenir]),
-      })
-      actionsService = mockedActionsService({
-        getActionsJeuneServerSide: jest.fn(async () => ({
-          actions: [
-            uneAction({ creationDate: now.toISO() }),
-            uneAction({ creationDate: datePasseeLoin.toISO() }),
-            uneAction({ creationDate: dateFuture.toISO() }),
-            uneAction({ creationDate: dateFutureLoin.toISO() }),
-          ],
-          metadonnees: { nombreTotal: 14, nombrePages: 2 },
-        })),
-      })
-      favorisService = mockedFavorisService({
-        getOffres: jest.fn(async () => uneListeDOffres()),
-      })
-      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-        if (dependance === 'jeunesService') return jeunesService
-        if (dependance === 'evenementsService') return evenementsService
-        if (dependance === 'actionsService') return actionsService
-        if (dependance === 'favorisService') return favorisService
-      })
+      ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
     })
 
     describe('Quand la session est invalide', () => {
@@ -308,10 +269,7 @@ describe('Fiche Jeune', () => {
 
       it('récupère les infos du jeune', async () => {
         // Then
-        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
-          'id-jeune',
-          'accessToken'
-        )
+        expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
         expect(actual).toEqual({
           props: {
             jeune: unDetailJeune(),
@@ -328,7 +286,7 @@ describe('Fiche Jeune', () => {
 
       it('récupère les rendez-vous à venir du jeune', async () => {
         // Then
-        expect(evenementsService.getRendezVousJeune).toHaveBeenCalledWith(
+        expect(getRendezVousJeune).toHaveBeenCalledWith(
           'id-jeune',
           'FUTURS',
           'accessToken'
@@ -340,7 +298,7 @@ describe('Fiche Jeune', () => {
 
       it('récupère les favoris', async () => {
         // Then
-        expect(jeunesService.getMetadonneesFavorisJeune).toHaveBeenCalledWith(
+        expect(getMetadonneesFavorisJeune).toHaveBeenCalledWith(
           'id-jeune',
           'accessToken'
         )
@@ -351,7 +309,7 @@ describe('Fiche Jeune', () => {
 
       it('récupère la première page des actions du jeune', async () => {
         // Then
-        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
+        expect(getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
           1,
           'accessToken'
@@ -390,7 +348,7 @@ describe('Fiche Jeune', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(actionsService.getActionsJeuneServerSide).toHaveBeenCalledWith(
+        expect(getActionsJeuneServerSide).toHaveBeenCalledWith(
           'id-jeune',
           3,
           'accessToken'
@@ -443,13 +401,13 @@ describe('Fiche Jeune', () => {
 
       it('ne recupère pas les rendez-vous', async () => {
         // Then
-        expect(evenementsService.getRendezVousJeune).not.toHaveBeenCalled()
+        expect(getRendezVousJeune).not.toHaveBeenCalled()
         expect(actual).toMatchObject({ props: { rdvs: [] } })
       })
 
       it('ne recupère pas les actions', async () => {
         // Then
-        expect(actionsService.getActionsJeuneServerSide).not.toHaveBeenCalled()
+        expect(getActionsJeuneServerSide).not.toHaveBeenCalled()
         expect(actual).toMatchObject({
           props: { actionsInitiales: { actions: [] } },
         })
@@ -473,10 +431,7 @@ describe('Fiche Jeune', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
-          'id-jeune',
-          'accessToken'
-        )
+        expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
         expect(actual).toMatchObject({
           props: {
             lectureSeule: true,
@@ -488,8 +443,8 @@ describe('Fiche Jeune', () => {
 })
 
 async function renderFicheJeune(
-  metadonnees: Metadonnees,
-  offresPE: Offres[],
+  metadonnees: MetadonneesFavoris,
+  offresPE: Offre[],
   recherchesPE: Recherche[]
 ) {
   await act(async () => {
@@ -505,16 +460,6 @@ async function renderFicheJeune(
       />,
       {
         customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-        customDependances: {
-          jeunesService: mockedJeunesService({
-            getIndicateursJeuneAlleges: jest.fn(async () =>
-              desIndicateursSemaine()
-            ),
-          }),
-          agendaService: mockedAgendaService({
-            recupererAgenda: jest.fn(async () => unAgenda()),
-          }),
-        },
       }
     )
   })

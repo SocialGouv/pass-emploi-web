@@ -3,19 +3,17 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { unDetailOffreEmploi } from 'fixtures/offre'
-import { mockedOffresEmploiService } from 'fixtures/services'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import DetailOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_type]/[offre_id]'
-import { OffresEmploiService } from 'services/offres-emploi.service'
+import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/offres-emploi.service')
 jest.mock('components/PageActionsPortal')
 
 describe('Page Détail Offre Emploi', () => {
@@ -157,18 +155,16 @@ describe('Page Détail Offre Emploi', () => {
   })
 
   describe('server side', () => {
-    let offresEmploiService: OffresEmploiService
     beforeEach(() => {
-      offresEmploiService = mockedOffresEmploiService({
-        getOffreEmploiServerSide: jest.fn(async () => unDetailOffreEmploi()),
-      })
+      ;(getOffreEmploiServerSide as jest.Mock).mockResolvedValue(
+        unDetailOffreEmploi()
+      )
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
         validSession: true,
         session: {
           accessToken: 'accessToken',
         },
       })
-      ;(withDependance as jest.Mock).mockReturnValue(offresEmploiService)
     })
 
     it('requiert la connexion', async () => {
@@ -193,7 +189,7 @@ describe('Page Détail Offre Emploi', () => {
       } as unknown as GetServerSidePropsContext)
 
       // Then
-      expect(offresEmploiService.getOffreEmploiServerSide).toHaveBeenCalledWith(
+      expect(getOffreEmploiServerSide).toHaveBeenCalledWith(
         'id-offre',
         'accessToken'
       )
@@ -208,9 +204,7 @@ describe('Page Détail Offre Emploi', () => {
 
     it("renvoie une 404 si l'offre n'existe pas", async () => {
       // Given
-      ;(
-        offresEmploiService.getOffreEmploiServerSide as jest.Mock
-      ).mockResolvedValue(undefined)
+      ;(getOffreEmploiServerSide as jest.Mock).mockResolvedValue(undefined)
 
       // When
       const actual = await getServerSideProps({

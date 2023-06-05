@@ -17,16 +17,22 @@ import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ByDay, Message } from 'interfaces/message'
-import { FichiersService } from 'services/fichiers.service'
+import {
+  deleteFichier,
+  uploadFichier as _uploadFichier,
+} from 'services/fichiers.service'
 import {
   FormNouveauMessageIndividuel,
-  MessagesService,
+  observeDerniersMessages,
+  observeJeuneReadingDate,
+  sendNouveauMessage as _sendNouveauMessage,
+  setReadByConseiller,
+  toggleFlag as _toggleFlag,
 } from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
 
 type ConversationProps = {
   conseillers: ConseillerHistorique[]
@@ -39,8 +45,6 @@ export default function Conversation({
   conseillers,
   onBack,
 }: ConversationProps) {
-  const messagesService = useDependance<MessagesService>('messagesService')
-  const fichiersService = useDependance<FichiersService>('fichiersService')
   const [chatCredentials] = useChatCredentials()
   const [conseiller] = useConseiller()
 
@@ -84,7 +88,7 @@ export default function Conversation({
 
     if (uploadedFileInfo) formNouveauMessage.infoPieceJointe = uploadedFileInfo
 
-    messagesService.sendNouveauMessage(formNouveauMessage)
+    _sendNouveauMessage(formNouveauMessage)
 
     setUploadedFileInfo(undefined)
     inputRef.current!.value = ''
@@ -99,13 +103,6 @@ export default function Conversation({
       return `${conseillerTrouve?.prenom.toLowerCase()} ${conseillerTrouve?.nom.toLowerCase()}`
     }
   }
-
-  const setReadByConseiller = useCallback(
-    (idChatToUpdate: string) => {
-      messagesService.setReadByConseiller(idChatToUpdate)
-    },
-    [messagesService]
-  )
 
   function chargerPlusDeMessages() {
     const pageSuivante = nombrePagesChargees + 1
@@ -128,7 +125,7 @@ export default function Conversation({
     (idChatToObserve: string, nombreDePages: number) => {
       if (!chatCredentials) return () => {}
 
-      return messagesService.observeDerniersMessages(
+      return observeDerniersMessages(
         idChatToObserve,
         chatCredentials.cleChiffrement,
         nombreDePages,
@@ -154,17 +151,7 @@ export default function Conversation({
         }
       )
     },
-    [chatCredentials, messagesService, setReadByConseiller]
-  )
-
-  const observerLastJeuneReadingDate = useCallback(
-    (idChatToObserve: string) => {
-      return messagesService.observeJeuneReadingDate(
-        idChatToObserve,
-        setLastSeenByJeune
-      )
-    },
-    [messagesService]
+    [chatCredentials]
   )
 
   async function uploadFichier(fichierSelectionne: File) {
@@ -172,7 +159,7 @@ export default function Conversation({
 
     try {
       setIsFileUploading(true)
-      const infoFichier = await fichiersService.uploadFichier(
+      const infoFichier = await _uploadFichier(
         [jeuneChat.id],
         [],
         fichierSelectionne
@@ -187,12 +174,12 @@ export default function Conversation({
 
   async function deleteFile() {
     setUploadedFileInfo(undefined)
-    await fichiersService.deleteFichier(uploadedFileInfo!.id)
+    await deleteFichier(uploadedFileInfo!.id)
   }
 
   async function toggleFlag() {
     const flagged = !jeuneChat.flaggedByConseiller
-    messagesService.toggleFlag(jeuneChat.chatId, flagged)
+    _toggleFlag(jeuneChat.chatId, flagged)
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Conversation suivie',
@@ -207,7 +194,7 @@ export default function Conversation({
     setReadByConseiller(jeuneChat.chatId)
 
     return unsubscribeFromMessages.current
-  }, [jeuneChat.chatId, observerMessages, setReadByConseiller])
+  }, [jeuneChat.chatId, observerMessages])
 
   useEffect(() => {
     if (messagesByDay?.length && nombrePagesChargees === 1) {
@@ -219,9 +206,12 @@ export default function Conversation({
   }, [messagesByDay, nombrePagesChargees])
 
   useEffect(() => {
-    const unsubscribe = observerLastJeuneReadingDate(jeuneChat.chatId)
+    const unsubscribe = observeJeuneReadingDate(
+      jeuneChat.chatId,
+      setLastSeenByJeune
+    )
     return () => unsubscribe()
-  }, [jeuneChat.chatId, observerLastJeuneReadingDate])
+  }, [jeuneChat.chatId])
 
   useEffect(() => {
     if (uploadedFileInfo) {

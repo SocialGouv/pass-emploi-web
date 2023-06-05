@@ -10,10 +10,9 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
-import { MessagesService } from 'services/messages.service'
+import { getMessagesListeDeDiffusion } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { dateIsToday, toShortDate } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
 
 type MessagesListeDeDiffusionProps = {
   liste: ListeDeDiffusion
@@ -27,7 +26,6 @@ export default function MessagesListeDeDiffusion({
   onBack,
   messagerieFullScreen,
 }: MessagesListeDeDiffusionProps) {
-  const messagesService = useDependance<MessagesService>('messagesService')
   const [chatCredentials] = useChatCredentials()
 
   const [messages, setMessages] = useState<ByDay<MessageListeDiffusion>[]>()
@@ -38,9 +36,10 @@ export default function MessagesListeDeDiffusion({
 
   useEffect(() => {
     if (chatCredentials) {
-      messagesService
-        .getMessagesListeDeDiffusion(liste.id, chatCredentials.cleChiffrement)
-        .then(setMessages)
+      getMessagesListeDeDiffusion(
+        liste.id,
+        chatCredentials.cleChiffrement
+      ).then(setMessages)
     }
   }, [chatCredentials, liste.id])
 

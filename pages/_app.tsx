@@ -1,8 +1,8 @@
 // eslint import/order: 0
 import ProgressBar from '@badrap/bar-of-progress'
 import localFont from '@next/font/local'
-import type { NextWebVitalsMetric } from 'next/app'
 import { AppProps as NextAppProps } from 'next/app'
+import type { NextWebVitalsMetric } from 'next/app'
 import Router, { useRouter } from 'next/router'
 import { ThemeProvider } from 'next-themes'
 import React, { useEffect } from 'react'
@@ -19,7 +19,6 @@ import { init } from 'utils/analytics/matomo'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { Container, DIProvider } from 'utils/injectionDependances'
 import { initRum } from 'utils/monitoring/init-rum'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
@@ -65,6 +64,9 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
   const isLogoutPage = router.pathname === '/logout'
+  const isOfflinePage =
+    router.pathname === '/offline' || router.pathname === '/_offline'
+  const shouldUseLayout = !isLoginPage && !isLogoutPage && !isOfflinePage
 
   useEffect(() => {
     init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
@@ -78,36 +80,33 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
           font-family: ${fontMarianne.style.fontFamily};
         }
       `}</style>
-      <DIProvider dependances={Container.getDIContainer().dependances}>
-        <ConseillerProvider>
-          {isLoginPage || isLogoutPage ? (
-            <>
-              <AppHead titre='' hasMessageNonLu={false} />
-              <div className='flex flex-col justify-center h-screen'>
-                <Component {...pageProps} />
-                {isLoginPage && <Footer />}
-              </div>
-            </>
-          ) : (
-            <PortefeuilleProvider>
-              <ChatCredentialsProvider>
-                <CurrentJeuneProvider>
-                  <AlerteProvider>
-                    <ThemeProvider
-                      defaultTheme={'cej'}
-                      themes={['cej', 'brsa']}
-                    >
-                      <Layout>
-                        <Component {...pageProps} />
-                      </Layout>
-                    </ThemeProvider>
-                  </AlerteProvider>
-                </CurrentJeuneProvider>
-              </ChatCredentialsProvider>
-            </PortefeuilleProvider>
-          )}
-        </ConseillerProvider>
-      </DIProvider>
+      <ConseillerProvider>
+        {!shouldUseLayout && (
+          <>
+            <AppHead titre='' hasMessageNonLu={false} />
+            <div className='flex flex-col justify-center h-screen'>
+              <Component {...pageProps} />
+              {isLoginPage && <Footer />}
+            </div>
+          </>
+        )}
+
+        {shouldUseLayout && (
+          <PortefeuilleProvider>
+            <ChatCredentialsProvider>
+              <CurrentJeuneProvider>
+                <AlerteProvider>
+                  <ThemeProvider defaultTheme={'cej'} themes={['cej', 'brsa']}>
+                    <Layout>
+                      <Component {...pageProps} />
+                    </Layout>
+                  </ThemeProvider>
+                </AlerteProvider>
+              </CurrentJeuneProvider>
+            </ChatCredentialsProvider>
+          </PortefeuilleProvider>
+        )}
+      </ConseillerProvider>
     </>
   )
 }

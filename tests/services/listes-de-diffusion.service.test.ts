@@ -1,38 +1,34 @@
-import { ApiClient } from 'clients/api.client'
+import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   desListesDeDiffusion,
   uneListeDeDiffusion,
 } from 'fixtures/listes-de-diffusion'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import {
-  ListesDeDiffusionApiService,
-  ListesDeDiffusionService,
+  creerListeDeDiffusion,
+  getListesDeDiffusionClientSide,
+  getListesDeDiffusionServerSide,
+  modifierListeDeDiffusion,
+  recupererListeDeDiffusion,
+  supprimerListeDeDiffusion,
 } from 'services/listes-de-diffusion.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
+
+jest.mock('clients/api.client')
 
 describe('ListesDeDiffusionApiService', () => {
-  let apiClient: ApiClient
-  let listesDeDiffusionService: ListesDeDiffusionService
-  beforeEach(async () => {
-    // Given
-    apiClient = new FakeApiClient()
-    listesDeDiffusionService = new ListesDeDiffusionApiService(apiClient)
-  })
-
   describe('.getListesDeDiffusionClientSide', () => {
     it('renvoie les listes de diffusion du conseiller', async () => {
       // Given
       const listesDeDiffusion: ListeDeDiffusion[] = desListesDeDiffusion()
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: listesDeDiffusion,
       })
 
       // When
-      const actual =
-        await listesDeDiffusionService.getListesDeDiffusionClientSide()
+      const actual = await getListesDeDiffusionClientSide()
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/idConseiller/listes-de-diffusion',
         'accessToken'
       )
@@ -44,19 +40,18 @@ describe('ListesDeDiffusionApiService', () => {
     it('renvoie les listes de diffusion du conseiller', async () => {
       // Given
       const listesDeDiffusion: ListeDeDiffusion[] = desListesDeDiffusion()
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: listesDeDiffusion,
       })
 
       // When
-      const actual =
-        await listesDeDiffusionService.getListesDeDiffusionServerSide(
-          'idConseiller',
-          'accessToken'
-        )
+      const actual = await getListesDeDiffusionServerSide(
+        'idConseiller',
+        'accessToken'
+      )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/idConseiller/listes-de-diffusion',
         'accessToken'
       )
@@ -69,18 +64,15 @@ describe('ListesDeDiffusionApiService', () => {
       // Given
       const listeDeDiffusion: ListeDeDiffusion = uneListeDeDiffusion()
 
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: listeDeDiffusion,
       })
 
       // When
-      const actual = await listesDeDiffusionService.recupererListeDeDiffusion(
-        '1',
-        'accessToken'
-      )
+      const actual = await recupererListeDeDiffusion('1', 'accessToken')
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/listes-de-diffusion/1',
         'accessToken'
       )
@@ -95,13 +87,13 @@ describe('ListesDeDiffusionApiService', () => {
       const idsBeneficiaires = ['id-1', 'id-2']
 
       // When
-      await listesDeDiffusionService.creerListeDeDiffusion({
+      await creerListeDeDiffusion({
         titre,
         idsBeneficiaires: idsBeneficiaires,
       })
 
       // Then
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(apiPost).toHaveBeenCalledWith(
         '/conseillers/idConseiller/listes-de-diffusion',
         { titre, idsBeneficiaires },
         'accessToken'
@@ -116,13 +108,13 @@ describe('ListesDeDiffusionApiService', () => {
       const idsBeneficiaires = ['id-1', 'id-2']
 
       // When
-      await listesDeDiffusionService.modifierListeDeDiffusion('id-liste', {
+      await modifierListeDeDiffusion('id-liste', {
         titre,
         idsBeneficiaires: idsBeneficiaires,
       })
 
       // Then
-      expect(apiClient.put).toHaveBeenCalledWith(
+      expect(apiPut).toHaveBeenCalledWith(
         '/listes-de-diffusion/id-liste',
         { titre, idsBeneficiaires },
         'accessToken'
@@ -133,10 +125,10 @@ describe('ListesDeDiffusionApiService', () => {
   describe('.supprimerListeDeDiffusion', () => {
     it('modifie la liste de diffusion', async () => {
       // When
-      await listesDeDiffusionService.supprimerListeDeDiffusion('id-liste')
+      await supprimerListeDeDiffusion('id-liste')
 
       // Then
-      expect(apiClient.delete).toHaveBeenCalledWith(
+      expect(apiDelete).toHaveBeenCalledWith(
         '/listes-de-diffusion/id-liste',
         'accessToken'
       )

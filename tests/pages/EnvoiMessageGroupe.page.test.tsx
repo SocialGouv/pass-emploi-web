@@ -5,35 +5,30 @@ import { GetServerSidePropsContext } from 'next/types'
 
 import { desItemsJeunes } from 'fixtures/jeune'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import {
-  mockedFichiersService,
-  mockedListesDeDiffusionService,
-  mockedMessagesService,
-} from 'fixtures/services'
 import { JeuneFromListe } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import EnvoiMessageGroupe, {
   getServerSideProps,
 } from 'pages/mes-jeunes/envoi-message-groupe'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { FichiersService } from 'services/fichiers.service'
-import { ListesDeDiffusionService } from 'services/listes-de-diffusion.service'
-import { MessagesService } from 'services/messages.service'
+import { uploadFichier } from 'services/fichiers.service'
+import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
+import { sendNouveauMessageGroupe, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { ApiError } from 'utils/httpClient'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 jest.mock('components/Modal')
+jest.mock('services/listes-de-diffusion.service')
+jest.mock('services/fichiers.service')
+jest.mock('services/messages.service')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
 
 describe('EnvoiMessageGroupe', () => {
   describe('client side', () => {
     let jeunes: JeuneFromListe[]
     let listesDeDiffusion: ListeDeDiffusion[]
-    let messagesService: MessagesService
-    let fichiersService: FichiersService
+
     let inputSearchJeune: HTMLSelectElement
     let inputMessage: HTMLInputElement
     let fileInput: HTMLInputElement
@@ -48,16 +43,11 @@ describe('EnvoiMessageGroupe', () => {
 
       jeunes = desItemsJeunes()
       listesDeDiffusion = desListesDeDiffusion()
-
-      messagesService = mockedMessagesService({
-        sendNouveauMessageGroupe: jest.fn(() => {
-          return Promise.resolve()
-        }),
-      })
-      fichiersService = mockedFichiersService({
-        uploadFichier: jest
-          .fn()
-          .mockResolvedValue({ id: 'id-fichier', nom: 'imageupload.png' }),
+      ;(signIn as jest.Mock).mockResolvedValue(undefined)
+      ;(sendNouveauMessageGroupe as jest.Mock).mockResolvedValue(undefined)
+      ;(uploadFichier as jest.Mock).mockResolvedValue({
+        id: 'id-fichier',
+        nom: 'imageupload.png',
       })
 
       renderWithContexts(
@@ -68,10 +58,6 @@ describe('EnvoiMessageGroupe', () => {
           returnTo='/mes-jeunes'
         />,
         {
-          customDependances: {
-            messagesService,
-            fichiersService,
-          },
           customAlerte: { alerteSetter },
         }
       )
@@ -153,8 +139,8 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(0)
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
+        expect(uploadFichier).toHaveBeenCalledTimes(0)
+        expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
           idsBeneficiaires: [jeunes[1].id],
           idsListesDeDiffusion: ['liste-1'],
           newMessage,
@@ -213,9 +199,7 @@ describe('EnvoiMessageGroupe', () => {
         // Given
         const messageErreur =
           "Suite à un problème inconnu l'envoi du message a échoué. Vous pouvez réessayer."
-        ;(
-          messagesService.sendNouveauMessageGroupe as jest.Mock
-        ).mockRejectedValue({
+        ;(sendNouveauMessageGroupe as jest.Mock).mockRejectedValue({
           message: 'whatever',
         })
 
@@ -223,9 +207,7 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledTimes(
-          1
-        )
+        expect(sendNouveauMessageGroupe).toHaveBeenCalledTimes(1)
         expect(screen.getByText(messageErreur)).toBeInTheDocument()
       })
     })
@@ -237,7 +219,7 @@ describe('EnvoiMessageGroupe', () => {
       beforeEach(async () => {
         push = jest.fn(() => Promise.resolve())
         ;(useRouter as jest.Mock).mockReturnValue({ push })
-        ;(fichiersService.uploadFichier as jest.Mock).mockResolvedValue({
+        ;(uploadFichier as jest.Mock).mockResolvedValue({
           id: 'id-fichier',
           nom: 'nom-fichier.png',
         })
@@ -274,12 +256,12 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
+        expect(uploadFichier).toHaveBeenCalledWith(
           [jeunes[1].id],
           ['liste-1'],
           file
         )
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
+        expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
           idsBeneficiaires: [jeunes[1].id],
           idsListesDeDiffusion: ['liste-1'],
           newMessage,
@@ -296,12 +278,12 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(fichiersService.uploadFichier).toHaveBeenCalledWith(
+        expect(uploadFichier).toHaveBeenCalledWith(
           [jeunes[1].id],
           ['liste-1'],
           file
         )
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledWith({
+        expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
           idsBeneficiaires: [jeunes[1].id],
           idsListesDeDiffusion: ['liste-1'],
           newMessage:
@@ -314,7 +296,7 @@ describe('EnvoiMessageGroupe', () => {
       it("affiche un message d'erreur en cas d'échec de l'upload de la pièce jointe", async () => {
         // Given
         const messageErreur = 'Le poids du document dépasse 5Mo'
-        ;(fichiersService.uploadFichier as jest.Mock).mockRejectedValue(
+        ;(uploadFichier as jest.Mock).mockRejectedValue(
           new ApiError(400, messageErreur)
         )
 
@@ -322,10 +304,8 @@ describe('EnvoiMessageGroupe', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(fichiersService.uploadFichier).toHaveBeenCalledTimes(1)
-        expect(messagesService.sendNouveauMessageGroupe).toHaveBeenCalledTimes(
-          0
-        )
+        expect(uploadFichier).toHaveBeenCalledTimes(1)
+        expect(sendNouveauMessageGroupe).toHaveBeenCalledTimes(0)
         expect(screen.getByText(messageErreur)).toBeInTheDocument()
       })
     })
@@ -368,7 +348,7 @@ describe('EnvoiMessageGroupe', () => {
     describe("quand l'utilisateur est connecté", () => {
       let jeunes: JeuneFromListe[]
       let listesDeDiffusion: ListeDeDiffusion[]
-      let listesDeDiffusionService: ListesDeDiffusionService
+
       beforeEach(() => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -380,12 +360,9 @@ describe('EnvoiMessageGroupe', () => {
         })
         jeunes = desItemsJeunes()
         listesDeDiffusion = desListesDeDiffusion()
-        listesDeDiffusionService = mockedListesDeDiffusionService({
-          getListesDeDiffusionServerSide: jest.fn(
-            async () => listesDeDiffusion
-          ),
-        })
-        ;(withDependance as jest.Mock).mockReturnValue(listesDeDiffusionService)
+        ;(getListesDeDiffusionServerSide as jest.Mock).mockResolvedValue(
+          listesDeDiffusion
+        )
       })
 
       it('récupère les listes de diffusion du conseiller', async () => {
@@ -395,9 +372,10 @@ describe('EnvoiMessageGroupe', () => {
         } as GetServerSidePropsContext)
 
         // Then
-        expect(
-          listesDeDiffusionService.getListesDeDiffusionServerSide
-        ).toHaveBeenCalledWith('id-conseiller', 'accessToken')
+        expect(getListesDeDiffusionServerSide).toHaveBeenCalledWith(
+          'id-conseiller',
+          'accessToken'
+        )
         expect(actual).toEqual({
           props: {
             listesDiffusion: listesDeDiffusion,

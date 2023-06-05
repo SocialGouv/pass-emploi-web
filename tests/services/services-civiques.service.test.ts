@@ -1,38 +1,34 @@
-import { ApiClient } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import {
   listeBaseServicesCiviques,
   listeServicesCiviquesJson,
   unServiceCiviqueJson,
 } from 'fixtures/offre'
 import { uneCommune } from 'fixtures/referentiel'
-import { ServicesCiviquesApiService } from 'services/services-civiques.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
+import {
+  getServiceCiviqueServerSide,
+  searchServicesCiviques,
+} from 'services/services-civiques.service'
 import { ApiError } from 'utils/httpClient'
 
+jest.mock('clients/api.client')
+
 describe('ServicesCiviqueApiService', () => {
-  let apiClient: ApiClient
-  let servicesCiviquesService: ServicesCiviquesApiService
-
-  beforeEach(() => {
-    apiClient = new FakeApiClient()
-    servicesCiviquesService = new ServicesCiviquesApiService(apiClient)
-  })
-
   describe('.getServiceCiviqueServerSide', () => {
     it('renvoie le service civique si il est trouvé en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: unServiceCiviqueJson(),
       })
 
       // When
-      const actual = await servicesCiviquesService.getServiceCiviqueServerSide(
+      const actual = await getServiceCiviqueServerSide(
         'ID_SERVICE_CIVIQUE',
         'accessToken'
       )
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/services-civique/ID_SERVICE_CIVIQUE',
         'accessToken'
       )
@@ -50,12 +46,12 @@ describe('ServicesCiviqueApiService', () => {
 
     it('renvoie undefined si l’offre d’emploi n’est pas trouvée en base', async () => {
       // Given
-      ;(apiClient.get as jest.Mock).mockRejectedValue(
+      ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'service civique non trouvé')
       )
 
       // When
-      const actual = await servicesCiviquesService.getServiceCiviqueServerSide(
+      const actual = await getServiceCiviqueServerSide(
         'ID_SERVICE_CIVIQUE',
         'accessToken'
       )
@@ -68,7 +64,7 @@ describe('ServicesCiviqueApiService', () => {
   describe('.searchServicesCiviques', () => {
     beforeEach(() => {
       // Given
-      ;(apiClient.get as jest.Mock).mockResolvedValue({
+      ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           pagination: { total: 35 },
           results: listeServicesCiviquesJson(),
@@ -78,10 +74,10 @@ describe('ServicesCiviqueApiService', () => {
 
     it('renvoie une liste paginée d’offres d’emploi', async () => {
       // When
-      const actual = await servicesCiviquesService.searchServicesCiviques({}, 3)
+      const actual = await searchServicesCiviques({}, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10',
         'accessToken'
       )
@@ -96,13 +92,10 @@ describe('ServicesCiviqueApiService', () => {
 
     it('parse les coordonnées', async () => {
       // When
-      await servicesCiviquesService.searchServicesCiviques(
-        { commune: uneCommune() },
-        3
-      )
+      await searchServicesCiviques({ commune: uneCommune() }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&lon=2.323026&lat=48.830108',
         'accessToken'
       )
@@ -110,13 +103,10 @@ describe('ServicesCiviqueApiService', () => {
 
     it('parse le domaine', async () => {
       // When
-      await servicesCiviquesService.searchServicesCiviques(
-        { domaine: 'code-domaine' },
-        3
-      )
+      await searchServicesCiviques({ domaine: 'code-domaine' }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&domaine=code-domaine',
         'accessToken'
       )
@@ -124,13 +114,10 @@ describe('ServicesCiviqueApiService', () => {
 
     it('parse la date de début', async () => {
       // When
-      await servicesCiviquesService.searchServicesCiviques(
-        { dateDebut: '2022-11-01' },
-        3
-      )
+      await searchServicesCiviques({ dateDebut: '2022-11-01' }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&dateDeDebutMinimum=2022-11-01T00%3A00%3A00.000%2B01%3A00',
         'accessToken'
       )
@@ -138,10 +125,10 @@ describe('ServicesCiviqueApiService', () => {
 
     it('parse le rayon', async () => {
       // When
-      await servicesCiviquesService.searchServicesCiviques({ rayon: 43 }, 3)
+      await searchServicesCiviques({ rayon: 43 }, 3)
 
       // Then
-      expect(apiClient.get).toHaveBeenCalledWith(
+      expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&distance=43',
         'accessToken'
       )

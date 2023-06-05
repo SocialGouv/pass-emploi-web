@@ -8,13 +8,13 @@ import TileIndicateur from 'components/ui/TileIndicateur'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { IndicateursSemaine } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { JeunesService } from 'services/jeunes.service'
+import {
+  getIndicateursJeuneComplets,
+  getJeuneDetails,
+} from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchString } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type IndicateursProps = PageProps & {
@@ -23,7 +23,6 @@ type IndicateursProps = PageProps & {
 }
 
 function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
-  const jeunesService = useDependance<JeunesService>('jeunesService')
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -38,16 +37,14 @@ function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
   // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
     if (!indicateursSemaine) {
-      jeunesService
-        .getIndicateursJeuneComplets(
-          conseiller.id,
-          idJeune,
-          debutSemaine,
-          finSemaine
-        )
-        .then(setIndicateursSemaine)
+      getIndicateursJeuneComplets(
+        conseiller.id,
+        idJeune,
+        debutSemaine,
+        finSemaine
+      ).then(setIndicateursSemaine)
     }
-  }, [idJeune, debutSemaine, finSemaine, indicateursSemaine, jeunesService])
+  }, [idJeune, debutSemaine, finSemaine, indicateursSemaine])
 
   const tracking = `Détail jeune – Indicateurs${
     lectureSeule ? ' - hors portefeuille' : ''
@@ -183,12 +180,13 @@ function IndicateursOffres({
 export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
   }
-
-  const jeunesService = withDependance<JeunesService>('jeunesService')
 
   const {
     session: { accessToken, user },
@@ -199,10 +197,7 @@ export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
 
   const idBeneficiaire = context.query.jeune_id as string
 
-  const beneficiaire = await jeunesService.getJeuneDetails(
-    idBeneficiaire,
-    accessToken
-  )
+  const beneficiaire = await getJeuneDetails(idBeneficiaire, accessToken)
 
   if (!beneficiaire) {
     return { notFound: true }

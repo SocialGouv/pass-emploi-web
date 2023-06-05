@@ -24,14 +24,17 @@ import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ActionsService } from 'services/actions.service'
+import {
+  deleteAction as _deleteAction,
+  getAction,
+  qualifier,
+  recupererLesCommentaires,
+  updateAction,
+} from 'services/actions.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface PageActionProps extends PageProps {
@@ -48,7 +51,6 @@ function PageAction({
   commentaires,
   lectureSeule,
 }: PageActionProps) {
-  const actionsService = useDependance<ActionsService>('actionsService')
   const router = useRouter()
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -82,10 +84,7 @@ function PageAction({
   const dateEcheance = toShortDate(action.dateEcheance)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
-    const nouveauStatut = await actionsService.updateAction(
-      action.id,
-      statutChoisi
-    )
+    const nouveauStatut = await updateAction(action.id, statutChoisi)
     setStatut(nouveauStatut)
   }
 
@@ -97,7 +96,7 @@ function PageAction({
         `/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`
       )
     } else {
-      const nouvelleQualification = await actionsService.qualifier(
+      const nouvelleQualification = await qualifier(
         action.id,
         CODE_QUALIFICATION_NON_SNP,
         {
@@ -112,8 +111,7 @@ function PageAction({
 
   async function deleteAction(): Promise<void> {
     setDeleteDisabled(true)
-    actionsService
-      .deleteAction(action.id)
+    _deleteAction(action.id)
       .then(() => {
         setAlerte(AlerteParam.suppressionAction)
         router.push({
@@ -235,6 +233,9 @@ function PageAction({
 export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -248,17 +249,12 @@ export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
   }
   const { jeune_id, action_id } = context.query
 
-  const actionsService = withDependance<ActionsService>('actionsService')
-
-  const actionEtJeune = await actionsService.getAction(
-    action_id as string,
-    accessToken
-  )
+  const actionEtJeune = await getAction(action_id as string, accessToken)
 
   if (!actionEtJeune) return { notFound: true }
   if (jeune_id !== actionEtJeune.jeune.id) return { notFound: true }
 
-  const commentaires = await actionsService.recupererLesCommentaires(
+  const commentaires = await recupererLesCommentaires(
     action_id as string,
     accessToken
   )

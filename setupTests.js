@@ -8,6 +8,7 @@ window.HTMLElement.prototype.scrollTo = jest.fn()
 
 jest.mock('utils/analytics/useMatomo')
 jest.mock('utils/hooks/useLeanBeWidget')
+
 jest.mock('next/router', () => ({
   __esModule: true,
   useRouter: jest.fn(),
@@ -18,6 +19,7 @@ jest.mock('next/router', () => ({
     },
   },
 }))
+
 jest.mock('next-auth/react', () => ({
   getSession: async () => ({
     user: {

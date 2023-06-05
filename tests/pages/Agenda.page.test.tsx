@@ -8,29 +8,28 @@ import React from 'react'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneAnimationCollective, unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import {
-  mockedConseillerService,
-  mockedEvenementsService,
-  mockedReferentielService,
-} from 'fixtures/services'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
 import Agenda, { getServerSideProps } from 'pages/agenda'
-import { ConseillerService } from 'services/conseiller.service'
-import { EvenementsService } from 'services/evenements.service'
-import { ReferentielService } from 'services/referentiel.service'
+import { modifierAgence } from 'services/conseiller.service'
+import {
+  getRendezVousConseiller,
+  getRendezVousEtablissement,
+} from 'services/evenements.service'
+import { getAgencesClientSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/evenements.service')
+jest.mock('services/referentiel.service')
+jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('Agenda', () => {
   describe('client side', () => {
-    let evenementsService: EvenementsService
     let replace: jest.Mock
 
     beforeEach(() => {
@@ -43,31 +42,30 @@ describe('Agenda', () => {
         replace: replace,
         asPath: '/mes-jeunes',
       })
-
-      evenementsService = mockedEvenementsService({
-        getRendezVousConseiller: jest.fn(async (_, dateDebut) => [
+      ;(getRendezVousConseiller as jest.Mock).mockImplementation(
+        async (_, dateDebut) => [
           unEvenementListItem({
             date: dateDebut.plus({ day: 3 }).toISO(),
           }),
-        ]),
-        getRendezVousEtablissement: jest.fn(async () => [
-          uneAnimationCollective({
-            id: 'ac-1',
-            date: SEPTEMBRE_1_14H.minus({ day: 3 }),
-            statut: StatutAnimationCollective.Close,
-          }),
-          uneAnimationCollective({
-            id: 'ac-2',
-            date: SEPTEMBRE_1_14H,
-            statut: StatutAnimationCollective.AClore,
-          }),
-          uneAnimationCollective({
-            id: 'ac-3',
-            date: SEPTEMBRE_1_14H.plus({ day: 3 }),
-            statut: StatutAnimationCollective.AVenir,
-          }),
-        ]),
-      })
+        ]
+      )
+      ;(getRendezVousEtablissement as jest.Mock).mockResolvedValue([
+        uneAnimationCollective({
+          id: 'ac-1',
+          date: SEPTEMBRE_1_14H.minus({ day: 3 }),
+          statut: StatutAnimationCollective.Close,
+        }),
+        uneAnimationCollective({
+          id: 'ac-2',
+          date: SEPTEMBRE_1_14H,
+          statut: StatutAnimationCollective.AClore,
+        }),
+        uneAnimationCollective({
+          id: 'ac-3',
+          date: SEPTEMBRE_1_14H.plus({ day: 3 }),
+          statut: StatutAnimationCollective.AVenir,
+        }),
+      ])
     })
 
     describe('contenu', () => {
@@ -83,7 +81,6 @@ describe('Agenda', () => {
         // When
         await act(async () => {
           await renderWithContexts(<Agenda pageTitle='' />, {
-            customDependances: { evenementsService: evenementsService },
             customConseiller: conseiller,
           })
         })
@@ -180,9 +177,11 @@ describe('Agenda', () => {
 
         it('affiche une période de 7 jours à partir de la date du jour', async () => {
           // Then
-          expect(
-            evenementsService.getRendezVousConseiller
-          ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
+          expect(getRendezVousConseiller).toHaveBeenCalledWith(
+            '1',
+            SEPTEMBRE_1_0H,
+            SEPTEMBRE_7_23H
+          )
 
           expect(screen.getByRole('table')).toBeInTheDocument()
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
@@ -205,25 +204,31 @@ describe('Agenda', () => {
           // When
           await userEvent.click(periodePasseeButton)
           // Then
-          expect(
-            evenementsService.getRendezVousConseiller
-          ).toHaveBeenLastCalledWith('1', AOUT_25_0H, AOUT_31_23H)
+          expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
+            '1',
+            AOUT_25_0H,
+            AOUT_31_23H
+          )
           expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
 
           // When
           await userEvent.click(buttonPeriodeCourante)
           // Then
-          expect(
-            evenementsService.getRendezVousConseiller
-          ).toHaveBeenCalledWith('1', SEPTEMBRE_1_0H, SEPTEMBRE_7_23H)
+          expect(getRendezVousConseiller).toHaveBeenCalledWith(
+            '1',
+            SEPTEMBRE_1_0H,
+            SEPTEMBRE_7_23H
+          )
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
           // When
           await userEvent.click(periodeFutureButton)
           // Then
-          expect(
-            evenementsService.getRendezVousConseiller
-          ).toHaveBeenLastCalledWith('1', SEPTEMBRE_8_0H, SEPTEMBRE_14_23H)
+          expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
+            '1',
+            SEPTEMBRE_8_0H,
+            SEPTEMBRE_14_23H
+          )
           expect(screen.getByText('dimanche 11 septembre')).toBeInTheDocument()
         })
       })
@@ -258,9 +263,7 @@ describe('Agenda', () => {
 
         it('récupère les événements sur une période de 7 jours à partir de la date du jour', async () => {
           // Then
-          expect(
-            evenementsService.getRendezVousEtablissement
-          ).toHaveBeenCalledWith(
+          expect(getRendezVousEtablissement).toHaveBeenCalledWith(
             'id-etablissement',
             SEPTEMBRE_1_0H,
             SEPTEMBRE_7_23H
@@ -331,9 +334,7 @@ describe('Agenda', () => {
           // When
           await userEvent.click(periodesPasseesButton)
           // Then
-          expect(
-            evenementsService.getRendezVousEtablissement
-          ).toHaveBeenLastCalledWith(
+          expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
             'id-etablissement',
             AOUT_25_0H,
             AOUT_31_23H
@@ -343,9 +344,7 @@ describe('Agenda', () => {
           await userEvent.click(periodeCouranteButton)
 
           // Then
-          expect(
-            evenementsService.getRendezVousEtablissement
-          ).toHaveBeenCalledWith(
+          expect(getRendezVousEtablissement).toHaveBeenCalledWith(
             'id-etablissement',
             SEPTEMBRE_1_0H,
             SEPTEMBRE_7_23H
@@ -355,9 +354,7 @@ describe('Agenda', () => {
           // When
           await userEvent.click(periodesFuturesButton)
           // Then
-          expect(
-            evenementsService.getRendezVousEtablissement
-          ).toHaveBeenLastCalledWith(
+          expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
             'id-etablissement',
             SEPTEMBRE_8_0H,
             SEPTEMBRE_14_23H
@@ -368,25 +365,14 @@ describe('Agenda', () => {
 
     describe('quand le conseiller n’a pas d’établissement', () => {
       let agences: Agence[]
-      let referentielService: ReferentielService
-      let conseillerService: ConseillerService
 
       beforeEach(async () => {
         agences = uneListeDAgencesMILO()
-        referentielService = mockedReferentielService({
-          getAgencesClientSide: jest.fn(async () => agences),
-        })
-
-        conseillerService = mockedConseillerService()
+        ;(getAgencesClientSide as jest.Mock).mockResolvedValue(agences)
 
         // When
         await act(async () => {
           await renderWithContexts(<Agenda pageTitle='' />, {
-            customDependances: {
-              referentielService,
-              conseillerService,
-              evenementsService,
-            },
             customConseiller: { structure: StructureConseiller.MILO },
           })
         })
@@ -435,7 +421,7 @@ describe('Agenda', () => {
         )
 
         // Then
-        expect(referentielService.getAgencesClientSide).toHaveBeenCalledWith(
+        expect(getAgencesClientSide).toHaveBeenCalledWith(
           StructureConseiller.MILO
         )
         expect(
@@ -466,7 +452,7 @@ describe('Agenda', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(conseillerService.modifierAgence).toHaveBeenCalledWith({
+        expect(modifierAgence).toHaveBeenCalledWith({
           id: agence.id,
           nom: agence.nom,
           codeDepartement: '3',

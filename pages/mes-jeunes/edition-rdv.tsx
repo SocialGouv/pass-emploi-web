@@ -30,16 +30,19 @@ import {
   TypeEvenementReferentiel,
 } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { EvenementsService } from 'services/evenements.service'
-import { JeunesService } from 'services/jeunes.service'
+import {
+  creerEvenement,
+  getDetailsEvenement,
+  getTypesRendezVous,
+  supprimerEvenement as _supprimerEvenement,
+  updateRendezVous,
+} from 'services/evenements.service'
+import { getJeunesDeLEtablissement } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -59,9 +62,6 @@ function EditionRdv({
   evenementTypeAC,
 }: EditionRdvProps) {
   const router = useRouter()
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const evenementsService =
-    useDependance<EvenementsService>('evenementsService')
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [_, setAlerte] = useAlerte()
@@ -179,7 +179,7 @@ function EditionRdv({
   async function creerNouvelEvenement(
     payload: EvenementFormData
   ): Promise<void> {
-    const idNouvelEvenement = await evenementsService.creerEvenement(payload)
+    const idNouvelEvenement = await creerEvenement(payload)
     const alertType = evenementTypeAC
       ? AlerteParam.creationAnimationCollective
       : AlerteParam.creationRDV
@@ -190,7 +190,7 @@ function EditionRdv({
     idEvenement: string,
     payload: EvenementFormData
   ): Promise<void> {
-    await evenementsService.updateRendezVous(idEvenement, payload)
+    await updateRendezVous(idEvenement, payload)
     const alertType = evenementTypeAC
       ? AlerteParam.modificationAnimationCollective
       : AlerteParam.modificationRDV
@@ -202,7 +202,7 @@ function EditionRdv({
     setShowDeleteRdvModal(false)
 
     try {
-      await evenementsService.supprimerEvenement(evenement!.id)
+      await _supprimerEvenement(evenement!.id)
       const alertType = evenementTypeAC
         ? AlerteParam.suppressionAnimationCollective
         : AlerteParam.suppressionRDV
@@ -215,7 +215,7 @@ function EditionRdv({
 
   function recupererJeunesDeLEtablissement() {
     if (conseiller.agence?.id) {
-      return jeunesService.getJeunesDeLEtablissement(conseiller.agence.id)
+      return getJeunesDeLEtablissement(conseiller.agence.id)
     }
     return Promise.resolve([])
   }
@@ -314,7 +314,7 @@ function EditionRdv({
               <dd className='text-base-bold'>{evenement.type.label}</dd>
 
               <div className='mt-2'>
-                <dt className='inline'>Créé(e) par : </dt>
+                <dt className='inline'>Créé(e) par :</dt>
                 <dd className='inline text-s-bold'>
                   {estCreeParSiMILO(evenement) && 'Système d’information MILO'}
                   {!estCreeParSiMILO(evenement) &&
@@ -427,6 +427,9 @@ function EditionRdv({
 export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -447,15 +450,9 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
       referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   }
 
-  const evenementsService =
-    withDependance<EvenementsService>('evenementsService')
-
   const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
-    const evenement = await evenementsService.getDetailsEvenement(
-      idRdv,
-      accessToken
-    )
+    const evenement = await getDetailsEvenement(idRdv, accessToken)
     if (!evenement) return { notFound: true }
 
     return {
@@ -465,9 +462,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
       },
     }
   } else {
-    const typesEvenements = await evenementsService.getTypesRendezVous(
-      accessToken
-    )
+    const typesEvenements = await getTypesRendezVous(accessToken)
     const creationAC = context.query.type === 'ac'
 
     return {

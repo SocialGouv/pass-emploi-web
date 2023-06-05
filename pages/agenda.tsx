@@ -16,14 +16,15 @@ import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ConseillerService } from 'services/conseiller.service'
-import { EvenementsService } from 'services/evenements.service'
-import { ReferentielService } from 'services/referentiel.service'
+import { modifierAgence } from 'services/conseiller.service'
+import {
+  getRendezVousConseiller,
+  getRendezVousEtablissement,
+} from 'services/evenements.service'
+import { getAgencesClientSide } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 enum Onglet {
@@ -37,13 +38,6 @@ interface AgendaProps extends PageProps {
 }
 
 function Agenda({ onglet }: AgendaProps) {
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
-  const rendezVousService =
-    useDependance<EvenementsService>('evenementsService')
-  const referentielService =
-    useDependance<ReferentielService>('referentielService')
-
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -103,11 +97,7 @@ function Agenda({ onglet }: AgendaProps) {
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<EvenementListItem[]> {
-    return rendezVousService.getRendezVousConseiller(
-      idConseiller,
-      dateDebut,
-      dateFin
-    )
+    return getRendezVousConseiller(idConseiller, dateDebut, dateFin)
   }
 
   function recupererRdvsEtablissement(
@@ -115,11 +105,7 @@ function Agenda({ onglet }: AgendaProps) {
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<AnimationCollective[]> {
-    return rendezVousService.getRendezVousEtablissement(
-      idEtablissement,
-      dateDebut,
-      dateFin
-    )
+    return getRendezVousEtablissement(idEtablissement, dateDebut, dateFin)
   }
 
   async function trackAgenceModal(trackingMessage: string) {
@@ -130,7 +116,7 @@ function Agenda({ onglet }: AgendaProps) {
     id?: string
     nom: string
   }): Promise<void> {
-    await conseillerService.modifierAgence(agence)
+    await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
@@ -224,9 +210,7 @@ function Agenda({ onglet }: AgendaProps) {
             <EncartAgenceRequise
               conseiller={conseiller}
               onAgenceChoisie={renseignerAgence}
-              getAgences={referentielService.getAgencesClientSide.bind(
-                referentielService
-              )}
+              getAgences={getAgencesClientSide}
               onChangeAffichageModal={trackAgenceModal}
             />
           )}
@@ -239,6 +223,9 @@ function Agenda({ onglet }: AgendaProps) {
 export const getServerSideProps: GetServerSideProps<AgendaProps> = async (
   context
 ): Promise<GetServerSidePropsResult<AgendaProps>> => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

@@ -13,16 +13,16 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { estUserPoleEmploi, StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { EvenementsService } from 'services/evenements.service'
+import {
+  cloreAnimationCollective as _cloreAnimationCollective,
+  getDetailsEvenement,
+} from 'services/evenements.service'
 import { useAlerte } from 'utils/alerteContext'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 
 interface ClotureProps extends PageProps {
   returnTo: string
@@ -32,8 +32,6 @@ interface ClotureProps extends PageProps {
 
 function Cloture({ returnTo, evenement }: ClotureProps) {
   const router = useRouter()
-  const evenementsService =
-    useDependance<EvenementsService>('evenementsService')
   const [_, setAlerte] = useAlerte()
 
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
@@ -57,10 +55,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
   async function cloreAnimationCollective(event: FormEvent) {
     event.preventDefault()
 
-    await evenementsService.cloreAnimationCollective(
-      evenement.id,
-      idsSelectionnes
-    )
+    await _cloreAnimationCollective(evenement.id, idsSelectionnes)
 
     setAlerte(AlerteParam.clotureAC)
     await router.push(returnTo)
@@ -161,6 +156,9 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
 export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
   context
 ) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -174,10 +172,7 @@ export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
-  const evenementsService =
-    withDependance<EvenementsService>('evenementsService')
-
-  const evenement = await evenementsService.getDetailsEvenement(
+  const evenement = await getDetailsEvenement(
     context.query.evenement_id as string,
     accessToken
   )

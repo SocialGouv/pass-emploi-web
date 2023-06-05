@@ -21,27 +21,19 @@ import {
 } from 'interfaces/conseiller'
 import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { ConseillerService } from 'services/conseiller.service'
-import { JeunesService } from 'services/jeunes.service'
-import { ReferentielService } from 'services/referentiel.service'
+import { modifierAgence } from 'services/conseiller.service'
+import { rechercheJeunesDeLEtablissement } from 'services/jeunes.service'
+import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
-import { useDependance } from 'utils/injectionDependances'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type MissionLocaleProps = PageProps
 
 const Etablissement = (_: MissionLocaleProps) => {
   const initialTracking = `Etablissement`
-
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
-  const jeunesService = useDependance<JeunesService>('jeunesService')
-  const referentielService =
-    useDependance<ReferentielService>('referentielService')
 
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -62,7 +54,7 @@ const Etablissement = (_: MissionLocaleProps) => {
       setResultatsRecherche(undefined)
       setMetadonnees(undefined)
     } else if (nouvelleRecherche(input, page)) {
-      const resultats = await jeunesService.rechercheJeunesDeLEtablissement(
+      const resultats = await rechercheJeunesDeLEtablissement(
         conseiller.agence!.id!,
         input,
         page
@@ -79,7 +71,7 @@ const Etablissement = (_: MissionLocaleProps) => {
     id?: string
     nom: string
   }): Promise<void> {
-    await conseillerService.modifierAgence(agence)
+    await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingTitle(initialTracking + ' - Succès ajout agence')
   }
@@ -107,9 +99,7 @@ const Etablissement = (_: MissionLocaleProps) => {
         <EncartAgenceRequise
           conseiller={conseiller}
           onAgenceChoisie={renseignerAgence}
-          getAgences={referentielService.getAgencesClientSide.bind(
-            referentielService
-          )}
+          getAgences={getAgencesClientSide}
           onChangeAffichageModal={trackAgenceModal}
         />
       )}
@@ -198,6 +188,9 @@ const Etablissement = (_: MissionLocaleProps) => {
 export const getServerSideProps: GetServerSideProps<
   MissionLocaleProps
 > = async (context) => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }

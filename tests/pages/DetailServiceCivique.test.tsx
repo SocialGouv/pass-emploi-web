@@ -3,19 +3,17 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { unDetailServiceCivique } from 'fixtures/offre'
-import { mockedServicesCiviquesService } from 'fixtures/services'
 import { DetailServiceCivique } from 'interfaces/offre'
 import DetailOffre, {
   getServerSideProps,
 } from 'pages/offres/[offre_type]/[offre_id]'
-import { ServicesCiviquesService } from 'services/services-civiques.service'
+import { getServiceCiviqueServerSide } from 'services/services-civiques.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/services-civiques.service')
 jest.mock('components/PageActionsPortal')
 
 describe('Page Détail Service civique', () => {
@@ -122,20 +120,14 @@ describe('Page Détail Service civique', () => {
   })
 
   describe('server side', () => {
-    let servicesCiviquesService: ServicesCiviquesService
     beforeEach(() => {
-      servicesCiviquesService = mockedServicesCiviquesService({
-        getServiceCiviqueServerSide: jest.fn(async () =>
-          unDetailServiceCivique()
-        ),
-      })
+      ;(getServiceCiviqueServerSide as jest.Mock).mockResolvedValue(unDetailServiceCivique())
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
         validSession: true,
         session: {
           accessToken: 'accessToken',
         },
       })
-      ;(withDependance as jest.Mock).mockReturnValue(servicesCiviquesService)
     })
 
     it('requiert la connexion', async () => {
@@ -163,9 +155,10 @@ describe('Page Détail Service civique', () => {
       } as unknown as GetServerSidePropsContext)
 
       // Then
-      expect(
-        servicesCiviquesService.getServiceCiviqueServerSide
-      ).toHaveBeenCalledWith('id-service-civique', 'accessToken')
+      expect(getServiceCiviqueServerSide).toHaveBeenCalledWith(
+        'id-service-civique',
+        'accessToken'
+      )
       expect(actual).toEqual({
         props: {
           offre: unDetailServiceCivique(),
@@ -177,9 +170,7 @@ describe('Page Détail Service civique', () => {
 
     it("renvoie une 404 si l'offre n'existe pas", async () => {
       // Given
-      ;(
-        servicesCiviquesService.getServiceCiviqueServerSide as jest.Mock
-      ).mockResolvedValue(undefined)
+      ;(getServiceCiviqueServerSide as jest.Mock).mockResolvedValue(undefined)
 
       // When
       const actual = await getServerSideProps({

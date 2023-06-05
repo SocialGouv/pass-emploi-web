@@ -1,16 +1,9 @@
-import { ApiClient } from 'clients/api.client'
-import { FichiersApiService, FichiersService } from 'services/fichiers.service'
-import { FakeApiClient } from 'tests/utils/fakeApiClient'
+import { apiDelete, apiPostFile } from 'clients/api.client'
+import { deleteFichier, uploadFichier } from 'services/fichiers.service'
+
+jest.mock('clients/api.client')
 
 describe('FichierApiService', () => {
-  let apiClient: ApiClient
-  let fichiersService: FichiersService
-  beforeEach(async () => {
-    // Given
-    apiClient = new FakeApiClient()
-    fichiersService = new FichiersApiService(apiClient)
-  })
-
   describe('.uploadFichier', () => {
     it('envoie un fichier', async () => {
       // Given
@@ -19,10 +12,10 @@ describe('FichierApiService', () => {
       })
 
       // When
-      await fichiersService.uploadFichier(['id-jeune'], ['liste-1'], file)
+      await uploadFichier(['id-jeune'], ['liste-1'], file)
 
       // Then
-      expect(apiClient.postFile).toHaveBeenCalledWith(
+      expect(apiPostFile).toHaveBeenCalledWith(
         '/fichiers',
         expect.objectContaining({}),
         // FIXME pourquoi on peut pas expect le contenu du payload ?
@@ -39,10 +32,10 @@ describe('FichierApiService', () => {
   describe('.deleteFichier', () => {
     it('supprime le fichier', async () => {
       // WHEN
-      await fichiersService.deleteFichier('id-fichier')
+      await deleteFichier('id-fichier')
 
       // THEN
-      expect(apiClient.delete).toHaveBeenCalledWith(
+      expect(apiDelete).toHaveBeenCalledWith(
         '/fichiers/id-fichier',
         'accessToken'
       )

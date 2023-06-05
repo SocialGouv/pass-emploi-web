@@ -1,13 +1,15 @@
 import { EncryptedTextWithInitializationVector } from '../chatCrypto'
 
-export class ChatCrypto {
-  encrypt = jest.fn((message: string) => ({
-    encryptedText: `Encrypted: ${message}`,
-    iv: `IV: ${message}`,
-  }))
-  encryptWithCustomIv = jest.fn((message: string) => `Encrypted: ${message}`)
-  decrypt = jest.fn(
-    ({ encryptedText }: EncryptedTextWithInitializationVector) =>
-      `Decrypted: ${encryptedText}`
-  )
+export function encrypt(message: string) {
+  return { encryptedText: `Encrypted: ${message}`, iv: `IV: ${message}` }
+}
+
+export function encryptWithCustomIv(message: string) {
+  return `Encrypted: ${message}`
+}
+
+export function decrypt({
+  encryptedText,
+}: EncryptedTextWithInitializationVector) {
+  return `Decrypted: ${encryptedText}`
 }

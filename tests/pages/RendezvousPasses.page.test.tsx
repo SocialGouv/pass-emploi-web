@@ -8,18 +8,17 @@ import renderWithContexts from '../renderWithContexts'
 
 import { unEvenementListItem } from 'fixtures/evenement'
 import { unDetailJeune, uneBaseJeune } from 'fixtures/jeune'
-import { mockedEvenementsService, mockedJeunesService } from 'fixtures/services'
 import { EvenementListItem } from 'interfaces/evenement'
 import RendezVousPasses, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/rendez-vous-passes'
-import { EvenementsService } from 'services/evenements.service'
-import { JeunesService } from 'services/jeunes.service'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
-import withDependance from 'utils/injectionDependances/withDependance'
+import { getRendezVousJeune } from 'services/evenements.service'
+import { getJeuneDetails } from 'services/jeunes.service'
+import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('utils/injectionDependances/withDependance')
+jest.mock('services/evenements.service')
+jest.mock('services/jeunes.service')
 
 describe('RendezVousPasses', () => {
   describe('client side', () => {
@@ -122,19 +121,11 @@ describe('RendezVousPasses', () => {
   })
 
   describe('server side', () => {
-    let evenementsService: EvenementsService
-    let jeunesService: JeunesService
     beforeEach(() => {
-      evenementsService = mockedEvenementsService({
-        getRendezVousJeune: jest.fn(async () => [unEvenementListItem()]),
-      })
-      jeunesService = mockedJeunesService({
-        getJeuneDetails: jest.fn(async () => unDetailJeune()),
-      })
-      ;(withDependance as jest.Mock).mockImplementation((dependance) => {
-        if (dependance === 'evenementsService') return evenementsService
-        if (dependance === 'jeunesService') return jeunesService
-      })
+      ;(getRendezVousJeune as jest.Mock).mockResolvedValue([
+        unEvenementListItem(),
+      ])
+      ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
     })
 
     describe('quand la session est invalide', () => {
@@ -172,11 +163,8 @@ describe('RendezVousPasses', () => {
         } as unknown as GetServerSidePropsContext)
 
         // Then
-        expect(jeunesService.getJeuneDetails).toHaveBeenCalledWith(
-          'id-jeune',
-          'accessToken'
-        )
-        expect(evenementsService.getRendezVousJeune).toHaveBeenCalledWith(
+        expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
+        expect(getRendezVousJeune).toHaveBeenCalledWith(
           'id-jeune',
           'PASSES',
           'accessToken'
@@ -207,7 +195,7 @@ describe('RendezVousPasses', () => {
           query: {},
         } as unknown as GetServerSidePropsContext)
         // Then
-        expect(evenementsService.getRendezVousJeune).not.toHaveBeenCalled()
+        expect(getRendezVousJeune).not.toHaveBeenCalled()
         expect(actual).toMatchObject({ props: { rdvs: [] } })
       })
     })

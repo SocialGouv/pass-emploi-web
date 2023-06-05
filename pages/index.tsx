@@ -8,15 +8,15 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { ConseillerService } from 'services/conseiller.service'
-import { ReferentielService } from 'services/referentiel.service'
+import {
+  getConseillerServerSide,
+  modifierAgence,
+} from 'services/conseiller.service'
+import { getAgencesServerSide } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
-import { withMandatorySessionOrRedirect } from 'utils/auth/withMandatorySessionOrRedirect'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { useDependance } from 'utils/injectionDependances'
-import withDependance from 'utils/injectionDependances/withDependance'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface HomePageProps extends PageProps {
@@ -26,8 +26,6 @@ interface HomePageProps extends PageProps {
 
 function Home({ redirectUrl, referentielAgences }: HomePageProps) {
   const router = useRouter()
-  const conseillerService =
-    useDependance<ConseillerService>('conseillerService')
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [_, setAlerte] = useAlerte()
@@ -41,7 +39,7 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     id?: string
     nom: string
   }): Promise<void> {
-    await conseillerService.modifierAgence(agence)
+    await modifierAgence(agence)
     setConseiller({ ...conseiller, agence })
     setTrackingLabel('Succès ajout agence')
     setAlerte(AlerteParam.choixAgence)
@@ -78,6 +76,9 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   context
 ): Promise<GetServerSidePropsResult<HomePageProps>> => {
+  const { default: withMandatorySessionOrRedirect } = await import(
+    'utils/auth/withMandatorySessionOrRedirect'
+  )
   const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
   if (!sessionOrRedirect.validSession) {
     return { redirect: sessionOrRedirect.redirect }
@@ -91,12 +92,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     ? `?source=${context.query.source}`
     : ''
 
-  const conseillerService =
-    withDependance<ConseillerService>('conseillerService')
-  const conseiller = await conseillerService.getConseillerServerSide(
-    user,
-    accessToken
-  )
+  const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
   }
@@ -115,8 +111,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     }
   }
 
-  const agenceService = withDependance<ReferentielService>('referentielService')
-  const referentielAgences = await agenceService.getAgencesServerSide(
+  const referentielAgences = await getAgencesServerSide(
     user.structure,
     accessToken
   )
