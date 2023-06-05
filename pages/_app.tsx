@@ -11,6 +11,8 @@ import React, { useEffect } from 'react'
 import 'styles/globals.css'
 import 'styles/typography.css'
 
+import unregisterServiceWorker from '../utils/unregisterServiceWorker'
+
 import AppHead from 'components/AppHead'
 import Footer from 'components/layouts/Footer'
 import { init } from 'utils/analytics/matomo'
@@ -69,6 +71,17 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
   useEffect(() => {
     init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
     initRum()
+  }, [])
+
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = '/unregisterServiceWorker.js'
+    script.async = true
+    document.body.appendChild(script)
+
+    return () => {
+      document.body.removeChild(script)
+    }
   }, [])
 
   return (
