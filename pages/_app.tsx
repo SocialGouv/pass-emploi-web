@@ -11,8 +11,6 @@ import React, { useEffect } from 'react'
 import 'styles/globals.css'
 import 'styles/typography.css'
 
-import unregisterServiceWorker from '../utils/unregisterServiceWorker'
-
 import AppHead from 'components/AppHead'
 import Footer from 'components/layouts/Footer'
 import { init } from 'utils/analytics/matomo'
@@ -73,14 +71,17 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
     initRum()
   }, [])
 
+  // Clear le SW (retrait de next-pwa) - 05/06/2023
   useEffect(() => {
-    const script = document.createElement('script')
-    script.src = '/unregisterServiceWorker.js'
-    script.async = true
-    document.body.appendChild(script)
-
-    return () => {
-      document.body.removeChild(script)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) => {
+          registrations.forEach((registration) => registration.unregister())
+        })
+        .catch(function (err) {
+          console.log('Service Worker registration failed: ', err)
+        })
     }
   }, [])
 
