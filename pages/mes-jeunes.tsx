@@ -29,11 +29,11 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 interface MesJeunesProps extends PageProps {
-  conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
+  accessToken: string
   isFromEmail: boolean
 }
 
-function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
+function MesJeunes({ accessToken, isFromEmail }: MesJeunesProps) {
   const [chatCredentials] = useChatCredentials()
   const [alerte, setAlerte] = useAlerte()
 
@@ -41,6 +41,9 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>()
   const [jeunesFiltres, setJeunesFiltres] =
     useState<JeuneAvecInfosComplementaires[]>()
+  const [conseillerJeunes, setConseillerJeunes] = useState<
+    JeuneAvecNbActionsNonTerminees[]
+  >([])
 
   const [
     isRecuperationBeneficiairesLoading,
@@ -126,6 +129,47 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
       })
   }, [chatCredentials, conseillerJeunes])
 
+  useEffect(() => {
+    const toto = async () => {
+      const { getJeunesDuConseillerClientSide } = await import(
+        'services/jeunes.service'
+      )
+      const jeunes = await getJeunesDuConseillerClientSide()
+
+      let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
+      if (estPoleEmploi(conseiller)) {
+        jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
+          ...jeune,
+          nbActionsNonTerminees: 0,
+        }))
+      } else {
+        const { countActionsJeunes } = await import('services/actions.service')
+        const totauxActions: TotalActions[] = await countActionsJeunes(
+          conseiller.id,
+          accessToken
+        )
+
+        jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
+          const totalJeune = totauxActions.find(
+            (action) => action.idJeune === jeune.id
+          )
+
+          return {
+            ...jeune,
+            nbActionsNonTerminees: totalJeune?.nbActionsNonTerminees ?? 0,
+          }
+        })
+      }
+      setConseillerJeunes(
+        [...jeunesAvecNbActionsNonTerminees].sort(compareJeunesByNom)
+      )
+    }
+
+    toto().catch((error: Error) => {
+      console.log(error)
+    })
+  }, [])
+
   const adesBeneficiaires = conseillerJeunes.length === 0 ? 'non' : 'oui'
 
   useMatomo(trackingTitle, adesBeneficiaires)
@@ -202,43 +246,11 @@ export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
     return { redirect: sessionOrRedirect.redirect }
   }
   const {
-    session: { user, accessToken },
+    session: { accessToken },
   } = sessionOrRedirect
 
-  const { getJeunesDuConseillerServerSide } = await import(
-    'services/jeunes.service'
-  )
-  const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
-
-  let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
-  if (estUserPoleEmploi(user)) {
-    jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
-      ...jeune,
-      nbActionsNonTerminees: 0,
-    }))
-  } else {
-    const { countActionsJeunes } = await import('services/actions.service')
-    const totauxActions: TotalActions[] = await countActionsJeunes(
-      user.id,
-      accessToken
-    )
-
-    jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
-      const totalJeune = totauxActions.find(
-        (action) => action.idJeune === jeune.id
-      )
-
-      return {
-        ...jeune,
-        nbActionsNonTerminees: totalJeune?.nbActionsNonTerminees ?? 0,
-      }
-    })
-  }
-
   const props: MesJeunesProps = {
-    conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
-      compareJeunesByNom
-    ),
+    accessToken: accessToken,
     isFromEmail: Boolean(context.query?.source),
     pageTitle: 'Portefeuille',
   }
