@@ -169,10 +169,11 @@ function userStructureDimensionString(loginMode: StructureConseiller): string {
       return 'Mission Locale'
     case StructureConseiller.POLE_EMPLOI:
       return 'Pôle emploi'
+    case StructureConseiller.POLE_EMPLOI_BRSA:
+      return 'Pôle emploi BRSA'
     case StructureConseiller.PASS_EMPLOI:
       return 'pass emploi'
   }
-  return ''
 }
 
 export { init, trackPage, trackSSR, trackEvent, userStructureDimensionString }
