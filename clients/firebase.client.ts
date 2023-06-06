@@ -108,7 +108,7 @@ export async function signIn(token: string): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
-  await _signOut(getAuth(getApp()))
+  await _signOut(getAuth(retrieveApp()))
 }
 
 export async function addMessage(
