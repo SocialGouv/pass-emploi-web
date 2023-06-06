@@ -62,9 +62,7 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
   const isLogoutPage = router.pathname === '/logout'
-  const isOfflinePage =
-    router.pathname === '/offline' || router.pathname === '/_offline'
-  const shouldUseLayout = !isLoginPage && !isLogoutPage && !isOfflinePage
+  const shouldUseLayout = !isLoginPage && !isLogoutPage
 
   useEffect(() => {
     init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
