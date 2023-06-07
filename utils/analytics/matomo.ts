@@ -17,7 +17,7 @@ interface TrackPageSettings {
 }
 
 interface TrackEventSettings {
-  structure: string
+  structure: StructureConseiller
   categorie: string
   action: string
   nom: string
@@ -162,14 +162,16 @@ function trackSSR({
   })
 }
 
-function userStructureDimensionString(loginMode: string): string {
+function userStructureDimensionString(loginMode: StructureConseiller): string {
   switch (loginMode) {
     case StructureConseiller.MILO:
       return 'Mission Locale'
     case StructureConseiller.POLE_EMPLOI:
       return 'Pôle emploi'
+    case StructureConseiller.PASS_EMPLOI:
+      return 'pass emploi'
   }
-  return 'pass emploi'
+  return ''
 }
 
 export { init, trackPage, trackSSR, trackEvent, userStructureDimensionString }
