@@ -21,6 +21,7 @@ import {
   Action,
   EtatQualificationAction,
   StatutAction,
+  TotalActions,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
@@ -31,8 +32,10 @@ import {
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
+  compareJeunesByNom,
   DetailJeune,
   IndicateursSemaine,
+  JeuneAvecNbActionsNonTerminees,
   MetadonneesFavoris,
 } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
@@ -92,8 +95,7 @@ interface FicheJeuneProps extends PageProps {
   lectureSeule?: boolean
   metadonneesFavoris?: MetadonneesFavoris
   onglet?: Onglet
-  offresPE?: Offre[]
-  recherchesPE?: Recherche[]
+  accessToken: string
 }
 
 function FicheJeune({
@@ -103,8 +105,7 @@ function FicheJeune({
   metadonneesFavoris,
   onglet,
   lectureSeule,
-  offresPE,
-  recherchesPE,
+  accessToken,
 }: FicheJeuneProps) {
   const router = useRouter()
   const pathPrefix = router.asPath.startsWith('/etablissement')
@@ -127,6 +128,8 @@ function FicheJeune({
   const [indicateursSemaine, setIndicateursSemaine] = useState<
     IndicateursSemaine | undefined
   >()
+  const [offresPE, setOffresPE] = useState<Offre[] | undefined>()
+  const [recherchesPE, setRecherchesPE] = useState<Recherche[] | undefined>()
 
   const [showModaleDeleteJeuneActif, setShowModaleDeleteJeuneActif] =
     useState<boolean>(false)
@@ -286,6 +289,27 @@ function FicheJeune({
   }
 
   useMatomo(trackingLabel, aDesBeneficiaires)
+
+  useEffect(() => {
+    const toto = async () => {
+      const { getOffres, getRecherchesSauvegardees } = await import(
+        'services/favoris.service'
+      )
+
+      const [offresPE, recherchesPE] = await Promise.all([
+        estPoleEmploi(conseiller) ? getOffres(jeune.id, accessToken) : [],
+        estPoleEmploi(conseiller)
+          ? getRecherchesSauvegardees(jeune.id, accessToken)
+          : [],
+      ])
+
+      setOffresPE(offresPE)
+      setRecherchesPE(recherchesPE)
+    }
+    toto().catch((error: Error) => {
+      console.log(error)
+    })
+  }, [])
 
   useEffect(() => {
     if (!lectureSeule) setIdCurrentJeune(jeune.id)
@@ -593,38 +617,25 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   )
   const { getRendezVousJeune } = await import('services/evenements.service')
   const { getActionsJeuneServerSide } = await import('services/actions.service')
-  const { getOffres, getRecherchesSauvegardees } = await import(
-    'services/favoris.service'
-  )
 
-  const [jeune, metadonneesFavoris, rdvs, actions, offresPE, recherchesPE] =
-    await Promise.all([
-      getJeuneDetails(context.query.jeune_id as string, accessToken),
-      getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
-      userIsPoleEmploi
-        ? []
-        : getRendezVousJeune(
-            context.query.jeune_id as string,
-            PeriodeEvenements.FUTURS,
-            accessToken
-          ),
-      userIsPoleEmploi
-        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-        : getActionsJeuneServerSide(
-            context.query.jeune_id as string,
-            page,
-            accessToken
-          ),
-      userIsPoleEmploi
-        ? getOffres(context.query.jeune_id as string, accessToken)
-        : [],
-      userIsPoleEmploi
-        ? getRecherchesSauvegardees(
-            context.query.jeune_id as string,
-            accessToken
-          )
-        : [],
-    ])
+  const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
+    getJeuneDetails(context.query.jeune_id as string, accessToken),
+    getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
+    userIsPoleEmploi
+      ? []
+      : getRendezVousJeune(
+          context.query.jeune_id as string,
+          PeriodeEvenements.FUTURS,
+          accessToken
+        ),
+    userIsPoleEmploi
+      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+      : getActionsJeuneServerSide(
+          context.query.jeune_id as string,
+          page,
+          accessToken
+        ),
+  ])
 
   if (!jeune) {
     return { notFound: true }
@@ -637,8 +648,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
-    offresPE,
-    recherchesPE,
+    accessToken,
   }
 
   if (context.query.onglet) {

@@ -53,7 +53,8 @@ export const fontMarianne = localFont({
 })
 
 export function reportWebVitals(metric: NextWebVitalsMetric) {
-  if (process.env.NODE_ENV !== 'production' && metric.name === 'FCP') {
+  console.log('>>>', metric)
+  if (metric.label === 'custom') {
     console.log('>>>', metric)
   }
 }
