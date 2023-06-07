@@ -163,7 +163,7 @@ function trackSSR({
   })
 }
 
-function userStructureDimensionString(loginMode: string): string {
+function userStructureDimensionString(loginMode: StructureConseiller): string {
   switch (loginMode) {
     case StructureConseiller.MILO:
       return 'Mission Locale'
@@ -171,12 +171,9 @@ function userStructureDimensionString(loginMode: string): string {
       return 'Pôle emploi'
     case StructureConseiller.POLE_EMPLOI_BRSA:
       return 'Pôle emploi BRSA'
-    case undefined:
-    default:
-      return ''
+    case StructureConseiller.PASS_EMPLOI:
+      return 'pass emploi'
   }
-  if (StructureConseiller.PASS_EMPLOI && process.env.ENABLE_PASS_EMPLOI_SSO)
-    return 'pass emploi'
 }
 
 export { init, trackPage, trackSSR, trackEvent, userStructureDimensionString }
