@@ -171,6 +171,9 @@ function userStructureDimensionString(loginMode: string): string {
       return 'Pôle emploi'
     case StructureConseiller.POLE_EMPLOI_BRSA:
       return 'Pôle emploi BRSA'
+    case undefined:
+    default:
+      return ''
   }
   if (StructureConseiller.PASS_EMPLOI && process.env.ENABLE_PASS_EMPLOI_SSO)
     return 'pass emploi'
