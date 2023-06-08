@@ -70,6 +70,7 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
   }, [])
 
   // Clear le SW (retrait de next-pwa) - 05/06/2023
+  // todo : à retirer dans quelques mois
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
