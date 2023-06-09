@@ -24,7 +24,7 @@ export function TutorielRaccourci() {
           aria-label='Plus'
           className='inline w-6 h-6'
         />
-        puis &quot;Installer l&apos;application&quot;
+        puis &quot;Ajouter à l’écran d’accueil&quot;
       </p>
       <h3 className='text-base-bold mt-6'>Sur Safari (sur iPhone)</h3>
       <p>

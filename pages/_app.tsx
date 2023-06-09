@@ -62,13 +62,26 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
   const isLogoutPage = router.pathname === '/logout'
-  const isOfflinePage =
-    router.pathname === '/offline' || router.pathname === '/_offline'
-  const shouldUseLayout = !isLoginPage && !isLogoutPage && !isOfflinePage
+  const shouldUseLayout = !isLoginPage && !isLogoutPage
 
   useEffect(() => {
     init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
     initRum()
+  }, [])
+
+  // Clear le SW (retrait de next-pwa) - 05/06/2023
+  // todo : à retirer dans quelques mois
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) => {
+          registrations.forEach((registration) => registration.unregister())
+        })
+        .catch(function (err) {
+          console.log('Service Worker registration failed: ', err)
+        })
+    }
   }, [])
 
   return (
