@@ -6,6 +6,8 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import SituationTag from 'components/jeune/SituationTag'
+import PageActionsPortal from 'components/PageActionsPortal'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
@@ -90,6 +92,11 @@ const Etablissement = (_: MissionLocaleProps) => {
 
   return (
     <>
+      <PageActionsPortal>
+        <ButtonLink href='/reaffectation'>
+          Réaffecter des bénéficiaires
+        </ButtonLink>
+      </PageActionsPortal>
       {Boolean(conseiller.agence) && (
         <RechercheJeune
           onSearchFilterBy={(input) => rechercherJeunes(input, 1)}

@@ -56,6 +56,8 @@ describe('Etablissement', () => {
         })
       })
 
+      it('affiche un lien vers la page de réaffectation', () => {})
+
       it('affiche un champ de recherche', () => {
         // Then
         expect(

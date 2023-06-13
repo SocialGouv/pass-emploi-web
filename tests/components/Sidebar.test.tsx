@@ -80,17 +80,6 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Mission Locale')).toThrow()
   })
 
-  it('affiche le lien de réaffectation des jeunes lorsque le conseiller est superviseur', () => {
-    // WHEN
-    renderSidebar({ estSuperviseur: true })
-
-    // THEN
-    expect(screen.getByRole('link', { name: 'Réaffectation' })).toHaveAttribute(
-      'href',
-      '/reaffectation'
-    )
-  })
-
   it("n'affiche pas le lien de Messagerie lorsque le conseiller est MILO", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.MILO })

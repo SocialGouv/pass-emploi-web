@@ -21,6 +21,7 @@ import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
 import isEmailValid from 'utils/isEmailValid'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 type ReaffectationProps = PageProps
 
@@ -483,6 +484,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { redirect: sessionOrRedirect.redirect }
   }
 
+  let redirectTo = context.query.redirectUrl as string
+  if (!redirectTo) {
+    const referer = context.req.headers.referer
+    redirectTo =
+      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
+  }
+
   const {
     session: { user },
   } = sessionOrRedirect
@@ -492,6 +500,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
+      returnTo: redirectTo,
       pageTitle: 'Réaffectation',
     },
   }
