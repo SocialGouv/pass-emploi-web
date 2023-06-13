@@ -162,16 +162,6 @@ export default function NavLinks({
             />
           )}
 
-        {estSuperviseur(conseiller) && items.includes(NavItem.Supervision) && (
-          <NavLink
-            iconName={IconName.ArrowForward}
-            label='Réaffectation'
-            href='/reaffectation'
-            isActive={isCurrentRoute('/reaffectation')}
-            showLabelOnSmallScreen={showLabelsOnSmallScreen}
-          />
-        )}
-
         {!estMilo(conseiller) && items.includes(NavItem.Messagerie) && (
           <NavLink
             iconName={

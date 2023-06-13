@@ -229,7 +229,9 @@ describe('Reaffectation', () => {
         })
 
         // When
-        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+        const actual = await getServerSideProps({
+          query: { redirectUrl: '/etablissement' },
+        } as GetServerSidePropsContext)
 
         // Then
         expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
@@ -246,12 +248,15 @@ describe('Reaffectation', () => {
         })
 
         // When
-        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+        const actual = await getServerSideProps({
+          query: { redirectUrl: '/etablissement' },
+        } as GetServerSidePropsContext)
 
         // Then
         expect(actual).toEqual({
           props: {
             pageTitle: 'Réaffectation',
+            returnTo: '/etablissement',
           },
         })
       })
