@@ -236,7 +236,7 @@ describe('EvenementsApiService', () => {
           ...unEvenementJson({
             id: 'ac-passee',
             type: {
-              code: 'whatever',
+              code: 'INFORMATION_COLLECTIVE',
               label: 'Information collective',
             },
             date: dateDebut.toISO(),
@@ -246,7 +246,7 @@ describe('EvenementsApiService', () => {
         {
           ...unEvenementJson({
             id: 'ac-future',
-            type: { code: 'whatever', label: 'Atelier' },
+            type: { code: 'ATELIER', label: 'Atelier' },
             date: dateFin.toISO(),
           }),
           statut: 'CLOTUREE',
@@ -271,7 +271,7 @@ describe('EvenementsApiService', () => {
       const animationsCollectives: AnimationCollective[] = [
         uneAnimationCollective({
           id: 'ac-passee',
-          type: 'Information collective',
+          type: 'Info coll',
           date: dateDebut,
           statut: StatutAnimationCollective.AVenir,
         }),

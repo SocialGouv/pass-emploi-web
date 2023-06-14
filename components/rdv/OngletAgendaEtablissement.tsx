@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/empty_state.svg'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
@@ -199,7 +199,7 @@ function heure({ date }: AnimationCollective): string {
   return toFrenchFormat(date, TIME_24_H_SEPARATOR)
 }
 
-function tagType({ type }: AnimationCollective): JSX.Element {
+function tagType({ type }: AnimationCollective): ReactElement {
   const color = type === 'Atelier' ? 'accent_2' : 'additional_2'
   const iconName =
     type === 'Information collective' ? IconName.Error : undefined

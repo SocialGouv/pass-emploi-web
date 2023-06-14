@@ -133,12 +133,19 @@ export function jsonToAnimationCollective(
 ): AnimationCollective {
   return {
     id: json.id,
-    type: json.type.label,
+    type: jsonToTypeAnimationCollective(json.type),
     titre: json.title,
     date: DateTime.fromISO(json.date),
     duree: json.duration,
     statut: jsonToStatutAnimationCollective(json.statut),
   }
+}
+
+function jsonToTypeAnimationCollective(jsonType: TypeEvenement): string {
+  if (jsonType.code === 'INFORMATION_COLLECTIVE') {
+    return 'Info coll'
+  }
+  return jsonType.label
 }
 
 function jsonToStatutAnimationCollective(
