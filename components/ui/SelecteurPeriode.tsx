@@ -56,16 +56,7 @@ export function SelecteurPeriode({
 
   return (
     <>
-      <div className='flex justify-between items-center'>
-        <p className='text-base-medium'>Période :</p>
-        <Button
-          type='button'
-          style={ButtonStyle.SECONDARY}
-          onClick={allerPeriodeActuelle}
-        >
-          <span className='sr-only'>Aller à la</span> période en cours
-        </Button>
-      </div>
+      <p className='text-base-medium'>Période :</p>
 
       <div className='flex items-center mt-1'>
         <p className='text-m-bold text-primary mr-6'>
@@ -78,18 +69,25 @@ export function SelecteurPeriode({
         >
           <IconComponent
             name={IconName.ChevronLeft}
-            className='w-6 h-6 fill-primary hover:fill-primary_darken'
+            className='w-6 h-6 fill-primary mr-2 hover:fill-primary_darken'
             focusable='false'
             title='Aller à la période précédente'
           />
         </button>
+        <Button
+          type='button'
+          style={ButtonStyle.SECONDARY}
+          onClick={allerPeriodeActuelle}
+        >
+          <span className='sr-only'>Aller à la </span>Période en cours
+        </Button>
         <button
           aria-label='Aller à la période suivante'
           onClick={allerPeriodeSuivante}
         >
           <IconComponent
             name={IconName.ChevronRight}
-            className='w-6 h-6 fill-primary ml-8 hover:fill-primary_darken'
+            className='w-6 h-6 fill-primary ml-2 hover:fill-primary_darken'
             focusable='false'
             title='Aller à la période suivante'
           />

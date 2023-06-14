@@ -11,7 +11,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -176,7 +176,10 @@ function Agenda({ onglet }: AgendaProps) {
         />
 
         <Tab
-          label='Agenda établissement'
+          label={
+            'Agenda ' +
+            (estMilo(conseiller) ? 'Mission locale' : 'établissement')
+          }
           selected={currentTab === Onglet.ETABLISSEMENT}
           controls='agenda-etablissement'
           onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
