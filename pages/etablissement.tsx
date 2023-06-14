@@ -18,6 +18,7 @@ import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import {
   estMilo,
+  estSuperviseur,
   estUserPoleEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
@@ -92,11 +93,13 @@ const Etablissement = (_: MissionLocaleProps) => {
 
   return (
     <>
-      <PageActionsPortal>
-        <ButtonLink href='/etablissement/reaffectation'>
-          Réaffecter des bénéficiaires
-        </ButtonLink>
-      </PageActionsPortal>
+      {estSuperviseur(conseiller) && (
+        <PageActionsPortal>
+          <ButtonLink href='/etablissement/reaffectation'>
+            Réaffecter des bénéficiaires
+          </ButtonLink>
+        </PageActionsPortal>
+      )}
 
       {Boolean(conseiller.agence) && (
         <RechercheJeune
