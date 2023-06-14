@@ -6,7 +6,6 @@ import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import {
   estMilo,
-  estSuperviseur,
   estPoleEmploi,
   estPoleEmploiBRSA,
   StructureConseiller,

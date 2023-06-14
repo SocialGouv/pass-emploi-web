@@ -93,17 +93,17 @@ const Etablissement = (_: MissionLocaleProps) => {
   return (
     <>
       <PageActionsPortal>
-        <ButtonLink href='/reaffectation'>
+        <ButtonLink href='/etablissement/reaffectation'>
           Réaffecter des bénéficiaires
         </ButtonLink>
       </PageActionsPortal>
+
       {Boolean(conseiller.agence) && (
         <RechercheJeune
           onSearchFilterBy={(input) => rechercherJeunes(input, 1)}
           minCaracteres={2}
         />
       )}
-
       {!conseiller.agence && (
         <EncartAgenceRequise
           conseiller={conseiller}
@@ -112,7 +112,6 @@ const Etablissement = (_: MissionLocaleProps) => {
           onChangeAffichageModal={trackAgenceModal}
         />
       )}
-
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
@@ -177,7 +176,6 @@ const Etablissement = (_: MissionLocaleProps) => {
           )}
         </div>
       )}
-
       {resultatsRecherche?.length === 0 && (
         <>
           <EmptyStateImage

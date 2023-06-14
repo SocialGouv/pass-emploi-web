@@ -20,6 +20,7 @@ jest.mock('services/jeunes.service')
 jest.mock('services/referentiel.service')
 jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
+jest.mock('components/PageActionsPortal')
 
 describe('Etablissement', () => {
   describe('Client side', () => {
@@ -56,7 +57,14 @@ describe('Etablissement', () => {
         })
       })
 
-      it('affiche un lien vers la page de réaffectation', () => {})
+      it('affiche un lien vers la page de réaffectation', () => {
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Réaffecter des bénéficiaires',
+          })
+        ).toHaveAttribute('href', '/etablissement/reaffectation')
+      })
 
       it('affiche un champ de recherche', () => {
         // Then

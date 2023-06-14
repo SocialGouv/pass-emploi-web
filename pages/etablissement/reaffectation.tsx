@@ -1,8 +1,10 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
-import React, { ChangeEvent, FormEvent, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
-import Button from 'components/ui/Button/Button'
+import RadioBox from 'components/action/RadioBox'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { Etape } from 'components/ui/Form/Etape'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
@@ -185,8 +187,8 @@ function Reaffectation(_: ReaffectationProps) {
     Temporaire: 'TEMPORAIRE',
   }
 
-  function handleTypeReaffectation(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.value === TYPE_REAFFECTATION.Temporaire) {
+  function handleTypeReaffectation(value: string) {
+    if (value === TYPE_REAFFECTATION.Temporaire) {
       setIsReaffectationTemporaire(true)
     } else {
       setIsReaffectationTemporaire(false)
@@ -204,62 +206,38 @@ function Reaffectation(_: ReaffectationProps) {
         />
       )}
 
-      <div className='mb-10 bg-accent_2_lighten rounded-base p-6'>
-        <p className='text-base-bold mb-4'>
-          Pour réaffecter les jeunes d&apos;un conseiller vers un autre
-          conseiller :
-        </p>
-        <ol
-          className='flex text-s-regular'
-          aria-label='Étapes pour la réaffectation'
-        >
-          <li>
-            1. Préciser s’il s’agit d’une réaffectation définitive ou temporaire
-          </li>
-          <li>2. Renseigner l’adresse e-mail du conseiller initial</li>
-          <li>3. Sélectionner les jeunes à réaffecter</li>
-          <li>4. Renseigner le mail du conseiller de destination</li>
-        </ol>
-      </div>
-
-      <p className='mb-6'>
+      <p className=' text-s-regular mb-6'>
         Les champs avec <span className='text-warning'>*</span> sont
         obligatoires
       </p>
+      <Etape numero={1} titre='Choisissez un type de réaffectation'>
+        <div className='flex flex-wrap'>
+          <RadioBox
+            className='mr-2'
+            isSelected={isReaffectationTemporaire === false}
+            color={'primary'}
+            onChange={() =>
+              handleTypeReaffectation(TYPE_REAFFECTATION.Definitif)
+            }
+            label='Définitif'
+            name='type-reaffectation'
+            id='type-reaffectation--definitif'
+          ></RadioBox>
+          <RadioBox
+            className='mr-2'
+            isSelected={isReaffectationTemporaire === true}
+            color={'primary'}
+            onChange={() =>
+              handleTypeReaffectation(TYPE_REAFFECTATION.Temporaire)
+            }
+            label='Temporaire'
+            name='type-reaffectation'
+            id='type-temporaire--definitif'
+          ></RadioBox>
+        </div>
+      </Etape>
 
-      <fieldset className='pb-6'>
-        <legend className='text-base-medium mb-3'>
-          <span aria-hidden='true'>*</span> Type de réaffectation
-        </legend>
-
-        <input
-          className='mr-2'
-          type='radio'
-          name='type-reaffectation'
-          id='type-reaffectation--definitif'
-          value={TYPE_REAFFECTATION.Definitif}
-          onChange={handleTypeReaffectation}
-          checked={isReaffectationTemporaire === false}
-          required
-        />
-        <label htmlFor='type-reaffectation--definitif' className='mr-6'>
-          Définitif
-        </label>
-
-        <input
-          className='mr-2 ml-10'
-          type='radio'
-          name='type-reaffectation'
-          id='type-reaffectation--temporaire'
-          value={TYPE_REAFFECTATION.Temporaire}
-          onChange={handleTypeReaffectation}
-          checked={isReaffectationTemporaire === true}
-          required
-        />
-        <label htmlFor='type-reaffectation--temporaire'>Temporaire</label>
-      </fieldset>
-
-      <div className='grid w-full grid-cols-[1fr_1fr_auto] items-center gap-x-12'>
+      <Etape numero={2} titre='Recherchez un portefeuille de bénéficiaires'>
         <label
           htmlFor='email-conseiller-initial'
           className='text-base-medium text-content_color row-start-1 row-start-1 mb-3'
@@ -272,24 +250,24 @@ function Reaffectation(_: ReaffectationProps) {
           onSubmit={fetchListeJeunes}
           className='grow col-start-1 row-start-2'
         >
-          <div className='flex'>
+          <div className='flex align-middle'>
             <ResettableTextInput
               id={'email-conseiller-initial'}
               value={conseillerInitial.email}
               onChange={editEmailConseillerInitial}
               onReset={resetInitialEmail}
               type={'email'}
-              className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-regular text-primary_darken'
+              className='flex-1 border border-solid border-grey_700 rounded-base text-base-regular text-primary_darken'
               required={true}
             />
-            <button
-              className={`flex p-3 items-center border border-solid border-content_color rounded-r-base ${
-                isRechercheJeunesEnabled ? 'hover:bg-primary_lighten' : ''
-              } disabled:cursor-not-allowed disabled:border-disabled`}
-              type='submit'
+
+            <Button
+              className='ml-2'
+              label='Ajouter un commentaire'
+              style={ButtonStyle.PRIMARY}
               disabled={!isRechercheJeunesEnabled}
+              type='submit'
             >
-              <span className='sr-only'>Rechercher conseiller initial</span>
               <IconComponent
                 name={IconName.Search}
                 focusable='false'
@@ -299,10 +277,10 @@ function Reaffectation(_: ReaffectationProps) {
                 }`}
                 title='Rechercher'
               />
-            </button>
+              Rechercher les bénéficiaires
+            </Button>
           </div>
         </form>
-
         {Boolean(conseillerInitial.error) && (
           <div className='flex col-start-1 row-start-3'>
             <IconComponent
@@ -314,163 +292,165 @@ function Reaffectation(_: ReaffectationProps) {
             <p className='text-warning'>{conseillerInitial.error}</p>
           </div>
         )}
+      </Etape>
 
-        <label
-          htmlFor='email-conseiller-destination'
-          className={`text-base-medium whitespace-nowrap col-start-2 row-start-1 mb-3 ${
-            isRechercheJeunesSubmitted && jeunes.length > 0
-              ? 'text-content_color'
-              : 'text-disabled'
-          }`}
-        >
-          <span aria-hidden='true'>*</span> E-mail conseiller de destination
-        </label>
+      {conseillerInitial.email &&
+        isRechercheJeunesSubmitted &&
+        jeunes.length > 0 && (
+          <>
+            <Etape
+              numero={3}
+              titre='Sélectionnez les bénéficiaires à réaffecter'
+            >
+              <Table
+                caption={{
+                  text: `Jeunes de ${conseillerInitial.email}`,
+                  visible: false,
+                }}
+              >
+                <THead>
+                  <TR isHeader={true}>
+                    <TH className='text-base-bold'>
+                      <label
+                        className='sr-only'
+                        htmlFor='reaffectation-tout-selectionner'
+                      >
+                        {idsJeunesSelected.length === 0 ? 'Cocher' : 'Décocher'}{' '}
+                        tous les bénéficiaires
+                      </label>
+                      <input
+                        id='reaffectation-tout-selectionner'
+                        type='checkbox'
+                        className='mr-6'
+                        checked={idsJeunesSelected.length === jeunes.length}
+                        title='Tout sélectionner'
+                        onChange={() => false}
+                        onClick={(e) => selectionnerTousLesJeunes(e)}
+                      />
+                    </TH>
+                    <TH className='text-base-bold'>Bénéficiaire</TH>
+                    <TH className='text-base-bold'>Conseiller précédent</TH>
+                    <TH className='text-base-bold'>
+                      Email conseiller précédent
+                    </TH>
+                  </TR>
+                </THead>
+                <TBody>
+                  {jeunes.map((jeune: JeuneFromListe) => (
+                    <TR key={jeune.id} onClick={() => selectionnerJeune(jeune)}>
+                      <TD className='p-4 rounded-l-base'>
+                        <input
+                          id={'checkbox-' + jeune.id}
+                          type='checkbox'
+                          checked={idsJeunesSelected.includes(jeune.id)}
+                          title={'Sélectionner ' + getNomJeuneComplet(jeune)}
+                          onChange={() => false}
+                        />
+                      </TD>
+                      <TD className='p-4 text-base-bold'>
+                        <label
+                          htmlFor={'checkbox-' + jeune.id}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {getNomJeuneComplet(jeune)}
+                        </label>
+                      </TD>
+                      <TD className='p-4 text-base-regular'>
+                        {jeune.conseillerPrecedent
+                          ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
+                          : '-'}
+                      </TD>
+                      <TD className='p-4 text-base-regular rounded-r-base'>
+                        {jeune.conseillerPrecedent?.email ?? '-'}
+                      </TD>
+                    </TR>
+                  ))}
+                </TBody>
+              </Table>
+            </Etape>
+            <Etape
+              numero={4}
+              titre='À qui souhaitez-vous affecter ce(s) bénéficiaire(s) ?'
+            >
+              <label
+                htmlFor='email-conseiller-destination'
+                className='text-base-medium whitespace-nowrap col-start-2 row-start-1 mb-3 text-content_color'
+              >
+                <span aria-hidden='true'>*</span> E-mail conseiller de
+                destination
+              </label>
 
-        <form
-          id='affecter-jeunes'
-          onSubmit={reaffecterJeunes}
-          className='grow col-start-2 row-start-2'
-        >
-          <ResettableTextInput
-            id={'email-conseiller-destination'}
-            value={emailConseillerDestination.value}
-            onChange={editEmailConseillerDestination}
-            onReset={() => editEmailConseillerDestination('')}
-            disabled={!isRechercheJeunesSubmitted || jeunes.length === 0}
-            type={'email'}
-            className='flex-1 border border-solid border-grey_700 rounded-base text-base-regular text-primary_darken'
-            required={true}
-          />
-        </form>
+              <span className='text-s-regular mb-3'>
+                L’e-mail de la personne à qui vous souhaitez transférer les
+                bénéficiaires sélectionnés
+              </span>
 
-        {Boolean(emailConseillerDestination.error) && (
-          <div className='flex col-start-2 row-start-3'>
-            <IconComponent
-              name={IconName.Error}
-              focusable={false}
-              aria-hidden={true}
-              className='fill-warning w-6 h-6 mr-2'
-            />
-            <p className='text-warning'>{emailConseillerDestination.error}</p>
-          </div>
-        )}
-
-        <Button
-          form='affecter-jeunes'
-          label='Réaffecter les jeunes'
-          type='submit'
-          className='row-start-2 col-start-3'
-          disabled={
-            idsJeunesSelected.length === 0 ||
-            !isEmailValid(emailConseillerDestination.value) ||
-            isReaffectationEnCours ||
-            isReaffectationTemporaire === undefined
-          }
-        >
-          R&eacute;affecter les jeunes
-        </Button>
-
-        {idsJeunesSelected.length > 0 && (
-          <div className='relative row-start-3 col-start-3'>
-            <p className='text-base-bold text-center'>
-              {idsJeunesSelected.length} jeune
-              {idsJeunesSelected.length > 1 ? 's' : ''} sélectionné
-              {idsJeunesSelected.length > 1 ? 's' : ''}
-            </p>
-
-            {Boolean(erreurReaffectation) && (
-              <div className='absolute flex mt-3'>
-                <IconComponent
-                  name={IconName.Error}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
+              <form
+                id='affecter-jeunes'
+                onSubmit={reaffecterJeunes}
+                className='grow col-start-2 row-start-2'
+              >
+                <ResettableTextInput
+                  id={'email-conseiller-destination'}
+                  value={emailConseillerDestination.value}
+                  onChange={editEmailConseillerDestination}
+                  onReset={() => editEmailConseillerDestination('')}
+                  disabled={false}
+                  type={'email'}
+                  className='flex-1 border border-solid border-grey_700 rounded-base text-base-regular text-primary_darken'
+                  required={true}
                 />
-                <p className='text-warning'>{erreurReaffectation}</p>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+              </form>
 
-      {isRechercheJeunesSubmitted && jeunes.length > 0 && (
-        <div
-          className={`${
-            idsJeunesSelected.length === 0 ? 'mt-16' : 'mt-7'
-          } ml-5`}
-        >
-          <Table
-            caption={{
-              text: `Jeunes de ${conseillerInitial.email}`,
-              visible: true,
-            }}
-          >
-            <THead>
-              <TR isHeader={true}>
-                <TH>
-                  <span className='sr-only'>Cocher/Décocher les jeunes</span>
-                </TH>
-                <TH>Nom et prénom</TH>
-                <TH>Conseiller précédent</TH>
-                <TH className='sr-only'>Email conseiller précédent</TH>
-              </TR>
-            </THead>
-            <TBody>
-              <TR onClick={(e) => selectionnerTousLesJeunes(e)}>
-                <TD className='py-4 pl-4'>
-                  <input
-                    id='reaffectation-tout-selectionner'
-                    type='checkbox'
-                    className='mr-6'
-                    checked={idsJeunesSelected.length === jeunes.length}
-                    title='Tout sélectionner'
-                    onChange={() => false}
+              {Boolean(emailConseillerDestination.error) && (
+                <div className='flex col-start-2 row-start-3 mt-3'>
+                  <IconComponent
+                    name={IconName.Error}
+                    focusable={false}
+                    aria-hidden={true}
+                    className='fill-warning w-6 h-6 mr-2'
                   />
-                </TD>
-                <TD className='whitespace-nowrap'>
-                  <label
-                    htmlFor='reaffectation-tout-selectionner'
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Tout sélectionner
-                  </label>
-                </TD>
-              </TR>
-            </TBody>
-            <TBody>
-              {jeunes.map((jeune: JeuneFromListe) => (
-                <TR key={jeune.id} onClick={() => selectionnerJeune(jeune)}>
-                  <TD className='p-4 rounded-l-base'>
-                    <input
-                      id={'checkbox-' + jeune.id}
-                      type='checkbox'
-                      checked={idsJeunesSelected.includes(jeune.id)}
-                      title={'Sélectionner ' + getNomJeuneComplet(jeune)}
-                      onChange={() => false}
-                    />
-                  </TD>
-                  <TD className='p-4 text-base-regular'>
-                    <label
-                      htmlFor={'checkbox-' + jeune.id}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {getNomJeuneComplet(jeune)}
-                    </label>
-                  </TD>
-                  <TD className='p-4 text-base-regular'>
-                    {jeune.conseillerPrecedent
-                      ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
-                      : '-'}
-                  </TD>
-                  <TD className='p-4 text-base-regular rounded-r-base'>
-                    {jeune.conseillerPrecedent?.email ?? '-'}
-                  </TD>
-                </TR>
-              ))}
-            </TBody>
-          </Table>
-        </div>
-      )}
+                  <p className='text-warning'>
+                    {emailConseillerDestination.error}
+                  </p>
+                </div>
+              )}
+            </Etape>
+
+            <div className='w-full'>
+              <Button
+                form='affecter-jeunes'
+                label='Réaffecter les jeunes'
+                type='submit'
+              >
+                <IconComponent
+                  name={IconName.ArrowForward}
+                  focusable='false'
+                  aria-hidden={true}
+                  className={`w-6 h-6 mr-2 fill-blanc`}
+                  title='Rechercher'
+                />
+                Valider mon choix
+              </Button>
+
+              {idsJeunesSelected.length > 0 && (
+                <div>
+                  {Boolean(erreurReaffectation) && (
+                    <div className='absolute flex mt-3'>
+                      <IconComponent
+                        name={IconName.Error}
+                        focusable={false}
+                        aria-hidden={true}
+                        className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
+                      />
+                      <p className='text-warning'>{erreurReaffectation}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </>
+        )}
     </>
   )
 }
@@ -502,6 +482,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       returnTo: redirectTo,
       pageTitle: 'Réaffectation',
+      withoutChat: true,
     },
   }
 }
