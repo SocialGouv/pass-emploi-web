@@ -4,7 +4,9 @@ import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { desItemsJeunes } from 'fixtures/jeune'
-import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
+import Reaffectation, {
+  getServerSideProps,
+} from 'pages/etablissement/reaffectation'
 import {
   getJeunesDuConseillerParEmail,
   reaffecter,
@@ -24,21 +26,10 @@ describe('Reaffectation', () => {
       })
     })
 
-    it('affiche les 4 étapes de réaffectation', async () => {
-      const listeEtapesReaffectation = screen.getByRole('list', {
-        name: 'Étapes pour la réaffectation',
-      })
-      // THEN
-      expect(listeEtapesReaffectation).toBeInTheDocument()
-      const { getAllByRole } = within(listeEtapesReaffectation)
-      const items = getAllByRole('listitem')
-      expect(items.length).toBe(4)
-    })
-
     it('contient un champ pour sélectionner le type de réaffectation', () => {
       // When
       const typeReaffectation = screen.getByRole('group', {
-        name: 'Type de réaffectation',
+        name: /Choisissez un type de réaffectation/,
       })
       const typeReaffectionDefinitiveRadio = screen.getByLabelText('Définitif')
       const typeReaffectationTemporaireRadio =
@@ -62,37 +53,14 @@ describe('Reaffectation', () => {
       expect(screen.getByTitle('Rechercher')).toBeInTheDocument()
     })
 
-    it('affiche un champ de saisie du conseiller de destination', async () => {
-      // THEN
-      const inputDestination: HTMLElement = screen.getByLabelText(
-        '* E-mail conseiller de destination'
-      )
-      expect(inputDestination).toBeInTheDocument()
-      expect(inputDestination).toHaveAttribute('disabled')
-    })
-
-    it('afficher un bouton pour réaffecter les jeunes', async () => {
-      // THEN
-      const submitReaffectation: HTMLElement = screen.getByRole('button', {
-        name: 'Réaffecter les jeunes',
-      })
-      expect(submitReaffectation).toBeInTheDocument()
-      expect(submitReaffectation).toHaveAttribute('disabled')
-    })
-
-    it("affiche un champ de recherche des jeunes d'un conseiller", async () => {
-      // THEN
-      expect(
-        screen.getByLabelText('* E-mail conseiller initial')
-      ).toBeInTheDocument()
-    })
-
     describe('au clic sur un type de réaffectation', () => {
       it('déclenche le changement de type de réaffectation', async () => {
         // Given
         const typeReaffectationRadio = screen.getByLabelText('Définitif')
         expect(
-          screen.getByRole('group', { name: 'Type de réaffectation' })
+          screen.getByRole('group', {
+            name: /Choisissez un type de réaffectation/,
+          })
         ).toBeInTheDocument()
         expect(typeReaffectationRadio).not.toBeChecked()
 
@@ -104,7 +72,7 @@ describe('Reaffectation', () => {
       })
     })
 
-    describe('au clique pour rechercher le conseiller initial', () => {
+    describe('au clic pour rechercher le conseiller initial', () => {
       const emailConseillerInitial = 'conseiller@email.com'
       const idConseillerInitial = 'id-conseiller-initial'
       let emailInput: HTMLInputElement
@@ -142,8 +110,9 @@ describe('Reaffectation', () => {
 
       it('selectionne tous les jeunes au clic sur la checkbox', async () => {
         // Given
-        const toutSelectionnerCheckbox =
-          screen.getByLabelText('Tout sélectionner')
+        const toutSelectionnerCheckbox = screen.getByLabelText(
+          'Cocher/Décocher les jeunes'
+        )
         expect(toutSelectionnerCheckbox).not.toBeChecked()
 
         // When
@@ -151,6 +120,31 @@ describe('Reaffectation', () => {
 
         // Then
         expect(toutSelectionnerCheckbox).toBeChecked()
+      })
+
+      it('affiche un champ de saisie du conseiller de destination', async () => {
+        // WHEN
+
+        // THEN
+        const inputDestination: HTMLElement = screen.getByLabelText(
+          '* E-mail conseiller de destination'
+        )
+        expect(inputDestination).toBeInTheDocument()
+      })
+
+      it('afficher un bouton pour réaffecter les jeunes', async () => {
+        // THEN
+        const submitReaffectation: HTMLElement = screen.getByRole('button', {
+          name: 'Réaffecter les jeunes',
+        })
+        expect(submitReaffectation).toBeInTheDocument()
+      })
+
+      it("affiche un champ de recherche des jeunes d'un conseiller", async () => {
+        // THEN
+        expect(
+          screen.getByLabelText('* E-mail conseiller initial')
+        ).toBeInTheDocument()
       })
 
       describe('au reset du mail du conseiller initial', () => {
@@ -194,7 +188,7 @@ describe('Reaffectation', () => {
           )
           const typeReaffectationRadio = screen.getByLabelText('Définitif')
           const estTemporaire = false
-          const submitReaffecter = screen.getByText('Réaffecter les jeunes')
+          const submitReaffecter = screen.getByText('Valider mon choix')
 
           // WHEN
           await userEvent.type(destinationInput, emailConseillerDestination)
@@ -257,6 +251,7 @@ describe('Reaffectation', () => {
           props: {
             pageTitle: 'Réaffectation',
             returnTo: '/etablissement',
+            withoutChat: true,
           },
         })
       })
