@@ -95,7 +95,7 @@ function Reaffectation(_: ReaffectationProps) {
     }
   }
 
-  function selectionnerTousLesJeunes(_event: FormEvent) {
+  function toggleTousLesBeneficiaires() {
     setErreurReaffectation(undefined)
     if (idsJeunesSelected.length !== jeunes.length) {
       setIdsJeunesSelected(jeunes.map((jeune) => jeune.id))
@@ -215,7 +215,7 @@ function Reaffectation(_: ReaffectationProps) {
           <RadioBox
             className='mr-2'
             isSelected={isReaffectationTemporaire === false}
-            color={'primary'}
+            color='primary'
             onChange={() =>
               handleTypeReaffectation(TYPE_REAFFECTATION.Definitif)
             }
@@ -232,7 +232,7 @@ function Reaffectation(_: ReaffectationProps) {
             }
             label='Temporaire'
             name='type-reaffectation'
-            id='type-temporaire--definitif'
+            id='type-reaffectation--temporaire'
           ></RadioBox>
         </div>
       </Etape>
@@ -263,7 +263,7 @@ function Reaffectation(_: ReaffectationProps) {
 
             <Button
               className='ml-2'
-              label='Ajouter un commentaire'
+              label='Rechercher les bénéficiaires'
               style={ButtonStyle.PRIMARY}
               disabled={!isRechercheJeunesEnabled}
               type='submit'
@@ -323,9 +323,13 @@ function Reaffectation(_: ReaffectationProps) {
                         type='checkbox'
                         className='mr-6'
                         checked={idsJeunesSelected.length === jeunes.length}
-                        title='Tout sélectionner'
+                        title={
+                          idsJeunesSelected.length === 0
+                            ? 'Tout sélectionner'
+                            : 'Tout désélectionner'
+                        }
                         onChange={() => false}
-                        onClick={(e) => selectionnerTousLesJeunes(e)}
+                        onClick={toggleTousLesBeneficiaires}
                       />
                     </TH>
                     <TH className='text-base-bold'>Bénéficiaire</TH>
@@ -368,6 +372,7 @@ function Reaffectation(_: ReaffectationProps) {
                 </TBody>
               </Table>
             </Etape>
+
             <Etape
               numero={4}
               titre='À qui souhaitez-vous affecter ce(s) bénéficiaire(s) ?'
@@ -381,8 +386,8 @@ function Reaffectation(_: ReaffectationProps) {
               </label>
 
               <span className='text-s-regular mb-3'>
-                L’e-mail de la personne à qui vous souhaitez transférer les
-                bénéficiaires sélectionnés
+                L’e-mail de la personne à qui vous souhaitez transférer le(s)
+                bénéficiaire(s) sélectionné(s)
               </span>
 
               <form

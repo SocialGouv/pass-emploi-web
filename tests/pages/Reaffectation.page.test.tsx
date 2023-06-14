@@ -123,8 +123,6 @@ describe('Reaffectation', () => {
       })
 
       it('affiche un champ de saisie du conseiller de destination', async () => {
-        // WHEN
-
         // THEN
         const inputDestination: HTMLElement = screen.getByLabelText(
           '* E-mail conseiller de destination'
@@ -148,7 +146,7 @@ describe('Reaffectation', () => {
       })
 
       describe('au reset du mail du conseiller initial', () => {
-        it('vide le champ de saisie du mail ', async () => {
+        it('vide le champ de saisie du mail', async () => {
           //When
           const inputSaisieEmailInitial = screen
             .getByLabelText('* E-mail conseiller initial')
@@ -179,7 +177,7 @@ describe('Reaffectation', () => {
         })
       })
 
-      describe('au clique pour reaffecter les jeunes', () => {
+      describe('au clic pour reaffecter les jeunes', () => {
         it('réaffecte les jeunes', async () => {
           // GIVEN
           const emailConseillerDestination = 'destination@email.com'
