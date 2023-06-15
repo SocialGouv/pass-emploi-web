@@ -49,18 +49,13 @@ describe('Etablissement', () => {
 
     describe('Render', () => {
       describe('quand le conseiller est superviseur', () => {
-        it('affiche un lien vers la page de réaffectation si le conseiller est superviseur', () => {
-          // Given
-          ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-            validSession: true,
-            session: { user: { estSuperviseur: true } },
-          })
-
+        it('affiche un lien vers la page de réaffectation', () => {
           // When
           renderWithContexts(<Etablissement pageTitle='' />, {
             customConseiller: {
               structure: StructureConseiller.MILO,
               agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
+              estSuperviseur: true,
             },
           })
 
