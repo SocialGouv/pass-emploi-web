@@ -73,7 +73,10 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   if (
-    sessionOrRedirect.session.user.structure !== StructureConseiller.POLE_EMPLOI
+    sessionOrRedirect.session.user.structure !==
+      StructureConseiller.POLE_EMPLOI &&
+    sessionOrRedirect.session.user.structure !==
+      StructureConseiller.POLE_EMPLOI_BRSA
   ) {
     return {
       redirect: {
