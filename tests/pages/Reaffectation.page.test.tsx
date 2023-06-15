@@ -28,9 +28,9 @@ describe('Reaffectation', () => {
 
     it('contient un champ pour sélectionner le type de réaffectation', () => {
       // When
-      const typeReaffectation = screen.getByRole('group', {
-        name: /Choisissez un type de réaffectation/,
-      })
+      const typeReaffectation = screen.getByText(
+        'Choisissez un type de réaffectation'
+      )
       const typeReaffectionDefinitiveRadio = screen.getByLabelText('Définitif')
       const typeReaffectationTemporaireRadio =
         screen.getByLabelText('Temporaire')
@@ -58,9 +58,7 @@ describe('Reaffectation', () => {
         // Given
         const typeReaffectationRadio = screen.getByLabelText('Définitif')
         expect(
-          screen.getByRole('group', {
-            name: /Choisissez un type de réaffectation/,
-          })
+          screen.getByText('Choisissez un type de réaffectation')
         ).toBeInTheDocument()
         expect(typeReaffectationRadio).not.toBeChecked()
 
@@ -111,7 +109,7 @@ describe('Reaffectation', () => {
       it('selectionne tous les jeunes au clic sur la checkbox', async () => {
         // Given
         const toutSelectionnerCheckbox = screen.getByLabelText(
-          'Cocher/Décocher les jeunes'
+          'Cocher tous les bénéficiaires'
         )
         expect(toutSelectionnerCheckbox).not.toBeChecked()
 
