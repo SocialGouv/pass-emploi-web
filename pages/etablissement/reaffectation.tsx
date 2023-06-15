@@ -210,47 +210,51 @@ function Reaffectation(_: ReaffectationProps) {
         Les champs avec <span className='text-warning'>*</span> sont
         obligatoires
       </p>
-      <Etape numero={1} titre='Choisissez un type de réaffectation'>
-        <div className='flex flex-wrap'>
-          <RadioBox
-            className='mr-2'
-            isSelected={isReaffectationTemporaire === false}
-            color='primary'
-            onChange={() =>
-              handleTypeReaffectation(TYPE_REAFFECTATION.Definitif)
-            }
-            label='Définitif'
-            name='type-reaffectation'
-            id='type-reaffectation--definitif'
-          ></RadioBox>
-          <RadioBox
-            className='mr-2'
-            isSelected={isReaffectationTemporaire === true}
-            color={'primary'}
-            onChange={() =>
-              handleTypeReaffectation(TYPE_REAFFECTATION.Temporaire)
-            }
-            label='Temporaire'
-            name='type-reaffectation'
-            id='type-reaffectation--temporaire'
-          ></RadioBox>
-        </div>
-      </Etape>
 
-      <Etape numero={2} titre='Recherchez un portefeuille de bénéficiaires'>
-        <label
-          htmlFor='email-conseiller-initial'
-          className='text-base-medium text-content_color row-start-1 row-start-1 mb-3'
-        >
-          <span aria-hidden='true'>*</span> E-mail conseiller initial
-        </label>
+      <form
+        id='affecter-jeunes'
+        onSubmit={reaffecterJeunes}
+        className='grow col-start-2 row-start-2'
+      >
+        <Etape numero={1} titre='Choisissez un type de réaffectation'>
+          <div className='flex flex-wrap'>
+            <RadioBox
+              className='mr-2'
+              isSelected={isReaffectationTemporaire === false}
+              color='primary'
+              onChange={() =>
+                handleTypeReaffectation(TYPE_REAFFECTATION.Definitif)
+              }
+              label='Définitif'
+              name='type-reaffectation'
+              id='type-reaffectation--definitif'
+            ></RadioBox>
 
-        <form
-          role='search'
-          onSubmit={fetchListeJeunes}
-          className='grow col-start-1 row-start-2'
-        >
-          <div className='flex align-middle'>
+            <RadioBox
+              className='mr-2'
+              isSelected={isReaffectationTemporaire === true}
+              color={'primary'}
+              onChange={() =>
+                handleTypeReaffectation(TYPE_REAFFECTATION.Temporaire)
+              }
+              label='Temporaire'
+              name='type-reaffectation'
+              id='type-reaffectation--temporaire'
+            ></RadioBox>
+          </div>
+        </Etape>
+
+        <Etape numero={2} titre='Recherchez un portefeuille de bénéficiaires'>
+          <div className='mb-3'>
+            <label
+              htmlFor='email-conseiller-initial'
+              className='text-base-medium text-content_color row-start-1 row-start-1'
+            >
+              <span aria-hidden='true'>*</span> E-mail conseiller initial
+            </label>
+          </div>
+
+          <div className='flex align-middle mt-3'>
             <ResettableTextInput
               id={'email-conseiller-initial'}
               value={conseillerInitial.email}
@@ -266,7 +270,8 @@ function Reaffectation(_: ReaffectationProps) {
               label='Rechercher les bénéficiaires'
               style={ButtonStyle.PRIMARY}
               disabled={!isRechercheJeunesEnabled}
-              type='submit'
+              type='button'
+              onClick={fetchListeJeunes}
             >
               <IconComponent
                 name={IconName.Search}
@@ -280,182 +285,190 @@ function Reaffectation(_: ReaffectationProps) {
               Rechercher les bénéficiaires
             </Button>
           </div>
-        </form>
-        {Boolean(conseillerInitial.error) && (
-          <div className='flex col-start-1 row-start-3'>
-            <IconComponent
-              name={IconName.Error}
-              focusable={false}
-              aria-hidden={true}
-              className='fill-warning w-6 h-6 mr-2'
-            />
-            <p className='text-warning'>{conseillerInitial.error}</p>
-          </div>
-        )}
-      </Etape>
 
-      {conseillerInitial.email &&
-        isRechercheJeunesSubmitted &&
-        jeunes.length > 0 && (
-          <>
-            <Etape
-              numero={3}
-              titre='Sélectionnez les bénéficiaires à réaffecter'
-            >
-              <Table
-                caption={{
-                  text: `Jeunes de ${conseillerInitial.email}`,
-                  visible: false,
-                }}
-              >
-                <THead>
-                  <TR isHeader={true}>
-                    <TH className='text-base-bold'>
-                      <label
-                        className='sr-only'
-                        htmlFor='reaffectation-tout-selectionner'
-                      >
-                        {idsJeunesSelected.length === 0 ? 'Cocher' : 'Décocher'}{' '}
-                        tous les bénéficiaires
-                      </label>
-                      <input
-                        id='reaffectation-tout-selectionner'
-                        type='checkbox'
-                        className='mr-6'
-                        checked={idsJeunesSelected.length === jeunes.length}
-                        title={
-                          idsJeunesSelected.length === 0
-                            ? 'Tout sélectionner'
-                            : 'Tout désélectionner'
-                        }
-                        onChange={() => false}
-                        onClick={toggleTousLesBeneficiaires}
-                      />
-                    </TH>
-                    <TH className='text-base-bold'>Bénéficiaire</TH>
-                    <TH className='text-base-bold'>Conseiller précédent</TH>
-                    <TH className='text-base-bold'>
-                      Email conseiller précédent
-                    </TH>
-                  </TR>
-                </THead>
-                <TBody>
-                  {jeunes.map((jeune: JeuneFromListe) => (
-                    <TR key={jeune.id} onClick={() => selectionnerJeune(jeune)}>
-                      <TD className='p-4 rounded-l-base'>
-                        <input
-                          id={'checkbox-' + jeune.id}
-                          type='checkbox'
-                          checked={idsJeunesSelected.includes(jeune.id)}
-                          title={'Sélectionner ' + getNomJeuneComplet(jeune)}
-                          onChange={() => false}
-                        />
-                      </TD>
-                      <TD className='p-4 text-base-bold'>
-                        <label
-                          htmlFor={'checkbox-' + jeune.id}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {getNomJeuneComplet(jeune)}
-                        </label>
-                      </TD>
-                      <TD className='p-4 text-base-regular'>
-                        {jeune.conseillerPrecedent
-                          ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
-                          : '-'}
-                      </TD>
-                      <TD className='p-4 text-base-regular rounded-r-base'>
-                        {jeune.conseillerPrecedent?.email ?? '-'}
-                      </TD>
-                    </TR>
-                  ))}
-                </TBody>
-              </Table>
-            </Etape>
-
-            <Etape
-              numero={4}
-              titre='À qui souhaitez-vous affecter ce(s) bénéficiaire(s) ?'
-            >
-              <label
-                htmlFor='email-conseiller-destination'
-                className='text-base-medium whitespace-nowrap col-start-2 row-start-1 mb-3 text-content_color'
-              >
-                <span aria-hidden='true'>*</span> E-mail conseiller de
-                destination
-              </label>
-
-              <span className='text-s-regular mb-3'>
-                L’e-mail de la personne à qui vous souhaitez transférer le(s)
-                bénéficiaire(s) sélectionné(s)
-              </span>
-
-              <form
-                id='affecter-jeunes'
-                onSubmit={reaffecterJeunes}
-                className='grow col-start-2 row-start-2'
-              >
-                <ResettableTextInput
-                  id={'email-conseiller-destination'}
-                  value={emailConseillerDestination.value}
-                  onChange={editEmailConseillerDestination}
-                  onReset={() => editEmailConseillerDestination('')}
-                  disabled={false}
-                  type={'email'}
-                  className='flex-1 border border-solid border-grey_700 rounded-base text-base-regular text-primary_darken'
-                  required={true}
-                />
-              </form>
-
-              {Boolean(emailConseillerDestination.error) && (
-                <div className='flex col-start-2 row-start-3 mt-3'>
-                  <IconComponent
-                    name={IconName.Error}
-                    focusable={false}
-                    aria-hidden={true}
-                    className='fill-warning w-6 h-6 mr-2'
-                  />
-                  <p className='text-warning'>
-                    {emailConseillerDestination.error}
-                  </p>
-                </div>
-              )}
-            </Etape>
-
-            <div className='w-full'>
-              <Button
-                form='affecter-jeunes'
-                label='Réaffecter les jeunes'
-                type='submit'
-              >
-                <IconComponent
-                  name={IconName.ArrowForward}
-                  focusable='false'
-                  aria-hidden={true}
-                  className={`w-6 h-6 mr-2 fill-blanc`}
-                  title='Rechercher'
-                />
-                Valider mon choix
-              </Button>
-
-              {idsJeunesSelected.length > 0 && (
-                <div>
-                  {Boolean(erreurReaffectation) && (
-                    <div className='absolute flex mt-3'>
-                      <IconComponent
-                        name={IconName.Error}
-                        focusable={false}
-                        aria-hidden={true}
-                        className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
-                      />
-                      <p className='text-warning'>{erreurReaffectation}</p>
-                    </div>
-                  )}
-                </div>
-              )}
+          {Boolean(conseillerInitial.error) && (
+            <div className='flex col-start-1 row-start-3'>
+              <IconComponent
+                name={IconName.Error}
+                focusable={false}
+                aria-hidden={true}
+                className='fill-warning w-6 h-6 mr-2'
+              />
+              <p className='text-warning'>{conseillerInitial.error}</p>
             </div>
-          </>
-        )}
+          )}
+        </Etape>
+
+        {conseillerInitial.email &&
+          isRechercheJeunesSubmitted &&
+          jeunes.length > 0 && (
+            <>
+              <Etape
+                numero={3}
+                titre='Sélectionnez les bénéficiaires à réaffecter'
+              >
+                <Table
+                  caption={{
+                    text: `Jeunes de ${conseillerInitial.email}`,
+                    visible: false,
+                  }}
+                >
+                  <THead>
+                    <TR isHeader={true}>
+                      <TH className='text-base-bold'>
+                        <label
+                          className='sr-only'
+                          htmlFor='reaffectation-tout-selectionner'
+                        >
+                          {idsJeunesSelected.length === 0
+                            ? 'Cocher'
+                            : 'Décocher'}{' '}
+                          tous les bénéficiaires
+                        </label>
+                        <input
+                          id='reaffectation-tout-selectionner'
+                          type='checkbox'
+                          className='mr-6'
+                          checked={idsJeunesSelected.length === jeunes.length}
+                          title={
+                            idsJeunesSelected.length === 0
+                              ? 'Tout sélectionner'
+                              : 'Tout désélectionner'
+                          }
+                          onChange={() => false}
+                          onClick={toggleTousLesBeneficiaires}
+                        />
+                      </TH>
+                      <TH className='text-base-bold'>Bénéficiaire</TH>
+                      <TH className='text-base-bold'>Conseiller précédent</TH>
+                      <TH className='text-base-bold'>
+                        Email conseiller précédent
+                      </TH>
+                    </TR>
+                  </THead>
+
+                  <TBody>
+                    {jeunes.map((jeune: JeuneFromListe) => (
+                      <TR
+                        key={jeune.id}
+                        onClick={() => selectionnerJeune(jeune)}
+                      >
+                        <TD className='p-4 rounded-l-base'>
+                          <input
+                            id={'checkbox-' + jeune.id}
+                            type='checkbox'
+                            checked={idsJeunesSelected.includes(jeune.id)}
+                            title={'Sélectionner ' + getNomJeuneComplet(jeune)}
+                            onChange={() => false}
+                          />
+                        </TD>
+                        <TD className='p-4 text-base-bold'>
+                          <label
+                            htmlFor={'checkbox-' + jeune.id}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {getNomJeuneComplet(jeune)}
+                          </label>
+                        </TD>
+                        <TD className='p-4 text-base-regular'>
+                          {jeune.conseillerPrecedent
+                            ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
+                            : '-'}
+                        </TD>
+                        <TD className='p-4 text-base-regular rounded-r-base'>
+                          {jeune.conseillerPrecedent?.email ?? '-'}
+                        </TD>
+                      </TR>
+                    ))}
+                  </TBody>
+                </Table>
+              </Etape>
+
+              <Etape
+                numero={4}
+                titre='À qui souhaitez-vous affecter ce(s) bénéficiaire(s) ?'
+              >
+                <div className='mb-3 flex flex-wrap'>
+                  <label
+                    htmlFor='email-conseiller-destination'
+                    className='text-base-medium whitespace-nowrap col-start-2 row-start-1 text-content_color mb-3'
+                  >
+                    <span aria-hidden='true'>*</span> E-mail conseiller de
+                    destination
+                  </label>
+
+                  <span className='text-s-regular'>
+                    L’e-mail de la personne à qui vous souhaitez transférer
+                    le(s) bénéficiaire(s) sélectionné(s)
+                  </span>
+                </div>
+
+                <div
+                  id='affecter-jeunes'
+                  className='grow col-start-2 row-start-2'
+                >
+                  <ResettableTextInput
+                    id={'email-conseiller-destination'}
+                    value={emailConseillerDestination.value}
+                    onChange={editEmailConseillerDestination}
+                    onReset={() => editEmailConseillerDestination('')}
+                    disabled={false}
+                    type='email'
+                    className='flex-1 border border-solid border-grey_700 rounded-base text-base-regular text-primary_darken'
+                    required={true}
+                  />
+                </div>
+
+                {Boolean(emailConseillerDestination.error) && (
+                  <div className='flex col-start-2 row-start-3 mt-3'>
+                    <IconComponent
+                      name={IconName.Error}
+                      focusable={false}
+                      aria-hidden={true}
+                      className='fill-warning w-6 h-6 mr-2'
+                    />
+                    <p className='text-warning'>
+                      {emailConseillerDestination.error}
+                    </p>
+                  </div>
+                )}
+              </Etape>
+
+              <div className='w-full'>
+                <Button
+                  form='affecter-jeunes'
+                  label='Réaffecter les jeunes'
+                  type='submit'
+                >
+                  <IconComponent
+                    name={IconName.ArrowForward}
+                    focusable='false'
+                    aria-hidden={true}
+                    className={`w-6 h-6 mr-2 fill-blanc`}
+                    title='Rechercher'
+                  />
+                  Valider mon choix
+                </Button>
+
+                {idsJeunesSelected.length > 0 && (
+                  <div>
+                    {Boolean(erreurReaffectation) && (
+                      <div className='absolute flex mt-3'>
+                        <IconComponent
+                          name={IconName.Error}
+                          focusable={false}
+                          aria-hidden={true}
+                          className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
+                        />
+                        <p className='text-warning'>{erreurReaffectation}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+      </form>
     </>
   )
 }
