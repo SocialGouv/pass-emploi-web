@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
@@ -195,7 +195,7 @@ describe('Agenda', () => {
             name: 'Aller à la période précédente',
           })
           const buttonPeriodeCourante = screen.getByRole('button', {
-            name: 'Aller à la période en cours',
+            name: 'Aller à la Période en cours',
           })
           const periodeFutureButton = screen.getByRole('button', {
             name: 'Aller à la période suivante',
@@ -270,13 +270,15 @@ describe('Agenda', () => {
           )
         })
 
-        it('affiche les événements récupérés', () => {
+        it('affiche les événements récupérés', async () => {
           // Then
-          expect(
-            screen.getByRole('table', {
-              name: 'Liste des animations collectives de mon établissement',
-            })
-          ).toBeInTheDocument()
+          await waitFor(() => {
+            expect(
+              screen.getByRole('table', {
+                name: 'Liste des animations collectives de mon établissement',
+              })
+            ).toBeInTheDocument()
+          })
           expect(
             screen.getByRole('row', { name: 'lundi 29 août' }).nextSibling
           ).toHaveAccessibleName('Après-midi')
@@ -325,7 +327,7 @@ describe('Agenda', () => {
             name: 'Aller à la période précédente',
           })
           const periodeCouranteButton = screen.getByRole('button', {
-            name: 'Aller à la période en cours',
+            name: 'Aller à la Période en cours',
           })
           const periodesFuturesButton = screen.getByRole('button', {
             name: 'Aller à la période suivante',
@@ -378,7 +380,7 @@ describe('Agenda', () => {
         })
 
         await userEvent.click(
-          screen.getByRole('tab', { name: 'Agenda établissement' })
+          screen.getByRole('tab', { name: 'Agenda Mission locale' })
         )
       })
 
