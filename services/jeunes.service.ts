@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { Conseiller } from 'interfaces/conseiller'
+import { BaseConseiller } from 'interfaces/conseiller'
 import {
   BaseJeune,
   ConseillerHistorique,
@@ -14,6 +14,7 @@ import {
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
+  ConseillerJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
 import {
@@ -63,6 +64,13 @@ export async function getJeunesDuConseillerClientSide(): Promise<
 > {
   const session = await getSession()
   return getJeunesDuConseiller(session!.user.id, session!.accessToken)
+}
+
+export async function getJeunesDuConseillerParId(
+  idConseiller: string
+): Promise<JeuneFromListe[]> {
+  const session = await getSession()
+  return getJeunesDuConseiller(idConseiller, session!.accessToken)
 }
 
 export async function getJeuneDetails(
@@ -117,17 +125,19 @@ export async function createCompteJeunePoleEmploi(newJeune: {
 
 export async function getJeunesDuConseillerParEmail(
   emailConseiller: string
-): Promise<{ idConseiller: string; jeunes: JeuneFromListe[] }> {
+): Promise<{ conseiller: BaseConseiller; jeunes: JeuneFromListe[] }> {
   const session = await getSession()
-  const { content: conseiller } = await apiGet<Conseiller>(
+  const {
+    content: { id, firstName, lastName },
+  } = await apiGet<ConseillerJson>(
     `/conseillers?email=${emailConseiller}`,
     session!.accessToken
   )
-  const jeunesDuConseiller = await getJeunesDuConseillerServerSide(
-    conseiller.id,
+  const jeunesDuConseiller = await getJeunesDuConseiller(
+    id,
     session!.accessToken
   )
-  return { idConseiller: conseiller.id, jeunes: jeunesDuConseiller }
+  return { conseiller: { id, firstName, lastName }, jeunes: jeunesDuConseiller }
 }
 
 export async function getIdJeuneMilo(
@@ -152,20 +162,16 @@ export async function getIdJeuneMilo(
 
 export async function reaffecter(
   idConseillerInitial: string,
-  emailConseillerDestination: string,
+  idConseillerDestination: string,
   idsJeunes: string[],
   estTemporaire: boolean
 ): Promise<void> {
   const session = await getSession()
-  const { content: conseillerDestination } = await apiGet<Conseiller>(
-    `/conseillers?email=${emailConseillerDestination}`,
-    session!.accessToken
-  )
   await apiPost(
     '/jeunes/transferer',
     {
       idConseillerSource: idConseillerInitial,
-      idConseillerCible: conseillerDestination.id,
+      idConseillerCible: idConseillerDestination,
       idsJeune: idsJeunes,
       estTemporaire: estTemporaire,
     },

@@ -3,12 +3,18 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
+import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes } from 'fixtures/jeune'
+import { StructureConseiller } from 'interfaces/conseiller'
 import Reaffectation, {
   getServerSideProps,
 } from 'pages/etablissement/reaffectation'
 import {
-  getJeunesDuConseillerParEmail,
+  getConseillerServerSide,
+  getConseillersEtablissementServerSide,
+} from 'services/conseiller.service'
+import {
+  getJeunesDuConseillerParId,
   reaffecter,
 } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -16,13 +22,39 @@ import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRed
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/jeunes.service')
+jest.mock('services/conseiller.service')
 
 describe('Reaffectation', () => {
+  const conseillersEtablissement = [
+    unConseiller({
+      id: 'id-conseiller-initial',
+      firstName: 'Albert',
+      lastName: 'Durant',
+      agence: { nom: 'agence-dijon', id: 'id-agence' },
+      aDesBeneficiairesARecuperer: true,
+      structure: StructureConseiller.MILO,
+    }),
+    unConseiller({
+      id: 'id-conseiller-destination',
+      firstName: 'Claude',
+      lastName: 'Dupont',
+      agence: { nom: 'agence-dijon', id: 'id-agence' },
+      aDesBeneficiairesARecuperer: true,
+      structure: StructureConseiller.MILO,
+    }),
+  ]
+
   describe('client side', () => {
     beforeEach(async () => {
       // When
       await act(() => {
-        renderWithContexts(<Reaffectation withoutChat={true} pageTitle='' />)
+        renderWithContexts(
+          <Reaffectation
+            withoutChat={true}
+            pageTitle=''
+            conseillersEtablissement={conseillersEtablissement}
+          />
+        )
       })
     })
 
@@ -41,16 +73,16 @@ describe('Reaffectation', () => {
       expect(typeReaffectationTemporaireRadio).toBeInTheDocument()
     })
 
-    it("affiche un champ de recherche d'un conseiller", async () => {
+    it("affiche un champ de recherche d'un conseiller initial", async () => {
       // THEN
-      expect(
-        screen.getByLabelText('* E-mail conseiller initial')
-      ).toBeInTheDocument()
+      expect(screen.getByLabelText(/Conseiller initial/)).toBeInTheDocument()
     })
 
     it("affiche un bouton pour rechercher les jeunes d'un conseiller", async () => {
       // THEN
-      expect(screen.getByTitle('Rechercher')).toBeInTheDocument()
+      expect(
+        screen.getByText('Rechercher les bénéficiaires')
+      ).toBeInTheDocument()
     })
 
     describe('au clic sur un type de réaffectation', () => {
@@ -71,20 +103,21 @@ describe('Reaffectation', () => {
     })
 
     describe('au clic pour rechercher le conseiller initial', () => {
-      const emailConseillerInitial = 'conseiller@email.com'
+      const nomConseillerInitial = 'Albert Durant'
       const idConseillerInitial = 'id-conseiller-initial'
-      let emailInput: HTMLInputElement
+      let conseillerInitialInput: HTMLInputElement
       const jeunes = desItemsJeunes()
       beforeEach(async () => {
         // GIVEN
-        emailInput = screen.getByLabelText('* E-mail conseiller initial')
-        const submitRecherche = screen.getByTitle('Rechercher')
-        ;(getJeunesDuConseillerParEmail as jest.Mock).mockResolvedValue({
-          idConseiller: idConseillerInitial,
-          jeunes,
-        })
+        conseillerInitialInput = screen.getByLabelText(/Conseiller initial/)
+        const submitRecherche = screen.getByLabelText(
+          'Rechercher les bénéficiaires'
+        )
+        ;(getJeunesDuConseillerParId as jest.Mock).mockResolvedValue(
+          jeunes
+        )
         await userEvent.click(screen.getByLabelText('Définitif'))
-        await userEvent.type(emailInput, emailConseillerInitial)
+        await userEvent.type(conseillerInitialInput, nomConseillerInitial)
 
         // WHEN
         await userEvent.click(submitRecherche)
@@ -92,8 +125,8 @@ describe('Reaffectation', () => {
 
       it('récupère les jeunes du conseiller', async () => {
         // THEN
-        expect(getJeunesDuConseillerParEmail).toHaveBeenCalledWith(
-          emailConseillerInitial
+        expect(getJeunesDuConseillerParId).toHaveBeenCalledWith(
+          idConseillerInitial
         )
       })
 
@@ -123,7 +156,7 @@ describe('Reaffectation', () => {
       it('affiche un champ de saisie du conseiller de destination', async () => {
         // THEN
         const inputDestination: HTMLElement = screen.getByLabelText(
-          '* E-mail conseiller de destination'
+          /Conseiller de destination/
         )
         expect(inputDestination).toBeInTheDocument()
       })
@@ -136,35 +169,47 @@ describe('Reaffectation', () => {
         expect(submitReaffectation).toBeInTheDocument()
       })
 
-      it("affiche un champ de recherche des jeunes d'un conseiller", async () => {
-        // THEN
-        expect(
-          screen.getByLabelText('* E-mail conseiller initial')
-        ).toBeInTheDocument()
-      })
-
-      describe('au reset du mail du conseiller initial', () => {
-        it('vide le champ de saisie du mail', async () => {
+      describe('au reset du nom et prénom du conseiller initial', () => {
+        it('vide le champ de saisie du nom et prénom', async () => {
           //When
-          const inputSaisieEmailInitial = screen
-            .getByLabelText('* E-mail conseiller initial')
+          const inputSaisieConseillerInitial = screen
+            .getByLabelText(/Conseiller initial/)
             .closest('div') as HTMLElement
           await userEvent.click(
-            within(inputSaisieEmailInitial).getByText(
+            within(inputSaisieConseillerInitial).getByText(
+              'Effacer le champ de saisie'
+            )
+          )
+          // Then
+          expect(screen.getByLabelText(/Conseiller initial/)).toHaveAttribute(
+            'value',
+            ''
+          )
+        })
+      })
+
+      describe('au reset du nom et prénom du conseiller destination', () => {
+        it('vide le champ de saisie du nom et prénom', async () => {
+          //When
+          const inputSaisieConseillerDestination = screen
+            .getByLabelText(/Conseiller de destination/)
+            .closest('div') as HTMLElement
+          await userEvent.click(
+            within(inputSaisieConseillerDestination).getByText(
               'Effacer le champ de saisie'
             )
           )
           // Then
           expect(
-            screen.getByLabelText('* E-mail conseiller initial')
+            screen.getByLabelText(/Conseiller de destination/)
           ).toHaveAttribute('value', '')
         })
       })
 
-      describe('à la modification du mail du conseiller initial', () => {
+      describe('à la modification du nom et prénom du conseiller initial', () => {
         it('reset de la liste des jeunes', async () => {
           // WHEN
-          await userEvent.type(emailInput, 'whatever')
+          await userEvent.type(conseillerInitialInput, 'whatever')
 
           // THEN
           for (const jeune of jeunes) {
@@ -178,16 +223,20 @@ describe('Reaffectation', () => {
       describe('au clic pour reaffecter les jeunes', () => {
         it('réaffecte les jeunes', async () => {
           // GIVEN
-          const emailConseillerDestination = 'destination@email.com'
+          const nomEtPrenomConseillerDestination = 'Claude Dupont'
+          const idConseillerDestination = 'id-conseiller-destination'
           const destinationInput = screen.getByLabelText(
-            '* E-mail conseiller de destination'
+            /Conseiller de destination/
           )
           const typeReaffectationRadio = screen.getByLabelText('Définitif')
           const estTemporaire = false
           const submitReaffecter = screen.getByText('Valider mon choix')
 
           // WHEN
-          await userEvent.type(destinationInput, emailConseillerDestination)
+          await userEvent.type(
+            destinationInput,
+            nomEtPrenomConseillerDestination
+          )
           await userEvent.click(
             screen.getByText(jeunes[0].prenom, { exact: false })
           )
@@ -200,7 +249,7 @@ describe('Reaffectation', () => {
           // THEN
           expect(reaffecter).toHaveBeenCalledWith(
             idConseillerInitial,
-            emailConseillerDestination,
+            idConseillerDestination,
             [jeunes[0].id, jeunes[2].id],
             estTemporaire
           )
@@ -234,8 +283,16 @@ describe('Reaffectation', () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
-          session: { user: { estSuperviseur: true } },
+          session: {
+            user: { estSuperviseur: true },
+          },
         })
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
+          conseillersEtablissement[0]
+        )
+        ;(getConseillersEtablissementServerSide as jest.Mock).mockResolvedValue(
+          conseillersEtablissement
+        )
 
         // When
         const actual = await getServerSideProps({
@@ -248,6 +305,7 @@ describe('Reaffectation', () => {
             pageTitle: 'Réaffectation',
             returnTo: '/etablissement',
             withoutChat: true,
+            conseillersEtablissement: conseillersEtablissement,
           },
         })
       })
