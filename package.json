@@ -26,7 +26,7 @@
     "@next/font": "13.4.6",
     "@storybook/storybook-deployer": "^2.8.16",
     "crypto-js": "4.1.1",
-    "dotenv": "16.1.4",
+    "dotenv": "16.2.0",
     "elastic-apm-node": "3.46.0",
     "firebase": "9.22.2",
     "global": "^4.4.0",
