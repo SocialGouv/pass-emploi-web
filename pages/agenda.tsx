@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import PageActionsPortal from 'components/PageActionsPortal'
@@ -14,6 +14,7 @@ import TabList from 'components/ui/Navigation/TabList'
 import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
+import { SessionMilo } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -59,7 +60,6 @@ function Agenda({ onglet }: AgendaProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(
     onglet ?? Onglet.CONSEILLER
   )
-
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
@@ -113,6 +113,17 @@ function Agenda({ onglet }: AgendaProps) {
       'services/evenements.service'
     )
     return getRendezVousEtablissement(idEtablissement, dateDebut, dateFin)
+  }
+
+  async function recupererSessionsMilo(
+    idConseiller: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<AnimationCollective[]> {
+    const { getSessionsMissionLocale } = await import(
+      'services/sessions.service'
+    )
+    return getSessionsMissionLocale(idConseiller, dateDebut, dateFin)
   }
 
   async function trackAgenceModal(trackingMessage: string) {
@@ -212,7 +223,9 @@ function Agenda({ onglet }: AgendaProps) {
           {conseiller.agence && (
             <OngletAgendaEtablissement
               idEtablissement={conseiller.agence.id!}
+              idConseiller={conseiller.id!}
               recupererAnimationsCollectives={recupererRdvsEtablissement}
+              recupererSessionsMilo={recupererSessionsMilo}
               trackNavigation={trackNavigation}
             />
           )}

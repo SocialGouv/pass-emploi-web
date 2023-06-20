@@ -31,8 +31,14 @@ import {
 
 type OngletAgendaEtablissementProps = {
   idEtablissement: string
+  idConseiller: string
   recupererAnimationsCollectives: (
     idEtablissement: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) => Promise<AnimationCollective[]>
+  recupererSessionsMilo: (
+    idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
@@ -41,7 +47,9 @@ type OngletAgendaEtablissementProps = {
 
 export default function OngletAgendaEtablissement({
   idEtablissement,
+  idConseiller,
   recupererAnimationsCollectives,
+  recupererSessionsMilo,
   trackNavigation,
 }: OngletAgendaEtablissementProps) {
   const [animationsCollectives, setAnimationsCollectives] = useState<
@@ -51,7 +59,7 @@ export default function OngletAgendaEtablissement({
     useState<AnimationCollective[]>([])
 
   const [animationsCollectivesGroupees, setAnimationsCollectivesGroupees] =
-    useState<ItemOuIntercalaire<AnimationCollective>[]>([])
+    useState<Array<ItemOuIntercalaire<AnimationCollective>>>([])
 
   const [statutsValides, setStatutsValides] = useState<
     StatutAnimationCollective[]
@@ -66,15 +74,22 @@ export default function OngletAgendaEtablissement({
       dateDebut,
       dateFin
     )
-    setAnimationsCollectives(evenements)
+    const evenementsMilo = await recupererSessionsMilo(
+      idConseiller!,
+      dateDebut,
+      dateFin
+    )
+
+    const evenementsCEJetMilo = [...evenementsMilo, ...evenements]
+    setAnimationsCollectives(evenementsCEJetMilo)
   }
 
   function filtrerAnimationsCollectives() {
     if (!statutsValides.length)
       setAnimationsCollectivesFiltrees(animationsCollectives)
     else {
-      const acFiltrees = animationsCollectives.filter((ac) =>
-        statutsValides.includes(ac.statut)
+      const acFiltrees = animationsCollectives.filter(
+        (ac) => ac.statut && statutsValides.includes(ac.statut)
       )
       setAnimationsCollectivesFiltrees(acFiltrees)
     }
@@ -89,6 +104,11 @@ export default function OngletAgendaEtablissement({
       insertIntercalaires(animationsCollectivesFiltrees, ({ date }) => date)
     )
   }, [animationsCollectivesFiltrees])
+
+  function getHref(ac: AnimationCollective): string {
+    if (ac.statut) return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
+    else return `agenda/sessions/${ac.id}`
+  }
 
   return (
     <>
@@ -154,19 +174,26 @@ export default function OngletAgendaEtablissement({
               {renderListeWithIntercalaires(
                 animationsCollectivesGroupees,
                 (ac) => (
-                  <TR
-                    key={ac.id}
-                    href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
-                    label={labelLien(ac)}
-                  >
+                  <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
                     <TD>
                       {heure(ac)} - {ac.duree} min
                     </TD>
-                    <TD>{ac.titre}</TD>
+                    <TD>
+                      {ac.titre}{' '}
+                      <span className={'text-s-regular'}>{ac.sousTitre}</span>
+                    </TD>
                     <TD>{tagType(ac)}</TD>
                     <TD>
                       <div className='flex items-center justify-between'>
-                        {tagStatut(ac)}
+                        {ac.statut && tagStatut(ac)}
+                        {ac.statut === undefined && (
+                          <>
+                            -
+                            <span className='sr-only'>
+                              information non disponible
+                            </span>
+                          </>
+                        )}
                         <IconComponent
                           name={IconName.ChevronRight}
                           focusable={false}
@@ -199,16 +226,16 @@ function heure({ date }: AnimationCollective): string {
   return toFrenchFormat(date, TIME_24_H_SEPARATOR)
 }
 
-function tagType({ type }: AnimationCollective): ReactElement {
+function tagType({ statut, type }: AnimationCollective): ReactElement {
   const color = type === 'Atelier' ? 'accent_2' : 'additional_2'
   const iconName =
     type === 'Information collective' ? IconName.Error : undefined
   return (
     <TagMetier
       label={type}
-      color={color}
-      backgroundColor={color + '_lighten'}
-      iconName={iconName}
+      color={statut ? color : 'accent_1'}
+      backgroundColor={statut ? color + '_lighten' : 'accent_1_lighten'}
+      iconName={statut ? iconName : IconName.Lock}
     />
   )
 }
@@ -227,6 +254,11 @@ function statusProps({ type, statut }: AnimationCollective): {
       return {
         label: type === 'Atelier' ? 'Clos' : 'Close',
         color: 'accent_2',
+      }
+    case undefined:
+      return {
+        label: '',
+        color: '',
       }
   }
 }
