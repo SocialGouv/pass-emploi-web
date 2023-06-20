@@ -19,7 +19,8 @@ export type AnimationCollective = {
   titre: string
   date: DateTime
   duree: number
-  statut: StatutAnimationCollective
+  statut?: StatutAnimationCollective
+  sousTitre?: string
 }
 
 export type AnimationCollectivePilotage = {
