@@ -30,6 +30,17 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
 
 export const desMessagesAntechronologiques = (): Message[] => [
   unMessage({
+    id: 'message-8',
+    content: 'Bonjour, je vous partage un événement afin d’avoir votre avis',
+    creationDate: DateTime.local(2022, 1, 17),
+    type: TypeMessage.MESSAGE_EVENEMENT_EMPLOI,
+    infoEvenementEmploi: {
+      id: 'id-evenement-emploi',
+      titre: 'Un événement emploi',
+      url: 'https://www.lala.com',
+    },
+  }),
+  unMessage({
     id: 'message-7',
     content: 'Je vous partage cet événement',
     creationDate: DateTime.local(2022, 1, 17),
@@ -165,6 +176,18 @@ export const desMessagesParJour = (): ByDay<Message>[] => [
           id: 'id-evenement',
           titre: 'Un atelier',
           date: DateTime.fromISO('2021-12-22T00:00:00.000Z'),
+        },
+      }),
+      unMessage({
+        id: 'message-8',
+        content:
+          'Decrypted: Bonjour, je vous partage un événement afin d’avoir votre avis',
+        creationDate: DateTime.local(2022, 1, 17),
+        type: TypeMessage.MESSAGE_EVENEMENT_EMPLOI,
+        infoEvenementEmploi: {
+          id: 'id-evenement-emploi',
+          titre: 'Un événement emploi',
+          url: 'https://www.lala.com',
         },
       }),
     ],

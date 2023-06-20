@@ -49,6 +49,48 @@ describe('FirebaseClient', () => {
       }
       expect(message).toEqual(expectedMessage)
     })
+    it("mappe un partage d'événement d’emploi", () => {
+      // Given
+      const docSnapshot: QueryDocumentSnapshot<FirebaseMessage> = {
+        id: 'document-id',
+        data: () => ({
+          iv: 'iv',
+          conseillerId: 'conseiller-id',
+          content: 'Je vous partage cet événement emploi',
+          creationDate: Timestamp.fromDate(
+            DateTime.local(2022, 1, 17).toJSDate()
+          ),
+          type: 'MESSAGE_EVENEMENT_EMPLOI',
+          sentBy: 'jeune',
+          evenementEmploi: {
+            id: 'id-event',
+            titre: 'Un événement emploi',
+            type: 'MESSAGE_EVENEMENT_EMPLOI',
+            url: 'http://www.lala.com',
+          },
+        }),
+      } as QueryDocumentSnapshot<FirebaseMessage>
+
+      // When
+      const message = docSnapshotToMessage(docSnapshot)
+
+      // Then
+      const expectedMessage: Message = {
+        id: 'document-id',
+        content: 'Je vous partage cet événement emploi',
+        creationDate: DateTime.local(2022, 1, 17),
+        type: TypeMessage.MESSAGE_EVENEMENT_EMPLOI,
+        sentBy: 'jeune',
+        iv: 'iv',
+        conseillerId: 'conseiller-id',
+        infoEvenementEmploi: {
+          id: 'id-event',
+          titre: 'Un événement emploi',
+          url: 'http://www.lala.com',
+        },
+      }
+      expect(message).toEqual(expectedMessage)
+    })
     it("mappe un partage d'offre", () => {
       // Given
       const docSnapshot: QueryDocumentSnapshot<FirebaseMessage> = {
