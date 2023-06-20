@@ -45,6 +45,7 @@ type TypeMessageFirebase =
   | 'MESSAGE_PJ'
   | 'MESSAGE_OFFRE'
   | 'MESSAGE_EVENEMENT'
+  | 'MESSAGE_EVENEMENT_EMPLOI'
   | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
 
 export type FirebaseMessage = {
@@ -57,6 +58,7 @@ export type FirebaseMessage = {
   type: TypeMessageFirebase | undefined
   offre?: InfoOffreFirebase
   evenement?: EvenementPartage
+  evenementEmploi?: EvenementEmploi
 }
 
 export type FirebaseMessageGroupe = {
@@ -81,6 +83,13 @@ export interface EvenementPartage {
   titre: string
   type: string
   date: string
+}
+
+export interface EvenementEmploi {
+  id: string
+  titre: string
+  type: string
+  url: string
 }
 
 type BaseCreateFirebaseMessage = {
@@ -530,6 +539,17 @@ export function docSnapshotToMessage(
     }
   }
 
+  if (
+    message.type === TypeMessage.MESSAGE_EVENEMENT_EMPLOI &&
+    firebaseMessage.evenementEmploi
+  ) {
+    message.infoEvenementEmploi = {
+      id: firebaseMessage.evenementEmploi.id,
+      titre: firebaseMessage.evenementEmploi.titre,
+      url: firebaseMessage.evenementEmploi.url,
+    }
+  }
+
   return message
 }
 
@@ -566,6 +586,8 @@ function firebaseToMessageType(
       return TypeMessage.MESSAGE_OFFRE
     case 'MESSAGE_EVENEMENT':
       return TypeMessage.MESSAGE_EVENEMENT
+    case 'MESSAGE_EVENEMENT_EMPLOI':
+      return TypeMessage.MESSAGE_EVENEMENT_EMPLOI
     case 'MESSAGE':
       return TypeMessage.MESSAGE
     case undefined:

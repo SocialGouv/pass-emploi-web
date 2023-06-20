@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { InfoEvenementEmploi } from 'interfaces/message'
 
 export default function LienEvenementEmploi({
@@ -12,7 +13,7 @@ export default function LienEvenementEmploi({
     <div className={`mt-4 p-4 rounded-base bg-blanc`}>
       <div className={`text-base-bold text-content_color`}>
         <dl>
-          <dt className='sr-only'>Titre de l’événement :</dt>
+          <dt className='sr-only'>Titre de l’événement emploi :</dt>
           <dd>{infoEvenementEmploi.titre}</dd>
         </dl>
       </div>
@@ -21,9 +22,16 @@ export default function LienEvenementEmploi({
       >
         <Link
           href={infoEvenementEmploi.url}
-          className='underline text-[inherit]'
+          className='underline text-[inherit] flex items-center'
+          aria-label={`${infoEvenementEmploi.url} (nouvelle fenêtre)`}
         >
           Voir l’événement emploi
+          <IconComponent
+            name={IconName.OpenInNew}
+            className='w-4 h-4 ml-1 fill-primary'
+            focusable={false}
+            aria-hidden={true}
+          />
         </Link>
       </div>
     </div>

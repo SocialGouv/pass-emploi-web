@@ -410,24 +410,24 @@ describe('<Conversation />', () => {
     let message: HTMLElement
     beforeEach(() => {
       message = screen.getByText(
-        'Decrypted: Je vous partage cet événement d’emploi'
+        'Decrypted: Bonjour, je vous partage un événement afin d’avoir votre avis'
       ).parentElement!
     })
 
-    it("affiche le titre de l'événement", async () => {
+    it("affiche le titre de l'événement emploi", async () => {
       // Then
-      expect(getByDescriptionTerm('Titre de l’événement :')).toHaveTextContent(
-        'Un événement emploi'
-      )
+      expect(
+        getByDescriptionTerm('Titre de l’événement emploi :')
+      ).toHaveTextContent('Un événement emploi')
     })
 
-    it("affiche le lien de l'événement", async () => {
+    it("affiche le lien de l'événement emploi", async () => {
       // Then
       expect(
         within(message).getByRole('link', {
-          name: 'Voir l’événement',
+          name: 'https://www.lala.com (nouvelle fenêtre)',
         })
-      ).toHaveAttribute('href', 'https://www.toto.com')
+      ).toHaveAttribute('href', 'https://www.lala.com')
     })
   })
 })
