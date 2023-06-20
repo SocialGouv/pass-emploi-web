@@ -18,6 +18,7 @@ import {
   getRendezVousEtablissement,
 } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
+import { getSessionsMissionLocale } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
@@ -25,6 +26,7 @@ jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/evenements.service')
 jest.mock('services/referentiel.service')
 jest.mock('services/conseiller.service')
+jest.mock('services/sessions.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
@@ -64,6 +66,12 @@ describe('Agenda', () => {
           id: 'ac-3',
           date: SEPTEMBRE_1_14H.plus({ day: 3 }),
           statut: StatutAnimationCollective.AVenir,
+        }),
+      ])
+      ;(getSessionsMissionLocale as jest.Mock).mockResolvedValue([
+        uneAnimationCollective({
+          id: 'id-session-1',
+          date: SEPTEMBRE_1_14H,
         }),
       ])
     })
@@ -270,6 +278,15 @@ describe('Agenda', () => {
           )
         })
 
+        it('récupère les sessions milo sur une période de 7 jours à partir de la date du jour', async () => {
+          // Then
+          expect(getSessionsMissionLocale).toHaveBeenCalledWith(
+            '1',
+            SEPTEMBRE_1_0H,
+            SEPTEMBRE_7_23H
+          )
+        })
+
         it('affiche les événements récupérés', async () => {
           // Then
           await waitFor(() => {
@@ -304,6 +321,11 @@ describe('Agenda', () => {
               name: 'Consulter Atelier À venir du dimanche 4 septembre à 14h00',
             })
           ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-3')
+          expect(
+            screen.getByRole('row', {
+              name: 'Consulter Atelier À venir du dimanche 4 septembre à 14h00',
+            })
+          ).toHaveAttribute('href', '/agenda/sessions/id-session-1')
         })
 
         it('a deux boutons de navigation', () => {
@@ -342,6 +364,12 @@ describe('Agenda', () => {
             AOUT_31_23H
           )
 
+          expect(getSessionsMissionLocale).toHaveBeenLastCalledWith(
+            '1',
+            AOUT_25_0H,
+            AOUT_31_23H
+          )
+
           // When
           await userEvent.click(periodeCouranteButton)
 
@@ -351,6 +379,13 @@ describe('Agenda', () => {
             SEPTEMBRE_1_0H,
             SEPTEMBRE_7_23H
           )
+
+          expect(getSessionsMissionLocale).toHaveBeenCalledWith(
+            '1',
+            SEPTEMBRE_1_0H,
+            SEPTEMBRE_7_23H
+          )
+
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
           // When
@@ -358,6 +393,12 @@ describe('Agenda', () => {
           // Then
           expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
             'id-etablissement',
+            SEPTEMBRE_8_0H,
+            SEPTEMBRE_14_23H
+          )
+
+          expect(getSessionsMissionLocale).toHaveBeenLastCalledWith(
+            '1',
             SEPTEMBRE_8_0H,
             SEPTEMBRE_14_23H
           )
