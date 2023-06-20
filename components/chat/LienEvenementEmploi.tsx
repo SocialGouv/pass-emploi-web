@@ -22,13 +22,15 @@ export default function LienEvenementEmploi({
       >
         <Link
           href={infoEvenementEmploi.url}
+          target='_blank'
+          rel='noreferrer noopener'
           className='underline text-[inherit] flex items-center'
-          aria-label={`${infoEvenementEmploi.url} (nouvelle fenêtre)`}
+          aria-label={`${infoEvenementEmploi.titre} (nouvelle fenêtre)`}
         >
           Voir l’événement emploi
           <IconComponent
             name={IconName.OpenInNew}
-            className='w-4 h-4 ml-1 fill-primary'
+            className='w-4 h-4 ml-1 fill-[currentColor]'
             focusable={false}
             aria-hidden={true}
           />
