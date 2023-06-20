@@ -405,4 +405,29 @@ describe('<Conversation />', () => {
       ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=id-evenement')
     })
   })
+
+  describe("quand on reçoit un message de partage d'événement emploi", () => {
+    let message: HTMLElement
+    beforeEach(() => {
+      message = screen.getByText(
+        'Decrypted: Je vous partage cet événement d’emploi'
+      ).parentElement!
+    })
+
+    it("affiche le titre de l'événement", async () => {
+      // Then
+      expect(getByDescriptionTerm('Titre de l’événement :')).toHaveTextContent(
+        'Un événement emploi'
+      )
+    })
+
+    it("affiche le lien de l'événement", async () => {
+      // Then
+      expect(
+        within(message).getByRole('link', {
+          name: 'Voir l’événement',
+        })
+      ).toHaveAttribute('href', 'https://www.toto.com')
+    })
+  })
 })
