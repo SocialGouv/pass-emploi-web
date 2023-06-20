@@ -405,4 +405,29 @@ describe('<Conversation />', () => {
       ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=id-evenement')
     })
   })
+
+  describe("quand on reçoit un message de partage d'événement emploi", () => {
+    let message: HTMLElement
+    beforeEach(() => {
+      message = screen.getByText(
+        'Decrypted: Bonjour, je vous partage un événement afin d’avoir votre avis'
+      ).parentElement!
+    })
+
+    it("affiche le titre de l'événement emploi", async () => {
+      // Then
+      expect(
+        getByDescriptionTerm('Titre de l’événement emploi :')
+      ).toHaveTextContent('Un événement emploi')
+    })
+
+    it("affiche le lien de l'événement emploi", async () => {
+      // Then
+      expect(
+        within(message).getByRole('link', {
+          name: 'https://www.lala.com (nouvelle fenêtre)',
+        })
+      ).toHaveAttribute('href', 'https://www.lala.com')
+    })
+  })
 })

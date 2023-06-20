@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import React from 'react'
 
 import LienEvenement from 'components/chat/LienEvenement'
+import LienEvenementEmploi from 'components/chat/LienEvenementEmploi'
 import LienOffre from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
@@ -59,6 +60,12 @@ export default function DisplayMessage({
         {message.type === TypeMessage.MESSAGE_EVENEMENT &&
           message.infoEvenement && (
             <LienEvenement infoEvenement={message.infoEvenement} />
+          )}
+        {message.type === TypeMessage.MESSAGE_EVENEMENT_EMPLOI &&
+          message.infoEvenementEmploi && (
+            <LienEvenementEmploi
+              infoEvenementEmploi={message.infoEvenementEmploi}
+            />
           )}
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&
