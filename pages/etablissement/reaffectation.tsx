@@ -51,11 +51,15 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
     BaseConseiller | undefined
   >()
 
-  const [isRechercheJeunesSubmitted, setRechercheJeunesSubmitted] =
-    useState<boolean>(false)
-  const [jeunes, setJeunes] = useState<JeuneFromListe[]>([])
+  const [
+    isRechercheBeneficiairesSubmitted,
+    setRechercheBeneficiairesSubmitted,
+  ] = useState<boolean>(false)
+  const [beneficiaires, setBeneficiaires] = useState<JeuneFromListe[]>([])
 
-  const [idsJeunesSelected, setIdsJeunesSelected] = useState<string[]>([])
+  const [idsBeneficiairesSelected, setIdsBeneficiairesSelected] = useState<
+    string[]
+  >([])
   const [isReaffectationEnCours, setReaffectationEnCours] =
     useState<boolean>(false)
   const [isReaffectationSuccess, setReaffectationSuccess] =
@@ -131,45 +135,49 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
   }
 
   function resetFormOnNewInputConseillerInitial() {
-    setRechercheJeunesSubmitted(false)
-    setJeunes([])
-    setIdsJeunesSelected([])
+    setRechercheBeneficiairesSubmitted(false)
+    setBeneficiaires([])
+    setIdsBeneficiairesSelected([])
     setReaffectationSuccess(false)
     setErreurReaffectation(undefined)
     setQueryConseillerDestination({ value: '' })
     setConseillerDestination(undefined)
   }
 
-  function selectionnerJeune(jeune: JeuneFromListe) {
+  function selectionnerBeneficiaire(beneficiaire: JeuneFromListe) {
     setErreurReaffectation(undefined)
-    if (idsJeunesSelected.includes(jeune.id)) {
-      setIdsJeunesSelected(idsJeunesSelected.filter((id) => id !== jeune.id))
+    if (idsBeneficiairesSelected.includes(beneficiaire.id)) {
+      setIdsBeneficiairesSelected(
+        idsBeneficiairesSelected.filter((id) => id !== beneficiaire.id)
+      )
     } else {
-      setIdsJeunesSelected(idsJeunesSelected.concat(jeune.id))
+      setIdsBeneficiairesSelected(
+        idsBeneficiairesSelected.concat(beneficiaire.id)
+      )
     }
   }
 
   function toggleTousLesBeneficiaires() {
     setErreurReaffectation(undefined)
-    if (idsJeunesSelected.length !== jeunes.length) {
-      setIdsJeunesSelected(jeunes.map((jeune) => jeune.id))
+    if (idsBeneficiairesSelected.length !== beneficiaires.length) {
+      setIdsBeneficiairesSelected(
+        beneficiaires.map((beneficiaire) => beneficiaire.id)
+      )
     } else {
-      setIdsJeunesSelected([])
+      setIdsBeneficiairesSelected([])
     }
   }
 
-  async function fetchListeJeunes() {
-    // e.preventDefault() // TODO remove ?
-    console.log('>>> TOTO')
+  async function fetchListeBeneficiaires() {
     if (!conseillerInitial || !queryConseillerInitial) return
 
     try {
       const { getJeunesDuConseillerParEmail, getJeunesDuConseillerParId } =
         await import('services/jeunes.service')
 
-      let jeunesDuConseiller: JeuneFromListe[]
+      let beneficiairesDuConseiller: JeuneFromListe[]
       if (conseillerInitial) {
-        jeunesDuConseiller = await getJeunesDuConseillerParId(
+        beneficiairesDuConseiller = await getJeunesDuConseillerParId(
           conseillerInitial.id
         )
       } else {
@@ -177,19 +185,21 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
           queryConseillerInitial.value
         )
         setConseillerInitial(conseiller)
-        jeunesDuConseiller = jeunes
+        beneficiairesDuConseiller = jeunes
       }
 
-      setRechercheJeunesSubmitted(true)
-      if (jeunesDuConseiller.length > 0) {
-        setJeunes([...jeunesDuConseiller].sort(compareJeunesByNom))
+      setRechercheBeneficiairesSubmitted(true)
+      if (beneficiairesDuConseiller.length > 0) {
+        setBeneficiaires(
+          [...beneficiairesDuConseiller].sort(compareJeunesByNom)
+        )
         setTrackingTitle(
           'Réaffectation jeunes – Etape 2 – Réaff. jeunes vers cons. dest.'
         )
       } else {
         setQueryConseillerInitial({
           ...queryConseillerInitial,
-          error: 'Aucun jeune trouvé pour ce conseiller',
+          error: 'Aucun bénéficiaire trouvé pour ce conseiller',
         })
       }
     } catch (err) {
@@ -201,12 +211,12 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
     }
   }
 
-  async function reaffecterJeunes(e: FormEvent) {
+  async function reaffecterBeneficiaires(e: FormEvent) {
     e.preventDefault()
     if (
       !conseillerInitial ||
       !queryConseillerDestination ||
-      idsJeunesSelected.length === 0 ||
+      idsBeneficiairesSelected.length === 0 ||
       isReaffectationEnCours ||
       isReaffectationTemporaire === undefined
     ) {
@@ -227,7 +237,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
       await reaffecter(
         conseillerInitial.id,
         idConseillerDestination,
-        idsJeunesSelected,
+        idsBeneficiairesSelected,
         isReaffectationTemporaire
       )
       resetAll()
@@ -273,14 +283,14 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
     <>
       {isReaffectationSuccess && (
         <SuccessAlert
-          label={'Les jeunes ont été réaffectés avec succès'}
+          label={'Les bénéficiaires ont été réaffectés avec succès'}
           onAcknowledge={() => setReaffectationSuccess(false)}
         />
       )}
 
       <p className=' text-s-regular mb-6'>Tous les champs sont obligatoires</p>
 
-      <form onSubmit={reaffecterJeunes} className='grow'>
+      <form onSubmit={reaffecterBeneficiaires} className='grow'>
         <Etape numero={1} titre='Choisissez un type de réaffectation'>
           <div className='flex flex-wrap'>
             <RadioBox
@@ -334,7 +344,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
               style={ButtonStyle.PRIMARY}
               disabled={!queryConseillerInitial.value}
               type='button'
-              onClick={fetchListeJeunes}
+              onClick={fetchListeBeneficiaires}
             >
               <IconComponent
                 name={IconName.Search}
@@ -348,7 +358,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
           </div>
         </Etape>
 
-        {isRechercheJeunesSubmitted && jeunes.length > 0 && (
+        {isRechercheBeneficiairesSubmitted && beneficiaires.length > 0 && (
           <>
             <Etape
               numero={3}
@@ -356,7 +366,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
             >
               <Table
                 caption={{
-                  text: `Jeunes de ${
+                  text: `Bénéficiaires de ${
                     conseillerInitial
                       ? `${conseillerInitial.firstName} ${conseillerInitial.lastName}`
                       : queryConseillerInitial.value
@@ -371,16 +381,21 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
                         className='sr-only'
                         htmlFor='reaffectation-tout-selectionner'
                       >
-                        {idsJeunesSelected.length === 0 ? 'Cocher' : 'Décocher'}{' '}
+                        {idsBeneficiairesSelected.length === 0
+                          ? 'Cocher'
+                          : 'Décocher'}{' '}
                         tous les bénéficiaires
                       </label>
                       <input
                         id='reaffectation-tout-selectionner'
                         type='checkbox'
                         className='mr-6'
-                        checked={idsJeunesSelected.length === jeunes.length}
+                        checked={
+                          idsBeneficiairesSelected.length ===
+                          beneficiaires.length
+                        }
                         title={
-                          idsJeunesSelected.length === 0
+                          idsBeneficiairesSelected.length === 0
                             ? 'Tout sélectionner'
                             : 'Tout désélectionner'
                         }
@@ -397,32 +412,39 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
                 </THead>
 
                 <TBody>
-                  {jeunes.map((jeune: JeuneFromListe) => (
-                    <TR key={jeune.id} onClick={() => selectionnerJeune(jeune)}>
+                  {beneficiaires.map((beneficiaire: JeuneFromListe) => (
+                    <TR
+                      key={beneficiaire.id}
+                      onClick={() => selectionnerBeneficiaire(beneficiaire)}
+                    >
                       <TD className='p-4 rounded-l-base'>
                         <input
-                          id={'checkbox-' + jeune.id}
+                          id={'checkbox-' + beneficiaire.id}
                           type='checkbox'
-                          checked={idsJeunesSelected.includes(jeune.id)}
-                          title={'Sélectionner ' + getNomJeuneComplet(jeune)}
+                          checked={idsBeneficiairesSelected.includes(
+                            beneficiaire.id
+                          )}
+                          title={
+                            'Sélectionner ' + getNomJeuneComplet(beneficiaire)
+                          }
                           onChange={() => false}
                         />
                       </TD>
                       <TD className='p-4 text-base-bold'>
                         <label
-                          htmlFor={'checkbox-' + jeune.id}
+                          htmlFor={'checkbox-' + beneficiaire.id}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          {getNomJeuneComplet(jeune)}
+                          {getNomJeuneComplet(beneficiaire)}
                         </label>
                       </TD>
                       <TD className='p-4 text-base-regular'>
-                        {jeune.conseillerPrecedent
-                          ? `${jeune.conseillerPrecedent.nom} ${jeune.conseillerPrecedent.prenom}`
+                        {beneficiaire.conseillerPrecedent
+                          ? `${beneficiaire.conseillerPrecedent.nom} ${beneficiaire.conseillerPrecedent.prenom}`
                           : '-'}
                       </TD>
                       <TD className='p-4 text-base-regular rounded-r-base'>
-                        {jeune.conseillerPrecedent?.email ?? '-'}
+                        {beneficiaire.conseillerPrecedent?.email ?? '-'}
                       </TD>
                     </TR>
                   ))}
@@ -458,7 +480,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
             </Etape>
 
             <div className='w-full'>
-              <Button label='Réaffecter les jeunes' type='submit'>
+              <Button label='Réaffecter les bénéficiaires' type='submit'>
                 <IconComponent
                   name={IconName.ArrowForward}
                   focusable='false'
@@ -469,7 +491,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
                 Valider mon choix
               </Button>
 
-              {idsJeunesSelected.length > 0 && erreurReaffectation && (
+              {idsBeneficiairesSelected.length > 0 && erreurReaffectation && (
                 <div className='absolute flex mt-3'>
                   <IconComponent
                     name={IconName.Error}
