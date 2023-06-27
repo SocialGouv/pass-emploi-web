@@ -82,7 +82,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
     conseillersEtablissement.map(conseillerToOption)
 
   function conseillerToOption(conseiller: Conseiller): OptionConseiller {
-    let value: string = `${conseiller.lastName} ${conseiller.firstName}`
+    let value: string = `${conseiller.firstName} ${conseiller.lastName}`
     if (conseiller.email) value += ` (${conseiller.email})`
 
     return {
@@ -169,7 +169,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
   }
 
   async function fetchListeBeneficiaires() {
-    if (!conseillerInitial || !queryConseillerInitial) return
+    if (!conseillerInitial && !queryConseillerInitial) return
 
     try {
       const { getJeunesDuConseillerParEmail, getJeunesDuConseillerParId } =
@@ -319,7 +319,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
 
         <Etape numero={2} titre='Recherchez un portefeuille de bénéficiaires'>
           <Label htmlFor='conseiller-initial'>
-            E-mail conseiller initial {/* TODO nom/prénom ou email */}
+            Nom et prénom ou e-mail conseiller initial
           </Label>
 
           {queryConseillerInitial.error && (
@@ -528,12 +528,9 @@ export const getServerSideProps: GetServerSideProps<
     return { notFound: true }
   }
 
-  let redirectTo = context.query.redirectUrl as string
-  if (!redirectTo) {
-    const referer = context.req.headers.referer
-    redirectTo =
-      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  }
+  const referer = context.req.headers.referer
+  const redirectTo =
+    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
 
   const { getConseillerServerSide, getConseillersEtablissementServerSide } =
     await import('services/conseiller.service')
