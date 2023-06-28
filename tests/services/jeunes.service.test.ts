@@ -17,6 +17,7 @@ import {
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
+import { BaseConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, JeuneFromListe } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
@@ -32,6 +33,7 @@ import {
   getJeunesDeLEtablissement,
   getJeunesDuConseillerClientSide,
   getJeunesDuConseillerParEmail,
+  getJeunesDuConseillerParId,
   getJeunesDuConseillerServerSide,
   getMetadonneesFavorisJeune,
   getMotifsSuppression,
@@ -53,6 +55,25 @@ describe('JeunesApiService', () => {
 
       // When
       const actual = await getJeunesDuConseillerClientSide()
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        `/conseillers/idConseiller/jeunes`,
+        'accessToken'
+      )
+      expect(actual).toEqual(desItemsJeunes())
+    })
+  })
+
+  describe('.getJeunesDuConseillerParId', () => {
+    it('renvoie les jeunes du conseiller', async () => {
+      // Given
+      const idConseiller = 'idConseiller'
+      const jeunesJson = desItemsJeunesJson()
+      ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
+
+      // When
+      const actual = await getJeunesDuConseillerParId(idConseiller)
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
@@ -91,7 +112,7 @@ describe('JeunesApiService', () => {
     const accessToken = 'accessToken'
     const conseiller = unConseiller({ id: 'conseiller-by-email' })
     const jeunes = desItemsJeunesJson()
-    let actual: { idConseiller: string; jeunes: JeuneFromListe[] }
+    let actual: { conseiller: BaseConseiller; jeunes: JeuneFromListe[] }
     beforeEach(async () => {
       // Given
       ;(apiGet as jest.Mock).mockImplementation((url) => {
@@ -120,7 +141,11 @@ describe('JeunesApiService', () => {
         accessToken
       )
       expect(actual).toEqual({
-        idConseiller: 'conseiller-by-email',
+        conseiller: {
+          id: 'conseiller-by-email',
+          firstName: 'Nils',
+          lastName: 'Tavernier',
+        },
         jeunes: desItemsJeunes(),
       })
     })
@@ -212,7 +237,7 @@ describe('JeunesApiService', () => {
       // WHEN
       await reaffecter(
         idConseillerInitial,
-        emailConseillerDestination,
+        idConseillerDestination,
         idsJeunes,
         estTemporaire
       )
