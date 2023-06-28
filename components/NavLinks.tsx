@@ -8,6 +8,7 @@ import {
   estMilo,
   estPoleEmploi,
   estPoleEmploiBRSA,
+  estSuperviseur,
   StructureConseiller,
 } from 'interfaces/conseiller'
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
@@ -19,7 +20,7 @@ export enum NavItem {
   Jeunes = 'Jeunes',
   Rdvs = 'Rdvs',
   RechercheOffres = 'RechercheOffres',
-  Supervision = 'Supervision',
+  Reaffectation = 'Reaffectation',
   Aide = 'Aide',
   Profil = 'Profil',
   Actualites = 'Actualites',
@@ -28,6 +29,7 @@ export enum NavItem {
   Pilotage = 'Pilotage',
   Etablissement = 'Etablissement',
 }
+
 type NavLinksProps = { showLabelsOnSmallScreen: boolean; items: NavItem[] }
 export default function NavLinks({
   showLabelsOnSmallScreen,
@@ -157,6 +159,17 @@ export default function NavLinks({
               label='Bénéficiaires'
               href='/etablissement'
               isActive={isCurrentRoute('/etablissement')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          )}
+
+        {estSuperviseur(conseiller) &&
+          items.includes(NavItem.Reaffectation) && (
+            <NavLink
+              iconName={IconName.ArrowForward}
+              label='Réaffectation'
+              href='/reaffectation'
+              isActive={isCurrentRoute('/reaffectation')}
               showLabelOnSmallScreen={showLabelsOnSmallScreen}
             />
           )}

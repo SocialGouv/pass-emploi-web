@@ -9,7 +9,7 @@ import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import { JeuneFromListe } from 'interfaces/jeune'
 import Reaffectation, {
   getServerSideProps,
-} from 'pages/etablissement/reaffectation'
+} from 'pages/reaffectation'
 import {
   getConseillerByEmail,
   getConseillerServerSide,

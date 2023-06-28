@@ -64,7 +64,7 @@ describe('Etablissement', () => {
             screen.getByRole('link', {
               name: 'Réaffecter des bénéficiaires',
             })
-          ).toHaveAttribute('href', '/etablissement/reaffectation')
+          ).toHaveAttribute('href', '/reaffectation')
         })
       })
 

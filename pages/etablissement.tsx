@@ -95,7 +95,7 @@ const Etablissement = (_: MissionLocaleProps) => {
     <>
       {estSuperviseur(conseiller) && (
         <PageActionsPortal>
-          <ButtonLink href='/etablissement/reaffectation'>
+          <ButtonLink href='/reaffectation'>
             Réaffecter des bénéficiaires
           </ButtonLink>
         </PageActionsPortal>
