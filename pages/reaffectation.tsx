@@ -279,7 +279,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
         conseillerInitial!.id,
         idConseillerDestination,
         idsBeneficiairesSelected.value,
-        isReaffectationTemporaire.value
+        isReaffectationTemporaire.value!
       )
       resetAll()
       setReaffectationSuccess(true)
