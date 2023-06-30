@@ -4,11 +4,11 @@ import { getSession } from 'next-auth/react'
 import { apiGet } from 'clients/api.client'
 import { AnimationCollective } from 'interfaces/evenement'
 import {
+  SessionJson,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
-import { SessionJson } from 'interfaces/json/session'
-import { jsonToSession, Session } from 'interfaces/session'
+import { Session } from 'interfaces/session'
 import { ApiError } from 'utils/httpClient'
 
 export async function getSessionsMissionLocale(
@@ -43,4 +43,32 @@ export async function getDetailsSession(
     }
     throw e
   }
+}
+
+export function jsonToSession(json: SessionJson): Session {
+  const session: Session = {
+    session: {
+      nom: json.session.nom,
+      dateHeureDebut: json.session.dateHeureDebut,
+      dateHeureFin: json.session.dateHeureFin,
+      lieu: json.session.lieu,
+    },
+    offre: {
+      titre: json.offre.nom,
+      theme: json.offre.theme,
+      type: json.offre.type.label,
+    },
+  }
+
+  if (json.offre.description) session.offre.description = json.offre.description
+  if (json.offre.nomPartenaire)
+    session.offre.partenaire = json.offre.nomPartenaire
+
+  if (json.session.dateMaxInscription)
+    session.session.dateMaxInscription = json.session.dateMaxInscription
+  if (json.session.animateur) session.session.animateur = json.session.animateur
+  if (json.session.commentaire)
+    session.session.commentaire = json.session.commentaire
+
+  return session
 }
