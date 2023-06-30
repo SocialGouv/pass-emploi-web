@@ -10,22 +10,20 @@ import { Session } from 'interfaces/session'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
-interface DetailSessionProps extends PageProps {
+type DetailSessionProps = PageProps & {
   session: Session
 }
 
-function DetailSession({ session }: DetailSessionProps) {
+function DetailsSession({ session }: DetailSessionProps) {
   return (
     <>
-      <div className='mt-6'>
-        <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
-      </div>
+      <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
       <section className='border border-solid rounded-base w-full p-4 border-grey_100 mt-6'>
         <h2 className='text-m-bold text-grey_800 mb-4'>Informations offre</h2>
         <dl>
           <div className='mb-3'>
-            <dt className='inline text-base-regular'>Titre de l’offre :</dt>
+            <dt className='inline text-base-regular'>Titre :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.titre}
             </dd>
@@ -34,30 +32,32 @@ function DetailSession({ session }: DetailSessionProps) {
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Type :</dt>
             <dd className='ml-2 inline text-base-medium'>
-              {session.offre.type.label}
+              {session.offre.type}
             </dd>
           </div>
 
           <div className='mb-3'>
-            <dt className='inline text-base-regular'>Thème de l’offre :</dt>
+            <dt className='inline text-base-regular'>Thème :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.theme}
             </dd>
           </div>
 
           <div className='mb-3'>
-            <dt className='inline text-base-regular'>
-              Description de l’offre :
-            </dt>
+            <dt className='inline text-base-regular'>Description :</dt>
             <dd className='ml-2 inline text-base-medium'>
-              {session.offre.description ?? '--'}
+              {session.offre.description ?? (
+                <span aria-label='non renseigné'>--</span>
+              )}
             </dd>
           </div>
 
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Partenaire :</dt>
             <dd className='ml-2 inline text-base-medium'>
-              {session.offre.partenaire ?? '--'}
+              {session.offre.partenaire ?? (
+                <span aria-label='non renseigné'>--</span>
+              )}
             </dd>
           </div>
         </dl>
@@ -67,7 +67,7 @@ function DetailSession({ session }: DetailSessionProps) {
         <h2 className='text-m-bold text-grey_800 mb-4'>Informations session</h2>
         <dl>
           <div className='mb-3'>
-            <dt className='inline text-base-regular'>Nom de la session :</dt>
+            <dt className='inline text-base-regular'>Nom :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.session.nom}
             </dd>
@@ -98,19 +98,23 @@ function DetailSession({ session }: DetailSessionProps) {
               Date limite d’inscription :
             </dt>
             <dd className='ml-2 inline text-base-medium'>
-              {session.session.dateMaxInscription
-                ? toFrenchFormat(
-                    DateTime.fromISO(session.session.dateMaxInscription),
-                    DATETIME_LONG
-                  )
-                : '--'}
+              {session.session.dateMaxInscription ? (
+                toFrenchFormat(
+                  DateTime.fromISO(session.session.dateMaxInscription),
+                  DATETIME_LONG
+                )
+              ) : (
+                <span aria-label='non renseigné'>--</span>
+              )}
             </dd>
           </div>
 
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Animateur :</dt>
             <dd className='ml-2 inline text-base-medium'>
-              {session.session.animateur ?? '--'}
+              {session.session.animateur ?? (
+                <span aria-label='non renseigné'>--</span>
+              )}
             </dd>
           </div>
 
@@ -124,7 +128,9 @@ function DetailSession({ session }: DetailSessionProps) {
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Commentaire :</dt>
             <dd className='ml-2 inline text-base-medium'>
-              {session.session.commentaire ?? '--'}
+              {session.session.commentaire ?? (
+                <span aria-label='non renseigné'>--</span>
+              )}
             </dd>
           </div>
         </dl>
@@ -161,7 +167,8 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      pageTitle: 'Détail de la session i-milo',
+      pageTitle: `Détail session ${session.session.nom} - Agenda`,
+      pageHeader: 'Détail de la session i-milo',
       returnTo: redirectTo,
       session: session,
       withoutChat: true,
@@ -169,4 +176,4 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default withTransaction(DetailSession.name, 'page')(DetailSession)
+export default withTransaction(DetailsSession.name, 'page')(DetailsSession)

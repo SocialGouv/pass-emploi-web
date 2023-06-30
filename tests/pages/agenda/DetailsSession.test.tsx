@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { uneSession } from 'fixtures/session'
+import { unDetailSession } from 'fixtures/session'
 import { Session } from 'interfaces/session'
 import DetailSession, {
   getServerSideProps,
@@ -23,28 +23,34 @@ describe('Détails Session', () => {
       let session: Session
       beforeEach(async () => {
         // Given
-        session = uneSession()
+        session = unDetailSession()
         // When
         await act(async () => {
           renderWithContexts(<DetailSession pageTitle='' session={session} />)
         })
       })
 
+      it('affiche un encart d’information pour la modification sur i-milo', () => {
+        expect(
+          screen.getByText('Pour modifier la session, rendez-vous sur i-milo.')
+        ).toBeInTheDocument()
+      })
+
       it('affiche les détails de l’offre', () => {
         // Then
         expect(screen.getByText('Informations offre')).toBeInTheDocument()
-        expect(getByDescriptionTerm('Titre de l’offre :')).toHaveTextContent(
+        expect(getByDescriptionTerm('Titre :')).toHaveTextContent(
           session.offre.titre
         )
         expect(getByDescriptionTerm('Type :')).toHaveTextContent(
-          session.offre.type.label
+          session.offre.type
         )
-        expect(getByDescriptionTerm('Thème de l’offre :')).toHaveTextContent(
+        expect(getByDescriptionTerm('Thème :')).toHaveTextContent(
           session.offre.theme
         )
-        expect(
-          getByDescriptionTerm('Description de l’offre :')
-        ).toHaveTextContent(session.offre.description!)
+        expect(getByDescriptionTerm('Description :')).toHaveTextContent(
+          session.offre.description!
+        )
         expect(getByDescriptionTerm('Partenaire :')).toHaveTextContent(
           session.offre.partenaire!
         )
@@ -53,7 +59,7 @@ describe('Détails Session', () => {
       it('affiche les détails de la session', () => {
         // Then
         expect(screen.getByText('Informations session')).toBeInTheDocument()
-        expect(getByDescriptionTerm('Nom de la session :')).toHaveTextContent(
+        expect(getByDescriptionTerm('Nom :')).toHaveTextContent(
           session.session.nom
         )
         expect(getByDescriptionTerm('Début :')).toHaveTextContent(
@@ -91,10 +97,10 @@ describe('Détails Session', () => {
 
   describe('server side', () => {
     beforeEach(() => {
-      ;(getDetailsSession as jest.Mock).mockResolvedValue(uneSession())
+      ;(getDetailsSession as jest.Mock).mockResolvedValue(unDetailSession())
     })
 
-    describe('Quand le conseiller est Pole emploi', () => {
+    describe('Quand le conseiller est Pôle emploi', () => {
       let actual: GetServerSidePropsResult<any>
 
       it('renvoie une 404', async () => {
@@ -152,7 +158,7 @@ describe('Détails Session', () => {
           },
         })
 
-        const session = uneSession()
+        const session = unDetailSession()
 
         // When
         const actual = await getServerSideProps({
@@ -163,7 +169,8 @@ describe('Détails Session', () => {
         // Then
         expect(actual).toEqual({
           props: {
-            pageTitle: 'Détail de la session i-milo',
+            pageTitle: `Détail session ${session.session.nom} - Agenda`,
+            pageHeader: 'Détail de la session i-milo',
             returnTo: '/mes-jeunes',
             session: session,
             withoutChat: true,

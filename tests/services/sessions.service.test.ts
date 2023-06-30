@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 
 import { apiGet } from 'clients/api.client'
-import { uneSession, uneSessionJson } from 'fixtures/session'
+import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import { AnimationCollective } from 'interfaces/evenement'
 import { SessionMiloJson } from 'interfaces/json/session'
 import { getSessionsMissionLocale } from 'services/sessions.service'
@@ -83,11 +83,12 @@ describe('SessionsApiService', () => {
       expect(actual).toEqual(sessionsMilo)
     })
   })
+
   describe('.getDetailSession', () => {
     it('renvoie les détails de la session', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: uneSessionJson(),
+        content: unDetailSessionJson(),
       })
 
       // When
@@ -96,7 +97,13 @@ describe('SessionsApiService', () => {
         'id-session',
         'accessToken'
       )
-      expect(actual).toEqual(uneSession())
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/milo/id-conseiller/sessions/id-session',
+        'accessToken'
+      )
+      expect(actual).toEqual(unDetailSession())
     })
 
     it("renvoie undefined si la session n'existe pas", async () => {
