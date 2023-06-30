@@ -384,6 +384,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
           </div>
 
           <button
+            type='button'
             onClick={() => setShowModalConseillerIntrouvable(true)}
             className='flex text-s-medium text-primary_darken hover:text-primary items-center'
           >
@@ -478,6 +479,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
               />
 
               <button
+                type='button'
                 onClick={() => setShowModalConseillerIntrouvable(true)}
                 className='flex text-s-medium text-primary_darken hover:text-primary items-center'
               >
