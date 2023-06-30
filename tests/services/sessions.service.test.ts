@@ -1,9 +1,12 @@
 import { DateTime } from 'luxon'
 
 import { apiGet } from 'clients/api.client'
+import { uneSession, uneSessionJson } from 'fixtures/session'
 import { AnimationCollective } from 'interfaces/evenement'
 import { SessionMiloJson } from 'interfaces/json/session'
 import { getSessionsMissionLocale } from 'services/sessions.service'
+import { getDetailsSession } from 'services/sessions.service'
+import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
 
@@ -78,6 +81,39 @@ describe('SessionsApiService', () => {
         },
       ]
       expect(actual).toEqual(sessionsMilo)
+    })
+  })
+  describe('.getDetailSession', () => {
+    it('renvoie les détails de la session', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: uneSessionJson(),
+      })
+
+      // When
+      const actual = await getDetailsSession(
+        'id-conseiller',
+        'id-session',
+        'accessToken'
+      )
+      expect(actual).toEqual(uneSession())
+    })
+
+    it("renvoie undefined si la session n'existe pas", async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockRejectedValue(
+        new ApiError(404, 'Session non trouvée')
+      )
+
+      // When
+      const actual = await getDetailsSession(
+        'id-conseiller',
+        'id-session',
+        'accessToken'
+      )
+
+      // Then
+      expect(actual).toEqual(undefined)
     })
   })
 })
