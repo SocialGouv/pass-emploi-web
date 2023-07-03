@@ -1,11 +1,14 @@
 import { DateTime } from 'luxon'
 
-import { apiGet } from 'clients/api.client'
+import { apiGet, apiPut } from 'clients/api.client'
 import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import { AnimationCollective } from 'interfaces/evenement'
 import { SessionMiloJson } from 'interfaces/json/session'
 import { getSessionsMissionLocale } from 'services/sessions.service'
-import { getDetailsSession } from 'services/sessions.service'
+import {
+  changeVisibiliteSession,
+  getDetailsSession,
+} from 'services/sessions.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -121,6 +124,20 @@ describe('SessionsApiService', () => {
 
       // Then
       expect(actual).toEqual(undefined)
+    })
+  })
+
+  describe('.changeVisibiliteSession', () => {
+    it('modifie la visibilité de la session', async () => {
+      // When
+      await changeVisibiliteSession('idSession', true)
+
+      // Then
+      expect(apiPut).toHaveBeenCalledWith(
+        '/conseillers/milo/idConseiller/sessions/idSession',
+        { estVisible: true },
+        'accessToken'
+      )
     })
   })
 })

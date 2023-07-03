@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
@@ -8,7 +9,10 @@ import { Session } from 'interfaces/session'
 import DetailSession, {
   getServerSideProps,
 } from 'pages/agenda/sessions/[session_id]'
-import { getDetailsSession } from 'services/sessions.service'
+import {
+  changeVisibiliteSession,
+  getDetailsSession,
+} from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
@@ -91,6 +95,88 @@ describe('Détails Session', () => {
         expect(getByDescriptionTerm('Commentaire :')).toHaveTextContent(
           session.session.commentaire!
         )
+      })
+    })
+
+    describe('permet de gérer la visibilité de la session', () => {
+      let sessionVisible: Session
+      let sessionInvisible: Session
+      let toggleVisibiliteSession: HTMLInputElement
+      beforeEach(async () => {
+        // Given
+        sessionVisible = unDetailSession()
+        sessionInvisible = unDetailSession({
+          session: {
+            nom: 'session-invisible',
+            dateHeureDebut: '2023-07-04T10:00:00.000+00:00',
+            dateHeureFin: '2023-07-04T10:00:00.000+00:00',
+            lieu: 'Warneton',
+            estVisible: false,
+          },
+        })
+      })
+
+      it('affiche un switch désactivé par défaut', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <DetailSession pageTitle='' session={sessionInvisible} />
+          )
+        })
+
+        toggleVisibiliteSession = getToggleVisibiliteSession(
+          sessionInvisible.session.estVisible
+        )
+
+        // Then
+        expect(toggleVisibiliteSession).toBeInTheDocument()
+        expect(toggleVisibiliteSession.checked).toEqual(false)
+      })
+      it('affiche un switch dont la valeur correspond à la visibilité de la session', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <DetailSession pageTitle='' session={sessionVisible} />
+          )
+        })
+        toggleVisibiliteSession = getToggleVisibiliteSession(
+          sessionVisible.session.estVisible
+        )
+
+        // Then
+        expect(toggleVisibiliteSession).toBeInTheDocument()
+        expect(toggleVisibiliteSession.checked).toEqual(
+          sessionVisible.session.estVisible
+        )
+      })
+
+      describe('au clic sur le switch', () => {
+        it('change la visibilité', async () => {
+          // Given
+          ;(changeVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
+          await act(async () => {
+            renderWithContexts(
+              <DetailSession
+                pageTitle=''
+                session={sessionInvisible}
+                idSession='session-id'
+              />
+            )
+          })
+          toggleVisibiliteSession = getToggleVisibiliteSession(
+            sessionInvisible.session.estVisible
+          )
+
+          // When
+          await userEvent.click(toggleVisibiliteSession)
+
+          // Then
+          expect(changeVisibiliteSession).toHaveBeenCalledWith(
+            'session-id',
+            true
+          )
+          expect(toggleVisibiliteSession).toBeChecked()
+        })
       })
     })
   })
@@ -180,3 +266,13 @@ describe('Détails Session', () => {
     })
   })
 })
+
+function getToggleVisibiliteSession(estVisible: boolean) {
+  return estVisible
+    ? screen.getByRole<HTMLInputElement>('checkbox', {
+        name: /Rendre visible la session/,
+      })
+    : screen.getByRole<HTMLInputElement>('checkbox', {
+        name: /Rendre invisible la session/,
+      })
+}

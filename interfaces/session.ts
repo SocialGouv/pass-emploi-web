@@ -4,8 +4,9 @@ export type Session = {
     dateHeureDebut: string
     dateHeureFin: string
     dateMaxInscription?: string
-    animateur?: string
     lieu: string
+    estVisible: boolean
+    animateur?: string
     commentaire?: string
   }
   offre: {
