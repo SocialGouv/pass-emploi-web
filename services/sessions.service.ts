@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiGet } from 'clients/api.client'
+import { apiGet, apiPut } from 'clients/api.client'
 import { AnimationCollective } from 'interfaces/evenement'
 import {
   SessionJson,
@@ -45,6 +45,21 @@ export async function getDetailsSession(
   }
 }
 
+export async function changeVisibiliteSession(
+  idSession: string,
+  estVisible: boolean
+): Promise<void> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session?.user.id
+
+  return apiPut(
+    `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
+    { estVisible },
+    accessToken
+  )
+}
+
 export function jsonToSession(json: SessionJson): Session {
   const session: Session = {
     session: {
@@ -52,6 +67,7 @@ export function jsonToSession(json: SessionJson): Session {
       dateHeureDebut: json.session.dateHeureDebut,
       dateHeureFin: json.session.dateHeureFin,
       lieu: json.session.lieu,
+      estVisible: json.session.estVisible,
     },
     offre: {
       titre: json.offre.nom,

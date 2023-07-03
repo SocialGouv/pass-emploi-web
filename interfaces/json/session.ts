@@ -45,9 +45,10 @@ export type SessionJson = {
     dateHeureDebut: string
     dateHeureFin: string
     dateMaxInscription?: string
-    animateur?: string
     lieu: string
     nbPlacesDisponibles?: number
+    estVisible: boolean
+    animateur?: string
     commentaire?: string
   }
   offre: {
