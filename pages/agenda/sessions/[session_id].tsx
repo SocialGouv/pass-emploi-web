@@ -1,8 +1,11 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
-import React from 'react'
+import React, { useState } from 'react'
 
+import { Etape } from 'components/ui/Form/Etape'
+import Label from 'components/ui/Form/Label'
+import { Switch } from 'components/ui/Form/Switch'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
@@ -12,9 +15,21 @@ import redirectedFromHome from 'utils/redirectedFromHome'
 
 type DetailSessionProps = PageProps & {
   session: Session
+  idSession: string
 }
 
-function DetailsSession({ session }: DetailSessionProps) {
+function DetailsSession({ session, idSession }: DetailSessionProps) {
+  const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
+    session.session.estVisible
+  )
+  async function handleChangeVisibiliteSession(newVisibilite: boolean) {
+    setVisibiliteSession(newVisibilite)
+    const { changeVisibiliteSession } = await import(
+      'services/sessions.service'
+    )
+    changeVisibiliteSession(idSession, newVisibilite)
+  }
+
   return (
     <>
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
@@ -47,7 +62,10 @@ function DetailsSession({ session }: DetailSessionProps) {
             <dt className='inline text-base-regular'>Description :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.description ?? (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
@@ -56,7 +74,10 @@ function DetailsSession({ session }: DetailSessionProps) {
             <dt className='inline text-base-regular'>Partenaire :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.partenaire ?? (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
@@ -104,7 +125,10 @@ function DetailsSession({ session }: DetailSessionProps) {
                   DATETIME_LONG
                 )
               ) : (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
@@ -113,7 +137,10 @@ function DetailsSession({ session }: DetailSessionProps) {
             <dt className='inline text-base-regular'>Animateur :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.session.animateur ?? (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
@@ -129,12 +156,33 @@ function DetailsSession({ session }: DetailSessionProps) {
             <dt className='inline text-base-regular'>Commentaire :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.session.commentaire ?? (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
         </dl>
       </section>
+
+      <div className='mt-6'>
+        <Etape numero={1} titre='Gérez la visibilité'>
+          <div className='flex'>
+            <Label htmlFor='visibilite-session'>
+              Rendre {visibiliteSession ? 'visible' : 'invisible'} la session
+              aux bénéficiaires de la Mission Locale
+            </Label>
+            <Switch
+              id='visibilite-session'
+              checkedLabel='Oui'
+              uncheckedLabel='Non'
+              checked={visibiliteSession}
+              onChange={() => handleChangeVisibiliteSession(!visibiliteSession)}
+            />
+          </div>
+        </Etape>
+      </div>
     </>
   )
 }
@@ -171,6 +219,7 @@ export const getServerSideProps: GetServerSideProps<
       pageHeader: 'Détail de la session i-milo',
       returnTo: redirectTo,
       session: session,
+      idSession: idSession,
       withoutChat: true,
     },
   }
