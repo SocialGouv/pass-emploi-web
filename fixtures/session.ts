@@ -15,6 +15,7 @@ export function unDetailSessionJson(
       lieu: 'CEJ Paris',
       nbPlacesDisponibles: 20,
       commentaire: 'bla',
+      estVisible: true,
     },
     offre: {
       id: '5522561',
@@ -42,6 +43,7 @@ export function unDetailSession(overrides: Partial<Session> = {}): Session {
       animateur: 'Charles Dupont',
       lieu: 'CEJ Paris',
       commentaire: 'bla',
+      estVisible: true,
     },
     offre: {
       titre: 'aide',
