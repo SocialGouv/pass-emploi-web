@@ -51,7 +51,7 @@ export async function changeVisibiliteSession(
 ): Promise<void> {
   const session = await getSession()
   const accessToken = session!.accessToken
-  const idConseiller = session?.user.id
+  const idConseiller = session!.user.id
 
   return apiPut(
     `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
@@ -63,6 +63,7 @@ export async function changeVisibiliteSession(
 export function jsonToSession(json: SessionJson): Session {
   const session: Session = {
     session: {
+      id: json.session.id,
       nom: json.session.nom,
       dateHeureDebut: json.session.dateHeureDebut,
       dateHeureFin: json.session.dateHeureFin,

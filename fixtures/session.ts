@@ -36,6 +36,7 @@ export function unDetailSessionJson(
 export function unDetailSession(overrides: Partial<Session> = {}): Session {
   const defaults: Session = {
     session: {
+      id: 'session-id',
       nom: 'titre-session',
       dateHeureDebut: '2023-06-19 10:00:00',
       dateHeureFin: '2023-06-19 17:00:00',

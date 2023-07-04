@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
@@ -14,7 +14,6 @@ import {
   getDetailsSession,
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
-import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
@@ -29,9 +28,7 @@ describe('Détails Session', () => {
         // Given
         session = unDetailSession()
         // When
-        await act(async () => {
-          renderWithContexts(<DetailSession pageTitle='' session={session} />)
-        })
+        await render(<DetailSession pageTitle='' session={session} />)
       })
 
       it('affiche un encart d’information pour la modification sur i-milo', () => {
@@ -107,6 +104,7 @@ describe('Détails Session', () => {
         sessionVisible = unDetailSession()
         sessionInvisible = unDetailSession({
           session: {
+            id: 'session-invisible-id',
             nom: 'session-invisible',
             dateHeureDebut: '2023-07-04T10:00:00.000+00:00',
             dateHeureFin: '2023-07-04T10:00:00.000+00:00',
@@ -118,61 +116,41 @@ describe('Détails Session', () => {
 
       it('affiche un switch désactivé par défaut', async () => {
         // When
-        await act(async () => {
-          renderWithContexts(
-            <DetailSession pageTitle='' session={sessionInvisible} />
-          )
-        })
+        await render(<DetailSession pageTitle='' session={sessionInvisible} />)
 
-        toggleVisibiliteSession = getToggleVisibiliteSession(
-          sessionInvisible.session.estVisible
-        )
+        toggleVisibiliteSession = getToggleVisibiliteSession(false)
 
         // Then
         expect(toggleVisibiliteSession).toBeInTheDocument()
-        expect(toggleVisibiliteSession.checked).toEqual(false)
+        expect(toggleVisibiliteSession).not.toBeChecked()
       })
       it('affiche un switch dont la valeur correspond à la visibilité de la session', async () => {
         // When
-        await act(async () => {
-          renderWithContexts(
-            <DetailSession pageTitle='' session={sessionVisible} />
-          )
-        })
-        toggleVisibiliteSession = getToggleVisibiliteSession(
-          sessionVisible.session.estVisible
-        )
+        await render(<DetailSession pageTitle='' session={sessionVisible} />)
+        toggleVisibiliteSession = getToggleVisibiliteSession(true)
 
         // Then
         expect(toggleVisibiliteSession).toBeInTheDocument()
-        expect(toggleVisibiliteSession.checked).toEqual(
-          sessionVisible.session.estVisible
-        )
+        expect(toggleVisibiliteSession).toBeChecked()
       })
 
       describe('au clic sur le switch', () => {
         it('change la visibilité', async () => {
           // Given
           ;(changeVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
-          await act(async () => {
-            renderWithContexts(
-              <DetailSession
-                pageTitle=''
-                session={sessionInvisible}
-                idSession='session-id'
-              />
-            )
-          })
-          toggleVisibiliteSession = getToggleVisibiliteSession(
-            sessionInvisible.session.estVisible
+          await render(
+            <DetailSession pageTitle='' session={sessionInvisible} />
           )
+          toggleVisibiliteSession = getToggleVisibiliteSession(false)
 
           // When
           await userEvent.click(toggleVisibiliteSession)
 
+          toggleVisibiliteSession = getToggleVisibiliteSession(true)
+
           // Then
           expect(changeVisibiliteSession).toHaveBeenCalledWith(
-            'session-id',
+            'session-invisible-id',
             true
           )
           expect(toggleVisibiliteSession).toBeChecked()
