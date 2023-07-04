@@ -24,6 +24,7 @@ describe('SessionsApiService', () => {
             code: 'COLLECTIVE_INFORMATION',
             label: 'info coll i-milo',
           },
+          isSession: true,
         },
         {
           id: 'id-session',
@@ -35,6 +36,7 @@ describe('SessionsApiService', () => {
             code: 'WORKSHOP',
             label: 'Atelier i-milo',
           },
+          isSession: true,
         },
       ]
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -56,19 +58,23 @@ describe('SessionsApiService', () => {
       const sessionsMilo: AnimationCollective[] = [
         {
           id: 'id-session',
-          titre: 'nom offre - nom session',
+          titre: 'nom offre',
+          sousTitre: 'nom session',
           date: dateDebut,
           duree: 10079.999983333333,
           type: 'info coll i-milo',
           statut: undefined,
+          isSession: true,
         },
         {
           id: 'id-session',
-          titre: 'nom offre - nom session',
+          titre: 'nom offre',
+          sousTitre: 'nom session',
           date: dateDebut,
           duree: 10079.999983333333,
           type: 'Atelier i-milo',
           statut: undefined,
+          isSession: true,
         },
       ]
       expect(actual).toEqual(sessionsMilo)

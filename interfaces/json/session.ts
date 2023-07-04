@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 
 import { AnimationCollective, TypeEvenement } from 'interfaces/evenement'
-import { dureeEntreDeuxDates } from 'utils/date'
+import { minutesEntreDeuxDates } from 'utils/date'
 
 export type SessionMiloJson = {
   id: string
@@ -16,16 +16,18 @@ export function sessionMiloJsonToAnimationCollective(
   json: SessionMiloJson
 ): AnimationCollective {
   const dateDebut = DateTime.fromISO(json.dateHeureDebut)
-  //FIXME: valider avec design
   return {
     id: json.id,
     date: dateDebut,
-    duree: dureeEntreDeuxDates(dateDebut, DateTime.fromISO(json.dateHeureFin)),
+    duree: minutesEntreDeuxDates(
+      dateDebut,
+      DateTime.fromISO(json.dateHeureFin)
+    ),
     statut: undefined,
-    // titre: `${json.nomOffre} - ${json.nomSession}`,
     titre: json.nomOffre,
     sousTitre: json.nomSession,
     type: jsonToTypeSessionMilo(json.type),
+    isSession: true,
   }
 }
 
