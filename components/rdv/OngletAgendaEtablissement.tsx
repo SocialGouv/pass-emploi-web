@@ -44,8 +44,6 @@ type OngletAgendaEtablissementProps = {
 }
 
 export default function OngletAgendaEtablissement({
-  idEtablissement,
-  idConseiller,
   recupererAnimationsCollectives,
   recupererSessionsMilo,
   trackNavigation,
@@ -85,7 +83,7 @@ export default function OngletAgendaEtablissement({
 
   useEffect(() => {
     filtrerAnimationsCollectives()
-  }, [animationsCollectives, filtrerAnimationsCollectives, statutsValides])
+  }, [animationsCollectives, statutsValides])
 
   useEffect(() => {
     setAnimationsCollectivesGroupees(
@@ -94,8 +92,8 @@ export default function OngletAgendaEtablissement({
   }, [animationsCollectivesFiltrees])
 
   function getHref(ac: AnimationCollective): string {
-    if (!ac.isSession) return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
-    else return `agenda/sessions/${ac.id}`
+    if (ac.isSession) return `agenda/sessions/${ac.id}`
+    else return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
   }
 
   return (
