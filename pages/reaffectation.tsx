@@ -323,7 +323,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
       <form onSubmit={reaffecterBeneficiaires} className='grow'>
         <Etape numero={1} titre='Choisissez un type de réaffectation'>
           {isReaffectationTemporaire.error && (
-            <InputError id='type-reaffectation--error'>
+            <InputError id='type-reaffectation--error' className='mb-2'>
               {isReaffectationTemporaire.error}
             </InputError>
           )}
@@ -366,7 +366,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
             />
 
             <Button
-              className='ml-2 shrink-0'
+              className='ml-4 shrink-0'
               label='Afficher la liste des bénéficiaires'
               style={ButtonStyle.SECONDARY}
               disabled={!queryConseillerInitial.value}
@@ -406,14 +406,14 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
               titre='Sélectionnez les bénéficiaires à réaffecter'
             >
               {idsBeneficiairesSelected.error && (
-                <InputError id='beneficiairs--error'>
+                <InputError id='beneficiairs--error' className='mb-2'>
                   {idsBeneficiairesSelected.error}
                 </InputError>
               )}
               <ul>
                 <li
                   onClick={toggleTousLesBeneficiaires}
-                  className='rounded-base p-4 flex focus-within:bg-primary_lighten shadow-base mb-2'
+                  className='rounded-base p-4 flex focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer'
                 >
                   <input
                     id='reaffectation-tout-selectionner'
@@ -437,7 +437,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
                   <li
                     key={beneficiaire.id}
                     onClick={() => selectionnerBeneficiaire(beneficiaire)}
-                    className='rounded-base p-4 flex focus-within:bg-primary_lighten shadow-base mb-2'
+                    className='rounded-base p-4 flex focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer'
                   >
                     <input
                       id={'checkbox-' + beneficiaire.id}
@@ -446,7 +446,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
                         beneficiaire.id
                       )}
                       readOnly={true}
-                      className='mr-4'
+                      className='mr-4 ml-6'
                     />
                     <label
                       htmlFor={'checkbox-' + beneficiaire.id}
