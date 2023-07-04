@@ -8,9 +8,17 @@ interface TagProps {
   backgroundColor: string
   className?: string
   iconName?: IconName
+  iconLabel?: string
 }
 
-function Tag({ label, color, backgroundColor, className, iconName }: TagProps) {
+function Tag({
+  label,
+  color,
+  backgroundColor,
+  className,
+  iconName,
+  iconLabel,
+}: TagProps) {
   return (
     <span
       className={`flex items-center w-fit text-s-medium text-${color} px-3 bg-${backgroundColor} whitespace-nowrap ${
@@ -20,8 +28,10 @@ function Tag({ label, color, backgroundColor, className, iconName }: TagProps) {
       {iconName && (
         <IconComponent
           name={iconName}
-          aria-hidden={true}
+          aria-hidden={!iconLabel ? true : false}
           className='h-5 w-5 mr-1 fill-[currentColor]'
+          aria-label={iconLabel}
+          title={iconLabel ? iconLabel : ''}
         />
       )}
       {label}
