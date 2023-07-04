@@ -70,7 +70,7 @@ export function dateIsInInterval(
   return Boolean(date > dateMin && date < dateMax)
 }
 
-export function dureeEntreDeuxDates(date1, date2): number {
+export function minutesEntreDeuxDates(date1, date2): number {
   const diff = Interval.fromDateTimes(date1, date2)
   return diff.length('minutes')
 }
