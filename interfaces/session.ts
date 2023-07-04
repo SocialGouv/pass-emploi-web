@@ -1,5 +1,6 @@
 export type Session = {
   session: {
+    id: string
     nom: string
     dateHeureDebut: string
     dateHeureFin: string

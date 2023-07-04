@@ -12,22 +12,28 @@ import { PageProps } from 'interfaces/pageProps'
 import { Session } from 'interfaces/session'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 
 type DetailSessionProps = PageProps & {
   session: Session
-  idSession: string
 }
 
-function DetailsSession({ session, idSession }: DetailSessionProps) {
+function DetailsSession({ session }: DetailSessionProps) {
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
     session.session.estVisible
   )
-  async function handleChangeVisibiliteSession(newVisibilite: boolean) {
-    setVisibiliteSession(newVisibilite)
+  const [loadingChangerVisibilite, setLoadingChangerVisibilite] =
+    useState<boolean>(false)
+  async function handleChangerVisibiliteSession() {
+    setLoadingChangerVisibilite(true)
+
     const { changeVisibiliteSession } = await import(
       'services/sessions.service'
     )
-    changeVisibiliteSession(idSession, newVisibilite)
+    await changeVisibiliteSession(session.session.id, !visibiliteSession)
+
+    setVisibiliteSession(!visibiliteSession)
+    setLoadingChangerVisibilite(false)
   }
 
   return (
@@ -84,7 +90,7 @@ function DetailsSession({ session, idSession }: DetailSessionProps) {
         </dl>
       </section>
 
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 mt-6'>
+      <section className='border border-solid rounded-base w-full p-4 border-grey_100 my-6'>
         <h2 className='text-m-bold text-grey_800 mb-4'>Informations session</h2>
         <dl>
           <div className='mb-3'>
@@ -166,23 +172,22 @@ function DetailsSession({ session, idSession }: DetailSessionProps) {
         </dl>
       </section>
 
-      <div className='mt-6'>
-        <Etape numero={1} titre='Gérez la visibilité'>
-          <div className='flex'>
-            <Label htmlFor='visibilite-session'>
-              Rendre {visibiliteSession ? 'visible' : 'invisible'} la session
-              aux bénéficiaires de la Mission Locale
-            </Label>
-            <Switch
-              id='visibilite-session'
-              checkedLabel='Oui'
-              uncheckedLabel='Non'
-              checked={visibiliteSession}
-              onChange={() => handleChangeVisibiliteSession(!visibiliteSession)}
-            />
-          </div>
-        </Etape>
-      </div>
+      <Etape numero={1} titre='Gérez la visibilité'>
+        <div className='flex items-center gap-1'>
+          <Label htmlFor='visibilite-session'>
+            Rendre {visibiliteSession ? 'visible' : 'invisible'} la session aux
+            bénéficiaires de la Mission Locale
+          </Label>
+          <Switch
+            id='visibilite-session'
+            checkedLabel='Oui'
+            uncheckedLabel='Non'
+            checked={visibiliteSession}
+            onChange={handleChangerVisibiliteSession}
+            disabled={loadingChangerVisibilite}
+          />
+        </div>
+      </Etape>
     </>
   )
 }
@@ -219,7 +224,6 @@ export const getServerSideProps: GetServerSideProps<
       pageHeader: 'Détail de la session i-milo',
       returnTo: redirectTo,
       session: session,
-      idSession: idSession,
       withoutChat: true,
     },
   }
