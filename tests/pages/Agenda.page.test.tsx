@@ -71,7 +71,13 @@ describe('Agenda', () => {
       ;(getSessionsMissionLocale as jest.Mock).mockResolvedValue([
         uneAnimationCollective({
           id: 'id-session-1',
-          date: SEPTEMBRE_1_14H,
+          type: 'Atelier i-milo',
+          date: SEPTEMBRE_1_14H.plus({ day: 3 }),
+          duree: 60,
+          titre: 'Titre offre session milo',
+          sousTitre: 'Nom session',
+          statut: undefined,
+          isSession: true,
         }),
       ])
     })
@@ -323,9 +329,9 @@ describe('Agenda', () => {
           ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-3')
           expect(
             screen.getByRole('row', {
-              name: 'Consulter Atelier À venir du dimanche 4 septembre à 14h00',
+              name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
             })
-          ).toHaveAttribute('href', '/agenda/sessions/id-session-1')
+          ).toHaveAttribute('href', 'agenda/sessions/id-session-1')
         })
 
         it('a deux boutons de navigation', () => {

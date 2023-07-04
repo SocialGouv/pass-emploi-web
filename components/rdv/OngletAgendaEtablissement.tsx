@@ -33,12 +33,10 @@ type OngletAgendaEtablissementProps = {
   idEtablissement: string
   idConseiller: string
   recupererAnimationsCollectives: (
-    idEtablissement: string,
     dateDebut: DateTime,
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
   recupererSessionsMilo: (
-    idConseiller: string,
     dateDebut: DateTime,
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
@@ -69,19 +67,9 @@ export default function OngletAgendaEtablissement({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
-    const evenements = await recupererAnimationsCollectives(
-      idEtablissement!,
-      dateDebut,
-      dateFin
-    )
-    const evenementsMilo = await recupererSessionsMilo(
-      idConseiller!,
-      dateDebut,
-      dateFin
-    )
-
-    const evenementsCEJetMilo = [...evenementsMilo, ...evenements]
-    setAnimationsCollectives(evenementsCEJetMilo)
+    const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
+    const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
+    setAnimationsCollectives([...evenementsMilo, ...evenements])
   }
 
   function filtrerAnimationsCollectives() {
@@ -97,7 +85,7 @@ export default function OngletAgendaEtablissement({
 
   useEffect(() => {
     filtrerAnimationsCollectives()
-  }, [animationsCollectives, statutsValides])
+  }, [animationsCollectives, filtrerAnimationsCollectives, statutsValides])
 
   useEffect(() => {
     setAnimationsCollectivesGroupees(
@@ -106,7 +94,7 @@ export default function OngletAgendaEtablissement({
   }, [animationsCollectivesFiltrees])
 
   function getHref(ac: AnimationCollective): string {
-    if (ac.statut) return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
+    if (!ac.isSession) return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
     else return `agenda/sessions/${ac.id}`
   }
 
@@ -179,14 +167,16 @@ export default function OngletAgendaEtablissement({
                       {heure(ac)} - {ac.duree} min
                     </TD>
                     <TD>
-                      {ac.titre}{' '}
-                      <span className={'text-s-regular'}>{ac.sousTitre}</span>
+                      {ac.titre}
+                      <span className={'block text-s-regular'}>
+                        {ac.sousTitre}
+                      </span>
                     </TD>
                     <TD>{tagType(ac)}</TD>
                     <TD>
                       <div className='flex items-center justify-between'>
                         {ac.statut && tagStatut(ac)}
-                        {ac.statut === undefined && (
+                        {!ac.statut && (
                           <>
                             -
                             <span className='sr-only'>
@@ -226,16 +216,19 @@ function heure({ date }: AnimationCollective): string {
   return toFrenchFormat(date, TIME_24_H_SEPARATOR)
 }
 
-function tagType({ statut, type }: AnimationCollective): ReactElement {
+function tagType({ isSession, type }: AnimationCollective): ReactElement {
   const color = type === 'Atelier' ? 'accent_2' : 'additional_2'
   const iconName =
     type === 'Information collective' ? IconName.Error : undefined
+  const labelIconeSessionMilo = 'Informations de la session non modifiables'
   return (
     <TagMetier
       label={type}
-      color={statut ? color : 'accent_1'}
-      backgroundColor={statut ? color + '_lighten' : 'accent_1_lighten'}
-      iconName={statut ? iconName : IconName.Lock}
+      color={!isSession ? color : 'accent_1'}
+      backgroundColor={!isSession ? color + '_lighten' : 'accent_1_lighten'}
+      iconName={!isSession ? iconName : IconName.Lock}
+      title={isSession ?? labelIconeSessionMilo}
+      iconLabel={labelIconeSessionMilo}
     />
   )
 }
