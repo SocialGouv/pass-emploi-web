@@ -15,10 +15,13 @@ export enum UserRole {
   SUPERVISEUR = 'SUPERVISEUR',
 }
 
-export interface Conseiller {
+export type BaseConseiller = {
   id: string
   firstName: string
   lastName: string
+}
+
+export interface Conseiller extends BaseConseiller {
   notificationsSonores: boolean
   aDesBeneficiairesARecuperer: boolean
   structure: StructureConseiller

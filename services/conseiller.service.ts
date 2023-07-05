@@ -2,7 +2,7 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { Conseiller } from 'interfaces/conseiller'
+import { BaseConseiller, Conseiller } from 'interfaces/conseiller'
 import { BaseJeune, DossierMilo } from 'interfaces/jeune'
 import { ConseillerJson, jsonToConseiller } from 'interfaces/json/conseiller'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
@@ -20,6 +20,41 @@ export async function getConseillerServerSide(
   accessToken: string
 ): Promise<Conseiller | undefined> {
   return getConseiller(user, accessToken)
+}
+
+export async function getConseillersEtablissementServerSide(
+  accessToken: string,
+  idAgence: string | undefined,
+  user: Session.HydratedUser
+): Promise<Conseiller[]> {
+  try {
+    const { content: conseillersJson } = await apiGet<ConseillerJson[]>(
+      `/etablissements/${idAgence}/conseillers`,
+      accessToken
+    )
+
+    return conseillersJson.map((conseiller) =>
+      jsonToConseiller(conseiller, user)
+    )
+  } catch (e) {
+    if (e instanceof ApiError) {
+      return []
+    }
+    throw e
+  }
+}
+
+export async function getConseillerByEmail(
+  email: string
+): Promise<BaseConseiller> {
+  const session = await getSession()
+  const {
+    content: { id, firstName, lastName },
+  } = await apiGet<ConseillerJson>(
+    `/conseillers?email=${email}`,
+    session!.accessToken
+  )
+  return { id, firstName, lastName }
 }
 
 export async function modifierAgence({

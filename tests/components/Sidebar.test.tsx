@@ -56,6 +56,17 @@ describe('<Sidebar/>', () => {
     )
   })
 
+  it('afficher le lien vers la réaffectation quand le conseiller est superviseur', async () => {
+    // When
+    renderSidebar({ estSuperviseur: true })
+
+    // Then
+    const navigation = screen.getByRole('navigation')
+    expect(
+      within(navigation).getByRole('link', { name: 'Réaffectation' })
+    ).toHaveAttribute('href', '/reaffectation')
+  })
+
   it("n'affiche pas le lien de l’agenda lorsque le conseiller est Pole emploi", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
@@ -78,17 +89,6 @@ describe('<Sidebar/>', () => {
 
     // THEN
     expect(() => screen.getByText('Mission Locale')).toThrow()
-  })
-
-  it('affiche le lien de réaffectation des jeunes lorsque le conseiller est superviseur', () => {
-    // WHEN
-    renderSidebar({ estSuperviseur: true })
-
-    // THEN
-    expect(screen.getByRole('link', { name: 'Réaffectation' })).toHaveAttribute(
-      'href',
-      '/reaffectation'
-    )
   })
 
   it("n'affiche pas le lien de Messagerie lorsque le conseiller est MILO", () => {

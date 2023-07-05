@@ -46,7 +46,7 @@ export default function Sidebar() {
             NavItem.Jeunes,
             NavItem.Rdvs,
             NavItem.RechercheOffres,
-            NavItem.Supervision,
+            NavItem.Reaffectation,
             NavItem.Aide,
             NavItem.Profil,
             NavItem.Actualites,
