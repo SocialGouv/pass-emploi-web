@@ -48,6 +48,8 @@ import PageViewOutlineIcon from 'assets/icons/informations/page_view_outline.svg
 import PeopleFillIcon from 'assets/icons/informations/people_fill.svg'
 import PeopleOutlineIcon from 'assets/icons/informations/people_outline.svg'
 import ScheduleIcon from 'assets/icons/informations/schedule.svg'
+import VisibilityOffIcon from 'assets/icons/informations/visibility-off.svg'
+import VisibilityOnIcon from 'assets/icons/informations/visibility-on.svg'
 import WarningIcon from 'assets/icons/informations/warning.svg'
 import ArrowBackwardIcon from 'assets/icons/navigation/arrow_backward.svg'
 import ArrowDownwardIcon from 'assets/icons/navigation/arrow_downward.svg'
@@ -137,6 +139,8 @@ export enum IconName {
   Spinner = 'Spinner',
   Suitcase = 'Suitcase',
   SwapVert = 'SwapVert',
+  VisibilityOn = 'VisibilityOn',
+  VisibilityOff = 'VisibilityOff',
   Warning = 'Warning',
 }
 
@@ -209,6 +213,8 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Pending]: PendingIcon,
   [IconName.Remove]: RemoveIcon,
   [IconName.Note]: NoteIcon,
+  [IconName.VisibilityOn]: VisibilityOnIcon,
+  [IconName.VisibilityOff]: VisibilityOffIcon,
 }
 
 type IconComponentProps = ComponentPropsWithoutRef<'svg'> & {
