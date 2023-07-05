@@ -45,6 +45,32 @@ export async function handleJWTAndRefresh({
   return hydratedJWT
 }
 
+async function hydrateJwtAtFirstSignin(
+  { access_token, expires_at, refresh_token }: Account,
+  jwt: JWT
+): Promise<HydratedJWT> {
+  const { userId, userStructure, userRoles, userType } = decode(
+    <string>access_token
+  ) as JwtPayload
+
+  const expiresAt = expires_at ? secondsToMilliseconds(expires_at) : undefined
+  const expiresAtTimestamp =
+    userStructure === StructureConseiller.MILO
+      ? DateTime.now().toMillis() + Number(MILO_TOKEN_DURATION_MS)
+      : expiresAt
+
+  return {
+    ...jwt,
+    accessToken: access_token,
+    refreshToken: refresh_token,
+    idConseiller: userId,
+    structureConseiller: userStructure,
+    estConseiller: userType === UserType.CONSEILLER,
+    estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
+    expiresAtTimestamp,
+  }
+}
+
 async function refreshAccessToken(jwt: HydratedJWT) {
   try {
     const refreshedTokens = await fetchRefreshedTokens(jwt.refreshToken)
@@ -90,30 +116,4 @@ async function fetchRefreshedTokens(
     body,
   })
   return tokens
-}
-
-async function hydrateJwtAtFirstSignin(
-  { access_token, expires_at, refresh_token }: Account,
-  jwt: JWT
-): Promise<HydratedJWT> {
-  const { userId, userStructure, userRoles, userType } = decode(
-    <string>access_token
-  ) as JwtPayload
-
-  const expiresAt = expires_at ? secondsToMilliseconds(expires_at) : undefined
-  const expiresAtTimestamp =
-    userStructure === StructureConseiller.MILO
-      ? DateTime.now().toMillis() + Number(MILO_TOKEN_DURATION_MS)
-      : expiresAt
-
-  return {
-    ...jwt,
-    accessToken: access_token,
-    refreshToken: refresh_token,
-    idConseiller: userId,
-    structureConseiller: userStructure,
-    estConseiller: userType === UserType.CONSEILLER,
-    estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
-    expiresAtTimestamp,
-  }
 }
