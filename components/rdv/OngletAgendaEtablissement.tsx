@@ -30,8 +30,6 @@ import {
 } from 'utils/date'
 
 type OngletAgendaEtablissementProps = {
-  idEtablissement: string
-  idConseiller: string
   recupererAnimationsCollectives: (
     dateDebut: DateTime,
     dateFin: DateTime
@@ -215,18 +213,28 @@ function heure({ date }: AnimationCollective): string {
 }
 
 function tagType({ isSession, type }: AnimationCollective): ReactElement {
-  const color = type === 'Atelier' ? 'accent_2' : 'additional_2'
-  const iconName =
-    type === 'Information collective' ? IconName.Error : undefined
-  const labelIconeSessionMilo = 'Informations de la session non modifiables'
+  let tagProps: { color: string; iconName?: IconName; iconLabel?: string } = {
+    color: 'additional_2',
+    iconName: undefined,
+    iconLabel: undefined,
+  }
+
+  if (type === 'Atelier') tagProps.color = 'accent_2'
+  if (type === 'Information collective') tagProps.iconName = IconName.Error
+  if (isSession)
+    tagProps = {
+      color: 'accent_1',
+      iconName: IconName.Lock,
+      iconLabel: 'Informations de la session non modifiables',
+    }
+
   return (
     <TagMetier
       label={type}
-      color={!isSession ? color : 'accent_1'}
-      backgroundColor={!isSession ? color + '_lighten' : 'accent_1_lighten'}
-      iconName={!isSession ? iconName : IconName.Lock}
-      title={isSession ?? labelIconeSessionMilo}
-      iconLabel={labelIconeSessionMilo}
+      color={tagProps.color}
+      backgroundColor={tagProps.color + '_lighten'}
+      iconName={tagProps.iconName}
+      iconLabel={tagProps.iconLabel}
     />
   )
 }
