@@ -13,22 +13,21 @@ describe('Authenticator', () => {
   let refreshToken: string
   let now: DateTime
 
-  beforeEach(() => {
-    // httpClient = { fetchJson: jest.fn(), fetchNoContent: jest.fn() }
-    now = DateTime.now()
-    jest.spyOn(DateTime, 'now').mockReturnValue(now)
+  describe('conseiller Milo', () => {
+    beforeEach(() => {
+      now = DateTime.now()
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
-    accessToken =
-      'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJleGItdTZsMmNkS1BzWEdRUXJIb0tIS0lVS2NmbE9xUkcyYTE0QjNWSzRVIn0.eyJleHAiOjE2NDYwMzkwMjgsImlhdCI6MTY0NjAzNzIyOCwiYXV0aF90aW1lIjoxNjQ2MDM3MjI4LCJqdGkiOiI4MmQwOWI2Zi00NjFmLTQ2OWEtODk0Yy01NDYzMmE2NmU5YzUiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODIvYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJzdWIiOiI4NDNkYzljZS1jMWVlLTRmYjUtODYwMy1hYjI3MzEwMzY0N2QiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTIyZjY3OWYtZmFjZi00ZTgzLWEwZjgtYjI0YzBkMzJjNGZiIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJjb25zZWlsbGVyX3N1cGVydmlzZXVyIl19LCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwYXNzLWVtcGxvaS11c2VyIHByb2ZpbGUiLCJzaWQiOiJhMjJmNjc5Zi1mYWNmLTRlODMtYTBmOC1iMjRjMGQzMmM0ZmIiLCJ1c2VyUm9sZXMiOlsiU1VQRVJWSVNFVVIiXSwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJ1c2VyU3RydWN0dXJlIjoiUEFTU19FTVBMT0kiLCJuYW1lIjoiTmlscyBUYXZlcm5pZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI0MSIsInVzZXJUeXBlIjoiQ09OU0VJTExFUiIsImdpdmVuX25hbWUiOiJOaWxzIiwidXNlcklkIjoiNDEiLCJmYW1pbHlfbmFtZSI6IlRhdmVybmllciIsImVtYWlsIjoibmlscy50YXZlcm5pZXJAcGFzc2VtcGxvaS5jb20ifQ.TdAdafg4EVyJkTaBfEiFLjsGjWyAkFgIcBfB72tmYc6uVWvy49u5RJIkqVk60OEjsGX6bfSW_lbAp8nR1tpfVMV_rAHCFnnk3nw2dh-Qp2jmNfvlxY5v1m_KouK-7_XB6xJ-M7-Q2EUQmRn5XFJ31Pka7JaSCaCHae7W-juE4Ocko2eEbYV24OtRqRYXLlAS3WPR9vVufVwRp-hQYghdQ9WvAsdPzGW9yqnl5FlA7ITx_ad8OwCIQtFznXqzXYVq9bqfBqnsxz6lb9KHhL5EGIjqaWxzxLeIZ44Ag3R1hUhDOZYaw2qD1VMu2HnhDqESCiCoYTYRKasKCsyaSFKZ-A'
-    refreshToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1N2Q0M2NmNy02YjRiLTRlZTItODNkYi0xOTRjYWUwYjZkMGUifQ.eyJleHAiOjE2Mzg0MzYyMzcsImlhdCI6MTYzODQzNDQzNywianRpIjoiYzRmODI0ZjUtNDhlNS00ZDkwLTkwNWQtNmYxZDhlOGJmYTkxIiwiaXNzIjoiaHR0cHM6Ly9wYS1hdXRoLXN0YWdpbmcub3NjLXNlY251bS1mcjEuc2NhbGluZ28uaW8vYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL3BhLWF1dGgtc3RhZ2luZy5vc2Mtc2VjbnVtLWZyMS5zY2FsaW5nby5pby9hdXRoL3JlYWxtcy9wYXNzLWVtcGxvaSIsInN1YiI6IjQ0ODA5MmRhLTRhZDctNGZjZi04ZmY1LWEzMDNmMzBlYTEwOSIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTBiNDliM2QtNjU3Ny00MWNkLWI5NzAtNTQwNDk5NWI4MmEzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsInNpZCI6ImEwYjQ5YjNkLTY1NzctNDFjZC1iOTcwLTU0MDQ5OTViODJhMyJ9.u9FW5_DfCAbWHff8K3ZazNOea7uoe_Bb2onJ_cVpmFs'
-  })
+      accessToken =
+        'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJnMG4zdi1lV2pLZVdjSXdSTlljQ2dSaHJTVkdBSXdpLWYxRnlOOVk1R1ZZIn0.eyJleHAiOjE2ODg1NTk5NTIsImlhdCI6MTY4ODU1ODE1MiwiYXV0aF90aW1lIjoxNjg4NTU4MTUyLCJqdGkiOiI1ZTU3YmIxMC00NGE0LTRmZTItYTRkMi1hNzA2ZGNkNmVmY2QiLCJpc3MiOiJodHRwczovL2lkLnBhc3MtZW1wbG9pLmluY3ViYXRldXIubmV0L2F1dGgvcmVhbG1zL3Bhc3MtZW1wbG9pIiwiYXVkIjpbImJyb2tlciIsImFjY291bnQiXSwic3ViIjoiZjlhYTBiOGYtNWYwYi00NWEwLThlM2EtYWQzYTU3ZmJiZTdkIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoicGFzcy1lbXBsb2ktd2ViIiwic2Vzc2lvbl9zdGF0ZSI6ImJhZjQ1MWIxLWI1YTAtNGYyZS1iNjIzLWM0ZjlmM2JlYjI4ZSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1wYXNzLWVtcGxvaSIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJicm9rZXIiOnsicm9sZXMiOlsicmVhZC10b2tlbiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcGFzcy1lbXBsb2ktdXNlciBlbWFpbCBwcm9maWxlIiwic2lkIjoiYmFmNDUxYjEtYjVhMC00ZjJlLWI2MjMtYzRmOWYzYmViMjhlIiwidXNlclJvbGVzIjpbIlNVUEVSVklTRVVSIl0sImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwidXNlclN0cnVjdHVyZSI6Ik1JTE8iLCJuYW1lIjoiQWxiZXJ0IER1cmFudCIsInVzZXJUeXBlIjoiQ09OU0VJTExFUiIsInByZWZlcnJlZF91c2VybmFtZSI6InRlY2huaWNhbC5hLmR1cmFudCIsImdpdmVuX25hbWUiOiJBbGJlcnQiLCJmYW1pbHlfbmFtZSI6IkR1cmFudCIsInVzZXJJZCI6Ijk3MmQwMTNkLTM3ODEtNDE4YS05YjhkLTFlMjg4ZjM0NmI0NSIsImVtYWlsIjoiY29uc2VpbGxlci50ZWNobmlxdWUubWlsby5wYXNzZW1wbG9pQGdtYWlsLmNvbSJ9.VGmGSs8w0cnE4e_isPCfG2E5EVFsPtkgxkGO0_fr34s_Td7K5z_vGwNQB0JN3jGlE_kxDiVifkq1IF2Nd_e-GxixQWAebG6pcizo7aRl01IHxq9wGOP6uRnz_XBorMqXB06l0mff6-Zh8M7Swz2UwbOzH_5rl07vgtiQz7chDL4cYfIcBQrkHkPEN2dM7K651Z8MNMrWPRRcvwuCtHNA1qGK9VKsw-Pql8uabuNfMfrbbABh_erKGygp7VJtwcxtB7iGebq9IYIrHwOmKxGoytzAjjJob2CeYxqZs2_aWjF4NIBFlvHXR1vwEo4ljmWr8LtKQG7JzFKu1mLaj1Hx2g'
+      refreshToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1N2Q0M2NmNy02YjRiLTRlZTItODNkYi0xOTRjYWUwYjZkMGUifQ.eyJleHAiOjE2Mzg0MzYyMzcsImlhdCI6MTYzODQzNDQzNywianRpIjoiYzRmODI0ZjUtNDhlNS00ZDkwLTkwNWQtNmYxZDhlOGJmYTkxIiwiaXNzIjoiaHR0cHM6Ly9wYS1hdXRoLXN0YWdpbmcub3NjLXNlY251bS1mcjEuc2NhbGluZ28uaW8vYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL3BhLWF1dGgtc3RhZ2luZy5vc2Mtc2VjbnVtLWZyMS5zY2FsaW5nby5pby9hdXRoL3JlYWxtcy9wYXNzLWVtcGxvaSIsInN1YiI6IjQ0ODA5MmRhLTRhZDctNGZjZi04ZmY1LWEzMDNmMzBlYTEwOSIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTBiNDliM2QtNjU3Ny00MWNkLWI5NzAtNTQwNDk5NWI4MmEzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsInNpZCI6ImEwYjQ5YjNkLTY1NzctNDFjZC1iOTcwLTU0MDQ5OTViODJhMyJ9.u9FW5_DfCAbWHff8K3ZazNOea7uoe_Bb2onJ_cVpmFs'
+    })
 
-  describe('handleJWTAndRefresh', () => {
     const cinqMnEnS = 300
 
     describe("Quand c'est la 1ere connexion", () => {
-      it('enrichit le JWT avec les infos du token et du conseiller', async () => {
+      it('enrichit le JWT avec les infos du token et du conseiller et le durée de validité propre à Milo', async () => {
         // Given
         const expiresAtInSeconds: number = 1638434737
 
@@ -48,14 +47,15 @@ describe('Authenticator', () => {
           ...jwt,
           accessToken,
           refreshToken,
-          expiresAtTimestamp: expiresAtInSeconds * 1000,
-          idConseiller: '41',
+          expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
+          idConseiller: '972d013d-3781-418a-9b8d-1e288f346b45',
           estSuperviseur: true,
           estConseiller: true,
-          structureConseiller: StructureConseiller.PASS_EMPLOI,
+          structureConseiller: StructureConseiller.MILO,
         })
       })
     })
+
     describe("Quand ce n'est pas la première connexion", () => {
       it('renvoie le JWT', async () => {
         // When
@@ -78,7 +78,7 @@ describe('Authenticator', () => {
             ...jwtFixture(),
             accessToken: 'accessToken',
             refreshToken: 'refreshToken',
-            expiresAtTimestamp: now.minus({ minute: 5 }).toMillis(),
+            expiresAtTimestamp: now.minus({ second: cinqMnEnS }).toMillis(),
           }
           const nouvelAccessToken = 'nouvelAccessToken'
           const nouveauRefreshToken = 'nouveauRefreshToken'
@@ -92,12 +92,16 @@ describe('Authenticator', () => {
 
           // When
           const actual = await handleJWTAndRefresh({
-            jwt,
+            jwt: {
+              ...jwt,
+              structureConseiller: StructureConseiller.MILO,
+            },
           })
 
           // Then
           const jwtMisAjour = {
             ...jwt,
+            structureConseiller: StructureConseiller.MILO,
             accessToken: nouvelAccessToken,
             refreshToken: nouveauRefreshToken,
             expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
@@ -111,6 +115,7 @@ describe('Authenticator', () => {
           // Given
           const jwt = {
             ...jwtFixture(),
+            structureConseiller: StructureConseiller.MILO,
             accessToken: 'accessToken',
             refreshToken: 'refreshToken',
             expiresAtTimestamp: now.plus({ second: 13 }).toMillis(),
@@ -136,9 +141,171 @@ describe('Authenticator', () => {
             ...jwt,
             accessToken: nouvelAccessToken,
             refreshToken: nouveauRefreshToken,
+            structureConseiller: StructureConseiller.MILO,
             expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
           }
           expect(actual).toEqual(jwtMisAjour)
+        })
+      })
+    })
+  })
+
+  describe('conseiller autre', () => {
+    beforeEach(() => {
+      now = DateTime.now()
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+
+      accessToken =
+        'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJleGItdTZsMmNkS1BzWEdRUXJIb0tIS0lVS2NmbE9xUkcyYTE0QjNWSzRVIn0.eyJleHAiOjE2NDYwMzkwMjgsImlhdCI6MTY0NjAzNzIyOCwiYXV0aF90aW1lIjoxNjQ2MDM3MjI4LCJqdGkiOiI4MmQwOWI2Zi00NjFmLTQ2OWEtODk0Yy01NDYzMmE2NmU5YzUiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODIvYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJzdWIiOiI4NDNkYzljZS1jMWVlLTRmYjUtODYwMy1hYjI3MzEwMzY0N2QiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTIyZjY3OWYtZmFjZi00ZTgzLWEwZjgtYjI0YzBkMzJjNGZiIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJjb25zZWlsbGVyX3N1cGVydmlzZXVyIl19LCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwYXNzLWVtcGxvaS11c2VyIHByb2ZpbGUiLCJzaWQiOiJhMjJmNjc5Zi1mYWNmLTRlODMtYTBmOC1iMjRjMGQzMmM0ZmIiLCJ1c2VyUm9sZXMiOlsiU1VQRVJWSVNFVVIiXSwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJ1c2VyU3RydWN0dXJlIjoiUEFTU19FTVBMT0kiLCJuYW1lIjoiTmlscyBUYXZlcm5pZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI0MSIsInVzZXJUeXBlIjoiQ09OU0VJTExFUiIsImdpdmVuX25hbWUiOiJOaWxzIiwidXNlcklkIjoiNDEiLCJmYW1pbHlfbmFtZSI6IlRhdmVybmllciIsImVtYWlsIjoibmlscy50YXZlcm5pZXJAcGFzc2VtcGxvaS5jb20ifQ.TdAdafg4EVyJkTaBfEiFLjsGjWyAkFgIcBfB72tmYc6uVWvy49u5RJIkqVk60OEjsGX6bfSW_lbAp8nR1tpfVMV_rAHCFnnk3nw2dh-Qp2jmNfvlxY5v1m_KouK-7_XB6xJ-M7-Q2EUQmRn5XFJ31Pka7JaSCaCHae7W-juE4Ocko2eEbYV24OtRqRYXLlAS3WPR9vVufVwRp-hQYghdQ9WvAsdPzGW9yqnl5FlA7ITx_ad8OwCIQtFznXqzXYVq9bqfBqnsxz6lb9KHhL5EGIjqaWxzxLeIZ44Ag3R1hUhDOZYaw2qD1VMu2HnhDqESCiCoYTYRKasKCsyaSFKZ-A'
+      refreshToken =
+        'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1N2Q0M2NmNy02YjRiLTRlZTItODNkYi0xOTRjYWUwYjZkMGUifQ.eyJleHAiOjE2Mzg0MzYyMzcsImlhdCI6MTYzODQzNDQzNywianRpIjoiYzRmODI0ZjUtNDhlNS00ZDkwLTkwNWQtNmYxZDhlOGJmYTkxIiwiaXNzIjoiaHR0cHM6Ly9wYS1hdXRoLXN0YWdpbmcub3NjLXNlY251bS1mcjEuc2NhbGluZ28uaW8vYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL3BhLWF1dGgtc3RhZ2luZy5vc2Mtc2VjbnVtLWZyMS5zY2FsaW5nby5pby9hdXRoL3JlYWxtcy9wYXNzLWVtcGxvaSIsInN1YiI6IjQ0ODA5MmRhLTRhZDctNGZjZi04ZmY1LWEzMDNmMzBlYTEwOSIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTBiNDliM2QtNjU3Ny00MWNkLWI5NzAtNTQwNDk5NWI4MmEzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsInNpZCI6ImEwYjQ5YjNkLTY1NzctNDFjZC1iOTcwLTU0MDQ5OTViODJhMyJ9.u9FW5_DfCAbWHff8K3ZazNOea7uoe_Bb2onJ_cVpmFs'
+    })
+
+    describe('handleJWTAndRefresh', () => {
+      const cinqMnEnS = 300
+
+      describe("Quand c'est la 1ere connexion", () => {
+        it('enrichit le JWT avec les infos du token et du conseiller', async () => {
+          // Given
+          const expiresAtInSeconds: number = 1638434737
+
+          // When
+          const jwt = jwtFixture()
+          const actual = await handleJWTAndRefresh({
+            jwt: jwt,
+            account: accountFixture({
+              accessToken,
+              refreshToken,
+              expiresAtInSeconds,
+            }),
+          })
+
+          // Then
+          expect(actual).toEqual({
+            ...jwt,
+            accessToken,
+            refreshToken,
+            expiresAtTimestamp: expiresAtInSeconds * 1000,
+            idConseiller: '41',
+            estSuperviseur: true,
+            estConseiller: true,
+            structureConseiller: StructureConseiller.PASS_EMPLOI,
+          })
+        })
+
+        it('enrichit le JWT avec les infos du token et du conseiller et le durée de validité propre à Milo', async () => {
+          // Given
+          const expiresAtInSeconds: number = 1638434737
+
+          // When
+          const jwt = jwtFixture()
+          const actual = await handleJWTAndRefresh({
+            jwt: jwt,
+            account: accountFixture({
+              accessToken,
+              refreshToken,
+              expiresAtInSeconds,
+            }),
+          })
+
+          // Then
+          expect(actual).toEqual({
+            ...jwt,
+            accessToken,
+            refreshToken,
+            expiresAtTimestamp: expiresAtInSeconds * 1000,
+            idConseiller: '41',
+            estSuperviseur: true,
+            estConseiller: true,
+            structureConseiller: StructureConseiller.PASS_EMPLOI,
+          })
+        })
+      })
+
+      describe("Quand ce n'est pas la première connexion", () => {
+        it('renvoie le JWT', async () => {
+          // When
+          const jwt = {
+            ...jwtFixture(),
+            expiresAtTimestamp: now.plus({ second: 20 }).toMillis(),
+          }
+          const actual = await handleJWTAndRefresh({
+            jwt,
+            account: undefined,
+          })
+          // Then
+          expect(actual).toEqual(jwt)
+        })
+
+        describe("Quand l'accessToken est expiré", () => {
+          it('utilise le refresh token pour récupérer un nouvel access token', async () => {
+            // Given
+            const jwt = {
+              ...jwtFixture(),
+              accessToken: 'accessToken',
+              refreshToken: 'refreshToken',
+              expiresAtTimestamp: now.minus({ second: cinqMnEnS }).toMillis(),
+            }
+            const nouvelAccessToken = 'nouvelAccessToken'
+            const nouveauRefreshToken = 'nouveauRefreshToken'
+            ;(fetchJson as jest.Mock).mockResolvedValueOnce({
+              content: {
+                access_token: nouvelAccessToken,
+                refresh_token: nouveauRefreshToken,
+                expires_in: cinqMnEnS,
+              },
+            })
+
+            // When
+            const actual = await handleJWTAndRefresh({
+              jwt,
+            })
+
+            // Then
+            const jwtMisAjour = {
+              ...jwt,
+              accessToken: nouvelAccessToken,
+              refreshToken: nouveauRefreshToken,
+              expiresAtTimestamp: now.plus({ second: cinqMnEnS }).toMillis(),
+            }
+            expect(actual).toEqual(jwtMisAjour)
+          })
+        })
+
+        describe("si l'access token expire dans moins de 15 secondes", () => {
+          it('utilise le refresh token pour récupérer un nouvel access token', async () => {
+            // Given
+            const jwt = {
+              ...jwtFixture(),
+              accessToken: 'accessToken',
+              refreshToken: 'refreshToken',
+              expiresAtTimestamp: now.plus({ second: 13 }).toMillis(),
+            }
+
+            const nouvelAccessToken = 'nouvelAccessToken'
+            const nouveauRefreshToken = 'nouveauRefreshToken'
+            ;(fetchJson as jest.Mock).mockResolvedValueOnce({
+              content: {
+                access_token: nouvelAccessToken,
+                refresh_token: nouveauRefreshToken,
+                expires_in: cinqMnEnS,
+              },
+            })
+
+            // When
+            const actual = await handleJWTAndRefresh({
+              jwt,
+            })
+
+            // Then
+            const jwtMisAjour = {
+              ...jwt,
+              accessToken: nouvelAccessToken,
+              refreshToken: nouveauRefreshToken,
+              expiresAtTimestamp: now.plus({ second: cinqMnEnS }).toMillis(),
+            }
+            expect(actual).toEqual(jwtMisAjour)
+          })
         })
       })
     })
