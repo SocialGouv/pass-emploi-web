@@ -2,13 +2,13 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { apiGet, apiPut } from 'clients/api.client'
+import { DetailsSession } from 'interfaces/detailsSession'
 import { AnimationCollective } from 'interfaces/evenement'
+import { DetailsSessionJson } from 'interfaces/json/detailsSession'
 import {
-  SessionJson,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
-import { Session } from 'interfaces/session'
 import { ApiError } from 'utils/httpClient'
 
 export async function getSessionsMissionLocale(
@@ -30,9 +30,9 @@ export async function getDetailsSession(
   idConseiller: string,
   idSession: string,
   accessToken: string
-): Promise<Session | undefined> {
+): Promise<DetailsSession | undefined> {
   try {
-    const { content: sessionJson } = await apiGet<SessionJson>(
+    const { content: sessionJson } = await apiGet<DetailsSessionJson>(
       `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
       accessToken
     )
@@ -45,7 +45,7 @@ export async function getDetailsSession(
   }
 }
 
-export async function changeVisibiliteSession(
+export async function changerVisibiliteSession(
   idSession: string,
   estVisible: boolean
 ): Promise<void> {
@@ -60,8 +60,8 @@ export async function changeVisibiliteSession(
   )
 }
 
-export function jsonToSession(json: SessionJson): Session {
-  const session: Session = {
+export function jsonToSession(json: DetailsSessionJson): DetailsSession {
+  const session: DetailsSession = {
     session: {
       id: json.session.id,
       nom: json.session.nom,

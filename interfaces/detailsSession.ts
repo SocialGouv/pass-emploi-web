@@ -1,4 +1,4 @@
-export type Session = {
+export type DetailsSession = {
   session: {
     id: string
     nom: string
