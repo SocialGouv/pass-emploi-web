@@ -1,11 +1,13 @@
-export type Session = {
+export type DetailsSession = {
   session: {
+    id: string
     nom: string
     dateHeureDebut: string
     dateHeureFin: string
     dateMaxInscription?: string
-    animateur?: string
     lieu: string
+    estVisible: boolean
+    animateur?: string
     commentaire?: string
   }
   offre: {

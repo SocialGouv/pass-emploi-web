@@ -1,20 +1,41 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
-import React from 'react'
+import React, { useState } from 'react'
 
+import { Etape } from 'components/ui/Form/Etape'
+import Label from 'components/ui/Form/Label'
+import { Switch } from 'components/ui/Form/Switch'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { DetailsSession } from 'interfaces/detailsSession'
 import { PageProps } from 'interfaces/pageProps'
-import { Session } from 'interfaces/session'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
 type DetailSessionProps = PageProps & {
-  session: Session
+  session: DetailsSession
 }
 
-function DetailsSession({ session }: DetailSessionProps) {
+function FicheDetailsSession({ session }: DetailSessionProps) {
+  const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
+    session.session.estVisible
+  )
+  const [loadingChangerVisibilite, setLoadingChangerVisibilite] =
+    useState<boolean>(false)
+
+  async function handleChangerVisibiliteSession() {
+    setLoadingChangerVisibilite(true)
+
+    const { changerVisibiliteSession } = await import(
+      'services/sessions.service'
+    )
+    await changerVisibiliteSession(session.session.id, !visibiliteSession)
+
+    setVisibiliteSession(!visibiliteSession)
+    setLoadingChangerVisibilite(false)
+  }
+
   return (
     <>
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
@@ -47,7 +68,10 @@ function DetailsSession({ session }: DetailSessionProps) {
             <dt className='inline text-base-regular'>Description :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.description ?? (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
@@ -56,14 +80,17 @@ function DetailsSession({ session }: DetailSessionProps) {
             <dt className='inline text-base-regular'>Partenaire :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.offre.partenaire ?? (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
         </dl>
       </section>
 
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 mt-6'>
+      <section className='border border-solid rounded-base w-full p-4 border-grey_100 my-6'>
         <h2 className='text-m-bold text-grey_800 mb-4'>Informations session</h2>
         <dl>
           <div className='mb-3'>
@@ -104,7 +131,10 @@ function DetailsSession({ session }: DetailSessionProps) {
                   DATETIME_LONG
                 )
               ) : (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
@@ -113,7 +143,10 @@ function DetailsSession({ session }: DetailSessionProps) {
             <dt className='inline text-base-regular'>Animateur :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.session.animateur ?? (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
@@ -129,12 +162,31 @@ function DetailsSession({ session }: DetailSessionProps) {
             <dt className='inline text-base-regular'>Commentaire :</dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.session.commentaire ?? (
-                <span aria-label='non renseigné'>--</span>
+                <>
+                  --
+                  <span className='sr-only'>information non disponible</span>
+                </>
               )}
             </dd>
           </div>
         </dl>
       </section>
+
+      <Etape numero={1} titre='Gérez la visibilité'>
+        <div className='flex items-center gap-1'>
+          <Label htmlFor='visibilite-session'>
+            Rendre visible la session aux bénéficiaires de la Mission Locale
+          </Label>
+          <Switch
+            id='visibilite-session'
+            checkedLabel='Oui'
+            uncheckedLabel='Non'
+            checked={visibiliteSession}
+            onChange={handleChangerVisibiliteSession}
+            disabled={loadingChangerVisibilite}
+          />
+        </div>
+      </Etape>
     </>
   )
 }
@@ -176,4 +228,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default withTransaction(DetailsSession.name, 'page')(DetailsSession)
+export default withTransaction(
+  FicheDetailsSession.name,
+  'page'
+)(FicheDetailsSession)
