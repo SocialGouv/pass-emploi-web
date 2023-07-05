@@ -44,7 +44,7 @@ async function callFetch(
 }
 
 async function handleHttpError(response: Response): Promise<void> {
-  if (response.status === 401) {
+  if (response.status === 401 && typeof window !== undefined) {
     //ce reload permet de donner la main au SSR pour le cas non-autorisé (refreshtoken expiré).
     //TODO trouver une solution propre
     window.location.reload()

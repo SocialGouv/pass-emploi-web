@@ -6,6 +6,8 @@ import EmptyStateImage from 'assets/images/empty_state.svg'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import SituationTag from 'components/jeune/SituationTag'
+import PageActionsPortal from 'components/PageActionsPortal'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
@@ -16,6 +18,7 @@ import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import {
   estMilo,
+  estSuperviseur,
   estUserPoleEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
@@ -90,13 +93,20 @@ const Etablissement = (_: MissionLocaleProps) => {
 
   return (
     <>
+      {estSuperviseur(conseiller) && (
+        <PageActionsPortal>
+          <ButtonLink href='/reaffectation'>
+            Réaffecter des bénéficiaires
+          </ButtonLink>
+        </PageActionsPortal>
+      )}
+
       {Boolean(conseiller.agence) && (
         <RechercheJeune
           onSearchFilterBy={(input) => rechercherJeunes(input, 1)}
           minCaracteres={2}
         />
       )}
-
       {!conseiller.agence && (
         <EncartAgenceRequise
           conseiller={conseiller}
@@ -105,7 +115,6 @@ const Etablissement = (_: MissionLocaleProps) => {
           onChangeAffichageModal={trackAgenceModal}
         />
       )}
-
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
@@ -170,7 +179,6 @@ const Etablissement = (_: MissionLocaleProps) => {
           )}
         </div>
       )}
-
       {resultatsRecherche?.length === 0 && (
         <>
           <EmptyStateImage

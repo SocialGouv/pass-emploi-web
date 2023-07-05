@@ -6,9 +6,9 @@ import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import {
   estMilo,
-  estSuperviseur,
   estPoleEmploi,
   estPoleEmploiBRSA,
+  estSuperviseur,
   StructureConseiller,
 } from 'interfaces/conseiller'
 import { trackEvent, trackPage } from 'utils/analytics/matomo'
@@ -20,7 +20,7 @@ export enum NavItem {
   Jeunes = 'Jeunes',
   Rdvs = 'Rdvs',
   RechercheOffres = 'RechercheOffres',
-  Supervision = 'Supervision',
+  Reaffectation = 'Reaffectation',
   Aide = 'Aide',
   Profil = 'Profil',
   Actualites = 'Actualites',
@@ -29,6 +29,7 @@ export enum NavItem {
   Pilotage = 'Pilotage',
   Etablissement = 'Etablissement',
 }
+
 type NavLinksProps = { showLabelsOnSmallScreen: boolean; items: NavItem[] }
 export default function NavLinks({
   showLabelsOnSmallScreen,
@@ -162,15 +163,16 @@ export default function NavLinks({
             />
           )}
 
-        {estSuperviseur(conseiller) && items.includes(NavItem.Supervision) && (
-          <NavLink
-            iconName={IconName.ArrowForward}
-            label='Réaffectation'
-            href='/reaffectation'
-            isActive={isCurrentRoute('/reaffectation')}
-            showLabelOnSmallScreen={showLabelsOnSmallScreen}
-          />
-        )}
+        {estSuperviseur(conseiller) &&
+          items.includes(NavItem.Reaffectation) && (
+            <NavLink
+              iconName={IconName.ArrowForward}
+              label='Réaffectation'
+              href='/reaffectation'
+              isActive={isCurrentRoute('/reaffectation')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          )}
 
         {!estMilo(conseiller) && items.includes(NavItem.Messagerie) && (
           <NavLink

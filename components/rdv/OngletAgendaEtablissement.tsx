@@ -30,9 +30,11 @@ import {
 } from 'utils/date'
 
 type OngletAgendaEtablissementProps = {
-  idEtablissement: string
   recupererAnimationsCollectives: (
-    idEtablissement: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) => Promise<AnimationCollective[]>
+  recupererSessionsMilo: (
     dateDebut: DateTime,
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
@@ -40,8 +42,8 @@ type OngletAgendaEtablissementProps = {
 }
 
 export default function OngletAgendaEtablissement({
-  idEtablissement,
   recupererAnimationsCollectives,
+  recupererSessionsMilo,
   trackNavigation,
 }: OngletAgendaEtablissementProps) {
   const [animationsCollectives, setAnimationsCollectives] = useState<
@@ -51,7 +53,7 @@ export default function OngletAgendaEtablissement({
     useState<AnimationCollective[]>([])
 
   const [animationsCollectivesGroupees, setAnimationsCollectivesGroupees] =
-    useState<ItemOuIntercalaire<AnimationCollective>[]>([])
+    useState<Array<ItemOuIntercalaire<AnimationCollective>>>([])
 
   const [statutsValides, setStatutsValides] = useState<
     StatutAnimationCollective[]
@@ -61,20 +63,17 @@ export default function OngletAgendaEtablissement({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
-    const evenements = await recupererAnimationsCollectives(
-      idEtablissement!,
-      dateDebut,
-      dateFin
-    )
-    setAnimationsCollectives(evenements)
+    const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
+    const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
+    setAnimationsCollectives([...evenementsMilo, ...evenements])
   }
 
   function filtrerAnimationsCollectives() {
     if (!statutsValides.length)
       setAnimationsCollectivesFiltrees(animationsCollectives)
     else {
-      const acFiltrees = animationsCollectives.filter((ac) =>
-        statutsValides.includes(ac.statut)
+      const acFiltrees = animationsCollectives.filter(
+        (ac) => ac.statut && statutsValides.includes(ac.statut)
       )
       setAnimationsCollectivesFiltrees(acFiltrees)
     }
@@ -89,6 +88,11 @@ export default function OngletAgendaEtablissement({
       insertIntercalaires(animationsCollectivesFiltrees, ({ date }) => date)
     )
   }, [animationsCollectivesFiltrees])
+
+  function getHref(ac: AnimationCollective): string {
+    if (ac.isSession) return `agenda/sessions/${ac.id}`
+    else return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
+  }
 
   return (
     <>
@@ -139,6 +143,15 @@ export default function OngletAgendaEtablissement({
                 <TH>Horaires</TH>
                 <TH>Titre</TH>
                 <TH>Type</TH>
+                <TH>
+                  Visible{' '}
+                  <IconComponent
+                    name={IconName.Info}
+                    className='inline h-4 w-4 fill-primary'
+                    aria-label='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                    title='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                  />
+                </TH>
                 <TH
                   estCliquable={true}
                   className='rounded-base hover:bg-primary_lighten'
@@ -154,19 +167,41 @@ export default function OngletAgendaEtablissement({
               {renderListeWithIntercalaires(
                 animationsCollectivesGroupees,
                 (ac) => (
-                  <TR
-                    key={ac.id}
-                    href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
-                    label={labelLien(ac)}
-                  >
+                  <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
                     <TD>
                       {heure(ac)} - {ac.duree} min
                     </TD>
-                    <TD>{ac.titre}</TD>
+                    <TD>
+                      {ac.titre}
+                      <span className={'block text-s-regular'}>
+                        {ac.sousTitre}
+                      </span>
+                    </TD>
                     <TD>{tagType(ac)}</TD>
+                    <TD className='flex text-center'>
+                      <IconComponent
+                        aria-label={ac.estCache ? 'Non visible' : 'Visible'}
+                        className='inline h-6 w-6 fill-primary'
+                        focusable={false}
+                        name={
+                          ac.estCache
+                            ? IconName.VisibilityOff
+                            : IconName.VisibilityOn
+                        }
+                        role='img'
+                      />
+                    </TD>
                     <TD>
                       <div className='flex items-center justify-between'>
-                        {tagStatut(ac)}
+                        {ac.statut && tagStatut(ac)}
+                        {!ac.statut && (
+                          <>
+                            -
+                            <span className='sr-only'>
+                              information non disponible
+                            </span>
+                          </>
+                        )}
                         <IconComponent
                           name={IconName.ChevronRight}
                           focusable={false}
@@ -199,16 +234,29 @@ function heure({ date }: AnimationCollective): string {
   return toFrenchFormat(date, TIME_24_H_SEPARATOR)
 }
 
-function tagType({ type }: AnimationCollective): ReactElement {
-  const color = type === 'Atelier' ? 'accent_2' : 'additional_2'
-  const iconName =
-    type === 'Information collective' ? IconName.Error : undefined
+function tagType({ isSession, type }: AnimationCollective): ReactElement {
+  let tagProps: { color: string; iconName?: IconName; iconLabel?: string } = {
+    color: 'additional_2',
+    iconName: undefined,
+    iconLabel: undefined,
+  }
+
+  if (type === 'Atelier') tagProps.color = 'accent_2'
+  if (type === 'Information collective') tagProps.iconName = IconName.Error
+  if (isSession)
+    tagProps = {
+      color: 'accent_1',
+      iconName: IconName.Lock,
+      iconLabel: 'Informations de la session non modifiables',
+    }
+
   return (
     <TagMetier
       label={type}
-      color={color}
-      backgroundColor={color + '_lighten'}
-      iconName={iconName}
+      color={tagProps.color}
+      backgroundColor={tagProps.color + '_lighten'}
+      iconName={tagProps.iconName}
+      iconLabel={tagProps.iconLabel}
     />
   )
 }
@@ -227,6 +275,11 @@ function statusProps({ type, statut }: AnimationCollective): {
       return {
         label: type === 'Atelier' ? 'Clos' : 'Close',
         color: 'accent_2',
+      }
+    case undefined:
+      return {
+        label: '',
+        color: '',
       }
   }
 }
