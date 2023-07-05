@@ -5,12 +5,12 @@ import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { unDetailSession } from 'fixtures/session'
-import { Session } from 'interfaces/session'
+import { DetailsSession } from 'interfaces/detailsSession'
 import DetailSession, {
   getServerSideProps,
 } from 'pages/agenda/sessions/[session_id]'
 import {
-  changeVisibiliteSession,
+  changerVisibiliteSession,
   getDetailsSession,
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
@@ -20,10 +20,10 @@ import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/sessions.service')
 
-describe('Détails Session', () => {
+describe('Détails DetailsSession', () => {
   describe('client side', () => {
     describe('contenu', () => {
-      let session: Session
+      let session: DetailsSession
       beforeEach(async () => {
         // Given
         session = unDetailSession()
@@ -96,8 +96,8 @@ describe('Détails Session', () => {
     })
 
     describe('permet de gérer la visibilité de la session', () => {
-      let sessionVisible: Session
-      let sessionInvisible: Session
+      let sessionVisible: DetailsSession
+      let sessionInvisible: DetailsSession
       let toggleVisibiliteSession: HTMLInputElement
       beforeEach(async () => {
         // Given
@@ -137,7 +137,7 @@ describe('Détails Session', () => {
       describe('au clic sur le switch', () => {
         it('change la visibilité', async () => {
           // Given
-          ;(changeVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
+          ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
           await render(
             <DetailSession pageTitle='' session={sessionInvisible} />
           )
@@ -149,7 +149,7 @@ describe('Détails Session', () => {
           toggleVisibiliteSession = getToggleVisibiliteSession(true)
 
           // Then
-          expect(changeVisibiliteSession).toHaveBeenCalledWith(
+          expect(changerVisibiliteSession).toHaveBeenCalledWith(
             'session-invisible-id',
             true
           )
