@@ -37,3 +37,28 @@ function jsonToTypeSessionMilo(jsonType: TypeEvenement): string {
   }
   return jsonType.label
 }
+
+export type SessionJson = {
+  session: {
+    id: string
+    nom: string
+    dateHeureDebut: string
+    dateHeureFin: string
+    dateMaxInscription?: string
+    animateur?: string
+    lieu: string
+    nbPlacesDisponibles?: number
+    commentaire?: string
+  }
+  offre: {
+    id: string
+    nom: string
+    theme: string
+    type: {
+      code: string
+      label: string
+    }
+    description?: string
+    nomPartenaire?: string
+  }
+}

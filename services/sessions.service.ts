@@ -4,9 +4,12 @@ import { getSession } from 'next-auth/react'
 import { apiGet } from 'clients/api.client'
 import { AnimationCollective } from 'interfaces/evenement'
 import {
+  SessionJson,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
+import { Session } from 'interfaces/session'
+import { ApiError } from 'utils/httpClient'
 
 export async function getSessionsMissionLocale(
   idConseiller: string,
@@ -21,4 +24,51 @@ export async function getSessionsMissionLocale(
     session!.accessToken
   )
   return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
+}
+
+export async function getDetailsSession(
+  idConseiller: string,
+  idSession: string,
+  accessToken: string
+): Promise<Session | undefined> {
+  try {
+    const { content: sessionJson } = await apiGet<SessionJson>(
+      `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
+      accessToken
+    )
+    return jsonToSession(sessionJson)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) {
+      return undefined
+    }
+    throw e
+  }
+}
+
+export function jsonToSession(json: SessionJson): Session {
+  const session: Session = {
+    session: {
+      nom: json.session.nom,
+      dateHeureDebut: json.session.dateHeureDebut,
+      dateHeureFin: json.session.dateHeureFin,
+      lieu: json.session.lieu,
+    },
+    offre: {
+      titre: json.offre.nom,
+      theme: json.offre.theme,
+      type: json.offre.type.label,
+    },
+  }
+
+  if (json.offre.description) session.offre.description = json.offre.description
+  if (json.offre.nomPartenaire)
+    session.offre.partenaire = json.offre.nomPartenaire
+
+  if (json.session.dateMaxInscription)
+    session.session.dateMaxInscription = json.session.dateMaxInscription
+  if (json.session.animateur) session.session.animateur = json.session.animateur
+  if (json.session.commentaire)
+    session.session.commentaire = json.session.commentaire
+
+  return session
 }
