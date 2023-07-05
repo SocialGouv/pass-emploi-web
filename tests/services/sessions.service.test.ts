@@ -6,7 +6,7 @@ import { AnimationCollective } from 'interfaces/evenement'
 import { SessionMiloJson } from 'interfaces/json/session'
 import { getSessionsMissionLocale } from 'services/sessions.service'
 import {
-  changeVisibiliteSession,
+  changerVisibiliteSession,
   getDetailsSession,
 } from 'services/sessions.service'
 import { ApiError } from 'utils/httpClient'
@@ -97,13 +97,13 @@ describe('SessionsApiService', () => {
       // When
       const actual = await getDetailsSession(
         'id-conseiller',
-        'id-session',
+        'session-1',
         'accessToken'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/milo/id-conseiller/sessions/id-session',
+        '/conseillers/milo/id-conseiller/sessions/session-1',
         'accessToken'
       )
       expect(actual).toEqual(unDetailSession())
@@ -112,7 +112,7 @@ describe('SessionsApiService', () => {
     it("renvoie undefined si la session n'existe pas", async () => {
       // Given
       ;(apiGet as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'Session non trouvée')
+        new ApiError(404, 'DetailsSession non trouvée')
       )
 
       // When
@@ -127,10 +127,10 @@ describe('SessionsApiService', () => {
     })
   })
 
-  describe('.changeVisibiliteSession', () => {
+  describe('.changerVisibiliteSession', () => {
     it('modifie la visibilité de la session', async () => {
       // When
-      await changeVisibiliteSession('idSession', true)
+      await changerVisibiliteSession('idSession', true)
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(

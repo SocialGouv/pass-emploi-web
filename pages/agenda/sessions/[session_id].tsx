@@ -8,14 +8,13 @@ import Label from 'components/ui/Form/Label'
 import { Switch } from 'components/ui/Form/Switch'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { DetailsSession } from 'interfaces/detailsSession'
 import { PageProps } from 'interfaces/pageProps'
-import { Session } from 'interfaces/session'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
 
 type DetailSessionProps = PageProps & {
-  session: Session
+  session: DetailsSession
 }
 
 function DetailsSession({ session }: DetailSessionProps) {
@@ -24,13 +23,14 @@ function DetailsSession({ session }: DetailSessionProps) {
   )
   const [loadingChangerVisibilite, setLoadingChangerVisibilite] =
     useState<boolean>(false)
+
   async function handleChangerVisibiliteSession() {
     setLoadingChangerVisibilite(true)
 
-    const { changeVisibiliteSession } = await import(
+    const { changerVisibiliteSession } = await import(
       'services/sessions.service'
     )
-    await changeVisibiliteSession(session.session.id, !visibiliteSession)
+    await changerVisibiliteSession(session.session.id, !visibiliteSession)
 
     setVisibiliteSession(!visibiliteSession)
     setLoadingChangerVisibilite(false)
