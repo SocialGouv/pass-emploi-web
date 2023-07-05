@@ -117,8 +117,7 @@ describe('Détails DetailsSession', () => {
       it('affiche un switch désactivé par défaut', async () => {
         // When
         await render(<DetailSession pageTitle='' session={sessionInvisible} />)
-
-        toggleVisibiliteSession = getToggleVisibiliteSession(false)
+        toggleVisibiliteSession = getToggleVisibiliteSession()
 
         // Then
         expect(toggleVisibiliteSession).toBeInTheDocument()
@@ -127,7 +126,7 @@ describe('Détails DetailsSession', () => {
       it('affiche un switch dont la valeur correspond à la visibilité de la session', async () => {
         // When
         await render(<DetailSession pageTitle='' session={sessionVisible} />)
-        toggleVisibiliteSession = getToggleVisibiliteSession(true)
+        toggleVisibiliteSession = getToggleVisibiliteSession()
 
         // Then
         expect(toggleVisibiliteSession).toBeInTheDocument()
@@ -141,12 +140,10 @@ describe('Détails DetailsSession', () => {
           await render(
             <DetailSession pageTitle='' session={sessionInvisible} />
           )
-          toggleVisibiliteSession = getToggleVisibiliteSession(false)
+          toggleVisibiliteSession = getToggleVisibiliteSession()
 
           // When
           await userEvent.click(toggleVisibiliteSession)
-
-          toggleVisibiliteSession = getToggleVisibiliteSession(true)
 
           // Then
           expect(changerVisibiliteSession).toHaveBeenCalledWith(
@@ -245,12 +242,8 @@ describe('Détails DetailsSession', () => {
   })
 })
 
-function getToggleVisibiliteSession(estVisible: boolean) {
-  return estVisible
-    ? screen.getByRole<HTMLInputElement>('checkbox', {
-        name: /Rendre visible la session/,
-      })
-    : screen.getByRole<HTMLInputElement>('checkbox', {
-        name: /Rendre invisible la session/,
-      })
+function getToggleVisibiliteSession() {
+  return screen.getByRole<HTMLInputElement>('checkbox', {
+    name: /Rendre visible la session/,
+  })
 }
