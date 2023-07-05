@@ -17,7 +17,7 @@ type DetailSessionProps = PageProps & {
   session: DetailsSession
 }
 
-function DetailsSession({ session }: DetailSessionProps) {
+function FicheDetailsSession({ session }: DetailSessionProps) {
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
     session.session.estVisible
   )
@@ -175,8 +175,7 @@ function DetailsSession({ session }: DetailSessionProps) {
       <Etape numero={1} titre='Gérez la visibilité'>
         <div className='flex items-center gap-1'>
           <Label htmlFor='visibilite-session'>
-            Rendre {visibiliteSession ? 'visible' : 'invisible'} la session aux
-            bénéficiaires de la Mission Locale
+            Rendre visible la session aux bénéficiaires de la Mission Locale
           </Label>
           <Switch
             id='visibilite-session'
@@ -229,4 +228,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default withTransaction(DetailsSession.name, 'page')(DetailsSession)
+export default withTransaction(
+  FicheDetailsSession.name,
+  'page'
+)(FicheDetailsSession)
