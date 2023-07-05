@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon'
+import { DateTime, Interval } from 'luxon'
 import { DateTimeFormatOptions } from 'luxon/src/misc'
 
 export const WEEKDAY_MONTH_LONG: string = 'EEEE d MMMM'
@@ -68,4 +68,9 @@ export function dateIsInInterval(
   dateMax: DateTime
 ) {
   return Boolean(date > dateMin && date < dateMax)
+}
+
+export function minutesEntreDeuxDates(date1, date2): number {
+  const diff = Interval.fromDateTimes(date1, date2)
+  return diff.length('minutes')
 }

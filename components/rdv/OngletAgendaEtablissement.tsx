@@ -31,8 +31,12 @@ import {
 
 type OngletAgendaEtablissementProps = {
   idEtablissement: string
+  idConseiller: string
   recupererAnimationsCollectives: (
-    idEtablissement: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) => Promise<AnimationCollective[]>
+  recupererSessionsMilo: (
     dateDebut: DateTime,
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
@@ -40,8 +44,8 @@ type OngletAgendaEtablissementProps = {
 }
 
 export default function OngletAgendaEtablissement({
-  idEtablissement,
   recupererAnimationsCollectives,
+  recupererSessionsMilo,
   trackNavigation,
 }: OngletAgendaEtablissementProps) {
   const [animationsCollectives, setAnimationsCollectives] = useState<
@@ -51,7 +55,7 @@ export default function OngletAgendaEtablissement({
     useState<AnimationCollective[]>([])
 
   const [animationsCollectivesGroupees, setAnimationsCollectivesGroupees] =
-    useState<ItemOuIntercalaire<AnimationCollective>[]>([])
+    useState<Array<ItemOuIntercalaire<AnimationCollective>>>([])
 
   const [statutsValides, setStatutsValides] = useState<
     StatutAnimationCollective[]
@@ -61,20 +65,17 @@ export default function OngletAgendaEtablissement({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
-    const evenements = await recupererAnimationsCollectives(
-      idEtablissement!,
-      dateDebut,
-      dateFin
-    )
-    setAnimationsCollectives(evenements)
+    const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
+    const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
+    setAnimationsCollectives([...evenementsMilo, ...evenements])
   }
 
   function filtrerAnimationsCollectives() {
     if (!statutsValides.length)
       setAnimationsCollectivesFiltrees(animationsCollectives)
     else {
-      const acFiltrees = animationsCollectives.filter((ac) =>
-        statutsValides.includes(ac.statut)
+      const acFiltrees = animationsCollectives.filter(
+        (ac) => ac.statut && statutsValides.includes(ac.statut)
       )
       setAnimationsCollectivesFiltrees(acFiltrees)
     }
@@ -89,6 +90,11 @@ export default function OngletAgendaEtablissement({
       insertIntercalaires(animationsCollectivesFiltrees, ({ date }) => date)
     )
   }, [animationsCollectivesFiltrees])
+
+  function getHref(ac: AnimationCollective): string {
+    if (ac.isSession) return `agenda/sessions/${ac.id}`
+    else return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
+  }
 
   return (
     <>
@@ -154,19 +160,28 @@ export default function OngletAgendaEtablissement({
               {renderListeWithIntercalaires(
                 animationsCollectivesGroupees,
                 (ac) => (
-                  <TR
-                    key={ac.id}
-                    href={'/mes-jeunes/edition-rdv?idRdv=' + ac.id}
-                    label={labelLien(ac)}
-                  >
+                  <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
                     <TD>
                       {heure(ac)} - {ac.duree} min
                     </TD>
-                    <TD>{ac.titre}</TD>
+                    <TD>
+                      {ac.titre}
+                      <span className={'block text-s-regular'}>
+                        {ac.sousTitre}
+                      </span>
+                    </TD>
                     <TD>{tagType(ac)}</TD>
                     <TD>
                       <div className='flex items-center justify-between'>
-                        {tagStatut(ac)}
+                        {ac.statut && tagStatut(ac)}
+                        {!ac.statut && (
+                          <>
+                            -
+                            <span className='sr-only'>
+                              information non disponible
+                            </span>
+                          </>
+                        )}
                         <IconComponent
                           name={IconName.ChevronRight}
                           focusable={false}
@@ -199,16 +214,19 @@ function heure({ date }: AnimationCollective): string {
   return toFrenchFormat(date, TIME_24_H_SEPARATOR)
 }
 
-function tagType({ type }: AnimationCollective): ReactElement {
+function tagType({ isSession, type }: AnimationCollective): ReactElement {
   const color = type === 'Atelier' ? 'accent_2' : 'additional_2'
   const iconName =
     type === 'Information collective' ? IconName.Error : undefined
+  const labelIconeSessionMilo = 'Informations de la session non modifiables'
   return (
     <TagMetier
       label={type}
-      color={color}
-      backgroundColor={color + '_lighten'}
-      iconName={iconName}
+      color={!isSession ? color : 'accent_1'}
+      backgroundColor={!isSession ? color + '_lighten' : 'accent_1_lighten'}
+      iconName={!isSession ? iconName : IconName.Lock}
+      title={isSession ?? labelIconeSessionMilo}
+      iconLabel={labelIconeSessionMilo}
     />
   )
 }
@@ -227,6 +245,11 @@ function statusProps({ type, statut }: AnimationCollective): {
       return {
         label: type === 'Atelier' ? 'Clos' : 'Close',
         color: 'accent_2',
+      }
+    case undefined:
+      return {
+        label: '',
+        color: '',
       }
   }
 }

@@ -59,7 +59,6 @@ function Agenda({ onglet }: AgendaProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(
     onglet ?? Onglet.CONSEILLER
   )
-
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
@@ -105,14 +104,27 @@ function Agenda({ onglet }: AgendaProps) {
   }
 
   async function recupererRdvsEtablissement(
-    idEtablissement: string,
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<AnimationCollective[]> {
     const { getRendezVousEtablissement } = await import(
       'services/evenements.service'
     )
-    return getRendezVousEtablissement(idEtablissement, dateDebut, dateFin)
+    return getRendezVousEtablissement(
+      conseiller.agence!.id!,
+      dateDebut,
+      dateFin
+    )
+  }
+
+  async function recupererSessionsMilo(
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<AnimationCollective[]> {
+    const { getSessionsMissionLocale } = await import(
+      'services/sessions.service'
+    )
+    return getSessionsMissionLocale(conseiller.id, dateDebut, dateFin)
   }
 
   async function trackAgenceModal(trackingMessage: string) {
@@ -211,8 +223,8 @@ function Agenda({ onglet }: AgendaProps) {
         >
           {conseiller.agence && (
             <OngletAgendaEtablissement
-              idEtablissement={conseiller.agence.id!}
               recupererAnimationsCollectives={recupererRdvsEtablissement}
+              recupererSessionsMilo={recupererSessionsMilo}
               trackNavigation={trackNavigation}
             />
           )}
