@@ -1,5 +1,4 @@
 export const textesBRSA = {
-  nomApplication: 'application pass emploi',
   // PARTAGE RECHERCHE
   partageRechercheTexteInfo:
     'Ces critères apparaîtront dans la section favoris, catégorie recherches sauvegardées, du bénéficiaire de l’application pass emploi.',
@@ -12,7 +11,6 @@ export const textesBRSA = {
 }
 
 export const textesCEJ = {
-  nomApplication: 'application du CEJ',
   // PARTAGE RECHERCHE
   partageRechercheTexteInfo:
     'Ces critères apparaîtront dans la section favoris, catégorie recherches sauvegardées, du bénéficiaire de l’application CEJ.',
