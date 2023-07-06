@@ -22,6 +22,7 @@ export type AnimationCollective = {
   statut?: StatutAnimationCollective
   sousTitre?: string
   isSession?: boolean
+  estCache?: boolean
 }
 
 export type AnimationCollectivePilotage = {

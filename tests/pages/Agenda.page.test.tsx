@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
@@ -78,6 +78,19 @@ describe('Agenda', () => {
           sousTitre: 'Nom session',
           statut: undefined,
           isSession: true,
+          estCache: false,
+        }),
+
+        uneAnimationCollective({
+          id: 'id-session-2',
+          type: 'Atelier i-milo 2',
+          date: SEPTEMBRE_1_14H.plus({ day: 4 }),
+          duree: 60,
+          titre: 'Titre offre session milo',
+          sousTitre: 'Nom session',
+          statut: undefined,
+          isSession: true,
+          estCache: true,
         }),
       ])
     })
@@ -332,6 +345,39 @@ describe('Agenda', () => {
               name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
             })
           ).toHaveAttribute('href', 'agenda/sessions/id-session-1')
+
+          expect(
+            screen.getByRole('row', {
+              name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
+            })
+          ).toHaveAttribute('href', 'agenda/sessions/id-session-2')
+        })
+
+        it('affiche si une session n’est pas visible', async () => {
+          //Then
+          await waitFor(() => {
+            expect(
+              screen.getByRole('table', {
+                name: 'Liste des animations collectives de mon établissement',
+              })
+            ).toBeInTheDocument()
+          })
+
+          expect(
+            within(
+              screen.getByRole('row', {
+                name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
+              })
+            ).getByLabelText('Visible')
+          ).toBeInTheDocument()
+
+          expect(
+            within(
+              screen.getByRole('row', {
+                name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
+              })
+            ).getByLabelText('Non visible')
+          ).toBeInTheDocument()
         })
 
         it('a deux boutons de navigation', () => {

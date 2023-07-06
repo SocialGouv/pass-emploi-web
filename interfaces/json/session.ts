@@ -9,6 +9,7 @@ export type SessionMiloJson = {
   nomOffre: string
   dateHeureDebut: string
   dateHeureFin: string
+  estVisible: boolean
   type: TypeEvenement
 }
 
@@ -28,6 +29,7 @@ export function sessionMiloJsonToAnimationCollective(
     sousTitre: json.nomSession,
     type: jsonToTypeSessionMilo(json.type),
     isSession: true,
+    estCache: !json.estVisible,
   }
 }
 

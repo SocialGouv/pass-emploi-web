@@ -143,6 +143,15 @@ export default function OngletAgendaEtablissement({
                 <TH>Horaires</TH>
                 <TH>Titre</TH>
                 <TH>Type</TH>
+                <TH>
+                  Visible{' '}
+                  <IconComponent
+                    name={IconName.Info}
+                    className='inline h-4 w-4 fill-primary'
+                    aria-label='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                    title='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                  />
+                </TH>
                 <TH
                   estCliquable={true}
                   className='rounded-base hover:bg-primary_lighten'
@@ -169,6 +178,19 @@ export default function OngletAgendaEtablissement({
                       </span>
                     </TD>
                     <TD>{tagType(ac)}</TD>
+                    <TD className='flex text-center'>
+                      <IconComponent
+                        aria-label={ac.estCache ? 'Non visible' : 'Visible'}
+                        className='inline h-6 w-6 fill-primary'
+                        focusable={false}
+                        name={
+                          ac.estCache
+                            ? IconName.VisibilityOff
+                            : IconName.VisibilityOn
+                        }
+                        role='img'
+                      />
+                    </TD>
                     <TD>
                       <div className='flex items-center justify-between'>
                         {ac.statut && tagStatut(ac)}

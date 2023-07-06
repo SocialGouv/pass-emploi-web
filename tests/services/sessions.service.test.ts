@@ -31,6 +31,7 @@ describe('SessionsApiService', () => {
             label: 'info coll i-milo',
           },
           isSession: true,
+          estVisible: true,
         },
         {
           id: 'id-session',
@@ -43,6 +44,7 @@ describe('SessionsApiService', () => {
             label: 'Atelier i-milo',
           },
           isSession: true,
+          estVisible: false,
         },
       ]
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -71,6 +73,7 @@ describe('SessionsApiService', () => {
           type: 'info coll i-milo',
           statut: undefined,
           isSession: true,
+          estCache: false,
         },
         {
           id: 'id-session',
@@ -81,6 +84,7 @@ describe('SessionsApiService', () => {
           type: 'Atelier i-milo',
           statut: undefined,
           isSession: true,
+          estCache: true,
         },
       ]
       expect(actual).toEqual(sessionsMilo)
