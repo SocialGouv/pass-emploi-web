@@ -78,7 +78,7 @@ describe('Agenda', () => {
           sousTitre: 'Nom session',
           statut: undefined,
           isSession: true,
-          estVisible: false,
+          estCache: false,
         }),
 
         uneAnimationCollective({
@@ -90,7 +90,7 @@ describe('Agenda', () => {
           sousTitre: 'Nom session',
           statut: undefined,
           isSession: true,
-          estVisible: true,
+          estCache: true,
         }),
       ])
     })
@@ -368,7 +368,7 @@ describe('Agenda', () => {
               screen.getByRole('row', {
                 name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
               })
-            ).getByLabelText('Non visible')
+            ).getByLabelText('Visible')
           ).toBeInTheDocument()
 
           expect(
@@ -376,7 +376,7 @@ describe('Agenda', () => {
               screen.getByRole('row', {
                 name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
               })
-            ).getByLabelText('Visible')
+            ).getByLabelText('Non visible')
           ).toBeInTheDocument()
         })
 

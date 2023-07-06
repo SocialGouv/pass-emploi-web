@@ -29,7 +29,7 @@ export function sessionMiloJsonToAnimationCollective(
     sousTitre: json.nomSession,
     type: jsonToTypeSessionMilo(json.type),
     isSession: true,
-    estVisible: json.estVisible,
+    estCache: !json.estVisible,
   }
 }
 
