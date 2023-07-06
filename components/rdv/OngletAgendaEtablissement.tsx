@@ -143,7 +143,7 @@ export default function OngletAgendaEtablissement({
                 <TH>Horaires</TH>
                 <TH>Titre</TH>
                 <TH>Type</TH>
-                <TH className='text-center'>
+                <TH>
                   Visible{' '}
                   <IconComponent
                     name={IconName.Info}
@@ -179,21 +179,17 @@ export default function OngletAgendaEtablissement({
                     </TD>
                     <TD>{tagType(ac)}</TD>
                     <TD className='flex text-center'>
-                      {ac.estVisible || !ac.isSession ? (
-                        <IconComponent
-                          name={IconName.VisibilityOn}
-                          focusable={false}
-                          aria-label='Visible'
-                          className='inline h-6 w-6 fill-primary'
-                        />
-                      ) : (
-                        <IconComponent
-                          name={IconName.VisibilityOff}
-                          focusable={false}
-                          aria-label='Non visible'
-                          className='inline h-6 w-6 fill-primary'
-                        />
-                      )}
+                      <IconComponent
+                        aria-label={ac.estCache ? 'Non visible' : 'Visible'}
+                        className='inline h-6 w-6 fill-primary'
+                        focusable={false}
+                        name={
+                          ac.estCache
+                            ? IconName.VisibilityOff
+                            : IconName.VisibilityOn
+                        }
+                        role='img'
+                      />
                     </TD>
                     <TD>
                       <div className='flex items-center justify-between'>
