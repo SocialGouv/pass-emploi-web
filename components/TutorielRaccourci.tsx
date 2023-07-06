@@ -1,19 +1,11 @@
 import IconSettingsChrome from 'assets/icons/custom/settings_chrome.svg'
 import IconSettingsSafari from 'assets/icons/custom/settings_safari.svg'
-import { estPoleEmploiBRSA } from 'interfaces/conseiller'
-import { textesBRSA, textesCEJ } from 'lang/textes'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export function TutorielRaccourci() {
-  const [conseiller] = useConseiller()
-  const nomApplication = estPoleEmploiBRSA(conseiller)
-    ? textesBRSA.nomApplication
-    : textesCEJ.nomApplication
-
   return (
     <>
       <p>
-        Pour retrouver facilement votre {nomApplication}, vous pouvez ajouter
+        Pour retrouver facilement votre application, vous pouvez ajouter
         simplement un raccourci sur votre téléphone.
       </p>
       <p>
