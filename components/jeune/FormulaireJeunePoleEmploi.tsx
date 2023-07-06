@@ -39,21 +39,21 @@ function FormulaireJeunePoleEmploi({
     if (!Boolean(prenom.value)) {
       setPrenom({
         value: prenom.value,
-        error: 'Veuillez renseigner le prénom du jeune',
+        error: 'Veuillez renseigner le prénom du bénéficiaire',
       })
       isValid = false
     }
     if (!Boolean(nom.value)) {
       setNom({
         value: nom.value,
-        error: 'Veuillez renseigner le nom du jeune',
+        error: 'Veuillez renseigner le nom du bénéficiaire',
       })
       isValid = false
     }
     if (!Boolean(email.value)) {
       setEmail({
         value: email.value,
-        error: "Veuillez renseigner l'e-mail du jeune",
+        error: "Veuillez renseigner l'e-mail du bénéficiaire",
       })
       isValid = false
     } else if (!isEmailValid(email.value)) {
@@ -99,8 +99,8 @@ function FormulaireJeunePoleEmploi({
   return (
     <>
       <p className='text-m-bold mt-6 mb-4'>
-        Saisissez les coordonnées du jeune pour lequel vous voulez créer un
-        compte
+        Saisissez les coordonnées du bénéficiaire pour lequel vous voulez créer
+        un compte
       </p>
 
       <form method='POST' onSubmit={handleJeuneSubmit}>
@@ -145,7 +145,7 @@ function FormulaireJeunePoleEmploi({
         </Label>
         <p className='text-base-regular mb-3'>
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
-          dossier MAP du jeune.
+          dossier MAP du bénéficiaire.
         </p>
         <div className='w-8/12'>
           <Input

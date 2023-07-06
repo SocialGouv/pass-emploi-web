@@ -42,7 +42,7 @@ describe('PoleEmploiCreationJeune', () => {
       // Then
       expect(
         screen.getByText(
-          'Saisissez les coordonnées du jeune pour lequel vous voulez créer un compte'
+          'Saisissez les coordonnées du bénéficiaire pour lequel vous voulez créer un compte'
         )
       ).toBeInTheDocument()
       expect(screen.getByLabelText('* Prénom')).toBeInTheDocument()
@@ -71,7 +71,7 @@ describe('PoleEmploiCreationJeune', () => {
 
         // Then
         expect(
-          screen.getByText('Veuillez renseigner le prénom du jeune')
+          screen.getByText('Veuillez renseigner le prénom du bénéficiaire')
         ).toBeInTheDocument()
         expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
       })
@@ -86,7 +86,7 @@ describe('PoleEmploiCreationJeune', () => {
 
         // Then
         expect(
-          screen.getByText('Veuillez renseigner le nom du jeune')
+          screen.getByText('Veuillez renseigner le nom du bénéficiaire')
         ).toBeInTheDocument()
         expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
       })
@@ -101,7 +101,7 @@ describe('PoleEmploiCreationJeune', () => {
 
         // Then
         expect(
-          screen.getByText("Veuillez renseigner l'e-mail du jeune")
+          screen.getByText("Veuillez renseigner l'e-mail du bénéficiaire")
         ).toBeInTheDocument()
         expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
       })
