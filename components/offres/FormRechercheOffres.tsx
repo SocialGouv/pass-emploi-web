@@ -28,15 +28,15 @@ type FormRechercheOffresProps = {
   stateTypeOffre: [TypeOffre | undefined, (type: TypeOffre) => void]
   stateQueryOffresEmploi: [
     FormValues<SearchOffresEmploiQuery>,
-    (query: FormValues<SearchOffresEmploiQuery>) => void
+    (query: FormValues<SearchOffresEmploiQuery>) => void,
   ]
   stateQueryServicesCiviques: [
     FormValues<SearchServicesCiviquesQuery>,
-    (query: FormValues<SearchServicesCiviquesQuery>) => void
+    (query: FormValues<SearchServicesCiviquesQuery>) => void,
   ]
   stateQueryImmersions: [
     FormValues<SearchImmersionsQuery>,
-    (query: FormValues<SearchImmersionsQuery>) => void
+    (query: FormValues<SearchImmersionsQuery>) => void,
   ]
   onNouvelleRecherche: () => void
 }
