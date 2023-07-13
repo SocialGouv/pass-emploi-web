@@ -5,9 +5,9 @@ import { useRouter } from 'next/router'
 import React, { ChangeEvent, useState } from 'react'
 
 import QrcodeAppStore from 'assets/images/qrcode_app_store.svg'
-import QrcodeAppStoreBRSA from 'assets/images/qrcode_app_store_brsa.svg'
+import QrcodeAppStoreBRSA from 'assets/images/qrcode_brsa_app_store.svg'
+import QrcodePlayStoreBRSA from 'assets/images/qrcode_brsa_play_store.svg'
 import QrcodePlayStore from 'assets/images/qrcode_play_store.svg'
-import QrcodePlayStoreBRSA from 'assets/images/qrcode_play_store_brsa.svg'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
@@ -275,13 +275,13 @@ function Profil({ referentielAgences }: ProfilProps) {
             {estPoleEmploiBRSA(conseiller) && (
               <QrcodeAppStoreBRSA
                 focusable='false'
-                aria-label='QR code pour l’App Store'
+                aria-label='QR code à scanner pour télécharger l’application sur Google Play'
               />
             )}
             {!estPoleEmploiBRSA(conseiller) && (
               <QrcodeAppStore
                 focusable='false'
-                aria-label='QR code pour l’App Store'
+                aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
               />
             )}
             <p className='text-s-bold'>App Store</p>
@@ -290,13 +290,13 @@ function Profil({ referentielAgences }: ProfilProps) {
             {estPoleEmploiBRSA(conseiller) && (
               <QrcodePlayStoreBRSA
                 focusable='false'
-                aria-label='QR code pour l’App Store'
+                aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
               />
             )}
             {!estPoleEmploiBRSA(conseiller) && (
               <QrcodePlayStore
                 focusable='false'
-                aria-label='QR code pour Google Play'
+                aria-label='QR code à scanner pour télécharger l’application sur Google Play'
               />
             )}
             <p className='text-s-bold'>Google Play</p>
