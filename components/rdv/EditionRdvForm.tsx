@@ -1,5 +1,11 @@
 import { DateTime } from 'luxon'
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  KeyboardEvent,
+  useEffect,
+  useState,
+} from 'react'
 
 import {
   BeneficiaireIndicationPortefeuille,
@@ -479,6 +485,10 @@ export function EditionRdvForm({
     })
   }
 
+  function bloqueCaractereIndesirableInputValue(e: KeyboardEvent) {
+    if (/^[^\d]$/.test(e.key)) e.preventDefault()
+  }
+
   return (
     <form onSubmit={handleSoumettreRdv}>
       <p className='text-s-bold my-6'>
@@ -614,6 +624,7 @@ export function EditionRdvForm({
                   defaultValue={nombreMaxParticipants.value}
                   onChange={updateNbMaxParticipants}
                   onBlur={validateNombreMaxParticipants}
+                  onKeyDown={bloqueCaractereIndesirableInputValue}
                   required={true}
                   min={1}
                   invalid={Boolean(nombreMaxParticipants.error)}
