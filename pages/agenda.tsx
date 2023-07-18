@@ -11,7 +11,11 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estUserPoleEmploi,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -121,6 +125,8 @@ function Agenda({ onglet }: AgendaProps) {
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<AnimationCollective[]> {
+    if (conseiller.structure !== StructureConseiller.MILO) return []
+
     const { getSessionsMissionLocale } = await import(
       'services/sessions.service'
     )
