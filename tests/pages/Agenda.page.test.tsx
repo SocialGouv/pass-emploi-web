@@ -33,10 +33,16 @@ jest.mock('components/PageActionsPortal')
 describe('Agenda', () => {
   describe('client side', () => {
     let replace: jest.Mock
+    const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
+    const AOUT_31_23H = DateTime.fromISO('2022-08-31T23:59:59.999+02:00')
+    const SEPTEMBRE_1_0H = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
+    const SEPTEMBRE_1_14H = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
+    const SEPTEMBRE_7_23H = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
+    const SEPTEMBRE_8_0H = DateTime.fromISO('2022-09-08T00:00:00.000+02:00')
+    const SEPTEMBRE_14_23H = DateTime.fromISO('2022-09-14T23:59:59.999+02:00')
 
     beforeEach(() => {
       // Given
-      const SEPTEMBRE_1_14H = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1_14H)
 
       replace = jest.fn(() => Promise.resolve())
@@ -167,17 +173,6 @@ describe('Agenda', () => {
       })
 
       describe('agenda conseiller', () => {
-        const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
-        const AOUT_31_23H = DateTime.fromISO('2022-08-31T23:59:59.999+02:00')
-        const SEPTEMBRE_1_0H = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
-        const SEPTEMBRE_7_23H = DateTime.fromISO(
-          '2022-09-07T23:59:59.999+02:00'
-        )
-        const SEPTEMBRE_8_0H = DateTime.fromISO('2022-09-08T00:00:00.000+02:00')
-        const SEPTEMBRE_14_23H = DateTime.fromISO(
-          '2022-09-14T23:59:59.999+02:00'
-        )
-
         it('a un lien pour créer un rendez-vous', () => {
           // Then
           expect(
@@ -261,17 +256,6 @@ describe('Agenda', () => {
       })
 
       describe('agenda établissement', () => {
-        const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
-        const AOUT_31_23H = DateTime.fromISO('2022-08-31T23:59:59.999+02:00')
-        const SEPTEMBRE_1_0H = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
-        const SEPTEMBRE_7_23H = DateTime.fromISO(
-          '2022-09-07T23:59:59.999+02:00'
-        )
-        const SEPTEMBRE_8_0H = DateTime.fromISO('2022-09-08T00:00:00.000+02:00')
-        const SEPTEMBRE_14_23H = DateTime.fromISO(
-          '2022-09-14T23:59:59.999+02:00'
-        )
-
         beforeEach(async () => {
           // When
           await userEvent.click(
@@ -292,15 +276,6 @@ describe('Agenda', () => {
           // Then
           expect(getRendezVousEtablissement).toHaveBeenCalledWith(
             'id-etablissement',
-            SEPTEMBRE_1_0H,
-            SEPTEMBRE_7_23H
-          )
-        })
-
-        it('récupère les sessions milo sur une période de 7 jours à partir de la date du jour', async () => {
-          // Then
-          expect(getSessionsMissionLocale).toHaveBeenCalledWith(
-            '1',
             SEPTEMBRE_1_0H,
             SEPTEMBRE_7_23H
           )
@@ -340,44 +315,6 @@ describe('Agenda', () => {
               name: 'Consulter Atelier À venir du dimanche 4 septembre à 14h00',
             })
           ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-3')
-          expect(
-            screen.getByRole('row', {
-              name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
-            })
-          ).toHaveAttribute('href', 'agenda/sessions/id-session-1')
-
-          expect(
-            screen.getByRole('row', {
-              name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
-            })
-          ).toHaveAttribute('href', 'agenda/sessions/id-session-2')
-        })
-
-        it('affiche si une session n’est pas visible', async () => {
-          //Then
-          await waitFor(() => {
-            expect(
-              screen.getByRole('table', {
-                name: 'Liste des animations collectives de mon établissement',
-              })
-            ).toBeInTheDocument()
-          })
-
-          expect(
-            within(
-              screen.getByRole('row', {
-                name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
-              })
-            ).getByLabelText('Visible')
-          ).toBeInTheDocument()
-
-          expect(
-            within(
-              screen.getByRole('row', {
-                name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
-              })
-            ).getByLabelText('Non visible')
-          ).toBeInTheDocument()
         })
 
         it('a deux boutons de navigation', () => {
@@ -416,24 +353,12 @@ describe('Agenda', () => {
             AOUT_31_23H
           )
 
-          expect(getSessionsMissionLocale).toHaveBeenLastCalledWith(
-            '1',
-            AOUT_25_0H,
-            AOUT_31_23H
-          )
-
           // When
           await userEvent.click(periodeCouranteButton)
 
           // Then
           expect(getRendezVousEtablissement).toHaveBeenCalledWith(
             'id-etablissement',
-            SEPTEMBRE_1_0H,
-            SEPTEMBRE_7_23H
-          )
-
-          expect(getSessionsMissionLocale).toHaveBeenCalledWith(
-            '1',
             SEPTEMBRE_1_0H,
             SEPTEMBRE_7_23H
           )
@@ -448,13 +373,138 @@ describe('Agenda', () => {
             SEPTEMBRE_8_0H,
             SEPTEMBRE_14_23H
           )
-
-          expect(getSessionsMissionLocale).toHaveBeenLastCalledWith(
-            '1',
-            SEPTEMBRE_8_0H,
-            SEPTEMBRE_14_23H
-          )
         })
+      })
+    })
+
+    describe('quand le conseiller est Milo', () => {
+      beforeEach(async () => {
+        // Given
+        const conseiller = unConseiller({
+          structure: StructureConseiller.MILO,
+          agence: {
+            nom: 'Mission Locale Aubenas',
+            id: 'id-etablissement',
+          },
+        })
+
+        // When
+        await act(async () => {
+          await renderWithContexts(<Agenda pageTitle='' />, {
+            customConseiller: conseiller,
+          })
+        })
+        await userEvent.click(
+          screen.getByRole('tab', { name: 'Agenda Mission locale' })
+        )
+      })
+
+      it('récupère les sessions milo sur une période de 7 jours à partir de la date du jour', async () => {
+        // Then
+        expect(getSessionsMissionLocale).toHaveBeenCalledWith(
+          '1',
+          SEPTEMBRE_1_0H,
+          SEPTEMBRE_7_23H
+        )
+      })
+
+      it('affiche les événements récupérés', async () => {
+        // Then
+        await waitFor(() => {
+          expect(
+            screen.getByRole('table', {
+              name: 'Liste des animations collectives de mon établissement',
+            })
+          ).toBeInTheDocument()
+        })
+
+        expect(
+          screen.getByRole('row', {
+            name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
+          })
+        ).toHaveAttribute('href', 'agenda/sessions/id-session-1')
+
+        expect(
+          screen.getByRole('row', {
+            name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
+          })
+        ).toHaveAttribute('href', 'agenda/sessions/id-session-2')
+      })
+
+      it('affiche si une session n’est pas visible', async () => {
+        //Then
+        await waitFor(() => {
+          expect(
+            screen.getByRole('table', {
+              name: 'Liste des animations collectives de mon établissement',
+            })
+          ).toBeInTheDocument()
+        })
+
+        expect(
+          within(
+            screen.getByRole('row', {
+              name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
+            })
+          ).getByLabelText('Visible')
+        ).toBeInTheDocument()
+
+        expect(
+          within(
+            screen.getByRole('row', {
+              name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
+            })
+          ).getByLabelText('Non visible')
+        ).toBeInTheDocument()
+      })
+
+      it('permet de changer de période de 7 jours', async () => {
+        // Given
+        const periodesPasseesButton = screen.getByRole('button', {
+          name: 'Aller à la période précédente',
+        })
+        const periodeCouranteButton = screen.getByRole('button', {
+          name: 'Aller à la Période en cours',
+        })
+        const periodesFuturesButton = screen.getByRole('button', {
+          name: 'Aller à la période suivante',
+        })
+
+        // When
+        await userEvent.click(periodesPasseesButton)
+        // Then
+        expect(getSessionsMissionLocale).toHaveBeenLastCalledWith(
+          '1',
+          AOUT_25_0H,
+          AOUT_31_23H
+        )
+
+        // When
+        await userEvent.click(periodeCouranteButton)
+
+        // Then
+        expect(getSessionsMissionLocale).toHaveBeenCalledWith(
+          '1',
+          SEPTEMBRE_1_0H,
+          SEPTEMBRE_7_23H
+        )
+
+        expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
+
+        // When
+        await userEvent.click(periodesFuturesButton)
+        // Then
+        expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
+          'id-etablissement',
+          SEPTEMBRE_8_0H,
+          SEPTEMBRE_14_23H
+        )
+
+        expect(getSessionsMissionLocale).toHaveBeenLastCalledWith(
+          '1',
+          SEPTEMBRE_8_0H,
+          SEPTEMBRE_14_23H
+        )
       })
     })
 
