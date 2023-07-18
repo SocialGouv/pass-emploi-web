@@ -283,6 +283,7 @@ function FicheJeune({
     )
     updatedPortefeuille.splice(index, 1)
     setPortefeuille(updatedPortefeuille)
+    setIdCurrentJeune(undefined)
   }
 
   useMatomo(trackingLabel, aDesBeneficiaires)
