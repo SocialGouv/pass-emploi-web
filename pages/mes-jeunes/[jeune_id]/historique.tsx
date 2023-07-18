@@ -142,17 +142,20 @@ export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
   const { getJeuneDetails, getConseillersDuJeuneServerSide } = await import(
     'services/jeunes.service'
   )
-  const [jeune, conseillers] = await Promise.all([
-    getJeuneDetails(context.query.jeune_id as string, accessToken),
-    getConseillersDuJeuneServerSide(
-      context.query.jeune_id as string,
-      accessToken
-    ),
-  ])
+
+  const jeune = await getJeuneDetails(
+    context.query.jeune_id as string,
+    accessToken
+  )
 
   if (!jeune) {
     return { notFound: true }
   }
+
+  const conseillers = await getConseillersDuJeuneServerSide(
+    jeune.id,
+    accessToken
+  )
 
   const lectureSeule = jeune.idConseiller !== user.id
 

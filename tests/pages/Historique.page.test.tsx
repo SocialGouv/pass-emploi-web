@@ -143,7 +143,7 @@ describe('Historique', () => {
   describe('server side', () => {
     beforeEach(() => {
       ;(getJeuneDetails as jest.Mock).mockResolvedValue(
-        unDetailJeune({ situations: listeSituations })
+        unDetailJeune({ id: 'id-jeune', situations: listeSituations })
       )
       ;(getConseillersDuJeuneServerSide as jest.Mock).mockResolvedValue(
         desConseillersJeune()
@@ -190,7 +190,7 @@ describe('Historique', () => {
         expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
         expect(actual).toEqual({
           props: {
-            idJeune: 'jeune-1',
+            idJeune: 'id-jeune',
             lectureSeule: false,
             pageTitle: `Portefeuille - Kenji Jirac - Historique`,
             pageHeader: 'Historique',
