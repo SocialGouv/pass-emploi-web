@@ -1,7 +1,8 @@
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Conseiller, estPoleEmploiCEJ } from 'interfaces/conseiller'
+import { Conseiller } from 'interfaces/conseiller'
+import { getWidgetId } from 'utils/hooks/useLeanBeWidget'
 
 interface ActualitesMenuButtonProps {
   conseiller: Conseiller
@@ -12,10 +13,8 @@ function ActualitesMenuButton({
   conseiller,
   onClick,
 }: ActualitesMenuButtonProps) {
-  const widgetId = estPoleEmploiCEJ(conseiller)
-    ? process.env.LEANBE_PE_WIDGET_ID
-    : process.env.LEANBE_MILO_WIDGET_ID
-  const classWidget = `SGBF-open-${widgetId} w-full`
+  const classWidget = `SGBF-open-${getWidgetId(conseiller.structure)} w-full`
+
   const classMenu =
     'flex p-2 mb-6 items-center layout_base:justify-center rounded-l layout_s:justify-start layout_l:justify-start border-2 border-primary transition-all hover:cursor-pointer hover:border-blanc'
   return (
