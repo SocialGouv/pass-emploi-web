@@ -7,7 +7,6 @@ import { IconName } from 'components/ui/IconComponent'
 import {
   estMilo,
   estPoleEmploi,
-  estPoleEmploiBRSA,
   estSuperviseur,
   StructureConseiller,
 } from 'interfaces/conseiller'
@@ -198,15 +197,12 @@ export default function NavLinks({
           />
         )}
 
-        {process.env.ENABLE_LEANBE &&
-          items.includes(NavItem.Actualites) &&
-          !estPoleEmploiBRSA(conseiller) && (
-            <ActualitesMenuButton
-              conseiller={conseiller}
-              onClick={trackActualite}
-            />
-          )}
-
+        {process.env.ENABLE_LEANBE && items.includes(NavItem.Actualites) && (
+          <ActualitesMenuButton
+            conseiller={conseiller}
+            onClick={trackActualite}
+          />
+        )}
         {items.includes(NavItem.Aide) && (
           <NavLink
             href={getAideHref(conseiller.structure)}
