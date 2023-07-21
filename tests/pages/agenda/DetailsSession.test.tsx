@@ -4,31 +4,58 @@ import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { unConseiller } from 'fixtures/conseiller'
+import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
 import { DetailsSession } from 'interfaces/detailsSession'
+import { BaseJeune } from 'interfaces/jeune'
 import DetailSession, {
   getServerSideProps,
 } from 'pages/agenda/sessions/[session_id]'
+import { getConseillerServerSide } from 'services/conseiller.service'
+import { getJeunesDeLEtablissementServerSide } from 'services/jeunes.service'
 import {
-  changerVisibiliteSession,
   getDetailsSession,
+  modifierInformationsSession,
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('services/conseiller.service')
+jest.mock('services/jeunes.service')
 jest.mock('services/sessions.service')
 
 describe('Détails DetailsSession', () => {
   describe('client side', () => {
     describe('contenu', () => {
       let session: DetailsSession
+      let beneficiairesEtablissement: BaseJeune[]
       beforeEach(async () => {
         // Given
         session = unDetailSession()
+        beneficiairesEtablissement = [
+          uneBaseJeune({
+            id: 'jeune-1',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+          uneBaseJeune({
+            id: 'jeune-2',
+            prenom: 'Octo',
+            nom: 'Puce',
+          }),
+        ]
         // When
-        await render(<DetailSession pageTitle='' session={session} />)
+        await render(
+          <DetailSession
+            pageTitle=''
+            session={session}
+            beneficiairesEtablissement={beneficiairesEtablissement}
+            returnTo='whatever'
+          />
+        )
       })
 
       it('affiche un encart d’information pour la modification sur i-milo', () => {
@@ -99,6 +126,7 @@ describe('Détails DetailsSession', () => {
       let sessionVisible: DetailsSession
       let sessionInvisible: DetailsSession
       let toggleVisibiliteSession: HTMLInputElement
+      let beneficairesEtablissement: BaseJeune[]
       beforeEach(async () => {
         // Given
         sessionVisible = unDetailSession()
@@ -112,11 +140,30 @@ describe('Détails DetailsSession', () => {
             estVisible: false,
           },
         })
+        beneficairesEtablissement = [
+          uneBaseJeune({
+            id: 'jeune-1',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+          uneBaseJeune({
+            id: 'jeune-2',
+            prenom: 'Octo',
+            nom: 'Puce',
+          }),
+        ]
       })
 
       it('affiche un switch désactivé par défaut', async () => {
         // When
-        await render(<DetailSession pageTitle='' session={sessionInvisible} />)
+        await render(
+          <DetailSession
+            pageTitle=''
+            session={sessionInvisible}
+            beneficiairesEtablissement={beneficairesEtablissement}
+            returnTo='whatever'
+          />
+        )
         toggleVisibiliteSession = getToggleVisibiliteSession()
 
         // Then
@@ -125,7 +172,14 @@ describe('Détails DetailsSession', () => {
       })
       it('affiche un switch dont la valeur correspond à la visibilité de la session', async () => {
         // When
-        await render(<DetailSession pageTitle='' session={sessionVisible} />)
+        await render(
+          <DetailSession
+            pageTitle=''
+            session={sessionVisible}
+            beneficiairesEtablissement={beneficairesEtablissement}
+            returnTo='whatever'
+          />
+        )
         toggleVisibiliteSession = getToggleVisibiliteSession()
 
         // Then
@@ -136,9 +190,16 @@ describe('Détails DetailsSession', () => {
       describe('au clic sur le switch', () => {
         it('change la visibilité', async () => {
           // Given
-          ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
+          ;(modifierInformationsSession as jest.Mock).mockResolvedValue(
+            undefined
+          )
           await render(
-            <DetailSession pageTitle='' session={sessionInvisible} />
+            <DetailSession
+              pageTitle=''
+              session={sessionInvisible}
+              beneficiairesEtablissement={beneficairesEtablissement}
+              returnTo='whatever'
+            />
           )
           toggleVisibiliteSession = getToggleVisibiliteSession()
 
@@ -146,11 +207,210 @@ describe('Détails DetailsSession', () => {
           await userEvent.click(toggleVisibiliteSession)
 
           // Then
-          expect(changerVisibiliteSession).toHaveBeenCalledWith(
-            'session-invisible-id',
-            true
+          expect(modifierInformationsSession).toHaveBeenCalledWith(
+            true,
+            'session-invisible-id'
           )
           expect(toggleVisibiliteSession).toBeChecked()
+        })
+      })
+    })
+
+    describe('permet de gérer la liste des inscrits', () => {
+      let session: DetailsSession
+      let beneficairesEtablissement: BaseJeune[]
+      beforeEach(async () => {
+        // Given
+        beneficairesEtablissement = [
+          uneBaseJeune({
+            id: 'jeune-1',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+          uneBaseJeune({
+            id: 'jeune-2',
+            prenom: 'Octo',
+            nom: 'Puce',
+          }),
+          uneBaseJeune({
+            id: 'jeune-3',
+            prenom: 'Maggy',
+            nom: 'Carpe',
+          }),
+          uneBaseJeune({
+            id: 'jeune-4',
+            prenom: 'Tom',
+            nom: 'Sawyer',
+          }),
+        ]
+      })
+
+      describe('contenu', () => {
+        beforeEach(async () => {
+          session = unDetailSession({
+            inscriptions: [
+              {
+                idJeune: 'jeune-1',
+                nom: 'Beau',
+                prenom: 'Harry',
+                statut: 'INSCRIT',
+              },
+            ],
+          })
+
+          await render(
+            <DetailSession
+              pageTitle=''
+              session={session}
+              beneficiairesEtablissement={beneficairesEtablissement}
+              returnTo='whatever'
+            />
+          )
+        })
+        it('affiche la liste des inscrits', () => {
+          // Then
+          expect(
+            screen.getByLabelText(
+              `Désinscrire ${beneficairesEtablissement[0].prenom} ${beneficairesEtablissement[0].nom}`
+            )
+          ).toBeInTheDocument()
+        })
+
+        it('permet d’ajouter un bénéficiaire à la liste des inscrits', async () => {
+          //Given
+          const beneficiaireInput = screen.getByRole('combobox', {
+            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
+          })
+
+          //When
+          await userEvent.type(beneficiaireInput, 'Octo Puce')
+
+          //Then
+          expect(
+            screen.getByLabelText('Désinscrire Octo Puce')
+          ).toBeInTheDocument()
+        })
+
+        it('affiche les boutons de fin de formulaire', () => {
+          expect(
+            screen.getByRole('link', {
+              name: /Annuler/,
+            })
+          ).toBeInTheDocument()
+
+          expect(
+            screen.getByRole('button', {
+              name: /Enregistrer les modifications/,
+            })
+          ).toBeInTheDocument()
+        })
+      })
+
+      describe('au clic sur le bouton d’annulation', () => {
+        it('réinitialise la liste des inscrits', async () => {
+          //Given
+          session = unDetailSession({
+            session: {
+              id: 'session-1',
+              nom: 'titre-session',
+              dateHeureDebut: '2023-06-19 10:00:00',
+              dateHeureFin: '2023-06-19 17:00:00',
+              dateMaxInscription: '2023-06-17',
+              animateur: 'Charles Dupont',
+              lieu: 'CEJ Paris',
+              commentaire: 'bla',
+              estVisible: true,
+              nbPlacesDisponibles: 3,
+            },
+            inscriptions: [
+              {
+                idJeune: 'jeune-1',
+                nom: 'Beau',
+                prenom: 'Harry',
+                statut: 'INSCRIT',
+              },
+            ],
+          })
+          await render(
+            <DetailSession
+              pageTitle=''
+              session={session}
+              beneficiairesEtablissement={beneficairesEtablissement}
+              returnTo='whatever'
+            />
+          )
+          const beneficiaireInput = screen.getByRole('combobox', {
+            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
+          })
+          const annulerBtn = screen.getByRole('link', {
+            name: /Annuler/,
+          })
+
+          //When
+          await userEvent.type(beneficiaireInput, 'Octo Puce')
+          await userEvent.click(annulerBtn)
+
+          //Then
+          expect(screen.getByText('Octo Puce')).toBeInTheDocument()
+        })
+      })
+
+      describe('au clic sur le bouton d’enregistrement', () => {
+        it('appelle la méthode modifierInformationsSession', async () => {
+          //Given
+          ;(modifierInformationsSession as jest.Mock).mockResolvedValue(
+            undefined
+          )
+          session = unDetailSession({
+            session: {
+              id: 'session-1',
+              nom: 'titre-session',
+              dateHeureDebut: '2023-06-19 10:00:00',
+              dateHeureFin: '2023-06-19 17:00:00',
+              dateMaxInscription: '2023-06-17',
+              animateur: 'Charles Dupont',
+              lieu: 'CEJ Paris',
+              commentaire: 'bla',
+              estVisible: true,
+              nbPlacesDisponibles: 3,
+            },
+            inscriptions: [
+              {
+                idJeune: 'jeune-1',
+                nom: 'Beau',
+                prenom: 'Harry',
+                statut: 'INSCRIT',
+              },
+            ],
+          })
+          await render(
+            <DetailSession
+              pageTitle=''
+              session={session}
+              beneficiairesEtablissement={beneficairesEtablissement}
+              returnTo='whatever'
+            />
+          )
+          const beneficiaireInput = screen.getByRole('combobox', {
+            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
+          })
+          const enregistrerBtn = screen.getByRole('button', {
+            name: /Enregistrer les modifications/,
+          })
+
+          //When
+          await userEvent.type(beneficiaireInput, 'Octo Puce')
+          await userEvent.click(enregistrerBtn)
+
+          //Then
+          expect(modifierInformationsSession).toHaveBeenCalledWith(
+            true,
+            'session-1',
+            [
+              { commentaire: undefined, idJeune: 'jeune-2', statut: 'INSCRIT' },
+              { commentaire: undefined, idJeune: 'jeune-1', statut: 'INSCRIT' },
+            ]
+          )
         })
       })
     })
@@ -195,6 +455,21 @@ describe('Détails DetailsSession', () => {
           },
           validSession: true,
         })
+        ;(getJeunesDeLEtablissementServerSide as jest.Mock).mockReturnValue([
+          uneBaseJeune({
+            id: 'jeune-1',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+          uneBaseJeune({
+            id: 'jeune-2',
+            prenom: 'Octo',
+            nom: 'Puce',
+          }),
+        ])
+        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+          unConseiller({ id: 'id-conseiller' })
+        )
 
         // When
         actual = await getServerSideProps({
@@ -212,12 +487,30 @@ describe('Détails DetailsSession', () => {
 
       it('prépare la page', async () => {
         // Given
+        const beneficiairesEtablissement = [
+          uneBaseJeune({
+            id: 'jeune-1',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+          uneBaseJeune({
+            id: 'jeune-2',
+            prenom: 'Octo',
+            nom: 'Puce',
+          }),
+        ]
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
             user: { structure: 'MILO' },
           },
         })
+        ;(getJeunesDeLEtablissementServerSide as jest.Mock).mockReturnValue(
+          beneficiairesEtablissement
+        )
+        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+          unConseiller({ id: 'id-conseiller' })
+        )
 
         const session = unDetailSession()
 
@@ -230,6 +523,7 @@ describe('Détails DetailsSession', () => {
         // Then
         expect(actual).toEqual({
           props: {
+            beneficiairesEtablissement: beneficiairesEtablissement,
             pageTitle: `Détail session ${session.session.nom} - Agenda`,
             pageHeader: 'Détail de la session i-milo',
             returnTo: '/mes-jeunes',

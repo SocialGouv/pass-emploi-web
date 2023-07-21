@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiGet, apiPut } from 'clients/api.client'
+import { apiGet, apiPatch, apiPut } from 'clients/api.client'
 import { DetailsSession } from 'interfaces/detailsSession'
 import { AnimationCollective } from 'interfaces/evenement'
 import { DetailsSessionJson } from 'interfaces/json/detailsSession'
@@ -10,6 +10,12 @@ import {
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
 import { ApiError } from 'utils/httpClient'
+
+export type InformationBeneficiaireSession = {
+  idJeune: string
+  statut: string
+  commentaire?: string
+}
 
 export async function getSessionsMissionLocale(
   idConseiller: string,
@@ -45,6 +51,26 @@ export async function getDetailsSession(
   }
 }
 
+export async function modifierInformationsSession(
+  estVisible: boolean,
+  idSession: string,
+  inscriptions?: InformationBeneficiaireSession[]
+): Promise<void> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
+  const payload = {
+    estVisible: estVisible,
+    inscriptions: inscriptions ?? [],
+  }
+
+  return await apiPatch(
+    `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
+    payload,
+    accessToken
+  )
+}
+
 export async function changerVisibiliteSession(
   idSession: string,
   estVisible: boolean
@@ -75,11 +101,14 @@ export function jsonToSession(json: DetailsSessionJson): DetailsSession {
       theme: json.offre.theme,
       type: json.offre.type.label,
     },
+    inscriptions: json.inscriptions,
   }
 
   if (json.offre.description) session.offre.description = json.offre.description
   if (json.offre.nomPartenaire)
     session.offre.partenaire = json.offre.nomPartenaire
+  if (json.session.nbPlacesDisponibles)
+    session.session.nbPlacesDisponibles = json.session.nbPlacesDisponibles
 
   if (json.session.dateMaxInscription)
     session.session.dateMaxInscription = json.session.dateMaxInscription
