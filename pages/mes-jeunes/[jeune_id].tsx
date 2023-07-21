@@ -621,8 +621,8 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     return { notFound: true }
   }
 
-  let offresPE = []
-  let recherchesPE = []
+  let offresPE: Offre[] = []
+  let recherchesPE: Recherche[] = []
 
   if (metadonneesFavoris?.autoriseLePartage) {
     ;[offresPE, recherchesPE] = await Promise.all([
