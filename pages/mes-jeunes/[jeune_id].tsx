@@ -624,7 +624,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   let offresPE = []
   let recherchesPE = []
 
-  if (metadonneesFavoris && metadonneesFavoris?.autoriseLePartage) {
+  if (metadonneesFavoris?.autoriseLePartage) {
     ;[offresPE, recherchesPE] = await Promise.all([
       userIsPoleEmploi
         ? getOffres(context.query.jeune_id as string, accessToken)
