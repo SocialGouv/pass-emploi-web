@@ -28,6 +28,14 @@ export function unDetailSessionJson(
       description: 'toto',
       nomPartenaire: '65-ML SUE',
     },
+    inscriptions: [
+      {
+        idJeune: 'jeune-1',
+        nom: 'Beau',
+        prenom: 'Harry',
+        statut: 'INSCRIT',
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }
@@ -47,6 +55,7 @@ export function unDetailSession(
       lieu: 'CEJ Paris',
       commentaire: 'bla',
       estVisible: true,
+      nbPlacesDisponibles: 20,
     },
     offre: {
       titre: 'aide',
@@ -55,6 +64,14 @@ export function unDetailSession(
       description: 'toto',
       partenaire: '65-ML SUE',
     },
+    inscriptions: [
+      {
+        idJeune: 'jeune-1',
+        nom: 'Beau',
+        prenom: 'Harry',
+        statut: 'INSCRIT',
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }

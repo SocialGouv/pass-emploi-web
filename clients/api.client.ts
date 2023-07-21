@@ -75,6 +75,23 @@ export async function apiPut(
   })
 }
 
+export async function apiPatch(
+  path: string,
+  payload: { [key: string]: any },
+  accessToken: string
+): Promise<void> {
+  const headers = new Headers({
+    Authorization: `Bearer ${accessToken}`,
+    'content-type': 'application/json',
+  })
+
+  return fetchNoContent(`${apiPrefix}${path}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(payload),
+  })
+}
+
 export async function apiDelete(
   path: string,
   accessToken: string

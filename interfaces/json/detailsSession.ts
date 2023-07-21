@@ -22,4 +22,12 @@ export type DetailsSessionJson = {
     description?: string
     nomPartenaire?: string
   }
+  inscriptions: [
+    {
+      idJeune: string
+      nom: string
+      prenom: string
+      statut: string
+    }
+  ]
 }

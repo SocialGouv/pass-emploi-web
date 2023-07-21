@@ -262,6 +262,17 @@ export async function getJeunesDeLEtablissement(
   return jeunes.map(jsonToBaseJeune)
 }
 
+export async function getJeunesDeLEtablissementServerSide(
+  idEtablissement: string,
+  accessToken: string
+): Promise<BaseJeune[]> {
+  const { content: jeunes } = await apiGet<BaseJeuneJson[]>(
+    `/etablissements/${idEtablissement}/jeunes`,
+    accessToken
+  )
+  return jeunes.map(jsonToBaseJeune)
+}
+
 export async function rechercheJeunesDeLEtablissement(
   idEtablissement: string,
   recherche: string,

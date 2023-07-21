@@ -1,10 +1,13 @@
 import { DateTime } from 'luxon'
 
-import { apiGet, apiPut } from 'clients/api.client'
+import { apiGet, apiPatch, apiPut } from 'clients/api.client'
 import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import { AnimationCollective } from 'interfaces/evenement'
 import { SessionMiloJson } from 'interfaces/json/session'
-import { getSessionsMissionLocale } from 'services/sessions.service'
+import {
+  getSessionsMissionLocale,
+  modifierInformationsSession,
+} from 'services/sessions.service'
 import {
   changerVisibiliteSession,
   getDetailsSession,
@@ -140,6 +143,27 @@ describe('SessionsApiService', () => {
       expect(apiPut).toHaveBeenCalledWith(
         '/conseillers/milo/idConseiller/sessions/idSession',
         { estVisible: true },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.modifierInformationsSession', () => {
+    it('modifie les informations de la session', async () => {
+      // When
+      await modifierInformationsSession(true, 'idSession', [
+        { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
+      ])
+
+      // Then
+      expect(apiPatch).toHaveBeenCalledWith(
+        '/conseillers/milo/idConseiller/sessions/idSession',
+        {
+          estVisible: true,
+          inscriptions: [
+            { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
+          ],
+        },
         'accessToken'
       )
     })

@@ -6,6 +6,7 @@ export type DetailsSession = {
     dateHeureFin: string
     dateMaxInscription?: string
     lieu: string
+    nbPlacesDisponibles?: number
     estVisible: boolean
     animateur?: string
     commentaire?: string
@@ -17,4 +18,12 @@ export type DetailsSession = {
     description?: string
     partenaire?: string
   }
+  inscriptions: [
+    {
+      idJeune: string
+      nom: string
+      prenom: string
+      statut: string
+    }
+  ]
 }
