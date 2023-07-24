@@ -37,5 +37,5 @@ function jsonToTypeSessionMilo(jsonType: TypeEvenement): string {
   if (jsonType.code === 'COLLECTIVE_INFORMATION') {
     return 'info coll i-milo'
   }
-  return jsonType.label
+  return 'Atelier i-milo'
 }
