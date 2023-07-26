@@ -21,11 +21,14 @@ import {
   getDetailsSession,
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
+import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
+jest.mock('components/Modal')
+jest.mock('components/PageActionsPortal')
 jest.mock('services/jeunes.service')
 jest.mock('services/sessions.service')
 
@@ -264,6 +267,18 @@ describe('Détails Session', () => {
             },
             inscriptions: [
               {
+                idJeune: 'jeune-3',
+                nom: 'Carpe',
+                prenom: 'Maggy',
+                statut: 'REFUS_JEUNE',
+              },
+              {
+                idJeune: 'jeune-2',
+                nom: 'Puce',
+                prenom: 'Octo',
+                statut: 'REFUS_TIERS',
+              },
+              {
                 idJeune: 'jeune-1',
                 nom: 'Beau',
                 prenom: 'Harry',
@@ -288,6 +303,8 @@ describe('Détails Session', () => {
               `Désinscrire ${beneficairesEtablissement[0].prenom} ${beneficairesEtablissement[0].nom}`
             )
           ).toBeInTheDocument()
+          expect(screen.getByText('Refus Tiers')).toBeInTheDocument()
+          expect(screen.getByText('Refus Jeune')).toBeInTheDocument()
         })
 
         it('permet d’ajouter un bénéficiaire à la liste des inscrits', async () => {
@@ -297,11 +314,11 @@ describe('Détails Session', () => {
           })
 
           //When
-          await userEvent.type(beneficiaireInput, 'Octo Puce')
+          await userEvent.type(beneficiaireInput, 'Tom Sawyer')
 
           //Then
           expect(
-            screen.getByLabelText('Désinscrire Octo Puce')
+            screen.getByLabelText('Désinscrire Tom Sawyer')
           ).toBeInTheDocument()
         })
 
@@ -508,6 +525,251 @@ describe('Détails Session', () => {
             name: /Enregistrer les modifications/,
           })
         ).toThrow()
+      })
+    })
+
+    describe('permet de désinscrire un bénéficiaire', () => {
+      let session: Session
+      let beneficairesEtablissement: BaseJeune[]
+      beforeEach(async () => {
+        // Given
+        beneficairesEtablissement = [
+          uneBaseJeune({
+            id: 'jeune-1',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+          uneBaseJeune({
+            id: 'jeune-2',
+            prenom: 'Octo',
+            nom: 'Puce',
+          }),
+          uneBaseJeune({
+            id: 'jeune-3',
+            prenom: 'Maggy',
+            nom: 'Carpe',
+          }),
+          uneBaseJeune({
+            id: 'jeune-4',
+            prenom: 'Tom',
+            nom: 'Sawyer',
+          }),
+        ]
+      })
+
+      it('si le bénéficiaire n’était pas inscrit', async () => {
+        session = unDetailSession({
+          session: {
+            id: 'session-1',
+            nom: 'titre-session',
+            dateHeureDebut: DateTime.now()
+              .plus({ days: 1, minute: 1 })
+              .toString(),
+            dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+            dateMaxInscription: DateTime.now().plus({ days: 1 }).toString(),
+            animateur: 'Charles Dupont',
+            lieu: 'CEJ Paris',
+            commentaire: 'bla',
+            estVisible: true,
+            nbPlacesDisponibles: 3,
+          },
+          inscriptions: [],
+        })
+
+        await render(
+          <DetailSession
+            pageTitle=''
+            session={session}
+            beneficiairesEtablissement={beneficairesEtablissement}
+            returnTo='whatever'
+          />
+        )
+
+        const beneficiaireInput = screen.getByRole('combobox', {
+          name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
+        })
+        await userEvent.type(beneficiaireInput, 'Octo Puce')
+        const desinscriptionBtn = screen.getByRole('button', {
+          name: /Désinscrire Octo Puce/,
+        })
+
+        //When
+        await userEvent.click(desinscriptionBtn)
+
+        //Then
+        expect(desinscriptionBtn).not.toBeInTheDocument()
+      })
+
+      describe('si le bénéficiaire était inscrit', () => {
+        beforeEach(async () => {
+          session = unDetailSession({
+            session: {
+              id: 'session-1',
+              nom: 'titre-session',
+              dateHeureDebut: DateTime.now()
+                .plus({ days: 1, minute: 1 })
+                .toString(),
+              dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+              dateMaxInscription: DateTime.now().plus({ days: 1 }).toString(),
+              animateur: 'Charles Dupont',
+              lieu: 'CEJ Paris',
+              commentaire: 'bla',
+              estVisible: true,
+              nbPlacesDisponibles: 3,
+            },
+            inscriptions: [
+              {
+                idJeune: 'jeune-2',
+                prenom: 'Octo',
+                nom: 'Puce',
+                statut: 'INSCRIT',
+              },
+            ],
+          })
+
+          renderWithContexts(
+            <DetailSession
+              pageTitle=''
+              session={session}
+              beneficiairesEtablissement={beneficairesEtablissement}
+              returnTo='whatever'
+            />
+          )
+
+          const desinscriptionInput = screen.getByRole('button', {
+            name: /Désinscrire Octo Puce/,
+          })
+
+          //When
+          await userEvent.click(desinscriptionInput)
+        })
+
+        it('affiche la modale de désinscription', () => {
+          //Then
+          expect(
+            screen.getByRole('radio', { name: /J’ai fait une erreur/ })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('radio', { name: /Refus tiers/ })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('radio', { name: /Refus jeune/ })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('textbox', { name: /Veuillez préciser le motif/ })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('textbox', { name: /Veuillez préciser le motif/ })
+          ).toBeDisabled()
+        })
+
+        it('permet d’activer le champs de saisie du motif de désinscription', async () => {
+          //When
+          const refusJeuneBtn = screen.getByRole('radio', {
+            name: /Refus jeune/,
+          })
+
+          //When
+          await userEvent.click(refusJeuneBtn)
+
+          //Then
+          expect(
+            screen.getByRole('textbox', { name: /Veuillez préciser le motif/ })
+          ).not.toBeDisabled()
+        })
+      })
+    })
+
+    describe('permet de réinscrire un bénéficiaire', () => {
+      //Given
+      let session: Session
+      let beneficairesEtablissement: BaseJeune[]
+
+      beforeEach(async () => {
+        session = unDetailSession({
+          session: {
+            id: 'session-1',
+            nom: 'titre-session',
+            dateHeureDebut: DateTime.now()
+              .plus({ days: 1, minute: 1 })
+              .toString(),
+            dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+            dateMaxInscription: DateTime.now().plus({ days: 1 }).toString(),
+            animateur: 'Charles Dupont',
+            lieu: 'CEJ Paris',
+            commentaire: 'bla',
+            estVisible: true,
+            nbPlacesDisponibles: 3,
+          },
+          inscriptions: [
+            {
+              idJeune: 'idHarryBeau',
+              nom: 'Beau',
+              prenom: 'Harry',
+              statut: 'REFUS_TIER',
+            },
+          ],
+        })
+
+        beneficairesEtablissement = [
+          uneBaseJeune({
+            id: 'idHarryBeau',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+        ]
+
+        await render(
+          <DetailSession
+            pageTitle=''
+            session={session}
+            beneficiairesEtablissement={beneficairesEtablissement}
+            returnTo='whatever'
+          />
+        )
+      })
+
+      it('affiche le bouton de réinscription du bénéficiaire désinscrit', async () => {
+        //Then
+
+        expect(
+          screen.getByRole('button', {
+            name: /Réinscrire Harry Beau/,
+          })
+        ).toBeInTheDocument()
+      })
+
+      it('au clic sur le bouton de réinscription, change le statut du bénéficiaire', async () => {
+        //Given
+        ;(changerInscriptionsSession as jest.Mock).mockResolvedValue(undefined)
+
+        const reinscriptionBeneficiaireBtn = screen.getByRole('button', {
+          name: /Réinscrire Harry Beau/,
+        })
+        const validationBtn = screen.getByRole('button', {
+          name: /Enregistrer/,
+        })
+
+        //When
+        await userEvent.click(reinscriptionBeneficiaireBtn)
+        await userEvent.click(validationBtn)
+
+        //Then
+        expect(() =>
+          screen.getByRole('button', {
+            name: /Réinscrire Harry Beau/,
+          })
+        ).toThrow()
+
+        expect(
+          screen.getByRole('button', {
+            name: /Désinscrire Harry Beau/,
+          })
+        ).toBeInTheDocument()
+
+        expect(changerInscriptionsSession).toHaveBeenCalledWith('session-1', [
+          { commentaire: undefined, idJeune: 'idHarryBeau', statut: 'INSCRIT' },
+        ])
       })
     })
   })
