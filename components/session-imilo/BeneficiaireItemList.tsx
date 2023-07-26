@@ -5,6 +5,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 type BeneficiaireItemListProps = {
   beneficiaireEstInscrit: boolean
+  dateLimiteEstDepassee: boolean
   idBeneficiaire: string
   value: string
   statut: string
@@ -13,6 +14,7 @@ type BeneficiaireItemListProps = {
 
 export default function BeneficiaireItemList({
   beneficiaireEstInscrit,
+  dateLimiteEstDepassee,
   idBeneficiaire,
   value,
   statut,
@@ -37,7 +39,7 @@ export default function BeneficiaireItemList({
         {!beneficiaireEstInscrit && <span>{statut}</span>}
       </div>
 
-      {beneficiaireEstInscrit && (
+      {beneficiaireEstInscrit && !dateLimiteEstDepassee && (
         <Button
           style={ButtonStyle.SECONDARY}
           label={`Désinscrire ${value}`}

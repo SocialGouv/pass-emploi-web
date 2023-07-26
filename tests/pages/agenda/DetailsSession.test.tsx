@@ -248,6 +248,20 @@ describe('Détails DetailsSession', () => {
       describe('contenu', () => {
         beforeEach(async () => {
           session = unDetailSession({
+            session: {
+              id: 'session-1',
+              nom: 'titre-session',
+              dateHeureDebut: DateTime.now()
+                .plus({ days: 1, minute: 1 })
+                .toString(),
+              dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+              dateMaxInscription: DateTime.now().plus({ days: 1 }).toString(),
+              animateur: 'Charles Dupont',
+              lieu: 'CEJ Paris',
+              commentaire: 'bla',
+              estVisible: true,
+              nbPlacesDisponibles: 3,
+            },
             inscriptions: [
               {
                 idJeune: 'jeune-1',
@@ -313,9 +327,11 @@ describe('Détails DetailsSession', () => {
             session: {
               id: 'session-1',
               nom: 'titre-session',
-              dateHeureDebut: '2023-06-19 10:00:00',
-              dateHeureFin: '2023-06-19 17:00:00',
-              dateMaxInscription: '2023-06-17',
+              dateHeureDebut: DateTime.now()
+                .plus({ days: 1, minute: 1 })
+                .toString(),
+              dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+              dateMaxInscription: DateTime.now().plus({ days: 1 }).toString(),
               animateur: 'Charles Dupont',
               lieu: 'CEJ Paris',
               commentaire: 'bla',
@@ -365,9 +381,11 @@ describe('Détails DetailsSession', () => {
             session: {
               id: 'session-1',
               nom: 'titre-session',
-              dateHeureDebut: '2023-06-19 10:00:00',
-              dateHeureFin: '2023-06-19 17:00:00',
-              dateMaxInscription: '2023-06-17',
+              dateHeureDebut: DateTime.now()
+                .plus({ days: 1, minute: 1 })
+                .toString(),
+              dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+              dateMaxInscription: DateTime.now().plus({ days: 1 }).toString(),
               animateur: 'Charles Dupont',
               lieu: 'CEJ Paris',
               commentaire: 'bla',
@@ -383,6 +401,7 @@ describe('Détails DetailsSession', () => {
               },
             ],
           })
+
           await render(
             <DetailSession
               pageTitle=''
@@ -412,6 +431,87 @@ describe('Détails DetailsSession', () => {
             ]
           )
         })
+      })
+    })
+
+    describe('si la date limite d’inscription est dépassée', () => {
+      let session: DetailsSession
+      let beneficairesEtablissement: BaseJeune[]
+      beforeEach(async () => {
+        // Given
+        beneficairesEtablissement = [
+          uneBaseJeune({
+            id: 'jeune-1',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+        ]
+
+        session = unDetailSession({
+          session: {
+            id: 'session-1',
+            nom: 'titre-session',
+            dateHeureDebut: DateTime.now()
+              .plus({ days: 1, minute: 1 })
+              .toString(),
+            dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+            dateMaxInscription: DateTime.now().minus({ days: 1 }).toString(),
+            animateur: 'Charles Dupont',
+            lieu: 'CEJ Paris',
+            commentaire: 'bla',
+            estVisible: true,
+            nbPlacesDisponibles: 3,
+          },
+          inscriptions: [
+            {
+              idJeune: 'jeune-1',
+              nom: 'Beau',
+              prenom: 'Harry',
+              statut: 'INSCRIT',
+            },
+          ],
+        })
+
+        await render(
+          <DetailSession
+            pageTitle=''
+            session={session}
+            beneficiairesEtablissement={beneficairesEtablissement}
+            returnTo='whatever'
+          />
+        )
+      })
+
+      it('affiche un message d’alerte', () => {
+        //Then
+        expect(
+          screen.getByText(
+            'Les inscriptions ne sont plus possibles car la date limite est atteinte.'
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('désactive le champs de recherche des bénéficiaires', () => {
+        expect(
+          screen.getByRole('combobox', {
+            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
+          })
+        ).toBeDisabled()
+      })
+
+      it('n’affiche pas le bouton désinscrire', () => {
+        expect(() =>
+          screen.getByRole('button', { name: /Désinscrire/ })
+        ).toThrow()
+      })
+
+      it('n’affiche pas les boutons de soumission du formulaire', () => {
+        expect(() => screen.getByRole('link', { name: /Annuler/ })).toThrow()
+        expect(() =>
+          screen.getByRole('button', {
+            name: /Enregistrer les modifications/,
+          })
+        ).toThrow()
       })
     })
   })
