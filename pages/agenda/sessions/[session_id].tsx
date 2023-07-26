@@ -1,6 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
+import dynamic from 'next/dynamic'
 import React, { FormEvent, useRef, useState } from 'react'
 
 import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
@@ -21,6 +22,11 @@ import { PageProps } from 'interfaces/pageProps'
 import { Session, StatutBeneficiaire } from 'interfaces/session'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
+
+const DesinscriptionBeneficiaireModal = dynamic(
+  import('components/session-imilo/DesinscriptionBeneficiaireModal'),
+  { ssr: false }
+)
 
 type DetailSessionProps = PageProps & {
   beneficiairesEtablissement: BaseJeune[]
@@ -62,6 +68,32 @@ function FicheDetailsSession({
   const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] = useState<
     ValueWithError<BeneficiaireSelectionneSession[]>
   >({ value: initBeneficiairesSelectionnes() })
+
+  const [beneficiaireADesinscrire, setBeneficiaireADesinscire] = useState<
+    | {
+        value: string
+        id: string
+      }
+    | undefined
+  >()
+
+  console.log('>>>> TOPALAVACHET', beneficiairesSelectionnes.value)
+
+  function openDesinscriptionBeneficiaireModal(
+    id: string,
+    nom: string,
+    statut: string
+  ) {
+    setBeneficiaireADesinscire({
+      value: nom,
+      id,
+      statut,
+    })
+  }
+
+  function closeDesinscriptionBeneficiaireModal() {
+    setBeneficiaireADesinscire(undefined)
+  }
 
   function dateLimiteEstDepassee() {
     return Boolean(
@@ -160,9 +192,50 @@ function FicheDetailsSession({
       const nouvelleSelection: BeneficiaireSelectionneSession[] =
         beneficiairesSelectionnes.value.filter((b) => b.id !== idBeneficiaire)
       setBeneficiairesSelectionnes({ value: nouvelleSelection })
-      if (nbPlacesDisponibles.value)
+      if (nbPlacesDisponibles.value !== undefined)
         setNbPlacesDisponibles({ value: nbPlacesDisponibles.value + 1 })
+    } else {
+      openDesinscriptionBeneficiaireModal(
+        beneficiaireDejaInscrit.idJeune,
+        `${beneficiaireDejaInscrit.prenom} ${beneficiaireDejaInscrit.nom}`,
+        beneficiaireDejaInscrit.statut
+      )
     }
+  }
+
+  function reinscrireBeneficiaire(idBeneficiaire: string) {
+    const indexBeneficiaireAReinscrire =
+      beneficiairesSelectionnes.value.findIndex(
+        ({ id }) => id === idBeneficiaire
+      )
+
+    setBeneficiairesSelectionnes((state) => {
+      const newState = { ...state }
+
+      newState.value[indexBeneficiaireAReinscrire].statut =
+        StatutBeneficiaire.INSCRIT
+      return newState
+    })
+
+    if (nbPlacesDisponibles.value !== undefined)
+      setNbPlacesDisponibles({ value: nbPlacesDisponibles.value - 1 })
+  }
+
+  function desinscrireBeneficiaireInscrit(
+    beneficiaireDesinscrit: BeneficiaireSelectionneSession
+  ) {
+    const indexBeneficiaireADesinscrire =
+      beneficiairesSelectionnes.value.findIndex(
+        ({ id }) => id === beneficiaireDesinscrit.id
+      )
+    setBeneficiairesSelectionnes((state) => {
+      state.value[indexBeneficiaireADesinscrire] = beneficiaireDesinscrit
+      return state
+    })
+
+    if (nbPlacesDisponibles.value !== undefined)
+      setNbPlacesDisponibles({ value: nbPlacesDisponibles.value + 1 })
+    closeDesinscriptionBeneficiaireModal()
   }
 
   function getNbPlacesDisponibles() {
@@ -426,6 +499,7 @@ function FicheDetailsSession({
                     beneficiaire={beneficiaire}
                     dateLimiteDepassee={dateLimiteDepassee}
                     onDesinscrire={desinscrireBeneficiaire}
+                    onReinscrire={reinscrireBeneficiaire}
                   />
                 </li>
               ))}
@@ -452,6 +526,15 @@ function FicheDetailsSession({
           </div>
         )}
       </form>
+
+      {beneficiaireADesinscrire && (
+        <DesinscriptionBeneficiaireModal
+          onCancel={closeDesinscriptionBeneficiaireModal}
+          onConfirmation={desinscrireBeneficiaireInscrit}
+          beneficiaireADesinscrire={beneficiaireADesinscrire}
+          sessionName={session.session.nom}
+        />
+      )}
     </>
   )
 }

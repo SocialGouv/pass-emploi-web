@@ -11,14 +11,26 @@ type BeneficiaireItemListProps = {
   idBeneficiaire: string
   value: string
   onDesinscrire: (id: string) => void
+  onReinscrire: (id: string) => void
 }
 
 export default function BeneficiaireItemList({
   beneficiaire,
   dateLimiteDepassee,
   onDesinscrire,
+  onReinscrire,
 }: BeneficiaireItemListProps) {
   const beneficiaireEstInscrit = beneficiaire.statut === 'INSCRIT'
+
+  const beneficiaireAStatutRefus =
+    beneficiaire.statut !== StatutBeneficiaire.DESINSCRIT &&
+    beneficiaire.statut !== StatutBeneficiaire.INSCRIT
+
+  function afficherStatut() {
+    return beneficiaire.statut === StatutBeneficiaire.REFUS_JEUNE
+      ? 'Refus Jeune'
+      : 'Refus Tiers'
+  }
 
   return (
     <>
@@ -33,21 +45,37 @@ export default function BeneficiaireItemList({
             beneficiaireEstInscrit ? 'fill-success' : 'fill-warning'
           }`}
         />
-        {beneficiaire.value}
-        {!beneficiaireEstInscrit && beneficiaire.statut}
-        {beneficiaireEstInscrit && (
-          <span className='sr-only'>{beneficiaire.statut}</span>
-        )}
+        <div className='flex flex-col'>
+          <p>{beneficiaire.value}</p>
+          {beneficiaireAStatutRefus && <span>{afficherStatut()}</span>}
+          {beneficiaireEstInscrit && (
+            <span className='sr-only'>{beneficiaire.statut}</span>
+          )}
+        </div>
       </div>
 
-      {beneficiaireEstInscrit && !dateLimiteDepassee && (
-        <Button
-          style={ButtonStyle.SECONDARY}
-          label={`Désinscrire ${beneficiaire.value}`}
-          onClick={() => onDesinscrire(beneficiaire.id)}
-        >
-          Désinscrire
-        </Button>
+      {!dateLimiteDepassee && (
+        <>
+          {beneficiaireEstInscrit && (
+            <Button
+              style={ButtonStyle.SECONDARY}
+              label={`Désinscrire ${beneficiaire.value}`}
+              onClick={() => onDesinscrire(beneficiaire.id)}
+            >
+              Désinscrire
+            </Button>
+          )}
+
+          {!beneficiaireEstInscrit && (
+            <Button
+              style={ButtonStyle.TERTIARY}
+              label={`Réinscrire ${beneficiaire.value}`}
+              onClick={() => onReinscrire(beneficiaire.id)}
+            >
+              Réinscrire
+            </Button>
+          )}
+        </>
       )}
     </>
   )

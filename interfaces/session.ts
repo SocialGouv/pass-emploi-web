@@ -28,4 +28,7 @@ export type Session = {
 
 export const StatutBeneficiaire = {
   INSCRIT: 'INSCRIT',
+  DESINSCRIT: 'DESINSCRIT',
+  REFUS_JEUNE: 'REFUS_JEUNE',
+  REFUS_TIERS: 'REFUS_TIERS',
 }
