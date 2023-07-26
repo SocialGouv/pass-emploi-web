@@ -5132,10 +5132,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "@types/luxon@npm:3.3.0"
-  checksum: f7e3a89fc3ca404fbc3ea538653ed6860bc28f570a8c4d6d24449b89b9b553b7d6ad6cc94a9e129c5b8c9a2b97f0c365b3017f811e59c4a859a9c219a1c918e0
+"@types/luxon@npm:^3.3.1":
+  version: 3.3.1
+  resolution: "@types/luxon@npm:3.3.1"
+  checksum: da8f6158edacae1430f3eca5f4ab4891200ffb34aa521ef6bae407a3c50b3854907098bc4535fb2a66a2779738f3c6c48fdfd86f01117a6f4844b18536cdb7c0
   languageName: node
   linkType: hard
 
@@ -5244,7 +5244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.2.6":
+"@types/react@npm:*":
   version: 18.2.7
   resolution: "@types/react@npm:18.2.7"
   dependencies:
@@ -5252,6 +5252,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: caa5da4cf929766738ec789301dc6fb6624bd48dd317d851c4c9b84b1f47cd8ebe17fe01398cadaa0bc938cd4d502d67f4b9de9ff771dc132096bdc86228efba
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.16":
+  version: 18.2.16
+  resolution: "@types/react@npm:18.2.16"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 3d4fdc12509e0098e0dbb4bacdea53e8ccc6632e9df63d9f2711c77aa81ce3b2bb9c76d087f284034b25fd7245680167f4832bf6e4df960c5af2634b52adfd0c
   languageName: node
   linkType: hard
 
@@ -9460,9 +9471,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-storybook@npm:^0.6.12":
-  version: 0.6.12
-  resolution: "eslint-plugin-storybook@npm:0.6.12"
+"eslint-plugin-storybook@npm:^0.6.13":
+  version: 0.6.13
+  resolution: "eslint-plugin-storybook@npm:0.6.13"
   dependencies:
     "@storybook/csf": ^0.0.1
     "@typescript-eslint/utils": ^5.45.0
@@ -9470,7 +9481,7 @@ __metadata:
     ts-dedent: ^2.2.0
   peerDependencies:
     eslint: ">=6"
-  checksum: 8e0e160c71216019c291a5a03b797b5359076067d16ea03b3dec63594093d45398f028d15c47eb89f2ddb6e8db18cc7e376b02d921dacc4fb31bbc8da46363c8
+  checksum: 4d7bebd19bbebcdc36042e1e796dfd25fbde5f9d3a3d551a4d75fe1f41f537412f53fcf6b5e544386c5e0e2ce7af30efdabeb9169df27333e3e793a26fe2f008
   languageName: node
   linkType: hard
 
@@ -15158,8 +15169,8 @@ __metadata:
     "@types/crypto-js": ^4.1.1
     "@types/jsonwebtoken": ^9.0.2
     "@types/lodash.isequal": ^4.5.6
-    "@types/luxon": ^3.3.0
-    "@types/react": ^18.2.6
+    "@types/luxon": ^3.3.1
+    "@types/react": ^18.2.16
     autoprefixer: ^10.4.14
     crypto-js: 4.1.1
     css-loader: ^6.7.3
@@ -15169,7 +15180,7 @@ __metadata:
     eslint-config-next: 13.4.9
     eslint-config-prettier: ^8.8.0
     eslint-plugin-prettier: ^5.0.0
-    eslint-plugin-storybook: ^0.6.12
+    eslint-plugin-storybook: ^0.6.13
     firebase: 9.23.0
     global: ^4.4.0
     html-react-parser: 4.0.0
@@ -15185,15 +15196,15 @@ __metadata:
     next-themes: 0.2.1
     pino: 8.14.1
     pino-pretty: ^10.0.0
-    postcss: ^8.4.23
+    postcss: ^8.4.27
     prettier: ^3.0.0
     react: 18.2.0
     react-dom: 18.2.0
     react-router-dom: 6.14.1
     source-map-explorer: ^2.5.3
-    style-loader: ^3.3.2
+    style-loader: ^3.3.3
     tailwindcss: 3.3.2
-    ts-loader: ^9.4.2
+    ts-loader: ^9.4.4
     tsconfig-paths-webpack-plugin: ^4.0.1
     typescript: ^5.0.4
   languageName: unknown
@@ -15730,6 +15741,17 @@ __metadata:
     picocolors: ^1.0.0
     source-map-js: ^1.0.2
   checksum: 814e2126dacfea313588eda09cc99a9b4c26ec55c059188aa7a916d20d26d483483106dc5ff9e560731b59f45c5bb91b945dfadc670aed875cc90ddbbf4e787d
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.27":
+  version: 8.4.27
+  resolution: "postcss@npm:8.4.27"
+  dependencies:
+    nanoid: ^3.3.6
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.2
+  checksum: 1cdd0c298849df6cd65f7e646a3ba36870a37b65f55fd59d1a165539c263e9b4872a402bf4ed1ca1bc31f58b68b2835545e33ea1a23b161a1f8aa6d5ded81e78
   languageName: node
   linkType: hard
 
@@ -18061,7 +18083,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-loader@npm:^3.3.2":
+"style-loader@npm:^3.3.3":
   version: 3.3.3
   resolution: "style-loader@npm:3.3.3"
   peerDependencies:
@@ -18640,9 +18662,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^9.4.2":
-  version: 9.4.3
-  resolution: "ts-loader@npm:9.4.3"
+"ts-loader@npm:^9.4.4":
+  version: 9.4.4
+  resolution: "ts-loader@npm:9.4.4"
   dependencies:
     chalk: ^4.1.0
     enhanced-resolve: ^5.0.0
@@ -18651,7 +18673,7 @@ __metadata:
   peerDependencies:
     typescript: "*"
     webpack: ^5.0.0
-  checksum: 139ed53bc60717d0ca231cdffbdef7566b9feda11c72fecc697983113f1266ccca2e1cdf191f841a43afa6b87d6afe57a0caf4feecf02f30845aa7ac6f2411a4
+  checksum: 8e5e6b839b0edfa40d2156c880d88ccab58226894ea5978221bc48c7db3215e2e856bfd0093f148e925a2befc42d6c94cafa9a994a7da274541efaa916012b63
   languageName: node
   linkType: hard
 
