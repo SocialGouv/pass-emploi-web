@@ -12,6 +12,7 @@ import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { Switch } from 'components/ui/Form/Switch'
 import { IconName } from 'components/ui/IconComponent'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
@@ -46,6 +47,9 @@ function FicheDetailsSession({
   returnTo,
 }: DetailSessionProps) {
   const input = useRef<HTMLInputElement>(null)
+  const dateLimiteEstDepassee = session.session.dateMaxInscription
+    ? DateTime.fromISO(session.session.dateMaxInscription) - DateTime.now() < 0
+    : false
 
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
     session.session.estVisible
@@ -150,8 +154,6 @@ function FicheDetailsSession({
       setBeneficiairesSelectionnes({ value: nouvelleSelection })
       if (nbPlacesDisponibles.value)
         setNbPlacesDisponibles({ value: nbPlacesDisponibles.value + 1 })
-    } else {
-      //todo ouvrir la popup
     }
   }
 
@@ -213,6 +215,12 @@ function FicheDetailsSession({
   return (
     <>
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
+
+      {dateLimiteEstDepassee && (
+        <div className='mt-2'>
+          <FailureAlert label='Les inscriptions ne sont plus possibles car la date limite est atteinte.' />
+        </div>
+      )}
 
       <section className='border border-solid rounded-base w-full p-4 border-grey_100 mt-6'>
         <h2 className='text-m-bold text-grey_800 mb-4'>Informations offre</h2>
@@ -393,11 +401,17 @@ function FicheDetailsSession({
             aria-controls='selected-beneficiaires'
             ref={input}
             invalid={Boolean(beneficiairesSelectionnes.error)}
-            disabled={nbPlacesDisponibles.value === 0}
+            disabled={nbPlacesDisponibles.value === 0 || dateLimiteEstDepassee}
           />
 
-          {Boolean(nbPlacesDisponibles.value) && (
-            <span className='mb-2'>
+          {Boolean(
+            !dateLimiteEstDepassee && nbPlacesDisponibles.value !== undefined
+          ) && (
+            <span
+              className={`mb-2 ${
+                nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
+              }`}
+            >
               {nbPlacesDisponibles.value}{' '}
               {nbPlacesDisponibles.value > 1
                 ? 'places restantes'
@@ -424,6 +438,7 @@ function FicheDetailsSession({
                     beneficiaireEstInscrit={
                       beneficiaire.statut === statutBeneficiaire.inscrit
                     }
+                    dateLimiteEstDepassee={dateLimiteEstDepassee}
                     idBeneficiaire={beneficiaire.id}
                     value={beneficiaire.value}
                     statut={beneficiaire.statut}
@@ -434,22 +449,25 @@ function FicheDetailsSession({
             </ul>
           )}
         </Etape>
-        <div className='flex gap-4 mx-auto'>
-          <ButtonLink
-            href={returnTo}
-            style={ButtonStyle.SECONDARY}
-            onClick={() => resetAll()}
-          >
-            Annuler
-          </ButtonLink>
-          <Button
-            style={ButtonStyle.PRIMARY}
-            type='submit'
-            label='Enregistrer les modifications'
-          >
-            Enregistrer
-          </Button>
-        </div>
+
+        {!dateLimiteEstDepassee && (
+          <div className='flex gap-4 mx-auto'>
+            <ButtonLink
+              href={returnTo}
+              style={ButtonStyle.SECONDARY}
+              onClick={() => resetAll()}
+            >
+              Annuler
+            </ButtonLink>
+            <Button
+              style={ButtonStyle.PRIMARY}
+              type='submit'
+              label='Enregistrer les modifications'
+            >
+              Enregistrer
+            </Button>
+          </div>
+        )}
       </form>
     </>
   )

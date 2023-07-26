@@ -64,7 +64,7 @@ export async function modifierInformationsSession(
     inscriptions: inscriptions ?? [],
   }
 
-  return await apiPatch(
+  return apiPatch(
     `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
     payload,
     accessToken
