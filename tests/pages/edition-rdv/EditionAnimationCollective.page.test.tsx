@@ -23,7 +23,7 @@ import {
   supprimerEvenement,
 } from 'services/evenements.service'
 import {
-  getJeunesDeLEtablissement,
+  getJeunesDeLEtablissementClientSide,
   getJeunesDuConseillerServerSide,
 } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -263,7 +263,7 @@ describe('EditionAnimationCollective', () => {
       ;(creerEvenement as jest.Mock).mockResolvedValue(
         '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
       )
-      ;(getJeunesDeLEtablissement as jest.Mock).mockResolvedValue(
+      ;(getJeunesDeLEtablissementClientSide as jest.Mock).mockResolvedValue(
         jeunesEtablissement
       )
       typesRendezVous = typesAnimationCollective()
@@ -300,7 +300,7 @@ describe('EditionAnimationCollective', () => {
 
       it('récupère les bénéficiaires de l’établissement', async () => {
         // Then
-        expect(getJeunesDeLEtablissement).toHaveBeenCalledWith(
+        expect(getJeunesDeLEtablissementClientSide).toHaveBeenCalledWith(
           'id-etablissement'
         )
         jeunesEtablissement.forEach((jeune) =>
@@ -520,7 +520,7 @@ describe('EditionAnimationCollective', () => {
 
       it('ne récupère pas les autres bénéficiaires de l’établissement', async () => {
         // Then
-        expect(getJeunesDeLEtablissement).toHaveBeenCalledTimes(0)
+        expect(getJeunesDeLEtablissementClientSide).toHaveBeenCalledTimes(0)
       })
 
       it('empêche toute modification', () => {

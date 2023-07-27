@@ -2,25 +2,26 @@ import React from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { BeneficiaireSelectionneSession } from 'pages/agenda/sessions/[session_id]'
 
 type BeneficiaireItemListProps = {
+  beneficiaire: BeneficiaireSelectionneSession
   beneficiaireEstInscrit: boolean
-  dateLimiteEstDepassee: boolean
+  dateLimiteDepassee: boolean
   idBeneficiaire: string
   value: string
   statut: string
-  onClick: (id: string) => void
+  onDesinscrire: (id: string) => void
 }
 
 export default function BeneficiaireItemList({
-  beneficiaireEstInscrit,
-  dateLimiteEstDepassee,
-  idBeneficiaire,
-  value,
+  beneficiaire,
+  dateLimiteDepassee,
   statut,
-
-  onClick,
+  onDesinscrire,
 }: BeneficiaireItemListProps) {
+  const beneficiaireEstInscrit = beneficiaire.statut === 'INSCRIT'
+
   return (
     <>
       <div className='flex'>
@@ -33,17 +34,16 @@ export default function BeneficiaireItemList({
           className={`mr-2 w-6 h-6 ${
             beneficiaireEstInscrit ? 'fill-success' : 'fill-warning'
           }`}
-          aria-label={statut}
         />
-        {value}
-        {!beneficiaireEstInscrit && <span>{statut}</span>}
+        {beneficiaire.value}
+        {!beneficiaireEstInscrit && <span className='sr-only'>{statut}</span>}
       </div>
 
-      {beneficiaireEstInscrit && !dateLimiteEstDepassee && (
+      {beneficiaireEstInscrit && !dateLimiteDepassee && (
         <Button
           style={ButtonStyle.SECONDARY}
-          label={`Désinscrire ${value}`}
-          onClick={() => onClick(idBeneficiaire)}
+          label={`Désinscrire ${beneficiaire.value}`}
+          onClick={() => onDesinscrire(beneficiaire.id)}
         >
           Désinscrire
         </Button>

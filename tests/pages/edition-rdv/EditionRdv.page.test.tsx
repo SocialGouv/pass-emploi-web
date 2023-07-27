@@ -24,7 +24,7 @@ import {
   supprimerEvenement,
   updateRendezVous,
 } from 'services/evenements.service'
-import { getJeunesDeLEtablissement } from 'services/jeunes.service'
+import { getJeunesDeLEtablissementClientSide } from 'services/jeunes.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
@@ -269,7 +269,7 @@ describe('EditionRdv', () => {
       ;(creerEvenement as jest.Mock).mockResolvedValue(
         '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
       )
-      ;(getJeunesDeLEtablissement as jest.Mock).mockResolvedValue(
+      ;(getJeunesDeLEtablissementClientSide as jest.Mock).mockResolvedValue(
         jeunesEtablissement
       )
       typesRendezVous = typesEvenement()

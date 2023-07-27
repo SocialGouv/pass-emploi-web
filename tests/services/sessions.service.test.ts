@@ -6,7 +6,7 @@ import { AnimationCollective } from 'interfaces/evenement'
 import { SessionMiloJson } from 'interfaces/json/session'
 import {
   getSessionsMissionLocale,
-  modifierInformationsSession,
+  changerInscriptionsSession,
 } from 'services/sessions.service'
 import {
   changerVisibiliteSession,
@@ -140,18 +140,18 @@ describe('SessionsApiService', () => {
       await changerVisibiliteSession('idSession', true)
 
       // Then
-      expect(apiPut).toHaveBeenCalledWith(
+      expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/milo/idConseiller/sessions/idSession',
-        { estVisible: true },
+        { estVisible: true, inscriptions: [] },
         'accessToken'
       )
     })
   })
 
-  describe('.modifierInformationsSession', () => {
+  describe('.changerInscriptionsSession', () => {
     it('modifie les informations de la session', async () => {
       // When
-      await modifierInformationsSession(true, 'idSession', [
+      await changerInscriptionsSession('idSession', true, [
         { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
       ])
 

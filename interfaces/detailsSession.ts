@@ -18,12 +18,14 @@ export type DetailsSession = {
     description?: string
     partenaire?: string
   }
-  inscriptions: [
-    {
-      idJeune: string
-      nom: string
-      prenom: string
-      statut: string
-    }
-  ]
+  inscriptions: Array<{
+    idJeune: string
+    nom: string
+    prenom: string
+    statut: string
+  }>
+}
+
+export const StatutBeneficiaire = {
+  INSCRIT: 'INSCRIT',
 }
