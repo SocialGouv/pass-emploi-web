@@ -15,12 +15,14 @@ import DetailSession, {
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getJeunesDeLEtablissementServerSide } from 'services/jeunes.service'
 import {
+  changerInscriptionsSession,
+  changerVisibiliteSession,
   getDetailsSession,
-  modifierInformationsSession,
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
+import { StructureConseiller } from 'interfaces/conseiller'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
@@ -190,9 +192,7 @@ describe('Détails DetailsSession', () => {
       describe('au clic sur le switch', () => {
         it('change la visibilité', async () => {
           // Given
-          ;(modifierInformationsSession as jest.Mock).mockResolvedValue(
-            undefined
-          )
+          ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
           await render(
             <DetailSession
               pageTitle=''
@@ -207,9 +207,9 @@ describe('Détails DetailsSession', () => {
           await userEvent.click(toggleVisibiliteSession)
 
           // Then
-          expect(modifierInformationsSession).toHaveBeenCalledWith(
-            true,
-            'session-invisible-id'
+          expect(changerVisibiliteSession).toHaveBeenCalledWith(
+            'session-invisible-id',
+            true
           )
           expect(toggleVisibiliteSession).toBeChecked()
         })
@@ -372,9 +372,9 @@ describe('Détails DetailsSession', () => {
       })
 
       describe('au clic sur le bouton d’enregistrement', () => {
-        it('appelle la méthode modifierInformationsSession', async () => {
+        it('appelle la méthode changerInscriptionsSession', async () => {
           //Given
-          ;(modifierInformationsSession as jest.Mock).mockResolvedValue(
+          ;(changerInscriptionsSession as jest.Mock).mockResolvedValue(
             undefined
           )
           session = unDetailSession({
@@ -422,9 +422,9 @@ describe('Détails DetailsSession', () => {
           await userEvent.click(enregistrerBtn)
 
           //Then
-          expect(modifierInformationsSession).toHaveBeenCalledWith(
-            true,
+          expect(changerInscriptionsSession).toHaveBeenCalledWith(
             'session-1',
+            true,
             [
               { commentaire: undefined, idJeune: 'jeune-2', statut: 'INSCRIT' },
               { commentaire: undefined, idJeune: 'jeune-1', statut: 'INSCRIT' },
@@ -609,7 +609,14 @@ describe('Détails DetailsSession', () => {
           beneficiairesEtablissement
         )
         ;(getConseillerServerSide as jest.Mock).mockReturnValue(
-          unConseiller({ id: 'id-conseiller' })
+          unConseiller({
+            id: 'id-conseiller',
+            structure: StructureConseiller.MILO,
+            agence: {
+              nom: 'milo-aubenas',
+              id: '42',
+            },
+          })
         )
 
         const session = unDetailSession()

@@ -51,9 +51,9 @@ export async function getDetailsSession(
   }
 }
 
-export async function modifierInformationsSession(
-  estVisible: boolean,
+export async function changerInscriptionsSession(
   idSession: string,
+  estVisible: boolean,
   inscriptions?: InformationBeneficiaireSession[]
 ): Promise<void> {
   const session = await getSession()
@@ -64,8 +64,9 @@ export async function modifierInformationsSession(
     inscriptions: inscriptions ?? [],
   }
 
-  return apiPatch(
-    `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
+  return modifierInformationsSession(
+    idConseiller,
+    idSession,
     payload,
     accessToken
   )
@@ -78,10 +79,31 @@ export async function changerVisibiliteSession(
   const session = await getSession()
   const accessToken = session!.accessToken
   const idConseiller = session!.user.id
+  const payload = {
+    estVisible: estVisible,
+    inscriptions: [],
+  }
 
-  return apiPut(
+  return modifierInformationsSession(
+    idConseiller,
+    idSession,
+    payload,
+    accessToken
+  )
+}
+
+export async function modifierInformationsSession(
+  idConseiller: string,
+  idSession: string,
+  payload: {
+    estVisible: boolean
+    inscriptions: InformationBeneficiaireSession[]
+  },
+  accessToken: string
+) {
+  return apiPatch(
     `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
-    { estVisible },
+    payload,
     accessToken
   )
 }

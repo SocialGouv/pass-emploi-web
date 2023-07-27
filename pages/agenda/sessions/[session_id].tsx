@@ -16,7 +16,7 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
-import { DetailsSession } from 'interfaces/detailsSession'
+import { DetailsSession, StatutBeneficiaire } from 'interfaces/detailsSession'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { InformationBeneficiaireSession } from 'services/sessions.service'
@@ -28,17 +28,11 @@ type DetailSessionProps = PageProps & {
   session: DetailsSession
 }
 
-type BeneficiaireSelectionneSession = {
+export type BeneficiaireSelectionneSession = {
   id: string
   value: string
   statut: string
   commentaire?: string
-}
-
-const statutBeneficiaire = {
-  inscrit: 'INSCRIT',
-  refusJeune: 'REFUS_JEUNE',
-  refusTiers: 'REFUS_TIERS',
 }
 
 function FicheDetailsSession({
@@ -46,9 +40,9 @@ function FicheDetailsSession({
   session,
   returnTo,
 }: DetailSessionProps) {
-  const input = useRef<HTMLInputElement>(null)
-  const dateLimiteEstDepassee = session.session.dateMaxInscription
-    ? DateTime.fromISO(session.session.dateMaxInscription) - DateTime.now() < 0
+  const inputBeneficiaires = useRef<HTMLInputElement>(null)
+  const dateLimiteDepassee = session.session.dateMaxInscription
+    ? DateTime.fromISO(session.session.dateMaxInscription) < DateTime.now()
     : false
 
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
@@ -77,10 +71,10 @@ function FicheDetailsSession({
   async function handleChangerVisibiliteSession() {
     setLoadingChangerVisibilite(true)
 
-    const { modifierInformationsSession } = await import(
+    const { changerVisibiliteSession } = await import(
       'services/sessions.service'
     )
-    await modifierInformationsSession(!visibiliteSession, session.session.id)
+    await changerVisibiliteSession(session.session.id, !visibiliteSession)
 
     setVisibiliteSession(!visibiliteSession)
     setLoadingChangerVisibilite(false)
@@ -88,21 +82,22 @@ function FicheDetailsSession({
 
   function getBeneficiairesNonSelectionnees(): BeneficiaireSelectionneSession[] {
     return beneficiairesEtablissement
-      .map((beneficiaire) => ({
-        id: beneficiaire.id,
-        value: `${beneficiaire.prenom} ${beneficiaire.nom}`,
-        statut: statutBeneficiaire.inscrit,
-      }))
       .filter((beneficiaire) => {
         return !beneficiairesSelectionnes.value.some(
           (selectedBeneficiaire) => selectedBeneficiaire.id === beneficiaire.id
         )
       })
+      .map((beneficiaire) => ({
+        id: beneficiaire.id,
+        value: `${beneficiaire.prenom} ${beneficiaire.nom}`,
+        statut: StatutBeneficiaire.INSCRIT,
+      }))
   }
 
   function rechercheUnBeneficiaire(
-    inputValue: string
+    inputValue: string | undefined
   ): BeneficiaireSelectionneSession {
+    if (!inputValue) return
     return getBeneficiairesNonSelectionnees().find(
       ({ value }) =>
         value.localeCompare(inputValue, undefined, {
@@ -119,7 +114,7 @@ function FicheDetailsSession({
       ...beneficiairesSelectionnes.value,
     ]
     setBeneficiairesSelectionnes({ value: updatedBeneficiairesSelectionnes })
-    input.current!.value = ''
+    inputBeneficiaires.current!.value = ''
 
     if (nbPlacesDisponibles.value)
       setNbPlacesDisponibles({
@@ -132,9 +127,11 @@ function FicheDetailsSession({
     if (option) updateBeneficiairesSelectionnes(option)
   }
 
-  function handleSelectionnerBeneficiaire() {
-    if (!input.current.value) return
-    const option = rechercheUnBeneficiaire(input.current.value ?? '')
+  function verifierBeneficiaireValid() {
+    if (!inputBeneficiaires.current!.value) return
+    const option = rechercheUnBeneficiaire(
+      inputBeneficiaires.current.value ?? ''
+    )
 
     if (!option)
       setBeneficiairesSelectionnes({
@@ -145,10 +142,10 @@ function FicheDetailsSession({
   }
 
   function desinscrireBeneficiaire(idBeneficiaire: string) {
-    const beneficiaireADesinscrire = session.inscriptions.find(
+    const beneficiaireDejaInscrit = session.inscriptions.find(
       (b) => b.idJeune === idBeneficiaire
     )
-    if (!beneficiaireADesinscrire) {
+    if (!beneficiaireDejaInscrit) {
       const nouvelleSelection: BeneficiaireSelectionneSession[] =
         beneficiairesSelectionnes.value.filter((b) => b.id !== idBeneficiaire)
       setBeneficiairesSelectionnes({ value: nouvelleSelection })
@@ -161,7 +158,7 @@ function FicheDetailsSession({
     return session.session.nbPlacesDisponibles
       ? session.session.nbPlacesDisponibles -
           session.inscriptions.filter(
-            (beneficiaire) => beneficiaire.statut === statutBeneficiaire.inscrit
+            (beneficiaire) => beneficiaire.statut === StatutBeneficiaire.INSCRIT
           ).length
       : undefined
   }
@@ -199,15 +196,15 @@ function FicheDetailsSession({
 
   async function enregistrerInscriptions(e: FormEvent) {
     e.preventDefault()
-    const { modifierInformationsSession } = await import(
+    const { changerInscriptionsSession } = await import(
       'services/sessions.service'
     )
     const inscriptions: InformationBeneficiaireSession[] =
       collecterDifferencesInscriptions()
 
-    await modifierInformationsSession(
-      visibiliteSession,
+    await changerInscriptionsSession(
       session.session.id,
+      visibiliteSession,
       inscriptions
     )
   }
@@ -216,7 +213,7 @@ function FicheDetailsSession({
     <>
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
-      {dateLimiteEstDepassee && (
+      {dateLimiteDepassee && (
         <div className='mt-2'>
           <FailureAlert label='Les inscriptions ne sont plus possibles car la date limite est atteinte.' />
         </div>
@@ -353,21 +350,24 @@ function FicheDetailsSession({
           </div>
         </dl>
       </section>
-      <Etape numero={1} titre='Gérez la visibilité'>
-        <div className='flex items-center gap-1'>
-          <Label htmlFor='visibilite-session'>
-            Rendre visible la session aux bénéficiaires de la Mission Locale
-          </Label>
-          <Switch
-            id='visibilite-session'
-            checkedLabel='Oui'
-            uncheckedLabel='Non'
-            checked={visibiliteSession}
-            onChange={handleChangerVisibiliteSession}
-            disabled={loadingChangerVisibilite}
-          />
-        </div>
-      </Etape>
+
+      <form>
+        <Etape numero={1} titre='Gérez la visibilité'>
+          <div className='flex items-center gap-1'>
+            <Label htmlFor='visibilite-session'>
+              Rendre visible la session aux bénéficiaires de la Mission Locale
+            </Label>
+            <Switch
+              id='visibilite-session'
+              checkedLabel='Oui'
+              uncheckedLabel='Non'
+              checked={visibiliteSession}
+              onChange={handleChangerVisibiliteSession}
+              disabled={loadingChangerVisibilite}
+            />
+          </div>
+        </Etape>
+      </form>
 
       <form onSubmit={enregistrerInscriptions}>
         <Etape numero={2} titre='Gérez les inscriptions'>
@@ -394,26 +394,24 @@ function FicheDetailsSession({
           <SelectAutocomplete
             id='select-beneficiaires'
             options={getBeneficiairesNonSelectionnees()}
-            onChange={(value: string) => selectionnerBeneficiaire(value)}
-            onBlur={handleSelectionnerBeneficiaire}
+            onChange={selectionnerBeneficiaire}
+            onBlur={verifierBeneficiaireValid}
             required={true}
             multiple={true}
             aria-controls='selected-beneficiaires'
-            ref={input}
+            ref={inputBeneficiaires}
             invalid={Boolean(beneficiairesSelectionnes.error)}
-            disabled={nbPlacesDisponibles.value === 0 || dateLimiteEstDepassee}
+            disabled={nbPlacesDisponibles.value === 0 || dateLimiteDepassee}
           />
 
-          {Boolean(
-            !dateLimiteEstDepassee && nbPlacesDisponibles.value !== undefined
-          ) && (
+          {nbPlacesDisponibles.value !== undefined && !dateLimiteDepassee && (
             <span
               className={`mb-2 ${
                 nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
               }`}
             >
               {nbPlacesDisponibles.value}{' '}
-              {nbPlacesDisponibles.value > 1
+              {nbPlacesDisponibles.value! > 1
                 ? 'places restantes'
                 : 'place restante'}
             </span>
@@ -421,7 +419,7 @@ function FicheDetailsSession({
 
           {beneficiairesSelectionnes.value.length > 0 && (
             <ul
-              aria-labelledby='selected-beneficiaires--title'
+              aria-label='Bénéficiaires sélectionnés'
               id='selected-beneficiaires'
               role='region'
               className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
@@ -435,14 +433,9 @@ function FicheDetailsSession({
                   aria-atomic={true}
                 >
                   <BeneficiaireItemList
-                    beneficiaireEstInscrit={
-                      beneficiaire.statut === statutBeneficiaire.inscrit
-                    }
-                    dateLimiteEstDepassee={dateLimiteEstDepassee}
-                    idBeneficiaire={beneficiaire.id}
-                    value={beneficiaire.value}
-                    statut={beneficiaire.statut}
-                    onClick={desinscrireBeneficiaire}
+                    beneficiaire={beneficiaire}
+                    dateLimiteDepassee={dateLimiteDepassee}
+                    onDesinscrire={desinscrireBeneficiaire}
                   />
                 </li>
               ))}
@@ -450,7 +443,7 @@ function FicheDetailsSession({
           )}
         </Etape>
 
-        {!dateLimiteEstDepassee && (
+        {!dateLimiteDepassee && (
           <div className='flex gap-4 mx-auto'>
             <ButtonLink
               href={returnTo}
@@ -504,11 +497,13 @@ export const getServerSideProps: GetServerSideProps<
   )
   const conseiller = await getConseillerServerSide(user, accessToken)
 
+  if (!conseiller || !conseiller.agence) return { notFound: true }
+
   const { getJeunesDeLEtablissementServerSide } = await import(
     'services/jeunes.service'
   )
   const beneficiairesEtablissement = await getJeunesDeLEtablissementServerSide(
-    conseiller?.agence?.id,
+    conseiller!.agence!.id,
     accessToken
   )
 
