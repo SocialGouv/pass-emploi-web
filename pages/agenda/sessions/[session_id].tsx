@@ -138,7 +138,6 @@ function FicheDetailsSession({
         value: beneficiairesSelectionnes.value,
         error: 'Aucun bénéficiaire ne correspond à cette recherche.',
       })
-    else updateBeneficiairesSelectionnes(option)
   }
 
   function desinscrireBeneficiaire(idBeneficiaire: string) {
@@ -171,36 +170,21 @@ function FicheDetailsSession({
       })
   }
 
-  function collecterDifferencesInscriptions(): InformationBeneficiaireSession[] {
-    const differenceInscriptions: InformationBeneficiaireSession[] = []
-
-    beneficiairesSelectionnes.value.forEach((modifiedItem) => {
-      const originalItem = session.inscriptions.find(
-        (item) => item.idJeune === modifiedItem.id
-      )
-
-      if (
-        !originalItem ||
-        JSON.stringify(originalItem) !== JSON.stringify(modifiedItem)
-      ) {
-        differenceInscriptions.push({
-          idJeune: modifiedItem.id,
-          statut: modifiedItem.statut,
-          commentaire: modifiedItem.commentaire ?? undefined,
-        })
-      }
-    })
-
-    return differenceInscriptions
-  }
-
   async function enregistrerInscriptions(e: FormEvent) {
     e.preventDefault()
     const { changerInscriptionsSession } = await import(
       'services/sessions.service'
     )
-    const inscriptions: InformationBeneficiaireSession[] =
-      collecterDifferencesInscriptions()
+
+    let inscriptions: InformationBeneficiaireSession[] = []
+
+    beneficiairesSelectionnes.value.forEach((beneficiaire) => {
+      inscriptions.push({
+        idJeune: beneficiaire.id,
+        statut: beneficiaire.statut,
+        commentaire: beneficiaire.commentaire ?? undefined,
+      })
+    })
 
     await changerInscriptionsSession(
       session.session.id,
@@ -411,7 +395,7 @@ function FicheDetailsSession({
               }`}
             >
               {nbPlacesDisponibles.value}{' '}
-              {nbPlacesDisponibles.value! > 1
+              {nbPlacesDisponibles.value > 1
                 ? 'places restantes'
                 : 'place restante'}
             </span>
@@ -503,7 +487,7 @@ export const getServerSideProps: GetServerSideProps<
     'services/jeunes.service'
   )
   const beneficiairesEtablissement = await getJeunesDeLEtablissementServerSide(
-    conseiller!.agence!.id,
+    conseiller.agence.id,
     accessToken
   )
 
