@@ -1,5 +1,5 @@
 import { DetailsSession } from 'interfaces/detailsSession'
-import { DetailsSessionJson } from 'interfaces/json/detailsSession'
+import { DetailsSessionJson } from 'interfaces/json/session'
 
 export function unDetailSessionJson(
   overrides: Partial<DetailsSessionJson> = {}

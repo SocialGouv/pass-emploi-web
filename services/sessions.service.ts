@@ -1,11 +1,11 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiGet, apiPatch, apiPut } from 'clients/api.client'
+import { apiGet, apiPatch } from 'clients/api.client'
 import { DetailsSession } from 'interfaces/detailsSession'
 import { AnimationCollective } from 'interfaces/evenement'
-import { DetailsSessionJson } from 'interfaces/json/detailsSession'
 import {
+  DetailsSessionJson,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
