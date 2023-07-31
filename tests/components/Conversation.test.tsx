@@ -430,4 +430,29 @@ describe('<Conversation />', () => {
       ).toHaveAttribute('href', 'https://www.lala.com')
     })
   })
+
+  describe("quand on reçoit un message de partage d'une session milo", () => {
+    let message: HTMLElement
+    beforeEach(() => {
+      message = screen.getByText(
+        'Decrypted: Bonjour, je vous partage une session milo afin d’avoir votre avis'
+      ).parentElement!
+    })
+
+    it('affiche le titre de la session', async () => {
+      // Then
+      expect(getByDescriptionTerm('Titre de la session :')).toHaveTextContent(
+        'Une session milo'
+      )
+    })
+
+    it('affiche le lien de la session', async () => {
+      // Then
+      expect(
+        within(message).getByRole('link', {
+          name: 'Une session milo (nouvelle fenêtre)',
+        })
+      ).toHaveAttribute('href', '/agenda/sessions/id-session-milo')
+    })
+  })
 })

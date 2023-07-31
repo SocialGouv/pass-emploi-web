@@ -46,6 +46,7 @@ type TypeMessageFirebase =
   | 'MESSAGE_OFFRE'
   | 'MESSAGE_EVENEMENT'
   | 'MESSAGE_EVENEMENT_EMPLOI'
+  | 'MESSAGE_SESSION_MILO'
   | 'NOUVEAU_CONSEILLER_TEMPORAIRE'
 
 export type FirebaseMessage = {
@@ -59,6 +60,7 @@ export type FirebaseMessage = {
   offre?: InfoOffreFirebase
   evenement?: EvenementPartage
   evenementEmploi?: EvenementEmploi
+  sessionMilo?: SessionMilo
 }
 
 export type FirebaseMessageGroupe = {
@@ -90,6 +92,11 @@ export interface EvenementEmploi {
   titre: string
   type: string
   url: string
+}
+
+export interface SessionMilo {
+  id: string
+  titre: string
 }
 
 type BaseCreateFirebaseMessage = {
@@ -550,6 +557,16 @@ export function docSnapshotToMessage(
     }
   }
 
+  if (
+    message.type === TypeMessage.MESSAGE_SESSION_MILO &&
+    firebaseMessage.sessionMilo
+  ) {
+    message.infoSessionImilo = {
+      id: firebaseMessage.sessionMilo.id,
+      titre: firebaseMessage.sessionMilo.titre,
+    }
+  }
+
   return message
 }
 
@@ -588,6 +605,8 @@ function firebaseToMessageType(
       return TypeMessage.MESSAGE_EVENEMENT
     case 'MESSAGE_EVENEMENT_EMPLOI':
       return TypeMessage.MESSAGE_EVENEMENT_EMPLOI
+    case 'MESSAGE_SESSION_MILO':
+      return TypeMessage.MESSAGE_SESSION_MILO
     case 'MESSAGE':
       return TypeMessage.MESSAGE
     case undefined:
