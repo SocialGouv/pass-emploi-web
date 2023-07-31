@@ -16,16 +16,15 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
-import { DetailsSession, StatutBeneficiaire } from 'interfaces/detailsSession'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { InformationBeneficiaireSession } from 'services/sessions.service'
+import { Session, StatutBeneficiaire } from 'interfaces/session'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
 type DetailSessionProps = PageProps & {
   beneficiairesEtablissement: BaseJeune[]
-  session: DetailsSession
+  session: Session
 }
 
 export type BeneficiaireSelectionneSession = {
@@ -35,13 +34,18 @@ export type BeneficiaireSelectionneSession = {
   commentaire?: string
 }
 
+export type BaseBeneficiaireASelectionner = {
+  id: string
+  value: string
+}
+
 function FicheDetailsSession({
   beneficiairesEtablissement,
   session,
   returnTo,
 }: DetailSessionProps) {
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
-  const dateLimiteDepassee = session.session.dateMaxInscription
+  const dateLimiteDepassee = dateLimiteEstDepassee()
     ? DateTime.fromISO(session.session.dateMaxInscription) < DateTime.now()
     : false
 
@@ -59,8 +63,14 @@ function FicheDetailsSession({
     ValueWithError<BeneficiaireSelectionneSession[]>
   >({ value: initBeneficiairesSelectionnes() })
 
+  function dateLimiteEstDepassee() {
+    return Boolean(
+      session.session.dateMaxInscription ||
+        session.session.dateHeureDebut < DateTime.now()
+    )
+  }
+
   function initBeneficiairesSelectionnes() {
-    if (session.inscriptions.length === 0) return []
     return session.inscriptions.map((beneficiaire) => ({
       id: beneficiaire.idJeune,
       value: `${beneficiaire.prenom} ${beneficiaire.nom}`,
@@ -80,23 +90,24 @@ function FicheDetailsSession({
     setLoadingChangerVisibilite(false)
   }
 
-  function getBeneficiairesNonSelectionnees(): BeneficiaireSelectionneSession[] {
+  function getBeneficiairesNonSelectionnees(): BaseBeneficiaireASelectionner[] {
     return beneficiairesEtablissement
-      .filter((beneficiaire) => {
-        return !beneficiairesSelectionnes.value.some(
-          (selectedBeneficiaire) => selectedBeneficiaire.id === beneficiaire.id
-        )
-      })
+      .filter(
+        (beneficiaire) =>
+          !beneficiairesSelectionnes.value.some(
+            (selectedBeneficiaire) =>
+              selectedBeneficiaire.id === beneficiaire.id
+          )
+      )
       .map((beneficiaire) => ({
         id: beneficiaire.id,
         value: `${beneficiaire.prenom} ${beneficiaire.nom}`,
-        statut: StatutBeneficiaire.INSCRIT,
       }))
   }
 
   function rechercheUnBeneficiaire(
     inputValue: string | undefined
-  ): BeneficiaireSelectionneSession {
+  ): BaseBeneficiaireASelectionner {
     if (!inputValue) return
     return getBeneficiairesNonSelectionnees().find(
       ({ value }) =>
@@ -107,12 +118,13 @@ function FicheDetailsSession({
   }
 
   function updateBeneficiairesSelectionnes(
-    option: BeneficiaireSelectionneSession
+    option: BaseBeneficiaireASelectionner
   ) {
     const updatedBeneficiairesSelectionnes = [
-      option,
+      { ...option, statut: StatutBeneficiaire.INSCRIT },
       ...beneficiairesSelectionnes.value,
     ]
+
     setBeneficiairesSelectionnes({ value: updatedBeneficiairesSelectionnes })
     inputBeneficiaires.current!.value = ''
 
@@ -142,7 +154,7 @@ function FicheDetailsSession({
 
   function desinscrireBeneficiaire(idBeneficiaire: string) {
     const beneficiaireDejaInscrit = session.inscriptions.find(
-      (b) => b.idJeune === idBeneficiaire
+      ({ idJeune }) => idJeune === idBeneficiaire
     )
     if (!beneficiaireDejaInscrit) {
       const nouvelleSelection: BeneficiaireSelectionneSession[] =
@@ -176,21 +188,15 @@ function FicheDetailsSession({
       'services/sessions.service'
     )
 
-    let inscriptions: InformationBeneficiaireSession[] = []
-
-    beneficiairesSelectionnes.value.forEach((beneficiaire) => {
-      inscriptions.push({
+    const inscriptions = beneficiairesSelectionnes.value.map(
+      (beneficiaire) => ({
         idJeune: beneficiaire.id,
         statut: beneficiaire.statut,
-        commentaire: beneficiaire.commentaire ?? undefined,
+        commentaire: beneficiaire.commentaire || undefined,
       })
-    })
-
-    await changerInscriptionsSession(
-      session.session.id,
-      visibiliteSession,
-      inscriptions
     )
+
+    await changerInscriptionsSession(session.session.id, inscriptions)
   }
 
   return (

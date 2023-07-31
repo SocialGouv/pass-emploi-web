@@ -1,4 +1,4 @@
-import { DetailsSession } from 'interfaces/detailsSession'
+import { Session } from 'interfaces/session'
 import { DetailsSessionJson } from 'interfaces/json/session'
 
 export function unDetailSessionJson(
@@ -41,10 +41,8 @@ export function unDetailSessionJson(
   return { ...defaults, ...overrides }
 }
 
-export function unDetailSession(
-  overrides: Partial<DetailsSession> = {}
-): DetailsSession {
-  const defaults: DetailsSession = {
+export function unDetailSession(overrides: Partial<Session> = {}): Session {
+  const defaults: Session = {
     session: {
       id: 'session-1',
       nom: 'titre-session',
