@@ -2,13 +2,13 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { apiGet, apiPatch } from 'clients/api.client'
-import { DetailsSession } from 'interfaces/detailsSession'
 import { AnimationCollective } from 'interfaces/evenement'
 import {
   DetailsSessionJson,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
+import { Session } from 'interfaces/session'
 import { ApiError } from 'utils/httpClient'
 
 export type InformationBeneficiaireSession = {
@@ -36,7 +36,7 @@ export async function getDetailsSession(
   idConseiller: string,
   idSession: string,
   accessToken: string
-): Promise<DetailsSession | undefined> {
+): Promise<Session | undefined> {
   try {
     const { content: sessionJson } = await apiGet<DetailsSessionJson>(
       `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
@@ -53,14 +53,12 @@ export async function getDetailsSession(
 
 export async function changerInscriptionsSession(
   idSession: string,
-  estVisible: boolean,
   inscriptions?: InformationBeneficiaireSession[]
 ): Promise<void> {
   const session = await getSession()
   const accessToken = session!.accessToken
   const idConseiller = session!.user.id
   const payload = {
-    estVisible: estVisible,
     inscriptions: inscriptions ?? [],
   }
 
@@ -81,7 +79,6 @@ export async function changerVisibiliteSession(
   const idConseiller = session!.user.id
   const payload = {
     estVisible: estVisible,
-    inscriptions: [],
   }
 
   return modifierInformationsSession(
@@ -96,8 +93,8 @@ export async function modifierInformationsSession(
   idConseiller: string,
   idSession: string,
   payload: {
-    estVisible: boolean
-    inscriptions: InformationBeneficiaireSession[]
+    estVisible?: boolean
+    inscriptions?: InformationBeneficiaireSession[]
   },
   accessToken: string
 ) {
@@ -108,8 +105,8 @@ export async function modifierInformationsSession(
   )
 }
 
-export function jsonToSession(json: DetailsSessionJson): DetailsSession {
-  const session: DetailsSession = {
+export function jsonToSession(json: DetailsSessionJson): Session {
+  const session: Session = {
     session: {
       id: json.session.id,
       nom: json.session.nom,

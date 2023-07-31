@@ -10,14 +10,12 @@ type BeneficiaireItemListProps = {
   dateLimiteDepassee: boolean
   idBeneficiaire: string
   value: string
-  statut: string
   onDesinscrire: (id: string) => void
 }
 
 export default function BeneficiaireItemList({
   beneficiaire,
   dateLimiteDepassee,
-  statut,
   onDesinscrire,
 }: BeneficiaireItemListProps) {
   const beneficiaireEstInscrit = beneficiaire.statut === 'INSCRIT'
@@ -36,7 +34,10 @@ export default function BeneficiaireItemList({
           }`}
         />
         {beneficiaire.value}
-        {!beneficiaireEstInscrit && <span className='sr-only'>{statut}</span>}
+        {!beneficiaireEstInscrit && beneficiaire.statut}
+        {beneficiaireEstInscrit && (
+          <span className='sr-only'>{beneficiaire.statut}</span>
+        )}
       </div>
 
       {beneficiaireEstInscrit && !dateLimiteDepassee && (

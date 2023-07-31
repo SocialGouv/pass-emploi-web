@@ -265,7 +265,7 @@ export async function getJeunesDeLEtablissementServerSide(
   return getJeunesDeLEtablissement(idEtablissement, accessToken)
 }
 
-export async function getJeunesDeLEtablissement(
+async function getJeunesDeLEtablissement(
   idEtablissement: string,
   accessToken: string
 ) {

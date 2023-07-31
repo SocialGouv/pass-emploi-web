@@ -119,7 +119,7 @@ describe('SessionsApiService', () => {
     it("renvoie undefined si la session n'existe pas", async () => {
       // Given
       ;(apiGet as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'DetailsSession non trouvée')
+        new ApiError(404, 'Session non trouvée')
       )
 
       // When
@@ -142,7 +142,7 @@ describe('SessionsApiService', () => {
       // Then
       expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/milo/idConseiller/sessions/idSession',
-        { estVisible: true, inscriptions: [] },
+        { estVisible: true },
         'accessToken'
       )
     })
@@ -151,7 +151,7 @@ describe('SessionsApiService', () => {
   describe('.changerInscriptionsSession', () => {
     it('modifie les informations de la session', async () => {
       // When
-      await changerInscriptionsSession('idSession', true, [
+      await changerInscriptionsSession('idSession', [
         { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
       ])
 
@@ -159,7 +159,6 @@ describe('SessionsApiService', () => {
       expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/milo/idConseiller/sessions/idSession',
         {
-          estVisible: true,
           inscriptions: [
             { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
           ],

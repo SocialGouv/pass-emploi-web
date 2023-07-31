@@ -7,8 +7,9 @@ import { GetServerSidePropsContext } from 'next/types'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
-import { DetailsSession } from 'interfaces/detailsSession'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
+import { Session } from 'interfaces/session'
 import DetailSession, {
   getServerSideProps,
 } from 'pages/agenda/sessions/[session_id]'
@@ -22,17 +23,16 @@ import {
 import getByDescriptionTerm from 'tests/querySelector'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
-import { StructureConseiller } from 'interfaces/conseiller'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
 jest.mock('services/jeunes.service')
 jest.mock('services/sessions.service')
 
-describe('Détails DetailsSession', () => {
+describe('Détails Session', () => {
   describe('client side', () => {
     describe('contenu', () => {
-      let session: DetailsSession
+      let session: Session
       let beneficiairesEtablissement: BaseJeune[]
       beforeEach(async () => {
         // Given
@@ -125,8 +125,8 @@ describe('Détails DetailsSession', () => {
     })
 
     describe('permet de gérer la visibilité de la session', () => {
-      let sessionVisible: DetailsSession
-      let sessionInvisible: DetailsSession
+      let sessionVisible: Session
+      let sessionInvisible: Session
       let toggleVisibiliteSession: HTMLInputElement
       let beneficairesEtablissement: BaseJeune[]
       beforeEach(async () => {
@@ -217,7 +217,7 @@ describe('Détails DetailsSession', () => {
     })
 
     describe('permet de gérer la liste des inscrits', () => {
-      let session: DetailsSession
+      let session: Session
       let beneficairesEtablissement: BaseJeune[]
       beforeEach(async () => {
         // Given
@@ -422,20 +422,16 @@ describe('Détails DetailsSession', () => {
           await userEvent.click(enregistrerBtn)
 
           //Then
-          expect(changerInscriptionsSession).toHaveBeenCalledWith(
-            'session-1',
-            true,
-            [
-              { commentaire: undefined, idJeune: 'jeune-2', statut: 'INSCRIT' },
-              { commentaire: undefined, idJeune: 'jeune-1', statut: 'INSCRIT' },
-            ]
-          )
+          expect(changerInscriptionsSession).toHaveBeenCalledWith('session-1', [
+            { commentaire: undefined, idJeune: 'jeune-2', statut: 'INSCRIT' },
+            { commentaire: undefined, idJeune: 'jeune-1', statut: 'INSCRIT' },
+          ])
         })
       })
     })
 
     describe('si la date limite d’inscription est dépassée', () => {
-      let session: DetailsSession
+      let session: Session
       let beneficairesEtablissement: BaseJeune[]
       beforeEach(async () => {
         // Given
