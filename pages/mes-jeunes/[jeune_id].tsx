@@ -598,24 +598,34 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     'services/favoris.service'
   )
 
-  const [jeune, metadonneesFavoris, rdvs, actions, offresPE, recherchesPE] =
-    await Promise.all([
-      getJeuneDetails(context.query.jeune_id as string, accessToken),
-      getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
-      userIsPoleEmploi
-        ? []
-        : getRendezVousJeune(
-            context.query.jeune_id as string,
-            PeriodeEvenements.FUTURS,
-            accessToken
-          ),
-      userIsPoleEmploi
-        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-        : getActionsJeuneServerSide(
-            context.query.jeune_id as string,
-            page,
-            accessToken
-          ),
+  const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
+    getJeuneDetails(context.query.jeune_id as string, accessToken),
+    getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
+    userIsPoleEmploi
+      ? []
+      : getRendezVousJeune(
+          context.query.jeune_id as string,
+          PeriodeEvenements.FUTURS,
+          accessToken
+        ),
+    userIsPoleEmploi
+      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+      : getActionsJeuneServerSide(
+          context.query.jeune_id as string,
+          page,
+          accessToken
+        ),
+  ])
+
+  if (!jeune) {
+    return { notFound: true }
+  }
+
+  let offresPE: Offre[] = []
+  let recherchesPE: Recherche[] = []
+
+  if (metadonneesFavoris?.autoriseLePartage) {
+    ;[offresPE, recherchesPE] = await Promise.all([
       userIsPoleEmploi
         ? getOffres(context.query.jeune_id as string, accessToken)
         : [],
@@ -626,9 +636,6 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
           )
         : [],
     ])
-
-  if (!jeune) {
-    return { notFound: true }
   }
 
   const props: FicheJeuneProps = {
