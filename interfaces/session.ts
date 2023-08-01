@@ -1,4 +1,4 @@
-export type DetailsSession = {
+export type Session = {
   session: {
     id: string
     nom: string
@@ -6,6 +6,7 @@ export type DetailsSession = {
     dateHeureFin: string
     dateMaxInscription?: string
     lieu: string
+    nbPlacesDisponibles?: number
     estVisible: boolean
     animateur?: string
     commentaire?: string
@@ -17,4 +18,14 @@ export type DetailsSession = {
     description?: string
     partenaire?: string
   }
+  inscriptions: Array<{
+    idJeune: string
+    nom: string
+    prenom: string
+    statut: string
+  }>
+}
+
+export const StatutBeneficiaire = {
+  INSCRIT: 'INSCRIT',
 }

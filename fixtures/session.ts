@@ -1,5 +1,5 @@
-import { DetailsSession } from 'interfaces/detailsSession'
-import { DetailsSessionJson } from 'interfaces/json/detailsSession'
+import { Session } from 'interfaces/session'
+import { DetailsSessionJson } from 'interfaces/json/session'
 
 export function unDetailSessionJson(
   overrides: Partial<DetailsSessionJson> = {}
@@ -28,15 +28,21 @@ export function unDetailSessionJson(
       description: 'toto',
       nomPartenaire: '65-ML SUE',
     },
+    inscriptions: [
+      {
+        idJeune: 'jeune-1',
+        nom: 'Beau',
+        prenom: 'Harry',
+        statut: 'INSCRIT',
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }
 }
 
-export function unDetailSession(
-  overrides: Partial<DetailsSession> = {}
-): DetailsSession {
-  const defaults: DetailsSession = {
+export function unDetailSession(overrides: Partial<Session> = {}): Session {
+  const defaults: Session = {
     session: {
       id: 'session-1',
       nom: 'titre-session',
@@ -47,6 +53,7 @@ export function unDetailSession(
       lieu: 'CEJ Paris',
       commentaire: 'bla',
       estVisible: true,
+      nbPlacesDisponibles: 20,
     },
     offre: {
       titre: 'aide',
@@ -55,6 +62,14 @@ export function unDetailSession(
       description: 'toto',
       partenaire: '65-ML SUE',
     },
+    inscriptions: [
+      {
+        idJeune: 'jeune-1',
+        nom: 'Beau',
+        prenom: 'Harry',
+        statut: 'INSCRIT',
+      },
+    ],
   }
 
   return { ...defaults, ...overrides }

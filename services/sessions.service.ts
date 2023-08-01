@@ -1,15 +1,21 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiGet, apiPut } from 'clients/api.client'
-import { DetailsSession } from 'interfaces/detailsSession'
+import { apiGet, apiPatch } from 'clients/api.client'
 import { AnimationCollective } from 'interfaces/evenement'
-import { DetailsSessionJson } from 'interfaces/json/detailsSession'
 import {
+  DetailsSessionJson,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
+import { Session } from 'interfaces/session'
 import { ApiError } from 'utils/httpClient'
+
+export type InformationBeneficiaireSession = {
+  idJeune: string
+  statut: string
+  commentaire?: string
+}
 
 export async function getSessionsMissionLocale(
   idConseiller: string,
@@ -30,7 +36,7 @@ export async function getDetailsSession(
   idConseiller: string,
   idSession: string,
   accessToken: string
-): Promise<DetailsSession | undefined> {
+): Promise<Session | undefined> {
   try {
     const { content: sessionJson } = await apiGet<DetailsSessionJson>(
       `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
@@ -45,6 +51,25 @@ export async function getDetailsSession(
   }
 }
 
+export async function changerInscriptionsSession(
+  idSession: string,
+  inscriptions?: InformationBeneficiaireSession[]
+): Promise<void> {
+  const session = await getSession()
+  const accessToken = session!.accessToken
+  const idConseiller = session!.user.id
+  const payload = {
+    inscriptions: inscriptions ?? [],
+  }
+
+  return modifierInformationsSession(
+    idConseiller,
+    idSession,
+    payload,
+    accessToken
+  )
+}
+
 export async function changerVisibiliteSession(
   idSession: string,
   estVisible: boolean
@@ -52,16 +77,36 @@ export async function changerVisibiliteSession(
   const session = await getSession()
   const accessToken = session!.accessToken
   const idConseiller = session!.user.id
+  const payload = {
+    estVisible: estVisible,
+  }
 
-  return apiPut(
-    `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
-    { estVisible },
+  return modifierInformationsSession(
+    idConseiller,
+    idSession,
+    payload,
     accessToken
   )
 }
 
-export function jsonToSession(json: DetailsSessionJson): DetailsSession {
-  const session: DetailsSession = {
+export async function modifierInformationsSession(
+  idConseiller: string,
+  idSession: string,
+  payload: {
+    estVisible?: boolean
+    inscriptions?: InformationBeneficiaireSession[]
+  },
+  accessToken: string
+) {
+  return apiPatch(
+    `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
+    payload,
+    accessToken
+  )
+}
+
+export function jsonToSession(json: DetailsSessionJson): Session {
+  const session: Session = {
     session: {
       id: json.session.id,
       nom: json.session.nom,
@@ -75,11 +120,14 @@ export function jsonToSession(json: DetailsSessionJson): DetailsSession {
       theme: json.offre.theme,
       type: json.offre.type.label,
     },
+    inscriptions: json.inscriptions,
   }
 
   if (json.offre.description) session.offre.description = json.offre.description
   if (json.offre.nomPartenaire)
     session.offre.partenaire = json.offre.nomPartenaire
+  if (json.session.nbPlacesDisponibles)
+    session.session.nbPlacesDisponibles = json.session.nbPlacesDisponibles
 
   if (json.session.dateMaxInscription)
     session.session.dateMaxInscription = json.session.dateMaxInscription

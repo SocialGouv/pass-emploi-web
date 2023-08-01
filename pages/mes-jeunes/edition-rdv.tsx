@@ -28,7 +28,7 @@ import {
   TypeEvenementReferentiel,
 } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getJeunesDeLEtablissement } from 'services/jeunes.service'
+import { getJeunesDeLEtablissementClientSide } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -223,7 +223,7 @@ function EditionRdv({
 
   function recupererJeunesDeLEtablissement() {
     if (conseiller.agence?.id) {
-      return getJeunesDeLEtablissement(conseiller.agence.id)
+      return getJeunesDeLEtablissementClientSide(conseiller.agence.id)
     }
     return Promise.resolve([])
   }

@@ -1,10 +1,13 @@
 import { DateTime } from 'luxon'
 
-import { apiGet, apiPut } from 'clients/api.client'
+import { apiGet, apiPatch, apiPut } from 'clients/api.client'
 import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import { AnimationCollective } from 'interfaces/evenement'
 import { SessionMiloJson } from 'interfaces/json/session'
-import { getSessionsMissionLocale } from 'services/sessions.service'
+import {
+  getSessionsMissionLocale,
+  changerInscriptionsSession,
+} from 'services/sessions.service'
 import {
   changerVisibiliteSession,
   getDetailsSession,
@@ -116,7 +119,7 @@ describe('SessionsApiService', () => {
     it("renvoie undefined si la session n'existe pas", async () => {
       // Given
       ;(apiGet as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'DetailsSession non trouvée')
+        new ApiError(404, 'Session non trouvée')
       )
 
       // When
@@ -137,9 +140,29 @@ describe('SessionsApiService', () => {
       await changerVisibiliteSession('idSession', true)
 
       // Then
-      expect(apiPut).toHaveBeenCalledWith(
+      expect(apiPatch).toHaveBeenCalledWith(
         '/conseillers/milo/idConseiller/sessions/idSession',
         { estVisible: true },
+        'accessToken'
+      )
+    })
+  })
+
+  describe('.changerInscriptionsSession', () => {
+    it('modifie les informations de la session', async () => {
+      // When
+      await changerInscriptionsSession('idSession', [
+        { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
+      ])
+
+      // Then
+      expect(apiPatch).toHaveBeenCalledWith(
+        '/conseillers/milo/idConseiller/sessions/idSession',
+        {
+          inscriptions: [
+            { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
+          ],
+        },
         'accessToken'
       )
     })
