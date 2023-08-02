@@ -5,6 +5,7 @@ import LienEvenement from 'components/chat/LienEvenement'
 import LienEvenementEmploi from 'components/chat/LienEvenementEmploi'
 import LienOffre from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
+import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
@@ -57,6 +58,12 @@ export default function DisplayMessage({
             isSentByConseiller={isSentByConseiller}
           />
         )}
+
+        {message.type === TypeMessage.MESSAGE_SESSION_MILO &&
+          message.infoSessionImilo && (
+            <LienSessionMilo infoSessionMilo={message.infoSessionImilo} />
+          )}
+
         {message.type === TypeMessage.MESSAGE_EVENEMENT &&
           message.infoEvenement && (
             <LienEvenement infoEvenement={message.infoEvenement} />
