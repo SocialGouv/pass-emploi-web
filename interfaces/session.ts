@@ -10,6 +10,7 @@ export type Session = {
     estVisible: boolean
     animateur?: string
     commentaire?: string
+    statut: string
   }
   offre: {
     titre: string

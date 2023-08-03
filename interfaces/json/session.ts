@@ -1,6 +1,11 @@
 import { DateTime } from 'luxon'
 
-import { AnimationCollective, TypeEvenement } from 'interfaces/evenement'
+import {
+  AnimationCollective,
+  StatutAnimationCollective,
+  TypeEvenement,
+} from 'interfaces/evenement'
+import { StatutAnimationCollectiveJson } from 'interfaces/json/evenement'
 import { minutesEntreDeuxDates } from 'utils/date'
 
 export type SessionMiloJson = {
@@ -11,6 +16,7 @@ export type SessionMiloJson = {
   dateHeureFin: string
   estVisible: boolean
   type: TypeEvenement
+  statut: StatutAnimationCollectiveJson
 }
 
 export type DetailsSessionJson = {
@@ -25,6 +31,7 @@ export type DetailsSessionJson = {
     estVisible: boolean
     animateur?: string
     commentaire?: string
+    statut: StatutAnimationCollectiveJson
   }
   offre: {
     id: string
@@ -43,7 +50,7 @@ export type DetailsSessionJson = {
       nom: string
       prenom: string
       statut: string
-    }
+    },
   ]
 }
 
@@ -58,12 +65,31 @@ export function sessionMiloJsonToAnimationCollective(
       dateDebut,
       DateTime.fromISO(json.dateHeureFin)
     ),
-    statut: undefined,
+    statut: jsonToStatutSession(json.statut),
     titre: json.nomOffre,
     sousTitre: json.nomSession,
     type: jsonToTypeSessionMilo(json.type),
     isSession: true,
     estCache: !json.estVisible,
+  }
+}
+
+export function jsonToStatutSession(
+  jsonStatus: StatutAnimationCollectiveJson
+): StatutAnimationCollective {
+  switch (jsonStatus) {
+    case 'A_VENIR':
+      return StatutAnimationCollective.AVenir
+    case 'A_CLOTURER':
+      return StatutAnimationCollective.AClore
+    case 'CLOTUREE':
+      return StatutAnimationCollective.Close
+
+    default:
+      console.warn(
+        `Statut de session ${jsonStatus} incorrect, traité comme AVenir`
+      )
+      return StatutAnimationCollective.AVenir
   }
 }
 
