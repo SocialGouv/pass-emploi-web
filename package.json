@@ -27,7 +27,7 @@
     "@storybook/storybook-deployer": "^2.8.16",
     "crypto-js": "4.1.1",
     "dotenv": "16.3.1",
-    "elastic-apm-node": "3.48.0",
+    "elastic-apm-node": "3.49.0",
     "firebase": "9.23.0",
     "global": "^4.4.0",
     "html-react-parser": "4.2.0",
