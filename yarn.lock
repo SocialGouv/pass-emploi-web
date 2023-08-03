@@ -1852,36 +1852,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@elastic/apm-rum-core@npm:^5.18.0":
-  version: 5.18.0
-  resolution: "@elastic/apm-rum-core@npm:5.18.0"
+"@elastic/apm-rum-core@npm:^5.19.0":
+  version: 5.19.0
+  resolution: "@elastic/apm-rum-core@npm:5.19.0"
   dependencies:
     error-stack-parser: ^1.3.5
     opentracing: ^0.14.3
     promise-polyfill: ^8.1.3
-  checksum: fd10a65d6bf3b3e719a27c7b5bb3c88c645f27f8614e2271de97783ad7eb6256acda074b34338889bb00d4226c45d64b857312310cb522503fd90b6285261a1b
+  checksum: 257cb85aca1e0dc55da40b806a9f7445b92fe9b21fd1f0e6f105b5463358496e0b2730d325bf51ab9ac659759b48ffbc5a2abd76ea59a98eb18e552290af876d
   languageName: node
   linkType: hard
 
-"@elastic/apm-rum-react@npm:1.4.3":
-  version: 1.4.3
-  resolution: "@elastic/apm-rum-react@npm:1.4.3"
+"@elastic/apm-rum-react@npm:1.4.4":
+  version: 1.4.4
+  resolution: "@elastic/apm-rum-react@npm:1.4.4"
   dependencies:
-    "@elastic/apm-rum": ^5.13.0
+    "@elastic/apm-rum": ^5.14.0
     hoist-non-react-statics: ^3.3.0
   peerDependencies:
     react: ">16.0.0"
     react-router-dom: ">4.0.0"
-  checksum: 0304cfde9a53062838c8d67e11488006bc36ab518d31041bfa29cb687f4c7181ebbd263e5369caf1a2e0e8636f57072c186d7053462cd31954206b4b58a6ecbe
+  checksum: 8d3d925e24d33ecd6d0ee226b497e68d82cf45ec27c8a6aaa6b21a4975a9f853de8c5dfa9641fd519812d602bc28a3ec3d2d22f78bb9556d68a812485f59d923
   languageName: node
   linkType: hard
 
-"@elastic/apm-rum@npm:5.13.0, @elastic/apm-rum@npm:^5.13.0":
-  version: 5.13.0
-  resolution: "@elastic/apm-rum@npm:5.13.0"
+"@elastic/apm-rum@npm:5.14.0, @elastic/apm-rum@npm:^5.14.0":
+  version: 5.14.0
+  resolution: "@elastic/apm-rum@npm:5.14.0"
   dependencies:
-    "@elastic/apm-rum-core": ^5.18.0
-  checksum: 0b2e0b22039185cfbd61507eec54a050ca0a7985aa6b3027a3c9ce1719ddc5456c27cca4485d22beaf5c17892674516728a485b389623bf3e930880ce458f7f7
+    "@elastic/apm-rum-core": ^5.19.0
+  checksum: 71ff4d693c9bcbf34b7b40da04bf97633a2ba8d1386f98921721e164729321464e3750445f948c97b051ed99aaf51f42e45e0ad356d2a28e7945d819d0dd7735
   languageName: node
   linkType: hard
 
@@ -15136,8 +15136,8 @@ __metadata:
   resolution: "pass-emploi-web@workspace:."
   dependencies:
     "@badrap/bar-of-progress": 0.2.2
-    "@elastic/apm-rum": 5.13.0
-    "@elastic/apm-rum-react": 1.4.3
+    "@elastic/apm-rum": 5.14.0
+    "@elastic/apm-rum-react": 1.4.4
     "@next/bundle-analyzer": ^13.3.0
     "@next/font": 13.4.12
     "@storybook/addon-a11y": ^6.5.16
