@@ -1,16 +1,17 @@
 import { DateTime } from 'luxon'
 
-import { apiGet, apiPatch, apiPut } from 'clients/api.client'
+import { apiGet, apiPatch } from 'clients/api.client'
 import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
-import { AnimationCollective } from 'interfaces/evenement'
+import {
+  AnimationCollective,
+  StatutAnimationCollective,
+} from 'interfaces/evenement'
 import { SessionMiloJson } from 'interfaces/json/session'
 import {
-  getSessionsMissionLocale,
   changerInscriptionsSession,
-} from 'services/sessions.service'
-import {
   changerVisibiliteSession,
   getDetailsSession,
+  getSessionsMissionLocale,
 } from 'services/sessions.service'
 import { ApiError } from 'utils/httpClient'
 
@@ -35,6 +36,7 @@ describe('SessionsApiService', () => {
           },
           isSession: true,
           estVisible: true,
+          statut: 'CLOTUREE',
         },
         {
           id: 'id-session',
@@ -48,6 +50,7 @@ describe('SessionsApiService', () => {
           },
           isSession: true,
           estVisible: false,
+          statut: 'A_VENIR',
         },
       ]
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -74,7 +77,7 @@ describe('SessionsApiService', () => {
           date: dateDebut,
           duree: 10079.999983333333,
           type: 'info coll i-milo',
-          statut: undefined,
+          statut: StatutAnimationCollective.Close,
           isSession: true,
           estCache: false,
         },
@@ -85,7 +88,7 @@ describe('SessionsApiService', () => {
           date: dateDebut,
           duree: 10079.999983333333,
           type: 'Atelier i-milo',
-          statut: undefined,
+          statut: StatutAnimationCollective.AVenir,
           isSession: true,
           estCache: true,
         },

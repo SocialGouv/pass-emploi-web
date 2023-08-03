@@ -5,6 +5,7 @@ import { apiGet, apiPatch } from 'clients/api.client'
 import { AnimationCollective } from 'interfaces/evenement'
 import {
   DetailsSessionJson,
+  jsonToStatutSession,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
@@ -114,6 +115,7 @@ export function jsonToSession(json: DetailsSessionJson): Session {
       dateHeureFin: json.session.dateHeureFin,
       lieu: json.session.lieu,
       estVisible: json.session.estVisible,
+      statut: jsonToStatutSession(json.session.statut),
     },
     offre: {
       titre: json.offre.nom,
