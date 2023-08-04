@@ -235,11 +235,13 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
       return
     }
 
+    let formInvalid = false
     if (isReaffectationTemporaire.value === undefined) {
       setIsReaffectationTemporaire({
         ...isReaffectationTemporaire,
         error: 'Veuillez choisir un type de réaffectation',
       })
+      formInvalid = true
     }
 
     if (!conseillerDestination && !queryConseillerDestination.value) {
@@ -247,6 +249,7 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
         ...queryConseillerDestination,
         error: 'Veuillez rechercher un conseiller de destination',
       })
+      formInvalid = true
     }
 
     if (idsBeneficiairesSelected.value.length === 0) {
@@ -254,13 +257,10 @@ function Reaffectation({ conseillersEtablissement }: ReaffectationProps) {
         ...idsBeneficiairesSelected,
         error: 'Veuillez sélectionner au moins un bénéficiaire',
       })
+      formInvalid = true
     }
 
-    if (
-      isReaffectationTemporaire.error ||
-      queryConseillerDestination.error ||
-      idsBeneficiairesSelected.error
-    ) {
+    if (formInvalid) {
       return
     }
 
