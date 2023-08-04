@@ -59,6 +59,7 @@ export default function BeneficiaireItemList({
             <Button
               style={ButtonStyle.SECONDARY}
               label={`Désinscrire ${beneficiaire.value}`}
+              type='button'
               onClick={() => onDesinscrire(beneficiaire.id)}
             >
               Désinscrire
@@ -69,6 +70,7 @@ export default function BeneficiaireItemList({
             <Button
               style={ButtonStyle.TERTIARY}
               label={`Réinscrire ${beneficiaire.value}`}
+              type='button'
               onClick={() => onReinscrire(beneficiaire.id)}
             >
               Réinscrire
