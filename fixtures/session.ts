@@ -1,5 +1,6 @@
 import { Session } from 'interfaces/session'
 import { DetailsSessionJson } from 'interfaces/json/session'
+import { StatutAnimationCollective } from 'interfaces/evenement'
 
 export function unDetailSessionJson(
   overrides: Partial<DetailsSessionJson> = {}
@@ -16,6 +17,7 @@ export function unDetailSessionJson(
       nbPlacesDisponibles: 20,
       commentaire: 'bla',
       estVisible: true,
+      statut: 'CLOTUREE',
     },
     offre: {
       id: '5522561',
@@ -54,6 +56,7 @@ export function unDetailSession(overrides: Partial<Session> = {}): Session {
       commentaire: 'bla',
       estVisible: true,
       nbPlacesDisponibles: 20,
+      statut: StatutAnimationCollective.Close,
     },
     offre: {
       titre: 'aide',
