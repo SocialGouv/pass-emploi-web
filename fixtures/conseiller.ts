@@ -1,5 +1,5 @@
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { ConseillerJson } from 'interfaces/json/conseiller'
+import { BaseConseillerJson, ConseillerJson } from 'interfaces/json/conseiller'
 
 export const unConseiller = (
   overrides: Partial<Conseiller> = {}
@@ -12,6 +12,18 @@ export const unConseiller = (
     aDesBeneficiairesARecuperer: false,
     estSuperviseur: false,
     structure: StructureConseiller.PASS_EMPLOI,
+  }
+  return { ...defaults, ...overrides }
+}
+
+export const unBaseConseillerJson = (
+  overrides: Partial<BaseConseillerJson> = {}
+): BaseConseillerJson => {
+  const defaults: BaseConseillerJson = {
+    id: '1',
+    prenom: 'Nils',
+    nom: 'Tavernier',
+    email: 'nils.tavernier@mail.com',
   }
   return { ...defaults, ...overrides }
 }

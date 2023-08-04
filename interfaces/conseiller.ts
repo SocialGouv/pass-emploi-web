@@ -19,6 +19,7 @@ export type BaseConseiller = {
   id: string
   firstName: string
   lastName: string
+  email?: string
 }
 
 export interface Conseiller extends BaseConseiller {
@@ -26,7 +27,6 @@ export interface Conseiller extends BaseConseiller {
   aDesBeneficiairesARecuperer: boolean
   structure: StructureConseiller
   estSuperviseur: boolean
-  email?: string
   agence?: { nom: string; id?: string }
 }
 

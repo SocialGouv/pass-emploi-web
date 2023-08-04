@@ -48,7 +48,10 @@ export function TR(props: TRProps | TRLinkProps) {
   } else {
     const { isHeader, onClick, children } = props
     return (
-      <tr className={!isHeader ? style : ''} onClick={onClick}>
+      <tr
+        className={`${!isHeader ? style : ''} ${onClick ? clickableStyle : ''}`}
+        onClick={onClick}
+      >
         {children}
       </tr>
     )

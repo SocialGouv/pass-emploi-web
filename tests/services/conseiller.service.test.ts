@@ -1,11 +1,14 @@
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { unConseiller, unConseillerJson } from 'fixtures/conseiller'
+import {
+  unBaseConseillerJson,
+  unConseiller,
+  unConseillerJson,
+} from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
-  getConseillerByEmail,
   getConseillerClientSide,
+  getConseillers,
   getConseillerServerSide,
-  getConseillersEtablissementServerSide,
   modifierAgence,
   modifierNotificationsSonores,
   recupererBeneficiaires,
@@ -75,89 +78,30 @@ describe('ConseillerApiService', () => {
     })
   })
 
-  describe('.getConseillersEtablissementServerSide', () => {
-    it('renvoie une liste de conseillers de l’établissement', async () => {
+  describe('.getConseillers', () => {
+    it('renvoie les informations des conseillers', async () => {
       // Given
-      const idAgence = 'id-agence'
       const accessToken = 'accessToken'
-      const user = {
-        id: 'id-user',
-        name: 'Albert Durant',
-        structure: StructureConseiller.MILO,
-        email: 'albert.durant@gmail.com',
-        estConseiller: true,
-        estSuperviseur: true,
-      }
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: [
-          unConseillerJson({
-            id: '1',
-            agence: {
-              nom: 'Milo Marseille',
-              id: 'id-agence',
-            },
-          }),
-          unConseillerJson({
-            id: '2',
-            agence: {
-              nom: 'Milo Marseille',
-              id: 'id-agence',
-            },
-          }),
-        ],
+        content: [unBaseConseillerJson()],
       })
 
       // When
-      const actual = await getConseillersEtablissementServerSide(
-        accessToken,
-        idAgence,
-        user
-      )
+      const actual = await getConseillers('conseiller@email.com')
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        `/etablissements/${idAgence}/conseillers`,
+        '/conseillers?q=conseiller@email.com',
         accessToken
       )
       expect(actual).toEqual([
-        unConseiller({
+        {
           id: '1',
-          agence: { nom: 'Milo Marseille', id: 'id-agence' },
-          structure: StructureConseiller.MILO,
-          estSuperviseur: true,
-        }),
-        unConseiller({
-          id: '2',
-          agence: { nom: 'Milo Marseille', id: 'id-agence' },
-          structure: StructureConseiller.MILO,
-          estSuperviseur: true,
-        }),
+          firstName: 'Nils',
+          lastName: 'Tavernier',
+          email: 'nils.tavernier@mail.com',
+        },
       ])
-    })
-  })
-
-  describe('.getConseillerByEmail', () => {
-    it('renvoie les informations d’un conseiller', async () => {
-      // Given
-      const idConseiller = 'idConseiller'
-      const accessToken = 'accessToken'
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: unConseillerJson(),
-      })
-
-      // When
-      const actual = await getConseillerByEmail('conseiller@email.com')
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers?email=conseiller@email.com',
-        accessToken
-      )
-      expect(actual).toEqual({
-        id: '1',
-        firstName: 'Nils',
-        lastName: 'Tavernier',
-      })
     })
   })
 

@@ -123,23 +123,6 @@ export async function createCompteJeunePoleEmploi(newJeune: {
   return jsonToBaseJeune(content)
 }
 
-export async function getJeunesDuConseillerParEmail(
-  emailConseiller: string
-): Promise<{ conseiller: BaseConseiller; jeunes: JeuneFromListe[] }> {
-  const session = await getSession()
-  const {
-    content: { id, firstName, lastName },
-  } = await apiGet<ConseillerJson>(
-    `/conseillers?email=${emailConseiller}`,
-    session!.accessToken
-  )
-  const jeunesDuConseiller = await getJeunesDuConseiller(
-    id,
-    session!.accessToken
-  )
-  return { conseiller: { id, firstName, lastName }, jeunes: jeunesDuConseiller }
-}
-
 export async function getIdJeuneMilo(
   numeroDossier: string,
   accessToken: string
