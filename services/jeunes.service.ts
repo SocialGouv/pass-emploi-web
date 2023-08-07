@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { BaseConseiller } from 'interfaces/conseiller'
 import {
   BaseJeune,
   ConseillerHistorique,
@@ -14,7 +13,6 @@ import {
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
-  ConseillerJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
 import {

@@ -11,7 +11,8 @@ type TRLinkProps = Children & { href: string; label: string }
 
 export function TR(props: TRProps | TRLinkProps) {
   const style = 'focus-within:bg-primary_lighten rounded-base shadow-base'
-  const clickableStyle = 'cursor-pointer hover:bg-primary_lighten'
+  const clickableStyle =
+    'cursor-pointer hover:bg-primary_lighten hover:rounded-base'
 
   if (isLink(props)) {
     const { href, label, children } = props

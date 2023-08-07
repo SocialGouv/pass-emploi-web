@@ -34,7 +34,7 @@ const ConseillerIntrouvableSuggestionModal = dynamic(
   { ssr: false }
 )
 
-function Reaffectation() {
+function Reaffectation(_props: PageProps) {
   const [portefeuille] = usePortefeuille()
 
   const [isReaffectationTemporaire, setIsReaffectationTemporaire] = useState<
@@ -77,35 +77,27 @@ function Reaffectation() {
     setIsReaffectationTemporaire({ value: isTemporaire })
   }
 
-  function handleInputConseillerInitial() {
-    // TODO resets
-    setErreurReaffectation(undefined)
-    resetFormOnNewInputConseillerInitial()
+  function resetConseillerInitial() {
+    setConseillerInitial({ value: undefined })
+    setConseillerDestination({ value: undefined })
+
+    resetBeneficiaires()
+    resetReaffectation()
   }
 
-  function handleInputConseillerDestination() {
-    // TODO resets
-    setErreurReaffectation(undefined)
-  }
-
-  function resetAll() {
-    // TODO resets
-    // setQueryConseillerInitial({ value: '' })
-    // setConseillerInitial(undefined)
-    // inputConseillerInitialRef.current!.value = ''
-    resetFormOnNewInputConseillerInitial()
-    setIsReaffectationTemporaire({ value: undefined })
-  }
-
-  function resetFormOnNewInputConseillerInitial() {
-    // TODO resets
-    // setRechercheBeneficiairesSubmitted(false)
-    setBeneficiaires([])
+  function resetBeneficiaires(): void {
+    setBeneficiaires(undefined)
     setIdsBeneficiairesSelected({ value: [] })
+  }
+
+  function resetReaffectation(): void {
     setReaffectationSuccess(false)
     setErreurReaffectation(undefined)
-    // setQueryConseillerDestination({ value: '' })
-    // setConseillerDestination(undefined)
+  }
+
+  function resetConseillerDestination() {
+    setConseillerDestination({ value: undefined })
+    resetReaffectation()
   }
 
   function selectionnerBeneficiaire(beneficiaire: JeuneFromListe) {
@@ -139,34 +131,24 @@ function Reaffectation() {
   async function fetchListeBeneficiaires(conseiller: BaseConseiller) {
     setConseillerInitial({ value: conseiller })
 
-    try {
-      const { getJeunesDuConseillerParId } = await import(
-        'services/jeunes.service'
-      )
-      const beneficiairesDuConseiller = await getJeunesDuConseillerParId(
-        conseiller.id
-      )
+    const { getJeunesDuConseillerParId } = await import(
+      'services/jeunes.service'
+    )
+    const beneficiairesDuConseiller = await getJeunesDuConseillerParId(
+      conseiller.id
+    )
 
-      if (beneficiairesDuConseiller.length > 0) {
-        setBeneficiaires(
-          [...beneficiairesDuConseiller].sort(compareJeunesByNom)
-        )
-        setTrackingTitle(
-          'Réaffectation jeunes – Etape 3 – Réaff. jeunes vers cons. dest.'
-        )
-      } else {
-        // FIXME
-        // setQueryConseillerInitial({
-        //   ...queryConseillerInitial,
-        //   error: 'Aucun bénéficiaire trouvé pour ce conseiller',
-        // })
-      }
-    } catch (err) {
-      // FIXME
-      // setQueryConseillerInitial({
-      //   ...queryConseillerInitial,
-      //   error: "Une erreur inconnue s'est produite",
-      // })
+    if (beneficiairesDuConseiller.length > 0) {
+      setBeneficiaires([...beneficiairesDuConseiller].sort(compareJeunesByNom))
+      setTrackingTitle(
+        'Réaffectation jeunes – Etape 3 – Réaff. jeunes vers cons. dest.'
+      )
+    } else {
+      setBeneficiaires(undefined)
+      setConseillerInitial({
+        value: conseiller,
+        error: 'Aucun bénéficiaire trouvé pour ce conseiller',
+      })
       setTrackingTitle('Réaffectation jeunes – Etape 2 – Erreur')
     }
   }
@@ -215,7 +197,6 @@ function Reaffectation() {
         idsBeneficiairesSelected.value,
         isReaffectationTemporaire.value!
       )
-      resetAll()
       setReaffectationSuccess(true)
       setTrackingTitle('Réaffectation jeunes – Etape 1 – Succès réaff.')
     } catch (erreur) {
@@ -276,8 +257,9 @@ function Reaffectation() {
           <ChoixConseiller
             name='initial'
             idConseillerSelectionne={conseillerInitial.value?.id}
-            onInput={handleInputConseillerInitial}
+            onInput={resetConseillerInitial}
             onChoixConseiller={fetchListeBeneficiaires}
+            error={conseillerInitial.error}
           />
         </Etape>
 
@@ -346,13 +328,13 @@ function Reaffectation() {
               titre='Saisissez le conseiller à qui affecter les bénéficiaires'
             >
               <ChoixConseiller
-                name='destination'
-                error={conseillerDestination.error}
+                name='destinataire'
                 idConseillerSelectionne={conseillerDestination.value?.id}
-                onInput={handleInputConseillerDestination}
+                onInput={resetConseillerDestination}
                 onChoixConseiller={(conseiller) =>
                   setConseillerDestination({ value: conseiller })
                 }
+                error={conseillerDestination.error}
               />
             </Etape>
 
@@ -404,7 +386,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 
   const {
-    session: { user, accessToken },
+    session: { user },
   } = sessionOrRedirect
   if (!user.estSuperviseur) {
     return { notFound: true }
@@ -413,14 +395,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const referer = context.req.headers.referer
   const redirectTo =
     referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-
-  const { getConseillerServerSide } = await import(
-    'services/conseiller.service'
-  )
-  const conseiller = await getConseillerServerSide(user, accessToken)
-  if (!conseiller) {
-    throw new Error(`Conseiller ${user.id} inexistant`)
-  }
 
   return {
     props: {
@@ -459,12 +433,14 @@ function ChoixConseiller({
     useState<boolean>(false)
 
   function handleInputQuery(value: string) {
+    setChoixConseillers(undefined)
     setQueryConseiller({ value })
     onInput()
   }
 
   async function rechercherConseiller() {
     if (queryConseiller.value.length < 2) return
+    if (choixConseillers) return
 
     const { getConseillers } = await import('services/conseiller.service')
     setRechercheConseillerEnCours(true)
@@ -501,7 +477,7 @@ function ChoixConseiller({
 
       <div className='flex'>
         <Input
-          type='text'
+          type='search'
           id={id}
           onChange={handleInputQuery}
           required={true}
@@ -558,7 +534,11 @@ function ChoixConseiller({
                     {conseiller.firstName} {conseiller.lastName}
                   </label>
                 </TD>
-                <TD>{conseiller.email ?? '-'}</TD>
+                <TD>
+                  {conseiller.email ?? (
+                    <span aria-label='non renseignée'>-</span>
+                  )}
+                </TD>
               </TR>
             ))}
           </TBody>
