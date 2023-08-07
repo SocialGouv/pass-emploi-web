@@ -130,6 +130,12 @@ const ALERTES: DictAlertes = {
   suppressionListeDiffusion: {
     title: 'La liste de diffusion a bien été supprimée',
   },
+  modificationAtelier: {
+    title: 'L’atelier a bien été mis à jour',
+  },
+  modificationInformationCollective: {
+    title: 'L’information collective a bien été mise à jour',
+  },
 }
 
 const ALERTES_MILO: DictAlertes = {

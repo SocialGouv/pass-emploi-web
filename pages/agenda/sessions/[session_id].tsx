@@ -2,6 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 import React, { FormEvent, useRef, useState } from 'react'
 
 import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
@@ -20,6 +21,8 @@ import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { Session, StatutBeneficiaire } from 'interfaces/session'
+import { AlerteParam } from 'referentiel/alerteParam'
+import { useAlerte } from 'utils/alerteContext'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -51,6 +54,9 @@ function FicheDetailsSession({
   session,
   returnTo,
 }: DetailSessionProps) {
+  const router = useRouter()
+  const [_, setAlerte] = useAlerte()
+
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
   const dateLimiteDepassee = dateLimiteEstDepassee()
     ? DateTime.fromISO(session.session.dateMaxInscription!) < DateTime.now()
@@ -251,6 +257,7 @@ function FicheDetailsSession({
 
   async function enregistrerInscriptions(e: FormEvent) {
     e.preventDefault()
+
     const { changerInscriptionsSession } = await import(
       'services/sessions.service'
     )
@@ -264,6 +271,12 @@ function FicheDetailsSession({
     )
 
     await changerInscriptionsSession(session.session.id, inscriptions)
+    setAlerte(
+      session.offre.type === 'Atelier'
+        ? AlerteParam.modificationAtelier
+        : AlerteParam.modificationInformationCollective
+    )
+    await router.push(returnTo)
   }
 
   return (

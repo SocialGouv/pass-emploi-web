@@ -24,6 +24,9 @@ import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
+import { AlerteParam } from 'referentiel/alerteParam'
+import { deleteAction, updateAction } from 'services/actions.service'
+import { useRouter } from 'next/router'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
@@ -53,7 +56,7 @@ describe('Détails Session', () => {
           }),
         ]
         // When
-        await render(
+        await renderWithContexts(
           <DetailSession
             pageTitle=''
             session={session}
@@ -161,7 +164,7 @@ describe('Détails Session', () => {
 
       it('affiche un switch désactivé par défaut', async () => {
         // When
-        await render(
+        await renderWithContexts(
           <DetailSession
             pageTitle=''
             session={sessionInvisible}
@@ -177,7 +180,7 @@ describe('Détails Session', () => {
       })
       it('affiche un switch dont la valeur correspond à la visibilité de la session', async () => {
         // When
-        await render(
+        await renderWithContexts(
           <DetailSession
             pageTitle=''
             session={sessionVisible}
@@ -196,7 +199,7 @@ describe('Détails Session', () => {
         it('change la visibilité', async () => {
           // Given
           ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
-          await render(
+          await renderWithContexts(
             <DetailSession
               pageTitle=''
               session={sessionInvisible}
@@ -287,7 +290,7 @@ describe('Détails Session', () => {
             ],
           })
 
-          await render(
+          await renderWithContexts(
             <DetailSession
               pageTitle=''
               session={session}
@@ -364,7 +367,7 @@ describe('Détails Session', () => {
               },
             ],
           })
-          await render(
+          await renderWithContexts(
             <DetailSession
               pageTitle=''
               session={session}
@@ -391,6 +394,11 @@ describe('Détails Session', () => {
       describe('au clic sur le bouton d’enregistrement', () => {
         it('appelle la méthode changerInscriptionsSession', async () => {
           //Given
+          let routerPush: Function = jest.fn()
+
+          ;(useRouter as jest.Mock).mockReturnValue({
+            push: routerPush,
+          })
           ;(changerInscriptionsSession as jest.Mock).mockResolvedValue(
             undefined
           )
@@ -419,7 +427,7 @@ describe('Détails Session', () => {
             ],
           })
 
-          await render(
+          await renderWithContexts(
             <DetailSession
               pageTitle=''
               session={session}
@@ -485,7 +493,7 @@ describe('Détails Session', () => {
           ],
         })
 
-        await render(
+        await renderWithContexts(
           <DetailSession
             pageTitle=''
             session={session}
@@ -576,7 +584,7 @@ describe('Détails Session', () => {
           inscriptions: [],
         })
 
-        await render(
+        await renderWithContexts(
           <DetailSession
             pageTitle=''
             session={session}
@@ -719,7 +727,7 @@ describe('Détails Session', () => {
           }),
         ]
 
-        await render(
+        await renderWithContexts(
           <DetailSession
             pageTitle=''
             session={session}
@@ -741,6 +749,11 @@ describe('Détails Session', () => {
 
       it('au clic sur le bouton de réinscription, change le statut du bénéficiaire', async () => {
         //Given
+        let routerPush: Function = jest.fn()
+
+        ;(useRouter as jest.Mock).mockReturnValue({
+          push: routerPush,
+        })
         ;(changerInscriptionsSession as jest.Mock).mockResolvedValue(undefined)
 
         const reinscriptionBeneficiaireBtn = screen.getByRole('button', {
