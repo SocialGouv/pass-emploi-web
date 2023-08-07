@@ -212,7 +212,9 @@ describe('Page d’édition d’une liste de diffusion', () => {
       it('permet de supprimer la liste', async () => {
         // When
         await userEvent.click(screen.getByRole('button', { name: 'Supprimer' }))
-        await userEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Supprimer la liste' })
+        )
 
         // Then
         expect(supprimerListeDeDiffusion).toHaveBeenCalledWith(

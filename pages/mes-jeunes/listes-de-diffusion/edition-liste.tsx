@@ -259,6 +259,7 @@ function EditionListeDiffusion({
 
       {showConfirmationSuppression && (
         <ConfirmationDeleteListeDiffusionModal
+          titreListeDeDiffusion={liste!.titre}
           onConfirmation={supprimerListe}
           onCancel={() => setShowConfirmationSuppression(false)}
         />

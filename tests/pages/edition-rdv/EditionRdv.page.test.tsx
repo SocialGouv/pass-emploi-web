@@ -819,7 +819,7 @@ describe('EditionRdv', () => {
           expect(push).not.toHaveBeenCalled()
           expect(
             screen.getByText(
-              'Vous allez quitter la création d’un nouvel événement'
+              'Souhaitez-vous quitter la création de l’événement ?'
             )
           ).toBeInTheDocument()
         })
@@ -1165,9 +1165,7 @@ describe('EditionRdv', () => {
           expect(button).not.toHaveAttribute('href')
           expect(push).not.toHaveBeenCalled()
           expect(
-            screen.getByText(
-              'Vous allez quitter la modification de l’événement'
-            )
+            screen.getByText('Les informations saisies seront perdues.')
           ).toBeInTheDocument()
         })
 
@@ -1217,15 +1215,17 @@ describe('EditionRdv', () => {
           // Then
           expect(
             screen.getByText(
-              'L’ensemble des bénéficiaires sera notifié de la suppression'
+              'Les bénéficiaires seront notifiées de la suppression.'
             )
           ).toBeInTheDocument()
-          expect(screen.getByText('Confirmer')).toBeInTheDocument()
+          expect(screen.getByText('Supprimer l’événement')).toBeInTheDocument()
         })
 
         it('lors de la confirmation, supprime bien le rendez-vous et retourne à la page précédente', async () => {
           // Given
-          const deleteButtonFromModal = screen.getByText('Confirmer')
+          const deleteButtonFromModal = screen.getByText(
+            'Supprimer l’événement'
+          )
 
           // When
           await userEvent.click(deleteButtonFromModal)
@@ -1330,11 +1330,13 @@ describe('EditionRdv', () => {
         // Then
         expect(
           screen.getByText(
-            /concerne des jeunes qui ne sont pas dans votre portefeuille/
+            /concerne des bénéficiaires qui ne sont pas dans votre portefeuille/
           )
         ).toBeInTheDocument()
         expect(
-          screen.getByText(/Le créateur recevra un e-mail de suppression/)
+          screen.getByText(
+            /Le créateur de l’événement et les bénéficiaires seront notifiés de la suppression./
+          )
         ).toBeInTheDocument()
       })
 

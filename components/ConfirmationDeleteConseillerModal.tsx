@@ -1,11 +1,19 @@
+import dynamic from 'next/dynamic'
 import { MouseEvent, useRef } from 'react'
 
 import Modal from './Modal'
-import { IconName } from './ui/IconComponent'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
+
+const IllustrationDelete = dynamic(
+  import('../assets/images/illustration-delete.svg'),
+  { ssr: false }
+)
+const IllustrationArrowForward = dynamic(
+  import('../assets/images/illustration-arrow-forward.svg'),
+  { ssr: false }
+)
 
 interface ConfirmationDeleteConseillerModalProps {
   onConfirmation: () => void
@@ -25,26 +33,40 @@ export default function ConfirmationDeleteConseillerModal({
   }>(null)
 
   const labelStructure = !estPoleEmploiBRSA(conseiller) ? 'CEJ' : 'BRSA'
+  const title = portefeuilleAvecBeneficiaires
+    ? 'Pour supprimer votre compte, vos bénéficiaires doivent être transférés à un conseiller.'
+    : `Souhaitez-vous supprimer le compte conseiller ${labelStructure}: ${conseiller.firstName} ${conseiller.lastName} ?`
   return (
     <Modal
-      title={`Suppression de votre compte conseiller ${labelStructure} ${conseiller.firstName} ${conseiller.lastName}`}
-      titleIcon={IconName.Warning}
+      title={title}
       onClose={onCancel}
       ref={modalRef}
+      illustration={
+        portefeuilleAvecBeneficiaires ? (
+          <IllustrationArrowForward
+            focusable='false'
+            aria-hidden='true'
+            className='w-1/3 m-auto fill-primary mb-8'
+          />
+        ) : (
+          <IllustrationDelete
+            focusable='false'
+            aria-hidden='true'
+            className='w-1/3 m-auto fill-primary mb-8'
+          />
+        )
+      }
     >
       <div className='px-20 text-center'>
         {!portefeuilleAvecBeneficiaires && (
-          <InformationMessage label='Attention, cette opération est définitive. Une fois confirmée, toutes les informations liées à votre compte seront supprimées et irrécupérables.' />
+          <p className='mt-6'>L’ensemble des données sera supprimé.</p>
         )}
         {portefeuilleAvecBeneficiaires && (
-          <InformationMessage label='Afin de procéder à la suppression de votre compte, votre portefeuille doit avoir été transféré. Merci de contacter votre superviseur puis renouveler la suppression.' />
-        )}
-        {!portefeuilleAvecBeneficiaires && (
-          <p className='mt-6'>Souhaitez-vous confirmer la suppression ?</p>
+          <p className='mt-6'>Veuillez contacter votre superviseur.</p>
         )}
       </div>
 
-      <div className='mt-14 flex justify-center'>
+      <div className='mt-4 flex justify-center'>
         {!portefeuilleAvecBeneficiaires && (
           <>
             <Button
@@ -56,7 +78,7 @@ export default function ConfirmationDeleteConseillerModal({
               Annuler
             </Button>
             <Button type='button' onClick={onConfirmation}>
-              Confirmer
+              Supprimer le compte
             </Button>
           </>
         )}
@@ -67,7 +89,7 @@ export default function ConfirmationDeleteConseillerModal({
             onClick={(e) => modalRef.current!.closeModal(e)}
             className='mr-3'
           >
-            Retour
+            Fermer
           </Button>
         )}
       </div>

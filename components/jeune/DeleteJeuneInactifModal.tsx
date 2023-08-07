@@ -1,9 +1,16 @@
+import dynamic from 'next/dynamic'
+import React from 'react'
+
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { IconName } from 'components/ui/IconComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const IllustrationDelete = dynamic(
+  import('../../assets/images/illustration-delete.svg'),
+  { ssr: false }
+)
 
 interface DeleteJeuneInactifModalProps {
   jeune: BaseJeune
@@ -24,17 +31,20 @@ export default function DeleteJeuneInactifModal({
   return (
     <Modal
       title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
-      titleIcon={IconName.Warning}
       onClose={onClose}
+      illustration={
+        <IllustrationDelete
+          focusable='false'
+          aria-hidden='true'
+          className='w-1/3 m-auto fill-primary mb-8'
+        />
+      }
     >
-      <p className='mb-12 text-base-regular text-content_color text-center'>
+      <p className='mt-6 text-base-regular text-content_color text-center'>
         Une fois confirmée toutes les informations liées à ce compte jeune
         seront supprimées.
       </p>
-      <p className='mb-12 text-base-regular text-content_color text-center'>
-        Souhaitez-vous continuer la suppression ?
-      </p>
-      <div className='flex justify-center'>
+      <div className='flex justify-center mt-4'>
         <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
           Annuler
         </Button>
@@ -44,7 +54,7 @@ export default function DeleteJeuneInactifModal({
           onClick={onDelete}
           className='ml-6'
         >
-          Confirmer
+          Supprimer le compte
         </Button>
       </div>
     </Modal>

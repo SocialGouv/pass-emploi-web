@@ -402,12 +402,10 @@ function EditionRdv({
 
       {showLeavePageModal && (
         <LeavePageConfirmationModal
-          message={`Vous allez quitter la ${
-            evenement ? 'modification de l’' : 'création d’un nouvel '
-          }événement`}
-          commentaire={`Toutes les informations ${
-            evenement ? 'modifiées' : 'saisies'
-          } seront perdues`}
+          titre={`Souhaitez-vous quitter la ${
+            evenement ? 'modification de l’' : 'création de l’'
+          }${evenementTypeAC ? 'animation collective' : 'événement'} ?`}
+          commentaire='Les informations saisies seront perdues.'
           onCancel={closeLeavePageModal}
           destination={returnTo}
         />
@@ -426,6 +424,7 @@ function EditionRdv({
           onClose={closeDeleteRdvModal}
           performDelete={supprimerEvenement}
           evenementTypeAC={evenementTypeAC!}
+          titreEvenement={evenement!.titre}
         />
       )}
     </>

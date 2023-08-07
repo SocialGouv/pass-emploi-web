@@ -1,22 +1,27 @@
 import { UrlObject } from 'url'
 
+import dynamic from 'next/dynamic'
 import { MouseEvent, useRef } from 'react'
 
 import Modal from './Modal'
 import ButtonLink from './ui/Button/ButtonLink'
-import IconComponent, { IconName } from './ui/IconComponent'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+
+const IllustrationError = dynamic(
+  import('../assets/images/illustration-error.svg'),
+  { ssr: false }
+)
 
 interface LeavePageConfirmationModalProps {
   destination: string | UrlObject
   onCancel: () => void
-  message: string
+  titre: string
   commentaire: string
 }
 
 export default function LeavePageConfirmationModal({
-  message,
+  titre,
   commentaire,
   onCancel,
   destination,
@@ -26,19 +31,23 @@ export default function LeavePageConfirmationModal({
   }>(null)
 
   return (
-    <Modal title='Quitter la page ?' onClose={onCancel} ref={modalRef}>
-      <div className='px-20 text-center'>
-        <IconComponent
-          name={IconName.Warning}
-          focusable={false}
-          aria-hidden={true}
-          className='w-[54px] h-[54px] m-auto fill-primary'
+    <Modal
+      title={titre}
+      onClose={onCancel}
+      ref={modalRef}
+      illustration={
+        <IllustrationError
+          focusable='false'
+          aria-hidden='true'
+          className='w-1/3 m-auto fill-primary mb-8'
         />
-        <p className='mt-6 text-base-bold'>{message}</p>
+      }
+    >
+      <div className='px-20 text-center'>
         <p className='mt-6'>{commentaire}</p>
       </div>
 
-      <div className='mt-14 flex justify-center'>
+      <div className='mt-4 flex justify-center'>
         <Button
           type='button'
           style={ButtonStyle.SECONDARY}
@@ -47,7 +56,7 @@ export default function LeavePageConfirmationModal({
         >
           Annuler
         </Button>
-        <ButtonLink href={destination}>Continuer</ButtonLink>
+        <ButtonLink href={destination}>Quitter la page</ButtonLink>
       </div>
     </Modal>
   )
