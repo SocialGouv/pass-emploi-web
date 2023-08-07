@@ -27,4 +27,6 @@ export enum AlerteParam {
   modificationIdentifiantPartenaire = 'modificationIdentifiantPartenaire',
   partageOffre = 'partageOffre',
   suggestionRecherche = 'suggestionRecherche',
+  modificationAtelier = 'modificationAtelier',
+  modificationInformationCollective = 'modificationInformationCollective',
 }
