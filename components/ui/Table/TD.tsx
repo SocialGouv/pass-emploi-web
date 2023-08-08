@@ -13,9 +13,9 @@ export default function TD({
   isBold = false,
   ...props
 }: TDProps) {
-  const style =
-    `p-4 align-middle  ${isBold ? 'text-base-bold' : 'text-base-regular'} ` +
-    className
+  const style = `p-4 align-middle  ${
+    isBold ? 'text-base-bold' : 'text-base-regular'
+  } group-hover:first:rounded-l-base group-hover:last:rounded-r-base ${className}`
 
   if (asDiv)
     return (

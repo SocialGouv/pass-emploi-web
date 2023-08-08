@@ -100,6 +100,11 @@ function Reaffectation(_props: PageProps) {
     resetReaffectation()
   }
 
+  function resetAll() {
+    resetConseillerInitial()
+    setIsReaffectationTemporaire({ value: undefined })
+  }
+
   function selectionnerBeneficiaire(beneficiaire: JeuneFromListe) {
     setErreurReaffectation(undefined)
 
@@ -197,6 +202,7 @@ function Reaffectation(_props: PageProps) {
         idsBeneficiairesSelected.value,
         isReaffectationTemporaire.value!
       )
+      resetAll()
       setReaffectationSuccess(true)
       setTrackingTitle('Réaffectation jeunes – Etape 1 – Succès réaff.')
     } catch (erreur) {

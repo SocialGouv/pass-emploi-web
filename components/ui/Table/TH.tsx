@@ -12,10 +12,10 @@ export function TH({
   asDiv = false,
   className = '',
   estCliquable = false,
-}: THProps): JSX.Element {
+}: THProps): React.JSX.Element {
   const style = `text-s-medium text-left text-content_color ${
     estCliquable ? '' : 'p-4'
-  } ${className}`
+  } group-hover:first:rounded-l-base group-hover:last:rounded-r-base ${className}`
 
   if (asDiv)
     return (
