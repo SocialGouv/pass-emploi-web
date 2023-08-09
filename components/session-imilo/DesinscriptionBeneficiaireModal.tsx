@@ -67,15 +67,22 @@ export default function DesinscriptionBeneficiaireModal({
       commentaire.value.length <= 250
 
     if (formulaireEstValide) {
-      onConfirmation({
+      const beneficiaireDesinscrit = {
         id: beneficiaireADesinscrire.id,
         value: beneficiaireADesinscrire.value,
-        statut: typeRefus.value!,
-        commentaire:
-          typeRefus.value === StatutBeneficiaire.REFUS_JEUNE
-            ? commentaire.value
-            : undefined,
-      })
+        statut: typeRefus.value,
+      }
+      if (
+        typeRefus.value === StatutBeneficiaire.REFUS_JEUNE &&
+        commentaire.value
+      ) {
+        onConfirmation({
+          ...beneficiaireDesinscrit,
+          commentaire: commentaire.value,
+        })
+      } else {
+        onConfirmation(beneficiaireDesinscrit)
+      }
     }
   }
   return (
