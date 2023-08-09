@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic'
 import React, { FormEvent, useState } from 'react'
 
 import Modal from 'components/Modal'
@@ -7,6 +6,7 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { BaseJeune } from 'interfaces/jeune'
@@ -14,11 +14,6 @@ import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-
-const IllustrationDelete = dynamic(
-  import('../../assets/images/illustration-delete.svg'),
-  { ssr: false }
-)
 
 interface DeleteJeuneActifModalProps {
   jeune: BaseJeune
@@ -105,13 +100,7 @@ export default function DeleteJeuneActifModal({
         <Modal
           title={`Souhaitez-vous supprimer le compte bénéficiaire : ${jeune.prenom} ${jeune.nom} ?`}
           onClose={onClose}
-          illustration={
-            <IllustrationDelete
-              focusable='false'
-              aria-hidden='true'
-              className='w-1/3 m-auto fill-primary mb-8'
-            />
-          }
+          titleIllustration={IllustrationName.Delete}
         >
           <p className='mt-6 text-base-regular text-content_color text-center'>
             Le bénéficiaire sera notifié de la suppression de son compte. Les
@@ -141,13 +130,7 @@ export default function DeleteJeuneActifModal({
         <Modal
           title={`Souhaitez-vous supprimer le compte bénéficiaire : ${jeune.prenom} ${jeune.nom} ?`}
           onClose={onClose}
-          illustration={
-            <IllustrationDelete
-              focusable='false'
-              aria-hidden='true'
-              className='w-1/3 m-auto fill-primary mb-8'
-            />
-          }
+          titleIllustration={IllustrationName.Delete}
         >
           <InformationMessage label='Une fois confirmé toutes les informations liées à ce compte bénéficiaire seront supprimées' />
 

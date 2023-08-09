@@ -1,16 +1,12 @@
-import dynamic from 'next/dynamic'
 import React from 'react'
 
 import { IconName } from '../ui/IconComponent'
 
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 
-const IllustrationDelete = dynamic(
-  import('../../assets/images/illustration-delete.svg'),
-  { ssr: false }
-)
 interface DeleteRdvModalProps {
   aDesJeunesDUnAutrePortefeuille: boolean
   onClose: () => void
@@ -36,13 +32,7 @@ export default function DeleteRdvModal({
         evenementTypeAC ? 'animation collective' : 'événement'
       } : ${titreEvenement} ?`}
       onClose={handleCloseModal}
-      illustration={
-        <IllustrationDelete
-          focusable='false'
-          aria-hidden='true'
-          className='w-1/3 m-auto fill-primary mb-8'
-        />
-      }
+      titleIllustration={IllustrationName.Delete}
     >
       {aDesJeunesDUnAutrePortefeuille && (
         <>

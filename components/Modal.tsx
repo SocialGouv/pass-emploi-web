@@ -11,6 +11,9 @@ import { createPortal } from 'react-dom'
 
 import IconComponent, { IconName } from './ui/IconComponent'
 
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import styles from 'styles/components/Modal.module.css'
 
 export const MODAL_ROOT_ID = 'modal-root'
@@ -20,7 +23,7 @@ interface ModalProps {
   onClose?: () => void
   children: ReactNode
   titleIcon?: IconName
-  illustration?: ReactNode
+  titleIllustration?: IllustrationName
 }
 
 const Modal = forwardRef((props: ModalProps, ref) => {
@@ -29,7 +32,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
     onClose,
     title,
     titleIcon,
-    illustration,
+    titleIllustration,
   } = props
 
   useImperativeHandle(ref, () => ({
@@ -124,7 +127,14 @@ const Modal = forwardRef((props: ModalProps, ref) => {
             className='w-20 h-20 m-auto fill-primary mb-8'
           />
         )}
-        {illustration}
+        {titleIllustration && (
+          <IllustrationComponent
+            name={titleIllustration}
+            focusable='false'
+            aria-hidden='true'
+            className='w-1/3 m-auto fill-primary mb-8'
+          />
+        )}
         <h2
           id='modal-title'
           className='text-l-bold text-primary text-center flex-auto mb-4'

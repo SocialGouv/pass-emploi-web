@@ -2,8 +2,8 @@ import { MouseEvent, useRef } from 'react'
 
 import Modal from './Modal'
 
-import IllustrationDelete from 'assets/images/illustration-delete.svg'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 
 interface ConfirmationDeleteListeDiffusionModalProps {
   titreListeDeDiffusion: string
@@ -25,13 +25,7 @@ export default function ConfirmationDeleteListeDiffusionModal({
       title={`Souhaitez-vous supprimer la liste de diffusion : ${titreListeDeDiffusion} ?`}
       onClose={onCancel}
       ref={modalRef}
-      illustration={
-        <IllustrationDelete
-          focusable='false'
-          aria-hidden='true'
-          className='w-1/3 m-auto fill-primary mb-8'
-        />
-      }
+      titleIllustration={IllustrationName.Delete}
     >
       <div className='px-20 text-center'>
         <p className='mt-6'>

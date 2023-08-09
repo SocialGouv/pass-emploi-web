@@ -1,17 +1,12 @@
 import { UrlObject } from 'url'
 
-import dynamic from 'next/dynamic'
 import { MouseEvent, useRef } from 'react'
 
 import Modal from './Modal'
 import ButtonLink from './ui/Button/ButtonLink'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-
-const IllustrationError = dynamic(
-  import('../assets/images/illustration-error.svg'),
-  { ssr: false }
-)
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 
 interface LeavePageConfirmationModalProps {
   destination: string | UrlObject
@@ -35,13 +30,7 @@ export default function LeavePageConfirmationModal({
       title={titre}
       onClose={onCancel}
       ref={modalRef}
-      illustration={
-        <IllustrationError
-          focusable='false'
-          aria-hidden='true'
-          className='w-1/3 m-auto fill-primary mb-8'
-        />
-      }
+      titleIllustration={IllustrationName.Error}
     >
       <div className='px-20 text-center'>
         <p className='mt-6'>{commentaire}</p>

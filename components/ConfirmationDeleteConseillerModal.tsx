@@ -1,19 +1,12 @@
-import dynamic from 'next/dynamic'
 import { MouseEvent, useRef } from 'react'
 
 import Modal from './Modal'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
-
-const IllustrationDelete = dynamic(
-  import('../assets/images/illustration-delete.svg'),
-  { ssr: false }
-)
-const IllustrationArrowForward = dynamic(
-  import('../assets/images/illustration-arrow-forward.svg'),
-  { ssr: false }
-)
 
 interface ConfirmationDeleteConseillerModalProps {
   onConfirmation: () => void
@@ -41,20 +34,10 @@ export default function ConfirmationDeleteConseillerModal({
       title={title}
       onClose={onCancel}
       ref={modalRef}
-      illustration={
-        portefeuilleAvecBeneficiaires ? (
-          <IllustrationArrowForward
-            focusable='false'
-            aria-hidden='true'
-            className='w-1/3 m-auto fill-primary mb-8'
-          />
-        ) : (
-          <IllustrationDelete
-            focusable='false'
-            aria-hidden='true'
-            className='w-1/3 m-auto fill-primary mb-8'
-          />
-        )
+      titleIllustration={
+        portefeuilleAvecBeneficiaires
+          ? IllustrationName.ArrowForward
+          : IllustrationName.Delete
       }
     >
       <div className='px-20 text-center'>

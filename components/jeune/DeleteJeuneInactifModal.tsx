@@ -1,16 +1,11 @@
-import dynamic from 'next/dynamic'
 import React from 'react'
 
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { BaseJeune } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-
-const IllustrationDelete = dynamic(
-  import('../../assets/images/illustration-delete.svg'),
-  { ssr: false }
-)
 
 interface DeleteJeuneInactifModalProps {
   jeune: BaseJeune
@@ -32,13 +27,7 @@ export default function DeleteJeuneInactifModal({
     <Modal
       title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
       onClose={onClose}
-      illustration={
-        <IllustrationDelete
-          focusable='false'
-          aria-hidden='true'
-          className='w-1/3 m-auto fill-primary mb-8'
-        />
-      }
+      titleIllustration={IllustrationName.Delete}
     >
       <p className='mt-6 text-base-regular text-content_color text-center'>
         Une fois confirmée toutes les informations liées à ce compte jeune
