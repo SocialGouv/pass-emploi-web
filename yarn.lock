@@ -5907,12 +5907,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.0.4, acorn@npm:^8.1.0, acorn@npm:^8.5.0, acorn@npm:^8.7.1, acorn@npm:^8.8.0, acorn@npm:^8.8.1":
-  version: 8.8.2
-  resolution: "acorn@npm:8.8.2"
+"acorn@npm:^8.0.4, acorn@npm:^8.1.0, acorn@npm:^8.5.0, acorn@npm:^8.7.1, acorn@npm:^8.8.0, acorn@npm:^8.8.1, acorn@npm:^8.8.2":
+  version: 8.10.0
+  resolution: "acorn@npm:8.10.0"
   bin:
     acorn: bin/acorn
-  checksum: f790b99a1bf63ef160c967e23c46feea7787e531292bb827126334612c234ed489a0dc2c7ba33156416f0ffa8d25bf2b0fdb7f35c2ba60eb3e960572bece4001
+  checksum: 538ba38af0cc9e5ef983aee196c4b8b4d87c0c94532334fa7e065b2c8a1f85863467bb774231aae91613fcda5e68740c15d97b1967ae3394d20faddddd8af61d
   languageName: node
   linkType: hard
 
@@ -7529,10 +7529,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cjs-module-lexer@npm:^1.0.0":
-  version: 1.2.2
-  resolution: "cjs-module-lexer@npm:1.2.2"
-  checksum: 977f3f042bd4f08e368c890d91eecfbc4f91da0bc009a3c557bc4dfbf32022ad1141244ac1178d44de70fc9f3dea7add7cd9a658a34b9fae98a55d8f92331ce5
+"cjs-module-lexer@npm:^1.0.0, cjs-module-lexer@npm:^1.2.2":
+  version: 1.2.3
+  resolution: "cjs-module-lexer@npm:1.2.3"
+  checksum: 5ea3cb867a9bb609b6d476cd86590d105f3cfd6514db38ff71f63992ab40939c2feb68967faa15a6d2b1f90daa6416b79ea2de486e9e2485a6f8b66a21b4fb0a
   languageName: node
   linkType: hard
 
@@ -8860,45 +8860,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-http-client@npm:12.0.0":
-  version: 12.0.0
-  resolution: "elastic-apm-http-client@npm:12.0.0"
-  dependencies:
-    agentkeepalive: ^4.2.1
-    breadth-filter: ^2.0.0
-    end-of-stream: ^1.4.4
-    fast-safe-stringify: ^2.0.7
-    fast-stream-to-buffer: ^1.0.0
-    object-filter-sequence: ^1.0.0
-    readable-stream: ^3.4.0
-    semver: ^6.3.0
-    stream-chopper: ^3.0.1
-  checksum: df927a78c5eeab8795cdc0429156982c68539531928e68ab84b7e24d02a8287da213668a2dc814c41282b231aa4dd30cdf4ae12a903bd1caaf22476844a458b1
-  languageName: node
-  linkType: hard
-
-"elastic-apm-node@npm:3.48.0":
-  version: 3.48.0
-  resolution: "elastic-apm-node@npm:3.48.0"
+"elastic-apm-node@npm:3.49.1":
+  version: 3.49.1
+  resolution: "elastic-apm-node@npm:3.49.1"
   dependencies:
     "@elastic/ecs-pino-format": ^1.2.0
     "@opentelemetry/api": ^1.4.1
     "@opentelemetry/core": ^1.11.0
     "@opentelemetry/sdk-metrics": ^1.12.0
     after-all-results: ^2.0.0
+    agentkeepalive: ^4.2.1
     async-cache: ^1.1.0
     async-value-promise: ^1.1.1
     basic-auth: ^2.0.1
+    breadth-filter: ^2.0.0
     cookie: ^0.5.0
     core-util-is: ^1.0.2
-    elastic-apm-http-client: 12.0.0
     end-of-stream: ^1.4.4
     error-callsites: ^2.0.4
     error-stack-parser: ^2.0.6
     escape-string-regexp: ^4.0.0
     fast-safe-stringify: ^2.0.7
+    fast-stream-to-buffer: ^1.0.0
     http-headers: ^3.0.2
-    import-in-the-middle: 1.3.5
+    import-in-the-middle: 1.4.2
     is-native: ^1.0.1
     lru-cache: ^6.0.0
     measured-reporting: ^1.51.1
@@ -8908,14 +8893,16 @@ __metadata:
     object-identity-map: ^1.0.2
     original-url: ^1.2.3
     pino: ^6.11.2
+    readable-stream: ^3.4.0
     relative-microtime: ^2.0.0
-    require-in-the-middle: ^7.0.1
-    semver: ^6.3.0
+    require-in-the-middle: ^7.1.1
+    semver: ^6.3.1
     shallow-clone-shim: ^2.0.0
     source-map: ^0.8.0-beta.0
     sql-summary: ^1.0.1
+    stream-chopper: ^3.0.1
     unicode-byte-truncate: ^1.0.0
-  checksum: 0eceaf4553873a369c91ccb159af017e30844daf9844edc586adaedd4260842b7f6273217fceee785fe595b159ffca5ec2f4af1bcec82bfa102fddf748b537de
+  checksum: d3df8a8d89bc6b461040516f5db05d69fcc153730032b45b43c38c1641ac6a3d57fea1273a6cfae32994bbe9aadbd9bb44181818d76dcb2b4636c06d624c5b0a
   languageName: node
   linkType: hard
 
@@ -11425,12 +11412,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-in-the-middle@npm:1.3.5":
-  version: 1.3.5
-  resolution: "import-in-the-middle@npm:1.3.5"
+"import-in-the-middle@npm:1.4.2":
+  version: 1.4.2
+  resolution: "import-in-the-middle@npm:1.4.2"
   dependencies:
+    acorn: ^8.8.2
+    acorn-import-assertions: ^1.9.0
+    cjs-module-lexer: ^1.2.2
     module-details-from-path: ^1.0.3
-  checksum: e8420c863cf0c7eb53647afea6b870357eeb2fa74624827452f94635fea43d022947cd49e3b9404c2cdcd1adf8bac5a61c3bae3321de1aa5d219a3a88297e7b6
+  checksum: 52971f821e9a3c94834cd5cf0ab5178321c07d4f4babd547b3cb24c4de21670d05b42ca1523890e7e90525c3bba6b7db7e54cf45421919b0b2712a34faa96ea5
   languageName: node
   linkType: hard
 
@@ -15164,7 +15154,7 @@ __metadata:
     crypto-js: 4.1.1
     css-loader: ^6.7.3
     dotenv: 16.3.1
-    elastic-apm-node: 3.48.0
+    elastic-apm-node: 3.49.1
     eslint: ^8.40.0
     eslint-config-next: 13.4.12
     eslint-config-prettier: ^8.8.0
@@ -16757,14 +16747,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"require-in-the-middle@npm:^7.0.1":
-  version: 7.1.1
-  resolution: "require-in-the-middle@npm:7.1.1"
+"require-in-the-middle@npm:^7.1.1":
+  version: 7.2.0
+  resolution: "require-in-the-middle@npm:7.2.0"
   dependencies:
     debug: ^4.1.1
     module-details-from-path: ^1.0.3
     resolve: ^1.22.1
-  checksum: 00c7e28c271cefc219962b18c1803f6124c761238c1edbf588c68a7143bfeb5779df455d2f0791c2c1f6e841580c50080d4435156e72841fa0bc50c3f383d032
+  checksum: 5ed219d12aec4d0f098029827f9e929d8e0ca4f2fe01f23a9b02169e57c5157cced9e7acaef6a871d3f56646f2cb807b08f2f23d66912ee53eca16cb88eff743
   languageName: node
   linkType: hard
 
@@ -17154,12 +17144,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "semver@npm:6.3.0"
+"semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.3.0, semver@npm:^6.3.1":
+  version: 6.3.1
+  resolution: "semver@npm:6.3.1"
   bin:
-    semver: ./bin/semver.js
-  checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
+    semver: bin/semver.js
+  checksum: ae47d06de28836adb9d3e25f22a92943477371292d9b665fb023fae278d345d508ca1958232af086d85e0155aee22e313e100971898bbb8d5d89b8b1d4054ca2
   languageName: node
   linkType: hard
 
