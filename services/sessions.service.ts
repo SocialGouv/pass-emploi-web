@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiGet, apiPatch } from 'clients/api.client'
+import { apiGet, apiPatch, apiPost } from 'clients/api.client'
 import { AnimationCollective } from 'interfaces/evenement'
 import {
   DetailsSessionJson,
@@ -103,6 +103,20 @@ export async function modifierInformationsSession(
     `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
     payload,
     accessToken
+  )
+}
+
+export async function cloreSession(
+  idConseiller: string,
+  idSession: string,
+  emargements: InformationBeneficiaireSession[]
+): Promise<void> {
+  const session = await getSession()
+  const payload = { emargements }
+  await apiPost(
+    `/conseillers/milo/${idConseiller}/sessions/${idSession}/cloturer`,
+    payload,
+    session!.accessToken
   )
 }
 

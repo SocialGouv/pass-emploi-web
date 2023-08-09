@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
 import { unConseiller } from 'fixtures/conseiller'
@@ -24,9 +25,6 @@ import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
-import { AlerteParam } from 'referentiel/alerteParam'
-import { deleteAction, updateAction } from 'services/actions.service'
-import { useRouter } from 'next/router'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
@@ -482,6 +480,7 @@ describe('Détails Session', () => {
             commentaire: 'bla',
             estVisible: true,
             nbPlacesDisponibles: 3,
+            statut: 'AClore',
           },
           inscriptions: [
             {
@@ -783,6 +782,89 @@ describe('Détails Session', () => {
         expect(changerInscriptionsSession).toHaveBeenCalledWith('session-1', [
           { commentaire: undefined, idJeune: 'idHarryBeau', statut: 'INSCRIT' },
         ])
+      })
+    })
+
+    describe('Cloture', () => {
+      describe('quand la session est à venir', () => {
+        it("n'affiche pas le lien Clore", async () => {
+          let session: Session
+          let beneficairesEtablissement: BaseJeune[]
+          // Given
+          beneficairesEtablissement = [uneBaseJeune()]
+
+          session = unDetailSession({
+            session: {
+              statut: 'AVenir',
+            },
+          })
+
+          await renderWithContexts(
+            <DetailSession
+              pageTitle=''
+              session={session}
+              beneficiairesEtablissement={beneficairesEtablissement}
+              returnTo='whatever'
+            />
+          )
+
+          // Then
+          const cloreButton = screen.queryByRole('link', {
+            name: 'Clore',
+          })
+          expect(cloreButton).not.toBeInTheDocument()
+        })
+      })
+
+      describe('quand la session est passée et non close', () => {
+        let session: Session
+        let beneficairesEtablissement: BaseJeune[]
+        beforeEach(async () => {
+          // Given
+          beneficairesEtablissement = [
+            uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+          ]
+
+          session = unDetailSession({
+            session: {
+              dateHeureDebut: DateTime.now()
+                .plus({ days: 1, minute: 1 })
+                .toString(),
+              dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+              dateMaxInscription: DateTime.now().minus({ days: 1 }).toString(),
+              nbPlacesDisponibles: 3,
+              statut: 'AClore',
+            },
+          })
+
+          await renderWithContexts(
+            <DetailSession
+              pageTitle=''
+              session={session}
+              beneficiairesEtablissement={beneficairesEtablissement}
+              returnTo='whatever'
+            />
+          )
+        })
+
+        it('affiche un message d’alerte', () => {
+          //Then
+          expect(
+            screen.getByText('Cet événement est passé et doit être clos.')
+          ).toBeInTheDocument()
+        })
+
+        it('affiche un lien pour Clore', () => {
+          //Then
+          expect(screen.getByRole('link', { name: 'Clore' })).toHaveAttribute(
+            'href',
+            `/sessions/${session.session.id}/cloture`
+          )
+        })
       })
     })
   })
