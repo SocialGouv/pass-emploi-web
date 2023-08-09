@@ -3,21 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes } from 'fixtures/jeune'
-import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { BaseConseiller } from 'interfaces/conseiller'
 import { JeuneFromListe } from 'interfaces/jeune'
 import Reaffectation, { getServerSideProps } from 'pages/reaffectation'
-import {
-  getConseillerByEmail,
-  getConseillerServerSide,
-  getConseillersEtablissementServerSide,
-} from 'services/conseiller.service'
-import {
-  getJeunesDuConseillerParEmail,
-  getJeunesDuConseillerParId,
-  reaffecter,
-} from 'services/jeunes.service'
+import { getConseillers } from 'services/conseiller.service'
+import { getJeunesDuConseillerParId, reaffecter } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
@@ -27,53 +18,30 @@ jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
 
 describe('Reaffectation', () => {
-  const conseillersEtablissement = [
-    unConseiller({
-      id: 'id-albert-durant',
-      firstName: 'Albert',
-      lastName: 'Durant',
-      agence: { nom: 'agence-dijon', id: 'id-agence' },
-      email: 'adurant@milo.com',
-      aDesBeneficiairesARecuperer: true,
-      structure: StructureConseiller.MILO,
-    }),
-    unConseiller({
-      id: 'id-claude-dupont',
-      firstName: 'Claude',
-      lastName: 'Dupont',
-      agence: { nom: 'agence-dijon', id: 'id-agence' },
-      aDesBeneficiairesARecuperer: true,
-      structure: StructureConseiller.MILO,
-    }),
-  ]
-
   describe('client side', () => {
     let jeunes: JeuneFromListe[]
-    let conseillerParEmail: BaseConseiller
+    let conseillers: BaseConseiller[]
     beforeEach(async () => {
       // Given
       jeunes = desItemsJeunes()
-      conseillerParEmail = {
-        id: 'id-conseiller-mail',
-        firstName: 'Nils',
-        lastName: 'Tavernier',
-      }
-      ;(getConseillerByEmail as jest.Mock).mockResolvedValue(conseillerParEmail)
+      conseillers = [
+        {
+          id: 'id-nils-tavernier',
+          firstName: 'Nils',
+          lastName: 'Tavernier',
+        },
+        {
+          id: 'id-neil-armstrong',
+          firstName: 'Neil',
+          lastName: 'Armstrong',
+        },
+      ]
+      ;(getConseillers as jest.Mock).mockResolvedValue(conseillers)
       ;(getJeunesDuConseillerParId as jest.Mock).mockResolvedValue(jeunes)
-      ;(getJeunesDuConseillerParEmail as jest.Mock).mockResolvedValue({
-        conseiller: conseillerParEmail,
-        jeunes,
-      })
 
       // When
-      await act(() => {
-        renderWithContexts(
-          <Reaffectation
-            conseillersEtablissement={conseillersEtablissement}
-            withoutChat={true}
-            pageTitle=''
-          />
-        )
+      act(() => {
+        renderWithContexts(<Reaffectation withoutChat={true} pageTitle='' />)
       })
     })
 
@@ -97,107 +65,78 @@ describe('Reaffectation', () => {
       let etape: HTMLFieldSetElement
       beforeEach(async () => {
         etape = screen.getByRole('group', {
-          name: 'Étape 2 Recherchez les bénéficiaires d’un conseiller',
+          name: 'Étape 2 Saisissez le conseiller dont les bénéficiaires sont à réaffecter',
         })
       })
 
       it("affiche un champ de recherche d'un conseiller initial", async () => {
         // THEN
         expect(
-          within(etape).getByRole('combobox', {
-            name: 'Nom et prénom ou e-mail conseiller initial',
+          within(etape).getByRole('searchbox', {
+            name: 'E-mail ou nom et prénom du conseiller',
           })
         ).toBeInTheDocument()
-        expect(
-          within(etape).getByRole('option', {
-            hidden: true,
-            name: 'Albert Durant (adurant@milo.com)',
-          })
-        ).toBeInTheDocument()
-        expect(
-          within(etape).getByRole('option', {
-            hidden: true,
-            name: 'Claude Dupont',
-          })
-        ).toBeInTheDocument()
-      })
-
-      it("affiche un bouton pour rechercher les jeunes d'un conseiller", async () => {
-        // THEN
         expect(
           within(etape).getByRole('button', {
-            name: 'Afficher la liste des bénéficiaires',
+            name: 'Rechercher un conseiller initial',
           })
         ).toBeInTheDocument()
       })
 
-      it('affiche une aide à la recherche', async () => {
+      it('affiche la liste des conseillers possibles', async () => {
+        // Given
+        await userEvent.type(
+          within(etape).getByRole('searchbox', {
+            name: 'E-mail ou nom et prénom du conseiller',
+          }),
+          'Nils'
+        )
+
         // When
         await userEvent.click(
           within(etape).getByRole('button', {
-            name: /Le conseiller n’apparaît pas dans la liste déroulante/,
+            name: 'Rechercher un conseiller initial',
           })
         )
 
         // Then
-        expect(
-          screen.getByText(
-            /Vous ne trouvez pas le nom d’une conseillère ou d’un conseiller dans la liste/
-          )
-        ).toBeInTheDocument()
+        expect(getConseillers).toHaveBeenCalledWith('Nils')
+        const listeConseillers = within(etape).getByRole('table', {
+          name: 'Choix du conseiller initial',
+        })
+        expect(listeConseillers).toBeInTheDocument()
+        for (const conseiller of conseillers) {
+          expect(
+            within(listeConseillers).getByRole('radio', {
+              name: `${conseiller.firstName} ${conseiller.lastName}`,
+            })
+          ).toBeInTheDocument()
+        }
       })
 
-      describe('quand on recherche un conseiller de l’établissement', () => {
-        it('récupère les jeunes du conseiller', async () => {
-          // GIVEN
-          const nomConseillerInitial = 'Albert Durant (adurant@milo.com)'
-          const idConseillerInitial = 'id-albert-durant'
-          const conseillerInitialInput =
-            screen.getByLabelText(/conseiller initial/)
-          const submitRecherche = screen.getByLabelText(
-            'Afficher la liste des bénéficiaires'
-          )
-          await userEvent.type(conseillerInitialInput, nomConseillerInitial)
+      it('recherche les jeunes du conseiller sélectionné', async () => {
+        // Given
+        await userEvent.type(
+          within(etape).getByRole('searchbox', {
+            name: 'E-mail ou nom et prénom du conseiller',
+          }),
+          'Nils'
+        )
+        await userEvent.click(
+          within(etape).getByRole('button', {
+            name: 'Rechercher un conseiller initial',
+          })
+        )
 
-          // WHEN
-          await userEvent.click(submitRecherche)
+        // When
+        await userEvent.click(
+          within(etape).getByRole('radio', { name: 'Nils Tavernier' })
+        )
 
-          // THEN
-          expect(getJeunesDuConseillerParId).toHaveBeenCalledWith(
-            idConseillerInitial
-          )
-          for (const jeune of jeunes) {
-            expect(
-              screen.getByText(`${jeune.nom} ${jeune.prenom}`)
-            ).toBeInTheDocument()
-          }
-        })
-      })
-
-      describe('quand on recherche un conseiller par son mail', () => {
-        it('récupère les jeunes du conseiller', async () => {
-          // GIVEN
-          const conseillerInitialInput =
-            screen.getByLabelText(/conseiller initial/)
-          const submitRecherche = screen.getByLabelText(
-            'Afficher la liste des bénéficiaires'
-          )
-
-          await userEvent.type(conseillerInitialInput, 'conseiller@mail.com')
-
-          // WHEN
-          await userEvent.click(submitRecherche)
-
-          // THEN
-          expect(getJeunesDuConseillerParEmail).toHaveBeenCalledWith(
-            'conseiller@mail.com'
-          )
-          for (const jeune of jeunes) {
-            expect(
-              screen.getByText(`${jeune.nom} ${jeune.prenom}`)
-            ).toBeInTheDocument()
-          }
-        })
+        // Then
+        expect(getJeunesDuConseillerParId).toHaveBeenCalledWith(
+          'id-nils-tavernier'
+        )
       })
     })
 
@@ -205,16 +144,16 @@ describe('Reaffectation', () => {
       let etape: HTMLFieldSetElement
       beforeEach(async () => {
         // GIVEN
-        const conseillerInitialInput =
-          screen.getByLabelText(/conseiller initial/)
-        const submitRecherche = screen.getByLabelText(
-          'Afficher la liste des bénéficiaires'
-        )
         await userEvent.type(
-          conseillerInitialInput,
-          'Albert Durant (adurant@milo.com)'
+          screen.getByRole('searchbox', { name: /conseiller/ }),
+          'Nils'
         )
-        await userEvent.click(submitRecherche)
+        await userEvent.click(
+          screen.getByRole('button', { name: /conseiller initial/ })
+        )
+        await userEvent.click(
+          screen.getByRole('radio', { name: 'Nils Tavernier' })
+        )
 
         etape = screen.getByRole('group', {
           name: 'Étape 3 Sélectionnez les bénéficiaires à réaffecter',
@@ -281,186 +220,106 @@ describe('Reaffectation', () => {
     })
 
     describe('Étape 4 : conseiller destinataire et réaffectation', () => {
-      let conseillerInitialInput: HTMLElement
-      let getCheckboxJeune: () => HTMLElement
-      let getEtape: () => HTMLFieldSetElement
-      let getConseillerDestinataireInput: () => HTMLElement
+      let checkboxJeune: HTMLInputElement
+      let etape: HTMLFieldSetElement
+      let conseillerDestinataireInput: HTMLInputElement
       beforeEach(async () => {
         // GIVEN
-        conseillerInitialInput = screen.getByRole('combobox', {
-          name: /conseiller initial/,
-        })
-        getCheckboxJeune = () =>
-          screen.getByRole('checkbox', {
-            name: new RegExp(jeunes[1].nom),
-          })
+        await userEvent.type(
+          screen.getByRole('searchbox', { name: /conseiller/ }),
+          'Nils'
+        )
+        await userEvent.click(
+          screen.getByRole('button', { name: /conseiller initial/ })
+        )
+        await userEvent.click(
+          screen.getByRole('radio', { name: 'Nils Tavernier' })
+        )
 
-        getEtape = () =>
-          screen.getByRole('group', {
-            name: 'Étape 4 Renseignez le conseiller de destination',
-          })
-        getConseillerDestinataireInput = () =>
-          within(getEtape()).getByRole('combobox', {
-            name: /conseiller de destination/,
-          })
+        checkboxJeune = screen.getByRole('checkbox', {
+          name: new RegExp(jeunes[1].nom),
+        })
+        etape = screen.getByRole('group', {
+          name: 'Étape 4 Saisissez le conseiller à qui affecter les bénéficiaires',
+        })
+        conseillerDestinataireInput = within(etape).getByRole('searchbox', {
+          name: 'E-mail ou nom et prénom du conseiller',
+        })
 
         await userEvent.click(screen.getByRole('radio', { name: 'Définitive' }))
       })
 
       it("affiche un champ de recherche d'un conseiller de destination", async () => {
-        // Given
-        await userEvent.type(
-          conseillerInitialInput,
-          'Albert Durant (adurant@milo.com)'
-        )
-        await userEvent.click(
-          screen.getByLabelText('Afficher la liste des bénéficiaires')
-        )
-
-        // Then
-        expect(getConseillerDestinataireInput()).toBeInTheDocument()
+        // THEN
+        expect(conseillerDestinataireInput).toBeInTheDocument()
         expect(
-          within(getEtape()).getByRole('option', {
-            hidden: true,
-            name: 'Albert Durant (adurant@milo.com)',
-          })
-        ).toBeInTheDocument()
-        expect(
-          within(getEtape()).getByRole('option', {
-            hidden: true,
-            name: 'Claude Dupont',
+          within(etape).getByRole('button', {
+            name: 'Rechercher un conseiller destinataire',
           })
         ).toBeInTheDocument()
       })
 
-      it('affiche une aide à la recherche', async () => {
+      it('affiche la liste des conseillers possibles', async () => {
         // Given
-        await userEvent.type(
-          conseillerInitialInput,
-          'Albert Durant (adurant@milo.com)'
-        )
-        await userEvent.click(
-          screen.getByLabelText('Afficher la liste des bénéficiaires')
-        )
+        await userEvent.type(conseillerDestinataireInput, 'Nils')
 
         // When
         await userEvent.click(
-          within(getEtape()).getByRole('button', {
-            name: /Le conseiller n’apparaît pas dans la liste déroulante/,
+          within(etape).getByRole('button', {
+            name: 'Rechercher un conseiller destinataire',
           })
         )
 
         // Then
-        expect(
-          screen.getByText(
-            /Vous ne trouvez pas le nom d’une conseillère ou d’un conseiller dans la liste/
-          )
-        ).toBeInTheDocument()
+        expect(getConseillers).toHaveBeenCalledWith('Nils')
+        const listeConseillers = within(etape).getByRole('table', {
+          name: 'Choix du conseiller destinataire',
+        })
+        expect(listeConseillers).toBeInTheDocument()
+        for (const conseiller of conseillers) {
+          expect(
+            within(listeConseillers).getByRole('radio', {
+              name: `${conseiller.firstName} ${conseiller.lastName}`,
+            })
+          ).toBeInTheDocument()
+        }
       })
 
-      describe('conseiller initial établissement / conseiller destinataire établissement', () => {
-        it('réaffecte les jeunes', async () => {
-          // GIVEN
-          await userEvent.type(
-            conseillerInitialInput,
-            'Albert Durant (adurant@milo.com)'
-          )
-          await userEvent.click(
-            screen.getByLabelText('Afficher la liste des bénéficiaires')
-          )
-          await userEvent.click(getCheckboxJeune())
-          await userEvent.type(
-            getConseillerDestinataireInput(),
-            'Claude Dupont'
-          )
+      it('réaffecte les jeunes vers le conseiller sélectionné', async () => {
+        // GIVEN
+        await userEvent.type(conseillerDestinataireInput, 'Nils')
+        await userEvent.click(
+          within(etape).getByRole('button', { name: /conseiller destinataire/ })
+        )
+        await userEvent.click(
+          within(etape).getByRole('radio', { name: 'Neil Armstrong' })
+        )
+        await userEvent.click(checkboxJeune)
 
-          // WHEN
-          await userEvent.click(
-            screen.getByRole('button', { name: 'Réaffecter les bénéficiaires' })
-          )
+        // WHEN
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Valider mon choix' })
+        )
 
-          // THEN
-          expect(reaffecter).toHaveBeenCalledWith(
-            'id-albert-durant',
-            'id-claude-dupont',
-            ['jeune-2'],
-            false
-          )
-        })
-      })
-
-      describe('conseiller initial mail / conseiller destinataire établissement', () => {
-        it('réaffecte les jeunes', async () => {
-          // GIVEN
-          await userEvent.type(conseillerInitialInput, 'conseiller@mail.com')
-          await userEvent.click(
-            screen.getByLabelText('Afficher la liste des bénéficiaires')
-          )
-          await userEvent.click(getCheckboxJeune())
-          await userEvent.type(
-            getConseillerDestinataireInput(),
-            'Claude Dupont'
-          )
-
-          // WHEN
-          await userEvent.click(
-            screen.getByRole('button', { name: 'Réaffecter les bénéficiaires' })
-          )
-
-          // THEN
-          expect(reaffecter).toHaveBeenCalledWith(
-            'id-conseiller-mail',
-            'id-claude-dupont',
-            ['jeune-2'],
-            false
-          )
-        })
-      })
-
-      describe('conseiller initial établissement / conseiller destinataire mail', () => {
-        it('réaffecte les jeunes', async () => {
-          // GIVEN
-          await userEvent.type(
-            conseillerInitialInput,
-            'Albert Durant (adurant@milo.com)'
-          )
-          await userEvent.click(
-            screen.getByLabelText('Afficher la liste des bénéficiaires')
-          )
-          await userEvent.click(getCheckboxJeune())
-          await userEvent.type(
-            getConseillerDestinataireInput(),
-            'conseiller@mail.com'
-          )
-
-          // WHEN
-          await userEvent.click(
-            screen.getByRole('button', { name: 'Réaffecter les bénéficiaires' })
-          )
-
-          // THEN
-          expect(reaffecter).toHaveBeenCalledWith(
-            'id-albert-durant',
-            'id-conseiller-mail',
-            ['jeune-2'],
-            false
-          )
-        })
+        // THEN
+        expect(reaffecter).toHaveBeenCalledWith(
+          'id-nils-tavernier',
+          'id-neil-armstrong',
+          ['jeune-2'],
+          false
+        )
       })
     })
 
     describe('quand on modifie la recherche du conseiller initial', () => {
       it('reset le reste du formulaire', async () => {
         // GIVEN
-        const conseillerInitialInput = screen.getByRole('combobox', {
-          name: /conseiller initial/,
+        const conseillerInitialInput = screen.getByRole('searchbox', {
+          name: /conseiller/,
         })
-        await userEvent.type(
-          conseillerInitialInput,
-          'Albert Durant (adurant@milo.com)'
-        )
+        await userEvent.type(conseillerInitialInput, 'Nils')
         await userEvent.click(
-          screen.getByLabelText('Afficher la liste des bénéficiaires')
+          screen.getByRole('button', { name: /conseiller initial/ })
         )
 
         // WHEN
@@ -470,10 +329,10 @@ describe('Reaffectation', () => {
         expect(screen.queryByRole('table')).not.toBeInTheDocument()
         expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
         expect(
-          screen.queryByRole('combobox', { name: /conseiller de destination/ })
-        ).not.toBeInTheDocument()
+          screen.queryAllByRole('searchbox', { name: /conseiller/ })
+        ).toHaveLength(1)
         expect(
-          screen.queryByRole('button', { name: /réaffecter/ })
+          screen.queryByRole('button', { name: /confirmer/ })
         ).not.toBeInTheDocument()
       })
     })
@@ -506,12 +365,6 @@ describe('Reaffectation', () => {
             user: { estSuperviseur: true },
           },
         })
-        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
-          conseillersEtablissement[0]
-        )
-        ;(getConseillersEtablissementServerSide as jest.Mock).mockResolvedValue(
-          conseillersEtablissement
-        )
 
         // When
         const actual = await getServerSideProps({
@@ -524,7 +377,6 @@ describe('Reaffectation', () => {
             pageTitle: 'Réaffectation',
             returnTo: '/etablissement',
             withoutChat: true,
-            conseillersEtablissement,
           },
         })
       })

@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { BaseConseiller } from 'interfaces/conseiller'
 import {
   BaseJeune,
   ConseillerHistorique,
@@ -14,7 +13,6 @@ import {
 } from 'interfaces/jeune'
 import {
   ConseillerHistoriqueJson,
-  ConseillerJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
 import {
@@ -121,23 +119,6 @@ export async function createCompteJeunePoleEmploi(newJeune: {
     session!.accessToken
   )
   return jsonToBaseJeune(content)
-}
-
-export async function getJeunesDuConseillerParEmail(
-  emailConseiller: string
-): Promise<{ conseiller: BaseConseiller; jeunes: JeuneFromListe[] }> {
-  const session = await getSession()
-  const {
-    content: { id, firstName, lastName },
-  } = await apiGet<ConseillerJson>(
-    `/conseillers?email=${emailConseiller}`,
-    session!.accessToken
-  )
-  const jeunesDuConseiller = await getJeunesDuConseiller(
-    id,
-    session!.accessToken
-  )
-  return { conseiller: { id, firstName, lastName }, jeunes: jeunesDuConseiller }
 }
 
 export async function getIdJeuneMilo(

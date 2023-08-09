@@ -1,6 +1,10 @@
 import { Session } from 'next-auth'
 
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import {
+  BaseConseiller,
+  Conseiller,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { ConseillerHistorique } from 'interfaces/jeune'
 
 export interface ConseillerHistoriqueJson {
@@ -21,6 +25,13 @@ export function toConseillerHistorique(
   }
 }
 
+export type BaseConseillerJson = {
+  id: string
+  prenom: string
+  nom: string
+  email?: string
+}
+
 export interface ConseillerJson {
   id: string
   firstName: string
@@ -32,6 +43,16 @@ export interface ConseillerJson {
   }
   notificationsSonores: boolean
   aDesBeneficiairesARecuperer: boolean
+}
+
+export function jsonToBaseConseiller(json: BaseConseillerJson): BaseConseiller {
+  const conseiller: BaseConseiller = {
+    id: json.id,
+    firstName: json.prenom,
+    lastName: json.nom,
+  }
+  if (json.email) conseiller.email = json.email
+  return conseiller
 }
 
 export function jsonToConseiller(

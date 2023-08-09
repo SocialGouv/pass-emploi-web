@@ -17,8 +17,7 @@ import {
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { BaseConseiller } from 'interfaces/conseiller'
-import { CategorieSituation, JeuneFromListe } from 'interfaces/jeune'
+import { CategorieSituation } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import {
@@ -32,7 +31,6 @@ import {
   getJeuneDetails,
   getJeunesDeLEtablissement,
   getJeunesDuConseillerClientSide,
-  getJeunesDuConseillerParEmail,
   getJeunesDuConseillerParId,
   getJeunesDuConseillerServerSide,
   getMetadonneesFavorisJeune,
@@ -104,50 +102,6 @@ describe('JeunesApiService', () => {
         accessToken
       )
       expect(actual).toEqual(desItemsJeunes())
-    })
-  })
-
-  describe('.getJeunesDuConseillerParEmail', () => {
-    const email = 'conseiller@email.com'
-    const accessToken = 'accessToken'
-    const conseiller = unConseiller({ id: 'conseiller-by-email' })
-    const jeunes = desItemsJeunesJson()
-    let actual: { conseiller: BaseConseiller; jeunes: JeuneFromListe[] }
-    beforeEach(async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockImplementation((url) => {
-        if (url === `/conseillers?email=${email}`)
-          return { content: conseiller }
-        if (url === '/conseillers/conseiller-by-email/jeunes')
-          return { content: jeunes }
-      })
-
-      // When
-      actual = await getJeunesDuConseillerParEmail(email)
-    })
-
-    it('récupère le conseiller par son email', async () => {
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers?email=${email}`,
-        accessToken
-      )
-    })
-
-    it('renvoie les jeunes du conseiller', async () => {
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/conseiller-by-email/jeunes`,
-        accessToken
-      )
-      expect(actual).toEqual({
-        conseiller: {
-          id: 'conseiller-by-email',
-          firstName: 'Nils',
-          lastName: 'Tavernier',
-        },
-        jeunes: desItemsJeunes(),
-      })
     })
   })
 

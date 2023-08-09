@@ -7,7 +7,7 @@ type ComplexLabel = {
 }
 type LabelProps = {
   htmlFor: string
-  children: string | ComplexLabel
+  children: string | string[] | ComplexLabel
   inputRequired?: boolean
   withBulleMessageSensible?: boolean
 }
@@ -39,7 +39,7 @@ export default function Label({
 }
 
 function isComplexLabel(
-  children: string | ComplexLabel
+  children: string | string[] | ComplexLabel
 ): children is ComplexLabel {
   return Object.prototype.hasOwnProperty.call(children, 'main')
 }
