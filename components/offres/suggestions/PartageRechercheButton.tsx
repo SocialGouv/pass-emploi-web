@@ -123,7 +123,7 @@ export default function PartageRechercheButton({
         <>
           <div
             className={`
-              flex mt-12 gap-4 ${errorMessage ? 'items-start' : 'items-center'}
+              flex mt-4 gap-4 ${errorMessage ? 'items-start' : 'items-center'}
             `}
           >
             <p>Suggérer ces critères de recherche à vos bénéficiaires</p>
@@ -143,8 +143,8 @@ export default function PartageRechercheButton({
                   focusable={false}
                   aria-hidden={true}
                 />
-                Partager les critères{' '}
-                <span className='sr-only'>de recherche</span>
+                Partager les critères
+                <span className='sr-only'> de recherche</span>
               </ButtonLink>
             )}
             {!laRechercheEstPartageable() && (
@@ -158,8 +158,8 @@ export default function PartageRechercheButton({
                   focusable={false}
                   aria-hidden={true}
                 />
-                Partager les critères{' '}
-                <span className='sr-only'>de recherche</span>
+                Partager les critères
+                <span className='sr-only'> de recherche</span>
               </Button>
             )}
           </div>

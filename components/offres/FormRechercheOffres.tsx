@@ -22,7 +22,7 @@ import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 
 type FormRechercheOffresProps = {
   hasResults: boolean
-  showForm: boolean
+  collapsed: boolean
   fetchMetiers: (search: string) => Promise<Metier[]>
   fetchCommunes: (search: string) => Promise<Commune[]>
   fetchCommunesEtDepartements: (search: string) => Promise<Localite[]>
@@ -45,9 +45,9 @@ export default function FormRechercheOffres({
   fetchMetiers,
   fetchCommunes,
   fetchCommunesEtDepartements,
+  collapsed,
   hasResults,
   onNouvelleRecherche,
-  showForm,
   stateQueryOffresEmploi,
   stateQueryServicesCiviques,
   stateQueryImmersions,
@@ -67,7 +67,7 @@ export default function FormRechercheOffres({
     stateQueryServicesCiviques
   const [queryImmersions, setQueryImmersions] = stateQueryImmersions
 
-  const [offreTitre, setOffreTitre] = useState<string | undefined>()
+  const [labelTypeOffre, setLabelTypeOffre] = useState<string | undefined>()
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [offreLieu, setOffreLieu] = useState<string | undefined>()
 
@@ -94,41 +94,41 @@ export default function FormRechercheOffres({
     onNouvelleRecherche()
   }
 
-  function handleChangeTypeOffre(type: TypeOffre) {
+  function changerTypeOffre(type: TypeOffre) {
     setTypeOffre(type)
     setOffreLieu(undefined)
     setMotsCles(undefined)
 
     switch (type) {
       case TypeOffre.ALTERNANCE:
-        setOffreTitre('Alternance')
+        setLabelTypeOffre('Alternance')
         break
       case TypeOffre.SERVICE_CIVIQUE:
-        setOffreTitre('Service Civique')
+        setLabelTypeOffre('Service Civique')
         break
       case TypeOffre.IMMERSION:
-        setOffreTitre('Immersion')
+        setLabelTypeOffre('Immersion')
         break
       case TypeOffre.EMPLOI:
       default:
-        setOffreTitre('Offre d’emploi')
+        setLabelTypeOffre('Offre d’emploi')
         break
     }
   }
 
-  function handleQueryOffreEmploi(query: FormValues<SearchOffresEmploiQuery>) {
+  function updateQueryOffreEmploi(query: FormValues<SearchOffresEmploiQuery>) {
     setQueryOffresEmploi(query)
     setOffreLieu(query.commune?.libelle)
     setMotsCles(query.motsCles)
   }
 
-  function handleQueryImmersion(query: FormValues<SearchImmersionsQuery>) {
+  function updateQueryImmersion(query: FormValues<SearchImmersionsQuery>) {
     setQueryImmersions(query)
     setOffreLieu(query.commune?.libelle)
     setMotsCles(query.metier?.libelle)
   }
 
-  function handleQueryServiceCivique(
+  function updateQueryServiceCivique(
     query: FormValues<SearchServicesCiviquesQuery>
   ) {
     setQueryServicesCiviques(query)
@@ -138,12 +138,12 @@ export default function FormRechercheOffres({
 
   return (
     <form onSubmit={rechercherPremierePage}>
-      <div className={!showForm ? 'hidden' : ''} aria-hidden={!showForm}>
+      <div className={collapsed ? 'hidden' : 'mb-8'} aria-hidden={collapsed}>
         <Etape numero={1} titre='Sélectionner un type d’offre'>
           <div className='flex flex-wrap'>
             <RadioBox
               isSelected={typeOffre === TypeOffre.EMPLOI}
-              onChange={() => handleChangeTypeOffre(TypeOffre.EMPLOI)}
+              onChange={() => changerTypeOffre(TypeOffre.EMPLOI)}
               name='type-offre'
               id='type-offre--emploi'
               label='Offre d’emploi'
@@ -153,7 +153,7 @@ export default function FormRechercheOffres({
               <>
                 <RadioBox
                   isSelected={typeOffre === TypeOffre.ALTERNANCE}
-                  onChange={() => handleChangeTypeOffre(TypeOffre.ALTERNANCE)}
+                  onChange={() => changerTypeOffre(TypeOffre.ALTERNANCE)}
                   name='type-offre'
                   id='type-offre--alternance'
                   label='Alternance'
@@ -161,9 +161,7 @@ export default function FormRechercheOffres({
 
                 <RadioBox
                   isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
-                  onChange={() =>
-                    handleChangeTypeOffre(TypeOffre.SERVICE_CIVIQUE)
-                  }
+                  onChange={() => changerTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
                   name='type-offre'
                   id='type-offre--service-civique'
                   label='Service civique'
@@ -172,7 +170,7 @@ export default function FormRechercheOffres({
             )}
             <RadioBox
               isSelected={typeOffre === TypeOffre.IMMERSION}
-              onChange={() => handleChangeTypeOffre(TypeOffre.IMMERSION)}
+              onChange={() => changerTypeOffre(TypeOffre.IMMERSION)}
               name='type-offre'
               id='type-offre--immersion'
               label='Immersion'
@@ -229,22 +227,28 @@ export default function FormRechercheOffres({
           </>
         )}
       </div>
-      {!showForm && (
-        <div className='flex mt-4 gap-2'>
-          {Boolean(offreTitre && offreTitre.length > 0) && (
+      {collapsed && (
+        <div className='flex mt-4 mb-8 gap-2'>
+          {labelTypeOffre && (
             <p className='bg-blanc px-2 py-1 text-primary rounded-base'>
-              {offreTitre}
+              {labelTypeOffre}
             </p>
           )}
-          {Boolean(motsCles && motsCles.length > 0) && (
+          {motsCles && (
             <p className='bg-blanc px-2 py-1 text-primary rounded-base'>
               {motsCles}
             </p>
           )}
-          {Boolean(offreLieu && offreLieu.length > 0) && (
-            <p className='bg-blanc px-2 py-1 text-primary rounded-base'>
-              {offreLieu}
-            </p>
+          {offreLieu && (
+            <div className='flex bg-blanc px-2 py-1 text-primary rounded-base align-middle gap-2'>
+              <IconComponent
+                name={IconName.LocationOn}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 m-auto fill-primary'
+              />
+              <span className='capitalize'>{offreLieu}</span>
+            </div>
           )}
         </div>
       )}
@@ -259,7 +263,7 @@ export default function FormRechercheOffres({
             key='recherche-offres--emploi--principale'
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
-            onQueryUpdate={handleQueryOffreEmploi}
+            onQueryUpdate={updateQueryOffreEmploi}
             onRechercheParIdOffre={(value) => {
               setShowFilters(!value)
             }}
@@ -271,7 +275,7 @@ export default function FormRechercheOffres({
             key='recherche-offres--alternance--principale'
             recupererCommunesEtDepartements={fetchCommunesEtDepartements}
             query={queryOffresEmploi}
-            onQueryUpdate={handleQueryOffreEmploi}
+            onQueryUpdate={updateQueryOffreEmploi}
             onRechercheParIdOffre={(value) => {
               setShowFilters(!value)
             }}
@@ -282,7 +286,7 @@ export default function FormRechercheOffres({
           <RechercheServicesCiviquesPrincipale
             recupererCommunes={fetchCommunes}
             query={queryServicesCiviques}
-            onQueryUpdate={handleQueryServiceCivique}
+            onQueryUpdate={updateQueryServiceCivique}
           />
         )
       case TypeOffre.IMMERSION:
@@ -291,7 +295,7 @@ export default function FormRechercheOffres({
             recupererMetiers={fetchMetiers}
             recupererCommunes={fetchCommunes}
             query={queryImmersions}
-            onQueryUpdate={handleQueryImmersion}
+            onQueryUpdate={updateQueryImmersion}
           />
         )
       case undefined:
@@ -308,7 +312,7 @@ export default function FormRechercheOffres({
             alternanceOnly={false}
             onCriteresChange={setCountCriteres}
             query={queryOffresEmploi}
-            onQueryUpdate={handleQueryOffreEmploi}
+            onQueryUpdate={updateQueryOffreEmploi}
           />
         )
       case TypeOffre.ALTERNANCE:
@@ -318,7 +322,7 @@ export default function FormRechercheOffres({
             alternanceOnly={true}
             onCriteresChange={setCountCriteres}
             query={queryOffresEmploi}
-            onQueryUpdate={handleQueryOffreEmploi}
+            onQueryUpdate={updateQueryOffreEmploi}
           />
         )
       case TypeOffre.SERVICE_CIVIQUE:
@@ -326,7 +330,7 @@ export default function FormRechercheOffres({
           <RechercheServicesCiviquesSecondaire
             onCriteresChange={setCountCriteres}
             query={queryServicesCiviques}
-            onQueryUpdate={handleQueryServiceCivique}
+            onQueryUpdate={updateQueryServiceCivique}
           />
         )
       case TypeOffre.IMMERSION:
@@ -334,7 +338,7 @@ export default function FormRechercheOffres({
           <RechercheImmersionsSecondaire
             onCriteresChange={setCountCriteres}
             query={queryImmersions}
-            onQueryUpdate={handleQueryImmersion}
+            onQueryUpdate={updateQueryImmersion}
           />
         )
       case undefined:

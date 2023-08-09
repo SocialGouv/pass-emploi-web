@@ -36,7 +36,7 @@ function RechercheOffres(_: PageProps) {
   const [portefeuille] = usePortefeuille()
 
   const RAYON_DEFAULT = 10
-  const [showForm, setShowForm] = useState<boolean>(true)
+  const [collapsed, setCollapsed] = useState<boolean>(false)
   const [typeOffre, setTypeOffre] = useSessionStorage<TypeOffre | undefined>(
     'recherche-offres--type',
     undefined
@@ -282,23 +282,27 @@ function RechercheOffres(_: PageProps) {
       )}
 
       <div className='bg-primary_lighten p-6 mb-10 rounded-base'>
-        <div className={`flex justify-between ${showForm ? 'mb-5' : ''}`}>
+        <div className={`flex justify-between ${collapsed ? '' : 'mb-5'}`}>
           <h2 className='text-m-medium text-primary'>Ma recherche</h2>
-          <button type='button' onClick={() => setShowForm(!showForm)}>
+          <button
+            type='button'
+            onClick={() => setCollapsed(!collapsed)}
+            className='p-2 hover:bg-blanc hover:rounded-l'
+          >
             <IconComponent
-              name={showForm ? IconName.ChevronUp : IconName.ChevronDown}
-              title={`${showForm ? 'Cacher' : 'Voir'} les critères`}
+              name={collapsed ? IconName.ChevronDown : IconName.ChevronUp}
+              title={`${collapsed ? 'Voir' : 'Cacher'} les critères`}
               className='h-6 w-6 fill-primary'
               focusable={false}
             />
             <span className='sr-only'>
-              {showForm ? 'Cacher' : 'Voir'} les critères
+              {collapsed ? 'Voir' : 'Cacher'} les critères
             </span>
           </button>
         </div>
         <FormRechercheOffres
           hasResults={isSearching || offres !== undefined}
-          showForm={showForm}
+          collapsed={collapsed}
           fetchMetiers={fetchMetiers}
           fetchCommunes={fetchCommunes}
           fetchCommunesEtDepartements={fetchCommunesEtDepartements}
@@ -313,7 +317,7 @@ function RechercheOffres(_: PageProps) {
         />
 
         <PartageRechercheButton
-          primary={!showForm}
+          primary={collapsed}
           typeOffre={typeOffre}
           suggestionOffreEmploi={getQueryOffreEmploi()}
           suggestionImmersion={getQueryImmersion()}
