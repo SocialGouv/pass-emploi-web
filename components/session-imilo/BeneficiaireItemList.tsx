@@ -7,10 +7,7 @@ import { BeneficiaireSelectionneSession } from 'pages/agenda/sessions/[session_i
 
 type BeneficiaireItemListProps = {
   beneficiaire: BeneficiaireSelectionneSession
-  beneficiaireEstInscrit: boolean
   dateLimiteDepassee: boolean
-  idBeneficiaire: string
-  value: string
   onDesinscrire: (id: string) => void
   onReinscrire: (id: string) => void
 }

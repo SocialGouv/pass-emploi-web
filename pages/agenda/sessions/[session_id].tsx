@@ -31,6 +31,7 @@ const DesinscriptionBeneficiaireModal = dynamic(
 type DetailSessionProps = PageProps & {
   beneficiairesEtablissement: BaseJeune[]
   session: Session
+  returnTo: string
 }
 
 export type BeneficiaireSelectionneSession = {
@@ -51,9 +52,16 @@ function FicheDetailsSession({
   returnTo,
 }: DetailSessionProps) {
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
-  const dateLimiteDepassee = dateLimiteEstDepassee()
-    ? DateTime.fromISO(session.session.dateMaxInscription) < DateTime.now()
-    : false
+  const dateLimiteDepassee = (): boolean => {
+    if (DateTime.fromISO(session.session.dateHeureDebut) < DateTime.now())
+      return true
+    if (session.session.dateMaxInscription) {
+      return (
+        DateTime.fromISO(session.session.dateMaxInscription) < DateTime.now()
+      )
+    }
+    return false
+  }
 
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
     session.session.estVisible
@@ -77,27 +85,12 @@ function FicheDetailsSession({
     | undefined
   >()
 
-  function openDesinscriptionBeneficiaireModal(
-    id: string,
-    nom: string,
-    statut: string
-  ) {
-    setBeneficiaireADesinscire({
-      value: nom,
-      id,
-      statut,
-    })
+  function openDesinscriptionBeneficiaireModal(id: string, nom: string) {
+    setBeneficiaireADesinscire({ value: nom, id })
   }
 
   function closeDesinscriptionBeneficiaireModal() {
     setBeneficiaireADesinscire(undefined)
-  }
-
-  function dateLimiteEstDepassee() {
-    return Boolean(
-      session.session.dateMaxInscription ||
-        session.session.dateHeureDebut < DateTime.now()
-    )
   }
 
   function initBeneficiairesSelectionnes() {
@@ -135,9 +128,9 @@ function FicheDetailsSession({
       }))
   }
 
-  function rechercheUnBeneficiaire(
+  function rechercherBeneficiaire(
     inputValue: string | undefined
-  ): BaseBeneficiaireASelectionner {
+  ): BaseBeneficiaireASelectionner | undefined {
     if (!inputValue) return
     return getBeneficiairesNonSelectionnees().find(
       ({ value }) =>
@@ -165,17 +158,12 @@ function FicheDetailsSession({
   }
 
   function selectionnerBeneficiaire(inputValue: string) {
-    const option = rechercheUnBeneficiaire(inputValue)
+    const option = rechercherBeneficiaire(inputValue)
     if (option) updateBeneficiairesSelectionnes(option)
   }
 
   function verifierBeneficiaireValid() {
-    if (!inputBeneficiaires.current!.value) return
-    const option = rechercheUnBeneficiaire(
-      inputBeneficiaires.current.value ?? ''
-    )
-
-    if (!option)
+    if (inputBeneficiaires.current!.value)
       setBeneficiairesSelectionnes({
         value: beneficiairesSelectionnes.value,
         error: 'Aucun bénéficiaire ne correspond à cette recherche.',
@@ -195,8 +183,7 @@ function FicheDetailsSession({
     } else {
       openDesinscriptionBeneficiaireModal(
         beneficiaireDejaInscrit.idJeune,
-        `${beneficiaireDejaInscrit.prenom} ${beneficiaireDejaInscrit.nom}`,
-        beneficiaireDejaInscrit.statut
+        `${beneficiaireDejaInscrit.prenom} ${beneficiaireDejaInscrit.nom}`
       )
     }
   }
@@ -274,7 +261,7 @@ function FicheDetailsSession({
     <>
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
-      {dateLimiteDepassee && (
+      {dateLimiteDepassee() && (
         <div className='mt-2'>
           <FailureAlert label='Les inscriptions ne sont plus possibles car la date limite est atteinte.' />
         </div>
@@ -462,10 +449,10 @@ function FicheDetailsSession({
             aria-controls='selected-beneficiaires'
             ref={inputBeneficiaires}
             invalid={Boolean(beneficiairesSelectionnes.error)}
-            disabled={nbPlacesDisponibles.value === 0 || dateLimiteDepassee}
+            disabled={nbPlacesDisponibles.value === 0 || dateLimiteDepassee()}
           />
 
-          {nbPlacesDisponibles.value !== undefined && !dateLimiteDepassee && (
+          {nbPlacesDisponibles.value !== undefined && !dateLimiteDepassee() && (
             <span
               className={`mb-2 ${
                 nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
@@ -495,7 +482,7 @@ function FicheDetailsSession({
                 >
                   <BeneficiaireItemList
                     beneficiaire={beneficiaire}
-                    dateLimiteDepassee={dateLimiteDepassee}
+                    dateLimiteDepassee={dateLimiteDepassee()}
                     onDesinscrire={desinscrireBeneficiaire}
                     onReinscrire={reinscrireBeneficiaire}
                   />
@@ -505,7 +492,7 @@ function FicheDetailsSession({
           )}
         </Etape>
 
-        {!dateLimiteDepassee && (
+        {!dateLimiteDepassee() && (
           <div className='flex gap-4 mx-auto'>
             <ButtonLink
               href={returnTo}
@@ -567,8 +554,7 @@ export const getServerSideProps: GetServerSideProps<
     'services/conseiller.service'
   )
   const conseiller = await getConseillerServerSide(user, accessToken)
-
-  if (!conseiller || !conseiller.agence) return { notFound: true }
+  if (!conseiller?.agence?.id) return { notFound: true }
 
   const { getJeunesDeLEtablissementServerSide } = await import(
     'services/jeunes.service'

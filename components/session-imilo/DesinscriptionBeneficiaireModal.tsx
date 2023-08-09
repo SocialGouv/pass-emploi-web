@@ -32,11 +32,13 @@ export default function DesinscriptionBeneficiaireModal({
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)
 
-  const [typeRefus, setTypeRefus] =
-    useState<ValueWithError<string | undefined>>()
+  const [typeRefus, setTypeRefus] = useState<
+    ValueWithError<string | undefined>
+  >({ value: undefined })
 
-  const [commentaire, setCommentaire] =
-    useState<ValueWithError<string | undefined>>()
+  const [commentaire, setCommentaire] = useState<
+    ValueWithError<string | undefined>
+  >({ value: undefined })
 
   function validateCommentaire() {
     if (commentaire?.value && commentaire.value.length > 250) {
@@ -58,7 +60,7 @@ export default function DesinscriptionBeneficiaireModal({
       return
     }
 
-    if (!commentaire?.value > 250 || commentaire?.value === undefined) {
+    if (!commentaire.value || commentaire.value.length <= 250) {
       onConfirmation({
         id: beneficiaireADesinscrire.id,
         value: beneficiaireADesinscrire.value,
