@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import PartageRechercheButton from 'components/offres/suggestions/PartageRechercheButton'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   BaseImmersion,
@@ -35,6 +36,7 @@ function RechercheOffres(_: PageProps) {
   const [portefeuille] = usePortefeuille()
 
   const RAYON_DEFAULT = 10
+  const [showForm, setShowForm] = useState<boolean>(true)
   const [typeOffre, setTypeOffre] = useSessionStorage<TypeOffre | undefined>(
     'recherche-offres--type',
     undefined
@@ -279,27 +281,45 @@ function RechercheOffres(_: PageProps) {
         />
       )}
 
-      <FormRechercheOffres
-        hasResults={isSearching || offres !== undefined}
-        fetchMetiers={fetchMetiers}
-        fetchCommunes={fetchCommunes}
-        fetchCommunesEtDepartements={fetchCommunesEtDepartements}
-        stateTypeOffre={[typeOffre, switchTypeOffre]}
-        stateQueryOffresEmploi={[queryOffresEmploi, updateQueryEmplois]}
-        stateQueryServicesCiviques={[
-          queryServicesCiviques,
-          updateQueryServicesCiviques,
-        ]}
-        stateQueryImmersions={[queryImmersions, updateQueryImmersions]}
-        onNouvelleRecherche={rechercherPremierePage}
-      />
+      <div className='bg-primary_lighten p-6 mb-10 rounded-base'>
+        <div className={`flex justify-between ${showForm ? 'mb-5' : ''}`}>
+          <h2 className='text-m-medium text-primary'>Ma recherche</h2>
+          <button type='button' onClick={() => setShowForm(!showForm)}>
+            <IconComponent
+              name={showForm ? IconName.ChevronUp : IconName.ChevronDown}
+              title={`${showForm ? 'Cacher' : 'Voir'} les critères`}
+              className='h-6 w-6 fill-primary'
+              focusable={false}
+            />
+            <span className='sr-only'>
+              {showForm ? 'Cacher' : 'Voir'} les critères
+            </span>
+          </button>
+        </div>
+        <FormRechercheOffres
+          hasResults={isSearching || offres !== undefined}
+          showForm={showForm}
+          fetchMetiers={fetchMetiers}
+          fetchCommunes={fetchCommunes}
+          fetchCommunesEtDepartements={fetchCommunesEtDepartements}
+          stateTypeOffre={[typeOffre, switchTypeOffre]}
+          stateQueryOffresEmploi={[queryOffresEmploi, updateQueryEmplois]}
+          stateQueryServicesCiviques={[
+            queryServicesCiviques,
+            updateQueryServicesCiviques,
+          ]}
+          stateQueryImmersions={[queryImmersions, updateQueryImmersions]}
+          onNouvelleRecherche={rechercherPremierePage}
+        />
 
-      <PartageRechercheButton
-        typeOffre={typeOffre}
-        suggestionOffreEmploi={getQueryOffreEmploi()}
-        suggestionImmersion={getQueryImmersion()}
-        suggestionServiceCivique={getQueryServiceCivique()}
-      />
+        <PartageRechercheButton
+          primary={!showForm}
+          typeOffre={typeOffre}
+          suggestionOffreEmploi={getQueryOffreEmploi()}
+          suggestionImmersion={getQueryImmersion()}
+          suggestionServiceCivique={getQueryServiceCivique()}
+        />
+      </div>
 
       {(isSearching || offres) && (
         <ResultatsRechercheOffre

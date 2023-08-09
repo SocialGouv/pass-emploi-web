@@ -9,6 +9,7 @@ import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 
 interface PartageRechercheButtonProps {
+  primary?: boolean
   typeOffre?: TypeOffre
   suggestionOffreEmploi: SearchOffresEmploiQuery
   suggestionImmersion: SearchImmersionsQuery
@@ -16,6 +17,7 @@ interface PartageRechercheButtonProps {
 }
 
 export default function PartageRechercheButton({
+  primary,
   typeOffre,
   suggestionOffreEmploi,
   suggestionImmersion,
@@ -120,23 +122,20 @@ export default function PartageRechercheButton({
       {typeOffre && (
         <>
           <div
-            className={
-              'flex justify-end my-8 gap-4 ' +
-              (errorMessage ? 'items-start' : 'items-center')
-            }
+            className={`
+              flex mt-12 gap-4 ${errorMessage ? 'items-start' : 'items-center'}
+            `}
           >
-            <div className='max-w-[40%]'>
-              <p>Suggérer ces critères de recherche à vos bénéficiaires</p>
-              {errorMessage && (
-                <p className='text-warning'>
-                  {getLabelRechercheNonPartageable()}
-                </p>
-              )}
-            </div>
+            <p>Suggérer ces critères de recherche à vos bénéficiaires</p>
+            {errorMessage && (
+              <p className='text-warning'>
+                {getLabelRechercheNonPartageable()}
+              </p>
+            )}
             {laRechercheEstPartageable() && (
               <ButtonLink
                 href={getPartageRechercheUrl()}
-                style={ButtonStyle.SECONDARY}
+                style={primary ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
               >
                 <IconComponent
                   name={IconName.Share}
@@ -144,12 +143,13 @@ export default function PartageRechercheButton({
                   focusable={false}
                   aria-hidden={true}
                 />
-                Partager <span className='sr-only'>critères de recherche</span>
+                Partager les critères{' '}
+                <span className='sr-only'>de recherche</span>
               </ButtonLink>
             )}
             {!laRechercheEstPartageable() && (
               <Button
-                style={ButtonStyle.SECONDARY}
+                style={primary ? ButtonStyle.PRIMARY : ButtonStyle.SECONDARY}
                 onClick={() => setErrorMessage(true)}
               >
                 <IconComponent
@@ -158,7 +158,8 @@ export default function PartageRechercheButton({
                   focusable={false}
                   aria-hidden={true}
                 />
-                Partager <span className='sr-only'>critères de recherche</span>
+                Partager les critères{' '}
+                <span className='sr-only'>de recherche</span>
               </Button>
             )}
           </div>

@@ -300,7 +300,7 @@ describe('Page Recherche Offres Service civique', () => {
       it('ne permet pas de partager s’il n’y a pas de commune renseignée', async () => {
         await userEvent.click(
           screen.getByRole('button', {
-            name: `Partager critères de recherche`,
+            name: `Partager les critères de recherche`,
           })
         )
 
@@ -323,7 +323,7 @@ describe('Page Recherche Offres Service civique', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByRole('link', {
-            name: `Partager critères de recherche`,
+            name: `Partager les critères de recherche`,
           })
         ).toBeInTheDocument()
       })
@@ -335,7 +335,7 @@ describe('Page Recherche Offres Service civique', () => {
         // Then
         expect(
           screen.getByRole('link', {
-            name: `Partager critères de recherche`,
+            name: `Partager les critères de recherche`,
           })
         ).toHaveAttribute(
           'href',
