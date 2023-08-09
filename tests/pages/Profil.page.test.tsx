@@ -468,17 +468,17 @@ describe('Page Profil conseiller', () => {
         it('affiche une modale avec les bonnes informations', async () => {
           // Then
           expect(
-            screen.getByText(/Attention, cette opération/)
+            screen.getByText(/Souhaitez-vous supprimer le compte conseiller/)
           ).toBeInTheDocument()
           expect(
-            screen.getByRole('button', { name: 'Confirmer' })
+            screen.getByRole('button', { name: 'Supprimer le compte' })
           ).toBeInTheDocument()
         })
 
         it('lors de la confirmation, supprime le conseiller et redirige vers la page de connexion', async () => {
           // Given
           const confirmerSuppressionButton = screen.getByRole('button', {
-            name: 'Confirmer',
+            name: 'Supprimer le compte',
           })
 
           // When
@@ -519,13 +519,13 @@ describe('Page Profil conseiller', () => {
           })
           await userEvent.click(supprimerConseillerButton)
           // Then
-          expect(screen.getByText('Retour')).toBeInTheDocument()
+          expect(screen.getByText('Fermer')).toBeInTheDocument()
           expect(
             screen.getByText(
-              /Afin de procéder à la suppression de votre compte, votre portefeuille doit avoir été transféré./
+              /Pour supprimer votre compte, vos bénéficiaires doivent être transférés à un conseiller./
             )
           ).toBeInTheDocument()
-          expect(() => screen.getByText('Confirmer')).toThrow()
+          expect(() => screen.getByText('Supprimer le compte')).toThrow()
         })
       })
     })

@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic'
 import React, { FormEvent, useState } from 'react'
 
 import Modal from 'components/Modal'
@@ -6,7 +7,6 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
-import { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { BaseJeune } from 'interfaces/jeune'
@@ -14,6 +14,11 @@ import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const IllustrationDelete = dynamic(
+  import('../../assets/images/illustration-delete.svg'),
+  { ssr: false }
+)
 
 interface DeleteJeuneActifModalProps {
   jeune: BaseJeune
@@ -98,19 +103,21 @@ export default function DeleteJeuneActifModal({
     <>
       {showModalEtape1 && (
         <Modal
-          title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
-          titleIcon={IconName.Warning}
+          title={`Souhaitez-vous supprimer le compte bénéficiaire : ${jeune.prenom} ${jeune.nom} ?`}
           onClose={onClose}
+          illustration={
+            <IllustrationDelete
+              focusable='false'
+              aria-hidden='true'
+              className='w-1/3 m-auto fill-primary mb-8'
+            />
+          }
         >
-          <p className='mb-12 text-base-regular text-content_color text-center'>
-            Le bénéficiaire sera prévenu de la suppression de son compte et de
-            la possibilité de demander un accès à ses données pendant une
-            période de 2 ans avant que celles-ci ne soient supprimées.
+          <p className='mt-6 text-base-regular text-content_color text-center'>
+            Le bénéficiaire sera notifié de la suppression de son compte. Les
+            données seront conservées pendant 2 ans avant leur suppression.
           </p>
-          <p className='mb-12 text-base-regular text-content_color text-center'>
-            Souhaitez-vous continuer la suppression ?
-          </p>
-          <div className='flex justify-center'>
+          <div className='flex justify-center mt-4'>
             <Button
               type='button'
               style={ButtonStyle.SECONDARY}
@@ -132,11 +139,17 @@ export default function DeleteJeuneActifModal({
 
       {showModalEtape2 && (
         <Modal
-          title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
-          titleIcon={IconName.Warning}
+          title={`Souhaitez-vous supprimer le compte bénéficiaire : ${jeune.prenom} ${jeune.nom} ?`}
           onClose={onClose}
+          illustration={
+            <IllustrationDelete
+              focusable='false'
+              aria-hidden='true'
+              className='w-1/3 m-auto fill-primary mb-8'
+            />
+          }
         >
-          <InformationMessage label='Une fois confirmé toutes les informations liées à ce compte jeune seront supprimées' />
+          <InformationMessage label='Une fois confirmé toutes les informations liées à ce compte bénéficiaire seront supprimées' />
 
           <form className='mt-8' onSubmit={handleSoumettreSuppression}>
             <fieldset>
@@ -201,7 +214,7 @@ export default function DeleteJeuneActifModal({
                 style={ButtonStyle.PRIMARY}
                 className='ml-6'
               >
-                Confirmer
+                Supprimer le compte
               </Button>
             </div>
           </form>
