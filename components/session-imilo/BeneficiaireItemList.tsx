@@ -2,6 +2,7 @@ import React from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { StatutBeneficiaire } from 'interfaces/session'
 import { BeneficiaireSelectionneSession } from 'pages/agenda/sessions/[session_id]'
 
 type BeneficiaireItemListProps = {

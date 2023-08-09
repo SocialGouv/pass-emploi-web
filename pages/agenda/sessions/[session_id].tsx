@@ -77,8 +77,6 @@ function FicheDetailsSession({
     | undefined
   >()
 
-  console.log('>>>> TOPALAVACHET', beneficiairesSelectionnes.value)
-
   function openDesinscriptionBeneficiaireModal(
     id: string,
     nom: string,
