@@ -31,6 +31,7 @@ export default function DesinscriptionBeneficiaireModal({
   const modalRef = useRef<{
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)
+  const textCommentaire = useRef<HTMLTextAreaElement>(null)
 
   const [typeRefus, setTypeRefus] = useState<
     ValueWithError<string | undefined>
@@ -41,7 +42,7 @@ export default function DesinscriptionBeneficiaireModal({
   >({ value: undefined })
 
   function validateCommentaire() {
-    if (commentaire?.value && commentaire.value.length > 250) {
+    if (commentaire.value && commentaire.value.length > 250) {
       setCommentaire({
         value: commentaire.value,
         error:
@@ -52,7 +53,7 @@ export default function DesinscriptionBeneficiaireModal({
 
   function validateFormulaire(e: FormEvent) {
     e.preventDefault()
-    if (!typeRefus?.value) {
+    if (!typeRefus.value) {
       setTypeRefus({
         value: undefined,
         error: 'Veuillez sélectionner un type de refus',
@@ -60,16 +61,28 @@ export default function DesinscriptionBeneficiaireModal({
       return
     }
 
-    if (!commentaire.value || commentaire.value.length <= 250) {
-      onConfirmation({
+    const formulaireEstValide =
+      typeRefus.value !== StatutBeneficiaire.REFUS_JEUNE ||
+      commentaire.value === undefined ||
+      commentaire.value.length <= 250
+
+    if (formulaireEstValide) {
+      const beneficiaireDesinscrit = {
         id: beneficiaireADesinscrire.id,
         value: beneficiaireADesinscrire.value,
         statut: typeRefus.value,
-        commentaire:
-          typeRefus.value === StatutBeneficiaire.REFUS_JEUNE
-            ? commentaire?.value
-            : undefined,
-      })
+      }
+      if (
+        typeRefus.value === StatutBeneficiaire.REFUS_JEUNE &&
+        commentaire.value
+      ) {
+        onConfirmation({
+          ...beneficiaireDesinscrit,
+          commentaire: commentaire.value,
+        })
+      } else {
+        onConfirmation(beneficiaireDesinscrit)
+      }
     }
   }
   return (
@@ -81,32 +94,34 @@ export default function DesinscriptionBeneficiaireModal({
       <form onSubmit={validateFormulaire}>
         <div className='mt-14 flex flex-col justify-center'>
           <div className='flex flex-col gap-2 mb-4'>
-            {typeRefus?.error && (
+            {typeRefus.error && (
               <InputError id={'select-beneficiaires--error'} className='my-2'>
                 {typeRefus.error}
               </InputError>
             )}
 
             <RadioBox
-              isSelected={typeRefus?.value === StatutBeneficiaire.DESINSCRIT}
-              onChange={() =>
+              isSelected={typeRefus.value === StatutBeneficiaire.DESINSCRIT}
+              onChange={() => {
                 setTypeRefus({ value: StatutBeneficiaire.DESINSCRIT })
-              }
+                textCommentaire.current!.value = ''
+              }}
               label='J’ai fait une erreur lors de l’ajout de ce bénéficiaire'
               name='type-refus'
               id='type-refus--erreur'
             />
             <RadioBox
-              isSelected={typeRefus?.value === StatutBeneficiaire.REFUS_TIERS}
-              onChange={() =>
+              isSelected={typeRefus.value === StatutBeneficiaire.REFUS_TIERS}
+              onChange={() => {
                 setTypeRefus({ value: StatutBeneficiaire.REFUS_TIERS })
-              }
+                textCommentaire.current!.value = ''
+              }}
               label='Refus tiers (la désinscription est à mon initiative ou à celle d’un tiers)'
               name='type-refus'
               id='type-refus--tiers'
             />
             <RadioBox
-              isSelected={typeRefus?.value === StatutBeneficiaire.REFUS_JEUNE}
+              isSelected={typeRefus.value === StatutBeneficiaire.REFUS_JEUNE}
               onChange={() =>
                 setTypeRefus({ value: StatutBeneficiaire.REFUS_JEUNE })
               }
@@ -127,7 +142,8 @@ export default function DesinscriptionBeneficiaireModal({
             maxLength={250}
             onChange={(value: string) => setCommentaire({ value: value })}
             onBlur={validateCommentaire}
-            disabled={typeRefus?.value !== StatutBeneficiaire.REFUS_JEUNE}
+            disabled={typeRefus.value !== StatutBeneficiaire.REFUS_JEUNE}
+            ref={textCommentaire}
           />
 
           <div className='flex justify-center'>
