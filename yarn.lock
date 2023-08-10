@@ -1863,16 +1863,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@elastic/apm-rum-react@npm:1.4.4":
-  version: 1.4.4
-  resolution: "@elastic/apm-rum-react@npm:1.4.4"
+"@elastic/apm-rum-react@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@elastic/apm-rum-react@npm:2.0.0"
   dependencies:
     "@elastic/apm-rum": ^5.14.0
     hoist-non-react-statics: ^3.3.0
   peerDependencies:
     react: ">16.0.0"
-    react-router-dom: ">4.0.0"
-  checksum: 8d3d925e24d33ecd6d0ee226b497e68d82cf45ec27c8a6aaa6b21a4975a9f853de8c5dfa9641fd519812d602bc28a3ec3d2d22f78bb9556d68a812485f59d923
+    react-router-dom: ">=6.0.0"
+  checksum: 9f56f5f127e19f141843764dc4f32e2a5f166e1d40cd90c5a1519cdfa1cbc3e9ec96ae3475dfc13069c75beec0d48699f3745076467c9444315ec8039621886f
   languageName: node
   linkType: hard
 
@@ -15137,7 +15137,7 @@ __metadata:
   dependencies:
     "@badrap/bar-of-progress": 0.2.2
     "@elastic/apm-rum": 5.14.0
-    "@elastic/apm-rum-react": 1.4.4
+    "@elastic/apm-rum-react": 2.0.0
     "@next/bundle-analyzer": ^13.3.0
     "@next/font": 13.4.12
     "@storybook/addon-a11y": ^6.5.16
