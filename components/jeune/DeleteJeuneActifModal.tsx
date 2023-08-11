@@ -120,7 +120,7 @@ export default function DeleteJeuneActifModal({
               onClick={openModalEtape2}
               className='ml-6'
             >
-              Continuer
+              Supprimer ce compte
             </Button>
           </div>
         </Modal>
