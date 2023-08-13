@@ -56,7 +56,7 @@
     "@storybook/react": "^6.5.16",
     "@svgr/webpack": "7.0.0",
     "@testing-library/dom": "^9.0.0",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/crypto-js": "^4.1.1",
