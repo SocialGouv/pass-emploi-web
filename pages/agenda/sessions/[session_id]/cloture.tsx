@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -14,15 +14,19 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { StatutAnimationCollective } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
-import { Session, StatutBeneficiaire } from 'interfaces/session'
 import {
-  getDetailsSession,
+  estAClore,
   InformationBeneficiaireSession,
-} from 'services/sessions.service'
+  Session,
+  StatutBeneficiaire,
+} from 'interfaces/session'
+import { AlerteParam } from 'referentiel/alerteParam'
+import { getDetailsSession } from 'services/sessions.service'
 import { useAlerte } from 'utils/alerteContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import redirectedFromHome from 'utils/redirectedFromHome'
 
 type ClotureSessionProps = PageProps & {
   session: Session
@@ -36,51 +40,126 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
   const [conseiller] = useConseiller()
 
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
-  const [statutsBeneficiaires, setStatutsBeneficiaires] = useState<string[]>([])
-  const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
   const [emargements, setEmargements] = useState<
-    { idJeune: string; statut: string }[]
+    Array<InformationBeneficiaireSession>
   >([])
 
-  function selectionnerTousLesBeneficiaires(_event: FormEvent) {
+  const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
+
+  const inscriptionsInitiales = session.inscriptions.map((inscription) => {
+    return { idJeune: inscription.idJeune, statut: inscription.statut }
+  })
+
+  function cocherTousLesBeneficiaires(_event: FormEvent) {
     if (idsSelectionnes.length !== session.inscriptions.length) {
       setIdsSelectionnes(session.inscriptions.map((jeune) => jeune.idJeune))
+      setEmargements(
+        inscriptionsInitiales.map((jeune) => {
+          return { ...jeune, statut: 'PRESENT' }
+        })
+      )
     } else {
       setIdsSelectionnes([])
-    }
-  }
-
-  async function cloreSession(event: FormEvent) {
-    event.preventDefault()
-    // const { cloreSession: _cloreSession } = await import(
-    //   'services/sessions.service'
-    // )
-    //
-    // await _cloreSession(conseiller.id, session.session.id, emargements)
-
-    alert('ok')
-    // setAlerte(AlerteParam.clotureAC)
-    // await router.push(returnTo)
-  }
-
-  function updateStatutBeneficiaire(jeune) {
-    switch (jeune.statut) {
-      case StatutBeneficiaire.INSCRIT:
-        return setStatutBeneficiaire('REFUS_JEUNE')
-      case StatutBeneficiaire.REFUS_JEUNE:
-      case StatutBeneficiaire.REFUS_TIERS:
-        return setStatutBeneficiaire(jeune.statut)
+      setEmargements([])
     }
   }
 
   function selectionnerBeneficiaire(jeune) {
     if (idsSelectionnes.includes(jeune.idJeune)) {
       setIdsSelectionnes(idsSelectionnes.filter((id) => id !== jeune.idJeune))
+      setStatutBeneficiaire(jeune.statut)
     } else {
       setIdsSelectionnes(idsSelectionnes.concat(jeune.idJeune))
+      setEmargements((currEmargements) => {
+        return [...currEmargements, { ...jeune, statut: 'PRESENT' }]
+      })
     }
   }
-  console.log('inscriptions', session.inscriptions)
+
+  function modifierStatutBeneficiaire(
+    event: ChangeEvent<HTMLInputElement>,
+    jeune: InformationBeneficiaireSession
+  ) {
+    if (event.target.checked) {
+      const { prenom, nom, ...infosBeneficiaires } = jeune
+      setIdsSelectionnes(idsSelectionnes.concat(jeune.idJeune))
+      setStatutBeneficiaire('PRESENT')
+      setEmargements((currentEmargements) => {
+        return [
+          ...currentEmargements,
+          { ...infosBeneficiaires, statut: 'PRESENT' },
+        ]
+      })
+    } else {
+      setStatutBeneficiaire(jeune.statut)
+      setIdsSelectionnes(idsSelectionnes.filter((id) => id !== jeune.idJeune))
+      setEmargements((prev) => {
+        return prev?.filter(({ idJeune }) => idJeune !== jeune.idJeune)
+      })
+    }
+  }
+
+  function updateStatutBeneficiaire(jeune: InformationBeneficiaireSession) {
+    switch (jeune.statut) {
+      case StatutBeneficiaire.PRESENT:
+        return 'PRESENT'
+      case StatutBeneficiaire.REFUS_TIERS:
+        return 'REFUS_TIERS'
+      case undefined:
+      case StatutBeneficiaire.INSCRIT:
+      case StatutBeneficiaire.REFUS_JEUNE:
+        return 'REFUS_JEUNE'
+    }
+  }
+
+  async function soumettreClotureSession(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const { cloreSession } = await import('services/sessions.service')
+
+    if (emargements.length === 0) {
+      inscriptionsInitiales.map((jeune) => {
+        return setEmargements((currentEmargements) => {
+          return [
+            ...currentEmargements,
+            { ...jeune, statut: updateStatutBeneficiaire(jeune) },
+          ]
+        })
+      })
+    } else {
+      const emargementsASoumettre = inscriptionsInitiales.filter(
+        (jeuneAEmarger) =>
+          !emargements.some(
+            (jeuneDejaCoche) => jeuneAEmarger.idJeune === jeuneDejaCoche.idJeune
+          )
+      )
+      emargementsASoumettre.map((jeune) => {
+        return setEmargements((currEmargements) => {
+          return [
+            ...currEmargements,
+            { ...jeune, statut: updateStatutBeneficiaire(jeune) },
+          ]
+        })
+      })
+    }
+
+    await cloreSession(conseiller.id, session.session.id, emargements)
+    setAlerte(AlerteParam.clotureSession)
+    await router.push(`/agenda/sessions/${session.session.id}`)
+  }
+
+  function afficherStatut(jeune) {
+    switch (jeune.statut) {
+      case StatutBeneficiaire.INSCRIT:
+        return 'Inscrit'
+      case StatutBeneficiaire.PRESENT:
+        return 'Présent'
+      case StatutBeneficiaire.REFUS_JEUNE:
+        return 'Refus jeune'
+      case StatutBeneficiaire.REFUS_TIERS:
+        return 'Refus tiers'
+    }
+  }
 
   return (
     <>
@@ -92,29 +171,32 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
       <div className='mt-6'>
         <InformationMessage label='La liste suivante se base sur les participants inscrits. Veuillez vous assurer de son exactitude.' />
       </div>
-      <form onSubmit={cloreSession} className='mt-6'>
+      <form onSubmit={soumettreClotureSession} className='mt-6'>
         <Table caption={{ text: 'Bénéficiaires de la session' }}>
           <THead>
             <TR isHeader={true}>
               <TH>
                 {' '}
                 <input
+                  disabled={
+                    session.session.statut === StatutAnimationCollective.Close
+                  }
                   id='cloture-tout-selectionner'
                   type='checkbox'
-                  checked={
+                  checked={Boolean(
                     idsSelectionnes.length === session.inscriptions.length
-                  }
+                  )}
                   title='Tout sélectionner'
-                  onChange={(e) => selectionnerTousLesBeneficiaires(e)}
+                  onChange={(e) => cocherTousLesBeneficiaires(e)}
+                  className='mr-4'
                 />
                 <label
-                  className='sr-only'
                   htmlFor='cloture-tout-selectionner'
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Tout sélectionner
+                  <span className='sr-only'>Tout sélectionner</span>
+                  Présence des bénéficiaires
                 </label>
-                Présence des bénéficiaires
               </TH>
               <TH>Statut</TH>
             </TR>
@@ -124,19 +206,29 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
             {session.inscriptions.map((jeune) => (
               <TR
                 key={jeune.idJeune}
-                onClick={() => selectionnerBeneficiaire(jeune)}
+                // onClick={() => selectionnerBeneficiaire(jeune)}
               >
                 <TD>
                   <input
+                    disabled={jeune.statut === StatutBeneficiaire.PRESENT}
                     type='checkbox'
-                    name={'checkbox-' + jeune.idJeune}
+                    name={jeune.idJeune}
                     id={'checkbox-' + jeune.idJeune}
-                    checked={idsSelectionnes.includes(jeune.idJeune)}
-                    title={'Sélectionner ' + getNomJeuneComplet(jeune)}
-                    value={statutBeneficiaire}
-                    onChange={(e) => {}}
+                    checked={
+                      Boolean(idsSelectionnes.includes(jeune.idJeune)) ||
+                      jeune.statut === StatutBeneficiaire.PRESENT
+                    }
+                    title={'Sélectionner ' + `${jeune.prenom} ${jeune.nom}`}
+                    value={statutBeneficiaire ?? jeune.statut}
+                    onChange={(e) => modifierStatutBeneficiaire(e, jeune)}
+                    className='mr-4'
                   />
                   <label
+                    className={`${
+                      jeune.statut === StatutBeneficiaire.PRESENT
+                        ? 'text-disabled'
+                        : ''
+                    }`}
                     htmlFor={'checkbox-' + jeune.idJeune}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -144,32 +236,44 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
                   </label>
                 </TD>
                 <TD>
-                  {jeune.statut} {statutBeneficiaire}
+                  <span
+                    className={`${
+                      jeune.statut === StatutBeneficiaire.PRESENT
+                        ? 'text-disabled'
+                        : ''
+                    }`}
+                  >
+                    {afficherStatut(jeune)}{' '}
+                    {session.session.commentaire && (
+                      <>: {session.session.commentaire}</>
+                    )}
+                  </span>
                 </TD>
               </TR>
             ))}
           </TBody>
         </Table>
+        {estAClore(session) && (
+          <div className='flex justify-center mt-10 p-4'>
+            <ButtonLink
+              href={returnTo}
+              style={ButtonStyle.SECONDARY}
+              className='mr-3'
+            >
+              Annuler la clôture
+            </ButtonLink>
 
-        <div className='flex justify-center mt-10 p-4'>
-          <ButtonLink
-            href={returnTo}
-            style={ButtonStyle.SECONDARY}
-            className='mr-3'
-          >
-            Annuler la clôture
-          </ButtonLink>
-
-          <Button type='submit'>
-            <IconComponent
-              name={IconName.CheckCircleFill}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
-            />
-            Clore la session
-          </Button>
-        </div>
+            <Button type='submit'>
+              <IconComponent
+                name={IconName.CheckCircleFill}
+                focusable={false}
+                aria-hidden={true}
+                className='mr-2 w-4 h-4'
+              />
+              Clore la session
+            </Button>
+          </div>
+        )}
       </form>
     </>
   )
@@ -200,17 +304,28 @@ export const getServerSideProps: GetServerSideProps<
     context.query.session_id as string,
     accessToken
   )
+  if (session?.session.statut !== StatutAnimationCollective.AClore)
+    return { notFound: true }
 
-  //TODO: Fix return to et ajouter redirectUrl
-  return {
-    props: {
-      session,
-      pageTitle: 'Clôture de la session - Sessions',
-      pageHeader: 'Clôture de la session',
-      withoutChat: true,
-      returnTo: `/agenda/sessions/${session!.session.id}`,
-    },
+  let redirectTo = context.query.redirectUrl as string
+
+  if (!redirectTo) {
+    const referer = context.req.headers.referer
+    redirectTo =
+      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   }
+
+  //FIXME: returnTo redirige vers agenda au lieu fiche session
+
+  const props: ClotureSessionProps = {
+    session,
+    returnTo: redirectTo,
+    pageTitle: `Clore - Session ${session.offre.titre}`,
+    pageHeader: 'Clôture de la session',
+    withoutChat: true,
+  }
+
+  return { props }
 }
 
 export default withTransaction(ClotureSession.name, 'page')(ClotureSession)

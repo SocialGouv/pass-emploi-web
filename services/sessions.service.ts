@@ -9,14 +9,8 @@ import {
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
-import { Session } from 'interfaces/session'
+import { InformationBeneficiaireSession, Session } from 'interfaces/session'
 import { ApiError } from 'utils/httpClient'
-
-export type InformationBeneficiaireSession = {
-  idJeune: string
-  statut: string
-  commentaire?: string
-}
 
 export async function getSessionsMissionLocale(
   idConseiller: string,

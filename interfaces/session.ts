@@ -26,10 +26,20 @@ export type Session = {
     statut: string
   }>
 }
+export type InformationBeneficiaireSession = {
+  idJeune: string
+  statut: string
+  commentaire?: string
+}
 
 export const StatutBeneficiaire = {
+  PRESENT: 'PRESENT',
   INSCRIT: 'INSCRIT',
   DESINSCRIT: 'DESINSCRIT',
   REFUS_JEUNE: 'REFUS_JEUNE',
   REFUS_TIERS: 'REFUS_TIERS',
+}
+
+export function estAClore(session: Session) {
+  return session.session.statut === 'AClore'
 }

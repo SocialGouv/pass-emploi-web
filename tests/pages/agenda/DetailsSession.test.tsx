@@ -138,6 +138,7 @@ describe('Détails Session', () => {
         sessionVisible = unDetailSession()
         sessionInvisible = unDetailSession({
           session: {
+            ...unDetailSession().session,
             id: 'session-invisible-id',
             nom: 'session-invisible',
             dateHeureDebut: '2023-07-04T10:00:00.000+00:00',
@@ -253,6 +254,7 @@ describe('Détails Session', () => {
         beforeEach(async () => {
           session = unDetailSession({
             session: {
+              ...unDetailSession().session,
               id: 'session-1',
               nom: 'titre-session',
               dateHeureDebut: DateTime.now()
@@ -343,6 +345,7 @@ describe('Détails Session', () => {
           //Given
           session = unDetailSession({
             session: {
+              ...unDetailSession().session,
               id: 'session-1',
               nom: 'titre-session',
               dateHeureDebut: DateTime.now()
@@ -402,6 +405,7 @@ describe('Détails Session', () => {
           )
           session = unDetailSession({
             session: {
+              ...unDetailSession().session,
               id: 'session-1',
               nom: 'titre-session',
               dateHeureDebut: DateTime.now()
@@ -567,6 +571,7 @@ describe('Détails Session', () => {
       it('si le bénéficiaire n’était pas inscrit', async () => {
         session = unDetailSession({
           session: {
+            ...unDetailSession().session,
             id: 'session-1',
             nom: 'titre-session',
             dateHeureDebut: DateTime.now()
@@ -611,6 +616,7 @@ describe('Détails Session', () => {
         beforeEach(async () => {
           session = unDetailSession({
             session: {
+              ...unDetailSession().session,
               id: 'session-1',
               nom: 'titre-session',
               dateHeureDebut: DateTime.now()
@@ -695,6 +701,8 @@ describe('Détails Session', () => {
       beforeEach(async () => {
         session = unDetailSession({
           session: {
+            ...unDetailSession().session,
+
             id: 'session-1',
             nom: 'titre-session',
             dateHeureDebut: DateTime.now()
@@ -795,6 +803,7 @@ describe('Détails Session', () => {
 
           session = unDetailSession({
             session: {
+              ...unDetailSession().session,
               statut: 'AVenir',
             },
           })
@@ -831,6 +840,7 @@ describe('Détails Session', () => {
 
           session = unDetailSession({
             session: {
+              ...unDetailSession().session,
               dateHeureDebut: DateTime.now()
                 .plus({ days: 1, minute: 1 })
                 .toString(),
@@ -862,7 +872,7 @@ describe('Détails Session', () => {
           //Then
           expect(screen.getByRole('link', { name: 'Clore' })).toHaveAttribute(
             'href',
-            `/sessions/${session.session.id}/cloture`
+            `/agenda/sessions/${session.session.id}/cloture?redirectUrl=whatever`
           )
         })
       })
@@ -875,8 +885,6 @@ describe('Détails Session', () => {
     })
 
     describe('Quand le conseiller est Pôle emploi', () => {
-      let actual: GetServerSidePropsResult<any>
-
       it('renvoie une 404', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({

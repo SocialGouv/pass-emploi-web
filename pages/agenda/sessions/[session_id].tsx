@@ -21,7 +21,7 @@ import { ValueWithError } from 'components/ValueWithError'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { Session, StatutBeneficiaire } from 'interfaces/session'
+import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
@@ -271,24 +271,26 @@ function FicheDetailsSession({
     await router.push(returnTo)
   }
 
-  console.log('return to', returnTo)
-
   return (
     <>
-      <PageActionsPortal>
-        <ButtonLink
-          href={`/agenda/sessions/${session.session.id}/cloture`}
-          style={ButtonStyle.PRIMARY}
-        >
-          <IconComponent
-            name={IconName.Description}
-            aria-hidden={true}
-            focusable={false}
-            className='mr-2 w-4 h-4'
-          />
-          Clore
-        </ButtonLink>
-      </PageActionsPortal>
+      {estAClore(session) && (
+        <PageActionsPortal>
+          <ButtonLink
+            href={`/agenda/sessions/${
+              session.session.id
+            }/cloture?redirectUrl=${encodeURIComponent(returnTo)}`}
+            style={ButtonStyle.PRIMARY}
+          >
+            <IconComponent
+              name={IconName.Description}
+              aria-hidden={true}
+              focusable={false}
+              className='mr-2 w-4 h-4'
+            />
+            Clore
+          </ButtonLink>
+        </PageActionsPortal>
+      )}
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
       {dateLimiteDepassee() && (
@@ -297,7 +299,7 @@ function FicheDetailsSession({
         </div>
       )}
 
-      {session.session.statut === 'AClore' && (
+      {estAClore(session) && (
         <div className='mt-2'>
           <FailureAlert label='Cet événement est passé et doit être clos.' />
         </div>
@@ -529,7 +531,7 @@ function FicheDetailsSession({
         </Etape>
 
         {!dateLimiteDepassee() && (
-          <div className='flex gap-4 mx-auto'>
+          <div className='flex justify-center gap-4 mx-auto'>
             <ButtonLink
               href={returnTo}
               style={ButtonStyle.SECONDARY}
