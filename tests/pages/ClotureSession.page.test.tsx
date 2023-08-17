@@ -16,7 +16,6 @@ import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRed
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/sessions.service')
-jest.mock('components/PageActionsPortal')
 
 describe('Cloture Session', () => {
   describe('client side', () => {
@@ -154,6 +153,18 @@ describe('Cloture Session', () => {
           { idJeune: 'jeune-1', statut: 'PRESENT' },
           { idJeune: 'jeune-2', statut: 'PRESENT' },
         ])
+      })
+
+      it('affiche un message de succès', async () => {
+        // Then
+        expect(alerteSetter).toHaveBeenCalledWith(AlerteParam.clotureSession)
+      })
+
+      it('redirige vers le détail de la session', async () => {
+        // Then
+        expect(routerPush).toHaveBeenCalledWith(
+          expect.stringMatching('/agenda/sessions/session-1')
+        )
       })
     })
   })

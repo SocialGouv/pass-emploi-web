@@ -43,3 +43,7 @@ export const StatutBeneficiaire = {
 export function estAClore(session: Session) {
   return session.session.statut === 'AClore'
 }
+
+export function estClose(session: Session) {
+  return session.session.statut === 'Close'
+}

@@ -25,6 +25,7 @@ import {
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getDetailsSession } from 'services/sessions.service'
 import { useAlerte } from 'utils/alerteContext'
+import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -160,6 +161,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
         return 'Refus tiers'
     }
   }
+  useMatomo('Sessions - Clôture de la session')
 
   return (
     <>
