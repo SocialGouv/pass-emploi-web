@@ -57,13 +57,14 @@ export function jsonToBaseConseiller(json: BaseConseillerJson): BaseConseiller {
 
 export function jsonToConseiller(
   conseillerJson: ConseillerJson,
-  { structure, estSuperviseur }: Session.HydratedUser
+  { structure, estSuperviseur, estSuperviseurPEBRSA }: Session.HydratedUser
 ): Conseiller {
   const { agence, ...json } = conseillerJson
   const conseiller: Conseiller = {
     ...json,
     structure: structure as StructureConseiller,
     estSuperviseur,
+    estSuperviseurPEBRSA,
   }
 
   if (agence) {

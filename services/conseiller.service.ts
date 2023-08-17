@@ -2,7 +2,11 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { BaseConseiller, Conseiller } from 'interfaces/conseiller'
+import {
+  BaseConseiller,
+  Conseiller,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { BaseJeune, DossierMilo } from 'interfaces/jeune'
 import {
   BaseConseillerJson,
@@ -28,11 +32,18 @@ export async function getConseillerServerSide(
 }
 
 export async function getConseillers(
-  recherche: string
+  recherche: string,
+  structure?:
+    | StructureConseiller.POLE_EMPLOI
+    | StructureConseiller.POLE_EMPLOI_BRSA
 ): Promise<BaseConseiller[]> {
   const session = await getSession()
+  let filtreStructure = ''
+  if (structure) {
+    filtreStructure = `&structure=${structure}`
+  }
   const { content } = await apiGet<BaseConseillerJson[]>(
-    `/conseillers?q=${recherche}`,
+    `/conseillers?q=${recherche}${filtreStructure}`,
     session!.accessToken
   )
   return content.map(jsonToBaseConseiller)
