@@ -66,29 +66,12 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     }
   }
 
-  function selectionnerBeneficiaire(beneficiaire) {
-    if (idsSelectionnes.includes(beneficiaire.idJeune)) {
-      setIdsSelectionnes(
-        idsSelectionnes.filter((id) => id !== beneficiaire.idJeune)
-      )
-      setStatutBeneficiaire(beneficiaire.statut)
-      setEmargements((prev) => {
-        return prev?.filter(({ idJeune }) => idJeune !== beneficiaire.idJeune)
-      })
-    } else {
-      setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
-      setEmargements((currEmargements) => {
-        return [...currEmargements, { ...beneficiaire, statut: 'PRESENT' }]
-      })
-    }
-  }
-
   function modifierStatutBeneficiaire(
     event: ChangeEvent<HTMLInputElement>,
     beneficiaire: InformationBeneficiaireSession
   ) {
     if (event.target.checked) {
-      const { prenom, nom, ...infosBeneficiaires } = beneficiaire
+      const { ...infosBeneficiaires } = beneficiaire
       setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
       setStatutBeneficiaire('PRESENT')
       setEmargements((currentEmargements) => {
@@ -217,10 +200,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
 
           <TBody>
             {session.inscriptions.map((beneficiaire) => (
-              <TR
-                key={beneficiaire.idJeune}
-                // onClick={() => selectionnerBeneficiaire(beneficiaire)}
-              >
+              <TR key={beneficiaire.idJeune}>
                 <TD>
                   <input
                     disabled={
