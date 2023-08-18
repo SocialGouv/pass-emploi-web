@@ -12,15 +12,12 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
-import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
 import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
-import { textesBRSA, textesCEJ } from 'lang/textes'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type CriteresRecherche =
@@ -65,7 +62,6 @@ function PartageRecherche({
 }: PartageRechercheProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
-  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
   const [idsDestinataires, setIdsDestinataires] = useState<
@@ -220,12 +216,14 @@ function PartageRecherche({
         labelLocalite={criteresRecherche.labelLocalite}
         labelMetier={getLabelMetier()}
       />
-      {estPoleEmploiBRSA(conseiller) && (
-        <p className='mt-8'>{textesBRSA.partageRechercheTexteInfo}</p>
-      )}
-      {!estPoleEmploiBRSA(conseiller) && (
-        <p className='mt-8'>{textesCEJ.partageRechercheTexteInfo}</p>
-      )}
+
+      <p className='mt-8'>
+        Ces critères apparaîtront sur la page d’accueil et dans l’onglet
+        recherche de l’application mobile du bénéficiaire. Une fois ajoutées par
+        le bénéficiaire, celui-ci pourra recevoir des alertes d’offres
+        correspondantes.
+      </p>
+
       <form onSubmit={partagerCriteresRecherche} className='mt-8'>
         <Etape numero={1} titre='Destinataires'>
           <BeneficiairesMultiselectAutocomplete
