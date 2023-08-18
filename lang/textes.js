@@ -1,7 +1,4 @@
 export const textesBRSA = {
-  // PARTAGE RECHERCHE
-  partageRechercheTexteInfo:
-    'Ces critères apparaîtront dans la section favoris, catégorie recherches sauvegardées, du bénéficiaire de l’application pass emploi.',
   // PROFIL
   profilTitreSection3: 'Application pass emploi - mode démo',
   introModeDemoTexte:
@@ -11,9 +8,6 @@ export const textesBRSA = {
 }
 
 export const textesCEJ = {
-  // PARTAGE RECHERCHE
-  partageRechercheTexteInfo:
-    'Ces critères apparaîtront dans la section favoris, catégorie recherches sauvegardées, du bénéficiaire de l’application CEJ.',
   // PROFIL
   profilTitreSection3: 'Application CEJ jeune - mode démo',
   introModeDemoTexte:
