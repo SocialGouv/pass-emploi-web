@@ -23,7 +23,6 @@ import {
   StatutBeneficiaire,
 } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getDetailsSession } from 'services/sessions.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -53,10 +52,12 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
 
   function cocherTousLesBeneficiaires(_event: FormEvent) {
     if (idsSelectionnes.length !== session.inscriptions.length) {
-      setIdsSelectionnes(session.inscriptions.map((jeune) => jeune.idJeune))
+      setIdsSelectionnes(
+        session.inscriptions.map((beneficiaire) => beneficiaire.idJeune)
+      )
       setEmargements(
-        inscriptionsInitiales.map((jeune) => {
-          return { ...jeune, statut: 'PRESENT' }
+        inscriptionsInitiales.map((beneficiaire) => {
+          return { ...beneficiaire, statut: 'PRESENT' }
         })
       )
     } else {
@@ -65,25 +66,30 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     }
   }
 
-  function selectionnerBeneficiaire(jeune) {
-    if (idsSelectionnes.includes(jeune.idJeune)) {
-      setIdsSelectionnes(idsSelectionnes.filter((id) => id !== jeune.idJeune))
-      setStatutBeneficiaire(jeune.statut)
+  function selectionnerBeneficiaire(beneficiaire) {
+    if (idsSelectionnes.includes(beneficiaire.idJeune)) {
+      setIdsSelectionnes(
+        idsSelectionnes.filter((id) => id !== beneficiaire.idJeune)
+      )
+      setStatutBeneficiaire(beneficiaire.statut)
+      setEmargements((prev) => {
+        return prev?.filter(({ idJeune }) => idJeune !== beneficiaire.idJeune)
+      })
     } else {
-      setIdsSelectionnes(idsSelectionnes.concat(jeune.idJeune))
+      setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
       setEmargements((currEmargements) => {
-        return [...currEmargements, { ...jeune, statut: 'PRESENT' }]
+        return [...currEmargements, { ...beneficiaire, statut: 'PRESENT' }]
       })
     }
   }
 
   function modifierStatutBeneficiaire(
     event: ChangeEvent<HTMLInputElement>,
-    jeune: InformationBeneficiaireSession
+    beneficiaire: InformationBeneficiaireSession
   ) {
     if (event.target.checked) {
-      const { prenom, nom, ...infosBeneficiaires } = jeune
-      setIdsSelectionnes(idsSelectionnes.concat(jeune.idJeune))
+      const { prenom, nom, ...infosBeneficiaires } = beneficiaire
+      setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
       setStatutBeneficiaire('PRESENT')
       setEmargements((currentEmargements) => {
         return [
@@ -92,16 +98,20 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
         ]
       })
     } else {
-      setStatutBeneficiaire(jeune.statut)
-      setIdsSelectionnes(idsSelectionnes.filter((id) => id !== jeune.idJeune))
+      setStatutBeneficiaire(beneficiaire.statut)
+      setIdsSelectionnes(
+        idsSelectionnes.filter((id) => id !== beneficiaire.idJeune)
+      )
       setEmargements((prev) => {
-        return prev?.filter(({ idJeune }) => idJeune !== jeune.idJeune)
+        return prev?.filter(({ idJeune }) => idJeune !== beneficiaire.idJeune)
       })
     }
   }
 
-  function updateStatutBeneficiaire(jeune: InformationBeneficiaireSession) {
-    switch (jeune.statut) {
+  function updateStatutBeneficiaire(
+    beneficiaire: InformationBeneficiaireSession
+  ) {
+    switch (beneficiaire.statut) {
       case StatutBeneficiaire.PRESENT:
         return 'PRESENT'
       case StatutBeneficiaire.REFUS_TIERS:
@@ -118,39 +128,40 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
 
     const { cloreSession } = await import('services/sessions.service')
 
-    if (emargements.length === 0) {
-      inscriptionsInitiales.map((jeune) => {
+    function updateStatutsBeneficiaires(
+      liste: InformationBeneficiaireSession[]
+    ) {
+      liste.forEach((beneficiaire) => {
         return setEmargements((currentEmargements) => {
           return [
             ...currentEmargements,
-            { ...jeune, statut: updateStatutBeneficiaire(jeune) },
-          ]
-        })
-      })
-    } else {
-      const emargementsASoumettre = inscriptionsInitiales.filter(
-        (jeuneAEmarger) =>
-          !emargements.some(
-            (jeuneDejaCoche) => jeuneAEmarger.idJeune === jeuneDejaCoche.idJeune
-          )
-      )
-      emargementsASoumettre.map((jeune) => {
-        return setEmargements((currEmargements) => {
-          return [
-            ...currEmargements,
-            { ...jeune, statut: updateStatutBeneficiaire(jeune) },
+            { ...beneficiaire, statut: updateStatutBeneficiaire(beneficiaire) },
           ]
         })
       })
     }
 
+    if (emargements.length === 0) {
+      updateStatutsBeneficiaires(inscriptionsInitiales)
+    } else {
+      const emargementsASoumettre = inscriptionsInitiales.filter(
+        (beneficiaireAEmarger) =>
+          !emargements.some(
+            (beneficiaireDejaCoche) =>
+              beneficiaireAEmarger.idJeune === beneficiaireDejaCoche.idJeune
+          )
+      )
+      updateStatutsBeneficiaires(emargementsASoumettre)
+    }
+
     await cloreSession(conseiller.id, session.session.id, emargements)
     setAlerte(AlerteParam.clotureSession)
+
     await router.push(`/agenda/sessions/${session.session.id}`)
   }
 
-  function afficherStatut(jeune) {
-    switch (jeune.statut) {
+  function afficherStatut(beneficiaire) {
+    switch (beneficiaire.statut) {
       case StatutBeneficiaire.INSCRIT:
         return 'Inscrit'
       case StatutBeneficiaire.PRESENT:
@@ -205,47 +216,54 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
           </THead>
 
           <TBody>
-            {session.inscriptions.map((jeune) => (
+            {session.inscriptions.map((beneficiaire) => (
               <TR
-                key={jeune.idJeune}
-                // onClick={() => selectionnerBeneficiaire(jeune)}
+                key={beneficiaire.idJeune}
+                // onClick={() => selectionnerBeneficiaire(beneficiaire)}
               >
                 <TD>
                   <input
-                    disabled={jeune.statut === StatutBeneficiaire.PRESENT}
-                    type='checkbox'
-                    name={jeune.idJeune}
-                    id={'checkbox-' + jeune.idJeune}
-                    checked={
-                      Boolean(idsSelectionnes.includes(jeune.idJeune)) ||
-                      jeune.statut === StatutBeneficiaire.PRESENT
+                    disabled={
+                      beneficiaire.statut === StatutBeneficiaire.PRESENT
                     }
-                    title={'Sélectionner ' + `${jeune.prenom} ${jeune.nom}`}
-                    value={statutBeneficiaire ?? jeune.statut}
-                    onChange={(e) => modifierStatutBeneficiaire(e, jeune)}
+                    type='checkbox'
+                    name={beneficiaire.idJeune}
+                    id={'checkbox-' + beneficiaire.idJeune}
+                    checked={
+                      Boolean(idsSelectionnes.includes(beneficiaire.idJeune)) ||
+                      beneficiaire.statut === StatutBeneficiaire.PRESENT
+                    }
+                    title={
+                      'Sélectionner ' +
+                      `${beneficiaire.prenom} ${beneficiaire.nom}`
+                    }
+                    value={statutBeneficiaire ?? beneficiaire.statut}
+                    onChange={(e) =>
+                      modifierStatutBeneficiaire(e, beneficiaire)
+                    }
                     className='mr-4'
                   />
                   <label
                     className={`${
-                      jeune.statut === StatutBeneficiaire.PRESENT
+                      beneficiaire.statut === StatutBeneficiaire.PRESENT
                         ? 'text-disabled'
                         : ''
                     }`}
-                    htmlFor={'checkbox-' + jeune.idJeune}
+                    htmlFor={'checkbox-' + beneficiaire.idJeune}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {jeune.prenom} {jeune.nom}
+                    {beneficiaire.prenom} {beneficiaire.nom}
                   </label>
                 </TD>
                 <TD>
                   <span
                     className={`${
-                      jeune.statut === StatutBeneficiaire.PRESENT
+                      beneficiaire.statut === StatutBeneficiaire.PRESENT
                         ? 'text-disabled'
                         : ''
                     }`}
                   >
-                    {afficherStatut(jeune)}{' '}
+                    {afficherStatut(beneficiaire)}{' '}
                     {session.session.commentaire && (
                       <>: {session.session.commentaire}</>
                     )}
@@ -316,8 +334,6 @@ export const getServerSideProps: GetServerSideProps<
     redirectTo =
       referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   }
-
-  //FIXME: returnTo redirige vers agenda au lieu fiche session
 
   const props: ClotureSessionProps = {
     session,
