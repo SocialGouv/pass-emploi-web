@@ -1,6 +1,6 @@
-import { Session } from 'interfaces/session'
-import { DetailsSessionJson } from 'interfaces/json/session'
 import { StatutAnimationCollective } from 'interfaces/evenement'
+import { DetailsSessionJson } from 'interfaces/json/session'
+import { Session } from 'interfaces/session'
 
 export function unDetailSessionJson(
   overrides: Partial<DetailsSessionJson> = {}

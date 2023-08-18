@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { apiGet, apiPatch } from 'clients/api.client'
+import { apiGet, apiPatch, apiPost } from 'clients/api.client'
 import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import {
   AnimationCollective,
@@ -10,6 +10,7 @@ import { SessionMiloJson } from 'interfaces/json/session'
 import {
   changerInscriptionsSession,
   changerVisibiliteSession,
+  cloreSession,
   getDetailsSession,
   getSessionsMissionLocale,
 } from 'services/sessions.service'
@@ -165,6 +166,30 @@ describe('SessionsApiService', () => {
           inscriptions: [
             { commentaire: undefined, idJeune: 'jeune-id', statut: 'INSCRIT' },
           ],
+        },
+        'accessToken'
+      )
+    })
+  })
+  describe('.cloreSession', () => {
+    it('clôt une session', async () => {
+      // Given
+      const emargements = [
+        { idJeune: 'id-jeune-1', statut: 'INSCRIT' },
+        { idJeune: 'id-jeune-2', statut: 'REFUS_TIERS' },
+      ]
+
+      // When
+      await cloreSession('id-conseiller', 'id-session', [
+        { idJeune: 'id-jeune-1', statut: 'INSCRIT' },
+        { idJeune: 'id-jeune-2', statut: 'REFUS_TIERS' },
+      ])
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        '/conseillers/milo/id-conseiller/sessions/id-session/cloturer',
+        {
+          emargements,
         },
         'accessToken'
       )

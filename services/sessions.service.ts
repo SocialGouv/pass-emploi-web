@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiGet, apiPatch } from 'clients/api.client'
+import { apiGet, apiPatch, apiPost } from 'clients/api.client'
 import { AnimationCollective } from 'interfaces/evenement'
 import {
   DetailsSessionJson,
@@ -9,14 +9,8 @@ import {
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
-import { Session } from 'interfaces/session'
+import { InformationBeneficiaireSession, Session } from 'interfaces/session'
 import { ApiError } from 'utils/httpClient'
-
-export type InformationBeneficiaireSession = {
-  idJeune: string
-  statut: string
-  commentaire?: string
-}
 
 export async function getSessionsMissionLocale(
   idConseiller: string,
@@ -103,6 +97,20 @@ export async function modifierInformationsSession(
     `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
     payload,
     accessToken
+  )
+}
+
+export async function cloreSession(
+  idConseiller: string,
+  idSession: string,
+  emargements: InformationBeneficiaireSession[]
+): Promise<void> {
+  const session = await getSession()
+  const payload = { emargements }
+  await apiPost(
+    `/conseillers/milo/${idConseiller}/sessions/${idSession}/cloturer`,
+    payload,
+    session!.accessToken
   )
 }
 

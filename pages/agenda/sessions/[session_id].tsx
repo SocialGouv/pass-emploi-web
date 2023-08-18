@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useRef, useState } from 'react'
 
+import PageActionsPortal from 'components/PageActionsPortal'
 import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -13,14 +14,14 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
 import { Switch } from 'components/ui/Form/Switch'
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
-import { Session, StatutBeneficiaire } from 'interfaces/session'
+import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
@@ -272,11 +273,35 @@ function FicheDetailsSession({
 
   return (
     <>
+      {estAClore(session) && (
+        <PageActionsPortal>
+          <ButtonLink
+            href={`/agenda/sessions/${
+              session.session.id
+            }/cloture?redirectUrl=${encodeURIComponent(returnTo)}`}
+            style={ButtonStyle.PRIMARY}
+          >
+            <IconComponent
+              name={IconName.Description}
+              aria-hidden={true}
+              focusable={false}
+              className='mr-2 w-4 h-4'
+            />
+            Clore
+          </ButtonLink>
+        </PageActionsPortal>
+      )}
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
       {dateLimiteDepassee() && (
         <div className='mt-2'>
           <FailureAlert label='Les inscriptions ne sont plus possibles car la date limite est atteinte.' />
+        </div>
+      )}
+
+      {estAClore(session) && (
+        <div className='mt-2'>
+          <FailureAlert label='Cet événement est passé et doit être clos.' />
         </div>
       )}
 
@@ -506,7 +531,7 @@ function FicheDetailsSession({
         </Etape>
 
         {!dateLimiteDepassee() && (
-          <div className='flex gap-4 mx-auto'>
+          <div className='flex justify-center gap-4 mx-auto'>
             <ButtonLink
               href={returnTo}
               style={ButtonStyle.SECONDARY}
@@ -555,9 +580,12 @@ export const getServerSideProps: GetServerSideProps<
 
   const idSession = context.query.session_id as string
 
-  const referer = context.req.headers.referer
-  const redirectTo =
-    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
+  let redirectTo = context.query.redirectUrl as string
+  if (!redirectTo) {
+    const referer = context.req.headers.referer
+    redirectTo =
+      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
+  }
 
   const { getDetailsSession } = await import('services/sessions.service')
   const session = await getDetailsSession(user.id, idSession, accessToken)
