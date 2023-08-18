@@ -71,7 +71,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     beneficiaire: InformationBeneficiaireSession
   ) {
     if (event.target.checked) {
-      const { ...infosBeneficiaires } = beneficiaire
+      const { prenom, nom, ...infosBeneficiaires } = beneficiaire
       setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
       setStatutBeneficiaire('PRESENT')
       setEmargements((currentEmargements) => {
@@ -99,7 +99,6 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
         return 'PRESENT'
       case StatutBeneficiaire.REFUS_TIERS:
         return 'REFUS_TIERS'
-      case undefined:
       case StatutBeneficiaire.INSCRIT:
       case StatutBeneficiaire.REFUS_JEUNE:
         return 'REFUS_JEUNE'
@@ -111,7 +110,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
 
     const { cloreSession } = await import('services/sessions.service')
 
-    function updateStatutsBeneficiaires(
+    function updateTousLesBeneficiaires(
       liste: InformationBeneficiaireSession[]
     ) {
       liste.forEach((beneficiaire) => {
@@ -125,7 +124,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     }
 
     if (emargements.length === 0) {
-      updateStatutsBeneficiaires(inscriptionsInitiales)
+      updateTousLesBeneficiaires(inscriptionsInitiales)
     } else {
       const emargementsASoumettre = inscriptionsInitiales.filter(
         (beneficiaireAEmarger) =>
@@ -134,12 +133,11 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
               beneficiaireAEmarger.idJeune === beneficiaireDejaCoche.idJeune
           )
       )
-      updateStatutsBeneficiaires(emargementsASoumettre)
+      updateTousLesBeneficiaires(emargementsASoumettre)
     }
 
     await cloreSession(conseiller.id, session.session.id, emargements)
     setAlerte(AlerteParam.clotureSession)
-
     await router.push(`/agenda/sessions/${session.session.id}`)
   }
 
