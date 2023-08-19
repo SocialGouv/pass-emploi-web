@@ -113,11 +113,14 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     function updateTousLesBeneficiaires(
       liste: InformationBeneficiaireSession[]
     ) {
-      liste.forEach((beneficiaire) => {
-        return setEmargements((currentEmargements) => {
+      liste.forEach((beneficiaire: InformationBeneficiaireSession) => {
+        return setEmargements((currentEmargements: any) => {
           return [
             ...currentEmargements,
-            { ...beneficiaire, statut: updateStatutBeneficiaire(beneficiaire) },
+            {
+              ...beneficiaire,
+              statut: updateStatutBeneficiaire(beneficiaire),
+            },
           ]
         })
       })
@@ -141,7 +144,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     await router.push(`/agenda/sessions/${session.session.id}`)
   }
 
-  function afficherStatut(beneficiaire) {
+  function afficherStatut(beneficiaire: InformationBeneficiaireSession) {
     switch (beneficiaire.statut) {
       case StatutBeneficiaire.INSCRIT:
         return 'Inscrit'

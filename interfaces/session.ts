@@ -30,6 +30,8 @@ export type InformationBeneficiaireSession = {
   idJeune: string
   statut: string
   commentaire?: string
+  nom?: string
+  prenom?: string
 }
 
 export const StatutBeneficiaire = {
