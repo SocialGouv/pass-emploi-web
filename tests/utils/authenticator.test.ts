@@ -50,6 +50,7 @@ describe('Authenticator', () => {
           expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
           idConseiller: '972d013d-3781-418a-9b8d-1e288f346b45',
           estSuperviseur: true,
+          estSuperviseurPEBRSA: false,
           estConseiller: true,
           structureConseiller: StructureConseiller.MILO,
         })
@@ -188,6 +189,7 @@ describe('Authenticator', () => {
             expiresAtTimestamp: expiresAtInSeconds * 1000,
             idConseiller: '41',
             estSuperviseur: true,
+            estSuperviseurPEBRSA: false,
             estConseiller: true,
             structureConseiller: StructureConseiller.PASS_EMPLOI,
           })
@@ -216,6 +218,7 @@ describe('Authenticator', () => {
             expiresAtTimestamp: expiresAtInSeconds * 1000,
             idConseiller: '41',
             estSuperviseur: true,
+            estSuperviseurPEBRSA: false,
             estConseiller: true,
             structureConseiller: StructureConseiller.PASS_EMPLOI,
           })

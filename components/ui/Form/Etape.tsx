@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-type NumeroEtape = 1 | 2 | 3 | 4 | 5
+export type NumeroEtape = 1 | 2 | 3 | 4 | 5
 type EtapeProps = {
   numero: NumeroEtape
   titre: string

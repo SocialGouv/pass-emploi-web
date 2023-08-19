@@ -11,6 +11,7 @@ export const unConseiller = (
     notificationsSonores: false,
     aDesBeneficiairesARecuperer: false,
     estSuperviseur: false,
+    estSuperviseurPEBRSA: false,
     structure: StructureConseiller.PASS_EMPLOI,
   }
   return { ...defaults, ...overrides }

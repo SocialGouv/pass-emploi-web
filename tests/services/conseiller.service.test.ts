@@ -57,6 +57,7 @@ describe('ConseillerApiService', () => {
         email: 'albert.durant@gmail.com',
         estConseiller: true,
         estSuperviseur: false,
+        estSuperviseurPEBRSA: false,
       }
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: unConseillerJson({
@@ -92,6 +93,33 @@ describe('ConseillerApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers?q=conseiller@email.com',
+        accessToken
+      )
+      expect(actual).toEqual([
+        {
+          id: '1',
+          firstName: 'Nils',
+          lastName: 'Tavernier',
+          email: 'nils.tavernier@mail.com',
+        },
+      ])
+    })
+    it('renvoie les informations des conseillers de la structure demandée', async () => {
+      // Given
+      const accessToken = 'accessToken'
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: [unBaseConseillerJson()],
+      })
+
+      // When
+      const actual = await getConseillers(
+        'conseiller@email.com',
+        StructureConseiller.POLE_EMPLOI_BRSA
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers?q=conseiller@email.com&structure=POLE_EMPLOI_BRSA',
         accessToken
       )
       expect(actual).toEqual([
