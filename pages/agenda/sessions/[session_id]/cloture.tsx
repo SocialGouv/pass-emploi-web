@@ -137,7 +137,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
 
     await cloreSession(conseiller.id, session.session.id, emargements)
     setAlerte(AlerteParam.clotureSession)
-    await router.push(`/agenda/sessions/${session.session.id}`)
+    await router.push(returnTo)
   }
 
   function afficherStatut(beneficiaire: InformationBeneficiaireSession) {
@@ -243,10 +243,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
                         : ''
                     }`}
                   >
-                    {afficherStatut(beneficiaire)}{' '}
-                    {session.session.commentaire && (
-                      <>: {session.session.commentaire}</>
-                    )}
+                    {afficherStatut(beneficiaire)}
                   </span>
                 </TD>
               </TR>

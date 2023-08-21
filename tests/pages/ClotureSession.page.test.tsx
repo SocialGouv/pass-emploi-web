@@ -163,7 +163,7 @@ describe('Cloture Session', () => {
       it('redirige vers le détail de la session', async () => {
         // Then
         expect(routerPush).toHaveBeenCalledWith(
-          expect.stringMatching('/agenda/sessions/session-1')
+          expect.stringMatching('/agenda/sessions/id-session')
         )
       })
     })
