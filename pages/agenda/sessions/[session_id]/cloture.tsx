@@ -243,10 +243,7 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
                         : ''
                     }`}
                   >
-                    {afficherStatut(beneficiaire)}{' '}
-                    {session.session.commentaire && (
-                      <>: {session.session.commentaire}</>
-                    )}
+                    {afficherStatut(beneficiaire)}
                   </span>
                 </TD>
               </TR>
