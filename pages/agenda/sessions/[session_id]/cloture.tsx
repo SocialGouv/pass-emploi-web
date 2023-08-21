@@ -71,14 +71,10 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     beneficiaire: InformationBeneficiaireSession
   ) {
     if (event.target.checked) {
-      const { prenom, nom, ...infosBeneficiaires } = beneficiaire
       setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
       setStatutBeneficiaire('PRESENT')
       setEmargements((currentEmargements) => {
-        return [
-          ...currentEmargements,
-          { ...infosBeneficiaires, statut: 'PRESENT' },
-        ]
+        return [...currentEmargements, { ...beneficiaire, statut: 'PRESENT' }]
       })
     } else {
       setStatutBeneficiaire(beneficiaire.statut)
@@ -220,7 +216,10 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
                     }
                     value={statutBeneficiaire ?? beneficiaire.statut}
                     onChange={(e) =>
-                      modifierStatutBeneficiaire(e, beneficiaire)
+                      modifierStatutBeneficiaire(e, {
+                        idJeune: beneficiaire.idJeune,
+                        statut: beneficiaire.statut,
+                      })
                     }
                     className='mr-4'
                   />
