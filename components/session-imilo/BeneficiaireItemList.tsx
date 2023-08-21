@@ -19,15 +19,21 @@ export default function BeneficiaireItemList({
   onReinscrire,
 }: BeneficiaireItemListProps) {
   const beneficiaireEstInscrit = beneficiaire.statut === 'INSCRIT'
+  const beneficiaireEstPresent = beneficiaire.statut === 'PRESENT'
 
-  const beneficiaireAStatutRefus =
-    beneficiaire.statut !== StatutBeneficiaire.DESINSCRIT &&
-    beneficiaire.statut !== StatutBeneficiaire.INSCRIT
-
-  function afficherStatut() {
-    return beneficiaire.statut === StatutBeneficiaire.REFUS_JEUNE
-      ? 'Refus Jeune'
-      : 'Refus Tiers'
+  function afficherStatut(
+    beneficiaireAAfficher: BeneficiaireSelectionneSession
+  ) {
+    switch (beneficiaireAAfficher.statut) {
+      case StatutBeneficiaire.INSCRIT:
+        return 'Inscrit'
+      case StatutBeneficiaire.PRESENT:
+        return 'Présent'
+      case StatutBeneficiaire.REFUS_JEUNE:
+        return 'Refus jeune'
+      case StatutBeneficiaire.REFUS_TIERS:
+        return 'Refus tiers'
+    }
   }
 
   return (
@@ -35,20 +41,21 @@ export default function BeneficiaireItemList({
       <div className='flex'>
         <IconComponent
           name={
-            beneficiaireEstInscrit ? IconName.CheckCircleFill : IconName.Close
+            beneficiaireEstInscrit || beneficiaireEstPresent
+              ? IconName.CheckCircleFill
+              : IconName.Close
           }
           focusable={false}
           aria-hidden={true}
           className={`mr-2 w-6 h-6 ${
-            beneficiaireEstInscrit ? 'fill-success' : 'fill-warning'
+            beneficiaireEstInscrit || beneficiaireEstPresent
+              ? 'fill-success'
+              : 'fill-warning'
           }`}
         />
         <div className='flex flex-col'>
           <p>{beneficiaire.value}</p>
-          {beneficiaireAStatutRefus && <span>{afficherStatut()}</span>}
-          {beneficiaireEstInscrit && (
-            <span className='sr-only'>{beneficiaire.statut}</span>
-          )}
+          <p>{afficherStatut(beneficiaire)}</p>
         </div>
       </div>
 
