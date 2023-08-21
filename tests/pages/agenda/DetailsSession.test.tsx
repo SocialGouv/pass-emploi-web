@@ -306,8 +306,8 @@ describe('Détails Session', () => {
               `Désinscrire ${beneficairesEtablissement[0].prenom} ${beneficairesEtablissement[0].nom}`
             )
           ).toBeInTheDocument()
-          expect(screen.getByText('Refus Tiers')).toBeInTheDocument()
-          expect(screen.getByText('Refus Jeune')).toBeInTheDocument()
+          expect(screen.getByText('Refus tiers')).toBeInTheDocument()
+          expect(screen.getByText('Refus jeune')).toBeInTheDocument()
         })
 
         it('permet d’ajouter un bénéficiaire à la liste des inscrits', async () => {
