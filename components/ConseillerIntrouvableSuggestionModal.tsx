@@ -35,14 +35,12 @@ export default function ConseillerIntrouvableSuggestionModal({
       onClose={onClose}
     >
       <p className='mb-4 text-base-bold text-content_color text-center'>
-        La personne n’est peut-être pas encore rattachée à votre agence.
+        La conseillère ou le conseiller en question ne s’est peut-être jamais
+        connecté(e) à l’Application du CEJ.
       </p>
       <p className='mb-12 text-base-regular text-content_color text-center'>
-        La conseillère ou le conseiller en question ne s’est peut-être jamais
-        connecté(e) à l’Application du CEJ. Nous l’invitons à effectuer une
-        première connexion pour apparaître dans les suggestions.
-        <br />
-        Si malgré ça vous rencontrez des difficultés,&nbsp;
+        Nous l’invitons à effectuer une première connexion pour apparaître dans
+        les suggestions. Si malgré ça vous rencontrez des difficultés,&nbsp;
         <span className='text-primary_darken hover:text-primary'>
           <ExternalLink
             href={'mailto:' + process.env.SUPPORT_MAIL}
