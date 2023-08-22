@@ -262,7 +262,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
 
       <form onSubmit={reaffecterBeneficiaires} className='grow'>
         {estSuperviseurPEBRSA && (
-          <Etape numero={1} titre='Choisissez un contrat'>
+          <Etape numero={1} titre='Choisissez un accompagnement'>
             {structureReaffectation.error && (
               <InputError id='structure-reaffectation--error' className='mb-2'>
                 {structureReaffectation.error}

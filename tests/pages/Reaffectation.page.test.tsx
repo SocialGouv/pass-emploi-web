@@ -57,7 +57,7 @@ describe('Reaffectation', () => {
         it('contient un champ pour sélectionner le contrat de réaffectation', () => {
           // When
           const etape = screen.getByRole('group', {
-            name: 'Étape 1 Choisissez un contrat',
+            name: 'Étape 1 Choisissez un accompagnement',
           })
           // Then
           expect(
