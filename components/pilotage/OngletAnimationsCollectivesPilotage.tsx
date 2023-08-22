@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
 import TableauAnimationsAClore from 'components/pilotage/TableauAnimationsAClore'
 import Pagination from 'components/ui/Table/Pagination'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
@@ -49,9 +50,16 @@ export default function OngletAnimationsCollectivesPilotage({
   return (
     <>
       {metadonnees && metadonnees.nombreTotal === 0 && (
-        <p className='text-base-bold mb-2'>
-          Vous n’avez pas d’animation collective à clore.
-        </p>
+        <div className='flex flex-col justify-center items-center'>
+          <EmptyStateImage
+            focusable={false}
+            aria-hidden={true}
+            className='w-[360px] h-[200px]'
+          />
+          <p className='mt-4 text-base-medium w-2/3 text-center'>
+            Vous n’avez pas d’animation collective à clore.
+          </p>
+        </div>
       )}
 
       {metadonnees && metadonnees.nombreTotal > 0 && (

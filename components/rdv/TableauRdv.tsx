@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import React from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
 import { RdvRow } from 'components/rdv/RdvRow'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Table from 'components/ui/Table/Table'

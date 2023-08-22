@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import EmptyStateImage from 'assets/images/illustration-checklist-grey.svg'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import Pagination from 'components/ui/Table/Pagination'
@@ -123,9 +124,16 @@ export default function OngletActions({
       {!estPoleEmploi(conseiller) && (
         <>
           {actionsInitiales.metadonnees.nombreTotal === 0 && (
-            <p className='text-base-bold mb-2'>
-              {jeune.prenom} {jeune.nom} n’a pas encore d’action
-            </p>
+            <div className='flex flex-col justify-center items-center'>
+              <EmptyStateImage
+                focusable={false}
+                aria-hidden={true}
+                className='w-[360px] h-[200px]'
+              />
+              <p className='mt-4 text-base-medium w-2/3 text-center'>
+                {jeune.prenom} {jeune.nom} n’a pas encore d’action
+              </p>
+            </div>
           )}
 
           {actionsInitiales.metadonnees.nombreTotal > 0 && (
