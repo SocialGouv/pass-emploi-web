@@ -206,7 +206,7 @@ export default function OngletAgendaEtablissement({
                           name={IconName.ChevronRight}
                           focusable={false}
                           aria-hidden={true}
-                          className='w-6 h-6 fill-content_color'
+                          className='w-6 h-6 fill-primary'
                         />
                       </div>
                     </TD>
