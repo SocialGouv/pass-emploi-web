@@ -87,20 +87,6 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     }
   }
 
-  function updateStatutBeneficiaire(
-    beneficiaire: InformationBeneficiaireSession
-  ) {
-    switch (beneficiaire.statut) {
-      case StatutBeneficiaire.PRESENT:
-        return 'PRESENT'
-      case StatutBeneficiaire.REFUS_TIERS:
-        return 'REFUS_TIERS'
-      case StatutBeneficiaire.INSCRIT:
-      case StatutBeneficiaire.REFUS_JEUNE:
-        return 'REFUS_JEUNE'
-    }
-  }
-
   async function soumettreClotureSession(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
@@ -115,7 +101,6 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
             ...currentEmargements,
             {
               ...beneficiaire,
-              statut: updateStatutBeneficiaire(beneficiaire),
             },
           ]
         })
