@@ -80,10 +80,13 @@ export default function Pagination({
           onClick={allerALaPage}
           disabled={pageCourante <= 1}
         >
-          <IconComponent
-            name={IconName.ChevronLeft}
-            className='fill-inherit w-6 h-6'
-          />
+          <div className='flex pr-2 gap-2'>
+            <IconComponent
+              name={IconName.ChevronLeft}
+              className='fill-inherit w-6 h-6'
+            />
+            Page précédente
+          </div>
         </PaginationItem>
         {renderPagination()}
         <PaginationItem
@@ -92,10 +95,13 @@ export default function Pagination({
           onClick={allerALaPage}
           disabled={pageCourante >= dernierePage}
         >
-          <IconComponent
-            name={IconName.ChevronRight}
-            className={`fill-inherit w-6 h-6`}
-          />
+          <div className='flex pl-2 gap-2'>
+            Page suivante
+            <IconComponent
+              name={IconName.ChevronRight}
+              className={`fill-inherit w-6 h-6`}
+            />
+          </div>
         </PaginationItem>
         <PaginationItem
           page={dernierePage}
