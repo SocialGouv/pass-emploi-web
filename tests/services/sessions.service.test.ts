@@ -12,7 +12,7 @@ import {
   changerVisibiliteSession,
   cloreSession,
   getDetailsSession,
-  getSessionsMissionLocale,
+  getSessionsMissionLocaleClientSide,
 } from 'services/sessions.service'
 import { ApiError } from 'utils/httpClient'
 
@@ -31,12 +31,11 @@ describe('SessionsApiService', () => {
           nomOffre: 'nom offre',
           dateHeureDebut: dateDebut,
           dateHeureFin: dateFin,
+          estVisible: true,
           type: {
             code: 'COLLECTIVE_INFORMATION',
             label: 'info coll i-milo',
           },
-          isSession: true,
-          estVisible: true,
           statut: 'CLOTUREE',
         },
         {
@@ -45,12 +44,11 @@ describe('SessionsApiService', () => {
           nomOffre: 'nom offre',
           dateHeureDebut: dateDebut,
           dateHeureFin: dateFin,
+          estVisible: false,
           type: {
             code: 'WORKSHOP',
             label: 'Atelier i-milo',
           },
-          isSession: true,
-          estVisible: false,
           statut: 'A_VENIR',
         },
       ]
@@ -59,7 +57,7 @@ describe('SessionsApiService', () => {
       })
 
       // When
-      const actual = await getSessionsMissionLocale(
+      const actual = await getSessionsMissionLocaleClientSide(
         'id-conseiller',
         dateDebut,
         dateFin
