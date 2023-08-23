@@ -159,7 +159,7 @@ const Etablissement = (_: MissionLocaleProps) => {
                       <IconComponent
                         focusable={false}
                         aria-hidden={true}
-                        className='w-4 h-4 fill-content_color'
+                        className='w-4 h-4 fill-primary'
                         name={IconName.ChevronRight}
                       />
                     </span>

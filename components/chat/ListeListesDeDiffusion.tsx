@@ -157,7 +157,7 @@ function ListeDeDiffusionTile({
       </div>
       <IconComponent
         name={IconName.ChevronRight}
-        className='h-6 w-6'
+        className='h-6 w-6 fill-primary'
         aria-hidden={true}
         focusable={false}
       />
