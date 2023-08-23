@@ -1,6 +1,6 @@
 import React from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
 import ImmersionCard from 'components/offres/ImmersionCard'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'

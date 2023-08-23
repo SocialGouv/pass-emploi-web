@@ -1,6 +1,6 @@
 import React from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/illustration-send-grey.svg'
 import HeaderChat from 'components/chat/HeaderChat'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
