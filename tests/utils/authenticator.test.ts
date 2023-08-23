@@ -47,7 +47,7 @@ describe('Authenticator', () => {
           ...jwt,
           accessToken,
           refreshToken,
-          expiresAtTimestamp: now.plus({ minute: 5 }).toMillis(),
+          expiresAtTimestamp: 1638434737000,
           idConseiller: '972d013d-3781-418a-9b8d-1e288f346b45',
           estSuperviseur: true,
           estSuperviseurPEBRSA: false,

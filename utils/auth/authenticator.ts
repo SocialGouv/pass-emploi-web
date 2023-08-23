@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { Account } from 'next-auth'
 import { HydratedJWT, JWT } from 'next-auth/jwt'
 
-import { StructureConseiller, UserRole, UserType } from 'interfaces/conseiller'
+import { UserRole, UserType } from 'interfaces/conseiller'
 import { fetchJson } from 'utils/httpClient'
 
 function secondsToMilliseconds(seconds: number): number {
@@ -19,8 +19,6 @@ interface RefreshedTokens {
 export const RefreshAccessTokenError = 'RefreshAccessTokenError'
 
 const issuerPrefix = process.env.KEYCLOAK_ISSUER
-const cinqMn = '300000'
-const MILO_TOKEN_DURATION_MS = process.env.MILO_TOKEN_DURATION_MS ?? cinqMn
 
 export async function handleJWTAndRefresh({
   jwt,
@@ -54,10 +52,6 @@ async function hydrateJwtAtFirstSignin(
   ) as JwtPayload
 
   const expiresAt = expires_at ? secondsToMilliseconds(expires_at) : undefined
-  const expiresAtTimestamp =
-    userStructure === StructureConseiller.MILO
-      ? DateTime.now().toMillis() + Number(MILO_TOKEN_DURATION_MS)
-      : expiresAt
 
   return {
     ...jwt,
@@ -70,7 +64,7 @@ async function hydrateJwtAtFirstSignin(
     estSuperviseurPEBRSA: Boolean(
       userRoles?.includes(UserRole.SUPERVISEUR_PE_BRSA)
     ),
-    expiresAtTimestamp,
+    expiresAtTimestamp: expiresAt,
   }
 }
 
@@ -81,16 +75,12 @@ async function refreshAccessToken(jwt: HydratedJWT) {
     const expiresAtMs = refreshedTokens.expires_in
       ? DateTime.now().plus({ second: refreshedTokens.expires_in }).toMillis()
       : jwt.expiresAtTimestamp
-    const expiresAtTimestamp =
-      jwt.structureConseiller === StructureConseiller.MILO
-        ? DateTime.now().toMillis() + Number(MILO_TOKEN_DURATION_MS)
-        : expiresAtMs
 
     return {
       ...jwt,
       accessToken: refreshedTokens.access_token,
       refreshToken: refreshedTokens.refresh_token ?? jwt.refreshToken, // Garde l'ancien refresh_token
-      expiresAtTimestamp,
+      expiresAtTimestamp: expiresAtMs,
     }
   } catch (error) {
     return {
