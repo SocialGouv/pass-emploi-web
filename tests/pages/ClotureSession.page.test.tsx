@@ -40,6 +40,10 @@ describe('Cloture Session', () => {
       ],
     })
 
+    let inscriptionsInitiales = session.inscriptions.map((inscription) => {
+      return { idJeune: inscription.idJeune, statut: inscription.statut }
+    })
+
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let routerPush: jest.Mock
 
@@ -56,6 +60,7 @@ describe('Cloture Session', () => {
           withoutChat={true}
           pageTitle=''
           session={session}
+          inscriptionsInitiales={inscriptionsInitiales}
           returnTo='/agenda/sessions/id-session'
         />,
         {

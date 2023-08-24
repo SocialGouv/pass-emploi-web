@@ -32,9 +32,14 @@ type ClotureSessionProps = PageProps & {
   session: Session
   returnTo: string
   withoutChat: true
+  inscriptionsInitiales: InformationBeneficiaireSession[]
 }
 
-function ClotureSession({ returnTo, session }: ClotureSessionProps) {
+function ClotureSession({
+  returnTo,
+  session,
+  inscriptionsInitiales,
+}: ClotureSessionProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
@@ -42,13 +47,9 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
   const [emargements, setEmargements] = useState<
     Array<InformationBeneficiaireSession>
-  >([])
+  >(inscriptionsInitiales)
 
   const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
-
-  const inscriptionsInitiales = session.inscriptions.map((inscription) => {
-    return { idJeune: inscription.idJeune, statut: inscription.statut }
-  })
 
   function cocherTousLesBeneficiaires(_event: FormEvent) {
     if (idsSelectionnes.length !== session.inscriptions.length) {
@@ -73,7 +74,12 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
       setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
       setStatutBeneficiaire('PRESENT')
       setEmargements((currentEmargements) => {
-        return [...currentEmargements, { ...beneficiaire, statut: 'PRESENT' }]
+        return [
+          ...currentEmargements.filter(
+            (b) => b.idJeune !== beneficiaire.idJeune
+          ),
+          { ...beneficiaire, statut: 'PRESENT' },
+        ]
       })
     } else {
       setStatutBeneficiaire(beneficiaire.statut)
@@ -299,8 +305,13 @@ export const getServerSideProps: GetServerSideProps<
       referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   }
 
+  const inscriptionsInitiales = session.inscriptions.map((inscription) => {
+    return { idJeune: inscription.idJeune, statut: inscription.statut }
+  })
+
   const props: ClotureSessionProps = {
     session,
+    inscriptionsInitiales,
     returnTo: redirectTo,
     pageTitle: `Clore - Session ${session.offre.titre}`,
     pageHeader: 'Clôture de la session',
