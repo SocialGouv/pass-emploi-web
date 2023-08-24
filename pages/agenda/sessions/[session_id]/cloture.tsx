@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -67,10 +67,9 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
   }
 
   function modifierStatutBeneficiaire(
-    event: ChangeEvent<HTMLInputElement>,
     beneficiaire: InformationBeneficiaireSession
   ) {
-    if (event.target.checked) {
+    if (!Boolean(idsSelectionnes.includes(beneficiaire.idJeune))) {
       setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
       setStatutBeneficiaire('PRESENT')
       setEmargements((currentEmargements) => {
@@ -182,7 +181,16 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
 
           <TBody>
             {session.inscriptions.map((beneficiaire) => (
-              <TR key={beneficiaire.idJeune}>
+              <TR
+                key={beneficiaire.idJeune}
+                asDiv={true}
+                onClick={() =>
+                  modifierStatutBeneficiaire({
+                    idJeune: beneficiaire.idJeune,
+                    statut: beneficiaire.statut,
+                  })
+                }
+              >
                 <TD>
                   <input
                     disabled={
@@ -200,12 +208,6 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
                       `${beneficiaire.prenom} ${beneficiaire.nom}`
                     }
                     value={statutBeneficiaire ?? beneficiaire.statut}
-                    onChange={(e) =>
-                      modifierStatutBeneficiaire(e, {
-                        idJeune: beneficiaire.idJeune,
-                        statut: beneficiaire.statut,
-                      })
-                    }
                     className='mr-4'
                   />
                   <label
