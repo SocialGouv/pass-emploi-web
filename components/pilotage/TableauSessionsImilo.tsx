@@ -18,31 +18,31 @@ export default function TableauSessionsImilo({
 }: TableauSessionsImiloProps) {
   return (
     <>
-      {sessions.length > 0 && (
-        <Table
-          asDiv={true}
-          caption={{ text: 'Liste des sessions i-milo à clore' }}
-        >
-          <THead>
-            <TR isHeader={true}>
-              <TH>Date</TH>
-              <TH>Titre de la session</TH>
-            </TR>
-          </THead>
+      <Table
+        asDiv={true}
+        caption={{ text: 'Liste des sessions i-milo à clore' }}
+      >
+        <THead>
+          <TR isHeader={true}>
+            <TH>Date</TH>
+            <TH>Titre de la session</TH>
+          </TR>
+        </THead>
 
-          <TBody>
-            {sessions.map((session: SessionsAClore) => (
-              <TR
-                key={session.id}
-                href={`/agenda/sessions/${session.id}`}
-                label={`Accéder au détail de la session : ${session.titre}`}
-              >
-                <TD>{session.date}</TD>
-                <TD>
-                  <p className='text-base-bold'>{session.titre}</p>
-                  {session.sousTitre && <p>{session.sousTitre}</p>}
-                </TD>
-                <TD>
+        <TBody>
+          {sessions.map((session: SessionsAClore) => (
+            <TR
+              key={session.id}
+              href={`/agenda/sessions/${session.id}`}
+              label={`Accéder au détail de la session : ${session.titre}`}
+            >
+              <TD>{session.date}</TD>
+              <TD>
+                <div className='flex justify-between items-center'>
+                  <div>
+                    <p className='text-base-bold'>{session.titre}</p>
+                    {session.sousTitre && <p>{session.sousTitre}</p>}
+                  </div>
                   <span className='flex flex-row justify-end'>
                     <IconComponent
                       name={IconName.ChevronRight}
@@ -51,12 +51,12 @@ export default function TableauSessionsImilo({
                       className='w-6 h-6 fill-primary'
                     />
                   </span>
-                </TD>
-              </TR>
-            ))}
-          </TBody>
-        </Table>
-      )}
+                </div>
+              </TD>
+            </TR>
+          ))}
+        </TBody>
+      </Table>
     </>
   )
 }

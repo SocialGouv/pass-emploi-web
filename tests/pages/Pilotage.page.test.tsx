@@ -695,6 +695,7 @@ describe('Pilotage', () => {
               donnees: uneListeDActionsAQualifier(),
               metadonnees: { nombreTotal: 5, nombrePages: 1 },
             },
+            sessions: uneListeDeSessionsAClore(),
             onglet: 'ANIMATIONS_COLLECTIVES',
           },
         })

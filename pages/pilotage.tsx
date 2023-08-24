@@ -339,10 +339,7 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
         accessToken
       )
     }),
-    getConseillerServerSide(user, accessToken).then((conseiller) => {
-      if (!conseiller?.agence?.id) return
-      return getSessionsACloreServerSide(user.id, accessToken)
-    }),
+    getSessionsACloreServerSide(user.id, accessToken),
   ])
 
   const props: PilotageProps = {
