@@ -58,13 +58,26 @@ function ClotureSession({
       )
       setEmargements(
         inscriptionsInitiales.map((beneficiaire) => {
-          return { ...beneficiaire, statut: 'PRESENT' }
+          return { ...beneficiaire, statut: StatutBeneficiaire.PRESENT }
         })
       )
     } else {
       setIdsSelectionnes([])
-      setEmargements([])
+      setEmargements(inscriptionsInitiales)
     }
+  }
+
+  function metAJourListeBeneficiairesEmarges(
+    listeEmargements: InformationBeneficiaireSession[],
+    beneficiaire: InformationBeneficiaireSession
+  ) {
+    return [
+      ...listeEmargements.filter(
+        (beneficiaireEmarge) =>
+          beneficiaireEmarge.idJeune !== beneficiaire.idJeune
+      ),
+      { ...beneficiaire },
+    ]
   }
 
   function modifierStatutBeneficiaire(
@@ -72,22 +85,28 @@ function ClotureSession({
   ) {
     if (!Boolean(idsSelectionnes.includes(beneficiaire.idJeune))) {
       setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
-      setStatutBeneficiaire('PRESENT')
-      setEmargements((currentEmargements) => {
-        return [
-          ...currentEmargements.filter(
-            (b) => b.idJeune !== beneficiaire.idJeune
-          ),
-          { ...beneficiaire, statut: 'PRESENT' },
-        ]
-      })
+      setStatutBeneficiaire(StatutBeneficiaire.PRESENT)
+      setEmargements((currentEmargements) =>
+        metAJourListeBeneficiairesEmarges(currentEmargements, {
+          ...beneficiaire,
+          statut: StatutBeneficiaire.PRESENT,
+        })
+      )
     } else {
-      setStatutBeneficiaire(beneficiaire.statut)
+      const beneficiaireMisAJour = inscriptionsInitiales.filter(
+        (beneficiaireInitial) =>
+          beneficiaireInitial.idJeune === beneficiaire.idJeune
+      )[0]
+
       setIdsSelectionnes(
         idsSelectionnes.filter((id) => id !== beneficiaire.idJeune)
       )
+      setStatutBeneficiaire(beneficiaire.statut)
       setEmargements((prev) => {
-        return prev?.filter(({ idJeune }) => idJeune !== beneficiaire.idJeune)
+        return [
+          ...prev?.filter(({ idJeune }) => idJeune !== beneficiaire.idJeune),
+          { ...beneficiaireMisAJour },
+        ]
       })
     }
   }
@@ -102,12 +121,10 @@ function ClotureSession({
     ) {
       liste.forEach((beneficiaire: InformationBeneficiaireSession) => {
         return setEmargements((currentEmargements: any) => {
-          return [
-            ...currentEmargements,
-            {
-              ...beneficiaire,
-            },
-          ]
+          return metAJourListeBeneficiairesEmarges(
+            currentEmargements,
+            beneficiaire
+          )
         })
       })
     }
