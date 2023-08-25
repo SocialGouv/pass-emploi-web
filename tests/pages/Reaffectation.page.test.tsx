@@ -453,6 +453,33 @@ describe('Reaffectation', () => {
             false
           )
         })
+
+        it('bloque la réaffectation des jeunes vers le conseiller initial', async () => {
+          // GIVEN
+          await userEvent.type(conseillerDestinataireInput, 'Nils')
+          await userEvent.click(
+            within(etape).getByRole('button', {
+              name: /conseiller destinataire/,
+            })
+          )
+          await userEvent.click(
+            within(etape).getByRole('radio', { name: 'Nils Tavernier' })
+          )
+          await userEvent.click(checkboxBeneficiaire)
+
+          // WHEN
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Valider mon choix' })
+          )
+
+          // THEN
+          expect(
+            screen.getByText(
+              'Vous ne pouvez pas réaffecter des bénéficiaires à leur conseiller initial'
+            )
+          ).toBeInTheDocument()
+          expect(reaffecter).not.toHaveBeenCalled()
+        })
       })
 
       describe('quand on modifie la recherche du conseiller initial', () => {
