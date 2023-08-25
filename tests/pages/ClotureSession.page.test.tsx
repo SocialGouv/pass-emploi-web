@@ -40,6 +40,10 @@ describe('Cloture Session', () => {
       ],
     })
 
+    let inscriptionsInitiales = session.inscriptions.map((inscription) => {
+      return { idJeune: inscription.idJeune, statut: inscription.statut }
+    })
+
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let routerPush: jest.Mock
 
@@ -56,6 +60,7 @@ describe('Cloture Session', () => {
           withoutChat={true}
           pageTitle=''
           session={session}
+          inscriptionsInitiales={inscriptionsInitiales}
           returnTo='/agenda/sessions/id-session'
         />,
         {
@@ -131,27 +136,16 @@ describe('Cloture Session', () => {
       })
 
       it('clôt la session', async () => {
-        // Given
-        await userEvent.click(
-          screen.getByText(session.inscriptions[0].prenom, {
-            exact: false,
-          })
-        )
-        await userEvent.click(
-          screen.getByText(session.inscriptions[1].prenom, {
-            exact: false,
-          })
-        )
-
-        // When
-        const clore = screen.getByRole('button', { name: 'Clore la session' })
-        expect(clore).toBeInTheDocument()
-        await userEvent.click(clore)
-
         // Then
         expect(cloreSession).toHaveBeenCalledWith('1', 'session-1', [
-          { idJeune: 'jeune-1', statut: 'PRESENT' },
-          { idJeune: 'jeune-2', statut: 'PRESENT' },
+          {
+            idJeune: 'jeune-1',
+            statut: 'PRESENT',
+          },
+          {
+            idJeune: 'jeune-2',
+            statut: 'PRESENT',
+          },
         ])
       })
 
@@ -249,6 +243,12 @@ describe('Cloture Session', () => {
                 statut: StatutAnimationCollective.AClore,
               },
             }),
+            inscriptionsInitiales: [
+              {
+                idJeune: 'jeune-1',
+                statut: 'INSCRIT',
+              },
+            ],
             returnTo: 'redirectUrl',
             pageTitle: 'Clore - Session aide',
             pageHeader: 'Clôture de la session',

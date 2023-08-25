@@ -32,9 +32,14 @@ type ClotureSessionProps = PageProps & {
   session: Session
   returnTo: string
   withoutChat: true
+  inscriptionsInitiales: InformationBeneficiaireSession[]
 }
 
-function ClotureSession({ returnTo, session }: ClotureSessionProps) {
+function ClotureSession({
+  returnTo,
+  session,
+  inscriptionsInitiales,
+}: ClotureSessionProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
@@ -42,13 +47,9 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
   const [emargements, setEmargements] = useState<
     Array<InformationBeneficiaireSession>
-  >([])
+  >(inscriptionsInitiales)
 
   const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
-
-  const inscriptionsInitiales = session.inscriptions.map((inscription) => {
-    return { idJeune: inscription.idJeune, statut: inscription.statut }
-  })
 
   function cocherTousLesBeneficiaires(_event: FormEvent) {
     if (idsSelectionnes.length !== session.inscriptions.length) {
@@ -57,13 +58,26 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
       )
       setEmargements(
         inscriptionsInitiales.map((beneficiaire) => {
-          return { ...beneficiaire, statut: 'PRESENT' }
+          return { ...beneficiaire, statut: StatutBeneficiaire.PRESENT }
         })
       )
     } else {
       setIdsSelectionnes([])
-      setEmargements([])
+      setEmargements(inscriptionsInitiales)
     }
+  }
+
+  function metAJourListeBeneficiairesEmarges(
+    listeEmargements: InformationBeneficiaireSession[],
+    beneficiaire: InformationBeneficiaireSession
+  ) {
+    return [
+      ...listeEmargements.filter(
+        (beneficiaireEmarge) =>
+          beneficiaireEmarge.idJeune !== beneficiaire.idJeune
+      ),
+      { ...beneficiaire },
+    ]
   }
 
   function modifierStatutBeneficiaire(
@@ -71,17 +85,28 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
   ) {
     if (!Boolean(idsSelectionnes.includes(beneficiaire.idJeune))) {
       setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
-      setStatutBeneficiaire('PRESENT')
-      setEmargements((currentEmargements) => {
-        return [...currentEmargements, { ...beneficiaire, statut: 'PRESENT' }]
-      })
+      setStatutBeneficiaire(StatutBeneficiaire.PRESENT)
+      setEmargements((currentEmargements) =>
+        metAJourListeBeneficiairesEmarges(currentEmargements, {
+          ...beneficiaire,
+          statut: StatutBeneficiaire.PRESENT,
+        })
+      )
     } else {
-      setStatutBeneficiaire(beneficiaire.statut)
+      const beneficiaireMisAJour = inscriptionsInitiales.filter(
+        (beneficiaireInitial) =>
+          beneficiaireInitial.idJeune === beneficiaire.idJeune
+      )[0]
+
       setIdsSelectionnes(
         idsSelectionnes.filter((id) => id !== beneficiaire.idJeune)
       )
+      setStatutBeneficiaire(beneficiaire.statut)
       setEmargements((prev) => {
-        return prev?.filter(({ idJeune }) => idJeune !== beneficiaire.idJeune)
+        return [
+          ...prev?.filter(({ idJeune }) => idJeune !== beneficiaire.idJeune),
+          { ...beneficiaireMisAJour },
+        ]
       })
     }
   }
@@ -96,12 +121,10 @@ function ClotureSession({ returnTo, session }: ClotureSessionProps) {
     ) {
       liste.forEach((beneficiaire: InformationBeneficiaireSession) => {
         return setEmargements((currentEmargements: any) => {
-          return [
-            ...currentEmargements,
-            {
-              ...beneficiaire,
-            },
-          ]
+          return metAJourListeBeneficiairesEmarges(
+            currentEmargements,
+            beneficiaire
+          )
         })
       })
     }
@@ -299,8 +322,13 @@ export const getServerSideProps: GetServerSideProps<
       referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
   }
 
+  const inscriptionsInitiales = session.inscriptions.map((inscription) => {
+    return { idJeune: inscription.idJeune, statut: inscription.statut }
+  })
+
   const props: ClotureSessionProps = {
     session,
+    inscriptionsInitiales,
     returnTo: redirectTo,
     pageTitle: `Clore - Session ${session.offre.titre}`,
     pageHeader: 'Clôture de la session',
