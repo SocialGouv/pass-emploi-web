@@ -80,6 +80,13 @@
   color: theme('colors.blanc');
 }
 
+.buttonSecondary[disabled] {
+  background-color: theme('colors.blanc');
+  color: theme('colors.primary');
+  border: 1px solid theme('colors.primary');
+
+}
+
 /**
 * Button Warning
 */
@@ -123,5 +130,10 @@
   background-color: theme('colors.primary_darken_brsa');
   color: theme('colors.blanc');
   border: 1px solid theme('colors.primary_darken_brsa');
+}
+
+.buttonPrimaryDarkenBRSA[disabled] {
+  opacity: 50%;
+  cursor: not-allowed;
 }
 

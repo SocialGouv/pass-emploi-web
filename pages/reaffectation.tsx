@@ -84,6 +84,10 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
+  const afficherChoixTypeReaffectation = Boolean(
+    !estSuperviseurPEBRSA || structureReaffectation.value !== undefined
+  )
+
   const numerosEtapes: NumeroEtape[] = estSuperviseurPEBRSA
     ? [2, 3, 4, 5]
     : [1, 2, 3, 4]
@@ -314,62 +318,66 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
           </Etape>
         )}
 
-        <Etape
-          numero={numerosEtapes[0]}
-          titre='Choisissez un type de réaffectation'
-        >
-          {isReaffectationTemporaire.error && (
-            <InputError id='type-reaffectation--error' className='mb-2'>
-              {isReaffectationTemporaire.error}
-            </InputError>
-          )}
-          <div className='flex flex-wrap'>
-            <RadioBox
-              isSelected={isReaffectationTemporaire.value === true}
-              onChange={() => handleInputTypeReaffectation(true)}
-              label='Temporaire'
-              name='type-reaffectation'
-              id='type-reaffectation--temporaire'
-            />
-
-            <RadioBox
-              isSelected={isReaffectationTemporaire.value === false}
-              onChange={() => handleInputTypeReaffectation(false)}
-              label='Définitive'
-              name='type-reaffectation'
-              id='type-reaffectation--definitive'
-            />
-          </div>
-        </Etape>
-
-        <Etape
-          numero={numerosEtapes[1]}
-          titre='Saisissez le conseiller dont les bénéficiaires sont à réaffecter'
-        >
-          <ChoixConseiller
-            name='initial'
-            idConseillerSelectionne={conseillerInitial.value?.id}
-            structureReaffectation={structureReaffectation.value}
-            onInput={resetConseillerInitial}
-            onChoixConseiller={fetchListeBeneficiaires}
-            error={conseillerInitial.error}
-          />
-
-          <button
-            type='button'
-            onClick={() => setShowModalConseillerIntrouvable(true)}
-            className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+        {afficherChoixTypeReaffectation && (
+          <Etape
+            numero={numerosEtapes[0]}
+            titre='Choisissez un type de réaffectation'
           >
-            Le conseiller n’apparaît pas dans la liste déroulante. Que faire
-            ?&nbsp;
-            <IconComponent
-              name={IconName.Help}
-              focusable={false}
-              aria-hidden={true}
-              className='w-4 h-4 fill-primary'
+            {isReaffectationTemporaire.error && (
+              <InputError id='type-reaffectation--error' className='mb-2'>
+                {isReaffectationTemporaire.error}
+              </InputError>
+            )}
+            <div className='flex flex-wrap'>
+              <RadioBox
+                isSelected={isReaffectationTemporaire.value === true}
+                onChange={() => handleInputTypeReaffectation(true)}
+                label='Temporaire'
+                name='type-reaffectation'
+                id='type-reaffectation--temporaire'
+              />
+
+              <RadioBox
+                isSelected={isReaffectationTemporaire.value === false}
+                onChange={() => handleInputTypeReaffectation(false)}
+                label='Définitive'
+                name='type-reaffectation'
+                id='type-reaffectation--definitive'
+              />
+            </div>
+          </Etape>
+        )}
+
+        {Boolean(isReaffectationTemporaire.value !== undefined) && (
+          <Etape
+            numero={numerosEtapes[1]}
+            titre='Saisissez le conseiller dont les bénéficiaires sont à réaffecter'
+          >
+            <ChoixConseiller
+              name='initial'
+              idConseillerSelectionne={conseillerInitial.value?.id}
+              structureReaffectation={structureReaffectation.value}
+              onInput={resetConseillerInitial}
+              onChoixConseiller={fetchListeBeneficiaires}
+              error={conseillerInitial.error}
             />
-          </button>
-        </Etape>
+
+            <button
+              type='button'
+              onClick={() => setShowModalConseillerIntrouvable(true)}
+              className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+            >
+              Le conseiller n’apparaît pas dans la liste déroulante. Que faire
+              ?&nbsp;
+              <IconComponent
+                name={IconName.Help}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 fill-primary'
+              />
+            </button>
+          </Etape>
+        )}
 
         {beneficiaires && beneficiaires.length > 0 && (
           <>
@@ -431,60 +439,64 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
               </ul>
             </Etape>
 
-            <Etape
-              numero={numerosEtapes[3]}
-              titre='Saisissez le conseiller à qui affecter les bénéficiaires'
-            >
-              <ChoixConseiller
-                name='destinataire'
-                idConseillerSelectionne={conseillerDestination.value?.id}
-                structureReaffectation={structureReaffectation.value}
-                onInput={resetConseillerDestination}
-                onChoixConseiller={(conseiller) =>
-                  choixConseillerDestination({ value: conseiller })
-                }
-                error={conseillerDestination.error}
-              />
-
-              <button
-                type='button'
-                onClick={() => setShowModalConseillerIntrouvable(true)}
-                className='flex text-s-medium text-primary_darken hover:text-primary items-center'
-              >
-                Le conseiller n’apparaît pas dans la liste déroulante. Que faire
-                ?&nbsp;
-                <IconComponent
-                  name={IconName.Help}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='w-4 h-4 fill-primary'
-                />
-              </button>
-            </Etape>
-
-            <div className='w-full flex justify-center gap-2'>
-              <Button type='submit'>
-                <IconComponent
-                  name={IconName.Send}
-                  focusable={false}
-                  aria-hidden={true}
-                  className={`w-6 h-6 mr-2 fill-blanc`}
-                />
-                Valider mon choix
-              </Button>
-
-              {erreurReaffectation && (
-                <div className='absolute flex mt-3'>
-                  <IconComponent
-                    name={IconName.Error}
-                    focusable={false}
-                    aria-hidden={true}
-                    className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
+            {Boolean(idsBeneficiairesSelected.value.length > 0) && (
+              <>
+                <Etape
+                  numero={numerosEtapes[3]}
+                  titre='Saisissez le conseiller à qui affecter les bénéficiaires'
+                >
+                  <ChoixConseiller
+                    name='destinataire'
+                    idConseillerSelectionne={conseillerDestination.value?.id}
+                    structureReaffectation={structureReaffectation.value}
+                    onInput={resetConseillerDestination}
+                    onChoixConseiller={(conseiller) =>
+                      choixConseillerDestination({ value: conseiller })
+                    }
+                    error={conseillerDestination.error}
                   />
-                  <p className='text-warning'>{erreurReaffectation}</p>
+
+                  <button
+                    type='button'
+                    onClick={() => setShowModalConseillerIntrouvable(true)}
+                    className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+                  >
+                    Le conseiller n’apparaît pas dans la liste déroulante. Que
+                    faire ?&nbsp;
+                    <IconComponent
+                      name={IconName.Help}
+                      focusable={false}
+                      aria-hidden={true}
+                      className='w-4 h-4 fill-primary'
+                    />
+                  </button>
+                </Etape>
+
+                <div className='w-full flex justify-center gap-2'>
+                  <Button type='submit'>
+                    <IconComponent
+                      name={IconName.Send}
+                      focusable={false}
+                      aria-hidden={true}
+                      className={`w-6 h-6 mr-2 fill-blanc`}
+                    />
+                    Valider mon choix
+                  </Button>
+
+                  {erreurReaffectation && (
+                    <div className='absolute flex mt-3'>
+                      <IconComponent
+                        name={IconName.Error}
+                        focusable={false}
+                        aria-hidden={true}
+                        className='fill-warning w-6 h-6 mr-2 flex-shrink-0'
+                      />
+                      <p className='text-warning'>{erreurReaffectation}</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </>
         )}
       </form>
@@ -617,7 +629,7 @@ function ChoixConseiller({
         <Button
           className='ml-4 shrink-0'
           label={'Rechercher un conseiller ' + name}
-          style={ButtonStyle.SECONDARY}
+          style={ButtonStyle.PRIMARY}
           disabled={queryConseiller.value.length < 2}
           type='button'
           onClick={rechercherConseiller}

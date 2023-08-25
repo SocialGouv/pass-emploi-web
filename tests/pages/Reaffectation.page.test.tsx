@@ -71,10 +71,13 @@ describe('Reaffectation', () => {
       describe('Étape 3 : conseiller initial', () => {
         let etape: HTMLFieldSetElement
         beforeEach(async () => {
+          await userEvent.click(screen.getByRole('radio', { name: 'BRSA' }))
+          await userEvent.click(
+            screen.getByRole('radio', { name: 'Temporaire' })
+          )
           etape = screen.getByRole('group', {
             name: 'Étape 3 Saisissez le conseiller dont les bénéficiaires sont à réaffecter',
           })
-          await userEvent.click(screen.getByRole('radio', { name: 'BRSA' }))
         })
 
         it('affiche la liste des conseillers possibles pour le contrat sélectionné', async () => {
@@ -136,6 +139,11 @@ describe('Reaffectation', () => {
           checkboxBeneficiaire = screen.getByRole('checkbox', {
             name: new RegExp(jeunes[1].nom),
           })
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: `${jeunes[0].nom} ${jeunes[0].prenom}`,
+            })
+          )
           etape = screen.getByRole('group', {
             name: 'Étape 5 Saisissez le conseiller à qui affecter les bénéficiaires',
           })
@@ -204,6 +212,9 @@ describe('Reaffectation', () => {
       describe('Étape 2 : conseiller initial', () => {
         let etape: HTMLFieldSetElement
         beforeEach(async () => {
+          await userEvent.click(
+            screen.getByRole('radio', { name: 'Définitive' })
+          )
           etape = screen.getByRole('group', {
             name: 'Étape 2 Saisissez le conseiller dont les bénéficiaires sont à réaffecter',
           })
@@ -284,6 +295,9 @@ describe('Reaffectation', () => {
         let etape: HTMLFieldSetElement
         beforeEach(async () => {
           // GIVEN
+          await userEvent.click(
+            screen.getByRole('radio', { name: 'Définitive' })
+          )
           await userEvent.type(
             screen.getByRole('searchbox', { name: /conseiller/ }),
             'Nils'
@@ -365,6 +379,9 @@ describe('Reaffectation', () => {
         let conseillerDestinataireInput: HTMLInputElement
         beforeEach(async () => {
           // GIVEN
+          await userEvent.click(
+            screen.getByRole('radio', { name: 'Définitive' })
+          )
           await userEvent.type(
             screen.getByRole('searchbox', { name: /conseiller/ }),
             'Nils'
@@ -374,6 +391,11 @@ describe('Reaffectation', () => {
           )
           await userEvent.click(
             screen.getByRole('radio', { name: 'Nils Tavernier' })
+          )
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: `${jeunes[0].nom} ${jeunes[0].prenom}`,
+            })
           )
 
           checkboxBeneficiaire = screen.getByRole('checkbox', {
@@ -449,7 +471,7 @@ describe('Reaffectation', () => {
           expect(reaffecter).toHaveBeenCalledWith(
             'id-nils-tavernier',
             'id-neil-armstrong',
-            ['jeune-2'],
+            ['jeune-1', 'jeune-2'],
             false
           )
         })
@@ -485,6 +507,10 @@ describe('Reaffectation', () => {
       describe('quand on modifie la recherche du conseiller initial', () => {
         it('reset le reste du formulaire', async () => {
           // GIVEN
+          await userEvent.click(
+            screen.getByRole('radio', { name: 'Définitive' })
+          )
+
           const conseillerInitialInput = screen.getByRole('searchbox', {
             name: /conseiller/,
           })
