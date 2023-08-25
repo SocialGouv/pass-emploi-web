@@ -578,6 +578,11 @@ export const getServerSideProps: GetServerSideProps<
   } = sessionOrRedirect
   if (estUserPoleEmploi(user)) return { notFound: true }
 
+  if (!process.env.ENABLE_SESSIONS_MILO)
+    return {
+      redirect: { destination: '/mes-jeunes', permanent: false },
+    }
+
   const idSession = context.query.session_id as string
 
   let redirectTo = context.query.redirectUrl as string

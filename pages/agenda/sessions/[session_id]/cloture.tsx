@@ -300,7 +300,7 @@ export const getServerSideProps: GetServerSideProps<
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (estUserPoleEmploi(user))
+  if (estUserPoleEmploi(user) || !process.env.ENABLE_SESSIONS_MILO)
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
