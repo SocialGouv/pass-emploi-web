@@ -144,6 +144,18 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     }
   }
 
+  function choixConseillerDestination(
+    conseiller: ValueWithError<BaseConseiller | undefined>
+  ) {
+    if (conseiller.value?.id === conseillerInitial.value?.id) {
+      setConseillerDestination({
+        value: undefined,
+        error:
+          'Vous ne pouvez pas réaffecter des bénéficiaires à leur conseiller initial',
+      })
+    } else setConseillerDestination({ value: conseiller.value })
+  }
+
   function toggleTousLesBeneficiaires() {
     setErreurReaffectation(undefined)
 
@@ -429,7 +441,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
                 structureReaffectation={structureReaffectation.value}
                 onInput={resetConseillerDestination}
                 onChoixConseiller={(conseiller) =>
-                  setConseillerDestination({ value: conseiller })
+                  choixConseillerDestination({ value: conseiller })
                 }
                 error={conseillerDestination.error}
               />
