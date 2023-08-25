@@ -12,7 +12,7 @@ export default function OngletSessionsImiloPilotage({
 }: OngletSessionsImiloPilotageProps) {
   return (
     <>
-      {Boolean(sessions?.length === 0) && (
+      {Boolean(sessions && sessions.length === 0) && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyStateImage
             focusable={false}
@@ -25,7 +25,7 @@ export default function OngletSessionsImiloPilotage({
         </div>
       )}
 
-      {Boolean(sessions?.length > 0) && (
+      {Boolean(sessions && sessions?.length > 0) && (
         <TableauSessionsImilo sessions={sessions!} />
       )}
     </>
