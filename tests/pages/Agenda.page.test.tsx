@@ -18,7 +18,7 @@ import {
   getRendezVousEtablissement,
 } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
-import { getSessionsMissionLocale } from 'services/sessions.service'
+import { getSessionsMissionLocaleClientSide } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
@@ -74,7 +74,7 @@ describe('Agenda', () => {
           statut: StatutAnimationCollective.AVenir,
         }),
       ])
-      ;(getSessionsMissionLocale as jest.Mock).mockResolvedValue([
+      ;(getSessionsMissionLocaleClientSide as jest.Mock).mockResolvedValue([
         uneAnimationCollective({
           id: 'id-session-1',
           type: 'Atelier i-milo',
@@ -401,7 +401,7 @@ describe('Agenda', () => {
 
       it('récupère les sessions milo sur une période de 7 jours à partir de la date du jour', async () => {
         // Then
-        expect(getSessionsMissionLocale).toHaveBeenCalledWith(
+        expect(getSessionsMissionLocaleClientSide).toHaveBeenCalledWith(
           '1',
           SEPTEMBRE_1_0H,
           SEPTEMBRE_7_23H
@@ -473,7 +473,7 @@ describe('Agenda', () => {
         // When
         await userEvent.click(periodesPasseesButton)
         // Then
-        expect(getSessionsMissionLocale).toHaveBeenLastCalledWith(
+        expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
           '1',
           AOUT_25_0H,
           AOUT_31_23H
@@ -483,7 +483,7 @@ describe('Agenda', () => {
         await userEvent.click(periodeCouranteButton)
 
         // Then
-        expect(getSessionsMissionLocale).toHaveBeenCalledWith(
+        expect(getSessionsMissionLocaleClientSide).toHaveBeenCalledWith(
           '1',
           SEPTEMBRE_1_0H,
           SEPTEMBRE_7_23H
@@ -500,7 +500,7 @@ describe('Agenda', () => {
           SEPTEMBRE_14_23H
         )
 
-        expect(getSessionsMissionLocale).toHaveBeenLastCalledWith(
+        expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
           '1',
           SEPTEMBRE_8_0H,
           SEPTEMBRE_14_23H

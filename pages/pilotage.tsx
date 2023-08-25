@@ -13,6 +13,7 @@ import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
+import { SessionsAClore } from 'services/sessions.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -24,11 +25,15 @@ const OngletActionsPilotage = dynamic(
 const OngletAnimationsCollectivesPilotage = dynamic(
   import('components/pilotage/OngletAnimationsCollectivesPilotage')
 )
+const OngletSessionsImiloPilotage = dynamic(
+  import('components/pilotage/OngletSessionsImiloPilotage')
+)
 const EncartAgenceRequise = dynamic(import('components/EncartAgenceRequise'))
 
 export enum Onglet {
   ACTIONS = 'ACTIONS',
   ANIMATIONS_COLLECTIVES = 'ANIMATIONS_COLLECTIVES',
+  SESSIONS_IMILO = 'SESSIONS_IMILO',
 }
 
 const ongletProps: {
@@ -39,6 +44,10 @@ const ongletProps: {
     queryParam: 'animationsCollectives',
     trackingLabel: 'Animations collectives',
   },
+  SESSIONS_IMILO: {
+    queryParam: 'sessionsImilo',
+    trackingLabel: 'Sessions i-milo',
+  },
 }
 
 type PilotageProps = PageProps & {
@@ -47,10 +56,16 @@ type PilotageProps = PageProps & {
     donnees: AnimationCollectivePilotage[]
     metadonnees: MetadonneesPagination
   }
+  sessions?: SessionsAClore[]
   onglet?: Onglet
 }
 
-function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
+function Pilotage({
+  actions,
+  animationsCollectives,
+  sessions,
+  onglet,
+}: PilotageProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const router = useRouter()
@@ -61,6 +76,8 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
   )
   const [totalAnimationsCollectives, setTotalAnimationsCollectives] =
     useState<number>(animationsCollectives?.metadonnees.nombreTotal ?? 0)
+
+  const [totalSessionsImilo] = useState<number>(sessions?.length ?? 0)
 
   const [animationsCollectivesAffichees, setAnimationsCollectivesAffichees] =
     useState<
@@ -166,20 +183,31 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
             </dd>
           </div>
           {conseiller.agence?.id && (
-            <div>
-              <dt className='text-base-bold'>Les animations</dt>
-              <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
-                <div className='text-xl-bold'>{totalAnimationsCollectives}</div>
-                <span className='text-base-bold'> À clore</span>
-              </dd>
-            </div>
+            <>
+              <div>
+                <dt className='text-base-bold'>Les animations</dt>
+                <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+                  <div className='text-xl-bold'>
+                    {totalAnimationsCollectives}
+                  </div>
+                  <span className='text-base-bold'> À clore</span>
+                </dd>
+              </div>
+              <div>
+                <dt className='text-base-bold'>Sessions i-milo</dt>
+                <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+                  <div className='text-xl-bold'>{totalSessionsImilo}</div>
+                  <span className='text-base-bold'> À clore</span>
+                </dd>
+              </div>
+            </>
           )}
         </dl>
       </div>
 
       <TabList className='mt-10'>
         <Tab
-          label='Actions à qualifier'
+          label='Actions'
           count={totalActions}
           selected={currentTab === Onglet.ACTIONS}
           controls='liste-actions-à-qualifier'
@@ -187,11 +215,19 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           iconName={IconName.EventFill}
         />
         <Tab
-          label='Animations à clore'
+          label='AC app CEJ'
           count={conseiller.agence?.id ? totalAnimationsCollectives : undefined}
           selected={currentTab === Onglet.ANIMATIONS_COLLECTIVES}
           controls='liste-animations-collectives-a-clore'
           onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
+          iconName={IconName.EventFill}
+        />
+        <Tab
+          label='Sessions i-milo'
+          count={totalSessionsImilo ?? undefined}
+          selected={currentTab === Onglet.SESSIONS_IMILO}
+          controls='liste-sessions-i-milo-a-clore'
+          onSelectTab={() => switchTab(Onglet.SESSIONS_IMILO)}
           iconName={IconName.EventFill}
         />
       </TabList>
@@ -240,6 +276,27 @@ function Pilotage({ actions, animationsCollectives, onglet }: PilotageProps) {
           )}
         </div>
       )}
+
+      {currentTab === Onglet.SESSIONS_IMILO && (
+        <div
+          role='tabpanel'
+          aria-labelledby='liste-sessions-i-milo-a-clore--tab'
+          tabIndex={0}
+          id='liste-sessions-i-milo-a-clore'
+          className='mt-8 pb-8 border-b border-primary_lighten'
+        >
+          {!animationsCollectivesAffichees && (
+            <EncartAgenceRequise
+              conseiller={conseiller}
+              onAgenceChoisie={renseignerAgence}
+              getAgences={getAgencesClientSide}
+              onChangeAffichageModal={trackAgenceModal}
+            />
+          )}
+
+          {sessions && <OngletSessionsImiloPilotage sessions={sessions} />}
+        </div>
+      )}
     </>
   )
 }
@@ -269,7 +326,11 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
   const { getAnimationsCollectivesACloreServerSide } = await import(
     'services/evenements.service'
   )
-  const [actions, evenements] = await Promise.all([
+  const { getSessionsACloreServerSide } = await import(
+    'services/sessions.service'
+  )
+
+  const [actions, evenements, sessions] = await Promise.all([
     getActionsAQualifierServerSide(user.id, accessToken),
     getConseillerServerSide(user, accessToken).then((conseiller) => {
       if (!conseiller?.agence?.id) return
@@ -278,6 +339,7 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
         accessToken
       )
     }),
+    getSessionsACloreServerSide(user.id, accessToken),
   ])
 
   const props: PilotageProps = {
@@ -295,10 +357,17 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
     }
   }
 
+  if (sessions) {
+    props.sessions = sessions
+  }
+
   if (context.query.onglet) {
     switch (context.query.onglet) {
       case 'animationsCollectives':
         props.onglet = Onglet.ANIMATIONS_COLLECTIVES
+        break
+      case 'sessionsImilo':
+        props.onglet = Onglet.SESSIONS_IMILO
         break
       case 'actions':
       default:

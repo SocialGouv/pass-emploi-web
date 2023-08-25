@@ -10,9 +10,49 @@ import {
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
 import { InformationBeneficiaireSession, Session } from 'interfaces/session'
+import { toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
+export type SessionsAClore = {
+  id: string
+  titre: string
+  date: string
+  sousTitre?: string
+}
+
+export async function getSessionsACloreServerSide(
+  idConseiller: string,
+  accessToken: string
+): Promise<SessionsAClore[]> {
+  const optionsText = `filtrerAClore=true`
+
+  const sessionsAClore = await getSessionsMissionLocale(
+    idConseiller,
+    accessToken,
+    optionsText
+  )
+
+  return sessionsAClore.map((session) => ({
+    id: session.id,
+    titre: session.titre,
+    sousTitre: session.sousTitre,
+    date: toShortDate(session.date),
+  }))
+}
+
 export async function getSessionsMissionLocale(
+  idConseiller: string,
+  accessToken: string,
+  options?: string
+): Promise<AnimationCollective[]> {
+  const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
+    `/conseillers/milo/${idConseiller}/sessions${options ? '?' + options : ''}`,
+    accessToken
+  )
+  return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
+}
+
+export async function getSessionsMissionLocaleClientSide(
   idConseiller: string,
   dateDebut: DateTime,
   dateFin: DateTime
@@ -20,11 +60,8 @@ export async function getSessionsMissionLocale(
   const session = await getSession()
   const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-  const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
-    `/conseillers/milo/${idConseiller}/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    session!.accessToken
-  )
-  return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
+  const options = `dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`
+  return getSessionsMissionLocale(idConseiller, session!.accessToken, options)
 }
 
 export async function getDetailsSession(

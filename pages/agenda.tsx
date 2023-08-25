@@ -127,10 +127,10 @@ function Agenda({ onglet }: AgendaProps) {
   ): Promise<AnimationCollective[]> {
     if (conseiller.structure !== StructureConseiller.MILO) return []
 
-    const { getSessionsMissionLocale } = await import(
+    const { getSessionsMissionLocaleClientSide } = await import(
       'services/sessions.service'
     )
-    return getSessionsMissionLocale(conseiller.id, dateDebut, dateFin)
+    return getSessionsMissionLocaleClientSide(conseiller.id, dateDebut, dateFin)
   }
 
   async function trackAgenceModal(trackingMessage: string) {
