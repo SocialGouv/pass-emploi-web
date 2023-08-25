@@ -56,7 +56,7 @@ export default function OffreCard({
           <LienPartageOffre
             titreOffre={titreLien}
             href={`/offres/${offrePath}/partage`}
-            style={ButtonStyle.TERTIARY}
+            style={ButtonStyle.SECONDARY}
           />
         </div>
       )}
