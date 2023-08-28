@@ -183,6 +183,10 @@ describe('Cloture Session', () => {
 
     describe("quand l'utilisateur est connecté", () => {
       beforeEach(() => {
+        process.env = Object.assign(process.env, {
+          ENABLE_SESSIONS_MILO: 'true',
+        })
+
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,

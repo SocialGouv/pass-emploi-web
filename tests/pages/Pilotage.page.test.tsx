@@ -51,6 +51,10 @@ describe('Pilotage', () => {
       let sessions: SessionsAClore[]
 
       beforeEach(async () => {
+        process.env = Object.assign(process.env, {
+          ENABLE_SESSIONS_MILO: 'true',
+        })
+
         actions = uneListeDActionsAQualifier()
         animationsCollectives = uneListeDAnimationCollectiveAClore()
         sessions = uneListeDeSessionsAClore()
