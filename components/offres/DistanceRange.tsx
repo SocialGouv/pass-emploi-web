@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Input from 'components/ui/Form/Input'
+import styles from 'styles/components/Input.module.css'
 
 export function DistanceRange({
   value,
@@ -20,17 +21,19 @@ export function DistanceRange({
         {required && <span aria-hidden={true}>*&nbsp;</span>}
         Dans un rayon de : <span className='text-base-bold'>{value}km</span>
       </label>
-      <Input
-        id='distance'
+
+      <input
         type='range'
-        className='block mt-4 w-full'
+        id='distance'
+        required={required}
+        onChange={(e) => onChange(parseInt(e.target.value, 10))}
+        className={`text-base-medium ${styles.range} mt-4`}
         value={value}
         min={DISTANCE_MIN}
         max={DISTANCE_MAX}
-        onChange={(str: string) => onChange(parseInt(str, 10))}
         list='distance-bornes'
-        required={required}
       />
+
       <datalist id='distance-bornes' className='flex justify-between'>
         <option value='0' label='0km' className='text-s-bold' />
         <option value='100' label='100km' className='text-s-bold' />
