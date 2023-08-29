@@ -384,7 +384,7 @@ describe('Agenda', () => {
           structure: StructureConseiller.MILO,
           agence: {
             nom: 'Mission Locale Aubenas',
-            id: 'id-etablissement',
+            id: '622',
           },
         })
 
@@ -495,7 +495,7 @@ describe('Agenda', () => {
         await userEvent.click(periodesFuturesButton)
         // Then
         expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
-          'id-etablissement',
+          '622',
           SEPTEMBRE_8_0H,
           SEPTEMBRE_14_23H
         )

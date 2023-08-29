@@ -14,6 +14,7 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
+import { estEarlyAdopter } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   StatutAnimationCollective,
@@ -23,6 +24,7 @@ import {
   ItemOuIntercalaire,
   renderListeWithIntercalaires,
 } from 'presentation/Intercalaires'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import {
   TIME_24_H_SEPARATOR,
   toFrenchFormat,
@@ -46,6 +48,7 @@ export default function OngletAgendaEtablissement({
   recupererSessionsMilo,
   trackNavigation,
 }: OngletAgendaEtablissementProps) {
+  const [conseiller] = useConseiller()
   const [animationsCollectives, setAnimationsCollectives] = useState<
     AnimationCollective[]
   >([])
@@ -64,8 +67,12 @@ export default function OngletAgendaEtablissement({
     dateFin: DateTime
   ) {
     const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
-    const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
-    setAnimationsCollectives([...evenementsMilo, ...evenements])
+    if (estEarlyAdopter(conseiller)) {
+      const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
+      setAnimationsCollectives([...evenementsMilo, ...evenements])
+    } else {
+      setAnimationsCollectives([...evenements])
+    }
   }
 
   function filtrerAnimationsCollectives() {

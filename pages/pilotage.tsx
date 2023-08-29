@@ -8,7 +8,7 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage } from 'interfaces/action'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { estEarlyAdopter, estUserPoleEmploi } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
@@ -193,15 +193,16 @@ function Pilotage({
                   <span className='text-base-bold'> À clore</span>
                 </dd>
               </div>
-              {process.env.ENABLE_SESSIONS_MILO && (
-                <div>
-                  <dt className='text-base-bold'>Sessions i-milo</dt>
-                  <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
-                    <div className='text-xl-bold'>{totalSessionsImilo}</div>
-                    <span className='text-base-bold'> À clore</span>
-                  </dd>
-                </div>
-              )}
+              {process.env.ENABLE_SESSIONS_MILO &&
+                estEarlyAdopter(conseiller) && (
+                  <div>
+                    <dt className='text-base-bold'>Sessions i-milo</dt>
+                    <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+                      <div className='text-xl-bold'>{totalSessionsImilo}</div>
+                      <span className='text-base-bold'> À clore</span>
+                    </dd>
+                  </div>
+                )}
             </>
           )}
         </dl>
@@ -224,7 +225,7 @@ function Pilotage({
           onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
           iconName={IconName.EventFill}
         />
-        {process.env.ENABLE_SESSIONS_MILO && (
+        {process.env.ENABLE_SESSIONS_MILO && estEarlyAdopter(conseiller) && (
           <Tab
             label='Sessions i-milo'
             count={totalSessionsImilo ?? undefined}

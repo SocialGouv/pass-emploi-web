@@ -111,7 +111,7 @@ describe('Pilotage', () => {
               customConseiller: {
                 agence: {
                   nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
+                  id: '622',
                 },
               },
             }
@@ -287,7 +287,7 @@ describe('Pilotage', () => {
 
           // Then
           expect(getAnimationsCollectivesACloreClientSide).toHaveBeenCalledWith(
-            'id-etablissement',
+            '622',
             2
           )
           expect(screen.getByText('Animation page 2')).toBeInTheDocument()
@@ -427,7 +427,15 @@ describe('Pilotage', () => {
               metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
             sessions={[]}
-          />
+          />,
+          {
+            customConseiller: {
+              agence: {
+                nom: 'Mission Locale Aubenas',
+                id: '622',
+              },
+            },
+          }
         )
 
         // When
@@ -576,7 +584,7 @@ describe('Pilotage', () => {
       expect(actual).toEqual({ redirect: { destination: 'whatever' } })
     })
 
-    describe('quand le conseiller est Pole emploi', () => {
+    describe('quand le conseiller est Pôle emploi', () => {
       it('renvoie une 404', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({

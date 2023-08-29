@@ -16,6 +16,9 @@ export enum UserRole {
   SUPERVISEUR_PE_BRSA = 'SUPERVISEUR_PE_BRSA',
 }
 
+const ID_AGENCE_DUNKERQUE = '622'
+const ID_AGENCE_BEAUCAIRE = '411'
+
 export type BaseConseiller = {
   id: string
   firstName: string
@@ -62,5 +65,12 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
   return (
     user.structure === StructureConseiller.POLE_EMPLOI ||
     user.structure === StructureConseiller.POLE_EMPLOI_BRSA
+  )
+}
+
+export function estEarlyAdopter(conseiller: Conseiller): boolean {
+  return (
+    conseiller.agence?.id === ID_AGENCE_BEAUCAIRE ||
+    conseiller.agence?.id === ID_AGENCE_DUNKERQUE
   )
 }
