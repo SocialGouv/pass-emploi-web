@@ -113,8 +113,18 @@ export default function OngletAgendaEtablissement({
               className='w-[360px] h-[200px]'
             />
             <p className='mt-4 text-base-medium w-2/3 text-center'>
-              Il n’y a pas d’animation collective sur cette période dans votre
-              établissement.
+              {statutsValides.length === 0 && (
+                <>
+                  Il n’y a pas d’animation collective sur cette période dans
+                  votre établissement.
+                </>
+              )}
+              {statutsValides.length !== 0 && (
+                <>
+                  Aucune animation collective ne correspond au(x) filtre(s)
+                  sélectionné(s) sur cette période.
+                </>
+              )}
             </p>
 
             {animationsCollectives.length > 0 && (
