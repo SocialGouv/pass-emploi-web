@@ -118,7 +118,7 @@ export default function FormRechercheOffres({
 
   function updateQueryOffreEmploi(query: FormValues<SearchOffresEmploiQuery>) {
     setQueryOffresEmploi(query)
-    setOffreLieu(query.commune?.libelle)
+    setOffreLieu(query.commune?.libelle ?? query.departement?.libelle)
     setMotsCles(query.motsCles)
   }
 
