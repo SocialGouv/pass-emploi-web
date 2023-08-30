@@ -190,7 +190,7 @@ describe('EnvoiMessageGroupe', () => {
         expect(push).not.toHaveBeenCalled()
         expect(
           screen.getByText(
-            "Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
+            'Souhaitez-vous quitter la rédaction du message multi-destinataires ?'
           )
         ).toBeInTheDocument()
       })

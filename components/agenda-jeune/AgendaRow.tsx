@@ -72,7 +72,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
             name={IconName.ChevronRight}
             focusable={false}
             aria-hidden={true}
-            className='w-6 h-6 ml-3 fill-content_color'
+            className='w-6 h-6 ml-3 fill-primary'
           />
         </div>
       </Link>

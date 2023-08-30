@@ -6,7 +6,7 @@ import { HydratedJWT, JWT } from 'next-auth/jwt'
 import { UserRole, UserType } from 'interfaces/conseiller'
 import { fetchJson } from 'utils/httpClient'
 
-function secondsToTimestamp(seconds: number): number {
+function secondsToMilliseconds(seconds: number): number {
   return seconds * 1000
 }
 
@@ -43,17 +43,44 @@ export async function handleJWTAndRefresh({
   return hydratedJWT
 }
 
+async function hydrateJwtAtFirstSignin(
+  { access_token, expires_at, refresh_token }: Account,
+  jwt: JWT
+): Promise<HydratedJWT> {
+  const { userId, userStructure, userRoles, userType } = decode(
+    <string>access_token
+  ) as JwtPayload
+
+  const expiresAt = expires_at ? secondsToMilliseconds(expires_at) : undefined
+
+  return {
+    ...jwt,
+    accessToken: access_token,
+    refreshToken: refresh_token,
+    idConseiller: userId,
+    structureConseiller: userStructure,
+    estConseiller: userType === UserType.CONSEILLER,
+    estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
+    estSuperviseurPEBRSA: Boolean(
+      userRoles?.includes(UserRole.SUPERVISEUR_PE_BRSA)
+    ),
+    expiresAtTimestamp: expiresAt,
+  }
+}
+
 async function refreshAccessToken(jwt: HydratedJWT) {
   try {
     const refreshedTokens = await fetchRefreshedTokens(jwt.refreshToken)
+
+    const expiresAtMs = refreshedTokens.expires_in
+      ? DateTime.now().plus({ second: refreshedTokens.expires_in }).toMillis()
+      : jwt.expiresAtTimestamp
 
     return {
       ...jwt,
       accessToken: refreshedTokens.access_token,
       refreshToken: refreshedTokens.refresh_token ?? jwt.refreshToken, // Garde l'ancien refresh_token
-      expiresAtTimestamp: refreshedTokens.expires_in
-        ? DateTime.now().plus({ second: refreshedTokens.expires_in }).toMillis()
-        : jwt.expiresAtTimestamp,
+      expiresAtTimestamp: expiresAtMs,
     }
   } catch (error) {
     return {
@@ -82,24 +109,4 @@ async function fetchRefreshedTokens(
     body,
   })
   return tokens
-}
-
-async function hydrateJwtAtFirstSignin(
-  { access_token, expires_at, refresh_token }: Account,
-  jwt: JWT
-): Promise<HydratedJWT> {
-  const { userId, userStructure, userRoles, userType } = decode(
-    <string>access_token
-  ) as JwtPayload
-
-  return {
-    ...jwt,
-    accessToken: access_token,
-    refreshToken: refresh_token,
-    idConseiller: userId,
-    structureConseiller: userStructure,
-    estConseiller: userType === UserType.CONSEILLER,
-    estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
-    expiresAtTimestamp: expires_at ? secondsToTimestamp(expires_at) : undefined,
-  }
 }

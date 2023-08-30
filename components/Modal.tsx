@@ -11,6 +11,9 @@ import { createPortal } from 'react-dom'
 
 import IconComponent, { IconName } from './ui/IconComponent'
 
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import styles from 'styles/components/Modal.module.css'
 
 export const MODAL_ROOT_ID = 'modal-root'
@@ -20,10 +23,17 @@ interface ModalProps {
   onClose?: () => void
   children: ReactNode
   titleIcon?: IconName
+  titleIllustration?: IllustrationName
 }
 
 const Modal = forwardRef((props: ModalProps, ref) => {
-  const { children: modalContent, onClose, title, titleIcon } = props
+  const {
+    children: modalContent,
+    onClose,
+    title,
+    titleIcon,
+    titleIllustration,
+  } = props
 
   useImperativeHandle(ref, () => ({
     closeModal: handleClose,
@@ -88,7 +98,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   }, [])
 
   const modalTemplate = (
-    <div className='rounded-base bg-blanc max-w-[620px] p-3' ref={modalRef}>
+    <div className='rounded-l bg-blanc max-w-[620px] p-3' ref={modalRef}>
       {onClose && (
         <div className='flex justify-end'>
           <button
@@ -115,6 +125,14 @@ const Modal = forwardRef((props: ModalProps, ref) => {
             focusable={false}
             aria-hidden={true}
             className='w-20 h-20 m-auto fill-primary mb-8'
+          />
+        )}
+        {titleIllustration && (
+          <IllustrationComponent
+            name={titleIllustration}
+            focusable='false'
+            aria-hidden='true'
+            className='w-1/3 m-auto fill-primary mb-8'
           />
         )}
         <h2

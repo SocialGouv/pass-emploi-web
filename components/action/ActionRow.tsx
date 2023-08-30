@@ -83,7 +83,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
             name={IconName.ChevronRight}
             focusable='false'
             aria-hidden='true'
-            className=' w-6 h-6 fill-content_color'
+            className=' w-6 h-6 fill-primary'
           />
         </span>
       </TD>

@@ -30,15 +30,17 @@ export default function ConseillerIntrouvableSuggestionModal({
 
   return (
     <Modal
-      title={`Vous ne trouvez pas le nom d’une conseillère ou d’un conseiller dans la liste ? La personne n’est peut-être pas encore rattachée à votre agence.`}
+      title={`Vous ne trouvez pas le nom d’une conseillère ou d’un conseiller CEJ dans la liste ?`}
       titleIcon={IconName.Help}
       onClose={onClose}
     >
+      <p className='mb-4 text-base-bold text-content_color text-center'>
+        La conseillère ou le conseiller en question ne s’est peut-être jamais
+        connecté(e) à l’Application du CEJ.
+      </p>
       <p className='mb-12 text-base-regular text-content_color text-center'>
-        Si le conseiller ou la conseillère n’a pas ajouté l’agence à son profil,
-        une fenêtre lui demandera de le faire à chaque connexion. En attendant,
-        vous devrez renseigner son e-mail à la main. <br />
-        En cas de difficulté,&nbsp;
+        Nous l’invitons à effectuer une première connexion pour apparaître dans
+        les suggestions. Si malgré ça vous rencontrez des difficultés,&nbsp;
         <span className='text-primary_darken hover:text-primary'>
           <ExternalLink
             href={'mailto:' + process.env.SUPPORT_MAIL}

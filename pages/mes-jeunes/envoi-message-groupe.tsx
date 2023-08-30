@@ -332,8 +332,8 @@ function EnvoiMessageGroupe({
 
         {showLeavePageModal && (
           <LeavePageConfirmationModal
-            message="Vous allez quitter la page d'édition d’un message à plusieurs jeunes."
-            commentaire='Toutes les informations saisies seront perdues ainsi que les pièces jointes attachées.'
+            titre='Souhaitez-vous quitter la rédaction du message multi-destinataires ?'
+            commentaire='Les informations saisies seront perdues.'
             onCancel={closeLeavePageConfirmationModal}
             destination={leavePageUrl}
           />

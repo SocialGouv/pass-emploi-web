@@ -232,13 +232,27 @@ export async function getIndicateursJeuneComplets(
   return getIndicateursJeune(idConseiller, idJeune, dateDebut, dateFin, false)
 }
 
-export async function getJeunesDeLEtablissement(
+export async function getJeunesDeLEtablissementClientSide(
   idEtablissement: string
 ): Promise<BaseJeune[]> {
   const session = await getSession()
+  return getJeunesDeLEtablissement(idEtablissement, session!.accessToken)
+}
+
+export async function getJeunesDeLEtablissementServerSide(
+  idEtablissement: string,
+  accessToken: string
+): Promise<BaseJeune[]> {
+  return getJeunesDeLEtablissement(idEtablissement, accessToken)
+}
+
+async function getJeunesDeLEtablissement(
+  idEtablissement: string,
+  accessToken: string
+) {
   const { content: jeunes } = await apiGet<BaseJeuneJson[]>(
     `/etablissements/${idEtablissement}/jeunes`,
-    session!.accessToken
+    accessToken
   )
   return jeunes.map(jsonToBaseJeune)
 }

@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/illustration-send-grey.svg'
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
 import HeaderChat from 'components/chat/HeaderChat'
 import { ButtonStyle } from 'components/ui/Button/Button'

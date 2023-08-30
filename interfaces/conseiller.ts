@@ -13,6 +13,7 @@ export enum UserType {
 
 export enum UserRole {
   SUPERVISEUR = 'SUPERVISEUR',
+  SUPERVISEUR_PE_BRSA = 'SUPERVISEUR_PE_BRSA',
 }
 
 export type BaseConseiller = {
@@ -27,6 +28,7 @@ export interface Conseiller extends BaseConseiller {
   aDesBeneficiairesARecuperer: boolean
   structure: StructureConseiller
   estSuperviseur: boolean
+  estSuperviseurPEBRSA: boolean
   agence?: { nom: string; id?: string }
 }
 
@@ -40,6 +42,10 @@ export function estMilo(conseiller: Conseiller): boolean {
 
 export function estSuperviseur(conseiller: Conseiller): boolean {
   return conseiller.estSuperviseur
+}
+
+export function estSuperviseurPEBRSA(conseiller: Conseiller): boolean {
+  return conseiller.estSuperviseurPEBRSA
 }
 
 export function estPoleEmploiBRSA(conseiller: Conseiller): boolean {

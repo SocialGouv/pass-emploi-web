@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
 import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
 import Pagination from 'components/ui/Table/Pagination'
 import { ActionPilotage } from 'interfaces/action'
@@ -46,9 +47,16 @@ export default function OngletActionsPilotage({
   return (
     <>
       {metadonnees.nombreTotal === 0 && (
-        <p className='text-base-bold mb-2'>
-          Vous n’avez pas d’action à qualifier.
-        </p>
+        <div className='bg-grey_100 flex flex-col justify-center items-center'>
+          <EmptyStateImage
+            focusable='false'
+            aria-hidden='true'
+            className='w-[360px] h-[200px]'
+          />
+          <p className='mt-4 text-base-medium w-2/3 text-center'>
+            Vous n’avez pas d’action à qualifier.
+          </p>
+        </div>
       )}
 
       {metadonnees.nombreTotal > 0 && (

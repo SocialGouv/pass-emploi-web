@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/illustration-people-grey.svg'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import SituationTag from 'components/jeune/SituationTag'
@@ -159,7 +159,7 @@ const Etablissement = (_: MissionLocaleProps) => {
                       <IconComponent
                         focusable={false}
                         aria-hidden={true}
-                        className='w-4 h-4 fill-content_color'
+                        className='w-4 h-4 fill-primary'
                         name={IconName.ChevronRight}
                       />
                     </span>

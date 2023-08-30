@@ -9,8 +9,8 @@ export enum TypeMessage {
   MESSAGE_PJ = 'MESSAGE_PJ',
   MESSAGE_OFFRE = 'MESSAGE_OFFRE',
   MESSAGE_EVENEMENT = 'MESSAGE_EVENEMENT',
-
   MESSAGE_EVENEMENT_EMPLOI = 'MESSAGE_EVENEMENT_EMPLOI',
+  MESSAGE_SESSION_MILO = 'MESSAGE_SESSION_MILO',
 }
 
 export interface Message {
@@ -25,6 +25,7 @@ export interface Message {
   infoOffre?: InfoOffre
   infoEvenement?: InfoEvenement
   infoEvenementEmploi?: InfoEvenementEmploi
+  infoSessionImilo?: InfoSessionMilo
 }
 
 export interface MessageListeDiffusion {
@@ -63,4 +64,9 @@ export interface InfoEvenementEmploi {
   id: string
   titre: string
   url: string
+}
+
+export interface InfoSessionMilo {
+  id: string
+  titre: string
 }

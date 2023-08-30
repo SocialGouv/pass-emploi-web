@@ -30,6 +30,17 @@ export const unMessage = (args: Partial<Message> = {}): Message => {
 
 export const desMessagesAntechronologiques = (): Message[] => [
   unMessage({
+    id: 'message-9',
+    content:
+      'Bonjour, je vous partage une session milo afin d’avoir votre avis',
+    creationDate: DateTime.local(2022, 1, 17),
+    type: TypeMessage.MESSAGE_SESSION_MILO,
+    infoSessionImilo: {
+      id: 'id-session-milo',
+      titre: 'Une session milo',
+    },
+  }),
+  unMessage({
     id: 'message-8',
     content: 'Bonjour, je vous partage un événement afin d’avoir votre avis',
     creationDate: DateTime.local(2022, 1, 17),
@@ -188,6 +199,17 @@ export const desMessagesParJour = (): ByDay<Message>[] => [
           id: 'id-evenement-emploi',
           titre: 'Un événement emploi',
           url: 'https://www.lala.com',
+        },
+      }),
+      unMessage({
+        id: 'message-9',
+        content:
+          'Decrypted: Bonjour, je vous partage une session milo afin d’avoir votre avis',
+        creationDate: DateTime.local(2022, 1, 17),
+        type: TypeMessage.MESSAGE_SESSION_MILO,
+        infoSessionImilo: {
+          id: 'id-session-milo',
+          titre: 'Une session milo',
         },
       }),
     ],

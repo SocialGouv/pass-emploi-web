@@ -123,12 +123,19 @@ const ALERTES: DictAlertes = {
     title: 'La recherche et ses critères ont bien été partagés',
   },
   clotureAC: { title: 'Cet événement a bien été clos' },
+  clotureSession: { title: 'Cet événement a bien été clos' },
   creationListeDiffusion: { title: 'La liste de diffusion a bien été créée' },
   modificationListeDiffusion: {
     title: 'La liste de diffusion a bien été modifiée',
   },
   suppressionListeDiffusion: {
     title: 'La liste de diffusion a bien été supprimée',
+  },
+  modificationAtelier: {
+    title: 'L’atelier a bien été mis à jour',
+  },
+  modificationInformationCollective: {
+    title: 'L’information collective a bien été mise à jour',
   },
 }
 

@@ -8,6 +8,7 @@ import { uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
+import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { ActionPilotage } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
@@ -26,6 +27,10 @@ import {
   getAnimationsCollectivesACloreServerSide,
 } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
+import {
+  getSessionsACloreServerSide,
+  SessionsAClore,
+} from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
@@ -35,6 +40,7 @@ jest.mock('services/actions.service')
 jest.mock('services/evenements.service')
 jest.mock('services/referentiel.service')
 jest.mock('services/conseiller.service')
+jest.mock('services/sessions.service')
 jest.mock('components/Modal')
 
 describe('Pilotage', () => {
@@ -42,10 +48,16 @@ describe('Pilotage', () => {
     describe('contenu', () => {
       let actions: ActionPilotage[]
       let animationsCollectives: AnimationCollectivePilotage[]
+      let sessions: SessionsAClore[]
 
       beforeEach(async () => {
+        process.env = Object.assign(process.env, {
+          ENABLE_SESSIONS_MILO: 'true',
+        })
+
         actions = uneListeDActionsAQualifier()
         animationsCollectives = uneListeDAnimationCollectiveAClore()
+        sessions = uneListeDeSessionsAClore()
         ;(getActionsAQualifierClientSide as jest.Mock).mockImplementation(
           async (_, page) => ({
             actions: [
@@ -76,6 +88,9 @@ describe('Pilotage', () => {
           ],
           metadonnees: { nombrePages: 3, nombreTotal: 25 },
         }))
+        ;(getSessionsACloreServerSide as jest.Mock).mockImplementation(
+          async () => {}
+        )
         ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
         await act(async () =>
@@ -90,6 +105,7 @@ describe('Pilotage', () => {
                 donnees: uneListeDAnimationCollectiveAClore(),
                 metadonnees: { nombrePages: 3, nombreTotal: 25 },
               }}
+              sessions={sessions}
             />,
             {
               customConseiller: {
@@ -113,6 +129,9 @@ describe('Pilotage', () => {
         )
         expect(getByDescriptionTerm('Les animations')).toHaveTextContent(
           '25 À clore'
+        )
+        expect(getByDescriptionTerm('Sessions i-milo')).toHaveTextContent(
+          '3 À clore'
         )
       })
 
@@ -173,17 +192,15 @@ describe('Pilotage', () => {
 
         it("permet d'accéder aux animations collectives", async () => {
           // When
-          await userEvent.click(
-            screen.getByRole('tab', { name: 'Animations à clore 25' })
-          )
+          await userEvent.click(screen.getByRole('tab', { name: 'Actions 25' }))
 
           // Then
           expect(
             screen.getByRole('tab', { selected: true })
-          ).toHaveAccessibleName('Animations à clore 25')
+          ).toHaveAccessibleName('Actions 25')
           expect(
             screen.getByRole('table', {
-              name: 'Liste des animations collectives à clore',
+              name: 'Liste des actions à qualifier',
             })
           ).toBeInTheDocument()
         })
@@ -193,7 +210,7 @@ describe('Pilotage', () => {
         beforeEach(async () => {
           // Given
           await userEvent.click(
-            screen.getByRole('tab', { name: 'Animations à clore 25' })
+            screen.getByRole('tab', { name: 'AC app CEJ 25' })
           )
         })
 
@@ -250,16 +267,16 @@ describe('Pilotage', () => {
         it("permet d'accéder aux actions", async () => {
           // When
           await userEvent.click(
-            screen.getByRole('tab', { name: 'Actions à qualifier 25' })
+            screen.getByRole('tab', { name: 'AC app CEJ 25' })
           )
 
           // Then
           expect(
             screen.getByRole('tab', { selected: true })
-          ).toHaveAccessibleName('Actions à qualifier 25')
+          ).toHaveAccessibleName('AC app CEJ 25')
           expect(
             screen.getByRole('table', {
-              name: 'Liste des actions à qualifier',
+              name: 'Liste des animations collectives à clore',
             })
           ).toBeInTheDocument()
         })
@@ -274,6 +291,67 @@ describe('Pilotage', () => {
             2
           )
           expect(screen.getByText('Animation page 2')).toBeInTheDocument()
+        })
+      })
+
+      describe('sessions i-milo', () => {
+        beforeEach(async () => {
+          // Given
+          await userEvent.click(
+            screen.getByRole('tab', { name: 'Sessions i-milo 3' })
+          )
+        })
+
+        it('affiche un tableau de sessions à clore ', () => {
+          // Given
+          const tableau = screen.getByRole('table', {
+            name: 'Liste des sessions i-milo à clore',
+          })
+
+          // Then
+          expect(
+            within(tableau).getByRole('columnheader', { name: 'Date' })
+          ).toBeInTheDocument()
+          expect(
+            within(tableau).getByRole('columnheader', {
+              name: 'Titre de la session',
+            })
+          ).toBeInTheDocument()
+        })
+
+        it('affiche les sessions i-milo de l’établissement à clore', async () => {
+          // Given
+          const tableau = screen.getByRole('table', {
+            name: 'Liste des sessions i-milo à clore',
+          })
+
+          // Then
+          sessions.forEach((session) => {
+            expect(within(tableau).getByText(session.date)).toBeInTheDocument()
+            expect(within(tableau).getByText(session.titre)).toBeInTheDocument()
+            expect(
+              within(tableau).getByLabelText(
+                `Accéder au détail de la session : ${session.titre}`
+              )
+            ).toHaveAttribute('href', '/agenda/sessions/' + session.id)
+          })
+        })
+
+        it("permet d'accéder aux sessions", async () => {
+          // When
+          await userEvent.click(
+            screen.getByRole('tab', { name: 'Sessions i-milo 3' })
+          )
+
+          // Then
+          expect(
+            screen.getByRole('tab', { selected: true })
+          ).toHaveAccessibleName('Sessions i-milo 3')
+          expect(
+            screen.getByRole('table', {
+              name: 'Liste des sessions i-milo à clore',
+            })
+          ).toBeInTheDocument()
         })
       })
     })
@@ -323,13 +401,43 @@ describe('Pilotage', () => {
         )
 
         // When
-        await userEvent.click(
-          screen.getByRole('tab', { name: /Animations à clore/ })
-        )
+        await userEvent.click(screen.getByRole('tab', { name: /AC app CEJ/ }))
 
         // Then
         expect(
           screen.getByText('Vous n’avez pas d’animation collective à clore.')
+        ).toBeInTheDocument()
+      })
+    })
+
+    describe("quand le conseiller n'a pas de session à clore", () => {
+      it('affiche un message qui le précise', async () => {
+        // Given
+        ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
+        renderWithContexts(
+          <Pilotage
+            withoutChat={true}
+            pageTitle=''
+            actions={{
+              donnees: [],
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
+            }}
+            animationsCollectives={{
+              donnees: [],
+              metadonnees: { nombrePages: 0, nombreTotal: 0 },
+            }}
+            sessions={[]}
+          />
+        )
+
+        // When
+        await userEvent.click(
+          screen.getByRole('tab', { name: /Sessions i-milo/ })
+        )
+
+        // Then
+        expect(
+          screen.getByText('Vous n’avez pas de session à clore.')
         ).toBeInTheDocument()
       })
     })
@@ -372,9 +480,7 @@ describe('Pilotage', () => {
         })
 
         // When
-        await userEvent.click(
-          screen.getByRole('tab', { name: /Animations à clore/ })
-        )
+        await userEvent.click(screen.getByRole('tab', { name: /AC app CEJ/ }))
       })
 
       it('n’affiche pas la liste des animations à clore', async () => {
@@ -453,32 +559,13 @@ describe('Pilotage', () => {
       })
     })
   })
-})
 
-describe('Server side', () => {
-  it('requiert une session valide', async () => {
-    // Given
-    ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-      validSession: false,
-      redirect: { destination: 'whatever' },
-    })
-
-    // When
-    const actual = await getServerSideProps({} as GetServerSidePropsContext)
-
-    // Then
-    expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-    expect(actual).toEqual({ redirect: { destination: 'whatever' } })
-  })
-
-  describe('quand le conseiller est Pole emploi', () => {
-    it('renvoie une 404', async () => {
+  describe('Server side', () => {
+    it('requiert une session valide', async () => {
       // Given
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          user: { structure: 'POLE_EMPLOI' },
-        },
+        validSession: false,
+        redirect: { destination: 'whatever' },
       })
 
       // When
@@ -486,108 +573,136 @@ describe('Server side', () => {
 
       // Then
       expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ notFound: true })
+      expect(actual).toEqual({ redirect: { destination: 'whatever' } })
     })
-  })
 
-  describe('quand le conseiller est connecté', () => {
-    beforeEach(async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        redirect: { destination: 'whatever' },
-        session: {
-          accessToken: 'accessToken',
-          user: { id: 'conseiller-id' },
-        },
-      })
-      ;(getActionsAQualifierServerSide as jest.Mock).mockResolvedValue({
-        actions: uneListeDActionsAQualifier(),
-        metadonnees: {
-          nombreTotal: 5,
-          nombrePages: 1,
-        },
-      })
-      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
-        unConseiller({
-          agence: {
-            nom: 'Mission Locale Aubenas',
-            id: 'id-etablissement',
+    describe('quand le conseiller est Pole emploi', () => {
+      it('renvoie une 404', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'POLE_EMPLOI' },
           },
         })
-      )
-      ;(
-        getAnimationsCollectivesACloreServerSide as jest.Mock
-      ).mockResolvedValue({
-        animationsCollectives: uneListeDAnimationCollectiveAClore(),
-        metadonnees: {
-          nombreTotal: 5,
-          nombrePages: 1,
-        },
+
+        // When
+        const actual = await getServerSideProps({} as GetServerSidePropsContext)
+
+        // Then
+        expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
+        expect(actual).toEqual({ notFound: true })
       })
     })
 
-    it('prépare la page', async () => {
-      // When
-      const actual = await getServerSideProps({
-        query: { onglet: 'actions' },
-      } as unknown as GetServerSidePropsContext)
-
-      // Then
-      expect(getActionsAQualifierServerSide).toHaveBeenCalledWith(
-        'conseiller-id',
-        'accessToken'
-      )
-      expect(getConseillerServerSide).toHaveBeenCalledWith(
-        { id: 'conseiller-id' },
-        'accessToken'
-      )
-      expect(getAnimationsCollectivesACloreServerSide).toHaveBeenCalledWith(
-        'id-etablissement',
-        'accessToken'
-      )
-      expect(actual).toEqual({
-        props: {
-          pageTitle: 'Pilotage',
-          actions: {
-            donnees: uneListeDActionsAQualifier(),
-            metadonnees: { nombreTotal: 5, nombrePages: 1 },
-          },
-          animationsCollectives: {
-            donnees: uneListeDAnimationCollectiveAClore(),
-            metadonnees: { nombreTotal: 5, nombrePages: 1 },
-          },
-          onglet: 'ACTIONS',
-        },
-      })
-    })
-
-    it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
-      // Given
-      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
-        unConseiller({
-          agence: {
-            nom: 'Mission Locale Aubenas',
+    describe('quand le conseiller est connecté', () => {
+      beforeEach(async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          redirect: { destination: 'whatever' },
+          session: {
+            accessToken: 'accessToken',
+            user: { id: 'conseiller-id' },
           },
         })
-      )
-
-      // When
-      const actual = await getServerSideProps({
-        query: { onglet: 'animationsCollectives' },
-      } as unknown as GetServerSidePropsContext)
-
-      // Then
-      expect(getAnimationsCollectivesACloreServerSide).not.toHaveBeenCalled()
-      expect(actual).toEqual({
-        props: {
-          pageTitle: 'Pilotage',
-          actions: {
-            donnees: uneListeDActionsAQualifier(),
-            metadonnees: { nombreTotal: 5, nombrePages: 1 },
+        ;(getActionsAQualifierServerSide as jest.Mock).mockResolvedValue({
+          actions: uneListeDActionsAQualifier(),
+          metadonnees: {
+            nombreTotal: 5,
+            nombrePages: 1,
           },
-          onglet: 'ANIMATIONS_COLLECTIVES',
-        },
+        })
+        ;(getSessionsACloreServerSide as jest.Mock).mockResolvedValue(
+          uneListeDeSessionsAClore()
+        )
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
+          unConseiller({
+            agence: {
+              nom: 'Mission Locale Aubenas',
+              id: 'id-etablissement',
+            },
+          })
+        )
+        ;(
+          getAnimationsCollectivesACloreServerSide as jest.Mock
+        ).mockResolvedValue({
+          animationsCollectives: uneListeDAnimationCollectiveAClore(),
+          metadonnees: {
+            nombreTotal: 5,
+            nombrePages: 1,
+          },
+        })
+      })
+
+      it('prépare la page', async () => {
+        // When
+        const actual = await getServerSideProps({
+          query: { onglet: 'actions' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(getActionsAQualifierServerSide).toHaveBeenCalledWith(
+          'conseiller-id',
+          'accessToken'
+        )
+        expect(getConseillerServerSide).toHaveBeenCalledWith(
+          { id: 'conseiller-id' },
+          'accessToken'
+        )
+        expect(getAnimationsCollectivesACloreServerSide).toHaveBeenCalledWith(
+          'id-etablissement',
+          'accessToken'
+        )
+        expect(getSessionsACloreServerSide).toHaveBeenCalledWith(
+          'conseiller-id',
+          'accessToken'
+        )
+        expect(actual).toEqual({
+          props: {
+            pageTitle: 'Pilotage',
+            actions: {
+              donnees: uneListeDActionsAQualifier(),
+              metadonnees: { nombreTotal: 5, nombrePages: 1 },
+            },
+            animationsCollectives: {
+              donnees: uneListeDAnimationCollectiveAClore(),
+              metadonnees: { nombreTotal: 5, nombrePages: 1 },
+            },
+            sessions: uneListeDeSessionsAClore(),
+            onglet: 'ACTIONS',
+          },
+        })
+      })
+
+      it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
+        // Given
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
+          unConseiller({
+            agence: {
+              nom: 'Mission Locale Aubenas',
+            },
+          })
+        )
+
+        // When
+        const actual = await getServerSideProps({
+          query: { onglet: 'animationsCollectives' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(getAnimationsCollectivesACloreServerSide).not.toHaveBeenCalled()
+        expect(actual).toEqual({
+          props: {
+            pageTitle: 'Pilotage',
+            actions: {
+              donnees: uneListeDActionsAQualifier(),
+              metadonnees: { nombreTotal: 5, nombrePages: 1 },
+            },
+            sessions: uneListeDeSessionsAClore(),
+            onglet: 'ANIMATIONS_COLLECTIVES',
+          },
+        })
       })
     })
   })

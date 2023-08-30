@@ -1,7 +1,7 @@
 import React from 'react'
 
 import MessageGroupeIcon from 'assets/icons/actions/outgoing_mail.svg'
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/illustration-messagerie.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'

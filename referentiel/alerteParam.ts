@@ -7,6 +7,7 @@ export enum AlerteParam {
   modificationAnimationCollective = 'modificationAnimationCollective',
   suppressionAnimationCollective = 'suppressionAnimationCollective',
   clotureAC = 'clotureAC',
+  clotureSession = 'clotureSession',
   // Bénéficiaires
   recuperationBeneficiaires = 'recuperationBeneficiaires',
   suppressionBeneficiaire = 'suppressionBeneficiaire',
@@ -27,4 +28,6 @@ export enum AlerteParam {
   modificationIdentifiantPartenaire = 'modificationIdentifiantPartenaire',
   partageOffre = 'partageOffre',
   suggestionRecherche = 'suggestionRecherche',
+  modificationAtelier = 'modificationAtelier',
+  modificationInformationCollective = 'modificationInformationCollective',
 }

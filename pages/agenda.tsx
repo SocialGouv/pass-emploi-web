@@ -11,7 +11,11 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estUserPoleEmploi,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -59,7 +63,6 @@ function Agenda({ onglet }: AgendaProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(
     onglet ?? Onglet.CONSEILLER
   )
-
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
@@ -105,14 +108,29 @@ function Agenda({ onglet }: AgendaProps) {
   }
 
   async function recupererRdvsEtablissement(
-    idEtablissement: string,
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<AnimationCollective[]> {
     const { getRendezVousEtablissement } = await import(
       'services/evenements.service'
     )
-    return getRendezVousEtablissement(idEtablissement, dateDebut, dateFin)
+    return getRendezVousEtablissement(
+      conseiller.agence!.id!,
+      dateDebut,
+      dateFin
+    )
+  }
+
+  async function recupererSessionsMilo(
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<AnimationCollective[]> {
+    if (conseiller.structure !== StructureConseiller.MILO) return []
+
+    const { getSessionsMissionLocaleClientSide } = await import(
+      'services/sessions.service'
+    )
+    return getSessionsMissionLocaleClientSide(conseiller.id, dateDebut, dateFin)
   }
 
   async function trackAgenceModal(trackingMessage: string) {
@@ -211,8 +229,8 @@ function Agenda({ onglet }: AgendaProps) {
         >
           {conseiller.agence && (
             <OngletAgendaEtablissement
-              idEtablissement={conseiller.agence.id!}
               recupererAnimationsCollectives={recupererRdvsEtablissement}
+              recupererSessionsMilo={recupererSessionsMilo}
               trackNavigation={trackNavigation}
             />
           )}

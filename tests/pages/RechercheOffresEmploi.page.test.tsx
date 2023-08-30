@@ -318,7 +318,7 @@ describe('Page Recherche Offres Emploi', () => {
     it('ne permet pas de partager s’il n’y a ni mots clés ni localité renseignés', async () => {
       await userEvent.click(
         screen.getByRole('button', {
-          name: `Partager critères de recherche`,
+          name: `Partager les critères de recherche`,
         })
       )
 
@@ -343,7 +343,7 @@ describe('Page Recherche Offres Emploi', () => {
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: `Partager critères de recherche`,
+          name: `Partager les critères de recherche`,
         })
       ).toBeInTheDocument()
     })
@@ -357,7 +357,7 @@ describe('Page Recherche Offres Emploi', () => {
       // Then
       expect(
         screen.getByRole('link', {
-          name: `Partager critères de recherche`,
+          name: `Partager les critères de recherche`,
         })
       ).toHaveAttribute(
         'href',

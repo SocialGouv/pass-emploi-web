@@ -29,7 +29,7 @@ import {
   getIndicateursJeuneAlleges,
   getIndicateursJeuneComplets,
   getJeuneDetails,
-  getJeunesDeLEtablissement,
+  getJeunesDeLEtablissementClientSide,
   getJeunesDuConseillerClientSide,
   getJeunesDuConseillerParId,
   getJeunesDuConseillerServerSide,
@@ -396,7 +396,7 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.getJeunesDeLEtablissement', () => {
+  describe('.getJeunesDeLEtablissementClientSide', () => {
     it('retourne les bénéficiaires d’un établissement', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -404,7 +404,9 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await getJeunesDeLEtablissement('id-etablissement')
+      const actual = await getJeunesDeLEtablissementClientSide(
+        'id-etablissement'
+      )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(

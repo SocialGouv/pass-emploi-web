@@ -5,7 +5,7 @@ import React, { FormEvent, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { Etape } from 'components/ui/Form/Etape'
+import { Etape, NumeroEtape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -18,7 +18,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { ValueWithError } from 'components/ValueWithError'
-import { BaseConseiller } from 'interfaces/conseiller'
+import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   compareJeunesByNom,
   getNomJeuneComplet,
@@ -29,13 +29,25 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
+type StructureReaffectation =
+  | StructureConseiller.POLE_EMPLOI
+  | StructureConseiller.POLE_EMPLOI_BRSA
+
 const ConseillerIntrouvableSuggestionModal = dynamic(
   import('components/ConseillerIntrouvableSuggestionModal'),
   { ssr: false }
 )
 
-function Reaffectation(_props: PageProps) {
+type ReaffectationProps = PageProps & {
+  estSuperviseurPEBRSA: boolean
+}
+
+function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   const [portefeuille] = usePortefeuille()
+
+  const [structureReaffectation, setStructureReaffectation] = useState<
+    ValueWithError<StructureReaffectation | undefined>
+  >({ value: undefined })
 
   const [isReaffectationTemporaire, setIsReaffectationTemporaire] = useState<
     ValueWithError<boolean | undefined>
@@ -71,6 +83,17 @@ function Reaffectation(_props: PageProps) {
   )
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
+  const numerosEtapes: NumeroEtape[] = estSuperviseurPEBRSA
+    ? [2, 3, 4, 5]
+    : [1, 2, 3, 4]
+
+  function handleInputStructureReaffectation(
+    structure: StructureReaffectation
+  ) {
+    setErreurReaffectation(undefined)
+    setStructureReaffectation({ value: structure })
+  }
 
   function handleInputTypeReaffectation(isTemporaire: boolean) {
     setErreurReaffectation(undefined)
@@ -121,6 +144,18 @@ function Reaffectation(_props: PageProps) {
     }
   }
 
+  function choixConseillerDestination(
+    conseiller: ValueWithError<BaseConseiller | undefined>
+  ) {
+    if (conseiller.value?.id === conseillerInitial.value?.id) {
+      setConseillerDestination({
+        value: undefined,
+        error:
+          'Vous ne pouvez pas réaffecter des bénéficiaires à leur conseiller initial',
+      })
+    } else setConseillerDestination({ value: conseiller.value })
+  }
+
   function toggleTousLesBeneficiaires() {
     setErreurReaffectation(undefined)
 
@@ -165,6 +200,13 @@ function Reaffectation(_props: PageProps) {
     }
 
     let formInvalid = false
+    if (estSuperviseurPEBRSA && structureReaffectation.value === undefined) {
+      setStructureReaffectation({
+        ...structureReaffectation,
+        error: 'Veuillez choisir un contrat de réaffectation',
+      })
+      formInvalid = true
+    }
     if (isReaffectationTemporaire.value === undefined) {
       setIsReaffectationTemporaire({
         ...isReaffectationTemporaire,
@@ -231,7 +273,51 @@ function Reaffectation(_props: PageProps) {
       </p>
 
       <form onSubmit={reaffecterBeneficiaires} className='grow'>
-        <Etape numero={1} titre='Choisissez un type de réaffectation'>
+        {estSuperviseurPEBRSA && (
+          <Etape numero={1} titre='Choisissez un accompagnement'>
+            {structureReaffectation.error && (
+              <InputError id='structure-reaffectation--error' className='mb-2'>
+                {structureReaffectation.error}
+              </InputError>
+            )}
+            <div className='flex flex-wrap'>
+              <RadioBox
+                isSelected={
+                  structureReaffectation.value ===
+                  StructureConseiller.POLE_EMPLOI
+                }
+                onChange={() =>
+                  handleInputStructureReaffectation(
+                    StructureConseiller.POLE_EMPLOI
+                  )
+                }
+                label='CEJ'
+                name='structure-reaffectation'
+                id='structure-reaffectation--CEJ'
+              />
+
+              <RadioBox
+                isSelected={
+                  structureReaffectation.value ===
+                  StructureConseiller.POLE_EMPLOI_BRSA
+                }
+                onChange={() =>
+                  handleInputStructureReaffectation(
+                    StructureConseiller.POLE_EMPLOI_BRSA
+                  )
+                }
+                label='BRSA'
+                name='structure-reaffectation'
+                id='structure-reaffectation--BRSA'
+              />
+            </div>
+          </Etape>
+        )}
+
+        <Etape
+          numero={numerosEtapes[0]}
+          titre='Choisissez un type de réaffectation'
+        >
           {isReaffectationTemporaire.error && (
             <InputError id='type-reaffectation--error' className='mb-2'>
               {isReaffectationTemporaire.error}
@@ -257,22 +343,38 @@ function Reaffectation(_props: PageProps) {
         </Etape>
 
         <Etape
-          numero={2}
+          numero={numerosEtapes[1]}
           titre='Saisissez le conseiller dont les bénéficiaires sont à réaffecter'
         >
           <ChoixConseiller
             name='initial'
             idConseillerSelectionne={conseillerInitial.value?.id}
+            structureReaffectation={structureReaffectation.value}
             onInput={resetConseillerInitial}
             onChoixConseiller={fetchListeBeneficiaires}
             error={conseillerInitial.error}
           />
+
+          <button
+            type='button'
+            onClick={() => setShowModalConseillerIntrouvable(true)}
+            className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+          >
+            Le conseiller n’apparaît pas dans la liste déroulante. Que faire
+            ?&nbsp;
+            <IconComponent
+              name={IconName.Help}
+              focusable={false}
+              aria-hidden={true}
+              className='w-4 h-4 fill-primary'
+            />
+          </button>
         </Etape>
 
         {beneficiaires && beneficiaires.length > 0 && (
           <>
             <Etape
-              numero={3}
+              numero={numerosEtapes[2]}
               titre='Sélectionnez les bénéficiaires à réaffecter'
             >
               {idsBeneficiairesSelected.error && (
@@ -330,18 +432,34 @@ function Reaffectation(_props: PageProps) {
             </Etape>
 
             <Etape
-              numero={4}
+              numero={numerosEtapes[3]}
               titre='Saisissez le conseiller à qui affecter les bénéficiaires'
             >
               <ChoixConseiller
                 name='destinataire'
                 idConseillerSelectionne={conseillerDestination.value?.id}
+                structureReaffectation={structureReaffectation.value}
                 onInput={resetConseillerDestination}
                 onChoixConseiller={(conseiller) =>
-                  setConseillerDestination({ value: conseiller })
+                  choixConseillerDestination({ value: conseiller })
                 }
                 error={conseillerDestination.error}
               />
+
+              <button
+                type='button'
+                onClick={() => setShowModalConseillerIntrouvable(true)}
+                className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+              >
+                Le conseiller n’apparaît pas dans la liste déroulante. Que faire
+                ?&nbsp;
+                <IconComponent
+                  name={IconName.Help}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='w-4 h-4 fill-primary'
+                />
+              </button>
             </Etape>
 
             <div className='w-full flex justify-center gap-2'>
@@ -407,6 +525,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
       returnTo: redirectTo,
       pageTitle: 'Réaffectation',
       withoutChat: true,
+      estSuperviseurPEBRSA: user.estSuperviseurPEBRSA,
     },
   }
 }
@@ -415,6 +534,7 @@ export default withTransaction(Reaffectation.name, 'page')(Reaffectation)
 
 function ChoixConseiller({
   idConseillerSelectionne,
+  structureReaffectation,
   name,
   onChoixConseiller,
   onInput,
@@ -424,6 +544,7 @@ function ChoixConseiller({
   onInput: () => void
   onChoixConseiller: (conseiller: BaseConseiller) => void
   idConseillerSelectionne?: string
+  structureReaffectation?: StructureReaffectation
   error?: string
 }) {
   const id = 'conseiller-' + name
@@ -450,7 +571,10 @@ function ChoixConseiller({
 
     const { getConseillers } = await import('services/conseiller.service')
     setRechercheConseillerEnCours(true)
-    const conseillers = await getConseillers(queryConseiller.value)
+    const conseillers = await getConseillers(
+      queryConseiller.value,
+      structureReaffectation
+    )
     if (conseillers.length) setChoixConseillers(conseillers)
     else {
       setQueryConseiller({

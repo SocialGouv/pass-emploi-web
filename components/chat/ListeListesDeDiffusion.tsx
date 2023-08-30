@@ -1,6 +1,6 @@
 import React from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/illustration-send-white.svg'
 import HeaderChat from 'components/chat/HeaderChat'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -157,7 +157,7 @@ function ListeDeDiffusionTile({
       </div>
       <IconComponent
         name={IconName.ChevronRight}
-        className='h-6 w-6'
+        className='h-6 w-6 fill-primary'
         aria-hidden={true}
         focusable={false}
       />

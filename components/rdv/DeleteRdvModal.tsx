@@ -1,13 +1,18 @@
-import IconComponent, { IconName } from '../ui/IconComponent'
+import React from 'react'
+
+import { IconName } from '../ui/IconComponent'
 
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 
 interface DeleteRdvModalProps {
   aDesJeunesDUnAutrePortefeuille: boolean
   onClose: () => void
   performDelete: () => Promise<void>
   evenementTypeAC: boolean
+  titreEvenement: string
 }
 
 export default function DeleteRdvModal({
@@ -15,46 +20,45 @@ export default function DeleteRdvModal({
   onClose,
   performDelete,
   evenementTypeAC,
+  titreEvenement,
 }: DeleteRdvModalProps) {
   function handleCloseModal() {
     onClose()
   }
 
-  const message = aDesJeunesDUnAutrePortefeuille
-    ? `Vous allez supprimer ${
-        evenementTypeAC ? 'une animation collective' : 'un rendez-vous'
-      } qui concerne des jeunes qui ne sont pas dans votre portefeuille`
-    : 'L’ensemble des bénéficiaires sera notifié de la suppression'
-
   return (
     <Modal
-      title={`Suppression ${
-        evenementTypeAC ? 'de l’animation collective' : 'du rendez-vous'
-      }`}
+      title={`Souhaitez vous supprimer l’${
+        evenementTypeAC ? 'animation collective' : 'événement'
+      } : ${titreEvenement} ?`}
       onClose={handleCloseModal}
+      titleIllustration={IllustrationName.Delete}
     >
-      <IconComponent
-        name={IconName.Warning}
-        focusable={false}
-        aria-hidden={true}
-        className='w-[108px] h-[108px] m-auto mb-16 fill-primary'
-      />
-
-      <p className='text-base-bold text-content_color text-center mx-28'>
-        {message}
-      </p>
-
       {aDesJeunesDUnAutrePortefeuille && (
-        <div className='text-base-regular text-content_color text-center mx-28 mt-12'>
-          <p>
-            Le créateur recevra un e-mail de suppression{' '}
-            {evenementTypeAC ? 'de l’animation collective' : 'du rendez-vous'}.
-          </p>
-          <p>Les bénéficiaires seront notifiés sur l’application CEJ.</p>
+        <>
+          <div className='mb-6'>
+            <InformationMessage
+              iconName={IconName.Info}
+              label='Celle-ci concerne des bénéficiaires qui ne sont pas dans votre portefeuille.'
+            />
+          </div>
+          <div className='text-base-regular text-content_color text-center mt-6'>
+            <p>
+              Le créateur de l’
+              {evenementTypeAC ? 'animation collective' : 'événement'} et les
+              bénéficiaires seront notifiés de la suppression.
+            </p>
+          </div>
+        </>
+      )}
+
+      {!aDesJeunesDUnAutrePortefeuille && (
+        <div className='text-base-regular text-content_color text-center mt-6'>
+          <p>Les bénéficiaires seront notifiées de la suppression.</p>
         </div>
       )}
 
-      <div className='flex justify-center mt-12'>
+      <div className='flex justify-center mt-4'>
         <Button
           type='button'
           className='mr-[16px]'
@@ -69,7 +73,9 @@ export default function DeleteRdvModal({
           style={ButtonStyle.PRIMARY}
           onClick={performDelete}
         >
-          <span className='px-[40px]'>Confirmer</span>
+          <span className='px-[40px]'>
+            Supprimer l’{evenementTypeAC ? 'animation' : 'événement'}
+          </span>
         </Button>
       </div>
     </Modal>

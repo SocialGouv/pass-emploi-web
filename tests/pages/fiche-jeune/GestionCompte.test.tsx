@@ -86,17 +86,19 @@ describe('Gestion du compte dans la fiche jeune', () => {
       it('affiche la première modale de suppression du compte d’un bénéficiaire actif', async () => {
         // Then
         expect(
-          screen.getByText('Souhaitez-vous continuer la suppression ?')
+          screen.getByText(/Souhaitez-vous supprimer le compte bénéficiaire/)
         ).toBeInTheDocument()
       })
 
       describe('Seconde étape suppression modale', () => {
         beforeEach(async () => {
           // Given
-          const continuerButton = screen.getByText('Continuer')
+          const afficheSecondeEtapeButton = screen.getAllByRole('button', {
+            name: 'Supprimer ce compte',
+          })[1]
 
           // When
-          await userEvent.click(continuerButton)
+          await userEvent.click(afficheSecondeEtapeButton)
         })
 
         it('affiche la seconde modale pour confirmer la suppression du compte d’un bénéficiaire actif', async () => {
@@ -162,7 +164,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
           const selectMotif = screen.getByRole('combobox', {
             name: /Motif de suppression/,
           })
-          const supprimerButtonModal = screen.getByText('Confirmer')
+          const supprimerButtonModal = screen.getByText('Supprimer le compte')
           await userEvent.selectOptions(
             selectMotif,
             'Demande du jeune de sortir du dispositif'
@@ -218,7 +220,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
       it('lors de la confirmation, supprime le bénéficiaire', async () => {
         // Given
-        const supprimerButtonModal = screen.getByText('Confirmer')
+        const supprimerButtonModal = screen.getByText('Supprimer le compte')
 
         // When
         await userEvent.click(supprimerButtonModal)

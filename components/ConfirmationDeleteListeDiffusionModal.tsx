@@ -1,16 +1,18 @@
 import { MouseEvent, useRef } from 'react'
 
 import Modal from './Modal'
-import { IconName } from './ui/IconComponent'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 
 interface ConfirmationDeleteListeDiffusionModalProps {
+  titreListeDeDiffusion: string
   onConfirmation: () => void
   onCancel: () => void
 }
 
 export default function ConfirmationDeleteListeDiffusionModal({
+  titreListeDeDiffusion,
   onCancel,
   onConfirmation,
 }: ConfirmationDeleteListeDiffusionModalProps) {
@@ -20,16 +22,15 @@ export default function ConfirmationDeleteListeDiffusionModal({
 
   return (
     <Modal
-      title='Suppression de la liste de diffusion'
-      titleIcon={IconName.Warning}
+      title={`Souhaitez-vous supprimer la liste de diffusion : ${titreListeDeDiffusion} ?`}
       onClose={onCancel}
       ref={modalRef}
+      titleIllustration={IllustrationName.Delete}
     >
       <div className='px-20 text-center'>
-        <p className='mt-6 text-base-bold'>
-          Vous allez supprimer cette liste de diffusion
+        <p className='mt-6'>
+          L’historique des messages envoyés ne sera plus accessible.
         </p>
-        <p className='mt-6'>Veuillez confirmer la suppression.</p>
       </div>
 
       <div className='mt-14 flex justify-center'>
@@ -42,7 +43,7 @@ export default function ConfirmationDeleteListeDiffusionModal({
           Annuler
         </Button>
         <Button type='button' onClick={onConfirmation}>
-          Confirmer
+          Supprimer la liste
         </Button>
       </div>
     </Modal>

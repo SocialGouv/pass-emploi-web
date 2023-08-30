@@ -31,24 +31,28 @@ export default function SuggestionCard({
   }
 
   return (
-    <div className='rounded-base shadow-base p-6'>
+    <div className='bg-primary_lighten rounded-base shadow-base p-6'>
       <h2 className='text-base-bold mb-2'>{titre}</h2>
       <dl>
         <dt className='sr-only'>Type</dt>
         <dd className='inline'>
-          <DataTag text={getTypeLabel()} />
+          <DataTag text={getTypeLabel()} style='secondary' />
         </dd>
         {labelMetier && (
           <>
             <dt className='sr-only'>Métier</dt>
             <dd className='inline'>
-              <DataTag className='ml-2' text={labelMetier} />
+              <DataTag className='ml-2' text={labelMetier} style='secondary' />
             </dd>
           </>
         )}
         <dt className='sr-only'>Localité</dt>
         <dd className='mt-4'>
-          <DataTag text={labelLocalite} iconName={IconName.LocationOn} />
+          <DataTag
+            text={labelLocalite}
+            iconName={IconName.LocationOn}
+            style='secondary'
+          />
         </dd>
       </dl>
     </div>
