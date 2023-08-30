@@ -67,7 +67,10 @@ export default function OngletAgendaEtablissement({
     dateFin: DateTime
   ) {
     const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
-    if (estEarlyAdopter(conseiller) || process.env.ENABLE_SESSIONS_MILO) {
+    if (
+      (conseiller && estEarlyAdopter(conseiller)) ||
+      process.env.ENABLE_SESSIONS_MILO
+    ) {
       const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
       setAnimationsCollectives([...evenementsMilo, ...evenements])
     } else {

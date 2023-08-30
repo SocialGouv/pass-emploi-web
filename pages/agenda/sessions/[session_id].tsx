@@ -597,7 +597,10 @@ export const getServerSideProps: GetServerSideProps<
   const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller?.agence?.id) return { notFound: true }
 
-  if (!estEarlyAdopter(conseiller) || !process.env.ENABLE_SESSIONS_MILO)
+  if (
+    (conseiller && !estEarlyAdopter(conseiller)) ||
+    !process.env.ENABLE_SESSIONS_MILO
+  )
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }

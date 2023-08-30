@@ -310,7 +310,7 @@ export const getServerSideProps: GetServerSideProps<
   )
   const conseiller = await getConseillerServerSide(user, accessToken)
 
-  if (!estEarlyAdopter(conseiller))
+  if (conseiller && !estEarlyAdopter(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
