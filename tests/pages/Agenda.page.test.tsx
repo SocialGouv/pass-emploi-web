@@ -382,13 +382,13 @@ describe('Agenda', () => {
         // Given
         process.env = Object.assign(process.env, {
           ENABLE_SESSIONS_MILO: 'true',
-          IDS_AGENCES_EARLY_ADOPTERS: '622',
+          IDS_AGENCES_EARLY_ADOPTERS: 'id-test',
         })
         const conseiller = unConseiller({
           structure: StructureConseiller.MILO,
           agence: {
             nom: 'Mission Locale Aubenas',
-            id: '622',
+            id: 'id-test',
           },
         })
 
@@ -499,7 +499,7 @@ describe('Agenda', () => {
         await userEvent.click(periodesFuturesButton)
         // Then
         expect(getRendezVousEtablissement).toHaveBeenLastCalledWith(
-          '622',
+          'id-test',
           SEPTEMBRE_8_0H,
           SEPTEMBRE_14_23H
         )

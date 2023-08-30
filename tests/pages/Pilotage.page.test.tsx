@@ -53,7 +53,7 @@ describe('Pilotage', () => {
       beforeEach(async () => {
         process.env = Object.assign(process.env, {
           ENABLE_SESSIONS_MILO: 'true',
-          IDS_AGENCES_EARLY_ADOPTERS: '622',
+          IDS_AGENCES_EARLY_ADOPTERS: 'id-test',
         })
 
         actions = uneListeDActionsAQualifier()
@@ -112,7 +112,7 @@ describe('Pilotage', () => {
               customConseiller: {
                 agence: {
                   nom: 'Mission Locale Aubenas',
-                  id: '622',
+                  id: 'id-test',
                 },
               },
             }
@@ -288,7 +288,7 @@ describe('Pilotage', () => {
 
           // Then
           expect(getAnimationsCollectivesACloreClientSide).toHaveBeenCalledWith(
-            '622',
+            'id-test',
             2
           )
           expect(screen.getByText('Animation page 2')).toBeInTheDocument()
@@ -433,7 +433,7 @@ describe('Pilotage', () => {
             customConseiller: {
               agence: {
                 nom: 'Mission Locale Aubenas',
-                id: '622',
+                id: 'id-test',
               },
             },
           }

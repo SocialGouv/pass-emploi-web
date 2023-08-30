@@ -67,5 +67,8 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
 
 export function estEarlyAdopter(conseiller: Conseiller): boolean {
   const idsAgences = new Array(process.env.IDS_AGENCES_EARLY_ADOPTERS)
-  return idsAgences.includes(conseiller.agence?.id)
+  return (
+    idsAgences.includes(conseiller.agence?.id) ||
+    process.env.ENABLE_SESSIONS_STAGING
+  )
 }

@@ -883,7 +883,7 @@ describe('Détails Session', () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
         ENABLE_SESSIONS_MILO: 'true',
-        IDS_AGENCES_EARLY_ADOPTERS: '622',
+        IDS_AGENCES_EARLY_ADOPTERS: 'id-test',
       })
       ;(getDetailsSession as jest.Mock).mockResolvedValue(unDetailSession())
     })
@@ -935,7 +935,7 @@ describe('Détails Session', () => {
           ;(getConseillerServerSide as jest.Mock).mockReturnValue(
             unConseiller({
               id: 'id-conseiller',
-              agence: { nom: 'Agence early', id: '622' },
+              agence: { nom: 'Agence early', id: 'id-test' },
             })
           )
 
@@ -982,7 +982,7 @@ describe('Détails Session', () => {
               structure: StructureConseiller.MILO,
               agence: {
                 nom: 'milo-aubenas',
-                id: '622',
+                id: 'id-test',
               },
             })
           )
