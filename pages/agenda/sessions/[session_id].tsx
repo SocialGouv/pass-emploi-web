@@ -18,7 +18,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { estEarlyAdopter, estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
@@ -578,11 +578,6 @@ export const getServerSideProps: GetServerSideProps<
   } = sessionOrRedirect
   if (estUserPoleEmploi(user)) return { notFound: true }
 
-  if (!process.env.ENABLE_SESSIONS_MILO)
-    return {
-      redirect: { destination: '/mes-jeunes', permanent: false },
-    }
-
   const idSession = context.query.session_id as string
 
   let redirectTo = context.query.redirectUrl as string
@@ -602,9 +597,15 @@ export const getServerSideProps: GetServerSideProps<
   const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller?.agence?.id) return { notFound: true }
 
+  if (!estEarlyAdopter(conseiller) || !process.env.ENABLE_SESSIONS_MILO)
+    return {
+      redirect: { destination: '/mes-jeunes', permanent: false },
+    }
+
   const { getJeunesDeLEtablissementServerSide } = await import(
     'services/jeunes.service'
   )
+
   const beneficiairesEtablissement = await getJeunesDeLEtablissementServerSide(
     conseiller.agence.id,
     accessToken

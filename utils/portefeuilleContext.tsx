@@ -5,7 +5,7 @@ import { BaseJeune } from 'interfaces/jeune'
 type MaybePortefeuille = BaseJeune[] | undefined
 type PortefeuilleState = [
   MaybePortefeuille,
-  (updatedBeneficiaires: BaseJeune[]) => void
+  (updatedBeneficiaires: BaseJeune[]) => void,
 ]
 
 const PortefeuilleContext = createContext<PortefeuilleState | undefined>(
@@ -45,7 +45,7 @@ export function usePortefeuillePotentiellementPasRecupere(): PortefeuilleState {
 
 export function usePortefeuille(): [
   BaseJeune[],
-  (updatedBeneficiaires: BaseJeune[]) => void
+  (updatedBeneficiaires: BaseJeune[]) => void,
 ] {
   const [portefeuille, setPortefeuille] =
     usePortefeuillePotentiellementPasRecupere()

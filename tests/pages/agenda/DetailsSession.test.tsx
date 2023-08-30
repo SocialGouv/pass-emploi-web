@@ -881,7 +881,10 @@ describe('Détails Session', () => {
 
   describe('server side', () => {
     beforeEach(() => {
-      process.env = Object.assign(process.env, { ENABLE_SESSIONS_MILO: 'true' })
+      process.env = Object.assign(process.env, {
+        ENABLE_SESSIONS_MILO: 'true',
+        IDS_AGENCES_EARLY_ADOPTERS: 'id-test',
+      })
       ;(getDetailsSession as jest.Mock).mockResolvedValue(unDetailSession())
     })
 
@@ -907,98 +910,102 @@ describe('Détails Session', () => {
 
     describe('Quand le conseiller est Milo', () => {
       let actual: GetServerSidePropsResult<any>
+      describe('quand conseiller est d’une agence early adopter', () => {
+        it('recupère le détail de la session', async () => {
+          // Given
+          ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+            session: {
+              user: { structure: 'MILO', id: 'id-conseiller' },
+              accessToken: 'accessToken',
+            },
+            validSession: true,
+          })
+          ;(getJeunesDeLEtablissementServerSide as jest.Mock).mockReturnValue([
+            uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            uneBaseJeune({
+              id: 'jeune-2',
+              prenom: 'Octo',
+              nom: 'Puce',
+            }),
+          ])
+          ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+            unConseiller({
+              id: 'id-conseiller',
+              agence: { nom: 'Agence early', id: 'id-test' },
+            })
+          )
 
-      it('recupère le détail de la session', async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-          session: {
-            user: { structure: 'MILO', id: 'id-conseiller' },
-            accessToken: 'accessToken',
-          },
-          validSession: true,
+          // When
+          actual = await getServerSideProps({
+            req: { headers: {} },
+            query: { session_id: 'id-session' },
+          } as unknown as GetServerSidePropsContext)
+
+          // Then
+          expect(getDetailsSession).toHaveBeenCalledWith(
+            'id-conseiller',
+            'id-session',
+            'accessToken'
+          )
         })
-        ;(getJeunesDeLEtablissementServerSide as jest.Mock).mockReturnValue([
-          uneBaseJeune({
-            id: 'jeune-1',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
-          uneBaseJeune({
-            id: 'jeune-2',
-            prenom: 'Octo',
-            nom: 'Puce',
-          }),
-        ])
-        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
-          unConseiller({ id: 'id-conseiller' })
-        )
 
-        // When
-        actual = await getServerSideProps({
-          req: { headers: {} },
-          query: { session_id: 'id-session' },
-        } as unknown as GetServerSidePropsContext)
-
-        // Then
-        expect(getDetailsSession).toHaveBeenCalledWith(
-          'id-conseiller',
-          'id-session',
-          'accessToken'
-        )
-      })
-
-      it('prépare la page', async () => {
-        // Given
-        const beneficiairesEtablissement = [
-          uneBaseJeune({
-            id: 'jeune-1',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
-          uneBaseJeune({
-            id: 'jeune-2',
-            prenom: 'Octo',
-            nom: 'Puce',
-          }),
-        ]
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          validSession: true,
-          session: {
-            user: { structure: 'MILO' },
-          },
-        })
-        ;(getJeunesDeLEtablissementServerSide as jest.Mock).mockReturnValue(
-          beneficiairesEtablissement
-        )
-        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
-          unConseiller({
-            id: 'id-conseiller',
-            structure: StructureConseiller.MILO,
-            agence: {
-              nom: 'milo-aubenas',
-              id: '42',
+        it('prépare la page', async () => {
+          // Given
+          const beneficiairesEtablissement = [
+            uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            uneBaseJeune({
+              id: 'jeune-2',
+              prenom: 'Octo',
+              nom: 'Puce',
+            }),
+          ]
+          ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+            validSession: true,
+            session: {
+              user: { structure: 'MILO' },
             },
           })
-        )
+          ;(getJeunesDeLEtablissementServerSide as jest.Mock).mockReturnValue(
+            beneficiairesEtablissement
+          )
+          ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+            unConseiller({
+              id: 'id-conseiller',
+              structure: StructureConseiller.MILO,
+              agence: {
+                nom: 'milo-aubenas',
+                id: 'id-test',
+              },
+            })
+          )
 
-        const session = unDetailSession()
+          const session = unDetailSession()
 
-        // When
-        const actual = await getServerSideProps({
-          req: { headers: {} },
-          query: {},
-        } as GetServerSidePropsContext)
+          // When
+          const actual = await getServerSideProps({
+            req: { headers: {} },
+            query: {},
+          } as GetServerSidePropsContext)
 
-        // Then
-        expect(actual).toEqual({
-          props: {
-            beneficiairesEtablissement: beneficiairesEtablissement,
-            pageTitle: `Détail session ${session.session.nom} - Agenda`,
-            pageHeader: 'Détail de la session i-milo',
-            returnTo: '/mes-jeunes',
-            session: session,
-            withoutChat: true,
-          },
+          // Then
+          expect(actual).toEqual({
+            props: {
+              beneficiairesEtablissement: beneficiairesEtablissement,
+              pageTitle: `Détail session ${session.session.nom} - Agenda`,
+              pageHeader: 'Détail de la session i-milo',
+              returnTo: '/mes-jeunes',
+              session: session,
+              withoutChat: true,
+            },
+          })
         })
       })
     })

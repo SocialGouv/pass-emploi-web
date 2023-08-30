@@ -64,3 +64,11 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
     user.structure === StructureConseiller.POLE_EMPLOI_BRSA
   )
 }
+
+export function estEarlyAdopter(conseiller: Conseiller): boolean {
+  const idsAgences = new Array(process.env.IDS_AGENCES_EARLY_ADOPTERS)
+  return (
+    idsAgences.includes(conseiller.agence?.id) ||
+    process.env.ENABLE_SESSIONS_STAGING
+  )
+}

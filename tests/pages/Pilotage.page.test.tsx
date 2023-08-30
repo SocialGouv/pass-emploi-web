@@ -53,6 +53,7 @@ describe('Pilotage', () => {
       beforeEach(async () => {
         process.env = Object.assign(process.env, {
           ENABLE_SESSIONS_MILO: 'true',
+          IDS_AGENCES_EARLY_ADOPTERS: 'id-test',
         })
 
         actions = uneListeDActionsAQualifier()
@@ -111,7 +112,7 @@ describe('Pilotage', () => {
               customConseiller: {
                 agence: {
                   nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
+                  id: 'id-test',
                 },
               },
             }
@@ -287,7 +288,7 @@ describe('Pilotage', () => {
 
           // Then
           expect(getAnimationsCollectivesACloreClientSide).toHaveBeenCalledWith(
-            'id-etablissement',
+            'id-test',
             2
           )
           expect(screen.getByText('Animation page 2')).toBeInTheDocument()
@@ -427,7 +428,15 @@ describe('Pilotage', () => {
               metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
             sessions={[]}
-          />
+          />,
+          {
+            customConseiller: {
+              agence: {
+                nom: 'Mission Locale Aubenas',
+                id: 'id-test',
+              },
+            },
+          }
         )
 
         // When
@@ -576,7 +585,7 @@ describe('Pilotage', () => {
       expect(actual).toEqual({ redirect: { destination: 'whatever' } })
     })
 
-    describe('quand le conseiller est Pole emploi', () => {
+    describe('quand le conseiller est Pôle emploi', () => {
       it('renvoie une 404', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
