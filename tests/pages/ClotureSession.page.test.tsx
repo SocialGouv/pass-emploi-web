@@ -190,6 +190,7 @@ describe('Cloture Session', () => {
       beforeEach(() => {
         process.env = Object.assign(process.env, {
           ENABLE_SESSIONS_MILO: 'true',
+          IDS_AGENCES_EARLY_ADOPTERS: '622',
         })
 
         // Given

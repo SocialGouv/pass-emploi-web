@@ -69,8 +69,6 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
 }
 
 export function estEarlyAdopter(conseiller: Conseiller): boolean {
-  return (
-    conseiller.agence?.id === ID_AGENCE_BEAUCAIRE ||
-    conseiller.agence?.id === ID_AGENCE_DUNKERQUE
-  )
+  const idsAgences = new Array(process.env.IDS_AGENCES_EARLY_ADOPTERS)
+  return idsAgences.includes(conseiller.agence?.id)
 }
