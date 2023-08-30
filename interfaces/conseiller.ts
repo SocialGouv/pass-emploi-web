@@ -16,9 +16,6 @@ export enum UserRole {
   SUPERVISEUR_PE_BRSA = 'SUPERVISEUR_PE_BRSA',
 }
 
-const ID_AGENCE_DUNKERQUE = '622'
-const ID_AGENCE_BEAUCAIRE = '411'
-
 export type BaseConseiller = {
   id: string
   firstName: string
