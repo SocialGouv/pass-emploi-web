@@ -282,26 +282,28 @@ function Pilotage({
         </div>
       )}
 
-      {currentTab === Onglet.SESSIONS_IMILO && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-sessions-i-milo-a-clore--tab'
-          tabIndex={0}
-          id='liste-sessions-i-milo-a-clore'
-          className='mt-8 pb-8 border-b border-primary_lighten'
-        >
-          {!animationsCollectivesAffichees && (
-            <EncartAgenceRequise
-              conseiller={conseiller}
-              onAgenceChoisie={renseignerAgence}
-              getAgences={getAgencesClientSide}
-              onChangeAffichageModal={trackAgenceModal}
-            />
-          )}
+      {currentTab === Onglet.SESSIONS_IMILO &&
+        process.env.ENABLE_SESSIONS_MILO &&
+        estEarlyAdopter(conseiller) && (
+          <div
+            role='tabpanel'
+            aria-labelledby='liste-sessions-i-milo-a-clore--tab'
+            tabIndex={0}
+            id='liste-sessions-i-milo-a-clore'
+            className='mt-8 pb-8 border-b border-primary_lighten'
+          >
+            {!animationsCollectivesAffichees && (
+              <EncartAgenceRequise
+                conseiller={conseiller}
+                onAgenceChoisie={renseignerAgence}
+                getAgences={getAgencesClientSide}
+                onChangeAffichageModal={trackAgenceModal}
+              />
+            )}
 
-          {sessions && <OngletSessionsImiloPilotage sessions={sessions} />}
-        </div>
-      )}
+            {sessions && <OngletSessionsImiloPilotage sessions={sessions} />}
+          </div>
+        )}
     </>
   )
 }
@@ -335,17 +337,21 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
     'services/sessions.service'
   )
 
-  const [actions, evenements, sessions] = await Promise.all([
-    getActionsAQualifierServerSide(user.id, accessToken),
-    getConseillerServerSide(user, accessToken).then((conseiller) => {
-      if (!conseiller?.agence?.id) return
-      return getAnimationsCollectivesACloreServerSide(
-        conseiller.agence.id,
-        accessToken
-      )
-    }),
-    getSessionsACloreServerSide(user.id, accessToken),
-  ])
+  const conseiller = await getConseillerServerSide(user, accessToken)
+
+  const actions = await getActionsAQualifierServerSide(user.id, accessToken)
+
+  let evenements, sessions
+
+  if (conseiller?.agence?.id)
+    evenements = await getAnimationsCollectivesACloreServerSide(
+      conseiller.agence.id,
+      accessToken
+    )
+
+  if (process.env.ENABLE_SESSIONS_MILO || estEarlyAdopter(conseiller)) {
+    sessions = await getSessionsACloreServerSide(user.id, accessToken)
+  }
 
   const props: PilotageProps = {
     pageTitle: 'Pilotage',
