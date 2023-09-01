@@ -254,10 +254,15 @@ describe('Partage Recherche', () => {
           ).toBeInTheDocument()
         })
 
-        it('ne devrait pas pouvoir cliquer sur le bouton envoyer sans avoir selectionner de destinataires', async () => {
+        it('ne valide pas le formulaire si aucun destinataires n’est sélectionné', async () => {
+          //Given
+          await userEvent.click(submitButton)
+
           // Then
           expect(inputSearchJeune.selectedOptions).toBe(undefined)
-          expect(submitButton).toHaveAttribute('disabled')
+          expect(
+            screen.getByText(/Le champ ”Destinataires” est vide./)
+          ).toBeInTheDocument()
         })
       })
 

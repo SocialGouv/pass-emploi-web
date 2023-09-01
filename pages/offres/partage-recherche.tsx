@@ -69,10 +69,15 @@ function PartageRecherche({
   >({ value: [] })
   const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)
 
-  const formIsValid = checkIfFormValid()
-
-  function checkIfFormValid(): boolean {
-    return idsDestinataires.value.length > 0
+  function formIsValid(): boolean {
+    const destinatairesSontValides = idsDestinataires.value.length > 0
+    if (!destinatairesSontValides)
+      setIdsDestinataires({
+        ...idsDestinataires,
+        error:
+          'Le champ ”Destinataires” est vide. Sélectionnez au moins un destinataire.',
+      })
+    return destinatairesSontValides
   }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
@@ -102,14 +107,14 @@ function PartageRecherche({
     setIdsDestinataires({
       value: selectedIds.beneficiaires!,
       error: !selectedIds.beneficiaires!.length
-        ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+        ? 'Le champ ”Destinataires” est vide. Sélectionnez au moins un destinataire.'
         : undefined,
     })
   }
 
   async function partagerCriteresRecherche(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!formIsValid) return
+    if (!formIsValid()) return
 
     setIsPartageEnCours(true)
 
@@ -224,7 +229,11 @@ function PartageRecherche({
         correspondantes.
       </p>
 
-      <form onSubmit={partagerCriteresRecherche} className='mt-8'>
+      <form
+        onSubmit={partagerCriteresRecherche}
+        noValidate={true}
+        className='mt-8'
+      >
         <Etape numero={1} titre='Destinataires'>
           <BeneficiairesMultiselectAutocomplete
             id='select-beneficiaires'
@@ -243,7 +252,6 @@ function PartageRecherche({
           <Button
             type='submit'
             className='ml-3 flex items-center'
-            disabled={!formIsValid}
             isLoading={isPartageEnCours}
           >
             <IconComponent

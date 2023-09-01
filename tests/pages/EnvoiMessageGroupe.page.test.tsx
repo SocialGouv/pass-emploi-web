@@ -103,14 +103,29 @@ describe('EnvoiMessageGroupe', () => {
         ).toHaveAttribute('href', '/mes-jeunes/listes-de-diffusion')
       })
 
-      it('ne devrait pas pouvoir cliquer sur le bouton envoyer avec un champ du formulaire vide', async () => {
-        // Given
-        await userEvent.type(inputMessage, 'Un message')
+      it('ne valide pas le formulaire si aucun bénéficiaire n’est sélectionné', async () => {
+        // When
+        await userEvent.click(submitButton)
 
         // Then
-        expect(inputSearchJeune.selectedOptions).toBe(undefined)
-        expect(inputMessage.value).toEqual('Un message')
-        expect(submitButton).toHaveAttribute('disabled')
+        expect(sendNouveauMessageGroupe).not.toHaveBeenCalled()
+        expect(
+          screen.getByText(/Le champ ”Destinataires” est vide./)
+        ).toBeInTheDocument()
+      })
+
+      it('ne valide pas le formulaire si aucun message ou pièce jointe n’est renseigné', async () => {
+        // Given
+        await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+
+        //When
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(sendNouveauMessageGroupe).not.toHaveBeenCalled()
+        expect(
+          screen.getByText(/Le champ ”Message” est vide./)
+        ).toBeInTheDocument()
       })
     })
 
@@ -310,7 +325,7 @@ describe('EnvoiMessageGroupe', () => {
       })
     })
 
-    describe('quand on selectionne tout les jeunes dans le champs de recherche', () => {
+    describe('quand on selectionne tout les jeunes dans le champ de recherche', () => {
       it('sélectionne tout les jeunes dans la liste', async () => {
         // When
         await userEvent.type(

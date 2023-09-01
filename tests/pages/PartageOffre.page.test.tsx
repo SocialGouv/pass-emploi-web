@@ -371,6 +371,24 @@ describe('Page Partage Offre', () => {
         )
       })
 
+      describe('formulaire incomplet', () => {
+        it('ne valide pas le formulaire si aucun bénéficiaire n’est sélectionné', async () => {
+          //Given
+          let buttonValider: HTMLButtonElement = screen.getByRole('button', {
+            name: 'Envoyer',
+          })
+
+          //When
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(partagerOffre).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ ”Destinataires” est vide./)
+          ).toBeInTheDocument()
+        })
+      })
+
       describe('formulaire rempli', () => {
         let inputMessage: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
@@ -390,66 +408,43 @@ describe('Page Partage Offre', () => {
           await userEvent.type(inputMessage, message)
         })
 
-        describe('quand le formulaire est valide', () => {
-          it("partage l'offre", async () => {
-            // When
-            await userEvent.click(buttonValider)
+        it("partage l'offre", async () => {
+          // When
+          await userEvent.click(buttonValider)
 
-            // Then
-            expect(partagerOffre).toHaveBeenCalledWith({
-              offre,
-              idsDestinataires: [jeunes[2].id, jeunes[0].id],
-              cleChiffrement: 'cleChiffrement',
-              message,
-            })
-          })
-
-          it('partage une offre avec un message par défaut', async () => {
-            // Given
-            await userEvent.clear(inputMessage)
-
-            // When
-            await userEvent.click(buttonValider)
-
-            // Then
-            expect(partagerOffre).toHaveBeenCalledWith({
-              offre,
-              idsDestinataires: [jeunes[2].id, jeunes[0].id],
-              cleChiffrement: 'cleChiffrement',
-              message:
-                'Bonjour, je vous partage une offre d’emploi qui pourrait vous intéresser.',
-            })
-          })
-
-          it('renvoie à la recherche', async () => {
-            // When
-            await userEvent.click(buttonValider)
-
-            // Then
-            expect(alerteSetter).toHaveBeenCalledWith('partageOffre')
-            expect(push).toHaveBeenCalledWith('/return/to')
+          // Then
+          expect(partagerOffre).toHaveBeenCalledWith({
+            offre,
+            idsDestinataires: [jeunes[2].id, jeunes[0].id],
+            cleChiffrement: 'cleChiffrement',
+            message,
           })
         })
 
-        it("est désactivé quand aucun jeune n'est sélectionné", async () => {
+        it('partage une offre avec un message par défaut', async () => {
           // Given
-          const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
-            'button',
-            { name: /Enlever beneficiaire/ }
-          )
+          await userEvent.clear(inputMessage)
 
           // When
-          for (const bouton of enleverJeunes) {
-            await userEvent.click(bouton)
-          }
+          await userEvent.click(buttonValider)
 
           // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
-            )
-          ).toBeInTheDocument()
+          expect(partagerOffre).toHaveBeenCalledWith({
+            offre,
+            idsDestinataires: [jeunes[2].id, jeunes[0].id],
+            cleChiffrement: 'cleChiffrement',
+            message:
+              'Bonjour, je vous partage une offre d’emploi qui pourrait vous intéresser.',
+          })
+        })
+
+        it('renvoie à la recherche', async () => {
+          // When
+          await userEvent.click(buttonValider)
+
+          // Then
+          expect(alerteSetter).toHaveBeenCalledWith('partageOffre')
+          expect(push).toHaveBeenCalledWith('/return/to')
         })
       })
     })
