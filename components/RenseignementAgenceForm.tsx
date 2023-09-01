@@ -70,7 +70,11 @@ export default function RenseignementAgenceForm({
   }
 
   return (
-    <form onSubmit={submitAgenceSelectionnee} className='px-10 pt-6'>
+    <form
+      onSubmit={submitAgenceSelectionnee}
+      noValidate={true}
+      className='px-10 pt-6'
+    >
       <Label htmlFor='search-agence'>
         Rechercher votre agence dans la liste suivante
       </Label>

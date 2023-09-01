@@ -34,9 +34,8 @@ export default function DeleteJeuneActifModal({
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
 
   const MOTIF_SUPPRESSION_AUTRE = 'Autre'
-  const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<
-    string | undefined
-  >(undefined)
+  const [motifSuppressionJeune, setMotifSuppressionJeune] =
+    useState<ValueWithError<string | undefined>>(undefined)
   const [commentaireMotif, setCommentaireMotif] = useState<ValueWithError>({
     value: '',
   })
@@ -53,7 +52,7 @@ export default function DeleteJeuneActifModal({
   }
 
   function selectMotifSuppression(value: string) {
-    setMotifSuppressionJeune(value)
+    setMotifSuppressionJeune({ value })
   }
 
   function validateCommentaireMotif() {
@@ -67,9 +66,26 @@ export default function DeleteJeuneActifModal({
   }
 
   function motifIsValid(): boolean {
-    if (!motifSuppressionJeune) return false
-    if (motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE)
-      return Boolean(commentaireMotif.value)
+    if (!motifSuppressionJeune?.value) {
+      setMotifSuppressionJeune({
+        ...motifSuppressionJeune,
+        error: 'Le champ ”Motif” est vide. Renseignez un motif de suppression.',
+      })
+      return false
+    }
+
+    if (
+      motifSuppressionJeune?.value === MOTIF_SUPPRESSION_AUTRE &&
+      !commentaireMotif.value
+    ) {
+      setCommentaireMotif({
+        ...commentaireMotif,
+        error:
+          'Le champ ”Motif de suppression” est vide. Renseignez un commentaire.',
+      })
+      return false
+    }
+
     return true
   }
 
@@ -78,9 +94,9 @@ export default function DeleteJeuneActifModal({
     if (!motifIsValid()) return
 
     const payload: SuppressionJeuneFormData = {
-      motif: motifSuppressionJeune!,
+      motif: motifSuppressionJeune.value!,
       commentaire:
-        motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE
+        motifSuppressionJeune.value === MOTIF_SUPPRESSION_AUTRE
           ? commentaireMotif.value
           : undefined,
     }
@@ -89,7 +105,7 @@ export default function DeleteJeuneActifModal({
   }
 
   const descriptionMotif = motifsSuppression.find(
-    ({ motif }) => motif === motifSuppressionJeune
+    ({ motif }) => motif === motifSuppressionJeune?.value
   )?.description
 
   useMatomo(trackingLabel, aDesBeneficiaires)
@@ -134,7 +150,11 @@ export default function DeleteJeuneActifModal({
         >
           <InformationMessage label='Une fois confirmé toutes les informations liées à ce compte bénéficiaire seront supprimées' />
 
-          <form className='mt-8' onSubmit={handleSoumettreSuppression}>
+          <form
+            className='mt-8'
+            onSubmit={handleSoumettreSuppression}
+            noValidate={true}
+          >
             <fieldset>
               <legend className='sr-only'>
                 Choisir un motif de suppression
@@ -146,6 +166,13 @@ export default function DeleteJeuneActifModal({
                     'Pour nos statistiques, merci de sélectionner un motif',
                 }}
               </Label>
+
+              {motifSuppressionJeune?.error && (
+                <InputError id='motif-suppression--error' className='mt-2'>
+                  {motifSuppressionJeune.error}
+                </InputError>
+              )}
+
               <Select
                 id='motif-suppression'
                 required
@@ -158,12 +185,12 @@ export default function DeleteJeuneActifModal({
                 ))}
               </Select>
 
-              {motifSuppressionJeune !== MOTIF_SUPPRESSION_AUTRE &&
+              {motifSuppressionJeune?.value !== MOTIF_SUPPRESSION_AUTRE &&
                 descriptionMotif && (
                   <p className='mb-8 text-s-regular'>{descriptionMotif}</p>
                 )}
 
-              {motifSuppressionJeune === MOTIF_SUPPRESSION_AUTRE && (
+              {motifSuppressionJeune?.value === MOTIF_SUPPRESSION_AUTRE && (
                 <>
                   <Label htmlFor='commentaire-motif' inputRequired={true}>
                     Veuillez préciser le motif de la suppression du compte
@@ -178,7 +205,7 @@ export default function DeleteJeuneActifModal({
                     required
                     onChange={(value) => setCommentaireMotif({ value })}
                     onBlur={validateCommentaireMotif}
-                    invalid={Boolean(commentaireMotif)}
+                    invalid={Boolean(commentaireMotif.error)}
                   />
                 </>
               )}
@@ -193,7 +220,6 @@ export default function DeleteJeuneActifModal({
               </Button>
               <Button
                 type='submit'
-                disabled={!motifIsValid()}
                 style={ButtonStyle.PRIMARY}
                 className='ml-6'
               >

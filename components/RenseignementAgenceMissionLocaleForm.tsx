@@ -3,10 +3,12 @@ import React, { FormEvent, useEffect, useState } from 'react'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
+import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { ValueWithError } from 'components/ValueWithError'
 import { Agence } from 'interfaces/referentiel'
 
 interface RenseignementAgenceMissionLocaleFormProps {
@@ -45,7 +47,8 @@ export function RenseignementAgenceMissionLocaleForm({
   const [departement, setDepartement] = useState<string>('')
   const [agencesMiloFiltrees, setAgencesMiloFiltrees] =
     useState<Agence[]>(referentielAgences)
-  const [idAgenceSelectionnee, setIdAgenceSelectionnee] = useState<string>()
+  const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
+    useState<ValueWithError<string | undefined>>()
 
   function buildOptions(): OptionAgence[] {
     return [AGENCE_PAS_DANS_LA_LISTE_OPTION].concat(
@@ -54,26 +57,32 @@ export function RenseignementAgenceMissionLocaleForm({
   }
 
   function selectDepartement(departementSelectionne: string) {
-    setIdAgenceSelectionnee(undefined)
+    setIdAgenceSelectionnee({ value: undefined })
     setDepartement(departementSelectionne)
   }
 
   function agenceEstDansLaListe() {
     return (
-      idAgenceSelectionnee &&
-      idAgenceSelectionnee !== AGENCE_PAS_DANS_LA_LISTE_OPTION.id
+      idAgenceSelectionnee?.value &&
+      idAgenceSelectionnee.value !== AGENCE_PAS_DANS_LA_LISTE_OPTION.id
     )
   }
 
   function agenceNestPasDansLaListe() {
-    return idAgenceSelectionnee === AGENCE_PAS_DANS_LA_LISTE_OPTION.id
+    return idAgenceSelectionnee?.value === AGENCE_PAS_DANS_LA_LISTE_OPTION.id
   }
 
   function submitMissionLocaleSelectionnee(e: FormEvent) {
     e.preventDefault()
+    if (!idAgenceSelectionnee?.value)
+      setIdAgenceSelectionnee({
+        ...idAgenceSelectionnee,
+        error:
+          'Le champ ”Recherchez votre Mission Locale” est vide. Renseignez votre Mission Locale.',
+      })
     if (agenceEstDansLaListe()) {
       const agence = referentielAgences.find(
-        (uneAgence) => uneAgence.id === idAgenceSelectionnee
+        (uneAgence) => uneAgence.id === idAgenceSelectionnee?.value
       )
       onAgenceChoisie(agence!)
     }
@@ -94,6 +103,7 @@ export function RenseignementAgenceMissionLocaleForm({
   return (
     <form
       onSubmit={submitMissionLocaleSelectionnee}
+      noValidate={true}
       className={`${container === FormContainer.PAGE ? '' : 'px-10 pt-6'}`}
     >
       <div
@@ -115,11 +125,18 @@ export function RenseignementAgenceMissionLocaleForm({
           <Label htmlFor='mission-locale' inputRequired={true}>
             Recherchez votre Mission Locale dans la liste suivante
           </Label>
+          {idAgenceSelectionnee?.error && (
+            <InputError id='mission-locale--error' className='mt-2'>
+              {idAgenceSelectionnee.error}
+            </InputError>
+          )}
           <Select
             id='mission-locale'
             key={departement}
             required={true}
-            onChange={setIdAgenceSelectionnee}
+            onChange={(nouvelleAgence) =>
+              setIdAgenceSelectionnee({ value: nouvelleAgence })
+            }
           >
             {buildOptions().map(({ id, value }) => (
               <option key={id} value={id}>
@@ -156,7 +173,7 @@ export function RenseignementAgenceMissionLocaleForm({
             Annuler
           </Button>
         )}
-        {(!idAgenceSelectionnee || agenceEstDansLaListe()) && (
+        {(!idAgenceSelectionnee?.value || agenceEstDansLaListe()) && (
           <Button type='submit' className='mr-6'>
             Ajouter
           </Button>
