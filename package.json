@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "18.12.1",
-    "yarn": "3.6.1"
+    "yarn": "3.6.3"
   },
   "scripts": {
     "dev": "node server.js | pino-pretty",
@@ -92,5 +92,5 @@
   "browser": {
     "elastic-apm-node": false
   },
-  "packageManager": "yarn@3.6.1"
+  "packageManager": "yarn@3.6.3"
 }
