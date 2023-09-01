@@ -235,13 +235,13 @@ export function EditionRdvForm({
   function formIsValid(): boolean {
     return (
       typeIsValid() &&
+      titreIsValid() &&
       nombreParticipantsIsValid(idsJeunes.value) &&
+      nombreMaxParticipantsIsValid() &&
       dateIsValid() &&
       horaireIsValid() &&
       dureeIsValid() &&
-      titreIsValid() &&
-      descriptionIsValid() &&
-      nombreMaxParticipantsIsValid()
+      descriptionIsValid()
     )
   }
 
@@ -276,7 +276,15 @@ export function EditionRdvForm({
   }
 
   function dateIsValid(): boolean {
-    return Boolean(date.value && regexDate.test(date.value))
+    const dateEstValide = Boolean(date.value && regexDate.test(date.value))
+    if (!dateEstValide) {
+      setDate({
+        ...date,
+        error: 'Le champ “Date“ est vide. Renseignez une date.',
+      })
+    }
+    document.getElementById('date').scrollIntoView({ behavior: 'smooth' })
+    return dateEstValide
   }
 
   function validateDate() {
@@ -309,7 +317,17 @@ export function EditionRdvForm({
   }
 
   function horaireIsValid() {
-    return Boolean(horaire.value && regexHoraire.test(horaire.value))
+    const horaireEstValide = Boolean(
+      horaire.value && regexHoraire.test(horaire.value)
+    )
+    if (!horaireEstValide) {
+      setHoraire({
+        ...horaire,
+        error: 'Le champ “Horaire“ est vide. Renseignez un horaire.',
+      })
+    }
+    document.getElementById('horaire').scrollIntoView({ behavior: 'smooth' })
+    return horaireEstValide
   }
 
   function validateHoraire() {
@@ -323,7 +341,15 @@ export function EditionRdvForm({
   }
 
   function dureeIsValid(): boolean {
-    return Boolean(duree.value && regexDuree.test(duree.value))
+    const dureeEstValide = Boolean(duree.value && regexDuree.test(duree.value))
+    if (!dureeEstValide) {
+      setDuree({
+        ...duree,
+        error: 'Le champ “Durée“ est vide. Renseignez une durée.',
+      })
+    }
+    document.getElementById('duree').scrollIntoView({ behavior: 'smooth' })
+    return dureeEstValide
   }
 
   function validateDuree() {
@@ -344,7 +370,15 @@ export function EditionRdvForm({
   }
 
   function titreIsValid(): boolean {
-    return !evenementTypeAC || Boolean(titre.value)
+    const titreEstValide = !evenementTypeAC || Boolean(titre.value)
+    if (!titreEstValide) {
+      setTitre({
+        ...titre,
+        error: 'Le champ “Titre” est vide. Renseignez un titre.',
+      })
+      document.getElementById('titre').scrollIntoView({ behavior: 'smooth' })
+    }
+    return titreEstValide
   }
 
   function validateTitre() {
@@ -392,6 +426,15 @@ export function EditionRdvForm({
       nombreMaxParticipants.value < idsBeneficiaires.length
     )
       return false
+
+    if (idsBeneficiaires.length === 0) {
+      setIdsJeunes({
+        ...idsJeunes,
+        error:
+          'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.',
+      })
+      document.getElementById('titre').scrollIntoView({ behavior: 'smooth' })
+    }
 
     return evenementTypeAC || idsBeneficiaires.length > 0
   }
@@ -480,7 +523,7 @@ export function EditionRdvForm({
   }
 
   return (
-    <form onSubmit={handleSoumettreRdv}>
+    <form onSubmit={handleSoumettreRdv} noValidate={true}>
       <p className='text-s-bold my-6'>
         Tous les champs avec * sont obligatoires
       </p>
@@ -844,20 +887,14 @@ export function EditionRdvForm({
           )}
 
           {evenement && (
-            <Button
-              type='submit'
-              disabled={!formHasChanges() || !formIsValid()}
-            >
+            <Button type='submit'>
               {evenementTypeAC
                 ? 'Modifier l’animation collective'
                 : 'Modifier le rendez-vous'}
             </Button>
           )}
           {!evenement && (
-            <Button
-              type='submit'
-              disabled={!formHasChanges() || !formIsValid()}
-            >
+            <Button type='submit'>
               <IconComponent
                 name={IconName.Add}
                 focusable={false}
