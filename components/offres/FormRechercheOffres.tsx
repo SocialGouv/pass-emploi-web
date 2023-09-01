@@ -79,9 +79,42 @@ export default function FormRechercheOffres({
       case TypeOffre.SERVICE_CIVIQUE:
         return queryServicesCiviques.hasError
       case TypeOffre.IMMERSION:
-        return queryImmersions.hasError
+        if (!queryImmersions.metier?.value) {
+          setQueryImmersions({
+            ...queryImmersions,
+            metier: {
+              value: undefined,
+              error: 'Le champ “Métier“ est vide. Renseignez un métier.',
+            },
+          })
+          return true
+        } else if (!queryImmersions.commune?.value) {
+          setQueryImmersions({
+            ...queryImmersions,
+            commune: {
+              value: undefined,
+              error: 'Le champ “Localisation“ est vide. Renseignez une ville.',
+            },
+          })
+          return true
+        }
+        return false
       default:
         return true
+    }
+  }
+
+  function hasNotChanged(): boolean {
+    switch (typeOffre) {
+      case TypeOffre.EMPLOI:
+      case TypeOffre.ALTERNANCE:
+        return stateQueryImmersions === queryOffresEmploi
+      case TypeOffre.SERVICE_CIVIQUE:
+        return stateQueryServicesCiviques === queryServicesCiviques
+      case TypeOffre.IMMERSION:
+        return stateQueryImmersions === queryImmersions
+      default:
+        return false
     }
   }
 
@@ -89,6 +122,7 @@ export default function FormRechercheOffres({
     e.preventDefault()
     if (hasResults) return
     if (formIsInvalid()) return
+    if (hasNotChanged()) return
     if (!typeOffre) return
 
     onNouvelleRecherche()
@@ -124,8 +158,8 @@ export default function FormRechercheOffres({
 
   function updateQueryImmersion(query: FormValues<SearchImmersionsQuery>) {
     setQueryImmersions(query)
-    setOffreLieu(query.commune?.libelle)
-    setMotsCles(query.metier?.libelle)
+    setOffreLieu(query.commune?.value?.libelle)
+    setMotsCles(query.metier?.value?.libelle)
   }
 
   function updateQueryServiceCivique(
@@ -137,7 +171,7 @@ export default function FormRechercheOffres({
   }
 
   return (
-    <form onSubmit={rechercherPremierePage}>
+    <form onSubmit={rechercherPremierePage} noValidate={true}>
       <div className={collapsed ? 'hidden' : 'mb-8'} aria-hidden={collapsed}>
         <Etape numero={1} titre='Sélectionner un type d’offre'>
           <div className='flex flex-wrap'>
@@ -211,11 +245,7 @@ export default function FormRechercheOffres({
               {countCriteres > 1 && 's'}
             </div>
 
-            <Button
-              type='submit'
-              className='mx-auto'
-              disabled={formIsInvalid() || hasResults}
-            >
+            <Button type='submit' className='mx-auto'>
               <IconComponent
                 name={IconName.Search}
                 focusable={false}

@@ -63,8 +63,8 @@ describe('ImmersionsApiService', () => {
       // When
       const actual = await searchImmersions(
         {
-          commune: uneCommune(),
-          metier: unMetier(),
+          commune: { value: uneCommune() },
+          metier: { value: unMetier() },
           rayon: 52,
         },
         1
@@ -89,8 +89,8 @@ describe('ImmersionsApiService', () => {
       // Given
       await searchImmersions(
         {
-          commune: uneCommune(),
-          metier: unMetier(),
+          commune: { value: uneCommune() },
+          metier: { value: unMetier() },
           rayon: 35,
         },
         1
@@ -99,8 +99,8 @@ describe('ImmersionsApiService', () => {
       // When
       const actual = await searchImmersions(
         {
-          commune: uneCommune(),
-          metier: unMetier(),
+          commune: { value: uneCommune() },
+          metier: { value: unMetier() },
           rayon: 35,
         },
         1
@@ -121,8 +121,8 @@ describe('ImmersionsApiService', () => {
       // Given
       await searchImmersions(
         {
-          commune: uneCommune(),
-          metier: unMetier(),
+          commune: { value: uneCommune() },
+          metier: { value: unMetier() },
           rayon: 52,
         },
         1
@@ -131,8 +131,8 @@ describe('ImmersionsApiService', () => {
       // When
       const actual = await searchImmersions(
         {
-          commune: uneCommune(),
-          metier: unMetier(),
+          commune: { value: uneCommune() },
+          metier: { value: unMetier() },
           rayon: 27,
         },
         1
@@ -153,8 +153,8 @@ describe('ImmersionsApiService', () => {
       // When
       const actual = await searchImmersions(
         {
-          commune: uneCommune(),
-          metier: unMetier(),
+          commune: { value: uneCommune() },
+          metier: { value: unMetier() },
           rayon: 52,
         },
         2

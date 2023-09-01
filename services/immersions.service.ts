@@ -1,6 +1,7 @@
 import { getSession } from 'next-auth/react'
 
 import { apiGet } from 'clients/api.client'
+import { ValueWithError } from 'components/ValueWithError'
 import {
   DetailImmersionJson,
   ImmersionItemJson,
@@ -12,8 +13,8 @@ import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
 export type SearchImmersionsQuery = {
-  commune: Commune
-  metier: Metier
+  commune: ValueWithError<Commune | undefined>
+  metier: ValueWithError<Metier | undefined>
   rayon: number
 }
 
@@ -79,10 +80,10 @@ export async function searchImmersions(
 
 function buildSearchParams(recherche: SearchImmersionsQuery): URLSearchParams {
   return new URLSearchParams({
-    lat: recherche.commune.latitude.toString(10),
-    lon: recherche.commune.longitude.toString(10),
+    lat: recherche.commune.value.latitude.toString(10),
+    lon: recherche.commune.value.longitude.toString(10),
     distance: recherche.rayon.toString(10),
-    rome: recherche.metier.code,
+    rome: recherche.metier.value.code,
   })
 }
 
@@ -91,8 +92,8 @@ function areSameQueries(
   query2: SearchImmersionsQuery
 ): boolean {
   return (
-    query1.metier.code === query2.metier.code &&
-    query1.commune.code === query2.commune.code &&
+    query1.metier.value.code === query2.metier.value.code &&
+    query1.commune.value.code === query2.commune.value.code &&
     query1.rayon === query2.rayon
   )
 }

@@ -198,7 +198,7 @@ describe('Page Recherche Immersions', () => {
 
       // Then
       expect(
-        screen.getByText('Veuillez saisir une commune correcte.')
+        screen.getByText(/Le champ “Localisation“ est vide./)
       ).toBeInTheDocument()
       expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
@@ -349,7 +349,6 @@ describe('Page Recherche Immersions', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(submitButton).toHaveAttribute('disabled')
       expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
 
@@ -395,8 +394,8 @@ describe('Page Recherche Immersions', () => {
       // Then
       expect(searchImmersions).toHaveBeenCalledWith(
         {
-          metier: unMetier(),
-          commune: uneCommune(),
+          commune: { value: uneCommune() },
+          metier: { value: unMetier() },
           rayon: 10,
         },
         1
@@ -509,13 +508,6 @@ describe('Page Recherche Immersions', () => {
       ).not.toBeInTheDocument()
     })
 
-    it("bloque la recherche tant que les champs n'ont pas changés", async () => {
-      // Then
-      expect(
-        screen.getByRole('button', { name: 'Rechercher' })
-      ).toHaveAttribute('disabled')
-    })
-
     describe('pagination', () => {
       beforeEach(() => {
         ;(searchImmersions as jest.Mock).mockImplementation((_query, page) => ({
@@ -531,8 +523,8 @@ describe('Page Recherche Immersions', () => {
         // Then
         expect(searchImmersions).toHaveBeenCalledWith(
           {
-            metier: unMetier(),
-            commune: uneCommune(),
+            commune: { value: uneCommune() },
+            metier: { value: unMetier() },
             rayon: 10,
           },
           2
@@ -548,16 +540,16 @@ describe('Page Recherche Immersions', () => {
         // Then
         expect(searchImmersions).toHaveBeenCalledWith(
           {
-            metier: unMetier(),
-            commune: uneCommune(),
+            commune: { value: uneCommune() },
+            metier: { value: unMetier() },
             rayon: 10,
           },
           2
         )
         expect(searchImmersions).toHaveBeenCalledWith(
           {
-            metier: unMetier(),
-            commune: uneCommune(),
+            commune: { value: uneCommune() },
+            metier: { value: unMetier() },
             rayon: 10,
           },
           3
