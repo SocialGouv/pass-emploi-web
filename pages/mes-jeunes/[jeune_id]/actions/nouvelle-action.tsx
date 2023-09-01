@@ -66,10 +66,10 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   }
 
   function formulaireEstValide(): boolean {
-    return Boolean(intitule.value) && dateIsValid()
+    return Boolean(intituleEstValide() && dateEcheanceEstValide())
   }
 
-  function dateIsValid(): boolean {
+  function formatDateEcheanceEstValide(): boolean {
     return Boolean(dateEcheance.value && regexDate.test(dateEcheance.value))
   }
 
@@ -91,8 +91,14 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
 
-    if (
-      dateEcheance.value &&
+    if (!dateEcheance.value) {
+      setDateEcheance({
+        ...dateEcheance,
+        error:
+          'Le champ “Date d’échéance” est vide. Renseignez une date d’échéance.',
+      })
+      return false
+    } else if (
       !dateIsInInterval(
         DateTime.fromFormat(dateEcheance.value, 'yyyy-MM-dd'),
         unAnAvant,
@@ -105,14 +111,14 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
           'dd/MM/yyyy'
         )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`,
       })
-    } else if (!dateIsValid()) {
+    } else if (!formatDateEcheanceEstValide()) {
       setDateEcheance({
         ...dateEcheance,
         error:
           'Le champ “Date d’échéance” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.',
       })
     }
-    return Boolean(intitule.value)
+    return Boolean(dateEcheance.value && regexDate.test(dateEcheance.value))
   }
 
   async function creerAction(e: FormEvent) {
@@ -134,7 +140,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
 
   return (
     <>
-      <form onSubmit={creerAction}>
+      <form onSubmit={creerAction} noValidate={true}>
         <TabList className='mb-10'>
           {Object.entries(tabsLabel).map(([tab, label]) => (
             <Tab
@@ -281,11 +287,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
           >
             Annuler
           </ButtonLink>
-          <Button
-            type='submit'
-            disabled={!formulaireEstValide()}
-            className='ml-6'
-          >
+          <Button type='submit' className='ml-6'>
             <IconComponent
               name={IconName.Add}
               focusable={false}
