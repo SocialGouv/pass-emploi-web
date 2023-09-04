@@ -349,7 +349,10 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
       accessToken
     )
 
-  if (process.env.ENABLE_SESSIONS_MILO || estEarlyAdopter(conseiller)) {
+  if (
+    process.env.ENABLE_SESSIONS_MILO ||
+    (conseiller && estEarlyAdopter(conseiller))
+  ) {
     sessions = await getSessionsACloreServerSide(user.id, accessToken)
   }
 
