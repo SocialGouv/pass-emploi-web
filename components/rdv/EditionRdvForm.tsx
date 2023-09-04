@@ -283,7 +283,8 @@ export function EditionRdvForm({
         error: 'Le champ “Date“ est vide. Renseignez une date.',
       })
     }
-    document.getElementById('date').scrollIntoView({ behavior: 'smooth' })
+    const inputDate = document.getElementById('date')
+    if (inputDate) inputDate.scrollIntoView({ behavior: 'smooth' })
     return dateEstValide
   }
 
@@ -326,7 +327,8 @@ export function EditionRdvForm({
         error: 'Le champ “Horaire“ est vide. Renseignez un horaire.',
       })
     }
-    document.getElementById('horaire').scrollIntoView({ behavior: 'smooth' })
+    const inputHoraire = document.getElementById('horaire')
+    if (inputHoraire) inputHoraire.scrollIntoView({ behavior: 'smooth' })
     return horaireEstValide
   }
 
@@ -348,7 +350,8 @@ export function EditionRdvForm({
         error: 'Le champ “Durée“ est vide. Renseignez une durée.',
       })
     }
-    document.getElementById('duree').scrollIntoView({ behavior: 'smooth' })
+    const inputDuree = document.getElementById('duree')
+    if (inputDuree) inputDuree.scrollIntoView({ behavior: 'smooth' })
     return dureeEstValide
   }
 
@@ -368,9 +371,8 @@ export function EditionRdvForm({
         ...codeTypeRendezVous,
         error: 'Le champ ”Type” est vide. Renseignez un type.',
       })
-      document
-        .getElementById('typeEvenement')
-        .scrollIntoView({ behavior: 'smooth' })
+      const inputType = document.getElementById('typeEvenement')
+      if (inputType) inputType.scrollIntoView({ behavior: 'smooth' })
       return false
     } else if (
       Boolean(
@@ -382,9 +384,8 @@ export function EditionRdvForm({
         ...precisionType,
         error: 'Le champ ”Préciser” est vide. Précisez le type d’évènement.',
       })
-      document
-        .getElementById('typeEvenement-autre')
-        .scrollIntoView({ behavior: 'smooth' })
+      const inputPreciser = document.getElementById('typeEvenement-autre')
+      if (inputPreciser) inputPreciser.scrollIntoView({ behavior: 'smooth' })
       return false
     }
     return true
@@ -397,7 +398,8 @@ export function EditionRdvForm({
         ...titre,
         error: 'Le champ “Titre” est vide. Renseignez un titre.',
       })
-      document.getElementById('titre').scrollIntoView({ behavior: 'smooth' })
+      const inputTitre = document.getElementById('titre')
+      if (inputTitre) inputTitre.scrollIntoView({ behavior: 'smooth' })
     }
     return titreEstValide
   }
@@ -448,13 +450,18 @@ export function EditionRdvForm({
     )
       return false
 
-    if (idsBeneficiaires.length === 0) {
+    if (idsBeneficiaires.length === 0 && !evenementTypeAC) {
       setIdsJeunes({
         ...idsJeunes,
         error:
           'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.',
       })
-      document.getElementById('titre').scrollIntoView({ behavior: 'smooth' })
+
+      const inputBeneficiaires = document.getElementById('select-beneficiaires')
+      if (inputBeneficiaires)
+        inputBeneficiaires.scrollIntoView({ behavior: 'smooth' })
+
+      return false
     }
 
     return evenementTypeAC || idsBeneficiaires.length > 0
