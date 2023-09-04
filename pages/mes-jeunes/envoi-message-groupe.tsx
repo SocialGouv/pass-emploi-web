@@ -91,9 +91,11 @@ function EnvoiMessageGroupe({
       setSelectionError(
         'Le champ ”Destinataires” est vide. Sélectionnez au moins un destinataire.'
       )
-      document
-        .getElementById('select-beneficiaires')
-        .scrollIntoView({ behavior: 'smooth' })
+      const selectBeneficiaires = document.getElementById(
+        'select-beneficiaires'
+      )
+      if (selectBeneficiaires)
+        selectBeneficiaires.scrollIntoView({ behavior: 'smooth' })
     }
     return selectionEstValide
   }
@@ -355,7 +357,6 @@ function EnvoiMessageGroupe({
             type='submit'
             className='flex items-center p-2'
             isLoading={isSending}
-            onClick={envoyerMessageGroupe}
           >
             <IconComponent
               name={IconName.Send}
