@@ -578,8 +578,6 @@ describe('EditionRdv', () => {
           selectType = screen.getByRole('combobox', {
             name: 'Type',
           })
-          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
-
           selectJeunes = screen.getByRole('combobox', {
             name: /Bénéficiaires/,
           })
@@ -599,8 +597,33 @@ describe('EditionRdv', () => {
           })
         })
 
+        it('ne soumet pas l’évènement quand aucun type n’est renseigné', async () => {
+          //When
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(creerEvenement).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ ”Type” est vide./)
+          ).toBeInTheDocument()
+        })
+
+        it('ne soumet pas l’évènement quand le champ Préciser n’est pas renseigné pour le type Autre', async () => {
+          //When
+          await userEvent.selectOptions(selectType, 'AUTRE')
+
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(creerEvenement).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ ”Préciser” est vide./)
+          ).toBeInTheDocument()
+        })
+
         it('ne soumet pas l’évènement quand aucun bénéficiaire n’est renseigné', async () => {
           //Given
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
 
@@ -612,8 +635,9 @@ describe('EditionRdv', () => {
           expect(screen.getByText(/Aucun bénéficiaire/)).toBeInTheDocument()
         })
 
-        it('ne soumet pas l’évènement quand aucune date n’est renseigné', async () => {
+        it('ne soumet pas l’évènement quand aucune date n’est renseignée', async () => {
           //Given
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(
@@ -633,6 +657,7 @@ describe('EditionRdv', () => {
 
         it('ne soumet pas l’évènement quand aucun horaire n’est renseigné', async () => {
           //Given
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(
@@ -651,8 +676,9 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it('ne soumet pas l’évènement quand aucun durée n’est renseigné', async () => {
+        it('ne soumet pas l’évènement quand aucune durée n’est renseignée', async () => {
           //Given
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(

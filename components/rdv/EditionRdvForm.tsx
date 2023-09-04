@@ -83,8 +83,8 @@ export function EditionRdvForm({
     value: defaultJeunes.map(({ id }) => id),
   })
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<
-    string | undefined
-  >(evenement?.type.code)
+    ValueWithError<string | undefined>
+  >({ value: evenement?.type.code })
 
   const [precisionType, setPrecisionType] = useState<
     ValueWithError<string | undefined>
@@ -202,7 +202,7 @@ export function EditionRdvForm({
     if (!evenement) {
       return Boolean(
         idsJeunes.value.length ||
-          codeTypeRendezVous ||
+          codeTypeRendezVous.value ||
           modalite ||
           date.value ||
           horaire.value ||
@@ -247,7 +247,7 @@ export function EditionRdvForm({
 
   async function handleSelectedTypeRendezVous(value: string) {
     setNombreMaxParticipants({ value: undefined })
-    setCodeTypeRendezVous(value)
+    setCodeTypeRendezVous({ value })
     setShowPrecisionType(value === TYPE_EVENEMENT.Autre)
     if (value === TYPE_EVENEMENT.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
@@ -363,9 +363,30 @@ export function EditionRdvForm({
   }
 
   function typeIsValid(): boolean {
-    if (!codeTypeRendezVous) return false
-    if (codeTypeRendezVous === TYPE_EVENEMENT.Autre)
-      return Boolean(precisionType.value)
+    if (!codeTypeRendezVous.value) {
+      setCodeTypeRendezVous({
+        ...codeTypeRendezVous,
+        error: 'Le champ ”Type” est vide. Renseignez un type.',
+      })
+      document
+        .getElementById('typeEvenement')
+        .scrollIntoView({ behavior: 'smooth' })
+      return false
+    } else if (
+      Boolean(
+        codeTypeRendezVous.value === TYPE_EVENEMENT.Autre &&
+          !precisionType.value
+      )
+    ) {
+      setPrecisionType({
+        ...precisionType,
+        error: 'Le champ ”Préciser” est vide. Précisez le type d’évènement.',
+      })
+      document
+        .getElementById('typeEvenement-autre')
+        .scrollIntoView({ behavior: 'smooth' })
+      return false
+    }
     return true
   }
 
@@ -447,7 +468,9 @@ export function EditionRdvForm({
   }
 
   function typeEntretienIndividuelConseillerSelected() {
-    return codeTypeRendezVous === TYPE_EVENEMENT.EntretienIndividuelConseiller
+    return (
+      codeTypeRendezVous.value === TYPE_EVENEMENT.EntretienIndividuelConseiller
+    )
   }
 
   function handlePresenceConseiller(e: ChangeEvent<HTMLInputElement>) {
@@ -461,8 +484,8 @@ export function EditionRdvForm({
   async function handleSoumettreRdv(e: FormEvent) {
     e.preventDefault()
 
-    if (!formHasChanges()) return Promise.resolve()
     if (!formIsValid()) return Promise.resolve()
+    if (!formHasChanges()) return Promise.resolve()
 
     const [dureeHeures, dureeMinutes] = duree.value!.split(':')
     const dateTime: DateTime = DateTime.fromFormat(
@@ -473,13 +496,13 @@ export function EditionRdvForm({
       parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10)
     const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
-      type: codeTypeRendezVous!,
+      type: codeTypeRendezVous.value!,
       date: dateTime.toISO(),
       duration: dureeEnMinutes,
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,
       precision:
-        codeTypeRendezVous === TYPE_EVENEMENT.Autre
+        codeTypeRendezVous.value === TYPE_EVENEMENT.Autre
           ? precisionType.value
           : undefined,
       modality: modalite,
@@ -537,9 +560,14 @@ export function EditionRdvForm({
         <Label htmlFor='typeEvenement' inputRequired={true}>
           Type
         </Label>
+        {codeTypeRendezVous.error && (
+          <InputError id='typeEvenement--error' className='mb-2'>
+            {codeTypeRendezVous.error}
+          </InputError>
+        )}
         <Select
           id='typeEvenement'
-          defaultValue={codeTypeRendezVous}
+          defaultValue={codeTypeRendezVous.value}
           required={true}
           disabled={Boolean(evenement)}
           onChange={handleSelectedTypeRendezVous}
