@@ -167,11 +167,11 @@ describe('NouvelleAction', () => {
           selectAction = screen.getByRole('combobox', {
             name: /Action prédéfinie/,
           })
+          submit = screen.getByRole('button', { name: 'Créer l’action' })
         })
 
         it("requiert la sélection d'une action", async () => {
           const dateEcheance = screen.getByLabelText(/Date d’échéance/)
-          submit = screen.getByRole('button', { name: 'Créer l’action' })
 
           await userEvent.type(dateEcheance, '2022-07-30')
           await userEvent.selectOptions(
@@ -183,37 +183,36 @@ describe('NouvelleAction', () => {
           await userEvent.click(submit)
 
           // Then
-          expect(submit).toHaveAttribute('disabled', '')
           expect(createAction).not.toHaveBeenCalled()
         })
 
         it("affiche un message d'erreur quand le type d’action prédéfinie est vide", async () => {
           // When
-          expect(selectAction).toBeInTheDocument()
-          await userEvent.click(selectAction)
-          await userEvent.tab()
+          await userEvent.click(submit)
 
           // Then
-          expect(selectAction.value).toEqual('')
           expect(
-            screen.getByText(
-              'Le champ “Action prédéfinie" est vide. Renseignez une action.'
-            )
+            screen.getByText(/Le champ “Action prédéfinie" est vide/)
           ).toBeInTheDocument()
+          expect(createAction).not.toHaveBeenCalled()
         })
 
         it("affiche un message d'erreur quand la date d'échéance n'est pas au bon format", async () => {
+          //Given
+          await userEvent.selectOptions(
+            selectAction,
+            actionsPredefinies[1].titre
+          )
           const dateEcheance = screen.getByLabelText(/Date d’échéance/)
 
           await userEvent.clear(dateEcheance)
-          await userEvent.tab()
+          await userEvent.click(submit)
 
           // Then
           expect(
-            screen.getByText(
-              'Le champ “Date d’échéance” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.'
-            )
+            screen.getByText(/Le champ “Date d’échéance” est vide/)
           ).toBeInTheDocument()
+          expect(createAction).not.toHaveBeenCalled()
         })
 
         it("affiche un message d'erreur quand date d'echeance n'est pas dans l'interval: un an avant, deux ans après", async () => {
@@ -330,16 +329,6 @@ describe('NouvelleAction', () => {
           await userEvent.type(intitule, 'Intitulé action')
           await userEvent.type(description, 'Commentaire action')
           await userEvent.type(dateEcheance, '2022-07-30')
-        })
-
-        it("requiert l'intitulé de l'action", async () => {
-          // When
-          await userEvent.clear(intitule)
-          await userEvent.click(submit)
-
-          // Then
-          expect(submit).toHaveAttribute('disabled', '')
-          expect(createAction).not.toHaveBeenCalled()
         })
 
         describe('formulaire valide', () => {
