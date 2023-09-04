@@ -76,7 +76,7 @@ export function RenseignementAgenceMissionLocaleForm({
     e.preventDefault()
     if (!idAgenceSelectionnee?.value)
       setIdAgenceSelectionnee({
-        ...idAgenceSelectionnee,
+        value: idAgenceSelectionnee?.value,
         error:
           'Le champ ”Recherchez votre Mission Locale” est vide. Renseignez votre Mission Locale.',
       })

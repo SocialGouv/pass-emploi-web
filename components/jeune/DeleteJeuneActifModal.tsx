@@ -34,8 +34,9 @@ export default function DeleteJeuneActifModal({
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
 
   const MOTIF_SUPPRESSION_AUTRE = 'Autre'
-  const [motifSuppressionJeune, setMotifSuppressionJeune] =
-    useState<ValueWithError<string | undefined>>(undefined)
+  const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<
+    ValueWithError<string | undefined>
+  >({ value: undefined })
   const [commentaireMotif, setCommentaireMotif] = useState<ValueWithError>({
     value: '',
   })
