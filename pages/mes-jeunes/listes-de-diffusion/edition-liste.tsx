@@ -12,6 +12,7 @@ import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
+import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -48,7 +49,9 @@ function EditionListeDiffusion({
   const [idsBeneficiaires, setIdsBeneficiaires] = useState<
     ValueWithError<string[]>
   >({ value: defaultBeneficiaires.map(({ id }) => id) })
-  const [titre, setTitre] = useState<string | undefined>(liste?.titre)
+  const [titre, setTitre] = useState<ValueWithError<string | undefined>>({
+    value: liste?.titre,
+  })
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showErreurSoumission, setShowErreurTraitement] =
@@ -56,17 +59,42 @@ function EditionListeDiffusion({
   const [showConfirmationSuppression, setShowConfirmationSuppression] =
     useState(false)
 
-  const formIsValid = Boolean(titre) && Boolean(idsBeneficiaires.value.length)
+  function formIsValid(): boolean {
+    return titreIsValid() && idsBeneficiairesIsValid()
+  }
+
+  function titreIsValid(): boolean {
+    const titreEstValide = Boolean(titre.value)
+    if (!titreEstValide)
+      setTitre({
+        ...titre,
+        error: 'Le champ “Titre” est vide. Renseignez un titre.',
+      })
+    return titreEstValide
+  }
+
+  function idsBeneficiairesIsValid(): boolean {
+    if (idsBeneficiaires.value.length === 0) {
+      setIdsBeneficiaires({
+        ...idsBeneficiaires,
+        error:
+          'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.',
+      })
+    }
+
+    return Boolean(idsBeneficiaires.value.length)
+  }
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function hasChanges(): boolean {
-    const previousIds = liste!.beneficiaires
-      .map(({ id }) => id)
-      .sort(compareParId)
+    const previousIds = liste?.beneficiaires
+      ? liste.beneficiaires.map(({ id }) => id).sort(compareParId)
+      : []
     const currentIds = [...idsBeneficiaires.value].sort(compareParId)
     return (
-      previousIds.toString() !== currentIds.toString() || liste!.titre !== titre
+      previousIds.toString() !== currentIds.toString() ||
+      liste!.titre !== titre.value
     )
   }
 
@@ -100,17 +128,17 @@ function EditionListeDiffusion({
       value: selectedIds.beneficiaires!,
       error: selectedIds.beneficiaires!.length
         ? undefined
-        : 'Aucun bénéficiaire n’est renseigné. Veuillez sélectionner au moins un bénéficiaire.',
+        : 'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.',
     })
   }
 
   async function soumettreListe(e: FormEvent) {
     e.preventDefault()
-    if (!formIsValid) return
+    if (!formIsValid() || !hasChanges()) return
 
     setIsLoading(true)
     const payload: ListeDeDiffusionFormData = {
-      titre: titre!,
+      titre: titre.value!,
       idsBeneficiaires: idsBeneficiaires.value,
     }
     try {
@@ -203,16 +231,22 @@ function EditionListeDiffusion({
         Tous les champs sont obligatoires
       </p>
 
-      <form onSubmit={soumettreListe}>
+      <form onSubmit={soumettreListe} noValidate={true}>
         <Label htmlFor='titre-liste' inputRequired={true}>
           {{ main: 'Titre', helpText: 'Exemple : Ma liste de pâtissier' }}
         </Label>
+        {titre.error && (
+          <InputError id='titre--error' className='mb-2'>
+            {titre.error}
+          </InputError>
+        )}
         <Input
           type='text'
           id='titre-liste'
+          invalid={Boolean(titre.error)}
           required={true}
-          defaultValue={titre}
-          onChange={setTitre}
+          defaultValue={titre.value}
+          onChange={(inputValue) => setTitre({ value: inputValue })}
         />
         <BeneficiairesMultiselectAutocomplete
           id={'select-beneficiaires'}
@@ -234,17 +268,13 @@ function EditionListeDiffusion({
           </ButtonLink>
 
           {liste && (
-            <Button
-              type='submit'
-              disabled={!formIsValid || !hasChanges()}
-              isLoading={isLoading}
-            >
+            <Button type='submit' isLoading={isLoading}>
               Modifier la liste
             </Button>
           )}
 
           {!liste && (
-            <Button type='submit' disabled={!formIsValid} isLoading={isLoading}>
+            <Button type='submit' isLoading={isLoading}>
               <IconComponent
                 name={IconName.Add}
                 focusable={false}
