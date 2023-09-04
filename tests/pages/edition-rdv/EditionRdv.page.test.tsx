@@ -563,6 +563,142 @@ describe('EditionRdv', () => {
         expect(cancelButton).toBeInTheDocument()
       })
 
+      describe('quand tous les champs ne sont pas remplis', () => {
+        let selectJeunes: HTMLInputElement
+        let selectModalite: HTMLSelectElement
+        let selectType: HTMLSelectElement
+        let inputDate: HTMLInputElement
+        let inputHoraire: HTMLInputElement
+        let inputDuree: HTMLInputElement
+        let inputTitre: HTMLInputElement
+        let inputDescription: HTMLTextAreaElement
+        let buttonValider: HTMLButtonElement
+        beforeEach(async () => {
+          // Given
+          selectType = screen.getByRole('combobox', {
+            name: 'Type',
+          })
+          selectJeunes = screen.getByRole('combobox', {
+            name: /Bénéficiaires/,
+          })
+          selectModalite = screen.getByRole('combobox', {
+            name: 'Modalité',
+          })
+          inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
+          inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
+          inputDuree = screen.getByLabelText('* Durée format : hh:mm')
+          inputTitre = screen.getByRole('textbox', { name: 'Titre' })
+          inputDescription = screen.getByRole('textbox', {
+            name: /Commentaire/,
+          })
+
+          buttonValider = screen.getByRole('button', {
+            name: 'Créer le rendez-vous',
+          })
+        })
+
+        it('ne soumet pas l’évènement quand aucun type n’est renseigné', async () => {
+          //When
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(creerEvenement).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ ”Type” est vide./)
+          ).toBeInTheDocument()
+        })
+
+        it('ne soumet pas l’évènement quand le champ Préciser n’est pas renseigné pour le type Autre', async () => {
+          //When
+          await userEvent.selectOptions(selectType, 'AUTRE')
+
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(creerEvenement).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ ”Préciser” est vide./)
+          ).toBeInTheDocument()
+        })
+
+        it('ne soumet pas l’évènement quand aucun bénéficiaire n’est renseigné', async () => {
+          //Given
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
+          await userEvent.type(inputTitre, 'Titre de l’événement')
+          await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
+
+          //When
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(creerEvenement).not.toHaveBeenCalled()
+          expect(screen.getByText(/Aucun bénéficiaire/)).toBeInTheDocument()
+        })
+
+        it('ne soumet pas l’évènement quand aucune date n’est renseignée', async () => {
+          //Given
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
+          await userEvent.type(inputTitre, 'Titre de l’événement')
+          await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
+          await userEvent.type(
+            selectJeunes,
+            getNomJeuneComplet(jeunesConseiller[0])
+          )
+
+          //When
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(creerEvenement).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ “Date“ est vide./)
+          ).toBeInTheDocument()
+        })
+
+        it('ne soumet pas l’évènement quand aucun horaire n’est renseigné', async () => {
+          //Given
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
+          await userEvent.type(inputTitre, 'Titre de l’événement')
+          await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
+          await userEvent.type(
+            selectJeunes,
+            getNomJeuneComplet(jeunesConseiller[0])
+          )
+          await userEvent.type(inputDate, '2022-03-03')
+
+          //When
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(creerEvenement).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ “Horaire“ est vide./)
+          ).toBeInTheDocument()
+        })
+
+        it('ne soumet pas l’évènement quand aucune durée n’est renseignée', async () => {
+          //Given
+          await userEvent.selectOptions(selectType, typesRendezVous[0].code)
+          await userEvent.type(inputTitre, 'Titre de l’événement')
+          await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
+          await userEvent.type(
+            selectJeunes,
+            getNomJeuneComplet(jeunesConseiller[0])
+          )
+          await userEvent.type(inputDate, '2022-03-03')
+          await userEvent.type(inputHoraire, '02:37')
+
+          //When
+          await userEvent.click(buttonValider)
+
+          //Then
+          expect(creerEvenement).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ “Durée“ est vide./)
+          ).toBeInTheDocument()
+        })
+      })
+
       describe('formulaire rempli', () => {
         let selectJeunes: HTMLInputElement
         let selectModalite: HTMLSelectElement
@@ -677,27 +813,6 @@ describe('EditionRdv', () => {
           })
         })
 
-        it("est désactivé quand aucun jeune n'est sélectionné", async () => {
-          // Given
-          const enleverJeunes: HTMLButtonElement[] = screen.getAllByRole(
-            'button',
-            { name: /Enlever beneficiaire/ }
-          )
-
-          // When
-          for (const bouton of enleverJeunes) {
-            await userEvent.click(bouton)
-          }
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              "Aucun bénéficiaire n'est renseigné. Sélectionnez au moins un bénéficiaire."
-            )
-          ).toBeInTheDocument()
-        })
-
         it('affiche le champ de saisie pour spécifier le type Autre', async () => {
           // When
           await userEvent.selectOptions(selectType, 'AUTRE')
@@ -726,49 +841,7 @@ describe('EditionRdv', () => {
           ).toBeInTheDocument()
         })
 
-        it("est désactivé quand aucune date n'est sélectionnée", async () => {
-          // When
-          await userEvent.clear(inputDate)
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              'Le champ “Date” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.'
-            )
-          ).toBeInTheDocument()
-        })
-
-        it("est désactivé quand aucune horaire n'est renseignée", async () => {
-          // When
-          await userEvent.clear(inputHoraire)
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.'
-            )
-          ).toBeInTheDocument()
-        })
-
-        it("est désactivé quand aucune durée n'est renseignée", async () => {
-          // When
-          await userEvent.clear(inputDuree)
-          await userEvent.tab()
-
-          // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              'Le champ “Durée” est invalide. Le format attendu est hh:mm, par exemple : 00:30 pour 30 minutes.'
-            )
-          ).toBeInTheDocument()
-        })
-
-        it('est désactivé quand la description dépasse 250 caractères', async () => {
+        it('affiche une erreur quand la description dépasse 250 caractères', async () => {
           // When
           await userEvent.clear(inputDescription)
           await userEvent.type(
@@ -780,7 +853,6 @@ describe('EditionRdv', () => {
           await userEvent.tab()
 
           // Then
-          expect(buttonValider).toHaveAttribute('disabled', '')
           expect(
             screen.getByText(
               'Vous avez dépassé le nombre maximal de caractères. Retirez des caractères.'
