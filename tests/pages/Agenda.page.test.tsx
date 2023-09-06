@@ -109,6 +109,10 @@ describe('Agenda', () => {
             nom: 'Mission Locale Aubenas',
             id: 'id-etablissement',
           },
+          structureMilo: {
+            nom: 'Mission Locale Aubenas',
+            id: 'id-test',
+          },
         })
 
         // When
@@ -382,11 +386,12 @@ describe('Agenda', () => {
         // Given
         process.env = Object.assign(process.env, {
           ENABLE_SESSIONS_MILO: 'true',
-          IDS_AGENCES_EARLY_ADOPTERS: 'id-test',
+          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
         })
         const conseiller = unConseiller({
           structure: StructureConseiller.MILO,
-          agence: {
+          agence: { nom: 'Mission Locale Aubenas', id: 'id-test' },
+          structureMilo: {
             nom: 'Mission Locale Aubenas',
             id: 'id-test',
           },

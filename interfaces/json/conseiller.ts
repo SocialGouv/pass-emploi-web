@@ -41,6 +41,10 @@ export interface ConseillerJson {
     id?: string
     nom: string
   }
+  structureMilo?: {
+    id?: string
+    nom: string
+  }
   notificationsSonores: boolean
   aDesBeneficiairesARecuperer: boolean
 }
