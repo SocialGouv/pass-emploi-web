@@ -24,6 +24,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
+import useMatomo from 'utils/analytics/useMatomo'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -270,6 +271,8 @@ function FicheDetailsSession({
     )
     await router.push(returnTo)
   }
+
+  useMatomo('Détail session i-milo')
 
   return (
     <>
