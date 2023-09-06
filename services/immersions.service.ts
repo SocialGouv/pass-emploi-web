@@ -80,10 +80,10 @@ export async function searchImmersions(
 
 function buildSearchParams(recherche: SearchImmersionsQuery): URLSearchParams {
   return new URLSearchParams({
-    lat: recherche.commune.value.latitude.toString(10),
-    lon: recherche.commune.value.longitude.toString(10),
+    lat: recherche.commune.value!.latitude.toString(10),
+    lon: recherche.commune.value!.longitude.toString(10),
     distance: recherche.rayon.toString(10),
-    rome: recherche.metier.value.code,
+    rome: recherche.metier.value!.code,
   })
 }
 
@@ -92,8 +92,8 @@ function areSameQueries(
   query2: SearchImmersionsQuery
 ): boolean {
   return (
-    query1.metier.value.code === query2.metier.value.code &&
-    query1.commune.value.code === query2.commune.value.code &&
+    query1.metier.value?.code === query2.metier.value?.code &&
+    query1.commune.value?.code === query2.commune.value?.code &&
     query1.rayon === query2.rayon
   )
 }

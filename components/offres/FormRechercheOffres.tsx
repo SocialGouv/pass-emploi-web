@@ -84,7 +84,7 @@ export default function FormRechercheOffres({
             ...queryImmersions,
             metier: {
               value: undefined,
-              error: 'Le champ “Métier“ est vide. Renseignez un métier.',
+              error: 'Le champ “Métier“ est incorrect. Renseignez un métier.',
             },
           })
           return true
@@ -93,7 +93,8 @@ export default function FormRechercheOffres({
             ...queryImmersions,
             commune: {
               value: undefined,
-              error: 'Le champ “Localisation“ est vide. Renseignez une ville.',
+              error:
+                'Le champ “Localisation“ est incorrect. Renseignez une ville.',
             },
           })
           return true
@@ -104,25 +105,10 @@ export default function FormRechercheOffres({
     }
   }
 
-  function hasNotChanged(): boolean {
-    switch (typeOffre) {
-      case TypeOffre.EMPLOI:
-      case TypeOffre.ALTERNANCE:
-        return stateQueryImmersions === queryOffresEmploi
-      case TypeOffre.SERVICE_CIVIQUE:
-        return stateQueryServicesCiviques === queryServicesCiviques
-      case TypeOffre.IMMERSION:
-        return stateQueryImmersions === queryImmersions
-      default:
-        return false
-    }
-  }
-
   async function rechercherPremierePage(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (hasResults) return
     if (formIsInvalid()) return
-    if (hasNotChanged()) return
     if (!typeOffre) return
 
     onNouvelleRecherche()

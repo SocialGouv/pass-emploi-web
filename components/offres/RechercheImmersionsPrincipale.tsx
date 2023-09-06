@@ -54,7 +54,7 @@ export default function RechercheImmersionsPrincipale({
         fetch={recupererMetiers}
         fieldNames={{ id: 'libelle', value: 'libelle' }}
         onUpdateSelected={updateMetier}
-        errorMessage='Veuillez saisir un métier correct.'
+        errorMessage=''
         defaultValue={query.metier?.value?.libelle}
         required={true}
       />
@@ -75,7 +75,7 @@ export default function RechercheImmersionsPrincipale({
         fetch={recupererCommunes}
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateCommune}
-        errorMessage={query.commune?.error}
+        errorMessage=''
         defaultValue={query.commune?.value?.libelle}
         required={true}
       />

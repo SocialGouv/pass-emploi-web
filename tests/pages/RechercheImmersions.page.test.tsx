@@ -102,28 +102,6 @@ describe('Page Recherche Immersions', () => {
       })
     })
 
-    it('affiche une erreur quand le métier est vide', async () => {
-      // Given
-      const inputMetier = screen.getByLabelText(/Métier/)
-      const submitButton = screen.getByRole('button', {
-        name: 'Rechercher',
-      })
-
-      // When
-      await userEvent.clear(inputMetier)
-
-      await act(() => {
-        fireEvent.blur(inputMetier)
-      })
-      await userEvent.click(submitButton)
-
-      // Then
-      expect(
-        screen.getByText('Veuillez saisir un métier correct.')
-      ).toBeInTheDocument()
-      expect(searchImmersions).toHaveBeenCalledTimes(0)
-    })
-
     it('affiche une erreur quand le métier est incorrect', async () => {
       // Given
       const inputMetier = screen.getByLabelText(/Métier/)
@@ -141,7 +119,7 @@ describe('Page Recherche Immersions', () => {
 
       // Then
       expect(
-        screen.getByText('Veuillez saisir un métier correct.')
+        screen.getByText(/Le champ “Métier“ est incorrect./)
       ).toBeInTheDocument()
       expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
@@ -181,46 +159,21 @@ describe('Page Recherche Immersions', () => {
       })
     })
 
-    it('affiche une erreur quand la localisation est vide', async () => {
-      // Given
-      const inputLocalisation = screen.getByLabelText(/Localisation/)
-      const submitButton = screen.getByRole('button', {
-        name: 'Rechercher',
-      })
-
-      // When
-      await userEvent.clear(inputLocalisation)
-
-      await act(() => {
-        fireEvent.blur(inputLocalisation)
-      })
-      await userEvent.click(submitButton)
-
-      // Then
-      expect(
-        screen.getByText(/Le champ “Localisation“ est vide./)
-      ).toBeInTheDocument()
-      expect(searchImmersions).toHaveBeenCalledTimes(0)
-    })
-
     it('affiche une erreur quand la localisation est incorrecte', async () => {
       // Given
-      const inputLocalisation = screen.getByLabelText(/Localisation/)
       const submitButton = screen.getByRole('button', {
         name: 'Rechercher',
       })
 
       // When
-      await userEvent.type(inputLocalisation, 'paris14')
+      await saisirMetier('développeur / développeuse web')
+      await saisirCommune('bout du monde')
 
-      await act(() => {
-        fireEvent.blur(inputLocalisation)
-      })
       await userEvent.click(submitButton)
 
       // Then
       expect(
-        screen.getByText('Veuillez saisir une commune correcte.')
+        screen.getByText(/Le champ “Localisation“ est incorrect./)
       ).toBeInTheDocument()
       expect(searchImmersions).toHaveBeenCalledTimes(0)
     })
