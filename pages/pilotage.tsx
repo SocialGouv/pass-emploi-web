@@ -341,7 +341,8 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
 
   const actions = await getActionsAQualifierServerSide(user.id, accessToken)
 
-  let evenements, sessions
+  let evenements
+  let sessions: SessionsAClore[] | undefined
 
   if (conseiller?.agence?.id)
     evenements = await getAnimationsCollectivesACloreServerSide(

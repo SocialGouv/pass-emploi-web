@@ -29,8 +29,8 @@ describe('SessionsApiService', () => {
           id: 'id-session',
           nomSession: 'nom session',
           nomOffre: 'nom offre',
-          dateHeureDebut: dateDebut,
-          dateHeureFin: dateFin,
+          dateHeureDebut: dateDebut.toISO(),
+          dateHeureFin: dateFin.toISO(),
           estVisible: true,
           type: {
             code: 'COLLECTIVE_INFORMATION',
@@ -42,8 +42,8 @@ describe('SessionsApiService', () => {
           id: 'id-session',
           nomSession: 'nom session',
           nomOffre: 'nom offre',
-          dateHeureDebut: dateDebut,
-          dateHeureFin: dateFin,
+          dateHeureDebut: dateDebut.toISO(),
+          dateHeureFin: dateFin.toISO(),
           estVisible: false,
           type: {
             code: 'WORKSHOP',
@@ -95,7 +95,7 @@ describe('SessionsApiService', () => {
       expect(actual).toEqual(sessionsMilo)
     })
 
-    it("renvoie undefined si les sessions n'existent pas", async () => {
+    it("renvoie un tableua vide si les sessions n'existent pas", async () => {
       // Given
       ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'Sessions non trouvées')
@@ -111,7 +111,7 @@ describe('SessionsApiService', () => {
       )
 
       // Then
-      expect(actual).toEqual(undefined)
+      expect(actual).toEqual([])
     })
   })
 

@@ -44,7 +44,7 @@ export async function getSessionsMissionLocale(
   idConseiller: string,
   accessToken: string,
   options?: string
-): Promise<AnimationCollective[] | undefined> {
+): Promise<AnimationCollective[]> {
   try {
     const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
       `/conseillers/milo/${idConseiller}/sessions${
@@ -55,7 +55,7 @@ export async function getSessionsMissionLocale(
     return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) {
-      return undefined
+      return []
     }
     throw e
   }

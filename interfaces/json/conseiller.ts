@@ -42,7 +42,7 @@ export interface ConseillerJson {
     nom: string
   }
   structureMilo?: {
-    id?: string
+    id: string
     nom: string
   }
   notificationsSonores: boolean
