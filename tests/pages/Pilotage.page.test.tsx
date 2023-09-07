@@ -53,7 +53,7 @@ describe('Pilotage', () => {
       beforeEach(async () => {
         process.env = Object.assign(process.env, {
           ENABLE_SESSIONS_MILO: 'true',
-          IDS_AGENCES_EARLY_ADOPTERS: 'id-test',
+          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
         })
 
         actions = uneListeDActionsAQualifier()
@@ -111,6 +111,10 @@ describe('Pilotage', () => {
             {
               customConseiller: {
                 agence: {
+                  nom: 'Mission Locale Aubenas',
+                  id: 'id-test',
+                },
+                structureMilo: {
                   nom: 'Mission Locale Aubenas',
                   id: 'id-test',
                 },
@@ -435,6 +439,10 @@ describe('Pilotage', () => {
                 nom: 'Mission Locale Aubenas',
                 id: 'id-test',
               },
+              structureMilo: {
+                nom: 'Mission Locale Aubenas',
+                id: 'id-test',
+              },
             },
           }
         )
@@ -607,6 +615,10 @@ describe('Pilotage', () => {
     describe('quand le conseiller est connecté', () => {
       beforeEach(async () => {
         // Given
+        process.env = Object.assign(process.env, {
+          ENABLE_SESSIONS_MILO: 'true',
+          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
+        })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           redirect: { destination: 'whatever' },
@@ -630,6 +642,10 @@ describe('Pilotage', () => {
             agence: {
               nom: 'Mission Locale Aubenas',
               id: 'id-etablissement',
+            },
+            structureMilo: {
+              nom: 'Mission Locale Aubenas',
+              id: 'id-test',
             },
           })
         )
@@ -691,6 +707,9 @@ describe('Pilotage', () => {
             agence: {
               nom: 'Mission Locale Aubenas',
             },
+            structureMilo: {
+              nom: 'Mission Locale Aubenas',
+            },
           })
         )
 
@@ -708,7 +727,6 @@ describe('Pilotage', () => {
               donnees: uneListeDActionsAQualifier(),
               metadonnees: { nombreTotal: 5, nombrePages: 1 },
             },
-            sessions: uneListeDeSessionsAClore(),
             onglet: 'ANIMATIONS_COLLECTIVES',
           },
         })

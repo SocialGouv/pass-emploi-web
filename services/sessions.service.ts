@@ -44,12 +44,21 @@ export async function getSessionsMissionLocale(
   idConseiller: string,
   accessToken: string,
   options?: string
-): Promise<AnimationCollective[]> {
-  const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
-    `/conseillers/milo/${idConseiller}/sessions${options ? '?' + options : ''}`,
-    accessToken
-  )
-  return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
+): Promise<AnimationCollective[] | undefined> {
+  try {
+    const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
+      `/conseillers/milo/${idConseiller}/sessions${
+        options ? '?' + options : ''
+      }`,
+      accessToken
+    )
+    return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) {
+      return undefined
+    }
+    throw e
+  }
 }
 
 export async function getSessionsMissionLocaleClientSide(

@@ -68,11 +68,16 @@ export default function OngletAgendaEtablissement({
   ) {
     const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
     if (
-      (conseiller && estEarlyAdopter(conseiller)) ||
+      conseiller &&
+      estEarlyAdopter(conseiller) &&
       process.env.ENABLE_SESSIONS_MILO
     ) {
-      const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
-      setAnimationsCollectives([...evenementsMilo, ...evenements])
+      try {
+        const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
+        setAnimationsCollectives([...evenementsMilo, ...evenements])
+      } catch (e) {
+        setAnimationsCollectives([...evenements])
+      }
     } else {
       setAnimationsCollectives([...evenements])
     }

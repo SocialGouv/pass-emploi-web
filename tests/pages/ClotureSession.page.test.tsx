@@ -190,7 +190,7 @@ describe('Cloture Session', () => {
       beforeEach(() => {
         process.env = Object.assign(process.env, {
           ENABLE_SESSIONS_MILO: 'true',
-          IDS_AGENCES_EARLY_ADOPTERS: 'id-test',
+          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
         })
 
         // Given
@@ -205,6 +205,7 @@ describe('Cloture Session', () => {
           unConseiller({
             id: 'id-conseiller',
             agence: { nom: 'Agence early', id: 'id-test' },
+            structureMilo: { nom: 'Agence early', id: 'id-test' },
           })
         )
         ;(getDetailsSession as jest.Mock).mockResolvedValue(

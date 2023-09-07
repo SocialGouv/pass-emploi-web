@@ -94,6 +94,25 @@ describe('SessionsApiService', () => {
       ]
       expect(actual).toEqual(sessionsMilo)
     })
+
+    it("renvoie undefined si les sessions n'existent pas", async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockRejectedValue(
+        new ApiError(404, 'Sessions non trouvées')
+      )
+      const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
+      const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
+
+      // When
+      const actual = await getSessionsMissionLocaleClientSide(
+        'id-conseiller',
+        dateDebut,
+        dateFin
+      )
+
+      // Then
+      expect(actual).toEqual(undefined)
+    })
   })
 
   describe('.getDetailSession', () => {
