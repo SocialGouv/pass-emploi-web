@@ -18,7 +18,10 @@ import {
   getRendezVousEtablissement,
 } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
-import { getSessionsMissionLocaleClientSide } from 'services/sessions.service'
+import {
+  getSessionsBeneficiaires,
+  getSessionsMissionLocaleClientSide,
+} from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
@@ -43,6 +46,11 @@ describe('Agenda', () => {
 
     beforeEach(() => {
       // Given
+      process.env = Object.assign(process.env, {
+        ENABLE_SESSIONS_MILO: 'true',
+        IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
+      })
+
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1_14H)
 
       replace = jest.fn(() => Promise.resolve())
@@ -54,6 +62,14 @@ describe('Agenda', () => {
         async (_, dateDebut) => [
           unEvenementListItem({
             date: dateDebut.plus({ day: 3 }).toISO(),
+          }),
+        ]
+      )
+      ;(getSessionsBeneficiaires as jest.Mock).mockImplementation(
+        async (_, dateDebut: DateTime) => [
+          unEvenementListItem({
+            id: 'session',
+            date: dateDebut.plus({ day: 2 }).set({ hour: 14 }).toISO(),
           }),
         ]
       )
@@ -208,8 +224,16 @@ describe('Agenda', () => {
             SEPTEMBRE_1_0H,
             SEPTEMBRE_7_23H
           )
+          expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
+            '1',
+            SEPTEMBRE_1_0H,
+            SEPTEMBRE_7_23H
+          )
 
           expect(screen.getByRole('table')).toBeInTheDocument()
+          expect(screen.getByText('samedi 3 septembre')).toBeInTheDocument()
+          expect(screen.getByText('Matin')).toBeInTheDocument()
+          expect(screen.getByText('00h00 - 125 min')).toBeInTheDocument()
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
           expect(screen.getByText('Matin')).toBeInTheDocument()
           expect(screen.getByText('00h00 - 125 min')).toBeInTheDocument()
@@ -235,6 +259,11 @@ describe('Agenda', () => {
             AOUT_25_0H,
             AOUT_31_23H
           )
+          expect(getSessionsBeneficiaires).toHaveBeenLastCalledWith(
+            '1',
+            AOUT_25_0H,
+            AOUT_31_23H
+          )
           expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
 
           // When
@@ -245,12 +274,22 @@ describe('Agenda', () => {
             SEPTEMBRE_1_0H,
             SEPTEMBRE_7_23H
           )
+          expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
+            '1',
+            SEPTEMBRE_1_0H,
+            SEPTEMBRE_7_23H
+          )
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
           // When
           await userEvent.click(periodeFutureButton)
           // Then
           expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
+            '1',
+            SEPTEMBRE_8_0H,
+            SEPTEMBRE_14_23H
+          )
+          expect(getSessionsBeneficiaires).toHaveBeenLastCalledWith(
             '1',
             SEPTEMBRE_8_0H,
             SEPTEMBRE_14_23H
@@ -381,13 +420,9 @@ describe('Agenda', () => {
       })
     })
 
-    describe('quand le conseiller est Milo', () => {
+    describe('agenda missions locale quand le conseiller est Milo', () => {
       beforeEach(async () => {
         // Given
-        process.env = Object.assign(process.env, {
-          ENABLE_SESSIONS_MILO: 'true',
-          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
-        })
         const conseiller = unConseiller({
           structure: StructureConseiller.MILO,
           agence: { nom: 'Mission Locale Aubenas', id: 'id-test' },

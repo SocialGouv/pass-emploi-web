@@ -10,6 +10,10 @@ import {
   TypeEvenement,
 } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
+import {
+  jsonToTypeSessionMilo,
+  SessionMiloBeneficiairesJson,
+} from 'interfaces/json/session'
 import { TIME_24_H_SEPARATOR, toFrenchFormat } from 'utils/date'
 
 type Auteur = { id: string; nom: string; prenom: string }
@@ -141,6 +145,24 @@ export function jsonToAnimationCollective(
   }
 }
 
+export function sessionMiloJsonToEvenementListItem(
+  json: SessionMiloBeneficiairesJson
+): EvenementListItem {
+  const dateDebut = DateTime.fromISO(json.dateHeureDebut)
+  const dateFin = DateTime.fromISO(json.dateHeureFin)
+  const duree = Math.round(
+    dateFin.diff(dateDebut, 'minutes').toObject().minutes!
+  )
+  return {
+    id: json.id,
+    type: jsonToTypeSessionMilo(json.type),
+    date: json.dateHeureDebut,
+    duree: duree,
+    labelBeneficiaires: jsonToBeneficiaires(json.beneficiaires),
+    source: 'MILO',
+  }
+}
+
 function jsonToTypeAnimationCollective(jsonType: TypeEvenement): string {
   if (jsonType.code === 'INFORMATION_COLLECTIVE') {
     return 'Info coll'
@@ -167,7 +189,9 @@ function jsonToStatutAnimationCollective(
   }
 }
 
-function jsonToBeneficiaires(jeunes: BaseJeune[]): string | undefined {
+function jsonToBeneficiaires(
+  jeunes: { nom: string; prenom: string }[]
+): string | undefined {
   if (jeunes.length === 1) return jeunes[0].prenom + ' ' + jeunes[0].nom
   return 'Bénéficiaires multiples'
 }

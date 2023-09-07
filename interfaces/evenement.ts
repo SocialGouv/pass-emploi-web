@@ -37,7 +37,7 @@ export type EvenementListItem = {
   type: string
   date: string
   duree: number
-  idCreateur: string
+  idCreateur?: string
   modality?: string
   labelBeneficiaires?: string
   source?: string
