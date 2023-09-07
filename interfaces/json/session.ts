@@ -93,9 +93,19 @@ export function jsonToStatutSession(
   }
 }
 
-function jsonToTypeSessionMilo(jsonType: TypeEvenement): string {
+export function jsonToTypeSessionMilo(jsonType: TypeEvenement): string {
   if (jsonType.code === 'COLLECTIVE_INFORMATION') {
     return 'info coll i-milo'
   }
   return 'Atelier i-milo'
+}
+
+export type SessionMiloJeuneJson = {
+  id: string
+  nomSession: string
+  nomOffre: string
+  dateHeureDebut: string
+  dateHeureFin: string
+  type: TypeEvenement
+  inscription: string
 }

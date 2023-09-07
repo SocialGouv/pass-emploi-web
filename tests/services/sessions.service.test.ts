@@ -95,7 +95,7 @@ describe('SessionsApiService', () => {
       expect(actual).toEqual(sessionsMilo)
     })
 
-    it("renvoie un tableua vide si les sessions n'existent pas", async () => {
+    it("renvoie un tableau vide si les sessions n'existent pas", async () => {
       // Given
       ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'Sessions non trouvées')

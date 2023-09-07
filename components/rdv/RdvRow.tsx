@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { DataTag } from 'components/ui/Indicateurs/DataTag'
+import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import { TR } from 'components/ui/Table/TR'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -47,15 +47,55 @@ export function RdvRow({
     ? getNomJeuneComplet(beneficiaireUnique)
     : rdv.labelBeneficiaires
 
-  function getRdvIconName(evenement: EvenementListItem) {
-    if (evenement.source === StructureConseiller.MILO) {
-      return IconName.Lock
+  const urlRdv = pathPrefix + '/edition-rdv?idRdv=' + rdv.id
+  const urlRdvSessionMilo = '/agenda/sessions/' + rdv.id
+
+  function tagType({
+    isSession,
+    type,
+    source,
+  }: EvenementListItem): ReactElement {
+    let tagProps: {
+      color: string
+      iconName?: IconName
+      iconLabel?: string
+      background?: string
+    } = {
+      color: 'content_color',
+      iconName: undefined,
+      iconLabel: undefined,
+      background: 'additional_5',
     }
+    if (source === StructureConseiller.MILO)
+      tagProps = {
+        color: 'content_color',
+        iconName: IconName.Lock,
+        iconLabel: 'Non modifiable',
+        background: 'additional_5',
+      }
+
+    if (isSession)
+      tagProps = {
+        color: 'accent_1',
+        iconName: IconName.Lock,
+        iconLabel: 'Informations de la session non modifiables',
+        background: 'accent_1',
+      }
+
+    return (
+      <TagMetier
+        label={type}
+        color={tagProps.color}
+        backgroundColor={tagProps.background + '_lighten'}
+        iconName={tagProps.iconName}
+        iconLabel={tagProps.iconLabel}
+      />
+    )
   }
 
   return (
     <TR
-      href={pathPrefix + '/edition-rdv?idRdv=' + rdv.id}
+      href={rdv.isSession ? urlRdvSessionMilo : urlRdv}
       label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
     >
       <TD
@@ -68,14 +108,7 @@ export function RdvRow({
 
       {!beneficiaireUnique && <TD isBold>{rdv.labelBeneficiaires}</TD>}
 
-      <TD>
-        <DataTag
-          text={rdv.type}
-          style='additional'
-          iconName={getRdvIconName(rdv)}
-          iconLabel='Non modifiable'
-        />
-      </TD>
+      <TD>{tagType(rdv)}</TD>
 
       <TD>
         {!withIndicationPresenceBeneficiaire && (
