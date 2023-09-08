@@ -882,7 +882,6 @@ describe('Détails Session', () => {
   describe('server side', () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
-        ENABLE_SESSIONS_MILO: 'true',
         IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
       })
       ;(getDetailsSession as jest.Mock).mockResolvedValue(unDetailSession())

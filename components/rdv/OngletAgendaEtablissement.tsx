@@ -14,7 +14,7 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { estEarlyAdopter } from 'interfaces/conseiller'
+import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   StatutAnimationCollective,
@@ -67,11 +67,7 @@ export default function OngletAgendaEtablissement({
     dateFin: DateTime
   ) {
     const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
-    if (
-      conseiller &&
-      estEarlyAdopter(conseiller) &&
-      process.env.ENABLE_SESSIONS_MILO
-    ) {
+    if (peutAccederAuxSessions(conseiller)) {
       try {
         const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
         setAnimationsCollectives([...evenementsMilo, ...evenements])

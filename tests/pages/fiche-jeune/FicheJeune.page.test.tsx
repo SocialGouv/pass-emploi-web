@@ -278,7 +278,6 @@ describe('Fiche Jeune', () => {
       beforeEach(async () => {
         // Given
         process.env = Object.assign(process.env, {
-          ENABLE_SESSIONS_MILO: 'true',
           IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
         })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({

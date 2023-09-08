@@ -52,7 +52,6 @@ describe('Pilotage', () => {
 
       beforeEach(async () => {
         process.env = Object.assign(process.env, {
-          ENABLE_SESSIONS_MILO: 'true',
           IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
         })
 
@@ -616,7 +615,6 @@ describe('Pilotage', () => {
       beforeEach(async () => {
         // Given
         process.env = Object.assign(process.env, {
-          ENABLE_SESSIONS_MILO: 'true',
           IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
         })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -703,14 +701,7 @@ describe('Pilotage', () => {
       it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
         // Given
         ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
-          unConseiller({
-            agence: {
-              nom: 'Mission Locale Aubenas',
-            },
-            structureMilo: {
-              nom: 'Mission Locale Aubenas',
-            },
-          })
+          unConseiller()
         )
 
         // When
