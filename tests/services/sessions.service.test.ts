@@ -81,7 +81,7 @@ describe('SessionsApiService', () => {
           titre: 'nom offre',
           sousTitre: 'nom session',
           date: dateDebut,
-          duree: 10079.999983333333,
+          duree: 10080,
           type: 'info coll i-milo',
           statut: StatutAnimationCollective.Close,
           isSession: true,
@@ -92,7 +92,7 @@ describe('SessionsApiService', () => {
           titre: 'nom offre',
           sousTitre: 'nom session',
           date: dateDebut,
-          duree: 10079.999983333333,
+          duree: 10080,
           type: 'Atelier i-milo',
           statut: StatutAnimationCollective.AVenir,
           isSession: true,
@@ -123,7 +123,7 @@ describe('SessionsApiService', () => {
   })
 
   describe('.getSessionsBeneficiaires', () => {
-    it('renvoie les sessions milo auxquelles participents les bénéficiaires du conseiller', async () => {
+    it('renvoie les sessions milo auxquelles participent les bénéficiaires du conseiller', async () => {
       // Given
       const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
       const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
@@ -197,6 +197,7 @@ describe('SessionsApiService', () => {
           duree: 10080,
           labelBeneficiaires: 'Hermione Granger',
           source: 'MILO',
+          isSession: true
         },
         {
           id: 'id-session-2',
@@ -205,6 +206,7 @@ describe('SessionsApiService', () => {
           duree: 10080,
           labelBeneficiaires: 'Bénéficiaires multiples',
           source: 'MILO',
+          isSession: true
         },
       ]
       expect(actual).toEqual(sessionsMilo)

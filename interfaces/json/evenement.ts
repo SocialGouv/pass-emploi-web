@@ -14,7 +14,11 @@ import {
   jsonToTypeSessionMilo,
   SessionMiloBeneficiairesJson,
 } from 'interfaces/json/session'
-import { TIME_24_H_SEPARATOR, toFrenchFormat } from 'utils/date'
+import {
+  minutesEntreDeuxDates,
+  TIME_24_H_SEPARATOR,
+  toFrenchFormat,
+} from 'utils/date'
 
 type Auteur = { id: string; nom: string; prenom: string }
 
@@ -150,16 +154,14 @@ export function sessionMiloJsonToEvenementListItem(
 ): EvenementListItem {
   const dateDebut = DateTime.fromISO(json.dateHeureDebut)
   const dateFin = DateTime.fromISO(json.dateHeureFin)
-  const duree = Math.round(
-    dateFin.diff(dateDebut, 'minutes').toObject().minutes!
-  )
   return {
     id: json.id,
     type: jsonToTypeSessionMilo(json.type),
     date: json.dateHeureDebut,
-    duree: duree,
+    duree: minutesEntreDeuxDates(dateDebut, dateFin),
     labelBeneficiaires: jsonToBeneficiaires(json.beneficiaires),
     source: 'MILO',
+    isSession: true,
   }
 }
 

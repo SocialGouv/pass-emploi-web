@@ -616,7 +616,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     getJeuneDetails(context.query.jeune_id as string, accessToken),
     getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
     userIsPoleEmploi
-      ? []
+      ? ([] as EvenementListItem[])
       : getRendezVousJeune(
           context.query.jeune_id as string,
           PeriodeEvenements.FUTURS,
