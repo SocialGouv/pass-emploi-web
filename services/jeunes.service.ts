@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { EvenementListItem } from 'interfaces/evenement'
 import {
   BaseJeune,
   ConseillerHistorique,
@@ -31,14 +30,8 @@ import {
   MetadonneesFavorisJson,
   SuppressionJeuneFormData,
 } from 'interfaces/json/jeune'
-import {
-  jsonToTypeSessionMilo,
-  SessionMiloJeuneJson,
-} from 'interfaces/json/session'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
-import { StatutBeneficiaire } from 'interfaces/session'
 import { MetadonneesPagination } from 'types/pagination'
-import { minutesEntreDeuxDates } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
 export async function getIdentitesBeneficiaires(
@@ -339,47 +332,4 @@ async function getIndicateursJeune(
     session!.accessToken
   )
   return jsonToIndicateursSemaine(indicateurs)
-}
-
-export async function getSessionsMiloJeune(
-  idJeune: string,
-  accessToken: string,
-  dateDebut: DateTime,
-  dateFin?: DateTime
-): Promise<EvenementListItem[]> {
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-  const dateFinUrlEncoded = encodeURIComponent(dateFin?.toISO())
-  try {
-    const path = dateFin
-      ? `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&filtrerEstInscrit=true`
-      : `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
-    const { content: sessionsMiloJeuneJson } = await apiGet<
-      SessionMiloJeuneJson[]
-    >(path, accessToken)
-
-    return sessionsMiloJeuneJson.map(sessionMiloJeuneJsonToEvenementListItem)
-  } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
-      return []
-    }
-    throw e
-  }
-}
-
-function sessionMiloJeuneJsonToEvenementListItem(
-  json: SessionMiloJeuneJson
-): EvenementListItem {
-  const dateDebut = DateTime.fromISO(json.dateHeureDebut)
-  return {
-    id: json.id,
-    date: json.dateHeureDebut,
-    type: jsonToTypeSessionMilo(json.type),
-    duree: minutesEntreDeuxDates(
-      dateDebut,
-      DateTime.fromISO(json.dateHeureFin)
-    ),
-    idCreateur: json.id ?? undefined,
-    isSession: true,
-    estInscrit: json.inscription === StatutBeneficiaire.INSCRIT,
-  }
 }

@@ -43,7 +43,6 @@ export type EvenementListItem = {
   source?: string
   futPresent?: boolean
   isSession?: boolean
-  estInscrit?: boolean
 }
 
 type Auteur = { nom: string; prenom: string }

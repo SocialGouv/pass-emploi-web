@@ -2,15 +2,21 @@ import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
 import { apiGet, apiPatch, apiPost } from 'clients/api.client'
-import { AnimationCollective } from 'interfaces/evenement'
+import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
 import {
   DetailsSessionJson,
   jsonToStatutSession,
+  jsonToTypeSessionMilo,
+  SessionMiloBeneficiaireJson,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
-import { InformationBeneficiaireSession, Session } from 'interfaces/session'
-import { toShortDate } from 'utils/date'
+import {
+  InformationBeneficiaireSession,
+  Session,
+  StatutBeneficiaire,
+} from 'interfaces/session'
+import { minutesEntreDeuxDates, toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
 export type SessionsAClore = {
@@ -160,6 +166,33 @@ export async function cloreSession(
   )
 }
 
+export async function getSessionsMiloBeneficiaire(
+  idJeune: string,
+  accessToken: string,
+  dateDebut?: DateTime,
+  dateFin?: DateTime
+): Promise<EvenementListItem[]> {
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut?.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(dateFin?.toISO())
+  try {
+    const path = dateFin
+      ? `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&filtrerEstInscrit=true`
+      : `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
+    const { content: sessionsMiloJeuneJson } = await apiGet<
+      SessionMiloBeneficiaireJson[]
+    >(path, accessToken)
+
+    return sessionsMiloJeuneJson.map(
+      sessionMiloBeneficiaireJsonToEvenementListItem
+    )
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) {
+      return []
+    }
+    throw e
+  }
+}
+
 export function jsonToSession(json: DetailsSessionJson): Session {
   const session: Session = {
     session: {
@@ -192,4 +225,21 @@ export function jsonToSession(json: DetailsSessionJson): Session {
     session.session.commentaire = json.session.commentaire
 
   return session
+}
+
+function sessionMiloBeneficiaireJsonToEvenementListItem(
+  json: SessionMiloBeneficiaireJson
+): EvenementListItem {
+  const dateDebut = DateTime.fromISO(json.dateHeureDebut)
+  return {
+    id: json.id,
+    date: json.dateHeureDebut,
+    type: jsonToTypeSessionMilo(json.type),
+    duree: minutesEntreDeuxDates(
+      dateDebut,
+      DateTime.fromISO(json.dateHeureFin)
+    ),
+    idCreateur: json.id ?? undefined,
+    isSession: true,
+  }
 }

@@ -594,8 +594,12 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const { getConseillerServerSide } = await import(
     'services/conseiller.service'
   )
-  const { getJeuneDetails, getMetadonneesFavorisJeune, getSessionsMiloJeune } =
-    await import('services/jeunes.service')
+  const { getJeuneDetails, getMetadonneesFavorisJeune } = await import(
+    'services/jeunes.service'
+  )
+  const { getSessionsMiloBeneficiaire } = await import(
+    'services/sessions.service'
+  )
   const { getRendezVousJeune } = await import('services/evenements.service')
   const { getActionsJeuneServerSide } = await import('services/actions.service')
   const { getOffres, getRecherchesSauvegardees } = await import(
@@ -603,6 +607,10 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   )
 
   const conseiller = await getConseillerServerSide(user, accessToken)
+
+  if (!conseiller) {
+    return { notFound: true }
+  }
 
   const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
     getJeuneDetails(context.query.jeune_id as string, accessToken),
@@ -623,16 +631,15 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
         ),
   ])
 
-  let sessionsMilo: EvenementListItem[] = [] | undefined
+  let sessionsMilo: EvenementListItem[] = []
 
   if (
-    process.env.ENABLE_SESSIONS_MILO &&
-    conseiller &&
-    estEarlyAdopter(conseiller) &&
+    (process.env.ENABLE_SESSIONS_MILO ||
+      (conseiller && estEarlyAdopter(conseiller))) &&
     !userIsPoleEmploi
   ) {
     try {
-      sessionsMilo = await getSessionsMiloJeune(
+      sessionsMilo = await getSessionsMiloBeneficiaire(
         context.query.jeune_id as string,
         accessToken,
         DateTime.now().startOf('day')
@@ -672,7 +679,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const props: FicheJeuneProps = {
     jeune,
     metadonneesFavoris,
-    rdvs: sessionsMilo ? rdvsEtSessionsTriesParDate : rdvs,
+    rdvs: rdvsEtSessionsTriesParDate,
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,

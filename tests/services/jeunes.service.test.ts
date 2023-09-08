@@ -20,7 +20,7 @@ import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { EvenementListItem } from 'interfaces/evenement'
 import { CategorieSituation } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { SessionMiloJeuneJson } from 'interfaces/json/session'
+import { SessionMiloBeneficiaireJson } from 'interfaces/json/session'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import {
   archiverJeune,
@@ -37,12 +37,12 @@ import {
   getJeunesDuConseillerServerSide,
   getMetadonneesFavorisJeune,
   getMotifsSuppression,
-  getSessionsMiloJeune,
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheJeunesDeLEtablissement,
   supprimerJeuneInactif,
 } from 'services/jeunes.service'
+import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -507,76 +507,6 @@ describe('JeunesApiService', () => {
           },
         ],
       })
-    })
-  })
-
-  describe('.getSessionsMiloJeune', () => {
-    it('renvoie les sessions milo futures', async () => {
-      // Given
-      const accessToken = 'accessToken'
-      const idJeune = 'id-jeune'
-      const dateDebut = DateTime.fromISO('2022-09-01T11:00:00.000+02:00')
-      const dateFin = DateTime.fromISO('2022-09-01T13:00:00.000+02:00')
-      const sessionsMiloJeuneJson: SessionMiloJeuneJson[] = [
-        {
-          id: '1',
-          nomSession: 'Une-session',
-          nomOffre: 'Une-offre',
-          dateHeureDebut: '2022-09-01T11:00:00.000Z',
-          dateHeureFin: '2022-09-01T13:00:00.000Z',
-          type: {
-            code: 'WORKSHOP',
-            label: 'Atelier',
-          },
-          inscription: 'INSCRIT',
-        },
-      ]
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: sessionsMiloJeuneJson,
-      })
-
-      // When
-      const actual = await getSessionsMiloJeune(
-        'id-jeune',
-        accessToken,
-        dateDebut
-      )
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        `/jeunes/milo/${idJeune}/sessions?dateDebut=2022-09-01T11%3A00%3A00.000%2B02%3A00&filtrerEstInscrit=true`,
-        accessToken
-      )
-
-      const sessionsMiloJeune: EvenementListItem[] = [
-        {
-          id: '1',
-          type: 'Atelier i-milo',
-          date: '2022-09-01T11:00:00.000Z',
-          duree: 120,
-          idCreateur: '1',
-          isSession: true,
-          estInscrit: true,
-        },
-      ]
-      expect(actual).toEqual(sessionsMiloJeune)
-    })
-    it("renvoie un tableau vide si les sessions n'existent pas", async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'Sessions non trouvées')
-      )
-      const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
-
-      // When
-      const actual = await getSessionsMiloJeune(
-        'id-jeune',
-        'access-token',
-        dateDebut
-      )
-
-      // Then
-      expect(actual).toEqual([])
     })
   })
 })

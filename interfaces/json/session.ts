@@ -54,6 +54,16 @@ export type DetailsSessionJson = {
   ]
 }
 
+export type SessionMiloBeneficiaireJson = {
+  id: string
+  nomSession: string
+  nomOffre: string
+  dateHeureDebut: string
+  dateHeureFin: string
+  type: TypeEvenement
+  inscription: string
+}
+
 export function sessionMiloJsonToAnimationCollective(
   json: SessionMiloJson
 ): AnimationCollective {
@@ -98,14 +108,4 @@ export function jsonToTypeSessionMilo(jsonType: TypeEvenement): string {
     return 'info coll i-milo'
   }
   return 'Atelier i-milo'
-}
-
-export type SessionMiloJeuneJson = {
-  id: string
-  nomSession: string
-  nomOffre: string
-  dateHeureDebut: string
-  dateHeureFin: string
-  type: TypeEvenement
-  inscription: string
 }

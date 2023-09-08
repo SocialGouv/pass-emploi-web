@@ -34,13 +34,14 @@ import {
   getIndicateursJeuneAlleges,
   getJeuneDetails,
   getMetadonneesFavorisJeune,
-  getSessionsMiloJeune,
 } from 'services/jeunes.service'
+import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/jeunes.service')
+jest.mock('services/sessions.service')
 jest.mock('services/agenda.service')
 jest.mock('services/evenements.service')
 jest.mock('services/actions.service')
@@ -223,7 +224,6 @@ describe('Fiche Jeune', () => {
         duree: 120,
         idCreateur: '1',
         isSession: true,
-        estInscrit: true,
       },
     ]
 
@@ -236,7 +236,9 @@ describe('Fiche Jeune', () => {
         uneMetadonneeFavoris()
       )
       ;(getRendezVousJeune as jest.Mock).mockResolvedValue([rdvAVenir])
-      ;(getSessionsMiloJeune as jest.Mock).mockResolvedValue([sessionsAVenir])
+      ;(getSessionsMiloBeneficiaire as jest.Mock).mockResolvedValue([
+        sessionsAVenir,
+      ])
       ;(getActionsJeuneServerSide as jest.Mock).mockResolvedValue({
         actions: [
           uneAction({ creationDate: now.toISO() }),
@@ -317,7 +319,7 @@ describe('Fiche Jeune', () => {
           'FUTURS',
           'accessToken'
         )
-        expect(getSessionsMiloJeune).toHaveBeenCalledWith(
+        expect(getSessionsMiloBeneficiaire).toHaveBeenCalledWith(
           'id-jeune',
           'accessToken',
           DateTime.fromISO('2023-09-08T00:00:00.000+02:00')
@@ -423,6 +425,11 @@ describe('Fiche Jeune', () => {
           session: { user: { structure: 'POLE_EMPLOI' } },
           validSession: true,
         })
+        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+          unConseiller({
+            id: 'id-conseiller',
+          })
+        )
 
         // When
         actual = await getServerSideProps({
@@ -433,7 +440,7 @@ describe('Fiche Jeune', () => {
       it('ne recupère pas les rendez-vous', async () => {
         // Then
         expect(getRendezVousJeune).not.toHaveBeenCalled()
-        expect(getSessionsMiloJeune).not.toHaveBeenCalled()
+        expect(getSessionsMiloBeneficiaire).not.toHaveBeenCalled()
         expect(actual).toMatchObject({ props: { rdvs: [] } })
       })
 

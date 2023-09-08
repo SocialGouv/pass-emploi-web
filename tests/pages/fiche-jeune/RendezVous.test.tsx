@@ -19,10 +19,8 @@ import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { recupererAgenda } from 'services/agenda.service'
 import { getOffres } from 'services/favoris.service'
-import {
-  getIndicateursJeuneAlleges,
-  getSessionsMiloJeune,
-} from 'services/jeunes.service'
+import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
+import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/jeunes.service')
@@ -113,7 +111,6 @@ describe('Rendez-vous de la fiche jeune', () => {
             duree: 120,
             idCreateur: '1',
             isSession: true,
-            estInscrit: true,
           },
         ]
         await renderFicheJeune(StructureConseiller.MILO, rdvs)
