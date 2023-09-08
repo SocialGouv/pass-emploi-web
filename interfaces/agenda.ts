@@ -10,10 +10,11 @@ export type Agenda = {
 export type EntreeAgenda = {
   id: string
   date: DateTime
-  type: 'action' | 'evenement'
+  type: 'action' | 'evenement' | 'session'
   titre: string
   statut?: StatutAction
   source?: string
+  typeSession?: 'info coll i-milo' | 'Atelier i-milo'
 }
 
 export type AgendaMetadata = {
