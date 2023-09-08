@@ -73,7 +73,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
                   color='accent_1'
                   iconName={IconName.Lock}
                   iconLabel='Informations de la session non modifiables'
-                  backgroundColor='accent_1'
+                  backgroundColor='accent_1_lighten'
                 />
               )}
 
