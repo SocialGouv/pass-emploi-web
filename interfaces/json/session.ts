@@ -103,7 +103,7 @@ export function sessionJsonToEntree(
 ): EntreeAgenda {
   const date = DateTime.fromISO(session.dateHeureFin)
   const titre = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${
-    session.nomSession
+    session.nomOffre
   }`
 
   return {
@@ -111,6 +111,7 @@ export function sessionJsonToEntree(
     date: date,
     source: 'MILO',
     titre,
+    sousTitre: session.nomSession,
     type: 'session',
     typeSession: 'info coll i-milo',
   }

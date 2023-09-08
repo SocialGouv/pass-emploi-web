@@ -61,8 +61,10 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
           />
         </div>
 
-        <div className='grow'>{entree.titre}</div>
-
+        <div className='grow'>
+          {entree.titre}{' '}
+          {entree.typeSession && entree.sousTitre && entree.sousTitre}
+        </div>
         <div className='flex justify-end'>
           {entree.statut && <TagStatutAction status={entree.statut} />}
           {entree.source === StructureConseiller.MILO && (
