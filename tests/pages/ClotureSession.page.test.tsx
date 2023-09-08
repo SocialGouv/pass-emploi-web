@@ -266,7 +266,7 @@ describe('Cloture Session', () => {
                 statut: 'INSCRIT',
               },
             ],
-            returnTo: 'redirectUrl',
+            returnTo: '/agenda/sessions/session-1?redirectUrl=redirectUrl',
             pageTitle: 'Clore - Session aide',
             pageHeader: 'Clôture de la session',
             withoutChat: true,
