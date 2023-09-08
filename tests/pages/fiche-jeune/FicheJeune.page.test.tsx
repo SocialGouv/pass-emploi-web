@@ -7,6 +7,7 @@ import React from 'react'
 
 import { desActionsInitiales, uneAction } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
+import { unConseiller } from 'fixtures/conseiller'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
@@ -25,6 +26,7 @@ import FicheJeune, {
 } from 'pages/mes-jeunes/[jeune_id]'
 import { getActionsJeuneServerSide } from 'services/actions.service'
 import { recupererAgenda } from 'services/agenda.service'
+import { getConseillerServerSide } from 'services/conseiller.service'
 import { getRendezVousJeune } from 'services/evenements.service'
 import { getOffres } from 'services/favoris.service'
 import {
@@ -33,15 +35,18 @@ import {
   getJeuneDetails,
   getMetadonneesFavorisJeune,
 } from 'services/jeunes.service'
+import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/jeunes.service')
+jest.mock('services/sessions.service')
 jest.mock('services/agenda.service')
 jest.mock('services/evenements.service')
 jest.mock('services/actions.service')
 jest.mock('services/favoris.service')
+jest.mock('services/conseiller.service')
 
 describe('Fiche Jeune', () => {
   describe('client side', () => {
@@ -211,6 +216,16 @@ describe('Fiche Jeune', () => {
     const rdvAVenir = unEvenementListItem({
       date: DateTime.now().plus({ day: 1 }).toISO(),
     })
+    const sessionsAVenir = [
+      {
+        id: '1',
+        type: 'Atelier i-milo',
+        date: '2022-09-01T11:00:00.000Z',
+        duree: 120,
+        idCreateur: '1',
+        isSession: true,
+      },
+    ]
 
     beforeEach(() => {
       ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
@@ -221,6 +236,9 @@ describe('Fiche Jeune', () => {
         uneMetadonneeFavoris()
       )
       ;(getRendezVousJeune as jest.Mock).mockResolvedValue([rdvAVenir])
+      ;(getSessionsMiloBeneficiaire as jest.Mock).mockResolvedValue([
+        sessionsAVenir,
+      ])
       ;(getActionsJeuneServerSide as jest.Mock).mockResolvedValue({
         actions: [
           uneAction({ creationDate: now.toISO() }),
@@ -231,6 +249,12 @@ describe('Fiche Jeune', () => {
         metadonnees: { nombreTotal: 14, nombrePages: 2 },
       })
       ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
+      ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+        unConseiller({
+          id: 'id-conseiller',
+          structureMilo: { nom: 'Agence early', id: 'id-test' },
+        })
+      )
     })
 
     describe('Quand la session est invalide', () => {
@@ -253,6 +277,10 @@ describe('Fiche Jeune', () => {
       let actual: GetServerSidePropsResult<any>
       beforeEach(async () => {
         // Given
+        process.env = Object.assign(process.env, {
+          ENABLE_SESSIONS_MILO: 'true',
+          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
+        })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',
@@ -291,8 +319,13 @@ describe('Fiche Jeune', () => {
           'FUTURS',
           'accessToken'
         )
+        expect(getSessionsMiloBeneficiaire).toHaveBeenCalledWith(
+          'id-jeune',
+          'accessToken',
+          DateTime.fromISO('2023-09-08T00:00:00.000+02:00')
+        )
         expect(actual).toMatchObject({
-          props: { rdvs: [rdvAVenir] },
+          props: { rdvs: [rdvAVenir, sessionsAVenir] },
         })
       })
 
@@ -384,7 +417,7 @@ describe('Fiche Jeune', () => {
       })
     })
 
-    describe('Quand le conseiller est Pole emploi', () => {
+    describe('Quand le conseiller est Pôle emploi', () => {
       let actual: GetServerSidePropsResult<any>
       beforeEach(async () => {
         // Given
@@ -392,6 +425,11 @@ describe('Fiche Jeune', () => {
           session: { user: { structure: 'POLE_EMPLOI' } },
           validSession: true,
         })
+        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+          unConseiller({
+            id: 'id-conseiller',
+          })
+        )
 
         // When
         actual = await getServerSideProps({
@@ -402,6 +440,7 @@ describe('Fiche Jeune', () => {
       it('ne recupère pas les rendez-vous', async () => {
         // Then
         expect(getRendezVousJeune).not.toHaveBeenCalled()
+        expect(getSessionsMiloBeneficiaire).not.toHaveBeenCalled()
         expect(actual).toMatchObject({ props: { rdvs: [] } })
       })
 

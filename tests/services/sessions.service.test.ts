@@ -4,14 +4,19 @@ import { apiGet, apiPatch, apiPost } from 'clients/api.client'
 import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import {
   AnimationCollective,
+  EvenementListItem,
   StatutAnimationCollective,
 } from 'interfaces/evenement'
-import { SessionMiloJson } from 'interfaces/json/session'
+import {
+  SessionMiloBeneficiaireJson,
+  SessionMiloJson,
+} from 'interfaces/json/session'
 import {
   changerInscriptionsSession,
   changerVisibiliteSession,
   cloreSession,
   getDetailsSession,
+  getSessionsMiloBeneficiaire,
   getSessionsMissionLocaleClientSide,
 } from 'services/sessions.service'
 import { ApiError } from 'utils/httpClient'
@@ -95,7 +100,7 @@ describe('SessionsApiService', () => {
       expect(actual).toEqual(sessionsMilo)
     })
 
-    it("renvoie un tableua vide si les sessions n'existent pas", async () => {
+    it("renvoie un tableau vide si les sessions n'existent pas", async () => {
       // Given
       ;(apiGet as jest.Mock).mockRejectedValue(
         new ApiError(404, 'Sessions non trouvées')
@@ -210,6 +215,74 @@ describe('SessionsApiService', () => {
         },
         'accessToken'
       )
+    })
+  })
+  describe('.getSessionsMiloJeune', () => {
+    it('renvoie les sessions milo futures', async () => {
+      // Given
+      const accessToken = 'accessToken'
+      const idJeune = 'id-jeune'
+      const dateDebut = DateTime.fromISO('2022-09-01T11:00:00.000+02:00')
+      const dateFin = DateTime.fromISO('2022-09-01T13:00:00.000+02:00')
+      const sessionsMiloJeuneJson: SessionMiloBeneficiaireJson[] = [
+        {
+          id: '1',
+          nomSession: 'Une-session',
+          nomOffre: 'Une-offre',
+          dateHeureDebut: '2022-09-01T11:00:00.000Z',
+          dateHeureFin: '2022-09-01T13:00:00.000Z',
+          type: {
+            code: 'WORKSHOP',
+            label: 'Atelier',
+          },
+          inscription: 'INSCRIT',
+        },
+      ]
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: sessionsMiloJeuneJson,
+      })
+
+      // When
+      const actual = await getSessionsMiloBeneficiaire(
+        'id-jeune',
+        accessToken,
+        dateDebut
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        `/jeunes/milo/${idJeune}/sessions?dateDebut=2022-09-01T11%3A00%3A00.000%2B02%3A00&filtrerEstInscrit=true`,
+        accessToken
+      )
+
+      const sessionsMiloJeune: EvenementListItem[] = [
+        {
+          id: '1',
+          type: 'Atelier i-milo',
+          date: '2022-09-01T11:00:00.000Z',
+          duree: 120,
+          idCreateur: '1',
+          isSession: true,
+        },
+      ]
+      expect(actual).toEqual(sessionsMiloJeune)
+    })
+    it("renvoie un tableau vide si les sessions n'existent pas", async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockRejectedValue(
+        new ApiError(404, 'Sessions non trouvées')
+      )
+      const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
+
+      // When
+      const actual = await getSessionsMiloBeneficiaire(
+        'id-jeune',
+        'access-token',
+        dateDebut
+      )
+
+      // Then
+      expect(actual).toEqual([])
     })
   })
 })
