@@ -670,7 +670,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     ])
   }
 
-  const rdvsEtSessionsTriesParDate = rdvs
+  const rdvsEtSessionsTriesParDate = [...rdvs]
     .concat(sessionsMilo)
     .sort((event1, event2) =>
       compareDates(DateTime.fromISO(event1.date), DateTime.fromISO(event2.date))
