@@ -1,12 +1,17 @@
 import { DateTime } from 'luxon'
 
+import { EntreeAgenda } from 'interfaces/agenda'
 import {
   AnimationCollective,
   StatutAnimationCollective,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { StatutAnimationCollectiveJson } from 'interfaces/json/evenement'
-import { minutesEntreDeuxDates } from 'utils/date'
+import {
+  minutesEntreDeuxDates,
+  TIME_24_H_SEPARATOR,
+  toFrenchFormat,
+} from 'utils/date'
 
 type InscriptionSessionJson = {
   idJeune: string
@@ -90,6 +95,24 @@ export function sessionMiloJsonToAnimationCollective(
     type: jsonToTypeSessionMilo(json.type),
     isSession: true,
     estCache: !json.estVisible,
+  }
+}
+
+export function sessionJsonToEntree(
+  session: SessionMiloBeneficiaireJson
+): EntreeAgenda {
+  const date = DateTime.fromISO(session.dateHeureFin)
+  const titre = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${
+    session.nomSession
+  }`
+
+  return {
+    id: session.id,
+    date: date,
+    source: 'MILO',
+    titre,
+    type: 'session',
+    typeSession: 'info coll i-milo',
   }
 }
 

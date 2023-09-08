@@ -36,6 +36,11 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
       iconName: IconName.EventFill,
       label: `Consulter l'événement du ${entree.titre}`,
     },
+    session: {
+      href: '/agenda/sessions/',
+      iconName: IconName.EventFill,
+      label: `Consulter la session ${entree.titre}`,
+    },
   }
   const { href, iconName, label } = props[entree.type]
 
@@ -61,12 +66,26 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
         <div className='flex justify-end'>
           {entree.statut && <TagStatutAction status={entree.statut} />}
           {entree.source === StructureConseiller.MILO && (
-            <TagStatut
-              label='Non modifiable'
-              color='accent_2'
-              backgroundColor='accent_2_lighten'
-              iconName={IconName.Lock}
-            />
+            <>
+              {entree.type === 'session' && entree.typeSession && (
+                <TagStatut
+                  label={entree.typeSession}
+                  color='accent_1'
+                  iconName={IconName.Lock}
+                  iconLabel='Informations de la session non modifiables'
+                  backgroundColor='accent_1'
+                />
+              )}
+
+              {entree.type !== 'session' && (
+                <TagStatut
+                  label='Non modifiable'
+                  color='accent_2'
+                  backgroundColor='accent_2_lighten'
+                  iconName={IconName.Lock}
+                />
+              )}
+            </>
           )}
           <IconComponent
             name={IconName.ChevronRight}

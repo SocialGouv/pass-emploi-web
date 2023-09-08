@@ -1,5 +1,8 @@
 import { StatutAnimationCollective } from 'interfaces/evenement'
-import { DetailsSessionJson } from 'interfaces/json/session'
+import {
+  DetailsSessionJson,
+  SessionMiloBeneficiaireJson,
+} from 'interfaces/json/session'
 import { Session } from 'interfaces/session'
 import { SessionsAClore } from 'services/sessions.service'
 
@@ -98,6 +101,35 @@ export const uneListeDeSessionsAClore = (): SessionsAClore[] => {
       titre: 'Session 3',
       sousTitre: 'sous-titre de session 3',
       date: '07/05/2023',
+    },
+  ]
+}
+
+export const uneListeDESessionsMiloJson = (): SessionMiloBeneficiaireJson[] => {
+  return [
+    {
+      id: 'session-1',
+      nomSession: 'Workshop du 20 Octobre',
+      nomOffre: 'Offre de la session 1',
+      dateHeureDebut: '2021-10-20T10:00:00.000Z',
+      dateHeureFin: '2021-10-20T10:00:00.000Z',
+      type: {
+        code: 'WORKSHOP',
+        label: 'Atelier i-milo',
+      },
+      inscription: 'INSCRIT',
+    },
+    {
+      id: 'session-2',
+      nomSession: 'Info coll du 21 Octobre',
+      nomOffre: 'Offre de la session 1',
+      dateHeureDebut: '2021-10-21T10:00:00.000Z',
+      dateHeureFin: '2021-10-21T10:00:00.000Z',
+      type: {
+        code: 'COLLECTIVE_INFORMATION',
+        label: 'info coll i-milo',
+      },
+      inscription: 'INSCRIT',
     },
   ]
 }

@@ -5,11 +5,16 @@ import { apiGet } from 'clients/api.client'
 import { Agenda, AgendaMetadata, EntreeAgenda } from 'interfaces/agenda'
 import { ActionJson, actionJsonToEntree } from 'interfaces/json/action'
 import { EvenementJeuneJson, rdvJsonToEntree } from 'interfaces/json/evenement'
+import {
+  sessionJsonToEntree,
+  SessionMiloBeneficiaireJson,
+} from 'interfaces/json/session'
 import { compareDates } from 'utils/date'
 
 type DesRdvEtDesActions = {
   actions: ActionJson[]
   rendezVous: EvenementJeuneJson[]
+  sessionsMilo: SessionMiloBeneficiaireJson[]
   metadata: AgendaMetadataJson
 }
 
@@ -27,14 +32,18 @@ export async function recupererAgenda(
   const maintenantUrlEncode = encodeURIComponent(maintenant.toISO())
 
   const {
-    content: { actions, rendezVous, metadata },
+    content: { actions, rendezVous, sessionsMilo, metadata },
   } = await apiGet<DesRdvEtDesActions>(
     `/jeunes/${idJeune}/home/agenda?maintenant=${maintenantUrlEncode}`,
     session!.accessToken
   )
 
   return {
-    entrees: fusionneEtTriActionsEtRendezVous(actions, rendezVous),
+    entrees: fusionneEtTriActionsEtRendezVous(
+      actions,
+      rendezVous,
+      sessionsMilo
+    ),
     metadata: jsonToMetadata(metadata),
   }
 }
@@ -49,7 +58,8 @@ function jsonToMetadata(json: AgendaMetadataJson): AgendaMetadata {
 
 function fusionneEtTriActionsEtRendezVous(
   actions: ActionJson[],
-  rendezVous: EvenementJeuneJson[]
+  rendezVous: EvenementJeuneJson[],
+  sessionsMilo: SessionMiloBeneficiaireJson[]
 ): Array<EntreeAgenda> {
   const actionsTriables = actions.map((action) => ({
     ...actionJsonToEntree(action),
@@ -59,13 +69,21 @@ function fusionneEtTriActionsEtRendezVous(
     ...rdvJsonToEntree(evenement),
     datePourLeTri: DateTime.fromISO(evenement.date),
   }))
+  const sessionsMiloTriables = sessionsMilo.map((session) => ({
+    ...sessionJsonToEntree(session),
+    datePourLeTri: DateTime.fromISO(session.dateHeureFin),
+  }))
 
-  const result = [...actionsTriables, ...rendezVousTriables].sort(
-    (first, second) => compareDates(first.datePourLeTri, second.datePourLeTri)
+  const result = [
+    ...actionsTriables,
+    ...rendezVousTriables,
+    ...sessionsMiloTriables,
+  ].sort((first, second) =>
+    compareDates(first.datePourLeTri, second.datePourLeTri)
   )
 
-  return result.map((actionOuRendezvousTriable) => {
-    const { datePourLeTri, ...actionOuRendezvous } = actionOuRendezvousTriable
-    return actionOuRendezvous
+  return result.map((actionSessionOuRdvTriable) => {
+    const { datePourLeTri, ...actionSessionOuRdv } = actionSessionOuRdvTriable
+    return actionSessionOuRdv
   })
 }
