@@ -322,14 +322,6 @@ export const getServerSideProps: GetServerSideProps<
   if (session?.session.statut !== StatutAnimationCollective.AClore)
     return { notFound: true }
 
-  let redirectTo = context.query.redirectUrl as string
-
-  if (!redirectTo) {
-    const referer = context.req.headers.referer
-    redirectTo =
-      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  }
-
   const inscriptionsInitiales = session.inscriptions.map((inscription) => {
     return { idJeune: inscription.idJeune, statut: inscription.statut }
   })
@@ -337,7 +329,7 @@ export const getServerSideProps: GetServerSideProps<
   const props: ClotureSessionProps = {
     session,
     inscriptionsInitiales,
-    returnTo: redirectTo,
+    returnTo: `/agenda/sessions/${session.session.id}?redirectUrl=${context.query.redirectUrl}`,
     pageTitle: `Clore - Session ${session.offre.titre}`,
     pageHeader: 'Clôture de la session',
     withoutChat: true,
