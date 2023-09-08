@@ -12,6 +12,7 @@ export type EntreeAgenda = {
   date: DateTime
   type: 'action' | 'evenement' | 'session'
   titre: string
+  sousTitre?: string
   statut?: StatutAction
   source?: string
   typeSession?: 'info coll i-milo' | 'Atelier i-milo'
