@@ -8,6 +8,22 @@ import {
 import { StatutAnimationCollectiveJson } from 'interfaces/json/evenement'
 import { minutesEntreDeuxDates } from 'utils/date'
 
+type InscriptionSessionJson = {
+  idJeune: string
+  nom: string
+  prenom: string
+  statut: string
+}
+export type SessionMiloBeneficiairesJson = {
+  id: string
+  nomSession: string
+  nomOffre: string
+  dateHeureDebut: string
+  dateHeureFin: string
+  type: TypeEvenement
+  beneficiaires: InscriptionSessionJson[]
+}
+
 export type SessionMiloJson = {
   id: string
   nomSession: string
@@ -44,14 +60,7 @@ export type DetailsSessionJson = {
     description?: string
     nomPartenaire?: string
   }
-  inscriptions: [
-    {
-      idJeune: string
-      nom: string
-      prenom: string
-      statut: string
-    },
-  ]
+  inscriptions: InscriptionSessionJson[]
 }
 
 export type SessionMiloBeneficiaireJson = {

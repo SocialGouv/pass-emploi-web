@@ -24,10 +24,10 @@ import {
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
-  estEarlyAdopter,
   estMilo,
   estPoleEmploi,
   estUserPoleEmploi,
+  peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
@@ -616,7 +616,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     getJeuneDetails(context.query.jeune_id as string, accessToken),
     getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
     userIsPoleEmploi
-      ? []
+      ? ([] as EvenementListItem[])
       : getRendezVousJeune(
           context.query.jeune_id as string,
           PeriodeEvenements.FUTURS,
@@ -633,11 +633,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   let sessionsMilo: EvenementListItem[] = []
 
-  if (
-    (process.env.ENABLE_SESSIONS_MILO ||
-      (conseiller && estEarlyAdopter(conseiller))) &&
-    !userIsPoleEmploi
-  ) {
+  if (peutAccederAuxSessions(conseiller) && !userIsPoleEmploi) {
     try {
       sessionsMilo = await getSessionsMiloBeneficiaire(
         context.query.jeune_id as string,

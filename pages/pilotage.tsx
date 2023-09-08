@@ -8,7 +8,10 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage } from 'interfaces/action'
-import { estEarlyAdopter, estUserPoleEmploi } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  peutAccederAuxSessions,
+} from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
@@ -193,16 +196,15 @@ function Pilotage({
                   <span className='text-base-bold'> À clore</span>
                 </dd>
               </div>
-              {process.env.ENABLE_SESSIONS_MILO &&
-                estEarlyAdopter(conseiller) && (
-                  <div>
-                    <dt className='text-base-bold'>Sessions i-milo</dt>
-                    <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
-                      <div className='text-xl-bold'>{totalSessionsImilo}</div>
-                      <span className='text-base-bold'> À clore</span>
-                    </dd>
-                  </div>
-                )}
+              {peutAccederAuxSessions(conseiller) && (
+                <div>
+                  <dt className='text-base-bold'>Sessions i-milo</dt>
+                  <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+                    <div className='text-xl-bold'>{totalSessionsImilo}</div>
+                    <span className='text-base-bold'> À clore</span>
+                  </dd>
+                </div>
+              )}
             </>
           )}
         </dl>
@@ -225,7 +227,7 @@ function Pilotage({
           onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
           iconName={IconName.EventFill}
         />
-        {process.env.ENABLE_SESSIONS_MILO && estEarlyAdopter(conseiller) && (
+        {peutAccederAuxSessions(conseiller) && (
           <Tab
             label='Sessions i-milo'
             count={totalSessionsImilo ?? undefined}
@@ -283,8 +285,7 @@ function Pilotage({
       )}
 
       {currentTab === Onglet.SESSIONS_IMILO &&
-        process.env.ENABLE_SESSIONS_MILO &&
-        estEarlyAdopter(conseiller) && (
+        peutAccederAuxSessions(conseiller) && (
           <div
             role='tabpanel'
             aria-labelledby='liste-sessions-i-milo-a-clore--tab'
@@ -350,11 +351,7 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
       accessToken
     )
 
-  if (
-    process.env.ENABLE_SESSIONS_MILO &&
-    conseiller &&
-    estEarlyAdopter(conseiller)
-  ) {
+  if (peutAccederAuxSessions(conseiller)) {
     try {
       sessions = await getSessionsACloreServerSide(user.id, accessToken)
     } catch (e) {

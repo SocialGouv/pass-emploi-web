@@ -107,6 +107,17 @@ function Agenda({ onglet }: AgendaProps) {
     return getRendezVousConseiller(idConseiller, dateDebut, dateFin)
   }
 
+  async function recupererSessionsBeneficiaires(
+    idConseiller: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<EvenementListItem[]> {
+    const { getSessionsBeneficiaires } = await import(
+      'services/sessions.service'
+    )
+    return getSessionsBeneficiaires(idConseiller, dateDebut, dateFin)
+  }
+
   async function recupererRdvsEtablissement(
     dateDebut: DateTime,
     dateFin: DateTime
@@ -121,7 +132,7 @@ function Agenda({ onglet }: AgendaProps) {
     )
   }
 
-  async function recupererSessionsMilo(
+  async function recupererSessionsMissionLocale(
     dateDebut: DateTime,
     dateFin: DateTime
   ): Promise<AnimationCollective[]> {
@@ -213,8 +224,9 @@ function Agenda({ onglet }: AgendaProps) {
           id='agenda-conseiller'
         >
           <OngletAgendaConseiller
-            idConseiller={conseiller.id}
+            conseiller={conseiller}
             recupererRdvs={recupererRdvsConseiller}
+            recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
             trackNavigation={trackNavigation}
           />
         </div>
@@ -230,7 +242,7 @@ function Agenda({ onglet }: AgendaProps) {
           {conseiller.agence && (
             <OngletAgendaEtablissement
               recupererAnimationsCollectives={recupererRdvsEtablissement}
-              recupererSessionsMilo={recupererSessionsMilo}
+              recupererSessionsMilo={recupererSessionsMissionLocale}
               trackNavigation={trackNavigation}
             />
           )}

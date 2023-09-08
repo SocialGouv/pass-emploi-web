@@ -66,9 +66,15 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
   )
 }
 
-export function estEarlyAdopter(conseiller: Conseiller): boolean {
-  const env = process.env.IDS_STRUCTURES_EARLY_ADOPTERS
+export function peutAccederAuxSessions(conseiller?: Conseiller): boolean {
+  return (
+    process.env.ENABLE_SESSIONS_MILO === 'true' ||
+    (Boolean(conseiller) && estEarlyAdopter(conseiller!))
+  )
+}
 
+function estEarlyAdopter(conseiller: Conseiller): boolean {
+  const env = process.env.IDS_STRUCTURES_EARLY_ADOPTERS
   const idsStructures = env?.split('|') || []
 
   return (

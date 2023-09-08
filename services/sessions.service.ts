@@ -3,19 +3,17 @@ import { getSession } from 'next-auth/react'
 
 import { apiGet, apiPatch, apiPost } from 'clients/api.client'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
+import { sessionMiloJsonToEvenementListItem } from 'interfaces/json/evenement'
 import {
   DetailsSessionJson,
   jsonToStatutSession,
   jsonToTypeSessionMilo,
   SessionMiloBeneficiaireJson,
+  SessionMiloBeneficiairesJson,
   SessionMiloJson,
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
-import {
-  InformationBeneficiaireSession,
-  Session,
-  StatutBeneficiaire,
-} from 'interfaces/session'
+import { InformationBeneficiaireSession, Session } from 'interfaces/session'
 import { minutesEntreDeuxDates, toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
@@ -46,27 +44,6 @@ export async function getSessionsACloreServerSide(
   }))
 }
 
-export async function getSessionsMissionLocale(
-  idConseiller: string,
-  accessToken: string,
-  options?: string
-): Promise<AnimationCollective[]> {
-  try {
-    const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
-      `/conseillers/milo/${idConseiller}/sessions${
-        options ? '?' + options : ''
-      }`,
-      accessToken
-    )
-    return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
-  } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
-      return []
-    }
-    throw e
-  }
-}
-
 export async function getSessionsMissionLocaleClientSide(
   idConseiller: string,
   dateDebut: DateTime,
@@ -77,6 +54,30 @@ export async function getSessionsMissionLocaleClientSide(
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
   const options = `dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`
   return getSessionsMissionLocale(idConseiller, session!.accessToken, options)
+}
+
+export async function getSessionsBeneficiaires(
+  idConseiller: string,
+  dateDebut: DateTime,
+  dateFin: DateTime
+): Promise<EvenementListItem[]> {
+  const session = await getSession()
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
+  try {
+    const { content: sessionsMiloJson } = await apiGet<
+      SessionMiloBeneficiairesJson[]
+    >(
+      `/conseillers/milo/${idConseiller}/agenda/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+      session!.accessToken
+    )
+    return sessionsMiloJson.map(sessionMiloJsonToEvenementListItem)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) {
+      return []
+    }
+    throw e
+  }
 }
 
 export async function getDetailsSession(
@@ -169,15 +170,11 @@ export async function cloreSession(
 export async function getSessionsMiloBeneficiaire(
   idJeune: string,
   accessToken: string,
-  dateDebut?: DateTime,
-  dateFin?: DateTime
+  dateDebut: DateTime
 ): Promise<EvenementListItem[]> {
   const dateDebutUrlEncoded = encodeURIComponent(dateDebut?.toISO())
-  const dateFinUrlEncoded = encodeURIComponent(dateFin?.toISO())
   try {
-    const path = dateFin
-      ? `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&filtrerEstInscrit=true`
-      : `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
+    const path = `/jeunes/milo/${idJeune}/sessions?dateDebut=${dateDebutUrlEncoded}&filtrerEstInscrit=true`
     const { content: sessionsMiloJeuneJson } = await apiGet<
       SessionMiloBeneficiaireJson[]
     >(path, accessToken)
@@ -225,6 +222,27 @@ export function jsonToSession(json: DetailsSessionJson): Session {
     session.session.commentaire = json.session.commentaire
 
   return session
+}
+
+async function getSessionsMissionLocale(
+  idConseiller: string,
+  accessToken: string,
+  options?: string
+): Promise<AnimationCollective[]> {
+  try {
+    const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
+      `/conseillers/milo/${idConseiller}/sessions${
+        options ? '?' + options : ''
+      }`,
+      accessToken
+    )
+    return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) {
+      return []
+    }
+    throw e
+  }
 }
 
 function sessionMiloBeneficiaireJsonToEvenementListItem(

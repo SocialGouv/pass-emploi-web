@@ -18,7 +18,10 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { estEarlyAdopter, estUserPoleEmploi } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  peutAccederAuxSessions,
+} from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
@@ -600,10 +603,7 @@ export const getServerSideProps: GetServerSideProps<
   const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller?.agence?.id) return { notFound: true }
 
-  if (
-    (conseiller && !estEarlyAdopter(conseiller)) ||
-    !process.env.ENABLE_SESSIONS_MILO
-  )
+  if (!peutAccederAuxSessions(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
