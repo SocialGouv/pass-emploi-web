@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -17,7 +18,6 @@ import {
   insertIntercalaires,
   renderListeWithIntercalaires,
 } from 'presentation/Intercalaires'
-import { useRouter } from 'next/router'
 
 type TableauRdvProps = {
   idConseiller: string

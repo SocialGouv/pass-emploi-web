@@ -1,6 +1,5 @@
 import React from 'react'
 
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'

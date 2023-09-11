@@ -1,14 +1,13 @@
 import React from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-send-white.svg'
 import HeaderChat from 'components/chat/HeaderChat'
+import EmptyState from 'components/EmptyState'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
-import EmptyState from 'components/EmptyState'
 
 type ListeListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
@@ -100,22 +99,24 @@ export default function ListeListesDeDiffusion({
         </div>
       )}
 
-      {listesDeDiffusion?.length > 0 && messagerieFullScreen && (
-        <div className='hidden layout_s:block w-fit mx-auto'>
-          <ButtonLink
-            href='/mes-jeunes/listes-de-diffusion'
-            style={ButtonStyle.TERTIARY}
-          >
-            <IconComponent
-              name={IconName.Edit}
-              focusable={false}
-              aria-hidden={true}
-              className='w-4 h-4 fill-primary mr-3'
-            />
-            Gérer mes listes de diffusion
-          </ButtonLink>
-        </div>
-      )}
+      {listesDeDiffusion &&
+        listesDeDiffusion.length > 0 &&
+        messagerieFullScreen && (
+          <div className='hidden layout_s:block w-fit mx-auto'>
+            <ButtonLink
+              href='/mes-jeunes/listes-de-diffusion'
+              style={ButtonStyle.TERTIARY}
+            >
+              <IconComponent
+                name={IconName.Edit}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 fill-primary mr-3'
+              />
+              Gérer mes listes de diffusion
+            </ButtonLink>
+          </div>
+        )}
     </>
   )
 }

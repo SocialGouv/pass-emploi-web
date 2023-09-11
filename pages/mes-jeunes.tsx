@@ -2,12 +2,13 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-people-grey.svg'
+import EmptyState from 'components/EmptyState'
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import TableauJeunes from 'components/jeune/TableauJeunes'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
 import {
@@ -27,8 +28,6 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
-import EmptyState from 'components/EmptyState'
 
 interface MesJeunesProps extends PageProps {
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]

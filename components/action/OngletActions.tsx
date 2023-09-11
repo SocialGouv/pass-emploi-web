@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-checklist-grey.svg'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import EmptyState from 'components/EmptyState'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'

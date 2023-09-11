@@ -25,12 +25,14 @@ describe('Page Listes de Diffusion', () => {
         )
 
         // Then
-        expect(
-          screen.getByRole('link', { name: 'Créer une liste' })
-        ).toHaveAttribute(
-          'href',
-          '/mes-jeunes/listes-de-diffusion/edition-liste'
-        )
+        screen
+          .getAllByRole('link', { name: 'Créer une liste' })
+          .forEach((lien) =>
+            expect(lien).toHaveAttribute(
+              'href',
+              '/mes-jeunes/listes-de-diffusion/edition-liste'
+            )
+          )
       })
     })
 
@@ -43,7 +45,7 @@ describe('Page Listes de Diffusion', () => {
 
         // Then
         expect(
-          screen.getByText('Vous n’avez aucune liste de diffusion.')
+          screen.getByText('Vous n’avez pas encore créé de liste de diffusion.')
         ).toBeInTheDocument()
       })
     })

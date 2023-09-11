@@ -1,16 +1,16 @@
 import React from 'react'
 
+import EmptyState from 'components/EmptyState'
 import OffreRow from 'components/favoris/offres/OffreRow'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
-import EmptyState from 'components/EmptyState'
-import ButtonLink from 'components/ui/Button/ButtonLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface TableauOffresProps {
   offres: Offre[]

@@ -2,10 +2,11 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyState from 'components/EmptyState'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -21,8 +22,6 @@ import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
-import EmptyState from 'components/EmptyState'
 
 type ListesDiffusionProps = PageProps & {
   listesDiffusion: ListeDeDiffusion[]

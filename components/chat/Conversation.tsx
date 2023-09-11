@@ -9,10 +9,12 @@ import React, {
 
 import DisplayMessage from 'components/chat/DisplayMessage'
 import HeaderChat from 'components/chat/HeaderChat'
+import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -27,9 +29,6 @@ import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
-import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
-import EmptyState from 'components/EmptyState'
 
 type ConversationProps = {
   conseillers: ConseillerHistorique[]

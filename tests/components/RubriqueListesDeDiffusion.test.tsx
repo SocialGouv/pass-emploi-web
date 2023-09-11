@@ -107,7 +107,7 @@ describe('<RubriqueListesDeDiffusion />', () => {
 
       // Then
       expect(
-        screen.getByText('Vous n’avez pas encore créé de liste de diffusion')
+        screen.getByText('Vous n’avez pas encore créé de liste de diffusion.')
       ).toBeInTheDocument()
     })
   })

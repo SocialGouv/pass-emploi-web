@@ -307,11 +307,16 @@ describe('Agenda', () => {
 
         it('a un lien pour créer une animation collective', () => {
           // Then
-          expect(
-            screen.getByRole('link', {
+          screen
+            .getAllByRole('link', {
               name: 'Créer une animation collective',
             })
-          ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?type=ac')
+            .forEach((lien) =>
+              expect(lien).toHaveAttribute(
+                'href',
+                '/mes-jeunes/edition-rdv?type=ac'
+              )
+            )
         })
 
         it('récupère les événements sur une période de 7 jours à partir de la date du jour', async () => {

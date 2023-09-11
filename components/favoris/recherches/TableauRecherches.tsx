@@ -1,16 +1,16 @@
 import React from 'react'
 
+import EmptyState from 'components/EmptyState'
 import RechercheRow from 'components/favoris/recherches/RechercheRow'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { Recherche } from 'interfaces/favoris'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
-import EmptyState from 'components/EmptyState'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ButtonLink from 'components/ui/Button/ButtonLink'
 
 interface TableauRecherchesProps {
   recherches: Recherche[]

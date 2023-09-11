@@ -1,10 +1,12 @@
 import { DateTime } from 'luxon'
 import React, { ReactElement, useEffect, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
+import EmptyState from 'components/EmptyState'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
@@ -30,9 +32,6 @@ import {
   toFrenchFormat,
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
-import ButtonLink from 'components/ui/Button/ButtonLink'
-import EmptyState from 'components/EmptyState'
 
 type OngletAgendaEtablissementProps = {
   recupererAnimationsCollectives: (
