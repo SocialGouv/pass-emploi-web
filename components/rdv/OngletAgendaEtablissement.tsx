@@ -30,6 +30,9 @@ import {
   toFrenchFormat,
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import EmptyState from 'components/EmptyState'
 
 type OngletAgendaEtablissementProps = {
   recupererAnimationsCollectives: (
@@ -118,25 +121,25 @@ export default function OngletAgendaEtablissement({
       {animationsCollectivesGroupees &&
         animationsCollectivesGroupees.length === 0 && (
           <div className='flex flex-col justify-center items-center'>
-            <EmptyStateImage
-              focusable={false}
-              aria-hidden={true}
-              className='w-[360px] h-[200px]'
+            <EmptyState
+              illustrationName={IllustrationName.Checklist}
+              titre={
+                statutsValides.length === 0
+                  ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
+                  : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
+              }
+              CTAPrimary={
+                <ButtonLink href='/mes-jeunes/edition-rdv?type=ac'>
+                  <IconComponent
+                    name={IconName.Add}
+                    focusable={false}
+                    aria-hidden={true}
+                    className='mr-2 w-4 h-4'
+                  />
+                  Créer une animation collective
+                </ButtonLink>
+              }
             />
-            <p className='mt-4 text-base-medium w-2/3 text-center'>
-              {statutsValides.length === 0 && (
-                <>
-                  Il n’y a pas d’animation collective sur cette période dans
-                  votre établissement.
-                </>
-              )}
-              {statutsValides.length !== 0 && (
-                <>
-                  Aucune animation collective ne correspond au(x) filtre(s)
-                  sélectionné(s) sur cette période.
-                </>
-              )}
-            </p>
 
             {animationsCollectives.length > 0 && (
               <Button

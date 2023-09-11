@@ -10,7 +10,7 @@ type EmptyStateProps = {
   titre: string
   sousTitre?: string
   CTAPrimary?: JSX.Element
-  CTASecondary?: HTMLButtonElement
+  CTASecondary?: JSX.Element
 }
 
 export default function EmptyState(props: EmptyStateProps) {

@@ -2,7 +2,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import EmptyState from 'components/EmptyState'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { InlineDefinitionItem } from 'components/ui/InlineDefinitionItem'
 import { MetadonneesFavoris } from 'interfaces/jeune'
 
@@ -19,19 +22,43 @@ export default function BlocFavoris({
   const pathPrefix = router.asPath.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
+  const aDesFavoris = offres.total > 0 || recherches.total > 0
 
   return (
-    <div className='border border-solid rounded-base w-full p-4 mt-3 border-grey_100'>
-      <dl>
-        <Offres offres={offres} />
+    <>
+      {!aDesFavoris && (
+        <EmptyState
+          illustrationName={IllustrationName.Checklist}
+          titre='Votre bénéficiaire n’a rien mis en favori pour l’instant.'
+          sousTitre='Suggérez-lui des offres d’emploi avec la partie “Offres”'
+          CTAPrimary={
+            <ButtonLink href={`/recherche-offres`} className='ml-4'>
+              <IconComponent
+                name={IconName.Search}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Rechercher une offre
+            </ButtonLink>
+          }
+        />
+      )}
 
-        <RecherchesSauvegardees total={recherches.total} />
+      {aDesFavoris && (
+        <div className='border border-solid rounded-base w-full p-4 mt-3 border-grey_100'>
+          <dl>
+            <Offres offres={offres} />
 
-        {autoriseLePartage && (
-          <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />
-        )}
-      </dl>
-    </div>
+            <RecherchesSauvegardees total={recherches.total} />
+
+            {autoriseLePartage && (
+              <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />
+            )}
+          </dl>
+        </div>
+      )}
+    </>
   )
 }
 
