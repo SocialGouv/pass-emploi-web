@@ -18,12 +18,16 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  peutAccederAuxSessions,
+} from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
+import useMatomo from 'utils/analytics/useMatomo'
 import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -78,7 +82,7 @@ function FicheDetailsSession({
   const [nbPlacesDisponibles, setNbPlacesDisponibles] = useState<
     ValueWithError<number | undefined>
   >({
-    value: getNbPlacesDisponibles(),
+    value: session.session.nbPlacesDisponibles ?? undefined,
   })
   const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] = useState<
     ValueWithError<BeneficiaireSelectionneSession[]>
@@ -230,20 +234,11 @@ function FicheDetailsSession({
     closeDesinscriptionBeneficiaireModal()
   }
 
-  function getNbPlacesDisponibles() {
-    return session.session.nbPlacesDisponibles
-      ? session.session.nbPlacesDisponibles -
-          session.inscriptions.filter(
-            (beneficiaire) => beneficiaire.statut === StatutBeneficiaire.INSCRIT
-          ).length
-      : undefined
-  }
-
   function resetAll() {
     setBeneficiairesSelectionnes({ value: initBeneficiairesSelectionnes() })
     if (nbPlacesDisponibles.value)
       setNbPlacesDisponibles({
-        value: getNbPlacesDisponibles(),
+        value: session.session.nbPlacesDisponibles ?? undefined,
       })
   }
 
@@ -270,6 +265,8 @@ function FicheDetailsSession({
     )
     await router.push(returnTo)
   }
+
+  useMatomo('Détail session i-milo')
 
   return (
     <>
@@ -578,11 +575,6 @@ export const getServerSideProps: GetServerSideProps<
   } = sessionOrRedirect
   if (estUserPoleEmploi(user)) return { notFound: true }
 
-  if (!process.env.ENABLE_SESSIONS_MILO)
-    return {
-      redirect: { destination: '/mes-jeunes', permanent: false },
-    }
-
   const idSession = context.query.session_id as string
 
   let redirectTo = context.query.redirectUrl as string
@@ -602,9 +594,15 @@ export const getServerSideProps: GetServerSideProps<
   const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller?.agence?.id) return { notFound: true }
 
+  if (!peutAccederAuxSessions(conseiller))
+    return {
+      redirect: { destination: '/mes-jeunes', permanent: false },
+    }
+
   const { getJeunesDeLEtablissementServerSide } = await import(
     'services/jeunes.service'
   )
+
   const beneficiairesEtablissement = await getJeunesDeLEtablissementServerSide(
     conseiller.agence.id,
     accessToken

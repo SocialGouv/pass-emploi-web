@@ -39,7 +39,7 @@ export default function RenseignementAgenceModal({
 
       <div className='mt-2'>
         <InformationMessage
-          label={`Une fois votre ${labelAgence} renseignée, ce message n'apparaitra plus.`}
+          label={`Une fois votre ${labelAgence} renseignée, ce message n'apparaîtra plus.`}
         />
       </div>
 

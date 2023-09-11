@@ -46,10 +46,15 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
-  const formIsValid = checkIfFormValid()
-
-  function checkIfFormValid(): boolean {
-    return idsDestinataires.value.length > 0
+  function formIsValid(): boolean {
+    const idsDestinatairesEstValide = Boolean(idsDestinataires.value.length > 0)
+    if (!idsDestinatairesEstValide)
+      setIdsDestinataires({
+        ...idsDestinataires,
+        error:
+          'Le champ ”Destinataires” est vide. Sélectionnez au moins un destinataire.',
+      })
+    return idsDestinatairesEstValide
   }
 
   function buildOptionsJeunes(): OptionBeneficiaire[] {
@@ -66,14 +71,14 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
     setIdsDestinataires({
       value: selectedIds.beneficiaires!,
       error: !selectedIds.beneficiaires!.length
-        ? "Aucun bénéficiaire n'est renseigné. Veuillez sélectionner au moins un bénéficiaire."
+        ? 'Le champ ”Destinataires” est vide. Sélectionnez au moins un destinataire.'
         : undefined,
     })
   }
 
   async function partager(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!formIsValid) return
+    if (!formIsValid()) return
 
     setIsPartageEnCours(true)
 
@@ -112,7 +117,7 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
     <>
       {getCardOffre()}
 
-      <form onSubmit={partager} className='mt-8'>
+      <form onSubmit={partager} noValidate={true} className='mt-8'>
         <Etape numero={1} titre='Bénéficiaires'>
           <BeneficiairesMultiselectAutocomplete
             id={'select-beneficiaires'}
@@ -138,7 +143,6 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
           <Button
             type='submit'
             className='ml-3 flex items-center'
-            disabled={!formIsValid}
             isLoading={isPartageEnCours}
           >
             <IconComponent

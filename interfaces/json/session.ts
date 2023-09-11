@@ -1,12 +1,33 @@
 import { DateTime } from 'luxon'
 
+import { EntreeAgenda } from 'interfaces/agenda'
 import {
   AnimationCollective,
   StatutAnimationCollective,
   TypeEvenement,
 } from 'interfaces/evenement'
 import { StatutAnimationCollectiveJson } from 'interfaces/json/evenement'
-import { minutesEntreDeuxDates } from 'utils/date'
+import {
+  minutesEntreDeuxDates,
+  TIME_24_H_SEPARATOR,
+  toFrenchFormat,
+} from 'utils/date'
+
+type InscriptionSessionJson = {
+  idJeune: string
+  nom: string
+  prenom: string
+  statut: string
+}
+export type SessionMiloBeneficiairesJson = {
+  id: string
+  nomSession: string
+  nomOffre: string
+  dateHeureDebut: string
+  dateHeureFin: string
+  type: TypeEvenement
+  beneficiaires: InscriptionSessionJson[]
+}
 
 export type SessionMiloJson = {
   id: string
@@ -44,14 +65,17 @@ export type DetailsSessionJson = {
     description?: string
     nomPartenaire?: string
   }
-  inscriptions: [
-    {
-      idJeune: string
-      nom: string
-      prenom: string
-      statut: string
-    },
-  ]
+  inscriptions: InscriptionSessionJson[]
+}
+
+export type SessionMiloBeneficiaireJson = {
+  id: string
+  nomSession: string
+  nomOffre: string
+  dateHeureDebut: string
+  dateHeureFin: string
+  type: TypeEvenement
+  inscription: string
 }
 
 export function sessionMiloJsonToAnimationCollective(
@@ -74,6 +98,25 @@ export function sessionMiloJsonToAnimationCollective(
   }
 }
 
+export function sessionJsonToEntree(
+  session: SessionMiloBeneficiaireJson
+): EntreeAgenda {
+  const date = DateTime.fromISO(session.dateHeureDebut)
+  const titre = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${
+    session.nomOffre
+  }`
+
+  return {
+    id: session.id,
+    date: date,
+    source: 'MILO',
+    titre,
+    sousTitre: session.nomSession,
+    type: 'session',
+    typeSession: 'info coll i-milo',
+  }
+}
+
 export function jsonToStatutSession(
   jsonStatus: StatutAnimationCollectiveJson
 ): StatutAnimationCollective {
@@ -93,7 +136,7 @@ export function jsonToStatutSession(
   }
 }
 
-function jsonToTypeSessionMilo(jsonType: TypeEvenement): string {
+export function jsonToTypeSessionMilo(jsonType: TypeEvenement): string {
   if (jsonType.code === 'COLLECTIVE_INFORMATION') {
     return 'info coll i-milo'
   }

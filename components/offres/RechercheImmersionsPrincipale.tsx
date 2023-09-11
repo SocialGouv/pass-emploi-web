@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Etape } from 'components/ui/Form/Etape'
+import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import SelectAutocompleteWithFetch from 'components/ui/Form/SelectAutocompleteWithFetch'
 import { Commune, Metier } from 'interfaces/referentiel'
@@ -24,8 +25,8 @@ export default function RechercheImmersionsPrincipale({
     const { metier, ...autresCriteres } = query
     onQueryUpdate({
       ...autresCriteres,
-      metier: selected,
-      hasError: !selected || !query.commune,
+      metier: { value: selected },
+      hasError: !selected || !query.commune?.value,
     })
   }
 
@@ -33,8 +34,8 @@ export default function RechercheImmersionsPrincipale({
     const { commune, ...autresCriteres } = query
     onQueryUpdate({
       ...autresCriteres,
-      commune: selected,
-      hasError: !selected || !query.metier,
+      commune: { value: selected },
+      hasError: !selected || !query.metier?.value,
     })
   }
 
@@ -43,13 +44,18 @@ export default function RechercheImmersionsPrincipale({
       <Label htmlFor='metier' inputRequired={true}>
         Métier
       </Label>
+      {query.metier?.error && (
+        <InputError id='metier--error' className='mt-2'>
+          {query.metier.error}
+        </InputError>
+      )}
       <SelectAutocompleteWithFetch<Metier>
         id='metier'
         fetch={recupererMetiers}
         fieldNames={{ id: 'libelle', value: 'libelle' }}
         onUpdateSelected={updateMetier}
-        errorMessage='Veuillez saisir un métier correct.'
-        defaultValue={query.metier?.libelle}
+        errorMessage=''
+        defaultValue={query.metier?.value?.libelle}
         required={true}
       />
 
@@ -59,13 +65,18 @@ export default function RechercheImmersionsPrincipale({
           helpText: 'Saisissez une ville',
         }}
       </Label>
+      {query.commune?.error && (
+        <InputError id='metier--error' className='mt-2'>
+          {query.commune.error}
+        </InputError>
+      )}
       <SelectAutocompleteWithFetch<Commune>
         id='communes'
         fetch={recupererCommunes}
         fieldNames={{ id: 'code', value: 'libelle' }}
         onUpdateSelected={updateCommune}
-        errorMessage='Veuillez saisir une commune correcte.'
-        defaultValue={query.commune?.libelle}
+        errorMessage=''
+        defaultValue={query.commune?.value?.libelle}
         required={true}
       />
     </Etape>

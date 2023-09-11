@@ -42,7 +42,8 @@ module.exports = withBundleAnalyzer({
     //BRSA
     ENABLE_PE_BRSA_SSO: process.env.ENABLE_PE_BRSA_SSO === 'true',
     //SESSIONS MILO
-    ENABLE_SESSIONS_MILO: process.env.ENABLE_SESSIONS_MILO === 'true',
+    ENABLE_SESSIONS_MILO: process.env.ENABLE_SESSIONS_MILO,
+    IDS_STRUCTURES_EARLY_ADOPTERS: process.env.IDS_STRUCTURES_EARLY_ADOPTERS,
     // OTHER
     ENVIRONMENT: process.env.ENVIRONMENT,
     MATOMO_SOCIALGOUV_URL: process.env.MATOMO_SOCIALGOUV_URL,

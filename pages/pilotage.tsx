@@ -8,7 +8,10 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage } from 'interfaces/action'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  peutAccederAuxSessions,
+} from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
@@ -193,7 +196,7 @@ function Pilotage({
                   <span className='text-base-bold'> À clore</span>
                 </dd>
               </div>
-              {process.env.ENABLE_SESSIONS_MILO && (
+              {peutAccederAuxSessions(conseiller) && (
                 <div>
                   <dt className='text-base-bold'>Sessions i-milo</dt>
                   <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
@@ -224,7 +227,7 @@ function Pilotage({
           onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
           iconName={IconName.EventFill}
         />
-        {process.env.ENABLE_SESSIONS_MILO && (
+        {peutAccederAuxSessions(conseiller) && (
           <Tab
             label='Sessions i-milo'
             count={totalSessionsImilo ?? undefined}
@@ -281,26 +284,27 @@ function Pilotage({
         </div>
       )}
 
-      {currentTab === Onglet.SESSIONS_IMILO && (
-        <div
-          role='tabpanel'
-          aria-labelledby='liste-sessions-i-milo-a-clore--tab'
-          tabIndex={0}
-          id='liste-sessions-i-milo-a-clore'
-          className='mt-8 pb-8 border-b border-primary_lighten'
-        >
-          {!animationsCollectivesAffichees && (
-            <EncartAgenceRequise
-              conseiller={conseiller}
-              onAgenceChoisie={renseignerAgence}
-              getAgences={getAgencesClientSide}
-              onChangeAffichageModal={trackAgenceModal}
-            />
-          )}
+      {currentTab === Onglet.SESSIONS_IMILO &&
+        peutAccederAuxSessions(conseiller) && (
+          <div
+            role='tabpanel'
+            aria-labelledby='liste-sessions-i-milo-a-clore--tab'
+            tabIndex={0}
+            id='liste-sessions-i-milo-a-clore'
+            className='mt-8 pb-8 border-b border-primary_lighten'
+          >
+            {!animationsCollectivesAffichees && (
+              <EncartAgenceRequise
+                conseiller={conseiller}
+                onAgenceChoisie={renseignerAgence}
+                getAgences={getAgencesClientSide}
+                onChangeAffichageModal={trackAgenceModal}
+              />
+            )}
 
-          {sessions && <OngletSessionsImiloPilotage sessions={sessions} />}
-        </div>
-      )}
+            {sessions && <OngletSessionsImiloPilotage sessions={sessions} />}
+          </div>
+        )}
     </>
   )
 }
@@ -334,17 +338,26 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
     'services/sessions.service'
   )
 
-  const [actions, evenements, sessions] = await Promise.all([
-    getActionsAQualifierServerSide(user.id, accessToken),
-    getConseillerServerSide(user, accessToken).then((conseiller) => {
-      if (!conseiller?.agence?.id) return
-      return getAnimationsCollectivesACloreServerSide(
-        conseiller.agence.id,
-        accessToken
-      )
-    }),
-    getSessionsACloreServerSide(user.id, accessToken),
-  ])
+  const conseiller = await getConseillerServerSide(user, accessToken)
+
+  const actions = await getActionsAQualifierServerSide(user.id, accessToken)
+
+  let evenements
+  let sessions: SessionsAClore[] | undefined
+
+  if (conseiller?.agence?.id)
+    evenements = await getAnimationsCollectivesACloreServerSide(
+      conseiller.agence.id,
+      accessToken
+    )
+
+  if (peutAccederAuxSessions(conseiller)) {
+    try {
+      sessions = await getSessionsACloreServerSide(user.id, accessToken)
+    } catch (e) {
+      sessions = []
+    }
+  }
 
   const props: PilotageProps = {
     pageTitle: 'Pilotage',

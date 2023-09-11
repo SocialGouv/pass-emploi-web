@@ -52,7 +52,7 @@ describe('Pilotage', () => {
 
       beforeEach(async () => {
         process.env = Object.assign(process.env, {
-          ENABLE_SESSIONS_MILO: 'true',
+          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
         })
 
         actions = uneListeDActionsAQualifier()
@@ -111,7 +111,11 @@ describe('Pilotage', () => {
               customConseiller: {
                 agence: {
                   nom: 'Mission Locale Aubenas',
-                  id: 'id-etablissement',
+                  id: 'id-test',
+                },
+                structureMilo: {
+                  nom: 'Mission Locale Aubenas',
+                  id: 'id-test',
                 },
               },
             }
@@ -287,7 +291,7 @@ describe('Pilotage', () => {
 
           // Then
           expect(getAnimationsCollectivesACloreClientSide).toHaveBeenCalledWith(
-            'id-etablissement',
+            'id-test',
             2
           )
           expect(screen.getByText('Animation page 2')).toBeInTheDocument()
@@ -427,7 +431,19 @@ describe('Pilotage', () => {
               metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
             sessions={[]}
-          />
+          />,
+          {
+            customConseiller: {
+              agence: {
+                nom: 'Mission Locale Aubenas',
+                id: 'id-test',
+              },
+              structureMilo: {
+                nom: 'Mission Locale Aubenas',
+                id: 'id-test',
+              },
+            },
+          }
         )
 
         // When
@@ -576,7 +592,7 @@ describe('Pilotage', () => {
       expect(actual).toEqual({ redirect: { destination: 'whatever' } })
     })
 
-    describe('quand le conseiller est Pole emploi', () => {
+    describe('quand le conseiller est Pôle emploi', () => {
       it('renvoie une 404', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
@@ -598,6 +614,9 @@ describe('Pilotage', () => {
     describe('quand le conseiller est connecté', () => {
       beforeEach(async () => {
         // Given
+        process.env = Object.assign(process.env, {
+          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
+        })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           redirect: { destination: 'whatever' },
@@ -621,6 +640,10 @@ describe('Pilotage', () => {
             agence: {
               nom: 'Mission Locale Aubenas',
               id: 'id-etablissement',
+            },
+            structureMilo: {
+              nom: 'Mission Locale Aubenas',
+              id: 'id-test',
             },
           })
         )
@@ -678,11 +701,7 @@ describe('Pilotage', () => {
       it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
         // Given
         ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
-          unConseiller({
-            agence: {
-              nom: 'Mission Locale Aubenas',
-            },
-          })
+          unConseiller()
         )
 
         // When
@@ -699,7 +718,6 @@ describe('Pilotage', () => {
               donnees: uneListeDActionsAQualifier(),
               metadonnees: { nombreTotal: 5, nombrePages: 1 },
             },
-            sessions: uneListeDeSessionsAClore(),
             onglet: 'ANIMATIONS_COLLECTIVES',
           },
         })

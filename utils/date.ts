@@ -75,5 +75,5 @@ export function minutesEntreDeuxDates(
   date2: DateTime
 ): number {
   const diff = Interval.fromDateTimes(date1, date2)
-  return diff.length('minutes')
+  return Math.round(diff.length('minutes'))
 }

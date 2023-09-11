@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { MouseEvent, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -51,6 +51,8 @@ function EnvoiMessageGroupe({
   const [_, setAlerte] = useAlerte()
 
   const [portefeuille] = usePortefeuille()
+  const [selectionError, setSelectionError] = useState<string | undefined>()
+  const [messageError, setMessageError] = useState<string | undefined>()
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
   const [selectedListesIds, setSelectedListesIds] = useState<string[]>([])
   const [message, setMessage] = useState<string>('')
@@ -78,10 +80,34 @@ function EnvoiMessageGroupe({
   }
 
   function formIsValid(): boolean {
-    return Boolean(
-      (selectedJeunesIds.length || selectedListesIds.length) &&
-        (message || pieceJointe)
+    return Boolean(isSelectedJeunesIdsValid() && isMessageValid())
+  }
+
+  function isSelectedJeunesIdsValid(): boolean {
+    const selectionEstValide = Boolean(
+      selectedJeunesIds.length || selectedListesIds.length
     )
+    if (!selectionEstValide) {
+      setSelectionError(
+        'Le champ ”Destinataires” est vide. Sélectionnez au moins un destinataire.'
+      )
+      const selectBeneficiaires = document.getElementById(
+        'select-beneficiaires'
+      )
+      if (selectBeneficiaires)
+        selectBeneficiaires.scrollIntoView({ behavior: 'smooth' })
+    }
+    return selectionEstValide
+  }
+
+  function isMessageValid(): boolean {
+    const messageEstValide = Boolean(message || pieceJointe)
+    if (!messageEstValide) {
+      setMessageError(
+        'Le champ ”Message” est vide. Renseignez un message ou choisissez une pièce jointe.'
+      )
+    }
+    return messageEstValide
   }
 
   function formHasChanges(): boolean {
@@ -105,7 +131,7 @@ function EnvoiMessageGroupe({
   }
 
   async function envoyerMessageGroupe(
-    e: MouseEvent<HTMLButtonElement>
+    e: FormEvent<HTMLFormElement>
   ): Promise<void> {
     e.preventDefault()
     e.stopPropagation()
@@ -195,6 +221,7 @@ function EnvoiMessageGroupe({
     listesDeDiffusion?: string[]
   }) {
     const { beneficiaires, listesDeDiffusion } = selectedIds
+    setSelectionError(undefined)
     if (beneficiaires) setSelectedJeunesIds(beneficiaires)
     if (listesDeDiffusion) setSelectedListesIds(listesDeDiffusion)
   }
@@ -205,7 +232,7 @@ function EnvoiMessageGroupe({
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
 
-      <form>
+      <form onSubmit={envoyerMessageGroupe} noValidate={true}>
         <div className='text-s-bold text-content_color mb-8'>
           Tous les champs sont obligatoires
         </div>
@@ -217,6 +244,7 @@ function EnvoiMessageGroupe({
             listesDeDiffusion={listesDiffusion}
             typeSelection='Destinataires'
             onUpdate={updateDestinataires}
+            error={selectionError}
           />
           <Link
             href='/mes-jeunes/listes-de-diffusion'
@@ -240,8 +268,20 @@ function EnvoiMessageGroupe({
           >
             Message
           </Label>
-
-          <Textarea id='message' rows={10} onChange={setMessage} required />
+          {messageError && (
+            <InputError id='message--error' className='mb-2'>
+              {messageError}
+            </InputError>
+          )}
+          <Textarea
+            id='message'
+            rows={10}
+            onChange={(nouveauMessage) => {
+              if (messageError) setMessageError(undefined)
+              setMessage(nouveauMessage)
+            }}
+            required
+          />
 
           <div>
             <div
@@ -315,10 +355,8 @@ function EnvoiMessageGroupe({
 
           <Button
             type='submit'
-            disabled={!formIsValid()}
             className='flex items-center p-2'
             isLoading={isSending}
-            onClick={envoyerMessageGroupe}
           >
             <IconComponent
               name={IconName.Send}

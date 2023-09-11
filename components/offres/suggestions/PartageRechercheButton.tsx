@@ -45,7 +45,9 @@ export default function PartageRechercheButton({
   }
 
   function laRechercheImmersionEstPartageable(): boolean {
-    return Boolean(suggestionImmersion.metier && suggestionImmersion.commune)
+    return Boolean(
+      suggestionImmersion.metier?.value && suggestionImmersion.commune?.value
+    )
   }
 
   function laRechercheServiceCiviqueEstPartageable(): boolean {
@@ -81,13 +83,15 @@ export default function PartageRechercheButton({
     const url = '/offres/partage-recherche'
       .concat(`?type=${typeOffre}`)
       .concat(
-        `&titre=${suggestionImmersion.metier.libelle} - ${suggestionImmersion.commune.libelle}`
+        `&titre=${suggestionImmersion.metier.value!.libelle} - ${
+          suggestionImmersion.commune.value!.libelle
+        }`
       )
-      .concat(`&labelMetier=${suggestionImmersion.metier.libelle}`)
-      .concat(`&codeMetier=${suggestionImmersion.metier.code}`)
-      .concat(`&labelLocalite=${suggestionImmersion.commune.libelle}`)
-      .concat(`&latitude=${suggestionImmersion.commune.latitude}`)
-      .concat(`&longitude=${suggestionImmersion.commune.longitude}`)
+      .concat(`&labelMetier=${suggestionImmersion.metier.value!.libelle}`)
+      .concat(`&codeMetier=${suggestionImmersion.metier.value!.code}`)
+      .concat(`&labelLocalite=${suggestionImmersion.commune.value!.libelle}`)
+      .concat(`&latitude=${suggestionImmersion.commune.value!.latitude}`)
+      .concat(`&longitude=${suggestionImmersion.commune.value!.longitude}`)
     return encodeURI(url)
   }
 

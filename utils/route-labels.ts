@@ -1,4 +1,5 @@
 const labelFicheBeneficiaire = 'Fiche bénéficiaire'
+const labelSession = 'Détail session'
 const labelFavoris = 'Favoris'
 const labelHistorique = 'Historique'
 const labelIndicateurs = 'Indicateurs'
@@ -9,6 +10,7 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   // Agenda
   [/\/mes-jeunes\/edition-rdv\?idRdv=.*$/, 'Fiche événement'],
   [/\/agenda$/, 'Agenda'],
+  [/\/agenda\/sessions\/[\w-]+(.*?)/, labelSession],
 
   // Listes de diffusion
   [/\/mes-jeunes\/listes-de-diffusion$/, 'Mes listes'],

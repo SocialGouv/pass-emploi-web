@@ -30,6 +30,7 @@ export interface Conseiller extends BaseConseiller {
   estSuperviseur: boolean
   estSuperviseurPEBRSA: boolean
   agence?: { nom: string; id?: string }
+  structureMilo?: { id: string; nom: string }
 }
 
 export function estPoleEmploiCEJ(conseiller: Conseiller): boolean {
@@ -62,5 +63,22 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
   return (
     user.structure === StructureConseiller.POLE_EMPLOI ||
     user.structure === StructureConseiller.POLE_EMPLOI_BRSA
+  )
+}
+
+export function peutAccederAuxSessions(conseiller?: Conseiller): boolean {
+  return (
+    process.env.ENABLE_SESSIONS_MILO === 'true' ||
+    (Boolean(conseiller) && estEarlyAdopter(conseiller!))
+  )
+}
+
+function estEarlyAdopter(conseiller: Conseiller): boolean {
+  const env = process.env.IDS_STRUCTURES_EARLY_ADOPTERS
+  const idsStructures = env?.split('|') || []
+
+  return (
+    Boolean(conseiller.structureMilo) &&
+    idsStructures.includes(conseiller.structureMilo!.id)
   )
 }

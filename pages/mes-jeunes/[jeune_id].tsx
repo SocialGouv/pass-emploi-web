@@ -27,6 +27,7 @@ import {
   estMilo,
   estPoleEmploi,
   estUserPoleEmploi,
+  peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
@@ -45,6 +46,7 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { compareDates } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const DeleteJeuneActifModal = dynamic(
@@ -589,8 +591,14 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
   const userIsPoleEmploi = estUserPoleEmploi(user)
   const page = parseInt(context.query.page as string, 10) || 1
 
+  const { getConseillerServerSide } = await import(
+    'services/conseiller.service'
+  )
   const { getJeuneDetails, getMetadonneesFavorisJeune } = await import(
     'services/jeunes.service'
+  )
+  const { getSessionsMiloBeneficiaire } = await import(
+    'services/sessions.service'
   )
   const { getRendezVousJeune } = await import('services/evenements.service')
   const { getActionsJeuneServerSide } = await import('services/actions.service')
@@ -598,11 +606,17 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     'services/favoris.service'
   )
 
+  const conseiller = await getConseillerServerSide(user, accessToken)
+
+  if (!conseiller) {
+    return { notFound: true }
+  }
+
   const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
     getJeuneDetails(context.query.jeune_id as string, accessToken),
     getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
     userIsPoleEmploi
-      ? []
+      ? ([] as EvenementListItem[])
       : getRendezVousJeune(
           context.query.jeune_id as string,
           PeriodeEvenements.FUTURS,
@@ -616,6 +630,20 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
           accessToken
         ),
   ])
+
+  let sessionsMilo: EvenementListItem[] = []
+
+  if (peutAccederAuxSessions(conseiller) && !userIsPoleEmploi) {
+    try {
+      sessionsMilo = await getSessionsMiloBeneficiaire(
+        context.query.jeune_id as string,
+        accessToken,
+        DateTime.now().startOf('day')
+      )
+    } catch (e) {
+      sessionsMilo = []
+    }
+  }
 
   if (!jeune) {
     return { notFound: true }
@@ -638,10 +666,16 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     ])
   }
 
+  const rdvsEtSessionsTriesParDate = [...rdvs]
+    .concat(sessionsMilo)
+    .sort((event1, event2) =>
+      compareDates(DateTime.fromISO(event1.date), DateTime.fromISO(event2.date))
+    )
+
   const props: FicheJeuneProps = {
     jeune,
     metadonneesFavoris,
-    rdvs,
+    rdvs: rdvsEtSessionsTriesParDate,
     actionsInitiales: { ...actions, page },
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,

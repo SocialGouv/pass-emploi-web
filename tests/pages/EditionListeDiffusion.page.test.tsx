@@ -79,6 +79,45 @@ describe('Page d’édition d’une liste de diffusion', () => {
         )
       })
 
+      describe('formulaire incomplet', () => {
+        let titreInput: HTMLInputElement
+        let creationButton: HTMLButtonElement
+
+        beforeEach(async () => {
+          titreInput = screen.getByLabelText(/\* Titre/)
+          creationButton = screen.getByRole('button', {
+            name: 'Créer la liste',
+          })
+        })
+
+        it('ne soumet pas le formulaire quand aucun titre n’est renseigné', async () => {
+          // When
+          await userEvent.click(creationButton)
+
+          // Then
+          expect(creerListeDeDiffusion).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(/Le champ “Titre” est vide./)
+          ).toBeInTheDocument()
+        })
+
+        it('ne soumet pas le formulaire quand aucun bénéficiaire n’est renseigné', async () => {
+          //Given
+          await userEvent.type(titreInput, 'Liste métiers aéronautique')
+
+          // When
+          await userEvent.click(creationButton)
+
+          // Then
+          expect(creerListeDeDiffusion).not.toHaveBeenCalled()
+          expect(
+            screen.getByText(
+              'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.'
+            )
+          ).toBeInTheDocument()
+        })
+      })
+
       describe('formulaire rempli', () => {
         beforeEach(async () => {
           const titreInput = screen.getByLabelText(/\* Titre/)
@@ -126,39 +165,6 @@ describe('Page d’édition d’une liste de diffusion', () => {
               AlerteParam.creationListeDiffusion
             )
           })
-        })
-
-        it('est désactivé quand le titre n’est pas renseigné', async () => {
-          // Given
-          await userEvent.clear(screen.getByLabelText(/\* Titre/))
-          // Then
-          expect(
-            screen.getByRole('button', {
-              name: 'Créer la liste',
-            })
-          ).toHaveAttribute('disabled', '')
-        })
-
-        it('est désactivé quand aucun destinataire n’est renseigné', async () => {
-          // Given
-          const enleverBeneficiaires: HTMLButtonElement[] =
-            screen.getAllByText(/Enlever/)
-
-          // When
-          for (const bouton of enleverBeneficiaires) {
-            await userEvent.click(bouton)
-          }
-          // Then
-          expect(
-            screen.getByRole('button', {
-              name: 'Créer la liste',
-            })
-          ).toHaveAttribute('disabled', '')
-          expect(
-            screen.getByText(
-              'Aucun bénéficiaire n’est renseigné. Veuillez sélectionner au moins un bénéficiaire.'
-            )
-          ).toBeInTheDocument()
         })
 
         it('affiche un message d’erreur si la création échoue', async () => {
@@ -276,9 +282,14 @@ describe('Page d’édition d’une liste de diffusion', () => {
         )
       })
 
-      it('ne permet pas de modifier tant qu’il n’y a pas de changement', () => {
+      it('ne permet pas de modifier tant qu’il n’y a pas de changement', async () => {
+        //When
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Modifier la liste' })
+        )
+
         //Then
-        expect(screen.getByText('Modifier la liste')).toBeDisabled()
+        expect(modifierListeDeDiffusion).not.toHaveBeenCalled()
       })
 
       describe('liste modifiée', () => {

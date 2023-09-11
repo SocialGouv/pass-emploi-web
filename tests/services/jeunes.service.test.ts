@@ -17,8 +17,10 @@ import {
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
+import { EvenementListItem } from 'interfaces/evenement'
 import { CategorieSituation } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
+import { SessionMiloBeneficiaireJson } from 'interfaces/json/session'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import {
   archiverJeune,
@@ -40,6 +42,7 @@ import {
   rechercheJeunesDeLEtablissement,
   supprimerJeuneInactif,
 } from 'services/jeunes.service'
+import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')

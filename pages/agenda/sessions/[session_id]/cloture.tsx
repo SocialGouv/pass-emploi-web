@@ -13,7 +13,10 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import {
+  estUserPoleEmploi,
+  peutAccederAuxSessions,
+} from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import {
@@ -300,7 +303,12 @@ export const getServerSideProps: GetServerSideProps<
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (estUserPoleEmploi(user) || !process.env.ENABLE_SESSIONS_MILO)
+
+  const { getConseillerServerSide } = await import(
+    'services/conseiller.service'
+  )
+  const conseiller = await getConseillerServerSide(user, accessToken)
+  if (estUserPoleEmploi(user) || !peutAccederAuxSessions(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
@@ -314,14 +322,6 @@ export const getServerSideProps: GetServerSideProps<
   if (session?.session.statut !== StatutAnimationCollective.AClore)
     return { notFound: true }
 
-  let redirectTo = context.query.redirectUrl as string
-
-  if (!redirectTo) {
-    const referer = context.req.headers.referer
-    redirectTo =
-      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  }
-
   const inscriptionsInitiales = session.inscriptions.map((inscription) => {
     return { idJeune: inscription.idJeune, statut: inscription.statut }
   })
@@ -329,7 +329,7 @@ export const getServerSideProps: GetServerSideProps<
   const props: ClotureSessionProps = {
     session,
     inscriptionsInitiales,
-    returnTo: redirectTo,
+    returnTo: `/agenda/sessions/${session.session.id}?redirectUrl=${context.query.redirectUrl}`,
     pageTitle: `Clore - Session ${session.offre.titre}`,
     pageHeader: 'Clôture de la session',
     withoutChat: true,

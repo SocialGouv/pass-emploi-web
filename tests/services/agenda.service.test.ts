@@ -2,7 +2,9 @@ import { DateTime } from 'luxon'
 
 import { apiGet } from 'clients/api.client'
 import { uneListeDActionsJson } from 'fixtures/action'
+import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDEvenementJson } from 'fixtures/evenement'
+import { uneListeDESessionsMiloJson } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { recupererAgenda } from 'services/agenda.service'
 
@@ -12,11 +14,18 @@ describe('AgendaService', () => {
   describe('.recupererAgenda', () => {
     it('renvoie des actions et des items rendez-vous', async () => {
       // Given
+      const conseiller = unConseiller({
+        structureMilo: {
+          id: '80620S00',
+          nom: '80-ML PERONNE',
+        },
+      })
       const maintenant = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
           rendezVous: uneListeDEvenementJson(),
+          sessionsMilo: uneListeDESessionsMiloJson(),
           metadata: {
             dateDeDebut: '2022-09-01T00:00:00.000+02:00',
             dateDeFin: '2022-09-14T00:00:00.000+02:00',
@@ -36,6 +45,15 @@ describe('AgendaService', () => {
       expect(actual).toEqual({
         entrees: [
           {
+            date: DateTime.fromISO('2021-10-20T10:00:00.000Z'),
+            id: 'session-1',
+            source: 'MILO',
+            titre: '12h00 - Offre de la session 1',
+            sousTitre: 'Workshop du 20 Octobre',
+            type: 'session',
+            typeSession: 'info coll i-milo',
+          },
+          {
             id: '1',
             date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
             titre: '12h00 - Prise de nouvelles par téléphone',
@@ -48,6 +66,15 @@ describe('AgendaService', () => {
             titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
             source: StructureConseiller.PASS_EMPLOI,
+          },
+          {
+            id: 'session-2',
+            titre: '12h00 - Offre de la session 1',
+            sousTitre: 'Info coll du 21 Octobre',
+            date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
+            type: 'session',
+            typeSession: 'info coll i-milo',
+            source: 'MILO',
           },
           {
             id: 'id-action-1',

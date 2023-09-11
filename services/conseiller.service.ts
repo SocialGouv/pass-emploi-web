@@ -123,7 +123,6 @@ async function getConseiller(
       `/conseillers/${user.id}`,
       accessToken
     )
-
     return jsonToConseiller(conseillerJson, user)
   } catch (e) {
     if (e instanceof ApiError) {

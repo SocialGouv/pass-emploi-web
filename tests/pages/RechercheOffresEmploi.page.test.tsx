@@ -20,6 +20,7 @@ import {
 import { getCommunesEtDepartements } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+import { searchServicesCiviques } from 'services/services-civiques.service'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/offres-emploi.service')
@@ -599,13 +600,6 @@ describe('Page Recherche Offres Emploi', () => {
           description: 'Liste des résultats',
         })
       ).not.toBeInTheDocument()
-    })
-
-    it("bloque la recherche tant que les champs n'ont pas changés", async () => {
-      // Then
-      expect(
-        screen.getByRole('button', { name: 'Rechercher' })
-      ).toHaveAttribute('disabled')
     })
 
     describe('pagination', () => {

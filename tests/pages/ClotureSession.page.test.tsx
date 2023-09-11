@@ -1,21 +1,25 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
+import { unConseiller } from 'fixtures/conseiller'
 import { unDetailSession } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import ClotureSession from 'pages/agenda/sessions/[session_id]/cloture'
 import { getServerSideProps } from 'pages/agenda/sessions/[session_id]/cloture'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { getConseillerServerSide } from 'services/conseiller.service'
 import { cloreSession, getDetailsSession } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/sessions.service')
+jest.mock('services/conseiller.service')
 
 describe('Cloture Session', () => {
   describe('client side', () => {
@@ -182,9 +186,10 @@ describe('Cloture Session', () => {
     })
 
     describe("quand l'utilisateur est connecté", () => {
+      let actual: GetServerSidePropsResult<any>
       beforeEach(() => {
         process.env = Object.assign(process.env, {
-          ENABLE_SESSIONS_MILO: 'true',
+          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
         })
 
         // Given
@@ -195,6 +200,13 @@ describe('Cloture Session', () => {
             accessToken: 'accessToken',
           },
         })
+        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+          unConseiller({
+            id: 'id-conseiller',
+            agence: { nom: 'Agence early', id: 'id-test' },
+            structureMilo: { nom: 'Agence early', id: 'id-test' },
+          })
+        )
         ;(getDetailsSession as jest.Mock).mockResolvedValue(
           unDetailSession({
             session: {
@@ -216,7 +228,7 @@ describe('Cloture Session', () => {
 
       it('récupère la session concernée', async () => {
         // When
-        const actual = await getServerSideProps({
+        actual = await getServerSideProps({
           req: { headers: {} },
           query: {
             redirectUrl: 'redirectUrl',
@@ -253,7 +265,7 @@ describe('Cloture Session', () => {
                 statut: 'INSCRIT',
               },
             ],
-            returnTo: 'redirectUrl',
+            returnTo: '/agenda/sessions/session-1?redirectUrl=redirectUrl',
             pageTitle: 'Clore - Session aide',
             pageHeader: 'Clôture de la session',
             withoutChat: true,
@@ -266,7 +278,7 @@ describe('Cloture Session', () => {
         ;(getDetailsSession as jest.Mock).mockResolvedValue(undefined)
 
         // When
-        const actual = await getServerSideProps({
+        actual = await getServerSideProps({
           req: { headers: {} },
           query: {},
         } as unknown as GetServerSidePropsContext)
@@ -296,7 +308,7 @@ describe('Cloture Session', () => {
         )
 
         // When
-        const actual = await getServerSideProps({
+        actual = await getServerSideProps({
           req: { headers: {} },
           query: {},
         } as unknown as GetServerSidePropsContext)

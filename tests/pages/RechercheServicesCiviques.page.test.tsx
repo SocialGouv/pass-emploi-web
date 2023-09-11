@@ -534,13 +534,6 @@ describe('Page Recherche Offres Service civique', () => {
         ).not.toBeInTheDocument()
       })
 
-      it("bloque la recherche tant que les champs n'ont pas changés", async () => {
-        // Then
-        expect(
-          screen.getByRole('button', { name: 'Rechercher' })
-        ).toHaveAttribute('disabled')
-      })
-
       describe('pagination', () => {
         beforeEach(() => {
           ;(searchServicesCiviques as jest.Mock).mockImplementation(
