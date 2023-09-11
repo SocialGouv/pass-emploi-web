@@ -1,12 +1,14 @@
 import { ComponentPropsWithoutRef } from 'react'
 
 import IllustrationArrowForward from 'assets/images/illustration-arrow-forward.svg'
+import IllustrationChecklist from 'assets/images/illustration-checklist-grey.svg'
 import IllustrationDelete from 'assets/images/illustration-delete.svg'
 import IllustrationError from 'assets/images/illustration-error.svg'
 import IllustrationPeople from 'assets/images/illustration-people-grey.svg'
 
 export enum IllustrationName {
   ArrowForward = 'ArrowForward',
+  Checklist = 'Checklist',
   Delete = 'Delete',
   Error = 'Error',
   People = 'People',
@@ -14,6 +16,7 @@ export enum IllustrationName {
 
 const illustrationsByName: { [key in IllustrationName]: any } = {
   [IllustrationName.ArrowForward]: IllustrationArrowForward,
+  [IllustrationName.Checklist]: IllustrationChecklist,
   [IllustrationName.Delete]: IllustrationDelete,
   [IllustrationName.Error]: IllustrationError,
   [IllustrationName.People]: IllustrationPeople,

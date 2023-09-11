@@ -15,6 +15,9 @@ import {
   insertIntercalaires,
   renderListeWithIntercalaires,
 } from 'presentation/Intercalaires'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import EmptyState from 'components/EmptyState'
 
 type TableauRdvProps = {
   idConseiller: string
@@ -44,14 +47,10 @@ export default function TableauRdv({
     <>
       {rdvs.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
-          <EmptyStateImage
-            focusable={false}
-            aria-hidden={true}
-            className='w-[360px] h-[200px]'
+          <EmptyState
+            illustrationName={IllustrationName.Checklist}
+            titre='Aucun événement ou rendez-vous pour votre bénéficiaire.'
           />
-          <p className='mt-4 text-base-medium w-2/3 text-center'>
-            Il n’y a pas d’événement sur cette période.
-          </p>
         </div>
       )}
 

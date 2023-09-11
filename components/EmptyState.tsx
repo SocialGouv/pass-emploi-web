@@ -29,7 +29,7 @@ export default function EmptyState(props: EmptyStateProps) {
 
       {props.sousTitre && (
         <p className='text-base-regular text-center text-content_color mt-4'>
-          Recommencez ou modifiez votre recherche.
+          {props.sousTitre}
         </p>
       )}
 

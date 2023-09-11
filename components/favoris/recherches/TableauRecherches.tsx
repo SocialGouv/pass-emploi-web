@@ -7,6 +7,10 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { Recherche } from 'interfaces/favoris'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import EmptyState from 'components/EmptyState'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 
 interface TableauRecherchesProps {
   recherches: Recherche[]
@@ -18,9 +22,22 @@ export default function TableauRecherches({
   return (
     <>
       {recherches.length === 0 && (
-        <p className='text-base-regular mb-2'>
-          Votre bénéficiaire n’a pas de recherche sauvegardée
-        </p>
+        <EmptyState
+          illustrationName={IllustrationName.Checklist}
+          titre='Votre bénéficiaire n’a sauvegardé aucune recherche pour l’instant.'
+          sousTitre='Suggérez des recherches-types d’offres à votre bénéficiaire depuis la partie “Offres”.'
+          CTAPrimary={
+            <ButtonLink href={`/recherche-offres`} className='ml-4'>
+              <IconComponent
+                name={IconName.Search}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Rechercher une offre
+            </ButtonLink>
+          }
+        />
       )}
 
       {recherches.length > 0 && (

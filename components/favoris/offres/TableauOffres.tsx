@@ -7,6 +7,10 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import EmptyState from 'components/EmptyState'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 interface TableauOffresProps {
   offres: Offre[]
@@ -16,9 +20,22 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
   return (
     <>
       {offres.length === 0 && (
-        <p className='text-base-regular mb-2'>
-          Votre bénéficiaire n’a pas d’offre mise en favoris
-        </p>
+        <EmptyState
+          illustrationName={IllustrationName.Checklist}
+          titre='Votre bénéficiaire n’a mis aucune offre en favori pour l’instant.'
+          sousTitre='Partagez des offres d’emploi, d’alternance, de service civique ou d’immersion à votre bénéficiaire depuis la partie “Offres”.'
+          CTAPrimary={
+            <ButtonLink href={`/recherche-offres`} className='ml-4'>
+              <IconComponent
+                name={IconName.Search}
+                focusable='false'
+                aria-hidden='true'
+                className='mr-2 w-4 h-4'
+              />
+              Rechercher une offre
+            </ButtonLink>
+          }
+        />
       )}
 
       {offres.length > 0 && (
