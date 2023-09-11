@@ -321,7 +321,7 @@ describe('Fiche Jeune', () => {
         expect(getSessionsMiloBeneficiaire).toHaveBeenCalledWith(
           'id-jeune',
           'accessToken',
-          DateTime.fromISO('2023-09-08T00:00:00.000+02:00')
+          now.startOf('day')
         )
         expect(actual).toMatchObject({
           props: { rdvs: [rdvAVenir, sessionsAVenir] },
