@@ -101,7 +101,7 @@ export function sessionMiloJsonToAnimationCollective(
 export function sessionJsonToEntree(
   session: SessionMiloBeneficiaireJson
 ): EntreeAgenda {
-  const date = DateTime.fromISO(session.dateHeureFin)
+  const date = DateTime.fromISO(session.dateHeureDebut)
   const titre = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${
     session.nomOffre
   }`
