@@ -438,7 +438,7 @@ describe('Agenda', () => {
           })
         })
         await userEvent.click(
-          screen.getByRole('tab', { name: 'Agenda Mission locale' })
+          screen.getByRole('tab', { name: 'Agenda Mission Locale' })
         )
       })
 
@@ -566,7 +566,7 @@ describe('Agenda', () => {
         })
 
         await userEvent.click(
-          screen.getByRole('tab', { name: 'Agenda Mission locale' })
+          screen.getByRole('tab', { name: 'Agenda Mission Locale' })
         )
       })
 

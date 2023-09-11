@@ -207,7 +207,7 @@ function Agenda({ onglet }: AgendaProps) {
         <Tab
           label={
             'Agenda ' +
-            (estMilo(conseiller) ? 'Mission locale' : 'établissement')
+            (estMilo(conseiller) ? 'Mission Locale' : 'établissement')
           }
           selected={currentTab === Onglet.ETABLISSEMENT}
           controls='agenda-etablissement'
