@@ -27,6 +27,8 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import EmptyState from 'components/EmptyState'
 
 interface MesJeunesProps extends PageProps {
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
@@ -158,14 +160,13 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
       {conseillerJeunes.length === 0 &&
         !conseiller.aDesBeneficiairesARecuperer && (
           <div className='mx-auto my-0 flex flex-col items-center'>
-            <EmptyStateImage
-              aria-hidden='true'
-              focusable='false'
-              className='w-[360px] h-[200px] mb-16'
+            <EmptyState
+              illustrationName={IllustrationName.People}
+              titre='Il n’y a aucun bénéficiaire dans votre portefeuille.'
+              CTAPrimary={
+                <AjouterJeuneButton structure={conseiller.structure} />
+              }
             />
-            <p className='text-base-bold mb-12'>
-              Vous n&apos;avez pas encore intégré de bénéficiaires.
-            </p>
           </div>
         )}
 
