@@ -82,7 +82,7 @@ function FicheDetailsSession({
   const [nbPlacesDisponibles, setNbPlacesDisponibles] = useState<
     ValueWithError<number | undefined>
   >({
-    value: getNbPlacesDisponibles(),
+    value: session.session.nbPlacesDisponibles ?? undefined,
   })
   const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] = useState<
     ValueWithError<BeneficiaireSelectionneSession[]>
@@ -234,20 +234,11 @@ function FicheDetailsSession({
     closeDesinscriptionBeneficiaireModal()
   }
 
-  function getNbPlacesDisponibles() {
-    return session.session.nbPlacesDisponibles
-      ? session.session.nbPlacesDisponibles -
-          session.inscriptions.filter(
-            (beneficiaire) => beneficiaire.statut === StatutBeneficiaire.INSCRIT
-          ).length
-      : undefined
-  }
-
   function resetAll() {
     setBeneficiairesSelectionnes({ value: initBeneficiairesSelectionnes() })
     if (nbPlacesDisponibles.value)
       setNbPlacesDisponibles({
-        value: getNbPlacesDisponibles(),
+        value: session.session.nbPlacesDisponibles ?? undefined,
       })
   }
 
