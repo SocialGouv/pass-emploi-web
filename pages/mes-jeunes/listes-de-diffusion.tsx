@@ -21,6 +21,8 @@ import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import EmptyState from 'components/EmptyState'
 
 type ListesDiffusionProps = PageProps & {
   listesDiffusion: ListeDeDiffusion[]
@@ -86,14 +88,22 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
 
       {listesDiffusion.length === 0 && (
         <div className='mx-auto my-0 flex flex-col items-center'>
-          <EmptyStateImage
-            aria-hidden={true}
-            focusable={false}
-            className='w-[360px] h-[200px] mb-16'
+          <EmptyState
+            illustrationName={IllustrationName.Send}
+            titre='Vous n’avez pas encore créé de liste de diffusion.'
+            sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
+            CTAPrimary={
+              <ButtonLink href='/mes-jeunes/listes-de-diffusion/edition-liste'>
+                <IconComponent
+                  name={IconName.Add}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+                Créer une liste
+              </ButtonLink>
+            }
           />
-          <p className='text-base-bold mb-12'>
-            Vous n’avez aucune liste de diffusion.
-          </p>
         </div>
       )}
 

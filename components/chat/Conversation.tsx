@@ -27,6 +27,9 @@ import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
+import EmptyState from 'components/EmptyState'
 
 type ConversationProps = {
   conseillers: ConseillerHistorique[]
@@ -275,6 +278,15 @@ export default function Conversation({
                 Voir messages plus anciens
               </Button>
             )}
+
+            {messagesByDay.length === 0 && (
+              <EmptyState
+                illustrationName={IllustrationName.SendWhite}
+                titre='Ceci est le début de votre conversation avec votre bénéficiaire.'
+                sousTitre='Écrivez votre premier message !'
+              />
+            )}
+
             <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                 <li key={messagesOfADay.date.toMillis()} className='mb-5'>

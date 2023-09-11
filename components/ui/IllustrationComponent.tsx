@@ -5,6 +5,8 @@ import IllustrationChecklist from 'assets/images/illustration-checklist-grey.svg
 import IllustrationDelete from 'assets/images/illustration-delete.svg'
 import IllustrationError from 'assets/images/illustration-error.svg'
 import IllustrationPeople from 'assets/images/illustration-people-grey.svg'
+import IllustrationSend from 'assets/images/illustration-send-grey.svg'
+import IllustrationSendWhite from 'assets/images/illustration-send-white.svg'
 
 export enum IllustrationName {
   ArrowForward = 'ArrowForward',
@@ -12,6 +14,8 @@ export enum IllustrationName {
   Delete = 'Delete',
   Error = 'Error',
   People = 'People',
+  Send = 'Send',
+  SendWhite = 'SendWhite',
 }
 
 const illustrationsByName: { [key in IllustrationName]: any } = {
@@ -20,6 +24,8 @@ const illustrationsByName: { [key in IllustrationName]: any } = {
   [IllustrationName.Delete]: IllustrationDelete,
   [IllustrationName.Error]: IllustrationError,
   [IllustrationName.People]: IllustrationPeople,
+  [IllustrationName.Send]: IllustrationSend,
+  [IllustrationName.SendWhite]: IllustrationSendWhite,
 }
 
 type IllustrationsComponentProps = ComponentPropsWithoutRef<'svg'> & {

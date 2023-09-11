@@ -7,6 +7,8 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import EmptyState from 'components/EmptyState'
 
 type ListeListesDeDiffusionProps = {
   listesDeDiffusion: ListeDeDiffusion[] | undefined
@@ -52,14 +54,22 @@ export default function ListeListesDeDiffusion({
 
       {listesDeDiffusion && listesDeDiffusion.length === 0 && (
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
-          <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
-            className='w-[360px] h-[200px]'
+          <EmptyState
+            illustrationName={IllustrationName.SendWhite}
+            titre='Vous n’avez pas encore créé de liste de diffusion.'
+            sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
+            CTAPrimary={
+              <ButtonLink href='/mes-jeunes/listes-de-diffusion/edition-liste'>
+                <IconComponent
+                  name={IconName.Add}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+                Créer une liste
+              </ButtonLink>
+            }
           />
-          <p className='mt-4 text-base-medium w-2/3 text-center'>
-            Vous n’avez pas encore créé de liste de diffusion
-          </p>
         </div>
       )}
 
@@ -90,7 +100,7 @@ export default function ListeListesDeDiffusion({
         </div>
       )}
 
-      {messagerieFullScreen && (
+      {listesDeDiffusion?.length > 0 && messagerieFullScreen && (
         <div className='hidden layout_s:block w-fit mx-auto'>
           <ButtonLink
             href='/mes-jeunes/listes-de-diffusion'
