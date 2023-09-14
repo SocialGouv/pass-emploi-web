@@ -28,7 +28,7 @@
     "crypto-js": "4.1.1",
     "dotenv": "16.3.1",
     "elastic-apm-node": "3.49.1",
-    "firebase": "10.3.1",
+    "firebase": "10.4.0",
     "global": "^4.4.0",
     "html-react-parser": "4.2.2",
     "jsonwebtoken": "9.0.2",
