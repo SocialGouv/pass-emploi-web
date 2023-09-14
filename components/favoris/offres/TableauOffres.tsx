@@ -2,8 +2,7 @@ import React from 'react'
 
 import EmptyState from 'components/EmptyState'
 import OffreRow from 'components/favoris/offres/OffreRow'
-import ButtonLink from 'components/ui/Button/ButtonLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -24,17 +23,11 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
           illustrationName={IllustrationName.Checklist}
           titre='Votre bénéficiaire n’a mis aucune offre en favori pour l’instant.'
           sousTitre='Partagez des offres d’emploi, d’alternance, de service civique ou d’immersion à votre bénéficiaire depuis la partie “Offres”.'
-          CTAPrimary={
-            <ButtonLink href={`/recherche-offres`} className='ml-4'>
-              <IconComponent
-                name={IconName.Search}
-                focusable='false'
-                aria-hidden='true'
-                className='mr-2 w-4 h-4'
-              />
-              Rechercher une offre
-            </ButtonLink>
-          }
+          premierLien={{
+            href: '/recherche-offres',
+            label: 'Rechercher une offre',
+            iconName: IconName.Search,
+          }}
         />
       )}
 

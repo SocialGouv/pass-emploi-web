@@ -37,7 +37,7 @@ export default function OngletRdvsBeneficiaire({
             rdvs={rdvs}
             idConseiller={conseiller.id}
             beneficiaireUnique={beneficiaire}
-            additionalColumns='Modalité'
+            additionalColumn='Modalité'
           />
           <Link
             href={`${pathPrefix}/${beneficiaire.id}/rendez-vous-passes`}

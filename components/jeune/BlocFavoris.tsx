@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 import EmptyState from 'components/EmptyState'
-import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { InlineDefinitionItem } from 'components/ui/InlineDefinitionItem'
@@ -31,17 +30,11 @@ export default function BlocFavoris({
           illustrationName={IllustrationName.Checklist}
           titre='Votre bénéficiaire n’a rien mis en favori pour l’instant.'
           sousTitre='Suggérez-lui des offres d’emploi avec la partie “Offres”'
-          CTAPrimary={
-            <ButtonLink href={`/recherche-offres`} className='ml-4'>
-              <IconComponent
-                name={IconName.Search}
-                focusable='false'
-                aria-hidden='true'
-                className='mr-2 w-4 h-4'
-              />
-              Rechercher une offre
-            </ButtonLink>
-          }
+          premierLien={{
+            href: '/recherche-offres',
+            label: 'Rechercher une offre',
+            iconName: IconName.Search,
+          }}
         />
       )}
 

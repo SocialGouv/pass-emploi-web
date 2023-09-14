@@ -1,41 +1,75 @@
 import React from 'react'
 
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 
+type EmptyStateLinkProps = { href: string; label: string; iconName?: IconName }
 type EmptyStateProps = {
   illustrationName: IllustrationName
   titre: string
   sousTitre?: string
-  CTAPrimary?: JSX.Element
-  CTASecondary?: JSX.Element
+  premierLien?: EmptyStateLinkProps
+  secondLien?: EmptyStateLinkProps
 }
 
-export default function EmptyState(props: EmptyStateProps) {
+export default function EmptyState({
+  illustrationName,
+  premierLien,
+  secondLien,
+  sousTitre,
+  titre,
+}: EmptyStateProps) {
   return (
     <>
       <IllustrationComponent
-        name={props.illustrationName}
+        name={illustrationName}
         focusable='false'
         aria-hidden='true'
-        className='w-48 m-auto'
+        className='w-48 h-48 m-auto mt-12'
       />
 
       <p className='text-base-bold text-center text-content_color mt-8'>
-        {props.titre}
+        {titre}
       </p>
 
-      {props.sousTitre && (
+      {sousTitre && (
         <p className='text-base-regular text-center text-content_color mt-4'>
-          {props.sousTitre}
+          {sousTitre}
         </p>
       )}
 
-      {(props.CTAPrimary || props.CTASecondary) && (
+      {(premierLien || secondLien) && (
         <div className='flex justify-center gap-4 mt-8'>
-          {props.CTASecondary && <>{props.CTASecondary}</>}
-          {props.CTAPrimary && <>{props.CTAPrimary}</>}
+          {premierLien && (
+            <ButtonLink href={premierLien.href}>
+              {premierLien.iconName && (
+                <IconComponent
+                  name={premierLien.iconName}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+              )}
+              {premierLien.label}
+            </ButtonLink>
+          )}
+
+          {secondLien && (
+            <ButtonLink href={secondLien.href}>
+              {secondLien.iconName && (
+                <IconComponent
+                  name={secondLien.iconName}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+              )}
+              {secondLien.label}
+            </ButtonLink>
+          )}
         </div>
       )}
     </>

@@ -3,8 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import EmptyState from 'components/EmptyState'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
-import ButtonLink from 'components/ui/Button/ButtonLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import {
@@ -134,21 +133,14 @@ export default function OngletActions({
               <EmptyState
                 illustrationName={IllustrationName.Checklist}
                 titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
-                CTAPrimary={
-                  !lectureSeule ? (
-                    <ButtonLink
-                      href={`/mes-jeunes/${jeune.id}/actions/nouvelle-action`}
-                      className='ml-4'
-                    >
-                      <IconComponent
-                        name={IconName.Add}
-                        focusable='false'
-                        aria-hidden='true'
-                        className='mr-2 w-4 h-4'
-                      />
-                      Créer une action
-                    </ButtonLink>
-                  ) : undefined
+                premierLien={
+                  !lectureSeule
+                    ? {
+                        href: `/mes-jeunes/${jeune.id}/actions/nouvelle-action`,
+                        label: 'Créer une action',
+                        iconName: IconName.Add,
+                      }
+                    : undefined
                 }
               />
             </div>

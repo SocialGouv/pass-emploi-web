@@ -4,7 +4,6 @@ import React, { ReactElement, useEffect, useState } from 'react'
 import EmptyState from 'components/EmptyState'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
@@ -127,23 +126,17 @@ export default function OngletAgendaEtablissement({
                   ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
                   : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
               }
-              CTAPrimary={
-                <ButtonLink href='/mes-jeunes/edition-rdv?type=ac'>
-                  <IconComponent
-                    name={IconName.Add}
-                    focusable={false}
-                    aria-hidden={true}
-                    className='mr-2 w-4 h-4'
-                  />
-                  Créer une animation collective
-                </ButtonLink>
-              }
+              premierLien={{
+                href: '/mes-jeunes/edition-rdv?type=ac',
+                label: 'Créer une animation collective',
+                iconName: IconName.Add,
+              }}
             />
 
             {animationsCollectives.length > 0 && (
               <Button
                 type='button'
-                style={ButtonStyle.PRIMARY}
+                style={ButtonStyle.SECONDARY}
                 onClick={() => setStatutsValides([])}
                 className='m-auto mt-8'
               >

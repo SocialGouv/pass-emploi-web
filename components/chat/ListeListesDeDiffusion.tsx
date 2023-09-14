@@ -57,17 +57,11 @@ export default function ListeListesDeDiffusion({
             illustrationName={IllustrationName.SendWhite}
             titre='Vous n’avez pas encore créé de liste de diffusion.'
             sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
-            CTAPrimary={
-              <ButtonLink href='/mes-jeunes/listes-de-diffusion/edition-liste'>
-                <IconComponent
-                  name={IconName.Add}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='mr-2 w-4 h-4'
-                />
-                Créer une liste
-              </ButtonLink>
-            }
+            premierLien={{
+              href: '/mes-jeunes/listes-de-diffusion/edition-liste',
+              label: 'Créer une liste',
+              iconName: IconName.Add,
+            }}
           />
         </div>
       )}

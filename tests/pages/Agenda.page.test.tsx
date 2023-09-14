@@ -138,6 +138,22 @@ describe('Agenda', () => {
         })
       })
 
+      it('contient des liens pour des évènements', () => {
+        const pageActionPortal = screen.getByTestId('page-action-portal')
+
+        expect(
+          within(pageActionPortal).getByRole('link', {
+            name: 'Créer une animation collective',
+          })
+        ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?type=ac')
+
+        expect(
+          within(pageActionPortal).getByRole('link', {
+            name: 'Créer un rendez-vous',
+          })
+        ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
+      })
+
       it('contient 2 onglets', () => {
         // Then
         expect(
@@ -192,15 +208,6 @@ describe('Agenda', () => {
       })
 
       describe('agenda conseiller', () => {
-        it('a un lien pour créer un rendez-vous', () => {
-          // Then
-          expect(
-            screen.getByRole('link', {
-              name: 'Créer un rendez-vous',
-            })
-          ).toHaveAttribute('href', '/mes-jeunes/edition-rdv')
-        })
-
         it('a deux boutons de navigation', () => {
           // When
           const periodesFutures = screen.getByRole('button', {
@@ -303,20 +310,6 @@ describe('Agenda', () => {
           await userEvent.click(
             screen.getByRole('tab', { name: 'Agenda établissement' })
           )
-        })
-
-        it('a un lien pour créer une animation collective', () => {
-          // Then
-          screen
-            .getAllByRole('link', {
-              name: 'Créer une animation collective',
-            })
-            .forEach((lien) =>
-              expect(lien).toHaveAttribute(
-                'href',
-                '/mes-jeunes/edition-rdv?type=ac'
-              )
-            )
         })
 
         it('récupère les événements sur une période de 7 jours à partir de la date du jour', async () => {
@@ -639,6 +632,7 @@ describe('Agenda', () => {
           name: /votre Mission Locale/,
         })
         const submit = screen.getByRole('button', { name: 'Ajouter' })
+        const pageActionPortal = screen.getByTestId('page-action-portal')
 
         // When
         await userEvent.selectOptions(searchAgence, agence.nom)
@@ -654,7 +648,7 @@ describe('Agenda', () => {
           screen.getByText('Votre Mission Locale n’est pas renseignée')
         ).toThrow()
         expect(
-          screen.getByText('Créer une animation collective')
+          within(pageActionPortal).getByText('Créer une animation collective')
         ).toBeInTheDocument()
       })
     })

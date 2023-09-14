@@ -114,7 +114,7 @@ describe('RendezVousPasses', () => {
           // Then
           expect(
             screen.getByText(
-              'Aucun événement ou rendez-vous sur cette période pour votre bénéficiaire.'
+              'Aucun événement ou rendez-vous pour votre bénéficiaire.'
             )
           ).toBeInTheDocument()
         })

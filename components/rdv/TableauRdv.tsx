@@ -4,7 +4,6 @@ import React from 'react'
 
 import EmptyState from 'components/EmptyState'
 import { RdvRow } from 'components/rdv/RdvRow'
-import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
@@ -24,7 +23,7 @@ type TableauRdvProps = {
   rdvs: EvenementListItem[]
   withIntercalaires?: boolean
   beneficiaireUnique?: BaseJeune
-  additionalColumns?: ColumnHeaderLabel
+  additionalColumn?: ColumnHeaderLabel
 }
 
 export type ColumnHeaderLabel = 'Présent' | 'Modalité'
@@ -34,13 +33,13 @@ export default function TableauRdv({
   idConseiller,
   withIntercalaires = false,
   beneficiaireUnique,
-  additionalColumns = 'Modalité',
+  additionalColumn = 'Modalité',
 }: TableauRdvProps) {
   const router = useRouter()
-  const isRdvPasses = router.asPath.endsWith('/rendez-vous-passes')
   const pathPrefix = router.asPath.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
+  const isRdvPasses = additionalColumn === 'Présent'
 
   const rdvsAffiches = withIntercalaires
     ? insertIntercalaires(rdvs, ({ date }) => DateTime.fromISO(date))
@@ -53,79 +52,11 @@ export default function TableauRdv({
     <>
       {rdvs.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
-          {!beneficiaireUnique && (
-            <>
-              <EmptyState
-                illustrationName={IllustrationName.Checklist}
-                titre='Vous n’avez rien de prévu pour l’instant.'
-                CTAPrimary={
-                  <ButtonLink href='/mes-jeunes/edition-rdv'>
-                    <IconComponent
-                      name={IconName.Add}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='mr-2 w-4 h-4'
-                    />
-                    Créer un rendez-vous
-                  </ButtonLink>
-                }
-                CTASecondary={
-                  <ButtonLink href='/mes-jeunes/edition-rdv?type=ac'>
-                    <IconComponent
-                      name={IconName.Add}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='mr-2 w-4 h-4'
-                    />
-                    Créer une animation collective
-                  </ButtonLink>
-                }
-              />
-            </>
-          )}
-
-          {beneficiaireUnique && isRdvPasses && (
-            <>
-              <EmptyState
-                illustrationName={IllustrationName.Event}
-                titre='Aucun événement ou rendez-vous pour votre bénéficiaire.'
-                CTAPrimary={
-                  <ButtonLink href={`${pathPrefix}/${beneficiaireUnique.id}`}>
-                    <IconComponent
-                      name={IconName.ChevronRight}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='mr-2 w-4 h-4'
-                    />
-                    Revenir à la fiche bénéficiaire
-                  </ButtonLink>
-                }
-              />
-            </>
-          )}
-
-          {beneficiaireUnique && !isRdvPasses && (
-            <>
-              <EmptyState
-                illustrationName={IllustrationName.Event}
-                titre='Aucun événement ou rendez-vous sur cette période pour votre bénéficiaire.'
-                sousTitre='Créez un nouveau rendez-vous pour votre bénéficiaire ou consultez l’historique des événements passés.'
-                CTAPrimary={
-                  <ButtonLink
-                    href={`${pathPrefix}/${beneficiaireUnique.id}/rendez-vous-passes`}
-                  >
-                    <IconComponent
-                      name={IconName.ChevronRight}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='mr-2 w-4 h-4'
-                    />
-                    Consulter l’historique
-                  </ButtonLink>
-                }
-              />
-            </>
-          )}
+          <StateAucunRendezvous
+            beneficiaireUnique={beneficiaireUnique}
+            isRdvPasses={isRdvPasses}
+            pathPrefix={pathPrefix}
+          />
         </div>
       )}
 
@@ -137,8 +68,8 @@ export default function TableauRdv({
               {!beneficiaireUnique && <TH>Bénéficiaire</TH>}
               <TH>Type</TH>
               <TH>
-                {additionalColumns}
-                {additionalColumns === 'Présent' && (
+                {additionalColumn}
+                {isRdvPasses && (
                   <IconComponent
                     name={IconName.Info}
                     role='img'
@@ -161,13 +92,72 @@ export default function TableauRdv({
                 withDate={!withIntercalaires}
                 beneficiaireUnique={beneficiaireUnique}
                 idConseiller={idConseiller}
-                withIndicationPresenceBeneficiaire={
-                  additionalColumns === 'Présent'
-                }
+                withIndicationPresenceBeneficiaire={isRdvPasses}
               />
             ))}
           </TBody>
         </Table>
+      )}
+    </>
+  )
+}
+
+function StateAucunRendezvous({
+  beneficiaireUnique,
+  isRdvPasses,
+  pathPrefix,
+}: {
+  beneficiaireUnique: BaseJeune | undefined
+  isRdvPasses: boolean
+  pathPrefix: string
+}): React.JSX.Element {
+  return (
+    <>
+      {!beneficiaireUnique && (
+        <>
+          <EmptyState
+            illustrationName={IllustrationName.Checklist}
+            titre='Vous n’avez rien de prévu pour l’instant.'
+            premierLien={{
+              href: '/mes-jeunes/edition-rdv?type=ac',
+              label: 'Créer une animation collective',
+              iconName: IconName.Add,
+            }}
+            secondLien={{
+              href: '/mes-jeunes/edition-rdv',
+              label: 'Créer un rendez-vous',
+              iconName: IconName.Add,
+            }}
+          />
+        </>
+      )}
+
+      {beneficiaireUnique && isRdvPasses && (
+        <>
+          <EmptyState
+            illustrationName={IllustrationName.Event}
+            titre='Aucun événement ou rendez-vous pour votre bénéficiaire.'
+            premierLien={{
+              href: `${pathPrefix}/${beneficiaireUnique.id}`,
+              label: 'Revenir à la fiche bénéficiaire',
+              iconName: IconName.ChevronLeft,
+            }}
+          />
+        </>
+      )}
+
+      {beneficiaireUnique && !isRdvPasses && (
+        <>
+          <EmptyState
+            illustrationName={IllustrationName.Event}
+            titre='Aucun événement ou rendez-vous sur cette période pour votre bénéficiaire.'
+            sousTitre='Créez un nouveau rendez-vous pour votre bénéficiaire ou consultez l’historique des événements passés.'
+            premierLien={{
+              href: `${pathPrefix}/${beneficiaireUnique.id}/rendez-vous-passes`,
+              label: 'Consulter l’historique',
+            }}
+          />
+        </>
       )}
     </>
   )

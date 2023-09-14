@@ -3,11 +3,15 @@ import { GetServerSideProps } from 'next'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
-import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
+import {
+  AjouterJeuneButton,
+  getAjouterJeuneHref,
+} from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import TableauJeunes from 'components/jeune/TableauJeunes'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
+import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
@@ -162,9 +166,11 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
             <EmptyState
               illustrationName={IllustrationName.People}
               titre='Il n’y a aucun bénéficiaire dans votre portefeuille.'
-              CTAPrimary={
-                <AjouterJeuneButton structure={conseiller.structure} />
-              }
+              premierLien={{
+                href: getAjouterJeuneHref(conseiller.structure),
+                label: 'Ajouter un bénéficiaire',
+                iconName: IconName.Add,
+              }}
             />
           </div>
         )}
