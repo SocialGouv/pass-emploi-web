@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -46,6 +46,7 @@ function ClotureSession({
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
+  const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
 
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
   const [emargements, setEmargements] = useState<
@@ -55,7 +56,7 @@ function ClotureSession({
   const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
 
   function cocherTousLesBeneficiaires(_event: FormEvent) {
-    if (idsSelectionnes.length !== session.inscriptions.length) {
+    if (idsSelectionnes.length === 0) {
       setIdsSelectionnes(
         session.inscriptions.map((beneficiaire) => beneficiaire.idJeune)
       )
@@ -162,6 +163,18 @@ function ClotureSession({
         return 'Refus tiers'
     }
   }
+
+  useEffect(() => {
+    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current
+    if (toutSelectionnerCheckbox) {
+      const tailleSelection = idsSelectionnes.length
+      toutSelectionnerCheckbox.checked =
+        tailleSelection === session.inscriptions.length
+      toutSelectionnerCheckbox.indeterminate =
+        tailleSelection !== session.inscriptions.length && tailleSelection > 0
+    }
+  }, [session.inscriptions, idsSelectionnes])
+
   useMatomo('Sessions - Clôture de la session')
 
   return (
@@ -192,6 +205,7 @@ function ClotureSession({
                   title='Tout sélectionner'
                   onChange={(e) => cocherTousLesBeneficiaires(e)}
                   className='mr-4'
+                  ref={toutSelectionnerCheckboxRef}
                 />
                 <label
                   htmlFor='cloture-tout-selectionner'
