@@ -6,18 +6,20 @@ interface AjouterJeuneButtonProps {
   structure: StructureConseiller
 }
 
-export const AjouterJeuneButton = ({ structure }: AjouterJeuneButtonProps) => {
-  function getHref() {
-    switch (structure) {
-      case StructureConseiller.MILO:
-        return '/mes-jeunes/milo/creation-jeune'
-      case StructureConseiller.POLE_EMPLOI:
-      case StructureConseiller.POLE_EMPLOI_BRSA:
-        return '/mes-jeunes/pole-emploi/creation-jeune'
-    }
+export function getAjouterJeuneHref(structure: StructureConseiller): string {
+  switch (structure) {
+    case StructureConseiller.MILO:
+      return '/mes-jeunes/milo/creation-jeune'
+    case StructureConseiller.POLE_EMPLOI:
+    case StructureConseiller.POLE_EMPLOI_BRSA:
+      return '/mes-jeunes/pole-emploi/creation-jeune'
+    default:
+      return ''
   }
+}
 
-  const href = getHref()
+export function AjouterJeuneButton({ structure }: AjouterJeuneButtonProps) {
+  const href = getAjouterJeuneHref(structure)
 
   return (
     <>

@@ -1,10 +1,11 @@
 import { DateTime } from 'luxon'
 import React, { ReactElement, useEffect, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
+import EmptyState from 'components/EmptyState'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
@@ -118,30 +119,24 @@ export default function OngletAgendaEtablissement({
       {animationsCollectivesGroupees &&
         animationsCollectivesGroupees.length === 0 && (
           <div className='flex flex-col justify-center items-center'>
-            <EmptyStateImage
-              focusable={false}
-              aria-hidden={true}
-              className='w-[360px] h-[200px]'
+            <EmptyState
+              illustrationName={IllustrationName.Checklist}
+              titre={
+                statutsValides.length === 0
+                  ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
+                  : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
+              }
+              premierLien={{
+                href: '/mes-jeunes/edition-rdv?type=ac',
+                label: 'Créer une animation collective',
+                iconName: IconName.Add,
+              }}
             />
-            <p className='mt-4 text-base-medium w-2/3 text-center'>
-              {statutsValides.length === 0 && (
-                <>
-                  Il n’y a pas d’animation collective sur cette période dans
-                  votre établissement.
-                </>
-              )}
-              {statutsValides.length !== 0 && (
-                <>
-                  Aucune animation collective ne correspond au(x) filtre(s)
-                  sélectionné(s) sur cette période.
-                </>
-              )}
-            </p>
 
             {animationsCollectives.length > 0 && (
               <Button
                 type='button'
-                style={ButtonStyle.PRIMARY}
+                style={ButtonStyle.SECONDARY}
                 onClick={() => setStatutsValides([])}
                 className='m-auto mt-8'
               >

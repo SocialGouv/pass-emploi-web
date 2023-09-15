@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-checklist-grey.svg'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
+import EmptyState from 'components/EmptyState'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
+import { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import {
   Action,
@@ -16,6 +18,7 @@ import { MetadonneesPagination } from 'types/pagination'
 interface OngletActionsProps {
   conseiller: Conseiller
   jeune: BaseJeune
+
   actionsInitiales: {
     actions: Action[]
     page: number
@@ -27,6 +30,7 @@ interface OngletActionsProps {
     etatsQualification: EtatQualificationAction[],
     tri: string
   ) => Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }>
+  lectureSeule?: boolean
 }
 
 export enum TRI {
@@ -41,6 +45,7 @@ export default function OngletActions({
   getActions,
   jeune,
   conseiller,
+  lectureSeule,
 }: OngletActionsProps) {
   const [actionsAffichees, setActionsAffichees] = useState<Action[]>(
     actionsInitiales.actions
@@ -125,14 +130,19 @@ export default function OngletActions({
         <>
           {actionsInitiales.metadonnees.nombreTotal === 0 && (
             <div className='flex flex-col justify-center items-center'>
-              <EmptyStateImage
-                focusable={false}
-                aria-hidden={true}
-                className='w-[360px] h-[200px]'
+              <EmptyState
+                illustrationName={IllustrationName.Checklist}
+                titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
+                premierLien={
+                  !lectureSeule
+                    ? {
+                        href: `/mes-jeunes/${jeune.id}/actions/nouvelle-action`,
+                        label: 'Créer une action',
+                        iconName: IconName.Add,
+                      }
+                    : undefined
+                }
               />
-              <p className='mt-4 text-base-medium w-2/3 text-center'>
-                {jeune.prenom} {jeune.nom} n’a pas encore d’action
-              </p>
             </div>
           )}
 

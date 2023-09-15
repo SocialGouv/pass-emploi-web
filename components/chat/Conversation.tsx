@@ -9,10 +9,12 @@ import React, {
 
 import DisplayMessage from 'components/chat/DisplayMessage'
 import HeaderChat from 'components/chat/HeaderChat'
+import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -275,6 +277,15 @@ export default function Conversation({
                 Voir messages plus anciens
               </Button>
             )}
+
+            {messagesByDay.length === 0 && (
+              <EmptyState
+                illustrationName={IllustrationName.SendWhite}
+                titre='Ceci est le début de votre conversation avec votre bénéficiaire.'
+                sousTitre='Écrivez votre premier message !'
+              />
+            )}
+
             <ul ref={conteneurMessagesRef}>
               {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                 <li key={messagesOfADay.date.toMillis()} className='mb-5'>

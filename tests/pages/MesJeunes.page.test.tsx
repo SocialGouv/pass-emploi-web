@@ -278,7 +278,9 @@ describe('Mes Jeunes', () => {
 
         //THEN
         expect(
-          screen.getByText("Vous n'avez pas encore intégré de bénéficiaires.")
+          screen.getByText(
+            'Il n’y a aucun bénéficiaire dans votre portefeuille.'
+          )
         ).toBeInTheDocument()
         expect(() => screen.getAllByRole('row')).toThrow()
       })

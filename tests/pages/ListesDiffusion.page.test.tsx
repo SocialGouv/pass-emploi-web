@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -23,10 +23,13 @@ describe('Page Listes de Diffusion', () => {
         renderWithContexts(
           <ListesDiffusion listesDiffusion={[]} pageTitle='' />
         )
+        const pageActionPortal = screen.getByTestId('page-action-portal')
 
         // Then
         expect(
-          screen.getByRole('link', { name: 'Créer une liste' })
+          within(pageActionPortal).getByRole('link', {
+            name: 'Créer une liste',
+          })
         ).toHaveAttribute(
           'href',
           '/mes-jeunes/listes-de-diffusion/edition-liste'
@@ -35,16 +38,32 @@ describe('Page Listes de Diffusion', () => {
     })
 
     describe('quand il n’y a pas de listes de diffusion', () => {
-      it('affiche le message idoine', async () => {
+      beforeEach(() => {
         // Given - When
         renderWithContexts(
           <ListesDiffusion listesDiffusion={[]} pageTitle='' />
         )
+      })
+
+      it('affiche le message idoine', async () => {
+        // Then
+        expect(
+          screen.getByText('Vous n’avez pas encore créé de liste de diffusion.')
+        ).toBeInTheDocument()
+      })
+
+      it('affiche un empty state comprenant un lien pour créer une liste de diffusion', () => {
+        const emptyState = screen.getByTestId('empty-state-liste-de-diffusion')
 
         // Then
         expect(
-          screen.getByText('Vous n’avez aucune liste de diffusion.')
-        ).toBeInTheDocument()
+          within(emptyState).getByRole('link', {
+            name: 'Créer une liste',
+          })
+        ).toHaveAttribute(
+          'href',
+          '/mes-jeunes/listes-de-diffusion/edition-liste'
+        )
       })
     })
 

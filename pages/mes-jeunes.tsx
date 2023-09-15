@@ -2,12 +2,17 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-people-grey.svg'
-import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
+import EmptyState from 'components/EmptyState'
+import {
+  AjouterJeuneButton,
+  getAjouterJeuneHref,
+} from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import TableauJeunes from 'components/jeune/TableauJeunes'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
+import { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { TotalActions } from 'interfaces/action'
 import {
@@ -158,14 +163,15 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
       {conseillerJeunes.length === 0 &&
         !conseiller.aDesBeneficiairesARecuperer && (
           <div className='mx-auto my-0 flex flex-col items-center'>
-            <EmptyStateImage
-              aria-hidden='true'
-              focusable='false'
-              className='w-[360px] h-[200px] mb-16'
+            <EmptyState
+              illustrationName={IllustrationName.People}
+              titre='Il n’y a aucun bénéficiaire dans votre portefeuille.'
+              premierLien={{
+                href: getAjouterJeuneHref(conseiller.structure),
+                label: 'Ajouter un bénéficiaire',
+                iconName: IconName.Add,
+              }}
             />
-            <p className='text-base-bold mb-12'>
-              Vous n&apos;avez pas encore intégré de bénéficiaires.
-            </p>
           </div>
         )}
 

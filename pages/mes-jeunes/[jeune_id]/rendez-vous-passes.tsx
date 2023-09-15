@@ -35,7 +35,7 @@ function RendezVousPasses({
       rdvs={rdvs}
       idConseiller={conseiller.id}
       beneficiaireUnique={beneficiaire}
-      additionalColumns='Présent'
+      additionalColumn='Présent'
     />
   )
 }

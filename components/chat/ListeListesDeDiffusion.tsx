@@ -1,10 +1,11 @@
 import React from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-send-white.svg'
 import HeaderChat from 'components/chat/HeaderChat'
+import EmptyState from 'components/EmptyState'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
@@ -52,14 +53,16 @@ export default function ListeListesDeDiffusion({
 
       {listesDeDiffusion && listesDeDiffusion.length === 0 && (
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
-          <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
-            className='w-[360px] h-[200px]'
+          <EmptyState
+            illustrationName={IllustrationName.SendWhite}
+            titre='Vous n’avez pas encore créé de liste de diffusion.'
+            sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
+            premierLien={{
+              href: '/mes-jeunes/listes-de-diffusion/edition-liste',
+              label: 'Créer une liste',
+              iconName: IconName.Add,
+            }}
           />
-          <p className='mt-4 text-base-medium w-2/3 text-center'>
-            Vous n’avez pas encore créé de liste de diffusion
-          </p>
         </div>
       )}
 
@@ -90,22 +93,24 @@ export default function ListeListesDeDiffusion({
         </div>
       )}
 
-      {messagerieFullScreen && (
-        <div className='hidden layout_s:block w-fit mx-auto'>
-          <ButtonLink
-            href='/mes-jeunes/listes-de-diffusion'
-            style={ButtonStyle.TERTIARY}
-          >
-            <IconComponent
-              name={IconName.Edit}
-              focusable={false}
-              aria-hidden={true}
-              className='w-4 h-4 fill-primary mr-3'
-            />
-            Gérer mes listes de diffusion
-          </ButtonLink>
-        </div>
-      )}
+      {listesDeDiffusion &&
+        listesDeDiffusion.length > 0 &&
+        messagerieFullScreen && (
+          <div className='hidden layout_s:block w-fit mx-auto'>
+            <ButtonLink
+              href='/mes-jeunes/listes-de-diffusion'
+              style={ButtonStyle.TERTIARY}
+            >
+              <IconComponent
+                name={IconName.Edit}
+                focusable={false}
+                aria-hidden={true}
+                className='w-4 h-4 fill-primary mr-3'
+              />
+              Gérer mes listes de diffusion
+            </ButtonLink>
+          </div>
+        )}
     </>
   )
 }
