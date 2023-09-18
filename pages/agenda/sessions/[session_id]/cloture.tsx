@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -29,7 +29,6 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
 type ClotureSessionProps = PageProps & {
   session: Session
@@ -65,9 +64,11 @@ function ClotureSession({
           return { ...beneficiaire, statut: StatutBeneficiaire.PRESENT }
         })
       )
+      mettreAJourCheckboxToutSelectionner(session.inscriptions.length)
     } else {
       setIdsSelectionnes([])
       setEmargements(inscriptionsInitiales)
+      mettreAJourCheckboxToutSelectionner(0)
     }
   }
 
@@ -87,8 +88,11 @@ function ClotureSession({
   function modifierStatutBeneficiaire(
     beneficiaire: InformationBeneficiaireSession
   ) {
+    let selection: string[]
+
     if (!Boolean(idsSelectionnes.includes(beneficiaire.idJeune))) {
-      setIdsSelectionnes(idsSelectionnes.concat(beneficiaire.idJeune))
+      selection = idsSelectionnes.concat(beneficiaire.idJeune)
+      setIdsSelectionnes(selection)
       setStatutBeneficiaire(StatutBeneficiaire.PRESENT)
       setEmargements((currentEmargements) =>
         metAJourListeBeneficiairesEmarges(currentEmargements, {
@@ -101,10 +105,9 @@ function ClotureSession({
         (beneficiaireInitial) =>
           beneficiaireInitial.idJeune === beneficiaire.idJeune
       )[0]
+      selection = idsSelectionnes.filter((id) => id !== beneficiaire.idJeune)
 
-      setIdsSelectionnes(
-        idsSelectionnes.filter((id) => id !== beneficiaire.idJeune)
-      )
+      setIdsSelectionnes(selection)
       setStatutBeneficiaire(beneficiaire.statut)
       setEmargements((prev) => {
         return [
@@ -113,6 +116,22 @@ function ClotureSession({
         ]
       })
     }
+
+    mettreAJourCheckboxToutSelectionner(selection.length)
+  }
+
+  function mettreAJourCheckboxToutSelectionner(tailleSelection: number) {
+    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
+    const isChecked = tailleSelection === session.inscriptions.length
+    const isIndeterminate =
+      tailleSelection !== session.inscriptions.length && tailleSelection > 0
+
+    toutSelectionnerCheckbox.checked = isChecked
+    toutSelectionnerCheckbox.indeterminate = isIndeterminate
+
+    if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
+    else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
+    else toutSelectionnerCheckbox.ariaChecked = 'false'
   }
 
   async function soumettreClotureSession(event: FormEvent<HTMLFormElement>) {
@@ -163,17 +182,6 @@ function ClotureSession({
         return 'Refus tiers'
     }
   }
-
-  useEffect(() => {
-    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current
-    if (toutSelectionnerCheckbox) {
-      const tailleSelection = idsSelectionnes.length
-      toutSelectionnerCheckbox.checked =
-        tailleSelection === session.inscriptions.length
-      toutSelectionnerCheckbox.indeterminate =
-        tailleSelection !== session.inscriptions.length && tailleSelection > 0
-    }
-  }, [session.inscriptions, idsSelectionnes])
 
   useMatomo('Sessions - Clôture de la session')
 

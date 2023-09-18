@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -132,18 +132,19 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
 
   function selectionnerBeneficiaire(beneficiaire: JeuneFromListe) {
     setErreurReaffectation(undefined)
+    let selection: string[]
 
     if (idsBeneficiairesSelected.value.includes(beneficiaire.id)) {
-      setIdsBeneficiairesSelected({
-        value: idsBeneficiairesSelected.value.filter(
-          (id) => id !== beneficiaire.id
-        ),
-      })
+      selection = idsBeneficiairesSelected.value.filter(
+        (id) => id !== beneficiaire.id
+      )
+      setIdsBeneficiairesSelected({ value: selection })
     } else {
-      setIdsBeneficiairesSelected({
-        value: idsBeneficiairesSelected.value.concat(beneficiaire.id),
-      })
+      selection = idsBeneficiairesSelected.value.concat(beneficiaire.id)
+      setIdsBeneficiairesSelected({ value: selection })
     }
+
+    mettreAJourCheckboxToutSelectionner(selection.length)
   }
 
   function choixConseillerDestination(
@@ -163,11 +164,27 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
 
     if (idsBeneficiairesSelected.value.length > 0) {
       setIdsBeneficiairesSelected({ value: [] })
+      mettreAJourCheckboxToutSelectionner(0)
     } else {
       setIdsBeneficiairesSelected({
         value: beneficiaires!.map((beneficiaire) => beneficiaire.id),
       })
+      mettreAJourCheckboxToutSelectionner(beneficiaires!.length)
     }
+  }
+
+  function mettreAJourCheckboxToutSelectionner(tailleSelection: number) {
+    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
+    const isChecked = tailleSelection === beneficiaires?.length
+    const isIndeterminate =
+      tailleSelection !== beneficiaires?.length && tailleSelection > 0
+
+    toutSelectionnerCheckbox.checked = isChecked
+    toutSelectionnerCheckbox.indeterminate = isIndeterminate
+
+    if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
+    else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
+    else toutSelectionnerCheckbox.ariaChecked = 'false'
   }
 
   async function fetchListeBeneficiaires(conseiller: BaseConseiller) {
@@ -258,17 +275,6 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
       setReaffectationEnCours(false)
     }
   }
-
-  useEffect(() => {
-    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current
-    if (toutSelectionnerCheckbox) {
-      const tailleSelection = idsBeneficiairesSelected.value.length
-      toutSelectionnerCheckbox.checked =
-        tailleSelection === beneficiaires?.length
-      toutSelectionnerCheckbox.indeterminate =
-        tailleSelection !== beneficiaires?.length && tailleSelection > 0
-    }
-  }, [idsBeneficiairesSelected, beneficiaires])
 
   useMatomo(trackingTitle, aDesBeneficiaires)
 
