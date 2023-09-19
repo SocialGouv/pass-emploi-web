@@ -28,7 +28,7 @@ import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
+import { DATETIME_LONG, toFrenchFormat, toFrenchString } from 'utils/date'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
 const DesinscriptionBeneficiaireModal = dynamic(
@@ -63,16 +63,6 @@ function FicheDetailsSession({
   const [_, setAlerte] = useAlerte()
 
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
-  const dateLimiteDepassee = (): boolean => {
-    if (DateTime.fromISO(session.session.dateHeureDebut) < DateTime.now())
-      return true
-    if (session.session.dateMaxInscription) {
-      return (
-        DateTime.fromISO(session.session.dateMaxInscription) < DateTime.now()
-      )
-    }
-    return false
-  }
 
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
     session.session.estVisible
@@ -96,6 +86,28 @@ function FicheDetailsSession({
     | undefined
   >()
 
+  function dateFinDeSessionDepassee() {
+    return (
+      DateTime.fromISO(session.session.dateHeureFin).set({
+        hour: 23,
+        minute: 59,
+        second: 59,
+      }) < DateTime.now()
+    )
+  }
+
+  function dateLimiteInscriptionDepassee() {
+    return (
+      session.session.dateMaxInscription &&
+      DateTime.fromISO(session.session.dateMaxInscription)
+        .set({
+          hour: 23,
+          minute: 59,
+          second: 59,
+        })
+        .minus({ day: 7 }) < DateTime.now()
+    )
+  }
   function openDesinscriptionBeneficiaireModal(id: string, nom: string) {
     setBeneficiaireADesinscire({ value: nom, id })
   }
@@ -290,7 +302,13 @@ function FicheDetailsSession({
       )}
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
-      {dateLimiteDepassee() && (
+      {dateLimiteInscriptionDepassee() && !dateFinDeSessionDepassee() && (
+        <div className='mt-2'>
+          <FailureAlert label='La date limite d’inscription est atteinte. Toutefois, il est encore possible d’inscrire des bénéficiaires jusqu’à la date de début de la session.' />
+        </div>
+      )}
+
+      {dateFinDeSessionDepassee() && (
         <div className='mt-2'>
           <FailureAlert label='Les inscriptions ne sont plus possibles car la date limite est atteinte.' />
         </div>
@@ -388,9 +406,8 @@ function FicheDetailsSession({
             </dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.session.dateMaxInscription ? (
-                toFrenchFormat(
-                  DateTime.fromISO(session.session.dateMaxInscription),
-                  DATETIME_LONG
+                toFrenchString(
+                  DateTime.fromISO(session.session.dateMaxInscription)
                 )
               ) : (
                 <>
@@ -484,21 +501,24 @@ function FicheDetailsSession({
             aria-controls='selected-beneficiaires'
             ref={inputBeneficiaires}
             invalid={Boolean(beneficiairesSelectionnes.error)}
-            disabled={nbPlacesDisponibles.value === 0 || dateLimiteDepassee()}
+            disabled={
+              nbPlacesDisponibles.value === 0 || dateFinDeSessionDepassee()
+            }
           />
 
-          {nbPlacesDisponibles.value !== undefined && !dateLimiteDepassee() && (
-            <span
-              className={`mb-2 ${
-                nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
-              }`}
-            >
-              {nbPlacesDisponibles.value}{' '}
-              {nbPlacesDisponibles.value > 1
-                ? 'places restantes'
-                : 'place restante'}
-            </span>
-          )}
+          {nbPlacesDisponibles.value !== undefined &&
+            !dateFinDeSessionDepassee() && (
+              <span
+                className={`mb-2 ${
+                  nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
+                }`}
+              >
+                {nbPlacesDisponibles.value}{' '}
+                {nbPlacesDisponibles.value > 1
+                  ? 'places restantes'
+                  : 'place restante'}
+              </span>
+            )}
 
           {beneficiairesSelectionnes.value.length > 0 && (
             <ul
@@ -517,7 +537,7 @@ function FicheDetailsSession({
                 >
                   <BeneficiaireItemList
                     beneficiaire={beneficiaire}
-                    dateLimiteDepassee={dateLimiteDepassee()}
+                    dateLimiteDepassee={dateFinDeSessionDepassee()}
                     onDesinscrire={desinscrireBeneficiaire}
                     onReinscrire={reinscrireBeneficiaire}
                   />
@@ -527,7 +547,7 @@ function FicheDetailsSession({
           )}
         </Etape>
 
-        {!dateLimiteDepassee() && (
+        {!dateFinDeSessionDepassee() && (
           <div className='flex justify-center gap-4 mx-auto'>
             <ButtonLink
               href={returnTo}

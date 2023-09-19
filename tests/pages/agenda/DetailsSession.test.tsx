@@ -24,7 +24,7 @@ import {
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
-import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
+import { DATETIME_LONG, toFrenchFormat, toFrenchString } from 'utils/date'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
@@ -111,10 +111,7 @@ describe('Détails Session', () => {
         expect(
           getByDescriptionTerm('Date limite d’inscription :')
         ).toHaveTextContent(
-          toFrenchFormat(
-            DateTime.fromISO(session.session.dateMaxInscription!),
-            DATETIME_LONG
-          )
+          toFrenchString(DateTime.fromISO(session.session.dateMaxInscription!))
         )
         expect(getByDescriptionTerm('Animateur :')).toHaveTextContent(
           session.session.animateur!
@@ -474,11 +471,68 @@ describe('Détails Session', () => {
           session: {
             id: 'session-1',
             nom: 'titre-session',
-            dateHeureDebut: DateTime.now()
-              .plus({ days: 1, minute: 1 })
-              .toString(),
-            dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
+            dateHeureDebut: DateTime.now().minus({ minute: 1 }).toString(),
+            dateHeureFin: DateTime.now().toString(),
             dateMaxInscription: DateTime.now().minus({ days: 1 }).toString(),
+            animateur: 'Charles Dupont',
+            lieu: 'CEJ Paris',
+            commentaire: 'bla',
+            estVisible: true,
+            nbPlacesDisponibles: 3,
+            statut: 'AClore',
+          },
+          inscriptions: [
+            {
+              idJeune: 'jeune-1',
+              nom: 'Beau',
+              prenom: 'Harry',
+              statut: 'INSCRIT',
+            },
+          ],
+        })
+
+        await renderWithContexts(
+          <DetailSession
+            pageTitle=''
+            session={session}
+            beneficiairesEtablissement={beneficairesEtablissement}
+            returnTo='whatever'
+          />
+        )
+      })
+
+      it('affiche un message d’alerte pour continuer d’inscrire des bénéficiaires', () => {
+        //Then
+        expect(
+          screen.getByText(
+            'La date limite d’inscription est atteinte. Toutefois, il est encore possible d’inscrire des bénéficiaires jusqu’à la date de début de la session.'
+          )
+        ).toBeInTheDocument()
+      })
+    })
+
+    describe('si la date de fin est dépassée', () => {
+      let session: Session
+      let beneficairesEtablissement: BaseJeune[]
+      beforeEach(async () => {
+        // Given
+        beneficairesEtablissement = [
+          uneBaseJeune({
+            id: 'jeune-1',
+            prenom: 'Harry',
+            nom: 'Beau',
+          }),
+        ]
+
+        session = unDetailSession({
+          session: {
+            id: 'session-1',
+            nom: 'titre-session',
+            dateHeureDebut: DateTime.now()
+              .minus({ days: 1, minute: 1 })
+              .toString(),
+            dateHeureFin: DateTime.now().minus({ days: 1 }).toString(),
+            dateMaxInscription: DateTime.now().minus({ days: 2 }).toString(),
             animateur: 'Charles Dupont',
             lieu: 'CEJ Paris',
             commentaire: 'bla',
