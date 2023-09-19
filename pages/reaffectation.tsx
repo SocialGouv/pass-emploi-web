@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -44,6 +44,8 @@ type ReaffectationProps = PageProps & {
 
 function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   const [portefeuille] = usePortefeuille()
+
+  const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
 
   const [structureReaffectation, setStructureReaffectation] = useState<
     ValueWithError<StructureReaffectation | undefined>
@@ -130,18 +132,19 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
 
   function selectionnerBeneficiaire(beneficiaire: JeuneFromListe) {
     setErreurReaffectation(undefined)
+    let selection: string[]
 
     if (idsBeneficiairesSelected.value.includes(beneficiaire.id)) {
-      setIdsBeneficiairesSelected({
-        value: idsBeneficiairesSelected.value.filter(
-          (id) => id !== beneficiaire.id
-        ),
-      })
+      selection = idsBeneficiairesSelected.value.filter(
+        (id) => id !== beneficiaire.id
+      )
+      setIdsBeneficiairesSelected({ value: selection })
     } else {
-      setIdsBeneficiairesSelected({
-        value: idsBeneficiairesSelected.value.concat(beneficiaire.id),
-      })
+      selection = idsBeneficiairesSelected.value.concat(beneficiaire.id)
+      setIdsBeneficiairesSelected({ value: selection })
     }
+
+    mettreAJourCheckboxToutSelectionner(selection.length)
   }
 
   function choixConseillerDestination(
@@ -159,13 +162,29 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   function toggleTousLesBeneficiaires() {
     setErreurReaffectation(undefined)
 
-    if (idsBeneficiairesSelected.value.length !== beneficiaires!.length) {
+    if (idsBeneficiairesSelected.value.length > 0) {
+      setIdsBeneficiairesSelected({ value: [] })
+      mettreAJourCheckboxToutSelectionner(0)
+    } else {
       setIdsBeneficiairesSelected({
         value: beneficiaires!.map((beneficiaire) => beneficiaire.id),
       })
-    } else {
-      setIdsBeneficiairesSelected({ value: [] })
+      mettreAJourCheckboxToutSelectionner(beneficiaires!.length)
     }
+  }
+
+  function mettreAJourCheckboxToutSelectionner(tailleSelection: number) {
+    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
+    const isChecked = tailleSelection === beneficiaires?.length
+    const isIndeterminate =
+      tailleSelection !== beneficiaires?.length && tailleSelection > 0
+
+    toutSelectionnerCheckbox.checked = isChecked
+    toutSelectionnerCheckbox.indeterminate = isIndeterminate
+
+    if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
+    else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
+    else toutSelectionnerCheckbox.ariaChecked = 'false'
   }
 
   async function fetchListeBeneficiaires(conseiller: BaseConseiller) {
@@ -385,17 +404,14 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
               <ul>
                 <li
                   onClick={toggleTousLesBeneficiaires}
-                  className='rounded-base p-4 flex focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'
+                  className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'
                 >
                   <input
                     id='reaffectation-tout-selectionner'
                     type='checkbox'
                     className='mr-4'
-                    checked={
-                      idsBeneficiairesSelected.value.length ===
-                      beneficiaires.length
-                    }
                     readOnly={true}
+                    ref={toutSelectionnerCheckboxRef}
                   />
                   <label
                     htmlFor='reaffectation-tout-selectionner'
@@ -409,7 +425,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
                   <li
                     key={beneficiaire.id}
                     onClick={() => selectionnerBeneficiaire(beneficiaire)}
-                    className='rounded-base p-4 flex focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'
+                    className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'
                   >
                     <input
                       id={'checkbox-' + beneficiaire.id}
