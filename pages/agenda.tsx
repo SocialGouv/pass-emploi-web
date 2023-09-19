@@ -57,11 +57,11 @@ function Agenda({ onglet }: AgendaProps) {
     CONSEILLER: { queryParam: 'conseiller', trackingLabel: 'conseiller' },
     ETABLISSEMENT: {
       queryParam: 'etablissement',
-      trackingLabel: 'établissement',
+      trackingLabel: 'Mission Locale',
     },
   }
   const [currentTab, setCurrentTab] = useState<Onglet>(
-    onglet ?? Onglet.CONSEILLER
+    onglet ?? Onglet.ETABLISSEMENT
   )
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
@@ -197,14 +197,6 @@ function Agenda({ onglet }: AgendaProps) {
 
       <TabList className='mb-6'>
         <Tab
-          label='Mon agenda'
-          selected={currentTab === Onglet.CONSEILLER}
-          controls='agenda-conseiller'
-          onSelectTab={() => switchTab(Onglet.CONSEILLER)}
-          iconName={IconName.EventFill}
-        />
-
-        <Tab
           label={
             'Agenda ' +
             (estMilo(conseiller) ? 'Mission Locale' : 'établissement')
@@ -214,23 +206,14 @@ function Agenda({ onglet }: AgendaProps) {
           onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
           iconName={IconName.EventFill}
         />
+        <Tab
+          label='Mon agenda'
+          selected={currentTab === Onglet.CONSEILLER}
+          controls='agenda-conseiller'
+          onSelectTab={() => switchTab(Onglet.CONSEILLER)}
+          iconName={IconName.EventFill}
+        />
       </TabList>
-
-      {currentTab === Onglet.CONSEILLER && (
-        <div
-          role='tabpanel'
-          aria-labelledby='agenda-conseiller--tab'
-          tabIndex={0}
-          id='agenda-conseiller'
-        >
-          <OngletAgendaConseiller
-            conseiller={conseiller}
-            recupererRdvs={recupererRdvsConseiller}
-            recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
-            trackNavigation={trackNavigation}
-          />
-        </div>
-      )}
 
       {currentTab === Onglet.ETABLISSEMENT && (
         <div
@@ -255,6 +238,22 @@ function Agenda({ onglet }: AgendaProps) {
               onChangeAffichageModal={trackAgenceModal}
             />
           )}
+        </div>
+      )}
+
+      {currentTab === Onglet.CONSEILLER && (
+        <div
+          role='tabpanel'
+          aria-labelledby='agenda-conseiller--tab'
+          tabIndex={0}
+          id='agenda-conseiller'
+        >
+          <OngletAgendaConseiller
+            conseiller={conseiller}
+            recupererRdvs={recupererRdvsConseiller}
+            recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
+            trackNavigation={trackNavigation}
+          />
         </div>
       )}
     </>
