@@ -157,12 +157,12 @@ describe('Agenda', () => {
       it('contient 2 onglets', () => {
         // Then
         expect(
-          screen.getByRole('tab', { name: 'Mon agenda', selected: true })
+          screen.getByRole('tab', { name: 'Mon agenda', selected: false })
         ).toBeInTheDocument()
         expect(
           screen.getByRole('tab', {
             name: 'Agenda établissement',
-            selected: false,
+            selected: true,
           })
         ).toBeInTheDocument()
       })
@@ -208,6 +208,10 @@ describe('Agenda', () => {
       })
 
       describe('agenda conseiller', () => {
+        beforeEach(async () => {
+          // When
+          await userEvent.click(screen.getByRole('tab', { name: 'Mon agenda' }))
+        })
         it('a deux boutons de navigation', () => {
           // When
           const periodesFutures = screen.getByRole('button', {
