@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import TableauRdv from 'components/rdv/TableauRdv'
+import TableauRdvsConseiller from 'components/rdv/TableauRdvsConseiller'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
@@ -78,11 +78,7 @@ export default function OngletAgendaConseiller({
         trackNavigation={trackNavigation}
       />
 
-      <TableauRdv
-        idConseiller={conseiller.id}
-        rdvs={rdvs ?? []}
-        withIntercalaires={true}
-      />
+      <TableauRdvsConseiller idConseiller={conseiller.id} rdvs={rdvs ?? []} />
     </>
   )
 }

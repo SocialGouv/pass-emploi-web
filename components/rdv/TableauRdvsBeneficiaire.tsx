@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -13,37 +12,27 @@ import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 import { BaseJeune } from 'interfaces/jeune'
-import {
-  insertIntercalaires,
-  renderListeWithIntercalaires,
-} from 'presentation/Intercalaires'
 
-type TableauRdvProps = {
+type TableauRdvsBeneficiaireProps = {
   idConseiller: string
   rdvs: EvenementListItem[]
-  withIntercalaires?: boolean
-  beneficiaireUnique?: BaseJeune
+  beneficiaire: BaseJeune
   additionalColumn?: ColumnHeaderLabel
 }
 
 export type ColumnHeaderLabel = 'Présent' | 'Modalité'
 
-export default function TableauRdv({
+export default function TableauRdvsBeneficiaire({
   rdvs,
   idConseiller,
-  withIntercalaires = false,
-  beneficiaireUnique,
+  beneficiaire,
   additionalColumn = 'Modalité',
-}: TableauRdvProps) {
+}: TableauRdvsBeneficiaireProps) {
   const router = useRouter()
   const pathPrefix = router.asPath.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
   const isRdvPasses = additionalColumn === 'Présent'
-
-  const rdvsAffiches = withIntercalaires
-    ? insertIntercalaires(rdvs, ({ date }) => DateTime.fromISO(date))
-    : rdvs
 
   const informationLabel =
     'L’information de présence est connue uniquement pour les informations collectives et les ateliers.'
@@ -53,7 +42,7 @@ export default function TableauRdv({
       {rdvs.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <StateAucunRendezvous
-            beneficiaireUnique={beneficiaireUnique}
+            beneficiaire={beneficiaire}
             isRdvPasses={isRdvPasses}
             pathPrefix={pathPrefix}
           />
@@ -65,7 +54,6 @@ export default function TableauRdv({
           <THead>
             <TR isHeader={true}>
               <TH>Horaires</TH>
-              {!beneficiaireUnique && <TH>Bénéficiaire</TH>}
               <TH>Type</TH>
               <TH>
                 {additionalColumn}
@@ -85,12 +73,12 @@ export default function TableauRdv({
           </THead>
 
           <TBody>
-            {renderListeWithIntercalaires(rdvsAffiches, (rdv) => (
+            {rdvs.map((rdv) => (
               <RdvRow
                 key={rdv.id}
                 rdv={rdv}
-                withDate={!withIntercalaires}
-                beneficiaireUnique={beneficiaireUnique}
+                withDate={true}
+                beneficiaireUnique={beneficiaire}
                 idConseiller={idConseiller}
                 withIndicationPresenceBeneficiaire={isRdvPasses}
               />
@@ -103,61 +91,38 @@ export default function TableauRdv({
 }
 
 function StateAucunRendezvous({
-  beneficiaireUnique,
+  beneficiaire,
   isRdvPasses,
   pathPrefix,
 }: {
-  beneficiaireUnique: BaseJeune | undefined
+  beneficiaire: BaseJeune
   isRdvPasses: boolean
   pathPrefix: string
 }): React.JSX.Element {
   return (
     <>
-      {!beneficiaireUnique && (
-        <>
-          <EmptyState
-            illustrationName={IllustrationName.Checklist}
-            titre='Vous n’avez rien de prévu pour l’instant.'
-            premierLien={{
-              href: '/mes-jeunes/edition-rdv?type=ac',
-              label: 'Créer une animation collective',
-              iconName: IconName.Add,
-            }}
-            secondLien={{
-              href: '/mes-jeunes/edition-rdv',
-              label: 'Créer un rendez-vous',
-              iconName: IconName.Add,
-            }}
-          />
-        </>
+      {isRdvPasses && (
+        <EmptyState
+          illustrationName={IllustrationName.Event}
+          titre='Aucun événement ou rendez-vous pour votre bénéficiaire.'
+          premierLien={{
+            href: `${pathPrefix}/${beneficiaire.id}`,
+            label: 'Revenir à la fiche bénéficiaire',
+            iconName: IconName.ChevronLeft,
+          }}
+        />
       )}
 
-      {beneficiaireUnique && isRdvPasses && (
-        <>
-          <EmptyState
-            illustrationName={IllustrationName.Event}
-            titre='Aucun événement ou rendez-vous pour votre bénéficiaire.'
-            premierLien={{
-              href: `${pathPrefix}/${beneficiaireUnique.id}`,
-              label: 'Revenir à la fiche bénéficiaire',
-              iconName: IconName.ChevronLeft,
-            }}
-          />
-        </>
-      )}
-
-      {beneficiaireUnique && !isRdvPasses && (
-        <>
-          <EmptyState
-            illustrationName={IllustrationName.Event}
-            titre='Aucun événement ou rendez-vous sur cette période pour votre bénéficiaire.'
-            sousTitre='Créez un nouveau rendez-vous pour votre bénéficiaire ou consultez l’historique des événements passés.'
-            premierLien={{
-              href: `${pathPrefix}/${beneficiaireUnique.id}/rendez-vous-passes`,
-              label: 'Consulter l’historique',
-            }}
-          />
-        </>
+      {!isRdvPasses && (
+        <EmptyState
+          illustrationName={IllustrationName.Event}
+          titre='Aucun événement ou rendez-vous sur cette période pour votre bénéficiaire.'
+          sousTitre='Créez un nouveau rendez-vous pour votre bénéficiaire ou consultez l’historique des événements passés.'
+          premierLien={{
+            href: `${pathPrefix}/${beneficiaire.id}/rendez-vous-passes`,
+            label: 'Consulter l’historique',
+          }}
+        />
       )}
     </>
   )
