@@ -86,28 +86,11 @@ function FicheDetailsSession({
     | undefined
   >()
 
-  function dateFinDeSessionDepassee() {
-    return (
-      DateTime.fromISO(session.session.dateHeureFin).set({
-        hour: 23,
-        minute: 59,
-        second: 59,
-      }) < DateTime.now()
-    )
-  }
+  const dateLimiteInscription = DateTime.fromISO(
+    session.session.dateMaxInscription ?? session.session.dateHeureDebut
+  ).endOf('day')
+  const dateLimiteInscriptionDepassee = DateTime.now() > dateLimiteInscription
 
-  function dateLimiteInscriptionDepassee() {
-    return (
-      session.session.dateMaxInscription &&
-      DateTime.fromISO(session.session.dateMaxInscription)
-        .set({
-          hour: 23,
-          minute: 59,
-          second: 59,
-        })
-        .minus({ day: 7 }) < DateTime.now()
-    )
-  }
   function openDesinscriptionBeneficiaireModal(id: string, nom: string) {
     setBeneficiaireADesinscire({ value: nom, id })
   }
@@ -302,13 +285,7 @@ function FicheDetailsSession({
       )}
       <InformationMessage label='Pour modifier la session, rendez-vous sur i-milo.' />
 
-      {dateLimiteInscriptionDepassee() && !dateFinDeSessionDepassee() && (
-        <div className='mt-2'>
-          <FailureAlert label='La date limite d’inscription est atteinte. Toutefois, il est encore possible d’inscrire des bénéficiaires jusqu’à la date de début de la session.' />
-        </div>
-      )}
-
-      {dateFinDeSessionDepassee() && (
+      {dateLimiteInscriptionDepassee && (
         <div className='mt-2'>
           <FailureAlert label='Les inscriptions ne sont plus possibles car la date limite est atteinte.' />
         </div>
@@ -502,12 +479,12 @@ function FicheDetailsSession({
             ref={inputBeneficiaires}
             invalid={Boolean(beneficiairesSelectionnes.error)}
             disabled={
-              nbPlacesDisponibles.value === 0 || dateFinDeSessionDepassee()
+              nbPlacesDisponibles.value === 0 || dateLimiteInscriptionDepassee
             }
           />
 
           {nbPlacesDisponibles.value !== undefined &&
-            !dateFinDeSessionDepassee() && (
+            !dateLimiteInscriptionDepassee && (
               <span
                 className={`mb-2 ${
                   nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
@@ -537,7 +514,7 @@ function FicheDetailsSession({
                 >
                   <BeneficiaireItemList
                     beneficiaire={beneficiaire}
-                    dateLimiteDepassee={dateFinDeSessionDepassee()}
+                    dateLimiteDepassee={dateLimiteInscriptionDepassee}
                     onDesinscrire={desinscrireBeneficiaire}
                     onReinscrire={reinscrireBeneficiaire}
                   />
@@ -547,7 +524,7 @@ function FicheDetailsSession({
           )}
         </Etape>
 
-        {!dateFinDeSessionDepassee() && (
+        {!dateLimiteInscriptionDepassee && (
           <div className='flex justify-center gap-4 mx-auto'>
             <ButtonLink
               href={returnTo}

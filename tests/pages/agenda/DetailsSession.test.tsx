@@ -41,6 +41,7 @@ describe('Détails Session', () => {
       beforeEach(async () => {
         // Given
         session = unDetailSession()
+        session.session.dateMaxInscription = '2023-06-17'
         beneficiairesEtablissement = [
           uneBaseJeune({
             id: 'jeune-1',
@@ -471,8 +472,8 @@ describe('Détails Session', () => {
           session: {
             id: 'session-1',
             nom: 'titre-session',
-            dateHeureDebut: DateTime.now().minus({ minute: 1 }).toString(),
-            dateHeureFin: DateTime.now().toString(),
+            dateHeureDebut: DateTime.now().plus({ day: 1 }).toString(),
+            dateHeureFin: DateTime.now().plus({ day: 2 }).toString(),
             dateMaxInscription: DateTime.now().minus({ days: 1 }).toString(),
             animateur: 'Charles Dupont',
             lieu: 'CEJ Paris',
@@ -501,17 +502,17 @@ describe('Détails Session', () => {
         )
       })
 
-      it('affiche un message d’alerte pour continuer d’inscrire des bénéficiaires', () => {
+      it('affiche un message d’alerte', () => {
         //Then
         expect(
           screen.getByText(
-            'La date limite d’inscription est atteinte. Toutefois, il est encore possible d’inscrire des bénéficiaires jusqu’à la date de début de la session.'
+            'Les inscriptions ne sont plus possibles car la date limite est atteinte.'
           )
         ).toBeInTheDocument()
       })
     })
 
-    describe('si la date de fin est dépassée', () => {
+    describe('si la date de début est dépassée', () => {
       let session: Session
       let beneficairesEtablissement: BaseJeune[]
       beforeEach(async () => {
@@ -528,11 +529,8 @@ describe('Détails Session', () => {
           session: {
             id: 'session-1',
             nom: 'titre-session',
-            dateHeureDebut: DateTime.now()
-              .minus({ days: 1, minute: 1 })
-              .toString(),
-            dateHeureFin: DateTime.now().minus({ days: 1 }).toString(),
-            dateMaxInscription: DateTime.now().minus({ days: 2 }).toString(),
+            dateHeureDebut: DateTime.now().minus({ days: 1 }).toString(),
+            dateHeureFin: DateTime.now().toString(),
             animateur: 'Charles Dupont',
             lieu: 'CEJ Paris',
             commentaire: 'bla',
