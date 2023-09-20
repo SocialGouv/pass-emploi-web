@@ -250,6 +250,7 @@ describe('Agenda', () => {
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
           expect(screen.getByText('Matin')).toBeInTheDocument()
           expect(screen.getByText('00h00 - 125 min')).toBeInTheDocument()
+          expect(screen.getByText('lundi 5 septembre')).toBeInTheDocument()
         })
 
         it('permet de changer de période de 7 jours', async () => {

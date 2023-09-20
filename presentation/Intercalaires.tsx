@@ -18,7 +18,10 @@ export class IntercalaireJour {
 }
 
 export class IntercalairePlageHoraire {
-  constructor(readonly label: string, readonly jour: string) {}
+  constructor(
+    readonly label: string,
+    readonly jour: string
+  ) {}
 }
 
 export type ItemOuIntercalaire<T> =
@@ -28,7 +31,7 @@ export type ItemOuIntercalaire<T> =
 
 export function insertIntercalaires<T>(
   listeBase: T[],
-  extractDate: (item: T) => DateTime
+  extractDate: (item: T) => DateTime,
 ): Array<ItemOuIntercalaire<T>> {
   const listeTriee = [...listeBase].sort((item1, item2) =>
     compareDates(extractDate(item1), extractDate(item2))
@@ -71,8 +74,8 @@ export function insertIntercalaires<T>(
 
 export function renderListeWithIntercalaires<T>(
   liste: ItemOuIntercalaire<T>[],
-  renderItem: (item: T) => JSX.Element
-): JSX.Element[] {
+  renderItem: (item: T) => React.JSX.Element
+): React.JSX.Element[] {
   return liste.map((item, index) => {
     if (item instanceof IntercalaireJour) return intercalaireDate(item, index)
     if (item instanceof IntercalairePlageHoraire)
