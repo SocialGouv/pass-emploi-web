@@ -33,8 +33,14 @@ export default function OngletAgendaConseiller({
   const router = useRouter()
   const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
 
-  async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
-    const evenements = await recupererRdvs(conseiller.id, dateDebut, dateFin)
+  async function chargerRdvs(dateDebut: DateTime) {
+    const deuxiemeJour = dateDebut.plus({ day: 1 }).endOf('day')
+
+    const evenements = await recupererRdvs(
+      conseiller.id,
+      dateDebut,
+      deuxiemeJour
+    )
 
     let sessions: EvenementListItem[] = []
     if (peutAccederAuxSessions(conseiller)) {
@@ -42,7 +48,7 @@ export default function OngletAgendaConseiller({
         sessions = await recupererSessionsBeneficiaires(
           conseiller.id,
           dateDebut,
-          dateFin
+          deuxiemeJour
         )
       } catch (e) {
         if (e instanceof ApiError && e.statusCode === 401) {

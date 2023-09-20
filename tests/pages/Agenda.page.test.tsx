@@ -37,11 +37,14 @@ describe('Agenda', () => {
   describe('client side', () => {
     let replace: jest.Mock
     const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
+    const AOUT_26_23H = DateTime.fromISO('2022-08-26T23:59:59.999+02:00')
     const AOUT_31_23H = DateTime.fromISO('2022-08-31T23:59:59.999+02:00')
     const SEPTEMBRE_1_0H = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
     const SEPTEMBRE_1_14H = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
+    const SEPTEMBRE_2_23H = DateTime.fromISO('2022-09-02T23:59:59.999+02:00')
     const SEPTEMBRE_7_23H = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
     const SEPTEMBRE_8_0H = DateTime.fromISO('2022-09-08T00:00:00.000+02:00')
+    const SEPTEMBRE_9_23H = DateTime.fromISO('2022-09-09T23:59:59.999+02:00')
     const SEPTEMBRE_14_23H = DateTime.fromISO('2022-09-14T23:59:59.999+02:00')
 
     beforeEach(() => {
@@ -232,12 +235,12 @@ describe('Agenda', () => {
           expect(getRendezVousConseiller).toHaveBeenCalledWith(
             '1',
             SEPTEMBRE_1_0H,
-            SEPTEMBRE_7_23H
+            SEPTEMBRE_2_23H
           )
           expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
             '1',
             SEPTEMBRE_1_0H,
-            SEPTEMBRE_7_23H
+            SEPTEMBRE_2_23H
           )
 
           expect(screen.getByRole('table')).toBeInTheDocument()
@@ -267,12 +270,12 @@ describe('Agenda', () => {
           expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
             '1',
             AOUT_25_0H,
-            AOUT_31_23H
+            AOUT_26_23H
           )
           expect(getSessionsBeneficiaires).toHaveBeenLastCalledWith(
             '1',
             AOUT_25_0H,
-            AOUT_31_23H
+            AOUT_26_23H
           )
           expect(screen.getByText('dimanche 28 août')).toBeInTheDocument()
 
@@ -282,12 +285,12 @@ describe('Agenda', () => {
           expect(getRendezVousConseiller).toHaveBeenCalledWith(
             '1',
             SEPTEMBRE_1_0H,
-            SEPTEMBRE_7_23H
+            SEPTEMBRE_2_23H
           )
           expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
             '1',
             SEPTEMBRE_1_0H,
-            SEPTEMBRE_7_23H
+            SEPTEMBRE_2_23H
           )
           expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
@@ -297,12 +300,12 @@ describe('Agenda', () => {
           expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
             '1',
             SEPTEMBRE_8_0H,
-            SEPTEMBRE_14_23H
+            SEPTEMBRE_9_23H
           )
           expect(getSessionsBeneficiaires).toHaveBeenLastCalledWith(
             '1',
             SEPTEMBRE_8_0H,
-            SEPTEMBRE_14_23H
+            SEPTEMBRE_9_23H
           )
           expect(screen.getByText('dimanche 11 septembre')).toBeInTheDocument()
         })
