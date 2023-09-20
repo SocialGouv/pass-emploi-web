@@ -355,6 +355,12 @@ function FicheJeune({
         </div>
       )}
 
+      {jeune.structureMilo?.id !== conseiller.structureMilo?.id && (
+        <div className='mb-6'>
+          <FailureAlert label='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre. Il ne pourra ni visualiser les événements partagés ni y être inscrit.' />
+        </div>
+      )}
+
       {lectureSeule && (
         <div className='mb-6'>
           <InformationMessage label='Vous êtes en lecture seule'>

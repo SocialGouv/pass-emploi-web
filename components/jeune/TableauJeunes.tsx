@@ -24,6 +24,7 @@ import {
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
 
 enum SortColumn {
@@ -47,6 +48,7 @@ export default function TableauJeunes({
   withActions,
   withSituations,
 }: TableauJeunesProps) {
+  const [conseiller] = useConseiller()
   const [sortedJeunes, setSortedJeunes] =
     useState<JeuneAvecInfosComplementaires[]>(jeunesFiltres)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
@@ -156,6 +158,16 @@ export default function TableauJeunes({
     if (isMessage && sortDesc) return 'Mes jeunes - Messages - Ordre croissant'
     if (isMessage && !sortDesc)
       return 'Mes jeunes - Messages - Ordre décroissant'
+  }
+
+  function beneficiaireTemporaireEtStructureDifferente(
+    jeune: JeuneAvecInfosComplementaires
+  ) {
+    return (
+      jeune.structureMilo?.id !== conseiller.structureMilo?.id ||
+      (jeune.isReaffectationTemporaire &&
+        jeune.structureMilo?.id !== conseiller.structureMilo?.id)
+    )
   }
 
   useMatomo(matomoTitle())
@@ -305,6 +317,20 @@ export default function TableauJeunes({
                             focusable={false}
                             className='w-4 h-4'
                             title='bénéficiaire temporaire'
+                          />
+                        </span>
+                      )}
+                      {beneficiaireTemporaireEtStructureDifferente(jeune) && (
+                        <span
+                          className='self-center mr-2'
+                          aria-label='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
+                        >
+                          <IconComponent
+                            name={IconName.Error}
+                            aria-hidden={true}
+                            focusable={false}
+                            className='w-4 h-4 fill-warning'
+                            title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                           />
                         </span>
                       )}
