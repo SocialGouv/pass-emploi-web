@@ -43,7 +43,7 @@ function ClotureSession({
   inscriptionsInitiales,
 }: ClotureSessionProps) {
   const router = useRouter()
-  const [_, setAlerte] = useAlerte()
+  const [alerte, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
 
@@ -53,6 +53,12 @@ function ClotureSession({
   >(inscriptionsInitiales)
 
   const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
+
+  let initialTracking = 'Session'
+  initialTracking +=
+    alerte?.key === AlerteParam.clotureSession
+      ? ' - Clôture succès'
+      : ' - Clôture de la session'
 
   function cocherTousLesBeneficiaires(_event: FormEvent) {
     if (idsSelectionnes.length === 0) {
@@ -183,7 +189,7 @@ function ClotureSession({
     }
   }
 
-  useMatomo('Sessions - Clôture de la session')
+  useMatomo(initialTracking)
 
   return (
     <>

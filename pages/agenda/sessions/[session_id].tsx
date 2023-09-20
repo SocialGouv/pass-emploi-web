@@ -60,7 +60,7 @@ function FicheDetailsSession({
   returnTo,
 }: DetailSessionProps) {
   const router = useRouter()
-  const [_, setAlerte] = useAlerte()
+  const [alerte, setAlerte] = useAlerte()
 
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
 
@@ -90,6 +90,10 @@ function FicheDetailsSession({
     session.session.dateMaxInscription ?? session.session.dateHeureDebut
   ).endOf('day')
   const dateLimiteInscriptionDepassee = DateTime.now() > dateLimiteInscription
+
+  let initialTracking = 'Détail session i-milo'
+  if (alerte?.key === AlerteParam.modificationSession)
+    initialTracking += ' - Modification succès'
 
   function openDesinscriptionBeneficiaireModal(id: string, nom: string) {
     setBeneficiaireADesinscire({ value: nom, id })
@@ -252,6 +256,7 @@ function FicheDetailsSession({
       })
     )
 
+    setAlerte(AlerteParam.modificationSession)
     await changerInscriptionsSession(session.session.id, inscriptions)
     setAlerte(
       session.offre.type === 'Atelier'
@@ -261,7 +266,7 @@ function FicheDetailsSession({
     await router.push(returnTo)
   }
 
-  useMatomo('Détail session i-milo')
+  useMatomo(initialTracking)
 
   return (
     <>
