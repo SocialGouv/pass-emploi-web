@@ -1,7 +1,13 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import React, { FormEvent, useRef, useState } from 'react'
+import React, {
+  FormEvent,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 import RadioBox from 'components/action/RadioBox'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -44,6 +50,9 @@ type ReaffectationProps = PageProps & {
 
 function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   const [portefeuille] = usePortefeuille()
+  const conseillerInitialRef = useRef<{
+    resetRechercheConseiller: () => void
+  }>(null)
 
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
 
@@ -126,6 +135,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   }
 
   function resetAll() {
+    conseillerInitialRef.current!.resetRechercheConseiller()
     resetConseillerInitial()
     setIsReaffectationTemporaire({ value: undefined })
   }
@@ -367,6 +377,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         >
           <ChoixConseiller
             name='initial'
+            ref={conseillerInitialRef}
             idConseillerSelectionne={conseillerInitial.value?.id}
             structureReaffectation={structureReaffectation.value}
             onInput={resetConseillerInitial}
@@ -548,148 +559,167 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 
 export default withTransaction(Reaffectation.name, 'page')(Reaffectation)
 
-function ChoixConseiller({
-  idConseillerSelectionne,
-  structureReaffectation,
-  name,
-  onChoixConseiller,
-  onInput,
-  error,
-}: {
-  name: string
-  onInput: () => void
-  onChoixConseiller: (conseiller: BaseConseiller) => void
-  idConseillerSelectionne?: string
-  structureReaffectation?: StructureReaffectation
-  error?: string
-}) {
-  const id = 'conseiller-' + name
+const ChoixConseiller = forwardRef(
+  (
+    {
+      idConseillerSelectionne,
+      structureReaffectation,
+      name,
+      onChoixConseiller,
+      onInput,
+      error,
+    }: {
+      name: string
+      onInput: () => void
+      onChoixConseiller: (conseiller: BaseConseiller) => void
+      idConseillerSelectionne?: string
+      structureReaffectation?: StructureReaffectation
+      error?: string
+    },
+    ref
+  ) => {
+    const id = 'conseiller-' + name
 
-  const [queryConseiller, setQueryConseiller] = useState<ValueWithError>({
-    value: '',
-  })
-  const [choixConseillers, setChoixConseillers] = useState<
-    BaseConseiller[] | undefined
-  >()
+    const inputRef = useRef<HTMLInputElement>(null)
 
-  const [rechercheConseillerEnCours, setRechercheConseillerEnCours] =
-    useState<boolean>(false)
+    const [queryConseiller, setQueryConseiller] = useState<ValueWithError>({
+      value: '',
+    })
+    const [choixConseillers, setChoixConseillers] = useState<
+      BaseConseiller[] | undefined
+    >()
 
-  function handleInputQuery(value: string) {
-    setChoixConseillers(undefined)
-    setQueryConseiller({ value })
-    onInput()
-  }
+    const [rechercheConseillerEnCours, setRechercheConseillerEnCours] =
+      useState<boolean>(false)
 
-  async function rechercherConseiller() {
-    if (queryConseiller.value.length < 2) return
-    if (choixConseillers) return
-
-    const { getConseillers } = await import('services/conseiller.service')
-    setRechercheConseillerEnCours(true)
-    const conseillers = await getConseillers(
-      queryConseiller.value,
-      structureReaffectation
-    )
-    if (conseillers.length) setChoixConseillers(conseillers)
-    else {
-      setQueryConseiller({
-        ...queryConseiller,
-        error: 'Aucun conseiller ne correspond',
-      })
+    function handleInputQuery(value: string) {
+      setChoixConseillers(undefined)
+      setQueryConseiller({ value })
+      onInput()
     }
-    setRechercheConseillerEnCours(false)
-  }
 
-  function choisirConseiller(conseiller: BaseConseiller): void {
-    if (conseiller.id !== idConseillerSelectionne) {
-      onChoixConseiller(conseiller)
+    useImperativeHandle(ref, () => ({
+      resetRechercheConseiller: resetRechercheConseiller,
+    }))
+
+    function resetRechercheConseiller() {
+      inputRef.current!.value = ''
+      setChoixConseillers(undefined)
+      setQueryConseiller({ value: '' })
     }
-  }
 
-  return (
-    <>
-      <Label htmlFor={id}>E-mail ou nom et prénom du conseiller</Label>
-      {queryConseiller.error && (
-        <InputError id={id + '--error'} className='mb-2'>
-          {queryConseiller.error}
-        </InputError>
-      )}
-      {error && (
-        <InputError id={id + '--error'} className='mb-2'>
-          {error}
-        </InputError>
-      )}
+    async function rechercherConseiller() {
+      if (queryConseiller.value.length < 2) return
+      if (choixConseillers) return
 
-      <div className='flex'>
-        <Input
-          type='search'
-          id={id}
-          onChange={handleInputQuery}
-          required={true}
-          invalid={Boolean(queryConseiller.error)}
-        />
+      const { getConseillers } = await import('services/conseiller.service')
+      setRechercheConseillerEnCours(true)
+      const conseillers = await getConseillers(
+        queryConseiller.value,
+        structureReaffectation
+      )
+      if (conseillers.length) setChoixConseillers(conseillers)
+      else {
+        setQueryConseiller({
+          ...queryConseiller,
+          error: 'Aucun conseiller ne correspond',
+        })
+      }
+      setRechercheConseillerEnCours(false)
+    }
 
-        <Button
-          className='ml-4 shrink-0'
-          label={'Rechercher un conseiller ' + name}
-          style={ButtonStyle.SECONDARY}
-          disabled={queryConseiller.value.length < 2}
-          type='button'
-          onClick={rechercherConseiller}
-          isLoading={rechercheConseillerEnCours}
-        >
-          <IconComponent
-            name={IconName.Search}
-            focusable={false}
-            aria-hidden={true}
-            className='w-6 h-6'
+    function choisirConseiller(conseiller: BaseConseiller): void {
+      if (conseiller.id !== idConseillerSelectionne) {
+        onChoixConseiller(conseiller)
+      }
+    }
+
+    return (
+      <>
+        <Label htmlFor={id}>E-mail ou nom et prénom du conseiller</Label>
+        {queryConseiller.error && (
+          <InputError id={id + '--error'} className='mb-2'>
+            {queryConseiller.error}
+          </InputError>
+        )}
+        {error && (
+          <InputError id={id + '--error'} className='mb-2'>
+            {error}
+          </InputError>
+        )}
+
+        <div className='flex'>
+          <Input
+            type='search'
+            id={id}
+            onChange={handleInputQuery}
+            required={true}
+            invalid={Boolean(queryConseiller.error)}
+            ref={inputRef}
           />
-          Rechercher un conseiller
-        </Button>
-      </div>
 
-      {choixConseillers && choixConseillers.length > 0 && (
-        <Table caption={{ text: 'Choix du conseiller ' + name }}>
-          <THead>
-            <TR isHeader={true}>
-              <TH>Conseiller</TH>
-              <TH>E-mail conseiller</TH>
-            </TR>
-          </THead>
-          <TBody>
-            {choixConseillers.map((conseiller) => (
-              <TR
-                key={conseiller.id}
-                onClick={() => choisirConseiller(conseiller)}
-              >
-                <TD isBold>
-                  <input
-                    type='radio'
-                    id={'choix-' + name + '--' + conseiller.id}
-                    name={'choix-' + name}
-                    checked={idConseillerSelectionne === conseiller.id}
-                    readOnly={true}
-                    required={true}
-                    className='mr-2'
-                  />
-                  <label
-                    htmlFor={'choix-' + name + '--' + conseiller.id}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {conseiller.firstName} {conseiller.lastName}
-                  </label>
-                </TD>
-                <TD>
-                  {conseiller.email ?? (
-                    <span aria-label='non renseignée'>-</span>
-                  )}
-                </TD>
+          <Button
+            className='ml-4 shrink-0'
+            label={'Rechercher un conseiller ' + name}
+            style={ButtonStyle.SECONDARY}
+            disabled={queryConseiller.value.length < 2}
+            type='button'
+            onClick={rechercherConseiller}
+            isLoading={rechercheConseillerEnCours}
+          >
+            <IconComponent
+              name={IconName.Search}
+              focusable={false}
+              aria-hidden={true}
+              className='w-6 h-6'
+            />
+            Rechercher un conseiller
+          </Button>
+        </div>
+
+        {choixConseillers && choixConseillers.length > 0 && (
+          <Table caption={{ text: 'Choix du conseiller ' + name }}>
+            <THead>
+              <TR isHeader={true}>
+                <TH>Conseiller</TH>
+                <TH>E-mail conseiller</TH>
               </TR>
-            ))}
-          </TBody>
-        </Table>
-      )}
-    </>
-  )
-}
+            </THead>
+            <TBody>
+              {choixConseillers.map((conseiller) => (
+                <TR
+                  key={conseiller.id}
+                  onClick={() => choisirConseiller(conseiller)}
+                >
+                  <TD isBold>
+                    <input
+                      type='radio'
+                      id={'choix-' + name + '--' + conseiller.id}
+                      name={'choix-' + name}
+                      checked={idConseillerSelectionne === conseiller.id}
+                      readOnly={true}
+                      required={true}
+                      className='mr-2'
+                    />
+                    <label
+                      htmlFor={'choix-' + name + '--' + conseiller.id}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {conseiller.firstName} {conseiller.lastName}
+                    </label>
+                  </TD>
+                  <TD>
+                    {conseiller.email ?? (
+                      <span aria-label='non renseignée'>-</span>
+                    )}
+                  </TD>
+                </TR>
+              ))}
+            </TBody>
+          </Table>
+        )}
+      </>
+    )
+  }
+)
+ChoixConseiller.displayName = 'ChoixConseiller'
