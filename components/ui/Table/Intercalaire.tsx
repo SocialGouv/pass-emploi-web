@@ -2,7 +2,7 @@ import React, { ReactNode, useRef, useState, useEffect } from 'react'
 
 interface IntercalaireProps {
   children: ReactNode
-  className: string
+  className?: string
   asDiv?: boolean
 }
 

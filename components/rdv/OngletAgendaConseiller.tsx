@@ -28,9 +28,10 @@ export default function OngletAgendaConseiller({
   recupererSessionsBeneficiaires,
   trackNavigation,
 }: OngletAgendaConseillerProps) {
-  const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
+  const [rdvs, setRdvs] = useState<EvenementListItem[]>()
+  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
 
-  async function chargerRdvs(dateDebut: DateTime) {
+  async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
     const deuxiemeJour = dateDebut.plus({ day: 1 }).endOf('day')
 
     const evenements = await recupererRdvs(
@@ -58,6 +59,7 @@ export default function OngletAgendaConseiller({
           )
         )
     )
+    setPeriode({ debut: dateDebut, fin: dateFin })
   }
 
   return (
@@ -68,7 +70,13 @@ export default function OngletAgendaConseiller({
         trackNavigation={trackNavigation}
       />
 
-      <TableauRdvsConseiller idConseiller={conseiller.id} rdvs={rdvs ?? []} />
+      {rdvs && periode && (
+        <TableauRdvsConseiller
+          idConseiller={conseiller.id}
+          rdvs={rdvs}
+          periode={periode}
+        />
+      )}
     </>
   )
 }

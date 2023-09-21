@@ -21,9 +21,9 @@ import {
   StatutAnimationCollective,
 } from 'interfaces/evenement'
 import {
-  insertIntercalaires,
-  ItemOuIntercalaire,
-  renderListeWithIntercalaires,
+  AgendaData,
+  buildAgenda,
+  renderAgenda,
 } from 'presentation/Intercalaires'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import {
@@ -50,14 +50,14 @@ export default function OngletAgendaEtablissement({
   trackNavigation,
 }: OngletAgendaEtablissementProps) {
   const [conseiller] = useConseiller()
-  const [animationsCollectives, setAnimationsCollectives] = useState<
-    AnimationCollective[]
-  >([])
+  const [animationsCollectives, setAnimationsCollectives] =
+    useState<AnimationCollective[]>()
   const [animationsCollectivesFiltrees, setAnimationsCollectivesFiltrees] =
-    useState<AnimationCollective[]>([])
+    useState<AnimationCollective[]>()
 
-  const [animationsCollectivesGroupees, setAnimationsCollectivesGroupees] =
-    useState<Array<ItemOuIntercalaire<AnimationCollective>>>([])
+  const [agendaAnimationsCollectives, setAgendaAnimationsCollectives] =
+    useState<AgendaData<AnimationCollective>>()
+  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
 
   const [statutsValides, setStatutsValides] = useState<
     StatutAnimationCollective[]
@@ -78,13 +78,14 @@ export default function OngletAgendaEtablissement({
     } else {
       setAnimationsCollectives([...evenements])
     }
+
+    setPeriode({ debut: dateDebut, fin: dateFin })
   }
 
-  function filtrerAnimationsCollectives() {
-    if (!statutsValides.length)
-      setAnimationsCollectivesFiltrees(animationsCollectives)
+  function filtrerAnimationsCollectives(aFiltrer: AnimationCollective[]) {
+    if (!statutsValides.length) setAnimationsCollectivesFiltrees(aFiltrer)
     else {
-      const acFiltrees = animationsCollectives.filter(
+      const acFiltrees = aFiltrer.filter(
         (ac) => ac.statut && statutsValides.includes(ac.statut)
       )
       setAnimationsCollectivesFiltrees(acFiltrees)
@@ -92,14 +93,18 @@ export default function OngletAgendaEtablissement({
   }
 
   useEffect(() => {
-    filtrerAnimationsCollectives()
+    if (animationsCollectives) {
+      filtrerAnimationsCollectives(animationsCollectives)
+    }
   }, [animationsCollectives, statutsValides])
 
   useEffect(() => {
-    setAnimationsCollectivesGroupees(
-      insertIntercalaires(animationsCollectivesFiltrees, ({ date }) => date)
-    )
-  }, [animationsCollectivesFiltrees])
+    if (animationsCollectivesFiltrees && periode) {
+      setAgendaAnimationsCollectives(
+        buildAgenda(animationsCollectivesFiltrees, periode, ({ date }) => date)
+      )
+    }
+  }, [animationsCollectivesFiltrees, periode])
 
   function getHref(ac: AnimationCollective): string {
     if (ac.isSession) return `agenda/sessions/${ac.id}`
@@ -114,10 +119,10 @@ export default function OngletAgendaEtablissement({
         trackNavigation={trackNavigation}
       />
 
-      {!animationsCollectivesGroupees && <SpinningLoader />}
+      {!agendaAnimationsCollectives && <SpinningLoader />}
 
-      {animationsCollectivesGroupees &&
-        animationsCollectivesGroupees.length === 0 && (
+      {agendaAnimationsCollectives &&
+        animationsCollectivesFiltrees!.length === 0 && (
           <div className='flex flex-col justify-center items-center'>
             <EmptyState
               illustrationName={IllustrationName.Checklist}
@@ -133,7 +138,7 @@ export default function OngletAgendaEtablissement({
               }}
             />
 
-            {animationsCollectives.length > 0 && (
+            {animationsCollectives!.length > 0 && (
               <Button
                 type='button'
                 style={ButtonStyle.SECONDARY}
@@ -146,92 +151,86 @@ export default function OngletAgendaEtablissement({
           </div>
         )}
 
-      {animationsCollectivesGroupees &&
-        animationsCollectivesGroupees.length > 0 && (
-          <Table
-            asDiv={true}
-            caption={{
-              text: 'Liste des animations collectives de mon établissement',
-            }}
-          >
-            <THead>
-              <TR isHeader={true}>
-                <TH>Horaires</TH>
-                <TH>Titre</TH>
-                <TH>Type</TH>
-                <TH>
-                  Visible{' '}
+      {agendaAnimationsCollectives && animationsCollectives!.length > 0 && (
+        <Table
+          asDiv={true}
+          caption={{
+            text: 'Liste des animations collectives de mon établissement',
+          }}
+        >
+          <THead>
+            <TR isHeader={true}>
+              <TH>Horaires</TH>
+              <TH>Titre</TH>
+              <TH>Type</TH>
+              <TH>
+                Visible{' '}
+                <IconComponent
+                  name={IconName.Info}
+                  className='inline h-4 w-4 fill-primary'
+                  aria-label='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                  title='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                />
+              </TH>
+              <TH
+                estCliquable={true}
+                className='rounded-base hover:bg-primary_lighten'
+              >
+                <FiltresStatutAnimationsCollectives
+                  onFiltres={setStatutsValides}
+                  defaultValue={statutsValides}
+                />
+              </TH>
+            </TR>
+          </THead>
+          <TBody>
+            {renderAgenda(agendaAnimationsCollectives, (ac) => (
+              <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
+                <TD>
+                  {heure(ac)} - {ac.duree} min
+                </TD>
+                <TD>
+                  {ac.titre}
+                  <span className={'block text-s-regular'}>{ac.sousTitre}</span>
+                </TD>
+                <TD>{tagType(ac)}</TD>
+                <TD className='flex text-center'>
                   <IconComponent
-                    name={IconName.Info}
-                    className='inline h-4 w-4 fill-primary'
-                    aria-label='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
-                    title='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                    aria-label={ac.estCache ? 'Non visible' : 'Visible'}
+                    className='inline h-6 w-6 fill-primary'
+                    focusable={false}
+                    name={
+                      ac.estCache
+                        ? IconName.VisibilityOff
+                        : IconName.VisibilityOn
+                    }
+                    role='img'
                   />
-                </TH>
-                <TH
-                  estCliquable={true}
-                  className='rounded-base hover:bg-primary_lighten'
-                >
-                  <FiltresStatutAnimationsCollectives
-                    onFiltres={setStatutsValides}
-                    defaultValue={statutsValides}
-                  />
-                </TH>
+                </TD>
+                <TD>
+                  <div className='flex items-center justify-between'>
+                    {ac.statut && tagStatut(ac)}
+                    {!ac.statut && (
+                      <>
+                        -
+                        <span className='sr-only'>
+                          information non disponible
+                        </span>
+                      </>
+                    )}
+                    <IconComponent
+                      name={IconName.ChevronRight}
+                      focusable={false}
+                      aria-hidden={true}
+                      className='w-6 h-6 fill-primary'
+                    />
+                  </div>
+                </TD>
               </TR>
-            </THead>
-            <TBody>
-              {renderListeWithIntercalaires(
-                animationsCollectivesGroupees,
-                (ac) => (
-                  <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
-                    <TD>
-                      {heure(ac)} - {ac.duree} min
-                    </TD>
-                    <TD>
-                      {ac.titre}
-                      <span className={'block text-s-regular'}>
-                        {ac.sousTitre}
-                      </span>
-                    </TD>
-                    <TD>{tagType(ac)}</TD>
-                    <TD className='flex text-center'>
-                      <IconComponent
-                        aria-label={ac.estCache ? 'Non visible' : 'Visible'}
-                        className='inline h-6 w-6 fill-primary'
-                        focusable={false}
-                        name={
-                          ac.estCache
-                            ? IconName.VisibilityOff
-                            : IconName.VisibilityOn
-                        }
-                        role='img'
-                      />
-                    </TD>
-                    <TD>
-                      <div className='flex items-center justify-between'>
-                        {ac.statut && tagStatut(ac)}
-                        {!ac.statut && (
-                          <>
-                            -
-                            <span className='sr-only'>
-                              information non disponible
-                            </span>
-                          </>
-                        )}
-                        <IconComponent
-                          name={IconName.ChevronRight}
-                          focusable={false}
-                          aria-hidden={true}
-                          className='w-6 h-6 fill-primary'
-                        />
-                      </div>
-                    </TD>
-                  </TR>
-                )
-              )}
-            </TBody>
-          </Table>
-        )}
+            ))}
+          </TBody>
+        </Table>
+      )}
     </>
   )
 }

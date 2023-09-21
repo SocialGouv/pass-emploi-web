@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React from 'react'
+import React, { useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
 import { RdvRow } from 'components/rdv/RdvRow'
@@ -12,21 +12,24 @@ import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 import {
-  insertIntercalaires,
-  renderListeWithIntercalaires,
+  AgendaData,
+  buildAgenda,
+  renderAgenda,
 } from 'presentation/Intercalaires'
 
 type TableauRdvsConseillerProps = {
   idConseiller: string
   rdvs: EvenementListItem[]
+  periode: { debut: DateTime; fin: DateTime }
 }
 
 export default function TableauRdvsConseiller({
   rdvs,
   idConseiller,
+  periode,
 }: TableauRdvsConseillerProps) {
-  const rdvsAffiches = insertIntercalaires(rdvs, ({ date }) =>
-    DateTime.fromISO(date)
+  const [agendaRdvs] = useState<AgendaData<EvenementListItem>>(
+    buildAgenda(rdvs, periode, ({ date }) => DateTime.fromISO(date))
   )
 
   return (
@@ -63,9 +66,13 @@ export default function TableauRdvsConseiller({
           </THead>
 
           <TBody>
-            {renderListeWithIntercalaires(rdvsAffiches, (rdv) => (
-              <RdvRow key={rdv.id} rdv={rdv} idConseiller={idConseiller} />
-            ))}
+            {renderAgenda(
+              agendaRdvs,
+              (rdv) => (
+                <RdvRow key={rdv.id} rdv={rdv} idConseiller={idConseiller} />
+              ),
+              true
+            )}
           </TBody>
         </Table>
       )}
