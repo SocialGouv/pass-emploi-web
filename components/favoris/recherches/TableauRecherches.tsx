@@ -1,6 +1,9 @@
 import React from 'react'
 
+import EmptyState from 'components/EmptyState'
 import RechercheRow from 'components/favoris/recherches/RechercheRow'
+import { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
@@ -18,9 +21,16 @@ export default function TableauRecherches({
   return (
     <>
       {recherches.length === 0 && (
-        <p className='text-base-regular mb-2'>
-          Votre bénéficiaire n’a pas de recherche sauvegardée
-        </p>
+        <EmptyState
+          illustrationName={IllustrationName.Checklist}
+          titre='Votre bénéficiaire n’a sauvegardé aucune recherche pour l’instant.'
+          sousTitre='Suggérez des recherches-types d’offres à votre bénéficiaire depuis la partie “Offres”.'
+          premierLien={{
+            href: '/recherche-offres',
+            label: 'Rechercher une offre',
+            iconName: IconName.Search,
+          }}
+        />
       )}
 
       {recherches.length > 0 && (

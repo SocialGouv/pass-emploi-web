@@ -506,6 +506,7 @@ function FicheJeune({
                 conseiller={conseiller}
                 jeune={jeune}
                 actionsInitiales={actionsInitiales}
+                lectureSeule={lectureSeule}
                 getActions={chargerActions}
               />
             </div>

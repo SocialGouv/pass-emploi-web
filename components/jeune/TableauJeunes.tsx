@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 
+import EmptyState from 'components/EmptyState'
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import SortIcon from 'components/ui/SortIcon'
 import Pagination from 'components/ui/Table/Pagination'
@@ -165,9 +167,13 @@ export default function TableauJeunes({
   return (
     <>
       {sortedJeunes.length === 0 && (
-        <p className='mt-32 text-base-bold text-center text-primary'>
-          Aucun bénéficiaire trouvé
-        </p>
+        <>
+          <EmptyState
+            illustrationName={IllustrationName.People}
+            titre='Aucun bénéficiaire trouvé.'
+            sousTitre='Recommencez ou modifiez votre recherche.'
+          />
+        </>
       )}
 
       {sortedJeunes.length > 0 && (

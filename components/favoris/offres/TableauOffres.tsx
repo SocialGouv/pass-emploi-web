@@ -1,6 +1,9 @@
 import React from 'react'
 
+import EmptyState from 'components/EmptyState'
 import OffreRow from 'components/favoris/offres/OffreRow'
+import { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
@@ -16,9 +19,16 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
   return (
     <>
       {offres.length === 0 && (
-        <p className='text-base-regular mb-2'>
-          Votre bénéficiaire n’a pas d’offre mise en favoris
-        </p>
+        <EmptyState
+          illustrationName={IllustrationName.Checklist}
+          titre='Votre bénéficiaire n’a mis aucune offre en favori pour l’instant.'
+          sousTitre='Partagez des offres d’emploi, d’alternance, de service civique ou d’immersion à votre bénéficiaire depuis la partie “Offres”.'
+          premierLien={{
+            href: '/recherche-offres',
+            label: 'Rechercher une offre',
+            iconName: IconName.Search,
+          }}
+        />
       )}
 
       {offres.length > 0 && (

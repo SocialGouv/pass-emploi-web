@@ -2,10 +2,11 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyState from 'components/EmptyState'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -85,15 +86,20 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
       </PageActionsPortal>
 
       {listesDiffusion.length === 0 && (
-        <div className='mx-auto my-0 flex flex-col items-center'>
-          <EmptyStateImage
-            aria-hidden={true}
-            focusable={false}
-            className='w-[360px] h-[200px] mb-16'
+        <div
+          className='mx-auto my-0 flex flex-col items-center'
+          data-testid='empty-state-liste-de-diffusion'
+        >
+          <EmptyState
+            illustrationName={IllustrationName.Send}
+            titre='Vous n’avez pas encore créé de liste de diffusion.'
+            sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
+            premierLien={{
+              href: '/mes-jeunes/listes-de-diffusion/edition-liste',
+              label: 'Créer une liste',
+              iconName: IconName.Add,
+            }}
           />
-          <p className='text-base-bold mb-12'>
-            Vous n’avez aucune liste de diffusion.
-          </p>
         </div>
       )}
 

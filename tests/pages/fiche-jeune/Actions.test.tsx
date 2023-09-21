@@ -160,7 +160,9 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByRole('tab', { name: /Actions/ }))
 
         // Then
-        expect(screen.getByText(/n’a pas encore d’action/)).toBeInTheDocument()
+        expect(
+          screen.getByText(/Aucune action prévue pour/)
+        ).toBeInTheDocument()
       })
     })
 

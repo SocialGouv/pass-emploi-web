@@ -54,7 +54,6 @@ export function unDetailSession(overrides: Partial<Session> = {}): Session {
       nom: 'titre-session',
       dateHeureDebut: '2023-06-19 10:00:00',
       dateHeureFin: '2023-06-19 17:00:00',
-      dateMaxInscription: '2023-06-17',
       animateur: 'Charles Dupont',
       lieu: 'CEJ Paris',
       commentaire: 'bla',

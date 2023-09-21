@@ -197,7 +197,7 @@ describe('SessionsApiService', () => {
           duree: 10080,
           labelBeneficiaires: 'Hermione Granger',
           source: 'MILO',
-          isSession: true
+          isSession: true,
         },
         {
           id: 'id-session-2',
@@ -206,7 +206,7 @@ describe('SessionsApiService', () => {
           duree: 10080,
           labelBeneficiaires: 'Bénéficiaires multiples',
           source: 'MILO',
-          isSession: true
+          isSession: true,
         },
       ]
       expect(actual).toEqual(sessionsMilo)
@@ -251,7 +251,9 @@ describe('SessionsApiService', () => {
         '/conseillers/milo/id-conseiller/sessions/session-1',
         'accessToken'
       )
-      expect(actual).toEqual(unDetailSession())
+      const expected = unDetailSession()
+      expected.session.dateMaxInscription = '2023-06-17'
+      expect(actual).toEqual(expected)
     })
 
     it("renvoie undefined si la session n'existe pas", async () => {
@@ -336,7 +338,6 @@ describe('SessionsApiService', () => {
       const accessToken = 'accessToken'
       const idJeune = 'id-jeune'
       const dateDebut = DateTime.fromISO('2022-09-01T11:00:00.000+02:00')
-      const dateFin = DateTime.fromISO('2022-09-01T13:00:00.000+02:00')
       const sessionsMiloJeuneJson: SessionMiloBeneficiaireJson[] = [
         {
           id: '1',

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
 
 export default function FakePortal(props: { children: ReactNode }) {
-  return <>{props.children}</>
+  return <div data-testid='page-action-portal'>{props.children}</div>
 }

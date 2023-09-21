@@ -78,7 +78,7 @@ describe('Page Recherche Offres', () => {
       // Then
       expect(
         screen.getByText(
-          'Aucune offre ne correspond à vos critères de recherche.'
+          'Pour le moment, aucune offre ne correspond à vos critères.'
         )
       ).toBeInTheDocument()
     })

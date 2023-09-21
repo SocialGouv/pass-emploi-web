@@ -1,9 +1,10 @@
 import React from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
+import EmptyState from 'components/EmptyState'
 import ImmersionCard from 'components/offres/ImmersionCard'
 import OffreEmploiCard from 'components/offres/OffreEmploiCard'
 import ServiceCiviqueCard from 'components/offres/ServiceCiviqueCard'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import { BaseOffre, TypeOffre } from 'interfaces/offre'
 
@@ -53,14 +54,11 @@ export default function ResultatsRechercheOffre({
       {offres && offres.length === 0 && (
         <>
           <ResultTitle total={nbTotal} />
-          <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
-            className='m-auto w-[200px] h-[200px]'
+          <EmptyState
+            illustrationName={IllustrationName.Search}
+            titre='Pour le moment, aucune offre ne correspond à vos critères.'
+            sousTitre='Modifiez vos critères de recherche ou partagez ces critères tels quels aux bénéficiaires.'
           />
-          <p className='text-base-bold text-center'>
-            Aucune offre ne correspond à vos critères de recherche.
-          </p>
         </>
       )}
 
