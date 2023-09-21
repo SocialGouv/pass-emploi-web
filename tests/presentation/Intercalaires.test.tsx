@@ -1,98 +1,83 @@
 import { DateTime } from 'luxon'
 
-import { insertIntercalaires } from 'presentation/Intercalaires'
+import { buildAgenda } from 'presentation/Intercalaires'
 
-const mardiMatin = '2030-01-01T10:00:00.000Z'
-const mardiApresMidi = '2030-01-01T16:00:00.000Z'
-const mercredi = '2030-01-02T10:00:00.000Z'
+const lundi = DateTime.fromISO('2029-12-31')
+const mardi = DateTime.fromISO('2030-01-01')
+const mercredi = DateTime.fromISO('2030-01-02')
+const vendredi = DateTime.fromISO('2030-01-04')
+const periode = { debut: lundi, fin: vendredi }
 
-describe('insertIntercalaires', () => {
-  type WithDate = { date: string }
+describe('buildAgenda', () => {
+  type WithDate = { date: DateTime }
 
-  it('quand la liste est vide retourne un tableau vide', () => {
+  it('construit un agenda vide', () => {
     // Given
     const listeBase: WithDate[] = []
 
     // When
-    const items = insertIntercalaires(listeBase, ({ date }) =>
-      DateTime.fromISO(date)
-    )
+    const agenda = buildAgenda(listeBase, periode, ({ date }) => date)
 
     // Then
-    expect(items.length).toBe(0)
+    expect(agenda).toEqual({
+      'lundi 31 décembre': undefined,
+      'mardi 1 janvier': undefined,
+      'mercredi 2 janvier': undefined,
+      'jeudi 3 janvier': undefined,
+      'vendredi 4 janvier': undefined,
+    })
   })
 
-  it('quand la liste ne contient qu’un rendez-vous, retourne le jour du rendez-vous, la plage horaire et le rendez-vous.', () => {
+  it('construit un agenda avec un seul item', () => {
     // Given
-    const withDate = { date: mardiMatin }
+    const withDate = { date: mardi.set({ hour: 8 }) }
 
     // When
-    const items = insertIntercalaires([withDate], ({ date }) =>
-      DateTime.fromISO(date)
-    )
+    const agenda = buildAgenda([withDate], periode, ({ date }) => date)
 
     // Then
-    expect(items.length).toBe(3)
-    expect(items[0]).toHaveProperty('label', 'mardi 1 janvier')
-    expect(items[1]).toHaveProperty('label', 'Matin')
-    expect(items[2]).toEqual(withDate)
+    expect(agenda).toEqual({
+      'lundi 31 décembre': undefined,
+      'mardi 1 janvier': { matin: [withDate], apresMidi: [] },
+      'mercredi 2 janvier': undefined,
+      'jeudi 3 janvier': undefined,
+      'vendredi 4 janvier': undefined,
+    })
   })
 
-  it('quand la liste contient un élément aujourd’hui, retourne "aujourd’hui", la plage horaire et l’élément.', () => {
+  it('construit un agenda avec plusieurs items', () => {
     // Given
-    const aujourdhuiApresmidi = DateTime.now().set({ hour: 15 }).toISO()
-    const withDate = { date: aujourdhuiApresmidi }
+    const withDateLundi = { date: lundi.set({ hour: 16 }) }
+    const withDateMardiMatin = { date: mardi.set({ hour: 8 }) }
+    const withDateMardiApresMidi = { date: mardi.set({ hour: 16 }) }
+    const withDateMercredi = { date: mercredi.set({ hour: 8 }) }
+    const withDateVendredi = { date: vendredi.set({ hour: 16 }) }
+    const withDateVendredi2 = { date: vendredi.set({ hour: 17 }) }
+    const items = [
+      withDateLundi,
+      withDateMardiMatin,
+      withDateMardiApresMidi,
+      withDateMercredi,
+      withDateVendredi,
+      withDateVendredi2,
+    ]
 
     // When
-    const items = insertIntercalaires([withDate], ({ date }) =>
-      DateTime.fromISO(date)
-    )
+    const agenda = buildAgenda(items, periode, ({ date }) => date)
 
     // Then
-    expect(items.length).toBe(3)
-    expect(items[0]).toHaveProperty('label', 'aujourd’hui')
-    expect(items[1]).toHaveProperty('label', 'Après-midi')
-    expect(items[2]).toEqual(withDate)
-  })
-
-  it('quand la liste contient 2 éléments de jours différents, retourne les deux éléments avec les deux jours et leurs plages horaires.', () => {
-    // Given
-    const withDateMardi = { date: mardiMatin }
-    const withDateMercredi = { date: mercredi }
-
-    // When
-    const items = insertIntercalaires(
-      [withDateMercredi, withDateMardi],
-      ({ date }) => DateTime.fromISO(date)
-    )
-
-    // Then
-    expect(items.length).toBe(6)
-    expect(items[0]).toHaveProperty('label', 'mardi 1 janvier')
-    expect(items[1]).toHaveProperty('label', 'Matin')
-    expect(items[2]).toEqual(withDateMardi)
-    expect(items[3]).toHaveProperty('label', 'mercredi 2 janvier')
-    expect(items[4]).toHaveProperty('label', 'Matin')
-    expect(items[5]).toEqual(withDateMercredi)
-  })
-
-  it('quand la liste contient 2 éléments le même jour(matin/ après-midi), retourne les deux éléments avec le même jour et les deux plages horaires.', () => {
-    // Given
-    const withDateMardi = { date: mardiMatin }
-    const withAutreDateMardi = { date: mardiApresMidi }
-
-    // When
-    const items = insertIntercalaires(
-      [withDateMardi, withAutreDateMardi],
-      ({ date }) => DateTime.fromISO(date)
-    )
-
-    // Then
-    expect(items.length).toBe(5)
-    expect(items[0]).toHaveProperty('label', 'mardi 1 janvier')
-    expect(items[1]).toHaveProperty('label', 'Matin')
-    expect(items[2]).toEqual(withDateMardi)
-    expect(items[3]).toHaveProperty('label', 'Après-midi')
-    expect(items[4]).toEqual(withAutreDateMardi)
+    expect(agenda).toEqual({
+      'lundi 31 décembre': { matin: [], apresMidi: [withDateLundi] },
+      'mardi 1 janvier': {
+        matin: [withDateMardiMatin],
+        apresMidi: [withDateMardiApresMidi],
+      },
+      'mercredi 2 janvier': { matin: [withDateMercredi], apresMidi: [] },
+      'jeudi 3 janvier': undefined,
+      'vendredi 4 janvier': {
+        matin: [],
+        apresMidi: [withDateVendredi, withDateVendredi2],
+      },
+    })
   })
 })

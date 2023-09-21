@@ -1,117 +1,120 @@
 import { DateTime } from 'luxon'
 import React from 'react'
 
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Intercalaire } from 'components/ui/Table/Intercalaire'
 import {
-  compareDates,
-  dateIsToday,
-  toFrenchFormat,
-  WEEKDAY_MONTH_LONG,
+  AUJOURDHUI_LABEL,
+  formatJourIfToday,
+  isApresMidi,
+  isMatin,
 } from 'utils/date'
 
-export const AUJOURDHUI_LABEL = 'aujourd’hui'
 export const PLAGE_HORAIRE_MATIN = 'Matin'
 export const PLAGE_HORAIRE_APRES_MIDI = 'Après-midi'
 
-export class IntercalaireJour {
-  constructor(readonly label: string) {}
+export type AgendaData<T> = {
+  [jour: string]:
+    | {
+        matin: T[]
+        apresMidi: T[]
+      }
+    | undefined
 }
 
-export class IntercalairePlageHoraire {
-  constructor(
-    readonly label: string,
-    readonly jour: string
-  ) {}
-}
-
-export type ItemOuIntercalaire<T> =
-  | T
-  | IntercalaireJour
-  | IntercalairePlageHoraire
-
-export function insertIntercalaires<T>(
-  listeBase: T[],
-  extractDate: (item: T) => DateTime,
-): Array<ItemOuIntercalaire<T>> {
-  const listeTriee = [...listeBase].sort((item1, item2) =>
-    compareDates(extractDate(item1), extractDate(item2))
-  )
-  const listeAvecIntercalaires: ItemOuIntercalaire<T>[] = []
-  let dernierJour = ''
-  let dernierePlageHoraireDefinie = ''
-  for (const item of listeTriee) {
-    const date = extractDate(item)
-    const jour = extractJourFormate(date)
-    const heure = date.hour
-
-    if (jour !== dernierJour) {
-      dernierJour = jour
-      listeAvecIntercalaires.push(new IntercalaireJour(jour))
-      dernierePlageHoraireDefinie = ''
-    }
-
-    if (isMatin(heure) && dernierePlageHoraireDefinie !== PLAGE_HORAIRE_MATIN) {
-      listeAvecIntercalaires.push(
-        new IntercalairePlageHoraire(PLAGE_HORAIRE_MATIN, dernierJour)
-      )
-      dernierePlageHoraireDefinie = PLAGE_HORAIRE_MATIN
-    }
-
-    if (
-      isApresMidi(heure) &&
-      dernierePlageHoraireDefinie !== PLAGE_HORAIRE_APRES_MIDI
-    ) {
-      listeAvecIntercalaires.push(
-        new IntercalairePlageHoraire(PLAGE_HORAIRE_APRES_MIDI, dernierJour)
-      )
-      dernierePlageHoraireDefinie = PLAGE_HORAIRE_APRES_MIDI
-    }
-
-    listeAvecIntercalaires.push(item)
+export function buildAgenda<T>(
+  elements: T[],
+  periode: { debut: DateTime; fin: DateTime },
+  extractDate: (element: T) => DateTime
+): AgendaData<T> {
+  const agenda: AgendaData<T> = {}
+  const premierJour = periode.debut.startOf('day')
+  const dernierJour = periode.fin.startOf('day')
+  for (
+    let jourCourant = premierJour;
+    jourCourant <= dernierJour;
+    jourCourant = jourCourant.plus({ day: 1 })
+  ) {
+    agenda[formatJourIfToday(jourCourant)] = undefined
   }
-  return listeAvecIntercalaires
-}
 
-export function renderListeWithIntercalaires<T>(
-  liste: ItemOuIntercalaire<T>[],
-  renderItem: (item: T) => React.JSX.Element
-): React.JSX.Element[] {
-  return liste.map((item, index) => {
-    if (item instanceof IntercalaireJour) return intercalaireDate(item, index)
-    if (item instanceof IntercalairePlageHoraire)
-      return intercalairePlageHoraire(item)
-    return renderItem(item)
+  elements.forEach((element) => {
+    const datetime = extractDate(element)
+    const jour = formatJourIfToday(datetime)
+    if (!agenda[jour]) agenda[jour] = { matin: [], apresMidi: [] }
+
+    if (isMatin(datetime.hour)) agenda[jour]!.matin.push(element)
+    if (isApresMidi(datetime.hour)) agenda[jour]!.apresMidi.push(element)
   })
+
+  return agenda
 }
 
-function extractJourFormate(date: DateTime): string {
-  return dateIsToday(date)
-    ? AUJOURDHUI_LABEL
-    : toFrenchFormat(date, WEEKDAY_MONTH_LONG)
+export function renderAgenda<T>(
+  agenda: AgendaData<T>,
+  renderEvenement: (item: T) => React.JSX.Element,
+  renderFiller: boolean = false
+): React.JSX.Element[] {
+  const renders: React.JSX.Element[] = []
+
+  Object.keys(agenda).forEach((jour, index) => {
+    const evenementsJour = agenda[jour]
+
+    if (evenementsJour) {
+      renders.push(intercalaireDate(jour, index))
+
+      if (evenementsJour.matin.length) {
+        renders.push(
+          intercalairePlageHoraire({ label: PLAGE_HORAIRE_MATIN, jour })
+        )
+        renders.push(...evenementsJour.matin.map(renderEvenement))
+      }
+
+      if (evenementsJour.apresMidi.length) {
+        renders.push(
+          intercalairePlageHoraire({ label: PLAGE_HORAIRE_APRES_MIDI, jour })
+        )
+        renders.push(...evenementsJour.apresMidi.map(renderEvenement))
+      }
+    } else if (renderFiller) {
+      renders.push(intercalaireDate(jour, index))
+      renders.push(
+        <Intercalaire key={'filler-' + jour}>
+          <Button
+            style={ButtonStyle.SECONDARY}
+            disabled={true}
+            className='m-auto'
+          >
+            Afficher l’agenda du jour
+          </Button>
+        </Intercalaire>
+      )
+    }
+  })
+
+  return renders
 }
 
-function isMatin(heure: number) {
-  return heure <= 12
-}
-
-function isApresMidi(heure: number) {
-  return heure > 12
-}
-
-function intercalaireDate({ label }: IntercalaireJour, index: number) {
+function intercalaireDate(jour: string, index: number) {
   return (
     <Intercalaire
-      key={label}
+      key={jour}
       className={`text-m-bold capitalize whitespace-nowrap pl-4 ${
         index > 0 ? 'pt-6' : ''
-      } ${label === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'} `}
+      } ${jour === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'} `}
     >
-      {label}
+      {jour}
     </Intercalaire>
   )
 }
 
-function intercalairePlageHoraire({ label, jour }: IntercalairePlageHoraire) {
+function intercalairePlageHoraire({
+  label,
+  jour,
+}: {
+  label: string
+  jour: string
+}) {
   return (
     <Intercalaire key={`${label}-${jour}`} className='text-s-bold pl-4'>
       {label}
