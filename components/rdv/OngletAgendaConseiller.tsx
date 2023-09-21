@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 
 import TableauRdvsConseiller from 'components/rdv/TableauRdvsConseiller'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { compareDates } from 'utils/date'
@@ -32,6 +33,8 @@ export default function OngletAgendaConseiller({
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
 
   async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
+    setRdvs(undefined)
+
     const deuxiemeJour = dateDebut.plus({ day: 1 }).endOf('day')
 
     const evenements = await recupererRdvs(
@@ -69,6 +72,8 @@ export default function OngletAgendaConseiller({
         nombreJours={7}
         trackNavigation={trackNavigation}
       />
+
+      {!rdvs && <SpinningLoader />}
 
       {rdvs && periode && (
         <TableauRdvsConseiller
