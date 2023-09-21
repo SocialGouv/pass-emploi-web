@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import React from 'react'
 
 import { RdvRow } from 'components/rdv/RdvRow'
@@ -8,23 +7,17 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
-import { buildAgenda, renderAgenda } from 'presentation/Intercalaires'
+import { AgendaData, renderAgenda } from 'presentation/Intercalaires'
 
 type TableauRdvsConseillerProps = {
   idConseiller: string
-  rdvs: EvenementListItem[]
-  periode: { debut: DateTime; fin: DateTime }
+  agendaRdvs: AgendaData<EvenementListItem>
 }
 
 export default function TableauRdvsConseiller({
-  rdvs,
+  agendaRdvs,
   idConseiller,
-  periode,
 }: TableauRdvsConseillerProps) {
-  const agendaRdvs = buildAgenda(rdvs, periode, ({ date }) =>
-    DateTime.fromISO(date)
-  )
-
   return (
     <Table asDiv={true} caption={{ text: 'Liste de mes événements' }}>
       <THead>
