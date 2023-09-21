@@ -160,16 +160,6 @@ export default function TableauJeunes({
       return 'Mes jeunes - Messages - Ordre décroissant'
   }
 
-  function beneficiaireTemporaireEtStructureDifferente(
-    jeune: JeuneAvecInfosComplementaires
-  ) {
-    return (
-      jeune.structureMilo?.id !== conseiller.structureMilo?.id ||
-      (jeune.isReaffectationTemporaire &&
-        jeune.structureMilo?.id !== conseiller.structureMilo?.id)
-    )
-  }
-
   useMatomo(matomoTitle())
 
   const columnHeaderStyle = 'rounded-l hover:bg-primary_lighten'
@@ -306,21 +296,24 @@ export default function TableauJeunes({
                 >
                   <TD isBold className='rounded-l-base'>
                     <span className='flex items-baseline'>
-                      {jeune.isReaffectationTemporaire && (
-                        <span
-                          aria-label='bénéficiaire temporaire'
-                          className='self-center mr-2'
-                        >
-                          <IconComponent
-                            name={IconName.Schedule}
-                            aria-hidden={true}
-                            focusable={false}
-                            className='w-4 h-4'
-                            title='bénéficiaire temporaire'
-                          />
-                        </span>
-                      )}
-                      {beneficiaireTemporaireEtStructureDifferente(jeune) && (
+                      {jeune.structureMilo?.id ===
+                        conseiller.structureMilo?.id &&
+                        jeune.isReaffectationTemporaire && (
+                          <span
+                            aria-label='bénéficiaire temporaire'
+                            className='self-center mr-2'
+                          >
+                            <IconComponent
+                              name={IconName.Schedule}
+                              aria-hidden={true}
+                              focusable={false}
+                              className='w-4 h-4'
+                              title='bénéficiaire temporaire'
+                            />
+                          </span>
+                        )}
+                      {jeune.structureMilo?.id !==
+                        conseiller.structureMilo?.id && (
                         <span
                           className='self-center mr-2'
                           aria-label='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
