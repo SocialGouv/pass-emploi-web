@@ -6428,15 +6428,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-cache@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "async-cache@npm:1.1.0"
-  dependencies:
-    lru-cache: ^4.0.0
-  checksum: 3f55cc78b3ddc745b6604dd144fc7bca2e21c7ba4c5ea18d312234dc625133511723dff6c71b2283582421f95d591bdb24bf89ce4c4869151e4ecedbdad4acf2
-  languageName: node
-  linkType: hard
-
 "async-each@npm:^1.0.1":
   version: 1.0.6
   resolution: "async-each@npm:1.0.6"
@@ -8886,9 +8877,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:3.49.1":
-  version: 3.49.1
-  resolution: "elastic-apm-node@npm:3.49.1"
+"elastic-apm-node@npm:4.0.0":
+  version: 4.0.0
+  resolution: "elastic-apm-node@npm:4.0.0"
   dependencies:
     "@elastic/ecs-pino-format": ^1.2.0
     "@opentelemetry/api": ^1.4.1
@@ -8896,7 +8887,6 @@ __metadata:
     "@opentelemetry/sdk-metrics": ^1.12.0
     after-all-results: ^2.0.0
     agentkeepalive: ^4.2.1
-    async-cache: ^1.1.0
     async-value-promise: ^1.1.1
     basic-auth: ^2.0.1
     breadth-filter: ^2.0.0
@@ -8910,25 +8900,24 @@ __metadata:
     fast-stream-to-buffer: ^1.0.0
     http-headers: ^3.0.2
     import-in-the-middle: 1.4.2
-    is-native: ^1.0.1
-    lru-cache: ^6.0.0
+    lru-cache: ^10.0.1
     measured-reporting: ^1.51.1
     module-details-from-path: ^1.0.3
     monitor-event-loop-delay: ^1.0.0
     object-filter-sequence: ^1.0.0
     object-identity-map: ^1.0.2
     original-url: ^1.2.3
-    pino: ^6.11.2
-    readable-stream: ^3.4.0
+    pino: ^8.15.0
+    readable-stream: ^3.6.2
     relative-microtime: ^2.0.0
     require-in-the-middle: ^7.1.1
-    semver: ^6.3.1
+    semver: ^7.5.4
     shallow-clone-shim: ^2.0.0
     source-map: ^0.8.0-beta.0
     sql-summary: ^1.0.1
     stream-chopper: ^3.0.1
     unicode-byte-truncate: ^1.0.0
-  checksum: d3df8a8d89bc6b461040516f5db05d69fcc153730032b45b43c38c1641ac6a3d57fea1273a6cfae32994bbe9aadbd9bb44181818d76dcb2b4636c06d624c5b0a
+  checksum: 3695e56e456d019fec63d6ce691aeedf0e3aace2363a89027be02bf37bbc27f86d1c4a0e5cb8dc00588d4b64c8c3ce9b481ec3b4019becdc685e8b5c8661b17a
   languageName: node
   linkType: hard
 
@@ -9929,14 +9918,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-redact@npm:^3.0.0, fast-redact@npm:^3.1.1":
+"fast-redact@npm:^3.1.1":
   version: 3.2.0
   resolution: "fast-redact@npm:3.2.0"
   checksum: 7305740bbc708b0c5662f46fc30ec910da519275574fea84f6df0bea0cfe6066ddf90c6c4b879642c509e692edf862edd22eaccb2a647db122eebe8259942888
   languageName: node
   linkType: hard
 
-"fast-safe-stringify@npm:^2.0.7, fast-safe-stringify@npm:^2.0.8, fast-safe-stringify@npm:^2.1.1":
+"fast-safe-stringify@npm:^2.0.7, fast-safe-stringify@npm:^2.1.1":
   version: 2.1.1
   resolution: "fast-safe-stringify@npm:2.1.1"
   checksum: a851cbddc451745662f8f00ddb622d6766f9bd97642dabfd9a405fb0d646d69fc0b9a1243cbf67f5f18a39f40f6fa821737651ff1bceeba06c9992ca2dc5bd3d
@@ -10178,13 +10167,6 @@ __metadata:
     flatted: ^3.1.0
     rimraf: ^3.0.2
   checksum: 4fdd10ecbcbf7d520f9040dd1340eb5dfe951e6f0ecf2252edeec03ee68d989ec8b9a20f4434270e71bcfd57800dc09b3344fca3966b2eb8f613072c7d9a2365
-  languageName: node
-  linkType: hard
-
-"flatstr@npm:^1.0.12":
-  version: 1.0.12
-  resolution: "flatstr@npm:1.0.12"
-  checksum: e1bb562c94b119e958bf37e55738b172b5f8aaae6532b9660ecd877779f8559dbbc89613ba6b29ccc13447e14c59277d41450f785cf75c30df9fce62f459e9a8
   languageName: node
   linkType: hard
 
@@ -11920,27 +11902,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-native@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "is-native@npm:1.0.1"
-  dependencies:
-    is-nil: ^1.0.0
-    to-source-code: ^1.0.0
-  checksum: 4967af8c4d7a06076cb16ef70fba5a5a2b61ef0a83d4d5dce437cf4c6b5315255cccf07db37d487bcdf2f0ded86edb166a62c46a712cfda1227532b70015029c
-  languageName: node
-  linkType: hard
-
 "is-negative-zero@npm:^2.0.2":
   version: 2.0.2
   resolution: "is-negative-zero@npm:2.0.2"
   checksum: f3232194c47a549da60c3d509c9a09be442507616b69454716692e37ae9f37c4dea264fb208ad0c9f3efd15a796a46b79df07c7e53c6227c32170608b809149a
-  languageName: node
-  linkType: hard
-
-"is-nil@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "is-nil@npm:1.0.1"
-  checksum: e5b89c3b82068e719372381c5aaa5f3f28d09e6d501d7f7e4365f136433de1ae92f9f82eeedcb3c3282da1ccf374aad46cc06feab2647d2820067c4a35484760
   languageName: node
   linkType: hard
 
@@ -13434,13 +13399,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^4.0.0":
-  version: 4.1.5
-  resolution: "lru-cache@npm:4.1.5"
-  dependencies:
-    pseudomap: ^1.0.2
-    yallist: ^2.1.2
-  checksum: 4bb4b58a36cd7dc4dcec74cbe6a8f766a38b7426f1ff59d4cf7d82a2aa9b9565cd1cb98f6ff60ce5cd174524868d7bc9b7b1c294371851356066ca9ac4cf135a
+"lru-cache@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "lru-cache@npm:10.0.1"
+  checksum: 06f8d0e1ceabd76bb6f644a26dbb0b4c471b79c7b514c13c6856113879b3bf369eb7b497dad4ff2b7e2636db202412394865b33c332100876d838ad1372f0181
   languageName: node
   linkType: hard
 
@@ -15228,7 +15190,7 @@ __metadata:
     crypto-js: 4.1.1
     css-loader: ^6.7.3
     dotenv: 16.3.1
-    elastic-apm-node: 3.49.1
+    elastic-apm-node: 4.0.0
     eslint: ^8.40.0
     eslint-config-next: 13.4.12
     eslint-config-prettier: ^9.0.0
@@ -15474,13 +15436,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-std-serializers@npm:^3.1.0":
-  version: 3.2.0
-  resolution: "pino-std-serializers@npm:3.2.0"
-  checksum: 77e29675b116e42ae9fe6d4ef52ef3a082ffc54922b122d85935f93ddcc20277f0b0c873c5c6c5274a67b0409c672aaae3de6bcea10a2d84699718dda55ba95b
-  languageName: node
-  linkType: hard
-
 "pino-std-serializers@npm:^6.0.0":
   version: 6.2.1
   resolution: "pino-std-serializers@npm:6.2.1"
@@ -15488,7 +15443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:8.15.1, pino@npm:^8.11.0":
+"pino@npm:8.15.1, pino@npm:^8.11.0, pino@npm:^8.15.0":
   version: 8.15.1
   resolution: "pino@npm:8.15.1"
   dependencies:
@@ -15506,23 +15461,6 @@ __metadata:
   bin:
     pino: bin.js
   checksum: cbc6aa4e7fcf28dac326292f6c9276bb6abd1c480e49a830601071c99fc74c09eb56c7049034ea011ccf7a224243af3452f59b73f07f4a22929b8f886130d5a2
-  languageName: node
-  linkType: hard
-
-"pino@npm:^6.11.2":
-  version: 6.14.0
-  resolution: "pino@npm:6.14.0"
-  dependencies:
-    fast-redact: ^3.0.0
-    fast-safe-stringify: ^2.0.8
-    flatstr: ^1.0.12
-    pino-std-serializers: ^3.1.0
-    process-warning: ^1.0.0
-    quick-format-unescaped: ^4.0.3
-    sonic-boom: ^1.0.2
-  bin:
-    pino: bin.js
-  checksum: eb13e12e3a3d682abe4a4da426455a9f4e041e55e4fa57d72d9677ee8d188a9c952f69347e728a3761c8262cdce76ef24bee29e1a53ab15aa9c5e851099163d0
   languageName: node
   linkType: hard
 
@@ -15919,13 +15857,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"process-warning@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "process-warning@npm:1.0.0"
-  checksum: c708a03241deec3cabaeee39c4f9ee8c4d71f1c5ef9b746c8252cdb952a6059068cfcdaf348399775244cbc441b6ae5e26a9c87ed371f88335d84f26d19180f9
-  languageName: node
-  linkType: hard
-
 "process-warning@npm:^2.0.0":
   version: 2.2.0
   resolution: "process-warning@npm:2.2.0"
@@ -16060,13 +15991,6 @@ __metadata:
   version: 1.0.1
   resolution: "prr@npm:1.0.1"
   checksum: 3bca2db0479fd38f8c4c9439139b0c42dcaadcc2fbb7bb8e0e6afaa1383457f1d19aea9e5f961d5b080f1cfc05bfa1fe9e45c97a1d3fd6d421950a73d3108381
-  languageName: node
-  linkType: hard
-
-"pseudomap@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "pseudomap@npm:1.0.2"
-  checksum: 856c0aae0ff2ad60881168334448e898ad7a0e45fe7386d114b150084254c01e200c957cf378378025df4e052c7890c5bd933939b0e0d2ecfcc1dc2f0b2991f5
   languageName: node
   linkType: hard
 
@@ -16483,7 +16407,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:^3.0.6, readable-stream@npm:^3.4.0, readable-stream@npm:^3.6.0":
+"readable-stream@npm:^3.0.6, readable-stream@npm:^3.6.0, readable-stream@npm:^3.6.2":
   version: 3.6.2
   resolution: "readable-stream@npm:3.6.2"
   dependencies:
@@ -17500,16 +17424,6 @@ __metadata:
     ip: ^2.0.0
     smart-buffer: ^4.2.0
   checksum: 259d9e3e8e1c9809a7f5c32238c3d4d2a36b39b83851d0f573bfde5f21c4b1288417ce1af06af1452569cd1eb0841169afd4998f0e04ba04656f6b7f0e46d748
-  languageName: node
-  linkType: hard
-
-"sonic-boom@npm:^1.0.2":
-  version: 1.4.1
-  resolution: "sonic-boom@npm:1.4.1"
-  dependencies:
-    atomic-sleep: ^1.0.0
-    flatstr: ^1.0.12
-  checksum: 189fa8fe5c2dc05d3513fc1a4926a2f16f132fa6fa0b511745a436010cdcd9c1d3b3cb6a9d7c05bd32a965dc77673a5ac0eb0992e920bdedd16330d95323124f
   languageName: node
   linkType: hard
 
@@ -18556,15 +18470,6 @@ __metadata:
     regex-not: ^1.0.2
     safe-regex: ^1.1.0
   checksum: 4ed4a619059b64e204aad84e4e5f3ea82d97410988bcece7cf6cbfdbf193d11bff48cf53842d88b8bb00b1bfc0d048f61f20f0709e6f393fd8fe0122662d9db4
-  languageName: node
-  linkType: hard
-
-"to-source-code@npm:^1.0.0":
-  version: 1.0.2
-  resolution: "to-source-code@npm:1.0.2"
-  dependencies:
-    is-nil: ^1.0.0
-  checksum: 24fd24767f185ad11f81c1e020c2f789fba29471195227731530ec39b2697bb680c16e1f6f7d0d68bffba81e3d95e68dd6014f8c88371399bddcf8c4ad036de3
   languageName: node
   linkType: hard
 
@@ -19932,13 +19837,6 @@ __metadata:
   version: 5.0.8
   resolution: "y18n@npm:5.0.8"
   checksum: 54f0fb95621ee60898a38c572c515659e51cc9d9f787fb109cef6fde4befbe1c4602dc999d30110feee37456ad0f1660fa2edcfde6a9a740f86a290999550d30
-  languageName: node
-  linkType: hard
-
-"yallist@npm:^2.1.2":
-  version: 2.1.2
-  resolution: "yallist@npm:2.1.2"
-  checksum: 9ba99409209f485b6fcb970330908a6d41fa1c933f75e08250316cce19383179a6b70a7e0721b89672ebb6199cc377bf3e432f55100da6a7d6e11902b0a642cb
   languageName: node
   linkType: hard
 
