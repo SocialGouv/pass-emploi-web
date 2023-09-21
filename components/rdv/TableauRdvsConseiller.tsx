@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { useState } from 'react'
+import React from 'react'
 
 import EmptyState from 'components/EmptyState'
 import { RdvRow } from 'components/rdv/RdvRow'
@@ -11,11 +11,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
-import {
-  AgendaData,
-  buildAgenda,
-  renderAgenda,
-} from 'presentation/Intercalaires'
+import { buildAgenda, renderAgenda } from 'presentation/Intercalaires'
 
 type TableauRdvsConseillerProps = {
   idConseiller: string
@@ -28,8 +24,8 @@ export default function TableauRdvsConseiller({
   idConseiller,
   periode,
 }: TableauRdvsConseillerProps) {
-  const [agendaRdvs] = useState<AgendaData<EvenementListItem>>(
-    buildAgenda(rdvs, periode, ({ date }) => DateTime.fromISO(date))
+  const agendaRdvs = buildAgenda(rdvs, periode, ({ date }) =>
+    DateTime.fromISO(date)
   )
 
   return (

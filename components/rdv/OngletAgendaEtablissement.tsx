@@ -71,6 +71,8 @@ export default function OngletAgendaEtablissement({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
+    setAgendaAnimationsCollectives(undefined)
+
     const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
     if (peutAccederAuxSessions(conseiller)) {
       try {
