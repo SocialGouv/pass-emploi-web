@@ -662,10 +662,11 @@ const ChoixConseiller = forwardRef(
             className='ml-4 shrink-0'
             label={'Rechercher un conseiller ' + name}
             style={ButtonStyle.SECONDARY}
-            disabled={queryConseiller.value.length < 2}
+            disabled={
+              queryConseiller.value.length < 2 || rechercheConseillerEnCours
+            }
             type='button'
             onClick={rechercherConseiller}
-            isLoading={rechercheConseillerEnCours}
           >
             <IconComponent
               name={IconName.Search}

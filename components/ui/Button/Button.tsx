@@ -55,13 +55,19 @@ export default function Button({
       disabled={disabled || isLoading}
       aria-disabled={disabled || isLoading}
     >
+      <span
+        className={`flex items-center justify-center ${
+          isLoading ? 'invisible' : ''
+        }`}
+      >
+        {children}
+      </span>
       {isLoading && (
         <IconComponent
           name={IconName.Spinner}
-          className='w-6 h-6 fill-blanc animate-spin'
+          className='w-6 h-6 fill-blanc animate-spin absolute m-auto'
         />
       )}
-      {!isLoading && children}
     </button>
   )
 }
