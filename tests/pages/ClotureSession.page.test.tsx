@@ -9,8 +9,9 @@ import { unConseiller } from 'fixtures/conseiller'
 import { unDetailSession } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
-import ClotureSession from 'pages/agenda/sessions/[session_id]/cloture'
-import { getServerSideProps } from 'pages/agenda/sessions/[session_id]/cloture'
+import ClotureSession, {
+  getServerSideProps,
+} from 'pages/agenda/sessions/[session_id]/cloture'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { cloreSession, getDetailsSession } from 'services/sessions.service'
@@ -196,13 +197,14 @@ describe('Cloture Session', () => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: {
-            user: { id: 'id-conseiller' },
+            user: { id: 'id-conseiller', structure: 'MILO' },
             accessToken: 'accessToken',
           },
         })
         ;(getConseillerServerSide as jest.Mock).mockReturnValue(
           unConseiller({
             id: 'id-conseiller',
+            structure: StructureConseiller.MILO,
             agence: { nom: 'Agence early', id: 'id-test' },
             structureMilo: { nom: 'Agence early', id: 'id-test' },
           })
@@ -331,6 +333,7 @@ describe('Cloture Session', () => {
             accessToken: 'accessToken',
           },
         })
+        ;(getConseillerServerSide as jest.Mock).mockReturnValue(unConseiller())
 
         // When
         const actual = await getServerSideProps({

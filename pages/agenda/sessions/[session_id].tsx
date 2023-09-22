@@ -20,7 +20,7 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import {
   Conseiller,
-  estUserPoleEmploi,
+  estUserMilo,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
@@ -576,7 +576,7 @@ export const getServerSideProps: GetServerSideProps<
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (estUserPoleEmploi(user)) return { notFound: true }
+  if (!estUserMilo(user)) return { notFound: true }
 
   const idSession = context.query.session_id as string
 

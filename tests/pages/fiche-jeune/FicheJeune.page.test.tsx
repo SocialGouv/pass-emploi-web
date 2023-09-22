@@ -1,9 +1,4 @@
 import { act, screen } from '@testing-library/react'
-import { DateTime } from 'luxon'
-import { GetServerSidePropsResult } from 'next'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
-import React from 'react'
 
 import { desActionsInitiales, uneAction } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
@@ -11,19 +6,16 @@ import { unConseiller } from 'fixtures/conseiller'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import {
-  desConseillersJeune,
-  desIndicateursSemaine,
-  unDetailJeune,
-  uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+import { desConseillersJeune, desIndicateursSemaine, unDetailJeune, uneMetadonneeFavoris } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
-import FicheJeune, {
-  getServerSideProps,
-  Onglet,
-} from 'pages/mes-jeunes/[jeune_id]'
+import { DateTime } from 'luxon'
+import { GetServerSidePropsResult } from 'next'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
+import FicheJeune, { getServerSideProps, Onglet } from 'pages/mes-jeunes/[jeune_id]'
+import React from 'react'
 import { getActionsJeuneServerSide } from 'services/actions.service'
 import { recupererAgenda } from 'services/agenda.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -33,7 +25,7 @@ import {
   getConseillersDuJeuneServerSide,
   getIndicateursJeuneAlleges,
   getJeuneDetails,
-  getMetadonneesFavorisJeune,
+  getMetadonneesFavorisJeune
 } from 'services/jeunes.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -252,6 +244,7 @@ describe('Fiche Jeune', () => {
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({
           id: 'id-conseiller',
+          structure: StructureConseiller.MILO,
           structureMilo: { nom: 'Agence early', id: 'id-test' },
         })
       )

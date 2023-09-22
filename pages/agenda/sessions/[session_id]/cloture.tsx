@@ -15,7 +15,7 @@ import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import {
   Conseiller,
-  estUserPoleEmploi,
+  estUserMilo,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
@@ -350,7 +350,9 @@ export const getServerSideProps: GetServerSideProps<
     }
     throw e
   }
-  if (estUserPoleEmploi(user) || !peutAccederAuxSessions(conseiller))
+  if (!conseiller) return { notFound: true }
+
+  if (!estUserMilo(user) || !peutAccederAuxSessions(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }

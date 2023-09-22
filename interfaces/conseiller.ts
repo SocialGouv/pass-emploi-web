@@ -59,6 +59,11 @@ export function estPoleEmploi(conseiller: Conseiller): boolean {
     conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
   )
 }
+
+export function estUserMilo(user: Session.HydratedUser): boolean {
+  return user.structure === StructureConseiller.MILO
+}
+
 export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
   return (
     user.structure === StructureConseiller.POLE_EMPLOI ||
@@ -66,10 +71,10 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
   )
 }
 
-export function peutAccederAuxSessions(conseiller?: Conseiller): boolean {
+export function peutAccederAuxSessions(conseiller: Conseiller): boolean {
   return (
-    process.env.ENABLE_SESSIONS_MILO === 'true' ||
-    (Boolean(conseiller) && estEarlyAdopter(conseiller!))
+    estMilo(conseiller) &&
+    (process.env.ENABLE_SESSIONS_MILO === 'true' || estEarlyAdopter(conseiller))
   )
 }
 
