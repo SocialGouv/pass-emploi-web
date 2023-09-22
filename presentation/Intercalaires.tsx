@@ -14,7 +14,7 @@ export const PLAGE_HORAIRE_MATIN = 'Matin'
 export const PLAGE_HORAIRE_APRES_MIDI = 'Après-midi'
 
 export type AgendaData<T> = {
-  [jour: string]:
+  [jourISO: string]:
     | {
         matin: T[]
         apresMidi: T[]
@@ -35,12 +35,12 @@ export function buildAgenda<T>(
     jourCourant <= dernierJour;
     jourCourant = jourCourant.plus({ day: 1 })
   ) {
-    agenda[formatJourIfToday(jourCourant)] = undefined
+    agenda[jourCourant.toISODate()] = undefined
   }
 
   elements.forEach((element) => {
     const datetime = extractDate(element)
-    const jour = formatJourIfToday(datetime)
+    const jour = datetime.toISODate()
     if (!agenda[jour]) agenda[jour] = { matin: [], apresMidi: [] }
 
     if (isMatin(datetime.hour)) agenda[jour]!.matin.push(element)
@@ -53,7 +53,7 @@ export function buildAgenda<T>(
 export function renderAgenda<T>(
   agenda: AgendaData<T>,
   renderEvenement: (item: T) => React.JSX.Element,
-  renderFiller: boolean = false
+  renderFiller: (jour: string) => React.JSX.Element
 ): React.JSX.Element[] {
   const renders: React.JSX.Element[] = []
 
@@ -96,14 +96,15 @@ export function renderAgenda<T>(
 }
 
 function intercalaireDate(jour: string, index: number) {
+  const label = formatJourIfToday(DateTime.fromISO(jour))
   return (
     <Intercalaire
       key={jour}
       className={`text-m-bold capitalize whitespace-nowrap pl-4 ${
         index > 0 ? 'pt-6' : ''
-      } ${jour === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'} `}
+      } ${label === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'} `}
     >
-      {jour}
+      {label}
     </Intercalaire>
   )
 }

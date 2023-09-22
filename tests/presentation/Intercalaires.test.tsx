@@ -20,11 +20,11 @@ describe('buildAgenda', () => {
 
     // Then
     expect(agenda).toEqual({
-      'lundi 31 décembre': undefined,
-      'mardi 1 janvier': undefined,
-      'mercredi 2 janvier': undefined,
-      'jeudi 3 janvier': undefined,
-      'vendredi 4 janvier': undefined,
+      '2029-12-31': undefined,
+      '2030-01-01': undefined,
+      '2030-01-02': undefined,
+      '2030-01-03': undefined,
+      '2030-01-04': undefined,
     })
   })
 
@@ -37,11 +37,11 @@ describe('buildAgenda', () => {
 
     // Then
     expect(agenda).toEqual({
-      'lundi 31 décembre': undefined,
-      'mardi 1 janvier': { matin: [withDate], apresMidi: [] },
-      'mercredi 2 janvier': undefined,
-      'jeudi 3 janvier': undefined,
-      'vendredi 4 janvier': undefined,
+      '2029-12-31': undefined,
+      '2030-01-01': { matin: [withDate], apresMidi: [] },
+      '2030-01-02': undefined,
+      '2030-01-03': undefined,
+      '2030-01-04': undefined,
     })
   })
 
@@ -67,14 +67,14 @@ describe('buildAgenda', () => {
 
     // Then
     expect(agenda).toEqual({
-      'lundi 31 décembre': { matin: [], apresMidi: [withDateLundi] },
-      'mardi 1 janvier': {
+      '2029-12-31': { matin: [], apresMidi: [withDateLundi] },
+      '2030-01-01': {
         matin: [withDateMardiMatin],
         apresMidi: [withDateMardiApresMidi],
       },
-      'mercredi 2 janvier': { matin: [withDateMercredi], apresMidi: [] },
-      'jeudi 3 janvier': undefined,
-      'vendredi 4 janvier': {
+      '2030-01-02': { matin: [withDateMercredi], apresMidi: [] },
+      '2030-01-03': undefined,
+      '2030-01-04': {
         matin: [],
         apresMidi: [withDateVendredi, withDateVendredi2],
       },
