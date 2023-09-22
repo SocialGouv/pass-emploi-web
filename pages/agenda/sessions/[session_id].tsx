@@ -62,7 +62,7 @@ function FicheDetailsSession({
   returnTo,
 }: DetailSessionProps) {
   const router = useRouter()
-  const [alerte, setAlerte] = useAlerte()
+  const [_, setAlerte] = useAlerte()
 
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
 
@@ -93,9 +93,8 @@ function FicheDetailsSession({
   ).endOf('day')
   const dateLimiteInscriptionDepassee = DateTime.now() > dateLimiteInscription
 
-  let initialTracking = 'Détail session i-milo'
-  if (alerte?.key === AlerteParam.modificationSession)
-    initialTracking += ' - Modification succès'
+  const initialTracking = 'Détail session i-milo'
+  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
 
   function openDesinscriptionBeneficiaireModal(id: string, nom: string) {
     setBeneficiaireADesinscire({ value: nom, id })
@@ -258,17 +257,17 @@ function FicheDetailsSession({
       })
     )
 
-    setAlerte(AlerteParam.modificationSession)
     await changerInscriptionsSession(session.session.id, inscriptions)
     setAlerte(
       session.offre.type === 'Atelier'
         ? AlerteParam.modificationAtelier
         : AlerteParam.modificationInformationCollective
     )
+    setTrackingLabel(initialTracking + ' - Modification succès')
     await router.push(returnTo)
   }
 
-  useMatomo(initialTracking)
+  useMatomo(trackingLabel)
 
   return (
     <>
