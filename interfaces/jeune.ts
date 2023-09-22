@@ -206,7 +206,9 @@ export function compareJeuneByLastActivityDesc(
   return compareDatesDesc(date1, date2) || -sortStatutCompteActif
 }
 
-export function getNomJeuneComplet(j: BaseJeune): string {
+export function getNomJeuneComplet(
+  j: Pick<BaseJeune, 'nom' | 'prenom'>
+): string {
   return `${j.nom} ${j.prenom}`
 }
 
