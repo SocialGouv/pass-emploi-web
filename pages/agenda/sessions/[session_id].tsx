@@ -18,10 +18,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import {
-  estUserPoleEmploi,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
+import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
@@ -574,7 +571,7 @@ export const getServerSideProps: GetServerSideProps<
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (estUserPoleEmploi(user)) return { notFound: true }
+  if (!estUserMilo(user)) return { notFound: true }
 
   const idSession = context.query.session_id as string
 

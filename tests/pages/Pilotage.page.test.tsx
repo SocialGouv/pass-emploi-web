@@ -1,8 +1,5 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
-import React from 'react'
 
 import { uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
@@ -13,24 +10,18 @@ import { ActionPilotage } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
 import Pilotage, { getServerSideProps } from 'pages/pilotage'
-import {
-  getActionsAQualifierClientSide,
-  getActionsAQualifierServerSide,
-} from 'services/actions.service'
-import {
-  getConseillerServerSide,
-  modifierAgence,
-} from 'services/conseiller.service'
+import React from 'react'
+import { getActionsAQualifierClientSide, getActionsAQualifierServerSide } from 'services/actions.service'
+import { getConseillerServerSide, modifierAgence } from 'services/conseiller.service'
 import {
   getAnimationsCollectivesACloreClientSide,
-  getAnimationsCollectivesACloreServerSide,
+  getAnimationsCollectivesACloreServerSide
 } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
-import {
-  getSessionsACloreServerSide,
-  SessionsAClore,
-} from 'services/sessions.service'
+import { getSessionsACloreServerSide, SessionsAClore } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
@@ -109,6 +100,7 @@ describe('Pilotage', () => {
             />,
             {
               customConseiller: {
+                structure: StructureConseiller.MILO,
                 agence: {
                   nom: 'Mission Locale Aubenas',
                   id: 'id-test',
@@ -434,6 +426,7 @@ describe('Pilotage', () => {
           />,
           {
             customConseiller: {
+              structure: StructureConseiller.MILO,
               agence: {
                 nom: 'Mission Locale Aubenas',
                 id: 'id-test',
@@ -637,6 +630,7 @@ describe('Pilotage', () => {
         )
         ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
           unConseiller({
+            structure: StructureConseiller.MILO,
             agence: {
               nom: 'Mission Locale Aubenas',
               id: 'id-etablissement',

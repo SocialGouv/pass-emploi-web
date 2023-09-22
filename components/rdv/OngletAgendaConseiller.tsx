@@ -60,6 +60,7 @@ export default function OngletAgendaConseiller({
           DateTime.fromISO(event2.date)
         )
       )
+
     setAgendaRdvs(
       buildAgenda(rdvs, { debut: dateDebut, fin: dateFin }, ({ date }) =>
         DateTime.fromISO(date)

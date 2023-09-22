@@ -1,9 +1,5 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
-import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { uneAnimationCollective, unEvenementListItem } from 'fixtures/evenement'
@@ -11,17 +7,15 @@ import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
+import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
 import Agenda, { getServerSideProps } from 'pages/agenda'
+import React from 'react'
 import { modifierAgence } from 'services/conseiller.service'
-import {
-  getRendezVousConseiller,
-  getRendezVousEtablissement,
-} from 'services/evenements.service'
+import { getRendezVousConseiller, getRendezVousEtablissement } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
-import {
-  getSessionsBeneficiaires,
-  getSessionsMissionLocaleClientSide,
-} from 'services/sessions.service'
+import { getSessionsBeneficiaires, getSessionsMissionLocaleClientSide } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
@@ -123,6 +117,7 @@ describe('Agenda', () => {
       beforeEach(async () => {
         // Given
         const conseiller = unConseiller({
+          structure: StructureConseiller.MILO,
           agence: {
             nom: 'Mission Locale Aubenas',
             id: 'id-etablissement',
@@ -164,7 +159,7 @@ describe('Agenda', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByRole('tab', {
-            name: 'Agenda établissement',
+            name: 'Agenda Mission Locale',
             selected: true,
           })
         ).toBeInTheDocument()
@@ -173,7 +168,7 @@ describe('Agenda', () => {
       it('permet de changer d’onglet', async () => {
         // When
         await userEvent.click(
-          screen.getByRole('tab', { name: 'Agenda établissement' })
+          screen.getByRole('tab', { name: 'Agenda Mission Locale' })
         )
         // Then
         expect(replace).toHaveBeenCalledWith(
@@ -183,9 +178,9 @@ describe('Agenda', () => {
         )
         expect(
           screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Agenda établissement')
+        ).toHaveAccessibleName('Agenda Mission Locale')
         expect(
-          screen.getByRole('tabpanel', { name: 'Agenda établissement' })
+          screen.getByRole('tabpanel', { name: 'Agenda Mission Locale' })
         ).toBeInTheDocument()
         expect(() =>
           screen.getByRole('tabpanel', { name: 'Mon agenda' })
@@ -316,7 +311,7 @@ describe('Agenda', () => {
         beforeEach(async () => {
           // When
           await userEvent.click(
-            screen.getByRole('tab', { name: 'Agenda établissement' })
+            screen.getByRole('tab', { name: 'Agenda Mission Locale' })
           )
         })
 

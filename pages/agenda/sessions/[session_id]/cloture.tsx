@@ -13,10 +13,7 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
-import {
-  estUserPoleEmploi,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
+import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import {
@@ -335,7 +332,9 @@ export const getServerSideProps: GetServerSideProps<
     'services/conseiller.service'
   )
   const conseiller = await getConseillerServerSide(user, accessToken)
-  if (estUserPoleEmploi(user) || !peutAccederAuxSessions(conseiller))
+  if (!conseiller) return { notFound: true }
+
+  if (!estUserMilo(user) || !peutAccederAuxSessions(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
