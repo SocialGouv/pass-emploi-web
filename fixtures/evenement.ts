@@ -108,7 +108,7 @@ export function desEvenementsListItems(): EvenementListItem[] {
     unEvenementListItem(),
     {
       id: '2',
-      labelBeneficiaires: 'Raja Jirac',
+      labelBeneficiaires: 'Jirac Raja',
       type: 'Atelier',
       modality: 'En agence',
       date: '2021-10-25T12:00:00.000Z',
@@ -124,7 +124,7 @@ export function unEvenementListItem(
 ): EvenementListItem {
   const defaults: EvenementListItem = {
     id: '1',
-    labelBeneficiaires: 'Kenji Jirac',
+    labelBeneficiaires: 'Jirac Kenji',
     type: 'Autre',
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
