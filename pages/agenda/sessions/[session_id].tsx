@@ -91,6 +91,9 @@ function FicheDetailsSession({
   ).endOf('day')
   const dateLimiteInscriptionDepassee = DateTime.now() > dateLimiteInscription
 
+  const initialTracking = 'Détail session i-milo'
+  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+
   function openDesinscriptionBeneficiaireModal(id: string, nom: string) {
     setBeneficiaireADesinscire({ value: nom, id })
   }
@@ -258,10 +261,11 @@ function FicheDetailsSession({
         ? AlerteParam.modificationAtelier
         : AlerteParam.modificationInformationCollective
     )
+    setTrackingLabel(initialTracking + ' - Modification succès')
     await router.push(returnTo)
   }
 
-  useMatomo('Détail session i-milo')
+  useMatomo(trackingLabel)
 
   return (
     <>

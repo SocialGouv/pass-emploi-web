@@ -54,6 +54,10 @@ function ClotureSession({
 
   const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
 
+  const [trackingLabel, setTrackingLabel] = useState<string>(
+    'Session - Clôture de la session'
+  )
+
   function cocherTousLesBeneficiaires(_event: FormEvent) {
     if (idsSelectionnes.length === 0) {
       setIdsSelectionnes(
@@ -167,6 +171,7 @@ function ClotureSession({
 
     await cloreSession(conseiller.id, session.session.id, emargements)
     setAlerte(AlerteParam.clotureSession)
+    setTrackingLabel('Session - Clôture succès')
     await router.push(returnTo)
   }
 
@@ -183,7 +188,7 @@ function ClotureSession({
     }
   }
 
-  useMatomo('Sessions - Clôture de la session')
+  useMatomo(trackingLabel)
 
   return (
     <>
