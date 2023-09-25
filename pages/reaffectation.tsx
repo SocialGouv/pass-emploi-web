@@ -665,6 +665,7 @@ const ChoixConseiller = forwardRef(
             disabled={
               queryConseiller.value.length < 2 || rechercheConseillerEnCours
             }
+            isLoading={rechercheConseillerEnCours}
             type='button'
             onClick={rechercherConseiller}
           >

@@ -43,7 +43,7 @@ export default function Button({
   return (
     <button
       onClick={onClick}
-      className={`${className ? className : ''} text-s-bold ${
+      className={`${className ? className : ''} text-s-bold relative ${
         styles.button
       } ${getColorStyleClassName(style)}`}
       form={form ?? undefined}
@@ -55,19 +55,17 @@ export default function Button({
       disabled={disabled || isLoading}
       aria-disabled={disabled || isLoading}
     >
-      <span
-        className={`flex items-center justify-center ${
-          isLoading ? 'invisible' : ''
-        }`}
-      >
-        {children}
+      <span className='flex items-center justify-center'>
+        {isLoading && (
+          <IconComponent
+            name={IconName.Spinner}
+            className='w-6 h-6 fill-blanc animate-spin absolute m-auto'
+          />
+        )}
+        <span className={`flex ${isLoading ? 'invisible' : ''}`}>
+          {children}
+        </span>
       </span>
-      {isLoading && (
-        <IconComponent
-          name={IconName.Spinner}
-          className='w-6 h-6 fill-blanc animate-spin absolute m-auto'
-        />
-      )}
     </button>
   )
 }
