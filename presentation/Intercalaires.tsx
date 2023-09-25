@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import React from 'react'
 
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Intercalaire } from 'components/ui/Table/Intercalaire'
 import {
   AUJOURDHUI_LABEL,
@@ -13,19 +12,16 @@ import {
 export const PLAGE_HORAIRE_MATIN = 'Matin'
 export const PLAGE_HORAIRE_APRES_MIDI = 'Après-midi'
 
+type DataJour<T> = { matin: T[]; apresMidi: T[] }
 export type AgendaData<T> = {
-  [jourISO: string]:
-    | {
-        matin: T[]
-        apresMidi: T[]
-      }
-    | undefined
+  [jourISO: string]: undefined | 'NO_DATA' | DataJour<T>
 }
 
 export function buildAgenda<T>(
   elements: T[],
   periode: { debut: DateTime; fin: DateTime },
-  extractDate: (element: T) => DateTime
+  extractDate: (element: T) => DateTime,
+  indexJoursCharges: number[] = [0, 1, 2, 3, 4, 5, 6]
 ): AgendaData<T> {
   const agenda: AgendaData<T> = {}
   const premierJour = periode.debut.startOf('day')
@@ -43,8 +39,15 @@ export function buildAgenda<T>(
     const jour = datetime.toISODate()
     if (!agenda[jour]) agenda[jour] = { matin: [], apresMidi: [] }
 
-    if (isMatin(datetime.hour)) agenda[jour]!.matin.push(element)
-    if (isApresMidi(datetime.hour)) agenda[jour]!.apresMidi.push(element)
+    if (isMatin(datetime.hour))
+      (agenda[jour] as DataJour<T>).matin!.push(element)
+    if (isApresMidi(datetime.hour))
+      (agenda[jour] as DataJour<T>).apresMidi!.push(element)
+  })
+
+  indexJoursCharges.forEach((index) => {
+    const jour = periode.debut.plus({ day: index }).toISODate()
+    if (!agenda[jour]) agenda[jour] = 'NO_DATA'
   })
 
   return agenda
@@ -53,41 +56,43 @@ export function buildAgenda<T>(
 export function renderAgenda<T>(
   agenda: AgendaData<T>,
   renderEvenement: (item: T) => React.JSX.Element,
-  renderFiller: (jour: string) => React.JSX.Element
+  renderFiller?: (jourISO: string) => React.JSX.Element
 ): React.JSX.Element[] {
   const renders: React.JSX.Element[] = []
 
   Object.keys(agenda).forEach((jour, index) => {
-    const evenementsJour = agenda[jour]
+    const jourCharge = agenda[jour]
 
-    if (evenementsJour) {
-      renders.push(intercalaireDate(jour, index))
+    if (jourCharge) {
+      if (jourCharge === 'NO_DATA') {
+        if (renderFiller) {
+          renders.push(intercalaireDate(jour, index))
+          renders.push(
+            <Intercalaire key={'no-data-' + jour}>
+              Aucun événement ce jour{' '}
+            </Intercalaire>
+          )
+        }
+      } else {
+        renders.push(intercalaireDate(jour, index))
+        if (jourCharge.matin.length) {
+          renders.push(
+            intercalairePlageHoraire({ label: PLAGE_HORAIRE_MATIN, jour })
+          )
+          renders.push(...jourCharge.matin.map(renderEvenement))
+        }
 
-      if (evenementsJour.matin.length) {
-        renders.push(
-          intercalairePlageHoraire({ label: PLAGE_HORAIRE_MATIN, jour })
-        )
-        renders.push(...evenementsJour.matin.map(renderEvenement))
-      }
-
-      if (evenementsJour.apresMidi.length) {
-        renders.push(
-          intercalairePlageHoraire({ label: PLAGE_HORAIRE_APRES_MIDI, jour })
-        )
-        renders.push(...evenementsJour.apresMidi.map(renderEvenement))
+        if (jourCharge.apresMidi.length) {
+          renders.push(
+            intercalairePlageHoraire({ label: PLAGE_HORAIRE_APRES_MIDI, jour })
+          )
+          renders.push(...jourCharge.apresMidi.map(renderEvenement))
+        }
       }
     } else if (renderFiller) {
       renders.push(intercalaireDate(jour, index))
       renders.push(
-        <Intercalaire key={'filler-' + jour}>
-          <Button
-            style={ButtonStyle.SECONDARY}
-            disabled={true}
-            className='m-auto'
-          >
-            Afficher l’agenda du jour
-          </Button>
-        </Intercalaire>
+        <Intercalaire key={'filler-' + jour}>{renderFiller(jour)}</Intercalaire>
       )
     }
   })

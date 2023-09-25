@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import TableauRdvsConseiller from 'components/rdv/TableauRdvsConseiller'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
@@ -34,6 +34,9 @@ export default function OngletAgendaConseiller({
   periodeIndex,
   changerPeriode,
 }: OngletAgendaConseillerProps) {
+  const [rdvs, setRdvs] = useState<EvenementListItem[]>()
+  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [indexJoursCharges, setIndexJoursCharges] = useState<number[]>()
   const [agendaRdvs, setAgendaRdvs] = useState<AgendaData<EvenementListItem>>()
 
   async function chargerNouvellePeriode(
@@ -41,31 +44,55 @@ export default function OngletAgendaConseiller({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
-    await chargerRdvs(dateDebut, dateFin)
+    await initEvenementsPeriode(dateDebut, dateFin)
     changerPeriode(nouvellePeriodeIndex)
   }
 
-  async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
+  async function initEvenementsPeriode(dateDebut: DateTime, dateFin: DateTime) {
     setAgendaRdvs(undefined)
 
     const deuxiemeJour = dateDebut.plus({ day: 1 }).endOf('day')
-
-    const evenements = await recupererRdvs(
-      conseiller.id,
+    const evenementsEtSessions = await chargerEvenements(
       dateDebut,
       deuxiemeJour
     )
+
+    setPeriode({ debut: dateDebut, fin: dateFin })
+    setIndexJoursCharges([0, 1])
+    setRdvs(evenementsEtSessions)
+  }
+
+  async function chargerEvenementsJour(jourACharger: DateTime) {
+    const evenementsEtSessions = await chargerEvenements(
+      jourACharger.startOf('day'),
+      jourACharger.endOf('day')
+    )
+
+    setIndexJoursCharges((current) => {
+      const indexJourACharger: number = jourACharger
+        .diff(periode!.debut)
+        .as('days')
+      return current!.concat(indexJourACharger)
+    })
+    setRdvs((current) => current!.concat(evenementsEtSessions))
+  }
+
+  async function chargerEvenements(
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<EvenementListItem[]> {
+    const evenements = await recupererRdvs(conseiller.id, dateDebut, dateFin)
 
     let sessions: EvenementListItem[] = []
     if (peutAccederAuxSessions(conseiller)) {
       sessions = await recupererSessionsBeneficiaires(
         conseiller.id,
         dateDebut,
-        deuxiemeJour
+        dateFin
       )
     }
 
-    const rdvs = evenements
+    return evenements
       .concat(sessions)
       .sort((event1, event2) =>
         compareDates(
@@ -73,13 +100,20 @@ export default function OngletAgendaConseiller({
           DateTime.fromISO(event2.date)
         )
       )
-
-    setAgendaRdvs(
-      buildAgenda(rdvs, { debut: dateDebut, fin: dateFin }, ({ date }) =>
-        DateTime.fromISO(date)
-      )
-    )
   }
+
+  useEffect(() => {
+    if (rdvs && periode && indexJoursCharges) {
+      setAgendaRdvs(
+        buildAgenda(
+          rdvs,
+          periode,
+          ({ date }) => DateTime.fromISO(date),
+          indexJoursCharges
+        )
+      )
+    }
+  }, [rdvs, periode, indexJoursCharges])
 
   return (
     <>
@@ -96,6 +130,7 @@ export default function OngletAgendaConseiller({
         <TableauRdvsConseiller
           idConseiller={conseiller.id}
           agendaRdvs={agendaRdvs}
+          onChargerEvenementsJour={chargerEvenementsJour}
         />
       )}
     </>
