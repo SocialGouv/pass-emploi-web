@@ -1,7 +1,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 
-import TableauRdv from 'components/rdv/TableauRdv'
+import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
@@ -31,10 +31,10 @@ function RendezVousPasses({
   useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
-    <TableauRdv
+    <TableauRdvsBeneficiaire
       rdvs={rdvs}
       idConseiller={conseiller.id}
-      beneficiaireUnique={beneficiaire}
+      beneficiaire={beneficiaire}
       additionalColumn='Présent'
     />
   )

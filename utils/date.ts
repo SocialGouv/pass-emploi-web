@@ -8,6 +8,8 @@ export const TIME_24_SIMPLE: string = 'HH:mm'
 export const DATE_DASH_SEPARATOR: string = 'yyyy-MM-dd'
 export const DATETIME_LONG: string = `dd/MM/yyyy 'à' ${TIME_24_H_SEPARATOR}`
 
+export const AUJOURDHUI_LABEL = 'aujourd’hui'
+
 export function dateIsToday(dateToCheck: DateTime): boolean {
   return DateTime.now().hasSame(dateToCheck, 'day')
 }
@@ -76,4 +78,18 @@ export function minutesEntreDeuxDates(
 ): number {
   const diff = Interval.fromDateTimes(date1, date2)
   return Math.round(diff.length('minutes'))
+}
+
+export function isMatin(heure: number) {
+  return heure <= 12
+}
+
+export function isApresMidi(heure: number) {
+  return heure > 12
+}
+
+export function formatJourIfToday(date: DateTime): string {
+  return dateIsToday(date)
+    ? AUJOURDHUI_LABEL
+    : toFrenchFormat(date, WEEKDAY_MONTH_LONG)
 }

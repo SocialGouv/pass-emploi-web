@@ -12,13 +12,11 @@ type EmptyStateProps = {
   titre: string
   sousTitre?: string
   premierLien?: EmptyStateLinkProps
-  secondLien?: EmptyStateLinkProps
 }
 
 export default function EmptyState({
   illustrationName,
   premierLien,
-  secondLien,
   sousTitre,
   titre,
 }: EmptyStateProps) {
@@ -41,7 +39,7 @@ export default function EmptyState({
         </p>
       )}
 
-      {(premierLien || secondLien) && (
+      {premierLien && (
         <div className='flex justify-center gap-4 mt-8'>
           {premierLien && (
             <ButtonLink href={premierLien.href}>
@@ -54,20 +52,6 @@ export default function EmptyState({
                 />
               )}
               {premierLien.label}
-            </ButtonLink>
-          )}
-
-          {secondLien && (
-            <ButtonLink href={secondLien.href}>
-              {secondLien.iconName && (
-                <IconComponent
-                  name={secondLien.iconName}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='mr-2 w-4 h-4'
-                />
-              )}
-              {secondLien.label}
             </ButtonLink>
           )}
         </div>

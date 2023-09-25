@@ -4,9 +4,10 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import TableauRdv from 'components/rdv/TableauRdv'
+import TableauRdvsConseiller from 'components/rdv/TableauRdvsConseiller'
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
+import { buildAgenda } from 'presentation/Intercalaires'
 import {
   TIME_24_H_SEPARATOR,
   toFrenchFormat,
@@ -14,21 +15,9 @@ import {
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 
-describe('<TableauRdv>', () => {
+describe('<TableauRdvsConseiller>', () => {
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
-  })
-
-  it("affiche un message lorsqu'il n'y a pas de rendez-vous", () => {
-    // When
-    render(<TableauRdv rdvs={[]} idConseiller='1' />)
-
-    // Then
-    expect(
-      screen.getByText(/Vous n’avez rien de prévu pour l’instant./)
-    ).toBeInTheDocument()
-
-    expect(() => screen.getByRole('table')).toThrow()
   })
 
   describe('Quand il y a des rendez-vous', () => {
@@ -36,24 +25,32 @@ describe('<TableauRdv>', () => {
     beforeEach(() => {
       // Given
       listeRdv = desEvenementsListItems()
+      const agenda = buildAgenda(
+        listeRdv,
+        {
+          debut: DateTime.fromISO('2021-10-21'),
+          fin: DateTime.fromISO('2021-10-26'),
+        },
+        ({ date }) => DateTime.fromISO(date)
+      )
 
       // When
-      render(<TableauRdv rdvs={listeRdv} idConseiller='1' />)
+      render(<TableauRdvsConseiller agendaRdvs={agenda} idConseiller='1' />)
     })
 
     it('affiche les informations des rendez-vous', () => {
       // Then
       listeRdv.forEach((rdv) => {
-        const date = DateTime.fromISO(rdv.date)
-        const horaires = `${toShortDate(date)} - ${toFrenchFormat(
-          date,
+        const horaires = `${toFrenchFormat(
+          DateTime.fromISO(rdv.date),
           TIME_24_H_SEPARATOR
         )} - ${rdv.duree} min`
+
         expect(
           screen.getByText(`${rdv.labelBeneficiaires}`)
         ).toBeInTheDocument()
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
-        expect(screen.getByText(rdv.modality)).toBeInTheDocument()
+        expect(screen.getByText(rdv.modality!)).toBeInTheDocument()
         expect(screen.getByText(horaires)).toBeInTheDocument()
       })
     })

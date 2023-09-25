@@ -195,7 +195,7 @@ describe('SessionsApiService', () => {
           type: 'info coll i-milo',
           date: '2022-09-01T00:00:00.000+02:00',
           duree: 10080,
-          labelBeneficiaires: 'Hermione Granger',
+          labelBeneficiaires: 'Granger Hermione',
           source: 'MILO',
           isSession: true,
         },

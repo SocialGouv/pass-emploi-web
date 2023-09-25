@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
-import TableauRdv from 'components/rdv/TableauRdv'
+import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
@@ -33,10 +33,10 @@ export default function OngletRdvsBeneficiaire({
 
       {!estPoleEmploi(conseiller) && (
         <>
-          <TableauRdv
+          <TableauRdvsBeneficiaire
             rdvs={rdvs}
             idConseiller={conseiller.id}
-            beneficiaireUnique={beneficiaire}
+            beneficiaire={beneficiaire}
             additionalColumn='Modalité'
           />
           <Link
