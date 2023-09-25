@@ -40,9 +40,10 @@ enum Onglet {
 interface AgendaProps extends PageProps {
   pageTitle: string
   onglet?: Onglet
+  periodeIndexInitial?: number
 }
 
-function Agenda({ onglet }: AgendaProps) {
+function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -63,6 +64,10 @@ function Agenda({ onglet }: AgendaProps) {
   const [currentTab, setCurrentTab] = useState<Onglet>(
     onglet ?? Onglet.ETABLISSEMENT
   )
+  const [periodeIndex, setPeriodeIndex] = useState<number>(
+    periodeIndexInitial ?? 0
+  )
+
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
@@ -87,7 +92,27 @@ function Agenda({ onglet }: AgendaProps) {
     await router.replace(
       {
         pathname: '/agenda',
-        query: { onglet: ongletProps[tab].queryParam },
+        query: {
+          onglet: ongletProps[tab].queryParam,
+          periodeIndex: periodeIndex,
+        },
+      },
+      undefined,
+      {
+        shallow: true,
+      }
+    )
+  }
+
+  async function switchPeriode(index: number) {
+    setPeriodeIndex(index)
+    await router.replace(
+      {
+        pathname: '/agenda',
+        query: {
+          onglet: ongletProps[currentTab].queryParam,
+          periodeIndex: index,
+        },
       },
       undefined,
       {
@@ -227,6 +252,8 @@ function Agenda({ onglet }: AgendaProps) {
               recupererAnimationsCollectives={recupererRdvsEtablissement}
               recupererSessionsMilo={recupererSessionsMissionLocale}
               trackNavigation={trackNavigation}
+              periodeIndex={periodeIndex}
+              changerPeriode={switchPeriode}
             />
           )}
 
@@ -253,6 +280,8 @@ function Agenda({ onglet }: AgendaProps) {
             recupererRdvs={recupererRdvsConseiller}
             recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
             trackNavigation={trackNavigation}
+            periodeIndex={periodeIndex}
+            changerPeriode={switchPeriode}
           />
         </div>
       )}
@@ -282,6 +311,12 @@ export const getServerSideProps: GetServerSideProps<AgendaProps> = async (
     pageTitle: 'Tableau de bord - Agenda',
     pageHeader: 'Agenda',
   }
+
+  if (context.query.periodeIndex)
+    props.periodeIndexInitial = parseInt(
+      context.query.periodeIndex.toString(),
+      10
+    )
 
   if (context.query.onglet)
     props.onglet =

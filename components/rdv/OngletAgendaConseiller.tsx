@@ -20,6 +20,8 @@ type OngletAgendaConseillerProps = {
     dateFin: DateTime
   ) => Promise<EvenementListItem[]>
   trackNavigation: (append?: string) => void
+  periodeIndex: number
+  changerPeriode: (index: number) => void
 }
 
 export default function OngletAgendaConseiller({
@@ -27,6 +29,8 @@ export default function OngletAgendaConseiller({
   recupererRdvs,
   recupererSessionsBeneficiaires,
   trackNavigation,
+  periodeIndex,
+  changerPeriode,
 }: OngletAgendaConseillerProps) {
   const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
 
@@ -58,6 +62,8 @@ export default function OngletAgendaConseiller({
     <>
       <SelecteurPeriode
         onNouvellePeriode={chargerRdvs}
+        changerPeriode={changerPeriode}
+        periodeCourante={periodeIndex}
         nombreJours={7}
         trackNavigation={trackNavigation}
       />
@@ -66,6 +72,7 @@ export default function OngletAgendaConseiller({
         idConseiller={conseiller.id}
         rdvs={rdvs ?? []}
         withIntercalaires={true}
+        periodeIndex={periodeIndex}
       />
     </>
   )

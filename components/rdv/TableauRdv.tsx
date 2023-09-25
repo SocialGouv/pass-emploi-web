@@ -21,6 +21,7 @@ import {
 type TableauRdvProps = {
   idConseiller: string
   rdvs: EvenementListItem[]
+  periodeIndex?: number
   withIntercalaires?: boolean
   beneficiaireUnique?: BaseJeune
   additionalColumn?: ColumnHeaderLabel
@@ -34,6 +35,7 @@ export default function TableauRdv({
   withIntercalaires = false,
   beneficiaireUnique,
   additionalColumn = 'Modalité',
+  periodeIndex,
 }: TableauRdvProps) {
   const router = useRouter()
   const pathPrefix = router.asPath.startsWith('/etablissement')
