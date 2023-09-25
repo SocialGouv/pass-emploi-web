@@ -1,10 +1,12 @@
 import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
-import TableauRdv from 'components/rdv/TableauRdv'
+import TableauRdvsConseiller from 'components/rdv/TableauRdvsConseiller'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
+import { AgendaData, buildAgenda } from 'presentation/Intercalaires'
 import { compareDates } from 'utils/date'
 
 type OngletAgendaConseillerProps = {
@@ -28,29 +30,41 @@ export default function OngletAgendaConseiller({
   recupererSessionsBeneficiaires,
   trackNavigation,
 }: OngletAgendaConseillerProps) {
-  const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
+  const [agendaRdvs, setAgendaRdvs] = useState<AgendaData<EvenementListItem>>()
 
   async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
-    const evenements = await recupererRdvs(conseiller.id, dateDebut, dateFin)
+    setAgendaRdvs(undefined)
+
+    const deuxiemeJour = dateDebut.plus({ day: 1 }).endOf('day')
+
+    const evenements = await recupererRdvs(
+      conseiller.id,
+      dateDebut,
+      deuxiemeJour
+    )
 
     let sessions: EvenementListItem[] = []
     if (peutAccederAuxSessions(conseiller)) {
       sessions = await recupererSessionsBeneficiaires(
         conseiller.id,
         dateDebut,
-        dateFin
+        deuxiemeJour
       )
     }
 
-    setRdvs(
-      evenements
-        .concat(sessions)
-        .sort((event1, event2) =>
-          compareDates(
-            DateTime.fromISO(event1.date),
-            DateTime.fromISO(event2.date)
-          )
+    const rdvs = evenements
+      .concat(sessions)
+      .sort((event1, event2) =>
+        compareDates(
+          DateTime.fromISO(event1.date),
+          DateTime.fromISO(event2.date)
         )
+      )
+
+    setAgendaRdvs(
+      buildAgenda(rdvs, { debut: dateDebut, fin: dateFin }, ({ date }) =>
+        DateTime.fromISO(date)
+      )
     )
   }
 
@@ -62,11 +76,14 @@ export default function OngletAgendaConseiller({
         trackNavigation={trackNavigation}
       />
 
-      <TableauRdv
-        idConseiller={conseiller.id}
-        rdvs={rdvs ?? []}
-        withIntercalaires={true}
-      />
+      {!agendaRdvs && <SpinningLoader />}
+
+      {agendaRdvs && (
+        <TableauRdvsConseiller
+          idConseiller={conseiller.id}
+          agendaRdvs={agendaRdvs}
+        />
+      )}
     </>
   )
 }
