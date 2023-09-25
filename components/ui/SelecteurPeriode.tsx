@@ -10,14 +10,20 @@ type SelecteurPeriodeProps = {
   onNouvellePeriode: (dateDebut: DateTime, dateFin: DateTime) => Promise<void>
   trackNavigation: (append?: string) => void
   nombreJours: number
+  periodeCourante: number
+  changerPeriode: (toto: number) => void
 }
 
 export function SelecteurPeriode({
   onNouvellePeriode,
   nombreJours,
   trackNavigation,
+  periodeCourante,
+  changerPeriode,
 }: SelecteurPeriodeProps): JSX.Element {
-  const [indexPeriodeAffichee, setIndexPeriodeAffichee] = useState<number>(0)
+  const [indexPeriodeAffichee, setIndexPeriodeAffichee] = useState<number>(
+    periodeCourante ?? 0
+  )
   const AUJOURDHUI = DateTime.now().startOf('day')
 
   function jourDeDebutDeLaPeriode(indexPeriode: number): DateTime {
@@ -33,16 +39,20 @@ export function SelecteurPeriode({
   }
 
   async function allerPeriodePrecedente() {
+    console.log('>>>>', periodeCourante)
+    changerPeriode(periodeCourante - 1)
     setIndexPeriodeAffichee(indexPeriodeAffichee - 1)
     trackNavigation('passés')
   }
 
   async function allerPeriodeSuivante() {
+    changerPeriode(periodeCourante + 1)
     setIndexPeriodeAffichee(indexPeriodeAffichee + 1)
     trackNavigation('futurs')
   }
 
   async function allerPeriodeActuelle() {
+    changerPeriode(0)
     setIndexPeriodeAffichee(0)
     trackNavigation()
   }

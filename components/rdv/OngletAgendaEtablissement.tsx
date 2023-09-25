@@ -44,12 +44,16 @@ type OngletAgendaEtablissementProps = {
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
   trackNavigation: (append?: string) => void
+  periodeIndex: number
+  changerPeriode: (index: number) => void
 }
 
 export default function OngletAgendaEtablissement({
   recupererAnimationsCollectives,
   recupererSessionsMilo,
   trackNavigation,
+  periodeIndex,
+  changerPeriode,
 }: OngletAgendaEtablissementProps) {
   const router = useRouter()
 
@@ -126,6 +130,8 @@ export default function OngletAgendaEtablissement({
         onNouvellePeriode={chargerEvenementsPeriode}
         nombreJours={7}
         trackNavigation={trackNavigation}
+        periodeCourante={periodeIndex}
+        changerPeriode={changerPeriode}
       />
 
       {!agendaAnimationsCollectives && <SpinningLoader />}

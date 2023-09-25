@@ -24,6 +24,8 @@ type OngletAgendaConseillerProps = {
     dateFin: DateTime
   ) => Promise<EvenementListItem[]>
   trackNavigation: (append?: string) => void
+  periodeIndex: number
+  changerPeriode: (index: number) => void
 }
 
 export default function OngletAgendaConseiller({
@@ -31,6 +33,8 @@ export default function OngletAgendaConseiller({
   recupererRdvs,
   recupererSessionsBeneficiaires,
   trackNavigation,
+  periodeIndex,
+  changerPeriode,
 }: OngletAgendaConseillerProps) {
   const router = useRouter()
   const [agendaRdvs, setAgendaRdvs] = useState<AgendaData<EvenementListItem>>()
@@ -82,6 +86,8 @@ export default function OngletAgendaConseiller({
     <>
       <SelecteurPeriode
         onNouvellePeriode={chargerRdvs}
+        changerPeriode={changerPeriode}
+        periodeCourante={periodeIndex}
         nombreJours={7}
         trackNavigation={trackNavigation}
       />

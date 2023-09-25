@@ -12,7 +12,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   estAClore,
   estClos,
@@ -450,12 +450,11 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
-  let redirectTo = context.query.redirectUrl as string
-  if (!redirectTo) {
-    const referer = context.req.headers.referer
-    redirectTo =
-      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  }
+  const periodeIndex = context.query.periodeIndex
+
+  const referer = context.req.headers.referer
+  const returnTo =
+    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
 
   const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
@@ -465,7 +464,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
     return {
       props: {
-        returnTo: redirectTo,
+        returnTo: returnTo,
         ...buildPropsModificationEvenement(evenement),
       },
     }
@@ -476,7 +475,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
     return {
       props: {
-        returnTo: redirectTo,
+        returnTo: returnTo,
         ...buildPropsCreationEvenement(
           typesEvenements,
           creationAC,

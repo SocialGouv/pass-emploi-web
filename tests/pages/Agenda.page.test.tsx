@@ -172,7 +172,10 @@ describe('Agenda', () => {
         )
         // Then
         expect(replace).toHaveBeenCalledWith(
-          { pathname: '/agenda', query: { onglet: 'etablissement' } },
+          {
+            pathname: '/agenda',
+            query: { onglet: 'etablissement', periodeIndex: 0 },
+          },
           undefined,
           { shallow: true }
         )
