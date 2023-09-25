@@ -6,9 +6,9 @@ const lundi = DateTime.fromISO('2029-12-31')
 const mardi = DateTime.fromISO('2030-01-01')
 const mercredi = DateTime.fromISO('2030-01-02')
 const vendredi = DateTime.fromISO('2030-01-04')
-const periode = { debut: lundi, fin: vendredi }
+const periode = { debut: lundi, fin: vendredi.plus({ day: 2 }) }
 
-describe('buildAgenda', () => {
+describe('initAgenda', () => {
   type WithDate = { date: DateTime }
 
   it('construit un agenda vide', () => {
@@ -16,15 +16,17 @@ describe('buildAgenda', () => {
     const listeBase: WithDate[] = []
 
     // When
-    const agenda = buildAgenda(listeBase, periode, ({ date }) => date)
+    const agenda = buildAgenda(listeBase, periode, ({ date }) => date, [0, 1])
 
     // Then
-    expect(agenda).toEqual({
-      '2029-12-31': undefined,
-      '2030-01-01': undefined,
+    expect(agenda).toStrictEqual({
+      '2029-12-31': 'NO_DATA',
+      '2030-01-01': 'NO_DATA',
       '2030-01-02': undefined,
       '2030-01-03': undefined,
       '2030-01-04': undefined,
+      '2030-01-05': undefined,
+      '2030-01-06': undefined,
     })
   })
 
@@ -33,15 +35,17 @@ describe('buildAgenda', () => {
     const withDate = { date: mardi.set({ hour: 8 }) }
 
     // When
-    const agenda = buildAgenda([withDate], periode, ({ date }) => date)
+    const agenda = buildAgenda([withDate], periode, ({ date }) => date, [0, 1])
 
     // Then
-    expect(agenda).toEqual({
-      '2029-12-31': undefined,
+    expect(agenda).toStrictEqual({
+      '2029-12-31': 'NO_DATA',
       '2030-01-01': { matin: [withDate], apresMidi: [] },
       '2030-01-02': undefined,
       '2030-01-03': undefined,
       '2030-01-04': undefined,
+      '2030-01-05': undefined,
+      '2030-01-06': undefined,
     })
   })
 
@@ -66,18 +70,20 @@ describe('buildAgenda', () => {
     const agenda = buildAgenda(items, periode, ({ date }) => date)
 
     // Then
-    expect(agenda).toEqual({
+    expect(agenda).toStrictEqual({
       '2029-12-31': { matin: [], apresMidi: [withDateLundi] },
       '2030-01-01': {
         matin: [withDateMardiMatin],
         apresMidi: [withDateMardiApresMidi],
       },
       '2030-01-02': { matin: [withDateMercredi], apresMidi: [] },
-      '2030-01-03': undefined,
+      '2030-01-03': 'NO_DATA',
       '2030-01-04': {
         matin: [],
         apresMidi: [withDateVendredi, withDateVendredi2],
       },
+      '2030-01-05': 'NO_DATA',
+      '2030-01-06': 'NO_DATA',
     })
   })
 })

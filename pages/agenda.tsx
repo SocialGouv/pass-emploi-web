@@ -32,10 +32,7 @@ const OngletAgendaEtablissement = dynamic(
   import('components/rdv/OngletAgendaEtablissement')
 )
 
-enum Onglet {
-  CONSEILLER = 'CONSEILLER',
-  ETABLISSEMENT = 'ETABLISSEMENT',
-}
+type Onglet = 'CONSEILLER' | 'ETABLISSEMENT'
 
 interface AgendaProps extends PageProps {
   pageTitle: string
@@ -62,7 +59,7 @@ function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
     },
   }
   const [currentTab, setCurrentTab] = useState<Onglet>(
-    onglet ?? Onglet.ETABLISSEMENT
+    onglet ?? 'ETABLISSEMENT'
   )
   const [periodeIndex, setPeriodeIndex] = useState<number>(
     periodeIndexInitial ?? 0
@@ -226,21 +223,21 @@ function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
             'Agenda ' +
             (estMilo(conseiller) ? 'Mission Locale' : 'établissement')
           }
-          selected={currentTab === Onglet.ETABLISSEMENT}
+          selected={currentTab === 'ETABLISSEMENT'}
           controls='agenda-etablissement'
-          onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
+          onSelectTab={() => switchTab('ETABLISSEMENT')}
           iconName={IconName.EventFill}
         />
         <Tab
           label='Mon agenda'
-          selected={currentTab === Onglet.CONSEILLER}
+          selected={currentTab === 'CONSEILLER'}
           controls='agenda-conseiller'
-          onSelectTab={() => switchTab(Onglet.CONSEILLER)}
+          onSelectTab={() => switchTab('CONSEILLER')}
           iconName={IconName.EventFill}
         />
       </TabList>
 
-      {currentTab === Onglet.ETABLISSEMENT && (
+      {currentTab === 'ETABLISSEMENT' && (
         <div
           role='tabpanel'
           aria-labelledby='agenda-etablissement--tab'
@@ -268,7 +265,7 @@ function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
         </div>
       )}
 
-      {currentTab === Onglet.CONSEILLER && (
+      {currentTab === 'CONSEILLER' && (
         <div
           role='tabpanel'
           aria-labelledby='agenda-conseiller--tab'
@@ -320,9 +317,7 @@ export const getServerSideProps: GetServerSideProps<AgendaProps> = async (
 
   if (context.query.onglet)
     props.onglet =
-      context.query.onglet === 'etablissement'
-        ? Onglet.ETABLISSEMENT
-        : Onglet.CONSEILLER
+      context.query.onglet === 'etablissement' ? 'ETABLISSEMENT' : 'CONSEILLER'
 
   return { props }
 }
