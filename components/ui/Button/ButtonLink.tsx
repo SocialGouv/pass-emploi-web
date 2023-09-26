@@ -24,7 +24,9 @@ export default function ButtonLink({
   return (
     <Link
       href={href}
-      className={`${className ? className : ''} text-s-bold ${
+      className={`${
+        className ? className : ''
+      } flex items-center justify-center text-s-bold ${
         styles.button
       } ${getColorStyleClassName(style)}`}
       onClick={onClick}
