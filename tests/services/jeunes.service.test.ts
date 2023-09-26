@@ -38,7 +38,7 @@ import {
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheJeunesDeLEtablissement,
-  getJeunesDeLaStructureMilo,
+  getBeneficiairesDeLaStructureMilo,
   supprimerJeuneInactif,
 } from 'services/jeunes.service'
 import { ApiError } from 'utils/httpClient'
@@ -508,7 +508,7 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.getJeunesDeLaStructureMilo', () => {
+  describe('.getBeneficiairesDeLaStructureMilo', () => {
     it('retourne le resultat de recherche des jeunes d’une structure Milo', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -538,23 +538,17 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await getJeunesDeLaStructureMilo(
+      const actual = await getBeneficiairesDeLaStructureMilo(
         'id-structure',
-        'tok',
-        'e',
-        3
+        'tok'
       )
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/structures-milo/id-structure/jeunes?q=e&page=3',
+        '/structures-milo/id-structure/jeunes',
         'tok'
       )
       expect(actual).toEqual({
-        metadonnees: {
-          nombrePages: 6,
-          nombreTotal: 51,
-        },
         jeunes: [
           {
             base: {

@@ -257,33 +257,21 @@ async function getJeunesDeLEtablissement(
   return jeunes.map(jsonToBaseJeune)
 }
 
-export async function getJeunesDeLaStructureMilo(
+export async function getBeneficiairesDeLaStructureMilo(
   idStructureMilo: string,
-  accessToken: string,
-  recherche?: string,
-  page?: number
+  accessToken: string
 ): Promise<{
   jeunes: JeuneEtablissement[]
-  metadonnees: MetadonneesPagination
 }> {
   let url = `/structures-milo/${idStructureMilo}/jeunes`
 
-  if (recherche && page) {
-    url += `?q=${recherche}&page=${page}`
-  }
-
   const {
-    content: { pagination, resultats },
+    content: { resultats },
   } = await apiGet<{
-    pagination: { total: number; limit: number }
     resultats: JeuneEtablissementJson[]
   }>(url, accessToken)
 
   return {
-    metadonnees: {
-      nombrePages: Math.ceil(pagination.total / pagination.limit),
-      nombreTotal: pagination.total,
-    },
     jeunes: resultats.map(jsonToJeuneEtablissement),
   }
 }

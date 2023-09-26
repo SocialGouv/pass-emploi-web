@@ -590,17 +590,19 @@ export const getServerSideProps: GetServerSideProps<
     'services/conseiller.service'
   )
   const conseiller = await getConseillerServerSide(user, accessToken)
-  if (!conseiller?.agence?.id) return { notFound: true }
+  if (!conseiller?.structureMilo?.id) return { notFound: true }
 
   if (!peutAccederAuxSessions(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
-  const { getJeunesDeLaStructureMilo } = await import('services/jeunes.service')
+  const {
+    getBeneficiairesDeLaStructureMilo: getBeneficiairesDeLaStructureMilo,
+  } = await import('services/jeunes.service')
 
-  const beneficiairesStructureMilo = await getJeunesDeLaStructureMilo(
-    conseiller.agence.id,
+  const beneficiairesStructureMilo = await getBeneficiairesDeLaStructureMilo(
+    conseiller.structureMilo.id,
     accessToken
   )
 
