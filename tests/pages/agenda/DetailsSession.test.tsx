@@ -5,7 +5,7 @@ import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { getJeunesDeLaStructureMilo } from '../../../services/jeunes.service'
+import { getBeneficiairesDeLaStructureMilo } from '../../../services/jeunes.service'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { uneBaseJeune } from 'fixtures/jeune'
@@ -1121,7 +1121,7 @@ describe('Détails Session', () => {
 
     describe('Quand le conseiller est Milo', () => {
       let actual: GetServerSidePropsResult<any>
-      describe('quand conseiller est d’une agence early adopter', () => {
+      describe('quand conseiller est d’une structure Milo early adopter', () => {
         it('recupère le détail de la session', async () => {
           // Given
           ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
@@ -1131,7 +1131,7 @@ describe('Détails Session', () => {
             },
             validSession: true,
           })
-          ;(getJeunesDeLaStructureMilo as jest.Mock).mockReturnValue({
+          ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
             jeunes: [
               {
                 base: uneBaseJeune({
@@ -1222,7 +1222,7 @@ describe('Détails Session', () => {
               user: { structure: 'MILO' },
             },
           })
-          ;(getJeunesDeLaStructureMilo as jest.Mock).mockReturnValue({
+          ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
             jeunes: beneficiaires,
           })
           ;(getConseillerServerSide as jest.Mock).mockReturnValue(
