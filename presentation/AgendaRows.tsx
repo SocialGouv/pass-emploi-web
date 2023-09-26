@@ -25,32 +25,10 @@ export function buildAgendaData<T extends { id: string }>(
   indexJoursCharges: number[] = [0, 1, 2, 3, 4, 5, 6]
 ): AgendaData<T> {
   const agenda: AgendaData<T> = new Map()
-  const premierJour = periode.debut.startOf('day')
-  const dernierJour = periode.fin.startOf('day')
-  for (
-    let jourCourant = premierJour;
-    jourCourant <= dernierJour;
-    jourCourant = jourCourant.plus({ day: 1 })
-  ) {
-    agenda.set(jourCourant.toISODate(), undefined)
-  }
 
-  elements.forEach((element) => {
-    const datetime = extractDate(element)
-    const jour = datetime.toISODate()
-    if (agenda.get(jour) === undefined)
-      agenda.set(jour, { matin: [], apresMidi: [] })
-
-    if (isMatin(datetime.hour))
-      (agenda.get(jour) as DataJour<T>).matin.push(element)
-    if (isApresMidi(datetime.hour))
-      (agenda.get(jour) as DataJour<T>).apresMidi.push(element)
-  })
-
-  indexJoursCharges.forEach((index) => {
-    const jour = premierJour.plus({ day: index }).toISODate()
-    if (agenda.get(jour) === undefined) agenda.set(jour, 'NO_DATA')
-  })
+  initAgendaWithEmptyDays(agenda, periode)
+  populateAgenda(agenda, elements, extractDate)
+  verifyJoursChargesWithoutData(agenda, periode, indexJoursCharges)
 
   return agenda
 }
@@ -165,4 +143,48 @@ function IntercalaireFiller({
       <Filler jourISO={jour} />
     </Intercalaire>
   )
+}
+
+function initAgendaWithEmptyDays<T extends { id: string }>(
+  agenda: AgendaData<T>,
+  periode: { debut: DateTime; fin: DateTime }
+) {
+  const premierJour = periode.debut.startOf('day')
+  const dernierJour = periode.fin.startOf('day')
+  for (
+    let jourCourant = premierJour;
+    jourCourant <= dernierJour;
+    jourCourant = jourCourant.plus({ day: 1 })
+  ) {
+    agenda.set(jourCourant.toISODate(), undefined)
+  }
+}
+
+function populateAgenda<T extends { id: string }>(
+  agenda: AgendaData<T>,
+  elements: T[],
+  extractDate: (element: T) => DateTime
+) {
+  elements.forEach((element) => {
+    const datetime = extractDate(element)
+    const jour = datetime.toISODate()
+    if (agenda.get(jour) === undefined)
+      agenda.set(jour, { matin: [], apresMidi: [] })
+
+    if (isMatin(datetime.hour))
+      (agenda.get(jour) as DataJour<T>).matin.push(element)
+    if (isApresMidi(datetime.hour))
+      (agenda.get(jour) as DataJour<T>).apresMidi.push(element)
+  })
+}
+
+function verifyJoursChargesWithoutData<T extends { id: string }>(
+  agenda: AgendaData<T>,
+  periode: { debut: DateTime; fin: DateTime },
+  indexJoursCharges: number[]
+) {
+  indexJoursCharges.forEach((index) => {
+    const jour = periode.debut.plus({ day: index }).toISODate()
+    if (agenda.get(jour) === undefined) agenda.set(jour, 'NO_DATA')
+  })
 }
