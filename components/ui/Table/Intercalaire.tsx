@@ -1,19 +1,16 @@
-import React, { ReactNode, useRef, useState, useEffect } from 'react'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
 
 interface IntercalaireProps {
   children: ReactNode
   className?: string
-  asDiv?: boolean
 }
 
 export function Intercalaire({
   children,
-  asDiv = false,
   className = '',
 }: IntercalaireProps): JSX.Element {
   const [colspan, setColspan] = useState<number>(1)
   const divRef = useRef<HTMLDivElement>(null)
-  const trRef = useRef<HTMLTableRowElement>(null)
 
   function computeColspan(row: HTMLElement): number {
     const table = findParentTable(row)
@@ -44,28 +41,17 @@ export function Intercalaire({
 
   useEffect(() => {
     if (divRef.current) setColspan(computeColspan(divRef.current))
-    if (trRef.current) setColspan(computeColspan(trRef.current))
-  }, [divRef, trRef])
+  }, [divRef])
 
-  if (asDiv) {
-    return (
-      <div role='row' className='table-row' ref={divRef}>
-        <div
-          role='columnheader'
-          className={'table-cell ' + className}
-          aria-colspan={colspan}
-        >
-          {children}
-        </div>
+  return (
+    <div role='row' className='table-row' ref={divRef}>
+      <div
+        role='columnheader'
+        className={'table-cell ' + className}
+        aria-colspan={colspan}
+      >
+        {children}
       </div>
-    )
-  } else {
-    return (
-      <tr ref={trRef}>
-        <th className={'text-left ' + className} colSpan={colspan}>
-          {children}
-        </th>
-      </tr>
-    )
-  }
+    </div>
+  )
 }

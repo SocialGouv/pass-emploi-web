@@ -9,7 +9,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
-import { AgendaData, renderAgenda } from 'presentation/Intercalaires'
+import { AgendaRows, AgendaData } from 'presentation/AgendaRows'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 
 type TableauRdvsConseillerProps = {
@@ -36,18 +36,18 @@ export default function TableauRdvsConseiller({
       </THead>
 
       <TBody>
-        {renderAgenda(
-          agendaRdvs,
-          (rdv) => (
-            <RdvRow key={rdv.id} rdv={rdv} idConseiller={idConseiller} />
-          ),
-          (jourISO: string) => (
+        <AgendaRows
+          agenda={agendaRdvs}
+          Data={({ item }) => (
+            <RdvRow key={item.id} rdv={item} idConseiller={idConseiller} />
+          )}
+          Filler={({ jourISO }) => (
             <ButtonChargerEvenementsJour
               jour={DateTime.fromISO(jourISO)}
               onClick={onChargerEvenementsJour}
             />
-          )
-        )}
+          )}
+        />
       </TBody>
     </Table>
   )

@@ -23,9 +23,9 @@ import {
 } from 'interfaces/evenement'
 import {
   AgendaData,
-  buildAgenda,
-  renderAgenda,
-} from 'presentation/Intercalaires'
+  AgendaRows,
+  buildAgendaData,
+} from 'presentation/AgendaRows'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import {
   TIME_24_H_SEPARATOR,
@@ -123,7 +123,11 @@ export default function OngletAgendaEtablissement({
   useEffect(() => {
     if (animationsCollectivesFiltrees && periode) {
       setAgendaAnimationsCollectives(
-        buildAgenda(animationsCollectivesFiltrees, periode, ({ date }) => date)
+        buildAgendaData(
+          animationsCollectivesFiltrees,
+          periode,
+          ({ date }) => date
+        )
       )
     }
   }, [animationsCollectivesFiltrees, periode])
@@ -207,50 +211,53 @@ export default function OngletAgendaEtablissement({
             </TR>
           </THead>
           <TBody>
-            {renderAgenda(agendaAnimationsCollectives, (ac) => (
-              <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
-                <TD>
-                  {heure(ac)} - {ac.duree} min
-                </TD>
-                <TD>
-                  {ac.titre}
-                  <span className={'block text-s-regular'}>{ac.sousTitre}</span>
-                </TD>
-                <TD>{tagType(ac)}</TD>
-                <TD className='flex text-center'>
-                  <IconComponent
-                    aria-label={ac.estCache ? 'Non visible' : 'Visible'}
-                    className='inline h-6 w-6 fill-primary'
-                    focusable={false}
-                    name={
-                      ac.estCache
-                        ? IconName.VisibilityOff
-                        : IconName.VisibilityOn
-                    }
-                    role='img'
-                  />
-                </TD>
-                <TD>
-                  <div className='flex items-center justify-between'>
-                    {ac.statut && tagStatut(ac)}
-                    {!ac.statut && (
-                      <>
-                        -
-                        <span className='sr-only'>
-                          information non disponible
-                        </span>
-                      </>
-                    )}
+            <AgendaRows
+              agenda={agendaAnimationsCollectives}
+              Data={({ item: ac }) => (
+                <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
+                  <TD>
+                    {heure(ac)} - {ac.duree} min
+                  </TD>
+                  <TD>
+                    {ac.titre}
+                    <span className='block text-s-regular'>{ac.sousTitre}</span>
+                  </TD>
+                  <TD>{tagType(ac)}</TD>
+                  <TD className='flex text-center'>
                     <IconComponent
-                      name={IconName.ChevronRight}
+                      aria-label={ac.estCache ? 'Non visible' : 'Visible'}
+                      className='inline h-6 w-6 fill-primary'
                       focusable={false}
-                      aria-hidden={true}
-                      className='w-6 h-6 fill-primary'
+                      name={
+                        ac.estCache
+                          ? IconName.VisibilityOff
+                          : IconName.VisibilityOn
+                      }
+                      role='img'
                     />
-                  </div>
-                </TD>
-              </TR>
-            ))}
+                  </TD>
+                  <TD>
+                    <div className='flex items-center justify-between'>
+                      {ac.statut && tagStatut(ac)}
+                      {!ac.statut && (
+                        <>
+                          -
+                          <span className='sr-only'>
+                            information non disponible
+                          </span>
+                        </>
+                      )}
+                      <IconComponent
+                        name={IconName.ChevronRight}
+                        focusable={false}
+                        aria-hidden={true}
+                        className='w-6 h-6 fill-primary'
+                      />
+                    </div>
+                  </TD>
+                </TR>
+              )}
+            />
           </TBody>
         </Table>
       )}
