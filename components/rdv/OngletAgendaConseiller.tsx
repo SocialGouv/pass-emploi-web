@@ -6,7 +6,7 @@ import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
-import { AgendaData, buildAgenda } from 'presentation/Intercalaires'
+import { AgendaData, buildAgendaData } from 'presentation/AgendaRows'
 import { compareDates } from 'utils/date'
 
 type OngletAgendaConseillerProps = {
@@ -105,7 +105,7 @@ export default function OngletAgendaConseiller({
   useEffect(() => {
     if (rdvs && periode && indexJoursCharges) {
       setAgendaRdvs(
-        buildAgenda(
+        buildAgendaData(
           rdvs,
           periode,
           ({ date }) => DateTime.fromISO(date),

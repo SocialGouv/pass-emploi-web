@@ -8,7 +8,7 @@ import React from 'react'
 import TableauRdvsConseiller from 'components/rdv/TableauRdvsConseiller'
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
-import { buildAgenda } from 'presentation/Intercalaires'
+import { buildAgendaData } from 'presentation/AgendaRows'
 import {
   TIME_24_H_SEPARATOR,
   toFrenchFormat,
@@ -26,7 +26,7 @@ describe('<TableauRdvsConseiller>', () => {
     beforeEach(() => {
       // Given
       listeRdv = desEvenementsListItems()
-      const agenda = buildAgenda(
+      const agenda = buildAgendaData(
         listeRdv,
         {
           debut: DateTime.fromISO('2021-10-21'),

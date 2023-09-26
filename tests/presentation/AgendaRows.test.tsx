@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { buildAgenda } from 'presentation/Intercalaires'
+import { buildAgendaData } from 'presentation/AgendaRows'
 
 const lundi = DateTime.fromISO('2029-12-31')
 const mardi = DateTime.fromISO('2030-01-01')
@@ -8,15 +8,20 @@ const mercredi = DateTime.fromISO('2030-01-02')
 const vendredi = DateTime.fromISO('2030-01-04')
 const periode = { debut: lundi, fin: vendredi.plus({ day: 2 }) }
 
-describe('initAgenda', () => {
-  type WithDate = { date: DateTime }
+describe('buildAgendaData', () => {
+  type WithDate = { id: string; date: DateTime }
 
   it('construit un agenda vide', () => {
     // Given
     const listeBase: WithDate[] = []
 
     // When
-    const agenda = buildAgenda(listeBase, periode, ({ date }) => date, [0, 1])
+    const agenda = buildAgendaData(
+      listeBase,
+      periode,
+      ({ date }) => date,
+      [0, 1]
+    )
 
     // Then
     expect(agenda).toStrictEqual({
@@ -32,10 +37,15 @@ describe('initAgenda', () => {
 
   it('construit un agenda avec un seul item', () => {
     // Given
-    const withDate = { date: mardi.set({ hour: 8 }) }
+    const withDate = { id: 'mardi', date: mardi.set({ hour: 8 }) }
 
     // When
-    const agenda = buildAgenda([withDate], periode, ({ date }) => date, [0, 1])
+    const agenda = buildAgendaData(
+      [withDate],
+      periode,
+      ({ date }) => date,
+      [0, 1]
+    )
 
     // Then
     expect(agenda).toStrictEqual({
@@ -51,12 +61,24 @@ describe('initAgenda', () => {
 
   it('construit un agenda avec plusieurs items', () => {
     // Given
-    const withDateLundi = { date: lundi.set({ hour: 16 }) }
-    const withDateMardiMatin = { date: mardi.set({ hour: 8 }) }
-    const withDateMardiApresMidi = { date: mardi.set({ hour: 16 }) }
-    const withDateMercredi = { date: mercredi.set({ hour: 8 }) }
-    const withDateVendredi = { date: vendredi.set({ hour: 16 }) }
-    const withDateVendredi2 = { date: vendredi.set({ hour: 17 }) }
+    const withDateLundi = { id: 'lundi', date: lundi.set({ hour: 16 }) }
+    const withDateMardiMatin = {
+      id: 'mardiMatin',
+      date: mardi.set({ hour: 8 }),
+    }
+    const withDateMardiApresMidi = {
+      id: 'mardiApresMidi',
+      date: mardi.set({ hour: 16 }),
+    }
+    const withDateMercredi = { id: 'mercredi', date: mercredi.set({ hour: 8 }) }
+    const withDateVendredi = {
+      id: 'vendredi',
+      date: vendredi.set({ hour: 16 }),
+    }
+    const withDateVendredi2 = {
+      id: 'vendredi2',
+      date: vendredi.set({ hour: 17 }),
+    }
     const items = [
       withDateLundi,
       withDateMardiMatin,
@@ -67,7 +89,7 @@ describe('initAgenda', () => {
     ]
 
     // When
-    const agenda = buildAgenda(items, periode, ({ date }) => date)
+    const agenda = buildAgendaData(items, periode, ({ date }) => date)
 
     // Then
     expect(agenda).toStrictEqual({
