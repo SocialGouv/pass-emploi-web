@@ -5,17 +5,22 @@ import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
+import { getJeunesDeLaStructureMilo } from '../../../services/jeunes.service'
+
 import { unConseiller } from 'fixtures/conseiller'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { BaseJeune } from 'interfaces/jeune'
+import {
+  BaseJeune,
+  CategorieSituation,
+  JeuneEtablissement,
+} from 'interfaces/jeune'
 import { Session } from 'interfaces/session'
 import DetailSession, {
   getServerSideProps,
 } from 'pages/agenda/sessions/[session_id]'
 import { getConseillerServerSide } from 'services/conseiller.service'
-import { getJeunesDeLEtablissementServerSide } from 'services/jeunes.service'
 import {
   changerInscriptionsSession,
   changerVisibiliteSession,
@@ -37,29 +42,47 @@ describe('Détails Session', () => {
   describe('client side', () => {
     describe('contenu', () => {
       let session: Session
-      let beneficiairesEtablissement: BaseJeune[]
+      let beneficiaires: JeuneEtablissement[]
       beforeEach(async () => {
         // Given
         session = unDetailSession()
         session.session.dateMaxInscription = '2023-06-17'
-        beneficiairesEtablissement = [
-          uneBaseJeune({
-            id: 'jeune-1',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
-          uneBaseJeune({
-            id: 'jeune-2',
-            prenom: 'Octo',
-            nom: 'Puce',
-          }),
+        beneficiaires = [
+          {
+            base: uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-2',
+              prenom: 'Octo',
+              nom: 'Puce',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
         ]
         // When
         await renderWithContexts(
           <DetailSession
             pageTitle=''
             session={session}
-            beneficiairesEtablissement={beneficiairesEtablissement}
+            beneficiairesStructureMilo={beneficiaires}
             returnTo='whatever'
           />
         )
@@ -130,7 +153,7 @@ describe('Détails Session', () => {
       let sessionVisible: Session
       let sessionInvisible: Session
       let toggleVisibiliteSession: HTMLInputElement
-      let beneficairesEtablissement: BaseJeune[]
+      let beneficaires: JeuneEtablissement[]
       beforeEach(async () => {
         // Given
         sessionVisible = unDetailSession()
@@ -145,17 +168,35 @@ describe('Détails Session', () => {
             estVisible: false,
           },
         })
-        beneficairesEtablissement = [
-          uneBaseJeune({
-            id: 'jeune-1',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
-          uneBaseJeune({
-            id: 'jeune-2',
-            prenom: 'Octo',
-            nom: 'Puce',
-          }),
+        beneficaires = [
+          {
+            base: uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-2',
+              prenom: 'Octo',
+              nom: 'Puce',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
         ]
       })
 
@@ -165,7 +206,7 @@ describe('Détails Session', () => {
           <DetailSession
             pageTitle=''
             session={sessionInvisible}
-            beneficiairesEtablissement={beneficairesEtablissement}
+            beneficiairesStructureMilo={beneficaires}
             returnTo='whatever'
           />
         )
@@ -181,7 +222,7 @@ describe('Détails Session', () => {
           <DetailSession
             pageTitle=''
             session={sessionVisible}
-            beneficiairesEtablissement={beneficairesEtablissement}
+            beneficiairesStructureMilo={beneficaires}
             returnTo='whatever'
           />
         )
@@ -200,7 +241,7 @@ describe('Détails Session', () => {
             <DetailSession
               pageTitle=''
               session={sessionInvisible}
-              beneficiairesEtablissement={beneficairesEtablissement}
+              beneficiairesStructureMilo={beneficaires}
               returnTo='whatever'
             />
           )
@@ -221,30 +262,66 @@ describe('Détails Session', () => {
 
     describe('permet de gérer la liste des inscrits', () => {
       let session: Session
-      let beneficairesEtablissement: BaseJeune[]
+      let beneficaires: JeuneEtablissement[]
       beforeEach(async () => {
         // Given
-        beneficairesEtablissement = [
-          uneBaseJeune({
-            id: 'jeune-1',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
-          uneBaseJeune({
-            id: 'jeune-2',
-            prenom: 'Octo',
-            nom: 'Puce',
-          }),
-          uneBaseJeune({
-            id: 'jeune-3',
-            prenom: 'Maggy',
-            nom: 'Carpe',
-          }),
-          uneBaseJeune({
-            id: 'jeune-4',
-            prenom: 'Tom',
-            nom: 'Sawyer',
-          }),
+        beneficaires = [
+          {
+            base: uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-2',
+              prenom: 'Octo',
+              nom: 'Puce',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-3',
+              prenom: 'Maggy',
+              nom: 'Carpe',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-4',
+              prenom: 'Tom',
+              nom: 'Sawyer',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
         ]
       })
 
@@ -292,7 +369,7 @@ describe('Détails Session', () => {
             <DetailSession
               pageTitle=''
               session={session}
-              beneficiairesEtablissement={beneficairesEtablissement}
+              beneficiairesStructureMilo={beneficaires}
               returnTo='whatever'
             />
           )
@@ -301,7 +378,7 @@ describe('Détails Session', () => {
           // Then
           expect(
             screen.getByLabelText(
-              `Désinscrire ${beneficairesEtablissement[0].prenom} ${beneficairesEtablissement[0].nom}`
+              `Désinscrire ${beneficaires[0].base.prenom} ${beneficaires[0].base.nom}`
             )
           ).toBeInTheDocument()
           expect(screen.getByText('Refus tiers')).toBeInTheDocument()
@@ -370,7 +447,7 @@ describe('Détails Session', () => {
             <DetailSession
               pageTitle=''
               session={session}
-              beneficiairesEtablissement={beneficairesEtablissement}
+              beneficiairesStructureMilo={beneficaires}
               returnTo='whatever'
             />
           )
@@ -431,7 +508,7 @@ describe('Détails Session', () => {
             <DetailSession
               pageTitle=''
               session={session}
-              beneficiairesEtablissement={beneficairesEtablissement}
+              beneficiairesStructureMilo={beneficaires}
               returnTo='whatever'
             />
           )
@@ -457,15 +534,24 @@ describe('Détails Session', () => {
 
     describe('si la date limite d’inscription est dépassée', () => {
       let session: Session
-      let beneficairesEtablissement: BaseJeune[]
+      let beneficaires: JeuneEtablissement[]
       beforeEach(async () => {
         // Given
-        beneficairesEtablissement = [
-          uneBaseJeune({
-            id: 'jeune-1',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
+        beneficaires = [
+          {
+            base: uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
         ]
 
         session = unDetailSession({
@@ -496,7 +582,7 @@ describe('Détails Session', () => {
           <DetailSession
             pageTitle=''
             session={session}
-            beneficiairesEtablissement={beneficairesEtablissement}
+            beneficiairesStructureMilo={beneficaires}
             returnTo='whatever'
           />
         )
@@ -514,15 +600,24 @@ describe('Détails Session', () => {
 
     describe('si la date de début est dépassée', () => {
       let session: Session
-      let beneficairesEtablissement: BaseJeune[]
+      let beneficaires: JeuneEtablissement[]
       beforeEach(async () => {
         // Given
-        beneficairesEtablissement = [
-          uneBaseJeune({
-            id: 'jeune-1',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
+        beneficaires = [
+          {
+            base: uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
         ]
 
         session = unDetailSession({
@@ -552,7 +647,7 @@ describe('Détails Session', () => {
           <DetailSession
             pageTitle=''
             session={session}
-            beneficiairesEtablissement={beneficairesEtablissement}
+            beneficiairesStructureMilo={beneficaires}
             returnTo='whatever'
           />
         )
@@ -593,30 +688,66 @@ describe('Détails Session', () => {
 
     describe('permet de désinscrire un bénéficiaire', () => {
       let session: Session
-      let beneficairesEtablissement: BaseJeune[]
+      let beneficaires: JeuneEtablissement[]
       beforeEach(async () => {
         // Given
-        beneficairesEtablissement = [
-          uneBaseJeune({
-            id: 'jeune-1',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
-          uneBaseJeune({
-            id: 'jeune-2',
-            prenom: 'Octo',
-            nom: 'Puce',
-          }),
-          uneBaseJeune({
-            id: 'jeune-3',
-            prenom: 'Maggy',
-            nom: 'Carpe',
-          }),
-          uneBaseJeune({
-            id: 'jeune-4',
-            prenom: 'Tom',
-            nom: 'Sawyer',
-          }),
+        beneficaires = [
+          {
+            base: uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-2',
+              prenom: 'Octo',
+              nom: 'Puce',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-3',
+              prenom: 'Maggy',
+              nom: 'Carpe',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-4',
+              prenom: 'Tom',
+              nom: 'Sawyer',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
         ]
       })
 
@@ -644,7 +775,7 @@ describe('Détails Session', () => {
           <DetailSession
             pageTitle=''
             session={session}
-            beneficiairesEtablissement={beneficairesEtablissement}
+            beneficiairesStructureMilo={beneficaires}
             returnTo='whatever'
           />
         )
@@ -696,7 +827,7 @@ describe('Détails Session', () => {
             <DetailSession
               pageTitle=''
               session={session}
-              beneficiairesEtablissement={beneficairesEtablissement}
+              beneficiairesStructureMilo={beneficaires}
               returnTo='whatever'
             />
           )
@@ -748,7 +879,7 @@ describe('Détails Session', () => {
     describe('permet de réinscrire un bénéficiaire', () => {
       //Given
       let session: Session
-      let beneficairesEtablissement: BaseJeune[]
+      let beneficaires: JeuneEtablissement[]
 
       beforeEach(async () => {
         session = unDetailSession({
@@ -778,19 +909,28 @@ describe('Détails Session', () => {
           ],
         })
 
-        beneficairesEtablissement = [
-          uneBaseJeune({
-            id: 'idHarryBeau',
-            prenom: 'Harry',
-            nom: 'Beau',
-          }),
+        beneficaires = [
+          {
+            base: uneBaseJeune({
+              id: 'idHarryBeau',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
         ]
 
         await renderWithContexts(
           <DetailSession
             pageTitle=''
             session={session}
-            beneficiairesEtablissement={beneficairesEtablissement}
+            beneficiairesStructureMilo={beneficaires}
             returnTo='whatever'
           />
         )
@@ -849,9 +989,20 @@ describe('Détails Session', () => {
       describe('quand la session est à venir', () => {
         it("n'affiche pas le lien Clore", async () => {
           let session: Session
-          let beneficairesEtablissement: BaseJeune[]
+          let beneficairesEtablissement: JeuneEtablissement[]
           // Given
-          beneficairesEtablissement = [uneBaseJeune()]
+          beneficairesEtablissement = [
+            {
+              base: uneBaseJeune(),
+              referent: {
+                id: 'id-conseiller',
+                nom: 'Le Calamar',
+                prenom: 'Carlo',
+              },
+              situation: CategorieSituation.EMPLOI,
+              dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+            },
+          ]
 
           session = unDetailSession({
             session: {
@@ -864,7 +1015,7 @@ describe('Détails Session', () => {
             <DetailSession
               pageTitle=''
               session={session}
-              beneficiairesEtablissement={beneficairesEtablissement}
+              beneficiairesStructureMilo={beneficairesEtablissement}
               returnTo='whatever'
             />
           )
@@ -879,15 +1030,24 @@ describe('Détails Session', () => {
 
       describe('quand la session est passée et non close', () => {
         let session: Session
-        let beneficairesEtablissement: BaseJeune[]
+        let beneficaires: JeuneEtablissement[]
         beforeEach(async () => {
           // Given
-          beneficairesEtablissement = [
-            uneBaseJeune({
-              id: 'jeune-1',
-              prenom: 'Harry',
-              nom: 'Beau',
-            }),
+          beneficaires = [
+            {
+              base: uneBaseJeune({
+                id: 'jeune-1',
+                prenom: 'Harry',
+                nom: 'Beau',
+              }),
+              referent: {
+                id: 'id-conseiller',
+                nom: 'Le Calamar',
+                prenom: 'Carlo',
+              },
+              situation: CategorieSituation.EMPLOI,
+              dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+            },
           ]
 
           session = unDetailSession({
@@ -907,7 +1067,7 @@ describe('Détails Session', () => {
             <DetailSession
               pageTitle=''
               session={session}
-              beneficiairesEtablissement={beneficairesEtablissement}
+              beneficiairesStructureMilo={beneficaires}
               returnTo='whatever'
             />
           )
@@ -971,18 +1131,38 @@ describe('Détails Session', () => {
             },
             validSession: true,
           })
-          ;(getJeunesDeLEtablissementServerSide as jest.Mock).mockReturnValue([
-            uneBaseJeune({
-              id: 'jeune-1',
-              prenom: 'Harry',
-              nom: 'Beau',
-            }),
-            uneBaseJeune({
-              id: 'jeune-2',
-              prenom: 'Octo',
-              nom: 'Puce',
-            }),
-          ])
+          ;(getJeunesDeLaStructureMilo as jest.Mock).mockReturnValue({
+            jeunes: [
+              {
+                base: uneBaseJeune({
+                  id: 'jeune-1',
+                  prenom: 'Harry',
+                  nom: 'Beau',
+                }),
+                referent: {
+                  id: 'id-conseiller',
+                  nom: 'Le Calamar',
+                  prenom: 'Carlo',
+                },
+                situation: CategorieSituation.EMPLOI,
+                dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+              },
+              {
+                base: uneBaseJeune({
+                  id: 'jeune-2',
+                  prenom: 'Octo',
+                  nom: 'Puce',
+                }),
+                referent: {
+                  id: 'id-conseiller',
+                  nom: 'Le Calamar',
+                  prenom: 'Carlo',
+                },
+                situation: CategorieSituation.EMPLOI,
+                dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+              },
+            ],
+          })
           ;(getConseillerServerSide as jest.Mock).mockReturnValue(
             unConseiller({
               id: 'id-conseiller',
@@ -1006,17 +1186,35 @@ describe('Détails Session', () => {
 
         it('prépare la page', async () => {
           // Given
-          const beneficiairesEtablissement = [
-            uneBaseJeune({
-              id: 'jeune-1',
-              prenom: 'Harry',
-              nom: 'Beau',
-            }),
-            uneBaseJeune({
-              id: 'jeune-2',
-              prenom: 'Octo',
-              nom: 'Puce',
-            }),
+          const beneficiaires: JeuneEtablissement[] = [
+            {
+              base: uneBaseJeune({
+                id: 'jeune-1',
+                prenom: 'Harry',
+                nom: 'Beau',
+              }),
+              referent: {
+                id: 'id-conseiller',
+                nom: 'Le Calamar',
+                prenom: 'Carlo',
+              },
+              situation: CategorieSituation.EMPLOI,
+              dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+            },
+            {
+              base: uneBaseJeune({
+                id: 'jeune-2',
+                prenom: 'Octo',
+                nom: 'Puce',
+              }),
+              referent: {
+                id: 'id-conseiller',
+                nom: 'Le Calamar',
+                prenom: 'Carlo',
+              },
+              situation: CategorieSituation.EMPLOI,
+              dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+            },
           ]
           ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
             validSession: true,
@@ -1024,9 +1222,9 @@ describe('Détails Session', () => {
               user: { structure: 'MILO' },
             },
           })
-          ;(getJeunesDeLEtablissementServerSide as jest.Mock).mockReturnValue(
-            beneficiairesEtablissement
-          )
+          ;(getJeunesDeLaStructureMilo as jest.Mock).mockReturnValue({
+            jeunes: beneficiaires,
+          })
           ;(getConseillerServerSide as jest.Mock).mockReturnValue(
             unConseiller({
               id: 'id-conseiller',
@@ -1053,7 +1251,7 @@ describe('Détails Session', () => {
           // Then
           expect(actual).toEqual({
             props: {
-              beneficiairesEtablissement: beneficiairesEtablissement,
+              beneficiairesStructureMilo: beneficiaires,
               pageTitle: `Détail session ${session.session.nom} - Agenda`,
               pageHeader: 'Détail de la session i-milo',
               returnTo: '/mes-jeunes',

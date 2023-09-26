@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useRef, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 
 import PageActionsPortal from 'components/PageActionsPortal'
 import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
@@ -23,7 +23,7 @@ import {
   estUserMilo,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
-import { BaseJeune } from 'interfaces/jeune'
+import { JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -39,7 +39,7 @@ const DesinscriptionBeneficiaireModal = dynamic(
 )
 
 type DetailSessionProps = PageProps & {
-  beneficiairesEtablissement: BaseJeune[]
+  beneficiairesStructureMilo: JeuneEtablissement[]
   session: Session
   returnTo: string
 }
@@ -57,7 +57,7 @@ export type BaseBeneficiaireASelectionner = {
 }
 
 function FicheDetailsSession({
-  beneficiairesEtablissement,
+  beneficiairesStructureMilo,
   session,
   returnTo,
 }: DetailSessionProps) {
@@ -125,17 +125,17 @@ function FicheDetailsSession({
   }
 
   function getBeneficiairesNonSelectionnees(): BaseBeneficiaireASelectionner[] {
-    return beneficiairesEtablissement
+    return beneficiairesStructureMilo
       .filter(
         (beneficiaire) =>
           !beneficiairesSelectionnes.value.some(
             (selectedBeneficiaire) =>
-              selectedBeneficiaire.id === beneficiaire.id
+              selectedBeneficiaire.id === beneficiaire.base.id
           )
       )
       .map((beneficiaire) => ({
-        id: beneficiaire.id,
-        value: `${beneficiaire.prenom} ${beneficiaire.nom}`,
+        id: beneficiaire.base.id,
+        value: `${beneficiaire.base.prenom} ${beneficiaire.base.nom}`,
       }))
   }
 
@@ -615,18 +615,16 @@ export const getServerSideProps: GetServerSideProps<
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
-  const { getJeunesDeLEtablissementServerSide } = await import(
-    'services/jeunes.service'
-  )
+  const { getJeunesDeLaStructureMilo } = await import('services/jeunes.service')
 
-  const beneficiairesEtablissement = await getJeunesDeLEtablissementServerSide(
+  const beneficiairesStructureMilo = await getJeunesDeLaStructureMilo(
     conseiller.agence.id,
     accessToken
   )
 
   return {
     props: {
-      beneficiairesEtablissement: beneficiairesEtablissement,
+      beneficiairesStructureMilo: beneficiairesStructureMilo.jeunes,
       pageTitle: `Détail session ${session.session.nom} - Agenda`,
       pageHeader: 'Détail de la session i-milo',
       returnTo: redirectTo,

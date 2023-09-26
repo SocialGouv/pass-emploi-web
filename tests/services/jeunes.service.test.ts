@@ -17,17 +17,15 @@ import {
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { EvenementListItem } from 'interfaces/evenement'
 import { CategorieSituation } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { SessionMiloBeneficiaireJson } from 'interfaces/json/session'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import {
   archiverJeune,
   getConseillersDuJeuneClientSide,
   getConseillersDuJeuneServerSide,
-  getIdentitesBeneficiaires,
   getIdJeuneMilo,
+  getIdentitesBeneficiaires,
   getIndicateursJeuneAlleges,
   getIndicateursJeuneComplets,
   getJeuneDetails,
@@ -40,9 +38,9 @@ import {
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheJeunesDeLEtablissement,
+  getJeunesDeLaStructureMilo,
   supprimerJeuneInactif,
 } from 'services/jeunes.service'
-import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -484,6 +482,73 @@ describe('JeunesApiService', () => {
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/etablissements/id-etablissement/jeunes?q=e&page=3',
         'accessToken'
+      )
+      expect(actual).toEqual({
+        metadonnees: {
+          nombrePages: 6,
+          nombreTotal: 51,
+        },
+        jeunes: [
+          {
+            base: {
+              id: 'jeune-1',
+              nom: 'Reportaire',
+              prenom: 'Albert',
+            },
+            referent: {
+              id: 'conseiller-1',
+              nom: 'Tavernier',
+              prenom: 'Nils',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+        ],
+      })
+    })
+  })
+
+  describe('.getJeunesDeLaStructureMilo', () => {
+    it('retourne le resultat de recherche des jeunes d’une structure Milo', async () => {
+      // Given
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: {
+          pagination: {
+            page: 3,
+            limit: 10,
+            total: 51,
+          },
+          resultats: [
+            {
+              jeune: {
+                id: 'jeune-1',
+                nom: 'Reportaire',
+                prenom: 'Albert',
+              },
+              referent: {
+                id: 'conseiller-1',
+                nom: 'Tavernier',
+                prenom: 'Nils',
+              },
+              situation: 'Emploi',
+              dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+            },
+          ],
+        },
+      })
+
+      // When
+      const actual = await getJeunesDeLaStructureMilo(
+        'id-structure',
+        'tok',
+        'e',
+        3
+      )
+
+      // Then
+      expect(apiGet).toHaveBeenCalledWith(
+        '/structures-milo/id-structure/jeunes?q=e&page=3',
+        'tok'
       )
       expect(actual).toEqual({
         metadonnees: {
