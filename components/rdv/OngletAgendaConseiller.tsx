@@ -34,6 +34,15 @@ export default function OngletAgendaConseiller({
 }: OngletAgendaConseillerProps) {
   const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
 
+  async function chargerNouvellePeriode(
+    nouvellePeriodeIndex: number,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) {
+    await chargerRdvs(dateDebut, dateFin)
+    changerPeriode(nouvellePeriodeIndex)
+  }
+
   async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
     const evenements = await recupererRdvs(conseiller.id, dateDebut, dateFin)
 
@@ -61,8 +70,7 @@ export default function OngletAgendaConseiller({
   return (
     <>
       <SelecteurPeriode
-        onNouvellePeriode={chargerRdvs}
-        changerPeriode={changerPeriode}
+        onNouvellePeriode={chargerNouvellePeriode}
         periodeCourante={periodeIndex}
         nombreJours={7}
         trackNavigation={trackNavigation}
@@ -72,7 +80,6 @@ export default function OngletAgendaConseiller({
         idConseiller={conseiller.id}
         rdvs={rdvs ?? []}
         withIntercalaires={true}
-        periodeIndex={periodeIndex}
       />
     </>
   )

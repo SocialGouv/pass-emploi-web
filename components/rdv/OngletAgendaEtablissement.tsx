@@ -67,6 +67,15 @@ export default function OngletAgendaEtablissement({
     StatutAnimationCollective[]
   >([])
 
+  async function chargerNouvellePeriode(
+    nouvellePeriodeIndex: number,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) {
+    await chargerEvenementsPeriode(dateDebut, dateFin)
+    changerPeriode(nouvellePeriodeIndex)
+  }
+
   async function chargerEvenementsPeriode(
     dateDebut: DateTime,
     dateFin: DateTime
@@ -113,11 +122,10 @@ export default function OngletAgendaEtablissement({
   return (
     <>
       <SelecteurPeriode
-        onNouvellePeriode={chargerEvenementsPeriode}
         nombreJours={7}
-        trackNavigation={trackNavigation}
+        onNouvellePeriode={chargerNouvellePeriode}
         periodeCourante={periodeIndex}
-        changerPeriode={changerPeriode}
+        trackNavigation={trackNavigation}
       />
 
       {!animationsCollectivesGroupees && <SpinningLoader />}

@@ -7,11 +7,14 @@ import IconComponent, { IconName } from './IconComponent'
 import { toShortDate } from 'utils/date'
 
 type SelecteurPeriodeProps = {
-  onNouvellePeriode: (dateDebut: DateTime, dateFin: DateTime) => Promise<void>
+  onNouvellePeriode: (
+    indexPeriode: number,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) => Promise<void>
   trackNavigation: (append?: string) => void
   nombreJours: number
   periodeCourante: number
-  changerPeriode: (toto: number) => void
 }
 
 export function SelecteurPeriode({
@@ -19,7 +22,6 @@ export function SelecteurPeriode({
   nombreJours,
   trackNavigation,
   periodeCourante,
-  changerPeriode,
 }: SelecteurPeriodeProps): JSX.Element {
   const [indexPeriodeAffichee, setIndexPeriodeAffichee] = useState<number>(
     periodeCourante ?? 0
@@ -39,26 +41,23 @@ export function SelecteurPeriode({
   }
 
   async function allerPeriodePrecedente() {
-    console.log('>>>>', periodeCourante)
-    changerPeriode(periodeCourante - 1)
     setIndexPeriodeAffichee(indexPeriodeAffichee - 1)
     trackNavigation('passés')
   }
 
   async function allerPeriodeSuivante() {
-    changerPeriode(periodeCourante + 1)
     setIndexPeriodeAffichee(indexPeriodeAffichee + 1)
     trackNavigation('futurs')
   }
 
   async function allerPeriodeActuelle() {
-    changerPeriode(0)
     setIndexPeriodeAffichee(0)
     trackNavigation()
   }
 
   useEffect(() => {
     onNouvellePeriode(
+      indexPeriodeAffichee,
       jourDeDebutDeLaPeriode(indexPeriodeAffichee),
       jourDeFinDeLaPeriode(indexPeriodeAffichee)
     )
