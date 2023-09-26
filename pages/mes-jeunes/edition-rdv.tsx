@@ -12,7 +12,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   estAClore,
   estClos,
@@ -449,8 +449,6 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
-
-  const periodeIndex = context.query.periodeIndex
 
   const referer = context.req.headers.referer
   const returnTo =

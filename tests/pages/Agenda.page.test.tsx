@@ -193,7 +193,10 @@ describe('Agenda', () => {
         await userEvent.click(screen.getByRole('tab', { name: 'Mon agenda' }))
         // Then
         expect(replace).toHaveBeenCalledWith(
-          { pathname: '/agenda', query: { onglet: 'conseiller' } },
+          {
+            pathname: '/agenda',
+            query: { onglet: 'conseiller', periodeIndex: 0 },
+          },
           undefined,
           { shallow: true }
         )

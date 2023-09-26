@@ -39,6 +39,15 @@ export default function OngletAgendaConseiller({
   const router = useRouter()
   const [agendaRdvs, setAgendaRdvs] = useState<AgendaData<EvenementListItem>>()
 
+  async function chargerNouvellePeriode(
+    nouvellePeriodeIndex: number,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) {
+    await chargerRdvs(dateDebut, dateFin)
+    changerPeriode(nouvellePeriodeIndex)
+  }
+
   async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
     setAgendaRdvs(undefined)
 
@@ -85,8 +94,7 @@ export default function OngletAgendaConseiller({
   return (
     <>
       <SelecteurPeriode
-        onNouvellePeriode={chargerRdvs}
-        changerPeriode={changerPeriode}
+        onNouvellePeriode={chargerNouvellePeriode}
         periodeCourante={periodeIndex}
         nombreJours={7}
         trackNavigation={trackNavigation}
