@@ -13,9 +13,10 @@ export const PLAGE_HORAIRE_MATIN = 'Matin'
 export const PLAGE_HORAIRE_APRES_MIDI = 'Après-midi'
 
 type DataJour<T> = { matin: T[]; apresMidi: T[] }
-export type AgendaData<T extends { id: string }> = {
-  [jourISO: string]: undefined | 'NO_DATA' | DataJour<T>
-}
+export type AgendaData<T extends { id: string }> = Map<
+  string,
+  undefined | 'NO_DATA' | DataJour<T>
+>
 
 export function buildAgendaData<T extends { id: string }>(
   elements: T[],
@@ -23,7 +24,7 @@ export function buildAgendaData<T extends { id: string }>(
   extractDate: (element: T) => DateTime,
   indexJoursCharges: number[] = [0, 1, 2, 3, 4, 5, 6]
 ): AgendaData<T> {
-  const agenda: AgendaData<T> = {}
+  const agenda: AgendaData<T> = new Map()
   const premierJour = periode.debut.startOf('day')
   const dernierJour = periode.fin.startOf('day')
   for (
@@ -31,23 +32,24 @@ export function buildAgendaData<T extends { id: string }>(
     jourCourant <= dernierJour;
     jourCourant = jourCourant.plus({ day: 1 })
   ) {
-    agenda[jourCourant.toISODate()] = undefined
+    agenda.set(jourCourant.toISODate(), undefined)
   }
 
   elements.forEach((element) => {
     const datetime = extractDate(element)
     const jour = datetime.toISODate()
-    if (!agenda[jour]) agenda[jour] = { matin: [], apresMidi: [] }
+    if (agenda.get(jour) === undefined)
+      agenda.set(jour, { matin: [], apresMidi: [] })
 
     if (isMatin(datetime.hour))
-      (agenda[jour] as DataJour<T>).matin!.push(element)
+      (agenda.get(jour) as DataJour<T>).matin.push(element)
     if (isApresMidi(datetime.hour))
-      (agenda[jour] as DataJour<T>).apresMidi!.push(element)
+      (agenda.get(jour) as DataJour<T>).apresMidi.push(element)
   })
 
   indexJoursCharges.forEach((index) => {
-    const jour = periode.debut.plus({ day: index }).toISODate()
-    if (!agenda[jour]) agenda[jour] = 'NO_DATA'
+    const jour = premierJour.plus({ day: index }).toISODate()
+    if (agenda.get(jour) === undefined) agenda.set(jour, 'NO_DATA')
   })
 
   return agenda
@@ -64,7 +66,7 @@ export function AgendaRows<T extends { id: string }>({
 }): React.JSX.Element {
   return (
     <>
-      {Object.entries(agenda).map(([jour, dataJour], index) => (
+      {Array.from(agenda.entries()).map(([jour, dataJour], index) => (
         <Fragment key={jour}>
           {dataJour && (
             <>
