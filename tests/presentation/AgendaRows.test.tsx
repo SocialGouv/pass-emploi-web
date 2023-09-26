@@ -24,15 +24,17 @@ describe('buildAgendaData', () => {
     )
 
     // Then
-    expect(agenda).toStrictEqual({
-      '2029-12-31': 'NO_DATA',
-      '2030-01-01': 'NO_DATA',
-      '2030-01-02': undefined,
-      '2030-01-03': undefined,
-      '2030-01-04': undefined,
-      '2030-01-05': undefined,
-      '2030-01-06': undefined,
-    })
+    expect(agenda).toStrictEqual(
+      new Map([
+        ['2029-12-31', 'NO_DATA'],
+        ['2030-01-01', 'NO_DATA'],
+        ['2030-01-02', undefined],
+        ['2030-01-03', undefined],
+        ['2030-01-04', undefined],
+        ['2030-01-05', undefined],
+        ['2030-01-06', undefined],
+      ])
+    )
   })
 
   it('construit un agenda avec un seul item', () => {
@@ -48,15 +50,17 @@ describe('buildAgendaData', () => {
     )
 
     // Then
-    expect(agenda).toStrictEqual({
-      '2029-12-31': 'NO_DATA',
-      '2030-01-01': { matin: [withDate], apresMidi: [] },
-      '2030-01-02': undefined,
-      '2030-01-03': undefined,
-      '2030-01-04': undefined,
-      '2030-01-05': undefined,
-      '2030-01-06': undefined,
-    })
+    expect(agenda).toStrictEqual(
+      new Map<string, any>([
+        ['2029-12-31', 'NO_DATA'],
+        ['2030-01-01', { matin: [withDate], apresMidi: [] }],
+        ['2030-01-02', undefined],
+        ['2030-01-03', undefined],
+        ['2030-01-04', undefined],
+        ['2030-01-05', undefined],
+        ['2030-01-06', undefined],
+      ])
+    )
   })
 
   it('construit un agenda avec plusieurs items', () => {
@@ -92,20 +96,28 @@ describe('buildAgendaData', () => {
     const agenda = buildAgendaData(items, periode, ({ date }) => date)
 
     // Then
-    expect(agenda).toStrictEqual({
-      '2029-12-31': { matin: [], apresMidi: [withDateLundi] },
-      '2030-01-01': {
-        matin: [withDateMardiMatin],
-        apresMidi: [withDateMardiApresMidi],
-      },
-      '2030-01-02': { matin: [withDateMercredi], apresMidi: [] },
-      '2030-01-03': 'NO_DATA',
-      '2030-01-04': {
-        matin: [],
-        apresMidi: [withDateVendredi, withDateVendredi2],
-      },
-      '2030-01-05': 'NO_DATA',
-      '2030-01-06': 'NO_DATA',
-    })
+    expect(agenda).toStrictEqual(
+      new Map<string, any>([
+        ['2029-12-31', { matin: [], apresMidi: [withDateLundi] }],
+        [
+          '2030-01-01',
+          {
+            matin: [withDateMardiMatin],
+            apresMidi: [withDateMardiApresMidi],
+          },
+        ],
+        ['2030-01-02', { matin: [withDateMercredi], apresMidi: [] }],
+        ['2030-01-03', 'NO_DATA'],
+        [
+          '2030-01-04',
+          {
+            matin: [],
+            apresMidi: [withDateVendredi, withDateVendredi2],
+          },
+        ],
+        ['2030-01-05', 'NO_DATA'],
+        ['2030-01-06', 'NO_DATA'],
+      ])
+    )
   })
 })
