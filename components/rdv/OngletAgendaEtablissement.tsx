@@ -206,7 +206,7 @@ export default function OngletAgendaEtablissement({
           <TBody>
             <AgendaRows
               agenda={agendaAnimationsCollectives}
-              Data={({ item: ac }) => (
+              Item={({ item: ac }) => (
                 <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
                   <TD>
                     {heure(ac)} - {ac.duree} min

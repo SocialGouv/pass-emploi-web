@@ -35,64 +35,56 @@ export function buildAgendaData<T extends { id: string }>(
 
 export function AgendaRows<T extends { id: string }>({
   agenda,
-  Data,
+  Item,
   Filler,
 }: {
   agenda: AgendaData<T>
-  Data: (props: { item: T }) => React.JSX.Element
+  Item: (props: { item: T }) => React.JSX.Element
   Filler?: (props: { jourISO: string }) => React.JSX.Element
 }): React.JSX.Element {
   return (
     <>
       {Array.from(agenda.entries()).map(([jour, dataJour], index) => (
         <Fragment key={jour}>
-          {dataJour && (
+          {dataJour && dataJour === 'NO_DATA' && Filler && (
             <>
-              {dataJour === 'NO_DATA' && (
+              <IntercalaireDate jour={jour} index={index} />
+              <IntercalaireFiller
+                jour={jour}
+                Filler={() => (
+                  <span className='text-base-bold'>
+                    Aucun rendez-vous ou
+                    <br />
+                    événements prévus ce jour.
+                  </span>
+                )}
+              />
+            </>
+          )}
+
+          {dataJour && dataJour !== 'NO_DATA' && (
+            <>
+              <IntercalaireDate jour={jour} index={index} />
+              {Boolean(dataJour.matin.length) && (
                 <>
-                  {Filler && (
-                    <>
-                      <IntercalaireDate jour={jour} index={index} />
-                      <IntercalaireFiller
-                        jour={jour}
-                        Filler={() => (
-                          <span className='text-base-bold'>
-                            Aucun rendez-vous ou
-                            <br />
-                            événements prévus ce jour.
-                          </span>
-                        )}
-                      />
-                    </>
-                  )}
+                  <IntercalairePlageHoraire
+                    label={PLAGE_HORAIRE_MATIN}
+                    jour={jour}
+                  />
+                  {dataJour.matin.map((item) => (
+                    <Item item={item} key={item.id} />
+                  ))}
                 </>
               )}
-
-              {dataJour !== 'NO_DATA' && (
+              {Boolean(dataJour.apresMidi.length) && (
                 <>
-                  <IntercalaireDate jour={jour} index={index} />
-                  {Boolean(dataJour.matin.length) && (
-                    <>
-                      <IntercalairePlageHoraire
-                        label={PLAGE_HORAIRE_MATIN}
-                        jour={jour}
-                      />
-                      {dataJour.matin.map((item) => (
-                        <Data item={item} key={item.id} />
-                      ))}
-                    </>
-                  )}
-                  {Boolean(dataJour.apresMidi.length) && (
-                    <>
-                      <IntercalairePlageHoraire
-                        label={PLAGE_HORAIRE_APRES_MIDI}
-                        jour={jour}
-                      />
-                      {dataJour.apresMidi.map((item) => (
-                        <Data item={item} key={item.id} />
-                      ))}
-                    </>
-                  )}
+                  <IntercalairePlageHoraire
+                    label={PLAGE_HORAIRE_APRES_MIDI}
+                    jour={jour}
+                  />
+                  {dataJour.apresMidi.map((item) => (
+                    <Item item={item} key={item.id} />
+                  ))}
                 </>
               )}
             </>
