@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@badrap/bar-of-progress": "0.2.2",
-    "@elastic/apm-rum": "5.14.0",
+    "@elastic/apm-rum": "5.15.0",
     "@elastic/apm-rum-react": "1.4.4",
     "@next/bundle-analyzer": "^13.3.0",
     "@next/font": "13.5.2",
