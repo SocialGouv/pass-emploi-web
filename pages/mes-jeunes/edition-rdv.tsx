@@ -450,12 +450,9 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
-  let redirectTo = context.query.redirectUrl as string
-  if (!redirectTo) {
-    const referer = context.req.headers.referer
-    redirectTo =
-      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  }
+  const referer = context.req.headers.referer
+  const returnTo =
+    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
 
   const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
@@ -465,7 +462,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
     return {
       props: {
-        returnTo: redirectTo,
+        returnTo: returnTo,
         ...buildPropsModificationEvenement(evenement),
       },
     }
@@ -476,7 +473,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 
     return {
       props: {
-        returnTo: redirectTo,
+        returnTo: returnTo,
         ...buildPropsCreationEvenement(
           typesEvenements,
           creationAC,

@@ -171,7 +171,7 @@ describe('EditionAnimationCollective', () => {
         })
       })
 
-      it('récupère l’url de redirection s’il y en a une', async () => {
+      it('récupère le referer s’il y en a un', async () => {
         // Given
         ;(getDetailsEvenement as jest.Mock).mockResolvedValue(
           uneAnimationCollective()
@@ -179,14 +179,16 @@ describe('EditionAnimationCollective', () => {
 
         // When
         const actual = await getServerSideProps({
-          req: { headers: {} },
+          req: {
+            headers: { referer: '/agenda?onglet=conseiller&periodeIndex=-1' },
+          },
           query: { redirectUrl: 'redirectUrl' },
         } as unknown as GetServerSidePropsContext)
 
         // Then
         expect(actual).toMatchObject({
           props: {
-            returnTo: 'redirectUrl',
+            returnTo: '/agenda?onglet=conseiller&periodeIndex=-1',
           },
         })
       })

@@ -7,17 +7,25 @@ import IconComponent, { IconName } from './IconComponent'
 import { toShortDate } from 'utils/date'
 
 type SelecteurPeriodeProps = {
-  onNouvellePeriode: (dateDebut: DateTime, dateFin: DateTime) => Promise<void>
+  onNouvellePeriode: (
+    indexPeriode: number,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) => Promise<void>
   trackNavigation: (append?: string) => void
   nombreJours: number
+  periodeCourante: number
 }
 
 export function SelecteurPeriode({
   onNouvellePeriode,
   nombreJours,
   trackNavigation,
+  periodeCourante,
 }: SelecteurPeriodeProps): JSX.Element {
-  const [indexPeriodeAffichee, setIndexPeriodeAffichee] = useState<number>(0)
+  const [indexPeriodeAffichee, setIndexPeriodeAffichee] = useState<number>(
+    periodeCourante ?? 0
+  )
   const AUJOURDHUI = DateTime.now().startOf('day')
 
   function jourDeDebutDeLaPeriode(indexPeriode: number): DateTime {
@@ -49,6 +57,7 @@ export function SelecteurPeriode({
 
   useEffect(() => {
     onNouvellePeriode(
+      indexPeriodeAffichee,
       jourDeDebutDeLaPeriode(indexPeriodeAffichee),
       jourDeFinDeLaPeriode(indexPeriodeAffichee)
     )

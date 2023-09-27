@@ -42,12 +42,16 @@ type OngletAgendaEtablissementProps = {
     dateFin: DateTime
   ) => Promise<AnimationCollective[]>
   trackNavigation: (append?: string) => void
+  periodeIndex: number
+  changerPeriode: (index: number) => void
 }
 
 export default function OngletAgendaEtablissement({
   recupererAnimationsCollectives,
   recupererSessionsMilo,
   trackNavigation,
+  periodeIndex,
+  changerPeriode,
 }: OngletAgendaEtablissementProps) {
   const [conseiller] = useConseiller()
   const [animationsCollectives, setAnimationsCollectives] =
@@ -62,6 +66,15 @@ export default function OngletAgendaEtablissement({
   const [statutsValides, setStatutsValides] = useState<
     StatutAnimationCollective[]
   >([])
+
+  async function chargerNouvellePeriode(
+    nouvellePeriodeIndex: number,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) {
+    await chargerEvenementsPeriode(dateDebut, dateFin)
+    changerPeriode(nouvellePeriodeIndex)
+  }
 
   async function chargerEvenementsPeriode(
     dateDebut: DateTime,
@@ -116,8 +129,9 @@ export default function OngletAgendaEtablissement({
   return (
     <>
       <SelecteurPeriode
-        onNouvellePeriode={chargerEvenementsPeriode}
         nombreJours={7}
+        onNouvellePeriode={chargerNouvellePeriode}
+        periodeCourante={periodeIndex}
         trackNavigation={trackNavigation}
       />
 

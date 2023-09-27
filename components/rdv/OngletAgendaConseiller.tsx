@@ -22,6 +22,8 @@ type OngletAgendaConseillerProps = {
     dateFin: DateTime
   ) => Promise<EvenementListItem[]>
   trackNavigation: (append?: string) => void
+  periodeIndex: number
+  changerPeriode: (index: number) => void
 }
 
 export default function OngletAgendaConseiller({
@@ -29,8 +31,19 @@ export default function OngletAgendaConseiller({
   recupererRdvs,
   recupererSessionsBeneficiaires,
   trackNavigation,
+  periodeIndex,
+  changerPeriode,
 }: OngletAgendaConseillerProps) {
   const [agendaRdvs, setAgendaRdvs] = useState<AgendaData<EvenementListItem>>()
+
+  async function chargerNouvellePeriode(
+    nouvellePeriodeIndex: number,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) {
+    await chargerRdvs(dateDebut, dateFin)
+    changerPeriode(nouvellePeriodeIndex)
+  }
 
   async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
     setAgendaRdvs(undefined)
@@ -71,7 +84,8 @@ export default function OngletAgendaConseiller({
   return (
     <>
       <SelecteurPeriode
-        onNouvellePeriode={chargerRdvs}
+        onNouvellePeriode={chargerNouvellePeriode}
+        periodeCourante={periodeIndex}
         nombreJours={7}
         trackNavigation={trackNavigation}
       />
