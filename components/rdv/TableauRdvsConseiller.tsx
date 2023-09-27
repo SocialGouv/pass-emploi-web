@@ -38,7 +38,7 @@ export default function TableauRdvsConseiller({
       <TBody>
         <AgendaRows
           agenda={agendaRdvs}
-          Data={({ item }) => (
+          Item={({ item }) => (
             <RdvRow key={item.id} rdv={item} idConseiller={idConseiller} />
           )}
           Filler={({ jourISO }) => (
