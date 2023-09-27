@@ -7,7 +7,7 @@ import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 import { AgendaRows, AgendaData } from 'presentation/AgendaRows'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
@@ -73,9 +73,9 @@ function ButtonChargerEvenementsJour({
       className='m-auto'
       onClick={propagateClick}
       isLoading={isLoading}
+      label={'Afficher l’agenda du ' + toFrenchFormat(jour, WEEKDAY_MONTH_LONG)}
     >
-      Afficher l’agenda du&nbsp;
-      <span aria-label={toFrenchFormat(jour, WEEKDAY_MONTH_LONG)}>jour</span>
+      Afficher l’agenda du jour
     </Button>
   )
 }
