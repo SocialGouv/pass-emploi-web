@@ -8,7 +8,7 @@ import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
 
 interface TableauOffresProps {

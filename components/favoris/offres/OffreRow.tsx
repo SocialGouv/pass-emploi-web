@@ -2,7 +2,7 @@ import React from 'react'
 
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
 
 export default function OffreRow({ offre }: { offre: Offre }) {

@@ -14,7 +14,7 @@ import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,

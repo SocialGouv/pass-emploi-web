@@ -2,7 +2,7 @@ import React from 'react'
 
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { Recherche } from 'interfaces/favoris'
 
 export default function RechercheRow({ recherche }: { recherche: Recherche }) {

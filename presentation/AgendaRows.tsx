@@ -139,7 +139,7 @@ function IntercalaireFiller({
   Filler: (props: { jourISO: string }) => React.JSX.Element
 }) {
   return (
-    <Intercalaire key={'filler-' + jour}>
+    <Intercalaire key={'filler-' + jour} rowLike={true}>
       <Filler jourISO={jour} />
     </Intercalaire>
   )
