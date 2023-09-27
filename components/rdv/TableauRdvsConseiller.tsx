@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
+import FailureIcon from 'assets/icons/informations/info.svg'
 import { RdvRow } from 'components/rdv/RdvRow'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Table from 'components/ui/Table/Table'
@@ -9,7 +10,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
-import { AgendaRows, AgendaData } from 'presentation/AgendaRows'
+import { AgendaData, AgendaRows } from 'presentation/AgendaRows'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 
 type TableauRdvsConseillerProps = {
@@ -58,24 +59,57 @@ function ButtonChargerEvenementsJour({
   onClick,
 }: {
   jour: DateTime
-  onClick: (jour: DateTime) => void
+  onClick: (jour: DateTime) => Promise<void>
 }): React.JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [failed, setFailed] = useState<boolean>(false)
 
-  function propagateClick() {
+  async function propagateClick() {
     setIsLoading(true)
-    onClick(jour)
+    try {
+      await onClick(jour)
+    } catch {
+      setFailed(true)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  return (
-    <Button
-      style={ButtonStyle.SECONDARY}
-      className='m-auto'
-      onClick={propagateClick}
-      isLoading={isLoading}
-      label={'Afficher l’agenda du ' + toFrenchFormat(jour, WEEKDAY_MONTH_LONG)}
-    >
-      Afficher l’agenda du jour
-    </Button>
-  )
+  if (failed) {
+    return (
+      <div className='flex items-center'>
+        <FailureIcon
+          aria-hidden={true}
+          focusable={false}
+          className='w-6 h-6 mr-2 fill-warning shrink-0'
+        />
+        <p className='mr-2 text-base-bold text-warning'>
+          Le chargement de l’agenda
+          <br />
+          du jour a échoué.
+        </p>
+        <Button
+          style={ButtonStyle.SECONDARY}
+          onClick={propagateClick}
+          isLoading={isLoading}
+        >
+          Réssayer
+        </Button>
+      </div>
+    )
+  } else {
+    return (
+      <Button
+        style={ButtonStyle.SECONDARY}
+        className='m-auto'
+        onClick={propagateClick}
+        isLoading={isLoading}
+        label={
+          'Afficher l’agenda du ' + toFrenchFormat(jour, WEEKDAY_MONTH_LONG)
+        }
+      >
+        Afficher l’agenda du jour
+      </Button>
+    )
+  }
 }
