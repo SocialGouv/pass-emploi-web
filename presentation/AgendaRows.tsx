@@ -53,9 +53,16 @@ export function AgendaRows<T extends { id: string }>({
                   {Filler && (
                     <>
                       <IntercalaireDate jour={jour} index={index} />
-                      <Intercalaire key={'no-data-' + jour}>
-                        Aucun événement ce jour
-                      </Intercalaire>
+                      <IntercalaireFiller
+                        jour={jour}
+                        Filler={() => (
+                          <span className='text-base-bold'>
+                            Aucun rendez-vous ou
+                            <br />
+                            événements prévus ce jour.
+                          </span>
+                        )}
+                      />
                     </>
                   )}
                 </>
