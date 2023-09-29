@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import TableauRdvsConseiller from 'components/rdv/TableauRdvsConseiller'
+import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
 import { buildAgendaData } from 'presentation/AgendaRows'
@@ -38,8 +38,8 @@ describe('<TableauRdvsConseiller>', () => {
 
       // When
       render(
-        <TableauRdvsConseiller
-          agendaRdvs={agenda}
+        <TableauEvenementsConseiller
+          agendaEvenements={agenda}
           idConseiller='1'
           onChargerEvenementsJour={chargerEvenementsJour}
         />
