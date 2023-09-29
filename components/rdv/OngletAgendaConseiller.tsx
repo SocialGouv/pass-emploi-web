@@ -2,9 +2,10 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
+import EmptyState from 'components/EmptyState'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { AgendaData, buildAgendaData } from 'presentation/AgendaRows'
@@ -132,7 +133,13 @@ export default function OngletAgendaConseiller({
         trackNavigation={trackNavigation}
       />
 
-      {!agendaEvenements && <SpinningLoader />}
+      {!agendaEvenements && (
+        <EmptyState
+          illustrationName={IllustrationName.Sablier}
+          titre='L’affichage de votre agenda peut prendre quelques instants.'
+          sousTitre='Veuillez patienter pendant le chargement des informations.'
+        />
+      )}
 
       {agendaEvenements && (
         <TableauEvenementsConseiller

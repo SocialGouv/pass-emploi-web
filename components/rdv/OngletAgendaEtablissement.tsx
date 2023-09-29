@@ -9,14 +9,13 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { peutAccederAuxSessions } from 'interfaces/conseiller'
+import { estMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   StatutAnimationCollective,
@@ -144,7 +143,17 @@ export default function OngletAgendaEtablissement({
         trackNavigation={trackNavigation}
       />
 
-      {!agendaEvenements && <SpinningLoader />}
+      {!agendaEvenements && (
+        <EmptyState
+          illustrationName={IllustrationName.Sablier}
+          titre={`
+            L’affichage de l’agenda de votre ${
+              estMilo(conseiller) ? 'Mission Locale' : 'établissement'
+            } peut prendre quelques instants.
+          `}
+          sousTitre='Veuillez patienter pendant le chargement des informations.'
+        />
+      )}
 
       {agendaEvenements && evenementsFiltres!.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
