@@ -61,18 +61,18 @@ export default function OngletAgendaConseiller({
   }
 
   async function chargerEvenementsJour(jourACharger: DateTime) {
-    const evenements = await chargerEvenements(
+    const evenementsJour = await chargerEvenements(
       jourACharger.startOf('day'),
       jourACharger.endOf('day')
     )
 
-    setIndexJoursCharges((current) => {
+    setIndexJoursCharges((currents) => {
       const indexJourACharger: number = jourACharger
         .diff(periode!.debut)
         .as('days')
-      return current!.concat(indexJourACharger)
+      return currents!.concat(indexJourACharger)
     })
-    setEvenements((current) => current!.concat(evenements))
+    setEvenements((current) => current!.concat(evenementsJour))
   }
 
   async function chargerEvenements(

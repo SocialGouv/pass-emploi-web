@@ -1,18 +1,18 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
 
-import TD from './TD'
+import { TH } from './TH'
 import TR from './TR'
 
 interface IntercalaireProps {
   children: ReactNode
   className?: string
-  rowLike?: boolean
+  withRowStyle?: boolean
 }
 
 export function Intercalaire({
   children,
   className = '',
-  rowLike = false,
+  withRowStyle = false,
 }: IntercalaireProps): React.JSX.Element {
   const [colspan, setColspan] = useState<number>(1)
   const divRef = useRef<HTMLDivElement>(null)
@@ -48,7 +48,7 @@ export function Intercalaire({
     if (divRef.current) setColspan(computeColspan(divRef.current))
   }, [divRef])
 
-  if (!rowLike) {
+  if (!withRowStyle) {
     return (
       <div role='row' className='table-row' ref={divRef}>
         <div
@@ -63,9 +63,9 @@ export function Intercalaire({
   } else {
     return (
       <TR asDiv={true} ref={divRef}>
-        <TD role='columnheader' asDiv={true} aria-colspan={colspan}>
+        <TH asDiv={true} aria-colspan={colspan}>
           {children}
-        </TD>
+        </TH>
       </TR>
     )
   }

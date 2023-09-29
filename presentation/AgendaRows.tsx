@@ -26,9 +26,9 @@ export function buildAgendaData<T extends { id: string }>(
 ): AgendaData<T> {
   const agenda: AgendaData<T> = new Map()
 
-  initAgendaWithEmptyDays(agenda, periode)
-  populateAgenda(agenda, elements, extractDate)
-  verifyJoursChargesWithoutData(agenda, periode, indexJoursCharges)
+  initialiserAgendaJoursVides(agenda, periode)
+  remplirAgenda(agenda, elements, extractDate)
+  verifierJoursChargesSansData(agenda, periode, indexJoursCharges)
 
   return agenda
 }
@@ -52,11 +52,9 @@ export function AgendaRows<T extends { id: string }>({
               <IntercalaireFiller
                 jour={jour}
                 Filler={() => (
-                  <span className='text-base-bold'>
-                    Aucun rendez-vous ou
-                    <br />
-                    événements prévus ce jour.
-                  </span>
+                  <div className='text-base-bold max-w-[250px]'>
+                    Aucun rendez-vous ou événements prévus ce jour.
+                  </div>
                 )}
               />
             </>
@@ -138,13 +136,13 @@ function IntercalaireFiller({
   Filler: (props: { jourISO: string }) => React.JSX.Element
 }) {
   return (
-    <Intercalaire key={'filler-' + jour} rowLike={true}>
+    <Intercalaire key={'filler-' + jour} withRowStyle={true}>
       <Filler jourISO={jour} />
     </Intercalaire>
   )
 }
 
-function initAgendaWithEmptyDays<T extends { id: string }>(
+function initialiserAgendaJoursVides<T extends { id: string }>(
   agenda: AgendaData<T>,
   periode: { debut: DateTime; fin: DateTime }
 ) {
@@ -159,7 +157,7 @@ function initAgendaWithEmptyDays<T extends { id: string }>(
   }
 }
 
-function populateAgenda<T extends { id: string }>(
+function remplirAgenda<T extends { id: string }>(
   agenda: AgendaData<T>,
   elements: T[],
   extractDate: (element: T) => DateTime
@@ -177,7 +175,7 @@ function populateAgenda<T extends { id: string }>(
   })
 }
 
-function verifyJoursChargesWithoutData<T extends { id: string }>(
+function verifierJoursChargesSansData<T extends { id: string }>(
   agenda: AgendaData<T>,
   periode: { debut: DateTime; fin: DateTime },
   indexJoursCharges: number[]
