@@ -23,7 +23,7 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
           illustrationName={IllustrationName.Checklist}
           titre='Votre bénéficiaire n’a mis aucune offre en favori pour l’instant.'
           sousTitre='Partagez des offres d’emploi, d’alternance, de service civique ou d’immersion à votre bénéficiaire depuis la partie “Offres”.'
-          premierLien={{
+          lien={{
             href: '/recherche-offres',
             label: 'Rechercher une offre',
             iconName: IconName.Search,
