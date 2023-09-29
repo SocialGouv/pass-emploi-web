@@ -5,7 +5,9 @@ import IllustrationChecklist from 'assets/images/illustration-checklist-grey.svg
 import IllustrationDelete from 'assets/images/illustration-delete.svg'
 import IllustrationError from 'assets/images/illustration-error.svg'
 import IllustrationEvent from 'assets/images/illustration-event-grey.svg'
+import IllustrationMaintenance from 'assets/images/illustration-maintenance.svg'
 import IllustrationPeople from 'assets/images/illustration-people-grey.svg'
+import IllustrationSablier from 'assets/images/illustration-sablier.svg'
 import IllustrationSearch from 'assets/images/illustration-search-grey.svg'
 import IllustrationSend from 'assets/images/illustration-send-grey.svg'
 import IllustrationSendWhite from 'assets/images/illustration-send-white.svg'
@@ -16,7 +18,9 @@ export enum IllustrationName {
   Delete = 'Delete',
   Error = 'Error',
   Event = 'Event',
+  Maintenance = 'Maintenance',
   People = 'People',
+  Sablier = 'Sablier',
   Search = 'Search',
   Send = 'Send',
   SendWhite = 'SendWhite',
@@ -28,7 +32,9 @@ const illustrationsByName: { [key in IllustrationName]: any } = {
   [IllustrationName.Delete]: IllustrationDelete,
   [IllustrationName.Error]: IllustrationError,
   [IllustrationName.Event]: IllustrationEvent,
+  [IllustrationName.Maintenance]: IllustrationMaintenance,
   [IllustrationName.People]: IllustrationPeople,
+  [IllustrationName.Sablier]: IllustrationSablier,
   [IllustrationName.Search]: IllustrationSearch,
   [IllustrationName.Send]: IllustrationSend,
   [IllustrationName.SendWhite]: IllustrationSendWhite,
