@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 import EmptyState from 'components/EmptyState'
-import { RdvRow } from 'components/rdv/RdvRow'
+import { EvenementRow } from 'components/rdv/EvenementRow'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
@@ -74,9 +74,9 @@ export default function TableauRdvsBeneficiaire({
 
           <TBody>
             {rdvs.map((rdv) => (
-              <RdvRow
+              <EvenementRow
                 key={rdv.id}
-                rdv={rdv}
+                evenement={rdv}
                 withDate={true}
                 beneficiaireUnique={beneficiaire}
                 idConseiller={idConseiller}

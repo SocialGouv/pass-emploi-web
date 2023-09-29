@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
 import FailureIcon from 'assets/icons/informations/info.svg'
-import { RdvRow } from 'components/rdv/RdvRow'
+import { EvenementRow } from 'components/rdv/EvenementRow'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -13,17 +13,17 @@ import { EvenementListItem } from 'interfaces/evenement'
 import { AgendaData, AgendaRows } from 'presentation/AgendaRows'
 import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
 
-type TableauRdvsConseillerProps = {
+type TableauEvenementsConseillerProps = {
   idConseiller: string
-  agendaRdvs: AgendaData<EvenementListItem>
+  agendaEvenements: AgendaData<EvenementListItem>
   onChargerEvenementsJour: (jour: DateTime) => Promise<void>
 }
 
-export default function TableauRdvsConseiller({
-  agendaRdvs,
+export default function TableauEvenementsConseiller({
+  agendaEvenements,
   idConseiller,
   onChargerEvenementsJour,
-}: TableauRdvsConseillerProps) {
+}: TableauEvenementsConseillerProps) {
   return (
     <Table asDiv={true} caption={{ text: 'Liste de mes événements' }}>
       <THead>
@@ -38,9 +38,13 @@ export default function TableauRdvsConseiller({
 
       <TBody>
         <AgendaRows
-          agenda={agendaRdvs}
+          agenda={agendaEvenements}
           Item={({ item }) => (
-            <RdvRow key={item.id} rdv={item} idConseiller={idConseiller} />
+            <EvenementRow
+              key={item.id}
+              evenement={item}
+              idConseiller={idConseiller}
+            />
           )}
           Filler={({ jourISO }) => (
             <ButtonChargerEvenementsJour

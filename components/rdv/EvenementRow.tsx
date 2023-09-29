@@ -16,39 +16,39 @@ import {
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 
-interface RdvRowProps {
-  rdv: EvenementListItem
+interface EvenementRowProps {
+  evenement: EvenementListItem
   idConseiller: string
   beneficiaireUnique?: BaseJeune
   withDate?: boolean
   withIndicationPresenceBeneficiaire?: boolean
 }
 
-export function RdvRow({
-  rdv,
+export function EvenementRow({
+  evenement,
   idConseiller,
   beneficiaireUnique,
   withDate,
   withIndicationPresenceBeneficiaire = false,
-}: RdvRowProps) {
+}: EvenementRowProps) {
   const router = useRouter()
   const pathPrefix = router.asPath.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
-  const date = DateTime.fromISO(rdv.date)
+  const date = DateTime.fromISO(evenement.date)
   const shortDate = toShortDate(date)
   const fullDate = toFrenchFormat(date, WEEKDAY_MONTH_LONG)
   const timeAndDuration = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${
-    rdv.duree
+    evenement.duree
   } min`
 
   const labelBeneficiaires = beneficiaireUnique
     ? getNomJeuneComplet(beneficiaireUnique)
-    : rdv.labelBeneficiaires
+    : evenement.labelBeneficiaires
 
-  const urlRdv = pathPrefix + '/edition-rdv?idRdv=' + rdv.id
-  const urlRdvSessionMilo = '/agenda/sessions/' + rdv.id
+  const urlRdv = pathPrefix + '/edition-rdv?idRdv=' + evenement.id
+  const urlSessionMilo = '/agenda/sessions/' + evenement.id
 
   function tagType({
     isSession,
@@ -95,7 +95,7 @@ export function RdvRow({
 
   return (
     <TR
-      href={rdv.isSession ? urlRdvSessionMilo : urlRdv}
+      href={evenement.isSession ? urlSessionMilo : urlRdv}
       label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
     >
       <TD
@@ -106,9 +106,9 @@ export function RdvRow({
         {timeAndDuration}
       </TD>
 
-      {!beneficiaireUnique && <TD isBold>{rdv.labelBeneficiaires}</TD>}
+      {!beneficiaireUnique && <TD isBold>{evenement.labelBeneficiaires}</TD>}
 
-      <TD>{tagType(rdv)}</TD>
+      <TD>{tagType(evenement)}</TD>
 
       <TD>
         {!withIndicationPresenceBeneficiaire && (
@@ -119,31 +119,31 @@ export function RdvRow({
               aria-hidden={true}
               className='inline mr-2 h-6 w-6 fill-primary'
             />
-            {rdv.modality}
+            {evenement.modality}
           </>
         )}
 
         {withIndicationPresenceBeneficiaire && (
           <>
-            {rdv.futPresent === undefined && (
+            {evenement.futPresent === undefined && (
               <>
                 - <span className='sr-only'>information non disponible</span>
               </>
             )}
 
-            {rdv.futPresent !== undefined && (
+            {evenement.futPresent !== undefined && (
               <>
                 <IconComponent
                   name={
-                    rdv.futPresent ? IconName.CheckCircleFill : IconName.Close
+                    evenement.futPresent ? IconName.CheckCircleFill : IconName.Close
                   }
                   focusable={false}
                   aria-hidden={true}
                   className={`inline mr-2 h-6 w-6 fill-${
-                    rdv.futPresent ? 'success' : 'alert'
+                    evenement.futPresent ? 'success' : 'alert'
                   }`}
                 />
-                {rdv.futPresent ? 'Oui' : 'Non'}
+                {evenement.futPresent ? 'Oui' : 'Non'}
               </>
             )}
           </>
@@ -152,7 +152,7 @@ export function RdvRow({
 
       <TD className='rounded-r-base'>
         <span className='flex items-center justify-between'>
-          {rdv.idCreateur === idConseiller && (
+          {evenement.idCreateur === idConseiller && (
             <>
               <span className='sr-only'>oui</span>
               <IconComponent
@@ -163,7 +163,7 @@ export function RdvRow({
               />
             </>
           )}
-          {rdv.idCreateur !== idConseiller && (
+          {evenement.idCreateur !== idConseiller && (
             <>
               <span className='sr-only'>non</span>
               <IconComponent
