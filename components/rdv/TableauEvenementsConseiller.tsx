@@ -68,7 +68,7 @@ function ButtonChargerEvenementsJour({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [failed, setFailed] = useState<boolean>(false)
 
-  async function propagateClick() {
+  async function chargerEvenementsJours() {
     setIsLoading(true)
     try {
       await onClick(jour)
@@ -87,14 +87,12 @@ function ButtonChargerEvenementsJour({
           focusable={false}
           className='w-6 h-6 mr-2 fill-warning shrink-0'
         />
-        <p className='mr-2 text-base-bold text-warning'>
-          Le chargement de l’agenda
-          <br />
-          du jour a échoué.
+        <p className='mr-2 text-base-bold text-warning max-w-[150px]'>
+          Le chargement de l’agenda du jour a échoué.
         </p>
         <Button
           style={ButtonStyle.SECONDARY}
-          onClick={propagateClick}
+          onClick={chargerEvenementsJours}
           isLoading={isLoading}
         >
           Réssayer
@@ -106,7 +104,7 @@ function ButtonChargerEvenementsJour({
       <Button
         style={ButtonStyle.SECONDARY}
         className='m-auto'
-        onClick={propagateClick}
+        onClick={chargerEvenementsJours}
         isLoading={isLoading}
         label={
           'Afficher l’agenda du ' + toFrenchFormat(jour, WEEKDAY_MONTH_LONG)

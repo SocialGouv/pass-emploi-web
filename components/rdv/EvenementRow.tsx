@@ -135,7 +135,9 @@ export function EvenementRow({
               <>
                 <IconComponent
                   name={
-                    evenement.futPresent ? IconName.CheckCircleFill : IconName.Close
+                    evenement.futPresent
+                      ? IconName.CheckCircleFill
+                      : IconName.Close
                   }
                   focusable={false}
                   aria-hidden={true}
