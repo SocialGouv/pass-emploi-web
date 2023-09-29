@@ -1,5 +1,6 @@
 import React from 'react'
 
+import Button from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
@@ -7,19 +8,42 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 
 type EmptyStateLinkProps = { href: string; label: string; iconName?: IconName }
+type EmptyStateButtonProps = {
+  onClick: () => Promise<void>
+  label: string
+  iconName?: IconName
+}
+
 type EmptyStateProps = {
   illustrationName: IllustrationName
   titre: string
   sousTitre?: string
-  premierLien?: EmptyStateLinkProps
+}
+type EmptyStateWithLinkProps = EmptyStateProps & {
+  lien: EmptyStateLinkProps
+}
+type EmptyStateWithButtonProps = EmptyStateProps & {
+  bouton: EmptyStateButtonProps
+}
+
+export function hasLien(
+  props: {} | { lien: EmptyStateLinkProps } | { bouton: EmptyStateButtonProps }
+): props is { lien: EmptyStateLinkProps } {
+  return Object.prototype.hasOwnProperty.call(props, 'lien')
+}
+
+export function hasBouton(
+  props: {} | { lien: EmptyStateLinkProps } | { bouton: EmptyStateButtonProps }
+): props is { bouton: EmptyStateButtonProps } {
+  return Object.prototype.hasOwnProperty.call(props, 'bouton')
 }
 
 export default function EmptyState({
   illustrationName,
-  premierLien,
-  sousTitre,
   titre,
-}: EmptyStateProps) {
+  sousTitre,
+  ...props
+}: EmptyStateProps | EmptyStateWithLinkProps | EmptyStateWithButtonProps) {
   return (
     <>
       <IllustrationComponent
@@ -39,21 +63,35 @@ export default function EmptyState({
         </p>
       )}
 
-      {premierLien && (
+      {hasLien(props) && (
         <div className='flex justify-center gap-4 mt-8'>
-          {premierLien && (
-            <ButtonLink href={premierLien.href}>
-              {premierLien.iconName && (
-                <IconComponent
-                  name={premierLien.iconName}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='mr-2 w-4 h-4'
-                />
-              )}
-              {premierLien.label}
-            </ButtonLink>
-          )}
+          <ButtonLink href={props.lien.href}>
+            {props.lien.iconName && (
+              <IconComponent
+                name={props.lien.iconName}
+                focusable={false}
+                aria-hidden={true}
+                className='mr-2 w-4 h-4'
+              />
+            )}
+            {props.lien.label}
+          </ButtonLink>
+        </div>
+      )}
+
+      {hasBouton(props) && (
+        <div className='flex justify-center gap-4 mt-8'>
+          <Button onClick={props.bouton.onClick}>
+            {props.bouton.iconName && (
+              <IconComponent
+                name={props.bouton.iconName}
+                focusable={false}
+                aria-hidden={true}
+                className='mr-2 w-4 h-4'
+              />
+            )}
+            {props.bouton.label}
+          </Button>
         </div>
       )}
     </>

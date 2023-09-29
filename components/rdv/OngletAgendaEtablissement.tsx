@@ -64,6 +64,7 @@ export default function OngletAgendaEtablissement({
   const [agendaEvenements, setAgendaEvenements] =
     useState<AgendaData<AnimationCollective>>()
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [failed, setFailed] = useState<boolean>(false)
 
   const [statutsValides, setStatutsValides] = useState<
     StatutAnimationCollective[]
@@ -82,27 +83,29 @@ export default function OngletAgendaEtablissement({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
+    setFailed(false)
     setAgendaEvenements(undefined)
 
-    const animationsCollectives = await recupererAnimationsCollectives(
-      dateDebut,
-      dateFin
-    )
-    if (peutAccederAuxSessions(conseiller)) {
-      try {
+    try {
+      const animationsCollectives = await recupererAnimationsCollectives(
+        dateDebut,
+        dateFin
+      )
+
+      if (peutAccederAuxSessions(conseiller)) {
         const sessions = await recupererSessionsMilo(dateDebut, dateFin)
         setEvenements([...sessions, ...animationsCollectives])
-      } catch (e) {
-        if (e instanceof ApiError && e.statusCode === 401) {
-          await router.push('/api/auth/federated-logout')
-        }
+      } else {
         setEvenements([...animationsCollectives])
       }
-    } else {
-      setEvenements([...animationsCollectives])
+    } catch (e) {
+      if (e instanceof ApiError && e.statusCode === 401) {
+        await router.push('/api/auth/federated-logout')
+      }
+      setFailed(true)
+    } finally {
+      setPeriode({ debut: dateDebut, fin: dateFin })
     }
-
-    setPeriode({ debut: dateDebut, fin: dateFin })
   }
 
   function filtrerEvenements(aFiltrer: AnimationCollective[]) {
@@ -143,7 +146,7 @@ export default function OngletAgendaEtablissement({
         trackNavigation={trackNavigation}
       />
 
-      {!agendaEvenements && (
+      {!agendaEvenements && !failed && (
         <EmptyState
           illustrationName={IllustrationName.Sablier}
           titre={`
@@ -152,6 +155,23 @@ export default function OngletAgendaEtablissement({
             } peut prendre quelques instants.
           `}
           sousTitre='Veuillez patienter pendant le chargement des informations.'
+        />
+      )}
+
+      {!agendaEvenements && failed && (
+        <EmptyState
+          illustrationName={IllustrationName.Maintenance}
+          titre={`
+            L’affichage de l’agenda de votre ${
+              estMilo(conseiller) ? 'Mission Locale' : 'établissement'
+            } a échoué.
+          `}
+          sousTitre='Si le problème persiste, contactez notre support.'
+          bouton={{
+            onClick: () =>
+              chargerEvenementsPeriode(periode!.debut, periode!.fin),
+            label: 'Réessayer',
+          }}
         />
       )}
 
@@ -164,7 +184,7 @@ export default function OngletAgendaEtablissement({
                 ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
                 : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
             }
-            premierLien={{
+            lien={{
               href: '/mes-jeunes/edition-rdv?type=ac',
               label: 'Créer une animation collective',
               iconName: IconName.Add,

@@ -25,7 +25,7 @@ export default function TableauRecherches({
           illustrationName={IllustrationName.Checklist}
           titre='Votre bénéficiaire n’a sauvegardé aucune recherche pour l’instant.'
           sousTitre='Suggérez des recherches-types d’offres à votre bénéficiaire depuis la partie “Offres”.'
-          premierLien={{
+          lien={{
             href: '/recherche-offres',
             label: 'Rechercher une offre',
             iconName: IconName.Search,

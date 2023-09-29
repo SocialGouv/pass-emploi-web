@@ -166,7 +166,7 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
             <EmptyState
               illustrationName={IllustrationName.People}
               titre='Il n’y a aucun bénéficiaire dans votre portefeuille.'
-              premierLien={{
+              lien={{
                 href: getAjouterJeuneHref(conseiller.structure),
                 label: 'Ajouter un bénéficiaire',
                 iconName: IconName.Add,
