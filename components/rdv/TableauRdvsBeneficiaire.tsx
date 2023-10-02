@@ -105,7 +105,7 @@ function StateAucunRendezvous({
         <EmptyState
           illustrationName={IllustrationName.Event}
           titre='Aucun événement ou rendez-vous pour votre bénéficiaire.'
-          premierLien={{
+          lien={{
             href: `${pathPrefix}/${beneficiaire.id}`,
             label: 'Revenir à la fiche bénéficiaire',
             iconName: IconName.ChevronLeft,
@@ -118,7 +118,7 @@ function StateAucunRendezvous({
           illustrationName={IllustrationName.Event}
           titre='Aucun événement ou rendez-vous sur cette période pour votre bénéficiaire.'
           sousTitre='Créez un nouveau rendez-vous pour votre bénéficiaire ou consultez l’historique des événements passés.'
-          premierLien={{
+          lien={{
             href: `${pathPrefix}/${beneficiaire.id}/rendez-vous-passes`,
             label: 'Consulter l’historique',
           }}

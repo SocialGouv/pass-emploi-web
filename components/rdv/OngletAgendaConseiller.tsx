@@ -1,9 +1,10 @@
 import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
+import EmptyState from 'components/EmptyState'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { AgendaData, buildAgendaData } from 'presentation/AgendaRows'
@@ -39,6 +40,7 @@ export default function OngletAgendaConseiller({
   const [indexJoursCharges, setIndexJoursCharges] = useState<number[]>()
   const [agendaEvenements, setAgendaEvenements] =
     useState<AgendaData<EvenementListItem>>()
+  const [failed, setFailed] = useState<boolean>(false)
 
   async function chargerNouvellePeriode(
     nouvellePeriodeIndex: number,
@@ -50,14 +52,20 @@ export default function OngletAgendaConseiller({
   }
 
   async function initEvenementsPeriode(dateDebut: DateTime, dateFin: DateTime) {
+    setFailed(false)
     setAgendaEvenements(undefined)
 
     const deuxiemeJour = dateDebut.plus({ day: 1 }).endOf('day')
-    const evenementsPeriode = await chargerEvenements(dateDebut, deuxiemeJour)
 
-    setPeriode({ debut: dateDebut, fin: dateFin })
-    setIndexJoursCharges([0, 1])
-    setEvenements(evenementsPeriode)
+    try {
+      const evenementsPeriode = await chargerEvenements(dateDebut, deuxiemeJour)
+      setIndexJoursCharges([0, 1])
+      setEvenements(evenementsPeriode)
+    } catch (e) {
+      setFailed(true)
+    } finally {
+      setPeriode({ debut: dateDebut, fin: dateFin })
+    }
   }
 
   async function chargerEvenementsJour(jourACharger: DateTime) {
@@ -122,7 +130,25 @@ export default function OngletAgendaConseiller({
         trackNavigation={trackNavigation}
       />
 
-      {!agendaEvenements && <SpinningLoader />}
+      {!agendaEvenements && !failed && (
+        <EmptyState
+          illustrationName={IllustrationName.Sablier}
+          titre='L’affichage de votre agenda peut prendre quelques instants.'
+          sousTitre='Veuillez patienter pendant le chargement des informations.'
+        />
+      )}
+
+      {!agendaEvenements && failed && (
+        <EmptyState
+          illustrationName={IllustrationName.Maintenance}
+          titre='L’affichage de votre agenda a échoué.'
+          sousTitre='Si le problème persiste, contactez notre support.'
+          bouton={{
+            onClick: () => initEvenementsPeriode(periode!.debut, periode!.fin),
+            label: 'Réessayer',
+          }}
+        />
+      )}
 
       {agendaEvenements && (
         <TableauEvenementsConseiller

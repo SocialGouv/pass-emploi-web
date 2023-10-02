@@ -8,14 +8,13 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { peutAccederAuxSessions } from 'interfaces/conseiller'
+import { estMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   StatutAnimationCollective,
@@ -61,6 +60,7 @@ export default function OngletAgendaEtablissement({
   const [agendaEvenements, setAgendaEvenements] =
     useState<AgendaData<AnimationCollective>>()
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [failed, setFailed] = useState<boolean>(false)
 
   const [statutsValides, setStatutsValides] = useState<
     StatutAnimationCollective[]
@@ -79,24 +79,29 @@ export default function OngletAgendaEtablissement({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
+    setFailed(false)
     setAgendaEvenements(undefined)
 
-    const animationsCollectives = await recupererAnimationsCollectives(
-      dateDebut,
-      dateFin
-    )
-    if (peutAccederAuxSessions(conseiller)) {
-      try {
-        const sessions = await recupererSessionsMilo(dateDebut, dateFin)
-        setEvenements([...sessions, ...animationsCollectives])
-      } catch (e) {
+    try {
+      const animationsCollectives = await recupererAnimationsCollectives(
+        dateDebut,
+        dateFin
+      )
+      if (peutAccederAuxSessions(conseiller)) {
+        try {
+          const sessions = await recupererSessionsMilo(dateDebut, dateFin)
+          setEvenements([...sessions, ...animationsCollectives])
+        } catch (e) {
+          setEvenements([...animationsCollectives])
+        }
+      } else {
         setEvenements([...animationsCollectives])
       }
-    } else {
-      setEvenements([...animationsCollectives])
+    } catch (e) {
+      setFailed(true)
+    } finally {
+      setPeriode({ debut: dateDebut, fin: dateFin })
     }
-
-    setPeriode({ debut: dateDebut, fin: dateFin })
   }
 
   function filtrerEvenements(aFiltrer: AnimationCollective[]) {
@@ -137,7 +142,34 @@ export default function OngletAgendaEtablissement({
         trackNavigation={trackNavigation}
       />
 
-      {!agendaEvenements && <SpinningLoader />}
+      {!agendaEvenements && !failed && (
+        <EmptyState
+          illustrationName={IllustrationName.Sablier}
+          titre={`
+            L’affichage de l’agenda de votre ${
+              estMilo(conseiller) ? 'Mission Locale' : 'établissement'
+            } peut prendre quelques instants.
+          `}
+          sousTitre='Veuillez patienter pendant le chargement des informations.'
+        />
+      )}
+
+      {!agendaEvenements && failed && (
+        <EmptyState
+          illustrationName={IllustrationName.Maintenance}
+          titre={`
+            L’affichage de l’agenda de votre ${
+              estMilo(conseiller) ? 'Mission Locale' : 'établissement'
+            } a échoué.
+          `}
+          sousTitre='Si le problème persiste, contactez notre support.'
+          bouton={{
+            onClick: () =>
+              chargerEvenementsPeriode(periode!.debut, periode!.fin),
+            label: 'Réessayer',
+          }}
+        />
+      )}
 
       {agendaEvenements && evenementsFiltres!.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
@@ -148,7 +180,7 @@ export default function OngletAgendaEtablissement({
                 ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
                 : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
             }
-            premierLien={{
+            lien={{
               href: '/mes-jeunes/edition-rdv?type=ac',
               label: 'Créer une animation collective',
               iconName: IconName.Add,
