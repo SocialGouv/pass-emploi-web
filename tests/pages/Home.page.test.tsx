@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -470,6 +471,76 @@ describe('Home', () => {
             redirectUrl: '/agenda',
             referentielAgences: uneListeDAgencesMILO(),
             pageTitle: 'Accueil',
+          },
+        })
+      })
+    })
+
+    describe('si le conseiller n’a pas signé la dernière version des CGU', () => {
+      it('redirige vers l’url renseignée', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { id: '1' },
+            accessToken: 'accessToken',
+          },
+        })
+
+        const conseiller: Conseiller = unConseiller({
+          dateSignatureCGU: DateTime.fromISO(
+            process.env.VERSION_CGU_COURANTE
+          ).minus({ day: 1 }),
+        })
+
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
+
+        // When
+        const actual = await getServerSideProps({
+          query: { redirectUrl: '/mes-jeunes' },
+        } as unknown as GetServerSidePropsContext)
+
+        //Then
+        expect(actual).toEqual({
+          redirect: { destination: '/consentement-cgu', permanent: false },
+        })
+      })
+    })
+
+    describe('si le conseiller a signé la dernière version des CGU', () => {
+      it('redirige vers la liste des jeunes', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { id: '1' },
+            accessToken: 'accessToken',
+          },
+        })
+
+        const conseiller: Conseiller = unConseiller({
+          structure: StructureConseiller.MILO,
+          dateSignatureCGU: DateTime.fromISO(process.env.VERSION_CGU_COURANTE)
+            .plus({ day: 1 })
+            .toISO(),
+        })
+
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
+        ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
+          uneListeDAgencesMILO()
+        )
+
+        // When
+        const actual = await getServerSideProps({
+          query: {},
+        } as unknown as GetServerSidePropsContext)
+
+        //Then
+        expect(actual).toEqual({
+          props: {
+            pageTitle: 'Accueil',
+            redirectUrl: '/mes-jeunes',
+            referentielAgences: uneListeDAgencesMILO(),
           },
         })
       })

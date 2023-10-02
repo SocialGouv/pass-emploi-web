@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
@@ -63,6 +64,14 @@ export async function modifierAgence({
     { agence },
     session!.accessToken
   )
+}
+
+export async function modifierDateSignatureCGU(
+  idConseiller: string,
+  accessToken: string,
+  date: DateTime
+): Promise<void> {
+  return apiPut(`/conseillers/${idConseiller}`, { date }, accessToken)
 }
 
 export async function modifierNotificationsSonores(

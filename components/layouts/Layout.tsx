@@ -11,7 +11,7 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import AppHead from 'components/AppHead'
 import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { estPoleEmploiBRSA } from 'interfaces/conseiller'
+import { doitSignerLesCGU, estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { getConseillerClientSide } from 'services/conseiller.service'
@@ -47,9 +47,14 @@ export default function Layout({ children }: LayoutProps) {
   const [portefeuille, setPortefeuille] =
     usePortefeuillePotentiellementPasRecupere()
 
+  const [aSigneLesCGU, setASigneLesCGU] = useState<boolean>(false)
+
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
+
+  const pageCouranteEstMessagerie = router.pathname === '/messagerie'
+  const pageCouraneEstCGU = router.pathname === '/consentement-cgu'
 
   const withChat = !withoutChat
 
@@ -91,7 +96,10 @@ export default function Layout({ children }: LayoutProps) {
           }
           throw e
         })
+    } else if (doitSignerLesCGU(conseiller)) {
+      router.push('/consentement-cgu')
     } else {
+      setASigneLesCGU(true)
       const userAPM = {
         id: conseiller.id,
         username: `${conseiller.firstName} ${conseiller.lastName}`,
@@ -99,7 +107,7 @@ export default function Layout({ children }: LayoutProps) {
       }
       apm.setUserContext(userAPM)
     }
-  }, [conseiller])
+  }, [conseiller, router.route])
 
   useEffect(() => {
     if (conseiller && estPoleEmploiBRSA(conseiller)) {
@@ -109,8 +117,6 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [conseiller, conseiller?.structure, setTheme])
 
-  const pageCouranteEstMessagerie = router.pathname === '/messagerie'
-
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
@@ -119,7 +125,7 @@ export default function Layout({ children }: LayoutProps) {
 
       {conseiller && portefeuille && (
         <>
-          {!pageCouranteEstMessagerie && (
+          {!pageCouranteEstMessagerie && !pageCouraneEstCGU && aSigneLesCGU && (
             <div
               ref={containerRef}
               className={`${styles.container} ${
@@ -176,12 +182,26 @@ export default function Layout({ children }: LayoutProps) {
               <div ref={mainRef} className={styles.page}>
                 <main
                   role='main'
-                  className={`${styles.content} ${styles.messagerie_full_screen}`}
+                  className={`${styles.content} ${styles.cgu_full_screen}`}
                 >
                   <AlerteDisplayer />
                   {children}
                 </main>
                 <Footer conseiller={conseiller} />
+              </div>
+            </div>
+          )}
+
+          {pageCouraneEstCGU && (
+            <div ref={containerRef} className={`${styles.page_full_screen}`}>
+              <div ref={mainRef} className={styles.page}>
+                <main
+                  role='main'
+                  className={`${styles.content} ${styles.cgu_full_screen}`}
+                >
+                  <AlerteDisplayer />
+                  {children}
+                </main>
               </div>
             </div>
           )}

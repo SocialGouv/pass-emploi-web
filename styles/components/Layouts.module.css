@@ -23,6 +23,11 @@
   grid-template-columns: var(--sidebar-width) var(--chat-width) var(--page-width-when-chat);
 }
 
+.container.page_full_screen {
+  display: flex;
+  justify-content: center;
+}
+
 .sidebar {
   grid-area: sidebar;
   display: none;
@@ -58,6 +63,11 @@
   padding: 0;
   overflow: auto;
 }
+
+.content.cgu_full_screen {
+  max-width: 800px;
+}
+
 
 .content.content_when_chat {
   max-width: 100%;

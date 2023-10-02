@@ -13,6 +13,7 @@ export const unConseiller = (
     estSuperviseur: false,
     estSuperviseurPEBRSA: false,
     structure: StructureConseiller.PASS_EMPLOI,
+    dateSignatureCGU: '2023-10-03T00:00:00.000+02:00',
   }
   return { ...defaults, ...overrides }
 }
@@ -38,6 +39,7 @@ export const unConseillerJson = (
     lastName: 'Tavernier',
     notificationsSonores: false,
     aDesBeneficiairesARecuperer: false,
+    dateSignatureCGU: '2023-10-03',
   }
   return { ...defaults, ...overrides }
 }
