@@ -1,19 +1,21 @@
-import React, { ReactNode, useRef, useState, useEffect } from 'react'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
+
+import { TH } from './TH'
+import TR from './TR'
 
 interface IntercalaireProps {
   children: ReactNode
   className?: string
-  asDiv?: boolean
+  withRowStyle?: boolean
 }
 
 export function Intercalaire({
   children,
-  asDiv = false,
   className = '',
-}: IntercalaireProps): JSX.Element {
+  withRowStyle = false,
+}: IntercalaireProps): React.JSX.Element {
   const [colspan, setColspan] = useState<number>(1)
   const divRef = useRef<HTMLDivElement>(null)
-  const trRef = useRef<HTMLTableRowElement>(null)
 
   function computeColspan(row: HTMLElement): number {
     const table = findParentTable(row)
@@ -44,10 +46,9 @@ export function Intercalaire({
 
   useEffect(() => {
     if (divRef.current) setColspan(computeColspan(divRef.current))
-    if (trRef.current) setColspan(computeColspan(trRef.current))
-  }, [divRef, trRef])
+  }, [divRef])
 
-  if (asDiv) {
+  if (!withRowStyle) {
     return (
       <div role='row' className='table-row' ref={divRef}>
         <div
@@ -61,11 +62,11 @@ export function Intercalaire({
     )
   } else {
     return (
-      <tr ref={trRef}>
-        <th className={'text-left ' + className} colSpan={colspan}>
+      <TR asDiv={true} ref={divRef}>
+        <TH asDiv={true} aria-colspan={colspan}>
           {children}
-        </th>
-      </tr>
+        </TH>
+      </TR>
     )
   }
 }

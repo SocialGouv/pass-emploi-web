@@ -14,7 +14,7 @@ import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
@@ -22,9 +22,9 @@ import {
 } from 'interfaces/evenement'
 import {
   AgendaData,
-  buildAgenda,
-  renderAgenda,
-} from 'presentation/Intercalaires'
+  AgendaRows,
+  buildAgendaData,
+} from 'presentation/AgendaRows'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import {
   TIME_24_H_SEPARATOR,
@@ -54,12 +54,11 @@ export default function OngletAgendaEtablissement({
   changerPeriode,
 }: OngletAgendaEtablissementProps) {
   const [conseiller] = useConseiller()
-  const [animationsCollectives, setAnimationsCollectives] =
-    useState<AnimationCollective[]>()
-  const [animationsCollectivesFiltrees, setAnimationsCollectivesFiltrees] =
+  const [evenements, setEvenements] = useState<AnimationCollective[]>()
+  const [evenementsFiltres, setEvenementsFiltres] =
     useState<AnimationCollective[]>()
 
-  const [agendaAnimationsCollectives, setAgendaAnimationsCollectives] =
+  const [agendaEvenements, setAgendaEvenements] =
     useState<AgendaData<AnimationCollective>>()
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
 
@@ -80,46 +79,49 @@ export default function OngletAgendaEtablissement({
     dateDebut: DateTime,
     dateFin: DateTime
   ) {
-    setAgendaAnimationsCollectives(undefined)
+    setAgendaEvenements(undefined)
 
-    const evenements = await recupererAnimationsCollectives(dateDebut, dateFin)
+    const animationsCollectives = await recupererAnimationsCollectives(
+      dateDebut,
+      dateFin
+    )
     if (peutAccederAuxSessions(conseiller)) {
       try {
-        const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
-        setAnimationsCollectives([...evenementsMilo, ...evenements])
+        const sessions = await recupererSessionsMilo(dateDebut, dateFin)
+        setEvenements([...sessions, ...animationsCollectives])
       } catch (e) {
-        setAnimationsCollectives([...evenements])
+        setEvenements([...animationsCollectives])
       }
     } else {
-      setAnimationsCollectives([...evenements])
+      setEvenements([...animationsCollectives])
     }
 
     setPeriode({ debut: dateDebut, fin: dateFin })
   }
 
-  function filtrerAnimationsCollectives(aFiltrer: AnimationCollective[]) {
-    if (!statutsValides.length) setAnimationsCollectivesFiltrees(aFiltrer)
+  function filtrerEvenements(aFiltrer: AnimationCollective[]) {
+    if (!statutsValides.length) setEvenementsFiltres(aFiltrer)
     else {
       const acFiltrees = aFiltrer.filter(
         (ac) => ac.statut && statutsValides.includes(ac.statut)
       )
-      setAnimationsCollectivesFiltrees(acFiltrees)
+      setEvenementsFiltres(acFiltrees)
     }
   }
 
   useEffect(() => {
-    if (animationsCollectives) {
-      filtrerAnimationsCollectives(animationsCollectives)
+    if (evenements) {
+      filtrerEvenements(evenements)
     }
-  }, [animationsCollectives, statutsValides])
+  }, [evenements, statutsValides])
 
   useEffect(() => {
-    if (animationsCollectivesFiltrees && periode) {
-      setAgendaAnimationsCollectives(
-        buildAgenda(animationsCollectivesFiltrees, periode, ({ date }) => date)
+    if (evenementsFiltres && periode) {
+      setAgendaEvenements(
+        buildAgendaData(evenementsFiltres, periode, ({ date }) => date)
       )
     }
-  }, [animationsCollectivesFiltrees, periode])
+  }, [evenementsFiltres, periode])
 
   function getHref(ac: AnimationCollective): string {
     if (ac.isSession) return `agenda/sessions/${ac.id}`
@@ -135,39 +137,38 @@ export default function OngletAgendaEtablissement({
         trackNavigation={trackNavigation}
       />
 
-      {!agendaAnimationsCollectives && <SpinningLoader />}
+      {!agendaEvenements && <SpinningLoader />}
 
-      {agendaAnimationsCollectives &&
-        animationsCollectivesFiltrees!.length === 0 && (
-          <div className='flex flex-col justify-center items-center'>
-            <EmptyState
-              illustrationName={IllustrationName.Checklist}
-              titre={
-                statutsValides.length === 0
-                  ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
-                  : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
-              }
-              premierLien={{
-                href: '/mes-jeunes/edition-rdv?type=ac',
-                label: 'Créer une animation collective',
-                iconName: IconName.Add,
-              }}
-            />
+      {agendaEvenements && evenementsFiltres!.length === 0 && (
+        <div className='flex flex-col justify-center items-center'>
+          <EmptyState
+            illustrationName={IllustrationName.Checklist}
+            titre={
+              statutsValides.length === 0
+                ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
+                : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
+            }
+            premierLien={{
+              href: '/mes-jeunes/edition-rdv?type=ac',
+              label: 'Créer une animation collective',
+              iconName: IconName.Add,
+            }}
+          />
 
-            {animationsCollectives!.length > 0 && (
-              <Button
-                type='button'
-                style={ButtonStyle.SECONDARY}
-                onClick={() => setStatutsValides([])}
-                className='m-auto mt-8'
-              >
-                Réinitialiser les filtres
-              </Button>
-            )}
-          </div>
-        )}
+          {evenements!.length > 0 && (
+            <Button
+              type='button'
+              style={ButtonStyle.SECONDARY}
+              onClick={() => setStatutsValides([])}
+              className='m-auto mt-8'
+            >
+              Réinitialiser les filtres
+            </Button>
+          )}
+        </div>
+      )}
 
-      {agendaAnimationsCollectives && animationsCollectives!.length > 0 && (
+      {agendaEvenements && evenements!.length > 0 && (
         <Table
           asDiv={true}
           caption={{
@@ -200,50 +201,53 @@ export default function OngletAgendaEtablissement({
             </TR>
           </THead>
           <TBody>
-            {renderAgenda(agendaAnimationsCollectives, (ac) => (
-              <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
-                <TD>
-                  {heure(ac)} - {ac.duree} min
-                </TD>
-                <TD>
-                  {ac.titre}
-                  <span className={'block text-s-regular'}>{ac.sousTitre}</span>
-                </TD>
-                <TD>{tagType(ac)}</TD>
-                <TD className='flex text-center'>
-                  <IconComponent
-                    aria-label={ac.estCache ? 'Non visible' : 'Visible'}
-                    className='inline h-6 w-6 fill-primary'
-                    focusable={false}
-                    name={
-                      ac.estCache
-                        ? IconName.VisibilityOff
-                        : IconName.VisibilityOn
-                    }
-                    role='img'
-                  />
-                </TD>
-                <TD>
-                  <div className='flex items-center justify-between'>
-                    {ac.statut && tagStatut(ac)}
-                    {!ac.statut && (
-                      <>
-                        -
-                        <span className='sr-only'>
-                          information non disponible
-                        </span>
-                      </>
-                    )}
+            <AgendaRows
+              agenda={agendaEvenements}
+              Item={({ item: ac }) => (
+                <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
+                  <TD>
+                    {heure(ac)} - {ac.duree} min
+                  </TD>
+                  <TD>
+                    {ac.titre}
+                    <span className='block text-s-regular'>{ac.sousTitre}</span>
+                  </TD>
+                  <TD>{tagType(ac)}</TD>
+                  <TD className='flex text-center'>
                     <IconComponent
-                      name={IconName.ChevronRight}
+                      aria-label={ac.estCache ? 'Non visible' : 'Visible'}
+                      className='inline h-6 w-6 fill-primary'
                       focusable={false}
-                      aria-hidden={true}
-                      className='w-6 h-6 fill-primary'
+                      name={
+                        ac.estCache
+                          ? IconName.VisibilityOff
+                          : IconName.VisibilityOn
+                      }
+                      role='img'
                     />
-                  </div>
-                </TD>
-              </TR>
-            ))}
+                  </TD>
+                  <TD>
+                    <div className='flex items-center justify-between'>
+                      {ac.statut && tagStatut(ac)}
+                      {!ac.statut && (
+                        <>
+                          -
+                          <span className='sr-only'>
+                            information non disponible
+                          </span>
+                        </>
+                      )}
+                      <IconComponent
+                        name={IconName.ChevronRight}
+                        focusable={false}
+                        aria-hidden={true}
+                        className='w-6 h-6 fill-primary'
+                      />
+                    </div>
+                  </TD>
+                </TR>
+              )}
+            />
           </TBody>
         </Table>
       )}
