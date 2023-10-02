@@ -17,6 +17,7 @@ import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import {
+  Conseiller,
   estMilo,
   estPoleEmploiBRSA,
   StructureConseiller,
@@ -27,6 +28,7 @@ import { textesBRSA, textesCEJ } from 'lang/textes'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationDeleteConseillerModal = dynamic(
@@ -342,7 +344,20 @@ export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
     const { getConseillerServerSide } = await import(
       'services/conseiller.service'
     )
-    const conseiller = await getConseillerServerSide(user, accessToken)
+    let conseiller: Conseiller | undefined
+    try {
+      conseiller = await getConseillerServerSide(user, accessToken)
+    } catch (e) {
+      if (e instanceof ApiError && e.statusCode === 401) {
+        return {
+          redirect: {
+            destination: '/api/auth/federated-logout',
+            permanent: false,
+          },
+        }
+      }
+      throw e
+    }
     if (!conseiller) {
       throw new Error(`Conseiller ${user.id} inexistant`)
     }

@@ -18,7 +18,11 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
+import {
+  Conseiller,
+  estUserMilo,
+  peutAccederAuxSessions,
+} from 'interfaces/conseiller'
 import { JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
@@ -26,6 +30,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { DATETIME_LONG, toFrenchFormat, toFrenchString } from 'utils/date'
+import { ApiError } from 'utils/httpClient'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
 const DesinscriptionBeneficiaireModal = dynamic(
@@ -589,7 +594,20 @@ export const getServerSideProps: GetServerSideProps<
   const { getConseillerServerSide } = await import(
     'services/conseiller.service'
   )
-  const conseiller = await getConseillerServerSide(user, accessToken)
+  let conseiller: Conseiller | undefined
+  try {
+    conseiller = await getConseillerServerSide(user, accessToken)
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 401) {
+      return {
+        redirect: {
+          destination: '/api/auth/federated-logout',
+          permanent: false,
+        },
+      }
+    }
+    throw e
+  }
   if (!conseiller?.structureMilo?.id) return { notFound: true }
 
   if (!peutAccederAuxSessions(conseiller))

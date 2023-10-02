@@ -105,7 +105,7 @@ export async function getDetailsEvenement(
     )
     return jsonToEvenement(rdvJson)
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
     }
     throw e

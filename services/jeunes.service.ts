@@ -82,7 +82,7 @@ export async function getJeuneDetails(
     )
     return jsonToDetailJeune(jeune)
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
     }
     throw e
@@ -134,7 +134,7 @@ export async function getIdJeuneMilo(
     )
     return id
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
     }
     throw e
@@ -192,7 +192,7 @@ export async function getMetadonneesFavorisJeune(
     }>(`/jeunes/${idJeune}/favoris/metadonnees`, accessToken)
     return jsonToMetadonneesFavoris(metadonneesFavoris)
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
     }
 
@@ -327,7 +327,7 @@ async function getConseillersDuJeune(
       )
       return historique.map(toConseillerHistorique)
     } catch (e) {
-      if (e instanceof ApiError && e.status === 404) {
+      if (e instanceof ApiError && e.statusCode === 404) {
         return []
       }
       throw e

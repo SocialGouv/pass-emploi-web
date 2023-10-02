@@ -24,6 +24,7 @@ import {
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
+  Conseiller,
   estMilo,
   estPoleEmploi,
   estUserPoleEmploi,
@@ -47,6 +48,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { compareDates } from 'utils/date'
+import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const DeleteJeuneActifModal = dynamic(
@@ -613,7 +615,20 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     'services/favoris.service'
   )
 
-  const conseiller = await getConseillerServerSide(user, accessToken)
+  let conseiller: Conseiller | undefined
+  try {
+    conseiller = await getConseillerServerSide(user, accessToken)
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 401) {
+      return {
+        redirect: {
+          destination: '/api/auth/federated-logout',
+          permanent: false,
+        },
+      }
+    }
+    throw e
+  }
 
   if (!conseiller) {
     return { notFound: true }
@@ -648,6 +663,15 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
         DateTime.now().startOf('day')
       )
     } catch (e) {
+      if (e instanceof ApiError && e.statusCode === 401) {
+        return {
+          redirect: {
+            destination: '/api/auth/federated-logout',
+            permanent: false,
+          },
+        }
+      }
+
       sessionsMilo = []
     }
   }

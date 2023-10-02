@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -12,6 +12,7 @@ import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface HomePageProps extends PageProps {
@@ -91,7 +92,20 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   const { getConseillerServerSide } = await import(
     'services/conseiller.service'
   )
-  const conseiller = await getConseillerServerSide(user, accessToken)
+  let conseiller: Conseiller | undefined
+  try {
+    conseiller = await getConseillerServerSide(user, accessToken)
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 401) {
+      return {
+        redirect: {
+          destination: '/api/auth/federated-logout',
+          permanent: false,
+        },
+      }
+    }
+    throw e
+  }
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
   }

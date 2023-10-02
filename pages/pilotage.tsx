@@ -9,6 +9,7 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage } from 'interfaces/action'
 import {
+  Conseiller,
   estUserPoleEmploi,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
@@ -20,6 +21,7 @@ import { SessionsAClore } from 'services/sessions.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const OngletActionsPilotage = dynamic(
@@ -338,7 +340,20 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
     'services/sessions.service'
   )
 
-  const conseiller = await getConseillerServerSide(user, accessToken)
+  let conseiller: Conseiller | undefined
+  try {
+    conseiller = await getConseillerServerSide(user, accessToken)
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 401) {
+      return {
+        redirect: {
+          destination: '/api/auth/federated-logout',
+          permanent: false,
+        },
+      }
+    }
+    throw e
+  }
   if (!conseiller) return { notFound: true }
 
   const actions = await getActionsAQualifierServerSide(user.id, accessToken)
@@ -356,6 +371,14 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
     try {
       sessions = await getSessionsACloreServerSide(user.id, accessToken)
     } catch (e) {
+      if (e instanceof ApiError && e.statusCode === 401)
+        return {
+          redirect: {
+            destination: '/api/auth/federated-logout',
+            permanent: false,
+          },
+        }
+
       sessions = []
     }
   }

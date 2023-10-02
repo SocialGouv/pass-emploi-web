@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -30,6 +31,7 @@ import {
   toFrenchFormat,
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
+import { ApiError } from 'utils/httpClient'
 
 type OngletAgendaEtablissementProps = {
   recupererAnimationsCollectives: (
@@ -52,6 +54,8 @@ export default function OngletAgendaEtablissement({
   periodeIndex,
   changerPeriode,
 }: OngletAgendaEtablissementProps) {
+  const router = useRouter()
+
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
   const [evenementsFiltres, setEvenementsFiltres] =
@@ -88,16 +92,15 @@ export default function OngletAgendaEtablissement({
         dateFin
       )
       if (peutAccederAuxSessions(conseiller)) {
-        try {
-          const sessions = await recupererSessionsMilo(dateDebut, dateFin)
-          setEvenements([...sessions, ...animationsCollectives])
-        } catch (e) {
-          setEvenements([...animationsCollectives])
-        }
+        const sessions = await recupererSessionsMilo(dateDebut, dateFin)
+        setEvenements([...sessions, ...animationsCollectives])
       } else {
         setEvenements([...animationsCollectives])
       }
     } catch (e) {
+      if (e instanceof ApiError && e.statusCode === 401) {
+        await router.push('/api/auth/federated-logout')
+      }
       setFailed(true)
     } finally {
       setPeriode({ debut: dateDebut, fin: dateFin })

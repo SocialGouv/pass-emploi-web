@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -9,6 +10,7 @@ import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { AgendaData, buildAgendaData } from 'presentation/AgendaRows'
 import { compareDates } from 'utils/date'
+import { ApiError } from 'utils/httpClient'
 
 type OngletAgendaConseillerProps = {
   conseiller: Conseiller
@@ -35,6 +37,8 @@ export default function OngletAgendaConseiller({
   periodeIndex,
   changerPeriode,
 }: OngletAgendaConseillerProps) {
+  const router = useRouter()
+
   const [evenements, setEvenements] = useState<EvenementListItem[]>()
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
   const [indexJoursCharges, setIndexJoursCharges] = useState<number[]>()
@@ -62,6 +66,10 @@ export default function OngletAgendaConseiller({
       setIndexJoursCharges([0, 1])
       setEvenements(evenementsPeriode)
     } catch (e) {
+      if (e instanceof ApiError && e.statusCode === 401) {
+        await router.push('/api/auth/federated-logout')
+      }
+
       setFailed(true)
     } finally {
       setPeriode({ debut: dateDebut, fin: dateFin })
@@ -69,10 +77,18 @@ export default function OngletAgendaConseiller({
   }
 
   async function chargerEvenementsJour(jourACharger: DateTime) {
-    const evenementsJour = await chargerEvenements(
-      jourACharger.startOf('day'),
-      jourACharger.endOf('day')
-    )
+    let evenementsJour: EvenementListItem[]
+    try {
+      evenementsJour = await chargerEvenements(
+        jourACharger.startOf('day'),
+        jourACharger.endOf('day')
+      )
+    } catch (e) {
+      if (e instanceof ApiError && e.statusCode === 401) {
+        await router.push('/api/auth/federated-logout')
+      }
+      throw e
+    }
 
     setIndexJoursCharges((currents) => {
       const indexJourACharger: number = jourACharger

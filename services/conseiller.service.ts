@@ -125,7 +125,7 @@ async function getConseiller(
     )
     return jsonToConseiller(conseillerJson, user)
   } catch (e) {
-    if (e instanceof ApiError) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
     }
     throw e
