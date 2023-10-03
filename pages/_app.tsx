@@ -1,8 +1,7 @@
 // eslint import/order: 0
-import ProgressBar from '@badrap/bar-of-progress'
 import localFont from '@next/font/local'
-import { AppProps as NextAppProps } from 'next/app'
 import type { NextWebVitalsMetric } from 'next/app'
+import { AppProps as NextAppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Router, { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
@@ -11,10 +10,9 @@ import React, { useEffect } from 'react'
 import 'styles/globals.css'
 import 'styles/typography.css'
 
-import AppHead from 'components/AppHead'
-import Footer from 'components/layouts/Footer'
+import ProgressBar from 'components/global/ProgressBar'
 import { init } from 'utils/analytics/matomo'
-import { initRum } from 'utils/monitoring/init-rum'
+import { initRum } from 'utils/monitoring/elastic'
 
 const ContextProviders = dynamic(import('utils/ContextProviders'), {
   ssr: false,
@@ -22,17 +20,6 @@ const ContextProviders = dynamic(import('utils/ContextProviders'), {
 
 const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
 const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
-
-const progress = new ProgressBar({
-  size: 5,
-  color: '#274996',
-  className: 'bar-of-progress',
-  delay: 100,
-})
-
-Router.events.on('routeChangeStart', progress.start)
-Router.events.on('routeChangeComplete', progress.finish)
-Router.events.on('routeChangeError', progress.finish)
 
 export const fontMarianne = localFont({
   src: [
@@ -60,9 +47,7 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
 
 export default function CustomApp({ Component, pageProps }: NextAppProps) {
   const router = useRouter()
-  const isLoginPage = router.pathname === '/login'
   const isLogoutPage = router.pathname === '/logout'
-  const shouldUseLayout = !isLoginPage && !isLogoutPage
 
   useEffect(() => {
     init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
@@ -92,17 +77,11 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
         }
       `}</style>
 
-      {!shouldUseLayout && (
-        <>
-          <AppHead titre='' hasMessageNonLu={false} />
-          <div className='flex flex-col justify-center h-screen'>
-            <Component {...pageProps} />
-            {isLoginPage && <Footer />}
-          </div>
-        </>
-      )}
+      <ProgressBar />
 
-      {shouldUseLayout && (
+      {isLogoutPage && <Component {...pageProps} />}
+
+      {!isLogoutPage && (
         <ContextProviders>
           <Component {...pageProps} />
         </ContextProviders>
