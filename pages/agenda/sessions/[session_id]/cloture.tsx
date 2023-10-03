@@ -14,6 +14,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import { TR } from 'components/ui/Table/TR'
 import {
+  Conseiller,
   estUserPoleEmploi,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
@@ -29,6 +30,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { ApiError } from 'utils/httpClient'
 
 type ClotureSessionProps = PageProps & {
   session: Session
@@ -329,7 +331,20 @@ export const getServerSideProps: GetServerSideProps<
   const { getConseillerServerSide } = await import(
     'services/conseiller.service'
   )
-  const conseiller = await getConseillerServerSide(user, accessToken)
+  let conseiller: Conseiller | undefined
+  try {
+    conseiller = await getConseillerServerSide(user, accessToken)
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 401) {
+      return {
+        redirect: {
+          destination: '/api/auth/federated-logout',
+          permanent: false,
+        },
+      }
+    }
+    throw e
+  }
   if (estUserPoleEmploi(user) || !peutAccederAuxSessions(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },

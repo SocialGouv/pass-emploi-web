@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
 import TableauRdv from 'components/rdv/TableauRdv'
@@ -6,6 +7,7 @@ import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { compareDates } from 'utils/date'
+import { ApiError } from 'utils/httpClient'
 
 type OngletAgendaConseillerProps = {
   conseiller: Conseiller
@@ -28,6 +30,7 @@ export default function OngletAgendaConseiller({
   recupererSessionsBeneficiaires,
   trackNavigation,
 }: OngletAgendaConseillerProps) {
+  const router = useRouter()
   const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
 
   async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
@@ -35,11 +38,17 @@ export default function OngletAgendaConseiller({
 
     let sessions: EvenementListItem[] = []
     if (peutAccederAuxSessions(conseiller)) {
-      sessions = await recupererSessionsBeneficiaires(
-        conseiller.id,
-        dateDebut,
-        dateFin
-      )
+      try {
+        sessions = await recupererSessionsBeneficiaires(
+          conseiller.id,
+          dateDebut,
+          dateFin
+        )
+      } catch (e) {
+        if (e instanceof ApiError && e.statusCode === 401) {
+          await router.push('/api/auth/federated-logout')
+        }
+      }
     }
 
     setRdvs(

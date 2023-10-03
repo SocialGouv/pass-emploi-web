@@ -59,7 +59,10 @@ async function handleHttpError(response: Response): Promise<void> {
 export class ApiError implements Error {
   name = 'API_ERROR'
 
-  constructor(readonly status: number, readonly message: string) {}
+  constructor(
+    readonly statusCode: number,
+    readonly message: string
+  ) {}
 }
 
 export class UnexpectedError implements Error {

@@ -73,7 +73,7 @@ export async function getSessionsBeneficiaires(
     )
     return sessionsMiloJson.map(sessionMiloJsonToEvenementListItem)
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return []
     }
     throw e
@@ -92,7 +92,7 @@ export async function getDetailsSession(
     )
     return jsonToSession(sessionJson)
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
     }
     throw e
@@ -137,22 +137,6 @@ export async function changerVisibiliteSession(
   )
 }
 
-export async function modifierInformationsSession(
-  idConseiller: string,
-  idSession: string,
-  payload: {
-    estVisible?: boolean
-    inscriptions?: InformationBeneficiaireSession[]
-  },
-  accessToken: string
-) {
-  return apiPatch(
-    `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
-    payload,
-    accessToken
-  )
-}
-
 export async function cloreSession(
   idConseiller: string,
   idSession: string,
@@ -183,14 +167,68 @@ export async function getSessionsMiloBeneficiaire(
       sessionMiloBeneficiaireJsonToEvenementListItem
     )
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return []
     }
     throw e
   }
 }
 
-export function jsonToSession(json: DetailsSessionJson): Session {
+async function getSessionsMissionLocale(
+  idConseiller: string,
+  accessToken: string,
+  options?: string
+): Promise<AnimationCollective[]> {
+  try {
+    const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
+      `/conseillers/milo/${idConseiller}/sessions${
+        options ? '?' + options : ''
+      }`,
+      accessToken
+    )
+    return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) {
+      return []
+    }
+    throw e
+  }
+}
+
+async function modifierInformationsSession(
+  idConseiller: string,
+  idSession: string,
+  payload: {
+    estVisible?: boolean
+    inscriptions?: InformationBeneficiaireSession[]
+  },
+  accessToken: string
+) {
+  return apiPatch(
+    `/conseillers/milo/${idConseiller}/sessions/${idSession}`,
+    payload,
+    accessToken
+  )
+}
+
+function sessionMiloBeneficiaireJsonToEvenementListItem(
+  json: SessionMiloBeneficiaireJson
+): EvenementListItem {
+  const dateDebut = DateTime.fromISO(json.dateHeureDebut)
+  return {
+    id: json.id,
+    date: json.dateHeureDebut,
+    type: jsonToTypeSessionMilo(json.type),
+    duree: minutesEntreDeuxDates(
+      dateDebut,
+      DateTime.fromISO(json.dateHeureFin)
+    ),
+    idCreateur: json.id ?? undefined,
+    isSession: true,
+  }
+}
+
+function jsonToSession(json: DetailsSessionJson): Session {
   const session: Session = {
     session: {
       id: json.session.id,
@@ -222,42 +260,4 @@ export function jsonToSession(json: DetailsSessionJson): Session {
     session.session.commentaire = json.session.commentaire
 
   return session
-}
-
-async function getSessionsMissionLocale(
-  idConseiller: string,
-  accessToken: string,
-  options?: string
-): Promise<AnimationCollective[]> {
-  try {
-    const { content: sessionsMiloJson } = await apiGet<SessionMiloJson[]>(
-      `/conseillers/milo/${idConseiller}/sessions${
-        options ? '?' + options : ''
-      }`,
-      accessToken
-    )
-    return sessionsMiloJson.map(sessionMiloJsonToAnimationCollective)
-  } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
-      return []
-    }
-    throw e
-  }
-}
-
-function sessionMiloBeneficiaireJsonToEvenementListItem(
-  json: SessionMiloBeneficiaireJson
-): EvenementListItem {
-  const dateDebut = DateTime.fromISO(json.dateHeureDebut)
-  return {
-    id: json.id,
-    date: json.dateHeureDebut,
-    type: jsonToTypeSessionMilo(json.type),
-    duree: minutesEntreDeuxDates(
-      dateDebut,
-      DateTime.fromISO(json.dateHeureFin)
-    ),
-    idCreateur: json.id ?? undefined,
-    isSession: true,
-  }
 }
