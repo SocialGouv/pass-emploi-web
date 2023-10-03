@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -31,6 +32,7 @@ import {
   toFrenchFormat,
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
+import { ApiError } from 'utils/httpClient'
 
 type OngletAgendaEtablissementProps = {
   recupererAnimationsCollectives: (
@@ -49,6 +51,8 @@ export default function OngletAgendaEtablissement({
   recupererSessionsMilo,
   trackNavigation,
 }: OngletAgendaEtablissementProps) {
+  const router = useRouter()
+
   const [conseiller] = useConseiller()
   const [animationsCollectives, setAnimationsCollectives] = useState<
     AnimationCollective[]
@@ -73,6 +77,9 @@ export default function OngletAgendaEtablissement({
         const evenementsMilo = await recupererSessionsMilo(dateDebut, dateFin)
         setAnimationsCollectives([...evenementsMilo, ...evenements])
       } catch (e) {
+        if (e instanceof ApiError && e.statusCode === 401) {
+          await router.push('/api/auth/federated-logout')
+        }
         setAnimationsCollectives([...evenements])
       }
     } else {

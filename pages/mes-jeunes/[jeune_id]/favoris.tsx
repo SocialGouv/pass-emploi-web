@@ -63,7 +63,7 @@ export const getServerSideProps: GetServerSideProps<FavorisProps> = async (
       },
     }
   } catch (error) {
-    if (error instanceof ApiError && error.status === 403) {
+    if (error instanceof ApiError && error.statusCode === 403) {
       return { redirect: { destination: '/mes-jeunes', permanent: false } }
     }
     throw error

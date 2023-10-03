@@ -19,6 +19,7 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import {
+  Conseiller,
   estUserPoleEmploi,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
@@ -29,6 +30,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { DATETIME_LONG, toFrenchFormat, toFrenchString } from 'utils/date'
+import { ApiError } from 'utils/httpClient'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
 const DesinscriptionBeneficiaireModal = dynamic(
@@ -588,7 +590,20 @@ export const getServerSideProps: GetServerSideProps<
   const { getConseillerServerSide } = await import(
     'services/conseiller.service'
   )
-  const conseiller = await getConseillerServerSide(user, accessToken)
+  let conseiller: Conseiller | undefined
+  try {
+    conseiller = await getConseillerServerSide(user, accessToken)
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 401) {
+      return {
+        redirect: {
+          destination: '/api/auth/federated-logout',
+          permanent: false,
+        },
+      }
+    }
+    throw e
+  }
   if (!conseiller?.agence?.id) return { notFound: true }
 
   if (!peutAccederAuxSessions(conseiller))

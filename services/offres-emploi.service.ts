@@ -67,7 +67,7 @@ async function getOffreEmploi(idOffreEmploi: string, accessToken: string) {
     )
     return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) {
+    if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
     }
     throw e

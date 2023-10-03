@@ -18,6 +18,7 @@ import { getConseillerClientSide } from 'services/conseiller.service'
 import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
 import styles from 'styles/components/Layouts.module.css'
 import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
+import { ApiError } from 'utils/httpClient'
 import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleContext'
 
 const ChatManager = dynamic(import('components/layouts/ChatManager'), {
@@ -76,13 +77,20 @@ export default function Layout({ children }: LayoutProps) {
       Promise.all([
         getConseillerClientSide(),
         getJeunesDuConseillerClientSide(),
-      ]).then(([conseillerRecupere, beneficiaires]) => {
-        setConseiller(conseillerRecupere)
-        const beneficiairesParOrdreAlphabetique = beneficiaires
-          .map(({ id, nom, prenom }) => ({ id, nom, prenom }))
-          .sort(compareJeunesByNom)
-        setPortefeuille(beneficiairesParOrdreAlphabetique)
-      })
+      ])
+        .then(([conseillerRecupere, beneficiaires]) => {
+          setConseiller(conseillerRecupere)
+          const beneficiairesParOrdreAlphabetique = beneficiaires
+            .map(({ id, nom, prenom }) => ({ id, nom, prenom }))
+            .sort(compareJeunesByNom)
+          setPortefeuille(beneficiairesParOrdreAlphabetique)
+        })
+        .catch((e) => {
+          if (e instanceof ApiError && e.statusCode === 401) {
+            router.push('/api/auth/federated-logout')
+          }
+          throw e
+        })
     } else {
       const userAPM = {
         id: conseiller.id,

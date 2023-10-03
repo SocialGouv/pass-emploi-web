@@ -12,7 +12,13 @@ const CustomError: NextPage<ErrorProps> = ({ statusCode, message }) => (
 
 CustomError.getInitialProps = ({ req, res, err }) => {
   let props: ErrorProps
+
   if (res) {
+    if (err && err.statusCode === 401) {
+      res.writeHead(302, { Location: '/api/auth/federated-logout' })
+      res.end()
+    }
+
     props = { statusCode: res.statusCode, message: res.statusMessage }
   } else if (err) {
     props = { statusCode: err.statusCode, message: err.message }
