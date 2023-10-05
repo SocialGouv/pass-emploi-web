@@ -4809,7 +4809,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^9.0.0":
+"@testing-library/dom@npm:^9.0.0, @testing-library/dom@npm:^9.3.3":
   version: 9.3.3
   resolution: "@testing-library/dom@npm:9.3.3"
   dependencies:
@@ -4825,7 +4825,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^5.16.5":
+"@testing-library/jest-dom@npm:^5.17.0":
   version: 5.17.0
   resolution: "@testing-library/jest-dom@npm:5.17.0"
   dependencies:
@@ -4856,7 +4856,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^14.4.3":
+"@testing-library/user-event@npm:^14.5.1":
   version: 14.5.1
   resolution: "@testing-library/user-event@npm:14.5.1"
   peerDependencies:
@@ -8263,7 +8263,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^6.7.3":
+"css-loader@npm:^6.8.1":
   version: 6.8.1
   resolution: "css-loader@npm:6.8.1"
   dependencies:
@@ -9646,7 +9646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.40.0":
+"eslint@npm:^8.50.0":
   version: 8.50.0
   resolution: "eslint@npm:8.50.0"
   dependencies:
@@ -12635,7 +12635,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-jsdom@npm:^29.5.0":
+"jest-environment-jsdom@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-environment-jsdom@npm:29.7.0"
   dependencies:
@@ -13027,7 +13027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^29.5.0":
+"jest@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest@npm:29.7.0"
   dependencies:
@@ -15423,10 +15423,10 @@ __metadata:
     "@storybook/react": ^6.5.16
     "@storybook/storybook-deployer": ^2.8.16
     "@svgr/webpack": 7.0.0
-    "@testing-library/dom": ^9.0.0
-    "@testing-library/jest-dom": ^5.16.5
+    "@testing-library/dom": ^9.3.3
+    "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
-    "@testing-library/user-event": ^14.4.3
+    "@testing-library/user-event": ^14.5.1
     "@types/crypto-js": ^4.1.2
     "@types/jsonwebtoken": ^9.0.3
     "@types/lodash.isequal": ^4.5.6
@@ -15434,10 +15434,10 @@ __metadata:
     "@types/react": ^18.2.25
     autoprefixer: ^10.4.16
     crypto-js: 4.1.1
-    css-loader: ^6.7.3
+    css-loader: ^6.8.1
     dotenv: 16.3.1
     elastic-apm-node: 4.0.0
-    eslint: ^8.40.0
+    eslint: ^8.50.0
     eslint-config-next: 13.5.4
     eslint-config-prettier: ^9.0.0
     eslint-plugin-prettier: ^5.0.0
@@ -15445,8 +15445,8 @@ __metadata:
     firebase: 10.4.0
     global: ^4.4.0
     html-react-parser: 4.2.2
-    jest: ^29.5.0
-    jest-environment-jsdom: ^29.5.0
+    jest: ^29.7.0
+    jest-environment-jsdom: ^29.7.0
     jsonwebtoken: 9.0.2
     lodash.isequal: 4.5.0
     luxon: 3.4.3
@@ -15456,7 +15456,7 @@ __metadata:
     next-logger: 3.0.2
     next-themes: 0.2.1
     pino: 8.15.6
-    pino-pretty: ^10.0.0
+    pino-pretty: ^10.2.3
     postcss: ^8.4.31
     prettier: ^3.0.3
     react: 18.2.0
@@ -15466,8 +15466,8 @@ __metadata:
     style-loader: ^3.3.3
     tailwindcss: 3.3.3
     ts-loader: ^9.4.4
-    tsconfig-paths-webpack-plugin: ^4.0.1
-    typescript: ^5.0.4
+    tsconfig-paths-webpack-plugin: ^4.1.0
+    typescript: ^5.2.2
   languageName: unknown
   linkType: soft
 
@@ -15675,7 +15675,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-pretty@npm:^10.0.0":
+"pino-pretty@npm:^10.2.3":
   version: 10.2.3
   resolution: "pino-pretty@npm:10.2.3"
   dependencies:
@@ -18905,7 +18905,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfig-paths-webpack-plugin@npm:^4.0.1":
+"tsconfig-paths-webpack-plugin@npm:^4.1.0":
   version: 4.1.0
   resolution: "tsconfig-paths-webpack-plugin@npm:4.1.0"
   dependencies:
@@ -19088,7 +19088,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.0.4":
+"typescript@npm:^5.2.2":
   version: 5.2.2
   resolution: "typescript@npm:5.2.2"
   bin:
@@ -19098,7 +19098,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^5.2.2#~builtin<compat/typescript>":
   version: 5.2.2
   resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=f3b441"
   bin:
