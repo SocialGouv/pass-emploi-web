@@ -1859,20 +1859,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@elastic/apm-rum-react@npm:1.4.4":
-  version: 1.4.4
-  resolution: "@elastic/apm-rum-react@npm:1.4.4"
+"@elastic/apm-rum-react@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@elastic/apm-rum-react@npm:2.0.1"
   dependencies:
-    "@elastic/apm-rum": ^5.14.0
+    "@elastic/apm-rum": ^5.15.0
     hoist-non-react-statics: ^3.3.0
   peerDependencies:
     react: ">16.0.0"
-    react-router-dom: ">4.0.0"
-  checksum: 8d3d925e24d33ecd6d0ee226b497e68d82cf45ec27c8a6aaa6b21a4975a9f853de8c5dfa9641fd519812d602bc28a3ec3d2d22f78bb9556d68a812485f59d923
+    react-router-dom: ">=6.0.0"
+  checksum: 15b50bb72d802502a04c9ce1bcfe89f8471a9760ff62e25a29b79e2d17e0b71cb56f0f2585794bbc05e29f2b6b055b0dff5ab1418061c6bf5f1aa1374a633800
   languageName: node
   linkType: hard
 
-"@elastic/apm-rum@npm:5.15.0, @elastic/apm-rum@npm:^5.14.0":
+"@elastic/apm-rum@npm:5.15.0, @elastic/apm-rum@npm:^5.15.0":
   version: 5.15.0
   resolution: "@elastic/apm-rum@npm:5.15.0"
   dependencies:
@@ -15416,7 +15416,7 @@ __metadata:
   dependencies:
     "@badrap/bar-of-progress": 0.2.2
     "@elastic/apm-rum": 5.15.0
-    "@elastic/apm-rum-react": 1.4.4
+    "@elastic/apm-rum-react": 2.0.1
     "@next/bundle-analyzer": 13.5.4
     "@next/font": 13.5.4
     "@storybook/addon-a11y": ^6.5.16

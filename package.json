@@ -21,7 +21,7 @@
   "dependencies": {
     "@badrap/bar-of-progress": "0.2.2",
     "@elastic/apm-rum": "5.15.0",
-    "@elastic/apm-rum-react": "1.4.4",
+    "@elastic/apm-rum-react": "2.0.1",
     "@next/bundle-analyzer": "13.5.4",
     "@next/font": "13.5.4",
     "@storybook/storybook-deployer": "^2.8.16",
