@@ -12,7 +12,7 @@ const customJestConfig = {
     '^.+\\.(svg)$': '<rootDir>/assets/__mocks__/SvgrMock.jsx',
   },
   restoreMocks: true,
-  setupFilesAfterEnv: ['./setupTests.js'],
+  setupFilesAfterEnv: ['./setupTests.ts'],
   testEnvironment: 'jest-environment-jsdom',
 }
 
