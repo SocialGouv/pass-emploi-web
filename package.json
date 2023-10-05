@@ -84,6 +84,9 @@
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.2.2"
   },
+  "resolutions": {
+    "postcss": "^8.4.31"
+  },
   "browser": {
     "elastic-apm-node": false
   },
