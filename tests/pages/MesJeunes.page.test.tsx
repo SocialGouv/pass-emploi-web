@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom'
-import '@testing-library/jest-dom/extend-expect'
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
