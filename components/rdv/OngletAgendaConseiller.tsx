@@ -1,11 +1,14 @@
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import TableauRdv from 'components/rdv/TableauRdv'
+import EmptyState from 'components/EmptyState'
+import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
+import { AgendaData, buildAgendaData } from 'presentation/AgendaRows'
 import { compareDates } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
@@ -22,6 +25,8 @@ type OngletAgendaConseillerProps = {
     dateFin: DateTime
   ) => Promise<EvenementListItem[]>
   trackNavigation: (append?: string) => void
+  periodeIndex: number
+  changerPeriode: (index: number) => void
 }
 
 export default function OngletAgendaConseiller({
@@ -29,12 +34,63 @@ export default function OngletAgendaConseiller({
   recupererRdvs,
   recupererSessionsBeneficiaires,
   trackNavigation,
+  periodeIndex,
+  changerPeriode,
 }: OngletAgendaConseillerProps) {
   const router = useRouter()
-  const [rdvs, setRdvs] = useState<EvenementListItem[]>([])
+  const [evenements, setEvenements] = useState<EvenementListItem[]>()
+  const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [indexJoursCharges, setIndexJoursCharges] = useState<number[]>()
+  const [agendaEvenements, setAgendaEvenements] =
+    useState<AgendaData<EvenementListItem>>()
+  const [failed, setFailed] = useState<boolean>(false)
 
-  async function chargerRdvs(dateDebut: DateTime, dateFin: DateTime) {
-    const evenements = await recupererRdvs(conseiller.id, dateDebut, dateFin)
+  async function chargerNouvellePeriode(
+    nouvellePeriodeIndex: number,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ) {
+    await initEvenementsPeriode(dateDebut, dateFin)
+    changerPeriode(nouvellePeriodeIndex)
+  }
+
+  async function initEvenementsPeriode(dateDebut: DateTime, dateFin: DateTime) {
+    setFailed(false)
+    setAgendaEvenements(undefined)
+
+    const deuxiemeJour = dateDebut.plus({ day: 1 }).endOf('day')
+
+    try {
+      const evenementsPeriode = await chargerEvenements(dateDebut, deuxiemeJour)
+      setIndexJoursCharges([0, 1])
+      setEvenements(evenementsPeriode)
+    } catch (e) {
+      setFailed(true)
+    } finally {
+      setPeriode({ debut: dateDebut, fin: dateFin })
+    }
+  }
+
+  async function chargerEvenementsJour(jourACharger: DateTime) {
+    const evenementsJour = await chargerEvenements(
+      jourACharger.startOf('day'),
+      jourACharger.endOf('day')
+    )
+
+    setIndexJoursCharges((currents) => {
+      const indexJourACharger: number = jourACharger
+        .diff(periode!.debut)
+        .as('days')
+      return currents!.concat(indexJourACharger)
+    })
+    setEvenements((current) => current!.concat(evenementsJour))
+  }
+
+  async function chargerEvenements(
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<EvenementListItem[]> {
+    const rdvs = await recupererRdvs(conseiller.id, dateDebut, dateFin)
 
     let sessions: EvenementListItem[] = []
     if (peutAccederAuxSessions(conseiller)) {
@@ -52,31 +108,65 @@ export default function OngletAgendaConseiller({
       }
     }
 
-    setRdvs(
-      evenements
-        .concat(sessions)
-        .sort((event1, event2) =>
-          compareDates(
-            DateTime.fromISO(event1.date),
-            DateTime.fromISO(event2.date)
-          )
+    return rdvs
+      .concat(sessions)
+      .sort((event1, event2) =>
+        compareDates(
+          DateTime.fromISO(event1.date),
+          DateTime.fromISO(event2.date)
         )
-    )
+      )
   }
+
+  useEffect(() => {
+    if (evenements && periode && indexJoursCharges) {
+      setAgendaEvenements(
+        buildAgendaData(
+          evenements,
+          periode,
+          ({ date }) => DateTime.fromISO(date),
+          indexJoursCharges
+        )
+      )
+    }
+  }, [evenements, periode, indexJoursCharges])
 
   return (
     <>
       <SelecteurPeriode
-        onNouvellePeriode={chargerRdvs}
+        onNouvellePeriode={chargerNouvellePeriode}
+        periodeCourante={periodeIndex}
         nombreJours={7}
         trackNavigation={trackNavigation}
       />
 
-      <TableauRdv
-        idConseiller={conseiller.id}
-        rdvs={rdvs ?? []}
-        withIntercalaires={true}
-      />
+      {!agendaEvenements && !failed && (
+        <EmptyState
+          illustrationName={IllustrationName.Sablier}
+          titre='L’affichage de votre agenda peut prendre quelques instants.'
+          sousTitre='Veuillez patienter pendant le chargement des informations.'
+        />
+      )}
+
+      {!agendaEvenements && failed && (
+        <EmptyState
+          illustrationName={IllustrationName.Maintenance}
+          titre='L’affichage de votre agenda a échoué.'
+          sousTitre='Si le problème persiste, contactez notre support.'
+          bouton={{
+            onClick: () => initEvenementsPeriode(periode!.debut, periode!.fin),
+            label: 'Réessayer',
+          }}
+        />
+      )}
+
+      {agendaEvenements && (
+        <TableauEvenementsConseiller
+          idConseiller={conseiller.id}
+          agendaEvenements={agendaEvenements}
+          onChargerEvenementsJour={chargerEvenementsJour}
+        />
+      )}
     </>
   )
 }

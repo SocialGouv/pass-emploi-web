@@ -43,7 +43,7 @@ export default function Button({
   return (
     <button
       onClick={onClick}
-      className={`${className ? className : ''} text-s-bold ${
+      className={`${className ? className : ''} relative text-s-bold ${
         styles.button
       } ${getColorStyleClassName(style)}`}
       form={form ?? undefined}
@@ -58,10 +58,16 @@ export default function Button({
       {isLoading && (
         <IconComponent
           name={IconName.Spinner}
-          className='w-6 h-6 fill-blanc animate-spin'
+          className='w-6 h-6 fill-blanc animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
         />
       )}
-      {!isLoading && children}
+      <span
+        className={`flex items-center justify-center ${
+          isLoading ? 'invisible' : ''
+        }`}
+      >
+        {children}
+      </span>
     </button>
   )
 }

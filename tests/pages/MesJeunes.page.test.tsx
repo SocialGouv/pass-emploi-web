@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom'
-import '@testing-library/jest-dom/extend-expect'
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GetServerSidePropsContext } from 'next/types'
@@ -167,18 +165,31 @@ describe('Mes Jeunes', () => {
 
     describe('quand le conseiller est MILO', () => {
       let jeune: JeuneAvecNbActionsNonTerminees
+      let beneficiaireAvecStructureDifferente: JeuneAvecNbActionsNonTerminees
 
       beforeEach(async () => {
         //GIVEN
         jeune = unJeuneAvecActionsNonTerminees({
           situationCourante: CategorieSituation.DEMANDEUR_D_EMPLOI,
         })
+        beneficiaireAvecStructureDifferente = unJeuneAvecActionsNonTerminees({
+          prenom: 'Aline',
+          id: 'jeune-2',
+          structureMilo: { id: '2' },
+        })
 
         await act(() => {
           renderWithContexts(
-            <MesJeunes conseillerJeunes={[jeune]} isFromEmail pageTitle='' />,
+            <MesJeunes
+              conseillerJeunes={[jeune, beneficiaireAvecStructureDifferente]}
+              isFromEmail
+              pageTitle=''
+            />,
             {
-              customConseiller: { structure: StructureConseiller.MILO },
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+                structureMilo: { nom: 'Agence', id: '1' },
+              },
             }
           )
         })
@@ -210,9 +221,22 @@ describe('Mes Jeunes', () => {
       it('affiche la situation courante du jeune', () => {
         expect(screen.getByText(jeune.situationCourante!)).toBeInTheDocument()
       })
+
+      it('affiche si la structure du bénéficiaire est différente', () => {
+        const row3 = within(
+          screen.getByText(/Kenji/).closest('[role="row"]') as HTMLElement
+        )
+
+        //THEN
+        expect(
+          row3.getByLabelText(
+            /Ce bénéficiaire est rattaché à une Mission Locale différente/
+          )
+        ).toBeInTheDocument()
+      })
     })
 
-    describe('quand le conseiller est Pole emploi', () => {
+    describe('quand le conseiller est Pôle emploi', () => {
       beforeEach(async () => {
         //GIVEN
         const jeune = unJeuneAvecActionsNonTerminees()

@@ -13,7 +13,7 @@ import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -94,7 +94,7 @@ function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
             illustrationName={IllustrationName.Send}
             titre='Vous n’avez pas encore créé de liste de diffusion.'
             sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
-            premierLien={{
+            lien={{
               href: '/mes-jeunes/listes-de-diffusion/edition-liste',
               label: 'Créer une liste',
               iconName: IconName.Add,

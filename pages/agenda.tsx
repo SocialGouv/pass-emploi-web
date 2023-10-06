@@ -32,17 +32,15 @@ const OngletAgendaEtablissement = dynamic(
   import('components/rdv/OngletAgendaEtablissement')
 )
 
-enum Onglet {
-  CONSEILLER = 'CONSEILLER',
-  ETABLISSEMENT = 'ETABLISSEMENT',
-}
+type Onglet = 'CONSEILLER' | 'ETABLISSEMENT'
 
 interface AgendaProps extends PageProps {
   pageTitle: string
   onglet?: Onglet
+  periodeIndexInitial?: number
 }
 
-function Agenda({ onglet }: AgendaProps) {
+function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -61,8 +59,12 @@ function Agenda({ onglet }: AgendaProps) {
     },
   }
   const [currentTab, setCurrentTab] = useState<Onglet>(
-    onglet ?? Onglet.ETABLISSEMENT
+    onglet ?? 'ETABLISSEMENT'
   )
+  const [periodeIndex, setPeriodeIndex] = useState<number>(
+    periodeIndexInitial ?? 0
+  )
+
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
     initialTracking += ' - Creation rdv succès'
@@ -87,7 +89,27 @@ function Agenda({ onglet }: AgendaProps) {
     await router.replace(
       {
         pathname: '/agenda',
-        query: { onglet: ongletProps[tab].queryParam },
+        query: {
+          onglet: ongletProps[tab].queryParam,
+          periodeIndex: periodeIndex,
+        },
+      },
+      undefined,
+      {
+        shallow: true,
+      }
+    )
+  }
+
+  async function switchPeriode(index: number) {
+    setPeriodeIndex(index)
+    await router.replace(
+      {
+        pathname: '/agenda',
+        query: {
+          onglet: ongletProps[currentTab].queryParam,
+          periodeIndex: index,
+        },
       },
       undefined,
       {
@@ -201,21 +223,21 @@ function Agenda({ onglet }: AgendaProps) {
             'Agenda ' +
             (estMilo(conseiller) ? 'Mission Locale' : 'établissement')
           }
-          selected={currentTab === Onglet.ETABLISSEMENT}
+          selected={currentTab === 'ETABLISSEMENT'}
           controls='agenda-etablissement'
-          onSelectTab={() => switchTab(Onglet.ETABLISSEMENT)}
+          onSelectTab={() => switchTab('ETABLISSEMENT')}
           iconName={IconName.EventFill}
         />
         <Tab
           label='Mon agenda'
-          selected={currentTab === Onglet.CONSEILLER}
+          selected={currentTab === 'CONSEILLER'}
           controls='agenda-conseiller'
-          onSelectTab={() => switchTab(Onglet.CONSEILLER)}
+          onSelectTab={() => switchTab('CONSEILLER')}
           iconName={IconName.EventFill}
         />
       </TabList>
 
-      {currentTab === Onglet.ETABLISSEMENT && (
+      {currentTab === 'ETABLISSEMENT' && (
         <div
           role='tabpanel'
           aria-labelledby='agenda-etablissement--tab'
@@ -227,6 +249,8 @@ function Agenda({ onglet }: AgendaProps) {
               recupererAnimationsCollectives={recupererRdvsEtablissement}
               recupererSessionsMilo={recupererSessionsMissionLocale}
               trackNavigation={trackNavigation}
+              periodeIndex={periodeIndex}
+              changerPeriode={switchPeriode}
             />
           )}
 
@@ -241,7 +265,7 @@ function Agenda({ onglet }: AgendaProps) {
         </div>
       )}
 
-      {currentTab === Onglet.CONSEILLER && (
+      {currentTab === 'CONSEILLER' && (
         <div
           role='tabpanel'
           aria-labelledby='agenda-conseiller--tab'
@@ -253,6 +277,8 @@ function Agenda({ onglet }: AgendaProps) {
             recupererRdvs={recupererRdvsConseiller}
             recupererSessionsBeneficiaires={recupererSessionsBeneficiaires}
             trackNavigation={trackNavigation}
+            periodeIndex={periodeIndex}
+            changerPeriode={switchPeriode}
           />
         </div>
       )}
@@ -283,11 +309,15 @@ export const getServerSideProps: GetServerSideProps<AgendaProps> = async (
     pageHeader: 'Agenda',
   }
 
+  if (context.query.periodeIndex)
+    props.periodeIndexInitial = parseInt(
+      context.query.periodeIndex.toString(),
+      10
+    )
+
   if (context.query.onglet)
     props.onglet =
-      context.query.onglet === 'etablissement'
-        ? Onglet.ETABLISSEMENT
-        : Onglet.CONSEILLER
+      context.query.onglet === 'etablissement' ? 'ETABLISSEMENT' : 'CONSEILLER'
 
   return { props }
 }

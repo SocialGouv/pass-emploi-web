@@ -1,13 +1,26 @@
+import { act, screen } from '@testing-library/react'
+import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
 
+import { desActionsInitiales } from 'fixtures/action'
+import { unAgenda } from 'fixtures/agenda'
+import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
+import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { getServerSideProps } from 'pages/mes-jeunes/milo/[numero_dossier]'
-import { getIdJeuneMilo } from 'services/jeunes.service'
+import { recupererAgenda } from 'services/agenda.service'
+import {
+  getIdJeuneMilo,
+  getIndicateursJeuneAlleges,
+} from 'services/jeunes.service'
+import renderWithContexts from 'tests/renderWithContexts'
 import { trackSSR } from 'utils/analytics/matomo'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
 jest.mock('utils/analytics/matomo')
 
 describe('Fiche Jeune MiLo', () => {
@@ -111,6 +124,47 @@ describe('Fiche Jeune MiLo', () => {
             })
           })
         })
+      })
+    })
+  })
+
+  describe('client side', () => {
+    describe('quand la structure du bénéficiaire est différente du conseiller', () => {
+      it('affiche un message', async () => {
+        // Given
+        ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+        ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
+          desIndicateursSemaine()
+        )
+        ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
+
+        const jeune = unDetailJeune({ structureMilo: { id: '2' } })
+
+        // When
+        await act(async () => {
+          await renderWithContexts(
+            <FicheJeune
+              jeune={jeune}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              pageTitle={''}
+            />,
+            {
+              customConseiller: {
+                id: 'id-conseiller',
+                structure: StructureConseiller.MILO,
+                structureMilo: { nom: 'Agence', id: '1' },
+              },
+            }
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByText(
+            /Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre./
+          )
+        ).toBeInTheDocument()
       })
     })
   })

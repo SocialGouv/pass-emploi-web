@@ -12,7 +12,7 @@ import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import {
   compareJeuneByLastActivity,
   compareJeuneByLastActivityDesc,
@@ -24,6 +24,7 @@ import {
   JeuneAvecInfosComplementaires,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
 
 enum SortColumn {
@@ -47,6 +48,7 @@ export default function TableauJeunes({
   withActions,
   withSituations,
 }: TableauJeunesProps) {
+  const [conseiller] = useConseiller()
   const [sortedJeunes, setSortedJeunes] =
     useState<JeuneAvecInfosComplementaires[]>(jeunesFiltres)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
@@ -294,17 +296,34 @@ export default function TableauJeunes({
                 >
                   <TD isBold className='rounded-l-base'>
                     <span className='flex items-baseline'>
-                      {jeune.isReaffectationTemporaire && (
+                      {jeune.structureMilo?.id ===
+                        conseiller.structureMilo?.id &&
+                        jeune.isReaffectationTemporaire && (
+                          <span
+                            aria-label='bénéficiaire temporaire'
+                            className='self-center mr-2'
+                          >
+                            <IconComponent
+                              name={IconName.Schedule}
+                              aria-hidden={true}
+                              focusable={false}
+                              className='w-4 h-4'
+                              title='bénéficiaire temporaire'
+                            />
+                          </span>
+                        )}
+                      {jeune.structureMilo?.id !==
+                        conseiller.structureMilo?.id && (
                         <span
-                          aria-label='bénéficiaire temporaire'
                           className='self-center mr-2'
+                          aria-label='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                         >
                           <IconComponent
-                            name={IconName.Schedule}
+                            name={IconName.Error}
                             aria-hidden={true}
                             focusable={false}
-                            className='w-4 h-4'
-                            title='bénéficiaire temporaire'
+                            className='w-4 h-4 fill-warning'
+                            title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                           />
                         </span>
                       )}

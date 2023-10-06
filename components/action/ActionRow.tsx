@@ -5,7 +5,7 @@ import React from 'react'
 import TagStatutAction from 'components/action/TagStatutAction'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TD from 'components/ui/Table/TD'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { Action, StatutAction } from 'interfaces/action'
 import { toShortDate } from 'utils/date'
 

@@ -36,6 +36,7 @@ export interface JeuneFromListe extends BaseJeune {
     email?: string
   }
   situationCourante: CategorieSituation
+  structureMilo?: { id: string }
 }
 
 export interface DetailJeune extends BaseJeune {
@@ -52,6 +53,7 @@ export interface DetailJeune extends BaseJeune {
     dateFin?: string
   }>
   idPartenaire?: string
+  structureMilo?: { id: string }
 }
 
 export interface MetadonneesFavoris {
@@ -204,7 +206,9 @@ export function compareJeuneByLastActivityDesc(
   return compareDatesDesc(date1, date2) || -sortStatutCompteActif
 }
 
-export function getNomJeuneComplet(j: BaseJeune): string {
+export function getNomJeuneComplet(
+  j: Pick<BaseJeune, 'nom' | 'prenom'>
+): string {
   return `${j.nom} ${j.prenom}`
 }
 

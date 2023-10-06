@@ -46,7 +46,9 @@ export default function OngletAgendaBeneficiaire({
 
           entrees.forEach((entree) => {
             const semaine = entree.date < separation ? courante : suivante
-            semaine.jours[toFrenchFulldate(entree.date)].entrees.push(entree)
+            const jour = semaine.jours[toFrenchFulldate(entree.date)]
+            if (!jour) return
+            jour.entrees.push(entree)
             semaine.aEvenement = true
           })
 

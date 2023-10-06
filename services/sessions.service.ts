@@ -64,20 +64,13 @@ export async function getSessionsBeneficiaires(
   const session = await getSession()
   const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-  try {
-    const { content: sessionsMiloJson } = await apiGet<
-      SessionMiloBeneficiairesJson[]
-    >(
-      `/conseillers/milo/${idConseiller}/agenda/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-      session!.accessToken
-    )
-    return sessionsMiloJson.map(sessionMiloJsonToEvenementListItem)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 404) {
-      return []
-    }
-    throw e
-  }
+  const { content: sessionsMiloJson } = await apiGet<
+    SessionMiloBeneficiairesJson[]
+  >(
+    `/conseillers/milo/${idConseiller}/agenda/sessions?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+    session!.accessToken
+  )
+  return sessionsMiloJson.map(sessionMiloJsonToEvenementListItem)
 }
 
 export async function getDetailsSession(

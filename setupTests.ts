@@ -1,7 +1,7 @@
-import '@testing-library/jest-dom/extend-expect'
+import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 
-global.fetch = jest.fn(async () => ({ json: jest.fn(async () => ({})) }))
+global.fetch = jest.fn(async () => new Response())
 // https://github.com/jsdom/jsdom/issues/1695
 window.HTMLElement.prototype.scrollIntoView = jest.fn()
 window.HTMLElement.prototype.scrollTo = jest.fn()

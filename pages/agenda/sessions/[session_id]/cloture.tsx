@@ -12,10 +12,10 @@ import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import {
   Conseiller,
-  estUserPoleEmploi,
+  estUserMilo,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
@@ -55,6 +55,10 @@ function ClotureSession({
   >(inscriptionsInitiales)
 
   const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
+
+  const [trackingLabel, setTrackingLabel] = useState<string>(
+    'Session - Clôture de la session'
+  )
 
   function cocherTousLesBeneficiaires(_event: FormEvent) {
     if (idsSelectionnes.length === 0) {
@@ -169,6 +173,7 @@ function ClotureSession({
 
     await cloreSession(conseiller.id, session.session.id, emargements)
     setAlerte(AlerteParam.clotureSession)
+    setTrackingLabel('Session - Clôture succès')
     await router.push(returnTo)
   }
 
@@ -185,7 +190,7 @@ function ClotureSession({
     }
   }
 
-  useMatomo('Sessions - Clôture de la session')
+  useMatomo(trackingLabel)
 
   return (
     <>
@@ -197,6 +202,7 @@ function ClotureSession({
       <div className='mt-6'>
         <InformationMessage label='La liste suivante se base sur les participants inscrits. Veuillez vous assurer de son exactitude.' />
       </div>
+
       <form onSubmit={soumettreClotureSession} className='mt-6'>
         <Table caption={{ text: 'Bénéficiaires de la session' }}>
           <THead>
@@ -233,7 +239,6 @@ function ClotureSession({
             {session.inscriptions.map((beneficiaire) => (
               <TR
                 key={beneficiaire.idJeune}
-                asDiv={true}
                 onClick={() =>
                   modifierStatutBeneficiaire({
                     idJeune: beneficiaire.idJeune,
@@ -257,6 +262,7 @@ function ClotureSession({
                       'Sélectionner ' +
                       `${beneficiaire.prenom} ${beneficiaire.nom}`
                     }
+                    readOnly={true}
                     value={statutBeneficiaire ?? beneficiaire.statut}
                     className='mr-4'
                   />
@@ -287,6 +293,7 @@ function ClotureSession({
             ))}
           </TBody>
         </Table>
+
         {estAClore(session) && (
           <div className='flex justify-center mt-10 p-4'>
             <ButtonLink
@@ -345,7 +352,9 @@ export const getServerSideProps: GetServerSideProps<
     }
     throw e
   }
-  if (estUserPoleEmploi(user) || !peutAccederAuxSessions(conseiller))
+  if (!conseiller) return { notFound: true }
+
+  if (!estUserMilo(user) || !peutAccederAuxSessions(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }

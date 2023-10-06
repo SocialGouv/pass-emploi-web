@@ -133,7 +133,7 @@ export default function OngletActions({
               <EmptyState
                 illustrationName={IllustrationName.Checklist}
                 titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
-                premierLien={
+                lien={
                   !lectureSeule
                     ? {
                         href: `/mes-jeunes/${jeune.id}/actions/nouvelle-action`,

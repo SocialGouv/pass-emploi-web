@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useRef, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 
 import PageActionsPortal from 'components/PageActionsPortal'
 import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
@@ -20,10 +20,10 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import {
   Conseiller,
-  estUserPoleEmploi,
+  estUserMilo,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
-import { BaseJeune } from 'interfaces/jeune'
+import { JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -39,7 +39,7 @@ const DesinscriptionBeneficiaireModal = dynamic(
 )
 
 type DetailSessionProps = PageProps & {
-  beneficiairesEtablissement: BaseJeune[]
+  beneficiairesStructureMilo: JeuneEtablissement[]
   session: Session
   returnTo: string
 }
@@ -57,7 +57,7 @@ export type BaseBeneficiaireASelectionner = {
 }
 
 function FicheDetailsSession({
-  beneficiairesEtablissement,
+  beneficiairesStructureMilo,
   session,
   returnTo,
 }: DetailSessionProps) {
@@ -93,6 +93,9 @@ function FicheDetailsSession({
   ).endOf('day')
   const dateLimiteInscriptionDepassee = DateTime.now() > dateLimiteInscription
 
+  const initialTracking = 'Détail session i-milo'
+  const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
+
   function openDesinscriptionBeneficiaireModal(id: string, nom: string) {
     setBeneficiaireADesinscire({ value: nom, id })
   }
@@ -122,17 +125,17 @@ function FicheDetailsSession({
   }
 
   function getBeneficiairesNonSelectionnees(): BaseBeneficiaireASelectionner[] {
-    return beneficiairesEtablissement
+    return beneficiairesStructureMilo
       .filter(
         (beneficiaire) =>
           !beneficiairesSelectionnes.value.some(
             (selectedBeneficiaire) =>
-              selectedBeneficiaire.id === beneficiaire.id
+              selectedBeneficiaire.id === beneficiaire.base.id
           )
       )
       .map((beneficiaire) => ({
-        id: beneficiaire.id,
-        value: `${beneficiaire.prenom} ${beneficiaire.nom}`,
+        id: beneficiaire.base.id,
+        value: `${beneficiaire.base.prenom} ${beneficiaire.base.nom}`,
       }))
   }
 
@@ -260,10 +263,11 @@ function FicheDetailsSession({
         ? AlerteParam.modificationAtelier
         : AlerteParam.modificationInformationCollective
     )
+    setTrackingLabel(initialTracking + ' - Modification succès')
     await router.push(returnTo)
   }
 
-  useMatomo('Détail session i-milo')
+  useMatomo(trackingLabel)
 
   return (
     <>
@@ -572,7 +576,7 @@ export const getServerSideProps: GetServerSideProps<
   const {
     session: { user, accessToken },
   } = sessionOrRedirect
-  if (estUserPoleEmploi(user)) return { notFound: true }
+  if (!estUserMilo(user)) return { notFound: true }
 
   const idSession = context.query.session_id as string
 
@@ -604,25 +608,25 @@ export const getServerSideProps: GetServerSideProps<
     }
     throw e
   }
-  if (!conseiller?.agence?.id) return { notFound: true }
+  if (!conseiller?.structureMilo?.id) return { notFound: true }
 
   if (!peutAccederAuxSessions(conseiller))
     return {
       redirect: { destination: '/mes-jeunes', permanent: false },
     }
 
-  const { getJeunesDeLEtablissementServerSide } = await import(
-    'services/jeunes.service'
-  )
+  const {
+    getBeneficiairesDeLaStructureMilo: getBeneficiairesDeLaStructureMilo,
+  } = await import('services/jeunes.service')
 
-  const beneficiairesEtablissement = await getJeunesDeLEtablissementServerSide(
-    conseiller.agence.id,
+  const beneficiairesStructureMilo = await getBeneficiairesDeLaStructureMilo(
+    conseiller.structureMilo.id,
     accessToken
   )
 
   return {
     props: {
-      beneficiairesEtablissement: beneficiairesEtablissement,
+      beneficiairesStructureMilo: beneficiairesStructureMilo.jeunes,
       pageTitle: `Détail session ${session.session.nom} - Agenda`,
       pageHeader: 'Détail de la session i-milo',
       returnTo: redirectTo,

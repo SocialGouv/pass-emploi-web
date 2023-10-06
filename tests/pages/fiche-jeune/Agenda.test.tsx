@@ -386,6 +386,74 @@ describe('Agenda de la fiche jeune', () => {
           expect(screen.getByText('Non modifiable')).toBeInTheDocument()
         })
       })
+
+      describe('si le bénéficiaire a des éléments qui ne sont pas dans les bornes', () => {
+        it("ignore les éléments sans lever d'erreur", async () => {
+          // Given
+          ;(recupererAgenda as jest.Mock).mockResolvedValue({
+            entrees: [
+              {
+                date: DateTime.fromISO('2023-10-02T10:00:00.000+02:00'),
+                id: '1256142',
+                source: 'MILO',
+                sousTitre: 'Pour job Plombier',
+                titre: '10h00 - GJ - CV et Lettre de motivation',
+                type: 'session',
+                typeSession: 'info coll i-milo',
+              },
+              {
+                date: DateTime.fromISO('2023-10-04T10:00:00.000+02:00'),
+                id: '1256145',
+                source: 'MILO',
+                sousTitre: 'Sessions pour Amelle avec 2 L - 1',
+                titre: '10h00 - GJ - CV et Lettre de motivation',
+                type: 'session',
+                typeSession: 'info coll i-milo',
+              },
+              {
+                date: DateTime.fromISO('2023-10-06T10:00:00.000+02:00'),
+                id: '1256147',
+                source: 'MILO',
+                sousTitre: 'Sessions pour Amelle avec 2 L - 3',
+                titre: '10h00 - GJ - CV et Lettre de motivation',
+                type: 'session',
+                typeSession: 'info coll i-milo',
+              },
+              {
+                date: DateTime.fromISO('2023-10-10T10:00:00.000+02:00'),
+                id: '1256149',
+                source: 'MILO',
+                sousTitre: "dans le domaine de l'écologie",
+                titre: '10h00 - Recrutement service civique',
+                type: 'session',
+                typeSession: 'info coll i-milo',
+              },
+              {
+                date: DateTime.fromISO('2023-10-16T10:00:00.000+02:00'),
+                id: '1256148',
+                source: 'MILO',
+                sousTitre: 'Sessions pour Amelle avec 2 L - 4',
+                titre: '10h00 - GJ - CV et Lettre de motivation',
+                type: 'session',
+                typeSession: 'info coll i-milo',
+              },
+            ],
+            metadata: {
+              actionsEnRetard: 0,
+              dateDeDebut: DateTime.fromISO('2023-10-02T00:00:00.000+02:00'),
+              dateDeFin: DateTime.fromISO('2023-10-16T00:00:00.000+02:00'),
+            },
+          })
+
+          // When
+          await renderFicheJeuneMILO(StructureConseiller.MILO)
+
+          // Then
+          expect(
+            screen.queryByText(/Sessions pour Amelle avec 2 L - 4/)
+          ).not.toBeInTheDocument()
+        })
+      })
     })
   })
 })

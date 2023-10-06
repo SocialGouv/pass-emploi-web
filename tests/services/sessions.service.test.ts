@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 import { apiGet, apiPatch, apiPost } from 'clients/api.client'
 import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import {
@@ -12,6 +10,7 @@ import {
   SessionMiloBeneficiairesJson,
   SessionMiloJson,
 } from 'interfaces/json/session'
+import { DateTime } from 'luxon'
 import {
   changerInscriptionsSession,
   changerVisibiliteSession,
@@ -195,7 +194,7 @@ describe('SessionsApiService', () => {
           type: 'info coll i-milo',
           date: '2022-09-01T00:00:00.000+02:00',
           duree: 10080,
-          labelBeneficiaires: 'Hermione Granger',
+          labelBeneficiaires: 'Granger Hermione',
           source: 'MILO',
           isSession: true,
         },
@@ -210,25 +209,6 @@ describe('SessionsApiService', () => {
         },
       ]
       expect(actual).toEqual(sessionsMilo)
-    })
-
-    it('renvoie un tableau vide en fallback', async () => {
-      // Given
-      ;(apiGet as jest.Mock).mockRejectedValue(
-        new ApiError(404, 'Sessions non trouvées')
-      )
-      const dateDebut = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
-      const dateFin = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
-
-      // When
-      const actual = await getSessionsBeneficiaires(
-        'id-conseiller',
-        dateDebut,
-        dateFin
-      )
-
-      // Then
-      expect(actual).toEqual([])
     })
   })
 

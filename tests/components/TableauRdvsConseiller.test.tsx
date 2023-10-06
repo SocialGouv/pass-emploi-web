@@ -1,34 +1,24 @@
 import { screen } from '@testing-library/dom'
 import { render, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import TableauRdv from 'components/rdv/TableauRdv'
+import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
+import { buildAgendaData } from 'presentation/AgendaRows'
 import {
   TIME_24_H_SEPARATOR,
   toFrenchFormat,
-  toShortDate,
   WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 
-describe('<TableauRdv>', () => {
+describe('<TableauRdvsConseiller>', () => {
+  const chargerEvenementsJour: (jour: DateTime) => Promise<void> = jest.fn()
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
-  })
-
-  it("affiche un message lorsqu'il n'y a pas de rendez-vous", () => {
-    // When
-    render(<TableauRdv rdvs={[]} idConseiller='1' />)
-
-    // Then
-    expect(
-      screen.getByText(/Vous n’avez rien de prévu pour l’instant./)
-    ).toBeInTheDocument()
-
-    expect(() => screen.getByRole('table')).toThrow()
   })
 
   describe('Quand il y a des rendez-vous', () => {
@@ -36,24 +26,39 @@ describe('<TableauRdv>', () => {
     beforeEach(() => {
       // Given
       listeRdv = desEvenementsListItems()
+      const agenda = buildAgendaData(
+        listeRdv,
+        {
+          debut: DateTime.fromISO('2021-10-21'),
+          fin: DateTime.fromISO('2021-10-26'),
+        },
+        ({ date }) => DateTime.fromISO(date),
+        [0, 1, 4]
+      )
 
       // When
-      render(<TableauRdv rdvs={listeRdv} idConseiller='1' />)
+      render(
+        <TableauEvenementsConseiller
+          agendaEvenements={agenda}
+          idConseiller='1'
+          onChargerEvenementsJour={chargerEvenementsJour}
+        />
+      )
     })
 
     it('affiche les informations des rendez-vous', () => {
       // Then
       listeRdv.forEach((rdv) => {
-        const date = DateTime.fromISO(rdv.date)
-        const horaires = `${toShortDate(date)} - ${toFrenchFormat(
-          date,
+        const horaires = `${toFrenchFormat(
+          DateTime.fromISO(rdv.date),
           TIME_24_H_SEPARATOR
         )} - ${rdv.duree} min`
+
         expect(
           screen.getByText(`${rdv.labelBeneficiaires}`)
         ).toBeInTheDocument()
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
-        expect(screen.getByText(rdv.modality)).toBeInTheDocument()
+        expect(screen.getByText(rdv.modality!)).toBeInTheDocument()
         expect(screen.getByText(horaires)).toBeInTheDocument()
       })
     })
@@ -89,6 +94,20 @@ describe('<TableauRdv>', () => {
       expect(within(rendezVous1).getByText('non')).toHaveAttribute(
         'class',
         'sr-only'
+      )
+    })
+
+    it('permet de charger plus de rendez-vous', async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Afficher l’agenda du samedi 23 octobre',
+        })
+      )
+
+      // Then
+      expect(chargerEvenementsJour).toHaveBeenCalledWith(
+        DateTime.fromISO('2021-10-23')
       )
     })
   })

@@ -8,7 +8,7 @@ import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
-import { TR } from 'components/ui/Table/TR'
+import TR from 'components/ui/Table/TR'
 import { Recherche } from 'interfaces/favoris'
 
 interface TableauRecherchesProps {
@@ -25,7 +25,7 @@ export default function TableauRecherches({
           illustrationName={IllustrationName.Checklist}
           titre='Votre bénéficiaire n’a sauvegardé aucune recherche pour l’instant.'
           sousTitre='Suggérez des recherches-types d’offres à votre bénéficiaire depuis la partie “Offres”.'
-          premierLien={{
+          lien={{
             href: '/recherche-offres',
             label: 'Rechercher une offre',
             iconName: IconName.Search,

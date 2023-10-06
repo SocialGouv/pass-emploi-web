@@ -257,6 +257,25 @@ async function getJeunesDeLEtablissement(
   return jeunes.map(jsonToBaseJeune)
 }
 
+export async function getBeneficiairesDeLaStructureMilo(
+  idStructureMilo: string,
+  accessToken: string
+): Promise<{
+  jeunes: JeuneEtablissement[]
+}> {
+  let url = `/structures-milo/${idStructureMilo}/jeunes`
+
+  const {
+    content: { resultats },
+  } = await apiGet<{
+    resultats: JeuneEtablissementJson[]
+  }>(url, accessToken)
+
+  return {
+    jeunes: resultats.map(jsonToJeuneEtablissement),
+  }
+}
+
 export async function rechercheJeunesDeLEtablissement(
   idEtablissement: string,
   recherche: string,
