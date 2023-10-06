@@ -90,7 +90,7 @@
     "git-up/parse-url": "8.1.0",
     "meow/trim-newlines": "3.0.1",
     "postcss": "^8.4.31",
-    "remark-parse/trim": "0.0.3"
+    "remark-parse/trim": "1.0.1"
   },
   "browser": {
     "elastic-apm-node": false
