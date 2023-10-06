@@ -202,6 +202,7 @@ function ClotureSession({
       <div className='mt-6'>
         <InformationMessage label='La liste suivante se base sur les participants inscrits. Veuillez vous assurer de son exactitude.' />
       </div>
+
       <form onSubmit={soumettreClotureSession} className='mt-6'>
         <Table caption={{ text: 'Bénéficiaires de la session' }}>
           <THead>
@@ -238,7 +239,6 @@ function ClotureSession({
             {session.inscriptions.map((beneficiaire) => (
               <TR
                 key={beneficiaire.idJeune}
-                asDiv={true}
                 onClick={() =>
                   modifierStatutBeneficiaire({
                     idJeune: beneficiaire.idJeune,
@@ -262,6 +262,7 @@ function ClotureSession({
                       'Sélectionner ' +
                       `${beneficiaire.prenom} ${beneficiaire.nom}`
                     }
+                    readOnly={true}
                     value={statutBeneficiaire ?? beneficiaire.statut}
                     className='mr-4'
                   />
@@ -292,6 +293,7 @@ function ClotureSession({
             ))}
           </TBody>
         </Table>
+
         {estAClore(session) && (
           <div className='flex justify-center mt-10 p-4'>
             <ButtonLink
