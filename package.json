@@ -85,8 +85,8 @@
     "typescript": "^5.2.2"
   },
   "resolutions": {
-    "chokidar/glob-parent": "5.1.2",
-    "fast-glob/glob-parent": "5.1.2",
+    "chokidar/glob-parent": "6.0.2",
+    "fast-glob/glob-parent": "6.0.2",
     "git-up/parse-url": "8.1.0",
     "meow/trim-newlines": "3.0.1",
     "postcss": "^8.4.31",
