@@ -18810,10 +18810,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"trim-newlines@npm:3.0.1":
-  version: 3.0.1
-  resolution: "trim-newlines@npm:3.0.1"
-  checksum: b530f3fadf78e570cf3c761fb74fef655beff6b0f84b29209bac6c9622db75ad1417f4a7b5d54c96605dcd72734ad44526fef9f396807b90839449eb543c6206
+"trim-newlines@npm:5.0.0":
+  version: 5.0.0
+  resolution: "trim-newlines@npm:5.0.0"
+  checksum: 028a42134d05f732808da53c9613091392cd8a345b38d481fa202dba35a5806b0bbdeaffa8a256b772efb03b7f22cdaa49883421d49c730c5b80d9acf0a65ecd
   languageName: node
   linkType: hard
 
