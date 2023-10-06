@@ -44,7 +44,7 @@ async function callFetch(
 }
 
 async function handleHttpError(response: Response): Promise<void> {
-  if (response.status === 401 && typeof window !== undefined) {
+  if (response.status === 401 && typeof window !== 'undefined') {
     window.location.assign('api/auth/federated-logout')
   }
 

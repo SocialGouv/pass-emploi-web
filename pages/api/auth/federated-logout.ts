@@ -9,7 +9,7 @@ export default async function federatedLogout(
     const endsessionParams = new URLSearchParams({
       redirect_uri: `${process.env.NEXTAUTH_URL}/logout` ?? '',
     })
-    return res.redirect(`${endsessionURL}?${endsessionParams}`)
+    res.redirect(`${endsessionURL}?${endsessionParams}`)
   } catch (error) {
     console.error(error)
     res.redirect(process.env.NEXTAUTH_URL ?? '')
