@@ -25,7 +25,7 @@ export default function FileInput({
   const hiddenFileInput = useRef<HTMLInputElement>(null)
 
   const styleLabel = iconOnly
-    ? 'flex justify-center items-center bg-primary w-12 h-12 border-none rounded-full short:hidden'
+    ? 'bg-primary w-12 h-12 border-none rounded-full short:hidden'
     : `${buttonStyle.button} ${buttonStyle.buttonSecondary} w-fit text-s-bold`
   const styleIcone = iconOnly ? 'w-6 h-6 fill-blanc' : 'w-4 h-4 mr-2'
 
@@ -50,7 +50,12 @@ export default function FileInput({
         accept='.pdf, .png, .jpeg, .jpg'
         disabled={disabled || isLoading}
       />
-      <label htmlFor={id} className={'cursor-pointer ' + styleLabel}>
+      <label
+        htmlFor={id}
+        className={
+          'cursor-pointer flex justify-center items-center ' + styleLabel
+        }
+      >
         <IconComponent
           name={IconName.AttachFile}
           aria-hidden={true}
