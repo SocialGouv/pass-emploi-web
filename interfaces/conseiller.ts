@@ -1,8 +1,6 @@
 import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 
-import { compareDates } from 'utils/date'
-
 export enum StructureConseiller {
   MILO = 'MILO',
   POLE_EMPLOI = 'POLE_EMPLOI',
@@ -95,9 +93,7 @@ function estEarlyAdopter(conseiller: Conseiller): boolean {
 export function doitSignerLesCGU(conseiller: Conseiller): boolean {
   return (
     !conseiller.dateSignatureCGU ||
-    compareDates(
-      DateTime.fromISO(conseiller.dateSignatureCGU),
+    DateTime.fromISO(conseiller.dateSignatureCGU) <
       DateTime.fromISO(process.env.VERSION_CGU_COURANTE!)
-    ) < 0
   )
 }

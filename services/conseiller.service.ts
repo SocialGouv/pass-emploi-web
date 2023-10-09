@@ -66,12 +66,13 @@ export async function modifierAgence({
   )
 }
 
-export async function modifierDateSignatureCGU(
-  idConseiller: string,
-  accessToken: string,
-  date: DateTime
-): Promise<void> {
-  return apiPut(`/conseillers/${idConseiller}`, { date }, accessToken)
+export async function modifierDateSignatureCGU(date: DateTime): Promise<void> {
+  const session = await getSession()
+  return apiPut(
+    `/conseillers/${session!.user.id}`,
+    { dateSignatureCGU: date },
+    session!.accessToken
+  )
 }
 
 export async function modifierNotificationsSonores(

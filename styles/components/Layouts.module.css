@@ -23,8 +23,9 @@
   grid-template-columns: var(--sidebar-width) var(--chat-width) var(--page-width-when-chat);
 }
 
-.container.page_full_screen {
+.page_full_screen {
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 

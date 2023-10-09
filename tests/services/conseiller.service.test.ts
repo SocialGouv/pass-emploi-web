@@ -153,11 +153,7 @@ describe('ConseillerApiService', () => {
       const nouvelleDate = DateTime.now()
 
       // When
-      await modifierDateSignatureCGU(
-        'idConseiller',
-        'accessToken',
-        nouvelleDate
-      )
+      await modifierDateSignatureCGU(nouvelleDate)
 
       // Then
       expect(apiPut).toHaveBeenCalledWith(

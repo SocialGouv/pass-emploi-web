@@ -1,20 +1,20 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
-import { Conseiller } from 'interfaces/conseiller'
-import { getServerSideProps } from 'pages/consentement-cgu'
-import ConsentementCgu from 'pages/consentement-cgu'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import ConsentementCgu, { getServerSideProps } from 'pages/consentement-cgu'
 import {
+  getConseillerClientSide,
   getConseillerServerSide,
   modifierDateSignatureCGU,
 } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
-import { DateTime } from 'luxon'
 
 jest.mock('services/conseiller.service')
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
@@ -31,56 +31,102 @@ describe('ConsentementCGU', () => {
       ;(useRouter as jest.Mock).mockReturnValue({
         push: routerPush,
       })
+    })
 
-      // Given
-      conseiller = unConseiller()
-      act(() => {
-        renderWithContexts(
-          <ConsentementCgu
-            accessToken='accessToken'
-            conseiller={conseiller}
-            returnTo='/mes-jeunes'
-          />
-        )
+    describe('Adapte le wording', () => {
+      it('Pour un conseiller BRSA', () => {
+        // Given
+        conseiller = unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI_BRSA,
+        })
+        ;(getConseillerClientSide as jest.Mock).mockResolvedValue(conseiller)
+
+        // When
+        act(() => {
+          renderWithContexts(<ConsentementCgu returnTo='/mes-jeunes' />, {
+            customConseiller: conseiller,
+          })
+        })
+
+        // Then
+        expect(
+          screen.getByText(
+            /La plateforme pass emploi a pour objet de contribuer à l’insertion professionnelle des Usagers du RSA./
+          )
+        ).toBeInTheDocument()
+      })
+
+      it('Pour un conseiller CEJ', () => {
+        // Given
+        conseiller = unConseiller({
+          structure: StructureConseiller.MILO,
+        })
+        ;(getConseillerClientSide as jest.Mock).mockResolvedValue(conseiller)
+
+        // When
+        act(() => {
+          renderWithContexts(
+            <ConsentementCgu accessToken='accessToken' returnTo='/mes-jeunes' />
+          ),
+            {
+              customConseiller: conseiller,
+            }
+        })
+
+        // Then
+        expect(
+          screen.getByText(
+            /La plateforme CEJ a pour objet de contribuer à la diminution du décrochage des jeunes en accompagnement vers l’emploi./
+          )
+        ).toBeInTheDocument()
       })
     })
 
-    it('Affiche le formulaire de consentement aux CGU', () => {})
-    it('Affiche un message d’erreur quand le conseiller ne donne pas son consentement', async () => {
-      // When
-      await userEvent.click(screen.getByRole('button', { name: /Valider/ }))
-
-      // Then
-      expect(
-        screen.getByText(/Acceptez les Conditions Générales d’Utilisation/)
-      ).toBeInTheDocument()
-      expect(modifierDateSignatureCGU).not.toHaveBeenCalled()
-    })
-
-    describe('Quand le formulaire est complété', () => {
-      const now = DateTime.now()
+    describe('Gère le formulaire', () => {
       beforeEach(async () => {
         // Given
-        jest.spyOn(DateTime, 'now').mockReturnValue(now)
-        await userEvent.click(
-          screen.getByRole('checkbox', {
-            name: /accepter les conditions générales d’utilisation/,
-          })
-        )
+        conseiller = unConseiller()
+        act(() => {
+          renderWithContexts(
+            <ConsentementCgu accessToken='accessToken' returnTo='/mes-jeunes' />
+          ),
+            {
+              customConseiller: conseiller,
+            }
+        })
+      })
+      it('Affiche un message d’erreur quand le conseiller ne donne pas son consentement', async () => {
+        // When
         await userEvent.click(screen.getByRole('button', { name: /Valider/ }))
-      })
 
-      it('Appelle la méthode modifierDateSignatureCGU', () => {
-        expect(modifierDateSignatureCGU).toHaveBeenCalledWith(
-          conseiller.id,
-          'accessToken',
-          now
-        )
-      })
-
-      it('Redirige vers la page souhaitée', async () => {
         // Then
-        expect(routerPush).toHaveBeenCalledWith('/mes-jeunes')
+        expect(
+          screen.getByText(/Le champs Consentement est vide./)
+        ).toBeInTheDocument()
+        expect(modifierDateSignatureCGU).not.toHaveBeenCalled()
+      })
+
+      describe('Quand le formulaire est complété', () => {
+        const now = DateTime.now()
+        beforeEach(async () => {
+          // Given
+          jest.spyOn(DateTime, 'now').mockReturnValue(now)
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /accepter les conditions générales d’utilisation/,
+            })
+          )
+          await userEvent.click(screen.getByRole('button', { name: /Valider/ }))
+        })
+
+        it('Appelle la méthode modifierDateSignatureCGU', () => {
+          expect(modifierDateSignatureCGU).toHaveBeenCalledWith(now)
+        })
+
+        it('Redirige vers la page souhaitée', async () => {
+          // Then
+          expect(routerPush).toHaveBeenCalledWith('/mes-jeunes')
+        })
       })
     })
   })
@@ -107,8 +153,6 @@ describe('ConsentementCGU', () => {
       // Then
       expect(actual).toEqual({
         props: {
-          accessToken: 'accessToken',
-          conseiller: conseiller,
           returnTo: '/mes-jeunes',
           pageTitle: 'Consentement CGU',
           pageHeader: 'Conditions générales d’utilisation',

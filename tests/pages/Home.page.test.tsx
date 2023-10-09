@@ -400,7 +400,7 @@ describe('Home', () => {
         )
       })
 
-      it('redirige vers la liste des jeunes', async () => {
+      it('redirige vers le portefeuille', async () => {
         // When
         const actual = await getServerSideProps({
           query: {},
@@ -476,39 +476,8 @@ describe('Home', () => {
       })
     })
 
-    describe('si le conseiller n’a pas signé la dernière version des CGU', () => {
-      it('redirige vers l’url renseignée', async () => {
-        // Given
-        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-          validSession: true,
-          session: {
-            user: { id: '1' },
-            accessToken: 'accessToken',
-          },
-        })
-
-        const conseiller: Conseiller = unConseiller({
-          dateSignatureCGU: DateTime.fromISO(
-            process.env.VERSION_CGU_COURANTE
-          ).minus({ day: 1 }),
-        })
-
-        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
-
-        // When
-        const actual = await getServerSideProps({
-          query: { redirectUrl: '/mes-jeunes' },
-        } as unknown as GetServerSidePropsContext)
-
-        //Then
-        expect(actual).toEqual({
-          redirect: { destination: '/consentement-cgu', permanent: false },
-        })
-      })
-    })
-
     describe('si le conseiller a signé la dernière version des CGU', () => {
-      it('redirige vers la liste des jeunes', async () => {
+      it('redirige vers le portefeuille', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
