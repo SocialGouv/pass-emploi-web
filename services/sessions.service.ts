@@ -212,7 +212,7 @@ export function jsonToSession(json: DetailsSessionJson): Session {
   if (json.offre.description) session.offre.description = json.offre.description
   if (json.offre.nomPartenaire)
     session.offre.partenaire = json.offre.nomPartenaire
-  if (json.session.nbPlacesDisponibles)
+  if (json.session.nbPlacesDisponibles !== undefined)
     session.session.nbPlacesDisponibles = json.session.nbPlacesDisponibles
 
   if (json.session.dateMaxInscription)
