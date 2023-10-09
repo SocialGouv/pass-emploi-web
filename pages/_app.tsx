@@ -3,7 +3,6 @@ import localFont from '@next/font/local'
 import type { NextWebVitalsMetric } from 'next/app'
 import { AppProps as NextAppProps } from 'next/app'
 import dynamic from 'next/dynamic'
-import Router, { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
 // /!\ Garder les imports du CSS au début
@@ -46,9 +45,6 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
 }
 
 export default function CustomApp({ Component, pageProps }: NextAppProps) {
-  const router = useRouter()
-  const isLogoutPage = router.pathname === '/logout'
-
   useEffect(() => {
     init({ url: MATOMO_URL, siteId: MATOMO_SITE_ID })
     initRum()
@@ -79,13 +75,9 @@ export default function CustomApp({ Component, pageProps }: NextAppProps) {
 
       <ProgressBar />
 
-      {isLogoutPage && <Component {...pageProps} />}
-
-      {!isLogoutPage && (
-        <ContextProviders>
-          <Component {...pageProps} />
-        </ContextProviders>
-      )}
+      <ContextProviders>
+        <Component {...pageProps} />
+      </ContextProviders>
     </>
   )
 }
