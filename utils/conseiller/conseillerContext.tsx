@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { Conseiller } from 'interfaces/conseiller'
@@ -5,19 +7,19 @@ import { Conseiller } from 'interfaces/conseiller'
 type MaybeConseiller = Conseiller | undefined
 type ConseillerState = [
   MaybeConseiller,
-  (updatedConseiller: MaybeConseiller) => void
+  (updatedConseiller: MaybeConseiller) => void,
 ]
 
 const ConseillerContext = createContext<ConseillerState | undefined>(undefined)
 
 export function ConseillerProvider({
   children,
-  conseillerForTests,
+  conseiller,
 }: {
   children: ReactNode
-  conseillerForTests?: Conseiller
+  conseiller?: Conseiller
 }) {
-  const state = useState<MaybeConseiller>(conseillerForTests)
+  const state = useState<MaybeConseiller>(conseiller)
   return (
     <ConseillerContext.Provider value={state}>
       {children}
@@ -37,7 +39,7 @@ export function useConseillerPotentiellementPasRecupere(): ConseillerState {
 
 export function useConseiller(): [
   Conseiller,
-  (updatedConseiller: Conseiller) => void
+  (updatedConseiller: Conseiller) => void,
 ] {
   const [conseiller, setConseiller] = useConseillerPotentiellementPasRecupere()
   if (!conseiller) {

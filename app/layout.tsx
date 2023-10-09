@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import localFont from 'next/font/local'
+import { ReactNode } from 'react'
 
 import Analytics from 'components/global/Analytics'
 import ProgressBar from 'components/global/ProgressBar'
@@ -43,11 +44,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='fr' className={marianne.className}>
       <body>

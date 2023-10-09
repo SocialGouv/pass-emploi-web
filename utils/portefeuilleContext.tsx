@@ -14,20 +14,18 @@ const PortefeuilleContext = createContext<PortefeuilleState | undefined>(
 
 export function PortefeuilleProvider({
   children,
-  beneficiairesForTests,
+  portefeuille,
   setterForTests,
 }: {
   children: ReactNode
-  beneficiairesForTests?: MaybePortefeuille
+  portefeuille?: MaybePortefeuille
   setterForTests?: (updatedBeneficiaires: BaseJeune[]) => void
 }) {
-  const [portefeuille, setPortefeuille] = useState<MaybePortefeuille>(
-    beneficiairesForTests
-  )
+  const [state, setPortefeuille] = useState<MaybePortefeuille>(portefeuille)
   const setter = setterForTests ?? setPortefeuille
 
   return (
-    <PortefeuilleContext.Provider value={[portefeuille, setter]}>
+    <PortefeuilleContext.Provider value={[state, setter]}>
       {children}
     </PortefeuilleContext.Provider>
   )

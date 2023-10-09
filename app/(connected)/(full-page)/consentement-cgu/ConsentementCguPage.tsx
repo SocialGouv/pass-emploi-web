@@ -1,27 +1,27 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { GetServerSideProps, GetServerSidePropsResult } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import ContenuCGUConseillerBRSA from 'components/ContenuCGUConseillerBRSA'
 import ContenuCGUConseillerCEJ from 'components/ContenuCGUConseillerCEJ'
+import HeaderCGU from 'components/layouts/HeaderCGU'
 import Checkbox from 'components/offres/Checkbox'
 import Button from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
 import { estPoleEmploiBRSA } from 'interfaces/conseiller'
-import { PageProps } from 'interfaces/pageProps'
 import { modifierDateSignatureCGU } from 'services/conseiller.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
-interface ConsentementCguProps extends PageProps {
+type ConsentementCguProps = {
   returnTo: string
 }
 
-function ConsentementCgu({ returnTo }: ConsentementCguProps) {
+function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
   const [aDonneSonConsentement, setADonneSonConsentement] = useState<
     ValueWithError<boolean>
   >({ value: false })
@@ -43,7 +43,7 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
     else {
       try {
         await modifierDateSignatureCGU(DateTime.now())
-        await router.push(returnTo)
+        router.push(returnTo)
       } catch (e) {
         setShowErrorValidation(true)
       }
@@ -52,6 +52,8 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
 
   return (
     <>
+      <HeaderCGU conseiller={conseiller} />
+
       {estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerBRSA />}
 
       {!estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerCEJ />}
@@ -82,30 +84,7 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  ConsentementCguProps
-> = async (
-  context
-): Promise<GetServerSidePropsResult<ConsentementCguProps>> => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const referer = context.req.headers.referer
-  const redirectTo =
-    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-
-  const props: ConsentementCguProps = {
-    pageTitle: 'Consentement CGU',
-    pageHeader: 'Conditions générales d’utilisation',
-    returnTo: redirectTo,
-  }
-
-  return { props }
-}
-
-export default withTransaction(ConsentementCgu.name, 'page')(ConsentementCgu)
+export default withTransaction(
+  ConsentementCguPage.name,
+  'page'
+)(ConsentementCguPage)

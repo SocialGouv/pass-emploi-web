@@ -4,12 +4,11 @@ import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import React from 'react'
 
-import LoginPage from 'app/login/LoginPage'
+import LoginPage from 'app/(connexion)/login/LoginPage'
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
-jest.mock('next/navigation')
 
 describe('LoginPage client side', () => {
   beforeEach(async () => {

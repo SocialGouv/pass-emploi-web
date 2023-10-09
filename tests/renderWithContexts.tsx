@@ -109,9 +109,9 @@ function provideContexts(
   }>
 ) {
   return (
-    <ConseillerProvider conseillerForTests={conseiller}>
+    <ConseillerProvider conseiller={conseiller}>
       <PortefeuilleProvider
-        beneficiairesForTests={portefeuille.value}
+        portefeuille={portefeuille.value}
         setterForTests={portefeuille.setter}
       >
         <ChatCredentialsProvider

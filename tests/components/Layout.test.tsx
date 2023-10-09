@@ -26,7 +26,7 @@ import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 jest.mock('services/jeunes.service')
 jest.mock('services/conseiller.service')
 jest.mock('services/messages.service')
-jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
+jest.mock('components/layouts/SidebarLayout', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatContainer', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))

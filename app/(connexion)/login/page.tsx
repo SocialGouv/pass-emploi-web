@@ -2,9 +2,9 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import React from 'react'
 
-import LoginPage from 'app/login/LoginPage'
+import LoginPage from 'app/(connexion)/login/LoginPage'
 import Footer from 'components/layouts/Footer'
-import { auth } from 'utils/auth/auth'
+import { getSessionServerSide } from 'utils/auth/auth'
 
 type LoginSearchParams = {
   source?: string
@@ -38,7 +38,7 @@ export default async function Login({
 async function redirectIfAlreadyConnected(
   searchParams?: LoginSearchParams
 ): Promise<void> {
-  const session = await auth()
+  const session = await getSessionServerSide()
 
   const querySource = searchParams?.source && `?source=${searchParams.source}`
 

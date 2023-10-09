@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import { signOut } from 'next-auth/react'
 import React from 'react'
 
-import LogoutPage from 'app/logout/LogoutPage'
+import LogoutPage from 'app/(connexion)/logout/LogoutPage'
 import { signOut as chatSignOut } from 'services/messages.service'
 
 jest.mock('services/messages.service', () => ({

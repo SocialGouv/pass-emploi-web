@@ -19,6 +19,7 @@ jest.mock('next/router', () => ({
     },
   },
 }))
+jest.mock('next/navigation')
 
 jest.mock('next-auth/react', () => ({
   getSession: async () => ({
