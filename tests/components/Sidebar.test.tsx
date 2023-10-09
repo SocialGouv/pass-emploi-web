@@ -3,7 +3,7 @@ import { within } from '@testing-library/react'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import Sidebar from 'components/layouts/Sidebar'
+import Sidebar from 'components/Sidebar'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
 

@@ -20,13 +20,9 @@
 
 .container.messagerie_full_screen {
   grid-template-areas: 'sidebar chat page';
-  grid-template-columns: var(--sidebar-width) var(--chat-width) var(--page-width-when-chat);
-}
-
-.page_full_screen {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  grid-template-columns: var(--sidebar-width) var(--chat-width) var(
+      --page-width-when-chat
+    );
 }
 
 .sidebar {
@@ -64,11 +60,6 @@
   padding: 0;
   overflow: auto;
 }
-
-.content.cgu_full_screen {
-  max-width: 800px;
-}
-
 
 .content.content_when_chat {
   max-width: 100%;

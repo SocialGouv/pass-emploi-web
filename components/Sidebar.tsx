@@ -4,7 +4,6 @@ import LogoCEJ from 'assets/images/logo_app_cej.svg'
 import Logo from 'assets/images/logo_pass_emploi.svg'
 import NavLinks, { NavItem } from 'components/NavLinks'
 import { StructureConseiller } from 'interfaces/conseiller'
-import styles from 'styles/components/Layouts.module.css'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export default function Sidebar() {
@@ -14,7 +13,7 @@ export default function Sidebar() {
     conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
 
   return (
-    <div className={styles.sidebar}>
+    <>
       {estConseillerBRSA && (
         <Logo
           role='img'
@@ -56,6 +55,6 @@ export default function Sidebar() {
           ]}
         />
       </nav>
-    </div>
+    </>
   )
 }

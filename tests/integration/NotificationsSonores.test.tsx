@@ -15,7 +15,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/messages.service')
 jest.mock('services/jeunes.service')
 jest.mock('services/conseiller.service')
-jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
+jest.mock('components/layouts/SidebarLayout', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))

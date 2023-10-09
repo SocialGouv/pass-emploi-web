@@ -4,12 +4,11 @@ import LogoCEJ from 'assets/images/logo_app_cej.svg'
 import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
 import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
 
-interface HeaderCGUProps {
+type HeaderCGUProps = {
   conseiller: Conseiller
-  pageHeader: string
 }
 
-export default function HeaderCGU({ conseiller, pageHeader }: HeaderCGUProps) {
+export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
   return (
     <header className='flex justify-between items-center flex-col py-8 border-b border-solid border-primary_lighten mb-8'>
       {estPoleEmploiBRSA(conseiller) && (
@@ -31,7 +30,9 @@ export default function HeaderCGU({ conseiller, pageHeader }: HeaderCGUProps) {
           title='contrat d’engagement jeune'
         />
       )}
-      <h1 className='text-xl-bold text-primary mb-4'>{pageHeader}</h1>
+      <h1 className='text-xl-bold text-primary mb-4'>
+        Conditions générales d’utilisation
+      </h1>
       <p className='text-m-bold mb-4'>Application conseiller pass emploi</p>
       <p className='text-s-regular'>Version 4 – 19 décembre 2022</p>
     </header>
