@@ -9,6 +9,7 @@ import ContenuCGUConseillerCEJ from 'components/ContenuCGUConseillerCEJ'
 import Checkbox from 'components/offres/Checkbox'
 import Button from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
 import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
@@ -23,6 +24,7 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
   const [aDonneSonConsentement, setADonneSonConsentement] = useState<
     ValueWithError<boolean>
   >({ value: false })
+  const [showErrorValidation, setShowErrorValidation] = useState<boolean>(false)
   const router = useRouter()
   const [conseiller] = useConseiller()
 
@@ -34,11 +36,15 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
     if (!aDonneSonConsentement.value)
       setADonneSonConsentement({
         ...aDonneSonConsentement,
-        error: `Le champs Consentement est vide. Sélectionnez la case à cocher pour accepter les Conditions Générales d’Utilisation.`,
+        error: `Le champ Consentement est vide. Sélectionnez la case à cocher pour accepter les Conditions Générales d’Utilisation.`,
       })
     else {
-      await modifierDateSignatureCGU(DateTime.now())
-      await router.push(returnTo)
+      try {
+        await modifierDateSignatureCGU(DateTime.now())
+        await router.push(returnTo)
+      } catch (e) {
+        setShowErrorValidation(true)
+      }
     }
   }
 
@@ -54,6 +60,9 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
             <InputError id='consentement--error' className='mt-2'>
               {aDonneSonConsentement.error}
             </InputError>
+          )}
+          {showErrorValidation && (
+            <FailureAlert label="Une erreur s'est produite, veuillez réessayer ultérieurement" />
           )}
           <Checkbox
             id='checkbox-consentement-cgu'
