@@ -39,7 +39,7 @@
     "next-logger": "3.0.2",
     "next-themes": "0.2.1",
     "nextjs-toploader": "1.4.2",
-    "pino": "8.15.6",
+    "pino": "8.16.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "6.16.0"
