@@ -1,25 +1,26 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import React from 'react'
 
-import Login from 'pages/login'
+import LoginPage from 'app/login/LoginPage'
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
+jest.mock('next/navigation')
 
-describe('Login', () => {
+describe('LoginPage client side', () => {
   beforeEach(async () => {
-    ;(useRouter as jest.Mock).mockReturnValue({
-      query: { redirectUrl: 'redirectUrl' },
+    ;(useSearchParams as jest.Mock).mockReturnValue({
+      get: (param: string) => param,
     })
   })
 
   describe('render', () => {
     beforeEach(async () => {
-      render(<Login ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
+      render(<LoginPage ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
     })
 
     it('devrait afficher un titre de niveau 1', () => {
@@ -151,7 +152,9 @@ describe('Login', () => {
 
       // When
       await act(async () => {
-        render(<Login ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
+        render(
+          <LoginPage ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />
+        )
       })
 
       // Then
@@ -180,7 +183,7 @@ describe('Login', () => {
   describe('quand la connexion pass emploi est activée', () => {
     beforeEach(async () => {
       render(
-        <Login
+        <LoginPage
           ssoPoleEmploiBRSAEstActif={true}
           ssoPassEmploiEstActif={true}
           isFromEmail={false}

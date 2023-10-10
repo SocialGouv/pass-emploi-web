@@ -15,7 +15,6 @@ module.exports = withBundleAnalyzer({
     API_ENDPOINT: process.env.API_ENDPOINT,
     // AUTH
     AUTH_SECRET: process.env.AUTH_SECRET,
-    ENABLE_PASS_EMPLOI_SSO: process.env.ENABLE_PASS_EMPLOI_SSO === 'true',
     KEYCLOAK_ID: process.env.KEYCLOAK_ID,
     KEYCLOAK_SECRET: process.env.KEYCLOAK_SECRET,
     KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER,
@@ -39,8 +38,6 @@ module.exports = withBundleAnalyzer({
     LEANBE_MILO_WIDGET_ID: process.env.LEANBE_MILO_WIDGET_ID,
     LEANBE_PE_WIDGET_ID: process.env.LEANBE_PE_WIDGET_ID,
     LEANBE_PE_BRSA_WIDGET_ID: process.env.LEANBE_PE_BRSA_WIDGET_ID,
-    //BRSA
-    ENABLE_PE_BRSA_SSO: process.env.ENABLE_PE_BRSA_SSO === 'true',
     //SESSIONS MILO
     ENABLE_SESSIONS_MILO: process.env.ENABLE_SESSIONS_MILO,
     IDS_STRUCTURES_EARLY_ADOPTERS: process.env.IDS_STRUCTURES_EARLY_ADOPTERS,
@@ -90,7 +87,6 @@ module.exports = withBundleAnalyzer({
     // https://react-svgr.com/docs/next/
     config.module.rules.push({
       test: /\.svg$/i,
-      issuer: /\.[jt]sx?$/,
       use: [{ loader: '@svgr/webpack', options: { titleProp: true } }],
     })
 

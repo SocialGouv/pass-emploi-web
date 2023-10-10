@@ -1,10 +1,12 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { signOut } from 'next-auth/react'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 import { signOut as chatSignOut } from 'services/messages.service'
 
-function Logout() {
+function LogoutPage() {
   useEffect(() => {
     chatSignOut().then(() => {
       signOut({ redirect: true, callbackUrl: '/login' })
@@ -14,4 +16,4 @@ function Logout() {
   return null
 }
 
-export default withTransaction(Logout.name, 'page')(Logout)
+export default withTransaction(LogoutPage.name, 'page')(LogoutPage)

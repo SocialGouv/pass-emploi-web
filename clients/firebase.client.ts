@@ -37,7 +37,7 @@ import {
 } from 'interfaces/message'
 import { BaseOffre, TypeOffre } from 'interfaces/offre'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
-import { captureRUMError } from 'utils/monitoring/init-rum'
+import { captureRUMError } from 'utils/monitoring/elastic'
 
 type TypeMessageFirebase =
   | 'NOUVEAU_CONSEILLER'
