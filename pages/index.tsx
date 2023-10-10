@@ -4,7 +4,11 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import {
+  Conseiller,
+  doitSignerLesCGU,
+  StructureConseiller,
+} from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -109,6 +113,14 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
   }
+
+  if (doitSignerLesCGU(conseiller))
+    return {
+      redirect: {
+        destination: '/consentement-cgu',
+        permanent: false,
+      },
+    }
 
   const redirectUrl =
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam

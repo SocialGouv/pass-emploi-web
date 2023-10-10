@@ -158,7 +158,7 @@ describe('ConseillerApiService', () => {
       // Then
       expect(apiPut).toHaveBeenCalledWith(
         '/conseillers/idConseiller',
-        { date: nouvelleDate },
+        { dateSignatureCGU: nouvelleDate },
         'accessToken'
       )
     })

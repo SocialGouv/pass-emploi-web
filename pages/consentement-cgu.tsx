@@ -20,6 +20,7 @@ import redirectedFromHome from 'utils/redirectedFromHome'
 interface ConsentementCguProps extends PageProps {
   returnTo: string
 }
+
 function ConsentementCgu({ returnTo }: ConsentementCguProps) {
   const [aDonneSonConsentement, setADonneSonConsentement] = useState<
     ValueWithError<boolean>
@@ -31,8 +32,9 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
   function mettreAJourConsentement() {
     setADonneSonConsentement({ value: !aDonneSonConsentement.value })
   }
-  async function validerLesCGU(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
+
+  async function validerLesCGU(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
     if (!aDonneSonConsentement.value)
       setADonneSonConsentement({
         ...aDonneSonConsentement,
@@ -79,6 +81,7 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
     </>
   )
 }
+
 export const getServerSideProps: GetServerSideProps<
   ConsentementCguProps
 > = async (

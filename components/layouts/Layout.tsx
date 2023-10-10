@@ -12,7 +12,7 @@ import AppHead from 'components/AppHead'
 import HeaderCGU from 'components/layouts/HeaderCGU'
 import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { doitSignerLesCGU, estPoleEmploiBRSA } from 'interfaces/conseiller'
+import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { compareJeunesByNom } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { getConseillerClientSide } from 'services/conseiller.service'
@@ -112,12 +112,6 @@ export default function Layout({ children }: LayoutProps) {
       setTheme('cej')
     }
   }, [conseiller, conseiller?.structure, setTheme])
-
-  useEffect(() => {
-    if (conseiller && doitSignerLesCGU(conseiller)) {
-      router.push('/consentement-cgu')
-    }
-  }, [conseiller, router.asPath])
 
   return (
     <>

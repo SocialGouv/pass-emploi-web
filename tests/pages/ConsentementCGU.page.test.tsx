@@ -101,7 +101,7 @@ describe('ConsentementCGU', () => {
 
         // Then
         expect(
-          screen.getByText(/Le champs Consentement est vide./)
+          screen.getByText(/Le champ Consentement est vide./)
         ).toBeInTheDocument()
         expect(modifierDateSignatureCGU).not.toHaveBeenCalled()
       })
