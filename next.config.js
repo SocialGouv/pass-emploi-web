@@ -52,6 +52,7 @@ module.exports = withBundleAnalyzer({
     FAQ_PE_BRSA_EXTERNAL_LINK: process.env.FAQ_PE_BRSA_EXTERNAL_LINK,
     SUPPORT_MAIL: process.env.SUPPORT_MAIL,
     ANALYZE: process.env.ANALYZE,
+    VERSION_CGU_COURANTE: process.env.VERSION_CGU_COURANTE,
   },
 
   async redirects() {
