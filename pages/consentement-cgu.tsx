@@ -56,7 +56,7 @@ function ConsentementCgu({ returnTo }: ConsentementCguProps) {
 
       {!estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerCEJ />}
 
-      <form onSubmit={validerLesCGU} className='flex flex-col'>
+      <form onSubmit={validerLesCGU} className='flex flex-col mt-10'>
         <div className='mb-10'>
           {aDonneSonConsentement.error && (
             <InputError id='consentement--error' className='mt-2'>
