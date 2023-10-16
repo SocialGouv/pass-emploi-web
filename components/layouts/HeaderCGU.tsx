@@ -33,7 +33,7 @@ export default function HeaderCGU({ conseiller, pageHeader }: HeaderCGUProps) {
       )}
       <h1 className='text-xl-bold text-primary mb-4'>{pageHeader}</h1>
       <p className='text-m-bold mb-4'>Application conseiller pass emploi</p>
-      <p className='text-s-regular'>Version 1.1 – 15 février 2022</p>
+      <p className='text-s-regular'>Version 4 – 19 décembre 2022</p>
     </header>
   )
 }

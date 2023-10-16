@@ -69,10 +69,10 @@ export default function ContenuCGUConseillerBRSA() {
         A- Conseiller Pôle Emploi
       </h4>
       <p className='mb-4'>
-        La création d’un profil est ouverte à tout « Conseiller », souhaitant
-        utiliser la plateforme dans les conditions prévues. En outre, le profil
-        « Superviseur » permet aux agents habilités d’organiser et de modifier
-        l’affectation d’un Usager à un Conseiller déterminé.
+        L’authentification se fait via les identifiants métier Pôle emploi
+        (système « PEAMA ») : le DGASI et un mot de passe. Par ailleurs ces
+        Conseillers pourront ajouter le numéro Pôle emploi des Usagers du RSA
+        suivis.
       </p>
 
       <h3 className='text-base-bold text-content_color mb-2'>
@@ -248,7 +248,8 @@ export default function ContenuCGUConseillerBRSA() {
         informations contraires aux dispositions légales et réglementaires en
         vigueur. En particulier, il s’engage à ne pas publier de message
         racistes, sexistes, injurieux, insultants ou contraires à l’ordre
-        public.
+        public, et à ne pas télécharger de documents contenant des données à
+        caractère personnel sur un système non sécurisé.
       </p>
       <p className='mb-4'>
         Toute question ou propos peut être supprimé s’il contrevient à une
@@ -270,9 +271,7 @@ export default function ContenuCGUConseillerBRSA() {
       </p>
       <p className='mb-4'>Le Superviseur s’engage à ne pas :</p>
       <ul className='list-disc mb-8 ml-8'>
-        <li>
-          ne pas prendre de décision discriminatoire ou manifestement infondée ;
-        </li>
+        <li>prendre de décision discriminatoire ou manifestement infondée ;</li>
         <li>
           mettre en ligne de contenus ou informations contraires aux
           dispositions légales et réglementaires en vigueur, en particulier à ne
@@ -303,6 +302,13 @@ export default function ContenuCGUConseillerBRSA() {
         contraires à l’ordre public.
       </p>
       <p className='mb-4'>
+        Les pièces jointes déposées par l’Usager ne contiennent pas de données
+        sensibles, particulièrement ce dernier veille à ne pas déposer de
+        données relatives à ses opinions philosophiques, politiques, à sa
+        religion, à sa santé ou à son orientation sexuelle ou sur sa vie
+        sexuelle.
+      </p>
+      <p className='mb-4'>
         Toute question ou propos peut être supprimé s’il contrevient à une
         disposition des présentes CGU, s’il est contraire à des dispositions
         légales ou pour n’importe quelle raison jugée opportune par l’équipe de
@@ -313,10 +319,10 @@ export default function ContenuCGUConseillerBRSA() {
         Article 6 – Mise à jour des conditions d’utilisation
       </h2>
       <p className='mb-4'>
-        Les termes des présentes conditions d’utilisation peuvent être amendés à
-        tout moment, sans préavis, en fonction des modifications apportées à la
-        plateforme, de l’évolution de la législation ou pour tout autre motif
-        jugé nécessaire.
+        Les termes des CGU doivent être acceptés au moment de la connexion.
+        Toute modification des CGU réalisée en fonction des modifications
+        apportées au site, de l’évolution de la législation ou pour tout autre
+        motif jugé nécessaire, nécessite votre consentement.
       </p>
     </div>
   )

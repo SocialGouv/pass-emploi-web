@@ -82,7 +82,8 @@ export default function ContenuCGUConseillerCEJ() {
       </h4>
       <p className='mb-4'>
         L’authentification se fait via les identifiants métier Pôle emploi
-        (système « PEAMA ») : le DGASI et un mot de passe.
+        (système « PEAMA ») : le DGASI et un mot de passe. Par ailleurs ces
+        Conseillers pourront ajouter le numéro Pôle emploi des jeunes suivis.
       </p>
 
       <h3 className='text-base-bold text-content_color mt-2 mb-2'>
@@ -103,7 +104,7 @@ export default function ContenuCGUConseillerCEJ() {
         <li>
           Créer une action que l’Usager aura à faire ; Il devra alors nommer
           l’action, la décrire et en définir le statut (à réaliser, commencée ou
-          terminée) ;
+          terminée) et renseigner une date d’échéance ;
         </li>
         <li>
           Visualiser toutes les actions concernant les Usagers qu’il accompagne
@@ -119,6 +120,13 @@ export default function ContenuCGUConseillerCEJ() {
         qu’il a créé, ou que le Conseiller a créé pour lui. Les questions
         peuvent notamment permettre une meilleure compréhension de l’action à
         faire et améliorer la communication sur les difficultés rencontrées.
+      </p>
+      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+        C – Gestion des actions sur i-milo
+      </h4>
+      <p className='mb-4'>
+        Les Conseillers « Missions locales » peuvent intégrer les actions
+        renseignées dans l’application CEJ dans le dossier du jeune sur i-milo.
       </p>
 
       <h3 className='text-base-bold text-content_color mt-2 mb-2'>
@@ -165,7 +173,26 @@ export default function ContenuCGUConseillerCEJ() {
       </p>
 
       <h3 className='text-base-bold text-content_color mt-2 mb-2'>
-        4.7 Suppressions du compte
+        4.7 Autres fonctionnalités
+      </h3>
+      <p className='mb-4'>
+        D’autres fonctionnalités sont ouvertes aux Conseillers. Certaines
+        fonctionnalités dépendent des catégories de comptes :
+      </p>
+      <ul className='list-disc mb-8 ml-8'>
+        <li>
+          Si le jeune ne l’a pas refusé, tous les Conseillers peuvent visualiser
+          les offres et recherches sauvegardées ;
+        </li>
+        <li>
+          Tous les conseillers ont accès à un bouton « Actualités » leur
+          présentant les nouveautés de l’application ;
+        </li>
+        <li>Envoyer des pièces jointes ouvrables par les Jeunes.</li>
+      </ul>
+
+      <h3 className='text-base-bold text-content_color mt-2 mb-2'>
+        4.8 Suppressions du compte
       </h3>
       <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
         A – Suppression par l’Usager
@@ -243,7 +270,8 @@ export default function ContenuCGUConseillerCEJ() {
         informations contraires aux dispositions légales et réglementaires en
         vigueur. En particulier, il s’engage à ne pas publier de message
         racistes, sexistes, injurieux, insultants ou contraires à l’ordre
-        public.
+        public, et à ne pas télécharger de documents contenant des données à
+        caractère personnel sur un système non sécurisé.
       </p>
       <p className='mb-4'>
         Toute question ou propos peut être supprimé s’il contrevient à une
@@ -298,6 +326,13 @@ export default function ContenuCGUConseillerCEJ() {
         contraires à l’ordre public.
       </p>
       <p className='mb-4'>
+        Les pièces jointes déposées par l’Usager ne contiennent pas de données
+        sensibles, particulièrement ce dernier veille à ne pas déposer de
+        données relatives à ses opinions philosophiques, politiques, à sa
+        religion, à sa santé ou à son orientation sexuelle ou sur sa vie
+        sexuelle.
+      </p>
+      <p className='mb-4'>
         Toute question ou propos peut être supprimé s’il contrevient à une
         disposition des présentes CGU, s’il est contraire à des dispositions
         légales ou pour n’importe quelle raison jugée opportune par l’équipe de
@@ -308,10 +343,10 @@ export default function ContenuCGUConseillerCEJ() {
         Article 6 – Mise à jour des conditions d’utilisation
       </h2>
       <p className='mb-4'>
-        Les termes des présentes conditions d’utilisation peuvent être amendés à
-        tout moment, sans préavis, en fonction des modifications apportées à la
-        plateforme, de l’évolution de la législation ou pour tout autre motif
-        jugé nécessaire.
+        Les termes des CGU doivent être acceptés au moment de la connexion.
+        Toute modification des CGU réalisée en fonction des modifications
+        apportées au site, de l’évolution de la législation ou pour tout autre
+        motif jugé nécessaire, nécessite votre consentement.
       </p>
     </div>
   )
