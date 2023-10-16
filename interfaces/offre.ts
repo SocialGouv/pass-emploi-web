@@ -81,10 +81,5 @@ export type BaseImmersion = {
 export type DetailImmersion = BaseImmersion & {
   contact: {
     adresse: string
-    nom?: string
-    prenom?: string
-    role?: string
-    telephone?: string
-    email?: string
   }
 }

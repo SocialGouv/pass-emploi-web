@@ -71,44 +71,8 @@ export default function ImmersionDetail({ offre }: ImmersionDetailProps) {
           </h3>
 
           <dl>
-            {(offre.contact.prenom ||
-              offre.contact.nom ||
-              offre.contact.role) && (
-              <div className='mt-8 text-base-bold'>
-                <>
-                  {(offre.contact.prenom || offre.contact.nom) && (
-                    <>
-                      <dt className='sr-only'>Interlocuteur</dt>
-                      <dd>
-                        {offre.contact.prenom} {offre.contact.nom}
-                      </dd>
-                    </>
-                  )}
-                  {offre.contact.role && (
-                    <>
-                      <dt className='sr-only'>Rôle</dt>
-                      <dd>{offre.contact.role}</dd>
-                    </>
-                  )}
-                </>
-              </div>
-            )}
-
             <dt className='sr-only'>Adresse</dt>
             <dd className='mt-8'>{offre.contact.adresse}</dd>
-
-            {offre.contact.email && (
-              <>
-                <dt className='sr-only'>E-mail</dt>
-                <dd className='mt-8'>{offre.contact.email}</dd>
-              </>
-            )}
-            {offre.contact.telephone && (
-              <>
-                <dt className='sr-only'>Téléphone</dt>
-                <dd className='mt-8'>{offre.contact.telephone}</dd>
-              </>
-            )}
           </dl>
         </section>
       </div>
