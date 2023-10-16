@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { ChatCredentials } from 'interfaces/message'
@@ -5,7 +7,7 @@ import { ChatCredentials } from 'interfaces/message'
 type MaybeChatCredentials = ChatCredentials | undefined
 type ChatCredentialsState = [
   MaybeChatCredentials,
-  (credentials: MaybeChatCredentials) => void
+  (credentials: MaybeChatCredentials) => void,
 ]
 
 const ChatCredentialsContext = createContext<ChatCredentialsState | undefined>(
@@ -14,13 +16,12 @@ const ChatCredentialsContext = createContext<ChatCredentialsState | undefined>(
 
 export function ChatCredentialsProvider({
   children,
-  credentialsForTests,
+  credentials,
 }: {
   children: ReactNode
-  credentialsForTests?: ChatCredentials
+  credentials?: ChatCredentials
 }) {
-  const chatCredentialsState =
-    useState<MaybeChatCredentials>(credentialsForTests)
+  const chatCredentialsState = useState<MaybeChatCredentials>(credentials)
   return (
     <ChatCredentialsContext.Provider value={chatCredentialsState}>
       {children}

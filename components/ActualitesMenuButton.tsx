@@ -1,8 +1,10 @@
+'use client'
+
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Conseiller } from 'interfaces/conseiller'
-import { getWidgetId } from 'utils/hooks/useLeanBeWidget'
+import { getWidgetId, useLeanBeWidget } from 'utils/hooks/useLeanBeWidget'
 
 interface ActualitesMenuButtonProps {
   conseiller: Conseiller
@@ -17,6 +19,9 @@ function ActualitesMenuButton({
 
   const classMenu =
     'flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start border-2 border-primary transition-all hover:cursor-pointer hover:border-blanc'
+
+  useLeanBeWidget(conseiller)
+
   return (
     <li
       className={`${classWidget} ${classMenu}`}

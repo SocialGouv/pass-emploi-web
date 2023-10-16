@@ -1,10 +1,9 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
-import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, lazy, useEffect, useState } from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'
 import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
@@ -12,9 +11,8 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
 import { trackPage } from 'utils/analytics/matomo'
 
-const OnboardingMobileModal = dynamic(
-  import('components/OnboardingMobileModal'),
-  { ssr: false }
+const OnboardingMobileModal = lazy(
+  () => import('components/OnboardingMobileModal')
 )
 
 interface LoginProps {

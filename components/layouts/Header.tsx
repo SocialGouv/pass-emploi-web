@@ -1,35 +1,24 @@
+'use client'
+
 import React from 'react'
 
 import FilAriane from 'components/FilAriane'
-import LienRetour from 'components/LienRetour'
 import { PAGE_ACTIONS_ROOT_ID } from 'components/PageActionsPortal'
+import { PAGE_HEADER_ROOT_ID } from 'components/PageHeaderPortal'
+import { PAGE_RETOUR_ROOT_ID } from 'components/PageRetourPortal'
 
 interface HeaderProps {
   currentPath: string
-  returnTo?: string
-  pageHeader: string
 }
 
-export default function Header({
-  currentPath,
-  pageHeader,
-  returnTo,
-}: HeaderProps) {
+export default function Header({ currentPath }: HeaderProps) {
   return (
     <header className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'>
-      {!returnTo && (
-        <div>
-          <FilAriane currentPath={currentPath} />
-          <h1 className='text-l-bold text-primary'>{pageHeader}</h1>
-        </div>
-      )}
-
-      {returnTo && (
-        <div>
-          <LienRetour returnUrlOrPath={returnTo} />
-          <h1 className='text-l-bold text-primary'>{pageHeader}</h1>
-        </div>
-      )}
+      <div>
+        <FilAriane currentPath={currentPath} />
+        <div id={PAGE_RETOUR_ROOT_ID} />
+        <h1 id={PAGE_HEADER_ROOT_ID} className='text-l-bold text-primary' />
+      </div>
 
       <div id={PAGE_ACTIONS_ROOT_ID} className='flex gap-6' />
     </header>

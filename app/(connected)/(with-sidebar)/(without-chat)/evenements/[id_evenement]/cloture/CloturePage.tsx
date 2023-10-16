@@ -1,6 +1,7 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -13,20 +14,17 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
-import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
+import { Evenement } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 
-interface ClotureProps extends PageProps {
-  returnTo: string
+type ClotureProps = {
   evenement: Evenement
-  withoutChat: true
+  returnTo: string
 }
 
-function Cloture({ returnTo, evenement }: ClotureProps) {
+function CloturePage({ returnTo, evenement }: ClotureProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
@@ -57,7 +55,7 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
     await _cloreAnimationCollective(evenement.id, idsSelectionnes)
 
     setAlerte(AlerteParam.clotureAC)
-    await router.push(returnTo)
+    router.push(returnTo)
   }
 
   return (
@@ -152,42 +150,4 @@ function Cloture({ returnTo, evenement }: ClotureProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<ClotureProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-  if (estUserPoleEmploi(user))
-    return {
-      redirect: { destination: '/mes-jeunes', permanent: false },
-    }
-
-  const { getDetailsEvenement } = await import('services/evenements.service')
-  const evenement = await getDetailsEvenement(
-    context.query.evenement_id as string,
-    accessToken
-  )
-  if (evenement?.statut !== StatutAnimationCollective.AClore)
-    return { notFound: true }
-
-  const props: ClotureProps = {
-    evenement,
-    returnTo: `/mes-jeunes/edition-rdv?idRdv=${evenement.id}&redirectUrl=${context.query.redirectUrl}`,
-    pageTitle: 'Clore - Mes événements',
-    pageHeader: 'Clôture de l’événement',
-    withoutChat: true,
-  }
-
-  return { props }
-}
-
-export default withTransaction(Cloture.name, 'page')(Cloture)
+export default withTransaction(CloturePage.name, 'page')(CloturePage)
