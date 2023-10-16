@@ -80,27 +80,16 @@ describe('Page Détail Offre Emploi', () => {
       ).toHaveAccessibleName('Informations du Contact')
 
       const { contact } = offre
-      expect(getByDescriptionTerm('Interlocuteur', section)).toHaveTextContent(
-        contact.prenom! + ' ' + contact.nom!
-      )
-      expect(getByDescriptionTerm('Rôle', section)).toHaveTextContent(
-        contact.role!
-      )
+
       expect(getByDescriptionTerm('Adresse', section)).toHaveTextContent(
         contact.adresse!
-      )
-      expect(getByDescriptionTerm('E-mail', section)).toHaveTextContent(
-        contact.email!
-      )
-      expect(getByDescriptionTerm('Téléphone', section)).toHaveTextContent(
-        contact.telephone!
       )
     })
   })
 
   describe('server side', () => {
     beforeEach(() => {
-       ;(getImmersionServerSide as jest.Mock).mockResolvedValue(
+      ;(getImmersionServerSide as jest.Mock).mockResolvedValue(
         unDetailImmersion()
       )
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({

@@ -15,19 +15,12 @@ export type DetailImmersionJson = {
   secteurActivite: string
   ville: string
   adresse: string
-  contact?: {
-    nom: string
-    prenom: string
-    role: string
-    telephone?: string
-    email?: string
-  }
 }
 
 export function jsonToDetailImmersion(
   json: DetailImmersionJson
 ): DetailImmersion {
-  const immersion: DetailImmersion = {
+  return {
     type: TypeOffre.IMMERSION,
     id: json.id,
     titre: json.metier,
@@ -36,15 +29,4 @@ export function jsonToDetailImmersion(
     secteurActivite: json.secteurActivite,
     contact: { adresse: json.adresse },
   }
-
-  const { contact } = json
-  if (contact) {
-    immersion.contact.nom = contact.nom
-    immersion.contact.prenom = contact.prenom
-    immersion.contact.role = contact.role
-  }
-  if (contact?.telephone) immersion.contact.telephone = contact.telephone
-  if (contact?.email) immersion.contact.email = contact.email
-
-  return immersion
 }
