@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import React, {
   FormEvent,
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -16,6 +17,7 @@ import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import ErreursFormulaire from 'components/ui/Notifications/ErreursFormulaire'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -85,6 +87,9 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
   >()
+
+  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
+    useState<number>(0)
 
   const [showModalConseillerIntrouvable, setShowModalConseillerIntrouvable] =
     useState<boolean>(false)
@@ -227,7 +232,6 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     if (isReaffectationEnCours) {
       return
     }
-
     let formInvalid = false
     if (estSuperviseurPEBRSA && structureReaffectation.value === undefined) {
       setStructureReaffectation({
@@ -286,6 +290,22 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     }
   }
 
+  useEffect(() => {
+    const count = [
+      isReaffectationTemporaire,
+      conseillerInitial,
+      idsBeneficiairesSelected,
+      conseillerDestination,
+    ].filter((state) => state.error).length
+
+    setNombreErreursFormulaire(count)
+  }, [
+    isReaffectationTemporaire.error,
+    conseillerInitial.error,
+    idsBeneficiairesSelected.error,
+    conseillerDestination.error,
+  ])
+
   useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
@@ -295,6 +315,51 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
           label={'Les bénéficiaires ont été réaffectés avec succès'}
           onAcknowledge={() => setReaffectationSuccess(false)}
         />
+      )}
+
+      {nombreErreursFormulaire > 0 && (
+        <ErreursFormulaire
+          label={`Le formulaire contient ${nombreErreursFormulaire} erreur(s).`}
+        >
+          <>
+            {isReaffectationTemporaire.error && (
+              <p className='mb-2'>
+                Le champ type de réaffectation est vide.{' '}
+                <a href='#structure-reaffectation--CEJ' className='underline'>
+                  Remplir &gt;
+                </a>
+              </p>
+            )}
+            {conseillerInitial.error && (
+              <p className='mb-2'>
+                Le champ E-mail ou nom et prénom du conseiller initial est vide.{' '}
+                <a href='#conseiller-initial' className='underline'>
+                  Remplir &gt;
+                </a>
+              </p>
+            )}
+            {idsBeneficiairesSelected.error && (
+              <p className='mb-2'>
+                Le champ Bénéficiaires à réaffecter est vide.{' '}
+                <a
+                  href='#reaffectation-tout-selectionner'
+                  className='underline'
+                >
+                  Remplir &gt;
+                </a>
+              </p>
+            )}
+            {conseillerDestination.error && (
+              <p className='mb-2'>
+                Le champ E-mail ou nom et prénom du conseiller de destination
+                est vide.{' '}
+                <a href='#conseiller-destinataire' className='underline'>
+                  Remplir &gt;
+                </a>
+              </p>
+            )}
+          </>
+        </ErreursFormulaire>
       )}
 
       <p className='text-s-bold text-content_color mb-6'>
