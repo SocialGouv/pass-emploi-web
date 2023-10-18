@@ -6,7 +6,7 @@ import styles from 'styles/components/Button.module.css'
 interface Props {
   children: ReactNode
   style?: ButtonStyle
-  className?: any
+  className?: string
   onClick?: MouseEventHandler<HTMLButtonElement>
   type?: 'button' | 'submit' | 'reset'
   controls?: string

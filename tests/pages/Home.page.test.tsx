@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
@@ -28,6 +27,46 @@ jest.mock('components/Modal')
 
 describe('Home', () => {
   describe('client side', () => {
+    describe('quand le conseiller doit renseigner sa structure', () => {
+      let replace: jest.Mock
+
+      beforeEach(() => {
+        // Given
+        replace = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+        // When
+        renderWithContexts(<Home redirectUrl='/mes-jeunes' pageTitle='' />, {
+          customConseiller: { structure: StructureConseiller.MILO },
+        })
+      })
+
+      it('contient un message pour demander la structure du conseiller', () => {
+        // Then
+        expect(
+          screen.getByText(/vous devez renseigner votre structure/)
+        ).toBeInTheDocument()
+      })
+
+      it('affiche un lien pour contacter le support', async () => {
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Contacter le support (nouvelle fenêtre)',
+          })
+        ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
+      })
+
+      it('affiche un lien vers i-milo', async () => {
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Accéder à i-milo (nouvelle fenêtre)',
+          })
+        ).toHaveAttribute('href', 'https://portail.i-milo.fr/')
+      })
+    })
+
     describe('quand le conseiller n’est pas Mission Locale', () => {
       let agences: Agence[]
       let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -313,7 +352,9 @@ describe('Home', () => {
           screen.getByText(/vous devez contacter le support/)
         ).toBeInTheDocument()
         expect(
-          screen.getByRole('link', { name: 'Contacter le support' })
+          screen.getByRole('link', {
+            name: 'Contacter le support (nouvelle fenêtre)',
+          })
         ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
       })
 
@@ -425,17 +466,49 @@ describe('Home', () => {
       })
     })
 
+    describe('si le conseiller Milo n’a pas renseigné sa structure', () => {
+      beforeEach(() => {
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {},
+        })
+
+        const conseiller = unConseiller({
+          structure: StructureConseiller.MILO,
+        })
+
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
+        ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
+          uneListeDAgencesMILO()
+        )
+      })
+
+      it('renvoie les props nécessaires pour demander l’agence', async () => {
+        // When
+        const actual = await getServerSideProps({
+          query: {},
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          props: {
+            redirectUrl: '/mes-jeunes',
+            pageTitle: 'Accueil',
+          },
+        })
+      })
+    })
+
     describe('si le conseiller n’a pas renseigné son agence', () => {
       beforeEach(() => {
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
-          session: {
-            user: { id: '1', structure: StructureConseiller.MILO },
-            accessToken: 'accessToken',
-          },
+          session: {},
         })
 
-        const conseiller = unConseiller()
+        const conseiller = unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI,
+        })
 
         ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
         ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
@@ -476,24 +549,17 @@ describe('Home', () => {
       })
     })
 
-    describe('si le conseiller a signé la dernière version des CGU', () => {
+    describe('si le conseiller doit signer la dernière version des CGU', () => {
       it('redirige vers le portefeuille', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
-          session: {
-            user: { id: '1' },
-            accessToken: 'accessToken',
-          },
+          session: {},
         })
 
         const conseiller: Conseiller = unConseiller({
-          structure: StructureConseiller.MILO,
-          dateSignatureCGU: DateTime.fromISO(process.env.VERSION_CGU_COURANTE)
-            .plus({ day: 1 })
-            .toISO(),
+          dateSignatureCGU: '1970-01-01',
         })
-
         ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
         ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
           uneListeDAgencesMILO()
@@ -506,10 +572,9 @@ describe('Home', () => {
 
         //Then
         expect(actual).toEqual({
-          props: {
-            pageTitle: 'Accueil',
-            redirectUrl: '/mes-jeunes',
-            referentielAgences: uneListeDAgencesMILO(),
+          redirect: {
+            destination: '/consentement-cgu',
+            permanent: false,
           },
         })
       })
