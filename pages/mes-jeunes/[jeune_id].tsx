@@ -655,7 +655,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
 
   let sessionsMilo: EvenementListItem[] = []
 
-  if (peutAccederAuxSessions(conseiller) && !userIsPoleEmploi) {
+  if (peutAccederAuxSessions(conseiller)) {
     try {
       sessionsMilo = await getSessionsMiloBeneficiaire(
         context.query.jeune_id as string,

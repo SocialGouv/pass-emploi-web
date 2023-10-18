@@ -82,8 +82,6 @@ function Pilotage({
   const [totalAnimationsCollectives, setTotalAnimationsCollectives] =
     useState<number>(animationsCollectives?.metadonnees.nombreTotal ?? 0)
 
-  const [totalSessionsImilo] = useState<number>(sessions?.length ?? 0)
-
   const [animationsCollectivesAffichees, setAnimationsCollectivesAffichees] =
     useState<
       | {
@@ -202,7 +200,7 @@ function Pilotage({
                 <div>
                   <dt className='text-base-bold'>Sessions i-milo</dt>
                   <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
-                    <div className='text-xl-bold'>{totalSessionsImilo}</div>
+                    <div className='text-xl-bold'>{sessions?.length}</div>
                     <span className='text-base-bold'> À clore</span>
                   </dd>
                 </div>
@@ -232,7 +230,7 @@ function Pilotage({
         {peutAccederAuxSessions(conseiller) && (
           <Tab
             label='Sessions i-milo'
-            count={totalSessionsImilo ?? undefined}
+            count={sessions?.length}
             selected={currentTab === Onglet.SESSIONS_IMILO}
             controls='liste-sessions-i-milo-a-clore'
             onSelectTab={() => switchTab(Onglet.SESSIONS_IMILO)}
@@ -295,15 +293,6 @@ function Pilotage({
             id='liste-sessions-i-milo-a-clore'
             className='mt-8 pb-8 border-b border-primary_lighten'
           >
-            {!animationsCollectivesAffichees && (
-              <EncartAgenceRequise
-                conseiller={conseiller}
-                onAgenceChoisie={renseignerAgence}
-                getAgences={getAgencesClientSide}
-                onChangeAffichageModal={trackAgenceModal}
-              />
-            )}
-
             {sessions && <OngletSessionsImiloPilotage sessions={sessions} />}
           </div>
         )}
@@ -371,13 +360,14 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
     try {
       sessions = await getSessionsACloreServerSide(user.id, accessToken)
     } catch (e) {
-      if (e instanceof ApiError && e.statusCode === 401)
+      if (e instanceof ApiError && e.statusCode === 401) {
         return {
           redirect: {
             destination: '/api/auth/federated-logout',
             permanent: false,
           },
         }
+      }
 
       sessions = []
     }
