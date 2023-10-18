@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -17,6 +17,7 @@ import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import ErreursFormulaire from 'components/ui/Notifications/ErreursFormulaire'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { InfoFichier } from 'interfaces/fichier'
 import { getNomJeuneComplet } from 'interfaces/jeune'
@@ -63,6 +64,9 @@ function EnvoiMessageGroupe({
   >(undefined)
   const [erreurEnvoi, setErreurEnvoi] = useState<string | undefined>(undefined)
 
+  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
+    useState<number>(0)
+
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
@@ -80,7 +84,10 @@ function EnvoiMessageGroupe({
   }
 
   function formIsValid(): boolean {
-    return Boolean(isSelectedJeunesIdsValid() && isMessageValid())
+    const selectionEstValide = isSelectedJeunesIdsValid()
+    const messageEstValide = isMessageValid()
+
+    return Boolean(selectionEstValide && messageEstValide)
   }
 
   function isSelectedJeunesIdsValid(): boolean {
@@ -200,6 +207,14 @@ function EnvoiMessageGroupe({
     setTrackingLabel(initialTracking)
   }
 
+  useEffect(() => {
+    const count = [messageError, selectionError].filter(
+      (state) => state !== undefined
+    ).length
+
+    setNombreErreursFormulaire(count)
+  }, [messageError, selectionError])
+
   useMatomo(trackingLabel, aDesBeneficiaires)
   useMatomo(
     showLeavePageModal ? 'Message - Modale Annulation' : undefined,
@@ -230,6 +245,31 @@ function EnvoiMessageGroupe({
     <>
       {erreurEnvoi && (
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
+      )}
+
+      {nombreErreursFormulaire > 0 && (
+        <ErreursFormulaire
+          label={`Le formulaire contient ${nombreErreursFormulaire} erreur(s).`}
+        >
+          <>
+            {selectionError && (
+              <p className='mb-2'>
+                Le champ Sélection est vide.{' '}
+                <a href='#select-beneficiaires' className='underline'>
+                  Remplir &gt;
+                </a>
+              </p>
+            )}
+            {messageError && (
+              <p className='mb-2'>
+                Le champ Message est vide.{' '}
+                <a href='#message' className='underline'>
+                  Remplir &gt;
+                </a>
+              </p>
+            )}
+          </>
+        </ErreursFormulaire>
       )}
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
