@@ -35,8 +35,23 @@ export interface Conseiller extends BaseConseiller {
   dateSignatureCGU?: string
 }
 
+export function estPassEmploi(conseiller: Conseiller): boolean {
+  return conseiller.structure === StructureConseiller.PASS_EMPLOI
+}
+
 export function estMilo(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.MILO
+}
+
+export function estPoleEmploi(conseiller: Conseiller): boolean {
+  return (
+    conseiller.structure === StructureConseiller.POLE_EMPLOI ||
+    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
+  )
+}
+
+export function estPoleEmploiBRSA(conseiller: Conseiller): boolean {
+  return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
 }
 
 export function estSuperviseur(conseiller: Conseiller): boolean {
@@ -45,17 +60,6 @@ export function estSuperviseur(conseiller: Conseiller): boolean {
 
 export function estSuperviseurPEBRSA(conseiller: Conseiller): boolean {
   return conseiller.estSuperviseurPEBRSA
-}
-
-export function estPoleEmploiBRSA(conseiller: Conseiller): boolean {
-  return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
-}
-
-export function estPoleEmploi(conseiller: Conseiller): boolean {
-  return (
-    conseiller.structure === StructureConseiller.POLE_EMPLOI ||
-    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
-  )
 }
 
 export function estUserMilo(user: Session.HydratedUser): boolean {
@@ -67,6 +71,12 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
     user.structure === StructureConseiller.POLE_EMPLOI ||
     user.structure === StructureConseiller.POLE_EMPLOI_BRSA
   )
+}
+
+export function aEtablissement(conseiller: Conseiller): boolean {
+  return estMilo(conseiller)
+    ? Boolean(conseiller.structureMilo)
+    : Boolean(conseiller.agence)
 }
 
 export function peutAccederAuxSessions(conseiller: Conseiller): boolean {

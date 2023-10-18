@@ -10,7 +10,7 @@ interface Props {
   href: string | UrlObject
   children: ReactNode
   style?: ButtonStyle
-  className?: any
+  className?: string
   onClick?: () => void
 }
 

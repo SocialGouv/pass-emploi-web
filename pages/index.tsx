@@ -4,16 +4,24 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
+import RenseignementStructureModal from 'components/RenseignementStructureModal'
 import {
+  aEtablissement,
   Conseiller,
   doitSignerLesCGU,
+  estMilo,
+  estPassEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
-import { trackEvent } from 'utils/analytics/matomo'
+import {
+  trackEvent,
+  trackPage,
+  userStructureDimensionString,
+} from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { ApiError } from 'utils/httpClient'
@@ -21,7 +29,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface HomePageProps extends PageProps {
   redirectUrl: string
-  referentielAgences: Agence[]
+  referentielAgences?: Agence[]
 }
 
 function Home({ redirectUrl, referentielAgences }: HomePageProps) {
@@ -51,26 +59,45 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     await router.replace(redirectUrl)
   }
 
-  function trackContacterSupport() {
+  function trackContacterSupport(etablissement: string) {
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Contact Support',
-      action: 'Pop-in sélection agence',
+      action: 'Pop-in sélection ' + etablissement,
       nom: '',
       avecBeneficiaires: aDesBeneficiaires,
+    })
+  }
+
+  function trackAccederImilo() {
+    trackPage({
+      structure: userStructureDimensionString(StructureConseiller.MILO),
+      customTitle: 'Accès i-milo',
     })
   }
 
   useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
-    <RenseignementAgenceModal
-      conseiller={conseiller}
-      referentielAgences={referentielAgences}
-      onAgenceChoisie={selectAgence}
-      onContacterSupport={trackContacterSupport}
-      onClose={redirectToUrl}
-    />
+    <>
+      {!referentielAgences && (
+        <RenseignementStructureModal
+          onContacterSupport={() => trackContacterSupport('structure')}
+          onAccederImilo={trackAccederImilo}
+          onClose={redirectToUrl}
+        />
+      )}
+
+      {referentielAgences && (
+        <RenseignementAgenceModal
+          conseiller={conseiller}
+          referentielAgences={referentielAgences}
+          onAgenceChoisie={selectAgence}
+          onContacterSupport={() => trackContacterSupport('agence')}
+          onClose={redirectToUrl}
+        />
+      )}
+    </>
   )
 }
 
@@ -125,10 +152,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   const redirectUrl =
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
 
-  if (
-    Boolean(conseiller.agence) ||
-    user.structure === StructureConseiller.PASS_EMPLOI
-  ) {
+  if (estPassEmploi(conseiller) || aEtablissement(conseiller)) {
     return {
       redirect: {
         destination: `${redirectUrl}`,
@@ -137,9 +161,12 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
     }
   }
 
+  if (estMilo(conseiller) && !conseiller.structureMilo)
+    return { props: { redirectUrl, pageTitle: 'Accueil' } }
+
   const { getAgencesServerSide } = await import('services/referentiel.service')
   const referentielAgences = await getAgencesServerSide(
-    user.structure,
+    conseiller.structure,
     accessToken
   )
   return {
