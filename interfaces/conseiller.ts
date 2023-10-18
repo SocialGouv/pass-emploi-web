@@ -35,10 +35,6 @@ export interface Conseiller extends BaseConseiller {
   dateSignatureCGU?: string
 }
 
-export function estPoleEmploiCEJ(conseiller: Conseiller): boolean {
-  return conseiller.structure === StructureConseiller.POLE_EMPLOI
-}
-
 export function estMilo(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.MILO
 }
@@ -76,6 +72,7 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
 export function peutAccederAuxSessions(conseiller: Conseiller): boolean {
   return (
     estMilo(conseiller) &&
+    Boolean(conseiller.structureMilo) &&
     (process.env.ENABLE_SESSIONS_MILO === 'true' || estEarlyAdopter(conseiller))
   )
 }
@@ -84,10 +81,7 @@ function estEarlyAdopter(conseiller: Conseiller): boolean {
   const env = process.env.IDS_STRUCTURES_EARLY_ADOPTERS
   const idsStructures = env?.split('|') || []
 
-  return (
-    Boolean(conseiller.structureMilo) &&
-    idsStructures.includes(conseiller.structureMilo!.id)
-  )
+  return idsStructures.includes(conseiller.structureMilo!.id)
 }
 
 export function doitSignerLesCGU(conseiller: Conseiller): boolean {
