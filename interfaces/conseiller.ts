@@ -80,18 +80,7 @@ export function aEtablissement(conseiller: Conseiller): boolean {
 }
 
 export function peutAccederAuxSessions(conseiller: Conseiller): boolean {
-  return (
-    estMilo(conseiller) &&
-    Boolean(conseiller.structureMilo) &&
-    (process.env.ENABLE_SESSIONS_MILO === 'true' || estEarlyAdopter(conseiller))
-  )
-}
-
-function estEarlyAdopter(conseiller: Conseiller): boolean {
-  const env = process.env.IDS_STRUCTURES_EARLY_ADOPTERS
-  const idsStructures = env?.split('|') || []
-
-  return idsStructures.includes(conseiller.structureMilo!.id)
+  return estMilo(conseiller) && Boolean(conseiller.structureMilo)
 }
 
 export function doitSignerLesCGU(conseiller: Conseiller): boolean {
