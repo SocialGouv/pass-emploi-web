@@ -245,7 +245,7 @@ describe('Fiche Jeune', () => {
         unConseiller({
           id: 'id-conseiller',
           structure: StructureConseiller.MILO,
-          structureMilo: { nom: 'Agence early', id: 'id-test' },
+          structureMilo: { nom: 'Agence', id: 'id-test' },
         })
       )
     })
@@ -270,9 +270,6 @@ describe('Fiche Jeune', () => {
       let actual: GetServerSidePropsResult<any>
       beforeEach(async () => {
         // Given
-        process.env = Object.assign(process.env, {
-          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
-        })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
           session: {
             accessToken: 'accessToken',

@@ -42,10 +42,6 @@ describe('Pilotage', () => {
       let sessions: SessionsAClore[]
 
       beforeEach(async () => {
-        process.env = Object.assign(process.env, {
-          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
-        })
-
         actions = uneListeDActionsAQualifier()
         animationsCollectives = uneListeDAnimationCollectiveAClore()
         sessions = uneListeDeSessionsAClore()
@@ -607,9 +603,6 @@ describe('Pilotage', () => {
     describe('quand le conseiller est connecté', () => {
       beforeEach(async () => {
         // Given
-        process.env = Object.assign(process.env, {
-          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
-        })
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           redirect: { destination: 'whatever' },
