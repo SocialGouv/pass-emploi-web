@@ -47,11 +47,11 @@ export default function NavLinks({
   function getAideHref(structure: StructureConseiller): string {
     switch (structure) {
       case StructureConseiller.MILO:
-        return process.env.FAQ_MILO_EXTERNAL_LINK ?? ''
+        return process.env.NEXT_PUBLIC_FAQ_MILO_EXTERNAL_LINK ?? ''
       case StructureConseiller.POLE_EMPLOI:
-        return process.env.FAQ_PE_EXTERNAL_LINK ?? ''
+        return process.env.NEXT_PUBLIC_FAQ_PE_EXTERNAL_LINK ?? ''
       case StructureConseiller.POLE_EMPLOI_BRSA:
-        return process.env.FAQ_PE_BRSA_EXTERNAL_LINK ?? ''
+        return process.env.NEXT_PUBLIC_FAQ_PE_BRSA_EXTERNAL_LINK ?? ''
       case undefined:
       default:
         return ''
@@ -197,12 +197,14 @@ export default function NavLinks({
           />
         )}
 
-        {process.env.ENABLE_LEANBE && items.includes(NavItem.Actualites) && (
-          <ActualitesMenuButton
-            conseiller={conseiller}
-            onClick={trackActualite}
-          />
-        )}
+        {process.env.NEXT_PUBLIC_ENABLE_LEANBE === 'true' &&
+          items.includes(NavItem.Actualites) && (
+            <ActualitesMenuButton
+              conseiller={conseiller}
+              onClick={trackActualite}
+            />
+          )}
+
         {items.includes(NavItem.Aide) && (
           <NavLink
             href={getAideHref(conseiller.structure)}

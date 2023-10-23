@@ -26,11 +26,11 @@ export function useLeanBeWidget(conseiller: Conseiller) {
 export function getWidgetId(structure: StructureConseiller): string {
   switch (structure) {
     case StructureConseiller.MILO:
-      return process.env.LEANBE_MILO_WIDGET_ID ?? ''
+      return process.env.NEXT_PUBLIC_LEANBE_MILO_WIDGET_ID ?? ''
     case StructureConseiller.POLE_EMPLOI:
-      return process.env.LEANBE_PE_WIDGET_ID ?? ''
+      return process.env.NEXT_PUBLIC_LEANBE_PE_WIDGET_ID ?? ''
     case StructureConseiller.POLE_EMPLOI_BRSA:
-      return process.env.LEANBE_PE_BRSA_WIDGET_ID ?? ''
+      return process.env.NEXT_PUBLIC_LEANBE_PE_BRSA_WIDGET_ID ?? ''
     case undefined:
     default:
       return ''
