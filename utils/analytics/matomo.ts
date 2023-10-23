@@ -24,10 +24,11 @@ interface TrackEventSettings {
   avecBeneficiaires: string
 }
 
-const numeroDimensionAvecBeneficiaires = process.env
-  .MATOMO_DIMENSIONS_CONSEILLER_BENEFICIAIRES_STAGING
-  ? 8
-  : 3
+const numeroDimensionAvecBeneficiaires =
+  process.env.NEXT_PUBLIC_MATOMO_DIMENSIONS_CONSEILLER_BENEFICIAIRES_STAGING ===
+  'true'
+    ? 8
+    : 3
 
 // to push custom events
 function push(args: (number[] | string[] | number | string)[]): void {
@@ -141,8 +142,8 @@ function trackSSR({
   pathname: string
   refererUrl?: string
 }): void {
-  const url = process.env.MATOMO_SOCIALGOUV_URL
-  const siteId = process.env.MATOMO_SOCIALGOUV_SITE_ID
+  const url = process.env.NEXT_PUBLIC_MATOMO_SOCIALGOUV_URL
+  const siteId = process.env.NEXT_PUBLIC_MATOMO_SOCIALGOUV_SITE_ID
 
   if (!url || !siteId) {
     console.warn('Matomo disabled, please provide matomo url')

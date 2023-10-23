@@ -181,7 +181,7 @@ export function RenseignementAgenceMissionLocaleForm({
         {agenceNestPasDansLaListe() && (
           <a
             className={`w-fit flex items-center justify-center text-s-bold ${styles.button} ${styles.buttonTertiary}`}
-            href={'mailto:' + process.env.SUPPORT_MAIL}
+            href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
             target='_blank'
             rel='noreferrer noopener'
             onClick={onContacterSupport}
