@@ -371,7 +371,9 @@ describe('Page Profil conseiller', () => {
             screen.getByText(/vous devez contacter le support/)
           ).toBeInTheDocument()
           expect(
-            screen.getByRole('link', { name: 'Contacter le support' })
+            screen.getByRole('link', {
+              name: 'Contacter le support (nouvelle fenêtre)',
+            })
           ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
         })
 

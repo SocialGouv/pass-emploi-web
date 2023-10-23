@@ -38,9 +38,6 @@ module.exports = withBundleAnalyzer({
     LEANBE_MILO_WIDGET_ID: process.env.LEANBE_MILO_WIDGET_ID,
     LEANBE_PE_WIDGET_ID: process.env.LEANBE_PE_WIDGET_ID,
     LEANBE_PE_BRSA_WIDGET_ID: process.env.LEANBE_PE_BRSA_WIDGET_ID,
-    //SESSIONS MILO
-    ENABLE_SESSIONS_MILO: process.env.ENABLE_SESSIONS_MILO,
-    IDS_STRUCTURES_EARLY_ADOPTERS: process.env.IDS_STRUCTURES_EARLY_ADOPTERS,
     // OTHER
     ENVIRONMENT: process.env.ENVIRONMENT,
     MATOMO_SOCIALGOUV_URL: process.env.MATOMO_SOCIALGOUV_URL,
@@ -53,6 +50,7 @@ module.exports = withBundleAnalyzer({
     SUPPORT_MAIL: process.env.SUPPORT_MAIL,
     ANALYZE: process.env.ANALYZE,
     VERSION_CGU_COURANTE: process.env.VERSION_CGU_COURANTE,
+    IMILO_URL: process.env.IMILO_URL,
   },
 
   async redirects() {

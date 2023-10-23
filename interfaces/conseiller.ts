@@ -35,12 +35,23 @@ export interface Conseiller extends BaseConseiller {
   dateSignatureCGU?: string
 }
 
-export function estPoleEmploiCEJ(conseiller: Conseiller): boolean {
-  return conseiller.structure === StructureConseiller.POLE_EMPLOI
+export function estPassEmploi(conseiller: Conseiller): boolean {
+  return conseiller.structure === StructureConseiller.PASS_EMPLOI
 }
 
 export function estMilo(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.MILO
+}
+
+export function estPoleEmploi(conseiller: Conseiller): boolean {
+  return (
+    conseiller.structure === StructureConseiller.POLE_EMPLOI ||
+    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
+  )
+}
+
+export function estPoleEmploiBRSA(conseiller: Conseiller): boolean {
+  return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
 }
 
 export function estSuperviseur(conseiller: Conseiller): boolean {
@@ -49,17 +60,6 @@ export function estSuperviseur(conseiller: Conseiller): boolean {
 
 export function estSuperviseurPEBRSA(conseiller: Conseiller): boolean {
   return conseiller.estSuperviseurPEBRSA
-}
-
-export function estPoleEmploiBRSA(conseiller: Conseiller): boolean {
-  return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
-}
-
-export function estPoleEmploi(conseiller: Conseiller): boolean {
-  return (
-    conseiller.structure === StructureConseiller.POLE_EMPLOI ||
-    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
-  )
 }
 
 export function estUserMilo(user: Session.HydratedUser): boolean {
@@ -73,21 +73,14 @@ export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
   )
 }
 
-export function peutAccederAuxSessions(conseiller: Conseiller): boolean {
-  return (
-    estMilo(conseiller) &&
-    (process.env.ENABLE_SESSIONS_MILO === 'true' || estEarlyAdopter(conseiller))
-  )
+export function aEtablissement(conseiller: Conseiller): boolean {
+  return estMilo(conseiller)
+    ? Boolean(conseiller.structureMilo)
+    : Boolean(conseiller.agence)
 }
 
-function estEarlyAdopter(conseiller: Conseiller): boolean {
-  const env = process.env.IDS_STRUCTURES_EARLY_ADOPTERS
-  const idsStructures = env?.split('|') || []
-
-  return (
-    Boolean(conseiller.structureMilo) &&
-    idsStructures.includes(conseiller.structureMilo!.id)
-  )
+export function peutAccederAuxSessions(conseiller: Conseiller): boolean {
+  return estMilo(conseiller) && Boolean(conseiller.structureMilo)
 }
 
 export function doitSignerLesCGU(conseiller: Conseiller): boolean {
