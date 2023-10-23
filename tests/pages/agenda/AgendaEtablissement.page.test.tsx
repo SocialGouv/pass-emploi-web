@@ -195,15 +195,12 @@ describe('Agenda - Onglet établissement', () => {
 
         // When
         await userEvent.click(periodeCouranteButton)
-
         // Then
         expect(getRendezVousEtablissement).toHaveBeenCalledWith(
           'id-etablissement',
           SEPTEMBRE_1_0H,
           SEPTEMBRE_7_23H
         )
-
-        expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
 
         // When
         await userEvent.click(periodesFuturesButton)

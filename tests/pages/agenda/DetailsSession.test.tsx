@@ -1,26 +1,20 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
-
-import { getBeneficiairesDeLaStructureMilo } from '../../../services/jeunes.service'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  BaseJeune,
-  CategorieSituation,
-  JeuneEtablissement,
-} from 'interfaces/jeune'
+import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
 import { Session } from 'interfaces/session'
 import DetailSession, {
   getServerSideProps,
 } from 'pages/agenda/sessions/[session_id]'
 import { getConseillerServerSide } from 'services/conseiller.service'
+import { getBeneficiairesDeLaStructureMilo } from 'services/jeunes.service'
 import {
   changerInscriptionsSession,
   changerVisibiliteSession,
@@ -374,6 +368,7 @@ describe('Détails Session', () => {
             />
           )
         })
+
         it('affiche la liste des inscrits', () => {
           // Then
           expect(
@@ -412,58 +407,6 @@ describe('Détails Session', () => {
               name: /Enregistrer les modifications/,
             })
           ).toBeInTheDocument()
-        })
-      })
-
-      describe('au clic sur le bouton d’annulation', () => {
-        it('réinitialise la liste des inscrits', async () => {
-          //Given
-          session = unDetailSession({
-            session: {
-              ...unDetailSession().session,
-              id: 'session-1',
-              nom: 'titre-session',
-              dateHeureDebut: DateTime.now()
-                .plus({ days: 1, minute: 1 })
-                .toString(),
-              dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
-              dateMaxInscription: DateTime.now().plus({ days: 1 }).toString(),
-              animateur: 'Charles Dupont',
-              lieu: 'CEJ Paris',
-              commentaire: 'bla',
-              estVisible: true,
-              nbPlacesDisponibles: 3,
-            },
-            inscriptions: [
-              {
-                idJeune: 'jeune-1',
-                nom: 'Beau',
-                prenom: 'Harry',
-                statut: 'INSCRIT',
-              },
-            ],
-          })
-          await renderWithContexts(
-            <DetailSession
-              pageTitle=''
-              session={session}
-              beneficiairesStructureMilo={beneficaires}
-              returnTo='whatever'
-            />
-          )
-          const beneficiaireInput = screen.getByRole('combobox', {
-            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
-          })
-          const annulerBtn = screen.getByRole('link', {
-            name: /Annuler/,
-          })
-
-          //When
-          await userEvent.type(beneficiaireInput, 'Octo Puce')
-          await userEvent.click(annulerBtn)
-
-          //Then
-          expect(screen.getByText('Octo Puce')).toBeInTheDocument()
         })
       })
 

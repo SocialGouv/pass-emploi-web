@@ -234,14 +234,6 @@ function FicheDetailsSession({
     closeDesinscriptionBeneficiaireModal()
   }
 
-  function resetAll() {
-    setBeneficiairesSelectionnes({ value: initBeneficiairesSelectionnes() })
-    if (nbPlacesDisponibles.value)
-      setNbPlacesDisponibles({
-        value: session.session.nbPlacesDisponibles ?? undefined,
-      })
-  }
-
   async function enregistrerInscriptions(e: FormEvent) {
     e.preventDefault()
 
@@ -532,11 +524,7 @@ function FicheDetailsSession({
 
         {!dateLimiteInscriptionDepassee && (
           <div className='flex justify-center gap-4 mx-auto'>
-            <ButtonLink
-              href={returnTo}
-              style={ButtonStyle.SECONDARY}
-              onClick={() => resetAll()}
-            >
+            <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
               Annuler
             </ButtonLink>
             <Button
