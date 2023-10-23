@@ -6875,6 +6875,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bignumber.js@npm:^9.0.0":
+  version: 9.1.2
+  resolution: "bignumber.js@npm:9.1.2"
+  checksum: 582c03af77ec9cb0ebd682a373ee6c66475db94a4325f92299621d544aa4bd45cb45fd60001610e94aef8ae98a0905fa538241d9638d4422d57abbeeac6fadaf
+  languageName: node
+  linkType: hard
+
 "binary-extensions@npm:^1.0.0":
   version: 1.13.1
   resolution: "binary-extensions@npm:1.13.1"
@@ -8989,9 +8996,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:4.0.0":
-  version: 4.0.0
-  resolution: "elastic-apm-node@npm:4.0.0"
+"elastic-apm-node@npm:4.1.0":
+  version: 4.1.0
+  resolution: "elastic-apm-node@npm:4.1.0"
   dependencies:
     "@elastic/ecs-pino-format": ^1.2.0
     "@opentelemetry/api": ^1.4.1
@@ -9012,6 +9019,7 @@ __metadata:
     fast-stream-to-buffer: ^1.0.0
     http-headers: ^3.0.2
     import-in-the-middle: 1.4.2
+    json-bigint: ^1.0.0
     lru-cache: ^10.0.1
     measured-reporting: ^1.51.1
     module-details-from-path: ^1.0.3
@@ -9029,7 +9037,7 @@ __metadata:
     sql-summary: ^1.0.1
     stream-chopper: ^3.0.1
     unicode-byte-truncate: ^1.0.0
-  checksum: 3695e56e456d019fec63d6ce691aeedf0e3aace2363a89027be02bf37bbc27f86d1c4a0e5cb8dc00588d4b64c8c3ce9b481ec3b4019becdc685e8b5c8661b17a
+  checksum: 68c1f35a082a6448ecf34a9b9b9df822df33c545067878f05766197fb32ed7eab146dd537e9776d1dd7ca6735bd7b9db8f4485f216e7e411db55508e13a18013
   languageName: node
   linkType: hard
 
@@ -13160,6 +13168,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"json-bigint@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "json-bigint@npm:1.0.0"
+  dependencies:
+    bignumber.js: ^9.0.0
+  checksum: c67bb93ccb3c291e60eb4b62931403e378906aab113ec1c2a8dd0f9a7f065ad6fd9713d627b732abefae2e244ac9ce1721c7a3142b2979532f12b258634ce6f6
+  languageName: node
+  linkType: hard
+
 "json-buffer@npm:3.0.1":
   version: 3.0.1
   resolution: "json-buffer@npm:3.0.1"
@@ -15445,7 +15462,7 @@ __metadata:
     crypto-js: 4.1.1
     css-loader: ^6.8.1
     dotenv: 16.3.1
-    elastic-apm-node: 4.0.0
+    elastic-apm-node: 4.1.0
     eslint: ^8.50.0
     eslint-config-next: 13.5.4
     eslint-config-prettier: ^9.0.0
