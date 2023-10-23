@@ -161,7 +161,7 @@ function Profil({ referentielAgences }: ProfilProps) {
           )}
         </dl>
 
-        {process.env.ENABLE_PE_BRSA_SSO && !conseillerEstMilo && (
+        {process.env.NEXT_PUBLIC_ENABLE_PE_BRSA_SSO && !conseillerEstMilo && (
           <Button
             className='mt-4'
             onClick={openDeleteConseillerModal}
@@ -203,7 +203,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                   Pour ce faire merci de&nbsp;
                   <span className={'text-primary_darken hover:text-primary'}>
                     <ExternalLink
-                      href={'mailto:' + process.env.SUPPORT_MAIL}
+                      href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
                       label={'contacter le support'}
                       iconName={IconName.OutgoingMail}
                       onClick={trackContacterSupportClick}

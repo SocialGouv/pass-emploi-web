@@ -11,7 +11,7 @@ export default async function Fichier(
 
     return res.redirect(
       307,
-      `${process.env.API_ENDPOINT}/fichiers/${fichierId}?token=${session?.accessToken}`
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/fichiers/${fichierId}?token=${session?.accessToken}`
     )
   } catch (error) {
     console.error(error)

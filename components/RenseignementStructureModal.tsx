@@ -35,7 +35,7 @@ export default function RenseignementStructureModal({
 
       <div className='flex justify-center mt-4'>
         <a
-          href={'mailto:' + process.env.SUPPORT_MAIL}
+          href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
           target='_blank'
           rel='noreferrer noopener'
           className={`${buttonsStyle} ${styles.button} ${styles.buttonTertiary}`}
@@ -52,7 +52,7 @@ export default function RenseignementStructureModal({
         </a>
 
         <a
-          href={process.env.IMILO_URL as string}
+          href={process.env.NEXT_PUBLIC_IMILO_URL as string}
           target='_blank'
           rel='noreferrer noopener'
           className={`${buttonsStyle} ${styles.button} ${styles.buttonPrimary} ml-4`}

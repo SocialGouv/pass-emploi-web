@@ -131,10 +131,6 @@ describe('Page Profil conseiller', () => {
     let jeunes: JeuneFromListe[]
     let push: Function
 
-    beforeEach(async () => {
-      process.env = Object.assign(process.env, { ENABLE_PE_BRSA_SSO: 'true' })
-    })
-
     describe('contenu', () => {
       beforeEach(async () => {
         // Given

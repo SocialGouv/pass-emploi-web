@@ -24,7 +24,9 @@ export default async function Login({
   return (
     <div className='flex flex-col justify-center h-screen'>
       <LoginPage
-        ssoPoleEmploiBRSAEstActif={process.env.ENABLE_PE_BRSA_SSO === 'true'}
+        ssoPoleEmploiBRSAEstActif={
+          process.env.NEXT_PUBLIC_ENABLE_PE_BRSA_SSO === 'true'
+        }
         ssoPassEmploiEstActif={process.env.ENABLE_PASS_EMPLOI_SSO === 'true'}
         isFromEmail={isFromEmail}
       />

@@ -17,8 +17,8 @@ const ContextProviders = dynamic(import('utils/ContextProviders'), {
   ssr: false,
 })
 
-const MATOMO_URL = process.env.MATOMO_SOCIALGOUV_URL || ''
-const MATOMO_SITE_ID = process.env.MATOMO_SOCIALGOUV_SITE_ID || ''
+const MATOMO_URL = process.env.NEXT_PUBLIC_MATOMO_SOCIALGOUV_URL || ''
+const MATOMO_SITE_ID = process.env.NEXT_PUBLIC_MATOMO_SOCIALGOUV_SITE_ID || ''
 
 export const fontMarianne = localFont({
   src: [
