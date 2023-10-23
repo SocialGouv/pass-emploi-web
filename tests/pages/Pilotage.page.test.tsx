@@ -1,5 +1,8 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next/types'
+import React from 'react'
 
 import { uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
@@ -10,18 +13,24 @@ import { ActionPilotage } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
 import Pilotage, { getServerSideProps } from 'pages/pilotage'
-import React from 'react'
-import { getActionsAQualifierClientSide, getActionsAQualifierServerSide } from 'services/actions.service'
-import { getConseillerServerSide, modifierAgence } from 'services/conseiller.service'
+import {
+  getActionsAQualifierClientSide,
+  getActionsAQualifierServerSide,
+} from 'services/actions.service'
+import {
+  getConseillerServerSide,
+  modifierAgence,
+} from 'services/conseiller.service'
 import {
   getAnimationsCollectivesACloreClientSide,
-  getAnimationsCollectivesACloreServerSide
+  getAnimationsCollectivesACloreServerSide,
 } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
-import { getSessionsACloreServerSide, SessionsAClore } from 'services/sessions.service'
+import {
+  getSessionsACloreServerSide,
+  SessionsAClore,
+} from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
@@ -548,19 +557,21 @@ describe('Pilotage', () => {
         await userEvent.click(submit)
 
         // Then
-        expect(modifierAgence).toHaveBeenCalledWith({
-          id: agence.id,
-          nom: agence.nom,
-          codeDepartement: '3',
-        })
-        expect(
-          screen.queryByText('Votre Mission Locale n’est pas renseignée')
-        ).not.toBeInTheDocument()
-        expect(
-          screen.getByRole('table', {
-            name: 'Liste des animations collectives à clore',
+        await waitFor(() => {
+          expect(modifierAgence).toHaveBeenCalledWith({
+            id: agence.id,
+            nom: agence.nom,
+            codeDepartement: '3',
           })
-        ).toBeInTheDocument()
+          expect(
+            screen.queryByText('Votre Mission Locale n’est pas renseignée')
+          ).not.toBeInTheDocument()
+          expect(
+            screen.getByRole('table', {
+              name: 'Liste des animations collectives à clore',
+            })
+          ).toBeInTheDocument()
+        })
       })
     })
   })
