@@ -1,4 +1,4 @@
-import { captureRUMError } from 'utils/monitoring/init-rum'
+import { captureRUMError } from 'utils/monitoring/elastic'
 
 export async function fetchJson(
   reqInfo: RequestInfo,

@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 
 export enum StructureConseiller {
@@ -31,6 +32,7 @@ export interface Conseiller extends BaseConseiller {
   estSuperviseurPEBRSA: boolean
   agence?: { nom: string; id?: string }
   structureMilo?: { id: string; nom: string }
+  dateSignatureCGU?: string
 }
 
 export function estPoleEmploiCEJ(conseiller: Conseiller): boolean {
@@ -85,5 +87,13 @@ function estEarlyAdopter(conseiller: Conseiller): boolean {
   return (
     Boolean(conseiller.structureMilo) &&
     idsStructures.includes(conseiller.structureMilo!.id)
+  )
+}
+
+export function doitSignerLesCGU(conseiller: Conseiller): boolean {
+  return (
+    !conseiller.dateSignatureCGU ||
+    DateTime.fromISO(conseiller.dateSignatureCGU) <
+      DateTime.fromISO(process.env.VERSION_CGU_COURANTE!)
   )
 }

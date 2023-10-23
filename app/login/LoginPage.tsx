@@ -1,15 +1,15 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import React, { FormEvent, useCallback, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'
 import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
-import styles from 'styles/components/Login.module.css'
 import { trackPage } from 'utils/analytics/matomo'
 
 const OnboardingMobileModal = dynamic(
@@ -23,13 +23,13 @@ interface LoginProps {
   isFromEmail: boolean
 }
 
-function Login({
+function LoginPage({
   ssoPassEmploiEstActif,
   ssoPoleEmploiBRSAEstActif,
   isFromEmail,
 }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
-  const router = useRouter()
+  const searchParams = useSearchParams()
 
   const MIN_DESKTOP_WIDTH = 600
   const [afficherOnboarding, setAfficherOnboarding] = useState(false)
@@ -39,35 +39,28 @@ function Login({
     await signin(provider)
   }
 
-  const signin = useCallback(
-    async (provider?: string) => {
-      const redirectUrl: string = router.query.redirectUrl as string
-      try {
-        const callbackUrl: string = redirectUrl
-          ? '/?' + new URLSearchParams({ redirectUrl })
-          : '/'
-        await signIn(
-          'keycloak',
-          { callbackUrl },
-          { kc_idp_hint: provider ?? '' }
-        )
-      } catch (error) {
-        console.error(error)
-        setErrorMsg("une erreur est survenue lors de l'authentification")
-      }
-    },
-    [router]
-  )
+  async function signin(provider?: string) {
+    const redirectUrl: string = searchParams!.get('redirectUrl') as string
+    try {
+      const callbackUrl: string = redirectUrl
+        ? '/?' + new URLSearchParams({ redirectUrl })
+        : '/'
+      await signIn('keycloak', { callbackUrl }, { kc_idp_hint: provider ?? '' })
+    } catch (error) {
+      console.error(error)
+      setErrorMsg("une erreur est survenue lors de l'authentification")
+    }
+  }
 
   useEffect(() => {
-    const provider = router?.query.provider
+    const provider = searchParams!.get('provider')
     switch (provider) {
       case 'pe':
       case 'pe-brsa':
       case 'similo':
         signin(`${provider}-conseiller`)
     }
-  }, [router, signin])
+  }, [])
 
   useEffect(() => {
     if (window.innerWidth < MIN_DESKTOP_WIDTH) setAfficherOnboarding(true)
@@ -79,7 +72,7 @@ function Login({
   }, [])
 
   return (
-    <div className={`${styles.login} w-full h-screen relative`}>
+    <div className='bg-primary_lighten w-full grow relative'>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
         <h1 className='text-m-bold text-primary_darken text-center mb-[24px]'>
           Connectez-vous à l&apos;espace conseiller
@@ -160,37 +153,4 @@ function Login({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (
-  context
-): Promise<GetServerSidePropsResult<{}>> => {
-  const { getSession } = await import('next-auth/react')
-  const session = await getSession({ req: context.req })
-  const querySource = context.query.source && `?source=${context.query.source}`
-
-  if (session) {
-    const redirectUrl: string =
-      (context.query.redirectUrl as string) ?? `/${querySource || ''}`
-
-    return {
-      redirect: {
-        destination: redirectUrl,
-        permanent: false,
-      },
-    }
-  }
-
-  const isFromEmail: boolean = Boolean(
-    context.query.source ||
-      (context.query.redirectUrl as string)?.includes('notif-mail')
-  )
-
-  return {
-    props: {
-      ssoPoleEmploiBRSAEstActif: process.env.ENABLE_PE_BRSA_SSO,
-      ssoPassEmploiEstActif: process.env.ENABLE_PASS_EMPLOI_SSO,
-      isFromEmail: isFromEmail,
-    },
-  }
-}
-
-export default withTransaction(Login.name, 'page')(Login)
+export default withTransaction(LoginPage.name, 'page')(LoginPage)

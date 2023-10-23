@@ -1735,13 +1735,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@badrap/bar-of-progress@npm:0.2.2":
-  version: 0.2.2
-  resolution: "@badrap/bar-of-progress@npm:0.2.2"
-  checksum: 9b0d7c276213024d7444414d90228e56622964e34d4c3eaa4db524b37442f3b6a4b55e6fcb9c1446550c8166ac619ebf5000689fbc797fe509b0aeceb5513c67
-  languageName: node
-  linkType: hard
-
 "@base2/pretty-print-object@npm:1.0.1":
   version: 1.0.1
   resolution: "@base2/pretty-print-object@npm:1.0.1"
@@ -5186,6 +5179,13 @@ __metadata:
   version: 4.1.4
   resolution: "@types/npmlog@npm:4.1.4"
   checksum: 740f7431ccfc0e127aa8d162fe05c6ce8aa71290be020d179b2824806d19bd2c706c7e0c9a3c9963cefcdf2ceacb1dec6988c394c3694451387759dafe0aa927
+  languageName: node
+  linkType: hard
+
+"@types/nprogress@npm:^0.2.0":
+  version: 0.2.1
+  resolution: "@types/nprogress@npm:0.2.1"
+  checksum: fe9db499f3d9cff90bad9f49336ff82ea444a51ca336a25ec401d18cc8fb12e546b622bdc11379491475c22cd4d9fb1195c805055cacb365627c667e52d618b1
   languageName: node
   linkType: hard
 
@@ -14527,6 +14527,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nextjs-toploader@npm:1.4.2":
+  version: 1.4.2
+  resolution: "nextjs-toploader@npm:1.4.2"
+  dependencies:
+    "@types/nprogress": ^0.2.0
+    nprogress: ^0.2.0
+    prop-types: ^15.8.1
+  peerDependencies:
+    next: ">= 6.0.0"
+    react: ">= 16.0.0"
+    react-dom: ">= 16.0.0"
+  checksum: dab1d3327791fe772d63ab1cad56c0bc6071e72339cd85cfa03a668485490604acd70ddd9744c084323f95abcc495e6ee5e135a19fd5f45ae09b744202f4ba7d
+  languageName: node
+  linkType: hard
+
 "nice-try@npm:^1.0.4":
   version: 1.0.5
   resolution: "nice-try@npm:1.0.5"
@@ -14741,6 +14756,13 @@ __metadata:
     gauge: ^4.0.3
     set-blocking: ^2.0.0
   checksum: ae238cd264a1c3f22091cdd9e2b106f684297d3c184f1146984ecbe18aaa86343953f26b9520dedd1b1372bc0316905b736c1932d778dbeb1fcf5a1001390e2a
+  languageName: node
+  linkType: hard
+
+"nprogress@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "nprogress@npm:0.2.0"
+  checksum: 66b7bec5d563ecf2d1c3d2815e6d5eb74ed815eee8563e0afa63d3f185ab1b9cf2ddd97e1ded263b9995c5019d26d600320e849e50f3747984daa033744619dc
   languageName: node
   linkType: hard
 
@@ -15394,7 +15416,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pass-emploi-web@workspace:."
   dependencies:
-    "@badrap/bar-of-progress": 0.2.2
     "@elastic/apm-rum": 5.15.0
     "@elastic/apm-rum-react": 2.0.1
     "@next/bundle-analyzer": 13.5.4
@@ -15443,6 +15464,7 @@ __metadata:
     next-auth: 4.23.2
     next-logger: 3.0.2
     next-themes: 0.2.1
+    nextjs-toploader: 1.4.2
     pino: 8.15.6
     pino-pretty: ^10.2.3
     postcss: ^8.4.31

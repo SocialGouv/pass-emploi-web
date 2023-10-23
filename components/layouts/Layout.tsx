@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
+import HeaderCGU from 'components/layouts/HeaderCGU'
 import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { estPoleEmploiBRSA } from 'interfaces/conseiller'
@@ -50,6 +51,9 @@ export default function Layout({ children }: LayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mainRef = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
+
+  const pageCouranteEstMessagerie = router.pathname === '/messagerie'
+  const pageCouranteEstCGU = router.pathname === '/consentement-cgu'
 
   const withChat = !withoutChat
 
@@ -109,8 +113,6 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [conseiller, conseiller?.structure, setTheme])
 
-  const pageCouranteEstMessagerie = router.pathname === '/messagerie'
-
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
@@ -119,7 +121,7 @@ export default function Layout({ children }: LayoutProps) {
 
       {conseiller && portefeuille && (
         <>
-          {!pageCouranteEstMessagerie && (
+          {!pageCouranteEstMessagerie && !pageCouranteEstCGU && (
             <div
               ref={containerRef}
               className={`${styles.container} ${
@@ -182,6 +184,24 @@ export default function Layout({ children }: LayoutProps) {
                   {children}
                 </main>
                 <Footer conseiller={conseiller} />
+              </div>
+            </div>
+          )}
+
+          {pageCouranteEstCGU && (
+            <div ref={containerRef} className={`${styles.page_full_screen}`}>
+              <div ref={mainRef} className={styles.page}>
+                <HeaderCGU
+                  conseiller={conseiller}
+                  pageHeader={pageHeader ?? pageTitle}
+                />
+                <main
+                  role='main'
+                  className={`${styles.content} ${styles.cgu_full_screen}`}
+                >
+                  <AlerteDisplayer />
+                  {children}
+                </main>
               </div>
             </div>
           )}

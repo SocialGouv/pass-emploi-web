@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   unBaseConseillerJson,
@@ -10,6 +12,7 @@ import {
   getConseillers,
   getConseillerServerSide,
   modifierAgence,
+  modifierDateSignatureCGU,
   modifierNotificationsSonores,
   recupererBeneficiaires,
   supprimerConseiller,
@@ -23,12 +26,14 @@ describe('ConseillerApiService', () => {
       // Given
       const idConseiller = 'idConseiller'
       const accessToken = 'accessToken'
+      const dateSignatureCGU = '2023-10-03T00:00:00.000+02:00'
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: unConseillerJson({
           agence: {
             nom: 'Milo Marseille',
             id: 'id-agence',
           },
+          dateSignatureCGU: dateSignatureCGU,
         }),
       })
 
@@ -41,7 +46,10 @@ describe('ConseillerApiService', () => {
         accessToken
       )
       expect(actual).toEqual(
-        unConseiller({ agence: { nom: 'Milo Marseille', id: 'id-agence' } })
+        unConseiller({
+          agence: { nom: 'Milo Marseille', id: 'id-agence' },
+          dateSignatureCGU: dateSignatureCGU,
+        })
       )
     })
   })
@@ -50,6 +58,8 @@ describe('ConseillerApiService', () => {
     it('renvoie les informations d’un conseiller', async () => {
       // Given
       const accessToken = 'accessToken'
+      const dateSignature = '2023-10-03T00:00:00.000+02:00'
+
       const user = {
         id: 'id-user',
         name: 'Albert Durant',
@@ -58,6 +68,7 @@ describe('ConseillerApiService', () => {
         estConseiller: true,
         estSuperviseur: false,
         estSuperviseurPEBRSA: false,
+        dateSignatureCGU: dateSignature,
       }
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: unConseillerJson({
@@ -65,6 +76,7 @@ describe('ConseillerApiService', () => {
             nom: 'Milo Marseille',
             id: 'id-agence',
           },
+          dateSignatureCGU: dateSignature,
         }),
       })
 
@@ -74,7 +86,10 @@ describe('ConseillerApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith('/conseillers/id-user', accessToken)
       expect(actual).toEqual(
-        unConseiller({ agence: { nom: 'Milo Marseille', id: 'id-agence' } })
+        unConseiller({
+          agence: { nom: 'Milo Marseille', id: 'id-agence' },
+          dateSignatureCGU: dateSignature,
+        })
       )
     })
   })
@@ -130,6 +145,22 @@ describe('ConseillerApiService', () => {
           email: 'nils.tavernier@mail.com',
         },
       ])
+    })
+  })
+
+  describe('.modifierDateSignatureCGU', () => {
+    it('modifie le conseiller avec la nouvelle date de signature des CGU', async () => {
+      const nouvelleDate = DateTime.now()
+
+      // When
+      await modifierDateSignatureCGU(nouvelleDate)
+
+      // Then
+      expect(apiPut).toHaveBeenCalledWith(
+        '/conseillers/idConseiller',
+        { dateSignatureCGU: nouvelleDate },
+        'accessToken'
+      )
     })
   })
 

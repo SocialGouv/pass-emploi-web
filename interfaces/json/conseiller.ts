@@ -47,6 +47,7 @@ export interface ConseillerJson {
   }
   notificationsSonores: boolean
   aDesBeneficiairesARecuperer: boolean
+  dateSignatureCGU?: string
 }
 
 export function jsonToBaseConseiller(json: BaseConseillerJson): BaseConseiller {
@@ -63,7 +64,7 @@ export function jsonToConseiller(
   conseillerJson: ConseillerJson,
   { structure, estSuperviseur, estSuperviseurPEBRSA }: Session.HydratedUser
 ): Conseiller {
-  const { agence, ...json } = conseillerJson
+  const { agence, dateSignatureCGU, ...json } = conseillerJson
   const conseiller: Conseiller = {
     ...json,
     structure: structure as StructureConseiller,
@@ -73,6 +74,10 @@ export function jsonToConseiller(
 
   if (agence) {
     conseiller.agence = agence
+  }
+
+  if (dateSignatureCGU) {
+    conseiller.dateSignatureCGU = dateSignatureCGU
   }
 
   return conseiller

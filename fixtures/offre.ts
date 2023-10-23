@@ -419,11 +419,6 @@ export function unDetailImmersion(
     ville: 'Paris',
     contact: {
       adresse: '33 Rue Claude Lorrain 75016 Paris',
-      nom: 'Louis',
-      prenom: 'de Castro',
-      role: 'Président',
-      telephone: '0967430054',
-      email: 'louis@madoxr.com',
     },
   }
 
@@ -441,13 +436,6 @@ export function unDetailImmersionJson(
       'Production de films cinématographiques, de vidéo et de programmes de télévision',
     ville: 'Paris',
     adresse: '33 Rue Claude Lorrain 75016 Paris',
-    contact: {
-      nom: 'Louis',
-      prenom: 'de Castro',
-      role: 'Président',
-      telephone: '0967430054',
-      email: 'louis@madoxr.com',
-    },
   }
   return { ...defaults, ...overrides }
 }
