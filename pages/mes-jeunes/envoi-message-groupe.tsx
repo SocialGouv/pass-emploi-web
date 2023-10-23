@@ -17,8 +17,10 @@ import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ErreursFormulaire from 'components/ui/Notifications/ErreursFormulaire'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { InfoFichier } from 'interfaces/fichier'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -30,6 +32,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulaire'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -241,35 +244,31 @@ function EnvoiMessageGroupe({
     if (listesDeDiffusion) setSelectedListesIds(listesDeDiffusion)
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (selectionError)
+      erreurs.push({
+        ancre: '#select-beneficiaires',
+        label: 'Le champ Destinataires est vide.',
+        titreChamp: 'Destinataires',
+      })
+    if (messageError)
+      erreurs.push({
+        ancre: '#message',
+        label: 'Le champ Message est vide.',
+        titreChamp: 'Message',
+      })
+    return erreurs
+  }
+
   return (
     <>
       {erreurEnvoi && (
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
 
-      {nombreErreursFormulaire > 0 && (
-        <ErreursFormulaire
-          label={`Le formulaire contient ${nombreErreursFormulaire} erreur(s).`}
-        >
-          <>
-            {selectionError && (
-              <p className='mb-2'>
-                Le champ Sélection est vide.{' '}
-                <a href='#select-beneficiaires' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {messageError && (
-              <p className='mb-2'>
-                Le champ Message est vide.{' '}
-                <a href='#message' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-          </>
-        </ErreursFormulaire>
+      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
+        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
       )}
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>

@@ -15,8 +15,10 @@ import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ErreursFormulaire from 'components/ui/Notifications/ErreursFormulaire'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
 import { compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -25,6 +27,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulaire'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -192,6 +195,23 @@ function EditionListeDiffusion({
     }
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (titre.error)
+      erreurs.push({
+        ancre: '#titre-liste',
+        label: 'Le champ Titre est vide.',
+        titreChamp: 'Titre',
+      })
+    if (idsBeneficiaires.error)
+      erreurs.push({
+        ancre: '#select-beneficiaires',
+        label: 'Le champ Bénéficiaires est vide.',
+        titreChamp: 'Bénéficiaires',
+      })
+    return erreurs
+  }
+
   useEffect(() => {
     const count = [titre, idsBeneficiaires].filter(
       (state) => state.error
@@ -233,29 +253,8 @@ function EditionListeDiffusion({
         />
       )}
 
-      {nombreErreursFormulaire > 0 && (
-        <ErreursFormulaire
-          label={`Le formulaire contient ${nombreErreursFormulaire} erreur(s).`}
-        >
-          <>
-            {titre.error && (
-              <p className='mb-2'>
-                Le champ Titre est vide.{' '}
-                <a href='#titre-liste' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {idsBeneficiaires.error && (
-              <p className='mb-2'>
-                Le champ Bénéficiaires est vide.{' '}
-                <a href='#select-beneficiaires' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-          </>
-        </ErreursFormulaire>
+      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
+        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
       )}
 
       <p className='text-s-bold text-content_color mb-4'>
