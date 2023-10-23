@@ -18,9 +18,11 @@ import Select from 'components/ui/Form/Select'
 import { Switch } from 'components/ui/Form/Switch'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ErreursFormulaire from 'components/ui/Notifications/ErreursFormulaire'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
 import { Conseiller } from 'interfaces/conseiller'
 import {
@@ -40,6 +42,7 @@ import {
   toFrenchFormat,
   toFrenchString,
 } from 'utils/date'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulaire'
 
 interface EditionRdvFormProps {
   conseiller: Conseiller
@@ -237,16 +240,16 @@ export function EditionRdvForm({
   }
 
   function formIsValid(): boolean {
-    const typeEstValide = typeIsValid()
-    const titreEstValide = titreIsValid()
-    const nombreParticipantsEstValide = nombreParticipantsIsValid(
+    const typeEstValide = validateType()
+    const titreEstValide = validateTitre()
+    const nombreParticipantsEstValide = validateNombreParticipants(
       idsJeunes.value
     )
-    const nombreMaxParticipantsEstValide = nombreMaxParticipantsIsValid()
-    const dateEstValide = dateIsValid()
-    const horaireEstValide = horaireIsValid()
-    const dureeEstValide = dureeIsValid()
-    const descriptionEstValide = descriptionIsValid()
+    const nombreMaxParticipantsEstValide = validateNombreMaxParticipants()
+    const dateEstValide = validateDate()
+    const horaireEstValide = validateHoraire()
+    const dureeEstValide = validateDuree()
+    const descriptionEstValide = validateDescription()
 
     return (
       typeEstValide &&
@@ -264,6 +267,8 @@ export function EditionRdvForm({
     setNombreMaxParticipants({ value: undefined })
     setCodeTypeRendezVous({ value })
     setShowPrecisionType(value === TYPE_EVENEMENT.Autre)
+    if (value !== TYPE_EVENEMENT.Autre && precisionType.error)
+      setPrecisionType({ ...precisionType, error: undefined })
     if (value === TYPE_EVENEMENT.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
     }
@@ -290,22 +295,19 @@ export function EditionRdvForm({
     }
   }
 
-  function dateIsValid(): boolean {
-    const dateEstValide = Boolean(date.value && regexDate.test(date.value))
-    if (!dateEstValide) {
-      setDate({
-        ...date,
-        error: 'Le champ “Date“ est vide. Renseignez une date.',
-      })
-    }
-    const inputDate = document.getElementById('date')
-    if (inputDate) inputDate.scrollIntoView({ behavior: 'smooth' })
-    return dateEstValide
-  }
-
   function validateDate() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
+
+    const dateEstValide = Boolean(
+      date.value &&
+        dateIsInInterval(
+          DateTime.fromFormat(date.value, 'yyyy-MM-dd'),
+          unAnAvant,
+          deuxAnsApres
+        ) &&
+        regexDate.test(date.value)
+    )
 
     if (
       date.value &&
@@ -323,64 +325,62 @@ export function EditionRdvForm({
           'dd/MM/yyyy'
         )}.`,
       })
-    } else if (!dateIsValid()) {
+    } else if (!date.value) {
+      setDate({
+        ...date,
+        error: 'Le champ “Date“ est vide. Renseignez une date.',
+      })
+    } else if (!regexDate.test(date.value)) {
       setDate({
         ...date,
         error:
           'Le champ “Date” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.',
       })
     }
+
+    return dateEstValide
   }
 
-  function horaireIsValid() {
+  function validateHoraire() {
     const horaireEstValide = Boolean(
       horaire.value && regexHoraire.test(horaire.value)
     )
-    if (!horaireEstValide) {
+
+    if (!horaire.value) {
       setHoraire({
         ...horaire,
         error: 'Le champ “Horaire“ est vide. Renseignez un horaire.',
       })
-    }
-    const inputHoraire = document.getElementById('horaire')
-    if (inputHoraire) inputHoraire.scrollIntoView({ behavior: 'smooth' })
-    return horaireEstValide
-  }
-
-  function validateHoraire() {
-    if (!horaireIsValid()) {
+    } else if (!regexHoraire.test(horaire.value)) {
       setHoraire({
         ...horaire,
         error:
           'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.',
       })
     }
+    return horaireEstValide
   }
 
-  function dureeIsValid(): boolean {
+  function validateDuree() {
     const dureeEstValide = Boolean(duree.value && regexDuree.test(duree.value))
-    if (!dureeEstValide) {
+
+    if (!duree.value) {
       setDuree({
         ...duree,
         error: 'Le champ “Durée“ est vide. Renseignez une durée.',
       })
-    }
-    const inputDuree = document.getElementById('duree')
-    if (inputDuree) inputDuree.scrollIntoView({ behavior: 'smooth' })
-    return dureeEstValide
-  }
-
-  function validateDuree() {
-    if (!dureeIsValid()) {
+    } else if (!regexDuree.test(duree.value)) {
       setDuree({
         ...duree,
         error:
           'Le champ “Durée” est invalide. Le format attendu est hh:mm, par exemple : 00:30 pour 30 minutes.',
       })
     }
+
+    return dureeEstValide
   }
 
-  function typeIsValid(): boolean {
+  function validateType(): boolean {
     if (!codeTypeRendezVous.value) {
       setCodeTypeRendezVous({
         ...codeTypeRendezVous,
@@ -399,27 +399,23 @@ export function EditionRdvForm({
         ...precisionType,
         error: 'Le champ ”Préciser” est vide. Précisez le type d’évènement.',
       })
-      const inputPreciser = document.getElementById('typeEvenement-autre')
-      if (inputPreciser) inputPreciser.scrollIntoView({ behavior: 'smooth' })
       return false
     }
     return true
   }
 
-  function titreIsValid(): boolean {
+  function validateTitre(): boolean {
     const titreEstValide = !evenementTypeAC || Boolean(titre.value)
     if (!titreEstValide) {
       setTitre({
         ...titre,
         error: 'Le champ “Titre” est vide. Renseignez un titre.',
       })
-      const inputTitre = document.getElementById('titre')
-      if (inputTitre) inputTitre.scrollIntoView({ behavior: 'smooth' })
     }
     return titreEstValide
   }
 
-  function validateTitre() {
+  function onBlurTitre() {
     if (evenementTypeAC && !titre.value) {
       setTitre({
         ...titre,
@@ -430,35 +426,35 @@ export function EditionRdvForm({
     }
   }
 
-  function descriptionIsValid(): boolean {
-    return !description.value || description.value.length < 250
-  }
-
   function validateDescription() {
-    if (!descriptionIsValid()) {
+    const descriptionEstValide =
+      !description.value || description.value.length < 250
+
+    if (!descriptionEstValide) {
       setDescription({
         ...description,
         error:
           'Vous avez dépassé le nombre maximal de caractères. Retirez des caractères.',
       })
     }
-  }
-
-  function nombreMaxParticipantsIsValid(): boolean {
-    return Boolean(!showNombreMaxParticipants || nombreMaxParticipants.value)
+    return descriptionEstValide
   }
 
   function validateNombreMaxParticipants() {
-    if (!nombreMaxParticipantsIsValid()) {
+    const nombreMaxParticipantsIsValid = Boolean(
+      !showNombreMaxParticipants || nombreMaxParticipants.value
+    )
+    if (!nombreMaxParticipantsIsValid) {
       setNombreMaxParticipants({
         ...nombreMaxParticipants,
         error:
           'Le champ “Nombre maximum de participants” est vide. Renseignez une valeur, par exemple : 18.',
       })
     }
+    return nombreMaxParticipantsIsValid
   }
 
-  function nombreParticipantsIsValid(idsBeneficiaires: string[]): boolean {
+  function validateNombreParticipants(idsBeneficiaires: string[]): boolean {
     if (
       nombreMaxParticipants.value &&
       nombreMaxParticipants.value < idsBeneficiaires.length
@@ -549,6 +545,47 @@ export function EditionRdvForm({
     }
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (Boolean(!codeTypeRendezVous.value || precisionType.error))
+      erreurs.push({
+        ancre: '#typeEvenement',
+        label: 'Le champ Type est vide.',
+        titreChamp: 'Type',
+      })
+    if (titre.error)
+      erreurs.push({
+        ancre: '#titre',
+        label: 'Le champ Titre est vide.',
+        titreChamp: 'Titre',
+      })
+    if (idsJeunes.error)
+      erreurs.push({
+        ancre: '#select-beneficiaires',
+        label: 'Le champ Bénéficiaires est vide.',
+        titreChamp: 'Bénéficiaires',
+      })
+    if (date.error)
+      erreurs.push({
+        ancre: '#date',
+        label: 'Le champ Date est vide.',
+        titreChamp: 'Date',
+      })
+    if (horaire.error)
+      erreurs.push({
+        ancre: '#horaire',
+        label: 'Le champ Horaire est vide.',
+        titreChamp: 'Horaire',
+      })
+    if (duree.error)
+      erreurs.push({
+        ancre: '#duree',
+        label: 'Le champ Durée est vide.',
+        titreChamp: 'Durée',
+      })
+    return erreurs
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
@@ -591,61 +628,8 @@ export function EditionRdvForm({
 
   return (
     <>
-      {nombreErreursFormulaire > 0 && (
-        <ErreursFormulaire
-          label={`Le formulaire contient ${nombreErreursFormulaire} erreur(s).`}
-        >
-          <>
-            {Boolean(codeTypeRendezVous || precisionType.error) && (
-              <p className='mb-2'>
-                Le champ Type est vide.{' '}
-                <a href='#typeEvenement' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {titre.error && (
-              <p className='mb-2'>
-                Le champ Titre est vide.{' '}
-                <a href='#titre' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {idsJeunes.error && (
-              <p className='mb-2'>
-                Le champ Bénéficiaires est vide.{' '}
-                <a href='#select-beneficiaires' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {date.error && (
-              <p className='mb-2'>
-                Le champ Date est vide.{' '}
-                <a href='#date' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {horaire.error && (
-              <p className='mb-2'>
-                Le champ Horaire est vide.{' '}
-                <a href='#horaire' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {duree.error && (
-              <p className='mb-2'>
-                Le champ Durée est vide.{' '}
-                <a href='#duree' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-          </>
-        </ErreursFormulaire>
+      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
+        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
       )}
 
       <form onSubmit={handleSoumettreRdv} noValidate={true}>
@@ -728,7 +712,7 @@ export function EditionRdvForm({
             required={evenementTypeAC}
             invalid={Boolean(titre.error)}
             onChange={(value: string) => setTitre({ value })}
-            onBlur={validateTitre}
+            onBlur={onBlurTitre}
             disabled={lectureSeule}
           />
 

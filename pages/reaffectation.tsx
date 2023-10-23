@@ -17,7 +17,9 @@ import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import ErreursFormulaire from 'components/ui/Notifications/ErreursFormulaire'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -34,6 +36,7 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulaire'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -248,6 +251,15 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
       formInvalid = true
     }
 
+    if (!conseillerInitial.value) {
+      setConseillerInitial({
+        ...conseillerDestination,
+        error: 'Veuillez rechercher un conseiller initial',
+      })
+      formInvalid = true
+      return
+    }
+
     if (!conseillerDestination.value) {
       setConseillerDestination({
         ...conseillerDestination,
@@ -290,6 +302,38 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     }
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (isReaffectationTemporaire.error)
+      erreurs.push({
+        ancre: '#structure-reaffectation--CEJ',
+        label: 'Le champ type de réaffectation est vide.',
+        titreChamp: 'Type de réaffectation',
+      })
+    if (conseillerInitial.error)
+      erreurs.push({
+        ancre: '#conseiller-initial',
+        label:
+          'Le champ E-mail ou nom et prénom du conseiller initial est vide.',
+        titreChamp: 'Conseiller initial',
+      })
+    if (conseillerInitial.value && idsBeneficiairesSelected.error)
+      erreurs.push({
+        ancre: '#reaffectation-tout-selectionner',
+        label: 'Le champ Bénéficiaires à réaffecter est vide.',
+        titreChamp: 'Bénéficiaires à réaffecter',
+      })
+    if (conseillerInitial.value && conseillerDestination.error)
+      erreurs.push({
+        ancre: '#conseiller-destinataire',
+        label:
+          'Le champ E-mail ou nom et prénom du conseiller de destination est vide.',
+        titreChamp: 'Conseiller de destination',
+      })
+
+    return erreurs
+  }
+
   useEffect(() => {
     const count = [
       isReaffectationTemporaire,
@@ -317,49 +361,8 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         />
       )}
 
-      {nombreErreursFormulaire > 0 && (
-        <ErreursFormulaire
-          label={`Le formulaire contient ${nombreErreursFormulaire} erreur(s).`}
-        >
-          <>
-            {isReaffectationTemporaire.error && (
-              <p className='mb-2'>
-                Le champ type de réaffectation est vide.{' '}
-                <a href='#structure-reaffectation--CEJ' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {conseillerInitial.error && (
-              <p className='mb-2'>
-                Le champ E-mail ou nom et prénom du conseiller initial est vide.{' '}
-                <a href='#conseiller-initial' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {idsBeneficiairesSelected.error && (
-              <p className='mb-2'>
-                Le champ Bénéficiaires à réaffecter est vide.{' '}
-                <a
-                  href='#reaffectation-tout-selectionner'
-                  className='underline'
-                >
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-            {conseillerDestination.error && (
-              <p className='mb-2'>
-                Le champ E-mail ou nom et prénom du conseiller de destination
-                est vide.{' '}
-                <a href='#conseiller-destinataire' className='underline'>
-                  Remplir &gt;
-                </a>
-              </p>
-            )}
-          </>
-        </ErreursFormulaire>
+      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
+        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
       )}
 
       <p className='text-s-bold text-content_color mb-6'>
