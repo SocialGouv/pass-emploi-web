@@ -42,7 +42,7 @@ import {
   toFrenchFormat,
   toFrenchString,
 } from 'utils/date'
-import nombreErreursFormulairePositif from 'utils/nombreErreursFormulaire'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 
 interface EditionRdvFormProps {
   conseiller: Conseiller
@@ -295,19 +295,22 @@ export function EditionRdvForm({
     }
   }
 
-  function validateDate() {
+  function validateDate(): boolean {
+    const dateEstValide = Boolean(date.value && regexDate.test(date.value))
+    if (!dateEstValide) {
+      setDate({
+        ...date,
+        error: 'Le champ “Date“ est vide. Renseignez une date.',
+      })
+    }
+    const inputDate = document.getElementById('date')
+    if (inputDate) inputDate.scrollIntoView({ behavior: 'smooth' })
+    return dateEstValide
+  }
+
+  function validateDateInterval() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
-
-    const dateEstValide = Boolean(
-      date.value &&
-        dateIsInInterval(
-          DateTime.fromFormat(date.value, 'yyyy-MM-dd'),
-          unAnAvant,
-          deuxAnsApres
-        ) &&
-        regexDate.test(date.value)
-    )
 
     if (
       date.value &&
@@ -325,20 +328,13 @@ export function EditionRdvForm({
           'dd/MM/yyyy'
         )}.`,
       })
-    } else if (!date.value) {
-      setDate({
-        ...date,
-        error: 'Le champ “Date“ est vide. Renseignez une date.',
-      })
-    } else if (!regexDate.test(date.value)) {
+    } else if (!validateDate()) {
       setDate({
         ...date,
         error:
           'Le champ “Date” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.',
       })
     }
-
-    return dateEstValide
   }
 
   function validateHoraire() {
@@ -442,7 +438,9 @@ export function EditionRdvForm({
 
   function validateNombreMaxParticipants() {
     const nombreMaxParticipantsIsValid = Boolean(
-      !showNombreMaxParticipants || nombreMaxParticipants.value
+      !evenementTypeAC ||
+        !showNombreMaxParticipants ||
+        nombreMaxParticipants.value
     )
     if (!nombreMaxParticipantsIsValid) {
       setNombreMaxParticipants({
@@ -849,7 +847,7 @@ export function EditionRdvForm({
             defaultValue={date.value}
             required={true}
             onChange={(value: string) => setDate({ value })}
-            onBlur={validateDate}
+            onBlur={validateDateInterval}
             invalid={Boolean(date.error)}
             disabled={lectureSeule}
           />

@@ -32,7 +32,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
-import nombreErreursFormulairePositif from 'utils/nombreErreursFormulaire'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
