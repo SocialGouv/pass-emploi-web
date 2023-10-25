@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import React, {
   FormEvent,
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -16,6 +17,9 @@ import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -32,6 +36,7 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -85,6 +90,9 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
   >()
+
+  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
+    useState<number>(0)
 
   const [showModalConseillerIntrouvable, setShowModalConseillerIntrouvable] =
     useState<boolean>(false)
@@ -227,7 +235,6 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     if (isReaffectationEnCours) {
       return
     }
-
     let formInvalid = false
     if (estSuperviseurPEBRSA && structureReaffectation.value === undefined) {
       setStructureReaffectation({
@@ -242,6 +249,14 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         error: 'Veuillez choisir un type de réaffectation',
       })
       formInvalid = true
+    }
+
+    if (!conseillerInitial.value) {
+      setConseillerInitial({
+        ...conseillerDestination,
+        error: 'Veuillez rechercher un conseiller initial',
+      })
+      return
     }
 
     if (!conseillerDestination.value) {
@@ -268,7 +283,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     try {
       const { reaffecter } = await import('services/jeunes.service')
       await reaffecter(
-        conseillerInitial.value!.id,
+        conseillerInitial.value.id,
         conseillerDestination.value!.id,
         idsBeneficiairesSelected.value,
         isReaffectationTemporaire.value!
@@ -286,6 +301,54 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     }
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (isReaffectationTemporaire.error)
+      erreurs.push({
+        ancre: '#structure-reaffectation--CEJ',
+        label: 'Le champ type de réaffectation est vide.',
+        titreChamp: 'Type de réaffectation',
+      })
+    if (conseillerInitial.error)
+      erreurs.push({
+        ancre: '#conseiller-initial',
+        label:
+          'Le champ E-mail ou nom et prénom du conseiller initial est vide.',
+        titreChamp: 'Conseiller initial',
+      })
+    if (conseillerInitial.value && idsBeneficiairesSelected.error)
+      erreurs.push({
+        ancre: '#reaffectation-tout-selectionner',
+        label: 'Le champ Bénéficiaires à réaffecter est vide.',
+        titreChamp: 'Bénéficiaires à réaffecter',
+      })
+    if (conseillerInitial.value && conseillerDestination.error)
+      erreurs.push({
+        ancre: '#conseiller-destinataire',
+        label:
+          'Le champ E-mail ou nom et prénom du conseiller de destination est vide.',
+        titreChamp: 'Conseiller de destination',
+      })
+
+    return erreurs
+  }
+
+  useEffect(() => {
+    const count = [
+      isReaffectationTemporaire,
+      conseillerInitial,
+      idsBeneficiairesSelected,
+      conseillerDestination,
+    ].filter((state) => state.error).length
+
+    setNombreErreursFormulaire(count)
+  }, [
+    isReaffectationTemporaire.error,
+    conseillerInitial.error,
+    idsBeneficiairesSelected.error,
+    conseillerDestination.error,
+  ])
+
   useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
@@ -295,6 +358,10 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
           label={'Les bénéficiaires ont été réaffectés avec succès'}
           onAcknowledge={() => setReaffectationSuccess(false)}
         />
+      )}
+
+      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
+        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
       )}
 
       <p className='text-s-bold text-content_color mb-6'>

@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -18,6 +18,9 @@ import Multiselection from 'components/ui/Form/Multiselection'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { InfoFichier } from 'interfaces/fichier'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -29,6 +32,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -63,6 +67,9 @@ function EnvoiMessageGroupe({
   >(undefined)
   const [erreurEnvoi, setErreurEnvoi] = useState<string | undefined>(undefined)
 
+  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
+    useState<number>(0)
+
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
@@ -80,7 +87,10 @@ function EnvoiMessageGroupe({
   }
 
   function formIsValid(): boolean {
-    return Boolean(isSelectedJeunesIdsValid() && isMessageValid())
+    const selectionEstValide = isSelectedJeunesIdsValid()
+    const messageEstValide = isMessageValid()
+
+    return Boolean(selectionEstValide && messageEstValide)
   }
 
   function isSelectedJeunesIdsValid(): boolean {
@@ -200,6 +210,14 @@ function EnvoiMessageGroupe({
     setTrackingLabel(initialTracking)
   }
 
+  useEffect(() => {
+    const count = [messageError, selectionError].filter(
+      (state) => state !== undefined
+    ).length
+
+    setNombreErreursFormulaire(count)
+  }, [messageError, selectionError])
+
   useMatomo(trackingLabel, aDesBeneficiaires)
   useMatomo(
     showLeavePageModal ? 'Message - Modale Annulation' : undefined,
@@ -226,10 +244,31 @@ function EnvoiMessageGroupe({
     if (listesDeDiffusion) setSelectedListesIds(listesDeDiffusion)
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (selectionError)
+      erreurs.push({
+        ancre: '#select-beneficiaires',
+        label: 'Le champ Destinataires est vide.',
+        titreChamp: 'Destinataires',
+      })
+    if (messageError)
+      erreurs.push({
+        ancre: '#message',
+        label: 'Le champ Message est vide.',
+        titreChamp: 'Message',
+      })
+    return erreurs
+  }
+
   return (
     <>
       {erreurEnvoi && (
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
+      )}
+
+      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
+        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
       )}
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>

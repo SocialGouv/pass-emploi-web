@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 import { BeneficiaireIndicationReaffectaction } from 'components/jeune/BeneficiaireIndications'
 import BeneficiairesMultiselectAutocomplete, {
@@ -16,6 +16,9 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
 import { compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -24,6 +27,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -59,30 +63,27 @@ function EditionListeDiffusion({
   const [showConfirmationSuppression, setShowConfirmationSuppression] =
     useState(false)
 
-  function formIsValid(): boolean {
-    return titreIsValid() && idsBeneficiairesIsValid()
-  }
+  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
+    useState<number>(0)
 
-  function titreIsValid(): boolean {
+  function formIsValid(): boolean {
     const titreEstValide = Boolean(titre.value)
+    const idsBeneficiairesEstValide = idsBeneficiaires.value.length > 0
+
     if (!titreEstValide)
       setTitre({
         ...titre,
         error: 'Le champ “Titre” est vide. Renseignez un titre.',
       })
-    return titreEstValide
-  }
 
-  function idsBeneficiairesIsValid(): boolean {
-    if (idsBeneficiaires.value.length === 0) {
+    if (!idsBeneficiairesEstValide)
       setIdsBeneficiaires({
         ...idsBeneficiaires,
         error:
           'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.',
       })
-    }
 
-    return Boolean(idsBeneficiaires.value.length)
+    return titreEstValide && idsBeneficiairesEstValide
   }
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
@@ -194,6 +195,31 @@ function EditionListeDiffusion({
     }
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (titre.error)
+      erreurs.push({
+        ancre: '#titre-liste',
+        label: 'Le champ Titre est vide.',
+        titreChamp: 'Titre',
+      })
+    if (idsBeneficiaires.error)
+      erreurs.push({
+        ancre: '#select-beneficiaires',
+        label: 'Le champ Bénéficiaires est vide.',
+        titreChamp: 'Bénéficiaires',
+      })
+    return erreurs
+  }
+
+  useEffect(() => {
+    const count = [titre, idsBeneficiaires].filter(
+      (state) => state.error
+    ).length
+
+    setNombreErreursFormulaire(count)
+  }, [titre.error, idsBeneficiaires.error])
+
   useMatomo(
     liste ? 'Modification liste diffusion' : 'Création liste diffusion',
     aDesBeneficiaires
@@ -225,6 +251,10 @@ function EditionListeDiffusion({
           label='Une erreur s’est produite, veuillez réessayer ultérieurement.'
           onAcknowledge={() => setShowErreurTraitement(false)}
         />
+      )}
+
+      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
+        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
       )}
 
       <p className='text-s-bold text-content_color mb-4'>

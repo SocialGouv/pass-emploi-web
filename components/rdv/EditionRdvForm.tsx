@@ -20,6 +20,9 @@ import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
 import { Conseiller } from 'interfaces/conseiller'
 import {
@@ -39,6 +42,7 @@ import {
   toFrenchFormat,
   toFrenchString,
 } from 'utils/date'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 
 interface EditionRdvFormProps {
   conseiller: Conseiller
@@ -131,6 +135,9 @@ export function EditionRdvForm({
   >({
     value: evenement?.commentaire,
   })
+
+  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
+    useState<number>(0)
 
   const [showNombreMaxParticipants, setShowNombreMaxParticipants] =
     useState<boolean>(Boolean(evenement?.nombreMaxParticipants))
@@ -233,15 +240,26 @@ export function EditionRdvForm({
   }
 
   function formIsValid(): boolean {
+    const typeEstValide = validateType()
+    const titreEstValide = validateTitre()
+    const nombreParticipantsEstValide = validateNombreParticipants(
+      idsJeunes.value
+    )
+    const nombreMaxParticipantsEstValide = validateNombreMaxParticipants()
+    const dateEstValide = validateDate()
+    const horaireEstValide = validateHoraire()
+    const dureeEstValide = validateDuree()
+    const descriptionEstValide = validateDescription()
+
     return (
-      typeIsValid() &&
-      titreIsValid() &&
-      nombreParticipantsIsValid(idsJeunes.value) &&
-      nombreMaxParticipantsIsValid() &&
-      dateIsValid() &&
-      horaireIsValid() &&
-      dureeIsValid() &&
-      descriptionIsValid()
+      typeEstValide &&
+      titreEstValide &&
+      nombreParticipantsEstValide &&
+      nombreMaxParticipantsEstValide &&
+      dateEstValide &&
+      horaireEstValide &&
+      dureeEstValide &&
+      descriptionEstValide
     )
   }
 
@@ -249,6 +267,8 @@ export function EditionRdvForm({
     setNombreMaxParticipants({ value: undefined })
     setCodeTypeRendezVous({ value })
     setShowPrecisionType(value === TYPE_EVENEMENT.Autre)
+    if (value !== TYPE_EVENEMENT.Autre && precisionType.error)
+      setPrecisionType({ ...precisionType, error: undefined })
     if (value === TYPE_EVENEMENT.EntretienIndividuelConseiller) {
       setConseillerPresent(true)
     }
@@ -275,7 +295,7 @@ export function EditionRdvForm({
     }
   }
 
-  function dateIsValid(): boolean {
+  function validateDate(): boolean {
     const dateEstValide = Boolean(date.value && regexDate.test(date.value))
     if (!dateEstValide) {
       setDate({
@@ -288,7 +308,7 @@ export function EditionRdvForm({
     return dateEstValide
   }
 
-  function validateDate() {
+  function validateDateInterval() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
 
@@ -308,7 +328,7 @@ export function EditionRdvForm({
           'dd/MM/yyyy'
         )}.`,
       })
-    } else if (!dateIsValid()) {
+    } else if (!validateDate()) {
       setDate({
         ...date,
         error:
@@ -317,55 +337,46 @@ export function EditionRdvForm({
     }
   }
 
-  function horaireIsValid() {
+  function validateHoraire() {
     const horaireEstValide = Boolean(
       horaire.value && regexHoraire.test(horaire.value)
     )
-    if (!horaireEstValide) {
+
+    if (!horaire.value) {
       setHoraire({
         ...horaire,
         error: 'Le champ “Horaire“ est vide. Renseignez un horaire.',
       })
-    }
-    const inputHoraire = document.getElementById('horaire')
-    if (inputHoraire) inputHoraire.scrollIntoView({ behavior: 'smooth' })
-    return horaireEstValide
-  }
-
-  function validateHoraire() {
-    if (!horaireIsValid()) {
+    } else if (!regexHoraire.test(horaire.value)) {
       setHoraire({
         ...horaire,
         error:
           'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.',
       })
     }
+    return horaireEstValide
   }
 
-  function dureeIsValid(): boolean {
+  function validateDuree() {
     const dureeEstValide = Boolean(duree.value && regexDuree.test(duree.value))
-    if (!dureeEstValide) {
+
+    if (!duree.value) {
       setDuree({
         ...duree,
         error: 'Le champ “Durée“ est vide. Renseignez une durée.',
       })
-    }
-    const inputDuree = document.getElementById('duree')
-    if (inputDuree) inputDuree.scrollIntoView({ behavior: 'smooth' })
-    return dureeEstValide
-  }
-
-  function validateDuree() {
-    if (!dureeIsValid()) {
+    } else if (!regexDuree.test(duree.value)) {
       setDuree({
         ...duree,
         error:
           'Le champ “Durée” est invalide. Le format attendu est hh:mm, par exemple : 00:30 pour 30 minutes.',
       })
     }
+
+    return dureeEstValide
   }
 
-  function typeIsValid(): boolean {
+  function validateType(): boolean {
     if (!codeTypeRendezVous.value) {
       setCodeTypeRendezVous({
         ...codeTypeRendezVous,
@@ -384,27 +395,23 @@ export function EditionRdvForm({
         ...precisionType,
         error: 'Le champ ”Préciser” est vide. Précisez le type d’évènement.',
       })
-      const inputPreciser = document.getElementById('typeEvenement-autre')
-      if (inputPreciser) inputPreciser.scrollIntoView({ behavior: 'smooth' })
       return false
     }
     return true
   }
 
-  function titreIsValid(): boolean {
+  function validateTitre(): boolean {
     const titreEstValide = !evenementTypeAC || Boolean(titre.value)
     if (!titreEstValide) {
       setTitre({
         ...titre,
         error: 'Le champ “Titre” est vide. Renseignez un titre.',
       })
-      const inputTitre = document.getElementById('titre')
-      if (inputTitre) inputTitre.scrollIntoView({ behavior: 'smooth' })
     }
     return titreEstValide
   }
 
-  function validateTitre() {
+  function onBlurTitre() {
     if (evenementTypeAC && !titre.value) {
       setTitre({
         ...titre,
@@ -415,35 +422,37 @@ export function EditionRdvForm({
     }
   }
 
-  function descriptionIsValid(): boolean {
-    return !description.value || description.value.length < 250
-  }
-
   function validateDescription() {
-    if (!descriptionIsValid()) {
+    const descriptionEstValide =
+      !description.value || description.value.length < 250
+
+    if (!descriptionEstValide) {
       setDescription({
         ...description,
         error:
           'Vous avez dépassé le nombre maximal de caractères. Retirez des caractères.',
       })
     }
-  }
-
-  function nombreMaxParticipantsIsValid(): boolean {
-    return Boolean(!showNombreMaxParticipants || nombreMaxParticipants.value)
+    return descriptionEstValide
   }
 
   function validateNombreMaxParticipants() {
-    if (!nombreMaxParticipantsIsValid()) {
+    const nombreMaxParticipantsIsValid = Boolean(
+      !evenementTypeAC ||
+        !showNombreMaxParticipants ||
+        nombreMaxParticipants.value
+    )
+    if (!nombreMaxParticipantsIsValid) {
       setNombreMaxParticipants({
         ...nombreMaxParticipants,
         error:
           'Le champ “Nombre maximum de participants” est vide. Renseignez une valeur, par exemple : 18.',
       })
     }
+    return nombreMaxParticipantsIsValid
   }
 
-  function nombreParticipantsIsValid(idsBeneficiaires: string[]): boolean {
+  function validateNombreParticipants(idsBeneficiaires: string[]): boolean {
     if (
       nombreMaxParticipants.value &&
       nombreMaxParticipants.value < idsBeneficiaires.length
@@ -534,6 +543,47 @@ export function EditionRdvForm({
     }
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (Boolean(!codeTypeRendezVous.value || precisionType.error))
+      erreurs.push({
+        ancre: '#typeEvenement',
+        label: 'Le champ Type est vide.',
+        titreChamp: 'Type',
+      })
+    if (titre.error)
+      erreurs.push({
+        ancre: '#titre',
+        label: 'Le champ Titre est vide.',
+        titreChamp: 'Titre',
+      })
+    if (idsJeunes.error)
+      erreurs.push({
+        ancre: '#select-beneficiaires',
+        label: 'Le champ Bénéficiaires est vide.',
+        titreChamp: 'Bénéficiaires',
+      })
+    if (date.error)
+      erreurs.push({
+        ancre: '#date',
+        label: 'Le champ Date est vide.',
+        titreChamp: 'Date',
+      })
+    if (horaire.error)
+      erreurs.push({
+        ancre: '#horaire',
+        label: 'Le champ Horaire est vide.',
+        titreChamp: 'Horaire',
+      })
+    if (duree.error)
+      erreurs.push({
+        ancre: '#duree',
+        label: 'Le champ Durée est vide.',
+        titreChamp: 'Durée',
+      })
+    return erreurs
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
@@ -545,6 +595,28 @@ export function EditionRdvForm({
     }
   }, [evenementTypeAC, lectureSeule, recupererJeunesDeLEtablissement])
 
+  useEffect(() => {
+    const count = [
+      codeTypeRendezVous,
+      precisionType,
+      titre,
+      idsJeunes,
+      date,
+      horaire,
+      duree,
+    ].filter((state) => state.error).length
+
+    setNombreErreursFormulaire(count)
+  }, [
+    codeTypeRendezVous.error,
+    precisionType.error,
+    titre.error,
+    idsJeunes.error,
+    date.error,
+    horaire.error,
+    duree.error,
+  ])
+
   function updateNbMaxParticipants(value: string) {
     const parsed = parseInt(value, 10)
     setNombreMaxParticipants({
@@ -553,397 +625,403 @@ export function EditionRdvForm({
   }
 
   return (
-    <form onSubmit={handleSoumettreRdv} noValidate={true}>
-      <p className='text-s-bold my-6'>
-        Tous les champs avec * sont obligatoires
-      </p>
+    <>
+      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
+        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      )}
 
-      <Etape
-        numero={1}
-        titre={`Sélectionnez ${
-          evenementTypeAC ? 'une animation collective' : 'un rendez-vous'
-        }`}
-      >
-        <Label htmlFor='typeEvenement' inputRequired={true}>
-          Type
-        </Label>
-        {codeTypeRendezVous.error && (
-          <InputError id='typeEvenement--error' className='mb-2'>
-            {codeTypeRendezVous.error}
-          </InputError>
-        )}
-        <Select
-          id='typeEvenement'
-          defaultValue={codeTypeRendezVous.value}
-          required={true}
-          disabled={Boolean(evenement)}
-          onChange={handleSelectedTypeRendezVous}
+      <form onSubmit={handleSoumettreRdv} noValidate={true}>
+        <p className='text-s-bold my-6'>
+          Tous les champs avec * sont obligatoires
+        </p>
+
+        <Etape
+          numero={1}
+          titre={`Sélectionnez ${
+            evenementTypeAC ? 'une animation collective' : 'un rendez-vous'
+          }`}
         >
-          {Boolean(evenement)
-            ? buildOptionTypeDeLevenement(evenement!)
-            : buildOptionsTypesReferentiel(typesRendezVous)}
-        </Select>
+          <Label htmlFor='typeEvenement' inputRequired={true}>
+            Type
+          </Label>
+          {codeTypeRendezVous.error && (
+            <InputError id='typeEvenement--error' className='mb-2'>
+              {codeTypeRendezVous.error}
+            </InputError>
+          )}
+          <Select
+            id='typeEvenement'
+            defaultValue={codeTypeRendezVous.value}
+            required={true}
+            disabled={Boolean(evenement)}
+            onChange={handleSelectedTypeRendezVous}
+          >
+            {Boolean(evenement)
+              ? buildOptionTypeDeLevenement(evenement!)
+              : buildOptionsTypesReferentiel(typesRendezVous)}
+          </Select>
 
-        {showPrecisionType && (
-          <>
-            <Label
-              htmlFor='typeEvenement-autre'
-              inputRequired={true}
-              withBulleMessageSensible={true}
-            >
-              Préciser
-            </Label>
-            {precisionType.error && (
-              <InputError id='typeEvenement-autre--error' className='mb-2'>
-                {precisionType.error}
-              </InputError>
-            )}
-            <Input
-              type='text'
-              id='typeEvenement-autre'
-              required={true}
-              disabled={Boolean(evenement)}
-              defaultValue={precisionType.value}
-              onChange={(value: string) => setPrecisionType({ value })}
-              onBlur={validateTypeEvenementAutre}
-              invalid={Boolean(precisionType.error)}
-            />
-          </>
-        )}
-      </Etape>
+          {showPrecisionType && (
+            <>
+              <Label
+                htmlFor='typeEvenement-autre'
+                inputRequired={true}
+                withBulleMessageSensible={true}
+              >
+                Préciser
+              </Label>
+              {precisionType.error && (
+                <InputError id='typeEvenement-autre--error' className='mb-2'>
+                  {precisionType.error}
+                </InputError>
+              )}
+              <Input
+                type='text'
+                id='typeEvenement-autre'
+                required={true}
+                disabled={Boolean(evenement)}
+                defaultValue={precisionType.value}
+                onChange={(value: string) => setPrecisionType({ value })}
+                onBlur={validateTypeEvenementAutre}
+                invalid={Boolean(precisionType.error)}
+              />
+            </>
+          )}
+        </Etape>
 
-      <Etape
-        numero={2}
-        titre={`Décrivez ${
-          evenementTypeAC ? 'l’animation collective' : 'le rendez-vous'
-        }`}
-      >
-        <Label htmlFor='titre' inputRequired={evenementTypeAC}>
-          Titre
-        </Label>
-        {titre.error && (
-          <InputError id='titre--error' className='mb-2'>
-            {titre.error}
-          </InputError>
-        )}
-        <Input
-          id='titre'
-          type='text'
-          defaultValue={titre.value}
-          required={evenementTypeAC}
-          invalid={Boolean(titre.error)}
-          onChange={(value: string) => setTitre({ value })}
-          onBlur={validateTitre}
-          disabled={lectureSeule}
-        />
+        <Etape
+          numero={2}
+          titre={`Décrivez ${
+            evenementTypeAC ? 'l’animation collective' : 'le rendez-vous'
+          }`}
+        >
+          <Label htmlFor='titre' inputRequired={evenementTypeAC}>
+            Titre
+          </Label>
+          {titre.error && (
+            <InputError id='titre--error' className='mb-2'>
+              {titre.error}
+            </InputError>
+          )}
+          <Input
+            id='titre'
+            type='text'
+            defaultValue={titre.value}
+            required={evenementTypeAC}
+            invalid={Boolean(titre.error)}
+            onChange={(value: string) => setTitre({ value })}
+            onBlur={onBlurTitre}
+            disabled={lectureSeule}
+          />
 
-        <Label htmlFor='description' withBulleMessageSensible={true}>
-          {{
-            main: 'Commentaire',
-            helpText: '250 caractères maximum',
-          }}
-        </Label>
-        {description.error && (
-          <InputError id='description--error' className='mb-2'>
-            {description.error}
-          </InputError>
-        )}
-        <Textarea
-          id='description'
-          defaultValue={description.value}
-          maxLength={250}
-          onChange={(value: string) => setDescription({ value })}
-          invalid={Boolean(description.error)}
-          onBlur={validateDescription}
-          disabled={lectureSeule}
-        />
-      </Etape>
+          <Label htmlFor='description' withBulleMessageSensible={true}>
+            {{
+              main: 'Commentaire',
+              helpText: '250 caractères maximum',
+            }}
+          </Label>
+          {description.error && (
+            <InputError id='description--error' className='mb-2'>
+              {description.error}
+            </InputError>
+          )}
+          <Textarea
+            id='description'
+            defaultValue={description.value}
+            maxLength={250}
+            onChange={(value: string) => setDescription({ value })}
+            invalid={Boolean(description.error)}
+            onBlur={validateDescription}
+            disabled={lectureSeule}
+          />
+        </Etape>
 
-      <Etape numero={3} titre='Ajoutez des bénéficiaires'>
-        {evenementTypeAC && (
-          <>
-            <div className='flex items-center mb-8'>
-              <label htmlFor='toggle-max-participants' className='mr-4'>
-                Définissez un nombre maximum de participants
-              </label>
-              <Switch
-                id='toggle-max-participants'
-                checked={showNombreMaxParticipants}
-                onChange={() =>
-                  setShowNombreMaxParticipants(!showNombreMaxParticipants)
+        <Etape numero={3} titre='Ajoutez des bénéficiaires'>
+          {evenementTypeAC && (
+            <>
+              <div className='flex items-center mb-8'>
+                <label htmlFor='toggle-max-participants' className='mr-4'>
+                  Définissez un nombre maximum de participants
+                </label>
+                <Switch
+                  id='toggle-max-participants'
+                  checked={showNombreMaxParticipants}
+                  onChange={() =>
+                    setShowNombreMaxParticipants(!showNombreMaxParticipants)
+                  }
+                  disabled={lectureSeule}
+                />
+              </div>
+
+              {showNombreMaxParticipants && (
+                <>
+                  <Label htmlFor='max-participants' inputRequired={true}>
+                    Nombre maximum de participants
+                  </Label>
+                  {nombreMaxParticipants.error && (
+                    <InputError id='max-participants--error' className='mb-2'>
+                      {nombreMaxParticipants.error}
+                    </InputError>
+                  )}
+                  <Input
+                    id='max-participants'
+                    type='number'
+                    defaultValue={nombreMaxParticipants.value}
+                    onChange={updateNbMaxParticipants}
+                    onBlur={validateNombreMaxParticipants}
+                    required={true}
+                    min={1}
+                    invalid={Boolean(nombreMaxParticipants.error)}
+                    disabled={lectureSeule}
+                    aria-describedby={
+                      Boolean(nombreMaxParticipants.error)
+                        ? 'max-participants--error'
+                        : nbMaxParticipantsDepasse
+                        ? 'nombre-participants--error'
+                        : undefined
+                    }
+                  />
+                </>
+              )}
+
+              {nbMaxParticipantsDepasse && (
+                <div id='nombre-participants--error'>
+                  <FailureAlert label='Le nombre maximum de participants est dépassé.' />
+                </div>
+              )}
+            </>
+          )}
+
+          <BeneficiairesMultiselectAutocomplete
+            id='select-beneficiaires'
+            beneficiaires={buildOptionsJeunes()}
+            typeSelection='Bénéficiaires'
+            defaultBeneficiaires={defaultJeunes}
+            onUpdate={updateIdsJeunes}
+            error={idsJeunes.error}
+            required={!evenementTypeAC}
+            disabled={lectureSeule}
+            renderIndication={
+              evenement && estClos(evenement)
+                ? BeneficiaireIndicationPresent
+                : BeneficiaireIndicationPortefeuille
+            }
+            aria-describedby={
+              Boolean(nombreMaxParticipants.error)
+                ? 'select-beneficiaires--error'
+                : nbMaxParticipantsDepasse
+                ? 'nombre-participants--error'
+                : undefined
+            }
+          />
+        </Etape>
+
+        <Etape numero={4} titre='Ajoutez les modalités pratiques'>
+          <Label htmlFor='modalite'>Modalité</Label>
+          <Select
+            id='modalite'
+            defaultValue={modalite}
+            onChange={setModalite}
+            disabled={lectureSeule}
+          >
+            {modalites.map((md) => (
+              <option key={md} value={md}>
+                {md}
+              </option>
+            ))}
+          </Select>
+          <Label htmlFor='date' inputRequired={true}>
+            {{
+              main: 'Date',
+              helpText: 'format : jj/mm/aaaa',
+            }}
+          </Label>
+          {date.error && (
+            <InputError id='date--error' className='mb-2'>
+              {date.error}
+            </InputError>
+          )}
+          <Input
+            type='date'
+            id='date'
+            defaultValue={date.value}
+            required={true}
+            onChange={(value: string) => setDate({ value })}
+            onBlur={validateDateInterval}
+            invalid={Boolean(date.error)}
+            disabled={lectureSeule}
+          />
+
+          <Label htmlFor='horaire' inputRequired={true}>
+            {{
+              main: 'Heure',
+              helpText: 'format : hh:mm',
+            }}
+          </Label>
+          {horaire.error && (
+            <InputError id='horaire--error' className='mb-2'>
+              {horaire.error}
+            </InputError>
+          )}
+          <Input
+            type='time'
+            id='horaire'
+            defaultValue={horaire.value}
+            required={true}
+            onChange={(value: string) => setHoraire({ value })}
+            onBlur={validateHoraire}
+            invalid={Boolean(horaire.error)}
+            aria-invalid={horaire.error ? true : undefined}
+            aria-describedby={horaire.error ? 'horaire--error' : undefined}
+            disabled={lectureSeule}
+          />
+
+          <Label htmlFor='duree' inputRequired={true}>
+            {{
+              main: 'Durée',
+              helpText: 'format : hh:mm',
+            }}
+          </Label>
+          {duree.error && (
+            <InputError id='duree--error' className='mb-2'>
+              {duree.error}
+            </InputError>
+          )}
+          <Input
+            type='time'
+            id='duree'
+            required={true}
+            defaultValue={duree.value}
+            onChange={(value: string) => setDuree({ value })}
+            onBlur={validateDuree}
+            invalid={Boolean(duree.error)}
+            disabled={lectureSeule}
+          />
+
+          <Label htmlFor='adresse'>
+            {{
+              main: 'Adresse',
+              helpText: 'exemple : 12 rue Duc, Brest',
+            }}
+          </Label>
+          <Input
+            type='text'
+            id='adresse'
+            defaultValue={adresse}
+            onChange={setAdresse}
+            icon='location'
+            disabled={lectureSeule}
+          />
+
+          <Label htmlFor='organisme'>
+            {{
+              main: 'Organisme',
+              helpText: 'exemple : prestataire, entreprise, etc.',
+            }}
+          </Label>
+          <Input
+            type='text'
+            id='organisme'
+            defaultValue={organisme}
+            onChange={setOrganisme}
+            disabled={lectureSeule}
+          />
+        </Etape>
+
+        <Etape numero={5} titre='Définissez la gestion des accès'>
+          {evenement && !conseillerIsCreator && (
+            <div className='mb-6'>
+              <InformationMessage
+                label={
+                  estCreeParSiMILO(evenement)
+                    ? `L'événement a été créé sur i-milo. Vous ne recevrez pas d'invitation dans votre agenda`
+                    : `L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`
                 }
-                disabled={lectureSeule}
               />
             </div>
-
-            {showNombreMaxParticipants && (
-              <>
-                <Label htmlFor='max-participants' inputRequired={true}>
-                  Nombre maximum de participants
-                </Label>
-                {nombreMaxParticipants.error && (
-                  <InputError id='max-participants--error' className='mb-2'>
-                    {nombreMaxParticipants.error}
-                  </InputError>
-                )}
-                <Input
-                  id='max-participants'
-                  type='number'
-                  defaultValue={nombreMaxParticipants.value}
-                  onChange={updateNbMaxParticipants}
-                  onBlur={validateNombreMaxParticipants}
-                  required={true}
-                  min={1}
-                  invalid={Boolean(nombreMaxParticipants.error)}
-                  disabled={lectureSeule}
-                  aria-describedby={
-                    Boolean(nombreMaxParticipants.error)
-                      ? 'max-participants--error'
-                      : nbMaxParticipantsDepasse
-                      ? 'nombre-participants--error'
-                      : undefined
-                  }
-                />
-              </>
-            )}
-
-            {nbMaxParticipantsDepasse && (
-              <div id='nombre-participants--error'>
-                <FailureAlert label='Le nombre maximum de participants est dépassé.' />
-              </div>
-            )}
-          </>
-        )}
-
-        <BeneficiairesMultiselectAutocomplete
-          id='select-beneficiaires'
-          beneficiaires={buildOptionsJeunes()}
-          typeSelection='Bénéficiaires'
-          defaultBeneficiaires={defaultJeunes}
-          onUpdate={updateIdsJeunes}
-          error={idsJeunes.error}
-          required={!evenementTypeAC}
-          disabled={lectureSeule}
-          renderIndication={
-            evenement && estClos(evenement)
-              ? BeneficiaireIndicationPresent
-              : BeneficiaireIndicationPortefeuille
-          }
-          aria-describedby={
-            Boolean(nombreMaxParticipants.error)
-              ? 'select-beneficiaires--error'
-              : nbMaxParticipantsDepasse
-              ? 'nombre-participants--error'
-              : undefined
-          }
-        />
-      </Etape>
-
-      <Etape numero={4} titre='Ajoutez les modalités pratiques'>
-        <Label htmlFor='modalite'>Modalité</Label>
-        <Select
-          id='modalite'
-          defaultValue={modalite}
-          onChange={setModalite}
-          disabled={lectureSeule}
-        >
-          {modalites.map((md) => (
-            <option key={md} value={md}>
-              {md}
-            </option>
-          ))}
-        </Select>
-        <Label htmlFor='date' inputRequired={true}>
-          {{
-            main: 'Date',
-            helpText: 'format : jj/mm/aaaa',
-          }}
-        </Label>
-        {date.error && (
-          <InputError id='date--error' className='mb-2'>
-            {date.error}
-          </InputError>
-        )}
-        <Input
-          type='date'
-          id='date'
-          defaultValue={date.value}
-          required={true}
-          onChange={(value: string) => setDate({ value })}
-          onBlur={validateDate}
-          invalid={Boolean(date.error)}
-          disabled={lectureSeule}
-        />
-
-        <Label htmlFor='horaire' inputRequired={true}>
-          {{
-            main: 'Heure',
-            helpText: 'format : hh:mm',
-          }}
-        </Label>
-        {horaire.error && (
-          <InputError id='horaire--error' className='mb-2'>
-            {horaire.error}
-          </InputError>
-        )}
-        <Input
-          type='time'
-          id='horaire'
-          defaultValue={horaire.value}
-          required={true}
-          onChange={(value: string) => setHoraire({ value })}
-          onBlur={validateHoraire}
-          invalid={Boolean(horaire.error)}
-          aria-invalid={horaire.error ? true : undefined}
-          aria-describedby={horaire.error ? 'horaire--error' : undefined}
-          disabled={lectureSeule}
-        />
-
-        <Label htmlFor='duree' inputRequired={true}>
-          {{
-            main: 'Durée',
-            helpText: 'format : hh:mm',
-          }}
-        </Label>
-        {duree.error && (
-          <InputError id='duree--error' className='mb-2'>
-            {duree.error}
-          </InputError>
-        )}
-        <Input
-          type='time'
-          id='duree'
-          required={true}
-          defaultValue={duree.value}
-          onChange={(value: string) => setDuree({ value })}
-          onBlur={validateDuree}
-          invalid={Boolean(duree.error)}
-          disabled={lectureSeule}
-        />
-
-        <Label htmlFor='adresse'>
-          {{
-            main: 'Adresse',
-            helpText: 'exemple : 12 rue Duc, Brest',
-          }}
-        </Label>
-        <Input
-          type='text'
-          id='adresse'
-          defaultValue={adresse}
-          onChange={setAdresse}
-          icon='location'
-          disabled={lectureSeule}
-        />
-
-        <Label htmlFor='organisme'>
-          {{
-            main: 'Organisme',
-            helpText: 'exemple : prestataire, entreprise, etc.',
-          }}
-        </Label>
-        <Input
-          type='text'
-          id='organisme'
-          defaultValue={organisme}
-          onChange={setOrganisme}
-          disabled={lectureSeule}
-        />
-      </Etape>
-
-      <Etape numero={5} titre='Définissez la gestion des accès'>
-        {evenement && !conseillerIsCreator && (
-          <div className='mb-6'>
-            <InformationMessage
-              label={
-                estCreeParSiMILO(evenement)
-                  ? `L'événement a été créé sur i-milo. Vous ne recevrez pas d'invitation dans votre agenda`
-                  : `L’événement a été créé par un autre conseiller : ${evenement.createur.prenom} ${evenement.createur.nom}. Vous ne recevrez pas d'invitation dans votre agenda`
-              }
-            />
-          </div>
-        )}
-
-        <div className='flex items-center mb-8'>
-          <div className='flex items-center'>
-            <label htmlFor='presenceConseiller' className='w-64 mr-4'>
-              Informer les bénéficiaires qu’un conseiller sera présent à
-              l’événement
-            </label>
-            <Switch
-              id='presenceConseiller'
-              checked={isConseillerPresent}
-              disabled={
-                typeEntretienIndividuelConseillerSelected() || lectureSeule
-              }
-              onChange={handlePresenceConseiller}
-            />
-          </div>
-        </div>
-
-        <div className='flex items-center mb-8'>
-          <div className='flex items-center'>
-            <label htmlFor='emailInvitation' className='w-64 mr-4'>
-              {emailInvitationText()}
-            </label>
-            <Switch
-              id='emailInvitation'
-              disabled={Boolean(evenement)}
-              checked={sendEmailInvitation}
-              onChange={(e) => setSendEmailInvitation(e.target.checked)}
-            />
-          </div>
-        </div>
-      </Etape>
-
-      {(!evenement || !lectureSeule) && (
-        <div className='flex justify-center'>
-          {!formHasChanges() && (
-            <ButtonLink
-              href={redirectTo}
-              style={ButtonStyle.SECONDARY}
-              className='mr-3'
-            >
-              Annuler {evenement ? 'la modification' : ''}
-            </ButtonLink>
-          )}
-          {formHasChanges() && (
-            <Button
-              type='button'
-              label={`Quitter la ${
-                evenement ? 'modification' : 'création'
-              } de l’événement`}
-              onClick={leaveWithChanges}
-              style={ButtonStyle.SECONDARY}
-              className='mr-3'
-            >
-              Annuler {evenement ? ' la modification' : ''}
-            </Button>
           )}
 
-          {evenement && (
-            <Button type='submit'>
-              {evenementTypeAC
-                ? 'Modifier l’animation collective'
-                : 'Modifier le rendez-vous'}
-            </Button>
-          )}
-          {!evenement && (
-            <Button type='submit'>
-              <IconComponent
-                name={IconName.Add}
-                focusable={false}
-                aria-hidden={true}
-                className='mr-2 w-4 h-4'
+          <div className='flex items-center mb-8'>
+            <div className='flex items-center'>
+              <label htmlFor='presenceConseiller' className='w-64 mr-4'>
+                Informer les bénéficiaires qu’un conseiller sera présent à
+                l’événement
+              </label>
+              <Switch
+                id='presenceConseiller'
+                checked={isConseillerPresent}
+                disabled={
+                  typeEntretienIndividuelConseillerSelected() || lectureSeule
+                }
+                onChange={handlePresenceConseiller}
               />
-              {evenementTypeAC
-                ? 'Créer l’animation collective'
-                : 'Créer le rendez-vous'}
-            </Button>
-          )}
-        </div>
-      )}
-    </form>
+            </div>
+          </div>
+
+          <div className='flex items-center mb-8'>
+            <div className='flex items-center'>
+              <label htmlFor='emailInvitation' className='w-64 mr-4'>
+                {emailInvitationText()}
+              </label>
+              <Switch
+                id='emailInvitation'
+                disabled={Boolean(evenement)}
+                checked={sendEmailInvitation}
+                onChange={(e) => setSendEmailInvitation(e.target.checked)}
+              />
+            </div>
+          </div>
+        </Etape>
+
+        {(!evenement || !lectureSeule) && (
+          <div className='flex justify-center'>
+            {!formHasChanges() && (
+              <ButtonLink
+                href={redirectTo}
+                style={ButtonStyle.SECONDARY}
+                className='mr-3'
+              >
+                Annuler {evenement ? 'la modification' : ''}
+              </ButtonLink>
+            )}
+            {formHasChanges() && (
+              <Button
+                type='button'
+                label={`Quitter la ${
+                  evenement ? 'modification' : 'création'
+                } de l’événement`}
+                onClick={leaveWithChanges}
+                style={ButtonStyle.SECONDARY}
+                className='mr-3'
+              >
+                Annuler {evenement ? ' la modification' : ''}
+              </Button>
+            )}
+
+            {evenement && (
+              <Button type='submit'>
+                {evenementTypeAC
+                  ? 'Modifier l’animation collective'
+                  : 'Modifier le rendez-vous'}
+              </Button>
+            )}
+            {!evenement && (
+              <Button type='submit'>
+                <IconComponent
+                  name={IconName.Add}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+                {evenementTypeAC
+                  ? 'Créer l’animation collective'
+                  : 'Créer le rendez-vous'}
+              </Button>
+            )}
+          </div>
+        )}
+      </form>
+    </>
   )
 }
 
