@@ -36,7 +36,7 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
-import nombreErreursFormulairePositif from 'utils/nombreErreursFormulaire'
+import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -256,7 +256,6 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         ...conseillerDestination,
         error: 'Veuillez rechercher un conseiller initial',
       })
-      formInvalid = true
       return
     }
 
@@ -284,7 +283,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     try {
       const { reaffecter } = await import('services/jeunes.service')
       await reaffecter(
-        conseillerInitial.value!.id,
+        conseillerInitial.value.id,
         conseillerDestination.value!.id,
         idsBeneficiairesSelected.value,
         isReaffectationTemporaire.value!
