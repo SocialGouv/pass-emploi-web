@@ -309,20 +309,29 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         label: 'Le champ type de réaffectation est vide.',
         titreChamp: 'Type de réaffectation',
       })
-    if (conseillerInitial.error)
+
+    if (doitAfficherErreurConseillerInitial())
       erreurs.push({
         ancre: '#conseiller-initial',
         label:
           'Le champ E-mail ou nom et prénom du conseiller initial est vide.',
         titreChamp: 'Conseiller initial',
       })
-    if (conseillerInitial.value && idsBeneficiairesSelected.error)
+    if (
+      conseillerInitial.value &&
+      !conseillerInitial.error &&
+      idsBeneficiairesSelected.error
+    )
       erreurs.push({
         ancre: '#reaffectation-tout-selectionner',
         label: 'Le champ Bénéficiaires à réaffecter est vide.',
         titreChamp: 'Bénéficiaires à réaffecter',
       })
-    if (conseillerInitial.value && conseillerDestination.error)
+    if (
+      conseillerInitial.value &&
+      !conseillerInitial.error &&
+      conseillerDestination.error
+    )
       erreurs.push({
         ancre: '#conseiller-destinataire',
         label:
@@ -334,20 +343,20 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   }
 
   useEffect(() => {
-    const count = [
-      isReaffectationTemporaire,
-      conseillerInitial,
-      idsBeneficiairesSelected,
-      conseillerDestination,
-    ].filter((state) => state.error).length
-
-    setNombreErreursFormulaire(count)
+    const erreurs = getErreurs()
+    setNombreErreursFormulaire(erreurs.length)
   }, [
     isReaffectationTemporaire.error,
     conseillerInitial.error,
     idsBeneficiairesSelected.error,
     conseillerDestination.error,
   ])
+
+  function doitAfficherErreurConseillerInitial() {
+    return (
+      conseillerInitial.error === 'Veuillez rechercher un conseiller initial'
+    )
+  }
 
   useMatomo(trackingTitle, aDesBeneficiaires)
 
