@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic'
 import React, {
   FormEvent,
   forwardRef,
-  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -36,7 +35,6 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
-import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -90,9 +88,6 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
   >()
-
-  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
-    useState<number>(0)
 
   const [showModalConseillerIntrouvable, setShowModalConseillerIntrouvable] =
     useState<boolean>(false)
@@ -342,20 +337,8 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     return erreurs
   }
 
-  useEffect(() => {
-    const erreurs = getErreurs()
-    setNombreErreursFormulaire(erreurs.length)
-  }, [
-    isReaffectationTemporaire.error,
-    conseillerInitial.error,
-    idsBeneficiairesSelected.error,
-    conseillerDestination.error,
-  ])
-
   function doitAfficherErreurConseillerInitial() {
-    return (
-      conseillerInitial.error === 'Veuillez rechercher un conseiller initial'
-    )
+    return !conseillerInitial.value && conseillerInitial.error
   }
 
   useMatomo(trackingTitle, aDesBeneficiaires)
@@ -369,9 +352,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         />
       )}
 
-      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
-        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
-      )}
+      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <p className='text-s-bold text-content_color mb-6'>
         Tous les champs sont obligatoires

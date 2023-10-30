@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -32,7 +32,6 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
-import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -66,9 +65,6 @@ function EnvoiMessageGroupe({
     string | undefined
   >(undefined)
   const [erreurEnvoi, setErreurEnvoi] = useState<string | undefined>(undefined)
-
-  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
-    useState<number>(0)
 
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
@@ -210,14 +206,6 @@ function EnvoiMessageGroupe({
     setTrackingLabel(initialTracking)
   }
 
-  useEffect(() => {
-    const count = [messageError, selectionError].filter(
-      (state) => state !== undefined
-    ).length
-
-    setNombreErreursFormulaire(count)
-  }, [messageError, selectionError])
-
   useMatomo(trackingLabel, aDesBeneficiaires)
   useMatomo(
     showLeavePageModal ? 'Message - Modale Annulation' : undefined,
@@ -267,9 +255,7 @@ function EnvoiMessageGroupe({
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
 
-      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
-        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
-      )}
+      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
         <div className='text-s-bold text-content_color mb-8'>
