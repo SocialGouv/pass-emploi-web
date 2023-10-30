@@ -42,7 +42,6 @@ import {
   toFrenchFormat,
   toFrenchString,
 } from 'utils/date'
-import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 
 interface EditionRdvFormProps {
   conseiller: Conseiller
@@ -135,9 +134,6 @@ export function EditionRdvForm({
   >({
     value: evenement?.commentaire,
   })
-
-  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
-    useState<number>(0)
 
   const [showNombreMaxParticipants, setShowNombreMaxParticipants] =
     useState<boolean>(Boolean(evenement?.nombreMaxParticipants))
@@ -595,28 +591,6 @@ export function EditionRdvForm({
     }
   }, [evenementTypeAC, lectureSeule, recupererJeunesDeLEtablissement])
 
-  useEffect(() => {
-    const count = [
-      codeTypeRendezVous,
-      precisionType,
-      titre,
-      idsJeunes,
-      date,
-      horaire,
-      duree,
-    ].filter((state) => state.error).length
-
-    setNombreErreursFormulaire(count)
-  }, [
-    codeTypeRendezVous.error,
-    precisionType.error,
-    titre.error,
-    idsJeunes.error,
-    date.error,
-    horaire.error,
-    duree.error,
-  ])
-
   function updateNbMaxParticipants(value: string) {
     const parsed = parseInt(value, 10)
     setNombreMaxParticipants({
@@ -626,9 +600,7 @@ export function EditionRdvForm({
 
   return (
     <>
-      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
-        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
-      )}
+      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <form onSubmit={handleSoumettreRdv} noValidate={true}>
         <p className='text-s-bold my-6'>
