@@ -157,7 +157,7 @@ export async function cloreAnimationCollective(
   const session = await getSession()
   const payload = { idsJeunes }
   await apiPost(
-    `/etablissements/animations-collectives/${idAnimationCollective}/cloturer`,
+    `/structures-milo/animations-collectives/${idAnimationCollective}/cloturer`,
     payload,
     session!.accessToken
   )
