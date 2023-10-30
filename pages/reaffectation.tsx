@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic'
 import React, {
   FormEvent,
   forwardRef,
-  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -36,7 +35,6 @@ import {
 } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
-import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -90,9 +88,6 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
   >()
-
-  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
-    useState<number>(0)
 
   const [showModalConseillerIntrouvable, setShowModalConseillerIntrouvable] =
     useState<boolean>(false)
@@ -309,20 +304,29 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         label: 'Le champ type de réaffectation est vide.',
         titreChamp: 'Type de réaffectation',
       })
-    if (conseillerInitial.error)
+
+    if (doitAfficherErreurConseillerInitial())
       erreurs.push({
         ancre: '#conseiller-initial',
         label:
           'Le champ E-mail ou nom et prénom du conseiller initial est vide.',
         titreChamp: 'Conseiller initial',
       })
-    if (conseillerInitial.value && idsBeneficiairesSelected.error)
+    if (
+      conseillerInitial.value &&
+      !conseillerInitial.error &&
+      idsBeneficiairesSelected.error
+    )
       erreurs.push({
         ancre: '#reaffectation-tout-selectionner',
         label: 'Le champ Bénéficiaires à réaffecter est vide.',
         titreChamp: 'Bénéficiaires à réaffecter',
       })
-    if (conseillerInitial.value && conseillerDestination.error)
+    if (
+      conseillerInitial.value &&
+      !conseillerInitial.error &&
+      conseillerDestination.error
+    )
       erreurs.push({
         ancre: '#conseiller-destinataire',
         label:
@@ -333,21 +337,9 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     return erreurs
   }
 
-  useEffect(() => {
-    const count = [
-      isReaffectationTemporaire,
-      conseillerInitial,
-      idsBeneficiairesSelected,
-      conseillerDestination,
-    ].filter((state) => state.error).length
-
-    setNombreErreursFormulaire(count)
-  }, [
-    isReaffectationTemporaire.error,
-    conseillerInitial.error,
-    idsBeneficiairesSelected.error,
-    conseillerDestination.error,
-  ])
+  function doitAfficherErreurConseillerInitial() {
+    return !conseillerInitial.value && conseillerInitial.error
+  }
 
   useMatomo(trackingTitle, aDesBeneficiaires)
 
@@ -360,9 +352,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         />
       )}
 
-      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
-        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
-      )}
+      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <p className='text-s-bold text-content_color mb-6'>
         Tous les champs sont obligatoires

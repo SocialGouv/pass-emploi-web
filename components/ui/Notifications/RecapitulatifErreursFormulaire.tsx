@@ -15,6 +15,8 @@ type ErreursFormulaireProps = {
 export default function RecapitulatifErreursFormulaire({
   erreurs,
 }: ErreursFormulaireProps) {
+  if (!erreurs.length) return null
+
   return (
     <div
       role='alert'

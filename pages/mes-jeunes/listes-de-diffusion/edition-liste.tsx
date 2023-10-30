@@ -2,7 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 
 import { BeneficiaireIndicationReaffectaction } from 'components/jeune/BeneficiaireIndications'
 import BeneficiairesMultiselectAutocomplete, {
@@ -27,7 +27,6 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import nombreErreursFormulairePositif from 'utils/nombreErreursFormulairePositif'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -62,9 +61,6 @@ function EditionListeDiffusion({
     useState<boolean>(false)
   const [showConfirmationSuppression, setShowConfirmationSuppression] =
     useState(false)
-
-  const [nombreErreursFormulaire, setNombreErreursFormulaire] =
-    useState<number>(0)
 
   function formIsValid(): boolean {
     const titreEstValide = Boolean(titre.value)
@@ -212,14 +208,6 @@ function EditionListeDiffusion({
     return erreurs
   }
 
-  useEffect(() => {
-    const count = [titre, idsBeneficiaires].filter(
-      (state) => state.error
-    ).length
-
-    setNombreErreursFormulaire(count)
-  }, [titre.error, idsBeneficiaires.error])
-
   useMatomo(
     liste ? 'Modification liste diffusion' : 'Création liste diffusion',
     aDesBeneficiaires
@@ -253,9 +241,7 @@ function EditionListeDiffusion({
         />
       )}
 
-      {nombreErreursFormulairePositif(nombreErreursFormulaire) && (
-        <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
-      )}
+      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <p className='text-s-bold text-content_color mb-4'>
         Tous les champs sont obligatoires
