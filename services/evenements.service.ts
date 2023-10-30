@@ -162,6 +162,15 @@ export async function cloreAnimationCollective(
     session!.accessToken
   )
 }
+export async function structureMiloAnimationsCollectivesAClore(idAnimationCollective : string,idsJeunes:string[]):Promise<void>{
+    const session = await getSession()
+    const payload = {idsJeunes}
+    await apiPost(
+        `/structures-milo/animations-collectives/${idAnimationCollective}/cloturer`,
+        payload,
+        session!.accessToken
+    )
+  }
 
 async function getAnimationsCollectivesAClore(
   idEtablissement: string,

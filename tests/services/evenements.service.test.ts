@@ -29,7 +29,7 @@ import {
   getRendezVousConseiller,
   getRendezVousEtablissement,
   getRendezVousJeune,
-  getTypesRendezVous,
+  getTypesRendezVous, structureMiloAnimationsCollectivesAClore,
   supprimerEvenement,
   updateRendezVous,
 } from 'services/evenements.service'
@@ -417,6 +417,24 @@ describe('EvenementsApiService', () => {
           idsJeunes: ['jeune-1', 'jeune-2'],
         },
         'accessToken'
+      )
+    })
+  })
+  describe('structure-milo cloreAnimationCollective',()=>{
+    it('clôt une animation collective', async () => {
+      // Given
+      const idsJeunes = ['jeune-1', 'jeune-2']
+
+      // When
+      await structureMiloAnimationsCollectivesAClore('id-rdv', idsJeunes)
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+          '/structures-milo/animations-collectives/id-rdv/cloturer',
+          {
+            idsJeunes: ['jeune-1', 'jeune-2'],
+          },
+          'accessToken'
       )
     })
   })
