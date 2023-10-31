@@ -70,17 +70,17 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   }
 
   function formulaireEstValide(): boolean {
-    const intuleEstValide = validateIntule()
-    const dateEcheanceEstValide = validateDateEcheance()
+    const intituleEstValide = validerIntitule()
+    const dateEcheanceEstValide = validerDateEcheance()
 
-    return Boolean(intuleEstValide && dateEcheanceEstValide)
+    return Boolean(intituleEstValide && dateEcheanceEstValide)
   }
 
   function formatDateEcheanceEstValide(): boolean {
     return Boolean(dateEcheance.value && regexDate.test(dateEcheance.value))
   }
 
-  function validateIntule() {
+  function validerIntitule() {
     if (intitule.value === undefined) {
       setIntitule({
         ...intitule,
@@ -94,7 +94,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     return Boolean(intitule.value)
   }
 
-  function validateDateEcheance() {
+  function validerDateEcheance() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
 
@@ -221,7 +221,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               id='intitule-action-predefinie'
               required={true}
               onChange={(value: string) => setIntitule({ value })}
-              onBlur={validateIntule}
+              onBlur={validerIntitule}
             >
               {actionsPredefinies.map(({ id, titre }) => (
                 <option key={id}>{titre}</option>
@@ -258,7 +258,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               required={true}
               defaultValue={dateEcheance.value}
               onChange={(value: string) => setDateEcheance({ value })}
-              onBlur={validateDateEcheance}
+              onBlur={validerDateEcheance}
             />
           </div>
         )}
@@ -284,7 +284,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               id='intitule-action-personnalisee'
               required={true}
               onChange={(value: string) => setIntitule({ value })}
-              onBlur={validateIntule}
+              onBlur={validerIntitule}
             />
 
             <Label
@@ -317,7 +317,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               required={true}
               defaultValue={dateEcheance.value}
               onChange={(value: string) => setDateEcheance({ value })}
-              onBlur={validateDateEcheance}
+              onBlur={validerDateEcheance}
             />
           </div>
         )}
