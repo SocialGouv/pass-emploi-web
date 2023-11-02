@@ -43,7 +43,7 @@ export default function ConseillerIntrouvableSuggestionModal({
         les suggestions. Si malgré ça vous rencontrez des difficultés,&nbsp;
         <span className='text-primary_darken hover:text-primary'>
           <ExternalLink
-            href={'mailto:' + process.env.SUPPORT_MAIL}
+            href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
             label={'contactez le support'}
             iconName={IconName.OutgoingMail}
             onClick={trackContacterSupportClick}

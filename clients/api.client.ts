@@ -1,7 +1,7 @@
 import { InfoFichier } from 'interfaces/fichier'
 import { fetchJson, fetchNoContent } from 'utils/httpClient'
 
-const apiPrefix = process.env.API_ENDPOINT
+const apiPrefix = process.env.NEXT_PUBLIC_API_ENDPOINT
 
 export async function apiGet<T>(
   path: string,

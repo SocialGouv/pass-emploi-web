@@ -6,7 +6,7 @@ const config: AgentConfigOptions = {
   serverUrl: process.env.APM_URL || '',
   environment: process.env.ENVIRONMENT || 'development',
   active: process.env.APM_IS_ACTIVE === 'true',
-  distributedTracingOrigins: [process.env.API_ENDPOINT || ''],
+  distributedTracingOrigins: [process.env.NEXT_PUBLIC_API_ENDPOINT || ''],
 }
 
 export function initRum() {

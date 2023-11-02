@@ -43,8 +43,8 @@ describe('RootLayout', () => {
   it('initialise les analytics', async () => {
     // Then
     expect(initMatomo).toHaveBeenCalledWith({
-      siteId: 'MATOMO_SOCIALGOUV_SITE_ID',
-      url: 'MATOMO_SOCIALGOUV_URL',
+      siteId: 'NEXT_PUBLIC_MATOMO_SOCIALGOUV_SITE_ID',
+      url: 'NEXT_PUBLIC_MATOMO_SOCIALGOUV_URL',
     })
   })
 
@@ -52,7 +52,7 @@ describe('RootLayout', () => {
     // Then
     expect(initRum).toHaveBeenCalledWith({
       active: false,
-      distributedTracingOrigins: ['API_ENDPOINT'],
+      distributedTracingOrigins: ['NEXT_PUBLIC_API_ENDPOINT'],
       environment: 'development',
       serverUrl: 'APM_URL',
       serviceName: 'rum-pa-front-local',
