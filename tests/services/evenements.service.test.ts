@@ -412,7 +412,7 @@ describe('EvenementsApiService', () => {
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
-        '/etablissements/animations-collectives/id-rdv/cloturer',
+        '/structures-milo/animations-collectives/id-rdv/cloturer',
         {
           idsJeunes: ['jeune-1', 'jeune-2'],
         },
