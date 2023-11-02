@@ -14551,9 +14551,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nextjs-toploader@npm:1.5.3":
-  version: 1.5.3
-  resolution: "nextjs-toploader@npm:1.5.3"
+"nextjs-toploader@npm:1.6.4":
+  version: 1.6.4
+  resolution: "nextjs-toploader@npm:1.6.4"
   dependencies:
     "@types/nprogress": ^0.2.1
     nprogress: ^0.2.0
@@ -14562,7 +14562,7 @@ __metadata:
     next: ">= 6.0.0"
     react: ">= 16.0.0"
     react-dom: ">= 16.0.0"
-  checksum: e6ff35637df4065eb5c79de17355d663d10ee6f7b765a5fc7091a48737a32705bbf9dab6f68423cff422d67750aca385220be70bfbb8e3ecfa48743ce158e3ee
+  checksum: 43801c844494f508b31a02e202dc3f063e9ded5968edff0ed298118b2c5ad3f2bc200712ca3c693fe27fe5acb5363646c10e937710e3a27ba2fe284fd31a0665
   languageName: node
   linkType: hard
 
@@ -15488,7 +15488,7 @@ __metadata:
     next-auth: 4.24.4
     next-logger: 3.0.2
     next-themes: 0.2.1
-    nextjs-toploader: 1.5.3
+    nextjs-toploader: 1.6.4
     pino: 8.16.1
     pino-pretty: ^10.2.3
     postcss: ^8.4.31
