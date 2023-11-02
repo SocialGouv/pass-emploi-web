@@ -11254,13 +11254,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-dom-parser@npm:5.0.3":
-  version: 5.0.3
-  resolution: "html-dom-parser@npm:5.0.3"
+"html-dom-parser@npm:5.0.4":
+  version: 5.0.4
+  resolution: "html-dom-parser@npm:5.0.4"
   dependencies:
     domhandler: 5.0.3
     htmlparser2: 9.0.0
-  checksum: 7bfe242372016a677cd9ed173f54081d82bb038de580d0b8761fcdcb0abef1d4a03cdc620314b7485e4c9dfcb8c451a59b0556e9b937f1243b4ca118363d9b04
+  checksum: fd2747752dd3cebc9c4c1d6cf148eed3cc788ea0665c10572363b226b654f41af9169374f5418afe9173bcbbaed384dd28362e21ad2001050fb87645fb59f4de
   languageName: node
   linkType: hard
 
@@ -11321,17 +11321,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-react-parser@npm:4.2.10":
-  version: 4.2.10
-  resolution: "html-react-parser@npm:4.2.10"
+"html-react-parser@npm:5.0.4":
+  version: 5.0.4
+  resolution: "html-react-parser@npm:5.0.4"
   dependencies:
     domhandler: 5.0.3
-    html-dom-parser: 5.0.3
+    html-dom-parser: 5.0.4
     react-property: 2.0.2
     style-to-js: 1.1.8
   peerDependencies:
     react: 0.14 || 15 || 16 || 17 || 18
-  checksum: 26784eb0619e7fe073104768039f4e6f81e19956b79533e836938faae2aae9819c78cfcb3251b564d0e5eab46fcfdcc89570bc227d53414a2d961a7f6ac99f97
+  checksum: 79783d31fdb2f4a53c80bcb7c7e997bd5a14e6b57d64696942956d9a9aac5c4f6310d976dd7595e04996d8e7f261e1c83400bf73aa48e4f0f7d8a021ee983979
   languageName: node
   linkType: hard
 
@@ -15477,7 +15477,7 @@ __metadata:
     eslint-plugin-storybook: ^0.6.14
     firebase: 10.5.2
     global: ^4.4.0
-    html-react-parser: 4.2.10
+    html-react-parser: 5.0.4
     jest: ^29.7.0
     jest-environment-jsdom: ^29.7.0
     jsonwebtoken: 9.0.2
