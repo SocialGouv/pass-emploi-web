@@ -4832,7 +4832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^6.1.3":
+"@testing-library/jest-dom@npm:^6.1.4":
   version: 6.1.4
   resolution: "@testing-library/jest-dom@npm:6.1.4"
   dependencies:
@@ -4947,7 +4947,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/crypto-js@npm:^4.1.2":
+"@types/crypto-js@npm:^4.1.3":
   version: 4.1.3
   resolution: "@types/crypto-js@npm:4.1.3"
   checksum: 20c536e158f6aa231bcbfb79686a8d1f9a52545b4c61eb3c3e7e36a992e82a6c40b087cb07665dc847843e5dfd42fc0b4264f6e1abda63ed80350ffbaf125fec
@@ -5072,7 +5072,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.5":
+"@types/jest@npm:^29.5.7":
   version: 29.5.7
   resolution: "@types/jest@npm:29.5.7"
   dependencies:
@@ -5107,7 +5107,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:^9.0.3":
+"@types/jsonwebtoken@npm:^9.0.4":
   version: 9.0.4
   resolution: "@types/jsonwebtoken@npm:9.0.4"
   dependencies:
@@ -5116,7 +5116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.isequal@npm:^4.5.6":
+"@types/lodash.isequal@npm:^4.5.7":
   version: 4.5.7
   resolution: "@types/lodash.isequal@npm:4.5.7"
   dependencies:
@@ -5132,7 +5132,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:^3.3.2":
+"@types/luxon@npm:^3.3.3":
   version: 3.3.3
   resolution: "@types/luxon@npm:3.3.3"
   checksum: 169ce8eb8860f3ad9ef146c2c7a2d9bc09775b8af93fb346f1222e67e4f98559201cf38ed6d8dc9a72d9535b1cf9a46415cf95591e56d2d72101babce2996de3
@@ -5248,7 +5248,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.2.25":
+"@types/react@npm:*, @types/react@npm:^18.2.34":
   version: 18.2.34
   resolution: "@types/react@npm:18.2.34"
   dependencies:
@@ -9585,7 +9585,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:^5.0.0":
+"eslint-plugin-prettier@npm:^5.0.1":
   version: 5.0.1
   resolution: "eslint-plugin-prettier@npm:5.0.1"
   dependencies:
@@ -9639,7 +9639,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-storybook@npm:^0.6.14":
+"eslint-plugin-storybook@npm:^0.6.15":
   version: 0.6.15
   resolution: "eslint-plugin-storybook@npm:0.6.15"
   dependencies:
@@ -15436,15 +15436,15 @@ __metadata:
     "@storybook/storybook-deployer": "npm:^2.8.16"
     "@svgr/webpack": "npm:8.1.0"
     "@testing-library/dom": "npm:^9.3.3"
-    "@testing-library/jest-dom": "npm:^6.1.3"
+    "@testing-library/jest-dom": "npm:^6.1.4"
     "@testing-library/react": "npm:^14.0.0"
     "@testing-library/user-event": "npm:^14.5.1"
-    "@types/crypto-js": "npm:^4.1.2"
-    "@types/jest": "npm:^29.5.5"
-    "@types/jsonwebtoken": "npm:^9.0.3"
-    "@types/lodash.isequal": "npm:^4.5.6"
-    "@types/luxon": "npm:^3.3.2"
-    "@types/react": "npm:^18.2.25"
+    "@types/crypto-js": "npm:^4.1.3"
+    "@types/jest": "npm:^29.5.7"
+    "@types/jsonwebtoken": "npm:^9.0.4"
+    "@types/lodash.isequal": "npm:^4.5.7"
+    "@types/luxon": "npm:^3.3.3"
+    "@types/react": "npm:^18.2.34"
     autoprefixer: "npm:^10.4.16"
     crypto-js: "npm:4.2.0"
     css-loader: "npm:^6.8.1"
@@ -15453,8 +15453,8 @@ __metadata:
     eslint: "npm:^8.50.0"
     eslint-config-next: "npm:13.5.6"
     eslint-config-prettier: "npm:^9.0.0"
-    eslint-plugin-prettier: "npm:^5.0.0"
-    eslint-plugin-storybook: "npm:^0.6.14"
+    eslint-plugin-prettier: "npm:^5.0.1"
+    eslint-plugin-storybook: "npm:^0.6.15"
     firebase: "npm:10.5.2"
     global: "npm:^4.4.0"
     html-react-parser: "npm:5.0.4"
