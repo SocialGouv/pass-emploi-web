@@ -24,7 +24,7 @@
     "@next/bundle-analyzer": "13.5.6",
     "@next/font": "13.5.6",
     "@storybook/storybook-deployer": "^2.8.16",
-    "crypto-js": "4.1.1",
+    "crypto-js": "4.2.0",
     "dotenv": "16.3.1",
     "elastic-apm-node": "4.1.0",
     "firebase": "10.5.0",
