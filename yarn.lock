@@ -11325,17 +11325,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-react-parser@npm:5.0.4":
-  version: 5.0.4
-  resolution: "html-react-parser@npm:5.0.4"
+"html-react-parser@npm:5.0.6":
+  version: 5.0.6
+  resolution: "html-react-parser@npm:5.0.6"
   dependencies:
     domhandler: "npm:5.0.3"
     html-dom-parser: "npm:5.0.4"
     react-property: "npm:2.0.2"
-    style-to-js: "npm:1.1.8"
+    style-to-js: "npm:1.1.9"
   peerDependencies:
     react: 0.14 || 15 || 16 || 17 || 18
-  checksum: a0b825ad9985e0ae20d0671ad2e7932f3806ae00f09e7ea4e82f4c0bbd92c29b71fbac2bf339d97fe0cf87fcec0b008bc8ef8de7048c9cce1106490ad8dcf93b
+  checksum: f7f19f47f03cee8eb69367c00fcf4f3fa4451c2ef2c9fed44dea2dea12bdc7f55bb82bf1d5040798e783eeea1b8433e72c955b3d4d23922df7851b041b442024
   languageName: node
   linkType: hard
 
@@ -15457,7 +15457,7 @@ __metadata:
     eslint-plugin-storybook: "npm:^0.6.15"
     firebase: "npm:10.5.2"
     global: "npm:^4.4.0"
-    html-react-parser: "npm:5.0.4"
+    html-react-parser: "npm:5.0.6"
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
     jsonwebtoken: "npm:9.0.2"
@@ -18323,12 +18323,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-to-js@npm:1.1.8":
-  version: 1.1.8
-  resolution: "style-to-js@npm:1.1.8"
+"style-to-js@npm:1.1.9":
+  version: 1.1.9
+  resolution: "style-to-js@npm:1.1.9"
   dependencies:
-    style-to-object: "npm:1.0.3"
-  checksum: 43b7756b35b22b2cae917ac0b3815490149b9787651d92f1d7e6f387742d894f5f96f574018945d49ed0f22500a1e7fb83b95943284190f3f78aca2d406ad1b4
+    style-to-object: "npm:1.0.4"
+  checksum: bc498a7e22cead1d524db4a63d745b3db23a32b3cddcb7cce5a7d52435bd2edde9baca4daa6ab828f84b3a28b780f9ec4a0376eaa81341409c17c12e077e3652
   languageName: node
   linkType: hard
 
@@ -18341,12 +18341,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-to-object@npm:1.0.3":
-  version: 1.0.3
-  resolution: "style-to-object@npm:1.0.3"
+"style-to-object@npm:1.0.4":
+  version: 1.0.4
+  resolution: "style-to-object@npm:1.0.4"
   dependencies:
     inline-style-parser: "npm:0.2.2"
-  checksum: 8854d74df4a98e98d8973c62cf11f1c1dc199ca86422bcbe7dccef2b025e96b51cb1911bc7d6d161adbe00c97818a00899e3fa9a363be01026d82e3e77e2a536
+  checksum: 7f659384878e5b89ad2accb48f34843c4305fed7c4432c24d159d3ebf1b36727664744304e1cd9c9d67793cf99713c7e09e33e2b96ae21d3bcb389650b39ac5b
   languageName: node
   linkType: hard
 
