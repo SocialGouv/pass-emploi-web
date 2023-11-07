@@ -1,6 +1,5 @@
-'use client'
-
 import Link from 'next/link'
+import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
@@ -31,7 +30,7 @@ export default function NavLink({
       : 'border-primary hover:border-blanc text-base-medium'
   }`
 
-  const linkContent: JSX.Element = (
+  const linkContent: React.JSX.Element = (
     <>
       {showLabelOnSmallScreen && (
         <>

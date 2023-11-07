@@ -1,22 +1,14 @@
-'use client'
-
 import React from 'react'
 
-import FilAriane from 'components/FilAriane'
 import { PAGE_ACTIONS_ROOT_ID } from 'components/PageActionsPortal'
 import { PAGE_HEADER_ROOT_ID } from 'components/PageHeaderPortal'
-import { PAGE_RETOUR_ROOT_ID } from 'components/PageRetourPortal'
+import { PAGE_NAVIGATION_ROOT_ID } from 'components/PageNavigationPortals'
 
-interface HeaderProps {
-  currentPath: string
-}
-
-export default function Header({ currentPath }: HeaderProps) {
+export default function Header() {
   return (
     <header className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'>
       <div>
-        <FilAriane currentPath={currentPath} />
-        <div id={PAGE_RETOUR_ROOT_ID} />
+        <nav id={PAGE_NAVIGATION_ROOT_ID} aria-label="Fil d'ariane" />
         <h1 id={PAGE_HEADER_ROOT_ID} className='text-l-bold text-primary' />
       </div>
 

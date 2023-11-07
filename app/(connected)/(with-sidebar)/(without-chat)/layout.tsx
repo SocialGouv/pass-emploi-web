@@ -1,9 +1,8 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 
-import template from './template.module.css'
+import template from './layout.module.css'
 
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import Footer from 'components/layouts/Footer'
@@ -15,12 +14,11 @@ export default function LayoutWithoutChat({
 }: {
   children: ReactNode
 }) {
-  const pathname = usePathname()
   const [conseiller] = useConseiller()
 
   return (
     <div className={template.page}>
-      <Header currentPath={pathname!} />
+      <Header />
 
       <div className={template.content}>
         <AlerteDisplayer />

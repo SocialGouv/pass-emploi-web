@@ -79,7 +79,7 @@ describe('ChatsProvider', () => {
       )
     })
 
-    it('récupère les informations pour contacter la messagerie', async () => {
+    it('récupère les informations pour se connecter à la messagerie', async () => {
       // Then
       expect(getChatCredentials).toHaveBeenCalledWith()
     })

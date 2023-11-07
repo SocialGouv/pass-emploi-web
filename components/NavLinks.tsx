@@ -213,31 +213,27 @@ export default function NavLinks({
         />
       )}
 
-      <div className='flex flex-col'>
-        {items.includes(NavItem.Profil) && (
-          <NavLink
-            isActive={isCurrentRoute('/profil')}
-            href='/profil'
-            label={`${conseiller.firstName} ${conseiller.lastName}`}
-            iconName={
-              isCurrentRoute('/profil')
-                ? IconName.AccountCircleFill
-                : IconName.AccountCircleOutline
-            }
-            className='break-all'
-            showLabelOnSmallScreen={showLabelsOnSmallScreen}
-          />
-        )}
-
-        <span className='border-b border-blanc mx-4 mb-8'></span>
-
+      {items.includes(NavItem.Profil) && (
         <NavLink
-          label='Déconnexion'
-          iconName={IconName.Logout}
-          onClick={logout}
+          isActive={isCurrentRoute('/profil')}
+          href='/profil'
+          label={`${conseiller.firstName} ${conseiller.lastName}`}
+          iconName={
+            isCurrentRoute('/profil')
+              ? IconName.AccountCircleFill
+              : IconName.AccountCircleOutline
+          }
+          className='break-all'
           showLabelOnSmallScreen={showLabelsOnSmallScreen}
         />
-      </div>
+      )}
+
+      <NavLink
+        label='Déconnexion'
+        iconName={IconName.Logout}
+        onClick={logout}
+        showLabelOnSmallScreen={showLabelsOnSmallScreen}
+      />
     </ul>
   )
 }

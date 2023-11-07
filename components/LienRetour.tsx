@@ -21,19 +21,17 @@ export default function LienRetour({ returnUrlOrPath }: LienRetourProps) {
   }
 
   return (
-    <nav aria-label="Fil d'ariane">
-      <Link
-        href={returnUrlOrPath}
-        className='flex items-center text-s-regular text-content_color underline hover:text-primary_darken'
-      >
-        <IconComponent
-          name={IconName.ArrowBackward}
-          aria-hidden={true}
-          focusable={false}
-          className='w-4 h-4 fill-[currentColor] mr-3'
-        />
-        Retour à {getLabelLienRetour(returnUrlOrPath)}
-      </Link>
-    </nav>
+    <Link
+      href={returnUrlOrPath}
+      className='flex items-center text-s-regular text-content_color underline hover:text-primary_darken'
+    >
+      <IconComponent
+        name={IconName.ArrowBackward}
+        aria-hidden={true}
+        focusable={false}
+        className='w-4 h-4 fill-[currentColor] mr-3'
+      />
+      Retour à {getLabelLienRetour(returnUrlOrPath)}
+    </Link>
   )
 }
