@@ -31,7 +31,9 @@ describe('MiloCreationJeune', () => {
           'Saisissez le numéro de dossier du jeune pour lequel vous voulez créer un compte'
         )
       ).toBeInTheDocument()
-      expect(screen.getByLabelText('Numéro de dossier')).toBeInTheDocument()
+      expect(
+        screen.getByRole('textbox', { name: 'Numéro de dossier' })
+      ).toBeInTheDocument()
     })
 
     it("quand on soumet la recherche avec une valeur vide, affiche un message d'erreur", async () => {
@@ -39,7 +41,9 @@ describe('MiloCreationJeune', () => {
       const submitButton = screen.getByRole('button', {
         name: 'Valider le numéro',
       })
-      const inputSearch = screen.getByLabelText('Numéro de dossier')
+      const inputSearch = screen.getByRole('textbox', {
+        name: 'Numéro de dossier',
+      })
       await userEvent.clear(inputSearch)
 
       // When

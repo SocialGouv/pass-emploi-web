@@ -18,7 +18,6 @@ export function DistanceRange({
   return (
     <>
       <label htmlFor='distance'>
-        {required && <span aria-hidden={true}>*&nbsp;</span>}
         Dans un rayon de : <span className='text-base-bold'>{value}km</span>
       </label>
 

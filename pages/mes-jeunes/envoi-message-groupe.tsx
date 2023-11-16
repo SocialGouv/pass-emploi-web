@@ -259,7 +259,7 @@ function EnvoiMessageGroupe({
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
         <div className='text-s-bold text-content_color mb-8'>
-          Tous les champs sont obligatoires
+          Tous les champs avec * sont obligatoires
         </div>
 
         <Etape numero={1} titre='Sélectionnez des destinataires'>
@@ -284,7 +284,6 @@ function EnvoiMessageGroupe({
             />
           </Link>
         </Etape>
-
         <Etape numero={2} titre='Écrivez votre message'>
           <Label
             htmlFor='message'
@@ -355,7 +354,6 @@ function EnvoiMessageGroupe({
             )}
           </div>
         </Etape>
-
         <div className='flex justify-center'>
           {!formHasChanges() && (
             <ButtonLink
@@ -392,7 +390,6 @@ function EnvoiMessageGroupe({
             Envoyer
           </Button>
         </div>
-
         {showLeavePageModal && (
           <LeavePageConfirmationModal
             titre='Souhaitez-vous quitter la rédaction du message multi-destinataires ?'
