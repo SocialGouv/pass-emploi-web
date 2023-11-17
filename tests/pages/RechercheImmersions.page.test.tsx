@@ -229,7 +229,7 @@ describe('Page Recherche Immersions', () => {
       fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
         target: { value: 43 },
       })
-      expect(getByTextContent('* Dans un rayon de : 43km')).toBeInTheDocument()
+      expect(getByTextContent('Dans un rayon de : 43km')).toBeInTheDocument()
       expect(screen.getByText('[1] filtre sélectionné')).toBeInTheDocument()
 
       // When

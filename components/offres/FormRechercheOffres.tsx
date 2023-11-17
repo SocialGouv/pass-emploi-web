@@ -159,6 +159,11 @@ export default function FormRechercheOffres({
   return (
     <form onSubmit={rechercherPremierePage} noValidate={true}>
       <div className={collapsed ? 'hidden' : 'mb-8'} aria-hidden={collapsed}>
+        {typeOffre === TypeOffre.IMMERSION && (
+          <p className='text-s-bold mb-6'>
+            Tous les champs avec * sont obligatoires
+          </p>
+        )}
         <Etape numero={1} titre='Sélectionner un type d’offre'>
           <div className='flex flex-wrap'>
             <RadioBox
