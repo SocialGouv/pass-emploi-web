@@ -284,9 +284,6 @@ function RechercheOffres(_: PageProps) {
       <div className='bg-primary_lighten p-6 mb-10 rounded-base'>
         <div className={`flex justify-between ${collapsed ? '' : 'mb-5'}`}>
           <h2 className='text-m-medium text-primary'>Ma recherche</h2>
-          <p className='text-s-bold mb-6'>
-            Tous les champs avec * sont obligatoires
-          </p>
           <button
             type='button'
             onClick={() => setCollapsed(!collapsed)}
