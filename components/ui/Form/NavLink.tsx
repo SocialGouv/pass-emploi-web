@@ -77,30 +77,32 @@ export default function NavLink({
 
   return (
     <>
-      {!isExternal && (
-        <Link href={href} className={linkStyle} onClick={onClick}>
-          {linkContent}
-        </Link>
-      )}
+      <li>
+        {!isExternal && (
+          <Link href={href} className={linkStyle} onClick={onClick}>
+            {linkContent}
+          </Link>
+        )}
 
-      {isExternal && (
-        <a
-          href={href}
-          target='_blank'
-          rel='noreferrer noopener'
-          aria-label={`${label} (nouvel onglet)`}
-          className={linkStyle}
-          onClick={onClick}
-        >
-          {linkContent}
-          <IconComponent
-            name={IconName.OpenInNew}
-            aria-hidden={true}
-            focusable={false}
-            className='mx-2 w-4 h-4 fill-blanc hidden layout_l:block'
-          />
-        </a>
-      )}
+        {isExternal && (
+          <a
+            href={href}
+            target='_blank'
+            rel='noreferrer noopener'
+            aria-label={`${label} (nouvel onglet)`}
+            className={linkStyle}
+            onClick={onClick}
+          >
+            {linkContent}
+            <IconComponent
+              name={IconName.OpenInNew}
+              aria-hidden={true}
+              focusable={false}
+              className='mx-2 w-4 h-4 fill-blanc hidden layout_l:block'
+            />
+          </a>
+        )}
+      </li>
     </>
   )
 }
