@@ -1,13 +1,18 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
+import {
+  PageHeaderPortal,
+  PageRetourPortal,
+} from 'components/PageNavigationPortals'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -24,7 +29,6 @@ import RecapitulatifErreursFormulaire, {
 import { InfoFichier } from 'interfaces/fichier'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FormNouveauMessageGroupe } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -33,19 +37,18 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
 const LeavePageConfirmationModal = dynamic(
   import('components/LeavePageConfirmationModal'),
   { ssr: false }
 )
 
-interface EnvoiMessageGroupeProps extends PageProps {
+type EnvoiMessageGroupeProps = {
   listesDiffusion: ListeDeDiffusion[]
   returnTo: string
 }
 
-function EnvoiMessageGroupe({
+function EnvoiMessageGroupePage({
   listesDiffusion,
   returnTo,
 }: EnvoiMessageGroupeProps) {
@@ -187,7 +190,7 @@ function EnvoiMessageGroupe({
       await sendNouveauMessageGroupe(formNouveauMessage)
 
       setAlerte(AlerteParam.envoiMessage)
-      await router.push(returnTo)
+      router.push(returnTo)
     } catch (error) {
       setErreurEnvoi(
         error instanceof ApiError
@@ -251,6 +254,9 @@ function EnvoiMessageGroupe({
 
   return (
     <>
+      <PageRetourPortal lien={returnTo} />
+      <PageHeaderPortal header='Message multi-destinataires' />
+
       {erreurEnvoi && (
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
@@ -403,44 +409,7 @@ function EnvoiMessageGroupe({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  EnvoiMessageGroupeProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-
-  const { getListesDeDiffusionServerSide } = await import(
-    'services/listes-de-diffusion.service'
-  )
-  const listesDeDiffusion = await getListesDeDiffusionServerSide(
-    user.id,
-    accessToken
-  )
-
-  const referer: string | undefined = context.req.headers.referer
-
-  const previousUrl =
-    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  return {
-    props: {
-      listesDiffusion: listesDeDiffusion,
-      withoutChat: true,
-      pageTitle: 'Message multi-destinataires',
-      returnTo: previousUrl,
-    },
-  }
-}
-
 export default withTransaction(
-  EnvoiMessageGroupe.name,
+  EnvoiMessageGroupePage.name,
   'page'
-)(EnvoiMessageGroupe)
+)(EnvoiMessageGroupePage)

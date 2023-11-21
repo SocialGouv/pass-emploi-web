@@ -9,7 +9,7 @@ import { JeuneFromListe } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import EnvoiMessageGroupe, {
   getServerSideProps,
-} from 'pages/mes-jeunes/envoi-message-groupe'
+} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/envoi-message-groupe'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { uploadFichier } from 'services/fichiers.service'
 import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'

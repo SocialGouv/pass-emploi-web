@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import React, {
   createContext,
   ReactNode,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -113,6 +114,10 @@ export function ChatsProvider({ children }: { children: ReactNode }) {
       <ChatsContext.Provider value={chats}>{children}</ChatsContext.Provider>
     </ChatCredentialsProvider>
   )
+}
+
+export function useChats(): JeuneChat[] | undefined {
+  return useContext(ChatsContext)
 }
 
 function aUnNouveauMessage(previousChat: JeuneChat, updatedChat: JeuneChat) {

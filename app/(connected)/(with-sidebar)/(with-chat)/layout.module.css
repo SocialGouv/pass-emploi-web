@@ -2,9 +2,18 @@
   display: none;
 }
 
+.chatRoom {
+  width: 100vw;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: theme('colors.primary_lighten');
+}
+
 @media screen and (min-width: theme('screens.layout_s')) {
   .sidebar {
     width: 10vw;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -12,6 +21,10 @@
     padding: 24px 12px;
     text-align: center;
     background-color: theme('colors.primary');
+  }
+
+  .chatRoom {
+    width: 20vw;
   }
 }
 
@@ -24,5 +37,9 @@
 @media screen and (min-width: theme('screens.layout_l')) {
   .sidebar {
     width: 15vw;
+  }
+
+  .chatRoom {
+    width: 24vw;
   }
 }

@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
+import ChatNav from 'components/chat/ChatNav'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
 import {
   getChatCredentials,
   observeConseillerChats,
   signIn,
 } from 'services/messages.service'
+import styles from 'styles/components/Layouts.module.css'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -31,6 +33,8 @@ export default function ChatManager({
   const [chats, setChats] = useState<JeuneChat[]>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const destructorRef = useRef<() => void>(() => undefined)
+
+  const [showChatNav, setShowChatNav] = useState<boolean>(false)
 
   function hasMessageNonLu(updatedChats: JeuneChat[]): boolean {
     return updatedChats.some(
@@ -100,12 +104,19 @@ export default function ChatManager({
     }
   }, [portefeuille, chatCredentials, audio, conseiller.notificationsSonores])
 
-  return displayChat ? (
-    <ChatContainer
-      jeunesChats={chats}
-      messagerieFullScreen={pageEstMessagerie}
-    />
-  ) : (
-    <></>
+  if (!displayChat) return null
+
+  return (
+    <>
+      <aside className={styles.chatRoom}>
+        <ChatContainer
+          jeunesChats={chats}
+          menuState={[showChatNav, setShowChatNav]}
+          messagerieFullScreen={pageEstMessagerie}
+        />
+      </aside>
+
+      {showChatNav && <ChatNav menuState={[showChatNav, setShowChatNav]} />}
+    </>
   )
 }
