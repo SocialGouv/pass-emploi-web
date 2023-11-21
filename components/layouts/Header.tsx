@@ -16,7 +16,10 @@ export default function Header({
   returnTo,
 }: HeaderProps) {
   return (
-    <header className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'>
+    <header
+      role='banner'
+      className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'
+    >
       {!returnTo && (
         <div>
           <FilAriane currentPath={currentPath} />

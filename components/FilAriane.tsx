@@ -41,7 +41,7 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
   }, [currentPath])
 
   return (
-    <nav aria-label="Fil d'ariane">
+    <nav role='navigation' aria-label="Fil d'ariane">
       <ol className='mb-2 flex items-center'>
         {ariane.map(({ href, label }, index) => (
           <li key={label} className='flex items-center'>
