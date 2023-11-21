@@ -76,7 +76,7 @@ export default function NavLink({
   )
 
   return (
-    <>
+    <li>
       {!isExternal && (
         <Link href={href} className={linkStyle} onClick={onClick}>
           {linkContent}
@@ -101,6 +101,6 @@ export default function NavLink({
           />
         </a>
       )}
-    </>
+    </li>
   )
 }

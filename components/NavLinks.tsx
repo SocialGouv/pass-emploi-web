@@ -85,8 +85,8 @@ export default function NavLinks({
   useLeanBeWidget(conseiller)
 
   return (
-    <>
-      <div>
+    <ul>
+      <>
         {items.includes(NavItem.Jeunes) && (
           <NavLink
             isActive={isCurrentRoute('/mes-jeunes')}
@@ -215,7 +215,8 @@ export default function NavLinks({
             onClick={trackAide}
           />
         )}
-      </div>
+      </>
+
       <div className='flex flex-col'>
         {items.includes(NavItem.Profil) && (
           <NavLink
@@ -232,6 +233,7 @@ export default function NavLinks({
           />
         )}
         <span className='border-b border-blanc mx-4 mb-8'></span>
+
         <NavLink
           href='/api/auth/federated-logout'
           label='Déconnexion'
@@ -240,6 +242,6 @@ export default function NavLinks({
           showLabelOnSmallScreen={showLabelsOnSmallScreen}
         />
       </div>
-    </>
+    </ul>
   )
 }
