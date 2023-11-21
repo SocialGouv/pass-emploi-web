@@ -85,8 +85,8 @@ export default function NavLinks({
   useLeanBeWidget(conseiller)
 
   return (
-    <>
-      <ul>
+    <ul>
+      <>
         {items.includes(NavItem.Jeunes) && (
           <NavLink
             isActive={isCurrentRoute('/mes-jeunes')}
@@ -215,9 +215,9 @@ export default function NavLinks({
             onClick={trackAide}
           />
         )}
-      </ul>
+      </>
 
-      <ul className='flex flex-col'>
+      <div className='flex flex-col'>
         {items.includes(NavItem.Profil) && (
           <NavLink
             isActive={isCurrentRoute('/profil')}
@@ -241,7 +241,7 @@ export default function NavLinks({
           onClick={trackLogout}
           showLabelOnSmallScreen={showLabelsOnSmallScreen}
         />
-      </ul>
-    </>
+      </div>
+    </ul>
   )
 }
