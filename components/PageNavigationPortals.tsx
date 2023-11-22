@@ -45,3 +45,24 @@ export function PageFilArianePortal({ path }: { path: string }) {
     return null
   }
 }
+
+export function PageHeaderPortal({ header }: { header: string }) {
+  const [isBrowser, setIsBrowser] = useState(false)
+
+  const pageHeaderContainer = (
+    <h1 className='text-l-bold text-primary'>{header}</h1>
+  )
+
+  useEffect(() => {
+    setIsBrowser(true)
+  }, [])
+
+  if (isBrowser) {
+    const pageHeaderRoot = document.getElementById(PAGE_NAVIGATION_ROOT_ID)
+    return pageHeaderRoot
+      ? createPortal(pageHeaderContainer, pageHeaderRoot)
+      : null
+  } else {
+    return null
+  }
+}

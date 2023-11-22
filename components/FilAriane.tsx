@@ -15,37 +15,39 @@ export default function FilAriane({ path }: FilArianeProps) {
   }
 
   return (
-    <ol className='mb-2 flex items-center'>
-      {ariane.map(({ href, label }, index) => (
-        <li key={label} className='flex items-center'>
-          {index < ariane.length - 1 && (
-            <>
+    <nav aria-label="Fil d'ariane">
+      <ol className='mb-2 flex items-center'>
+        {ariane.map(({ href, label }, index) => (
+          <li key={label} className='flex items-center'>
+            {index < ariane.length - 1 && (
+              <>
+                <Link
+                  href={href}
+                  className='text-s-regular text-content_color underline hover:text-primary_darken'
+                >
+                  {label}
+                </Link>
+                <IconComponent
+                  name={IconName.ChevronRight}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='mx-2 w-6 h-6 fill-content_color'
+                />
+              </>
+            )}
+            {index === ariane.length - 1 && (
               <Link
                 href={href}
-                className='text-s-regular text-content_color underline hover:text-primary_darken'
+                aria-current='page'
+                className='text-s-regular text-content_color'
               >
                 {label}
               </Link>
-              <IconComponent
-                name={IconName.ChevronRight}
-                aria-hidden={true}
-                focusable={false}
-                className='mx-2 w-6 h-6 fill-content_color'
-              />
-            </>
-          )}
-          {index === ariane.length - 1 && (
-            <Link
-              href={href}
-              aria-current='page'
-              className='text-s-regular text-content_color'
-            >
-              {label}
-            </Link>
-          )}
-        </li>
-      ))}
-    </ol>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
   )
 }
 

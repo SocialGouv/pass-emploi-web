@@ -2,8 +2,10 @@ import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 
 import CloturePage from 'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage'
-import PageHeaderPortal from 'components/PageHeaderPortal'
-import { PageRetourPortal } from 'components/PageNavigationPortals'
+import {
+  PageHeaderPortal,
+  PageRetourPortal,
+} from 'components/PageNavigationPortals'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { getDetailsEvenement } from 'services/evenements.service'
@@ -35,8 +37,8 @@ export default async function Cloture({
 
   return (
     <>
-      <PageHeaderPortal header='Clôture de l’événement' />
       <PageRetourPortal lien={returnTo} />
+      <PageHeaderPortal header='Clôture de l’événement' />
 
       <CloturePage evenement={evenement} returnTo={returnTo} />
     </>

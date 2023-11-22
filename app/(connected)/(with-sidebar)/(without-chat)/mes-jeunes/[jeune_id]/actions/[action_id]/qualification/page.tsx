@@ -3,8 +3,10 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage'
-import PageHeaderPortal from 'components/PageHeaderPortal'
-import { PageRetourPortal } from 'components/PageNavigationPortals'
+import {
+  PageHeaderPortal,
+  PageRetourPortal,
+} from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'

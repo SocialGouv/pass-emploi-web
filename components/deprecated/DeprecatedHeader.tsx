@@ -19,18 +19,14 @@ export default function DeprecatedHeader({
     <header className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'>
       {!returnTo && (
         <div>
-          <nav aria-label="Fil d'ariane">
-            <FilAriane path={currentPath} />
-          </nav>
+          <FilAriane path={currentPath} />
           <h1 className='text-l-bold text-primary'>{pageHeader}</h1>
         </div>
       )}
 
       {returnTo && (
         <div>
-          <nav aria-label="Fil d'ariane">
-            <LienRetour returnUrlOrPath={returnTo} />
-          </nav>
+          <LienRetour returnUrlOrPath={returnTo} />
           <h1 className='text-l-bold text-primary'>{pageHeader}</h1>
         </div>
       )}
