@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/dom'
 import { within } from '@testing-library/react'
-import { useRouter } from 'next/router'
+import userEvent from '@testing-library/user-event'
+import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
 import Sidebar from 'components/Sidebar'
@@ -11,15 +12,13 @@ describe('<Sidebar/>', () => {
   let routerPush: Function
   beforeEach(() => {
     routerPush = jest.fn()
-    ;(useRouter as jest.Mock).mockReturnValue({
-      asPath: '',
-      push: routerPush,
-    })
+    ;(usePathname as jest.Mock).mockReturnValue('')
+    ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
   })
 
   it('affiche les liens de la barre de navigation', () => {
     // WHEN
-    renderSidebar()
+    renderSidebar({ structure: StructureConseiller.MILO })
 
     // THEN
     const navigation = screen.getByRole('navigation')
@@ -48,12 +47,10 @@ describe('<Sidebar/>', () => {
   it('permet la deconnexion', async () => {
     // When
     renderSidebar()
+    await userEvent.click(screen.getByRole('button', { name: 'Déconnexion' }))
 
     // Then
-    expect(screen.getByRole('link', { name: 'Déconnexion' })).toHaveAttribute(
-      'href',
-      '/api/auth/federated-logout'
-    )
+    expect(routerPush).toHaveBeenCalledWith('/api/auth/federated-logout')
   })
 
   it('afficher le lien vers la réaffectation quand le conseiller est superviseur', async () => {

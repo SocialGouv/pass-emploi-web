@@ -27,7 +27,10 @@ const ChatManager = dynamic(import('components/layouts/ChatManager'), {
 const SidebarLayout = dynamic(import('components/layouts/SidebarLayout'), {
   ssr: false,
 })
-const Header = dynamic(import('components/layouts/Header'), { ssr: false })
+const DeprecatedHeader = dynamic(
+  import('components/deprecated/DeprecatedHeader'),
+  { ssr: false }
+)
 const Footer = dynamic(import('components/layouts/Footer'), { ssr: false })
 const AlerteDisplayer = dynamic(import('components/layouts/AlerteDisplayer'), {
   ssr: false,
@@ -136,7 +139,7 @@ export default function Layout({ children }: LayoutProps) {
                   withChat ? styles.page_when_chat : ''
                 }`}
               >
-                <Header
+                <DeprecatedHeader
                   currentPath={router.asPath}
                   returnTo={returnTo}
                   pageHeader={pageHeader ?? pageTitle}

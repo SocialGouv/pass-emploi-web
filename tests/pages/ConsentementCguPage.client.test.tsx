@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
@@ -24,15 +24,17 @@ describe('ConsentementCGUPage client side', () => {
   })
 
   describe('Adapte le texte', () => {
-    it('Pour un conseiller BRSA', () => {
+    it('Pour un conseiller BRSA', async () => {
       // Given
       const conseiller = unConseiller({
         structure: StructureConseiller.POLE_EMPLOI_BRSA,
       })
 
       // When
-      renderWithContexts(<ConsentementCguPage returnTo='/mes-jeunes' />, {
-        customConseiller: conseiller,
+      await act(async () => {
+        renderWithContexts(<ConsentementCguPage returnTo='/mes-jeunes' />, {
+          customConseiller: conseiller,
+        })
       })
 
       // Then
@@ -43,15 +45,17 @@ describe('ConsentementCGUPage client side', () => {
       ).toBeInTheDocument()
     })
 
-    it('Pour un conseiller CEJ', () => {
+    it('Pour un conseiller CEJ', async () => {
       // Given
       const conseiller = unConseiller({
         structure: StructureConseiller.MILO,
       })
 
       // When
-      renderWithContexts(<ConsentementCguPage returnTo='/mes-jeunes' />, {
-        customConseiller: conseiller,
+      await act(async () => {
+        renderWithContexts(<ConsentementCguPage returnTo='/mes-jeunes' />, {
+          customConseiller: conseiller,
+        })
       })
 
       // Then

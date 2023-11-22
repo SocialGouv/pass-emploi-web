@@ -4,7 +4,7 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 
 export default function ContenuCGUConseillerCEJ() {
   return (
-    <div>
+    <>
       <InformationMessage label='Nous mettons à jour nos conditions générales d’utilisation. Veuillez les lire, cochez la case et valider pour pouvoir continuer à utiliser l’application.' />
       <p className='my-8'>
         Les présentes conditions générales d’utilisation (dites « CGU ») fixent
@@ -348,6 +348,6 @@ export default function ContenuCGUConseillerCEJ() {
         apportées au site, de l’évolution de la législation ou pour tout autre
         motif jugé nécessaire, nécessite votre consentement.
       </p>
-    </div>
+    </>
   )
 }

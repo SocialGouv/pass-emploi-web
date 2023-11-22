@@ -1,12 +1,13 @@
 import Link from 'next/link'
+import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 type NavLinkProps = {
   label: string | null
-  href: string
   iconName: IconName
   showLabelOnSmallScreen: boolean
+  href?: string
   isActive?: boolean
   className?: string
   isExternal?: boolean
@@ -29,7 +30,7 @@ export default function NavLink({
       : 'border-primary hover:border-blanc text-base-medium'
   }`
 
-  const linkContent: JSX.Element = (
+  const linkContent: React.JSX.Element = (
     <>
       {showLabelOnSmallScreen && (
         <>
@@ -77,19 +78,19 @@ export default function NavLink({
 
   return (
     <li>
-      {!isExternal && (
+      {href && !isExternal && (
         <Link href={href} className={linkStyle} onClick={onClick}>
           {linkContent}
         </Link>
       )}
 
-      {isExternal && (
+      {href && isExternal && (
         <a
           href={href}
           target='_blank'
           rel='noreferrer noopener'
           aria-label={`${label} (nouvel onglet)`}
-          className={linkStyle}
+          className={linkStyle + ' cursor-pointer'}
           onClick={onClick}
         >
           {linkContent}
@@ -100,6 +101,12 @@ export default function NavLink({
             className='mx-2 w-4 h-4 fill-blanc hidden layout_l:block'
           />
         </a>
+      )}
+
+      {!href && onClick && (
+        <button type='button' className={linkStyle} onClick={onClick}>
+          {linkContent}
+        </button>
       )}
     </li>
   )

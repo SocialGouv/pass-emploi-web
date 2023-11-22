@@ -3,19 +3,25 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, lazy, Suspense, useState } from 'react'
 
-import ContenuCGUConseillerBRSA from 'components/ContenuCGUConseillerBRSA'
-import ContenuCGUConseillerCEJ from 'components/ContenuCGUConseillerCEJ'
 import HeaderCGU from 'components/layouts/HeaderCGU'
 import Checkbox from 'components/offres/Checkbox'
 import Button from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { ValueWithError } from 'components/ValueWithError'
 import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { modifierDateSignatureCGU } from 'services/conseiller.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+
+const ContenuCGUConseillerCEJ = lazy(
+  () => import('components/ContenuCGUConseillerCEJ')
+)
+const ContenuCGUConseillerBRSA = lazy(
+  () => import('components/ContenuCGUConseillerBRSA')
+)
 
 type ConsentementCguProps = {
   returnTo: string
@@ -54,9 +60,10 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
     <>
       <HeaderCGU conseiller={conseiller} />
 
-      {estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerBRSA />}
-
-      {!estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerCEJ />}
+      <Suspense fallback={<SpinningLoader />}>
+        {estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerBRSA />}
+        {!estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerCEJ />}
+      </Suspense>
 
       <form onSubmit={validerLesCGU} className='flex flex-col mt-10'>
         <div className='mb-10'>

@@ -14,9 +14,14 @@ describe('LoginPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue({})
 
     // When
-    await Login({ searchParams: { redirectUrl: 'vers-linfini-et-au-dela' } })
+    const promise = Login({
+      searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },
+    })
 
     // Then
+    await expect(promise).rejects.toEqual(
+      new Error('NEXT REDIRECT vers-linfini-et-au-dela')
+    )
     expect(redirect).toHaveBeenCalledWith('vers-linfini-et-au-dela')
   })
 

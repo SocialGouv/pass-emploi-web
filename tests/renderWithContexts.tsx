@@ -115,7 +115,7 @@ function provideContexts(
         setterForTests={portefeuille.setter}
       >
         <ChatCredentialsProvider
-          credentialsForTests={{
+          credentials={{
             token: 'firebaseToken',
             cleChiffrement: 'cleChiffrement',
           }}

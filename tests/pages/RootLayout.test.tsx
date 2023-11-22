@@ -22,12 +22,9 @@ describe('RootLayout', () => {
     expect(screen.getByText('Composant whatever')).toBeInTheDocument()
   })
 
-  it('prépare les métadonnées de <head>', async () => {
+  it('prépare les métadonnées de head', async () => {
     expect(metadata).toEqual({
-      title: {
-        template: '%s - Espace conseiller CEJ',
-        default: 'Espace conseiller CEJ',
-      },
+      title: 'Espace conseiller',
       description: 'Espace conseiller de l’outil du Contrat d’Engagement Jeune',
       applicationName: 'CEJ conseiller',
       themeColor: '#3B69D1',

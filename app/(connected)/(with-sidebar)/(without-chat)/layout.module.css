@@ -1,0 +1,19 @@
+.page {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.content {
+  flex-grow: 1;
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 40px 1rem;
+}
+
+@media screen and (min-width: theme('screens.layout_s')) {
+  .content {
+    padding: 40px 0;
+  }
+}
