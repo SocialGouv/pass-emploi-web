@@ -112,6 +112,14 @@ describe('<Layout />', () => {
       ).toBeInTheDocument()
     })
 
+    it('contient la région (landmark) header', () => {
+      expect(screen.getByRole('banner')).toBeInTheDocument()
+    })
+
+    it('contient la région (landmark) main', () => {
+      expect(screen.getByRole('main')).toBeInTheDocument()
+    })
+
     it("affiche le fil d'ariane", () => {
       // Then
       expect(
@@ -123,6 +131,7 @@ describe('<Layout />', () => {
       expect(
         screen.getByRole('link', { name: 'Détail action' })
       ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
+      expect(screen.getByRole('navigation', { name: "Fil d'ariane" }))
     })
 
     it("affiche les messages d'alerte", () => {

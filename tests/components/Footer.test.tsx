@@ -46,6 +46,7 @@ describe('<Footer/>', () => {
       'href',
       'https://doc.pass-emploi.beta.gouv.fr/legal/web_politique_de_confidentialite'
     )
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument()
   })
 
   it('affiche les liens du footer pour PE BRSA', () => {
