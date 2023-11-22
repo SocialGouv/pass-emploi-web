@@ -10,7 +10,10 @@ type HeaderCGUProps = {
 
 export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
   return (
-    <header className='flex justify-between items-center flex-col py-8 border-b border-solid border-primary_lighten mb-8'>
+    <header
+      role='banner'
+      className='flex justify-between items-center flex-col py-8 border-b border-solid border-primary_lighten mb-8'
+    >
       {estPoleEmploiBRSA(conseiller) && (
         <LogoPassEmploi
           role='img'
