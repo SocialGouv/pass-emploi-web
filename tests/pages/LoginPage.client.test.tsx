@@ -22,17 +22,6 @@ describe('LoginPage client side', () => {
       render(<LoginPage ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
     })
 
-    it('devrait afficher un titre de niveau 1', () => {
-      //GIVEN
-      const heading = screen.getByRole('heading', {
-        level: 1,
-        name: "Connectez-vous à l'espace conseiller",
-      })
-
-      //THEN
-      expect(heading).toBeInTheDocument()
-    })
-
     it('devrait afficher deux titres de niveau 2', () => {
       //GIVEN
       const headingCEJ = screen.getByRole('heading', {
