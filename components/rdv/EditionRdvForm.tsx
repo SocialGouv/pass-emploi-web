@@ -299,8 +299,6 @@ export function EditionRdvForm({
         error: 'Le champ “Date“ est vide. Renseignez une date.',
       })
     }
-    const inputDate = document.getElementById('date')
-    if (inputDate) inputDate.scrollIntoView({ behavior: 'smooth' })
     return dateEstValide
   }
 
@@ -378,8 +376,6 @@ export function EditionRdvForm({
         ...codeTypeRendezVous,
         error: 'Le champ ”Type” est vide. Renseignez un type.',
       })
-      const inputType = document.getElementById('typeEvenement')
-      if (inputType) inputType.scrollIntoView({ behavior: 'smooth' })
       return false
     } else if (
       Boolean(
@@ -462,10 +458,6 @@ export function EditionRdvForm({
           'Aucun bénéficiaire n’est renseigné. Sélectionnez au moins un bénéficiaire.',
       })
 
-      const inputBeneficiaires = document.getElementById('select-beneficiaires')
-      if (inputBeneficiaires)
-        inputBeneficiaires.scrollIntoView({ behavior: 'smooth' })
-
       return false
     }
 
@@ -496,7 +488,12 @@ export function EditionRdvForm({
   async function handleSoumettreRdv(e: FormEvent) {
     e.preventDefault()
 
-    if (!formIsValid()) return Promise.resolve()
+    if (!formIsValid()) {
+      document
+        .getElementById('edition-rdv-form')!
+        .scrollIntoView({ behavior: 'smooth' })
+      return Promise.resolve()
+    }
     if (!formHasChanges()) return Promise.resolve()
 
     const [dureeHeures, dureeMinutes] = duree.value!.split(':')
@@ -541,11 +538,17 @@ export function EditionRdvForm({
 
   function getErreurs(): LigneErreur[] {
     let erreurs = []
-    if (Boolean(!codeTypeRendezVous.value || precisionType.error))
+    if (codeTypeRendezVous.error)
       erreurs.push({
         ancre: '#typeEvenement',
         label: 'Le champ Type est vide.',
         titreChamp: 'Type',
+      })
+    if (precisionType.error)
+      erreurs.push({
+        ancre: '#typeEvenement-autre',
+        label: 'Le champ Préciser est vide.',
+        titreChamp: 'Préciser',
       })
     if (titre.error)
       erreurs.push({
@@ -602,7 +605,11 @@ export function EditionRdvForm({
     <>
       <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
-      <form onSubmit={handleSoumettreRdv} noValidate={true}>
+      <form
+        id='edition-rdv-form'
+        onSubmit={handleSoumettreRdv}
+        noValidate={true}
+      >
         <p className='text-s-bold my-6'>
           Tous les champs avec * sont obligatoires
         </p>
