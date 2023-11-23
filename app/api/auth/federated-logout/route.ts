@@ -1,8 +1,12 @@
 import { isRedirectError } from 'next/dist/client/components/redirect'
 import { redirect } from 'next/navigation'
 
+import { getSessionServerSide } from 'utils/auth/auth'
+
+const rootUrl: string | undefined = process.env.NEXTAUTH_URL
+
 export async function GET() {
-  const rootUrl: string | undefined = process.env.NEXTAUTH_URL
+  if (!(await getSessionServerSide())) return
 
   try {
     const issuerLogout = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout`
@@ -12,7 +16,7 @@ export async function GET() {
 
     redirect(`${issuerLogout}?${redirectToSessionLogout}`)
   } catch (error) {
-    if (isRedirectError(error)) throw error // redirect() renvoie une erreur NEXT_REDIRECT
+    if (isRedirectError(error)) throw error
 
     console.error(error)
     redirect(rootUrl ?? '')

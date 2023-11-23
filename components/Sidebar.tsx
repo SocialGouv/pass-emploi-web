@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'

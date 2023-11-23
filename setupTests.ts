@@ -19,7 +19,22 @@ jest.mock('next/router', () => ({
     },
   },
 }))
-jest.mock('next/navigation')
+jest.mock('next/navigation', () => ({
+  notFound: jest.fn(() => {
+    throw new Error('NEXT NOT_FOUND')
+  }),
+  redirect: jest.fn((destination) => {
+    throw new Error('NEXT REDIRECT ' + destination)
+  }),
+  useRouter: jest.fn(),
+  usePathname: jest.fn(),
+  useSearchParams: jest.fn(),
+}))
+jest.mock('next/dist/client/components/redirect', () => ({
+  isRedirectError: jest.fn(({ message }) =>
+    message.startsWith('NEXT REDIRECT')
+  ),
+}))
 
 jest.mock('next-auth/react', () => ({
   getSession: async () => ({

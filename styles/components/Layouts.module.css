@@ -66,13 +66,6 @@
   padding: 1rem;
 }
 
-.footer {
-  display: flex;
-  justify-content: center;
-  padding: 16px 0;
-  border-top: 2px solid theme('colors.primary_lighten');
-}
-
 .chatRoom {
   grid-area: chat;
   display: flex;

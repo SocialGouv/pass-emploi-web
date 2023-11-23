@@ -1,7 +1,8 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -17,22 +18,20 @@ import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { Action, StatutAction } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
-import { PageProps } from 'interfaces/pageProps'
+import { Action } from 'interfaces/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type QualificationProps = PageProps & {
+type QualificationProps = {
   action: Action
   situationsNonProfessionnelles: Array<{ code: string; label: string }>
   returnTo: string
 }
 
-function PageQualification({
+function QualificationPage({
   action,
   situationsNonProfessionnelles,
   returnTo,
@@ -50,8 +49,8 @@ function PageQualification({
     action.dateFinReelle
   )
 
-  const snpParOrdreAlphabetique = situationsNonProfessionnelles.sort((a, b) =>
-    a.label.localeCompare(b.label)
+  const snpParOrdreAlphabetique = [...situationsNonProfessionnelles].sort(
+    (a, b) => a.label.localeCompare(b.label)
   )
 
   const [isQualificationEnCours, setIsQualificationEnCours] =
@@ -105,7 +104,7 @@ function PageQualification({
         dateFinModifiee: DateTime.fromISO(dateFin!).startOf('day'),
       })
       setAlerte(AlerteParam.qualificationSNP)
-      await router.push(returnTo)
+      router.push(returnTo)
     } catch (error) {
       setErreurQualification(
         error instanceof ApiError
@@ -257,50 +256,7 @@ function PageQualification({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  QualificationProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-  if (user.structure !== StructureConseiller.MILO) {
-    return { notFound: true }
-  }
-
-  const { getAction, getSituationsNonProfessionnelles } = await import(
-    'services/actions.service'
-  )
-  const [actionContent, situationsNonProfessionnelles] = await Promise.all([
-    getAction(context.query.action_id as string, accessToken),
-    getSituationsNonProfessionnelles(accessToken),
-  ])
-
-  if (!actionContent) return { notFound: true }
-  const { action, jeune } = actionContent
-  if (action.status !== StatutAction.Terminee) return { notFound: true }
-  if (action.qualification) return { notFound: true }
-
-  return {
-    props: {
-      action,
-      situationsNonProfessionnelles,
-      pageTitle: 'Actions jeune - Qualifier action',
-      pageHeader: 'Créer une situation non professionnelle',
-      returnTo: `/mes-jeunes/${jeune.id}/actions/${action.id}`,
-      withoutChat: true,
-    },
-  }
-}
-
 export default withTransaction(
-  PageQualification.name,
+  QualificationPage.name,
   'page'
-)(PageQualification)
+)(QualificationPage)

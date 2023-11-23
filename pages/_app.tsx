@@ -1,8 +1,8 @@
 // eslint import/order: 0
-import localFont from '@next/font/local'
 import type { NextWebVitalsMetric } from 'next/app'
 import { AppProps as NextAppProps } from 'next/app'
 import dynamic from 'next/dynamic'
+import localFont from 'next/font/local'
 import React, { useEffect } from 'react'
 
 // /!\ Garder les imports du CSS au début

@@ -1,44 +1,18 @@
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import mapRoutesToLabels from 'utils/route-labels'
 
 type FilArianeProps = {
-  currentPath: string
+  path: string
 }
 
-export default function FilAriane({ currentPath }: FilArianeProps) {
-  const [ariane, setAriane] = useState<Array<{ label: string; href: string }>>(
-    []
-  )
+export default function FilAriane({ path }: FilArianeProps) {
+  const ariane = creationFilAriane(path)
 
-  function creationFilAriane(path: string) {
-    const liensFilAriane: { label: string; href: string }[] = []
-    const pathWithoutQuery = path.split('?')[0]
-    const splittedPath = pathWithoutQuery.split('/').slice(1)
-    let rebuiltPath = ''
-
-    const regExps: RegExp[] = Array.from(mapRoutesToLabels.keys())
-    splittedPath.forEach((fragmentPath) => {
-      rebuiltPath += `/${fragmentPath}`
-
-      const route = regExps.find((regex) => regex.test(rebuiltPath))
-      if (route) {
-        liensFilAriane.push({
-          label: mapRoutesToLabels.get(route) ?? fragmentPath,
-          href: rebuiltPath,
-        })
-      }
-    })
-
-    return liensFilAriane.length > 1 ? liensFilAriane : []
+  if (!ariane.length) {
+    return null
   }
-
-  useEffect(() => {
-    const filAriane = creationFilAriane(currentPath)
-    setAriane(filAriane)
-  }, [currentPath])
 
   return (
     <nav role='navigation' aria-label="Fil d'ariane">
@@ -75,4 +49,26 @@ export default function FilAriane({ currentPath }: FilArianeProps) {
       </ol>
     </nav>
   )
+}
+
+function creationFilAriane(path: string) {
+  const liensFilAriane: { label: string; href: string }[] = []
+  const pathWithoutQuery = path.split('?')[0]
+  const splittedPath = pathWithoutQuery.split('/').slice(1)
+  let rebuiltPath = ''
+
+  const regExps: RegExp[] = Array.from(mapRoutesToLabels.keys())
+  splittedPath.forEach((fragmentPath) => {
+    rebuiltPath += `/${fragmentPath}`
+
+    const route = regExps.find((regex) => regex.test(rebuiltPath))
+    if (route) {
+      liensFilAriane.push({
+        label: mapRoutesToLabels.get(route) ?? fragmentPath,
+        href: rebuiltPath,
+      })
+    }
+  })
+
+  return liensFilAriane.length > 1 ? liensFilAriane : []
 }

@@ -6,10 +6,10 @@ import LoginPage from 'app/(connexion)/login/LoginPage'
 import Footer from 'components/layouts/Footer'
 import { getSessionServerSide } from 'utils/auth/auth'
 
-type LoginSearchParams = {
-  source?: string
-  redirectUrl?: string
-}
+type LoginSearchParams = Partial<{
+  source: string
+  redirectUrl: string
+}>
 
 export const metadata: Metadata = { title: 'Connexion' }
 

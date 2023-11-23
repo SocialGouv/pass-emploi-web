@@ -749,8 +749,8 @@ export function EditionRdvForm({
                       Boolean(nombreMaxParticipants.error)
                         ? 'max-participants--error'
                         : nbMaxParticipantsDepasse
-                        ? 'nombre-participants--error'
-                        : undefined
+                          ? 'nombre-participants--error'
+                          : undefined
                     }
                   />
                 </>
@@ -782,8 +782,8 @@ export function EditionRdvForm({
               Boolean(nombreMaxParticipants.error)
                 ? 'select-beneficiaires--error'
                 : nbMaxParticipantsDepasse
-                ? 'nombre-participants--error'
-                : undefined
+                  ? 'nombre-participants--error'
+                  : undefined
             }
           />
         </Etape>

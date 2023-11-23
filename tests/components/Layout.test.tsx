@@ -77,7 +77,7 @@ describe('<Layout />', () => {
     })
     ;(signIn as jest.Mock).mockResolvedValue({})
     ;(observeConseillerChats as jest.Mock).mockImplementation(
-      (jeune, _cle, fn) => {
+      (_jeune, _cle, fn) => {
         updateChatsRef = fn
         updateChatsRef(jeunesChats)
         return Promise.resolve(() => {})
