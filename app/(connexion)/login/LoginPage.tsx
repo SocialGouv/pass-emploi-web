@@ -70,12 +70,8 @@ function LoginPage({
   }, [])
 
   return (
-    <div className='bg-primary_lighten w-full grow relative'>
+    <main role='main' className='bg-primary_lighten w-full grow relative'>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-        <h1 className='text-m-bold text-primary_darken text-center mb-[24px]'>
-          Connectez-vous à l&apos;espace conseiller
-        </h1>
-
         <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-l drop-shadow-lg'>
           <h2>
             <span className='sr-only'>Contrat d’engagement jeune</span>
@@ -147,7 +143,7 @@ function LoginPage({
       )}
 
       <div id='modal-root' />
-    </div>
+    </main>
   )
 }
 

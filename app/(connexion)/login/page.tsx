@@ -23,6 +23,12 @@ export default async function Login({
 
   return (
     <div className='flex flex-col justify-center h-screen'>
+      <header role='banner' className='bg-primary_lighten'>
+        <h1 className='text-m-bold text-primary_darken text-center mt-[48px] mb-[24px]'>
+          Connectez-vous à l&apos;espace conseiller
+        </h1>
+      </header>
+
       <LoginPage
         ssoPoleEmploiBRSAEstActif={
           process.env.NEXT_PUBLIC_ENABLE_PE_BRSA_SSO === 'true'
@@ -30,6 +36,7 @@ export default async function Login({
         ssoPassEmploiEstActif={process.env.ENABLE_PASS_EMPLOI_SSO === 'true'}
         isFromEmail={isFromEmail}
       />
+
       <Footer />
     </div>
   )

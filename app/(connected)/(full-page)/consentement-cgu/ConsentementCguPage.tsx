@@ -59,34 +59,35 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
   return (
     <>
       <HeaderCGU conseiller={conseiller} />
+      <main role='main'>
+        <Suspense fallback={<SpinningLoader />}>
+          {estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerBRSA />}
+          {!estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerCEJ />}
+        </Suspense>
 
-      <Suspense fallback={<SpinningLoader />}>
-        {estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerBRSA />}
-        {!estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerCEJ />}
-      </Suspense>
-
-      <form onSubmit={validerLesCGU} className='flex flex-col mt-10'>
-        <div className='mb-10'>
-          {aDonneSonConsentement.error && (
-            <InputError id='consentement--error' className='mt-2'>
-              {aDonneSonConsentement.error}
-            </InputError>
-          )}
-          {showErrorValidation && (
-            <FailureAlert label="Une erreur s'est produite, veuillez réessayer ultérieurement" />
-          )}
-          <Checkbox
-            id='checkbox-consentement-cgu'
-            label='En cochant cette case, je déclare avoir pris connaissance et accepter les conditions générales d’utilisation de l’application.'
-            checked={aDonneSonConsentement.value}
-            value='donneConsentementCGU'
-            onChange={mettreAJourConsentement}
-          />
-        </div>
-        <Button type='submit' className='w-[100px] self-center'>
-          Valider
-        </Button>
-      </form>
+        <form onSubmit={validerLesCGU} className='flex flex-col mt-10'>
+          <div className='mb-10'>
+            {aDonneSonConsentement.error && (
+              <InputError id='consentement--error' className='mt-2'>
+                {aDonneSonConsentement.error}
+              </InputError>
+            )}
+            {showErrorValidation && (
+              <FailureAlert label="Une erreur s'est produite, veuillez réessayer ultérieurement" />
+            )}
+            <Checkbox
+              id='checkbox-consentement-cgu'
+              label='En cochant cette case, je déclare avoir pris connaissance et accepter les conditions générales d’utilisation de l’application.'
+              checked={aDonneSonConsentement.value}
+              value='donneConsentementCGU'
+              onChange={mettreAJourConsentement}
+            />
+          </div>
+          <Button type='submit' className='w-[100px] self-center'>
+            Valider
+          </Button>
+        </form>
+      </main>
     </>
   )
 }
