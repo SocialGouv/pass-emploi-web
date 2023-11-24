@@ -23,7 +23,7 @@ export default function RecapitulatifErreursFormulaire({
       className='text-warning bg-warning_lighten p-6 rounded-base mb-8'
       id='recapitulatif-erreurs-formulaire'
     >
-      <div className='flex items-center mb-8'>
+      <div className='flex items-center mb-4'>
         <FailureIcon
           aria-hidden={true}
           focusable={false}
@@ -31,17 +31,19 @@ export default function RecapitulatifErreursFormulaire({
         />
         <p className='text-base-bold grow'>{`Le formulaire contient ${erreurs.length} erreur(s).`}</p>
       </div>
-      {erreurs.map(({ label, ancre, titreChamp }) => {
-        return (
-          <p key={titreChamp} className='mb-2'>
-            {label}{' '}
-            <a href={ancre} className='underline'>
-              Remplir <span className='sr-only'>le champ {titreChamp} </span>
-              <span aria-hidden={true}>&gt;</span>
-            </a>
-          </p>
-        )
-      })}
+      <ul className='list-disc ml-6'>
+        {erreurs.map(({ label, ancre, titreChamp }) => {
+          return (
+            <li key={titreChamp} className='mb-2'>
+              {label}{' '}
+              <a href={ancre} className='underline'>
+                Remplir <span className='sr-only'>le champ {titreChamp} </span>
+                <span aria-hidden={true}>&gt;</span>
+              </a>
+            </li>
+          )
+        })}
+      </ul>
     </div>
   )
 }
