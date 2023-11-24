@@ -9,10 +9,6 @@ import React, { FormEvent, useState } from 'react'
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
-import {
-  PageHeaderPortal,
-  PageRetourPortal,
-} from 'components/PageNavigationPortals'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -52,7 +48,7 @@ function EnvoiMessageGroupePage({
   listesDiffusion,
   returnTo,
 }: EnvoiMessageGroupeProps) {
-  const [chatCredentials] = useChatCredentials()
+  const chatCredentials = useChatCredentials()
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
@@ -254,9 +250,6 @@ function EnvoiMessageGroupePage({
 
   return (
     <>
-      <PageRetourPortal lien={returnTo} />
-      <PageHeaderPortal header='Message multi-destinataires' />
-
       {erreurEnvoi && (
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}

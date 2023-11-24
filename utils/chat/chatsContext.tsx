@@ -11,13 +11,8 @@ import React, {
 } from 'react'
 
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
-import { ChatCredentials } from 'interfaces/message'
-import {
-  getChatCredentials,
-  observeConseillerChats,
-  signIn,
-} from 'services/messages.service'
-import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
+import { observeConseillerChats } from 'services/messages.service'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -28,12 +23,12 @@ const ChatsContext = createContext<JeuneChat[] | undefined>(undefined)
 export function ChatsProvider({ children }: { children: ReactNode }) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
+  const chatCredentials = useChatCredentials()
   const pathname = usePathname()
 
   const [titleBackup, setTitleBackup] = useState<string | undefined>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
-  const [chatCredentials, setChatCredentials] = useState<ChatCredentials>()
   const [chats, setChats] = useState<JeuneChat[]>()
   const [hasMessageNonLu, setHasMessageNonLu] = useState<boolean>(false)
 
@@ -42,16 +37,6 @@ export function ChatsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setAudio(new Audio(CHEMIN_DU_SON))
   }, [])
-
-  useEffect(() => {
-    if (!chatCredentials) {
-      getChatCredentials()
-        .then((credentials) =>
-          signIn(credentials.token).then(() => credentials)
-        )
-        .then(setChatCredentials)
-    }
-  }, [chatCredentials])
 
   useEffect(() => {
     if (!chatCredentials || !audio || !portefeuille) return
@@ -109,11 +94,7 @@ export function ChatsProvider({ children }: { children: ReactNode }) {
     }
   }, [hasMessageNonLu, titleBackup])
 
-  return (
-    <ChatCredentialsProvider credentials={chatCredentials}>
-      <ChatsContext.Provider value={chats}>{children}</ChatsContext.Provider>
-    </ChatCredentialsProvider>
-  )
+  return <ChatsContext.Provider value={chats}>{children}</ChatsContext.Provider>
 }
 
 export function useChats(): JeuneChat[] | undefined {

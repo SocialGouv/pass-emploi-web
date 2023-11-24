@@ -1,7 +1,12 @@
 import { Metadata } from 'next'
 import { headers } from 'next/headers'
+import React from 'react'
 
 import EnvoiMessageGroupePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
+import {
+  PageHeaderPortal,
+  PageRetourPortal,
+} from 'components/PageNavigationPortals'
 import { getListesDeDiffusionServerSide } from 'services/listes-de-diffusion.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import redirectedFromHome from 'utils/redirectedFromHome'
@@ -20,9 +25,14 @@ export default async function EnvoiMessageGroupe() {
     referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
 
   return (
-    <EnvoiMessageGroupePage
-      listesDiffusion={listesDeDiffusion}
-      returnTo={previousUrl}
-    />
+    <>
+      <PageRetourPortal lien={previousUrl} />
+      <PageHeaderPortal header='Message multi-destinataires' />
+
+      <EnvoiMessageGroupePage
+        listesDiffusion={listesDeDiffusion}
+        returnTo={previousUrl}
+      />
+    </>
   )
 }

@@ -1,3 +1,5 @@
+'use client'
+
 import { DateTime } from 'luxon'
 import React, {
   FormEvent,
@@ -41,7 +43,7 @@ export default function Conversation({
   conseillers,
   onBack,
 }: ConversationProps) {
-  const [chatCredentials] = useChatCredentials()
+  const chatCredentials = useChatCredentials()
   const [conseiller] = useConseiller()
 
   const [newMessage, setNewMessage] = useState('')
@@ -117,7 +119,10 @@ export default function Conversation({
     setNombrePagesChargees(pageSuivante)
     const previousFirstDisplayedMessage =
       conteneurMessagesRef.current!.querySelector('#' + idFirstDisplayedMessage)
-    previousFirstDisplayedMessage!.scrollIntoView()
+    previousFirstDisplayedMessage!.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+    })
   }
 
   const observerMessages = useCallback(
@@ -208,7 +213,7 @@ export default function Conversation({
       const dernierJour = conteneurMessagesRef.current!.lastElementChild
       const lastMessage = dernierJour!.querySelector('li:last-child')
 
-      lastMessage!.scrollIntoView()
+      lastMessage!.scrollIntoView({ block: 'nearest', inline: 'nearest' })
     }
   }, [messagesByDay, nombrePagesChargees])
 
@@ -229,7 +234,7 @@ export default function Conversation({
   }, [jeuneChat.chatId])
 
   return (
-    <div className='h-full flex flex-col bg-grey_100 overflow-auto'>
+    <div className='h-full flex flex-col min-h-0 bg-grey_100 overflow-auto'>
       <HeaderChat
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
@@ -248,9 +253,9 @@ export default function Conversation({
       />
 
       <div
-        className='p-4 grow overflow-y-auto short:hidden'
+        className='p-4 h-full grow overflow-y-auto short:hidden'
         aria-live='polite'
-        aria-busy={!messagesByDay}
+        aria-busy={!messagesByDay || loadingMoreMessages}
       >
         {!messagesByDay && <SpinningLoader />}
 
@@ -261,6 +266,7 @@ export default function Conversation({
                 Aucun message plus ancien
               </span>
             )}
+
             {!hasNoMoreMessages && (
               <Button
                 onClick={chargerPlusDeMessages}
@@ -286,29 +292,33 @@ export default function Conversation({
               />
             )}
 
-            <ul ref={conteneurMessagesRef}>
-              {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
-                <li key={messagesOfADay.date.toMillis()} className='mb-5'>
-                  <div className='text-base-regular text-center mb-3'>
-                    <span>{displayDate(messagesOfADay.date)}</span>
-                  </div>
+            {messagesByDay.length > 0 && (
+              <ul ref={conteneurMessagesRef}>
+                {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
+                  <li key={messagesOfADay.date.toMillis()} className='mb-5'>
+                    <div className='text-base-regular text-center mb-3'>
+                      <span>{displayDate(messagesOfADay.date)}</span>
+                    </div>
 
-                  <ul>
-                    {messagesOfADay.messages.map((message: Message) => (
-                      <DisplayMessage
-                        key={message.id}
-                        message={message}
-                        conseillerNomComplet={getConseillerNomComplet(message)}
-                        lastSeenByJeune={lastSeenByJeune}
-                        isConseillerCourant={
-                          message.conseillerId === conseiller.id
-                        }
-                      />
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
+                    <ul>
+                      {messagesOfADay.messages.map((message: Message) => (
+                        <DisplayMessage
+                          key={message.id}
+                          message={message}
+                          conseillerNomComplet={getConseillerNomComplet(
+                            message
+                          )}
+                          lastSeenByJeune={lastSeenByJeune}
+                          isConseillerCourant={
+                            message.conseillerId === conseiller.id
+                          }
+                        />
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            )}
           </>
         )}
       </div>

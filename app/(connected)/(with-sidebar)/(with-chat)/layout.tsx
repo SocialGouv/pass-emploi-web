@@ -4,6 +4,7 @@ import React, { ReactNode, useState } from 'react'
 
 import layout from 'app/(connected)/(with-sidebar)/(with-chat)/layout.module.css'
 import PageLayout from 'app/(connected)/(with-sidebar)/PageLayout'
+import sidebarLayout from 'app/(connected)/(with-sidebar)/sidebar.module.css'
 import ChatContainer from 'components/chat/ChatContainer'
 import ChatNav from 'components/chat/ChatNav'
 import Sidebar from 'components/Sidebar'
@@ -15,7 +16,7 @@ export default function LayoutWithChat({ children }: { children: ReactNode }) {
 
   return (
     <div className='flex h-[100vh] w-[100vw]'>
-      <div className={layout.sidebar}>
+      <div className={sidebarLayout.sidebar}>
         <Sidebar />
       </div>
 

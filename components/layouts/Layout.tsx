@@ -55,8 +55,6 @@ export default function Layout({ children }: LayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
 
-  const pageCouranteEstMessagerie = router.pathname === '/messagerie'
-
   const withChat = !withoutChat
 
   useEffect(() => {
@@ -119,75 +117,44 @@ export default function Layout({ children }: LayoutProps) {
       {!conseiller && <SpinningLoader />}
 
       {conseiller && portefeuille && (
-        <>
-          {!pageCouranteEstMessagerie && (
-            <div
-              ref={containerRef}
-              className={`${styles.container} ${
-                withChat ? styles.container_with_chat : ''
+        <div
+          ref={containerRef}
+          className={`${styles.container} ${
+            withChat ? styles.container_with_chat : ''
+          }`}
+        >
+          <SidebarLayout />
+
+          <div
+            className={`${styles.page} ${
+              withChat ? styles.page_when_chat : ''
+            }`}
+          >
+            <DeprecatedHeader
+              currentPath={router.asPath}
+              returnTo={returnTo}
+              pageHeader={pageHeader ?? pageTitle}
+            />
+
+            <main
+              role='main'
+              id='contenu'
+              className={`${styles.content} ${
+                withChat ? styles.content_when_chat : ''
               }`}
             >
-              <SidebarLayout />
+              <AlerteDisplayer />
+              {children}
+            </main>
 
-              <div
-                className={`${styles.page} ${
-                  withChat ? styles.page_when_chat : ''
-                }`}
-              >
-                <DeprecatedHeader
-                  currentPath={router.asPath}
-                  returnTo={returnTo}
-                  pageHeader={pageHeader ?? pageTitle}
-                />
+            <Footer conseiller={conseiller} />
+          </div>
 
-                <main
-                  role='main'
-                  id='contenu'
-                  className={`${styles.content} ${
-                    withChat ? styles.content_when_chat : ''
-                  }`}
-                >
-                  <AlerteDisplayer />
-                  {children}
-                </main>
-
-                <Footer conseiller={conseiller} />
-              </div>
-
-              <ChatManager
-                displayChat={withChat}
-                setHasMessageNonLu={setHasMessageNonLu}
-              />
-            </div>
-          )}
-
-          {pageCouranteEstMessagerie && (
-            <div
-              ref={containerRef}
-              className={`${styles.container} ${styles.messagerie_full_screen}`}
-            >
-              <SidebarLayout />
-
-              <ChatManager
-                displayChat={withChat}
-                setHasMessageNonLu={setHasMessageNonLu}
-                pageEstMessagerie={true}
-              />
-
-              <div className={styles.page}>
-                <main
-                  id='contenu'
-                  role='main'
-                  className={`${styles.content} ${styles.messagerie_full_screen}`}
-                >
-                  <AlerteDisplayer />
-                  {children}
-                </main>
-                <Footer conseiller={conseiller} />
-              </div>
-            </div>
-          )}
-        </>
+          <ChatManager
+            displayChat={withChat}
+            setHasMessageNonLu={setHasMessageNonLu}
+          />
+        </div>
       )}
 
       <div id={MODAL_ROOT_ID} />

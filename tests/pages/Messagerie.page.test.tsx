@@ -7,7 +7,7 @@ import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
-import Messagerie from 'pages/messagerie'
+import Messagerie from 'app/(connected)/(with-sidebar)/messagerie/messagerie'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import {

@@ -21,14 +21,14 @@ export default function PageLayout({
     <div className={layout.page}>
       <Header />
 
-      <div
+      <main
         className={`${layout.content} ${
           fullWidth ? layout.content_fullWidth : layout.content_centered
         }`}
       >
         <AlerteDisplayer />
         {children}
-      </div>
+      </main>
 
       <Footer conseiller={conseiller} />
     </div>

@@ -9,6 +9,7 @@ import { extractBaseJeune } from 'fixtures/jeune'
 import { Conseiller } from 'interfaces/conseiller'
 import { compareJeunesByNom, JeuneFromListe } from 'interfaces/jeune'
 import { AlerteProvider } from 'utils/alerteContext'
+import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
 import { CurrentJeuneProvider } from 'utils/chat/currentJeuneContext'
 import { ListeDeDiffusionSelectionneeProvider } from 'utils/chat/listeDeDiffusionSelectionneeContext'
@@ -40,23 +41,26 @@ export default function AppContextProviders({
   return (
     <ConseillerProvider conseiller={conseiller}>
       <PortefeuilleProvider portefeuille={portefeuilleTrie}>
-        <ChatsProvider>
-          <CurrentJeuneProvider>
-            <ShowRubriqueListeDeDiffusionProvider>
-              <ListeDeDiffusionSelectionneeProvider>
-                <AlerteProvider>
-                  <ThemeProvider
-                    defaultTheme={'cej'}
-                    themes={['cej', 'brsa']}
-                    forcedTheme={theme}
-                  >
-                    {children}
-      <div id={MODAL_ROOT_ID} />            </ThemeProvider>
-                </AlerteProvider>
-              </ListeDeDiffusionSelectionneeProvider>
-            </ShowRubriqueListeDeDiffusionProvider>
-          </CurrentJeuneProvider>
-        </ChatsProvider>
+        <ChatCredentialsProvider>
+          <ChatsProvider>
+            <CurrentJeuneProvider>
+              <ShowRubriqueListeDeDiffusionProvider>
+                <ListeDeDiffusionSelectionneeProvider>
+                  <AlerteProvider>
+                    <ThemeProvider
+                      defaultTheme={'cej'}
+                      themes={['cej', 'brsa']}
+                      forcedTheme={theme}
+                    >
+                      {children}
+                      <div id={MODAL_ROOT_ID} />
+                    </ThemeProvider>
+                  </AlerteProvider>
+                </ListeDeDiffusionSelectionneeProvider>
+              </ShowRubriqueListeDeDiffusionProvider>
+            </CurrentJeuneProvider>
+          </ChatsProvider>
+        </ChatCredentialsProvider>
       </PortefeuilleProvider>
     </ConseillerProvider>
   )

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 
-import layout from 'app/(connected)/(with-sidebar)/(without-chat)/layout.module.css'
 import PageLayout from 'app/(connected)/(with-sidebar)/PageLayout'
+import sidebarLayout from 'app/(connected)/(with-sidebar)/sidebar.module.css'
 import Sidebar from 'components/Sidebar'
 
 export default async function LayoutWithoutChat({
@@ -11,7 +11,7 @@ export default async function LayoutWithoutChat({
 }) {
   return (
     <div className='flex h-[100vh] w-[100vw]'>
-      <div className={layout.sidebar}>
+      <div className={sidebarLayout.sidebar}>
         <Sidebar />
       </div>
 

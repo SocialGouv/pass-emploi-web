@@ -28,7 +28,7 @@ export default function ChatManager({
 }: ChatManagerProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const [chatCredentials, setChatCredentials] = useChatCredentials()
+  const chatCredentials = useChatCredentials()
 
   const [chats, setChats] = useState<JeuneChat[]>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
@@ -53,16 +53,6 @@ export default function ChatManager({
     // https://github.com/vercel/next.js/discussions/17963
     setAudio(new Audio(CHEMIN_DU_SON))
   }, [])
-
-  useEffect(() => {
-    if (!chatCredentials) {
-      getChatCredentials()
-        .then((credentials) =>
-          signIn(credentials.token).then(() => credentials)
-        )
-        .then(setChatCredentials)
-    }
-  }, [chatCredentials])
 
   useEffect(() => {
     if (!chatCredentials || !audio || !portefeuille) return

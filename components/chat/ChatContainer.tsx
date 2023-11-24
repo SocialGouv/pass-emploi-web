@@ -1,3 +1,5 @@
+'use client'
+
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
