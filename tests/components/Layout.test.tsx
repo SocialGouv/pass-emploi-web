@@ -105,6 +105,13 @@ describe('<Layout />', () => {
       })
     })
 
+    it("affiche le lien d'évitement", () => {
+      // Then
+      expect(
+        screen.getByRole('link', { name: 'Aller au contenu' })
+      ).toHaveAttribute('href', '#contenu')
+    })
+
     it('affiche le titre de la page', () => {
       // Then
       expect(
@@ -117,7 +124,9 @@ describe('<Layout />', () => {
     })
 
     it('contient la région (landmark) main', () => {
-      expect(screen.getByRole('main')).toBeInTheDocument()
+      expect(
+        screen.getByRole('main').toHaveAttribute('id', 'contenu')
+      ).toBeInTheDocument()
     })
 
     it("affiche le fil d'ariane", () => {
