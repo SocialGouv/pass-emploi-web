@@ -17,6 +17,7 @@ export function LienPieceJointe({ id, nom }: { id: string; nom: string }) {
         title={`Télécharger la pièce jointe ${nom}`}
         className='font-bold break-all'
       >
+        <span className='sr-only'>Télécharger la pièce jointe </span>
         {nom}
       </a>
     </div>

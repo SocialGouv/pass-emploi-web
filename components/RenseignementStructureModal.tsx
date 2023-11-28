@@ -55,6 +55,7 @@ export default function RenseignementStructureModal({
           href={process.env.NEXT_PUBLIC_IMILO_URL as string}
           target='_blank'
           rel='noreferrer noopener'
+          aria-label='Accéder à i-milo (nouvelle fenêtre)'
           className={`${buttonsStyle} ${styles.button} ${styles.buttonPrimary} ml-4`}
           onClick={onAccederImilo}
         >

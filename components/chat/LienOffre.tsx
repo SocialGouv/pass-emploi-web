@@ -34,6 +34,7 @@ export default function LienOffre({
         <Link
           href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
           className='underline text-[inherit]'
+          aria-label={`Voir l’offre ${infoOffre.titre}`}
         >
           Voir l’offre <span className='sr-only'>{infoOffre.titre}</span>
         </Link>

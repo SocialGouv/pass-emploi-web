@@ -400,7 +400,7 @@ describe('<Conversation />', () => {
       // Then
       expect(
         within(message).getByRole('link', {
-          name: 'Voir l’événement',
+          name: 'Voir l’événement Un atelier',
         })
       ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=id-evenement')
     })
@@ -450,7 +450,7 @@ describe('<Conversation />', () => {
       // Then
       expect(
         within(message).getByRole('link', {
-          name: 'Une session milo (nouvelle fenêtre)',
+          name: /Voir les détails de la session/,
         })
       ).toHaveAttribute('href', '/agenda/sessions/id-session-milo')
     })

@@ -27,7 +27,8 @@ export default function LienEvenementEmploi({
           className='underline text-[inherit] flex items-center'
           aria-label={`${infoEvenementEmploi.titre} (nouvelle fenêtre)`}
         >
-          Voir l’événement emploi
+          Voir l’événement emploi{' '}
+          <span className='sr-only'>(nouvelle fenêtre)</span>
           <IconComponent
             name={IconName.OpenInNew}
             className='w-4 h-4 ml-1 fill-[currentColor]'
