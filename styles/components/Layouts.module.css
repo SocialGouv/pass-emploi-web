@@ -73,17 +73,6 @@
   background-color: theme('colors.primary_lighten');
 }
 
-.skipLink {
-  height: 0;
-  overflow: hidden;
-}
-
-.skipLink:focus-within {
-  tab-index: 0;
-  height: auto;
-  background-color: theme('colors.blanc');
-}
-
 
 @media screen and (min-width: theme('screens.layout_s')) {
   .container {

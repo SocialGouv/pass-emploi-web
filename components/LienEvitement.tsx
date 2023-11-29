@@ -16,7 +16,7 @@ export default function LienEvitement() {
   return (
     <>
       <div ref={refContainer} tabIndex={-1} />
-      <div className={styles.skipLink}>
+      <div className='h-0 overflow-hidden focus-within:h-auto focus-within:bg-blanc '>
         <a
           href='#contenu'
           title='Aller au contenu'
