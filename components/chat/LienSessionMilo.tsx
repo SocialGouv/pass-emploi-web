@@ -23,9 +23,11 @@ export default function LienSessionMilo({
           target='_blank'
           rel='noreferrer noopener'
           className='underline text-[inherit] flex items-center'
-          aria-label={`${infoSessionMilo.titre} (nouvelle fenêtre)`}
         >
-          Voir les détails de la session
+          Voir les détails de la session{' '}
+          <span className='sr-only'>
+            {infoSessionMilo.titre} (nouvelle fenêtre)
+          </span>
           <IconComponent
             name={IconName.OpenInNew}
             className='w-4 h-4 ml-1 fill-[currentColor]'

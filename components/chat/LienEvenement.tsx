@@ -26,7 +26,8 @@ export default function LienEvenement({
           href={`/mes-jeunes/edition-rdv?idRdv=${infoEvenement.id}`}
           className='underline text-[inherit]'
         >
-          Voir l’événement
+          Voir l’événement{' '}
+          <span className='sr-only'>{infoEvenement.titre}</span>
         </Link>
       </div>
     </div>

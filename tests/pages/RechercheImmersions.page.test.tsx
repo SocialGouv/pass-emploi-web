@@ -411,7 +411,8 @@ describe('Page Recherche Immersions', () => {
         ).toBeInTheDocument()
         expect(
           within(immersionCard).getByRole('link', {
-            name: 'Détail de l’offre chez ' + immersion.nomEtablissement,
+            name:
+              'Voir le détail de l’offre chez ' + immersion.nomEtablissement,
           })
         ).toHaveAttribute('href', '/offres/immersion/' + immersion.id)
       })

@@ -22,7 +22,6 @@ import {
 import { getCommunesEtDepartements } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { searchServicesCiviques } from 'services/services-civiques.service'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/offres-emploi.service')
@@ -550,7 +549,7 @@ describe('Page Recherche Alternances', () => {
           ).toBeInTheDocument()
           expect(
             within(offreCard).getByRole('link', {
-              name: 'Détail de l’offre ' + alternance.titre,
+              name: 'Voir le détail de l’offre ' + alternance.titre,
             })
           ).toHaveAttribute('href', '/offres/emploi/' + alternance.id)
         })

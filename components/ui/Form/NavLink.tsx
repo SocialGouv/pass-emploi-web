@@ -89,11 +89,11 @@ export default function NavLink({
           href={href}
           target='_blank'
           rel='noreferrer noopener'
-          aria-label={`${label} (nouvel onglet)`}
+          aria-label={`${label} (nouvelle fenêtre)`}
           className={linkStyle + ' cursor-pointer'}
           onClick={onClick}
         >
-          {linkContent}
+          {linkContent} <span className='sr-only'>(nouvelle fenêtre)</span>
           <IconComponent
             name={IconName.OpenInNew}
             aria-hidden={true}
