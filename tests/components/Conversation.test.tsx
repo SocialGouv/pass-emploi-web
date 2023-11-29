@@ -425,7 +425,7 @@ describe('<Conversation />', () => {
       // Then
       expect(
         within(message).getByRole('link', {
-          name: 'Un événement emploi (nouvelle fenêtre)',
+          name: 'Voir l’événement emploi Un événement emploi (nouvelle fenêtre)',
         })
       ).toHaveAttribute('href', 'https://www.lala.com')
     })

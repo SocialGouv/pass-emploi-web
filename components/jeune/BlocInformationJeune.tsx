@@ -146,7 +146,6 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
           className='underline text-primary hover:text-primary_darken flex items-center'
           href={props.href}
           target='_blank'
-          aria-label='Dossier jeune i-milo (nouvelle fenêtre)'
           onClick={props.onClick}
           rel='noopener noreferrer'
         >
