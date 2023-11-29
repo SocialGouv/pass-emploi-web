@@ -124,9 +124,7 @@ describe('<Layout />', () => {
     })
 
     it('contient la région (landmark) main', () => {
-      expect(
-        screen.getByRole('main').toHaveAttribute('id', 'contenu')
-      ).toBeInTheDocument()
+      expect(screen.getByRole('main')).toHaveAttribute('id', 'contenu')
     })
 
     it("affiche le fil d'ariane", () => {

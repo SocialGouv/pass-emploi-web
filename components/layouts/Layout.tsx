@@ -4,18 +4,9 @@
 
 import { apm } from '@elastic/apm-rum'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useTheme } from 'next-themes'
-import React, {
-  forwardRef,
-  ReactElement,
-  Ref,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
 import { MODAL_ROOT_ID } from 'components/Modal'
@@ -31,6 +22,9 @@ import { ApiError } from 'utils/httpClient'
 import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleContext'
 
 const ChatManager = dynamic(import('components/layouts/ChatManager'), {
+  ssr: false,
+})
+const LienEvitement = dynamic(import('components/LienEvitement'), {
   ssr: false,
 })
 const SidebarLayout = dynamic(import('components/layouts/SidebarLayout'), {
@@ -62,29 +56,11 @@ export default function Layout({ children }: LayoutProps) {
     usePortefeuillePotentiellementPasRecupere()
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const mainRef = useRef<HTMLDivElement>(null)
-  const skipLinkRefContainer = useRef<HTMLSpanElement>(null)
-  const mainRefContainer = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
 
   const pageCouranteEstMessagerie = router.pathname === '/messagerie'
 
   const withChat = !withoutChat
-
-  function focusOnMain() {
-    const findFirstFocusableElement = (element) => {
-      const focusableElements = element.querySelectorAll(
-        'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"], [role="tablist"])'
-      )
-      return focusableElements[0]
-    }
-    if (mainRef.current) {
-      const firstFocusableElement = findFirstFocusableElement(mainRef.current)
-      if (firstFocusableElement) {
-        firstFocusableElement.focus()
-      }
-    }
-  }
 
   useEffect(() => {
     // https://dev.to/admitkard/mobile-issue-with-100vh-height-100-100vh-3-solutions-3nae
@@ -138,16 +114,10 @@ export default function Layout({ children }: LayoutProps) {
     }
   }, [conseiller, conseiller?.structure, setTheme])
 
-  useEffect(() => {
-    if (skipLinkRefContainer.current) {
-      skipLinkRefContainer.current.focus()
-    }
-  }, [skipLinkRefContainer, router.pathname])
-
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
-      <LienEvitement ref={skipLinkRefContainer} onClick={focusOnMain} />
+      <LienEvitement />
 
       {!conseiller && <SpinningLoader />}
 
@@ -163,7 +133,6 @@ export default function Layout({ children }: LayoutProps) {
               <SidebarLayout />
 
               <div
-                ref={mainRefContainer}
                 className={`${styles.page} ${
                   withChat ? styles.page_when_chat : ''
                 }`}
@@ -175,7 +144,6 @@ export default function Layout({ children }: LayoutProps) {
                 />
 
                 <main
-                  ref={mainRef}
                   role='main'
                   id='contenu'
                   className={`${styles.content} ${
@@ -209,9 +177,8 @@ export default function Layout({ children }: LayoutProps) {
                 pageEstMessagerie={true}
               />
 
-              <div ref={mainRefContainer} className={styles.page}>
+              <div className={styles.page}>
                 <main
-                  ref={mainRef}
                   id='contenu'
                   role='main'
                   className={`${styles.content} ${styles.messagerie_full_screen}`}
@@ -230,26 +197,3 @@ export default function Layout({ children }: LayoutProps) {
     </>
   )
 }
-
-const LienEvitement = forwardRef(
-  (props: { onClick: () => void }, forwardedRef: Ref<HTMLSpanElement>) => {
-    const { onClick } = props
-    const ref = useRef<HTMLSpanElement>(null)
-
-    useImperativeHandle(forwardedRef, () => ref.current as HTMLSpanElement)
-
-    return (
-      <span ref={ref} tabIndex={-1}>
-        <Link
-          href='#contenu'
-          onClick={onClick}
-          className='sr-only focus:not-sr-only focus:text-primary'
-        >
-          Aller au contenu
-        </Link>
-      </span>
-    )
-  }
-)
-
-LienEvitement.displayName = 'LienEvitement'
