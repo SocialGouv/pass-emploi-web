@@ -3,8 +3,8 @@ import { FormEvent, useEffect, useState } from 'react'
 
 import IndicationRechercheDossier from 'components/jeune/IndicationRechercheDossier'
 import Button from 'components/ui/Button/Button'
-import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 import Input from 'components/ui/Form/Input'
+import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 
 type FormulaireRechercheDossierProps = {
@@ -26,7 +26,9 @@ function FormulaireRechercheDossier({
 
   const validate = () => {
     if (numeroDossier === '') {
-      setMessageErreur('Veuillez renseigner un numéro de dossier')
+      setMessageErreur(
+        'Le champ est numéro de dossier est vide. Renseigner un numéro. exemple : 123456'
+      )
       return false
     }
     return true
@@ -58,17 +60,21 @@ function FormulaireRechercheDossier({
       <form method='POST' onSubmit={handleSearchSubmit}>
         <Label htmlFor='recherche-numero'>Numéro de dossier</Label>
         <div className='w-8/12'></div>
+
+        {messageErreur && (
+          <InputError id='recherche-numero--error' className='mb-2'>
+            {messageErreur}
+          </InputError>
+        )}
+
         <Input
           type='text'
           id='recherche-numero'
           defaultValue={numeroDossier}
           onChange={handleSearchInputChanges}
           invalid={Boolean(messageErreur)}
+          aria-describedby='recherche-numero--error'
         />
-
-        {messageErreur && (
-          <DeprecatedErrorMessage>{messageErreur}</DeprecatedErrorMessage>
-        )}
 
         <Button type='submit'>Valider le numéro</Button>
       </form>
