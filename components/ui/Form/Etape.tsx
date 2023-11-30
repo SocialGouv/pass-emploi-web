@@ -20,7 +20,7 @@ export function Etape(props: EtapeProps) {
           aria-label={`Étape ${props.numero}`}
           className='mr-2 w-8 h-8'
         />
-        <span className='sr-only'>{props.numero}</span> {props.titre}
+        <span className='sr-only'>Étape {props.numero}: </span> {props.titre}
       </legend>
       {props.children}
     </fieldset>
