@@ -20,7 +20,6 @@ import {
 import { getCommunesEtDepartements } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { searchServicesCiviques } from 'services/services-civiques.service'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/offres-emploi.service')
@@ -49,7 +48,7 @@ describe('Page Recherche Offres Emploi', () => {
   it('permet de definir des critères de recherche', () => {
     // Then
     const etape2 = screen.getByRole('group', {
-      name: 'Étape 2 Critères de recherche',
+      name: /Critères de recherche/,
     })
 
     expect(etape2).toBeInTheDocument()
@@ -85,7 +84,7 @@ describe('Page Recherche Offres Emploi', () => {
   it('affiche le champ de saisie de l’offre si l’utilisateur souhaite faire une recherche par ID', async () => {
     // Given
     const etape2 = screen.getByRole('group', {
-      name: 'Étape 2 Critères de recherche',
+      name: /Critères de recherche/,
     })
     const checkbox = screen.getByRole('checkbox', {
       name: 'Recherche avec un numéro d’offre Pôle emploi',
@@ -169,7 +168,7 @@ describe('Page Recherche Offres Emploi', () => {
     it('permet d’ajouter plus de filtre à notre recherche', async () => {
       // Then
       expect(() =>
-        screen.getByRole('group', { name: 'Étape 3 Plus de critères' })
+        screen.getByRole('group', { name: /Plus de critères/ })
       ).toThrow()
       expect(
         screen.getByRole('button', { name: 'Voir plus de critères' })
@@ -180,7 +179,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       // Then
       const etape3 = screen.getByRole('group', {
-        name: 'Étape 3 Plus de critères',
+        name: /Plus de critères/,
       })
       expect(etape3).toBeInTheDocument()
       expect(screen.getByText('Voir moins de critères')).toBeInTheDocument()
@@ -192,7 +191,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       // Then
       const etape3 = screen.getByRole('group', {
-        name: 'Étape 3 Plus de critères',
+        name: /Plus de critères/,
       })
       const typeContratGroup = within(etape3).getByRole('group', {
         name: 'Type de contrat',
@@ -217,7 +216,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       // Then
       const etape3 = screen.getByRole('group', {
-        name: 'Étape 3 Plus de critères',
+        name: /Plus de critères/,
       })
       const tempsTravailGroup = within(etape3).getByRole('group', {
         name: 'Temps de travail',
@@ -241,7 +240,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       // Then
       const etape3 = screen.getByRole('group', {
-        name: 'Étape 3 Plus de critères',
+        name: /Plus de critères/,
       })
       const experienceGroup = within(etape3).getByRole('group', {
         name: 'Expérience',
@@ -257,7 +256,7 @@ describe('Page Recherche Offres Emploi', () => {
       // When
       await userEvent.click(screen.getByText('Voir plus de critères'))
       const etape3 = screen.getByRole('group', {
-        name: 'Étape 3 Plus de critères',
+        name: /Plus de critères/,
       })
       expect(() =>
         within(etape3).getByRole('group', { name: 'Distance' })

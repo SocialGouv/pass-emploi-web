@@ -9,6 +9,7 @@ interface TagProps {
   className?: string
   iconName?: IconName
   iconLabel?: string
+  role?: string
 }
 
 function Tag({
@@ -18,6 +19,7 @@ function Tag({
   className,
   iconName,
   iconLabel,
+  role,
 }: TagProps) {
   return (
     <span
@@ -31,6 +33,7 @@ function Tag({
           aria-hidden={!iconLabel ? true : false}
           className='h-5 w-5 mr-1 fill-[currentColor]'
           aria-label={iconLabel}
+          role={role ?? ''}
           title={iconLabel ? iconLabel : ''}
         />
       )}
