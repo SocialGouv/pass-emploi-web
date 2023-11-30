@@ -73,6 +73,7 @@
   background-color: theme('colors.primary_lighten');
 }
 
+
 @media screen and (min-width: theme('screens.layout_s')) {
   .container {
     --sidebar-width: 10vw;

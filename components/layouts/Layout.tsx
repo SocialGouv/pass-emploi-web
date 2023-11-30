@@ -24,6 +24,9 @@ import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleCon
 const ChatManager = dynamic(import('components/layouts/ChatManager'), {
   ssr: false,
 })
+const LienEvitement = dynamic(import('components/LienEvitement'), {
+  ssr: false,
+})
 const SidebarLayout = dynamic(import('components/layouts/SidebarLayout'), {
   ssr: false,
 })
@@ -53,7 +56,6 @@ export default function Layout({ children }: LayoutProps) {
     usePortefeuillePotentiellementPasRecupere()
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const mainRef = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
 
   const pageCouranteEstMessagerie = router.pathname === '/messagerie'
@@ -74,10 +76,6 @@ export default function Layout({ children }: LayoutProps) {
     return () =>
       window.removeEventListener('resize', resizeContainerToInnerHeight, true)
   }, [])
-
-  useEffect(() => {
-    if (mainRef.current) mainRef.current.scrollTo(0, 0)
-  }, [router.asPath, mainRef])
 
   useEffect(() => {
     if (!conseiller) {
@@ -119,6 +117,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
+      <LienEvitement />
 
       {!conseiller && <SpinningLoader />}
 
@@ -134,7 +133,6 @@ export default function Layout({ children }: LayoutProps) {
               <SidebarLayout />
 
               <div
-                ref={mainRef}
                 className={`${styles.page} ${
                   withChat ? styles.page_when_chat : ''
                 }`}
@@ -147,6 +145,7 @@ export default function Layout({ children }: LayoutProps) {
 
                 <main
                   role='main'
+                  id='contenu'
                   className={`${styles.content} ${
                     withChat ? styles.content_when_chat : ''
                   }`}
@@ -178,8 +177,9 @@ export default function Layout({ children }: LayoutProps) {
                 pageEstMessagerie={true}
               />
 
-              <div ref={mainRef} className={styles.page}>
+              <div className={styles.page}>
                 <main
+                  id='contenu'
                   role='main'
                   className={`${styles.content} ${styles.messagerie_full_screen}`}
                 >
