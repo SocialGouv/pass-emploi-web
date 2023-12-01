@@ -63,6 +63,7 @@ export const uneListeDActions = (): Action[] => [
     qualification: {
       libelle: 'Non SNP',
       isSituationNonProfessionnelle: false,
+      estQualifiee: false,
     },
   },
 ]

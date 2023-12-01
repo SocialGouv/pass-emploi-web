@@ -34,16 +34,17 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     >
       <TD className='rounded-l-base'>
         <div className='flex items-center'>
-          {action.qualification?.isSituationNonProfessionnelle && (
-            <IconComponent
-              role='img'
-              focusable={false}
-              name={IconName.Suitcase}
-              aria-label='Qualifiée en Situation Non Professionnelle'
-              title='SNP'
-              className='w-4 h-4 fill-accent_2 mr-2'
-            />
-          )}
+          {action.qualification?.estQualifiee &&
+            action.qualification?.isSituationNonProfessionnelle && (
+              <IconComponent
+                role='img'
+                focusable={false}
+                name={IconName.Suitcase}
+                aria-label='Qualifiée en Situation Non Professionnelle'
+                title='SNP'
+                className='w-4 h-4 fill-accent_2 mr-2'
+              />
+            )}
           <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
             {action.content}
           </span>

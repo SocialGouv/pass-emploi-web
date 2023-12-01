@@ -92,6 +92,7 @@ describe('QualificationPage server side', () => {
             qualification: {
               libelle: 'Santé',
               isSituationNonProfessionnelle: true,
+              estQualifiee: true,
             },
           }),
           jeune: {

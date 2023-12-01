@@ -35,7 +35,7 @@ export default async function Qualification({
 
   const { action, jeune } = actionContent
   if (action.status !== StatutAction.Terminee) notFound()
-  if (action.qualification) notFound()
+  if (action.qualification?.estQualifiee) notFound()
 
   const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
   return (
