@@ -327,7 +327,7 @@ describe('Page Partage Offre', () => {
       it('contient une liste pour choisir un ou plusieurs jeune', () => {
         // Given
         const etape = screen.getByRole('group', {
-          name: 'Étape 1 Bénéficiaires',
+          name: 'Étape 1: Bénéficiaires',
         })
 
         // Then
@@ -350,7 +350,7 @@ describe('Page Partage Offre', () => {
       it('contient un champ de saisie pour accompagner l’offre d’un message', () => {
         // Given
         const etape = screen.getByRole('group', {
-          name: 'Étape 2 Écrivez votre message',
+          name: 'Étape 2: Écrivez votre message',
         })
 
         // Then

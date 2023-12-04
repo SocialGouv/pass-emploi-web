@@ -278,12 +278,14 @@ function Profil({ referentielAgences }: ProfilProps) {
               <QrcodeAppStoreBRSA
                 focusable='false'
                 aria-label='QR code à scanner pour télécharger l’application sur Google Play'
+                role='img'
               />
             )}
             {!estPoleEmploiBRSA(conseiller) && (
               <QrcodeAppStore
                 focusable='false'
                 aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
+                role='img'
               />
             )}
             <p className='text-s-bold'>App Store</p>
@@ -293,12 +295,14 @@ function Profil({ referentielAgences }: ProfilProps) {
               <QrcodePlayStoreBRSA
                 focusable='false'
                 aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
+                role='img'
               />
             )}
             {!estPoleEmploiBRSA(conseiller) && (
               <QrcodePlayStore
                 focusable='false'
                 aria-label='QR code à scanner pour télécharger l’application sur Google Play'
+                role='img'
               />
             )}
             <p className='text-s-bold'>Google Play</p>
