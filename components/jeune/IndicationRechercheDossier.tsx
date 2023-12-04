@@ -6,33 +6,21 @@ type IndicationRechercheDossierProps = {}
 
 function IndicationRechercheDossier({}: IndicationRechercheDossierProps) {
   return (
-    <ol className='inline-flex flex-wrap justify-between max-w-2xl bg-primary_lighten mb-6 p-3 rounded-base'>
-      <li className='text-s-regular' style={{ flex: '0 0 136px' }}>
-        <Indication1 focusable='false' aria-hidden='true' className='mb-2' />
-
-        <span className='w-full text-center block'>1.</span>
-        <span className='text-center block'>
-          Ouvrez le dossier du jeune dans i-milo
-        </span>
+    <ol className='inline-flex flex-wrap justify-between max-w-2xl bg-primary_lighten mb-6 p-3 rounded-base list-decimal list-inside marker:font-bold'>
+      <li className='text-s-regular text-center' style={{ flex: '0 0 136px' }}>
+        <Indication1 focusable='false' aria-hidden='true' className='my-2' />
+        Ouvrez le dossier du jeune dans i-milo
       </li>
 
-      <li className='text-s-regular' style={{ flex: '0 0 136px' }}>
-        <Indication2 focusable='false' aria-hidden='true' className='mb-2' />
-
-        <span className='w-full text-center block'>2.</span>
-        <span className='text-center block'>
-          Le numéro de dossier à saisir se situe dans l&apos;adresse du
-          navigateur
-        </span>
+      <li className='text-s-regular text-center' style={{ flex: '0 0 136px' }}>
+        <Indication2 focusable='false' aria-hidden='true' className='my-2' />
+        Le numéro de dossier à saisir se situe dans l’adresse du navigateur
       </li>
 
-      <li className='text-s-regular' style={{ flex: '0 0 260px' }}>
-        <Indication3 focusable='false' aria-hidden='true' className='mb-2' />
-
-        <span className='w-full text-center block'>3.</span>
-        <span className='text-center block mx-2'>
-          Sélectionnez-le pour le copier et collez-le ici
-        </span>
+      <li className='text-s-regular text-center' style={{ flex: '0 0 260px' }}>
+        <Indication3 focusable='false' aria-hidden='true' className='my-2' />
+        Copiez le numéro de dossier depuis la barre d’adresse puis collez-le
+        dans le champ &quot;Numéro de dossier&quot;.
       </li>
     </ol>
   )
