@@ -143,6 +143,7 @@ describe('ActionsApiService', () => {
         qualification: {
           libelle: 'Santé',
           isSituationNonProfessionnelle: true,
+          estQualifiee: true,
         },
       })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
@@ -155,6 +156,7 @@ describe('ActionsApiService', () => {
                 qualification: {
                   libelle: 'Santé',
                   code: 'SANTE',
+                  heures: 5,
                 },
               }),
               jeune: {
@@ -189,6 +191,7 @@ describe('ActionsApiService', () => {
         qualification: {
           libelle: 'Situation pas non professionnelle',
           isSituationNonProfessionnelle: false,
+          estQualifiee: true,
         },
       })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
@@ -201,6 +204,7 @@ describe('ActionsApiService', () => {
                 qualification: {
                   libelle: 'Situation pas non professionnelle',
                   code: 'NON_SNP',
+                  heures: 5,
                 },
               }),
               jeune: {
@@ -515,6 +519,7 @@ describe('ActionsApiService', () => {
         content: {
           libelle: 'Non-SNP',
           code: CODE_QUALIFICATION_NON_SNP,
+          heures: 5,
         },
       })
 
@@ -535,6 +540,7 @@ describe('ActionsApiService', () => {
       const expected: QualificationAction = {
         libelle: 'Non-SNP',
         isSituationNonProfessionnelle: false,
+        estQualifiee: true,
       }
       expect(actual).toStrictEqual(expected)
     })
@@ -545,6 +551,7 @@ describe('ActionsApiService', () => {
         content: {
           libelle: 'Santé',
           code: 'SANTE',
+          heures: 5,
         },
       })
 
@@ -569,6 +576,7 @@ describe('ActionsApiService', () => {
       const expected: QualificationAction = {
         libelle: 'Santé',
         isSituationNonProfessionnelle: true,
+        estQualifiee: true,
       }
       expect(actual).toStrictEqual(expected)
     })

@@ -45,6 +45,7 @@ export interface ActionPilotageJson {
 export interface QualificationActionJson {
   libelle: string
   code: string
+  heures?: number
 }
 
 export interface MetadonneesActionsJson {
@@ -82,6 +83,7 @@ export function jsonToQualification(
     libelle: qualificationJson.libelle,
     isSituationNonProfessionnelle:
       qualificationJson.code !== CODE_QUALIFICATION_NON_SNP,
+    estQualifiee: Boolean(qualificationJson.heures),
   }
 }
 
