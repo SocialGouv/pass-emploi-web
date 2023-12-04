@@ -27,7 +27,7 @@ function FormulaireRechercheDossier({
   const validate = () => {
     if (numeroDossier === '') {
       setMessageErreur(
-        'Le champ est numéro de dossier est vide. Renseigner un numéro. exemple : 123456'
+        'Le champ "Numéro de dossier" est vide. Renseigner un numéro. Exemple : 123456'
       )
       return false
     }

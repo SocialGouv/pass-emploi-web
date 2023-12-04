@@ -52,7 +52,7 @@ describe('MiloCreationJeune', () => {
       // Then
       expect(
         screen.getByText(
-          'Le champ est numéro de dossier est vide. Renseigner un numéro. exemple : 123456'
+          'Le champ "Numéro de dossier" est vide. Renseigner un numéro. Exemple : 123456'
         )
       ).toBeInTheDocument()
     })
