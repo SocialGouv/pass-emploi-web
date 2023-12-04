@@ -57,7 +57,7 @@ describe('Reaffectation', () => {
         it('contient un champ pour sélectionner le contrat de réaffectation', () => {
           // When
           const etape = screen.getByRole('group', {
-            name: /Choisissez un accompagnement/,
+            name: 'Étape 1: Choisissez un accompagnement',
           })
           // Then
           expect(
@@ -72,7 +72,7 @@ describe('Reaffectation', () => {
         let etape: HTMLFieldSetElement
         beforeEach(async () => {
           etape = screen.getByRole('group', {
-            name: /Saisissez le conseiller dont les bénéficiaires sont à réaffecter/,
+            name: 'Étape 3: Saisissez le conseiller dont les bénéficiaires sont à réaffecter',
           })
           await userEvent.click(screen.getByRole('radio', { name: 'BRSA' }))
         })
@@ -137,7 +137,7 @@ describe('Reaffectation', () => {
             name: new RegExp(jeunes[1].nom),
           })
           etape = screen.getByRole('group', {
-            name: /Saisissez le conseiller à qui affecter les bénéficiaires/,
+            name: 'Étape 5: Saisissez le conseiller à qui affecter les bénéficiaires',
           })
           conseillerDestinataireInput = within(etape).getByRole('searchbox', {
             name: 'E-mail ou nom et prénom du conseiller',
@@ -189,7 +189,7 @@ describe('Reaffectation', () => {
         it('contient un champ pour sélectionner le type de réaffectation', () => {
           // When
           const etape = screen.getByRole('group', {
-            name: /Choisissez un type de réaffectation/,
+            name: 'Étape 1: Choisissez un type de réaffectation',
           })
           // Then
           expect(
@@ -205,7 +205,7 @@ describe('Reaffectation', () => {
         let etape: HTMLFieldSetElement
         beforeEach(async () => {
           etape = screen.getByRole('group', {
-            name: /Saisissez le conseiller dont les bénéficiaires sont à réaffecter/,
+            name: 'Étape 2: Saisissez le conseiller dont les bénéficiaires sont à réaffecter',
           })
         })
 
@@ -296,7 +296,7 @@ describe('Reaffectation', () => {
           )
 
           etape = screen.getByRole('group', {
-            name: /Sélectionnez les bénéficiaires à réaffecter/,
+            name: 'Étape 3: Sélectionnez les bénéficiaires à réaffecter',
           })
         })
 
@@ -380,7 +380,7 @@ describe('Reaffectation', () => {
             name: new RegExp(jeunes[1].nom),
           })
           etape = screen.getByRole('group', {
-            name: /Saisissez le conseiller à qui affecter les bénéficiaires/,
+            name: 'Étape 4: Saisissez le conseiller à qui affecter les bénéficiaires',
           })
           conseillerDestinataireInput = within(etape).getByRole('searchbox', {
             name: 'E-mail ou nom et prénom du conseiller',

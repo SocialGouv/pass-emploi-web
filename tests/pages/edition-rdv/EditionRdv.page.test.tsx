@@ -313,7 +313,7 @@ describe('EditionRdv', () => {
 
         beforeEach(() => {
           etape = screen.getByRole('group', {
-            name: /Sélectionnez un rendez-vous/,
+            name: 'Étape 1: Sélectionnez un rendez-vous',
           })
           selectType = within(etape).getByRole('combobox', {
             name: 'Type',
@@ -361,7 +361,7 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: /Décrivez le rendez-vous/,
+            name: 'Étape 2: Décrivez le rendez-vous',
           })
         })
 
@@ -391,7 +391,7 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: /Ajoutez des bénéficiaires/,
+            name: 'Étape 3: Ajoutez des bénéficiaires',
           })
         })
 
@@ -439,7 +439,7 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: /Ajoutez les modalités pratiques/,
+            name: 'Étape 4: Ajoutez les modalités pratiques',
           })
         })
         it('contient une liste pour choisir une modalité', () => {
@@ -514,7 +514,7 @@ describe('EditionRdv', () => {
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
-            name: /Définissez la gestion des accès/,
+            name: 'Étape 5: Définissez la gestion des accès',
           })
         })
         it('contient un champ pour indiquer la présence du conseiller à un rendez-vous', () => {

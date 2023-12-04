@@ -27,7 +27,7 @@ export default function RechercheImmersionsSecondaire({
 
   return (
     <fieldset className='w-1/2 min-w-[300px]'>
-      <legend className='sr-only'>Étape 3 Plus de critères</legend>
+      <legend className='sr-only'>Étape 3: Plus de critères</legend>
 
       {query.rayon !== undefined && (
         <fieldset className='mt-8 w-full'>

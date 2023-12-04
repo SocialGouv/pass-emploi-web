@@ -155,7 +155,7 @@ function QualificationPage({
 
       <p className='text-s-bold mb-6'>Tous les champs sont obligatoires</p>
 
-      <Etape numero={1} titre="Résumé de l'action">
+      <Etape numero={1} titre='Résumé de l’action'>
         <Label
           htmlFor='commentaire'
           inputRequired={true}

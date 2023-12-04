@@ -64,7 +64,7 @@ export default function RechercheOffresEmploiSecondaire({
 
   return (
     <fieldset>
-      <legend className='sr-only'>Étape 3 Plus de critères</legend>
+      <legend className='sr-only'>Étape 3: Plus de critères</legend>
 
       <div className='flex mb-10'>
         {!alternanceOnly && (

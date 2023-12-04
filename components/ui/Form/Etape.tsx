@@ -9,25 +9,24 @@ type EtapeProps = {
   children: Exclude<ReactNode, string | number | boolean | null | undefined>
 }
 
-export function Etape(props: EtapeProps) {
+export function Etape({ numero, titre, children }: EtapeProps) {
   return (
     <fieldset className='flex flex-col mb-8'>
       <legend className='flex items-center text-m-bold text-grey_800 mb-4'>
         <IconComponent
-          name={getIconNumero(props.numero)}
-          role='img'
+          name={getIconNumero(numero)}
           focusable={false}
-          aria-label={`Étape ${props.numero}`}
+          aria-hidden={true}
           className='mr-2 w-8 h-8'
         />
-        <span className='sr-only'>Étape {props.numero}: </span> {props.titre}
+        <span className='sr-only'>Étape {numero}: </span> {titre}
       </legend>
-      {props.children}
+      {children}
     </fieldset>
   )
 
-  function getIconNumero(numero: NumeroEtape): IconName {
-    switch (numero) {
+  function getIconNumero(numeroEtape: NumeroEtape): IconName {
+    switch (numeroEtape) {
       case 1:
         return IconName.NumberCircleOne
       case 2:

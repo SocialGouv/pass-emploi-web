@@ -51,7 +51,7 @@ describe('Page Recherche Immersions', () => {
   it('permet de definir des critères de recherche', () => {
     // Then
     const etape2 = screen.getByRole('group', {
-      name: /Critères de recherche/,
+      name: 'Étape 2: Critères de recherche',
     })
 
     expect(etape2).toBeInTheDocument()
@@ -183,7 +183,7 @@ describe('Page Recherche Immersions', () => {
     it('permet d’ajouter plus de filtre à la recherche', async () => {
       // Then
       expect(() =>
-        screen.getByRole('group', { name: /Plus de critères/ })
+        screen.getByRole('group', { name: 'Étape 3: Plus de critères' })
       ).toThrow()
       expect(
         screen.getByRole('button', { name: 'Voir plus de critères' })
@@ -194,7 +194,7 @@ describe('Page Recherche Immersions', () => {
 
       // Then
       const etape3 = screen.getByRole('group', {
-        name: 'Étape 3 Plus de critères',
+        name: 'Étape 3: Plus de critères',
       })
       expect(etape3).toBeInTheDocument()
       expect(screen.getByText('Voir moins de critères')).toBeInTheDocument()
@@ -204,7 +204,7 @@ describe('Page Recherche Immersions', () => {
       // Given
       await userEvent.click(screen.getByText('Voir plus de critères'))
       const etape3 = screen.getByRole('group', {
-        name: 'Étape 3 Plus de critères',
+        name: 'Étape 3: Plus de critères',
       })
 
       // Then

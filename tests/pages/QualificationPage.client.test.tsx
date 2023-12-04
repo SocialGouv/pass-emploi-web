@@ -72,7 +72,7 @@ describe('QualificationPage client side', () => {
   it("affiche le résumé de l'action", () => {
     // Then
     const etape1 = screen.getByRole('group', {
-      name: /Résumé de l'action/,
+      name: 'Étape 1: Résumé de l’action',
     })
     expect(
       within(etape1).getByRole('textbox', {
@@ -84,7 +84,7 @@ describe('QualificationPage client side', () => {
   it('demande un type de situation non professionnelle', () => {
     // Then
     const etape2 = screen.getByRole('group', {
-      name: /Type/,
+      name: 'Étape 2: Type',
     })
     const selectSNP = within(etape2).getByRole('combobox', { name: 'Type' })
     situationsNonProfessionnelles.forEach(({ code, label }) => {
@@ -97,7 +97,7 @@ describe('QualificationPage client side', () => {
   it("permet de modifier la date de début de l'action", () => {
     // Then
     const etape3 = screen.getByRole('group', {
-      name: /Date de début de l’action/,
+      name: 'Étape 3: Date de début de l’action',
     })
     const inputDate = within(etape3).getByLabelText('* Date de début')
     expect(inputDate).toHaveAttribute('type', 'date')
@@ -107,7 +107,7 @@ describe('QualificationPage client side', () => {
   it("permet de modifier la date de fin réelle de l'action", () => {
     // Then
     const etape4 = screen.getByRole('group', {
-      name: /Date de fin de l’action/,
+      name: 'Étape 4: Date de fin de l’action',
     })
     const inputDate = within(etape4).getByLabelText('* Date de fin')
     expect(inputDate).toHaveAttribute('type', 'date')
