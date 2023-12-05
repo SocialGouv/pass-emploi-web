@@ -17,7 +17,7 @@ export const uneAction = (overrides: Partial<Action> = {}): Action => {
     lastUpdate: '2022-02-16T15:50:46.000+01:00',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: StatutAction.ARealiser,
+    status: StatutAction.EnCours,
     dateEcheance: '2022-02-20T14:50:46.000Z',
   }
 
@@ -34,7 +34,7 @@ export const uneListeDActions = (): Action[] => [
     lastUpdate: '2022-02-18T15:50:46.000+01:00',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: StatutAction.Commencee,
+    status: StatutAction.EnCours,
     dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   {
@@ -63,7 +63,6 @@ export const uneListeDActions = (): Action[] => [
     qualification: {
       libelle: 'Non SNP',
       isSituationNonProfessionnelle: false,
-      estQualifiee: false,
     },
   },
 ]

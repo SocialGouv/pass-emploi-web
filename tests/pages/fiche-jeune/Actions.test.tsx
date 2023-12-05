@@ -39,7 +39,7 @@ jest.mock('services/favoris.service')
 jest.mock('services/actions.service')
 
 describe('Actions dans la fiche jeune', () => {
-  const actions = uneListeDActions().concat(
+  const actions = uneListeDActions().concat([
     uneAction({
       id: 'id-action-5',
       content: 'Action 5',
@@ -47,10 +47,18 @@ describe('Actions dans la fiche jeune', () => {
       qualification: {
         libelle: 'SNP',
         isSituationNonProfessionnelle: true,
-        estQualifiee: true,
       },
-    })
-  )
+    }),
+    uneAction({
+      id: 'id-action-6',
+      content: 'Action 6',
+      status: StatutAction.Qualifiee,
+      qualification: {
+        libelle: 'SNP',
+        isSituationNonProfessionnelle: true,
+      },
+    }),
+  ])
 
   let replace: jest.Mock
   beforeEach(async () => {
@@ -124,7 +132,7 @@ describe('Actions dans la fiche jeune', () => {
       expect(
         within(
           screen.getByRole('row', {
-            name: `Détail de l'action ${actions[4].content}`,
+            name: `Détail de l'action ${actions[5].content}`,
           })
         ).getByLabelText(`Qualifiée en Situation Non Professionnelle`)
       ).toBeInTheDocument()
@@ -281,8 +289,7 @@ describe('Actions dans la fiche jeune', () => {
 
         // When
         await userEvent.click(screen.getByText('Statut'))
-        await userEvent.click(screen.getByLabelText('Commencée'))
-        await userEvent.click(screen.getByLabelText('À réaliser'))
+        await userEvent.click(screen.getByLabelText('En cours'))
         await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
       })
 
@@ -290,7 +297,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
-          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          statuts: [StatutAction.EnCours],
           etatsQualification: [],
           tri: 'date_echeance_decroissante',
         })
@@ -311,153 +318,9 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
-          statuts: [StatutAction.Commencee, StatutAction.ARealiser],
+          statuts: [StatutAction.EnCours],
           etatsQualification: [],
           tri: 'date_echeance_decroissante',
-        })
-      })
-    })
-
-    describe('filtrer les actions par etat de qualification', () => {
-      let pageCourante: number
-      beforeEach(async () => {
-        // Given
-        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
-          async () => ({
-            actions: [uneAction({ content: 'Action filtrée' })],
-            metadonnees: { nombreTotal: 52, nombrePages: 3 },
-          })
-        )
-        pageCourante = 1
-
-        await renderFicheJeuneMILO({
-          structure: StructureConseiller.MILO,
-          actionsInitiales: {
-            actions,
-            page: pageCourante,
-            metadonnees: { nombreTotal: 52, nombrePages: 6 },
-          },
-          onglet: Onglet.ACTIONS,
-        })
-
-        // When
-        await act(() =>
-          userEvent.click(
-            screen.getByRole('button', { name: 'Filtrer par qualification' })
-          )
-        )
-        await userEvent.click(screen.getByLabelText('Actions à qualifier'))
-        await userEvent.click(screen.getByLabelText('Actions qualifiées'))
-        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
-      })
-
-      it('filtre les actions', () => {
-        // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          statuts: [],
-          etatsQualification: [
-            EtatQualificationAction.AQualifier,
-            EtatQualificationAction.Qualifiee,
-          ],
-          tri: 'date_echeance_decroissante',
-        })
-        expect(screen.getByText('Action filtrée')).toBeInTheDocument()
-      })
-
-      it('met à jour la pagination', () => {
-        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
-        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-      })
-
-      it('conserve les filtres de qualification en changeant de page', async () => {
-        // When
-        await userEvent.click(screen.getByLabelText('Page 2'))
-
-        // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          statuts: [],
-          etatsQualification: [
-            EtatQualificationAction.AQualifier,
-            EtatQualificationAction.Qualifiee,
-          ],
-          tri: 'date_echeance_decroissante',
-        })
-      })
-    })
-
-    describe('trier les actions par date de création', () => {
-      let pageCourante: number
-      let headerColonneDate: HTMLButtonElement
-      beforeEach(async () => {
-        // Given
-        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
-          async () => ({
-            actions: [uneAction({ content: 'Action triée' })],
-            metadonnees: { nombreTotal: 52, nombrePages: 3 },
-          })
-        )
-        pageCourante = 1
-
-        await renderFicheJeuneMILO({
-          structure: StructureConseiller.MILO,
-          actionsInitiales: {
-            actions,
-            page: pageCourante,
-            metadonnees: { nombreTotal: 52, nombrePages: 6 },
-          },
-          onglet: Onglet.ACTIONS,
-        })
-
-        headerColonneDate = screen.getByRole('button', { name: /Créée le/ })
-      })
-
-      it('tri les actions par ordre croissant puis decroissant', async () => {
-        // When
-        await userEvent.click(headerColonneDate)
-        await userEvent.click(headerColonneDate)
-
-        // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          statuts: [],
-          etatsQualification: [],
-          tri: 'date_croissante',
-        })
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          statuts: [],
-          etatsQualification: [],
-          tri: 'date_decroissante',
-        })
-        expect(screen.getByText('Action triée')).toBeInTheDocument()
-      })
-
-      it('met à jour la pagination', async () => {
-        // When
-        await userEvent.click(headerColonneDate)
-
-        // Then
-        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
-        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
-        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
-      })
-
-      it('conserve le tri en changeant de page', async () => {
-        // When
-        await userEvent.click(headerColonneDate)
-        await userEvent.click(screen.getByLabelText('Page 2'))
-
-        // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          statuts: [],
-          etatsQualification: [],
-          tri: 'date_decroissante',
         })
       })
     })
@@ -485,7 +348,9 @@ describe('Actions dans la fiche jeune', () => {
           onglet: Onglet.ACTIONS,
         })
 
-        headerColonneDate = screen.getByRole('button', { name: /Échéance/ })
+        headerColonneDate = screen.getByRole('button', {
+          name: /Date de l’action/,
+        })
       })
 
       it('tri les actions par ordre croissant puis decroissant', async () => {

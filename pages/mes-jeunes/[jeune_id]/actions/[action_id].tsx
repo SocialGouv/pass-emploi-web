@@ -63,18 +63,12 @@ function PageAction({
 
   const conseillerEstMilo = estMilo(conseiller)
 
-  const estARealiser =
-    statut !== StatutAction.Terminee && statut !== StatutAction.Annulee
-  const estAQualifier =
-    conseillerEstMilo &&
-    statut === StatutAction.Terminee &&
-    !qualification?.estQualifiee
-
+  const estARealiser = statut === StatutAction.EnCours
+  const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
   const afficherSuppressionAction =
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    !action.qualification?.estQualifiee &&
-    commentaires.length === 0 &&
-    statut !== StatutAction.Terminee
+    action.status !== StatutAction.Terminee &&
+    commentaires.length === 0
 
   const dateEcheance = toShortDate(action.dateEcheance)
 
@@ -103,6 +97,7 @@ function PageAction({
       )
       setQualification(nouvelleQualification)
       setAlerte(AlerteParam.qualificationNonSNP)
+      setStatut(StatutAction.Qualifiee)
     }
   }
 

@@ -7,6 +7,7 @@ import BookmarkFillIcon from 'assets/icons/actions/bookmark_fill.svg'
 import BookmarkOutlineIcon from 'assets/icons/actions/bookmark_outline.svg'
 import DeleteIcon from 'assets/icons/actions/delete.svg'
 import EditIcon from 'assets/icons/actions/edit.svg'
+import FilterIcon from 'assets/icons/actions/filter.svg'
 import OutgoingMailIcon from 'assets/icons/actions/outgoing_mail.svg'
 import SearchIcon from 'assets/icons/actions/search.svg'
 import SendIcon from 'assets/icons/actions/send.svg'
@@ -106,6 +107,8 @@ export enum IconName {
   EventFill = 'EventFill',
   EventOutline = 'EventOutline',
   FavoriteFill = 'FavoriteFill',
+  Filter = 'Filter',
+
   FirstPage = 'FirstPage',
   Flag = 'Flag',
   Help = 'Help',
@@ -175,6 +178,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.EventFill]: EventFillIcon,
   [IconName.EventOutline]: EventOutlineIcon,
   [IconName.FavoriteFill]: FavoriteFillIcon,
+  [IconName.Filter]: FilterIcon,
   [IconName.FirstPage]: FirstPageIcon,
   [IconName.Flag]: FlagIcon,
   [IconName.LastPage]: LastPageIcon,

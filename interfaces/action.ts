@@ -26,7 +26,6 @@ export interface ActionPilotage {
 export interface QualificationAction {
   libelle: string
   isSituationNonProfessionnelle: boolean
-  estQualifiee: boolean
 }
 
 export interface TotalActions {
@@ -35,10 +34,11 @@ export interface TotalActions {
 }
 
 export enum StatutAction {
-  ARealiser = 'ARealiser',
-  Commencee = 'Commencee',
+  EnCours = 'EnCours',
   Terminee = 'Terminee',
+  Qualifiee = 'Qualifiee',
   Annulee = 'Annulee',
+  EnRetard = 'EnRetard',
 }
 
 export enum EtatQualificationAction {

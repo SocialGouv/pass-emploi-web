@@ -154,9 +154,11 @@ describe('Agenda - Onglet conseiller', () => {
           AOUT_25_0H,
           AOUT_26_23H
         )
-        expect(
-          screen.getByRole('row', { name: 'dimanche 28 août' })
-        ).toBeInTheDocument()
+        await waitFor(() =>
+          expect(
+            screen.getByRole('row', { name: 'dimanche 28 août' })
+          ).toBeInTheDocument()
+        )
 
         // When
         await userEvent.click(buttonPeriodeCourante)

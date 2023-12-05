@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import React, { useEffect, useRef, useState } from 'react'
 
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
@@ -11,7 +12,7 @@ import {
   EtatQualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import { Conseiller, estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { MetadonneesPagination } from 'types/pagination'
 
@@ -113,7 +114,16 @@ export default function OngletActions({
         filtresParEtatsQualification,
         tri
       ).then(({ actions, metadonnees }) => {
-        setActionsAffichees(actions)
+        if (filtresParStatuts.includes(StatutAction.EnRetard))
+          setActionsAffichees(
+            actions.filter(
+              (action) =>
+                DateTime.fromISO(action.dateEcheance) < DateTime.now() &&
+                action.status === StatutAction.EnCours
+            )
+          )
+        else setActionsAffichees(actions)
+
         setNombrePages(metadonnees.nombrePages)
         setIsLoading(false)
       })
@@ -149,7 +159,6 @@ export default function OngletActions({
           {actionsInitiales.metadonnees.nombreTotal > 0 && (
             <>
               <TableauActionsJeune
-                afficherFiltresEtatsQualification={estMilo(conseiller)}
                 jeune={jeune}
                 actions={actionsAffichees}
                 isLoading={isLoading}

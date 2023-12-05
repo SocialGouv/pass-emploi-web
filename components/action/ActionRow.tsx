@@ -21,10 +21,9 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     : '/mes-jeunes'
 
   const actionEstEnRetard =
-    action.status !== StatutAction.Annulee &&
-    action.status !== StatutAction.Terminee &&
-    DateTime.fromISO(action.dateEcheance) < DateTime.now()
-  const creationDate = toShortDate(action.creationDate)
+    DateTime.fromISO(action.dateEcheance) < DateTime.now() &&
+    action.status === StatutAction.EnCours
+
   const dateEcheance = toShortDate(action.dateEcheance)
 
   return (
@@ -34,7 +33,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     >
       <TD className='rounded-l-base'>
         <div className='flex items-center'>
-          {action.qualification?.estQualifiee &&
+          {action.status === StatutAction.Qualifiee &&
             action.qualification?.isSituationNonProfessionnelle && (
               <IconComponent
                 role='img'
@@ -49,11 +48,6 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
             {action.content}
           </span>
         </div>
-      </TD>
-      <TD>
-        <span className='flex items-center'>
-          <span>{creationDate}</span>
-        </span>
       </TD>
       <TD>
         <span className='flex flex-row items-center'>
@@ -79,7 +73,9 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
       </TD>
       <TD className='rounded-r-base w-[160px]'>
         <span className='flex items-center justify-between'>
-          <TagStatutAction status={action.status} />
+          <TagStatutAction
+            status={actionEstEnRetard ? StatutAction.EnRetard : action.status}
+          />
           <IconComponent
             name={IconName.ChevronRight}
             focusable='false'

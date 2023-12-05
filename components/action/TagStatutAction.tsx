@@ -15,6 +15,11 @@ export default function TagStatutAction({ status }: TagStatutActionProps) {
     altColor: backgroundColor,
   } = propsStatutsActions[status]
   return (
-    <TagStatut label={label} color={color} backgroundColor={backgroundColor} />
+    <TagStatut
+      label={label}
+      color={color}
+      backgroundColor={backgroundColor}
+      className='text-s-bold'
+    />
   )
 }
