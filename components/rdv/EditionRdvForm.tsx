@@ -966,7 +966,7 @@ export function EditionRdvForm({
             {formHasChanges() && (
               <Button
                 type='button'
-                label={`Quitter la ${
+                label={`Annuler et quitter la ${
                   evenement ? 'modification' : 'création'
                 } de l’événement`}
                 onClick={leaveWithChanges}
