@@ -32,7 +32,7 @@ export default function HeaderChat({
             focusable={false}
             className='w-5 h-5 fill-primary mr-3'
           />
-          <span className='text-s-regular text-content underline hover:text-primar'>
+          <span className='text-s-regular text-content underline hover:text-primary'>
             Retour
           </span>
         </button>
