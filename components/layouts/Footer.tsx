@@ -34,7 +34,7 @@ export default function Footer({ conseiller }: FooterProps) {
         {liens.map(({ url, label }) => (
           <li
             key={label.toLowerCase().replace(/\s/g, '-')}
-            className='mr-4 text-s-regular text-primary_darken hover:text-primary'
+            className='mr-4 text-s-regular text-primary hover:text-primary_darken'
           >
             <ExternalLink
               key={url}

@@ -23,7 +23,7 @@ export default function FilAriane({ path }: FilArianeProps) {
               <>
                 <Link
                   href={href}
-                  className='text-s-regular text-content_color underline hover:text-primary_darken'
+                  className='text-s-regular text-content_color underline hover:text-primary'
                 >
                   {label}
                 </Link>
