@@ -22,7 +22,7 @@ export default function HeaderChat({
     <div className=' items-center mx-4 my-6 short:hidden'>
       <div className='pb-3 flex items-center justify-between'>
         <button
-          className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary'
+          className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary focus:pr-2'
           aria-label={labelRetour}
           onClick={onBack}
         >
@@ -32,9 +32,7 @@ export default function HeaderChat({
             focusable={false}
             className='w-5 h-5 fill-primary mr-3'
           />
-          <span className='text-s-regular text-content underline hover:text-primary'>
-            Retour
-          </span>
+          <span className='text-s-regular text-content underline'>Retour</span>
         </button>
         {iconName && (
           <button
