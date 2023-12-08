@@ -24,7 +24,7 @@ export default function LienEvenementEmploi({
           href={infoEvenementEmploi.url}
           target='_blank'
           rel='noreferrer noopener'
-          className='underline text-[inherit] flex items-center'
+          className='underline text-primary hover:text-primary_darken flex items-center'
         >
           Voir l’événement emploi{' '}
           <span className='sr-only'>

@@ -157,7 +157,7 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
             role='img'
             title='ouvrir'
             aria-hidden={true}
-            className='ml-2 w-4 h-4 fill-primary'
+            className='ml-2 w-4 h-4 fill-[currentColor]'
           />
         </a>
       </dd>

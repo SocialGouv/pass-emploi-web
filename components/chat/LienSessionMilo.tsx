@@ -22,7 +22,7 @@ export default function LienSessionMilo({
           href={`/agenda/sessions/${infoSessionMilo.id}`}
           target='_blank'
           rel='noreferrer noopener'
-          className='underline text-[inherit] flex items-center'
+          className='underline text-primary hover:primary_darken flex items-center'
         >
           Voir les détails de la session{' '}
           <span className='sr-only'>
