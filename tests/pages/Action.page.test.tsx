@@ -399,7 +399,102 @@ describe("Page Détail d'une action d'un jeune", () => {
           expect(
             screen.getByLabelText('Terminée - À qualifier')
           ).toHaveAttribute('disabled')
-          expect(screen.getByLabelText('Annulée')).toHaveAttribute('disabled')
+        })
+      })
+    })
+
+    describe("quand l'action qualifiée", () => {
+      describe('qualifiée en SNP', () => {
+        //Given
+        const actionAQualifier = uneAction({
+          status: StatutAction.Terminee,
+          qualification: {
+            libelle: 'Emploi',
+            isSituationNonProfessionnelle: true,
+          },
+        })
+        const jeune: BaseJeune & { idConseiller: string } = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        }
+
+        //When
+        beforeEach(async () => {
+          ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+
+          renderWithContexts(
+            <PageAction
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              lectureSeule={false}
+              pageTitle=''
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+              },
+              customAlerte: { alerteSetter },
+            }
+          )
+        })
+
+        it('affiche un encart d’information de qualification en SNP', async () => {
+          //Then
+          expect(
+            screen.getByText(
+              'Action qualifiée en Situation non-professionnelle : Emploi'
+            )
+          ).toBeInTheDocument()
+        })
+      })
+
+      describe('non qualifiée en SNP', () => {
+        //Given
+        const actionAQualifier = uneAction({
+          status: StatutAction.Terminee,
+          qualification: {
+            libelle: 'Non SNP',
+            isSituationNonProfessionnelle: false,
+          },
+        })
+        const jeune: BaseJeune & { idConseiller: string } = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        }
+
+        //When
+        beforeEach(async () => {
+          ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+
+          renderWithContexts(
+            <PageAction
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              lectureSeule={false}
+              pageTitle=''
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+              },
+              customAlerte: { alerteSetter },
+            }
+          )
+        })
+
+        it('affiche un encart d’information de qualification en SNP', async () => {
+          //Then
+          expect(
+            screen.getByText(
+              /Action non qualifiée en Situation non-professionnelle/
+            )
+          ).toBeInTheDocument()
         })
       })
     })

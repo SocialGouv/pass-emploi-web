@@ -178,18 +178,32 @@ function PageAction({
         </div>
       )}
 
-      {conseillerEstMilo && (
-        <TagQualificationAction statut={statut} qualification={qualification} />
+      {action.qualification && (
+        <>
+          {action.qualification.isSituationNonProfessionnelle && (
+            <div className='mb-6'>
+              <InformationMessage
+                label={`Action qualifiée en Situation non-professionnelle : ${action.qualification.libelle}`}
+              >
+                Vous pouvez modifier cette action dans i-milo. <br /> Délai
+                d’actualisation entre l’app CEJ et i-milo : 24h.
+              </InformationMessage>
+            </div>
+          )}
+
+          {!action.qualification.isSituationNonProfessionnelle && (
+            <div className='mb-6'>
+              <InformationMessage label='Action non qualifiée en Situation non-professionnelle : '>
+                C’est enregistré ! Vous pouvez poursuivre votre travail.
+              </InformationMessage>
+            </div>
+          )}
+        </>
       )}
 
-      <h2
-        className='text-m-bold text-grey_800 mb-5'
-        title='Intitulé de l’action'
-      >
-        {action.content}
-      </h2>
-
-      {action.comment && <p className='mb-8'>{action.comment}</p>}
+      {conseillerEstMilo && !action.qualification && (
+        <TagQualificationAction statut={statut} qualification={qualification} />
+      )}
 
       {estARealiser && (
         <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-l mb-8'>
@@ -214,13 +228,46 @@ function PageAction({
         estAQualifier={estAQualifier}
         lectureSeule={lectureSeule}
       />
+
+      <div className='border-b-2 border-primary_lighten mt-8'>
+        <div className='flex justify-between mb-2'>
+          <h2 className='text-m-bold text-grey_800 mb-5'>
+            Informations sur l’action
+          </h2>
+        </div>
+
+        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
+          <dt className='text-base-bold pb-6'>
+            <span>Catégorie :</span>
+          </dt>
+          <dd className='text-base-regular pl-6'></dd>
+          <dt className='text-base-bold pb-6'>
+            <span>Titre de l’action :</span>
+          </dt>
+          <dd className='text-base-regular pl-6'>{action.content}</dd>
+          <dt className='text-base-bold pb-6'>
+            <span>Description :</span>
+          </dt>
+          <dd className='text-base-regular pl-6'>{action.comment}</dd>
+          <dt className='text-base-bold pb-6'>
+            <span>Date de l’action :</span>
+          </dt>
+          <dd className='text-base-regular pl-6'>
+            {DateTime.fromISO(action.dateEcheance).toFormat('dd/MM/yyyy')}
+          </dd>
+        </dl>
+      </div>
+
       <HistoriqueAction action={action} />
-      <CommentairesAction
-        idAction={action.id}
-        commentairesInitiaux={commentaires}
-        onAjout={onAjoutCommentaire}
-        lectureSeule={lectureSeule}
-      />
+
+      {Boolean(commentaires.length) && (
+        <CommentairesAction
+          idAction={action.id}
+          commentairesInitiaux={commentaires}
+          onAjout={onAjoutCommentaire}
+          lectureSeule={lectureSeule}
+        />
+      )}
     </>
   )
 }
