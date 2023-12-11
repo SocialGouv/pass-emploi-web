@@ -130,7 +130,6 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       await userEvent.type(input, 'Option 1')
       await userEvent.type(input, 'Option 3')
     })
-
     it('affiche les bénéficiaires sélectionnés', async () => {
       // Then
       const selections = screen.getByRole('region', {

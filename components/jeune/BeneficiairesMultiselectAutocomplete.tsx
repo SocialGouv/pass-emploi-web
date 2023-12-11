@@ -71,6 +71,7 @@ export default function BeneficiairesMultiselectAutocomplete({
     return listesDeDiffusionNonSelectionnees.map((uneListeDeDiffusion) => ({
       id: uneListeDeDiffusion.id,
       value: getListeInformations(uneListeDeDiffusion),
+      estUneListe: true,
     }))
   }
 
@@ -250,6 +251,8 @@ export default function BeneficiairesMultiselectAutocomplete({
         invalid={Boolean(error)}
         disabled={disabled}
         ariaDescribedBy={ariaDescribedBy}
+        listsDeDiffusion={listesDeDiffusion}
+        estSelectMultiDestinataire={true}
       />
 
       <p

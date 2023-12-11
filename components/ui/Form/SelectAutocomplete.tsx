@@ -1,11 +1,12 @@
 import { forwardRef } from 'react'
 
 import Input from 'components/ui/Form/Input'
+import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
 export type OptionAutocomplete = {
   id: string
   value: string
-  optgroupLabel: string
+  estUneListe?: boolean
 }
 
 interface SelectAutocompleteProps {
@@ -18,7 +19,9 @@ interface SelectAutocompleteProps {
   disabled?: boolean
   onBlur?: () => void
   value?: string
+  estSelectMultiDestinataire?: boolean
   ariaDescribedBy?: string
+  listsDeDiffusion?: ListeDeDiffusion[]
 }
 
 const SelectAutocomplete = forwardRef<
@@ -37,16 +40,20 @@ const SelectAutocomplete = forwardRef<
       onBlur,
       value,
       ariaDescribedBy,
+      estSelectMultiDestinataire,
     },
     ref
   ) => {
-    const groupedOptions: Record<string, OptionAutocomplete[]> = {}
-    options.forEach((option) => {
-      if (!groupedOptions[option.optgroupLabel]) {
-        groupedOptions[option.optgroupLabel] = []
-      }
-      groupedOptions[option.optgroupLabel].push(option)
-    })
+    function getBeneficiaire() {
+      return options.filter(
+        (destinataire) => destinataire.estUneListe == undefined
+      )
+    }
+
+    function getListesDeDiffusion() {
+      return options.filter((destinataire) => destinataire.estUneListe)
+    }
+
     return (
       <>
         <Input
@@ -65,19 +72,43 @@ const SelectAutocomplete = forwardRef<
           value={value}
           aria-describedby={invalid ? `${id}--error` : ariaDescribedBy}
         />
-        <datalist id={`${id}--options`}>
-          {Object.entries(groupedOptions).map(
-            ([optgroupLabel, groupedOpts]) => (
-              <optgroup label={optgroupLabel} key={optgroupLabel}>
-                {groupedOpts.map(({ id: optionId, value: optionValue }) => (
-                  <option key={optionId} value={optionValue}>
-                    {optionValue}
-                  </option>
-                ))}
-              </optgroup>
-            )
-          )}
-        </datalist>
+
+        {!estSelectMultiDestinataire && (
+          <datalist id={`${id}--options`}>
+            {options.map(({ id: optionId, value: optionValue }) => (
+              <option key={optionId} value={optionValue}>
+                {optionValue}
+              </option>
+            ))}
+          </datalist>
+        )}
+
+        {estSelectMultiDestinataire && (
+          <datalist id={`${id}--options`}>
+            <optgroup label='Bénéficiaires'>
+              {getBeneficiaire().map((beneficiaire) => (
+                <option
+                  key={beneficiaire.id}
+                  value={beneficiaire.value}
+                  aria-label={beneficiaire.value}
+                >
+                  {value}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label='Listes de diffusion'>
+              {getListesDeDiffusion().map((liste) => (
+                <option
+                  key={liste.id}
+                  value={liste.value}
+                  aria-label={liste.value}
+                >
+                  {value}
+                </option>
+              ))}
+            </optgroup>
+          </datalist>
+        )}
       </>
     )
   }
