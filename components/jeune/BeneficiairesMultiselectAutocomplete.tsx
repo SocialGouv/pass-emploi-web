@@ -251,8 +251,7 @@ export default function BeneficiairesMultiselectAutocomplete({
         invalid={Boolean(error)}
         disabled={disabled}
         ariaDescribedBy={ariaDescribedBy}
-        listsDeDiffusion={listesDeDiffusion}
-        estSelectMultiDestinataire={true}
+        doitGrouperOptionParType={true}
       />
 
       <p
