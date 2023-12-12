@@ -6,7 +6,7 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 export type OptionAutocomplete = {
   id: string
   value: string
-  optgroupLabel: string
+  estUneListe: boolean
 }
 
 interface SelectAutocompleteProps {
@@ -21,7 +21,6 @@ interface SelectAutocompleteProps {
   value?: string
   doitGrouperOptionParType?: boolean
   ariaDescribedBy?: string
-  listsDeDiffusion?: ListeDeDiffusion[]
 }
 
 const SelectAutocomplete = forwardRef<
@@ -73,7 +72,7 @@ const SelectAutocomplete = forwardRef<
           aria-describedby={invalid ? `${id}--error` : ariaDescribedBy}
         />
 
-        {!estSelectMultiDestinataire && (
+        {!doitGrouperOptionParType && (
           <datalist id={`${id}--options`}>
             {options.map(({ id: optionId, value: optionValue }) => (
               <option key={optionId} value={optionValue}>
@@ -83,7 +82,7 @@ const SelectAutocomplete = forwardRef<
           </datalist>
         )}
 
-        {estSelectMultiDestinataire && (
+        {doitGrouperOptionParType && (
           <datalist id={`${id}--options`}>
             <optgroup label='Bénéficiaires'>
               {getBeneficiaire().map((beneficiaire) => (
