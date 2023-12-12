@@ -3,7 +3,9 @@ import { useRef, useState } from 'react'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
-import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import SelectAutocomplete, {
+  OptionAutocomplete,
+} from 'components/ui/Form/SelectAutocomplete'
 import {
   getListeInformations,
   ListeDeDiffusion,
@@ -55,14 +57,14 @@ export default function BeneficiairesMultiselectAutocomplete({
   >([])
   const input = useRef<HTMLInputElement>(null)
 
-  function getBeneficiairesNonSelectionnees(): OptionBeneficiaire[] {
+  function getBeneficiairesNonSelectionnees(): OptionAutocomplete[] {
     return beneficiaires.filter(
       (benef) =>
         beneficiairesSelectionnes.findIndex((j) => j.id === benef.id) < 0
     )
   }
 
-  function getListesDeDiffusionNonSelectionnees(): OptionBeneficiaire[] {
+  function getListesDeDiffusionNonSelectionnees(): OptionAutocomplete[] {
     const listesDeDiffusionNonSelectionnees = listesDeDiffusion.filter(
       (uneListe) =>
         listesSelectionnees.findIndex((l) => l.id === uneListe.id) < 0
@@ -71,7 +73,7 @@ export default function BeneficiairesMultiselectAutocomplete({
     return listesDeDiffusionNonSelectionnees.map((uneListeDeDiffusion) => ({
       id: uneListeDeDiffusion.id,
       value: getListeInformations(uneListeDeDiffusion),
-      estUneListe: true,
+      type: 'GROUPE',
     }))
   }
 
@@ -90,7 +92,7 @@ export default function BeneficiairesMultiselectAutocomplete({
     )
   }
 
-  function buildOptions(): OptionBeneficiaire[] {
+  function buildOptions(): OptionAutocomplete[] {
     let beneficiairesNonSelectionnes = getBeneficiairesNonSelectionnees()
     if (
       !beneficiairesNonSelectionnes.length &&
@@ -98,18 +100,17 @@ export default function BeneficiairesMultiselectAutocomplete({
     )
       return []
     if (listesDeDiffusion?.length) {
-      const listeFormatee: OptionBeneficiaire[] =
-        getListesDeDiffusionNonSelectionnees()
+      const listeFormatee = getListesDeDiffusionNonSelectionnees()
       beneficiairesNonSelectionnes = listeFormatee.concat(
         beneficiairesNonSelectionnes
       )
     }
-    return [
-      {
-        id: 'select-all-destinataires',
-        value: SELECT_ALL_DESTINATAIRES_OPTION,
-      },
-    ].concat(beneficiairesNonSelectionnes)
+    const toutSelectionner: OptionAutocomplete = {
+      id: 'select-all-destinataires',
+      value: SELECT_ALL_DESTINATAIRES_OPTION,
+      type: 'TOUT',
+    }
+    return [toutSelectionner].concat(beneficiairesNonSelectionnes)
   }
 
   function selectionneBeneficiairesDuConseiller() {

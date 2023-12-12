@@ -6,7 +6,7 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 export type OptionAutocomplete = {
   id: string
   value: string
-  estUneListe: boolean
+  type?: 'ENTITE' | 'GROUPE' | 'TOUT'
 }
 
 interface SelectAutocompleteProps {
@@ -45,12 +45,15 @@ const SelectAutocomplete = forwardRef<
   ) => {
     function getBeneficiaire() {
       return options.filter(
-        (destinataire) => destinataire.estUneListe == undefined
+        (destinataire) => !destinataire.type || destinataire.type === 'ENTITE'
       )
     }
 
     function getListesDeDiffusion() {
-      return options.filter((destinataire) => destinataire.estUneListe)
+      return options.filter((destinataire) => destinataire.type === 'GROUPE')
+    }
+    function getToutSelectionner() {
+      return options.filter((option) => option.type === 'TOUT')
     }
 
     return (
@@ -84,17 +87,22 @@ const SelectAutocomplete = forwardRef<
 
         {doitGrouperOptionParType && (
           <datalist id={`${id}--options`}>
-            <optgroup label='Bénéficiaires'>
-              {getBeneficiaire().map((beneficiaire) => (
-                <option key={beneficiaire.id} value={beneficiaire.value}>
-                  {value}
-                </option>
-              ))}
-            </optgroup>
+            {getToutSelectionner().map((option) => (
+              <option key={option.id} value={option.value}>
+                {option.value}
+              </option>
+            ))}
             <optgroup label='Listes de diffusion'>
               {getListesDeDiffusion().map((liste) => (
                 <option key={liste.id} value={liste.value}>
-                  {value}
+                  {liste.value}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label='Bénéficiaires'>
+              {getBeneficiaire().map((beneficiaire) => (
+                <option key={beneficiaire.id} value={beneficiaire.value}>
+                  {beneficiaire.value}
                 </option>
               ))}
             </optgroup>
