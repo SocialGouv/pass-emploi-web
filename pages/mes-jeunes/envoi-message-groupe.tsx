@@ -18,6 +18,9 @@ import Multiselection from 'components/ui/Form/Multiselection'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { InfoFichier } from 'interfaces/fichier'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -80,7 +83,10 @@ function EnvoiMessageGroupe({
   }
 
   function formIsValid(): boolean {
-    return Boolean(isSelectedJeunesIdsValid() && isMessageValid())
+    const selectionEstValide = isSelectedJeunesIdsValid()
+    const messageEstValide = isMessageValid()
+
+    return Boolean(selectionEstValide && messageEstValide)
   }
 
   function isSelectedJeunesIdsValid(): boolean {
@@ -226,15 +232,34 @@ function EnvoiMessageGroupe({
     if (listesDeDiffusion) setSelectedListesIds(listesDeDiffusion)
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (selectionError)
+      erreurs.push({
+        ancre: '#select-beneficiaires',
+        label: 'Le champ Destinataires est vide.',
+        titreChamp: 'Destinataires',
+      })
+    if (messageError)
+      erreurs.push({
+        ancre: '#message',
+        label: 'Le champ Message est vide.',
+        titreChamp: 'Message',
+      })
+    return erreurs
+  }
+
   return (
     <>
       {erreurEnvoi && (
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
 
+      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
         <div className='text-s-bold text-content_color mb-8'>
-          Tous les champs sont obligatoires
+          Tous les champs avec * sont obligatoires
         </div>
 
         <Etape numero={1} titre='Sélectionnez des destinataires'>
@@ -259,7 +284,6 @@ function EnvoiMessageGroupe({
             />
           </Link>
         </Etape>
-
         <Etape numero={2} titre='Écrivez votre message'>
           <Label
             htmlFor='message'
@@ -330,7 +354,6 @@ function EnvoiMessageGroupe({
             )}
           </div>
         </Etape>
-
         <div className='flex justify-center'>
           {!formHasChanges() && (
             <ButtonLink
@@ -367,7 +390,6 @@ function EnvoiMessageGroupe({
             Envoyer
           </Button>
         </div>
-
         {showLeavePageModal && (
           <LeavePageConfirmationModal
             titre='Souhaitez-vous quitter la rédaction du message multi-destinataires ?'

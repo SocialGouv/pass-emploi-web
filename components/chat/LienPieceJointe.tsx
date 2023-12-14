@@ -14,9 +14,9 @@ export function LienPieceJointe({ id, nom }: { id: string; nom: string }) {
       <a
         href={`/api/fichiers/${id}`}
         aria-label={`Télécharger la pièce jointe ${nom}`}
-        title={`Télécharger la pièce jointe ${nom}`}
         className='font-bold break-all'
       >
+        <span className='sr-only'>Télécharger la pièce jointe </span>
         {nom}
       </a>
     </div>

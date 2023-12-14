@@ -4,12 +4,11 @@ import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import React from 'react'
 
-import LoginPage from 'app/login/LoginPage'
+import LoginPage from 'app/(connexion)/login/LoginPage'
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
-jest.mock('next/navigation')
 
 describe('LoginPage client side', () => {
   beforeEach(async () => {
@@ -21,17 +20,6 @@ describe('LoginPage client side', () => {
   describe('render', () => {
     beforeEach(async () => {
       render(<LoginPage ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
-    })
-
-    it('devrait afficher un titre de niveau 1', () => {
-      //GIVEN
-      const heading = screen.getByRole('heading', {
-        level: 1,
-        name: "Connectez-vous à l'espace conseiller",
-      })
-
-      //THEN
-      expect(heading).toBeInTheDocument()
     })
 
     it('devrait afficher deux titres de niveau 2', () => {

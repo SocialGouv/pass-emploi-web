@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import localFont from 'next/font/local'
+import { ReactNode } from 'react'
 
 import Analytics from 'components/global/Analytics'
 import ProgressBar from 'components/global/ProgressBar'
@@ -28,10 +29,7 @@ const marianne = localFont({
 })
 
 export const metadata: Metadata = {
-  title: {
-    template: '%s - Espace conseiller CEJ',
-    default: 'Espace conseiller CEJ',
-  },
+  title: 'Espace conseiller',
   description: 'Espace conseiller de l’outil du Contrat d’Engagement Jeune',
   applicationName: 'CEJ conseiller',
   themeColor: '#3B69D1',
@@ -43,11 +41,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='fr' className={marianne.className}>
       <body>

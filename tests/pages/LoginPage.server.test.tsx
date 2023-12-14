@@ -1,26 +1,12 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
-import Login, { metadata } from 'app/login/page'
+import LoginPage from 'app/(connexion)/login/LoginPage'
+import Login, { metadata } from 'app/(connexion)/login/page'
 
 jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
-jest.mock('next/navigation')
-jest.mock(
-  'app/login/LoginPage',
-  () =>
-    function FakePake(props: { [prop: string]: any }) {
-      return (
-        <>
-          {Object.entries(props).map(([prop, value]) => (
-            <div key={prop}>
-              {prop}: {value.toString()}
-            </div>
-          ))}
-        </>
-      )
-    }
-)
+jest.mock('app/(connexion)/login/LoginPage', () => jest.fn())
 
 describe('LoginPage server side', () => {
   it('redirige si l’utilisateur est déjà connecté', async () => {
@@ -28,9 +14,14 @@ describe('LoginPage server side', () => {
     ;(getServerSession as jest.Mock).mockResolvedValue({})
 
     // When
-    await Login({ searchParams: { redirectUrl: 'vers-linfini-et-au-dela' } })
+    const promise = Login({
+      searchParams: { redirectUrl: 'vers-linfini-et-au-dela' },
+    })
 
     // Then
+    await expect(promise).rejects.toEqual(
+      new Error('NEXT REDIRECT vers-linfini-et-au-dela')
+    )
     expect(redirect).toHaveBeenCalledWith('vers-linfini-et-au-dela')
   })
 
@@ -43,10 +34,13 @@ describe('LoginPage server side', () => {
 
     // Then
     expect(metadata).toEqual({ title: 'Connexion' })
-    expect(
-      screen.getByText('ssoPoleEmploiBRSAEstActif: true')
-    ).toBeInTheDocument()
-    expect(screen.getByText('ssoPassEmploiEstActif: true')).toBeInTheDocument()
-    expect(screen.getByText('isFromEmail: true')).toBeInTheDocument()
+    expect(LoginPage).toHaveBeenCalledWith(
+      {
+        isFromEmail: true,
+        ssoPassEmploiEstActif: true,
+        ssoPoleEmploiBRSAEstActif: true,
+      },
+      {}
+    )
   })
 })

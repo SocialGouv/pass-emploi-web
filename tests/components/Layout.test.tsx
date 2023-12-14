@@ -26,7 +26,7 @@ import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 jest.mock('services/jeunes.service')
 jest.mock('services/conseiller.service')
 jest.mock('services/messages.service')
-jest.mock('components/layouts/Sidebar', () => jest.fn(() => <></>))
+jest.mock('components/layouts/SidebarLayout', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatContainer', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/AppHead', () => jest.fn(() => <></>))
@@ -77,7 +77,7 @@ describe('<Layout />', () => {
     })
     ;(signIn as jest.Mock).mockResolvedValue({})
     ;(observeConseillerChats as jest.Mock).mockImplementation(
-      (jeune, _cle, fn) => {
+      (_jeune, _cle, fn) => {
         updateChatsRef = fn
         updateChatsRef(jeunesChats)
         return Promise.resolve(() => {})
@@ -105,11 +105,26 @@ describe('<Layout />', () => {
       })
     })
 
+    it("affiche le lien d'évitement", () => {
+      // Then
+      expect(
+        screen.getByRole('link', { name: 'Aller au contenu' })
+      ).toHaveAttribute('href', '#contenu')
+    })
+
     it('affiche le titre de la page', () => {
       // Then
       expect(
         screen.getByRole('heading', { level: 1, name: 'Titre de la page' })
       ).toBeInTheDocument()
+    })
+
+    it('contient la région (landmark) header', () => {
+      expect(screen.getByRole('banner')).toBeInTheDocument()
+    })
+
+    it('contient la région (landmark) main', () => {
+      expect(screen.getByRole('main')).toHaveAttribute('id', 'contenu')
     })
 
     it("affiche le fil d'ariane", () => {
@@ -123,6 +138,7 @@ describe('<Layout />', () => {
       expect(
         screen.getByRole('link', { name: 'Détail action' })
       ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions/id-action')
+      expect(screen.getByRole('navigation', { name: "Fil d'ariane" }))
     })
 
     it("affiche les messages d'alerte", () => {

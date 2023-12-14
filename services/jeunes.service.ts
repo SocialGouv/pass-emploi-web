@@ -239,13 +239,6 @@ export async function getJeunesDeLEtablissementClientSide(
   return getJeunesDeLEtablissement(idEtablissement, session!.accessToken)
 }
 
-export async function getJeunesDeLEtablissementServerSide(
-  idEtablissement: string,
-  accessToken: string
-): Promise<BaseJeune[]> {
-  return getJeunesDeLEtablissement(idEtablissement, accessToken)
-}
-
 async function getJeunesDeLEtablissement(
   idEtablissement: string,
   accessToken: string

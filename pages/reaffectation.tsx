@@ -16,6 +16,9 @@ import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -227,7 +230,6 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     if (isReaffectationEnCours) {
       return
     }
-
     let formInvalid = false
     if (estSuperviseurPEBRSA && structureReaffectation.value === undefined) {
       setStructureReaffectation({
@@ -242,6 +244,14 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
         error: 'Veuillez choisir un type de réaffectation',
       })
       formInvalid = true
+    }
+
+    if (!conseillerInitial.value) {
+      setConseillerInitial({
+        ...conseillerDestination,
+        error: 'Veuillez rechercher un conseiller initial',
+      })
+      return
     }
 
     if (!conseillerDestination.value) {
@@ -268,7 +278,7 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     try {
       const { reaffecter } = await import('services/jeunes.service')
       await reaffecter(
-        conseillerInitial.value!.id,
+        conseillerInitial.value.id,
         conseillerDestination.value!.id,
         idsBeneficiairesSelected.value,
         isReaffectationTemporaire.value!
@@ -286,6 +296,51 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
     }
   }
 
+  function getErreurs(): LigneErreur[] {
+    let erreurs = []
+    if (isReaffectationTemporaire.error)
+      erreurs.push({
+        ancre: '#structure-reaffectation--CEJ',
+        label: 'Le champ type de réaffectation est vide.',
+        titreChamp: 'Type de réaffectation',
+      })
+
+    if (doitAfficherErreurConseillerInitial())
+      erreurs.push({
+        ancre: '#conseiller-initial',
+        label:
+          'Le champ E-mail ou nom et prénom du conseiller initial est vide.',
+        titreChamp: 'Conseiller initial',
+      })
+    if (
+      conseillerInitial.value &&
+      !conseillerInitial.error &&
+      idsBeneficiairesSelected.error
+    )
+      erreurs.push({
+        ancre: '#reaffectation-tout-selectionner',
+        label: 'Le champ Bénéficiaires à réaffecter est vide.',
+        titreChamp: 'Bénéficiaires à réaffecter',
+      })
+    if (
+      conseillerInitial.value &&
+      !conseillerInitial.error &&
+      conseillerDestination.error
+    )
+      erreurs.push({
+        ancre: '#conseiller-destinataire',
+        label:
+          'Le champ E-mail ou nom et prénom du conseiller de destination est vide.',
+        titreChamp: 'Conseiller de destination',
+      })
+
+    return erreurs
+  }
+
+  function doitAfficherErreurConseillerInitial() {
+    return !conseillerInitial.value && conseillerInitial.error
+  }
+
   useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
@@ -296,6 +351,8 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
           onAcknowledge={() => setReaffectationSuccess(false)}
         />
       )}
+
+      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <p className='text-s-bold text-content_color mb-6'>
         Tous les champs sont obligatoires

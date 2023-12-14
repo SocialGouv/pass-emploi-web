@@ -4,6 +4,10 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from '../../../../components/ui/Notifications/RecapitulatifErreursFormulaire'
+
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
@@ -66,14 +70,17 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   }
 
   function formulaireEstValide(): boolean {
-    return Boolean(intituleEstValide() && dateEcheanceEstValide())
+    const intituleEstValide = validerIntitule()
+    const dateEcheanceEstValide = validerDateEcheance()
+
+    return Boolean(intituleEstValide && dateEcheanceEstValide)
   }
 
   function formatDateEcheanceEstValide(): boolean {
     return Boolean(dateEcheance.value && regexDate.test(dateEcheance.value))
   }
 
-  function intituleEstValide() {
+  function validerIntitule() {
     if (intitule.value === undefined) {
       setIntitule({
         ...intitule,
@@ -87,7 +94,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     return Boolean(intitule.value)
   }
 
-  function dateEcheanceEstValide() {
+  function validerDateEcheance() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
 
@@ -136,10 +143,45 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     await router.push(`/mes-jeunes/${idJeune}?onglet=actions`)
   }
 
+  function getErreurs(): LigneErreur[] {
+    const erreurs = []
+
+    if (intitule.error) {
+      if (currentTab === 'predefinie') {
+        erreurs.push({
+          ancre: '#intitule-action-predefinie',
+          label: 'Le champ Action prédéfinie est vide.',
+          titreChamp: 'Action prédéfinie',
+        })
+      } else {
+        erreurs.push({
+          ancre: '#intitule-action-personnalisee',
+          label: 'Le champ Titre de l’action est vide.',
+          titreChamp: 'Titre de l’action',
+        })
+      }
+    }
+
+    if (dateEcheance.error) {
+      const ancre =
+        currentTab === 'predefinie'
+          ? '#date-echeance-action-predefinie'
+          : '#date-echeance-action-personnalisee'
+      const label = 'Le champ Date d’échéance est vide.'
+      const titreChamp = 'Date d’échéance'
+
+      erreurs.push({ ancre, label, titreChamp })
+    }
+
+    return erreurs
+  }
+
   useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>
+      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+
       <form onSubmit={creerAction} noValidate={true}>
         <TabList className='mb-10'>
           {Object.entries(tabsLabel).map(([tab, label]) => (
@@ -179,7 +221,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               id='intitule-action-predefinie'
               required={true}
               onChange={(value: string) => setIntitule({ value })}
-              onBlur={intituleEstValide}
+              onBlur={validerIntitule}
             >
               {actionsPredefinies.map(({ id, titre }) => (
                 <option key={id}>{titre}</option>
@@ -216,7 +258,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               required={true}
               defaultValue={dateEcheance.value}
               onChange={(value: string) => setDateEcheance({ value })}
-              onBlur={dateEcheanceEstValide}
+              onBlur={validerDateEcheance}
             />
           </div>
         )}
@@ -242,7 +284,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               id='intitule-action-personnalisee'
               required={true}
               onChange={(value: string) => setIntitule({ value })}
-              onBlur={intituleEstValide}
+              onBlur={validerIntitule}
             />
 
             <Label
@@ -275,7 +317,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
               required={true}
               defaultValue={dateEcheance.value}
               onChange={(value: string) => setDateEcheance({ value })}
-              onBlur={dateEcheanceEstValide}
+              onBlur={validerDateEcheance}
             />
           </div>
         )}

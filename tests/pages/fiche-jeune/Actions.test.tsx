@@ -47,6 +47,7 @@ describe('Actions dans la fiche jeune', () => {
       qualification: {
         libelle: 'SNP',
         isSituationNonProfessionnelle: true,
+        estQualifiee: true,
       },
     })
   )

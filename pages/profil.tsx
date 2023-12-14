@@ -161,7 +161,7 @@ function Profil({ referentielAgences }: ProfilProps) {
           )}
         </dl>
 
-        {process.env.ENABLE_PE_BRSA_SSO && !conseillerEstMilo && (
+        {process.env.NEXT_PUBLIC_ENABLE_PE_BRSA_SSO && !conseillerEstMilo && (
           <Button
             className='mt-4'
             onClick={openDeleteConseillerModal}
@@ -203,7 +203,7 @@ function Profil({ referentielAgences }: ProfilProps) {
                   Pour ce faire merci de&nbsp;
                   <span className={'text-primary_darken hover:text-primary'}>
                     <ExternalLink
-                      href={'mailto:' + process.env.SUPPORT_MAIL}
+                      href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
                       label={'contacter le support'}
                       iconName={IconName.OutgoingMail}
                       onClick={trackContacterSupportClick}
@@ -278,12 +278,14 @@ function Profil({ referentielAgences }: ProfilProps) {
               <QrcodeAppStoreBRSA
                 focusable='false'
                 aria-label='QR code à scanner pour télécharger l’application sur Google Play'
+                role='img'
               />
             )}
             {!estPoleEmploiBRSA(conseiller) && (
               <QrcodeAppStore
                 focusable='false'
                 aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
+                role='img'
               />
             )}
             <p className='text-s-bold'>App Store</p>
@@ -293,12 +295,14 @@ function Profil({ referentielAgences }: ProfilProps) {
               <QrcodePlayStoreBRSA
                 focusable='false'
                 aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
+                role='img'
               />
             )}
             {!estPoleEmploiBRSA(conseiller) && (
               <QrcodePlayStore
                 focusable='false'
                 aria-label='QR code à scanner pour télécharger l’application sur Google Play'
+                role='img'
               />
             )}
             <p className='text-s-bold'>Google Play</p>

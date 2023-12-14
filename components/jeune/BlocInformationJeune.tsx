@@ -149,13 +149,15 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
           onClick={props.onClick}
           rel='noopener noreferrer'
         >
-          Dossier jeune i-milo
+          Dossier jeune i-milo{' '}
+          <span className='sr-only'>(nouvelle fenêtre)</span>
           <IconComponent
             name={IconName.OpenInNew}
             focusable='false'
             role='img'
             title='ouvrir'
-            className='ml-2 w-4 h-4 fill-primary'
+            aria-hidden={true}
+            className='ml-2 w-4 h-4 fill-[currentColor]'
           />
         </a>
       </dd>

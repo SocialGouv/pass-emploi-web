@@ -1,36 +1,15 @@
 import React from 'react'
 
-import FilAriane from 'components/FilAriane'
-import LienRetour from 'components/LienRetour'
 import { PAGE_ACTIONS_ROOT_ID } from 'components/PageActionsPortal'
+import { PAGE_NAVIGATION_ROOT_ID } from 'components/PageNavigationPortals'
 
-interface HeaderProps {
-  currentPath: string
-  returnTo?: string
-  pageHeader: string
-}
-
-export default function Header({
-  currentPath,
-  pageHeader,
-  returnTo,
-}: HeaderProps) {
+export default function Header() {
   return (
-    <header className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'>
-      {!returnTo && (
-        <div>
-          <FilAriane currentPath={currentPath} />
-          <h1 className='text-l-bold text-primary'>{pageHeader}</h1>
-        </div>
-      )}
-
-      {returnTo && (
-        <div>
-          <LienRetour returnUrlOrPath={returnTo} />
-          <h1 className='text-l-bold text-primary'>{pageHeader}</h1>
-        </div>
-      )}
-
+    <header
+      role='banner'
+      className='flex justify-between items-center px-12 py-8 border-b border-solid border-primary_lighten'
+    >
+      <div id={PAGE_NAVIGATION_ROOT_ID} />
       <div id={PAGE_ACTIONS_ROOT_ID} className='flex gap-6' />
     </header>
   )

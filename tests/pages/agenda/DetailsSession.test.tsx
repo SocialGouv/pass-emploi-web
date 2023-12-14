@@ -1,26 +1,20 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
-
-import { getBeneficiairesDeLaStructureMilo } from '../../../services/jeunes.service'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  BaseJeune,
-  CategorieSituation,
-  JeuneEtablissement,
-} from 'interfaces/jeune'
+import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
 import { Session } from 'interfaces/session'
 import DetailSession, {
   getServerSideProps,
 } from 'pages/agenda/sessions/[session_id]'
 import { getConseillerServerSide } from 'services/conseiller.service'
+import { getBeneficiairesDeLaStructureMilo } from 'services/jeunes.service'
 import {
   changerInscriptionsSession,
   changerVisibiliteSession,
@@ -374,6 +368,7 @@ describe('Détails Session', () => {
             />
           )
         })
+
         it('affiche la liste des inscrits', () => {
           // Then
           expect(
@@ -412,58 +407,6 @@ describe('Détails Session', () => {
               name: /Enregistrer les modifications/,
             })
           ).toBeInTheDocument()
-        })
-      })
-
-      describe('au clic sur le bouton d’annulation', () => {
-        it('réinitialise la liste des inscrits', async () => {
-          //Given
-          session = unDetailSession({
-            session: {
-              ...unDetailSession().session,
-              id: 'session-1',
-              nom: 'titre-session',
-              dateHeureDebut: DateTime.now()
-                .plus({ days: 1, minute: 1 })
-                .toString(),
-              dateHeureFin: DateTime.now().plus({ days: 1 }).toString(),
-              dateMaxInscription: DateTime.now().plus({ days: 1 }).toString(),
-              animateur: 'Charles Dupont',
-              lieu: 'CEJ Paris',
-              commentaire: 'bla',
-              estVisible: true,
-              nbPlacesDisponibles: 3,
-            },
-            inscriptions: [
-              {
-                idJeune: 'jeune-1',
-                nom: 'Beau',
-                prenom: 'Harry',
-                statut: 'INSCRIT',
-              },
-            ],
-          })
-          await renderWithContexts(
-            <DetailSession
-              pageTitle=''
-              session={session}
-              beneficiairesStructureMilo={beneficaires}
-              returnTo='whatever'
-            />
-          )
-          const beneficiaireInput = screen.getByRole('combobox', {
-            name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
-          })
-          const annulerBtn = screen.getByRole('link', {
-            name: /Annuler/,
-          })
-
-          //When
-          await userEvent.type(beneficiaireInput, 'Octo Puce')
-          await userEvent.click(annulerBtn)
-
-          //Then
-          expect(screen.getByText('Octo Puce')).toBeInTheDocument()
         })
       })
 
@@ -1093,9 +1036,6 @@ describe('Détails Session', () => {
 
   describe('server side', () => {
     beforeEach(() => {
-      process.env = Object.assign(process.env, {
-        IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
-      })
       ;(getDetailsSession as jest.Mock).mockResolvedValue(unDetailSession())
     })
 
@@ -1120,73 +1060,17 @@ describe('Détails Session', () => {
     })
 
     describe('Quand le conseiller est Milo', () => {
-      let actual: GetServerSidePropsResult<any>
-      describe('quand conseiller est d’une structure Milo early adopter', () => {
-        it('recupère le détail de la session', async () => {
-          // Given
-          ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
-            session: {
-              user: { structure: 'MILO', id: 'id-conseiller' },
-              accessToken: 'accessToken',
-            },
-            validSession: true,
-          })
-          ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
-            jeunes: [
-              {
-                base: uneBaseJeune({
-                  id: 'jeune-1',
-                  prenom: 'Harry',
-                  nom: 'Beau',
-                }),
-                referent: {
-                  id: 'id-conseiller',
-                  nom: 'Le Calamar',
-                  prenom: 'Carlo',
-                },
-                situation: CategorieSituation.EMPLOI,
-                dateDerniereActivite: '2023-03-01T14:11:38.040Z',
-              },
-              {
-                base: uneBaseJeune({
-                  id: 'jeune-2',
-                  prenom: 'Octo',
-                  nom: 'Puce',
-                }),
-                referent: {
-                  id: 'id-conseiller',
-                  nom: 'Le Calamar',
-                  prenom: 'Carlo',
-                },
-                situation: CategorieSituation.EMPLOI,
-                dateDerniereActivite: '2023-03-01T14:11:38.040Z',
-              },
-            ],
-          })
-          ;(getConseillerServerSide as jest.Mock).mockReturnValue(
-            unConseiller({
-              id: 'id-conseiller',
-              structureMilo: { nom: 'Agence early', id: 'id-test' },
-            })
-          )
-
-          // When
-          actual = await getServerSideProps({
-            req: { headers: {} },
-            query: { session_id: 'id-session' },
-          } as unknown as GetServerSidePropsContext)
-
-          // Then
-          expect(getDetailsSession).toHaveBeenCalledWith(
-            'id-conseiller',
-            'id-session',
-            'accessToken'
-          )
+      it('recupère le détail de la session', async () => {
+        // Given
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockReturnValue({
+          session: {
+            user: { structure: 'MILO', id: 'id-conseiller' },
+            accessToken: 'accessToken',
+          },
+          validSession: true,
         })
-
-        it('prépare la page', async () => {
-          // Given
-          const beneficiaires: JeuneEtablissement[] = [
+        ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
+          jeunes: [
             {
               base: uneBaseJeune({
                 id: 'jeune-1',
@@ -1215,50 +1099,103 @@ describe('Détails Session', () => {
               situation: CategorieSituation.EMPLOI,
               dateDerniereActivite: '2023-03-01T14:11:38.040Z',
             },
-          ]
-          ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-            validSession: true,
-            session: {
-              user: { structure: 'MILO' },
-            },
+          ],
+        })
+        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+          unConseiller({
+            id: 'id-conseiller',
+            structureMilo: { nom: 'Agence', id: 'id-test' },
           })
-          ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
-            jeunes: beneficiaires,
-          })
-          ;(getConseillerServerSide as jest.Mock).mockReturnValue(
-            unConseiller({
+        )
+
+        // When
+        await getServerSideProps({
+          req: { headers: {} },
+          query: { session_id: 'id-session' },
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(getDetailsSession).toHaveBeenCalledWith(
+          'id-conseiller',
+          'id-session',
+          'accessToken'
+        )
+      })
+
+      it('prépare la page', async () => {
+        // Given
+        const beneficiaires: JeuneEtablissement[] = [
+          {
+            base: uneBaseJeune({
+              id: 'jeune-1',
+              prenom: 'Harry',
+              nom: 'Beau',
+            }),
+            referent: {
               id: 'id-conseiller',
-              structure: StructureConseiller.MILO,
-              agence: {
-                nom: 'milo-aubenas',
-                id: 'id-test',
-              },
-              structureMilo: {
-                nom: 'milo-aubenas',
-                id: 'id-test',
-              },
-            })
-          )
-
-          const session = unDetailSession()
-
-          // When
-          const actual = await getServerSideProps({
-            req: { headers: {} },
-            query: {},
-          } as GetServerSidePropsContext)
-
-          // Then
-          expect(actual).toEqual({
-            props: {
-              beneficiairesStructureMilo: beneficiaires,
-              pageTitle: `Détail session ${session.session.nom} - Agenda`,
-              pageHeader: 'Détail de la session i-milo',
-              returnTo: '/mes-jeunes',
-              session: session,
-              withoutChat: true,
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+          {
+            base: uneBaseJeune({
+              id: 'jeune-2',
+              prenom: 'Octo',
+              nom: 'Puce',
+            }),
+            referent: {
+              id: 'id-conseiller',
+              nom: 'Le Calamar',
+              prenom: 'Carlo',
+            },
+            situation: CategorieSituation.EMPLOI,
+            dateDerniereActivite: '2023-03-01T14:11:38.040Z',
+          },
+        ]
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {
+            user: { structure: 'MILO' },
+          },
+        })
+        ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
+          jeunes: beneficiaires,
+        })
+        ;(getConseillerServerSide as jest.Mock).mockReturnValue(
+          unConseiller({
+            id: 'id-conseiller',
+            structure: StructureConseiller.MILO,
+            agence: {
+              nom: 'milo-aubenas',
+              id: 'id-test',
+            },
+            structureMilo: {
+              nom: 'milo-aubenas',
+              id: 'id-test',
             },
           })
+        )
+
+        const session = unDetailSession()
+
+        // When
+        const actual = await getServerSideProps({
+          req: { headers: {} },
+          query: {},
+        } as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          props: {
+            beneficiairesStructureMilo: beneficiaires,
+            pageTitle: `Détail session ${session.session.nom} - Agenda`,
+            pageHeader: 'Détail de la session i-milo',
+            returnTo: '/mes-jeunes',
+            session: session,
+            withoutChat: true,
+          },
         })
       })
     })

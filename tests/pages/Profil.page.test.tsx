@@ -131,10 +131,6 @@ describe('Page Profil conseiller', () => {
     let jeunes: JeuneFromListe[]
     let push: Function
 
-    beforeEach(async () => {
-      process.env = Object.assign(process.env, { ENABLE_PE_BRSA_SSO: 'true' })
-    })
-
     describe('contenu', () => {
       beforeEach(async () => {
         // Given
@@ -371,7 +367,9 @@ describe('Page Profil conseiller', () => {
             screen.getByText(/vous devez contacter le support/)
           ).toBeInTheDocument()
           expect(
-            screen.getByRole('link', { name: 'Contacter le support' })
+            screen.getByRole('link', {
+              name: 'Contacter le support (nouvelle fenêtre)',
+            })
           ).toHaveAttribute('href', 'mailto:support@pass-emploi.beta.gouv.fr')
         })
 

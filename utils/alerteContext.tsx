@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -8,7 +10,7 @@ export type Alerte = {
 }
 type AlerteState = [
   Alerte | undefined,
-  (key: AlerteParam | undefined, target?: string) => void
+  (key: AlerteParam | undefined, target?: string) => void,
 ]
 
 const AlerteContext = createContext<AlerteState | undefined>(undefined)

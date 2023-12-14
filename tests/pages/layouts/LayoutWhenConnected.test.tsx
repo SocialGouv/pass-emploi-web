@@ -1,0 +1,105 @@
+import { render } from '@testing-library/react'
+import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+
+import LayoutWhenConnected from 'app/(connected)/layout'
+import { unConseiller } from 'fixtures/conseiller'
+import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
+import { Conseiller } from 'interfaces/conseiller'
+import { JeuneFromListe } from 'interfaces/jeune'
+import { getConseillerServerSide } from 'services/conseiller.service'
+import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
+import { PortefeuilleProvider } from 'utils/portefeuilleContext'
+
+jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
+
+jest.mock('services/conseiller.service')
+jest.mock('utils/conseiller/conseillerContext', () => ({
+  ConseillerProvider: jest.fn(({ children }) => <>{children}</>),
+}))
+
+jest.mock('services/jeunes.service')
+jest.mock('utils/portefeuilleContext')
+
+describe('LayoutWhenConnected', () => {
+  let conseiller: Conseiller
+  let portefeuille: JeuneFromListe[]
+
+  it('assure que l’utilisateur est connecté', async () => {
+    // Given
+    ;(getServerSession as jest.Mock).mockResolvedValue(null)
+
+    // When
+    const promise = LayoutWhenConnected({ children: <div /> })
+
+    // Then
+    await expect(promise).rejects.toEqual(new Error('NEXT REDIRECT /login'))
+    expect(redirect).toHaveBeenCalledWith('/login')
+  })
+
+  it('assure que l’utilisateur est un conseiller', async () => {
+    // Given
+    ;(getServerSession as jest.Mock).mockResolvedValue({
+      user: { estConseiller: false },
+    })
+
+    // When
+    const promise = LayoutWhenConnected({ children: <div /> })
+
+    // Then
+    await expect(promise).rejects.toEqual(
+      new Error('NEXT REDIRECT /api/auth/federated-logout')
+    )
+    expect(redirect).toHaveBeenCalledWith('/api/auth/federated-logout')
+  })
+
+  describe('quand l’utilisateur est connecté en tant que conseiller', () => {
+    beforeEach(async () => {
+      // Given
+      ;(getServerSession as jest.Mock).mockResolvedValue({
+        user: { estConseiller: true, id: 'user-id' },
+        accessToken: 'accessToken',
+      })
+
+      conseiller = unConseiller()
+      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
+
+      portefeuille = desItemsJeunes()
+      ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
+        portefeuille
+      )
+
+      // When
+      render(await LayoutWhenConnected({ children: <div /> }))
+    })
+
+    it('alimente le contexte avec le conseiller connecté', async () => {
+      // Then
+      expect(getConseillerServerSide).toHaveBeenCalledWith(
+        { id: 'user-id', estConseiller: true },
+        'accessToken'
+      )
+      expect(ConseillerProvider).toHaveBeenCalledWith(
+        expect.objectContaining({ conseiller }),
+        {}
+      )
+    })
+
+    it('alimente le contexte avec le portefeuille du conseiller', async () => {
+      // Then
+      expect(getJeunesDuConseillerServerSide).toHaveBeenCalledWith(
+        'user-id',
+        'accessToken'
+      )
+      expect(PortefeuilleProvider).toHaveBeenCalledWith(
+        expect.objectContaining({
+          portefeuille: [portefeuille[2], portefeuille[0], portefeuille[1]].map(
+            extractBaseJeune
+          ),
+        }),
+        {}
+      )
+    })
+  })
+})

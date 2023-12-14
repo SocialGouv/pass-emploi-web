@@ -60,7 +60,7 @@ describe('Page Recherche Offres Service civique', () => {
     it('permet de definir des critères de recherche', () => {
       // Then
       const etape2 = screen.getByRole('group', {
-        name: 'Étape 2 Critères de recherche',
+        name: 'Étape 2: Critères de recherche',
       })
 
       expect(etape2).toBeInTheDocument()
@@ -135,7 +135,7 @@ describe('Page Recherche Offres Service civique', () => {
       it('permet d’ajouter plus de filtre à notre recherche', async () => {
         // Then
         expect(() =>
-          screen.getByRole('group', { name: 'Étape 3 Plus de critères' })
+          screen.getByRole('group', { name: 'Étape 3: Plus de critères' })
         ).toThrow()
         expect(
           screen.getByRole('button', { name: 'Voir plus de critères' })
@@ -154,7 +154,7 @@ describe('Page Recherche Offres Service civique', () => {
 
         // Then
         const etape3 = screen.getByRole('group', {
-          name: 'Étape 3 Plus de critères',
+          name: 'Étape 3: Plus de critères',
         })
         const selectDomaine = within(etape3).getByRole('combobox', {
           name: 'Sélectionner domaine',
@@ -174,7 +174,7 @@ describe('Page Recherche Offres Service civique', () => {
 
         // Then
         const etape3 = screen.getByRole('group', {
-          name: 'Étape 3 Plus de critères',
+          name: 'Étape 3: Plus de critères',
         })
         const dateDebutGroupe = within(etape3).getByRole('group', {
           name: 'Date de début',
@@ -204,7 +204,7 @@ describe('Page Recherche Offres Service civique', () => {
         // When
         await userEvent.click(screen.getByText('Voir plus de critères'))
         const etape3 = screen.getByRole('group', {
-          name: 'Étape 3 Plus de critères',
+          name: 'Étape 3: Plus de critères',
         })
         expect(() => within(etape3).getByLabelText('Date de début')).toThrow()
 
@@ -235,7 +235,7 @@ describe('Page Recherche Offres Service civique', () => {
         // When
         await userEvent.click(screen.getByText('Voir plus de critères'))
         const etape3 = screen.getByRole('group', {
-          name: 'Étape 3 Plus de critères',
+          name: 'Étape 3: Plus de critères',
         })
         expect(() =>
           within(etape3).getByRole('group', { name: 'Distance' })
@@ -480,7 +480,7 @@ describe('Page Recherche Offres Service civique', () => {
           expect(within(offreCard).getByText(offre.ville!)).toBeInTheDocument()
           expect(
             within(offreCard).getByRole('link', {
-              name: 'Détail de l’offre ' + offre.titre,
+              name: 'Voir le détail de l’offre ' + offre.titre,
             })
           ).toHaveAttribute('href', '/offres/service-civique/' + offre.id)
         })

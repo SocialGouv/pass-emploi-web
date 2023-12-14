@@ -30,8 +30,9 @@ function Tag({
           name={iconName}
           aria-hidden={!iconLabel ? true : false}
           className='h-5 w-5 mr-1 fill-[currentColor]'
-          aria-label={iconLabel}
-          title={iconLabel ? iconLabel : ''}
+          aria-label={iconLabel ? iconLabel : undefined}
+          title={iconLabel ? iconLabel : undefined}
+          role='img'
         />
       )}
       {label}

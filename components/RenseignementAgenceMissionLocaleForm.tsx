@@ -1,7 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import ButtonLink from 'components/ui/Button/ButtonLink'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -10,6 +9,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { Agence } from 'interfaces/referentiel'
+import styles from 'styles/components/Button.module.css'
 
 interface RenseignementAgenceMissionLocaleFormProps {
   referentielAgences: Agence[]
@@ -179,10 +179,11 @@ export function RenseignementAgenceMissionLocaleForm({
           </Button>
         )}
         {agenceNestPasDansLaListe() && (
-          <ButtonLink
-            className={'w-fit'}
-            href={'mailto:' + process.env.SUPPORT_MAIL}
-            style={ButtonStyle.TERTIARY}
+          <a
+            className={`w-fit flex items-center justify-center text-s-bold ${styles.button} ${styles.buttonTertiary}`}
+            href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
+            target='_blank'
+            rel='noreferrer noopener'
             onClick={onContacterSupport}
           >
             <IconComponent
@@ -191,8 +192,9 @@ export function RenseignementAgenceMissionLocaleForm({
               focusable={false}
               className='inline w-4 h-4 mr-2'
             />
-            Contacter le support
-          </ButtonLink>
+            Contacter le support{' '}
+            <span className='sr-only'>(nouvelle fenêtre)</span>
+          </a>
         )}
       </div>
     </form>

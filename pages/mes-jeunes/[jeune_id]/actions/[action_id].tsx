@@ -66,11 +66,13 @@ function PageAction({
   const estARealiser =
     statut !== StatutAction.Terminee && statut !== StatutAction.Annulee
   const estAQualifier =
-    conseillerEstMilo && statut === StatutAction.Terminee && !qualification
+    conseillerEstMilo &&
+    statut === StatutAction.Terminee &&
+    !qualification?.estQualifiee
 
   const afficherSuppressionAction =
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    !Boolean(action.qualification) &&
+    !action.qualification?.estQualifiee &&
     commentaires.length === 0 &&
     statut !== StatutAction.Terminee
 

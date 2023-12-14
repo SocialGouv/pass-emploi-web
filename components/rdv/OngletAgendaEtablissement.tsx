@@ -260,6 +260,7 @@ export default function OngletAgendaEtablissement({
                           : IconName.VisibilityOn
                       }
                       role='img'
+                      title={ac.estCache ? 'Non visible' : 'Visible'}
                     />
                   </TD>
                   <TD>

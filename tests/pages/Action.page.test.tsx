@@ -249,10 +249,6 @@ describe("Page Détail d'une action d'un jeune", () => {
         }
 
         beforeEach(async () => {
-          ;(qualifier as jest.Mock).mockResolvedValue({
-            libelle: 'PAS Situation Non Professionnelle',
-            isSituationNonProfessionnelle: false,
-          })
           ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
           renderWithContexts(
@@ -279,6 +275,11 @@ describe("Page Détail d'une action d'un jeune", () => {
         describe("quand on qualifie l'action qui n'est PAS une Situation Non Professionnelle", () => {
           beforeEach(async () => {
             // Given
+            ;(qualifier as jest.Mock).mockResolvedValue({
+              libelle: 'PAS Situation Non Professionnelle',
+              isSituationNonProfessionnelle: false,
+              estQualifiee: true,
+            })
             const radioButton = screen.getByLabelText(
               'Il ne s’agit pas d’une Situation Non Professionnelle'
             )
@@ -328,6 +329,11 @@ describe("Page Détail d'une action d'un jeune", () => {
         describe("quand on qualifie l'action en Situation Non Professionnelle", () => {
           beforeEach(async () => {
             // Given
+            ;(qualifier as jest.Mock).mockResolvedValue({
+              libelle: 'Situation Non Professionnelle',
+              isSituationNonProfessionnelle: true,
+              estQualifiee: true,
+            })
             const radioButton = screen.getByLabelText(
               'Il s’agit d’une Situation Non Professionnelle'
             )

@@ -1,0 +1,28 @@
+.sidebar {
+  display: none;
+}
+
+@media screen and (min-width: theme('screens.layout_s')) {
+  .sidebar {
+    width: 10vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding: 24px 12px;
+    text-align: center;
+    background-color: theme('colors.primary');
+  }
+}
+
+@media screen and (min-width: theme('screens.layout_base')) {
+  .sidebar {
+    padding: 24px 16px;
+  }
+}
+
+@media screen and (min-width: theme('screens.layout_l')) {
+  .sidebar {
+    width: 15vw;
+  }
+}

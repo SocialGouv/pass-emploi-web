@@ -9,7 +9,6 @@ import { useTheme } from 'next-themes'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
-import HeaderCGU from 'components/layouts/HeaderCGU'
 import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { estPoleEmploiBRSA } from 'interfaces/conseiller'
@@ -25,8 +24,16 @@ import { usePortefeuillePotentiellementPasRecupere } from 'utils/portefeuilleCon
 const ChatManager = dynamic(import('components/layouts/ChatManager'), {
   ssr: false,
 })
-const Sidebar = dynamic(import('components/layouts/Sidebar'), { ssr: false })
-const Header = dynamic(import('components/layouts/Header'), { ssr: false })
+const LienEvitement = dynamic(import('components/LienEvitement'), {
+  ssr: false,
+})
+const SidebarLayout = dynamic(import('components/layouts/SidebarLayout'), {
+  ssr: false,
+})
+const DeprecatedHeader = dynamic(
+  import('components/deprecated/DeprecatedHeader'),
+  { ssr: false }
+)
 const Footer = dynamic(import('components/layouts/Footer'), { ssr: false })
 const AlerteDisplayer = dynamic(import('components/layouts/AlerteDisplayer'), {
   ssr: false,
@@ -49,11 +56,9 @@ export default function Layout({ children }: LayoutProps) {
     usePortefeuillePotentiellementPasRecupere()
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const mainRef = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
 
   const pageCouranteEstMessagerie = router.pathname === '/messagerie'
-  const pageCouranteEstCGU = router.pathname === '/consentement-cgu'
 
   const withChat = !withoutChat
 
@@ -71,10 +76,6 @@ export default function Layout({ children }: LayoutProps) {
     return () =>
       window.removeEventListener('resize', resizeContainerToInnerHeight, true)
   }, [])
-
-  useEffect(() => {
-    if (mainRef.current) mainRef.current.scrollTo(0, 0)
-  }, [router.asPath, mainRef])
 
   useEffect(() => {
     if (!conseiller) {
@@ -116,27 +117,27 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <AppHead hasMessageNonLu={hasMessageNonLu} titre={pageTitle} />
+      <LienEvitement />
 
       {!conseiller && <SpinningLoader />}
 
       {conseiller && portefeuille && (
         <>
-          {!pageCouranteEstMessagerie && !pageCouranteEstCGU && (
+          {!pageCouranteEstMessagerie && (
             <div
               ref={containerRef}
               className={`${styles.container} ${
                 withChat ? styles.container_with_chat : ''
               }`}
             >
-              <Sidebar />
+              <SidebarLayout />
 
               <div
-                ref={mainRef}
                 className={`${styles.page} ${
                   withChat ? styles.page_when_chat : ''
                 }`}
               >
-                <Header
+                <DeprecatedHeader
                   currentPath={router.asPath}
                   returnTo={returnTo}
                   pageHeader={pageHeader ?? pageTitle}
@@ -144,6 +145,7 @@ export default function Layout({ children }: LayoutProps) {
 
                 <main
                   role='main'
+                  id='contenu'
                   className={`${styles.content} ${
                     withChat ? styles.content_when_chat : ''
                   }`}
@@ -167,7 +169,7 @@ export default function Layout({ children }: LayoutProps) {
               ref={containerRef}
               className={`${styles.container} ${styles.messagerie_full_screen}`}
             >
-              <Sidebar />
+              <SidebarLayout />
 
               <ChatManager
                 displayChat={withChat}
@@ -175,8 +177,9 @@ export default function Layout({ children }: LayoutProps) {
                 pageEstMessagerie={true}
               />
 
-              <div ref={mainRef} className={styles.page}>
+              <div className={styles.page}>
                 <main
+                  id='contenu'
                   role='main'
                   className={`${styles.content} ${styles.messagerie_full_screen}`}
                 >
@@ -184,24 +187,6 @@ export default function Layout({ children }: LayoutProps) {
                   {children}
                 </main>
                 <Footer conseiller={conseiller} />
-              </div>
-            </div>
-          )}
-
-          {pageCouranteEstCGU && (
-            <div ref={containerRef} className={`${styles.page_full_screen}`}>
-              <div ref={mainRef} className={styles.page}>
-                <HeaderCGU
-                  conseiller={conseiller}
-                  pageHeader={pageHeader ?? pageTitle}
-                />
-                <main
-                  role='main'
-                  className={`${styles.content} ${styles.cgu_full_screen}`}
-                >
-                  <AlerteDisplayer />
-                  {children}
-                </main>
               </div>
             </div>
           )}

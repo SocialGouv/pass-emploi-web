@@ -6,7 +6,7 @@ describe('<FilAriane/>', () => {
   describe('Pour une route spécifique', () => {
     it('Affiche le fil d’ariane pour une route de niveau 2', () => {
       // Given
-      render(<FilAriane currentPath='/mes-jeunes/id-jeune' />)
+      render(<FilAriane path='/mes-jeunes/id-jeune' />)
       // Then
       expect(
         screen.getByRole('link', { name: 'Portefeuille' })
@@ -18,7 +18,7 @@ describe('<FilAriane/>', () => {
 
     it('Affiche le fil d’ariane pour une route de niveau 3', () => {
       // Given
-      render(<FilAriane currentPath='/mes-jeunes/id-jeune/actions/id-action' />)
+      render(<FilAriane path='/mes-jeunes/id-jeune/actions/id-action' />)
       // Then
       expect(screen.getByText('Portefeuille')).toBeInTheDocument()
       expect(screen.getByText('Fiche bénéficiaire')).toBeInTheDocument()
@@ -30,7 +30,7 @@ describe('<FilAriane/>', () => {
 
     it('N’affiche pas le fil d’ariane pour une route de niveau 1', () => {
       // Given
-      render(<FilAriane currentPath='/mes-jeunes' />)
+      render(<FilAriane path='/mes-jeunes' />)
       // Then
       expect(
         screen.queryByRole('link', { name: 'Portefeuille' })
@@ -41,7 +41,7 @@ describe('<FilAriane/>', () => {
   describe('Pour une route qui ne doit pas avoir de fil d’ariane', () => {
     it('N’affiche pas le fil d’ariane', () => {
       // Given
-      render(<FilAriane currentPath='/agenda/id-rdv' />)
+      render(<FilAriane path='/agenda/id-rdv' />)
       // Then
       expect(
         screen.queryByRole('link', { name: 'Mes événements' })

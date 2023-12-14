@@ -189,10 +189,6 @@ describe('Cloture Session', () => {
     describe("quand l'utilisateur est connecté", () => {
       let actual: GetServerSidePropsResult<any>
       beforeEach(() => {
-        process.env = Object.assign(process.env, {
-          IDS_STRUCTURES_EARLY_ADOPTERS: 'id-test',
-        })
-
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
@@ -205,8 +201,8 @@ describe('Cloture Session', () => {
           unConseiller({
             id: 'id-conseiller',
             structure: StructureConseiller.MILO,
-            agence: { nom: 'Agence early', id: 'id-test' },
-            structureMilo: { nom: 'Agence early', id: 'id-test' },
+            agence: { nom: 'Agence', id: 'id-test' },
+            structureMilo: { nom: 'Agence', id: 'id-test' },
           })
         )
         ;(getDetailsSession as jest.Mock).mockResolvedValue(
