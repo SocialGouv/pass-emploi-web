@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 
-import EmptyStateImage from 'assets/images/empty_state.svg'
+import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
 import ActionRow from 'components/action/ActionRow'
-import FiltresEtatsQualificationActions from 'components/action/FiltresEtatsQualificationActions'
 import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
 import { TRI } from 'components/action/OngletActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -21,7 +20,6 @@ import {
 import { BaseJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
-  afficherFiltresEtatsQualification: boolean
   jeune: BaseJeune
   actions: Action[]
   isLoading: boolean
@@ -34,7 +32,6 @@ interface TableauActionsJeuneProps {
 }
 
 export default function TableauActionsJeune({
-  afficherFiltresEtatsQualification,
   jeune,
   actions,
   isLoading,
@@ -43,18 +40,10 @@ export default function TableauActionsJeune({
   tri,
 }: TableauActionsJeuneProps) {
   const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
-  const [etatsQualificationValides, setEtatsQualificationValides] = useState<
-    EtatQualificationAction[]
-  >([])
 
   function reinitialiserFiltres() {
     onFiltres({ statuts: [], etatsQualification: [] })
     setStatutsValides([])
-    setEtatsQualificationValides([])
-  }
-
-  function getIsSortedByCreationDate(): boolean {
-    return tri === TRI.dateCroissante || tri === TRI.dateDecroissante
   }
 
   function getIsSortedByDateEcheance(): boolean {
@@ -65,14 +54,6 @@ export default function TableauActionsJeune({
 
   function getIsSortedDesc(): boolean {
     return tri === TRI.dateEcheanceDecroissante || tri === TRI.dateDecroissante
-  }
-
-  function trierParDateCreation() {
-    let nouveauTri: TRI = TRI.dateDecroissante
-    if (getIsSortedByCreationDate() && getIsSortedDesc()) {
-      nouveauTri = TRI.dateCroissante
-    }
-    onTri(nouveauTri)
   }
 
   function trierParDateEcheance() {
@@ -86,6 +67,12 @@ export default function TableauActionsJeune({
   const headerColumnWithButtonHover = 'rounded-base hover:bg-primary_lighten'
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
 
+  function getOrdreTriParDate() {
+    return `Trier les actions ordre ${
+      getIsSortedDesc() ? 'antéchronologique' : 'chronologique'
+    }`
+  }
+
   function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
     setStatutsValides(statutsSelectionnes)
     onFiltres({
@@ -94,29 +81,12 @@ export default function TableauActionsJeune({
     })
   }
 
-  function filtrerActionsParEtatsQualification(
-    etatsQualificationSelectionnes: EtatQualificationAction[]
-  ) {
-    setEtatsQualificationValides(etatsQualificationSelectionnes)
-    onFiltres({
-      etatsQualification: etatsQualificationSelectionnes,
-      statuts: [],
-    })
-  }
-
   return (
     <>
-      {afficherFiltresEtatsQualification && (
-        <FiltresEtatsQualificationActions
-          defaultValue={etatsQualificationValides}
-          onFiltres={filtrerActionsParEtatsQualification}
-        />
-      )}
-
       {isLoading && <SpinningLoader />}
 
       {actions.length === 0 && (
-        <>
+        <div className='flex flex-col justify-center'>
           <EmptyStateImage
             focusable='false'
             aria-hidden='true'
@@ -129,11 +99,11 @@ export default function TableauActionsJeune({
             type='button'
             style={ButtonStyle.PRIMARY}
             onClick={reinitialiserFiltres}
-            className='m-auto mt-8'
+            className='mx-auto mt-8'
           >
             Réinitialiser les filtres
           </Button>
-        </>
+        </div>
       )}
 
       {actions.length > 0 && (
@@ -145,27 +115,15 @@ export default function TableauActionsJeune({
         >
           <THead>
             <TR isHeader={true}>
-              <TH>Intitulé de l’action</TH>
-              <TH className={headerColumnWithButtonHover} estCliquable={true}>
-                <button
-                  onClick={trierParDateCreation}
-                  aria-label='Créée le - trier les actions'
-                  className={columnHeaderButtonStyle}
-                >
-                  Créée le
-                  <SortIcon
-                    isSorted={getIsSortedByCreationDate()}
-                    isDesc={getIsSortedDesc()}
-                  />
-                </button>
-              </TH>
+              <TH>Titre de l’action</TH>
               <TH className={headerColumnWithButtonHover} estCliquable={true}>
                 <button
                   onClick={trierParDateEcheance}
-                  aria-label='Échéance - trier les actions'
+                  aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
+                  title={getOrdreTriParDate()}
                   className={columnHeaderButtonStyle}
                 >
-                  Échéance
+                  Date de l’action
                   <SortIcon
                     isSorted={getIsSortedByDateEcheance()}
                     isDesc={getIsSortedDesc()}

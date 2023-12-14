@@ -88,11 +88,10 @@ describe('QualificationPage server side', () => {
       it('renvoie une 404', async () => {
         ;(getAction as jest.Mock).mockResolvedValue({
           action: uneAction({
-            status: StatutAction.Terminee,
+            status: StatutAction.Qualifiee,
             qualification: {
               libelle: 'Santé',
               isSituationNonProfessionnelle: true,
-              estQualifiee: true,
             },
           }),
           jeune: {

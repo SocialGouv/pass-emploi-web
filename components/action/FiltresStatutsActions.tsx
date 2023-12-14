@@ -25,10 +25,10 @@ export default function FiltresStatutsActions({
     return (
       <label key={id} htmlFor={id} className='flex pb-8'>
         <input
-          type='checkbox'
+          type='radio'
           value={statut}
           id={id}
-          className='h-5 w-5'
+          className='h-5 w-5 shrink-0'
           checked={statutsSelectionnes.includes(statut)}
           onChange={actionnerStatut}
         />
@@ -38,12 +38,9 @@ export default function FiltresStatutsActions({
   }
 
   function actionnerStatut(e: ChangeEvent<HTMLInputElement>) {
-    const statut = e.target.value as StatutAction
-    if (statutsSelectionnes.includes(statut)) {
-      setStatutsSelectionnes(statutsSelectionnes.filter((s) => s !== statut))
-    } else {
-      setStatutsSelectionnes(statutsSelectionnes.concat(statut))
-    }
+    const statut = e.target.value
+    if (statut === 'Tout sélectionner') setStatutsSelectionnes([])
+    else setStatutsSelectionnes([statut as StatutAction])
   }
 
   function filtrerActions(e: FormEvent) {
@@ -64,16 +61,15 @@ export default function FiltresStatutsActions({
         aria-expanded={afficherFiltresStatuts}
         onClick={() => setAfficherFiltresStatuts(!afficherFiltresStatuts)}
         aria-label='Statut - Filtrer les actions'
+        title='Filtrer les actions par statut'
         className='flex items-center p-4 w-full h-full'
       >
         Statut
         <IconComponent
-          name={
-            afficherFiltresStatuts ? IconName.ChevronUp : IconName.ChevronDown
-          }
+          name={IconName.Filter}
           aria-hidden={true}
           focusable={false}
-          className='h-4 w-4 ml-2 fill-primary'
+          className='h-6 w-6 ml-2 fill-primary'
         />
       </button>
 
@@ -87,6 +83,21 @@ export default function FiltresStatutsActions({
             <legend className='sr-only'>
               Choisir un ou plusieurs statuts à filtrer
             </legend>
+            <label
+              key='statut-tout-selectionner'
+              htmlFor='statut-tout-selectionner'
+              className='flex pb-8 text-base-bold'
+            >
+              <input
+                type='radio'
+                value='Tout sélectionner'
+                id='statut-tout-selectionner'
+                className='h-5 w-5 shrink-0'
+                checked={statutsSelectionnes.length === 0}
+                onChange={actionnerStatut}
+              />
+              <span className='pl-5'>Tout sélectionner</span>
+            </label>
             {Object.keys(StatutAction).map((statut) =>
               renderFiltresStatuts(statut as StatutAction)
             )}

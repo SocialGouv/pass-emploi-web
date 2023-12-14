@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
@@ -5,6 +6,7 @@ import React from 'react'
 import TagStatutAction from 'components/action/TagStatutAction'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagStatut } from 'components/ui/Indicateurs/Tag'
+import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
 
@@ -44,6 +46,14 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
   }
   const { href, iconName, label } = props[entree.type]
 
+  function determineActionEnRetard() {
+    return (
+      entree.type === 'action' &&
+      entree.statut === StatutAction.EnCours &&
+      entree.date < DateTime.now()
+    )
+  }
+
   return (
     <li className='mt-4 text-base-regular rounded-base shadow-base hover:bg-primary_lighten'>
       <Link
@@ -66,7 +76,12 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
           {entree.typeSession && entree.sousTitre && entree.sousTitre}
         </div>
         <div className='flex justify-end'>
-          {entree.statut && <TagStatutAction status={entree.statut} />}
+          {entree.type === 'action' && (
+            <TagStatutAction
+              status={entree.statut!}
+              actionEstEnRetard={determineActionEnRetard()}
+            />
+          )}
           {entree.source === StructureConseiller.MILO && (
             <>
               {entree.type === 'session' && entree.typeSession && (

@@ -17,10 +17,10 @@ import {
   ActionJson,
   ActionPilotageJson,
   ActionsCountJson,
+  actionStatusToFiltre,
   actionStatusToJson,
   CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
-  etatQualificationActionToJson,
   jsonToAction,
   jsonToActionPilotage,
   jsonToQualification,
@@ -86,11 +86,7 @@ export async function getActionsJeuneServerSide(
   page: number,
   accessToken: string
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-  return getActionsJeune(
-    idJeune,
-    { page, statuts: [], etatsQualification: [] },
-    accessToken
-  )
+  return getActionsJeune(idJeune, { page, statuts: [] }, accessToken)
 }
 
 export async function getActionsAQualifierClientSide(
@@ -224,24 +220,19 @@ async function getActionsJeune(
   {
     tri,
     statuts,
-    etatsQualification,
     page,
   }: {
     page: number
     statuts: StatutAction[]
-    etatsQualification: EtatQualificationAction[]
     tri?: string
   },
   accessToken: string
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
   const triActions = tri ?? 'date_echeance_decroissante'
   const filtresStatuts = statuts
-    .map((statut) => `&statuts=${actionStatusToJson(statut)}`)
+    .map((statut) => actionStatusToFiltre(statut))
     .join('')
-  const filtresEtatsQualification = etatsQualification
-    .map((etat) => `&etats=${etatQualificationActionToJson(etat)}`)
-    .join('')
-  const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}${filtresEtatsQualification}`
+  const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}`
 
   const {
     content: { actions: actionsJson, metadonnees },
@@ -250,10 +241,9 @@ async function getActionsJeune(
     metadonnees: MetadonneesActionsJson
   }>(url, accessToken)
 
-  const nombreActions =
-    statuts.length || etatsQualification.length
-      ? calculeNombreActionsFiltrees(statuts, etatsQualification, metadonnees)
-      : metadonnees.nombreTotal
+  const nombreActions = statuts.length
+    ? calculeNombreActionsFiltrees(statuts, metadonnees)
+    : metadonnees.nombreTotal
   const nombrePages = Math.ceil(
     nombreActions / metadonnees.nombreActionsParPage
   )
@@ -295,19 +285,12 @@ async function getActionsAQualifier(
 
 function calculeNombreActionsFiltrees(
   statuts: StatutAction[],
-  etatsQualification: EtatQualificationAction[],
   metadonnees: MetadonneesActionsJson
 ): number {
   let total = 0
 
   statuts.forEach((statut) => {
     total += extraireNombreActionsAvecStatut(metadonnees, statut)
-  })
-  etatsQualification.forEach((etatQualification) => {
-    total += extraireNombreActionsAvecEtatQualification(
-      metadonnees,
-      etatQualification
-    )
   })
 
   return total
@@ -318,30 +301,14 @@ function extraireNombreActionsAvecStatut(
   statut: StatutAction
 ): number {
   switch (statut) {
-    case StatutAction.ARealiser:
-      return metadonnees.nombrePasCommencees
-    case StatutAction.Commencee:
-      return metadonnees.nombreEnCours
+    case StatutAction.EnCours:
+      return metadonnees.nombrePasCommencees + metadonnees.nombreEnCours
     case StatutAction.Terminee:
-      return metadonnees.nombreTerminees
+      return metadonnees.nombreAQualifier
+    case StatutAction.Qualifiee:
+      return metadonnees.nombreQualifiees
     case StatutAction.Annulee:
       return metadonnees.nombreAnnulees
-    default:
-      return 0
-  }
-}
-
-function extraireNombreActionsAvecEtatQualification(
-  metadonnees: MetadonneesActionsJson,
-  etatQualification: EtatQualificationAction
-): number {
-  switch (etatQualification) {
-    case EtatQualificationAction.NonQualifiable:
-      return metadonnees.nombreNonQualifiables
-    case EtatQualificationAction.AQualifier:
-      return metadonnees.nombreAQualifier
-    case EtatQualificationAction.Qualifiee:
-      return metadonnees.nombreQualifiees
     default:
       return 0
   }

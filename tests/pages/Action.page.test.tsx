@@ -85,7 +85,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       describe('Au clique sur un statut', () => {
         it("déclenche le changement de statut de l'action", async () => {
           // Given
-          const statutRadio = screen.getByText('Commencée')
+          const statutRadio = screen.getByText('En cours')
 
           // When
           await userEvent.click(statutRadio)
@@ -93,7 +93,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           // Then
           expect(updateAction).toHaveBeenCalledWith(
             action.id,
-            StatutAction.Commencee
+            StatutAction.EnCours
           )
         })
       })
@@ -212,7 +212,7 @@ describe("Page Détail d'une action d'un jeune", () => {
     describe('quand l’action n’a pas de commentaires', () => {
       it('permet de supprimer l’action', async () => {
         // Given
-        const action = uneAction()
+        const action = uneAction({ status: StatutAction.EnCours })
         renderWithContexts(
           <PageAction
             action={action}
@@ -260,7 +260,9 @@ describe("Page Détail d'une action d'un jeune", () => {
               pageTitle=''
             />,
             {
-              customConseiller: { structure: StructureConseiller.MILO },
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+              },
               customAlerte: { alerteSetter },
             }
           )
@@ -276,9 +278,8 @@ describe("Page Détail d'une action d'un jeune", () => {
           beforeEach(async () => {
             // Given
             ;(qualifier as jest.Mock).mockResolvedValue({
-              libelle: 'PAS Situation Non Professionnelle',
+              libelle: 'Action non qualifiée en Situation Non Professionnelle',
               isSituationNonProfessionnelle: false,
-              estQualifiee: true,
             })
             const radioButton = screen.getByLabelText(
               'Il ne s’agit pas d’une Situation Non Professionnelle'
@@ -309,7 +310,9 @@ describe("Page Détail d'une action d'un jeune", () => {
 
           it("met à jour le tag de l'action", () => {
             expect(
-              screen.getByText('PAS Situation Non Professionnelle')
+              screen.getByText(
+                'Action non qualifiée en Situation Non Professionnelle'
+              )
             ).toBeInTheDocument()
           })
 
@@ -392,10 +395,10 @@ describe("Page Détail d'une action d'un jeune", () => {
         })
 
         it('ne permet pas de modifier le statut de l’action', () => {
-          expect(screen.getByLabelText('À réaliser')).toHaveAttribute(
-            'disabled'
-          )
-          expect(screen.getByLabelText('Commencée')).toHaveAttribute('disabled')
+          expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
+          expect(
+            screen.getByLabelText('Terminée - à qualifier')
+          ).toHaveAttribute('disabled')
           expect(screen.getByLabelText('Annulée')).toHaveAttribute('disabled')
         })
       })

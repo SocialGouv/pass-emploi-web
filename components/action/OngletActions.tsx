@@ -11,7 +11,7 @@ import {
   EtatQualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import { Conseiller, estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { MetadonneesPagination } from 'types/pagination'
 
@@ -149,7 +149,6 @@ export default function OngletActions({
           {actionsInitiales.metadonnees.nombreTotal > 0 && (
             <>
               <TableauActionsJeune
-                afficherFiltresEtatsQualification={estMilo(conseiller)}
                 jeune={jeune}
                 actions={actionsAffichees}
                 isLoading={isLoading}
