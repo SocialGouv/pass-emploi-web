@@ -55,6 +55,7 @@ export default function FileInput({
         className={
           'cursor-pointer flex justify-center items-center ' + styleLabel
         }
+        title='Ajoutez une pièce jointe'
       >
         <IconComponent
           name={IconName.AttachFile}
