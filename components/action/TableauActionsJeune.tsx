@@ -67,6 +67,12 @@ export default function TableauActionsJeune({
   const headerColumnWithButtonHover = 'rounded-base hover:bg-primary_lighten'
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
 
+  function getOrdreTriParDate() {
+    return `Trier les actions ordre ${
+      getIsSortedDesc() ? 'antéchronologique' : 'chronologique'
+    }`
+  }
+
   function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
     setStatutsValides(statutsSelectionnes)
     onFiltres({
@@ -113,7 +119,8 @@ export default function TableauActionsJeune({
               <TH className={headerColumnWithButtonHover} estCliquable={true}>
                 <button
                   onClick={trierParDateEcheance}
-                  aria-label='Date de l’action - trier les actions'
+                  aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
+                  title={getOrdreTriParDate()}
                   className={columnHeaderButtonStyle}
                 >
                   Date de l’action

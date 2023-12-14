@@ -38,7 +38,6 @@ export enum StatutAction {
   Terminee = 'Terminee',
   Qualifiee = 'Qualifiee',
   Annulee = 'Annulee',
-  EnRetard = 'EnRetard',
 }
 
 export enum EtatQualificationAction {

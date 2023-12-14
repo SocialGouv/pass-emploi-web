@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import React, { useEffect, useRef, useState } from 'react'
 
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
@@ -114,16 +113,7 @@ export default function OngletActions({
         filtresParEtatsQualification,
         tri
       ).then(({ actions, metadonnees }) => {
-        if (filtresParStatuts.includes(StatutAction.EnRetard))
-          setActionsAffichees(
-            actions.filter(
-              (action) =>
-                DateTime.fromISO(action.dateEcheance) < DateTime.now() &&
-                action.status === StatutAction.EnCours
-            )
-          )
-        else setActionsAffichees(actions)
-
+        setActionsAffichees(actions)
         setNombrePages(metadonnees.nombrePages)
         setIsLoading(false)
       })

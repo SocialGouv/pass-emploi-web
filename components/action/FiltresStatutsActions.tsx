@@ -38,9 +38,9 @@ export default function FiltresStatutsActions({
   }
 
   function actionnerStatut(e: ChangeEvent<HTMLInputElement>) {
-    const statut = e.target.value as StatutAction
+    const statut = e.target.value
     if (statut === 'Tout sélectionner') setStatutsSelectionnes([])
-    else setStatutsSelectionnes([statut])
+    else setStatutsSelectionnes([statut as StatutAction])
   }
 
   function filtrerActions(e: FormEvent) {
@@ -61,6 +61,7 @@ export default function FiltresStatutsActions({
         aria-expanded={afficherFiltresStatuts}
         onClick={() => setAfficherFiltresStatuts(!afficherFiltresStatuts)}
         aria-label='Statut - Filtrer les actions'
+        title='Filtrer les actions par statut'
         className='flex items-center p-4 w-full h-full'
       >
         Statut

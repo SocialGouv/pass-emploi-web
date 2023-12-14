@@ -159,9 +159,12 @@ export function actionStatusToJson(status: StatutAction): ActionStatusJson {
     case StatutAction.EnCours:
       return 'in_progress'
     case StatutAction.Terminee:
+    case StatutAction.Qualifiee:
       return 'done'
     case StatutAction.Annulee:
       return 'canceled'
+    default:
+      return 'in_progress'
   }
 }
 

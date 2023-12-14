@@ -74,7 +74,8 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
       <TD className='rounded-r-base w-[160px]'>
         <span className='flex items-center justify-between'>
           <TagStatutAction
-            status={actionEstEnRetard ? StatutAction.EnRetard : action.status}
+            status={action.status}
+            actionEstEnRetard={actionEstEnRetard}
           />
           <IconComponent
             name={IconName.ChevronRight}

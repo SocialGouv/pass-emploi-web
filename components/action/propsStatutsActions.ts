@@ -27,11 +27,6 @@ const propsStatutsActions: {
     color: 'success',
     altColor: 'success_lighten',
   },
-  EnRetard: {
-    label: 'En retard',
-    color: 'warning',
-    altColor: 'warning_lighten',
-  },
 }
 
 export default propsStatutsActions
