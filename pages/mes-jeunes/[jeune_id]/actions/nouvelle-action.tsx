@@ -16,16 +16,22 @@ import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import Tab from 'components/ui/Navigation/Tab'
-import TabList from 'components/ui/Navigation/TabList'
+
 import { ValueWithError } from 'components/ValueWithError'
-import { ActionPredefinie } from 'interfaces/action'
+import { ActionPredefinie, StatutAction } from 'interfaces/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { dateIsInInterval } from 'utils/date'
+import {
+  dateIsInInterval,
+  toFrenchFormat,
+  WEEKDAY,
+  WEEKDAY_MONTH_LONG,
+} from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
+import { Etape } from '../../../../components/ui/Form/Etape'
+import RadioBox from '../../../../components/action/RadioBox'
 
 interface EditionActionProps extends PageProps {
   idJeune: string
@@ -47,6 +53,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     value: undefined,
   })
   const [commentaire, setDescription] = useState<string>('')
+  const [statut, setStatut] = useState<StatutAction>(StatutAction.Terminee)
   const [dateEcheance, setDateEcheance] = useState<
     ValueWithError<string | undefined>
   >({ value: undefined })
@@ -57,17 +64,6 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     `Actions jeune – Création action ${tabsLabel[currentTab]}`
   )
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
-  function switchTab() {
-    const newTab = currentTab === 'predefinie' ? 'personnalisee' : 'predefinie'
-    setCurrentTab(newTab)
-    setIntitule({ value: intitule?.value })
-    setTrackingTitle(`Actions jeune – Création action ${tabsLabel[currentTab]}`)
-  }
-
-  function isSelected(tab: string): boolean {
-    return currentTab === tab
-  }
 
   function formulaireEstValide(): boolean {
     const intituleEstValide = validerIntitule()
@@ -183,144 +179,115 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
       <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <form onSubmit={creerAction} noValidate={true}>
-        <TabList className='mb-10'>
-          {Object.entries(tabsLabel).map(([tab, label]) => (
-            <Tab
-              key={tab}
-              label={`Action ${label}`}
-              controls={`form-action-${tab}`}
-              selected={isSelected(tab)}
-              onSelectTab={switchTab}
-            />
-          ))}
-        </TabList>
-
-        <p className='text-s-bold text-content_color'>
+        <p className='text-s-bold text-content_color mb-4'>
           Tous les champs avec * sont obligatoires
         </p>
-
-        {currentTab === 'predefinie' && (
-          <div
-            role='tabpanel'
-            id='form-action-predefinie'
-            aria-labelledby='creer-action-predefinie'
-            className='mt-5'
-          >
-            <Label htmlFor='intitule-action-predefinie' inputRequired={true}>
-              {{
-                main: 'Action prédéfinie',
-                helpText: 'Sélectionner dans la liste',
-              }}
-            </Label>
-            {intitule.error && (
-              <InputError id='intitule--error' className='mb-2'>
-                {intitule.error}
-              </InputError>
-            )}
-            <Select
-              id='intitule-action-predefinie'
-              required={true}
-              onChange={(value: string) => setIntitule({ value })}
-              onBlur={validerIntitule}
-            >
-              {actionsPredefinies.map(({ id, titre }) => (
-                <option key={id}>{titre}</option>
-              ))}
-            </Select>
-
-            <Label
-              htmlFor='commentaire-action-predefinie'
-              withBulleMessageSensible={true}
-            >
-              Commentaire
-            </Label>
-            <Textarea
-              id='commentaire-action-predefinie'
-              defaultValue={commentaire}
-              onChange={setDescription}
-              maxLength={INPUT_MAX_LENGTH}
-            />
-
-            <Label
-              htmlFor='date-echeance-action-predefinie'
-              inputRequired={true}
-            >
-              Date d’échéance
-            </Label>
-            {dateEcheance.error && (
-              <InputError id='date-echeance--error' className='mb-2'>
-                {dateEcheance.error}
-              </InputError>
-            )}
-            <Input
-              type='date'
-              id='date-echeance-action-predefinie'
-              required={true}
-              defaultValue={dateEcheance.value}
-              onChange={(value: string) => setDateEcheance({ value })}
-              onBlur={validerDateEcheance}
-            />
-          </div>
+        <Label htmlFor='intitule-action-personnalisee'>Catégorie</Label>
+        {intitule.error && (
+          <InputError id='intitule--error' className='mb-2'>
+            {intitule.error}
+          </InputError>
         )}
-
-        {currentTab === 'personnalisee' && (
-          <div
-            role='tabpanel'
-            id='form-action-personnalisee'
-            aria-labelledby='creer-action-personnalisee'
-            tabIndex={0}
-            className='mt-5'
-          >
-            <Label htmlFor='intitule-action-personnalisee' inputRequired={true}>
-              Titre de l&apos;action
-            </Label>
-            {intitule.error && (
-              <InputError id='intitule--error' className='mb-2'>
-                {intitule.error}
-              </InputError>
-            )}
-            <Input
-              type='text'
-              id='intitule-action-personnalisee'
-              required={true}
-              onChange={(value: string) => setIntitule({ value })}
-              onBlur={validerIntitule}
-            />
-
-            <Label
-              htmlFor='commentaire-action-personnalisee'
-              withBulleMessageSensible={true}
-            >
-              Commentaire
-            </Label>
-            <Textarea
-              id='commentaire-action-personnalisee'
-              defaultValue={commentaire}
-              onChange={setDescription}
-              maxLength={INPUT_MAX_LENGTH}
-            />
-
-            <Label
-              htmlFor='date-echeance-action-personnalisee'
-              inputRequired={true}
-            >
-              Date d’échéance
-            </Label>
-            {dateEcheance.error && (
-              <InputError id='date-echeance--error' className='mb-2'>
-                {dateEcheance.error}
-              </InputError>
-            )}
-            <Input
-              type='date'
-              id='date-echeance-action-personnalisee'
-              required={true}
-              defaultValue={dateEcheance.value}
-              onChange={(value: string) => setDateEcheance({ value })}
-              onBlur={validerDateEcheance}
-            />
-          </div>
+        <Select
+          id='intitule-action-predefinie'
+          required={true}
+          onChange={(value: string) => setIntitule({ value })}
+          onBlur={validerIntitule}
+        >
+          {actionsPredefinies.map(({ id, titre }) => (
+            <option key={id}>{titre}</option>
+          ))}
+        </Select>
+        <Label htmlFor="titre de l'action" inputRequired={true}>
+          Titre de l&apos;action
+        </Label>
+        <Input
+          type='text'
+          id='intitule-action-personnalisee'
+          required={true}
+          onChange={(value: string) => setIntitule({ value })}
+          onBlur={validerIntitule}
+        />
+        <Label htmlFor='commentaire-action-predefinie'>Description</Label>
+        <Textarea
+          id='commentaire-action-predefinie'
+          defaultValue={commentaire}
+          onChange={setDescription}
+          maxLength={INPUT_MAX_LENGTH}
+        />
+        <Etape numero={2} titre='Statut et date'></Etape>
+        <Label htmlFor='action' inputRequired={true}>
+          l&apos;action est:
+        </Label>
+        <RadioBox
+          isSelected={statut === StatutAction.ARealiser}
+          id='radio-statut-arealiser'
+          label='À faire'
+          name='radio-statut'
+          onChange={() => setStatut(StatutAction.ARealiser)}
+        />
+        <RadioBox
+          isSelected={statut === StatutAction.Terminee}
+          id='radio-statut-terminee'
+          label='Terminée'
+          name='radio-statut'
+          onChange={() => setStatut(StatutAction.Terminee)}
+        />
+        <Label htmlFor='date-echeance' inputRequired={true}>
+          Date d’échéance
+        </Label>
+        {dateEcheance.error && (
+          <InputError id='date-echeance--error' className='mb-2'>
+            {dateEcheance.error}
+          </InputError>
         )}
+        <Input
+          type='date'
+          id='date-echeance-action-predefinie'
+          required={true}
+          defaultValue={dateEcheance.value}
+          onChange={(value: string) => setDateEcheance({ value })}
+          onBlur={validerDateEcheance}
+        />
+        <input
+          type='button'
+          value={`Aujourd'hui (${toFrenchFormat(DateTime.now(), WEEKDAY)})`}
+          id='date-aujourdhui'
+          onClick={() => {
+            setDateEcheance({ value: DateTime.now().toISODate() })
+          }}
+        />
+
+        <input
+          type='button'
+          id='date-demain'
+          value={`Demain (${toFrenchFormat(
+            DateTime.now().plus({ day: 1 }),
+            WEEKDAY
+          )})`}
+          onClick={() => {
+            setDateEcheance({
+              value: DateTime.now().plus({ day: 1 }).toISODate(),
+            })
+          }}
+        />
+
+        <input
+          type='button'
+          id='semaine-prochaine'
+          value={`Semaine prochaine ${toFrenchFormat(
+            DateTime.now().plus({ week: 1 }).startOf('week'),
+            WEEKDAY
+          )}`}
+          onClick={() => {
+            setDateEcheance({
+              value: DateTime.now()
+                .plus({ week: 1 })
+                .startOf('week')
+                .toISODate(),
+            })
+          }}
+        />
 
         <div className='mt-8 flex justify-center'>
           <ButtonLink
