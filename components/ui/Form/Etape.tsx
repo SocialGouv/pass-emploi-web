@@ -11,7 +11,7 @@ type EtapeProps = {
 
 export function Etape({ numero, titre, children }: EtapeProps) {
   return (
-    <fieldset className='flex flex-col mb-8'>
+    <fieldset className='flex flex-col mb-7'>
       <legend className='flex items-center text-m-bold text-grey_800 mb-4'>
         <IconComponent
           name={getIconNumero(numero)}

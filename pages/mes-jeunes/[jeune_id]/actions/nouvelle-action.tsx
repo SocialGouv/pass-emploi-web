@@ -182,6 +182,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
         <p className='text-s-bold text-content_color mb-4'>
           Tous les champs avec * sont obligatoires
         </p>
+        <Etape numero={1} titre='Information principales'></Etape>
         <Label htmlFor='intitule-action-personnalisee'>Catégorie</Label>
         {intitule.error && (
           <InputError id='intitule--error' className='mb-2'>
@@ -219,20 +220,22 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
         <Label htmlFor='action' inputRequired={true}>
           l&apos;action est:
         </Label>
-        <RadioBox
-          isSelected={statut === StatutAction.ARealiser}
-          id='radio-statut-arealiser'
-          label='À faire'
-          name='radio-statut'
-          onChange={() => setStatut(StatutAction.ARealiser)}
-        />
-        <RadioBox
-          isSelected={statut === StatutAction.Terminee}
-          id='radio-statut-terminee'
-          label='Terminée'
-          name='radio-statut'
-          onChange={() => setStatut(StatutAction.Terminee)}
-        />
+        <div className='mb-7 flex flex-wrap'>
+          <RadioBox
+            isSelected={statut === StatutAction.ARealiser}
+            id='radio-statut-arealiser'
+            label='À faire'
+            name='radio-statut'
+            onChange={() => setStatut(StatutAction.ARealiser)}
+          />
+          <RadioBox
+            isSelected={statut === StatutAction.Terminee}
+            id='radio-statut-terminee'
+            label='Terminée'
+            name='radio-statut'
+            onChange={() => setStatut(StatutAction.Terminee)}
+          />
+        </div>
         <Label htmlFor='date-echeance' inputRequired={true}>
           Date d’échéance
         </Label>
@@ -249,45 +252,29 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
           onChange={(value: string) => setDateEcheance({ value })}
           onBlur={validerDateEcheance}
         />
-        <input
-          type='button'
-          value={`Aujourd'hui (${toFrenchFormat(DateTime.now(), WEEKDAY)})`}
-          id='date-aujourdhui'
-          onClick={() => {
-            setDateEcheance({ value: DateTime.now().toISODate() })
-          }}
-        />
-
-        <input
-          type='button'
-          id='date-demain'
-          value={`Demain (${toFrenchFormat(
-            DateTime.now().plus({ day: 1 }),
-            WEEKDAY
-          )})`}
-          onClick={() => {
-            setDateEcheance({
-              value: DateTime.now().plus({ day: 1 }).toISODate(),
-            })
-          }}
-        />
-
-        <input
-          type='button'
-          id='semaine-prochaine'
-          value={`Semaine prochaine ${toFrenchFormat(
-            DateTime.now().plus({ week: 1 }).startOf('week'),
-            WEEKDAY
-          )}`}
-          onClick={() => {
-            setDateEcheance({
-              value: DateTime.now()
-                .plus({ week: 1 })
-                .startOf('week')
-                .toISODate(),
-            })
-          }}
-        />
+        <div className='gap-2 flex flex-wrap'>
+          <BoutonDateRapide
+            date={DateTime.now()}
+            label="Aujourd'hui"
+            onClick={(date) => {
+              setDateEcheance({ value: date })
+            }}
+          />
+          <BoutonDateRapide
+            date={DateTime.now().plus({ day: 1 })}
+            label='Demain'
+            onClick={(date) => {
+              setDateEcheance({ value: date })
+            }}
+          />
+          <BoutonDateRapide
+            date={DateTime.now().plus({ week: 1 }).startOf('week')}
+            label='Semaine prochaine'
+            onClick={(date) => {
+              setDateEcheance({ value: date })
+            }}
+          />
+        </div>
 
         <div className='mt-8 flex justify-center'>
           <ButtonLink
@@ -338,6 +325,23 @@ export const getServerSideProps: GetServerSideProps<
       returnTo: `/mes-jeunes/${idJeune}`,
     },
   }
+}
+function BoutonDateRapide(props: {
+  date: DateTime
+  label: string
+  onClick: (date: string) => void
+}) {
+  return (
+    <input
+      className='text-s-medium border border-solid border-grey_700 rounded-base px-2 px-1'
+      type='button'
+      value={`${props.label} (${toFrenchFormat(props.date, WEEKDAY)})`}
+      id={props.label}
+      onClick={() => {
+        props.onClick(props.date.toISODate())
+      }}
+    />
+  )
 }
 
 export default withTransaction(EditionAction.name, 'page')(EditionAction)
