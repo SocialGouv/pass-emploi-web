@@ -1,7 +1,8 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
@@ -23,7 +24,6 @@ import {
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -35,18 +35,20 @@ import {
 } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-interface EditionActionProps extends PageProps {
+type EditionActionProps = {
   idJeune: string
   categories: SituationNonProfessionnelle[]
   actionsPredefinies: ActionPredefinie[]
+  returnTo: string
 }
 
-const TITRE_AUTRE = 'Autre'
+export const TITRE_AUTRE = 'Autre'
 
-function EditionAction({
+function NouvelleActionPage({
   idJeune,
   categories,
   actionsPredefinies,
+  returnTo,
 }: EditionActionProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
@@ -137,7 +139,7 @@ function EditionAction({
     const { creerAction } = await import('services/actions.service')
     await creerAction(action, idJeune)
     setAlerte(AlerteParam.creationAction)
-    await router.push(`/mes-jeunes/${idJeune}?onglet=actions`)
+    router.push(returnTo)
   }
 
   function getErreurs(): LigneErreur[] {
@@ -307,10 +309,7 @@ function EditionAction({
         </Etape>
 
         <div className='mt-8 flex justify-center'>
-          <ButtonLink
-            href={`/mes-jeunes/${idJeune}/actions`}
-            style={ButtonStyle.SECONDARY}
-          >
+          <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
             Annuler
           </ButtonLink>
           <Button type='submit' className='ml-6'>
@@ -326,45 +325,6 @@ function EditionAction({
       </form>
     </>
   )
-}
-
-export const getServerSideProps: GetServerSideProps<
-  EditionActionProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const idJeune = context.query.jeune_id as string
-
-  const { getSituationsNonProfessionnelles } = await import(
-    'services/actions.service'
-  )
-  const { getActionsPredefinies } = await import('services/referentiel.service')
-
-  const [categories, actionsPredefinies] = await Promise.all([
-    getSituationsNonProfessionnelles(sessionOrRedirect.session.accessToken),
-    getActionsPredefinies(sessionOrRedirect.session.accessToken),
-  ])
-
-  return {
-    props: {
-      idJeune,
-      categories,
-      actionsPredefinies: actionsPredefinies.concat({
-        id: 'autre',
-        titre: TITRE_AUTRE,
-      }),
-      withoutChat: true,
-      pageTitle: 'Actions jeune – Créer action',
-      pageHeader: 'Créer une nouvelle action',
-      returnTo: `/mes-jeunes/${idJeune}`,
-    },
-  }
 }
 
 function BoutonDateRapide(props: {
@@ -386,4 +346,7 @@ function BoutonDateRapide(props: {
   )
 }
 
-export default withTransaction(EditionAction.name, 'page')(EditionAction)
+export default withTransaction(
+  NouvelleActionPage.name,
+  'page'
+)(NouvelleActionPage)
