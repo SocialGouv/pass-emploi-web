@@ -1,15 +1,19 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 
-import { ActionPredefinie } from 'interfaces/action'
+import { desSituationsNonProfessionnelles } from 'fixtures/action'
+import {
+  ActionPredefinie,
+  SituationNonProfessionnelle,
+} from 'interfaces/action'
 import NouvelleAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/nouvelle-action'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { createAction } from 'services/actions.service'
+import { creerAction } from 'services/actions.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
@@ -38,22 +42,18 @@ describe('NouvelleAction', () => {
     })
 
     describe("quand l'utilisateur est connecté", () => {
-      it("récupère l'id du jeune", async () => {
+      it('prépare la page', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
           validSession: true,
           session: { accessToken: 'accessToken' },
         })
-
-        const actionsPredefinies: { titre: string; id: string }[] = [
+        ;(getActionsPredefinies as jest.Mock).mockResolvedValue([
           {
             id: 'action-predefinie-1',
             titre: 'Identifier ses atouts et ses compétences',
           },
-        ]
-        ;(getActionsPredefinies as jest.Mock).mockResolvedValue(
-          actionsPredefinies
-        )
+        ])
 
         // When
         const actual = await getServerSideProps({
@@ -65,7 +65,13 @@ describe('NouvelleAction', () => {
         expect(actual).toEqual({
           props: {
             idJeune: 'id-jeune',
-            actionsPredefinies,
+            actionsPredefinies: [
+              {
+                id: 'action-predefinie-1',
+                titre: 'Identifier ses atouts et ses compétences',
+              },
+              { id: 'autre', titre: 'Autre' },
+            ],
             withoutChat: true,
             pageTitle: 'Actions jeune – Créer action',
             pageHeader: 'Créer une nouvelle action',
@@ -79,25 +85,32 @@ describe('NouvelleAction', () => {
   describe('client side', () => {
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
-    let actionsPredefinies: ActionPredefinie[]
+    const categories: SituationNonProfessionnelle[] =
+      desSituationsNonProfessionnelles()
+    const actionsPredefinies: ActionPredefinie[] = [
+      {
+        id: 'action-predefinie-1',
+        titre: 'Identifier ses atouts et ses compétences',
+      },
+      { id: 'action-predefinie-2', titre: 'Identifier des pistes de métier' },
+      { id: 'action-predefinie-3', titre: 'Identifier des entreprises' },
+      { id: 'autre', titre: 'Autre' },
+    ]
+
     beforeEach(async () => {
       // Given
       alerteSetter = jest.fn()
       push = jest.fn(async () => {})
       ;(useRouter as jest.Mock).mockReturnValue({ push })
-      actionsPredefinies = [
-        {
-          id: 'action-predefinie-1',
-          titre: 'Identifier ses atouts et ses compétences',
-        },
-        { id: 'action-predefinie-2', titre: 'Identifier des pistes de métier' },
-        { id: 'action-predefinie-3', titre: 'Identifier des entreprises' },
-      ]
+      jest
+        .spyOn(DateTime, 'now')
+        .mockReturnValue(DateTime.fromISO('2023-12-19'))
 
       // When
       renderWithContexts(
         <NouvelleAction
           idJeune='id-jeune'
+          categories={categories}
           actionsPredefinies={actionsPredefinies}
           withoutChat={true}
           pageTitle=''
@@ -118,244 +131,156 @@ describe('NouvelleAction', () => {
       ).toHaveAttribute('href', '/mes-jeunes/id-jeune/actions')
     })
 
-    it('contient 2 onglets', () => {
+    it('contient une liste des catégories de qualification', () => {
       // Then
-      const tablist = screen.getByRole('tablist')
-      expect(
-        within(tablist).getByRole('tab', { name: 'Action prédéfinie' })
-      ).toBeInTheDocument()
-      expect(
-        within(tablist).getByRole('tab', { name: 'Action personnalisée' })
-      ).toBeInTheDocument()
-    })
+      const select = screen.getByRole('combobox', { name: 'Catégorie' })
 
-    describe('dans l\'onglet "Action prédéfinie" (défaut)', () => {
-      it('contient une liste des actions prédéfinies', () => {
-        // Then
-        const select = screen.getByRole('combobox', {
-          name: /Action prédéfinie/,
-        })
-
-        expect(select).toHaveAttribute('required', '')
-        actionsPredefinies.forEach(({ titre }) => {
-          expect(
-            within(select).getByRole('option', { name: titre })
-          ).toBeInTheDocument()
-        })
-      })
-
-      it('contient un champ pour saisir un commentaire', () => {
-        // Then
+      categories.forEach(({ label }) => {
         expect(
-          screen.getByRole('textbox', { name: /Commentaire/ })
-        ).not.toHaveAttribute('required')
-      })
-
-      it('contient un champ pour saisir une date d’échéance', () => {
-        // Then
-        expect(screen.getByLabelText(/Date d’échéance/)).toHaveAttribute(
-          'required'
-        )
-      })
-
-      describe('action prédéfinie remplie', () => {
-        let selectAction: HTMLSelectElement
-        let submit: HTMLButtonElement
-
-        beforeEach(async () => {
-          // Given
-          selectAction = screen.getByRole('combobox', {
-            name: /Action prédéfinie/,
-          })
-          submit = screen.getByRole('button', { name: 'Créer l’action' })
-        })
-
-        it("requiert la sélection d'une action", async () => {
-          const dateEcheance = screen.getByLabelText(/Date d’échéance/)
-
-          await userEvent.type(dateEcheance, '2022-07-30')
-          await userEvent.selectOptions(
-            selectAction,
-            actionsPredefinies[1].titre
-          )
-          // When
-          fireEvent.change(selectAction, { target: { value: '' } })
-          await userEvent.click(submit)
-
-          // Then
-          expect(createAction).not.toHaveBeenCalled()
-        })
-
-        it("affiche un message d'erreur quand le type d’action prédéfinie est vide", async () => {
-          // When
-          await userEvent.click(submit)
-
-          // Then
-          expect(
-            screen.getByText(/Le champ “Action prédéfinie" est vide/)
-          ).toBeInTheDocument()
-          expect(createAction).not.toHaveBeenCalled()
-        })
-
-        it("affiche un message d'erreur quand la date d'échéance n'est pas au bon format", async () => {
-          //Given
-          await userEvent.selectOptions(
-            selectAction,
-            actionsPredefinies[1].titre
-          )
-          const dateEcheance = screen.getByLabelText(/Date d’échéance/)
-
-          await userEvent.clear(dateEcheance)
-          await userEvent.click(submit)
-
-          // Then
-          expect(
-            screen.getByText(/Le champ “Date d’échéance” est vide/)
-          ).toBeInTheDocument()
-          expect(createAction).not.toHaveBeenCalled()
-        })
-
-        it("affiche un message d'erreur quand date d'echeance n'est pas dans l'interval: un an avant, deux ans après", async () => {
-          const dateEcheance = screen.getByLabelText(/Date d’échéance/)
-          await userEvent.type(dateEcheance, '2000-07-30')
-          await userEvent.tab()
-
-          const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
-          const deuxAnsApres = DateTime.now().plus({ year: 2 })
-
-          // Then
-          expect(
-            screen.getByText(
-              `Le champ “Date d’échéance” est invalide. Le date attendue est comprise entre le ${unAnAvant.toFormat(
-                'dd/MM/yyyy'
-              )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`
-            )
-          ).toBeInTheDocument()
-        })
-
-        describe('formulaire valide', () => {
-          beforeEach(async () => {
-            // Given
-            await userEvent.selectOptions(
-              selectAction,
-              actionsPredefinies[1].titre
-            )
-
-            const description = screen.getByRole('textbox', {
-              name: /Commentaire/,
-            })
-            await userEvent.type(description, 'Commentaire action')
-
-            const dateEcheance = screen.getByLabelText(/Date d’échéance/)
-
-            await userEvent.type(dateEcheance, '2022-07-30')
-
-            const submit = screen.getByRole('button', {
-              name: 'Créer l’action',
-            })
-
-            // When
-            await userEvent.click(submit)
-          })
-
-          it("crée l'action", () => {
-            // Then
-            expect(createAction).toHaveBeenCalledWith(
-              {
-                intitule: actionsPredefinies[1].titre,
-                commentaire: 'Commentaire action',
-                dateEcheance: '2022-07-30',
-              },
-              'id-jeune'
-            )
-          })
-
-          it('redirige vers la fiche du jeune', () => {
-            // Then
-            expect(alerteSetter).toHaveBeenCalledWith('creationAction')
-            expect(push).toHaveBeenCalledWith(
-              '/mes-jeunes/id-jeune?onglet=actions'
-            )
-          })
-        })
+          within(select).getByRole('option', { name: label })
+        ).toBeInTheDocument()
       })
     })
 
-    describe('dans l\'onglet "Action personnalisees"', () => {
+    it('contient une liste de titres prédéfinis', () => {
+      // Then
+      const select = screen.getByRole('combobox', { name: "Titre de l'action" })
+
+      expect(select).toHaveAttribute('required', '')
+      actionsPredefinies.forEach(({ titre }) => {
+        expect(
+          within(select).getByRole('option', { name: titre })
+        ).toBeInTheDocument()
+      })
+    })
+
+    it('contient un champ pour saisir un autre titre', async () => {
+      // Given
+      expect(
+        screen.queryByRole('textbox', { name: /titre personnalisé/ })
+      ).not.toBeInTheDocument()
+
+      // When
+      const select = screen.getByRole('combobox', { name: "Titre de l'action" })
+      await userEvent.selectOptions(select, 'Autre')
+
+      //The
+      expect(
+        screen.getByRole('textbox', { name: /titre personnalisé/ })
+      ).toHaveAttribute('required')
+    })
+
+    it('contient un champ pour saisir un commentaire', () => {
+      // Then
+      expect(
+        screen.getByRole('textbox', { name: /Description/ })
+      ).not.toHaveAttribute('required')
+    })
+
+    it('contient des boutons pour choisir le statut de l‘action', async () => {
+      // Then
+      expect(screen.getByRole('radio', { name: 'À faire' })).not.toBeChecked()
+      expect(screen.getByRole('radio', { name: 'Terminée' })).toBeChecked()
+    })
+
+    it('contient un champ pour saisir une date d’échéance', () => {
+      // Then
+      expect(screen.getByLabelText('* Date')).toHaveAttribute('required')
+    })
+
+    it('contient des boutons pour faciliter le choix de la date d’échéance', async () => {
+      expect(
+        screen.getByRole('button', { name: "Aujourd'hui (mardi 19)" })
+      ).toHaveAttribute('aria-controls', 'date-action')
+      expect(
+        screen.getByRole('button', { name: 'Demain (mercredi 20)' })
+      ).toHaveAttribute('aria-controls', 'date-action')
+      expect(
+        screen.getByRole('button', { name: 'Semaine prochaine (lundi 25)' })
+      ).toHaveAttribute('aria-controls', 'date-action')
+    })
+
+    describe('action remplie', () => {
+      let selectAction: HTMLSelectElement
+      let submit: HTMLButtonElement
+
       beforeEach(async () => {
         // Given
-        const switchTab = screen.getByRole('tab', {
-          name: /Action personnalisée/,
-        })
-        await userEvent.click(switchTab)
+        selectAction = screen.getByRole('combobox', { name: /Titre/ })
+        submit = screen.getByRole('button', { name: 'Créer l’action' })
       })
 
-      it("contient un champ pour saisir l'intitule de l'action", () => {
-        // Then
-        const intitule = screen.getByRole('textbox', {
-          name: "Titre de l'action",
-        })
-        expect(intitule).toHaveAttribute('required', '')
-        expect(intitule).toHaveAttribute('type', 'text')
-      })
+      it("affiche un message d'erreur quand le titre est vide", async () => {
+        // When
+        await userEvent.click(submit)
 
-      it('contient un champ pour saisir une description', () => {
         // Then
         expect(
-          screen.getByRole('textbox', { name: /Commentaire/ })
-        ).not.toHaveAttribute('required')
+          screen.getByText(/Le champ “Titre de l’action" est vide/)
+        ).toBeInTheDocument()
+        expect(creerAction).not.toHaveBeenCalled()
       })
 
-      it('contient un champ pour saisir une date d’échéance', () => {
+      it("affiche un message d'erreur quand la date d'échéance est vide", async () => {
+        //Given
+        await userEvent.click(submit)
+
         // Then
-        expect(screen.getByLabelText(/Date d’échéance/)).toHaveAttribute(
-          'required'
-        )
+        expect(screen.getByText(/Le champ “Date” est vide/)).toBeInTheDocument()
+        expect(creerAction).not.toHaveBeenCalled()
       })
 
-      describe('action personnalisée remplie', () => {
-        let intitule: HTMLInputElement
-        let submit: HTMLButtonElement
+      it("affiche un message d'erreur quand date d'echeance n'est pas dans l'interval: un an avant, deux ans après", async () => {
+        const dateEcheance = screen.getByLabelText(/Date/)
+        await userEvent.type(dateEcheance, '2000-07-30')
+        await userEvent.tab()
+
+        // Then
+        expect(
+          screen.getByText(
+            `Le champ “Date” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
+          )
+        ).toBeInTheDocument()
+      })
+
+      describe('formulaire valide', () => {
         beforeEach(async () => {
           // Given
-          intitule = screen.getByRole('textbox', { name: /Titre/ })
+          await userEvent.selectOptions(
+            selectAction,
+            actionsPredefinies[1].titre
+          )
+
           const description = screen.getByRole('textbox', {
-            name: /Commentaire/,
+            name: 'Description',
           })
-          const dateEcheance = screen.getByLabelText(/Date d’échéance/)
+          await userEvent.type(description, 'Description action')
 
-          submit = screen.getByRole('button', { name: 'Créer l’action' })
+          await userEvent.click(screen.getByRole('button', { name: /Demain/ }))
 
-          await userEvent.type(intitule, 'Intitulé action')
-          await userEvent.type(description, 'Commentaire action')
-          await userEvent.type(dateEcheance, '2022-07-30')
+          // When
+          await userEvent.click(submit)
         })
 
-        describe('formulaire valide', () => {
-          beforeEach(async () => {
-            // When
-            await userEvent.click(submit)
-          })
+        it("crée l'action", () => {
+          // Then
+          expect(creerAction).toHaveBeenCalledWith(
+            {
+              titre: actionsPredefinies[1].titre,
+              commentaire: 'Description action',
+              dateEcheance: '2023-12-20',
+              statut: 'Terminee',
+            },
+            'id-jeune'
+          )
+        })
 
-          it("crée l'action", () => {
-            // Then
-            expect(createAction).toHaveBeenCalledWith(
-              {
-                intitule: 'Intitulé action',
-                commentaire: 'Commentaire action',
-                dateEcheance: '2022-07-30',
-              },
-              'id-jeune'
-            )
-          })
-
-          it('redirige vers la fiche du jeune', () => {
-            // Then
-            expect(alerteSetter).toHaveBeenCalledWith('creationAction')
-            expect(push).toHaveBeenCalledWith(
-              '/mes-jeunes/id-jeune?onglet=actions'
-            )
-          })
+        it('redirige vers la fiche du jeune', () => {
+          // Then
+          expect(alerteSetter).toHaveBeenCalledWith('creationAction')
+          expect(push).toHaveBeenCalledWith(
+            '/mes-jeunes/id-jeune?onglet=actions'
+          )
         })
       })
     })

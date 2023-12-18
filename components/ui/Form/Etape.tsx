@@ -6,7 +6,7 @@ export type NumeroEtape = 1 | 2 | 3 | 4 | 5
 type EtapeProps = {
   numero: NumeroEtape
   titre: string
-  children?: Exclude<ReactNode, string | number | boolean | null | undefined>
+  children: Exclude<ReactNode, string | number | boolean | null | undefined>
 }
 
 export function Etape({ numero, titre, children }: EtapeProps) {

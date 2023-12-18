@@ -18,7 +18,7 @@ import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { Action } from 'interfaces/action'
+import { Action, SituationNonProfessionnelle } from 'interfaces/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -27,7 +27,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type QualificationProps = {
   action: Action
-  situationsNonProfessionnelles: Array<{ code: string; label: string }>
+  situationsNonProfessionnelles: SituationNonProfessionnelle[]
   returnTo: string
 }
 

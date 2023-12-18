@@ -4,21 +4,25 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 
-import RecapitulatifErreursFormulaire, {
-  LigneErreur,
-} from '../../../../components/ui/Notifications/RecapitulatifErreursFormulaire'
-
+import RadioBox from 'components/action/RadioBox'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import { Etape } from 'components/ui/Form/Etape'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
-import { ActionPredefinie, StatutAction } from 'interfaces/action'
+import {
+  ActionPredefinie,
+  SituationNonProfessionnelle,
+  StatutAction,
+} from 'interfaces/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
@@ -26,68 +30,69 @@ import useMatomo from 'utils/analytics/useMatomo'
 import {
   dateIsInInterval,
   toFrenchFormat,
+  toShortDate,
   WEEKDAY,
-  WEEKDAY_MONTH_LONG,
 } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import { Etape } from '../../../../components/ui/Form/Etape'
-import RadioBox from '../../../../components/action/RadioBox'
 
 interface EditionActionProps extends PageProps {
   idJeune: string
+  categories: SituationNonProfessionnelle[]
   actionsPredefinies: ActionPredefinie[]
 }
 
-function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
+const TITRE_AUTRE = 'Autre'
+
+function EditionAction({
+  idJeune,
+  categories,
+  actionsPredefinies,
+}: EditionActionProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
 
-  type Tab = 'predefinie' | 'personnalisee'
-  const tabsLabel: { [key in Tab]: string } = {
-    predefinie: 'prédéfinie',
-    personnalisee: 'personnalisée',
-  }
-  const [currentTab, setCurrentTab] = useState<Tab>('predefinie')
-  const [intitule, setIntitule] = useState<ValueWithError<string | undefined>>({
+  const [codeCategorie, setCodeCategorie] = useState<string | undefined>()
+  const [titre, setTitre] = useState<ValueWithError<string | undefined>>({
     value: undefined,
   })
-  const [commentaire, setDescription] = useState<string>('')
+  const [titreAutre, setTitreAutre] = useState<
+    ValueWithError<string | undefined>
+  >({ value: undefined })
+  const [commentaire, setDescription] = useState<string | undefined>()
   const [statut, setStatut] = useState<StatutAction>(StatutAction.Terminee)
   const [dateEcheance, setDateEcheance] = useState<
     ValueWithError<string | undefined>
   >({ value: undefined })
   const INPUT_MAX_LENGTH = 250
-  const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
 
-  const [trackingTitle, setTrackingTitle] = useState<string>(
-    `Actions jeune – Création action ${tabsLabel[currentTab]}`
-  )
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function formulaireEstValide(): boolean {
-    const intituleEstValide = validerIntitule()
+    const titreEstValide = validerTitre() && validerTitreAutre()
     const dateEcheanceEstValide = validerDateEcheance()
 
-    return Boolean(intituleEstValide && dateEcheanceEstValide)
+    return Boolean(titreEstValide && dateEcheanceEstValide)
   }
 
-  function formatDateEcheanceEstValide(): boolean {
-    return Boolean(dateEcheance.value && regexDate.test(dateEcheance.value))
-  }
-
-  function validerIntitule() {
-    if (intitule.value === undefined) {
-      setIntitule({
-        ...intitule,
-        error: `${
-          currentTab === 'predefinie'
-            ? 'Le champ “Action prédéfinie" est vide. Renseignez une action.'
-            : 'Le champ “Titre de l’action" est vide. Renseignez un titre.'
-        }`,
+  function validerTitre() {
+    if (!titre.value) {
+      setTitre({
+        ...titre,
+        error: 'Le champ “Titre de l’action" est vide. Renseignez un titre.',
       })
+      return false
     }
-    return Boolean(intitule.value)
+    return true
+  }
+
+  function validerTitreAutre() {
+    if (titre.value === TITRE_AUTRE && !titreAutre.value) {
+      setTitreAutre({ ...titre, error: 'Renseignez un titre personnalisé.' })
+      return false
+    }
+
+    return true
   }
 
   function validerDateEcheance() {
@@ -97,8 +102,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     if (!dateEcheance.value) {
       setDateEcheance({
         ...dateEcheance,
-        error:
-          'Le champ “Date d’échéance” est vide. Renseignez une date d’échéance.',
+        error: 'Le champ “Date” est vide. Renseignez une date de l’action.',
       })
       return false
     } else if (
@@ -110,18 +114,13 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     ) {
       setDateEcheance({
         ...dateEcheance,
-        error: `Le champ “Date d’échéance” est invalide. Le date attendue est comprise entre le ${unAnAvant.toFormat(
-          'dd/MM/yyyy'
-        )} et le ${deuxAnsApres.toFormat('dd/MM/yyyy')}.`,
+        error: `Le champ “Date” est invalide. Le date attendue est comprise entre le ${toShortDate(
+          unAnAvant
+        )} et le ${toShortDate(deuxAnsApres)}.`,
       })
-    } else if (!formatDateEcheanceEstValide()) {
-      setDateEcheance({
-        ...dateEcheance,
-        error:
-          'Le champ “Date d’échéance” est invalide. Le format attendu est jj/mm/aaaa, par exemple : 20/03/2023.',
-      })
+      return false
     }
-    return Boolean(dateEcheance.value && regexDate.test(dateEcheance.value))
+    return true
   }
 
   async function creerAction(e: FormEvent) {
@@ -129,12 +128,14 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     if (!formulaireEstValide()) return
 
     const action = {
-      intitule: intitule.value!,
-      commentaire,
+      titre: titre.value !== TITRE_AUTRE ? titre.value! : titreAutre.value!,
       dateEcheance: dateEcheance.value!,
+      codeCategorie,
+      commentaire,
+      statut,
     }
-    const { createAction } = await import('services/actions.service')
-    await createAction(action, idJeune)
+    const { creerAction } = await import('services/actions.service')
+    await creerAction(action, idJeune)
     setAlerte(AlerteParam.creationAction)
     await router.push(`/mes-jeunes/${idJeune}?onglet=actions`)
   }
@@ -142,29 +143,26 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
   function getErreurs(): LigneErreur[] {
     const erreurs = []
 
-    if (intitule.error) {
-      if (currentTab === 'predefinie') {
-        erreurs.push({
-          ancre: '#intitule-action-predefinie',
-          label: 'Le champ Action prédéfinie est vide.',
-          titreChamp: 'Action prédéfinie',
-        })
-      } else {
-        erreurs.push({
-          ancre: '#intitule-action-personnalisee',
-          label: 'Le champ Titre de l’action est vide.',
-          titreChamp: 'Titre de l’action',
-        })
-      }
+    if (titre.error) {
+      erreurs.push({
+        ancre: '#titre-action',
+        label: 'Le champ Titre de l’action est vide.',
+        titreChamp: 'Titre de l’action',
+      })
+    }
+
+    if (titreAutre.error) {
+      erreurs.push({
+        ancre: '#titre-action--autre',
+        label: 'Le champ Titre personnalisé est vide.',
+        titreChamp: 'Titre personnalisé',
+      })
     }
 
     if (dateEcheance.error) {
-      const ancre =
-        currentTab === 'predefinie'
-          ? '#date-echeance-action-predefinie'
-          : '#date-echeance-action-personnalisee'
-      const label = 'Le champ Date d’échéance est vide.'
-      const titreChamp = 'Date d’échéance'
+      const ancre = '#date-echeance-action'
+      const label = 'Le champ Date est vide.'
+      const titreChamp = 'Date'
 
       erreurs.push({ ancre, label, titreChamp })
     }
@@ -172,7 +170,7 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
     return erreurs
   }
 
-  useMatomo(trackingTitle, aDesBeneficiaires)
+  useMatomo('Actions jeune – Création action', aDesBeneficiaires)
 
   return (
     <>
@@ -182,99 +180,131 @@ function EditionAction({ idJeune, actionsPredefinies }: EditionActionProps) {
         <p className='text-s-bold text-content_color mb-4'>
           Tous les champs avec * sont obligatoires
         </p>
-        <Etape numero={1} titre='Information principales'></Etape>
-        <Label htmlFor='intitule-action-personnalisee'>Catégorie</Label>
-        {intitule.error && (
-          <InputError id='intitule--error' className='mb-2'>
-            {intitule.error}
-          </InputError>
-        )}
-        <Select
-          id='intitule-action-predefinie'
-          required={true}
-          onChange={(value: string) => setIntitule({ value })}
-          onBlur={validerIntitule}
-        >
-          {actionsPredefinies.map(({ id, titre }) => (
-            <option key={id}>{titre}</option>
-          ))}
-        </Select>
-        <Label htmlFor="titre de l'action" inputRequired={true}>
-          Titre de l&apos;action
-        </Label>
-        <Input
-          type='text'
-          id='intitule-action-personnalisee'
-          required={true}
-          onChange={(value: string) => setIntitule({ value })}
-          onBlur={validerIntitule}
-        />
-        <Label htmlFor='commentaire-action-predefinie'>Description</Label>
-        <Textarea
-          id='commentaire-action-predefinie'
-          defaultValue={commentaire}
-          onChange={setDescription}
-          maxLength={INPUT_MAX_LENGTH}
-        />
-        <Etape numero={2} titre='Statut et date'></Etape>
-        <Label htmlFor='action' inputRequired={true}>
-          l&apos;action est:
-        </Label>
-        <div className='mb-7 flex flex-wrap'>
-          <RadioBox
-            isSelected={statut === StatutAction.ARealiser}
-            id='radio-statut-arealiser'
-            label='À faire'
-            name='radio-statut'
-            onChange={() => setStatut(StatutAction.ARealiser)}
+
+        <Etape numero={1} titre='Information principales'>
+          <Label htmlFor='categorie-action'>Catégorie</Label>
+          <Select id='categorie-action' onChange={setCodeCategorie}>
+            {categories.map(({ code, label }) => (
+              <option key={code} value={code}>
+                {label}
+              </option>
+            ))}
+          </Select>
+
+          <Label htmlFor='titre-action' inputRequired={true}>
+            Titre de l&apos;action
+          </Label>
+          {titre.error && (
+            <InputError id='titre-action--error' className='mb-2'>
+              {titre.error}
+            </InputError>
+          )}
+          <Select
+            id='titre-action'
+            required={true}
+            onChange={(value: string) => setTitre({ value })}
+            onBlur={validerTitre}
+            invalid={Boolean(titre.error)}
+          >
+            {actionsPredefinies.map(({ id, titre }) => (
+              <option key={id}>{titre}</option>
+            ))}
+          </Select>
+
+          {titre.value === TITRE_AUTRE && (
+            <>
+              <Label htmlFor='titre-action--autre' inputRequired={true}>
+                Ajoutez un titre personnalisé
+              </Label>
+              {titreAutre.error && (
+                <InputError id='titre-action--autre--error' className='mb-2'>
+                  {titreAutre.error}
+                </InputError>
+              )}
+              <Input
+                type='text'
+                id='titre-action--autre'
+                required={true}
+                onChange={(value) => setTitreAutre({ value })}
+                onBlur={validerTitreAutre}
+                invalid={Boolean(titreAutre.error)}
+              />
+            </>
+          )}
+
+          <Label htmlFor='commentaire-action'>Description</Label>
+          <Textarea
+            id='commentaire-action'
+            defaultValue={commentaire}
+            onChange={setDescription}
+            maxLength={INPUT_MAX_LENGTH}
           />
-          <RadioBox
-            isSelected={statut === StatutAction.Terminee}
-            id='radio-statut-terminee'
-            label='Terminée'
-            name='radio-statut'
-            onChange={() => setStatut(StatutAction.Terminee)}
+        </Etape>
+
+        <Etape numero={2} titre='Statut et date'>
+          <fieldset>
+            <legend className='text-base-regular text-content_color mb-3'>
+              <span aria-hidden={true}>*&nbsp;</span>L’action est :
+            </legend>
+            <div className='mb-7 flex flex-wrap'>
+              <RadioBox
+                isSelected={statut === StatutAction.EnCours}
+                id='statut-action--arealiser'
+                label='À faire'
+                name='statut-action'
+                onChange={() => setStatut(StatutAction.EnCours)}
+              />
+              <RadioBox
+                isSelected={statut === StatutAction.Terminee}
+                id='statut-action--terminee'
+                label='Terminée'
+                name='statut-action'
+                onChange={() => setStatut(StatutAction.Terminee)}
+              />
+            </div>
+          </fieldset>
+
+          <Label htmlFor='date-action' inputRequired={true}>
+            Date
+          </Label>
+          {dateEcheance.error && (
+            <InputError id='date-action--error' className='mb-2'>
+              {dateEcheance.error}
+            </InputError>
+          )}
+          <Input
+            type='date'
+            id='date-action'
+            required={true}
+            defaultValue={dateEcheance.value}
+            onChange={(value: string) => setDateEcheance({ value })}
+            onBlur={validerDateEcheance}
+            invalid={Boolean(dateEcheance.error)}
           />
-        </div>
-        <Label htmlFor='date-echeance' inputRequired={true}>
-          Date d’échéance
-        </Label>
-        {dateEcheance.error && (
-          <InputError id='date-echeance--error' className='mb-2'>
-            {dateEcheance.error}
-          </InputError>
-        )}
-        <Input
-          type='date'
-          id='date-echeance-action-predefinie'
-          required={true}
-          defaultValue={dateEcheance.value}
-          onChange={(value: string) => setDateEcheance({ value })}
-          onBlur={validerDateEcheance}
-        />
-        <div className='gap-2 flex flex-wrap'>
-          <BoutonDateRapide
-            date={DateTime.now()}
-            label="Aujourd'hui"
-            onClick={(date) => {
-              setDateEcheance({ value: date })
-            }}
-          />
-          <BoutonDateRapide
-            date={DateTime.now().plus({ day: 1 })}
-            label='Demain'
-            onClick={(date) => {
-              setDateEcheance({ value: date })
-            }}
-          />
-          <BoutonDateRapide
-            date={DateTime.now().plus({ week: 1 }).startOf('week')}
-            label='Semaine prochaine'
-            onClick={(date) => {
-              setDateEcheance({ value: date })
-            }}
-          />
-        </div>
+          <div className='gap-2 flex flex-wrap'>
+            <BoutonDateRapide
+              date={DateTime.now()}
+              label="Aujourd'hui"
+              onClick={(date) => {
+                setDateEcheance({ value: date })
+              }}
+            />
+            <BoutonDateRapide
+              date={DateTime.now().plus({ day: 1 })}
+              label='Demain'
+              onClick={(date) => {
+                setDateEcheance({ value: date })
+              }}
+            />
+            <BoutonDateRapide
+              date={DateTime.now().plus({ week: 1 }).startOf('week')}
+              label='Semaine prochaine'
+              onClick={(date) => {
+                setDateEcheance({ value: date })
+              }}
+            />
+          </div>
+        </Etape>
 
         <div className='mt-8 flex justify-center'>
           <ButtonLink
@@ -311,14 +341,24 @@ export const getServerSideProps: GetServerSideProps<
 
   const idJeune = context.query.jeune_id as string
 
-  const { getActionsPredefinies } = await import('services/referentiel.service')
-  const actionsPredefinies = await getActionsPredefinies(
-    sessionOrRedirect.session.accessToken
+  const { getSituationsNonProfessionnelles } = await import(
+    'services/actions.service'
   )
+  const { getActionsPredefinies } = await import('services/referentiel.service')
+
+  const [categories, actionsPredefinies] = await Promise.all([
+    getSituationsNonProfessionnelles(sessionOrRedirect.session.accessToken),
+    getActionsPredefinies(sessionOrRedirect.session.accessToken),
+  ])
+
   return {
     props: {
       idJeune,
-      actionsPredefinies,
+      categories,
+      actionsPredefinies: actionsPredefinies.concat({
+        id: 'autre',
+        titre: TITRE_AUTRE,
+      }),
       withoutChat: true,
       pageTitle: 'Actions jeune – Créer action',
       pageHeader: 'Créer une nouvelle action',
@@ -326,6 +366,7 @@ export const getServerSideProps: GetServerSideProps<
     },
   }
 }
+
 function BoutonDateRapide(props: {
   date: DateTime
   label: string
@@ -333,10 +374,11 @@ function BoutonDateRapide(props: {
 }) {
   return (
     <input
-      className='text-s-medium border border-solid border-grey_700 rounded-base px-2 px-1'
       type='button'
-      value={`${props.label} (${toFrenchFormat(props.date, WEEKDAY)})`}
       id={props.label}
+      aria-controls='date-action'
+      className='text-s-medium border border-solid border-grey_700 rounded-base px-2 py-1 cursor-pointer'
+      value={`${props.label} (${toFrenchFormat(props.date, WEEKDAY)})`}
       onClick={() => {
         props.onClick(props.date.toISODate())
       }}
