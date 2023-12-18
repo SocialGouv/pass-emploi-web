@@ -37,7 +37,7 @@ describe('TableauActionsJeune', () => {
 
       // Then
       expect(
-        screen.getByLabelText('Terminée - à qualifier')
+        screen.getByLabelText('Terminée - À qualifier')
       ).not.toHaveAttribute('checked')
       expect(screen.getByLabelText('En cours')).toHaveAttribute('checked')
       expect(screen.getByLabelText('Qualifiée')).not.toHaveAttribute('checked')

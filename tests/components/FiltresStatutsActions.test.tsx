@@ -24,7 +24,7 @@ describe('FiltresStatutsAction', () => {
     ).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: 'En cours' })).toBeInTheDocument()
     expect(
-      screen.getByRole('radio', { name: 'Terminée - à qualifier' })
+      screen.getByRole('radio', { name: 'Terminée - À qualifier' })
     ).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: 'Qualifiée' })).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: 'Annulée' })).toBeInTheDocument()

@@ -44,32 +44,13 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
                 className='w-4 h-4 fill-accent_2 mr-2'
               />
             )}
-          <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
+          <span className='flex items-baseline wrap text-base-bold text-ellipsis overflow-hidden max-w-[400px]'>
             {action.content}
           </span>
         </div>
       </TD>
       <TD>
-        <span className='flex flex-row items-center'>
-          <span
-            className={
-              actionEstEnRetard ? 'text-warning flex flex-row items-center' : ''
-            }
-          >
-            {actionEstEnRetard ? (
-              <IconComponent
-                name={IconName.Error}
-                aria-label='en retard'
-                aria-hidden='true'
-                focusable='false'
-                className='h-3 mr-1 fill-warning'
-              />
-            ) : (
-              <></>
-            )}
-            {dateEcheance}
-          </span>
-        </span>
+        <span className='flex flex-row items-center'>{dateEcheance}</span>
       </TD>
       <TD className='rounded-r-base w-[160px]'>
         <span className='flex items-center justify-between'>
