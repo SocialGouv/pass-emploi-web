@@ -397,7 +397,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         it('ne permet pas de modifier le statut de l’action', () => {
           expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
           expect(
-            screen.getByLabelText('Terminée - à qualifier')
+            screen.getByLabelText('Terminée - À qualifier')
           ).toHaveAttribute('disabled')
           expect(screen.getByLabelText('Annulée')).toHaveAttribute('disabled')
         })

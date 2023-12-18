@@ -35,13 +35,13 @@ describe('<ActionRow/>', () => {
   it("devrait afficher un badge 'Terminée' quand l'action est terminée", () => {
     const actionTerminee = uneAction({ status: StatutAction.Terminee })
     render(<ActionRow action={actionTerminee} jeuneId={'1'} />)
-    expect(screen.getByText('Terminée - à qualifier')).toBeInTheDocument()
+    expect(screen.getByText('Terminée - À qualifier')).toBeInTheDocument()
   })
 
-  it('devrait afficher une icône quand la date d’échéance de l’action est dépassée', () => {
+  it("devrait afficher un badge 'En retard' quand la date d’échéance de l’action est dépassée", () => {
     const action = uneAction()
     render(<ActionRow action={action} jeuneId={'1'} />)
     expect(screen.getByText('20/02/2022')).toBeInTheDocument()
-    expect(screen.getByLabelText('en retard')).toBeInTheDocument()
+    expect(screen.getByText('En retard')).toBeInTheDocument()
   })
 })

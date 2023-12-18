@@ -14,12 +14,12 @@ const propsStatutsActions: {
   },
   EnCours: {
     label: 'En cours',
-    color: 'accent_1',
-    altColor: 'accent_1_lighten',
+    color: 'primary_darken',
+    altColor: 'accent_3_lighten',
   },
   Terminee: {
-    label: 'Terminée - à qualifier',
-    color: 'primary',
+    label: 'Terminée - À qualifier',
+    color: 'primary_darken',
     altColor: 'accent_3_lighten',
   },
   Qualifiee: {
