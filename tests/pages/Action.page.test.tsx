@@ -308,14 +308,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             )
           })
 
-          it("met à jour le tag de l'action", () => {
-            expect(
-              screen.getByText(
-                'Action non qualifiée en Situation Non Professionnelle'
-              )
-            ).toBeInTheDocument()
-          })
-
           it('cache le formulaire de qualification', () => {
             expect(() =>
               screen.getByText(
@@ -393,13 +385,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             screen.queryByRole('button', { name: 'Supprimer l’action' })
           ).not.toBeInTheDocument()
         })
-
-        it('ne permet pas de modifier le statut de l’action', () => {
-          expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
-          expect(
-            screen.getByLabelText('Terminée - À qualifier')
-          ).toHaveAttribute('disabled')
-        })
       })
     })
 
@@ -407,7 +392,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       describe('qualifiée en SNP', () => {
         //Given
         const actionAQualifier = uneAction({
-          status: StatutAction.Terminee,
+          status: StatutAction.Qualifiee,
           qualification: {
             libelle: 'Emploi',
             isSituationNonProfessionnelle: true,
@@ -443,18 +428,19 @@ describe("Page Détail d'une action d'un jeune", () => {
 
         it('affiche un encart d’information de qualification en SNP', async () => {
           //Then
-          expect(
-            screen.getByText(
-              'Action qualifiée en Situation non-professionnelle : Emploi'
-            )
-          ).toBeInTheDocument()
+          expect(screen.getByText('Action qualifiée.')).toBeInTheDocument()
+        })
+
+        it('ne permet pas de modifier le statut de l’action', () => {
+          expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
+          expect(screen.getByLabelText('Terminée')).toHaveAttribute('disabled')
         })
       })
 
       describe('non qualifiée en SNP', () => {
         //Given
         const actionAQualifier = uneAction({
-          status: StatutAction.Terminee,
+          status: StatutAction.Qualifiee,
           qualification: {
             libelle: 'Non SNP',
             isSituationNonProfessionnelle: false,
@@ -488,11 +474,16 @@ describe("Page Détail d'une action d'un jeune", () => {
           )
         })
 
+        it('ne permet pas de modifier le statut de l’action', () => {
+          expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
+          expect(screen.getByLabelText('Terminée')).toHaveAttribute('disabled')
+        })
+
         it('affiche un encart d’information de qualification en SNP', async () => {
           //Then
           expect(
             screen.getByText(
-              /Action non qualifiée en Situation non-professionnelle/
+              /Action qualifiée en non Situation non-professionnelle/
             )
           ).toBeInTheDocument()
         })

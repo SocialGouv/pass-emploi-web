@@ -7,7 +7,6 @@ import React, { useState } from 'react'
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
-import TagQualificationAction from 'components/action/TagQualificationAction'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -27,7 +26,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toShortDate } from 'utils/date'
+import { MONTH_LONG, toFrenchFormat } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface PageActionProps extends PageProps {
@@ -49,9 +48,9 @@ function PageAction({
   const [portefeuille] = usePortefeuille()
   const [alerte, setAlerte] = useAlerte()
 
-  const [qualification, setQualification] = useState<
-    QualificationAction | undefined
-  >(action.qualification)
+  const [_, setQualification] = useState<QualificationAction | undefined>(
+    action.qualification
+  )
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
@@ -63,14 +62,16 @@ function PageAction({
 
   const conseillerEstMilo = estMilo(conseiller)
 
-  const estARealiser = statut === StatutAction.EnCours
   const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
   const afficherSuppressionAction =
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
     action.status !== StatutAction.Terminee &&
     commentaires.length === 0
 
-  const dateEcheance = toShortDate(action.dateEcheance)
+  const dateEcheanceLongFormat = toFrenchFormat(
+    DateTime.fromISO(action.dateEcheance),
+    MONTH_LONG
+  )
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const { updateAction } = await import('services/actions.service')
@@ -182,9 +183,7 @@ function PageAction({
         <>
           {action.qualification.isSituationNonProfessionnelle && (
             <div className='mb-6'>
-              <InformationMessage
-                label={`Action qualifiée en Situation non-professionnelle : ${action.qualification.libelle}`}
-              >
+              <InformationMessage label={`Action qualifiée.`}>
                 Vous pouvez modifier cette action dans i-milo. <br /> Délai
                 d’actualisation entre l’app CEJ et i-milo : 24h.
               </InformationMessage>
@@ -193,30 +192,12 @@ function PageAction({
 
           {!action.qualification.isSituationNonProfessionnelle && (
             <div className='mb-6'>
-              <InformationMessage label='Action non qualifiée en Situation non-professionnelle : '>
-                C’est enregistré ! Vous pouvez poursuivre votre travail.
+              <InformationMessage label='Action qualifiée en non Situation non-professionnelle : '>
+                Vous ne pouvez plus modifier cette action.
               </InformationMessage>
             </div>
           )}
         </>
-      )}
-
-      {conseillerEstMilo && !action.qualification && (
-        <TagQualificationAction statut={statut} qualification={qualification} />
-      )}
-
-      {estARealiser && (
-        <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-l mb-8'>
-          <IconComponent
-            name={IconName.Schedule}
-            aria-hidden='true'
-            focusable='false'
-            className='h-5 w-5 mr-1 fill-accent_2'
-          />
-          <span>
-            À réaliser pour le : <b>{dateEcheance}</b>
-          </span>
-        </div>
       )}
 
       <StatutActionForm
@@ -240,7 +221,10 @@ function PageAction({
           <dt className='text-base-bold pb-6'>
             <span>Catégorie :</span>
           </dt>
-          <dd className='text-base-regular pl-6'></dd>
+          <dd className='text-base-regular pl-6'>
+            --
+            <span className='sr-only'>information non disponible</span>
+          </dd>
           <dt className='text-base-bold pb-6'>
             <span>Titre de l’action :</span>
           </dt>
@@ -248,13 +232,20 @@ function PageAction({
           <dt className='text-base-bold pb-6'>
             <span>Description :</span>
           </dt>
-          <dd className='text-base-regular pl-6'>{action.comment}</dd>
+          <dd className='text-base-regular pl-6'>
+            {action.comment ? (
+              action.comment
+            ) : (
+              <>
+                --
+                <span className='sr-only'>information non disponible</span>
+              </>
+            )}
+          </dd>
           <dt className='text-base-bold pb-6'>
             <span>Date de l’action :</span>
           </dt>
-          <dd className='text-base-regular pl-6'>
-            {DateTime.fromISO(action.dateEcheance).toFormat('dd/MM/yyyy')}
-          </dd>
+          <dd className='text-base-regular pl-6'>{dateEcheanceLongFormat}</dd>
         </dl>
       </div>
 

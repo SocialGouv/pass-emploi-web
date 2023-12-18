@@ -48,15 +48,18 @@ function StatutActionForm({
     <div className='border-b-2 border-solid border-primary_lighten pt-5'>
       <h2 className='text-m-bold text-grey_800 pb-6'>Statut</h2>
       <form className='flex flex-raw mb-10'>
-        {statuts.map((statutAction: StatutAction) => (
+        {statuts.map((statut: StatutAction) => (
           <RadioBoxStatut
-            key={statutAction.toLowerCase()}
-            status={statutAction}
-            isSelected={estStatutCourant(statutAction)}
+            key={statut.toLowerCase()}
+            status={statut}
+            isSelected={estStatutCourant(statut)}
             onChange={updateStatutAction}
             isDisabled={
-              (statutCourant === StatutAction.Terminee && !estAQualifier) ||
-              lectureSeule
+              statutCourant === StatutAction.Qualifiee || lectureSeule
+            }
+            estQualifiee={
+              statut === StatutAction.Terminee &&
+              statutCourant === StatutAction.Qualifiee
             }
           />
         ))}
