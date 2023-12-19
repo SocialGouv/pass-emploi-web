@@ -113,10 +113,10 @@ export async function getActionsAQualifierServerSide(
 
 export async function creerAction(
   action: {
+    codeCategorie: string
     titre: string
     dateEcheance: string
     statut: StatutAction
-    codeCategorie?: string
     commentaire?: string
   },
   idJeune: string

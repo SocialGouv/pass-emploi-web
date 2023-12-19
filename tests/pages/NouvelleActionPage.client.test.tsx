@@ -121,13 +121,22 @@ describe('NouvelleActionPage client side', () => {
   })
 
   describe('action remplie', () => {
-    let selectAction: HTMLSelectElement
     let submit: HTMLButtonElement
 
     beforeEach(async () => {
       // Given
-      selectAction = screen.getByRole('combobox', { name: /Titre/ })
       submit = screen.getByRole('button', { name: 'Créer l’action' })
+    })
+
+    it("affiche un message d'erreur quand la catégorie est vide", async () => {
+      // When
+      await userEvent.click(submit)
+
+      // Then
+      expect(
+        screen.getByText(/Le champ “Catégorie" est vide/)
+      ).toBeInTheDocument()
+      expect(creerAction).not.toHaveBeenCalled()
     })
 
     it("affiche un message d'erreur quand le titre est vide", async () => {
@@ -137,6 +146,21 @@ describe('NouvelleActionPage client side', () => {
       // Then
       expect(
         screen.getByText(/Le champ “Titre de l’action" est vide/)
+      ).toBeInTheDocument()
+      expect(creerAction).not.toHaveBeenCalled()
+    })
+
+    it("affiche un message d'erreur quand le titre est autre et le titre personnalisé est vide", async () => {
+      // When
+      await userEvent.selectOptions(
+        screen.getByRole('combobox', { name: /Titre/ }),
+        'Autre'
+      )
+      await userEvent.click(submit)
+
+      // Then
+      expect(
+        screen.getByText(/Le champ "Titre personnalisé" est vide/)
       ).toBeInTheDocument()
       expect(creerAction).not.toHaveBeenCalled()
     })
@@ -166,7 +190,14 @@ describe('NouvelleActionPage client side', () => {
     describe('formulaire valide', () => {
       beforeEach(async () => {
         // Given
-        await userEvent.selectOptions(selectAction, actionsPredefinies[1].titre)
+        await userEvent.selectOptions(
+          screen.getByRole('combobox', { name: /Catégorie/ }),
+          categories[2].label
+        )
+        await userEvent.selectOptions(
+          screen.getByRole('combobox', { name: /Titre/ }),
+          actionsPredefinies[1].titre
+        )
 
         const description = screen.getByRole('textbox', {
           name: 'Description',
@@ -183,6 +214,7 @@ describe('NouvelleActionPage client side', () => {
         // Then
         expect(creerAction).toHaveBeenCalledWith(
           {
+            codeCategorie: categories[2].code,
             titre: actionsPredefinies[1].titre,
             commentaire: 'Description action',
             dateEcheance: '2023-12-20',

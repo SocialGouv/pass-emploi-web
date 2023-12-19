@@ -17,7 +17,6 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
-import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { ValueWithError } from 'components/ValueWithError'
 import {
   ActionPredefinie,
@@ -50,7 +49,9 @@ function NouvelleActionPage({
 }: EditionActionProps) {
   const [portefeuille] = usePortefeuille()
 
-  const [codeCategorie, setCodeCategorie] = useState<string | undefined>()
+  const [codeCategorie, setCodeCategorie] = useState<
+    ValueWithError<string | undefined>
+  >({ value: undefined })
   const [titre, setTitre] = useState<ValueWithError<string | undefined>>({
     value: undefined,
   })
@@ -71,10 +72,24 @@ function NouvelleActionPage({
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function formulaireEstValide(): boolean {
+    const categorieEstValide = validerCategorie()
     const titreEstValide = validerTitre() && validerTitreAutre()
     const dateEcheanceEstValide = validerDateEcheance()
 
-    return Boolean(titreEstValide && dateEcheanceEstValide)
+    return Boolean(
+      categorieEstValide && titreEstValide && dateEcheanceEstValide
+    )
+  }
+
+  function validerCategorie() {
+    if (!codeCategorie.value) {
+      setCodeCategorie({
+        ...codeCategorie,
+        error: 'Le champ “Catégorie" est vide. Renseignez une catégorie.',
+      })
+      return false
+    }
+    return true
   }
 
   function validerTitre() {
@@ -90,7 +105,11 @@ function NouvelleActionPage({
 
   function validerTitreAutre() {
     if (titre.value === TITRE_AUTRE && !titreAutre.value) {
-      setTitreAutre({ ...titre, error: 'Renseignez un titre personnalisé.' })
+      setTitreAutre({
+        ...titre,
+        error:
+          'Le champ "Titre personnalisé" est vide. Renseignez un titre personnalisé.',
+      })
       return false
     }
 
@@ -130,9 +149,9 @@ function NouvelleActionPage({
     if (!formulaireEstValide()) return
 
     const action = {
+      codeCategorie: codeCategorie.value!,
       titre: titre.value !== TITRE_AUTRE ? titre.value! : titreAutre.value!,
       dateEcheance: dateEcheance.value!,
-      codeCategorie,
       commentaire: description,
       statut,
     }
@@ -145,6 +164,14 @@ function NouvelleActionPage({
 
   function getErreurs(): LigneErreur[] {
     const erreurs = []
+
+    if (codeCategorie.error) {
+      erreurs.push({
+        ancre: '#categorie-action',
+        label: 'Le champ Catégorie est vide.',
+        titreChamp: 'Catégorie',
+      })
+    }
 
     if (titre.error) {
       erreurs.push({
@@ -174,7 +201,7 @@ function NouvelleActionPage({
   }
 
   function resetForm() {
-    setCodeCategorie(undefined)
+    setCodeCategorie({ value: undefined })
     setTitre({ value: undefined })
     setTitreAutre({ value: undefined })
     setDescription(undefined)
@@ -201,10 +228,15 @@ function NouvelleActionPage({
               <Label htmlFor='categorie-action' inputRequired={true}>
                 Catégorie
               </Label>
+              {codeCategorie.error && (
+                <InputError id='categorie-action--error' className='mb-2'>
+                  {codeCategorie.error}
+                </InputError>
+              )}
               <Select
                 id='categorie-action'
                 required={true}
-                onChange={setCodeCategorie}
+                onChange={(value) => setCodeCategorie({ value })}
               >
                 {categories.map(({ code, label }) => (
                   <option key={code} value={code}>
