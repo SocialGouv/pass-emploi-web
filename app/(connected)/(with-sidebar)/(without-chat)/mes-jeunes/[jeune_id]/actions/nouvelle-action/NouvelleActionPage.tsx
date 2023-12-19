@@ -2,7 +2,6 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
@@ -18,14 +17,13 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
+import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { ValueWithError } from 'components/ValueWithError'
 import {
   ActionPredefinie,
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { AlerteParam } from 'referentiel/alerteParam'
-import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import {
   dateIsInInterval,
@@ -50,8 +48,6 @@ function NouvelleActionPage({
   actionsPredefinies,
   returnTo,
 }: EditionActionProps) {
-  const router = useRouter()
-  const [_, setAlerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
 
   const [codeCategorie, setCodeCategorie] = useState<string | undefined>()
@@ -61,13 +57,17 @@ function NouvelleActionPage({
   const [titreAutre, setTitreAutre] = useState<
     ValueWithError<string | undefined>
   >({ value: undefined })
-  const [commentaire, setDescription] = useState<string | undefined>()
+  const [description, setDescription] = useState<string | undefined>()
   const [statut, setStatut] = useState<StatutAction>(StatutAction.Terminee)
   const [dateEcheance, setDateEcheance] = useState<
     ValueWithError<string | undefined>
   >({ value: undefined })
   const INPUT_MAX_LENGTH = 250
 
+  const [succesCreation, setSuccesCreation] = useState<boolean>(false)
+
+  const initialTracking = 'Actions jeune – Création action'
+  const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function formulaireEstValide(): boolean {
@@ -133,13 +133,14 @@ function NouvelleActionPage({
       titre: titre.value !== TITRE_AUTRE ? titre.value! : titreAutre.value!,
       dateEcheance: dateEcheance.value!,
       codeCategorie,
-      commentaire,
+      commentaire: description,
       statut,
     }
     const { creerAction } = await import('services/actions.service')
     await creerAction(action, idJeune)
-    setAlerte(AlerteParam.creationAction)
-    router.push(returnTo)
+
+    setTrackingTitle('Actions jeune – Succès création action')
+    setSuccesCreation(true)
   }
 
   function getErreurs(): LigneErreur[] {
@@ -172,157 +173,200 @@ function NouvelleActionPage({
     return erreurs
   }
 
-  useMatomo('Actions jeune – Création action', aDesBeneficiaires)
+  function resetForm() {
+    setCodeCategorie(undefined)
+    setTitre({ value: undefined })
+    setTitreAutre({ value: undefined })
+    setDescription(undefined)
+    setStatut(StatutAction.Terminee)
+    setDateEcheance({ value: undefined })
+    setSuccesCreation(false)
+    setTrackingTitle(initialTracking)
+  }
+
+  useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      {!succesCreation && (
+        <>
+          <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
-      <form onSubmit={creerAction} noValidate={true}>
-        <p className='text-s-bold text-content_color mb-4'>
-          Tous les champs avec * sont obligatoires
-        </p>
+          <form onSubmit={creerAction} noValidate={true}>
+            <p className='text-s-bold text-content_color mb-4'>
+              Tous les champs avec * sont obligatoires
+            </p>
 
-        <Etape numero={1} titre='Information principales'>
-          <Label htmlFor='categorie-action'>Catégorie</Label>
-          <Select id='categorie-action' onChange={setCodeCategorie}>
-            {categories.map(({ code, label }) => (
-              <option key={code} value={code}>
-                {label}
-              </option>
-            ))}
-          </Select>
-
-          <Label htmlFor='titre-action' inputRequired={true}>
-            Titre de l&apos;action
-          </Label>
-          {titre.error && (
-            <InputError id='titre-action--error' className='mb-2'>
-              {titre.error}
-            </InputError>
-          )}
-          <Select
-            id='titre-action'
-            required={true}
-            onChange={(value: string) => setTitre({ value })}
-            onBlur={validerTitre}
-            invalid={Boolean(titre.error)}
-          >
-            {actionsPredefinies.map(({ id, titre }) => (
-              <option key={id}>{titre}</option>
-            ))}
-          </Select>
-
-          {titre.value === TITRE_AUTRE && (
-            <>
-              <Label htmlFor='titre-action--autre' inputRequired={true}>
-                Ajoutez un titre personnalisé
+            <Etape numero={1} titre='Information principales'>
+              <Label htmlFor='categorie-action' inputRequired={true}>
+                Catégorie
               </Label>
-              {titreAutre.error && (
-                <InputError id='titre-action--autre--error' className='mb-2'>
-                  {titreAutre.error}
+              <Select
+                id='categorie-action'
+                required={true}
+                onChange={setCodeCategorie}
+              >
+                {categories.map(({ code, label }) => (
+                  <option key={code} value={code}>
+                    {label}
+                  </option>
+                ))}
+              </Select>
+
+              <Label htmlFor='titre-action' inputRequired={true}>
+                Titre de l&apos;action
+              </Label>
+              {titre.error && (
+                <InputError id='titre-action--error' className='mb-2'>
+                  {titre.error}
+                </InputError>
+              )}
+              <Select
+                id='titre-action'
+                required={true}
+                onChange={(value: string) => setTitre({ value })}
+                onBlur={validerTitre}
+                invalid={Boolean(titre.error)}
+              >
+                {actionsPredefinies.map(({ id, titre }) => (
+                  <option key={id}>{titre}</option>
+                ))}
+              </Select>
+
+              {titre.value === TITRE_AUTRE && (
+                <>
+                  <Label htmlFor='titre-action--autre' inputRequired={true}>
+                    Ajoutez un titre personnalisé
+                  </Label>
+                  {titreAutre.error && (
+                    <InputError
+                      id='titre-action--autre--error'
+                      className='mb-2'
+                    >
+                      {titreAutre.error}
+                    </InputError>
+                  )}
+                  <Input
+                    type='text'
+                    id='titre-action--autre'
+                    required={true}
+                    onChange={(value) => setTitreAutre({ value })}
+                    onBlur={validerTitreAutre}
+                    invalid={Boolean(titreAutre.error)}
+                  />
+                </>
+              )}
+
+              <Label htmlFor='commentaire-action'>Description</Label>
+              <Textarea
+                id='commentaire-action'
+                defaultValue={description}
+                onChange={setDescription}
+                maxLength={INPUT_MAX_LENGTH}
+              />
+            </Etape>
+
+            <Etape numero={2} titre='Statut et date'>
+              <fieldset>
+                <legend className='text-base-regular text-content_color mb-3'>
+                  <span aria-hidden={true}>*&nbsp;</span>L’action est :
+                </legend>
+                <div className='mb-7 flex flex-wrap'>
+                  <RadioBox
+                    isSelected={statut === StatutAction.EnCours}
+                    id='statut-action--arealiser'
+                    label='À faire'
+                    name='statut-action'
+                    onChange={() => setStatut(StatutAction.EnCours)}
+                  />
+                  <RadioBox
+                    isSelected={statut === StatutAction.Terminee}
+                    id='statut-action--terminee'
+                    label='Terminée'
+                    name='statut-action'
+                    onChange={() => setStatut(StatutAction.Terminee)}
+                  />
+                </div>
+              </fieldset>
+
+              <Label htmlFor='date-action' inputRequired={true}>
+                Date
+              </Label>
+              {dateEcheance.error && (
+                <InputError id='date-action--error' className='mb-2'>
+                  {dateEcheance.error}
                 </InputError>
               )}
               <Input
-                type='text'
-                id='titre-action--autre'
+                type='date'
+                id='date-action'
                 required={true}
-                onChange={(value) => setTitreAutre({ value })}
-                onBlur={validerTitreAutre}
-                invalid={Boolean(titreAutre.error)}
+                defaultValue={dateEcheance.value}
+                onChange={(value: string) => setDateEcheance({ value })}
+                onBlur={validerDateEcheance}
+                invalid={Boolean(dateEcheance.error)}
               />
-            </>
-          )}
+              <div className='gap-2 flex flex-wrap'>
+                <BoutonDateRapide
+                  date={DateTime.now()}
+                  label="Aujourd'hui"
+                  onClick={(date) => {
+                    setDateEcheance({ value: date })
+                  }}
+                />
+                <BoutonDateRapide
+                  date={DateTime.now().plus({ day: 1 })}
+                  label='Demain'
+                  onClick={(date) => {
+                    setDateEcheance({ value: date })
+                  }}
+                />
+                <BoutonDateRapide
+                  date={DateTime.now().plus({ week: 1 }).startOf('week')}
+                  label='Semaine prochaine'
+                  onClick={(date) => {
+                    setDateEcheance({ value: date })
+                  }}
+                />
+              </div>
+            </Etape>
 
-          <Label htmlFor='commentaire-action'>Description</Label>
-          <Textarea
-            id='commentaire-action'
-            defaultValue={commentaire}
-            onChange={setDescription}
-            maxLength={INPUT_MAX_LENGTH}
-          />
-        </Etape>
-
-        <Etape numero={2} titre='Statut et date'>
-          <fieldset>
-            <legend className='text-base-regular text-content_color mb-3'>
-              <span aria-hidden={true}>*&nbsp;</span>L’action est :
-            </legend>
-            <div className='mb-7 flex flex-wrap'>
-              <RadioBox
-                isSelected={statut === StatutAction.EnCours}
-                id='statut-action--arealiser'
-                label='À faire'
-                name='statut-action'
-                onChange={() => setStatut(StatutAction.EnCours)}
-              />
-              <RadioBox
-                isSelected={statut === StatutAction.Terminee}
-                id='statut-action--terminee'
-                label='Terminée'
-                name='statut-action'
-                onChange={() => setStatut(StatutAction.Terminee)}
-              />
+            <div className='mt-8 flex justify-center'>
+              <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
+                Annuler
+              </ButtonLink>
+              <Button type='submit' className='ml-6'>
+                <IconComponent
+                  name={IconName.Add}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='mr-2 w-4 h-4'
+                />
+                Créer l’action
+              </Button>
             </div>
-          </fieldset>
+          </form>
+        </>
+      )}
 
-          <Label htmlFor='date-action' inputRequired={true}>
-            Date
-          </Label>
-          {dateEcheance.error && (
-            <InputError id='date-action--error' className='mb-2'>
-              {dateEcheance.error}
-            </InputError>
-          )}
-          <Input
-            type='date'
-            id='date-action'
-            required={true}
-            defaultValue={dateEcheance.value}
-            onChange={(value: string) => setDateEcheance({ value })}
-            onBlur={validerDateEcheance}
-            invalid={Boolean(dateEcheance.error)}
-          />
-          <div className='gap-2 flex flex-wrap'>
-            <BoutonDateRapide
-              date={DateTime.now()}
-              label="Aujourd'hui"
-              onClick={(date) => {
-                setDateEcheance({ value: date })
-              }}
-            />
-            <BoutonDateRapide
-              date={DateTime.now().plus({ day: 1 })}
-              label='Demain'
-              onClick={(date) => {
-                setDateEcheance({ value: date })
-              }}
-            />
-            <BoutonDateRapide
-              date={DateTime.now().plus({ week: 1 }).startOf('week')}
-              label='Semaine prochaine'
-              onClick={(date) => {
-                setDateEcheance({ value: date })
-              }}
-            />
+      {succesCreation && (
+        <div className='text-center'>
+          <h2 className='text-m-bold mb-2'>Action enregistrée !</h2>
+          <p>
+            L’action est en route vers l’appli de votre bénéficiaire. De votre
+            côté, retrouvez l’action dans la fiche bénéficiaire ou l’onglet
+            Pilotage !
+          </p>
+          <div className='mt-10 flex justify-center gap-4'>
+            <Button style={ButtonStyle.SECONDARY} onClick={resetForm}>
+              Créer une nouvelle action
+            </Button>
+            <ButtonLink href={returnTo} style={ButtonStyle.PRIMARY}>
+              Consulter la liste des actions
+            </ButtonLink>
           </div>
-        </Etape>
-
-        <div className='mt-8 flex justify-center'>
-          <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
-            Annuler
-          </ButtonLink>
-          <Button type='submit' className='ml-6'>
-            <IconComponent
-              name={IconName.Add}
-              focusable={false}
-              aria-hidden={true}
-              className='mr-2 w-4 h-4'
-            />
-            Créer l’action
-          </Button>
         </div>
-      </form>
+      )}
     </>
   )
 }

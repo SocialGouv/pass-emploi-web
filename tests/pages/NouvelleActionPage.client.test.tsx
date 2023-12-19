@@ -1,7 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/navigation'
 
 import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
 import { desSituationsNonProfessionnelles } from 'fixtures/action'
@@ -9,15 +8,12 @@ import {
   ActionPredefinie,
   SituationNonProfessionnelle,
 } from 'interfaces/action'
-import { AlerteParam } from 'referentiel/alerteParam'
 import { creerAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
 
 describe('NouvelleActionPage client side', () => {
-  let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  let push: Function
   const categories: SituationNonProfessionnelle[] =
     desSituationsNonProfessionnelles()
   const actionsPredefinies: ActionPredefinie[] = [
@@ -32,9 +28,6 @@ describe('NouvelleActionPage client side', () => {
 
   beforeEach(async () => {
     // Given
-    alerteSetter = jest.fn()
-    push = jest.fn(async () => {})
-    ;(useRouter as jest.Mock).mockReturnValue({ push })
     jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO('2023-12-19'))
 
     // When
@@ -44,10 +37,7 @@ describe('NouvelleActionPage client side', () => {
         categories={categories}
         actionsPredefinies={actionsPredefinies}
         returnTo='/lien/retour'
-      />,
-      {
-        customAlerte: { alerteSetter },
-      }
+      />
     )
   })
 
@@ -202,10 +192,38 @@ describe('NouvelleActionPage client side', () => {
         )
       })
 
-      it('redirige vers la fiche du jeune', () => {
-        // Then
-        expect(alerteSetter).toHaveBeenCalledWith('creationAction')
-        expect(push).toHaveBeenCalledWith('/lien/retour')
+      describe('succès', () => {
+        it('affiche message de succès', () => {
+          // Then
+          expect(
+            screen.getByRole('heading', {
+              level: 2,
+              name: 'Action enregistrée !',
+            })
+          )
+        })
+
+        it('permet de retourner à la liste des actions', async () => {
+          // Then
+          expect(
+            screen.getByRole('link', { name: 'Consulter la liste des actions' })
+          ).toHaveAttribute('href', '/lien/retour')
+        })
+
+        it('permet de créer une nouvelle action', async () => {
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Créer une nouvelle action' })
+          )
+
+          // Then
+          expect(
+            screen.queryByText(/Action enregistrée/)
+          ).not.toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Créer l’action' })
+          ).toBeInTheDocument()
+        })
       })
     })
   })

@@ -13,7 +13,6 @@ export enum AlerteParam {
   suppressionBeneficiaire = 'suppressionBeneficiaire',
   creationBeneficiaire = 'creationBeneficiaire',
   // Actions
-  creationAction = 'creationAction',
   suppressionAction = 'suppressionAction',
   ajoutCommentaireAction = 'ajoutCommentaireAction',
   qualificationSNP = 'qualificationSNP',
