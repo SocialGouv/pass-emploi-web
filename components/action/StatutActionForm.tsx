@@ -23,6 +23,19 @@ function StatutActionForm({
   const [isSituationNonProfessionnelle, setIsSituationNonProfessionnelle] =
     useState<boolean | undefined>(undefined)
 
+  const statuts = Object.values(StatutAction).filter(
+    (statut) => statut === 'EnCours' || statut === 'Terminee'
+  )
+
+  function estStatutCourant(statutAction: StatutAction): boolean {
+    if (
+      statutCourant === StatutAction.Qualifiee &&
+      statutAction === StatutAction.Terminee
+    )
+      return true
+    return statutCourant === statutAction
+  }
+
   function submit(e: FormEvent) {
     e.preventDefault()
 
@@ -32,18 +45,21 @@ function StatutActionForm({
   }
 
   return (
-    <div className='border-t border-solid border-grey_100 pt-5'>
+    <div className='border-b-2 border-solid border-primary_lighten pt-5'>
       <h2 className='text-m-bold text-grey_800 pb-6'>Statut</h2>
       <form className='flex flex-raw mb-10'>
-        {Object.values(StatutAction).map((status: StatutAction) => (
+        {statuts.map((statut: StatutAction) => (
           <RadioBoxStatut
-            key={status.toLowerCase()}
-            status={status}
-            isSelected={statutCourant === status}
+            key={statut.toLowerCase()}
+            status={statut}
+            isSelected={estStatutCourant(statut)}
             onChange={updateStatutAction}
             isDisabled={
-              (statutCourant === StatutAction.Terminee && !estAQualifier) ||
-              lectureSeule
+              statutCourant === StatutAction.Qualifiee || lectureSeule
+            }
+            estQualifiee={
+              statut === StatutAction.Terminee &&
+              statutCourant === StatutAction.Qualifiee
             }
           />
         ))}

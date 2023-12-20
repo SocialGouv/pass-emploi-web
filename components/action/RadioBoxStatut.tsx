@@ -7,6 +7,7 @@ interface RadioBoxStatutProps {
   isSelected: boolean
   onChange: (statutChoisi: StatutAction) => void
   isDisabled: boolean
+  estQualifiee?: boolean
 }
 
 export default function RadioBoxStatut({
@@ -14,18 +15,18 @@ export default function RadioBoxStatut({
   isSelected,
   onChange,
   isDisabled,
+  estQualifiee,
 }: RadioBoxStatutProps) {
-  const { label, color } = propsStatutsActions[status]
+  const { label } = propsStatutsActions[status]
   const id = `option-statut--${label.toLowerCase()}`
 
   return (
     <RadioBox
       isSelected={isSelected}
-      color={color}
       onChange={() => onChange(status)}
       name='option-statut'
       id={id}
-      label={label}
+      label={estQualifiee ? 'Terminée' : label}
       disabled={isDisabled}
     />
   )

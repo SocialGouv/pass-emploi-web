@@ -308,14 +308,6 @@ describe("Page Détail d'une action d'un jeune", () => {
             )
           })
 
-          it("met à jour le tag de l'action", () => {
-            expect(
-              screen.getByText(
-                'Action non qualifiée en Situation Non Professionnelle'
-              )
-            ).toBeInTheDocument()
-          })
-
           it('cache le formulaire de qualification', () => {
             expect(() =>
               screen.getByText(
@@ -393,13 +385,107 @@ describe("Page Détail d'une action d'un jeune", () => {
             screen.queryByRole('button', { name: 'Supprimer l’action' })
           ).not.toBeInTheDocument()
         })
+      })
+    })
+
+    describe("quand l'action qualifiée", () => {
+      describe('qualifiée en SNP', () => {
+        //Given
+        const actionAQualifier = uneAction({
+          status: StatutAction.Qualifiee,
+          qualification: {
+            libelle: 'Emploi',
+            isSituationNonProfessionnelle: true,
+          },
+        })
+        const jeune: BaseJeune & { idConseiller: string } = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        }
+
+        //When
+        beforeEach(async () => {
+          ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+
+          renderWithContexts(
+            <PageAction
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              lectureSeule={false}
+              pageTitle=''
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+              },
+              customAlerte: { alerteSetter },
+            }
+          )
+        })
+
+        it('affiche un encart d’information de qualification en SNP', async () => {
+          //Then
+          expect(screen.getByText('Action qualifiée.')).toBeInTheDocument()
+        })
 
         it('ne permet pas de modifier le statut de l’action', () => {
           expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
+          expect(screen.getByLabelText('Terminée')).toHaveAttribute('disabled')
+        })
+      })
+
+      describe('non qualifiée en SNP', () => {
+        //Given
+        const actionAQualifier = uneAction({
+          status: StatutAction.Qualifiee,
+          qualification: {
+            libelle: 'Non SNP',
+            isSituationNonProfessionnelle: false,
+          },
+        })
+        const jeune: BaseJeune & { idConseiller: string } = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        }
+
+        //When
+        beforeEach(async () => {
+          ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+
+          renderWithContexts(
+            <PageAction
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              lectureSeule={false}
+              pageTitle=''
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+              },
+              customAlerte: { alerteSetter },
+            }
+          )
+        })
+
+        it('ne permet pas de modifier le statut de l’action', () => {
+          expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
+          expect(screen.getByLabelText('Terminée')).toHaveAttribute('disabled')
+        })
+
+        it('affiche un encart d’information de qualification en SNP', async () => {
+          //Then
           expect(
-            screen.getByLabelText('Terminée - À qualifier')
-          ).toHaveAttribute('disabled')
-          expect(screen.getByLabelText('Annulée')).toHaveAttribute('disabled')
+            screen.getByText(
+              /Action qualifiée en non Situation non-professionnelle/
+            )
+          ).toBeInTheDocument()
         })
       })
     })
