@@ -231,23 +231,6 @@ describe('AlerteDisplayer', () => {
     })
   })
 
-  describe('quand la création d’une action est réussie', () => {
-    it("affiche l'alerte de succès", () => {
-      // Given
-      renderWithContexts(<AlerteDisplayer />, {
-        customAlerte: {
-          alerte: {
-            key: AlerteParam.creationAction,
-          },
-          alerteSetter,
-        },
-      })
-
-      // Then
-      expect(screen.getByText(/L’action a bien été créée/)).toBeInTheDocument()
-    })
-  })
-
   describe('quand l’ajout ou la modification de l’identifiant partenaire est réussi', () => {
     it("affiche l'alerte de succès", () => {
       // Given

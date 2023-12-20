@@ -2,9 +2,10 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
+import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -14,6 +15,9 @@ import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
@@ -65,6 +69,11 @@ function NouvelleActionPage({
   >({ value: undefined })
   const INPUT_MAX_LENGTH = 250
 
+  const [showHelperCategories, setShowHelperCategories] =
+    useState<boolean>(false)
+  const modalRef = useRef<{
+    closeModal: (e: KeyboardEvent | MouseEvent) => void
+  }>(null)
   const [succesCreation, setSuccesCreation] = useState<boolean>(false)
 
   const initialTracking = 'Actions jeune – Création action'
@@ -155,8 +164,10 @@ function NouvelleActionPage({
       commentaire: description,
       statut,
     }
-    const { creerAction } = await import('services/actions.service')
-    await creerAction(action, idJeune)
+    const { creerAction: _creerAction } = await import(
+      'services/actions.service'
+    )
+    await _creerAction(action, idJeune)
 
     setTrackingTitle('Actions jeune – Succès création action')
     setSuccesCreation(true)
@@ -211,6 +222,10 @@ function NouvelleActionPage({
     setTrackingTitle(initialTracking)
   }
 
+  function permuterAffichageHelperCategories() {
+    setShowHelperCategories(!showHelperCategories)
+  }
+
   useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
@@ -224,7 +239,7 @@ function NouvelleActionPage({
               Tous les champs avec * sont obligatoires
             </p>
 
-            <Etape numero={1} titre='Information principales'>
+            <Etape numero={1} titre='Informations principales'>
               <Label htmlFor='categorie-action' inputRequired={true}>
                 Catégorie
               </Label>
@@ -244,9 +259,22 @@ function NouvelleActionPage({
                   </option>
                 ))}
               </Select>
+              <button
+                type='button'
+                onClick={permuterAffichageHelperCategories}
+                className='flex items-center gap-2 text-primary mt-[-1.5rem] mb-8'
+              >
+                À quoi servent les catégories ?
+                <IconComponent
+                  name={IconName.Help}
+                  className='fill-[currentColor] w-4 h-4'
+                  aria-hidden={true}
+                  focusable={false}
+                />
+              </button>
 
               <Label htmlFor='titre-action' inputRequired={true}>
-                Titre de l&apos;action
+                Titre de l’action
               </Label>
               {titre.error && (
                 <InputError id='titre-action--error' className='mb-2'>
@@ -260,8 +288,8 @@ function NouvelleActionPage({
                 onBlur={validerTitre}
                 invalid={Boolean(titre.error)}
               >
-                {actionsPredefinies.map(({ id, titre }) => (
-                  <option key={id}>{titre}</option>
+                {actionsPredefinies.map(({ id, titre: titreAction }) => (
+                  <option key={id}>{titreAction}</option>
                 ))}
               </Select>
 
@@ -289,7 +317,13 @@ function NouvelleActionPage({
                 </>
               )}
 
-              <Label htmlFor='commentaire-action'>Description</Label>
+              <Label htmlFor='commentaire-action'>
+                {{
+                  main: 'Description',
+                  helpText:
+                    'Ajoutez des précisions, pour vous ou votre bénéficiaire.',
+                }}
+              </Label>
               <Textarea
                 id='commentaire-action'
                 defaultValue={description}
@@ -383,11 +417,17 @@ function NouvelleActionPage({
 
       {succesCreation && (
         <div className='text-center'>
+          <IllustrationComponent
+            name={IllustrationName.Check}
+            className='m-auto fill-success_darken w-[180px] h-[180px]'
+            aria-hidden={true}
+            focusable={false}
+          />
           <h2 className='text-m-bold mb-2'>Action enregistrée !</h2>
           <p>
-            L’action est en route vers l’appli de votre bénéficiaire. De votre
-            côté, retrouvez l’action dans la fiche bénéficiaire ou l’onglet
-            Pilotage !
+            L’action est en route vers l’application de votre bénéficiaire. De
+            votre côté, retrouvez l’action dans la fiche bénéficiaire ou
+            l’onglet Pilotage !
           </p>
           <div className='mt-10 flex justify-center gap-4'>
             <Button style={ButtonStyle.SECONDARY} onClick={resetForm}>
@@ -398,6 +438,28 @@ function NouvelleActionPage({
             </ButtonLink>
           </div>
         </div>
+      )}
+
+      {showHelperCategories && (
+        <Modal
+          ref={modalRef}
+          title='Pourquoi choisir une catégorie ?'
+          titleIllustration={IllustrationName.Info}
+          onClose={() => setShowHelperCategories(false)}
+        >
+          <p>
+            Les catégories proposées sont le reflet de celles que vous
+            retrouverez lors de la qualification. Elles vous permettent de
+            gagner du temps.
+          </p>
+          <Button
+            style={ButtonStyle.PRIMARY}
+            onClick={(e) => modalRef.current!.closeModal(e)}
+            className='block m-auto mt-4'
+          >
+            Fermer
+          </Button>
+        </Modal>
       )}
     </>
   )

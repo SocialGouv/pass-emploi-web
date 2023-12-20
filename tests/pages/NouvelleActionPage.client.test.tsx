@@ -12,6 +12,7 @@ import { creerAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
+jest.mock('components/Modal')
 
 describe('NouvelleActionPage client side', () => {
   const categories: SituationNonProfessionnelle[] =
@@ -51,7 +52,7 @@ describe('NouvelleActionPage client side', () => {
     ).toHaveAttribute('href', '/lien/retour')
   })
 
-  it('contient une liste des catégories de qualification', () => {
+  it('contient une liste des catégories de qualification', async () => {
     // Then
     const select = screen.getByRole('combobox', { name: 'Catégorie' })
 
@@ -60,11 +61,20 @@ describe('NouvelleActionPage client side', () => {
         within(select).getByRole('option', { name: label })
       ).toBeInTheDocument()
     })
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'À quoi servent les catégories ?',
+      })
+    )
+    expect(
+      screen.getByRole('heading', { name: 'Pourquoi choisir une catégorie ?' })
+    ).toBeInTheDocument()
   })
 
   it('contient une liste de titres prédéfinis', () => {
     // Then
-    const select = screen.getByRole('combobox', { name: "Titre de l'action" })
+    const select = screen.getByRole('combobox', { name: 'Titre de l’action' })
 
     expect(select).toHaveAttribute('required', '')
     actionsPredefinies.forEach(({ titre }) => {
@@ -81,7 +91,7 @@ describe('NouvelleActionPage client side', () => {
     ).not.toBeInTheDocument()
 
     // When
-    const select = screen.getByRole('combobox', { name: "Titre de l'action" })
+    const select = screen.getByRole('combobox', { name: 'Titre de l’action' })
     await userEvent.selectOptions(select, 'Autre')
 
     //The
@@ -174,7 +184,7 @@ describe('NouvelleActionPage client side', () => {
       expect(creerAction).not.toHaveBeenCalled()
     })
 
-    it("affiche un message d'erreur quand date d'echeance n'est pas dans l'interval: un an avant, deux ans après", async () => {
+    it("affiche un message d'erreur quand date d'échéance n'est pas dans l'intervalle : un an avant, deux ans après", async () => {
       const dateEcheance = screen.getByLabelText(/Date/)
       await userEvent.type(dateEcheance, '2000-07-30')
       await userEvent.tab()
@@ -199,9 +209,7 @@ describe('NouvelleActionPage client side', () => {
           actionsPredefinies[1].titre
         )
 
-        const description = screen.getByRole('textbox', {
-          name: 'Description',
-        })
+        const description = screen.getByRole('textbox', { name: /Description/ })
         await userEvent.type(description, 'Description action')
 
         await userEvent.click(screen.getByRole('button', { name: /Demain/ }))
@@ -232,7 +240,7 @@ describe('NouvelleActionPage client side', () => {
               level: 2,
               name: 'Action enregistrée !',
             })
-          )
+          ).toBeInTheDocument()
         })
 
         it('permet de retourner à la liste des actions', async () => {
