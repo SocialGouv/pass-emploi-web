@@ -34,20 +34,23 @@ import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
-export async function getIdentitesBeneficiaires(
+export async function getIdentitesBeneficiairesServerSide(
+  idsJeunes: string[],
+  idConseiller: string,
+  accessToken: string
+): Promise<BaseJeune[]> {
+  return getIdentitesBeneficiaires(idsJeunes, idConseiller, accessToken)
+}
+
+export async function getIdentitesBeneficiairesClientSide(
   idsJeunes: string[]
 ): Promise<BaseJeune[]> {
-  if (!idsJeunes.length) return []
-  const queryParam = idsJeunes.map((id) => 'ids=' + id).join('&')
-
   const session = await getSession()
-  // @ts-ignore
-  const { content: beneficiaires } = await apiGet<BaseJeune[]>(
-    `/conseillers/${session!.user.id}/jeunes/identites?${queryParam}`,
+  return getIdentitesBeneficiaires(
+    idsJeunes,
+    session!.user.id,
     session!.accessToken
   )
-
-  return beneficiaires
 }
 
 export async function getJeunesDuConseillerServerSide(
@@ -344,4 +347,20 @@ async function getIndicateursJeune(
     session!.accessToken
   )
   return jsonToIndicateursSemaine(indicateurs)
+}
+
+async function getIdentitesBeneficiaires(
+  idsJeunes: string[],
+  idConseiller: string,
+  accessToken: string
+): Promise<BaseJeune[]> {
+  if (!idsJeunes.length) return []
+  const queryParam = idsJeunes.map((id) => 'ids=' + id).join('&')
+
+  const { content: beneficiaires } = await apiGet<BaseJeune[]>(
+    `/conseillers/${idConseiller}/jeunes/identites?${queryParam}`,
+    accessToken
+  )
+
+  return beneficiaires
 }

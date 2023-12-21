@@ -1,15 +1,19 @@
 import { render } from '@testing-library/react'
 
 import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
-import NouvelleAction from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/page'
+import NouvelleAction, {
+  generateMetadata,
+} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/page'
 import { desSituationsNonProfessionnelles } from 'fixtures/action'
 import { getSituationsNonProfessionnelles } from 'services/actions.service'
+import { getIdentitesBeneficiairesServerSide } from 'services/jeunes.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
+jest.mock('services/jeunes.service')
 jest.mock('services/actions.service')
 jest.mock('services/referentiel.service')
 jest.mock(
@@ -18,6 +22,36 @@ jest.mock(
 )
 
 describe('NouvelleActionPage server side', () => {
+  it('prépare les métadonnées', async () => {
+    // Given
+    ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
+      user: { id: 'id-conseiller' },
+      accessToken: 'accessToken',
+    })
+    ;(getIdentitesBeneficiairesServerSide as jest.Mock).mockResolvedValue([
+      {
+        id: 'id-jeune',
+        prenom: 'Serge',
+        nom: 'Lama',
+      },
+    ])
+
+    // When
+    const metadata = await generateMetadata({
+      params: { jeune_id: 'id-jeune' },
+    })
+
+    // Then
+    expect(getIdentitesBeneficiairesServerSide).toHaveBeenCalledWith(
+      ['id-jeune'],
+      'id-conseiller',
+      'accessToken'
+    )
+    expect(metadata).toEqual({
+      title: 'Créer une nouvelle action - Actions Serge Lama',
+    })
+  })
+
   it('prépare la page', async () => {
     // Given
     ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

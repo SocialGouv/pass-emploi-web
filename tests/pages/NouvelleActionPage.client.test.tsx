@@ -84,7 +84,7 @@ describe('NouvelleActionPage client side', () => {
     })
   })
 
-  it('contient un champ pour saisir un autre titre', async () => {
+  it('contient un champ pour saisir un titre personnalisé', async () => {
     // Given
     expect(
       screen.queryByRole('textbox', { name: /titre personnalisé/ })

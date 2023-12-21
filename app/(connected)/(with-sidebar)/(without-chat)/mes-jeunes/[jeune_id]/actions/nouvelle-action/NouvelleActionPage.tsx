@@ -5,6 +5,7 @@ import { DateTime } from 'luxon'
 import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
+import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -34,6 +35,7 @@ import {
   toShortDate,
   WEEKDAY,
 } from 'utils/date'
+import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type EditionActionProps = {
@@ -59,7 +61,7 @@ function NouvelleActionPage({
   const [titre, setTitre] = useState<ValueWithError<string | undefined>>({
     value: undefined,
   })
-  const [titreAutre, setTitreAutre] = useState<
+  const [titrePersonnalise, setTitrePersonnalise] = useState<
     ValueWithError<string | undefined>
   >({ value: undefined })
   const [description, setDescription] = useState<string | undefined>()
@@ -76,13 +78,17 @@ function NouvelleActionPage({
   }>(null)
   const [succesCreation, setSuccesCreation] = useState<boolean>(false)
 
+  const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
+  const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
+    useState<boolean>(true)
+
   const initialTracking = 'Actions jeune – Création action'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function formulaireEstValide(): boolean {
     const categorieEstValide = validerCategorie()
-    const titreEstValide = validerTitre() && validerTitreAutre()
+    const titreEstValide = validerTitre() && validerTitrePersonnalise()
     const dateEcheanceEstValide = validerDateEcheance()
 
     return Boolean(
@@ -112,16 +118,15 @@ function NouvelleActionPage({
     return true
   }
 
-  function validerTitreAutre() {
-    if (titre.value === TITRE_AUTRE && !titreAutre.value) {
-      setTitreAutre({
-        ...titre,
+  function validerTitrePersonnalise() {
+    if (titre.value === TITRE_AUTRE && !titrePersonnalise.value) {
+      setTitrePersonnalise({
+        ...titrePersonnalise,
         error:
           'Le champ "Titre personnalisé" est vide. Renseignez un titre personnalisé.',
       })
       return false
     }
-
     return true
   }
 
@@ -156,10 +161,12 @@ function NouvelleActionPage({
   async function creerAction(e: FormEvent) {
     e.preventDefault()
     if (!formulaireEstValide()) return
+    setConfirmBeforeLeaving(false)
 
     const action = {
       codeCategorie: codeCategorie.value!,
-      titre: titre.value !== TITRE_AUTRE ? titre.value! : titreAutre.value!,
+      titre:
+        titre.value !== TITRE_AUTRE ? titre.value! : titrePersonnalise.value!,
       dateEcheance: dateEcheance.value!,
       commentaire: description,
       statut,
@@ -192,9 +199,9 @@ function NouvelleActionPage({
       })
     }
 
-    if (titreAutre.error) {
+    if (titrePersonnalise.error) {
       erreurs.push({
-        ancre: '#titre-action--autre',
+        ancre: '#titre-action--personnalise',
         label: 'Le champ Titre personnalisé est vide.',
         titreChamp: 'Titre personnalisé',
       })
@@ -214,7 +221,7 @@ function NouvelleActionPage({
   function resetForm() {
     setCodeCategorie({ value: undefined })
     setTitre({ value: undefined })
-    setTitreAutre({ value: undefined })
+    setTitrePersonnalise({ value: undefined })
     setDescription(undefined)
     setStatut(StatutAction.Terminee)
     setDateEcheance({ value: undefined })
@@ -225,6 +232,18 @@ function NouvelleActionPage({
   function permuterAffichageHelperCategories() {
     setShowHelperCategories(!showHelperCategories)
   }
+
+  function openLeavePageConfirmationModal() {
+    setShowLeavePageModal(true)
+    setConfirmBeforeLeaving(false)
+  }
+
+  function closeLeavePageConfirmationModal() {
+    setShowLeavePageModal(false)
+    setConfirmBeforeLeaving(true)
+  }
+
+  useLeavePageModal(confirmBeforeLeaving, openLeavePageConfirmationModal)
 
   useMatomo(trackingTitle, aDesBeneficiaires)
 
@@ -295,24 +314,27 @@ function NouvelleActionPage({
 
               {titre.value === TITRE_AUTRE && (
                 <>
-                  <Label htmlFor='titre-action--autre' inputRequired={true}>
+                  <Label
+                    htmlFor='titre-action--personnalise'
+                    inputRequired={true}
+                  >
                     Ajoutez un titre personnalisé
                   </Label>
-                  {titreAutre.error && (
+                  {titrePersonnalise.error && (
                     <InputError
-                      id='titre-action--autre--error'
+                      id='titre-action--personnalise--error'
                       className='mb-2'
                     >
-                      {titreAutre.error}
+                      {titrePersonnalise.error}
                     </InputError>
                   )}
                   <Input
                     type='text'
-                    id='titre-action--autre'
+                    id='titre-action--personnalise'
                     required={true}
-                    onChange={(value) => setTitreAutre({ value })}
-                    onBlur={validerTitreAutre}
-                    invalid={Boolean(titreAutre.error)}
+                    onChange={(value) => setTitrePersonnalise({ value })}
+                    onBlur={validerTitrePersonnalise}
+                    invalid={Boolean(titrePersonnalise.error)}
                   />
                 </>
               )}
@@ -461,11 +483,24 @@ function NouvelleActionPage({
           </Button>
         </Modal>
       )}
+
+      {showLeavePageModal && (
+        <LeavePageConfirmationModal
+          titre={`Souhaitez-vous quitter la création de l’action ?`}
+          commentaire='Les informations saisies seront perdues.'
+          onCancel={closeLeavePageConfirmationModal}
+          destination={returnTo}
+        />
+      )}
     </>
   )
 }
 
-function BoutonDateRapide(props: {
+function BoutonDateRapide({
+  date,
+  label,
+  onClick,
+}: {
   date: DateTime
   label: string
   onClick: (date: string) => void
@@ -473,12 +508,12 @@ function BoutonDateRapide(props: {
   return (
     <input
       type='button'
-      id={props.label}
+      id={label}
       aria-controls='date-action'
-      className='text-s-medium border border-solid border-grey_700 rounded-base px-2 py-1 cursor-pointer'
-      value={`${props.label} (${toFrenchFormat(props.date, WEEKDAY)})`}
+      className='text-s-medium border border-solid border-grey_700 rounded-base px-2 py-1 cursor-pointer hover:border-primary hover:bg-primary_lighten'
+      value={`${label} (${toFrenchFormat(date, WEEKDAY)})`}
       onClick={() => {
-        props.onClick(props.date.toISODate())
+        onClick(date.toISODate())
       }}
     />
   )
