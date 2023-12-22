@@ -9,18 +9,13 @@ import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import {
-  Action,
-  Commentaire,
-  QualificationAction,
-  StatutAction,
-} from 'interfaces/action'
+import { Action, Commentaire, StatutAction } from 'interfaces/action'
 import { estMilo, estUserPoleEmploi, UserType } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
-import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
@@ -48,9 +43,6 @@ function PageAction({
   const [portefeuille] = usePortefeuille()
   const [alerte, setAlerte] = useAlerte()
 
-  const [_, setQualification] = useState<QualificationAction | undefined>(
-    action.qualification
-  )
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
@@ -63,6 +55,7 @@ function PageAction({
   const conseillerEstMilo = estMilo(conseiller)
 
   const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
+  const qualifiee = conseillerEstMilo && statut === StatutAction.Qualifiee
   const afficherSuppressionAction =
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
     action.status !== StatutAction.Terminee &&
@@ -77,29 +70,6 @@ function PageAction({
     const { updateAction } = await import('services/actions.service')
     const nouveauStatut = await updateAction(action.id, statutChoisi)
     setStatut(nouveauStatut)
-  }
-
-  async function qualifierAction(
-    isSituationNonProfessionnelle: boolean
-  ): Promise<void> {
-    if (isSituationNonProfessionnelle) {
-      await router.push(
-        `/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`
-      )
-    } else {
-      const { qualifier } = await import('services/actions.service')
-      const nouvelleQualification = await qualifier(
-        action.id,
-        CODE_QUALIFICATION_NON_SNP,
-        {
-          dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
-          dateFinModifiee: DateTime.fromISO(action.dateEcheance),
-        }
-      )
-      setQualification(nouvelleQualification)
-      setAlerte(AlerteParam.qualificationNonSNP)
-      setStatut(StatutAction.Qualifiee)
-    }
   }
 
   async function deleteAction(): Promise<void> {
@@ -160,6 +130,20 @@ function PageAction({
               Supprimer
             </Button>
           )}
+          {estAQualifier && !lectureSeule && (
+            <ButtonLink
+              style={ButtonStyle.PRIMARY}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`}
+            >
+              Qualifier l’action
+              <IconComponent
+                name={IconName.Send}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 mr-2'
+              />
+            </ButtonLink>
+          )}
         </>
       </PageActionsPortal>
 
@@ -179,9 +163,9 @@ function PageAction({
         </div>
       )}
 
-      {action.qualification && (
+      {qualifiee && (
         <>
-          {action.qualification.isSituationNonProfessionnelle && (
+          {action.qualification?.isSituationNonProfessionnelle && (
             <div className='mb-6'>
               <InformationMessage label={`Action qualifiée.`}>
                 Vous pouvez modifier cette action dans i-milo. <br /> Délai
@@ -190,7 +174,7 @@ function PageAction({
             </div>
           )}
 
-          {!action.qualification.isSituationNonProfessionnelle && (
+          {!action.qualification?.isSituationNonProfessionnelle && (
             <div className='mb-6'>
               <InformationMessage label='Action qualifiée en non Situation non-professionnelle : '>
                 Vous ne pouvez plus modifier cette action.
@@ -202,9 +186,6 @@ function PageAction({
 
       <StatutActionForm
         updateStatutAction={updateStatutAction}
-        qualifierAction={(isSituationNonProfessionnelle) =>
-          qualifierAction(isSituationNonProfessionnelle)
-        }
         statutCourant={statut}
         estAQualifier={estAQualifier}
         lectureSeule={lectureSeule}
@@ -222,8 +203,14 @@ function PageAction({
             <span>Catégorie :</span>
           </dt>
           <dd className='text-base-regular pl-6'>
-            --
-            <span className='sr-only'>information non disponible</span>
+            {action.qualification && action.qualification.libelle ? (
+              action.qualification.libelle
+            ) : (
+              <>
+                --
+                <span className='sr-only'>information non disponible</span>
+              </>
+            )}
           </dd>
           <dt className='text-base-bold pb-6'>
             <span>Titre de l’action :</span>

@@ -39,7 +39,7 @@ export default async function Qualification({
   const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
   return (
     <>
-      <PageHeaderPortal header='Créer une situation non professionnelle' />
+      <PageHeaderPortal header='Qualifier l’action' />
       <PageRetourPortal lien={returnTo} />
 
       <QualificationPage

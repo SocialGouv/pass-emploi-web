@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage'
 import { desSituationsNonProfessionnelles, uneAction } from 'fixtures/action'
 import { Action, SituationNonProfessionnelle } from 'interfaces/action'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { qualifier } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -69,50 +70,43 @@ describe('QualificationPage client side', () => {
     )
   })
 
-  it("affiche le résumé de l'action", () => {
+  it("affiche les informations principales de l'action", () => {
     // Then
     const etape1 = screen.getByRole('group', {
-      name: 'Étape 1: Résumé de l’action',
+      name: 'Étape 1: Informations principales',
     })
-    expect(
-      within(etape1).getByRole('textbox', {
-        name: /Intitulé et description de l'action/,
-      })
-    ).toHaveValue(action.content + ' - ' + action.comment)
-  })
+    const selectSNP = within(etape1).getByRole('combobox', {
+      name: 'Catégorie',
+    })
 
-  it('demande un type de situation non professionnelle', () => {
-    // Then
-    const etape2 = screen.getByRole('group', {
-      name: 'Étape 2: Type',
-    })
-    const selectSNP = within(etape2).getByRole('combobox', { name: /Type/ })
     situationsNonProfessionnelles.forEach(({ code, label }) => {
       expect(
         within(selectSNP).getByRole('option', { name: label })
       ).toHaveValue(code)
     })
+
+    expect(
+      within(etape1).getByRole('textbox', {
+        name: /Titre et description de l'action/,
+      })
+    ).toHaveValue(action.content + ' - ' + action.comment)
   })
 
   it("permet de modifier la date de début de l'action", () => {
     // Then
-    const etape3 = screen.getByRole('group', {
-      name: 'Étape 3: Date de début de l’action',
+    const etape2 = screen.getByRole('group', {
+      name: 'Étape 2: Dates',
     })
-    const inputDate = within(etape3).getByLabelText('* Date de début')
-    expect(inputDate).toHaveAttribute('type', 'date')
-    expect(inputDate).toHaveValue('2022-02-15')
-  })
+    const inputDateDebut = within(etape2).getByLabelText(
+      '* Date de début de l’action'
+    )
+    const inputDateFin = within(etape2).getByLabelText('* Date de l’action')
+    expect(inputDateDebut).toHaveAttribute('type', 'date')
+    expect(inputDateDebut).toHaveValue('2022-02-15')
 
-  it("permet de modifier la date de fin réelle de l'action", () => {
-    // Then
-    const etape4 = screen.getByRole('group', {
-      name: 'Étape 4: Date de fin de l’action',
-    })
-    const inputDate = within(etape4).getByLabelText('* Date de fin')
-    expect(inputDate).toHaveAttribute('type', 'date')
-    expect(inputDate).toHaveAttribute('min', '2022-02-15')
-    expect(inputDate).toHaveValue('2022-09-02')
+    expect(inputDateFin).toHaveAttribute('type', 'date')
+    expect(inputDateFin).toHaveAttribute('min', '2022-02-15')
+    expect(inputDateFin).toHaveValue('2022-09-02')
   })
 
   describe('validation formulaire', () => {
@@ -120,10 +114,10 @@ describe('QualificationPage client side', () => {
     beforeEach(async () => {
       // Given
       inputCommentaire = screen.getByRole('textbox', {
-        name: /Intitulé et description/,
+        name: /Titre et description/,
       })
-      const selectSNP = screen.getByRole('combobox', { name: /Type/ })
-      const inputDate = screen.getByLabelText('* Date de fin')
+      const selectSNP = screen.getByRole('combobox', { name: 'Catégorie' })
+      const inputDate = screen.getByLabelText('* Date de l’action')
 
       await userEvent.clear(inputCommentaire)
       await userEvent.type(inputCommentaire, 'Nouveau commentaire modifié')
@@ -138,7 +132,7 @@ describe('QualificationPage client side', () => {
     it('envoie la qualification au fuseau horaire du navigateur du client', async () => {
       // When
       await userEvent.click(
-        screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
+        screen.getByRole('button', { name: 'Enregistrer et envoyer à i-milo' })
       )
 
       // Then
@@ -154,7 +148,7 @@ describe('QualificationPage client side', () => {
     it("redirige vers le détail de l'action", async () => {
       // When
       await userEvent.click(
-        screen.getByRole('button', { name: 'Créer et envoyer à i-milo' })
+        screen.getByRole('button', { name: 'Enregistrer et envoyer à i-milo' })
       )
 
       // Then
@@ -175,10 +169,9 @@ describe('QualificationPage client side', () => {
           'Le champ Intitulé et description n’est pas renseigné. Veuillez renseigner une description.'
         )
       ).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Créer/ })).toHaveAttribute(
-        'disabled',
-        ''
-      )
+      expect(
+        screen.getByRole('button', { name: /Enregistrer/ })
+      ).toHaveAttribute('disabled', '')
     })
 
     it('est désactivée si le commentaire contient plus de 255 caractères', async () => {
@@ -193,10 +186,9 @@ describe('QualificationPage client side', () => {
           'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
         )
       ).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Créer/ })).toHaveAttribute(
-        'disabled',
-        ''
-      )
+      expect(
+        screen.getByRole('button', { name: /Enregistrer/ })
+      ).toHaveAttribute('disabled', '')
     })
   })
 })

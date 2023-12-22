@@ -268,84 +268,13 @@ describe("Page Détail d'une action d'un jeune", () => {
           )
         })
 
-        it("affiche un bloc pour qualifier l'action", async () => {
+        it("affiche un lien pour qualifier l'action", async () => {
           expect(
-            screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
-          ).toBeInTheDocument()
-        })
-
-        describe("quand on qualifie l'action qui n'est PAS une Situation Non Professionnelle", () => {
-          beforeEach(async () => {
-            // Given
-            ;(qualifier as jest.Mock).mockResolvedValue({
-              libelle: 'Action non qualifiée en Situation Non Professionnelle',
-              isSituationNonProfessionnelle: false,
-            })
-            const radioButton = screen.getByLabelText(
-              'Il ne s’agit pas d’une Situation Non Professionnelle'
-            )
-            await userEvent.click(radioButton)
-
-            // When
-            const submitQualification = screen.getByRole('button', {
-              name: /Enregistrer/,
-            })
-            await userEvent.click(submitQualification)
-          })
-
-          it("qualifie l'action", () => {
-            expect(qualifier).toHaveBeenCalledWith(
-              actionAQualifier.id,
-              CODE_QUALIFICATION_NON_SNP,
-              {
-                dateDebutModifiee: DateTime.fromISO(
-                  actionAQualifier.dateEcheance
-                ),
-                dateFinModifiee: DateTime.fromISO(
-                  actionAQualifier.dateEcheance
-                ),
-              }
-            )
-          })
-
-          it('cache le formulaire de qualification', () => {
-            expect(() =>
-              screen.getByText(
-                'S’agit-il d’une Situation Non Professionnelle ?'
-              )
-            ).toThrow()
-          })
-
-          it('affiche une alerte de succès', () => {
-            expect(alerteSetter).toHaveBeenCalledWith('qualificationNonSNP')
-          })
-        })
-
-        describe("quand on qualifie l'action en Situation Non Professionnelle", () => {
-          beforeEach(async () => {
-            // Given
-            ;(qualifier as jest.Mock).mockResolvedValue({
-              libelle: 'Situation Non Professionnelle',
-              isSituationNonProfessionnelle: true,
-              estQualifiee: true,
-            })
-            const radioButton = screen.getByLabelText(
-              'Il s’agit d’une Situation Non Professionnelle'
-            )
-            await userEvent.click(radioButton)
-
-            // When
-            const submitQualification = screen.getByRole('button', {
-              name: /Enregistrer/,
-            })
-            await userEvent.click(submitQualification)
-          })
-
-          it('redirige vers la page de qualification', () => {
-            expect(routerPush).toHaveBeenCalledWith(
-              `/mes-jeunes/${jeune.id}/actions/${actionAQualifier.id}/qualification`
-            )
-          })
+            screen.getByRole('link', { name: 'Qualifier l’action' })
+          ).toHaveAttribute(
+            'href',
+            '/mes-jeunes/jeune-1/actions/id-action-1/qualification'
+          )
         })
       })
 
