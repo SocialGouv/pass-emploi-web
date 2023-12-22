@@ -25,7 +25,7 @@ import {
   getSituationsNonProfessionnelles,
   qualifier,
   recupererLesCommentaires,
-  updateAction,
+  modifierAction,
 } from 'services/actions.service'
 import { ApiError } from 'utils/httpClient'
 
@@ -171,6 +171,7 @@ describe('ActionsApiService', () => {
         status: StatutAction.Qualifiee,
         qualification: {
           libelle: 'Santé',
+          code: 'SANTE',
           isSituationNonProfessionnelle: true,
         },
       })
@@ -218,6 +219,7 @@ describe('ActionsApiService', () => {
         status: StatutAction.Qualifiee,
         qualification: {
           libelle: 'Situation pas non professionnelle',
+          code: 'NON_SNP',
           isSituationNonProfessionnelle: false,
         },
       })
@@ -479,7 +481,7 @@ describe('ActionsApiService', () => {
           titre: 'content',
           commentaire: 'comment',
           dateEcheance: '2022-07-30',
-          statut: StatutAction.EnCours,
+          status: StatutAction.EnCours,
         },
         'id-jeune'
       )
@@ -499,10 +501,10 @@ describe('ActionsApiService', () => {
     })
   })
 
-  describe('.updateAction', () => {
+  describe('.modifierAction', () => {
     it('met à jour une action commencée', async () => {
       // WHEN
-      const actual = await updateAction('id-action', StatutAction.EnCours)
+      const actual = await modifierAction('id-action', { status: StatutAction.EnCours })
 
       // THEN
       expect(apiPut).toHaveBeenCalledWith(
@@ -510,12 +512,12 @@ describe('ActionsApiService', () => {
         { status: 'in_progress' },
         'accessToken'
       )
-      expect(actual).toStrictEqual(StatutAction.EnCours)
+      expect(actual).toHaveProperty('status', 'in_progress')
     })
 
     it('met à jour une action terminée', async () => {
       // WHEN
-      const actual = await updateAction('id-action', StatutAction.Terminee)
+      const actual = await modifierAction('id-action', { status: StatutAction.Terminee })
 
       // THEN
       expect(apiPut).toHaveBeenCalledWith(
@@ -523,12 +525,12 @@ describe('ActionsApiService', () => {
         { status: 'done' },
         'accessToken'
       )
-      expect(actual).toStrictEqual(StatutAction.Terminee)
+      expect(actual).toHaveProperty('status', 'done')
     })
 
     it('met à jour une action annulée', async () => {
       // WHEN
-      const actual = await updateAction('id-action', StatutAction.Annulee)
+      const actual = await modifierAction('id-action', { status: StatutAction.Annulee })
 
       // THEN
       expect(apiPut).toHaveBeenCalledWith(
@@ -536,7 +538,7 @@ describe('ActionsApiService', () => {
         { status: 'canceled' },
         'accessToken'
       )
-      expect(actual).toStrictEqual(StatutAction.Annulee)
+      expect(actual).toHaveProperty('status', 'canceled')
     })
   })
 
@@ -567,6 +569,7 @@ describe('ActionsApiService', () => {
       )
       const expected: QualificationAction = {
         libelle: 'Non-SNP',
+        code: 'NON_SNP',
         isSituationNonProfessionnelle: false,
       }
       expect(actual).toStrictEqual(expected)
@@ -602,6 +605,7 @@ describe('ActionsApiService', () => {
       )
       const expected: QualificationAction = {
         libelle: 'Santé',
+        code: 'SANTE',
         isSituationNonProfessionnelle: true,
       }
       expect(actual).toStrictEqual(expected)

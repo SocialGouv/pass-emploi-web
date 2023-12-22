@@ -7,6 +7,7 @@ import {
   ActionPilotage,
   Commentaire,
   EtatQualificationAction,
+  ModificiationAction,
   QualificationAction,
   SituationNonProfessionnelle,
   StatutAction,
@@ -116,7 +117,7 @@ export async function creerAction(
     codeCategorie: string
     titre: string
     dateEcheance: string
-    statut: StatutAction
+    status: StatutAction
     commentaire?: string
   },
   idJeune: string
@@ -127,7 +128,7 @@ export async function creerAction(
     dateEcheance: DateTime.fromISO(action.dateEcheance).toISO(),
     codeQualification: action.codeCategorie,
     comment: action.commentaire,
-    status: actionStatusToJson(action.statut),
+    status: actionStatusToJson(action.status),
   }
   await apiPost(
     `/conseillers/${session!.user.id}/jeunes/${idJeune}/action`,
@@ -136,17 +137,32 @@ export async function creerAction(
   )
 }
 
-export async function updateAction(
+export async function modifierAction(
   idAction: string,
-  nouveauStatut: StatutAction
-): Promise<StatutAction> {
+  action: {
+    status?: StatutAction
+    titre?: string
+    commentaire?: string
+    dateEcheance?: string
+    codeCategorie?: string
+  }
+): Promise<ModificiationAction> {
   const session = await getSession()
+
+  const actionModifiee = { 
+    status: action.status ? actionStatusToJson(action.status) : undefined,
+    contenu: action.titre,
+    description: action.commentaire,
+    dateEcheance: action.dateEcheance,
+    codeQualification: action.codeCategorie
+  }
+
   await apiPut(
     `/actions/${idAction}`,
-    { status: actionStatusToJson(nouveauStatut) },
+    actionModifiee,
     session!.accessToken
   )
-  return nouveauStatut
+  return actionModifiee
 }
 
 export async function qualifier(
