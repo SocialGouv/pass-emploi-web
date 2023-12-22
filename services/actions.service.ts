@@ -111,15 +111,23 @@ export async function getActionsAQualifierServerSide(
   return getActionsAQualifier(idConseiller, 1, accessToken)
 }
 
-export async function createAction(
-  action: { intitule: string; commentaire: string; dateEcheance: string },
+export async function creerAction(
+  action: {
+    codeCategorie: string
+    titre: string
+    dateEcheance: string
+    statut: StatutAction
+    commentaire?: string
+  },
   idJeune: string
 ): Promise<void> {
   const session = await getSession()
   const payload = {
-    content: action.intitule,
-    comment: action.commentaire,
+    content: action.titre,
     dateEcheance: DateTime.fromISO(action.dateEcheance).toISO(),
+    codeQualification: action.codeCategorie,
+    comment: action.commentaire,
+    status: actionStatusToJson(action.statut),
   }
   await apiPost(
     `/conseillers/${session!.user.id}/jeunes/${idJeune}/action`,

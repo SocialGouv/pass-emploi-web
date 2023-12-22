@@ -9,7 +9,6 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { cloreAnimationCollective } from 'services/evenements.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/evenements.service')
 
 describe('CloturePage client side', () => {

@@ -15,7 +15,7 @@ import { QualificationAction, StatutAction } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import {
   ajouterCommentaire,
-  createAction,
+  creerAction,
   deleteAction,
   getAction,
   getActionsAQualifierClientSide,
@@ -473,11 +473,13 @@ describe('ActionsApiService', () => {
     it('crée une nouvelle action', async () => {
       // GIVEN
       // WHEN
-      await createAction(
+      await creerAction(
         {
-          intitule: 'content',
+          codeCategorie: 'CODE',
+          titre: 'content',
           commentaire: 'comment',
           dateEcheance: '2022-07-30',
+          statut: StatutAction.EnCours,
         },
         'id-jeune'
       )
@@ -486,9 +488,11 @@ describe('ActionsApiService', () => {
       expect(apiPost).toHaveBeenCalledWith(
         '/conseillers/idConseiller/jeunes/id-jeune/action',
         {
+          codeQualification: 'CODE',
           content: 'content',
           comment: 'comment',
           dateEcheance: '2022-07-30T00:00:00.000+02:00',
+          status: 'in_progress',
         },
         'accessToken'
       )

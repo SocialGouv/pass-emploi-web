@@ -4,6 +4,7 @@ import { apm } from '@elastic/apm-rum'
 import { ThemeProvider } from 'next-themes'
 import React, { ReactNode } from 'react'
 
+import { MODAL_ROOT_ID } from 'components/Modal'
 import { extractBaseJeune } from 'fixtures/jeune'
 import { Conseiller } from 'interfaces/conseiller'
 import { compareJeunesByNom, JeuneFromListe } from 'interfaces/jeune'
@@ -44,6 +45,8 @@ export default function AppContextProviders({
               forcedTheme={theme}
             >
               {children}
+
+              <div id={MODAL_ROOT_ID} />
             </ThemeProvider>
           </AlerteProvider>
         </ChatsProvider>

@@ -26,8 +26,6 @@ export default function RadioBox({
   }
   function onClickInput(e: MouseEvent) {
     e.stopPropagation()
-    if (disabled) return
-    onChange()
   }
 
   const selectedStyle = `border-${color} bg-${color}_lighten text-${color}`
@@ -44,10 +42,10 @@ export default function RadioBox({
         id={id}
         name={name}
         checked={isSelected}
-        readOnly={true}
         required={true}
         className='mr-2'
         onClick={onClickInput}
+        onChange={onChange}
         disabled={disabled}
       />
       <label

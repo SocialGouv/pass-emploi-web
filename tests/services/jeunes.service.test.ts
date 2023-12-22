@@ -25,7 +25,7 @@ import {
   getConseillersDuJeuneClientSide,
   getConseillersDuJeuneServerSide,
   getIdJeuneMilo,
-  getIdentitesBeneficiaires,
+  getIdentitesBeneficiairesClientSide,
   getIndicateursJeuneAlleges,
   getIndicateursJeuneComplets,
   getJeuneDetails,
@@ -427,7 +427,7 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await getIdentitesBeneficiaires([
+      const actual = await getIdentitesBeneficiairesClientSide([
         'id-jeune-1',
         'id-jeune-2',
         'id-jeune-3',

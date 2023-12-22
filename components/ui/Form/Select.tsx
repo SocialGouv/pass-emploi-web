@@ -1,15 +1,10 @@
-import { ReactNode } from 'react'
+import { ComponentPropsWithoutRef } from 'react'
 
 import styles from 'styles/components/Input.module.css'
 
-type SelectProps = {
-  id: string
+type SelectProps = Omit<ComponentPropsWithoutRef<'select'>, 'onChange'> & {
+  invalid?: boolean
   onChange: (value: string) => void
-  defaultValue?: string
-  required?: boolean
-  disabled?: boolean
-  onBlur?: () => void
-  children: ReactNode
 }
 
 export default function Select({
@@ -20,6 +15,8 @@ export default function Select({
   disabled = false,
   onBlur,
   children,
+  invalid,
+  ...props
 }: SelectProps) {
   return (
     <select
@@ -28,8 +25,11 @@ export default function Select({
       required={required}
       disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
-      className={`${styles.input} truncate`}
+      className={`${styles.input} truncate ${invalid ? styles.invalid : ''}`}
       onBlur={onBlur}
+      aria-describedby={invalid ? id + '--error' : undefined}
+      aria-invalid={invalid || undefined}
+      {...props}
     >
       {required && <option aria-hidden hidden disabled value='' />}
       {!required && <option value='' />}
