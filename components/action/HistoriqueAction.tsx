@@ -10,7 +10,7 @@ interface HistoriqueActionProps {
 }
 
 export function HistoriqueAction({ action }: HistoriqueActionProps) {
-  const [collapsed, setCollapsed] = useState<boolean>(false)
+  const [collapsed, setCollapsed] = useState<boolean>(true)
 
   const lastUpdate = toShortDate(action.lastUpdate)
   const creationDate = toShortDate(action.creationDate)
