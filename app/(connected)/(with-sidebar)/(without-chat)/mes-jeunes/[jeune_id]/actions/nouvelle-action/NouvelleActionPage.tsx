@@ -448,8 +448,7 @@ function NouvelleActionPage({
           <h2 className='text-m-bold mb-2'>Action enregistrée !</h2>
           <p>
             L’action est en route vers l’application de votre bénéficiaire. De
-            votre côté, retrouvez l’action dans la fiche bénéficiaire ou
-            l’onglet Pilotage !
+            votre côté, retrouvez l’action dans la fiche bénéficiaire !
           </p>
           <div className='mt-10 flex justify-center gap-4'>
             <Button style={ButtonStyle.SECONDARY} onClick={resetForm}>
