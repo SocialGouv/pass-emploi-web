@@ -19,8 +19,8 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "@elastic/apm-rum": "5.15.0",
-    "@elastic/apm-rum-react": "2.0.1",
+    "@elastic/apm-rum": "5.16.0",
+    "@elastic/apm-rum-react": "2.0.2",
     "@next/bundle-analyzer": "13.5.6",
     "crypto-js": "4.2.0",
     "dotenv": "16.3.1",
