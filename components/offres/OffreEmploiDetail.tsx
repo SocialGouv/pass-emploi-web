@@ -172,7 +172,6 @@ export default function OffreEmploiDetail({
                         title='Expérience exigée'
                         aria-label='Expérience exigée'
                         focusable={false}
-                        aria-hidden={true}
                         className='inline ml-2 h-5 w-5 fill-primary'
                         role='img'
                       />
