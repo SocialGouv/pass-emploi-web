@@ -316,7 +316,7 @@ describe('EditionRdv', () => {
             name: 'Étape 1: Sélectionnez un rendez-vous',
           })
           selectType = within(etape).getByRole('combobox', {
-            name: 'Type',
+            name: /Type/,
           })
           typesRendezVous = typesEvenementCEJ()
         })
@@ -357,7 +357,7 @@ describe('EditionRdv', () => {
 
         beforeEach(async () => {
           const selectType = screen.getByRole('combobox', {
-            name: 'Type',
+            name: /Type/,
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
@@ -387,7 +387,7 @@ describe('EditionRdv', () => {
 
         beforeEach(async () => {
           const selectType = screen.getByRole('combobox', {
-            name: 'Type',
+            name: /Type/,
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
@@ -435,7 +435,7 @@ describe('EditionRdv', () => {
         let etape: HTMLFieldSetElement
         beforeEach(async () => {
           const selectType = screen.getByRole('combobox', {
-            name: 'Type',
+            name: /Type/,
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
@@ -510,7 +510,7 @@ describe('EditionRdv', () => {
         let inputEmailInvitation: HTMLInputElement
         beforeEach(async () => {
           const selectType = screen.getByRole('combobox', {
-            name: 'Type',
+            name: /Type/,
           })
           await userEvent.selectOptions(selectType, 'Activités extérieures')
           etape = screen.getByRole('group', {
@@ -554,7 +554,7 @@ describe('EditionRdv', () => {
       it('contient un bouton pour annuler', async () => {
         // Given
         const selectType = screen.getByRole('combobox', {
-          name: 'Type',
+          name: /Type/,
         })
 
         // When
@@ -578,7 +578,7 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           // Given
           selectType = screen.getByRole('combobox', {
-            name: 'Type',
+            name: /Type/,
           })
           selectJeunes = screen.getByRole('combobox', {
             name: /Bénéficiaires/,
@@ -714,7 +714,7 @@ describe('EditionRdv', () => {
         beforeEach(async () => {
           // Given
           selectType = screen.getByRole('combobox', {
-            name: 'Type',
+            name: /Type/,
           })
           await userEvent.selectOptions(selectType, typesRendezVous[0].code)
 
@@ -981,7 +981,7 @@ describe('EditionRdv', () => {
           />
         )
         const selectType = screen.getByRole('combobox', {
-          name: 'Type',
+          name: /Type/,
         })
         await userEvent.selectOptions(selectType, 'Activités extérieures')
 

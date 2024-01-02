@@ -86,7 +86,7 @@ describe('QualificationPage client side', () => {
     const etape2 = screen.getByRole('group', {
       name: 'Étape 2: Type',
     })
-    const selectSNP = within(etape2).getByRole('combobox', { name: 'Type' })
+    const selectSNP = within(etape2).getByRole('combobox', { name: /Type/ })
     situationsNonProfessionnelles.forEach(({ code, label }) => {
       expect(
         within(selectSNP).getByRole('option', { name: label })
@@ -122,7 +122,7 @@ describe('QualificationPage client side', () => {
       inputCommentaire = screen.getByRole('textbox', {
         name: /Intitulé et description/,
       })
-      const selectSNP = screen.getByRole('combobox', { name: 'Type' })
+      const selectSNP = screen.getByRole('combobox', { name: /Type/ })
       const inputDate = screen.getByLabelText('* Date de fin')
 
       await userEvent.clear(inputCommentaire)
