@@ -317,7 +317,7 @@ describe('EditionAnimationCollective', () => {
 
       it('le titre est obligatoire', async () => {
         // Given
-        const inputTitre = screen.getByRole('textbox', { name: 'Titre' })
+        const inputTitre = screen.getByRole('textbox', { name: /Titre/ })
 
         // When
         expect(inputTitre).toHaveAttribute('required', '')
@@ -333,7 +333,7 @@ describe('EditionAnimationCollective', () => {
       it('les bénéficiaires sont facultatifs', async () => {
         // Given
         const selectType = screen.getByRole('combobox', {
-          name: 'Type',
+          name: /Type/,
         })
         const inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
         const inputHoraire = screen.getByLabelText('* Heure format : hh:mm')

@@ -54,7 +54,7 @@ describe('NouvelleActionPage client side', () => {
 
   it('contient une liste des catégories de qualification', async () => {
     // Then
-    const select = screen.getByRole('combobox', { name: 'Catégorie' })
+    const select = screen.getByRole('combobox', { name: /Catégorie/ })
 
     categories.forEach(({ label }) => {
       expect(
@@ -74,7 +74,7 @@ describe('NouvelleActionPage client side', () => {
 
   it('contient une liste de titres prédéfinis', () => {
     // Then
-    const select = screen.getByRole('combobox', { name: 'Titre de l’action' })
+    const select = screen.getByRole('combobox', { name: /Titre de l’action/ })
 
     expect(select).toHaveAttribute('required', '')
     actionsPredefinies.forEach(({ titre }) => {
@@ -91,7 +91,7 @@ describe('NouvelleActionPage client side', () => {
     ).not.toBeInTheDocument()
 
     // When
-    const select = screen.getByRole('combobox', { name: 'Titre de l’action' })
+    const select = screen.getByRole('combobox', { name: /Titre de l’action/ })
     await userEvent.selectOptions(select, 'Autre')
 
     //The
