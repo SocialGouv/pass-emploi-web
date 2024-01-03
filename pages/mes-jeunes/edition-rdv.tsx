@@ -36,6 +36,7 @@ import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
+import { JeuneFromListe } from '../../interfaces/jeune'
 
 const ConfirmationUpdateRdvModal = dynamic(
   import('components/ConfirmationUpdateRdvModal'),
@@ -55,6 +56,8 @@ interface EditionRdvProps extends PageProps {
   idJeune?: string
   evenement?: Evenement
   evenementTypeAC?: boolean
+  lectureSeule: boolean
+  conseillerEstObservateur: boolean
 }
 
 function EditionRdv({
@@ -63,27 +66,13 @@ function EditionRdv({
   returnTo,
   evenement,
   evenementTypeAC,
+  lectureSeule,
+  conseillerEstObservateur,
 }: EditionRdvProps) {
   const router = useRouter()
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [_, setAlerte] = useAlerte()
-
-  const aUnBeneficiaireInscritALEvenement: boolean =
-    Boolean(evenement) &&
-    evenement!.jeunes.some((jeuneEvenement) =>
-      portefeuille.some(
-        (jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id
-      )
-    )
-  const conseillerEstObservateur =
-    !evenementTypeAC && !aUnBeneficiaireInscritALEvenement
-
-  const lectureSeule =
-    evenement &&
-    (conseillerEstObservateur ||
-      estCreeParSiMILO(evenement) ||
-      estClos(evenement))
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
@@ -453,6 +442,10 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const referer = context.req.headers.referer
   const returnTo =
     referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
+  const { getJeunesDuConseillerServerSide } = await import(
+    'services/jeunes.service'
+  )
+  const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
 
   const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
@@ -463,7 +456,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     return {
       props: {
         returnTo: returnTo,
-        ...buildPropsModificationEvenement(evenement),
+        ...buildPropsModificationEvenement(evenement, jeunes),
       },
     }
   } else {
@@ -487,16 +480,34 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
 
 function buildPropsModificationEvenement(
-  evenement: Evenement
+  evenement: Evenement,
+  jeunes: JeuneFromListe[]
 ): Omit<EditionRdvProps, 'returnTo'> {
   const estUneAC = isCodeTypeAnimationCollective(evenement.type.code)
+  const aUnBeneficiaireInscritALEvenement: boolean =
+    Boolean(evenement) &&
+    evenement!.jeunes.some((jeuneEvenement) =>
+      jeunes.some((jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id)
+    )
+  const conseillerEstObservateur =
+    !estUneAC && !aUnBeneficiaireInscritALEvenement
+
+  const lectureSeule =
+    evenement &&
+    (conseillerEstObservateur ||
+      estCreeParSiMILO(evenement) ||
+      estClos(evenement))
 
   return {
+    conseillerEstObservateur: false,
+    lectureSeule,
     evenement,
     typesRendezVous: [],
     evenementTypeAC: estUneAC,
     withoutChat: true,
-    pageTitle: 'Mes événements - Modifier',
+    pageTitle: lectureSeule
+      ? `Detail - ${estUneAC} `
+      : 'Mes événements - Modifier',
     pageHeader: estUneAC
       ? 'Détail de l’animation collective'
       : 'Détail du rendez-vous',
@@ -516,6 +527,8 @@ function buildPropsCreationEvenement(
   })
 
   const props: Omit<EditionRdvProps, 'returnTo'> = {
+    conseillerEstObservateur: false,
+    lectureSeule: false,
     typesRendezVous: creationAC ? typesRdvAC : typesRdvCEJ,
     withoutChat: true,
     evenementTypeAC: creationAC,
