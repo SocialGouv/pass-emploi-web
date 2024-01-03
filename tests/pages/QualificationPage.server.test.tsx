@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation'
 
 import Qualification from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/page'
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage'
-import { desSituationsNonProfessionnelles, uneAction } from 'fixtures/action'
+import { desCategories, uneAction } from 'fixtures/action'
+import { uneBaseJeune } from 'fixtures/jeune'
 import { StatutAction } from 'interfaces/action'
 import {
   getAction,
@@ -92,6 +93,7 @@ describe('QualificationPage server side', () => {
             qualification: {
               libelle: 'Santé',
               isSituationNonProfessionnelle: true,
+              code: 'SANTE',
             },
           }),
           jeune: {
@@ -116,14 +118,11 @@ describe('QualificationPage server side', () => {
       it('récupère la liste des situations non professionnelles', async () => {
         // Given
         const action = uneAction({ status: StatutAction.Terminee })
-        const situationsNonProfessionnelles = desSituationsNonProfessionnelles()
+        const beneficiaire = uneBaseJeune()
+        const situationsNonProfessionnelles = desCategories()
         ;(getAction as jest.Mock).mockResolvedValue({
           action,
-          jeune: {
-            id: 'jeune-1',
-            prenom: 'Nadia',
-            nom: 'Sanfamiye',
-          },
+          jeune: beneficiaire,
         })
         ;(getSituationsNonProfessionnelles as jest.Mock).mockResolvedValue(
           situationsNonProfessionnelles
@@ -144,8 +143,9 @@ describe('QualificationPage server side', () => {
         expect(QualificationPage).toHaveBeenCalledWith(
           {
             action,
-            situationsNonProfessionnelles,
+            categories: situationsNonProfessionnelles,
             returnTo: '/mes-jeunes/jeune-1/actions/id-action-1',
+            beneficiaire,
           },
           {}
         )

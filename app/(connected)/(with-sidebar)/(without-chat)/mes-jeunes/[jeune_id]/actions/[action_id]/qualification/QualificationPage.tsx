@@ -2,7 +2,6 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/navigation'
 import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
 
 import Modal from 'components/Modal'
@@ -15,10 +14,15 @@ import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import RecapitulatifErreursFormulaire, {
+  LigneErreur,
+} from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
 import {
   Action,
@@ -26,38 +30,43 @@ import {
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
+import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
-import { AlerteParam } from 'referentiel/alerteParam'
-import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type QualificationProps = {
   action: Action
-  situationsNonProfessionnelles: SituationNonProfessionnelle[]
+  categories: SituationNonProfessionnelle[]
   returnTo: string
+  beneficiaire: BaseJeune
 }
 
 function QualificationPage({
   action,
-  situationsNonProfessionnelles,
+  categories,
   returnTo,
+  beneficiaire,
 }: QualificationProps) {
-  const router = useRouter()
-  const [_, setAlerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
 
   const [commentaire, setCommentaire] = useState<ValueWithError>({
     value: action.content + (action.comment && ' - ' + action.comment),
   })
-  const [codeSNP, setCodeSNP] = useState<ValueWithError<string | undefined>>({
-    value: action.qualification?.libelle,
+
+  const [codeCategorie, setCodeCategorie] = useState<
+    ValueWithError<string | undefined>
+  >({ value: action?.qualification?.code })
+  const [categorieSelectionnee, setCategorieSelectionnee] = useState<
+    string | undefined
+  >(undefined)
+  const [dateDebut, setDateDebut] = useState<
+    ValueWithError<string | undefined>
+  >({ value: action.creationDate })
+  const [dateFin, setDateFin] = useState<ValueWithError<string | undefined>>({
+    value: action.dateFinReelle,
   })
-  const [dateDebut, setDateDebut] = useState<string>(action.creationDate)
-  const [dateFin, setDateFin] = useState<string | undefined>(
-    action.dateFinReelle
-  )
 
   const [isQualificationEnCours, setIsQualificationEnCours] =
     useState<boolean>(false)
@@ -69,9 +78,8 @@ function QualificationPage({
   )
   const [statut, setStatut] = useState<StatutAction>(action.status)
 
-  const [categorieSelectionnee, setcategorieSelectionnee] = useState<
-    string | undefined
-  >(action.qualification?.libelle)
+  const [successQualification, setSuccessQualification] =
+    useState<boolean>(false)
 
   const [showHelperCategories, setShowHelperCategories] =
     useState<boolean>(false)
@@ -83,16 +91,25 @@ function QualificationPage({
     'Création Situation Non Professionnelle'
   )
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const estSNP = categorieSelectionnee !== CODE_QUALIFICATION_NON_SNP
 
   function isCommentaireValid(): boolean {
     return Boolean(commentaire.value) && commentaire.value.length <= 255
+  }
+
+  function validateCategorie() {
+    let error
+    if (!codeCategorie.value) {
+      error = 'Le champ Catégorie est vide. Veuillez renseigner une catégorie'
+    }
+    setCodeCategorie({ ...codeCategorie, error })
   }
 
   function validateCommentaire() {
     let error
     if (!commentaire.value) {
       error =
-        'Le champ Intitulé et description n’est pas renseigné. Veuillez renseigner une description.'
+        'Le champ Titre et description n’est pas renseigné. Veuillez renseigner un titre ou une description.'
     }
     if (commentaire.value.length > 255)
       error =
@@ -101,10 +118,28 @@ function QualificationPage({
     setCommentaire({ ...commentaire, error })
   }
 
+  function validerDateFin() {
+    let error
+    if (!dateFin.value) {
+      error =
+        'Le champ Date de fin de l’action n’est pas renseigné. Veuillez renseigner la date à laquelle l’action a été terminée.'
+    }
+    setDateFin({ ...dateFin, error })
+  }
+
+  function validerDateDebut() {
+    let error
+    if (!dateDebut.value) {
+      error =
+        'Le champ Date de début de l’action n’est pas renseigné. Veuillez renseigner la date de début de l’action.'
+    }
+    setDateDebut({ ...dateDebut, error })
+  }
+
   function isFormValid(): boolean {
     return (
       isCommentaireValid() &&
-      Boolean(codeSNP) &&
+      Boolean(codeCategorie) &&
       Boolean(dateFin) &&
       Boolean(dateDebut)
     )
@@ -121,7 +156,7 @@ function QualificationPage({
       }
     )
     setQualification(nouvelleQualification)
-    setAlerte(AlerteParam.qualificationNonSNP)
+    setSuccessQualification(true)
     setStatut(StatutAction.Qualifiee)
   }
 
@@ -131,18 +166,17 @@ function QualificationPage({
 
     setErreurQualification(undefined)
     setIsQualificationEnCours(true)
-    if (codeSNP.value === CODE_QUALIFICATION_NON_SNP) {
+    if (categorieSelectionnee === CODE_QUALIFICATION_NON_SNP) {
       await qualifierNonSNP()
     } else
       try {
         const { qualifier } = await import('services/actions.service')
-        await qualifier(action.id, codeSNP!, {
+        await qualifier(action.id, categorieSelectionnee!, {
           commentaire: commentaire.value,
-          dateDebutModifiee: DateTime.fromISO(dateDebut).startOf('day'),
-          dateFinModifiee: DateTime.fromISO(dateFin!).startOf('day'),
+          dateDebutModifiee: DateTime.fromISO(dateDebut.value).startOf('day'),
+          dateFinModifiee: DateTime.fromISO(dateFin.value!).startOf('day'),
         })
-        setAlerte(AlerteParam.qualificationSNP)
-        router.push(returnTo)
+        setSuccessQualification(true)
       } catch (error) {
         setErreurQualification(
           error instanceof ApiError
@@ -154,6 +188,42 @@ function QualificationPage({
       }
   }
 
+  function getErreurs(): LigneErreur[] {
+    const erreurs = []
+    if (codeCategorie.error) {
+      erreurs.push({
+        ancre: '#select-categorie',
+        label: 'Le champ Catégorie est vide.',
+        titreChamp: 'Catégorie',
+      })
+    }
+
+    if (codeCategorie !== CODE_QUALIFICATION_NON_SNP && commentaire.error) {
+      erreurs.push({
+        ancre: '#commentaire',
+        label: 'Le champ Titre et description de l’action est vide.',
+        titreChamp: 'Titre et description de l’action',
+      })
+    }
+
+    if (dateDebut.error) {
+      erreurs.push({
+        ancre: '#input-date-debut',
+        label: 'Le champ Date de début de l’action est vide.',
+        titreChamp: 'Date de début de l’action',
+      })
+    }
+
+    if (dateFin.error) {
+      erreurs.push({
+        ancre: '#input-date-fin',
+        label: 'Le champ Date de fin de l’action est vide.',
+        titreChamp: 'Date de fin de l’action',
+      })
+    }
+    return erreurs
+  }
+
   function permuterAffichageHelperCategories() {
     setShowHelperCategories(!showHelperCategories)
   }
@@ -162,184 +232,243 @@ function QualificationPage({
 
   return (
     <>
-      <form onSubmit={qualifierAction}>
-        {erreurQualification && (
-          <FailureAlert
-            label={erreurQualification}
-            onAcknowledge={() => setErreurQualification(undefined)}
-          />
-        )}
+      {!successQualification && (
+        <>
+          <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
-        <p className='text-s-bold mb-6'>
-          Tous les champs avec * sont obligatoires
-        </p>
+          <form onSubmit={qualifierAction}>
+            {erreurQualification && (
+              <FailureAlert
+                label={erreurQualification}
+                onAcknowledge={() => setErreurQualification(undefined)}
+              />
+            )}
 
-        <Etape numero={1} titre='Informations principales'>
-          <Label htmlFor='select-categorie' inputRequired={true}>
-            Catégorie
-          </Label>
-          <Select
-            id='select-categorie'
-            required={true}
-            onChange={(selectedValue) => {
-              setCodeSNP(selectedValue)
-              setcategorieSelectionnee(selectedValue)
-            }}
-            defaultValue={codeSNP.value}
-          >
-            {situationsNonProfessionnelles.map(({ code, label }) => (
-              <option key={code} value={code}>
-                {label}
-              </option>
-            ))}{' '}
-          </Select>
-          <button
-            type='button'
-            onClick={permuterAffichageHelperCategories}
-            className='flex items-center gap-2 text-primary mt-[-1.5rem] mb-8'
-          >
-            À quoi servent les catégories ?
-            <IconComponent
-              name={IconName.Help}
-              className='fill-[currentColor] w-4 h-4'
-              aria-hidden={true}
-              focusable={false}
-            />
-          </button>
+            <p className='text-s-bold mb-6'>
+              Tous les champs sont obligatoires
+            </p>
 
-          {categorieSelectionnee !== CODE_QUALIFICATION_NON_SNP && (
-            <>
-              <Label
-                htmlFor='commentaire'
-                inputRequired={true}
-                withBulleMessageSensible={true}
-              >
-                {{
-                  main: "Titre et description de l'action",
-                  helpText:
-                    'Vous retrouverez ce résumé dans les détails de la situation non professionnelle sur i-milo, dans le champ « Commentaire ».',
-                  precision: '255 caractères maximum',
-                }}
+            <Etape numero={1} titre='Informations principales'>
+              <Label htmlFor='select-categorie' inputRequired={true}>
+                Catégorie
               </Label>
-              {commentaire.error && (
-                <InputError id='commentaire--error'>
-                  {commentaire.error}
+              {codeCategorie.error && (
+                <InputError id='select-categorie--error'>
+                  {codeCategorie.error}
                 </InputError>
               )}
-              <Textarea
-                id='commentaire'
-                maxLength={255}
-                allowOverMax={true}
-                defaultValue={commentaire.value}
-                onChange={(value) => setCommentaire({ value })}
-                invalid={Boolean(commentaire.error)}
-                onBlur={validateCommentaire}
-              />
+              <Select
+                id='select-categorie'
+                required={true}
+                onChange={(selectedValue) => {
+                  setCodeCategorie(selectedValue)
+                  setCategorieSelectionnee(selectedValue)
+                }}
+                invalid={Boolean(codeCategorie.error)}
+                defaultValue={codeCategorie.value}
+                onBlur={validateCategorie}
+              >
+                {categories.map(({ code, label }) => (
+                  <option key={code} value={code}>
+                    {label}
+                  </option>
+                ))}{' '}
+              </Select>
+
+              <button
+                type='button'
+                onClick={permuterAffichageHelperCategories}
+                className='flex items-center gap-2 text-primary mt-[-1.5rem] mb-8'
+              >
+                À quoi servent les catégories ?
+                <IconComponent
+                  name={IconName.Help}
+                  className='fill-[currentColor] w-4 h-4'
+                  aria-hidden={true}
+                  focusable={false}
+                />
+              </button>
+
+              {estSNP && (
+                <>
+                  <Label
+                    htmlFor='commentaire'
+                    inputRequired={true}
+                    withBulleMessageSensible={true}
+                  >
+                    {{
+                      main: "Titre et description de l'action",
+                      helpText:
+                        'Vous retrouverez ce résumé dans les détails de la situation non professionnelle sur i-milo, dans le champ « Commentaire ».',
+                      precision: '255 caractères maximum',
+                    }}
+                  </Label>
+                  {commentaire.error && (
+                    <InputError id='commentaire--error'>
+                      {commentaire.error}
+                    </InputError>
+                  )}
+                  <Textarea
+                    id='commentaire'
+                    maxLength={255}
+                    allowOverMax={true}
+                    defaultValue={commentaire.value}
+                    onChange={(value) => setCommentaire({ value })}
+                    invalid={Boolean(commentaire.error)}
+                    onBlur={validateCommentaire}
+                  />
+                </>
+              )}
+            </Etape>
+
+            {estSNP && (
+              <Etape numero={2} titre='Dates'>
+                <Label htmlFor='input-date-debut' inputRequired={true}>
+                  Date de début de l’action
+                </Label>
+                {dateDebut.error && (
+                  <InputError id='input-date-debut--error' className='mb-2'>
+                    {dateDebut.error}
+                  </InputError>
+                )}
+                <Input
+                  type='date'
+                  id='input-date-debut'
+                  defaultValue={
+                    action.creationDate ?? ''
+                      ? DateTime.fromISO(action.creationDate).toISODate()
+                      : ''
+                  }
+                  onChange={(value: string) => setDateDebut({ value })}
+                  onBlur={validerDateDebut}
+                  required={true}
+                  invalid={Boolean(dateDebut.error)}
+                />
+                <Label htmlFor='input-date-fin' inputRequired={true}>
+                  Date de fin de l’action
+                </Label>
+                {dateFin.error && (
+                  <InputError id='input-date-fin--error' className='mb-2'>
+                    {dateFin.error}
+                  </InputError>
+                )}
+                <Input
+                  type='date'
+                  id='input-date-fin'
+                  defaultValue={
+                    action.dateFinReelle
+                      ? DateTime.fromISO(action.dateFinReelle).toISODate()
+                      : ''
+                  }
+                  min={DateTime.fromISO(dateDebut).toISODate()}
+                  onChange={(value: string) => setDateFin({ value })}
+                  onBlur={validerDateFin}
+                  required={true}
+                  invalid={Boolean(dateFin.error)}
+                />
+              </Etape>
+            )}
+
+            {estSNP && (
+              <div className='mb-6'>
+                <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du bénéficiaire'>
+                  <p>
+                    Les informations saisies sont partagées avec i-milo, et
+                    doivent en respecter les Conditions Générales d’utilisation.
+                    Elles ne doivent comporter aucune donnée personnelle non
+                    autorisée par <strong>l’arrêté du 17 novembre 2021</strong>{' '}
+                    relatif au traitement automatisé de données à caractère
+                    personnel dénommé « i-milo »
+                  </p>
+                  <span className='hover:text-primary_darken'>
+                    <ExternalLink
+                      href='https://c-milo.i-milo.fr/jcms/t482_1002488/fr/mentions-legales'
+                      label='Voir le détail des CGU'
+                      onClick={() => setLabelMatomo('Lien CGU')}
+                    />
+                  </span>
+                  <span className='hover:text-primary_darken'>
+                    <ExternalLink
+                      href='https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361'
+                      label='Voir le détail de l’arrêté du 17 novembre 2021'
+                      onClick={() =>
+                        setLabelMatomo('Lien Arrêté 17 novembre 2021')
+                      }
+                    />
+                  </span>
+                </InformationMessage>
+              </div>
+            )}
+
+            <div className='flex justify-center'>
+              <ButtonLink
+                href={returnTo}
+                style={ButtonStyle.SECONDARY}
+                className='mr-3'
+              >
+                Annuler
+              </ButtonLink>
+              {categorieSelectionnee === CODE_QUALIFICATION_NON_SNP && (
+                <Button type='submit' isLoading={isQualificationEnCours}>
+                  <IconComponent
+                    name={IconName.Send}
+                    aria-hidden={true}
+                    focusable={false}
+                    className='w-[1em] h-[1em] mr-2'
+                  />
+                  Enregistrer
+                </Button>
+              )}
+              {estSNP && (
+                <Button type='submit' isLoading={isQualificationEnCours}>
+                  <IconComponent
+                    name={IconName.Send}
+                    aria-hidden={true}
+                    focusable={false}
+                    className='w-[1em] h-[1em] mr-2'
+                  />
+                  Enregistrer et envoyer à i-milo
+                </Button>
+              )}
+            </div>
+          </form>
+        </>
+      )}
+
+      {successQualification && (
+        <div className='text-center'>
+          <IllustrationComponent
+            name={IllustrationName.Check}
+            className='m-auto fill-success_darken w-[180px] h-[180px]'
+            aria-hidden={true}
+            focusable={false}
+          />
+          <h2 className='text-m-bold mb-2'>Action enregistrée !</h2>
+          {categorieSelectionnee !== CODE_QUALIFICATION_NON_SNP && (
+            <>
+              <p>Les informations sont en route vers i-milo.</p>
+              <p> Délai d’actualisation : environ 24h.</p>
             </>
           )}
-        </Etape>
-
-        {categorieSelectionnee !== CODE_QUALIFICATION_NON_SNP && (
-          <Etape numero={2} titre='Dates'>
-            <Label htmlFor='input-date-debut' inputRequired={true}>
-              Date de début de l’action
-            </Label>
-            <Input
-              type='date'
-              id='input-date-debut'
-              defaultValue={
-                action.creationDate ?? ''
-                  ? DateTime.fromISO(action.creationDate).toISODate()
-                  : ''
-              }
-              onChange={setDateDebut}
-              required={true}
-            />
-            <Label htmlFor='input-date-fin' inputRequired={true}>
-              Date de l’action
-            </Label>
-            <Input
-              type='date'
-              id='input-date-fin'
-              defaultValue={
-                action.dateFinReelle
-                  ? DateTime.fromISO(action.dateFinReelle).toISODate()
-                  : ''
-              }
-              min={DateTime.fromISO(dateDebut).toISODate()}
-              onChange={setDateFin}
-              required={true}
-            />
-          </Etape>
-        )}
-
-        <div className='mb-6'>
-          <InformationMessage label='Ces informations seront intégrées sur le dossier i-milo du bénéficiaire'>
-            <p>
-              Les informations saisies sont partagées avec i-milo, et doivent en
-              respecter les Conditions Générales d’utilisation. Elles ne doivent
-              comporter aucune donnée personnelle non autorisée par{' '}
-              <strong>l’arrêté du 17 novembre 2021</strong> relatif au
-              traitement automatisé de données à caractère personnel dénommé «
-              i-milo »
-            </p>
-            <span className='hover:text-primary_darken'>
-              <ExternalLink
-                href='https://c-milo.i-milo.fr/jcms/t482_1002488/fr/mentions-legales'
-                label='Voir le détail des CGU'
-                onClick={() => setLabelMatomo('Lien CGU')}
-              />
-            </span>
-            <span className='hover:text-primary_darken'>
-              <ExternalLink
-                href='https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000045084361'
-                label='Voir le détail de l’arrêté du 17 novembre 2021'
-                onClick={() => setLabelMatomo('Lien Arrêté 17 novembre 2021')}
-              />
-            </span>
-          </InformationMessage>
-        </div>
-
-        <div className='flex justify-center'>
-          <ButtonLink
-            href={returnTo}
-            style={ButtonStyle.SECONDARY}
-            className='mr-3'
-          >
-            Annuler
-          </ButtonLink>
           {categorieSelectionnee === CODE_QUALIFICATION_NON_SNP && (
-            <Button
-              type='submit'
-              isLoading={isQualificationEnCours}
-              disabled={!isFormValid()}
-            >
-              <IconComponent
-                name={IconName.Send}
-                aria-hidden={true}
-                focusable={false}
-                className='w-[1em] h-[1em] mr-2'
-              />
-              Enregistrer
-            </Button>
+            <>
+              <p>L’action est qualifiée en non-SNP.</p>
+            </>
           )}
-          {categorieSelectionnee !== CODE_QUALIFICATION_NON_SNP && (
-            <Button
-              type='submit'
-              isLoading={isQualificationEnCours}
-              disabled={!isFormValid()}
+
+          <div className='mt-10 flex justify-center gap-4'>
+            <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
+              Voir le détail
+            </ButtonLink>
+            <ButtonLink
+              href={`/mes-jeunes/${beneficiaire.id}?onglet=actions`}
+              style={ButtonStyle.PRIMARY}
             >
-              <IconComponent
-                name={IconName.Send}
-                aria-hidden={true}
-                focusable={false}
-                className='w-[1em] h-[1em] mr-2'
-              />
-              Enregistrer et envoyer à i-milo
-            </Button>
-          )}
+              Revenir à ma liste d‘actions
+            </ButtonLink>
+          </div>
         </div>
-      </form>
+      )}
 
       {showHelperCategories && (
         <Modal

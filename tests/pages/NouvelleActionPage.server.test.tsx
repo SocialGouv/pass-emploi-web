@@ -4,7 +4,7 @@ import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/me
 import NouvelleAction, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/page'
-import { desSituationsNonProfessionnelles } from 'fixtures/action'
+import { desCategories } from 'fixtures/action'
 import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import { getIdentitesBeneficiairesServerSide } from 'services/jeunes.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
@@ -64,7 +64,7 @@ describe('NouvelleActionPage server side', () => {
       },
     ])
     ;(getSituationsNonProfessionnelles as jest.Mock).mockResolvedValue(
-      desSituationsNonProfessionnelles()
+      desCategories()
     )
 
     // When
@@ -79,7 +79,7 @@ describe('NouvelleActionPage server side', () => {
     expect(NouvelleActionPage).toHaveBeenCalledWith(
       {
         idJeune: 'id-jeune',
-        categories: desSituationsNonProfessionnelles(),
+        categories: desCategories(),
         actionsPredefinies: [
           {
             id: 'action-predefinie-1',

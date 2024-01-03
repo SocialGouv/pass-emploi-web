@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
-  desSituationsNonProfessionnelles,
+  desCategories,
   unCommentaire,
   uneAction,
   uneActionJson,
@@ -172,6 +172,7 @@ describe('ActionsApiService', () => {
         qualification: {
           libelle: 'Santé',
           isSituationNonProfessionnelle: true,
+          code: 'SANTE',
         },
       })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
@@ -219,6 +220,7 @@ describe('ActionsApiService', () => {
         qualification: {
           libelle: 'Situation pas non professionnelle',
           isSituationNonProfessionnelle: false,
+          code: 'NON_SNP',
         },
       })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
@@ -568,6 +570,7 @@ describe('ActionsApiService', () => {
       const expected: QualificationAction = {
         libelle: 'Non-SNP',
         isSituationNonProfessionnelle: false,
+        code: 'NON_SNP',
       }
       expect(actual).toStrictEqual(expected)
     })
@@ -603,6 +606,7 @@ describe('ActionsApiService', () => {
       const expected: QualificationAction = {
         libelle: 'Santé',
         isSituationNonProfessionnelle: true,
+        code: 'SANTE',
       }
       expect(actual).toStrictEqual(expected)
     })
@@ -663,7 +667,7 @@ describe('ActionsApiService', () => {
   describe('.getSituationsNonProfessionnelles', () => {
     it('retourne la liste des situations non professionnelles', async () => {
       // GIVEN
-      const situationsNonProfessionnelles = desSituationsNonProfessionnelles()
+      const situationsNonProfessionnelles = desCategories()
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: situationsNonProfessionnelles,
       })

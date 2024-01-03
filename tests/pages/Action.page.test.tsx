@@ -411,9 +411,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         it('affiche un encart d’information de qualification en SNP', async () => {
           //Then
           expect(
-            screen.getByText(
-              /Action qualifiée en non Situation non-professionnelle/
-            )
+            screen.getByText(/Action qualifiée en non SNP/)
           ).toBeInTheDocument()
         })
       })

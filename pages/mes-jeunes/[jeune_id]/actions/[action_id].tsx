@@ -109,7 +109,6 @@ function PageAction({
       : pageTracking,
     aDesBeneficiaires
   )
-
   return (
     <>
       <PageActionsPortal>
@@ -140,7 +139,7 @@ function PageAction({
                 name={IconName.Send}
                 aria-hidden={true}
                 focusable={false}
-                className='w-4 h-4 mr-2'
+                className='w-4 h-4 ml-2'
               />
             </ButtonLink>
           )}
@@ -176,7 +175,7 @@ function PageAction({
 
           {!action.qualification?.isSituationNonProfessionnelle && (
             <div className='mb-6'>
-              <InformationMessage label='Action qualifiée en non Situation non-professionnelle : '>
+              <InformationMessage label='Action qualifiée en non SNP.'>
                 Vous ne pouvez plus modifier cette action.
               </InformationMessage>
             </div>

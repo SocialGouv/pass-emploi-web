@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 
 import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
-import { desSituationsNonProfessionnelles } from 'fixtures/action'
+import { desCategories } from 'fixtures/action'
 import {
   ActionPredefinie,
   SituationNonProfessionnelle,
@@ -15,8 +15,7 @@ jest.mock('services/actions.service')
 jest.mock('components/Modal')
 
 describe('NouvelleActionPage client side', () => {
-  const categories: SituationNonProfessionnelle[] =
-    desSituationsNonProfessionnelles()
+  const categories: SituationNonProfessionnelle[] = desCategories()
   const actionsPredefinies: ActionPredefinie[] = [
     {
       id: 'action-predefinie-1',

@@ -80,6 +80,7 @@ export function jsonToQualification(
 ): QualificationAction {
   return {
     libelle: qualificationJson.libelle,
+    code: qualificationJson.code,
     isSituationNonProfessionnelle:
       qualificationJson.code !== CODE_QUALIFICATION_NON_SNP,
   }
