@@ -33,7 +33,9 @@ describe('LoginPage server side', () => {
     render(await Login({ searchParams: { source: 'notif-mail' } }))
 
     // Then
-    expect(metadata).toEqual({ title: 'Connexion' })
+    expect(metadata).toEqual({
+      title: "Connexion dans l'espace conseiller CEJ",
+    })
     expect(LoginPage).toHaveBeenCalledWith(
       {
         isFromEmail: true,
