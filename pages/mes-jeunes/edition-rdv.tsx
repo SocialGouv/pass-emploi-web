@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import { JeuneFromListe } from '../../interfaces/jeune'
+
 import PageActionsPortal from 'components/PageActionsPortal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -36,7 +38,6 @@ import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
-import { JeuneFromListe } from '../../interfaces/jeune'
 
 const ConfirmationUpdateRdvModal = dynamic(
   import('components/ConfirmationUpdateRdvModal'),

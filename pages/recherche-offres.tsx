@@ -351,7 +351,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 
   const props: PageProps = {
-    pageTitle: 'Recherche d’offres',
+    pageTitle: `Recherche d’offres `,
     pageHeader: 'Offres',
   }
 

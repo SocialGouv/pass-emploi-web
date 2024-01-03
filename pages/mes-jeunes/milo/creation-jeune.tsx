@@ -19,6 +19,7 @@ interface MiloCreationJeuneProps extends PageProps {
   dossierId: string
   dossier: DossierMilo | null
   erreurMessageHttpMilo: string
+  etape: number
 }
 
 function MiloCreationJeune({
@@ -140,6 +141,8 @@ export const getServerSideProps: GetServerSideProps<
   let erreurMessageHttpMilo: string = ''
 
   const dossierId = context.query.dossierId as string
+  //remettre numéro étape dans title
+  let etape: number = 1
 
   if (dossierId) {
     try {
@@ -149,19 +152,21 @@ export const getServerSideProps: GetServerSideProps<
           dossierId,
           sessionOrRedirect.session.accessToken
         )) || null
+      etape = dossier ? 2 : 1
     } catch (err) {
       erreurMessageHttpMilo =
         (err as Error).message || "Une erreur inconnue s'est produite"
       console.error('Error in SSR: /mes-jeunes/milo/creation-jeune', err)
     }
   }
-  //TODO: remettre numéro étape dans title
+
   return {
     props: {
       dossierId: dossierId || '',
       dossier,
       erreurMessageHttpMilo,
-      pageTitle: `Portefeuille - Créer bénéficiaire`,
+      etape,
+      pageTitle: `Portefeuille - Créer compte bénéficiaire - étape ${etape} sur 2 `,
       pageHeader: `Créer un compte bénéficiaire`,
       returnTo: '/mes-jeunes',
     },

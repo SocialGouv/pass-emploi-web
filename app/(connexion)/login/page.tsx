@@ -11,7 +11,9 @@ type LoginSearchParams = Partial<{
   redirectUrl: string
 }>
 
-export const metadata: Metadata = { title: 'Connexion' }
+export const metadata: Metadata = {
+  title: "Connexion dans l'espace conseiller CEJ",
+}
 
 export default async function Login({
   searchParams,
