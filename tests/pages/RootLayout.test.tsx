@@ -1,7 +1,7 @@
 import { init as initRum } from '@elastic/apm-rum'
 import { render, screen } from '@testing-library/react'
 
-import RootLayout, { metadata } from 'app/layout'
+import RootLayout, { metadata, viewport } from 'app/layout'
 import { init as initMatomo } from 'utils/analytics/matomo'
 
 jest.mock('utils/analytics/matomo')
@@ -27,13 +27,14 @@ describe('RootLayout', () => {
       title: 'Espace conseiller',
       description: 'Espace conseiller de l’outil du Contrat d’Engagement Jeune',
       applicationName: 'CEJ conseiller',
-      themeColor: '#3B69D1',
-      viewport: 'width=device-width, initial-scale=1',
       icons: {
         icon: '/favicon.png',
         shortcut: '/favicon.png',
         apple: '/favicon.png',
       },
+    })
+    expect(viewport).toEqual({
+      themeColor: '#3B69D1',
     })
   })
 
