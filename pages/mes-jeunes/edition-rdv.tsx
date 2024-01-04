@@ -507,8 +507,8 @@ function buildPropsModificationEvenement(
     evenementTypeAC: estUneAC,
     withoutChat: true,
     pageTitle: lectureSeule
-      ? `Detail - ${estUneAC} `
-      : 'Mes événements - Modifier',
+      ? `Detail - ${evenement.titre} `
+      : `Modifier rdv ${evenement.titre}`,
     pageHeader: estUneAC
       ? 'Détail de l’animation collective'
       : 'Détail du rendez-vous',
@@ -534,8 +534,8 @@ function buildPropsCreationEvenement(
     withoutChat: true,
     evenementTypeAC: creationAC,
     pageTitle: creationAC
-      ? 'Mes événements - Créer une animation collective'
-      : 'Mes événements - Créer un rendez-vous',
+      ? 'Créer une animation collective'
+      : 'Créer un rendez-vous',
     pageHeader: creationAC
       ? 'Créer une animation collective'
       : 'Créer un rendez-vous',
