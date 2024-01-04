@@ -44,9 +44,6 @@ function ModificationPage({
 }: ModificationProps) {
   const router = useRouter()
   const [portefeuille] = usePortefeuille()
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
 
   const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
@@ -60,18 +57,12 @@ function ModificationPage({
   const afficherSuppressionAction =
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
     action.status !== StatutAction.Terminee &&
+    action.status !== StatutAction.Qualifiee &&
     !aDesCommentaires
 
-  const [showHelperCategories, setShowHelperCategories] =
-    useState<boolean>(false)
-
-  function permuterAffichageHelperCategories() {
-    setShowHelperCategories(!showHelperCategories)
-  }
-
-  async function soumettreAction(payload: ActionFormData): Promise<void> {
-    await modifierAction(payload)
-  }
+  const suppressionModalRef = useRef<{
+    closeModal: (e: MouseEvent) => void
+  }>(null)
 
   async function modifierAction(payload: ActionFormData): Promise<void> {
     const { modifierAction: _modifierAction } = await import(
@@ -83,23 +74,19 @@ function ModificationPage({
     setSuccesModification(true)
   }
 
-  async function deleteAction(): Promise<void> {
+  async function supprimerAction(): Promise<void> {
     setDeleteDisabled(true)
-    const { deleteAction: _deleteAction } = await import(
-      'services/actions.service'
-    )
-    _deleteAction(action.id)
-      .then(() => {
-        setTrackingTitle('Actions jeune – Suppression')
-        router.push('/mes-jeunes/' + idJeune)
-      })
-      .catch((error: Error) => {
-        setShowEchecMessage(true)
-        console.log('Erreur lors de la suppression de l action', error)
-      })
-      .finally(() => {
-        setDeleteDisabled(false)
-      })
+    const { deleteAction } = await import('services/actions.service')
+    try {
+      await deleteAction(action.id)
+      setTrackingTitle('Actions jeune – Suppression')
+      router.push('/mes-jeunes/' + idJeune)
+    } catch (error) {
+      setShowEchecMessage(true)
+      console.log('Erreur lors de la suppression de l action', error)
+    } finally {
+      setDeleteDisabled(false)
+    }
   }
 
   useMatomo(trackingTitle, aDesBeneficiaires)
@@ -108,26 +95,24 @@ function ModificationPage({
     <>
       {!succesModification && !showSuppression && (
         <>
-          <PageActionsPortal>
-            <>
-              {afficherSuppressionAction && (
-                <Button
-                  label="Supprimer l'action"
-                  onClick={() => setShowSuppression(true)}
-                  style={ButtonStyle.WARNING}
-                  disabled={deleteDisabled}
-                >
-                  <IconComponent
-                    name={IconName.Delete}
-                    aria-hidden={true}
-                    focusable={false}
-                    className='w-4 h-4 mr-2'
-                  />
-                  Supprimer
-                </Button>
-              )}
-            </>
-          </PageActionsPortal>
+          {afficherSuppressionAction && (
+            <PageActionsPortal>
+              <Button
+                label="Supprimer l'action"
+                onClick={() => setShowSuppression(true)}
+                style={ButtonStyle.WARNING}
+                disabled={deleteDisabled}
+              >
+                <IconComponent
+                  name={IconName.Delete}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='w-4 h-4 mr-2'
+                />
+                Supprimer l’action
+              </Button>
+            </PageActionsPortal>
+          )}
 
           {showEchecMessage && (
             <FailureAlert
@@ -141,33 +126,8 @@ function ModificationPage({
             actionsPredefinies={actionsPredefinies}
             categories={situationsNonProfessionnelles}
             returnTo={returnTo}
-            permuterAffichageHelperCategories={
-              permuterAffichageHelperCategories
-            }
-            soumettreAction={soumettreAction}
+            soumettreAction={modifierAction}
           />
-
-          {showHelperCategories && (
-            <Modal
-              ref={modalRef}
-              title='Pourquoi choisir une catégorie ?'
-              titleIllustration={IllustrationName.Info}
-              onClose={() => setShowHelperCategories(false)}
-            >
-              <p>
-                Les catégories proposées sont le reflet de celles que vous
-                retrouverez lors de la qualification. Elles vous permettent de
-                gagner du temps.
-              </p>
-              <Button
-                style={ButtonStyle.PRIMARY}
-                onClick={(e) => modalRef.current!.closeModal(e)}
-                className='block m-auto mt-4'
-              >
-                Fermer
-              </Button>
-            </Modal>
-          )}
         </>
       )}
 
@@ -186,7 +146,7 @@ function ModificationPage({
           </p>
           <div className='mt-10 flex justify-center gap-4'>
             <ButtonLink
-              href={`/mes-jeunes/${idJeune}`}
+              href={`/mes-jeunes/${idJeune}?onglet=actions`}
               style={ButtonStyle.PRIMARY}
             >
               Consulter la liste des actions
@@ -196,35 +156,33 @@ function ModificationPage({
       )}
 
       {showSuppression && (
-        <div className='text-center'>
-          <IllustrationComponent
-            name={IllustrationName.Delete}
-            className='m-auto fill-warning w-[180px] h-[180px]'
-            aria-hidden={true}
-            focusable={false}
-          />
-          <h2 className='text-m-bold mb-2'>Supprimer l’action ?</h2>
+        <Modal
+          ref={suppressionModalRef}
+          title='Supprimer l’action ?'
+          titleIllustration={IllustrationName.Delete}
+          onClose={() => setShowSuppression(false)}
+        >
           <p>
             Votre choix est définitif. Vous ne pourrez plus la consulter ni la
             modifier.
           </p>
           <div className='mt-10 flex justify-center gap-4'>
             <Button
-              onClick={() => setShowSuppression(false)}
+              onClick={suppressionModalRef.current!.closeModal}
               style={ButtonStyle.SECONDARY}
               label={`Annuler la suppression de l’action ${action.content}`}
             >
               Annuler
             </Button>
             <Button
-              onClick={() => deleteAction()}
+              onClick={() => supprimerAction()}
               style={ButtonStyle.PRIMARY}
-              label={`Annuler l’action ${action.content}`}
+              label={`Supprimer l’action ${action.content}`}
             >
               Supprimer
             </Button>
           </div>
-        </div>
+        </Modal>
       )}
     </>
   )

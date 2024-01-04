@@ -99,7 +99,6 @@ const ALERTES: DictAlertes = {
       buildHref: (target?: string) => '/mes-jeunes/' + target,
     },
   },
-  modificationAction: { title: 'L’action a bien été modifiée' },
   suppressionAction: { title: 'L’action a bien été supprimée' },
   choixAgence: { title: 'Votre agence a été ajoutée à votre profil' },
   envoiMessage: {

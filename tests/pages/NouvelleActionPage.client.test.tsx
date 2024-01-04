@@ -216,9 +216,9 @@ describe('NouvelleActionPage client side', () => {
           {
             codeCategorie: categories[2].code,
             titre: actionsPredefinies[1].titre,
-            commentaire: 'Description action',
+            description: 'Description action',
             dateEcheance: '2023-12-20',
-            status: 'Terminee',
+            statut: 'Terminee',
           },
           'id-jeune'
         )

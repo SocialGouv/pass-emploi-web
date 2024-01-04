@@ -41,14 +41,6 @@ export enum StatutAction {
   Annulee = 'Annulee',
 }
 
-export interface ModificiationAction {
-  status?: StatutAction | string
-  titre?: string
-  commentaire?: string
-  dateEcheance?: string
-  codeCategorie?: string
-}
-
 export enum EtatQualificationAction {
   NonQualifiable = 'NonQualifiable',
   AQualifier = 'AQualifier',

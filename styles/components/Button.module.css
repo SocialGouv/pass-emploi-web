@@ -84,24 +84,21 @@
 .buttonWarning {
   background-color: theme('colors.warning_lighten');
   color: theme('colors.warning');
-  border: 1px solid theme('colors.warning');
+  box-shadow: theme('boxShadow.base');
 }
 
 .buttonWarning:hover {
   background-color: theme('colors.warning');
   color: theme('colors.blanc');
-  border: 1px solid transparent;
 }
 
 .buttonWarning[disabled] {
   cursor: not-allowed;
-  border: 1px solid transparent;
 }
 
 .buttonWarning[disabled]:hover {
   background-color: theme('colors.warning_lighten');
   color: theme('colors.warning');
-  border: 1px solid transparent;
 }
 
 /**

@@ -7,7 +7,6 @@ import {
   ActionPilotage,
   Commentaire,
   EtatQualificationAction,
-  ModificiationAction,
   QualificationAction,
   SituationNonProfessionnelle,
   StatutAction,
@@ -117,8 +116,8 @@ export async function creerAction(
     codeCategorie: string
     titre: string
     dateEcheance: string
-    status: StatutAction
-    commentaire?: string
+    statut: StatutAction
+    description?: string
   },
   idJeune: string
 ): Promise<void> {
@@ -127,8 +126,8 @@ export async function creerAction(
     content: action.titre,
     dateEcheance: DateTime.fromISO(action.dateEcheance).toISO(),
     codeQualification: action.codeCategorie,
-    comment: action.commentaire,
-    status: actionStatusToJson(action.status),
+    comment: action.description,
+    status: actionStatusToJson(action.statut),
   }
   await apiPost(
     `/conseillers/${session!.user.id}/jeunes/${idJeune}/action`,
@@ -139,22 +138,22 @@ export async function creerAction(
 
 export async function modifierAction(
   idAction: string,
-  action: {
-    status?: StatutAction
+  modifications: {
+    statut?: StatutAction
     titre?: string
-    commentaire?: string
+    description?: string
     dateEcheance?: string
     codeCategorie?: string
   }
-): Promise<ModificiationAction> {
+): Promise<void> {
   const session = await getSession()
 
   const actionModifiee = { 
-    status: action.status ? actionStatusToJson(action.status) : undefined,
-    contenu: action.titre,
-    description: action.commentaire,
-    dateEcheance: action.dateEcheance,
-    codeQualification: action.codeCategorie
+    status: modifications.statut ? actionStatusToJson(modifications.statut) : undefined,
+    contenu: modifications.titre,
+    description: modifications.description,
+    dateEcheance: modifications.dateEcheance,
+    codeQualification: modifications.codeCategorie
   }
 
   await apiPut(
@@ -162,7 +161,6 @@ export async function modifierAction(
     actionModifiee,
     session!.accessToken
   )
-  return actionModifiee
 }
 
 export async function qualifier(

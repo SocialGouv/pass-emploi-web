@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import ModificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/ModificationActionPage'
-import { TITRE_AUTRE } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
 import {
   PageHeaderPortal,
   PageRetourPortal,
@@ -13,8 +12,20 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { recupererLesCommentaires } from 'services/actions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-export const metadata: Metadata = {
-  title: 'Modifier action - Actions jeune',
+type ModificationActionParams = { action_id: string }
+
+export async function generateMetadata({
+  params,
+}: {
+  params: ModificationActionParams
+}): Promise<Metadata> {
+  const { getAction } = await import('services/actions.service')
+  const { accessToken } = await getMandatorySessionServerSide()
+  const actionContent = await getAction(params.action_id, accessToken)
+
+  return {
+    title: `Modifier l’action ${actionContent?.action.content} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.nom}`,
+  }
 }
 
 type ModificationParams = { action_id: string }
@@ -24,7 +35,7 @@ export default async function ModificationAction({
   params: ModificationParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (user.structure !== StructureConseiller.MILO) notFound()
+  if (user.structure === StructureConseiller.POLE_EMPLOI) notFound()
 
   const { getAction, getSituationsNonProfessionnelles } = await import(
     'services/actions.service'
@@ -47,7 +58,7 @@ export default async function ModificationAction({
     params.action_id as string,
     accessToken
   )
-  if (!commentaires) return { notFound: true }
+  if (!commentaires) notFound()
 
   const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
   return (
@@ -57,10 +68,7 @@ export default async function ModificationAction({
 
       <ModificationPage
         action={action}
-        actionsPredefinies={actionsPredefinies.concat({
-          id: 'autre',
-          titre: TITRE_AUTRE,
-        })}
+        actionsPredefinies={actionsPredefinies}
         aDesCommentaires={commentaires.length > 0}
         idJeune={jeune.id}
         situationsNonProfessionnelles={situationsNonProfessionnelles}

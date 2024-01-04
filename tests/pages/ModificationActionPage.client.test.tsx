@@ -161,9 +161,9 @@ describe('ModificationActionPage client side', () => {
           {
             codeCategorie: situationsNonProfessionnelles[2].code,
             titre: actionsPredefinies[1].titre,
-            commentaire: 'Description action',
+            description: 'Description action',
             dateEcheance: '2023-12-20',
-            status: 'EnCours',
+            statut: 'EnCours',
           }
         )
       })
@@ -183,7 +183,7 @@ describe('ModificationActionPage client side', () => {
           // Then
           expect(
             screen.getByRole('link', { name: 'Consulter la liste des actions' })
-          ).toHaveAttribute('href', '/mes-jeunes/id-jeune')
+          ).toHaveAttribute('href', '/mes-jeunes/id-jeune?onglet=actions')
         })
       })
     })

@@ -1,11 +1,10 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
-import React, { MouseEvent, useRef, useState } from 'react'
+import React, { useState } from 'react'
 
 import { EditionActionForm } from 'components/action/EditionActionForm'
 import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
-import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IllustrationComponent, {
@@ -27,8 +26,6 @@ type EditionActionProps = {
   returnTo: string
 }
 
-export const TITRE_AUTRE = 'Autre'
-
 function NouvelleActionPage({
   idJeune,
   categories,
@@ -37,11 +34,6 @@ function NouvelleActionPage({
 }: EditionActionProps) {
   const [portefeuille] = usePortefeuille()
 
-  const [showHelperCategories, setShowHelperCategories] =
-    useState<boolean>(false)
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
   const [succesCreation, setSuccesCreation] = useState<boolean>(false)
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
@@ -51,11 +43,6 @@ function NouvelleActionPage({
   const initialTracking = 'Actions jeune – Création action'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
-  async function soumettreAction(payload: ActionFormData): Promise<void> {
-    setConfirmBeforeLeaving(false)
-    await creerAction(payload)
-  }
 
   async function creerAction(action: ActionFormData) {
     setConfirmBeforeLeaving(false)
@@ -72,10 +59,6 @@ function NouvelleActionPage({
   function resetForm() {
     setSuccesCreation(false)
     setTrackingTitle(initialTracking)
-  }
-
-  function permuterAffichageHelperCategories() {
-    setShowHelperCategories(!showHelperCategories)
   }
 
   function openLeavePageConfirmationModal() {
@@ -99,8 +82,7 @@ function NouvelleActionPage({
           actionsPredefinies={actionsPredefinies}
           categories={categories}
           returnTo={returnTo}
-          permuterAffichageHelperCategories={permuterAffichageHelperCategories}
-          soumettreAction={soumettreAction}
+          soumettreAction={creerAction}
         />
       )}
 
@@ -127,28 +109,6 @@ function NouvelleActionPage({
             </ButtonLink>
           </div>
         </div>
-      )}
-
-      {showHelperCategories && (
-        <Modal
-          ref={modalRef}
-          title='Pourquoi choisir une catégorie ?'
-          titleIllustration={IllustrationName.Info}
-          onClose={() => setShowHelperCategories(false)}
-        >
-          <p>
-            Les catégories proposées sont le reflet de celles que vous
-            retrouverez lors de la qualification. Elles vous permettent de
-            gagner du temps.
-          </p>
-          <Button
-            style={ButtonStyle.PRIMARY}
-            onClick={(e) => modalRef.current!.closeModal(e)}
-            className='block m-auto mt-4'
-          >
-            Fermer
-          </Button>
-        </Modal>
       )}
 
       {showLeavePageModal && (

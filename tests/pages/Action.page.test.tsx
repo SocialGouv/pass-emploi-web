@@ -93,7 +93,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           // Then
           expect(modifierAction).toHaveBeenCalledWith(
             action.id,
-            { status: StatutAction.EnCours }
+            { statut: StatutAction.EnCours }
           )
         })
       })

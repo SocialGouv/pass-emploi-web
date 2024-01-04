@@ -298,5 +298,4 @@ export const desActionsPredefinies = (): ActionPredefinie[] => [
   },
   { id: 'action-predefinie-2', titre: 'Identifier des pistes de métier' },
   { id: 'action-predefinie-3', titre: 'Identifier des entreprises' },
-  { id: 'autre', titre: 'Autre' },
 ]

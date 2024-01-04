@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
 
-import { TITRE_AUTRE } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
 import RadioBox from 'components/action/RadioBox'
+import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -12,6 +12,7 @@ import Label from 'components/ui/Form/Label'
 import Select from 'components/ui/Form/Select'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
@@ -35,7 +36,6 @@ interface EditionRdvFormProps {
   actionsPredefinies: ActionPredefinie[]
   categories: SituationNonProfessionnelle[]
   returnTo: string
-  permuterAffichageHelperCategories: () => void
   soumettreAction: (payload: ActionFormData) => Promise<void>
   action?: Action
 }
@@ -44,23 +44,35 @@ export function EditionActionForm({
   actionsPredefinies,
   categories,
   returnTo,
-  permuterAffichageHelperCategories,
   soumettreAction,
 }: EditionRdvFormProps) {
+  const TITRE_AUTRE = 'Autre'
   const [codeCategorie, setCodeCategorie] = useState<
     ValueWithError<string | undefined>
   >({ value: action?.qualification?.code })
 
-  const [titre, setTitre] = useState<ValueWithError<string | undefined>>({
-    value: action?.content,
-  })
+  function titreEstPersonnalise({ content }: Action) {
+    return !actionsPredefinies.some(({ titre }) => titre === content)
+  }
+
+  const [titre, setTitre] = useState<ValueWithError<string | undefined>>(
+    !action
+      ? { value: undefined }
+      : titreEstPersonnalise(action)
+        ? { value: TITRE_AUTRE }
+        : { value: action.content }
+  )
   const [titrePersonnalise, setTitrePersonnalise] = useState<
     ValueWithError<string | undefined>
-  >({ value: undefined })
+  >(
+    action && titreEstPersonnalise(action)
+      ? { value: action.content }
+      : { value: undefined }
+  )
   const [description, setDescription] = useState<string | undefined>(
     action?.comment
   )
-  const [status, setStatus] = useState<StatutAction>(
+  const [statut, setStatut] = useState<StatutAction>(
     action?.status ?? StatutAction.Terminee
   )
 
@@ -71,6 +83,23 @@ export function EditionActionForm({
     ValueWithError<string | undefined>
   >({ value: localDate })
   const INPUT_MAX_LENGTH = 250
+
+  const optionsTitre = actionsPredefinies.concat({
+    id: 'autre',
+    titre: TITRE_AUTRE,
+  })
+
+  const [showHelperCategories, setShowHelperCategories] =
+    useState<boolean>(false)
+
+  const formRef = useRef<HTMLFormElement>(null)
+  const modalRef = useRef<{
+    closeModal: (e: MouseEvent) => void
+  }>(null)
+
+  function permuterAffichageHelperCategories() {
+    setShowHelperCategories(!showHelperCategories)
+  }
 
   function formulaireEstValide(): boolean {
     const categorieEstValide = validerCategorie()
@@ -171,7 +200,7 @@ export function EditionActionForm({
     }
 
     if (dateEcheance.error) {
-      const ancre = '#date-echeance-action'
+      const ancre = '#date-action'
       const label = 'Le champ Date est vide.'
       const titreChamp = 'Date'
 
@@ -185,9 +214,7 @@ export function EditionActionForm({
     e.preventDefault()
 
     if (!formulaireEstValide()) {
-      document
-        .getElementById('edition-action-form')!
-        .scrollIntoView({ behavior: 'smooth' })
+      formRef.current!.scrollIntoView({ behavior: 'smooth' })
       return Promise.resolve()
     }
 
@@ -196,8 +223,8 @@ export function EditionActionForm({
       titre:
         titre.value !== TITRE_AUTRE ? titre.value! : titrePersonnalise.value!,
       dateEcheance: dateEcheance.value!,
-      commentaire: description,
-      status,
+      description,
+      statut,
     }
 
     await soumettreAction(actionFormData)
@@ -211,6 +238,7 @@ export function EditionActionForm({
         id='edition-action-form'
         onSubmit={handleSoumettreAction}
         noValidate={true}
+        ref={formRef}
       >
         <p className='text-s-bold text-content_color mb-4'>
           Tous les champs avec * sont obligatoires
@@ -267,7 +295,7 @@ export function EditionActionForm({
             defaultValue={titre.value}
             invalid={Boolean(titre.error)}
           >
-            {actionsPredefinies.map(({ id, titre: titreAction }) => (
+            {optionsTitre.map(({ id, titre: titreAction }) => (
               <option key={id}>{titreAction}</option>
             ))}
           </Select>
@@ -318,18 +346,18 @@ export function EditionActionForm({
             </legend>
             <div className='mb-7 flex flex-wrap'>
               <RadioBox
-                isSelected={status === StatutAction.EnCours}
+                isSelected={statut === StatutAction.EnCours}
                 id='statut-action--arealiser'
                 label='À faire'
                 name='statut-action'
-                onChange={() => setStatus(StatutAction.EnCours)}
+                onChange={() => setStatut(StatutAction.EnCours)}
               />
               <RadioBox
-                isSelected={status === StatutAction.Terminee}
+                isSelected={statut === StatutAction.Terminee}
                 id='statut-action--terminee'
                 label='Terminée'
                 name='statut-action'
-                onChange={() => setStatus(StatutAction.Terminee)}
+                onChange={() => setStatut(StatutAction.Terminee)}
               />
             </div>
           </fieldset>
@@ -393,6 +421,28 @@ export function EditionActionForm({
           </Button>
         </div>
       </form>
+
+      {showHelperCategories && (
+        <Modal
+          ref={modalRef}
+          title='Pourquoi choisir une catégorie ?'
+          titleIllustration={IllustrationName.Info}
+          onClose={() => setShowHelperCategories(false)}
+        >
+          <p>
+            Les catégories proposées sont le reflet de celles que vous
+            retrouverez lors de la qualification. Elles vous permettent de
+            gagner du temps.
+          </p>
+          <Button
+            style={ButtonStyle.PRIMARY}
+            onClick={(e) => modalRef.current!.closeModal(e)}
+            className='block m-auto mt-4'
+          >
+            Fermer
+          </Button>
+        </Modal>
+      )}
     </>
   )
 }

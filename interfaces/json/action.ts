@@ -10,11 +10,7 @@ import {
 import { EntreeAgenda } from 'interfaces/agenda'
 import { toShortDate } from 'utils/date'
 
-export type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
-type EtatQualificationActionJson =
-  | 'A_QUALIFIER'
-  | 'NON_QUALIFIABLE'
-  | 'QUALIFIEE'
+type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
 
 export interface ActionJson {
   id: string
@@ -77,8 +73,8 @@ export type ActionFormData = {
   codeCategorie: string
   titre: string
   dateEcheance: string
-  status: StatutAction
-  commentaire?: string
+  statut: StatutAction
+  description?: string
 }
 
 export const CODE_QUALIFICATION_NON_SNP = 'NON_SNP'

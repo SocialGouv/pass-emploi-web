@@ -479,9 +479,9 @@ describe('ActionsApiService', () => {
         {
           codeCategorie: 'CODE',
           titre: 'content',
-          commentaire: 'comment',
+          description: 'comment',
           dateEcheance: '2022-07-30',
-          status: StatutAction.EnCours,
+          statut: StatutAction.EnCours,
         },
         'id-jeune'
       )
@@ -498,47 +498,6 @@ describe('ActionsApiService', () => {
         },
         'accessToken'
       )
-    })
-  })
-
-  describe('.modifierAction', () => {
-    it('met à jour une action commencée', async () => {
-      // WHEN
-      const actual = await modifierAction('id-action', { status: StatutAction.EnCours })
-
-      // THEN
-      expect(apiPut).toHaveBeenCalledWith(
-        '/actions/id-action',
-        { status: 'in_progress' },
-        'accessToken'
-      )
-      expect(actual).toHaveProperty('status', 'in_progress')
-    })
-
-    it('met à jour une action terminée', async () => {
-      // WHEN
-      const actual = await modifierAction('id-action', { status: StatutAction.Terminee })
-
-      // THEN
-      expect(apiPut).toHaveBeenCalledWith(
-        '/actions/id-action',
-        { status: 'done' },
-        'accessToken'
-      )
-      expect(actual).toHaveProperty('status', 'done')
-    })
-
-    it('met à jour une action annulée', async () => {
-      // WHEN
-      const actual = await modifierAction('id-action', { status: StatutAction.Annulee })
-
-      // THEN
-      expect(apiPut).toHaveBeenCalledWith(
-        '/actions/id-action',
-        { status: 'canceled' },
-        'accessToken'
-      )
-      expect(actual).toHaveProperty('status', 'canceled')
     })
   })
 

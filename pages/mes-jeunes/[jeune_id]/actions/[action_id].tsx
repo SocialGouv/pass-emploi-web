@@ -7,17 +7,25 @@ import React, { useState } from 'react'
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { Action, Commentaire, StatutAction } from 'interfaces/action'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import {
+  Action,
+  Commentaire,
+  QualificationAction,
+  StatutAction,
+} from 'interfaces/action'
+import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { MONTH_LONG, toFrenchFormat } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -36,9 +44,13 @@ function PageAction({
   lectureSeule,
 }: PageActionProps) {
   const router = useRouter()
+  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [alerte, setAlerte] = useAlerte()
 
+  const [_, setQualification] = useState<QualificationAction | undefined>(
+    action.qualification
+  )
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
@@ -47,6 +59,9 @@ function PageAction({
   }`
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
+  const conseillerEstMilo = estMilo(conseiller)
+  const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
+
   const dateEcheanceLongFormat = toFrenchFormat(
     DateTime.fromISO(action.dateEcheance),
     MONTH_LONG
@@ -54,12 +69,8 @@ function PageAction({
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const { modifierAction } = await import('services/actions.service')
-    await modifierAction(action.id, { status: statutChoisi })
+    await modifierAction(action.id, { statut: statutChoisi })
     setStatut(statutChoisi)
-  }
-
-  function updateAction() {
-    router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`)
   }
 
   function onAjoutCommentaire(estEnSucces: boolean) {
@@ -68,6 +79,29 @@ function PageAction({
     } else {
       setAlerte(AlerteParam.ajoutCommentaireAction)
       router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
+    }
+  }
+
+  async function qualifierAction(
+    isSituationNonProfessionnelle: boolean
+  ): Promise<void> {
+    if (isSituationNonProfessionnelle) {
+      await router.push(
+        `/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`
+      )
+    } else {
+      const { qualifier } = await import('services/actions.service')
+      const nouvelleQualification = await qualifier(
+        action.id,
+        CODE_QUALIFICATION_NON_SNP,
+        {
+          dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
+          dateFinModifiee: DateTime.fromISO(action.dateEcheance),
+        }
+      )
+      setQualification(nouvelleQualification)
+      setAlerte(AlerteParam.qualificationNonSNP)
+      setStatut(StatutAction.Qualifiee)
     }
   }
 
@@ -119,7 +153,11 @@ function PageAction({
 
       <StatutActionForm
         updateStatutAction={updateStatutAction}
+        qualifierAction={(isSituationNonProfessionnelle) =>
+          qualifierAction(isSituationNonProfessionnelle)
+        }
         statutCourant={statut}
+        estAQualifier={estAQualifier}
         lectureSeule={lectureSeule}
       />
 
@@ -128,9 +166,8 @@ function PageAction({
           <h2 className='text-m-bold text-grey_800 mb-5'>
             Informations sur l’action
           </h2>
-          <Button
-            label="Modifier l'action"
-            onClick={() => updateAction()}
+          <ButtonLink
+            href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
             style={ButtonStyle.SECONDARY}
           >
             <IconComponent
@@ -140,7 +177,7 @@ function PageAction({
               className='w-4 h-4 mr-2'
             />
             Modifier l’action
-          </Button>
+          </ButtonLink>
         </div>
 
         <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
@@ -148,9 +185,7 @@ function PageAction({
             <span>Catégorie :</span>
           </dt>
           <dd className='text-base-regular pl-6'>
-            {action.qualification?.libelle ? (
-              action.qualification.libelle
-            ) : (
+            {action.qualification?.libelle ?? (
               <>
                 --
                 <span className='sr-only'>information non disponible</span>
