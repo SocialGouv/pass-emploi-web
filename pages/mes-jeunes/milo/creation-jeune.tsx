@@ -141,7 +141,6 @@ export const getServerSideProps: GetServerSideProps<
   let erreurMessageHttpMilo: string = ''
 
   const dossierId = context.query.dossierId as string
-  //remettre numéro étape dans title
   let etape: number = 1
 
   if (dossierId) {
@@ -166,7 +165,7 @@ export const getServerSideProps: GetServerSideProps<
       dossier,
       erreurMessageHttpMilo,
       etape,
-      pageTitle: `Portefeuille - Créer compte bénéficiaire - étape ${etape} sur 2 `,
+      pageTitle: `Créer compte bénéficiaire - étape ${etape} sur 2 - Portefeuille`,
       pageHeader: `Créer un compte bénéficiaire`,
       returnTo: '/mes-jeunes',
     },

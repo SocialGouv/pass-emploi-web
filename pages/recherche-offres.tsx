@@ -1,5 +1,4 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { off } from '@firebase/database'
 import isEqual from 'lodash.isequal'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
