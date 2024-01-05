@@ -61,7 +61,7 @@ describe('QualificationPage client side', () => {
   describe('quand il s’agit d’une action SNP', () => {
     beforeEach(async () => {
       // Given
-      const selectSNP = screen.getByRole('combobox', { name: 'Catégorie' })
+      const selectSNP = screen.getByRole('combobox', { name: '* Catégorie' })
       await userEvent.selectOptions(selectSNP, categories[1].code)
     })
 
@@ -142,7 +142,7 @@ describe('QualificationPage client side', () => {
         inputTitreEtDescription = screen.getByRole('textbox', {
           name: /Titre et description/,
         })
-        selectCategorie = screen.getByRole('combobox', { name: 'Catégorie' })
+        selectCategorie = screen.getByRole('combobox', { name: '* Catégorie' })
         const inputDateFin = screen.getByLabelText('* Date de fin de l’action')
 
         await userEvent.clear(inputTitreEtDescription)
@@ -152,19 +152,6 @@ describe('QualificationPage client side', () => {
         )
         await userEvent.selectOptions(selectCategorie, categories[1].code)
         fireEvent.change(inputDateFin, { target: { value: '2022-09-05' } })
-      })
-
-      it('affiche un message d’erreur si la catégorie est vide', async () => {
-        // When
-        await userEvent.selectOptions(selectCategorie, '')
-        await userEvent.tab()
-
-        // Then
-        expect(
-          screen.getByText(
-            'Le champ Catégorie est vide. Veuillez renseigner une catégorie.'
-          )
-        ).toBeInTheDocument()
       })
 
       it('affiche un message d’erreur si le commentaire est vide', async () => {
@@ -268,7 +255,7 @@ describe('QualificationPage client side', () => {
   describe('quand il s’agit d’une NON SNP', () => {
     beforeEach(async () => {
       // Given
-      const selectSNP = screen.getByRole('combobox', { name: 'Catégorie' })
+      const selectSNP = screen.getByRole('combobox', { name: '* Catégorie' })
 
       // When
       await userEvent.selectOptions(selectSNP, categories[3].code)

@@ -106,7 +106,8 @@ function QualificationPage({
     if (!codeCategorie.value)
       setCodeCategorie({
         ...codeCategorie,
-        error: 'Le champ Catégorie est vide. Veuillez renseigner une catégorie',
+        error:
+          'Le champ Catégorie est vide. Veuillez renseigner une catégorie.',
       })
   }
 
