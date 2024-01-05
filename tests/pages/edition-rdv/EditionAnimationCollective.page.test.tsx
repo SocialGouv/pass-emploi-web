@@ -87,7 +87,9 @@ describe('EditionAnimationCollective', () => {
         expect(actual).toEqual({
           props: {
             withoutChat: true,
-            pageTitle: 'Mes événements - Créer une animation collective',
+            conseillerEstObservateur: false,
+            lectureSeule: false,
+            pageTitle: 'Créer une animation collective',
             pageHeader: 'Créer une animation collective',
             returnTo: '/agenda?onglet=etablissement',
             typesRendezVous: expect.arrayContaining([]),
@@ -164,7 +166,7 @@ describe('EditionAnimationCollective', () => {
         expect(actual).toMatchObject({
           props: {
             evenement: animationCollective,
-            pageTitle: 'Mes événements - Modifier',
+            pageTitle: `Modifier le rendez-vous ${animationCollective.titre}`,
             pageHeader: 'Détail de l’animation collective',
             evenementTypeAC: true,
           },

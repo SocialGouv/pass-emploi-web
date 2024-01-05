@@ -508,7 +508,7 @@ function buildPropsModificationEvenement(
     withoutChat: true,
     pageTitle: lectureSeule
       ? `Detail - ${evenement.titre} `
-      : `Modifier rdv ${evenement.titre}`,
+      : `Modifier le rendez-vous ${evenement.titre}`,
     pageHeader: estUneAC
       ? 'Détail de l’animation collective'
       : 'Détail du rendez-vous',
