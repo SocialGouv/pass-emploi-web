@@ -120,8 +120,11 @@ describe('Page Détail Service civique', () => {
   })
 
   describe('server side', () => {
+    const unServiceCivique = unDetailServiceCivique()
     beforeEach(() => {
-      ;(getServiceCiviqueServerSide as jest.Mock).mockResolvedValue(unDetailServiceCivique())
+      ;(getServiceCiviqueServerSide as jest.Mock).mockResolvedValue(
+        unServiceCivique
+      )
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
         validSession: true,
         session: {
@@ -161,8 +164,8 @@ describe('Page Détail Service civique', () => {
       )
       expect(actual).toEqual({
         props: {
-          offre: unDetailServiceCivique(),
-          pageTitle: 'Recherche d’offres - Détail de l’offre',
+          offre: unServiceCivique,
+          pageTitle: `Détail de l’offre n° ${unServiceCivique.id} - Recherche d\'offres`,
           pageHeader: 'Offre de service civique',
         },
       })
