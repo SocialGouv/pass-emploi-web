@@ -52,23 +52,23 @@ const DeleteRdvModal = dynamic(import('components/rdv/DeleteRdvModal'), {
 })
 
 interface EditionRdvProps extends PageProps {
-  typesRendezVous: TypeEvenementReferentiel[]
+  conseillerEstObservateur: boolean
+  lectureSeule: boolean
   returnTo: string
+  typesRendezVous: TypeEvenementReferentiel[]
   idJeune?: string
   evenement?: Evenement
   evenementTypeAC?: boolean
-  lectureSeule: boolean
-  conseillerEstObservateur: boolean
 }
 
 function EditionRdv({
+  conseillerEstObservateur,
+  lectureSeule,
+  returnTo,
   typesRendezVous,
   idJeune,
-  returnTo,
   evenement,
   evenementTypeAC,
-  lectureSeule,
-  conseillerEstObservateur,
 }: EditionRdvProps) {
   const router = useRouter()
   const [conseiller] = useConseiller()

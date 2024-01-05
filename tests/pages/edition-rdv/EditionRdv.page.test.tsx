@@ -24,7 +24,7 @@ import {
   supprimerEvenement,
   updateRendezVous,
 } from 'services/evenements.service'
-import { getJeunesDeLEtablissementClientSide } from 'services/jeunes.service'
+import { getJeunesDeLEtablissementClientSide, getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
@@ -83,11 +83,13 @@ describe('EditionRdv', () => {
         expect(actual).toEqual({
           props: {
             withoutChat: true,
-            pageTitle: 'Mes événements - Créer un rendez-vous',
+            pageTitle: 'Créer un rendez-vous',
             pageHeader: 'Créer un rendez-vous',
             returnTo: '/mes-jeunes',
             typesRendezVous: expect.arrayContaining([]),
             evenementTypeAC: false,
+            conseillerEstObservateur: false,
+            lectureSeule: false
           },
         })
       })
@@ -157,6 +159,7 @@ describe('EditionRdv', () => {
       it('récupère le rendez-vous concerné', async () => {
         // Given
         ;(getDetailsEvenement as jest.Mock).mockResolvedValue(unEvenement())
+        ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(desItemsJeunes())
 
         // When
         const actual = await getServerSideProps({
@@ -174,7 +177,7 @@ describe('EditionRdv', () => {
         expect(actual).toMatchObject({
           props: {
             evenement: unEvenement(),
-            pageTitle: 'Mes événements - Modifier',
+            pageTitle: 'Modifier rdv Prise de nouvelles par téléphone',
             pageHeader: 'Détail du rendez-vous',
           },
         })
@@ -290,6 +293,8 @@ describe('EditionRdv', () => {
             withoutChat={true}
             returnTo='/agenda?onglet=conseiller'
             pageTitle=''
+            lectureSeule={false}
+            conseillerEstObservateur={false}
           />,
           {
             customConseiller: { email: 'fake@email.com' },
@@ -913,6 +918,8 @@ describe('EditionRdv', () => {
             returnTo='https://localhost:3000/agenda'
             evenement={evenement}
             pageTitle=''
+            lectureSeule={true}
+            conseillerEstObservateur={true}
           />
         )
       })
@@ -978,6 +985,8 @@ describe('EditionRdv', () => {
             returnTo='/agenda'
             idJeune={idJeune}
             pageTitle=''
+            lectureSeule={false}
+            conseillerEstObservateur={false}
           />
         )
         const selectType = screen.getByRole('combobox', {
@@ -1026,6 +1035,8 @@ describe('EditionRdv', () => {
             returnTo='/agenda'
             evenement={evenement}
             pageTitle=''
+            lectureSeule={false}
+            conseillerEstObservateur={false}
           />,
           {
             customAlerte: { alerteSetter },
@@ -1340,6 +1351,8 @@ describe('EditionRdv', () => {
             returnTo='/agenda'
             evenement={evenement}
             pageTitle=''
+            conseillerEstObservateur={false}
+            lectureSeule={false}
           />
         )
       })
@@ -1477,6 +1490,8 @@ describe('EditionRdv', () => {
             returnTo='https://localhost:3000/agenda'
             evenement={unEvenement()}
             pageTitle=''
+            conseillerEstObservateur={true}
+            lectureSeule={true}
           />,
           {
             customPortefeuille: { value: [] },

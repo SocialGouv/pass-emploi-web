@@ -287,6 +287,8 @@ describe('EditionAnimationCollective', () => {
               returnTo='/agenda?onglet=etablissement'
               pageTitle=''
               evenementTypeAC={true}
+              lectureSeule={false}
+              conseillerEstObservateur={false}
             />,
             {
               customConseiller: {
@@ -401,6 +403,8 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
+                lectureSeule={false}
+                conseillerEstObservateur={false}
               />
             )
           })
@@ -430,6 +434,8 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
+                lectureSeule={false}
+                conseillerEstObservateur={false}
               />
             )
           })
@@ -459,6 +465,8 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
+                lectureSeule={false}
+                conseillerEstObservateur={false}
               />
             )
           })
@@ -507,6 +515,8 @@ describe('EditionAnimationCollective', () => {
               evenement={evenement}
               pageTitle=''
               evenementTypeAC={true}
+              lectureSeule={true}
+              conseillerEstObservateur={true}
             />,
             {
               customConseiller: {
