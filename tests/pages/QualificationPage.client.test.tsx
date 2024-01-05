@@ -71,7 +71,7 @@ describe('QualificationPage client side', () => {
         name: 'Étape 1: Informations principales',
       })
       const selectSNP = within(etape1).getByRole('combobox', {
-        name: 'Catégorie',
+        name: '* Catégorie',
       })
 
       categories.forEach(({ code, label }) => {

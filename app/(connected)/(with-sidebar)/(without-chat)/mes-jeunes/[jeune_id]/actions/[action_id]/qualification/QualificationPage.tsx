@@ -33,6 +33,7 @@ import {
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import useMatomo from 'utils/analytics/useMatomo'
+import { DATE_DASH_SEPARATOR, toFrenchFormat } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -57,15 +58,23 @@ function QualificationPage({
 
   const [codeCategorie, setCodeCategorie] = useState<
     ValueWithError<string | undefined>
-  >({ value: action?.qualification?.code })
+  >({ value: action.qualification?.code })
   const [categorieSelectionnee, setCategorieSelectionnee] = useState<
     string | undefined
   >(undefined)
+
+  const dateActionDebut = action && DateTime.fromISO(action?.creationDate)
+  const localDateDebut =
+    dateActionDebut && toFrenchFormat(dateActionDebut, DATE_DASH_SEPARATOR)
+  const dateActionFin = action && DateTime.fromISO(action?.dateFinReelle)
+  const localDateFin =
+    dateActionFin && toFrenchFormat(dateActionFin, DATE_DASH_SEPARATOR)
+
   const [dateDebut, setDateDebut] = useState<
     ValueWithError<string | undefined>
-  >({ value: action.creationDate })
+  >({ value: localDateDebut })
   const [dateFin, setDateFin] = useState<ValueWithError<string | undefined>>({
-    value: action.dateFinReelle,
+    value: localDateFin,
   })
 
   const [isQualificationEnCours, setIsQualificationEnCours] =
@@ -73,10 +82,6 @@ function QualificationPage({
   const [erreurQualification, setErreurQualification] = useState<
     string | undefined
   >()
-  const [, setQualification] = useState<QualificationAction | undefined>(
-    action.qualification
-  )
-  const [statut, setStatut] = useState<StatutAction>(action.status)
 
   const [successQualification, setSuccessQualification] =
     useState<boolean>(false)
@@ -98,33 +103,36 @@ function QualificationPage({
   }
 
   function validateCategorie() {
-    let error
-    if (!codeCategorie.value) {
-      error = 'Le champ Catégorie est vide. Veuillez renseigner une catégorie'
-    }
-    setCodeCategorie({ ...codeCategorie, error })
+    if (!codeCategorie.value)
+      setCodeCategorie({
+        ...codeCategorie,
+        error: 'Le champ Catégorie est vide. Veuillez renseigner une catégorie',
+      })
   }
 
   function validateCommentaire() {
-    let error
-    if (!commentaire.value) {
-      error =
-        'Le champ Titre et description n’est pas renseigné. Veuillez renseigner un titre ou une description.'
-    }
-    if (commentaire.value.length > 255)
-      error =
-        'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.'
+    if (!commentaire.value)
+      setCommentaire({
+        ...commentaire,
+        error:
+          'Le champ Titre et description n’est pas renseigné. Veuillez renseigner un titre ou une description.',
+      })
 
-    setCommentaire({ ...commentaire, error })
+    if (commentaire.value.length > 255)
+      setCommentaire({
+        ...commentaire,
+        error:
+          'Vous avez dépassé le nombre maximal de caractères. Veuillez retirer des caractères.',
+      })
   }
 
   function validerDateFin() {
-    let error
-    if (!dateFin.value) {
-      error =
-        'Le champ Date de fin de l’action n’est pas renseigné. Veuillez renseigner la date à laquelle l’action a été terminée.'
-    }
-    setDateFin({ ...dateFin, error })
+    if (!dateFin.value)
+      setDateFin({
+        ...dateFin,
+        error:
+          'Le champ Date de fin de l’action n’est pas renseigné. Veuillez renseigner la date à laquelle l’action a été terminée.',
+      })
   }
 
   function validerDateDebut() {
@@ -147,17 +155,20 @@ function QualificationPage({
 
   async function qualifierNonSNP() {
     const { qualifier } = await import('services/actions.service')
-    const nouvelleQualification = await qualifier(
-      action.id,
-      CODE_QUALIFICATION_NON_SNP,
-      {
-        dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
-        dateFinModifiee: DateTime.fromISO(action.dateEcheance),
-      }
-    )
-    setQualification(nouvelleQualification)
+    await qualifier(action.id, CODE_QUALIFICATION_NON_SNP, {
+      dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
+      dateFinModifiee: DateTime.fromISO(action.dateEcheance),
+    })
     setSuccessQualification(true)
-    setStatut(StatutAction.Qualifiee)
+  }
+
+  async function qualifierSNP() {
+    const { qualifier } = await import('services/actions.service')
+    await qualifier(action.id, categorieSelectionnee!, {
+      commentaire: commentaire.value,
+      dateDebutModifiee: DateTime.fromISO(dateDebut.value).startOf('day'),
+      dateFinModifiee: DateTime.fromISO(dateFin.value!).startOf('day'),
+    })
   }
 
   async function qualifierAction(e: FormEvent<HTMLFormElement>): Promise<void> {
@@ -166,26 +177,19 @@ function QualificationPage({
 
     setErreurQualification(undefined)
     setIsQualificationEnCours(true)
-    if (categorieSelectionnee === CODE_QUALIFICATION_NON_SNP) {
-      await qualifierNonSNP()
-    } else
-      try {
-        const { qualifier } = await import('services/actions.service')
-        await qualifier(action.id, categorieSelectionnee!, {
-          commentaire: commentaire.value,
-          dateDebutModifiee: DateTime.fromISO(dateDebut.value).startOf('day'),
-          dateFinModifiee: DateTime.fromISO(dateFin.value!).startOf('day'),
-        })
-        setSuccessQualification(true)
-      } catch (error) {
-        setErreurQualification(
-          error instanceof ApiError
-            ? error.message
-            : 'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
-        )
-      } finally {
-        setIsQualificationEnCours(false)
-      }
+    try {
+      if (estSNP) await qualifierSNP()
+      else await qualifierNonSNP()
+      setSuccessQualification(true)
+    } catch (error) {
+      setErreurQualification(
+        error instanceof ApiError
+          ? error.message
+          : 'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+      )
+    } finally {
+      setIsQualificationEnCours(false)
+    }
   }
 
   function getErreurs(): LigneErreur[] {
@@ -261,7 +265,7 @@ function QualificationPage({
                 id='select-categorie'
                 required={true}
                 onChange={(selectedValue) => {
-                  setCodeCategorie(selectedValue)
+                  setCodeCategorie({ value: selectedValue })
                   setCategorieSelectionnee(selectedValue)
                 }}
                 invalid={Boolean(codeCategorie.error)}
@@ -355,11 +359,7 @@ function QualificationPage({
                 <Input
                   type='date'
                   id='input-date-fin'
-                  defaultValue={
-                    action.dateFinReelle
-                      ? DateTime.fromISO(action.dateFinReelle).toISODate()
-                      : ''
-                  }
+                  defaultValue={localDateFin}
                   min={DateTime.fromISO(dateDebut).toISODate()}
                   onChange={(value: string) => setDateFin({ value })}
                   onBlur={validerDateFin}
@@ -408,28 +408,15 @@ function QualificationPage({
               >
                 Annuler
               </ButtonLink>
-              {categorieSelectionnee === CODE_QUALIFICATION_NON_SNP && (
-                <Button type='submit' isLoading={isQualificationEnCours}>
-                  <IconComponent
-                    name={IconName.Send}
-                    aria-hidden={true}
-                    focusable={false}
-                    className='w-[1em] h-[1em] mr-2'
-                  />
-                  Enregistrer
-                </Button>
-              )}
-              {estSNP && (
-                <Button type='submit' isLoading={isQualificationEnCours}>
-                  <IconComponent
-                    name={IconName.Send}
-                    aria-hidden={true}
-                    focusable={false}
-                    className='w-[1em] h-[1em] mr-2'
-                  />
-                  Enregistrer et envoyer à i-milo
-                </Button>
-              )}
+              <Button type='submit' isLoading={isQualificationEnCours}>
+                <IconComponent
+                  name={IconName.Send}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='w-[1em] h-[1em] mr-2'
+                />
+                {estSNP ? 'Enregistrer et envoyer à i-milo' : 'Enregistrer'}
+              </Button>
             </div>
           </form>
         </>
@@ -444,13 +431,13 @@ function QualificationPage({
             focusable={false}
           />
           <h2 className='text-m-bold mb-2'>Action enregistrée !</h2>
-          {categorieSelectionnee !== CODE_QUALIFICATION_NON_SNP && (
+          {estSNP && (
             <>
               <p>Les informations sont en route vers i-milo.</p>
               <p> Délai d’actualisation : environ 24h.</p>
             </>
           )}
-          {categorieSelectionnee === CODE_QUALIFICATION_NON_SNP && (
+          {!estSNP && (
             <>
               <p>L’action est qualifiée en non-SNP.</p>
             </>

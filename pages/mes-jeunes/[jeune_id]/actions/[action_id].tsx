@@ -164,7 +164,7 @@ function PageAction({
 
       {qualifiee && (
         <>
-          {action.qualification?.isSituationNonProfessionnelle && (
+          {action.qualification!.isSituationNonProfessionnelle && (
             <div className='mb-6'>
               <InformationMessage label={`Action qualifiée.`}>
                 Vous pouvez modifier cette action dans i-milo. <br /> Délai
@@ -173,7 +173,7 @@ function PageAction({
             </div>
           )}
 
-          {!action.qualification?.isSituationNonProfessionnelle && (
+          {!action.qualification!.isSituationNonProfessionnelle && (
             <div className='mb-6'>
               <InformationMessage label='Action qualifiée en non SNP.'>
                 Vous ne pouvez plus modifier cette action.
@@ -202,9 +202,7 @@ function PageAction({
             <span>Catégorie :</span>
           </dt>
           <dd className='text-base-regular pl-6'>
-            {action.qualification && action.qualification.libelle ? (
-              action.qualification.libelle
-            ) : (
+            {action?.qualification?.libelle ?? (
               <>
                 --
                 <span className='sr-only'>information non disponible</span>
