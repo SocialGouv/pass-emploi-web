@@ -1,4 +1,5 @@
 import { withTransaction } from '@elastic/apm-rum-react'
+import { off } from '@firebase/database'
 import isEqual from 'lodash.isequal'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
@@ -26,7 +27,6 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import { off } from '@firebase/database'
 
 const ResultatsRechercheOffre = dynamic(
   import('components/offres/ResultatsRechercheOffres')
