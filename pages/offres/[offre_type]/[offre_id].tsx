@@ -98,7 +98,7 @@ export const getServerSideProps: GetServerSideProps<DetailOffreProps> = async (
   return {
     props: {
       offre,
-      pageTitle: 'Recherche d’offres - Détail de l’offre',
+      pageTitle: `Détail de l’offre n° ${offre.id} - Recherche d'offres`,
       pageHeader: header!,
     },
   }

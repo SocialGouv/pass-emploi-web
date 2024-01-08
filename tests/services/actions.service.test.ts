@@ -25,7 +25,7 @@ import {
   getSituationsNonProfessionnelles,
   qualifier,
   recupererLesCommentaires,
-  updateAction,
+  modifierAction,
 } from 'services/actions.service'
 import { ApiError } from 'utils/httpClient'
 
@@ -171,6 +171,7 @@ describe('ActionsApiService', () => {
         status: StatutAction.Qualifiee,
         qualification: {
           libelle: 'Santé',
+          code: 'SANTE',
           isSituationNonProfessionnelle: true,
           code: 'SANTE',
         },
@@ -219,6 +220,7 @@ describe('ActionsApiService', () => {
         status: StatutAction.Qualifiee,
         qualification: {
           libelle: 'Situation pas non professionnelle',
+          code: 'NON_SNP',
           isSituationNonProfessionnelle: false,
           code: 'NON_SNP',
         },
@@ -479,7 +481,7 @@ describe('ActionsApiService', () => {
         {
           codeCategorie: 'CODE',
           titre: 'content',
-          commentaire: 'comment',
+          description: 'comment',
           dateEcheance: '2022-07-30',
           statut: StatutAction.EnCours,
         },
@@ -498,47 +500,6 @@ describe('ActionsApiService', () => {
         },
         'accessToken'
       )
-    })
-  })
-
-  describe('.updateAction', () => {
-    it('met à jour une action commencée', async () => {
-      // WHEN
-      const actual = await updateAction('id-action', StatutAction.EnCours)
-
-      // THEN
-      expect(apiPut).toHaveBeenCalledWith(
-        '/actions/id-action',
-        { status: 'in_progress' },
-        'accessToken'
-      )
-      expect(actual).toStrictEqual(StatutAction.EnCours)
-    })
-
-    it('met à jour une action terminée', async () => {
-      // WHEN
-      const actual = await updateAction('id-action', StatutAction.Terminee)
-
-      // THEN
-      expect(apiPut).toHaveBeenCalledWith(
-        '/actions/id-action',
-        { status: 'done' },
-        'accessToken'
-      )
-      expect(actual).toStrictEqual(StatutAction.Terminee)
-    })
-
-    it('met à jour une action annulée', async () => {
-      // WHEN
-      const actual = await updateAction('id-action', StatutAction.Annulee)
-
-      // THEN
-      expect(apiPut).toHaveBeenCalledWith(
-        '/actions/id-action',
-        { status: 'canceled' },
-        'accessToken'
-      )
-      expect(actual).toStrictEqual(StatutAction.Annulee)
     })
   })
 
@@ -569,6 +530,7 @@ describe('ActionsApiService', () => {
       )
       const expected: QualificationAction = {
         libelle: 'Non-SNP',
+        code: 'NON_SNP',
         isSituationNonProfessionnelle: false,
         code: 'NON_SNP',
       }
@@ -605,6 +567,7 @@ describe('ActionsApiService', () => {
       )
       const expected: QualificationAction = {
         libelle: 'Santé',
+        code: 'SANTE',
         isSituationNonProfessionnelle: true,
         code: 'SANTE',
       }

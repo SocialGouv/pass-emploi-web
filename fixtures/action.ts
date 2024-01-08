@@ -1,6 +1,7 @@
 import {
   Action,
   ActionPilotage,
+  ActionPredefinie,
   Commentaire,
   SituationNonProfessionnelle,
   StatutAction,
@@ -62,6 +63,7 @@ export const uneListeDActions = (): Action[] => [
     dateFinReelle: '2022-03-22T14:50:46.000Z',
     qualification: {
       libelle: 'Non SNP',
+      code: 'NON_SNP',
       isSituationNonProfessionnelle: false,
       code: 'NON_SNP',
     },
@@ -294,4 +296,19 @@ export const desCategoriesAvecNONSNP = (): SituationNonProfessionnelle[] => [
   { code: 'SNP_2', label: 'SNP 2' },
   { code: 'SNP_3', label: 'SNP 3' },
   { code: 'NON_SNP', label: 'NON_SNP' },
+  
+export const desSituationsNonProfessionnelles =
+  (): SituationNonProfessionnelle[] => [
+    { code: 'SNP_1', label: 'SNP 1' },
+    { code: 'SNP_2', label: 'SNP 2' },
+    { code: 'SNP_3', label: 'SNP 3' },
+  ]
+
+export const desActionsPredefinies = (): ActionPredefinie[] => [
+  {
+    id: 'action-predefinie-1',
+    titre: 'Identifier ses atouts et ses compétences',
+  },
+  { id: 'action-predefinie-2', titre: 'Identifier des pistes de métier' },
+  { id: 'action-predefinie-3', titre: 'Identifier des entreprises' },
 ]

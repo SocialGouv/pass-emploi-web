@@ -88,10 +88,9 @@ describe('Page Détail Offre Emploi', () => {
   })
 
   describe('server side', () => {
+    const detailImmersion = unDetailImmersion()
     beforeEach(() => {
-      ;(getImmersionServerSide as jest.Mock).mockResolvedValue(
-        unDetailImmersion()
-      )
+      ;(getImmersionServerSide as jest.Mock).mockResolvedValue(detailImmersion)
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
         validSession: true,
         session: {
@@ -128,8 +127,8 @@ describe('Page Détail Offre Emploi', () => {
       )
       expect(actual).toEqual({
         props: {
-          offre: unDetailImmersion(),
-          pageTitle: 'Recherche d’offres - Détail de l’offre',
+          offre: detailImmersion,
+          pageTitle: `Détail de l’offre n° ${detailImmersion.id} - Recherche d\'offres`,
           pageHeader: 'Offre d’immersion',
         },
       })

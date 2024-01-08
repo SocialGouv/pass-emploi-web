@@ -1,9 +1,7 @@
 import { Metadata } from 'next'
 import React from 'react'
 
-import NouvelleActionPage, {
-  TITRE_AUTRE,
-} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
+import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
 import {
   PageHeaderPortal,
   PageRetourPortal,
@@ -56,11 +54,8 @@ export default async function NouvelleAction({
 
       <NouvelleActionPage
         idJeune={params.jeune_id}
-        categories={categoriesFiltrees}
-        actionsPredefinies={actionsPredefinies.concat({
-          id: 'autre',
-          titre: TITRE_AUTRE,
-        })}
+        categories={categories}
+        actionsPredefinies={actionsPredefinies}
         returnTo={returnTo}
       />
     </>

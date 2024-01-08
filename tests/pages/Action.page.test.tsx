@@ -22,7 +22,7 @@ import {
   getAction,
   qualifier,
   recupererLesCommentaires,
-  updateAction,
+  modifierAction,
 } from 'services/actions.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -50,7 +50,7 @@ describe("Page Détail d'une action d'un jeune", () => {
     beforeEach(() => {
       alerteSetter = jest.fn()
       routerPush = jest.fn()
-      ;(updateAction as jest.Mock).mockImplementation(
+      ;(modifierAction as jest.Mock).mockImplementation(
         async (_, statut) => statut
       )
       ;(deleteAction as jest.Mock).mockResolvedValue({})
@@ -91,9 +91,9 @@ describe("Page Détail d'une action d'un jeune", () => {
           await userEvent.click(statutRadio)
 
           // Then
-          expect(updateAction).toHaveBeenCalledWith(
+          expect(modifierAction).toHaveBeenCalledWith(
             action.id,
-            StatutAction.EnCours
+            { statut: StatutAction.EnCours }
           )
         })
       })
@@ -154,7 +154,7 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     describe("quand le conseiller n'est pas le conseiller du jeune", () => {
-      ;(updateAction as jest.Mock).mockImplementation(
+      ;(modifierAction as jest.Mock).mockImplementation(
         async (_, statut) => statut
       )
       ;(deleteAction as jest.Mock).mockResolvedValue({})
@@ -200,39 +200,6 @@ describe("Page Détail d'une action d'un jeune", () => {
         ).toThrow()
         expect(() => screen.getByLabelText('Ajouter un commentaire')).toThrow()
         expect(() => screen.getByText('Ajouter un commentaire')).toThrow()
-      })
-
-      it("n'affiche pas l'encart: s’agit-il d’une SNP ?", async () => {
-        expect(() =>
-          screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
-        ).toThrow()
-      })
-    })
-
-    describe('quand l’action n’a pas de commentaires', () => {
-      it('permet de supprimer l’action', async () => {
-        // Given
-        const action = uneAction({ status: StatutAction.EnCours })
-        renderWithContexts(
-          <PageAction
-            action={action}
-            jeune={jeune}
-            commentaires={[]}
-            lectureSeule={false}
-            pageTitle=''
-          />,
-          {
-            customAlerte: { alerteSetter },
-          }
-        )
-
-        // When
-        await userEvent.click(
-          screen.getByRole('button', { name: "Supprimer l'action" })
-        )
-
-        // Then
-        expect(deleteAction).toHaveBeenCalledWith(action.id)
       })
     })
 
@@ -303,12 +270,6 @@ describe("Page Détail d'une action d'un jeune", () => {
           )
         })
 
-        it("n'affiche pas de bloc pour qualifier l'action", async () => {
-          expect(() =>
-            screen.getByText('S’agit-il d’une Situation Non Professionnelle ?')
-          ).toThrow()
-        })
-
         it('ne permet pas de supprimer l’action', () => {
           expect(
             screen.queryByRole('button', { name: 'Supprimer l’action' })
@@ -324,6 +285,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           status: StatutAction.Qualifiee,
           qualification: {
             libelle: 'Emploi',
+            code: 'EMPLOI',
             isSituationNonProfessionnelle: true,
           },
         })
@@ -372,6 +334,7 @@ describe("Page Détail d'une action d'un jeune", () => {
           status: StatutAction.Qualifiee,
           qualification: {
             libelle: 'Non SNP',
+            code: 'NON_SNP',
             isSituationNonProfessionnelle: false,
           },
         })

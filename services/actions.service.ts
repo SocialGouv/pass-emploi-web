@@ -116,7 +116,7 @@ export async function creerAction(
     titre: string
     dateEcheance: string
     statut: StatutAction
-    commentaire?: string
+    description?: string
   },
   idJeune: string
 ): Promise<void> {
@@ -125,7 +125,7 @@ export async function creerAction(
     content: action.titre,
     dateEcheance: DateTime.fromISO(action.dateEcheance).toISO(),
     codeQualification: action.codeCategorie,
-    comment: action.commentaire,
+    comment: action.description,
     status: actionStatusToJson(action.statut),
   }
   await apiPost(
@@ -135,17 +135,31 @@ export async function creerAction(
   )
 }
 
-export async function updateAction(
+export async function modifierAction(
   idAction: string,
-  nouveauStatut: StatutAction
-): Promise<StatutAction> {
+  modifications: {
+    statut?: StatutAction
+    titre?: string
+    description?: string
+    dateEcheance?: string
+    codeCategorie?: string
+  }
+): Promise<void> {
   const session = await getSession()
+
+  const actionModifiee = { 
+    status: modifications.statut ? actionStatusToJson(modifications.statut) : undefined,
+    contenu: modifications.titre,
+    description: modifications.description,
+    dateEcheance: modifications.dateEcheance,
+    codeQualification: modifications.codeCategorie
+  }
+
   await apiPut(
     `/actions/${idAction}`,
-    { status: actionStatusToJson(nouveauStatut) },
+    actionModifiee,
     session!.accessToken
   )
-  return nouveauStatut
 }
 
 export async function qualifier(
