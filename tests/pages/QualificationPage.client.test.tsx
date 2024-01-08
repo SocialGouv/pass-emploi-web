@@ -267,7 +267,7 @@ describe('QualificationPage client side', () => {
         screen.getByRole('group', {
           name: 'Étape 1: Informations principales',
         })
-      )
+      ).toBeInTheDocument()
       expect(() =>
         screen.getByRole('group', {
           name: 'Étape 2: Dates',

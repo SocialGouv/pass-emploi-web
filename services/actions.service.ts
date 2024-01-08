@@ -19,7 +19,6 @@ import {
   ActionsCountJson,
   actionStatusToFiltre,
   actionStatusToJson,
-  CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
   jsonToAction,
   jsonToActionPilotage,

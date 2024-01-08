@@ -26,9 +26,7 @@ import RecapitulatifErreursFormulaire, {
 import { ValueWithError } from 'components/ValueWithError'
 import {
   Action,
-  QualificationAction,
   SituationNonProfessionnelle,
-  StatutAction,
 } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
@@ -59,9 +57,6 @@ function QualificationPage({
   const [codeCategorie, setCodeCategorie] = useState<
     ValueWithError<string | undefined>
   >({ value: action.qualification?.code })
-  const [categorieSelectionnee, setCategorieSelectionnee] = useState<
-    string | undefined
-  >(undefined)
 
   const dateActionDebut = action && DateTime.fromISO(action?.creationDate)
   const localDateDebut =
@@ -96,7 +91,7 @@ function QualificationPage({
     'Création Situation Non Professionnelle'
   )
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-  const estSNP = categorieSelectionnee !== CODE_QUALIFICATION_NON_SNP
+  const estSNP = codeCategorie.value !== CODE_QUALIFICATION_NON_SNP
 
   function isCommentaireValid(): boolean {
     return Boolean(commentaire.value) && commentaire.value.length <= 255
@@ -160,12 +155,11 @@ function QualificationPage({
       dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
       dateFinModifiee: DateTime.fromISO(action.dateEcheance),
     })
-    setSuccessQualification(true)
   }
 
   async function qualifierSNP() {
     const { qualifier } = await import('services/actions.service')
-    await qualifier(action.id, categorieSelectionnee!, {
+    await qualifier(action.id, codeCategorie.value!, {
       commentaire: commentaire.value,
       dateDebutModifiee: DateTime.fromISO(dateDebut.value).startOf('day'),
       dateFinModifiee: DateTime.fromISO(dateFin.value!).startOf('day'),
@@ -203,7 +197,7 @@ function QualificationPage({
       })
     }
 
-    if (codeCategorie !== CODE_QUALIFICATION_NON_SNP && commentaire.error) {
+    if (estSNP && commentaire.error) {
       erreurs.push({
         ancre: '#commentaire',
         label: 'Le champ Titre et description de l’action est vide.',
@@ -267,7 +261,6 @@ function QualificationPage({
                 required={true}
                 onChange={(selectedValue) => {
                   setCodeCategorie({ value: selectedValue })
-                  setCategorieSelectionnee(selectedValue)
                 }}
                 invalid={Boolean(codeCategorie.error)}
                 defaultValue={codeCategorie.value}
@@ -340,9 +333,7 @@ function QualificationPage({
                   type='date'
                   id='input-date-debut'
                   defaultValue={
-                    action.creationDate ?? ''
-                      ? DateTime.fromISO(action.creationDate).toISODate()
-                      : ''
+                    localDateDebut
                   }
                   onChange={(value: string) => setDateDebut({ value })}
                   onBlur={validerDateDebut}
