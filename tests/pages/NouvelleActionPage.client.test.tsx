@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 
 import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
-import { desCategories, desActionsPredefinies, desSituationsNonProfessionnelles } from 'fixtures/action'
+import { desActionsPredefinies, desCategories  } from 'fixtures/action'
 import {
   ActionPredefinie,
   SituationNonProfessionnelle,
@@ -16,15 +16,7 @@ jest.mock('components/Modal')
 
 describe('NouvelleActionPage client side', () => {
   const categories: SituationNonProfessionnelle[] = desCategories()
-  const actionsPredefinies: ActionPredefinie[] = [
-    {
-      id: 'action-predefinie-1',
-      titre: 'Identifier ses atouts et ses compétences',
-    },
-    { id: 'action-predefinie-2', titre: 'Identifier des pistes de métier' },
-    { id: 'action-predefinie-3', titre: 'Identifier des entreprises' },
-    { id: 'autre', titre: 'Autre' },
-  ]
+  const actionsPredefinies: ActionPredefinie[] = desActionsPredefinies()
 
   beforeEach(async () => {
     // Given

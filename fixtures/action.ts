@@ -296,13 +296,7 @@ export const desCategoriesAvecNONSNP = (): SituationNonProfessionnelle[] => [
   { code: 'SNP_2', label: 'SNP 2' },
   { code: 'SNP_3', label: 'SNP 3' },
   { code: 'NON_SNP', label: 'NON_SNP' },
-  
-export const desSituationsNonProfessionnelles =
-  (): SituationNonProfessionnelle[] => [
-    { code: 'SNP_1', label: 'SNP 1' },
-    { code: 'SNP_2', label: 'SNP 2' },
-    { code: 'SNP_3', label: 'SNP 3' },
-  ]
+]
 
 export const desActionsPredefinies = (): ActionPredefinie[] => [
   {

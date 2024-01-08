@@ -150,18 +150,20 @@ function PageAction({
           <h2 className='text-m-bold text-grey_800 mb-5'>
             Informations sur l’action
           </h2>
-          <ButtonLink
-            href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
-            style={ButtonStyle.SECONDARY}
-          >
-            <IconComponent
-              name={IconName.Edit}
-              aria-hidden={true}
-              focusable={false}
-              className='w-4 h-4 mr-2'
-            />
-            Modifier l’action
-          </ButtonLink>
+          {!qualifiee && (
+            <ButtonLink
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
+              style={ButtonStyle.SECONDARY}
+            >
+              <IconComponent
+                name={IconName.Edit}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 mr-2'
+              />
+              Modifier l’action
+            </ButtonLink>
+          )}
         </div>
 
         <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
