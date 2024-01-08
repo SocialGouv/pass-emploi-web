@@ -11,10 +11,6 @@ import { EntreeAgenda } from 'interfaces/agenda'
 import { toShortDate } from 'utils/date'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
-type EtatQualificationActionJson =
-  | 'A_QUALIFIER'
-  | 'NON_QUALIFIABLE'
-  | 'QUALIFIEE'
 
 export interface ActionJson {
   id: string
@@ -73,6 +69,14 @@ export interface CommentaireJson {
   message: string
 }
 
+export type ActionFormData = {
+  codeCategorie: string
+  titre: string
+  dateEcheance: string
+  statut: StatutAction
+  description?: string
+}
+
 export const CODE_QUALIFICATION_NON_SNP = 'NON_SNP'
 
 export function jsonToQualification(
@@ -80,6 +84,7 @@ export function jsonToQualification(
 ): QualificationAction {
   return {
     libelle: qualificationJson.libelle,
+    code: qualificationJson.code,
     isSituationNonProfessionnelle:
       qualificationJson.code !== CODE_QUALIFICATION_NON_SNP,
   }
@@ -135,7 +140,7 @@ export function actionJsonToEntree(action: ActionJson): EntreeAgenda {
   }
 }
 
-function jsonToActionStatus({
+export function jsonToActionStatus({
   status,
   qualification,
 }: ActionJson): StatutAction {

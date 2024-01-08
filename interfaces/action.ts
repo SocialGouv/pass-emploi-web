@@ -25,6 +25,7 @@ export interface ActionPilotage {
 
 export interface QualificationAction {
   libelle: string
+  code: string
   isSituationNonProfessionnelle: boolean
 }
 

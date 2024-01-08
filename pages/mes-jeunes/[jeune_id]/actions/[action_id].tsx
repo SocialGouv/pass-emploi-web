@@ -7,8 +7,8 @@ import React, { useState } from 'react'
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
-import PageActionsPortal from 'components/PageActionsPortal'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
@@ -18,7 +18,7 @@ import {
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
-import { estMilo, estUserPoleEmploi, UserType } from 'interfaces/conseiller'
+import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
@@ -52,7 +52,6 @@ function PageAction({
     action.qualification
   )
   const [statut, setStatut] = useState<StatutAction>(action.status)
-  const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
   const pageTracking = `Détail Action${
@@ -61,12 +60,7 @@ function PageAction({
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   const conseillerEstMilo = estMilo(conseiller)
-
   const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
-  const afficherSuppressionAction =
-    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    action.status !== StatutAction.Terminee &&
-    commentaires.length === 0
 
   const dateEcheanceLongFormat = toFrenchFormat(
     DateTime.fromISO(action.dateEcheance),
@@ -74,9 +68,18 @@ function PageAction({
   )
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
-    const { updateAction } = await import('services/actions.service')
-    const nouveauStatut = await updateAction(action.id, statutChoisi)
-    setStatut(nouveauStatut)
+    const { modifierAction } = await import('services/actions.service')
+    await modifierAction(action.id, { statut: statutChoisi })
+    setStatut(statutChoisi)
+  }
+
+  function onAjoutCommentaire(estEnSucces: boolean) {
+    if (!estEnSucces) {
+      setShowEchecMessage(true)
+    } else {
+      setAlerte(AlerteParam.ajoutCommentaireAction)
+      router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
+    }
   }
 
   async function qualifierAction(
@@ -102,37 +105,6 @@ function PageAction({
     }
   }
 
-  async function deleteAction(): Promise<void> {
-    setDeleteDisabled(true)
-    const { deleteAction: _deleteAction } = await import(
-      'services/actions.service'
-    )
-    _deleteAction(action.id)
-      .then(() => {
-        setAlerte(AlerteParam.suppressionAction)
-        router.push({
-          pathname: '/mes-jeunes/' + jeune.id,
-          query: { onglet: 'actions' },
-        })
-      })
-      .catch((error: Error) => {
-        setShowEchecMessage(true)
-        console.log('Erreur lors de la suppression de l action', error)
-      })
-      .finally(() => {
-        setDeleteDisabled(false)
-      })
-  }
-
-  function onAjoutCommentaire(estEnSucces: boolean) {
-    if (!estEnSucces) {
-      setShowEchecMessage(true)
-    } else {
-      setAlerte(AlerteParam.ajoutCommentaireAction)
-      router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
-    }
-  }
-
   useMatomo(
     alerte && alerte.key === AlerteParam.envoiMessage
       ? `${pageTracking} - Succès envoi message`
@@ -142,27 +114,6 @@ function PageAction({
 
   return (
     <>
-      <PageActionsPortal>
-        <>
-          {afficherSuppressionAction && (
-            <Button
-              label="Supprimer l'action"
-              onClick={() => deleteAction()}
-              style={ButtonStyle.SECONDARY}
-              disabled={deleteDisabled}
-            >
-              <IconComponent
-                name={IconName.Delete}
-                aria-hidden={true}
-                focusable={false}
-                className='w-4 h-4 mr-2'
-              />
-              Supprimer
-            </Button>
-          )}
-        </>
-      </PageActionsPortal>
-
       {showEchecMessage && (
         <FailureAlert
           label="Une erreur s'est produite, veuillez réessayer ultérieurement"
@@ -179,9 +130,9 @@ function PageAction({
         </div>
       )}
 
-      {action.qualification && (
+      {action.status === StatutAction.Qualifiee && (
         <>
-          {action.qualification.isSituationNonProfessionnelle && (
+          {action.qualification!.isSituationNonProfessionnelle && (
             <div className='mb-6'>
               <InformationMessage label={`Action qualifiée.`}>
                 Vous pouvez modifier cette action dans i-milo. <br /> Délai
@@ -190,7 +141,7 @@ function PageAction({
             </div>
           )}
 
-          {!action.qualification.isSituationNonProfessionnelle && (
+          {!action.qualification!.isSituationNonProfessionnelle && (
             <div className='mb-6'>
               <InformationMessage label='Action qualifiée en non Situation non-professionnelle : '>
                 Vous ne pouvez plus modifier cette action.
@@ -215,6 +166,18 @@ function PageAction({
           <h2 className='text-m-bold text-grey_800 mb-5'>
             Informations sur l’action
           </h2>
+          <ButtonLink
+            href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
+            style={ButtonStyle.SECONDARY}
+          >
+            <IconComponent
+              name={IconName.Edit}
+              aria-hidden={true}
+              focusable={false}
+              className='w-4 h-4 mr-2'
+            />
+            Modifier l’action
+          </ButtonLink>
         </div>
 
         <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
@@ -222,8 +185,12 @@ function PageAction({
             <span>Catégorie :</span>
           </dt>
           <dd className='text-base-regular pl-6'>
-            --
-            <span className='sr-only'>information non disponible</span>
+            {action.qualification?.libelle ?? (
+              <>
+                --
+                <span className='sr-only'>information non disponible</span>
+              </>
+            )}
           </dd>
           <dt className='text-base-bold pb-6'>
             <span>Titre de l’action :</span>

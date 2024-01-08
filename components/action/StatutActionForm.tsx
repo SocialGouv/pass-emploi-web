@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from 'react'
 
-import RadioBox from 'components/action/RadioBox'
+import RadioBox from './RadioBox'
+
 import RadioBoxStatut from 'components/action/RadioBoxStatut'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { StatutAction } from 'interfaces/action'

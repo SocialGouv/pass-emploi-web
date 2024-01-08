@@ -85,7 +85,6 @@ describe('NouvelleActionPage server side', () => {
             id: 'action-predefinie-1',
             titre: 'Identifier ses atouts et ses compétences',
           },
-          { id: 'autre', titre: 'Autre' },
         ],
         returnTo: '/mes-jeunes/id-jeune?onglet=actions',
       },
