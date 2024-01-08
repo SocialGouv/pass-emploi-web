@@ -317,6 +317,7 @@ export function EditionActionForm({
                 type='text'
                 id='titre-action--personnalise'
                 required={true}
+                defaultValue={titrePersonnalise.value}
                 onChange={(value) => setTitrePersonnalise({ value })}
                 onBlur={validerTitrePersonnalise}
                 invalid={Boolean(titrePersonnalise.error)}
