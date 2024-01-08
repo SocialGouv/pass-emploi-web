@@ -8,20 +8,12 @@ import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
 import PageActionsPortal from 'components/PageActionsPortal'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, Commentaire, StatutAction } from 'interfaces/action'
-import { estMilo, estUserPoleEmploi, UserType } from 'interfaces/conseiller'
-import {
-  Action,
-  Commentaire,
-  QualificationAction,
-  StatutAction,
-} from 'interfaces/action'
 import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
@@ -82,15 +74,6 @@ function PageAction({
       router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
     }
   }
-
-  function onAjoutCommentaire(estEnSucces: boolean) {
-    if (!estEnSucces) {
-      setShowEchecMessage(true)
-    } else {
-      setAlerte(AlerteParam.ajoutCommentaireAction)
-      router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
-      }
-    }
 
   useMatomo(
     alerte && alerte.key === AlerteParam.envoiMessage
@@ -159,7 +142,6 @@ function PageAction({
       <StatutActionForm
         updateStatutAction={updateStatutAction}
         statutCourant={statut}
-        estAQualifier={estAQualifier}
         lectureSeule={lectureSeule}
       />
 

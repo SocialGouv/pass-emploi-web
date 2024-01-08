@@ -1,7 +1,5 @@
 import React from 'react'
 
-import RadioBox from './RadioBox'
-
 import RadioBoxStatut from 'components/action/RadioBoxStatut'
 import { StatutAction } from 'interfaces/action'
 

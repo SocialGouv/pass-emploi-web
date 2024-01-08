@@ -24,10 +24,7 @@ import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
-import {
-  Action,
-  SituationNonProfessionnelle,
-} from 'interfaces/action'
+import { Action, SituationNonProfessionnelle } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -332,9 +329,7 @@ function QualificationPage({
                 <Input
                   type='date'
                   id='input-date-debut'
-                  defaultValue={
-                    localDateDebut
-                  }
+                  defaultValue={localDateDebut}
                   onChange={(value: string) => setDateDebut({ value })}
                   onBlur={validerDateDebut}
                   required={true}
