@@ -2,6 +2,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import isEqual from 'lodash.isequal'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 import React, { useState } from 'react'
 
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
@@ -270,10 +271,32 @@ function RechercheOffres(_: PageProps) {
     setSearchError(undefined)
   }
 
+  function typeOffreToTitle(type: TypeOffre) {
+    switch (type) {
+      case TypeOffre.EMPLOI:
+        return 'd’emploi'
+      case TypeOffre.SERVICE_CIVIQUE:
+        return 'de service civique'
+      case TypeOffre.IMMERSION:
+        return 'd’immersion'
+      case TypeOffre.ALTERNANCE:
+        return 'd’alternance'
+    }
+  }
+
   useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>
+      {typeOffre && (
+        <Head>
+          <title>
+            Recherche d’offres {typeOffreToTitle(typeOffre)}
+            {pageCourante > 0 ? ' - page ' + pageCourante : ''}
+          </title>
+        </Head>
+      )}
+
       {searchError && (
         <FailureAlert
           label={searchError}
