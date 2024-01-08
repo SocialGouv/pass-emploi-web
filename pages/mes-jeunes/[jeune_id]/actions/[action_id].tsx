@@ -7,20 +7,15 @@ import React, { useState } from 'react'
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
+import PageActionsPortal from 'components/PageActionsPortal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import {
-  Action,
-  Commentaire,
-  QualificationAction,
-  StatutAction,
-} from 'interfaces/action'
+import { Action, Commentaire, StatutAction } from 'interfaces/action'
 import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
-import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
@@ -48,9 +43,6 @@ function PageAction({
   const [portefeuille] = usePortefeuille()
   const [alerte, setAlerte] = useAlerte()
 
-  const [_, setQualification] = useState<QualificationAction | undefined>(
-    action.qualification
-  )
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
@@ -61,6 +53,7 @@ function PageAction({
 
   const conseillerEstMilo = estMilo(conseiller)
   const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
+  const qualifiee = conseillerEstMilo && statut === StatutAction.Qualifiee
 
   const dateEcheanceLongFormat = toFrenchFormat(
     DateTime.fromISO(action.dateEcheance),
@@ -82,38 +75,33 @@ function PageAction({
     }
   }
 
-  async function qualifierAction(
-    isSituationNonProfessionnelle: boolean
-  ): Promise<void> {
-    if (isSituationNonProfessionnelle) {
-      await router.push(
-        `/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`
-      )
-    } else {
-      const { qualifier } = await import('services/actions.service')
-      const nouvelleQualification = await qualifier(
-        action.id,
-        CODE_QUALIFICATION_NON_SNP,
-        {
-          dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
-          dateFinModifiee: DateTime.fromISO(action.dateEcheance),
-        }
-      )
-      setQualification(nouvelleQualification)
-      setAlerte(AlerteParam.qualificationNonSNP)
-      setStatut(StatutAction.Qualifiee)
-    }
-  }
-
   useMatomo(
     alerte && alerte.key === AlerteParam.envoiMessage
       ? `${pageTracking} - Succès envoi message`
       : pageTracking,
     aDesBeneficiaires
   )
-
   return (
     <>
+      <PageActionsPortal>
+        <>
+          {estAQualifier && !lectureSeule && (
+            <ButtonLink
+              style={ButtonStyle.PRIMARY}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`}
+            >
+              Qualifier l’action
+              <IconComponent
+                name={IconName.Send}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 ml-2'
+              />
+            </ButtonLink>
+          )}
+        </>
+      </PageActionsPortal>
+
       {showEchecMessage && (
         <FailureAlert
           label="Une erreur s'est produite, veuillez réessayer ultérieurement"
@@ -130,7 +118,7 @@ function PageAction({
         </div>
       )}
 
-      {action.status === StatutAction.Qualifiee && (
+      {qualifiee && (
         <>
           {action.qualification!.isSituationNonProfessionnelle && (
             <div className='mb-6'>
@@ -143,7 +131,7 @@ function PageAction({
 
           {!action.qualification!.isSituationNonProfessionnelle && (
             <div className='mb-6'>
-              <InformationMessage label='Action qualifiée en non Situation non-professionnelle : '>
+              <InformationMessage label='Action qualifiée en non SNP.'>
                 Vous ne pouvez plus modifier cette action.
               </InformationMessage>
             </div>
@@ -153,11 +141,7 @@ function PageAction({
 
       <StatutActionForm
         updateStatutAction={updateStatutAction}
-        qualifierAction={(isSituationNonProfessionnelle) =>
-          qualifierAction(isSituationNonProfessionnelle)
-        }
         statutCourant={statut}
-        estAQualifier={estAQualifier}
         lectureSeule={lectureSeule}
       />
 
@@ -166,18 +150,20 @@ function PageAction({
           <h2 className='text-m-bold text-grey_800 mb-5'>
             Informations sur l’action
           </h2>
-          <ButtonLink
-            href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
-            style={ButtonStyle.SECONDARY}
-          >
-            <IconComponent
-              name={IconName.Edit}
-              aria-hidden={true}
-              focusable={false}
-              className='w-4 h-4 mr-2'
-            />
-            Modifier l’action
-          </ButtonLink>
+          {!qualifiee && (
+            <ButtonLink
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
+              style={ButtonStyle.SECONDARY}
+            >
+              <IconComponent
+                name={IconName.Edit}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 mr-2'
+              />
+              Modifier l’action
+            </ButtonLink>
+          )}
         </div>
 
         <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>

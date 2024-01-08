@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 
 import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/ModificationActionPage'
-import { desActionsPredefinies, desSituationsNonProfessionnelles, uneAction } from 'fixtures/action'
+import { desActionsPredefinies, desCategories, uneAction } from 'fixtures/action'
 import {
   ActionPredefinie,
   SituationNonProfessionnelle,
@@ -17,7 +17,7 @@ jest.mock('components/Modal')
 describe('ModificationActionPage client side', () => {
   const action = uneAction()
   const actionsPredefinies: ActionPredefinie[] = desActionsPredefinies()
-  const situationsNonProfessionnelles: SituationNonProfessionnelle[] = desSituationsNonProfessionnelles()
+  const situationsNonProfessionnelles: SituationNonProfessionnelle[] = desCategories()
 
   beforeEach(async () => {
     // Given

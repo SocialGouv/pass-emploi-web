@@ -204,6 +204,47 @@ describe("Page Détail d'une action d'un jeune", () => {
     })
 
     describe("quand l'action est terminée et non qualifiée", () => {
+      describe('quand le conseiller est MiLo', () => {
+        const actionAQualifier = uneAction({
+          status: StatutAction.Terminee,
+        })
+        const jeune: BaseJeune & { idConseiller: string } = {
+          id: 'jeune-1',
+          prenom: 'Nadia',
+          nom: 'Sanfamiye',
+          idConseiller: 'id-conseiller',
+        }
+
+        beforeEach(async () => {
+          ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+
+          renderWithContexts(
+            <PageAction
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              lectureSeule={false}
+              pageTitle=''
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+              },
+              customAlerte: { alerteSetter },
+            }
+          )
+        })
+
+        it("affiche un lien pour qualifier l'action", async () => {
+          expect(
+            screen.getByRole('link', { name: 'Qualifier l’action' })
+          ).toHaveAttribute(
+            'href',
+            '/mes-jeunes/jeune-1/actions/id-action-1/qualification'
+          )
+        })
+      })
+
       describe("quand le conseiller n'est pas MiLo", () => {
         const actionAQualifier = uneAction({
           status: StatutAction.Terminee,
@@ -333,9 +374,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         it('affiche un encart d’information de qualification en SNP', async () => {
           //Then
           expect(
-            screen.getByText(
-              /Action qualifiée en non Situation non-professionnelle/
-            )
+            screen.getByText(/Action qualifiée en non SNP/)
           ).toBeInTheDocument()
         })
       })

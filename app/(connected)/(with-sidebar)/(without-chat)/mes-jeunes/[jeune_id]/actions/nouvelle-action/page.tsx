@@ -6,6 +6,7 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import { getIdentitesBeneficiairesServerSide } from 'services/jeunes.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
@@ -40,6 +41,10 @@ export default async function NouvelleAction({
     getSituationsNonProfessionnelles(accessToken),
     getActionsPredefinies(accessToken),
   ])
+
+  const categoriesFiltrees = categories.filter(
+    (situations) => situations.code !== CODE_QUALIFICATION_NON_SNP
+  )
 
   const returnTo = `/mes-jeunes/${params.jeune_id}?onglet=actions`
   return (

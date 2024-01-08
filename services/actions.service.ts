@@ -19,7 +19,6 @@ import {
   ActionsCountJson,
   actionStatusToFiltre,
   actionStatusToJson,
-  CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
   jsonToAction,
   jsonToActionPilotage,
@@ -232,9 +231,7 @@ export async function getSituationsNonProfessionnelles(
     '/referentiels/qualifications-actions/types',
     accessToken
   )
-  return content.filter(
-    (situations) => situations.code !== CODE_QUALIFICATION_NON_SNP
-  )
+  return content
 }
 
 async function getActionsJeune(
