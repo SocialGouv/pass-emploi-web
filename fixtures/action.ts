@@ -65,7 +65,6 @@ export const uneListeDActions = (): Action[] => [
       libelle: 'Non SNP',
       code: 'NON_SNP',
       isSituationNonProfessionnelle: false,
-      code: 'NON_SNP',
     },
   },
 ]

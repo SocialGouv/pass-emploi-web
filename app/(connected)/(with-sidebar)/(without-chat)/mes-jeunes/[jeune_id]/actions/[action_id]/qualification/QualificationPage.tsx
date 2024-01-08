@@ -58,7 +58,7 @@ function QualificationPage({
   const dateActionDebut = action && DateTime.fromISO(action?.creationDate)
   const localDateDebut =
     dateActionDebut && toFrenchFormat(dateActionDebut, DATE_DASH_SEPARATOR)
-  const dateActionFin = action && DateTime.fromISO(action?.dateFinReelle)
+  const dateActionFin = action && DateTime.fromISO(action.dateFinReelle!)
   const localDateFin =
     dateActionFin && toFrenchFormat(dateActionFin, DATE_DASH_SEPARATOR)
 
@@ -158,7 +158,7 @@ function QualificationPage({
     const { qualifier } = await import('services/actions.service')
     await qualifier(action.id, codeCategorie.value!, {
       commentaire: commentaire.value,
-      dateDebutModifiee: DateTime.fromISO(dateDebut.value).startOf('day'),
+      dateDebutModifiee: DateTime.fromISO(dateDebut.value!).startOf('day'),
       dateFinModifiee: DateTime.fromISO(dateFin.value!).startOf('day'),
     })
   }
@@ -347,7 +347,7 @@ function QualificationPage({
                   type='date'
                   id='input-date-fin'
                   defaultValue={localDateFin}
-                  min={DateTime.fromISO(dateDebut).toISODate()}
+                  min={DateTime.fromISO(dateDebut.value!).toISODate()}
                   onChange={(value: string) => setDateFin({ value })}
                   onBlur={validerDateFin}
                   required={true}
