@@ -229,7 +229,7 @@ export default function Conversation({
   }, [jeuneChat.chatId])
 
   return (
-    <div className='h-full flex flex-col bg-grey_100'>
+    <div className='h-full flex flex-col bg-grey_100 overflow-auto'>
       <HeaderChat
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
@@ -317,7 +317,7 @@ export default function Conversation({
         {uploadedFileError && (
           <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
         )}
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'>
+        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-3'>
           <span
             id='piece-jointe--desc'
             className='self-center text-xs-regular short:hidden'
@@ -371,7 +371,7 @@ export default function Conversation({
               onFocus={() => setReadByConseiller(jeuneChat.chatId)}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Écrivez votre message ici...'
-              rows={5}
+              rows={2}
             />
           </div>
           <div className='relative'>
