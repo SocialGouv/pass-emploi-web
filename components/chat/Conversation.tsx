@@ -45,6 +45,7 @@ export default function Conversation({
   const [conseiller] = useConseiller()
 
   const [newMessage, setNewMessage] = useState('')
+  const [zoomLevel, setZoomLevel] = useState<number>(Math.round(window.devicePixelRatio * 100))
   const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
   const [uploadedFileInfo, setUploadedFileInfo] = useState<
     InfoFichier | undefined
@@ -65,6 +66,10 @@ export default function Conversation({
 
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
+
+  window.addEventListener('resize', () => {
+    setZoomLevel(Math.round(window.devicePixelRatio * 100))
+  })
 
   function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
@@ -371,7 +376,7 @@ export default function Conversation({
               onFocus={() => setReadByConseiller(jeuneChat.chatId)}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Écrivez votre message ici...'
-              rows={2}
+              rows={zoomLevel > 300 ? 2 : 5}
             />
           </div>
           <div className='relative'>
