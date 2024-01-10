@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes'
 import React, { ReactElement, useEffect, useRef, useState } from 'react'
 
 import AppHead from 'components/AppHead'
+import DeprecatedHeader from 'components/deprecated/DeprecatedHeader'
 import { MODAL_ROOT_ID } from 'components/Modal'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { estPoleEmploiBRSA } from 'interfaces/conseiller'
@@ -30,10 +31,6 @@ const LienEvitement = dynamic(import('components/LienEvitement'), {
 const SidebarLayout = dynamic(import('components/layouts/SidebarLayout'), {
   ssr: false,
 })
-const DeprecatedHeader = dynamic(
-  import('components/deprecated/DeprecatedHeader'),
-  { ssr: false }
-)
 const Footer = dynamic(import('components/layouts/Footer'), { ssr: false })
 const AlerteDisplayer = dynamic(import('components/layouts/AlerteDisplayer'), {
   ssr: false,
