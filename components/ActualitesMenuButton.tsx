@@ -16,7 +16,7 @@ function ActualitesMenuButton({
   onClick,
 }: ActualitesMenuButtonProps) {
   const classWidget = `SGBF-open-${getWidgetId(conseiller.structure)} w-full`
-
+  /* actualité notif css*/
   const classMenu =
     'flex p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start border-2 border-primary transition-all hover:cursor-pointer hover:border-blanc'
 
