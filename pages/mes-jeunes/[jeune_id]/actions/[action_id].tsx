@@ -11,6 +11,7 @@ import PageActionsPortal from 'components/PageActionsPortal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, Commentaire, StatutAction } from 'interfaces/action'
@@ -171,12 +172,7 @@ function PageAction({
             <span>Catégorie :</span>
           </dt>
           <dd className='text-base-regular pl-6'>
-            {action.qualification?.libelle ?? (
-              <>
-                --
-                <span className='sr-only'>information non disponible</span>
-              </>
-            )}
+            {action.qualification?.libelle ?? <TagCategorieAction />}
           </dd>
           <dt className='text-base-bold pb-6'>
             <span>Titre de l’action :</span>

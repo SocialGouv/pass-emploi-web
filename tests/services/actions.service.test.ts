@@ -173,7 +173,6 @@ describe('ActionsApiService', () => {
           libelle: 'Santé',
           code: 'SANTE',
           isSituationNonProfessionnelle: true,
-          code: 'SANTE',
         },
       })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
@@ -222,7 +221,6 @@ describe('ActionsApiService', () => {
           libelle: 'Situation pas non professionnelle',
           code: 'NON_SNP',
           isSituationNonProfessionnelle: false,
-          code: 'NON_SNP',
         },
       })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
@@ -532,7 +530,6 @@ describe('ActionsApiService', () => {
         libelle: 'Non-SNP',
         code: 'NON_SNP',
         isSituationNonProfessionnelle: false,
-        code: 'NON_SNP',
       }
       expect(actual).toStrictEqual(expected)
     })
@@ -569,7 +566,6 @@ describe('ActionsApiService', () => {
         libelle: 'Santé',
         code: 'SANTE',
         isSituationNonProfessionnelle: true,
-        code: 'SANTE',
       }
       expect(actual).toStrictEqual(expected)
     })

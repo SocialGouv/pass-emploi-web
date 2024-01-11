@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -69,6 +70,7 @@ export default function TableauActionsAQualifier({
                 </button>
               </TH>
               <TH>Date de réalisation</TH>
+              <TH>Catégorie</TH>
               <TH>Titre de l’action</TH>
             </TR>
           </THead>
@@ -84,6 +86,9 @@ export default function TableauActionsAQualifier({
                   {action.beneficiaire.nom} {action.beneficiaire.prenom}
                 </TD>
                 <TD>{action.dateFinReelle}</TD>
+                <TD>
+                  <TagCategorieAction categorie={action.categorie} />
+                </TD>
                 <TD isBold>
                   <span className='flex flex-row justify-between'>
                     {action.titre}
