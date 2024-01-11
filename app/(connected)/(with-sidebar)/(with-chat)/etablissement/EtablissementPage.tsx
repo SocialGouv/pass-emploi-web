@@ -26,8 +26,8 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-function Etablissement() {
-  const initialTracking = `Etablissement`
+function EtablissementPage() {
+  const initialTracking = 'Etablissement'
 
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -191,4 +191,7 @@ function Etablissement() {
   )
 }
 
-export default withTransaction(Etablissement.name, 'page')(Etablissement)
+export default withTransaction(
+  EtablissementPage.name,
+  'page'
+)(EtablissementPage)
