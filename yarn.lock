@@ -8964,9 +8964,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:4.3.0":
-  version: 4.3.0
-  resolution: "elastic-apm-node@npm:4.3.0"
+"elastic-apm-node@npm:4.4.0":
+  version: 4.4.0
+  resolution: "elastic-apm-node@npm:4.4.0"
   dependencies:
     "@elastic/ecs-pino-format": "npm:^1.5.0"
     "@opentelemetry/api": "npm:^1.4.1"
@@ -8986,7 +8986,7 @@ __metadata:
     fast-safe-stringify: "npm:^2.0.7"
     fast-stream-to-buffer: "npm:^1.0.0"
     http-headers: "npm:^3.0.2"
-    import-in-the-middle: "npm:1.5.0"
+    import-in-the-middle: "npm:1.7.2"
     json-bigint: "npm:^1.0.0"
     lru-cache: "npm:^10.0.1"
     measured-reporting: "npm:^1.51.1"
@@ -9005,7 +9005,7 @@ __metadata:
     sql-summary: "npm:^1.0.1"
     stream-chopper: "npm:^3.0.1"
     unicode-byte-truncate: "npm:^1.0.0"
-  checksum: 788b6f11dea2a81777682937170118af874c400fa0dd11ab133bfe3db604765f725d6736ed531f4ce022d6a9301e421e5c11e77552cc2ff58a673e3c23af8e49
+  checksum: 1b597516bcbb553bdc28ab33da64706eeae3391dd06708316b3461fdec03071e1cd5c0d7bdb8eb797870a6295504d27559c4fe641b7902e5ac1939ef12dead2b
   languageName: node
   linkType: hard
 
@@ -11479,15 +11479,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-in-the-middle@npm:1.5.0":
-  version: 1.5.0
-  resolution: "import-in-the-middle@npm:1.5.0"
+"import-in-the-middle@npm:1.7.2":
+  version: 1.7.2
+  resolution: "import-in-the-middle@npm:1.7.2"
   dependencies:
     acorn: "npm:^8.8.2"
     acorn-import-assertions: "npm:^1.9.0"
     cjs-module-lexer: "npm:^1.2.2"
     module-details-from-path: "npm:^1.0.3"
-  checksum: a7fa7ef4e9f0c3bc32babfa88bebb2addb8a381f637a6884775da1bcfdc59d847ce31de5e07e9b2310582c7519e1794fb5e7252e76d509ef31d899c3f055cb52
+  checksum: 9fe0acf8758180dc472f94f76171c3a9fab42378ddec85bed4e843849315d9a4e9900b0c0e7b9b110334cb779a35ea2b6fd9777d45815082b2de8ad42f184506
   languageName: node
   linkType: hard
 
@@ -15218,7 +15218,7 @@ __metadata:
     crypto-js: "npm:4.2.0"
     css-loader: "npm:^6.8.1"
     dotenv: "npm:16.3.1"
-    elastic-apm-node: "npm:4.3.0"
+    elastic-apm-node: "npm:4.4.0"
     eslint: "npm:^8.56.0"
     eslint-config-next: "npm:14.0.4"
     eslint-config-prettier: "npm:^9.1.0"
