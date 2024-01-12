@@ -29,6 +29,7 @@ function ActualitesMenuButton({
       style={{
         padding: '0.5rem',
         marginBottom: '1.5rem',
+        lineHeight: '8px',
       }}
       onClick={onClick}
     >

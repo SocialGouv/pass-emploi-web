@@ -102,7 +102,7 @@
 
 @media screen and (min-width: theme('screens.layout_l')) {
   .container {
-    --sidebar-width: 22vw;
+    --sidebar-width: 15vw;
     --chat-width: 24vw;
   }
 

@@ -90,6 +90,7 @@ export default function NavLinks({
         <NavLink
           isActive={isCurrentRoute('/mes-jeunes')}
           href='/mes-jeunes'
+          className='break-all'
           label='Portefeuille'
           iconName={
             isCurrentRoute('/mes-jeunes')
@@ -153,6 +154,7 @@ export default function NavLinks({
               ? IconName.ArrowCircleRightFill
               : IconName.ArrowCircleRightOutline
           }
+          className='break-all'
           label='Bénéficiaires'
           href='/etablissement'
           isActive={isCurrentRoute('/etablissement')}
@@ -163,6 +165,7 @@ export default function NavLinks({
       {estSuperviseur(conseiller) && items.includes(NavItem.Reaffectation) && (
         <NavLink
           iconName={IconName.ArrowForward}
+          className='break-all'
           label='Réaffectation'
           href='/reaffectation'
           isActive={isCurrentRoute('/reaffectation')}
@@ -177,6 +180,7 @@ export default function NavLinks({
               ? IconName.ChatFill
               : IconName.ChatOutline
           }
+          className='break-all'
           label='Messagerie'
           href='/messagerie'
           isActive={isCurrentRoute('/messagerie')}
@@ -231,6 +235,7 @@ export default function NavLinks({
       <NavLink
         label='Déconnexion'
         iconName={IconName.Logout}
+        className='break-all'
         onClick={logout}
         showLabelOnSmallScreen={showLabelsOnSmallScreen}
       />
