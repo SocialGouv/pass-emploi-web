@@ -1,4 +1,4 @@
-import { act, screen, waitFor, within } from '@testing-library/react'
+import { act, getByText, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -180,6 +180,40 @@ describe('Pilotage', () => {
               `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`
             )
           })
+        })
+
+        it('permet de trier les actions par nom du bénéficiaire par ordre alphabétique', async () => {
+          //When 
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
+            })
+          )
+
+          // Then
+          const [_header, ...actions] = screen.getAllByRole('row')
+          expect(within(actions[0]).getByText(/Android/)).toBeInTheDocument()
+          expect(within(actions[1]).getByText(/Caramelle/)).toBeInTheDocument()
+        })
+
+        it('permet de trier les actions par nom du bénéficiaire par ordre alphabétique inversé', async () => {
+          //When 
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
+            })
+          )
+
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique inversé',
+            })
+          )
+
+          // Then
+          const [_header, ...actions] = screen.getAllByRole('row')
+          expect(within(actions[0]).getByText(/Tran/)).toBeInTheDocument()
+          expect(within(actions[1]).getByText(/Granger/)).toBeInTheDocument()
         })
 
         it('met à jour les actions avec la page demandée ', async () => {
