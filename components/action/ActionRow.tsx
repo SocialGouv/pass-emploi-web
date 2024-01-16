@@ -21,10 +21,9 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     : '/mes-jeunes'
 
   const actionEstEnRetard =
-    action.status !== StatutAction.Annulee &&
-    action.status !== StatutAction.Terminee &&
-    DateTime.fromISO(action.dateEcheance) < DateTime.now()
-  const creationDate = toShortDate(action.creationDate)
+    DateTime.fromISO(action.dateEcheance) < DateTime.now() &&
+    action.status === StatutAction.EnCours
+
   const dateEcheance = toShortDate(action.dateEcheance)
 
   return (
@@ -34,7 +33,7 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     >
       <TD className='rounded-l-base'>
         <div className='flex items-center'>
-          {action.qualification?.estQualifiee &&
+          {action.status === StatutAction.Qualifiee &&
             action.qualification?.isSituationNonProfessionnelle && (
               <IconComponent
                 role='img'
@@ -45,41 +44,20 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
                 className='w-4 h-4 fill-accent_2 mr-2'
               />
             )}
-          <span className='text-base-bold text-ellipsis overflow-hidden max-w-[400px] whitespace-nowrap'>
+          <span className='flex items-baseline wrap text-base-bold text-ellipsis overflow-hidden max-w-[400px]'>
             {action.content}
           </span>
         </div>
       </TD>
       <TD>
-        <span className='flex items-center'>
-          <span>{creationDate}</span>
-        </span>
-      </TD>
-      <TD>
-        <span className='flex flex-row items-center'>
-          <span
-            className={
-              actionEstEnRetard ? 'text-warning flex flex-row items-center' : ''
-            }
-          >
-            {actionEstEnRetard ? (
-              <IconComponent
-                name={IconName.Error}
-                aria-label='en retard'
-                aria-hidden='true'
-                focusable='false'
-                className='h-3 mr-1 fill-warning'
-              />
-            ) : (
-              <></>
-            )}
-            {dateEcheance}
-          </span>
-        </span>
+        <span className='flex flex-row items-center'>{dateEcheance}</span>
       </TD>
       <TD className='rounded-r-base w-[160px]'>
         <span className='flex items-center justify-between'>
-          <TagStatutAction status={action.status} />
+          <TagStatutAction
+            status={action.status}
+            actionEstEnRetard={actionEstEnRetard}
+          />
           <IconComponent
             name={IconName.ChevronRight}
             focusable='false'

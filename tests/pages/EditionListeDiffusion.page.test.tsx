@@ -60,7 +60,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         // Then
         expect(
           screen.getByRole('textbox', {
-            name: 'Titre Exemple : Ma liste de pâtissier',
+            name: /Titre Exemple : Ma liste de pâtissier/,
           })
         ).toHaveProperty('required', true)
         expect(

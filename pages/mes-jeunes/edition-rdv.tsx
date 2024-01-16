@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
+import { JeuneFromListe } from '../../interfaces/jeune'
+
 import PageActionsPortal from 'components/PageActionsPortal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -50,17 +52,21 @@ const DeleteRdvModal = dynamic(import('components/rdv/DeleteRdvModal'), {
 })
 
 interface EditionRdvProps extends PageProps {
-  typesRendezVous: TypeEvenementReferentiel[]
+  conseillerEstObservateur: boolean
+  lectureSeule: boolean
   returnTo: string
+  typesRendezVous: TypeEvenementReferentiel[]
   idJeune?: string
   evenement?: Evenement
   evenementTypeAC?: boolean
 }
 
 function EditionRdv({
+  conseillerEstObservateur,
+  lectureSeule,
+  returnTo,
   typesRendezVous,
   idJeune,
-  returnTo,
   evenement,
   evenementTypeAC,
 }: EditionRdvProps) {
@@ -68,22 +74,6 @@ function EditionRdv({
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [_, setAlerte] = useAlerte()
-
-  const aUnBeneficiaireInscritALEvenement: boolean =
-    Boolean(evenement) &&
-    evenement!.jeunes.some((jeuneEvenement) =>
-      portefeuille.some(
-        (jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id
-      )
-    )
-  const conseillerEstObservateur =
-    !evenementTypeAC && !aUnBeneficiaireInscritALEvenement
-
-  const lectureSeule =
-    evenement &&
-    (conseillerEstObservateur ||
-      estCreeParSiMILO(evenement) ||
-      estClos(evenement))
 
   const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
@@ -453,6 +443,10 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
   const referer = context.req.headers.referer
   const returnTo =
     referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
+  const { getJeunesDuConseillerServerSide } = await import(
+    'services/jeunes.service'
+  )
+  const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
 
   const idRdv = context.query.idRdv as string | undefined
   if (idRdv) {
@@ -463,7 +457,7 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
     return {
       props: {
         returnTo: returnTo,
-        ...buildPropsModificationEvenement(evenement),
+        ...buildPropsModificationEvenement(evenement, jeunes),
       },
     }
   } else {
@@ -487,16 +481,34 @@ export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
 export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
 
 function buildPropsModificationEvenement(
-  evenement: Evenement
+  evenement: Evenement,
+  jeunes: JeuneFromListe[]
 ): Omit<EditionRdvProps, 'returnTo'> {
   const estUneAC = isCodeTypeAnimationCollective(evenement.type.code)
+  const aUnBeneficiaireInscritALEvenement: boolean =
+    Boolean(evenement) &&
+    evenement!.jeunes.some((jeuneEvenement) =>
+      jeunes.some((jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id)
+    )
+  const conseillerEstObservateur =
+    !estUneAC && !aUnBeneficiaireInscritALEvenement
+
+  const lectureSeule =
+    evenement &&
+    (conseillerEstObservateur ||
+      estCreeParSiMILO(evenement) ||
+      estClos(evenement))
 
   return {
+    conseillerEstObservateur: false,
+    lectureSeule,
     evenement,
     typesRendezVous: [],
     evenementTypeAC: estUneAC,
     withoutChat: true,
-    pageTitle: 'Mes événements - Modifier',
+    pageTitle: lectureSeule
+      ? `Detail - ${evenement.titre} `
+      : `Modifier le rendez-vous ${evenement.titre}`,
     pageHeader: estUneAC
       ? 'Détail de l’animation collective'
       : 'Détail du rendez-vous',
@@ -516,12 +528,14 @@ function buildPropsCreationEvenement(
   })
 
   const props: Omit<EditionRdvProps, 'returnTo'> = {
+    conseillerEstObservateur: false,
+    lectureSeule: false,
     typesRendezVous: creationAC ? typesRdvAC : typesRdvCEJ,
     withoutChat: true,
     evenementTypeAC: creationAC,
     pageTitle: creationAC
-      ? 'Mes événements - Créer une animation collective'
-      : 'Mes événements - Créer un rendez-vous',
+      ? 'Créer une animation collective'
+      : 'Créer un rendez-vous',
     pageHeader: creationAC
       ? 'Créer une animation collective'
       : 'Créer un rendez-vous',

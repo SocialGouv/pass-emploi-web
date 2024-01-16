@@ -1,4 +1,4 @@
-import { Metadata } from 'next'
+import { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { ReactNode } from 'react'
 
@@ -32,13 +32,15 @@ export const metadata: Metadata = {
   title: 'Espace conseiller',
   description: 'Espace conseiller de l’outil du Contrat d’Engagement Jeune',
   applicationName: 'CEJ conseiller',
-  themeColor: '#3B69D1',
-  viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#3B69D1',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

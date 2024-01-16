@@ -99,7 +99,6 @@ const ALERTES: DictAlertes = {
       buildHref: (target?: string) => '/mes-jeunes/' + target,
     },
   },
-  creationAction: { title: 'L’action a bien été créée' },
   suppressionAction: { title: 'L’action a bien été supprimée' },
   choixAgence: { title: 'Votre agence a été ajoutée à votre profil' },
   envoiMessage: {
@@ -113,11 +112,15 @@ const ALERTES: DictAlertes = {
     title: 'Votre jeune a été alerté que vous avez écrit un commentaire',
   },
   qualificationSNP: {
-    title:
-      'L’action a été traitée et qualifiée en Situation Non Professionnelle',
-    sub: 'Les informations ont été envoyées à i-milo',
+    title: 'Action qualifiée',
+    sub:
+      'Vous pouvez encore modifier cette action, uniquement dans i-milo.\n' +
+      'Délai d’actualisation entre l’app CEJ et i-milo : environ 24h.',
   },
-  qualificationNonSNP: { title: 'L’action a été qualifiée' },
+  qualificationNonSNP: {
+    title: 'Action qualifiée en non SNP.',
+    sub: 'C’est enregistré ! Vous pouvez poursuivre votre travail.',
+  },
   partageOffre: { title: 'L’offre a bien été partagée' },
   suggestionRecherche: {
     title: 'La recherche et ses critères ont bien été partagés',

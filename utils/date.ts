@@ -2,6 +2,8 @@ import { DateTime, Interval } from 'luxon'
 import { DateTimeFormatOptions } from 'luxon/src/misc'
 
 export const WEEKDAY_MONTH_LONG: string = 'EEEE d MMMM'
+export const WEEKDAY: string = 'EEEE d'
+export const MONTH_LONG: string = 'dd MMMM yyyy'
 export const TIME_24_H_SEPARATOR: string = "HH'h'mm"
 export const TIME_24_A11Y_SEPARATOR: string = "HH 'heure' mm"
 export const TIME_24_SIMPLE: string = 'HH:mm'

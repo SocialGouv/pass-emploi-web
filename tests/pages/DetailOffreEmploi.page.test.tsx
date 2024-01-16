@@ -155,9 +155,10 @@ describe('Page Détail Offre Emploi', () => {
   })
 
   describe('server side', () => {
+    const detailOffreEmploi = unDetailOffreEmploi()
     beforeEach(() => {
       ;(getOffreEmploiServerSide as jest.Mock).mockResolvedValue(
-        unDetailOffreEmploi()
+        detailOffreEmploi
       )
       ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
         validSession: true,
@@ -195,8 +196,8 @@ describe('Page Détail Offre Emploi', () => {
       )
       expect(actual).toEqual({
         props: {
-          offre: unDetailOffreEmploi(),
-          pageTitle: 'Recherche d’offres - Détail de l’offre',
+          offre: detailOffreEmploi,
+          pageTitle: `Détail de l’offre n° ${detailOffreEmploi.id} - Recherche d\'offres`,
           pageHeader: 'Offre d’emploi',
         },
       })

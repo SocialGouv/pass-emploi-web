@@ -6,7 +6,7 @@ import { unJeuneChat } from 'fixtures/jeune'
 import { unMessageListeDiffusion } from 'fixtures/message'
 import { BaseJeune } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
-import { getIdentitesBeneficiaires } from 'services/jeunes.service'
+import { getIdentitesBeneficiairesClientSide } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -33,7 +33,7 @@ describe('DetailMessageListeDeDiffusion', () => {
       prenom: 'Ada',
       nom: 'Lovelace',
     }
-    ;(getIdentitesBeneficiaires as jest.Mock).mockResolvedValue([
+    ;(getIdentitesBeneficiairesClientSide as jest.Mock).mockResolvedValue([
       destinataire1,
       destinataire2,
     ])
@@ -76,7 +76,7 @@ describe('DetailMessageListeDeDiffusion', () => {
 
   it('affiche les destinataires du message', async () => {
     // Then
-    expect(getIdentitesBeneficiaires).toHaveBeenCalledWith([
+    expect(getIdentitesBeneficiairesClientSide).toHaveBeenCalledWith([
       'id-destinataire-1',
       'id-destinataire-2',
     ])

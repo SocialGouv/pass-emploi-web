@@ -7,27 +7,21 @@ import React, { useState } from 'react'
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
-import TagQualificationAction from 'components/action/TagQualificationAction'
 import PageActionsPortal from 'components/PageActionsPortal'
-import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import {
-  Action,
-  Commentaire,
-  QualificationAction,
-  StatutAction,
-} from 'interfaces/action'
-import { estMilo, estUserPoleEmploi, UserType } from 'interfaces/conseiller'
+import { Action, Commentaire, StatutAction } from 'interfaces/action'
+import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
-import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toShortDate } from 'utils/date'
+import { MONTH_LONG, toFrenchFormat } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface PageActionProps extends PageProps {
@@ -49,11 +43,7 @@ function PageAction({
   const [portefeuille] = usePortefeuille()
   const [alerte, setAlerte] = useAlerte()
 
-  const [qualification, setQualification] = useState<
-    QualificationAction | undefined
-  >(action.qualification)
   const [statut, setStatut] = useState<StatutAction>(action.status)
-  const [deleteDisabled, setDeleteDisabled] = useState<boolean>(false)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
 
   const pageTracking = `Détail Action${
@@ -62,70 +52,18 @@ function PageAction({
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   const conseillerEstMilo = estMilo(conseiller)
+  const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
+  const qualifiee = conseillerEstMilo && statut === StatutAction.Qualifiee
 
-  const estARealiser =
-    statut !== StatutAction.Terminee && statut !== StatutAction.Annulee
-  const estAQualifier =
-    conseillerEstMilo &&
-    statut === StatutAction.Terminee &&
-    !qualification?.estQualifiee
-
-  const afficherSuppressionAction =
-    action.creatorType === UserType.CONSEILLER.toLowerCase() &&
-    !action.qualification?.estQualifiee &&
-    commentaires.length === 0 &&
-    statut !== StatutAction.Terminee
-
-  const dateEcheance = toShortDate(action.dateEcheance)
+  const dateEcheanceLongFormat = toFrenchFormat(
+    DateTime.fromISO(action.dateEcheance),
+    MONTH_LONG
+  )
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
-    const { updateAction } = await import('services/actions.service')
-    const nouveauStatut = await updateAction(action.id, statutChoisi)
-    setStatut(nouveauStatut)
-  }
-
-  async function qualifierAction(
-    isSituationNonProfessionnelle: boolean
-  ): Promise<void> {
-    if (isSituationNonProfessionnelle) {
-      await router.push(
-        `/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`
-      )
-    } else {
-      const { qualifier } = await import('services/actions.service')
-      const nouvelleQualification = await qualifier(
-        action.id,
-        CODE_QUALIFICATION_NON_SNP,
-        {
-          dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
-          dateFinModifiee: DateTime.fromISO(action.dateEcheance),
-        }
-      )
-      setQualification(nouvelleQualification)
-      setAlerte(AlerteParam.qualificationNonSNP)
-    }
-  }
-
-  async function deleteAction(): Promise<void> {
-    setDeleteDisabled(true)
-    const { deleteAction: _deleteAction } = await import(
-      'services/actions.service'
-    )
-    _deleteAction(action.id)
-      .then(() => {
-        setAlerte(AlerteParam.suppressionAction)
-        router.push({
-          pathname: '/mes-jeunes/' + jeune.id,
-          query: { onglet: 'actions' },
-        })
-      })
-      .catch((error: Error) => {
-        setShowEchecMessage(true)
-        console.log('Erreur lors de la suppression de l action', error)
-      })
-      .finally(() => {
-        setDeleteDisabled(false)
-      })
+    const { modifierAction } = await import('services/actions.service')
+    await modifierAction(action.id, { statut: statutChoisi })
+    setStatut(statutChoisi)
   }
 
   function onAjoutCommentaire(estEnSucces: boolean) {
@@ -143,26 +81,23 @@ function PageAction({
       : pageTracking,
     aDesBeneficiaires
   )
-
   return (
     <>
       <PageActionsPortal>
         <>
-          {afficherSuppressionAction && (
-            <Button
-              label="Supprimer l'action"
-              onClick={() => deleteAction()}
-              style={ButtonStyle.SECONDARY}
-              disabled={deleteDisabled}
+          {estAQualifier && !lectureSeule && (
+            <ButtonLink
+              style={ButtonStyle.PRIMARY}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`}
             >
+              Qualifier l’action
               <IconComponent
-                name={IconName.Delete}
+                name={IconName.Send}
                 aria-hidden={true}
                 focusable={false}
-                className='w-4 h-4 mr-2'
+                className='w-4 h-4 ml-2'
               />
-              Supprimer
-            </Button>
+            </ButtonLink>
           )}
         </>
       </PageActionsPortal>
@@ -183,49 +118,100 @@ function PageAction({
         </div>
       )}
 
-      {conseillerEstMilo && (
-        <TagQualificationAction statut={statut} qualification={qualification} />
-      )}
+      {qualifiee && (
+        <>
+          {action.qualification!.isSituationNonProfessionnelle && (
+            <div className='mb-6'>
+              <InformationMessage label={`Action qualifiée.`}>
+                Vous pouvez modifier cette action dans i-milo. <br /> Délai
+                d’actualisation entre l’app CEJ et i-milo : 24h.
+              </InformationMessage>
+            </div>
+          )}
 
-      <h2
-        className='text-m-bold text-grey_800 mb-5'
-        title='Intitulé de l’action'
-      >
-        {action.content}
-      </h2>
-
-      {action.comment && <p className='mb-8'>{action.comment}</p>}
-
-      {estARealiser && (
-        <div className='flex p-2 text-accent_2 bg-accent_3_lighten rounded-l mb-8'>
-          <IconComponent
-            name={IconName.Schedule}
-            aria-hidden='true'
-            focusable='false'
-            className='h-5 w-5 mr-1 fill-accent_2'
-          />
-          <span>
-            À réaliser pour le : <b>{dateEcheance}</b>
-          </span>
-        </div>
+          {!action.qualification!.isSituationNonProfessionnelle && (
+            <div className='mb-6'>
+              <InformationMessage label='Action qualifiée en non SNP.'>
+                Vous ne pouvez plus modifier cette action.
+              </InformationMessage>
+            </div>
+          )}
+        </>
       )}
 
       <StatutActionForm
         updateStatutAction={updateStatutAction}
-        qualifierAction={(isSituationNonProfessionnelle) =>
-          qualifierAction(isSituationNonProfessionnelle)
-        }
         statutCourant={statut}
-        estAQualifier={estAQualifier}
         lectureSeule={lectureSeule}
       />
+
+      <div className='border-b-2 border-primary_lighten mt-8'>
+        <div className='flex justify-between mb-2'>
+          <h2 className='text-m-bold text-grey_800 mb-5'>
+            Informations sur l’action
+          </h2>
+          {!qualifiee && (
+            <ButtonLink
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
+              style={ButtonStyle.SECONDARY}
+            >
+              <IconComponent
+                name={IconName.Edit}
+                aria-hidden={true}
+                focusable={false}
+                className='w-4 h-4 mr-2'
+              />
+              Modifier l’action
+            </ButtonLink>
+          )}
+        </div>
+
+        <dl className='grid grid-cols-[auto_1fr] grid-rows-[repeat(4,_auto)]'>
+          <dt className='text-base-bold pb-6'>
+            <span>Catégorie :</span>
+          </dt>
+          <dd className='text-base-regular pl-6'>
+            {action.qualification?.libelle ?? (
+              <>
+                --
+                <span className='sr-only'>information non disponible</span>
+              </>
+            )}
+          </dd>
+          <dt className='text-base-bold pb-6'>
+            <span>Titre de l’action :</span>
+          </dt>
+          <dd className='text-base-regular pl-6'>{action.content}</dd>
+          <dt className='text-base-bold pb-6'>
+            <span>Description :</span>
+          </dt>
+          <dd className='text-base-regular pl-6'>
+            {action.comment ? (
+              action.comment
+            ) : (
+              <>
+                --
+                <span className='sr-only'>information non disponible</span>
+              </>
+            )}
+          </dd>
+          <dt className='text-base-bold pb-6'>
+            <span>Date de l’action :</span>
+          </dt>
+          <dd className='text-base-regular pl-6'>{dateEcheanceLongFormat}</dd>
+        </dl>
+      </div>
+
       <HistoriqueAction action={action} />
-      <CommentairesAction
-        idAction={action.id}
-        commentairesInitiaux={commentaires}
-        onAjout={onAjoutCommentaire}
-        lectureSeule={lectureSeule}
-      />
+
+      {Boolean(commentaires.length) && (
+        <CommentairesAction
+          idAction={action.id}
+          commentairesInitiaux={commentaires}
+          onAjout={onAjoutCommentaire}
+          lectureSeule={lectureSeule}
+        />
+      )}
     </>
   )
 }

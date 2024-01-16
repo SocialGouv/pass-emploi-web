@@ -7,25 +7,25 @@ const propsStatutsActions: {
     altColor: string
   }
 } = {
-  ARealiser: {
-    label: 'À réaliser',
-    color: 'accent_1',
-    altColor: 'accent_1_lighten',
-  },
   Annulee: {
     label: 'Annulée',
-    color: 'accent_2',
-    altColor: 'accent_2_lighten',
+    color: 'disabled',
+    altColor: 'grey_100',
   },
-  Commencee: {
-    label: 'Commencée',
-    color: 'accent_3',
+  EnCours: {
+    label: 'En cours',
+    color: 'primary_darken',
     altColor: 'accent_3_lighten',
   },
   Terminee: {
-    label: 'Terminée',
-    color: 'accent_2',
-    altColor: 'accent_2_lighten',
+    label: 'Terminée - À qualifier',
+    color: 'primary_darken',
+    altColor: 'accent_3_lighten',
+  },
+  Qualifiee: {
+    label: 'Qualifiée',
+    color: 'success',
+    altColor: 'success_lighten',
   },
 }
 

@@ -24,7 +24,7 @@ export default function Label({
   return (
     <label htmlFor={htmlFor} className='flex flex-wrap text-content_color mb-3'>
       <span className='text-base-regular'>
-        {inputRequired && <span aria-hidden={true}>*&nbsp;</span>}
+        {inputRequired && <span>*&nbsp;</span>}
         {main}
         {withBulleMessageSensible && (
           <span className='ml-2'>
@@ -33,7 +33,7 @@ export default function Label({
         )}
       </span>
       {helpText && <span className='text-s-regular ml-2'> {helpText}</span>}
-      {helpText && <span className='text-xs-regular ml-2'> {precision}</span>}
+      {precision && <span className='text-xs-regular ml-2'> {precision}</span>}
     </label>
   )
 }

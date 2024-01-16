@@ -7,6 +7,7 @@ import React, { FormEvent, lazy, useEffect, useState } from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'
 import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
+import { MODAL_ROOT_ID } from 'components/Modal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
 import { trackPage } from 'utils/analytics/matomo'
@@ -142,7 +143,7 @@ function LoginPage({
         <OnboardingMobileModal onClose={() => setAfficherOnboarding(false)} />
       )}
 
-      <div id='modal-root' />
+      <div id={MODAL_ROOT_ID} />
     </main>
   )
 }

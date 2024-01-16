@@ -30,7 +30,7 @@ function DecompteCaracteres({
   invalid,
 }: DecompteCaracteresProps) {
   return (
-    <span className='text-xs-regular text-right mb-4'>
+    <div className='text-xs-regular text-right mb-4'>
       <p
         id={id + '--length'}
         aria-live='polite'
@@ -42,7 +42,7 @@ function DecompteCaracteres({
       <p aria-hidden={true} className={invalid ? 'text-warning' : ''}>
         {debounced.length} / {maxLength}
       </p>
-    </span>
+    </div>
   )
 }
 

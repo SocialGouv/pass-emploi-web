@@ -326,7 +326,9 @@ describe('Agenda - Onglet établissement', () => {
           SEPTEMBRE_7_23H
         )
 
-        expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
+        await waitFor(() =>
+          expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
+        )
 
         // When
         await userEvent.click(periodesFuturesButton)
@@ -337,10 +339,12 @@ describe('Agenda - Onglet établissement', () => {
           SEPTEMBRE_14_23H
         )
 
-        expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
-          '1',
-          SEPTEMBRE_8_0H,
-          SEPTEMBRE_14_23H
+        await waitFor(() =>
+          expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
+            '1',
+            SEPTEMBRE_8_0H,
+            SEPTEMBRE_14_23H
+          )
         )
       })
     })

@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
@@ -22,10 +22,12 @@ describe('FiltresStatutsAction', () => {
         name: 'Choisir un ou plusieurs statuts à filtrer',
       })
     ).toBeInTheDocument()
-    expect(screen.getByLabelText('Commencée')).toBeInTheDocument()
-    expect(screen.getByLabelText('À réaliser')).toBeInTheDocument()
-    expect(screen.getByLabelText('Terminée')).toBeInTheDocument()
-    expect(screen.getByLabelText('Annulée')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'En cours' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('radio', { name: 'Terminée - À qualifier' })
+    ).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Qualifiée' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Annulée' })).toBeInTheDocument()
   })
 
   it('cache la liste de statuts', async () => {
@@ -42,34 +44,28 @@ describe('FiltresStatutsAction', () => {
 
   it('réinitialise les statuts non validés', async () => {
     // Given
-    await userEvent.click(screen.getByLabelText('À réaliser'))
-    await userEvent.click(screen.getByLabelText('Terminée'))
+    await userEvent.click(screen.getByLabelText('En cours'))
     await userEvent.click(screen.getByText('Statut'))
 
     // When
     await userEvent.click(screen.getByText('Statut'))
 
     // Then
-    expect(screen.getByLabelText('Terminée')).not.toHaveAttribute('checked')
-    expect(screen.getByLabelText('Commencée')).not.toHaveAttribute('checked')
-    expect(screen.getByLabelText('À réaliser')).not.toHaveAttribute('checked')
-    expect(screen.getByLabelText('Annulée')).not.toHaveAttribute('checked')
+    expect(screen.getByLabelText('Tout sélectionner')).toHaveAttribute(
+      'checked'
+    )
+    expect(screen.getByLabelText('En cours')).not.toHaveAttribute('checked')
   })
 
-  it('filtre les actions avec les statuts sélectionnés', async () => {
+  it('filtre les actions avec le statut sélectionné', async () => {
     // Given
-    await userEvent.click(screen.getByLabelText('Terminée'))
-    await userEvent.click(screen.getByLabelText('Commencée'))
-    await userEvent.click(screen.getByLabelText('À réaliser'))
-    await userEvent.click(screen.getByLabelText('Terminée'))
+    await userEvent.click(screen.getByLabelText('En cours'))
+    await userEvent.click(screen.getByLabelText('Annulée'))
 
     // When
     await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
 
     // Then
-    expect(filtrerActions).toHaveBeenCalledWith([
-      StatutAction.Commencee,
-      StatutAction.ARealiser,
-    ])
+    expect(filtrerActions).toHaveBeenCalledWith([StatutAction.Annulee])
   })
 })

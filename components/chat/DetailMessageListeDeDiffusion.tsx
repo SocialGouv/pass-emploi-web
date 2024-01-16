@@ -7,7 +7,7 @@ import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { BaseJeune, JeuneChat } from 'interfaces/jeune'
 import { MessageListeDiffusion } from 'interfaces/message'
-import { getIdentitesBeneficiaires } from 'services/jeunes.service'
+import { getIdentitesBeneficiairesClientSide } from 'services/jeunes.service'
 import { toShortDate } from 'utils/date'
 
 export function DetailMessageListeDeDiffusion({
@@ -38,8 +38,8 @@ export function DetailMessageListeDeDiffusion({
     }
 
     if (message.idsDestinataires.length && chats?.length) {
-      getIdentitesBeneficiaires(message.idsDestinataires).then((jeunes) =>
-        setDestinataires(getChatsDestinataires(jeunes))
+      getIdentitesBeneficiairesClientSide(message.idsDestinataires).then(
+        (jeunes) => setDestinataires(getChatsDestinataires(jeunes))
       )
     }
   }, [chats, message.idsDestinataires])

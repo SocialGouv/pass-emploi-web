@@ -87,7 +87,9 @@ describe('EditionAnimationCollective', () => {
         expect(actual).toEqual({
           props: {
             withoutChat: true,
-            pageTitle: 'Mes événements - Créer une animation collective',
+            conseillerEstObservateur: false,
+            lectureSeule: false,
+            pageTitle: 'Créer une animation collective',
             pageHeader: 'Créer une animation collective',
             returnTo: '/agenda?onglet=etablissement',
             typesRendezVous: expect.arrayContaining([]),
@@ -164,7 +166,7 @@ describe('EditionAnimationCollective', () => {
         expect(actual).toMatchObject({
           props: {
             evenement: animationCollective,
-            pageTitle: 'Mes événements - Modifier',
+            pageTitle: `Modifier le rendez-vous ${animationCollective.titre}`,
             pageHeader: 'Détail de l’animation collective',
             evenementTypeAC: true,
           },
@@ -287,6 +289,8 @@ describe('EditionAnimationCollective', () => {
               returnTo='/agenda?onglet=etablissement'
               pageTitle=''
               evenementTypeAC={true}
+              lectureSeule={false}
+              conseillerEstObservateur={false}
             />,
             {
               customConseiller: {
@@ -317,7 +321,7 @@ describe('EditionAnimationCollective', () => {
 
       it('le titre est obligatoire', async () => {
         // Given
-        const inputTitre = screen.getByRole('textbox', { name: 'Titre' })
+        const inputTitre = screen.getByRole('textbox', { name: /Titre/ })
 
         // When
         expect(inputTitre).toHaveAttribute('required', '')
@@ -333,7 +337,7 @@ describe('EditionAnimationCollective', () => {
       it('les bénéficiaires sont facultatifs', async () => {
         // Given
         const selectType = screen.getByRole('combobox', {
-          name: 'Type',
+          name: /Type/,
         })
         const inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
         const inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
@@ -401,6 +405,8 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
+                lectureSeule={false}
+                conseillerEstObservateur={false}
               />
             )
           })
@@ -430,6 +436,8 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
+                lectureSeule={false}
+                conseillerEstObservateur={false}
               />
             )
           })
@@ -459,6 +467,8 @@ describe('EditionAnimationCollective', () => {
                 evenement={evenement}
                 pageTitle=''
                 evenementTypeAC={true}
+                lectureSeule={false}
+                conseillerEstObservateur={false}
               />
             )
           })
@@ -507,6 +517,8 @@ describe('EditionAnimationCollective', () => {
               evenement={evenement}
               pageTitle=''
               evenementTypeAC={true}
+              lectureSeule={true}
+              conseillerEstObservateur={true}
             />,
             {
               customConseiller: {

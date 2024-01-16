@@ -9,7 +9,6 @@ interface Props {
   qualification?: {
     libelle: string
     isSituationNonProfessionnelle: boolean
-    estQualifiee: boolean
   }
 }
 
@@ -19,7 +18,7 @@ export default function TagQualificationAction({
 }: Props) {
   return (
     <>
-      {statut === StatutAction.Terminee && !qualification?.estQualifiee && (
+      {statut === StatutAction.Terminee && (
         <TagStatut
           label={'Action à qualifier'}
           color='accent_2'
@@ -28,8 +27,8 @@ export default function TagQualificationAction({
           className='mb-4 text-s-bold'
         />
       )}
-      {qualification?.estQualifiee &&
-        qualification.isSituationNonProfessionnelle && (
+      {statut === StatutAction.Qualifiee &&
+        qualification?.isSituationNonProfessionnelle && (
           <TagStatut
             label={qualification.libelle}
             color='additional_2'
@@ -38,10 +37,10 @@ export default function TagQualificationAction({
             className='mb-4 text-s-bold'
           />
         )}
-      {qualification?.estQualifiee &&
-        !qualification.isSituationNonProfessionnelle && (
+      {statut === StatutAction.Qualifiee &&
+        !qualification?.isSituationNonProfessionnelle && (
           <TagStatut
-            label={qualification.libelle}
+            label={qualification!.libelle}
             color='accent_4'
             backgroundColor='accent_4_lighten'
             className='mb-4 text-s-bold'

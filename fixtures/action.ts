@@ -1,6 +1,7 @@
 import {
   Action,
   ActionPilotage,
+  ActionPredefinie,
   Commentaire,
   SituationNonProfessionnelle,
   StatutAction,
@@ -17,7 +18,7 @@ export const uneAction = (overrides: Partial<Action> = {}): Action => {
     lastUpdate: '2022-02-16T15:50:46.000+01:00',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: StatutAction.ARealiser,
+    status: StatutAction.EnCours,
     dateEcheance: '2022-02-20T14:50:46.000Z',
   }
 
@@ -34,7 +35,7 @@ export const uneListeDActions = (): Action[] => [
     lastUpdate: '2022-02-18T15:50:46.000+01:00',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: StatutAction.Commencee,
+    status: StatutAction.EnCours,
     dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   {
@@ -62,8 +63,8 @@ export const uneListeDActions = (): Action[] => [
     dateFinReelle: '2022-03-22T14:50:46.000Z',
     qualification: {
       libelle: 'Non SNP',
+      code: 'NON_SNP',
       isSituationNonProfessionnelle: false,
-      estQualifiee: false,
     },
   },
 ]
@@ -283,9 +284,24 @@ export const unCommentaire = (
   return { ...defaults, ...overrides }
 }
 
-export const desSituationsNonProfessionnelles =
-  (): SituationNonProfessionnelle[] => [
-    { code: 'SNP_1', label: 'SNP 1' },
-    { code: 'SNP_2', label: 'SNP 2' },
-    { code: 'SNP_3', label: 'SNP 3' },
-  ]
+export const desCategories = (): SituationNonProfessionnelle[] => [
+  { code: 'SNP_1', label: 'SNP 1' },
+  { code: 'SNP_2', label: 'SNP 2' },
+  { code: 'SNP_3', label: 'SNP 3' },
+]
+
+export const desCategoriesAvecNONSNP = (): SituationNonProfessionnelle[] => [
+  { code: 'SNP_1', label: 'SNP 1' },
+  { code: 'SNP_2', label: 'SNP 2' },
+  { code: 'SNP_3', label: 'SNP 3' },
+  { code: 'NON_SNP', label: 'NON_SNP' },
+]
+
+export const desActionsPredefinies = (): ActionPredefinie[] => [
+  {
+    id: 'action-predefinie-1',
+    titre: 'Identifier ses atouts et ses compétences',
+  },
+  { id: 'action-predefinie-2', titre: 'Identifier des pistes de métier' },
+  { id: 'action-predefinie-3', titre: 'Identifier des entreprises' },
+]

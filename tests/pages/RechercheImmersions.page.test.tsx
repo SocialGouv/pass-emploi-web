@@ -56,11 +56,11 @@ describe('Page Recherche Immersions', () => {
 
     expect(etape2).toBeInTheDocument()
     expect(
-      within(etape2).getByRole('combobox', { name: 'Métier' })
+      within(etape2).getByRole('combobox', { name: /Métier/ })
     ).toHaveAttribute('aria-required')
     expect(
       within(etape2).getByRole('combobox', {
-        name: 'Localisation Saisissez une ville',
+        name: /Localisation Saisissez une ville/,
       })
     ).toHaveAttribute('aria-required')
     expect(() =>

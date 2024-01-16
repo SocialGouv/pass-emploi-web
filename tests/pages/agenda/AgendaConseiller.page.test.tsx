@@ -154,9 +154,11 @@ describe('Agenda - Onglet conseiller', () => {
           AOUT_25_0H,
           AOUT_26_23H
         )
-        expect(
-          screen.getByRole('row', { name: 'dimanche 28 août' })
-        ).toBeInTheDocument()
+        await waitFor(() =>
+          expect(
+            screen.getByRole('row', { name: 'dimanche 28 août' })
+          ).toBeInTheDocument()
+        )
 
         // When
         await userEvent.click(buttonPeriodeCourante)
@@ -171,9 +173,11 @@ describe('Agenda - Onglet conseiller', () => {
           SEPTEMBRE_1_0H,
           SEPTEMBRE_2_23H
         )
-        expect(
-          screen.getByRole('row', { name: 'dimanche 4 septembre' })
-        ).toBeInTheDocument()
+        await waitFor(() =>
+          expect(
+            screen.getByRole('row', { name: 'dimanche 4 septembre' })
+          ).toBeInTheDocument()
+        )
 
         // When
         await userEvent.click(periodeFutureButton)
@@ -188,9 +192,11 @@ describe('Agenda - Onglet conseiller', () => {
           SEPTEMBRE_8_0H,
           SEPTEMBRE_9_23H
         )
-        expect(
-          screen.getByRole('row', { name: 'jeudi 8 septembre' })
-        ).toBeInTheDocument()
+        await waitFor(() =>
+          expect(
+            screen.getByRole('row', { name: 'jeudi 8 septembre' })
+          ).toBeInTheDocument()
+        )
       })
 
       it('permet de charger les événements d’une journée', async () => {

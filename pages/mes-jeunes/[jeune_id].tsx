@@ -163,8 +163,6 @@ function FicheJeune({
     initialTracking += ' - Modification animation collective succès'
   if (alerte?.key === AlerteParam.suppressionAnimationCollective)
     initialTracking += ' - Suppression animation collective succès'
-  if (alerte?.key === AlerteParam.creationAction)
-    initialTracking += ' - Succès creation action'
   if (alerte?.key === AlerteParam.envoiMessage)
     initialTracking += ' - Succès envoi message'
 

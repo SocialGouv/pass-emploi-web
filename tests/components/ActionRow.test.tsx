@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -18,26 +19,29 @@ describe('<ActionRow/>', () => {
     expect(
       screen.getByText('Identifier ses atouts et ses compétences')
     ).toBeInTheDocument()
-    expect(screen.getByText('15/02/2022')).toBeInTheDocument()
-    expect(screen.getByText('À réaliser')).toBeInTheDocument()
+    expect(screen.getByText('20/02/2022')).toBeInTheDocument()
+    expect(screen.getByText('En retard')).toBeInTheDocument()
   })
 
-  it("devrait afficher un badge 'Commencée' quand l'action a été commencée", () => {
-    const actionCommencee = uneAction({ status: StatutAction.Commencee })
+  it("devrait afficher un badge 'En cours' quand l'action a été commencée", () => {
+    const actionCommencee = uneAction({
+      status: StatutAction.EnCours,
+      dateEcheance: DateTime.now().plus({ day: 1 }),
+    })
     render(<ActionRow action={actionCommencee} jeuneId={'1'} />)
-    expect(screen.getByText('Commencée')).toBeInTheDocument()
+    expect(screen.getByText('En cours')).toBeInTheDocument()
   })
 
   it("devrait afficher un badge 'Terminée' quand l'action est terminée", () => {
     const actionTerminee = uneAction({ status: StatutAction.Terminee })
     render(<ActionRow action={actionTerminee} jeuneId={'1'} />)
-    expect(screen.getByText('Terminée')).toBeInTheDocument()
+    expect(screen.getByText('Terminée - À qualifier')).toBeInTheDocument()
   })
 
-  it('devrait afficher une icône quand la date d’échéance de l’action est dépassée', () => {
+  it("devrait afficher un badge 'En retard' quand la date d’échéance de l’action est dépassée", () => {
     const action = uneAction()
     render(<ActionRow action={action} jeuneId={'1'} />)
     expect(screen.getByText('20/02/2022')).toBeInTheDocument()
-    expect(screen.getByLabelText('en retard')).toBeInTheDocument()
+    expect(screen.getByText('En retard')).toBeInTheDocument()
   })
 })

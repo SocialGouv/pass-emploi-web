@@ -4,7 +4,6 @@ import {
   Action,
   ActionPilotage,
   CreateurCommentaire,
-  EtatQualificationAction,
   QualificationAction,
   StatutAction,
 } from 'interfaces/action'
@@ -12,10 +11,6 @@ import { EntreeAgenda } from 'interfaces/agenda'
 import { toShortDate } from 'utils/date'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
-type EtatQualificationActionJson =
-  | 'A_QUALIFIER'
-  | 'NON_QUALIFIABLE'
-  | 'QUALIFIEE'
 
 export interface ActionJson {
   id: string
@@ -74,6 +69,14 @@ export interface CommentaireJson {
   message: string
 }
 
+export type ActionFormData = {
+  codeCategorie: string
+  titre: string
+  dateEcheance: string
+  statut: StatutAction
+  description?: string
+}
+
 export const CODE_QUALIFICATION_NON_SNP = 'NON_SNP'
 
 export function jsonToQualification(
@@ -81,9 +84,9 @@ export function jsonToQualification(
 ): QualificationAction {
   return {
     libelle: qualificationJson.libelle,
+    code: qualificationJson.code,
     isSituationNonProfessionnelle:
       qualificationJson.code !== CODE_QUALIFICATION_NON_SNP,
-    estQualifiee: Boolean(qualificationJson.heures),
   }
 }
 
@@ -95,7 +98,7 @@ export function jsonToAction(json: ActionJson): Action {
     comment: json.comment,
     creationDate: DateTime.fromFormat(json.creationDate, legacyFormat).toISO(),
     lastUpdate: DateTime.fromFormat(json.lastUpdate, legacyFormat).toISO(),
-    status: jsonToActionStatus(json.status),
+    status: jsonToActionStatus(json),
     creator: json.creator,
     creatorType: json.creatorType,
     dateEcheance: json.dateEcheance,
@@ -133,50 +136,52 @@ export function actionJsonToEntree(action: ActionJson): EntreeAgenda {
     date: DateTime.fromISO(action.dateEcheance),
     type: 'action',
     titre: action.content,
-    statut: jsonToActionStatus(action.status),
+    statut: jsonToActionStatus(action),
   }
 }
 
-function jsonToActionStatus(jsonStatus: ActionStatusJson): StatutAction {
-  switch (jsonStatus) {
+export function jsonToActionStatus({
+  status,
+  qualification,
+}: ActionJson): StatutAction {
+  switch (status) {
+    case 'not_started':
     case 'in_progress':
-      return StatutAction.Commencee
+      return StatutAction.EnCours
     case 'done':
+      if (qualification?.heures !== undefined) return StatutAction.Qualifiee
       return StatutAction.Terminee
     case 'canceled':
       return StatutAction.Annulee
-    case 'not_started':
-      return StatutAction.ARealiser
     default:
-      console.warn(
-        `Statut d'action ${jsonStatus} incorrect, traité comme ARealiser`
-      )
-      return StatutAction.ARealiser
+      console.warn(`Statut d'action ${status} incorrect, traité comme EnCours`)
+      return StatutAction.EnCours
   }
 }
 
 export function actionStatusToJson(status: StatutAction): ActionStatusJson {
   switch (status) {
-    case StatutAction.ARealiser:
-      return 'not_started'
-    case StatutAction.Commencee:
+    case StatutAction.EnCours:
       return 'in_progress'
     case StatutAction.Terminee:
+    case StatutAction.Qualifiee:
       return 'done'
     case StatutAction.Annulee:
       return 'canceled'
+    default:
+      return 'in_progress'
   }
 }
 
-export function etatQualificationActionToJson(
-  etat: EtatQualificationAction
-): EtatQualificationActionJson {
-  switch (etat) {
-    case EtatQualificationAction.AQualifier:
-      return 'A_QUALIFIER'
-    case EtatQualificationAction.NonQualifiable:
-      return 'NON_QUALIFIABLE'
-    case EtatQualificationAction.Qualifiee:
-      return 'QUALIFIEE'
+export function actionStatusToFiltre(status: StatutAction): string {
+  switch (status) {
+    case StatutAction.EnCours:
+      return '&statuts=in_progress&statuts=not_started'
+    case StatutAction.Terminee:
+      return '&statuts=done&etats=A_QUALIFIER'
+    case StatutAction.Annulee:
+      return '&statuts=canceled'
+    case StatutAction.Qualifiee:
+      return '&statuts=done&etats=QUALIFIEE'
   }
 }

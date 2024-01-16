@@ -11,11 +11,22 @@ import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-export const metadata: Metadata = {
-  title: 'Qualifier action - Actions jeune',
-}
-
 type QualificationParams = { action_id: string }
+
+export async function generateMetadata({
+  params,
+}: {
+  params: QualificationParams
+}): Promise<Metadata> {
+  const { accessToken } = await getMandatorySessionServerSide()
+
+  const { getAction } = await import('services/actions.service')
+  const actionContent = await getAction(params.action_id, accessToken)
+
+  return {
+    title: `Qualifier l’action ${actionContent?.action.content} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.prenom}`,
+  }
+}
 export default async function Qualification({
   params,
 }: {
@@ -35,17 +46,17 @@ export default async function Qualification({
 
   const { action, jeune } = actionContent
   if (action.status !== StatutAction.Terminee) notFound()
-  if (action.qualification?.estQualifiee) notFound()
 
   const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
   return (
     <>
-      <PageHeaderPortal header='Créer une situation non professionnelle' />
+      <PageHeaderPortal header='Qualifier l’action' />
       <PageRetourPortal lien={returnTo} />
 
       <QualificationPage
+        beneficiaire={jeune}
         action={action}
-        situationsNonProfessionnelles={situationsNonProfessionnelles}
+        categories={situationsNonProfessionnelles}
         returnTo={returnTo}
       />
     </>

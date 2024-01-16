@@ -229,7 +229,7 @@ export default function Conversation({
   }, [jeuneChat.chatId])
 
   return (
-    <div className='h-full flex flex-col bg-grey_100'>
+    <div className='h-full flex flex-col bg-grey_100 overflow-auto'>
       <HeaderChat
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
