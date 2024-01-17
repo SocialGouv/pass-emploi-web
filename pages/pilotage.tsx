@@ -258,6 +258,7 @@ function Pilotage({
             actionsInitiales={actions.donnees}
             metadonneesInitiales={actions.metadonnees}
             getActions={chargerActions}
+            onLienExterne={setTrackingLabel}
           />
         </div>
       )}

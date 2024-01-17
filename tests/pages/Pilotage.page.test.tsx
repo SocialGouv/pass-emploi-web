@@ -17,6 +17,7 @@ import Pilotage, { getServerSideProps } from 'pages/pilotage'
 import {
   getActionsAQualifierClientSide,
   getActionsAQualifierServerSide,
+  multiQualifier,
 } from 'services/actions.service'
 import {
   getConseillerServerSide,
@@ -98,6 +99,7 @@ describe('Pilotage', () => {
         ;(getSessionsACloreServerSide as jest.Mock).mockImplementation(
           async () => {}
         )
+        ;(multiQualifier as jest.Mock).mockResolvedValue(undefined)
         ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
         await act(async () =>
@@ -284,6 +286,51 @@ describe('Pilotage', () => {
               name: 'Liste des actions à qualifier',
             })
           ).toBeInTheDocument()
+        })
+        
+        describe('multi-qualification', () => {
+          describe('quand aucune action n’est sélectionnée', () => {
+            it('invite à sélectionner une action', () => {
+              expect(screen.getByText('Sélectionnez au moins un élément ci-dessous pour commencer à qualifier')).toBeInTheDocument()
+            })
+
+            it('désactive la qualification en SNP', () => {
+              expect(screen.getByRole('button', {name: 'Qualifier les actions en SNP'})).toHaveAttribute('disabled')
+            })
+          })
+
+          describe('quand une action est sélectionnée', () => {
+            beforeEach(async () => {
+              await userEvent.click(screen.getByRole('checkbox', {name: `Sélectionner ${actions[0].titre}`}))
+            })
+
+            it('permet de qualifier l’action', () => {
+              //Then
+              expect(screen.getByText('1 action sélectionnée. S’agit-il de SNP ou de non SNP ?')).toBeInTheDocument()
+              expect(screen.getByRole('button', {name: 'Qualifier les actions en SNP'})).not.toHaveAttribute('disabled')
+            })
+
+            describe('quand le conseiller qualifie en SNP', () => {
+              beforeEach(async () => {
+                await userEvent.click(screen.getByRole('button', {name: 'Qualifier les actions en SNP'}))
+              })
+
+              it('affiche la modale de qualification en SNP', () => {
+                expect(screen.getByText(`Qualifier l’action de ${actions[0].beneficiaire.prenom} ${actions[0].beneficiaire.nom} en SNP ?`)).toBeInTheDocument()
+                expect(screen.getByText('Les informations seront envoyées à i-milo, qui comptera automatiquement les heures associées à chaque type de SNP.')).toBeInTheDocument()
+                expect(screen.getByRole('button', {name: 'Annuler'})).toBeInTheDocument()
+                expect(screen.getByRole('button', {name: 'Qualifier et envoyer à i-milo'})).toBeInTheDocument()
+              })
+
+              it('qualifie l’action', async () => {
+                //When 
+                await userEvent.click(screen.getByRole('button', {name: 'Qualifier et envoyer à i-milo'}))
+
+                //Then 
+                expect(multiQualifier).toHaveBeenCalledWith([{"codeQualification": actions[0].categorie!.code, "idAction": actions[0].id}], true)
+              })
+            })
+          })
         })
       })
 

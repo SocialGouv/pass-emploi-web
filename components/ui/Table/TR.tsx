@@ -14,23 +14,30 @@ type TRProps = Children & {
   asDiv?: boolean
   onClick?: (e: MouseEvent) => void
 }
-type TRLinkProps = Children & { href: string; label: string }
+type TRLinkProps = Children & {
+  href: string
+  label: string
+  isSelected?: boolean
+}
 
 const TR = forwardRef(
   (props: TRProps | TRLinkProps, ref: ForwardedRef<any>) => {
     const style = 'focus-within:bg-primary_lighten rounded-base shadow-base'
     const clickableStyle =
       'group cursor-pointer hover:bg-primary_lighten hover:rounded-base'
+    const selectedStyle = 'bg-primary_lighten shadow-m'
 
     if (isLink(props)) {
-      const { href, label, children } = props
+      const { href, label, children, isSelected } = props
       return (
         <Link
           href={href}
           role='row'
           aria-label={label}
           title={label}
-          className={`table-row ${style} ${clickableStyle}`}
+          className={`table-row shadow-base ${clickableStyle} ${
+            isSelected ? selectedStyle : ''
+          }`}
           ref={ref}
         >
           {React.Children.map(

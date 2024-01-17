@@ -5,7 +5,9 @@ import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifi
 import Pagination from 'components/ui/Table/Pagination'
 import { ActionPilotage } from 'interfaces/action'
 import { TriActionsAQualifier } from 'services/actions.service'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { MetadonneesPagination } from 'types/pagination'
+import { useAlerte } from 'utils/alerteContext'
 
 interface OngletActionsPilotageProps {
   actionsInitiales: ActionPilotage[]
@@ -17,13 +19,16 @@ interface OngletActionsPilotageProps {
     actions: ActionPilotage[]
     metadonnees: MetadonneesPagination
   }>
+  onLienExterne: (label: string) => void
 }
 
 export default function OngletActionsPilotage({
   actionsInitiales,
   metadonneesInitiales,
   getActions,
+  onLienExterne,
 }: OngletActionsPilotageProps) {
+  const [_, setAlerte] = useAlerte()
   const [actions, setActions] = useState<ActionPilotage[]>(actionsInitiales)
   const [metadonnees, setMetadonnees] =
     useState<MetadonneesPagination>(metadonneesInitiales)
@@ -44,6 +49,26 @@ export default function OngletActionsPilotage({
     const update = await getActions(nouvellePage, tri ?? undefined)
     setActions(update.actions)
     setMetadonnees(update.metadonnees)
+  }
+
+  async function multiQualifierActions(
+    qualificationSNP: boolean,
+    actionsSelectionnees: Array<{ idAction: string; codeQualification: string }>
+  ) {
+    const { multiQualifier } = await import('services/actions.service')
+    await multiQualifier(
+      actionsSelectionnees as Array<{
+        idAction: string
+        codeQualification: string
+      }>,
+      qualificationSNP
+    )
+    setAlerte(AlerteParam.multiQualificationSNP)
+    setActions(
+      actions.filter(
+        (action) => !actionsSelectionnees.some((a) => a.idAction === action.id)
+      )
+    )
   }
 
   return (
@@ -67,6 +92,8 @@ export default function OngletActionsPilotage({
             actions={actions}
             tri={tri}
             onTriActions={trierActions}
+            onLienExterne={onLienExterne}
+            onQualification={multiQualifierActions}
           />
           {metadonnees.nombrePages > 1 && (
             <div className='mt-6'>

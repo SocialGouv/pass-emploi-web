@@ -193,6 +193,13 @@ export async function qualifier(
   return jsonToQualification(content)
 }
 
+export async function multiQualifier(actions: Array<{idAction: string, codeQualification: string}>, estSNP: boolean): Promise<void> {
+  const session = await getSession()
+  const payload = { estSNP, qualifications: actions }
+
+  await apiPost('/conseillers/milo/actions/qualifier', payload, session!.accessToken)
+}
+
 export async function deleteAction(idAction: string): Promise<void> {
   const session = await getSession()
   await apiDelete(`/actions/${idAction}`, session!.accessToken)
