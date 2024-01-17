@@ -11,6 +11,10 @@ interface TagProps {
   iconLabel?: string
 }
 
+interface TagCategorieActionProps {
+  categorie?: string
+}
+
 function Tag({
   label,
   color,
@@ -46,4 +50,26 @@ export function TagMetier({ className, ...props }: TagProps) {
 
 export function TagStatut({ className, ...props }: TagProps) {
   return <Tag className={'rounded-l ' + className} {...props} />
+}
+
+export function TagCategorieAction({ categorie }: TagCategorieActionProps) {
+  if (categorie)
+    return (
+      <Tag
+        className='rounded-l '
+        backgroundColor='primary_lighten'
+        color='primary'
+        label={categorie}
+      />
+    )
+
+  return (
+    <Tag
+      className='rounded-l'
+      backgroundColor='none'
+      color='alert'
+      iconName={IconName.Warning}
+      label='Catégorie manquante'
+    />
+  )
 }

@@ -147,19 +147,17 @@ export async function modifierAction(
 ): Promise<void> {
   const session = await getSession()
 
-  const actionModifiee = { 
-    status: modifications.statut ? actionStatusToJson(modifications.statut) : undefined,
+  const actionModifiee = {
+    status: modifications.statut
+      ? actionStatusToJson(modifications.statut)
+      : undefined,
     contenu: modifications.titre,
     description: modifications.description,
     dateEcheance: modifications.dateEcheance,
-    codeQualification: modifications.codeCategorie
+    codeQualification: modifications.codeCategorie,
   }
 
-  await apiPut(
-    `/actions/${idAction}`,
-    actionModifiee,
-    session!.accessToken
-  )
+  await apiPut(`/actions/${idAction}`, actionModifiee, session!.accessToken)
 }
 
 export async function qualifier(

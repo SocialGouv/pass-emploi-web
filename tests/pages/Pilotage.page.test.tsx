@@ -1,4 +1,4 @@
-import { act, getByText, screen, waitFor, within } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
@@ -49,11 +49,23 @@ describe('Pilotage', () => {
       let actions: ActionPilotage[]
       let animationsCollectives: AnimationCollectivePilotage[]
       let sessions: SessionsAClore[]
+      let actionSansCategorie: ActionPilotage
 
       beforeEach(async () => {
         actions = uneListeDActionsAQualifier()
         animationsCollectives = uneListeDAnimationCollectiveAClore()
         sessions = uneListeDeSessionsAClore()
+        actionSansCategorie = {
+          id: '009347ea-4acb-4b61-9e08-b6caf38e2812',
+          titre: 'Regarder Tchoupi faire du tricycle',
+          beneficiaire: {
+            id: 'tchoupi',
+            nom: 'Trotro',
+            prenom: 'L’âne',
+          },
+          dateFinReelle: '16/01/2024',
+        }
+
         ;(getActionsAQualifierClientSide as jest.Mock).mockImplementation(
           async (_, page) => ({
             actions: [
@@ -94,7 +106,7 @@ describe('Pilotage', () => {
             <Pilotage
               pageTitle=''
               actions={{
-                donnees: uneListeDActionsAQualifier(),
+                donnees: [...uneListeDActionsAQualifier(), actionSansCategorie],
                 metadonnees: { nombrePages: 3, nombreTotal: 25 },
               }}
               animationsCollectives={{
@@ -159,6 +171,18 @@ describe('Pilotage', () => {
               name: 'Titre de l’action',
             })
           ).toBeInTheDocument()
+          expect(
+            within(tableauDActions).getByRole('columnheader', {
+              name: 'Catégorie',
+            })
+          ).toBeInTheDocument()
+        })
+
+        it('affiche information catégorie manquante', async () => {
+          // Then
+          expect(within(screen.getByRole('row', {
+            name: /Regarder Tchoupi faire du tricycle/,
+          })).getByText('Catégorie manquante')).toBeInTheDocument()
         })
 
         it('affiche les actions du conseiller à qualifier', async () => {
@@ -179,6 +203,7 @@ describe('Pilotage', () => {
               'href',
               `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`
             )
+            expect(screen.getByText(action.categorie!)).toBeInTheDocument()
           })
         })
 
@@ -212,8 +237,8 @@ describe('Pilotage', () => {
 
           // Then
           const [_header, ...actions] = screen.getAllByRole('row')
-          expect(within(actions[0]).getByText(/Tran/)).toBeInTheDocument()
-          expect(within(actions[1]).getByText(/Granger/)).toBeInTheDocument()
+          expect(within(actions[0]).getByText(/Trotro/)).toBeInTheDocument()
+          expect(within(actions[1]).getByText(/Tran/)).toBeInTheDocument()
         })
 
         it('met à jour les actions avec la page demandée ', async () => {

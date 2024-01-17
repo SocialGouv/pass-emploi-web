@@ -35,6 +35,7 @@ export interface ActionPilotageJson {
     prenom: string
   }
   dateFinReelle: string
+  categorie?: string
 }
 
 export interface QualificationActionJson {
@@ -118,7 +119,7 @@ export function jsonToAction(json: ActionJson): Action {
 export function jsonToActionPilotage(
   action: ActionPilotageJson
 ): ActionPilotage {
-  return {
+  const actionPilotage: ActionPilotage = {
     id: action.id,
     titre: action.titre,
     beneficiaire: {
@@ -128,6 +129,10 @@ export function jsonToActionPilotage(
     },
     dateFinReelle: toShortDate(action.dateFinReelle),
   }
+
+  if(action.categorie) actionPilotage.categorie = action.categorie
+  
+  return actionPilotage
 }
 
 export function actionJsonToEntree(action: ActionJson): EntreeAgenda {

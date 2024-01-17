@@ -22,6 +22,7 @@ export default function TagStatutAction({
         color: 'warning',
         altColor: 'warning_lighten',
       }
+
     return propsStatutsActions[status]
   }
 
