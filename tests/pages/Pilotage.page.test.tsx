@@ -65,13 +65,12 @@ describe('Pilotage', () => {
           },
           dateFinReelle: '16/01/2024',
         }
-
         ;(getActionsAQualifierClientSide as jest.Mock).mockImplementation(
-          async (_, page) => ({
+          async (_, { page, tri }) => ({
             actions: [
               {
-                id: 'action-page-' + page,
-                titre: 'Action page ' + page,
+                id: `action-page-${page}-${tri}`,
+                titre: `Action page ${page} ${tri}`,
                 beneficiaire: {
                   id: 'hermione',
                   nom: 'Granger',
@@ -180,9 +179,13 @@ describe('Pilotage', () => {
 
         it('affiche information catégorie manquante', async () => {
           // Then
-          expect(within(screen.getByRole('row', {
-            name: /Regarder Tchoupi faire du tricycle/,
-          })).getByText('Catégorie manquante')).toBeInTheDocument()
+          expect(
+            within(
+              screen.getByRole('row', {
+                name: /Regarder Tchoupi faire du tricycle/,
+              })
+            ).getByText('Catégorie manquante')
+          ).toBeInTheDocument()
         })
 
         it('affiche les actions du conseiller à qualifier', async () => {
@@ -203,12 +206,14 @@ describe('Pilotage', () => {
               'href',
               `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`
             )
-            expect(screen.getByText(action.categorie!.libelle)).toBeInTheDocument()
+            expect(
+              screen.getByText(action.categorie!.libelle)
+            ).toBeInTheDocument()
           })
         })
 
         it('permet de trier les actions par nom du bénéficiaire par ordre alphabétique', async () => {
-          //When 
+          //When
           await userEvent.click(
             screen.getByRole('button', {
               name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
@@ -216,13 +221,17 @@ describe('Pilotage', () => {
           )
 
           // Then
-          const [_header, ...actions] = screen.getAllByRole('row')
-          expect(within(actions[0]).getByText(/Android/)).toBeInTheDocument()
-          expect(within(actions[1]).getByText(/Caramelle/)).toBeInTheDocument()
+          expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
+            page: 1,
+            tri: 'ALPHABETIQUE',
+          })
+          expect(
+            screen.getByText('Action page 1 ALPHABETIQUE')
+          ).toBeInTheDocument()
         })
 
         it('permet de trier les actions par nom du bénéficiaire par ordre alphabétique inversé', async () => {
-          //When 
+          //When
           await userEvent.click(
             screen.getByRole('button', {
               name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
@@ -236,18 +245,30 @@ describe('Pilotage', () => {
           )
 
           // Then
-          const [_header, ...actions] = screen.getAllByRole('row')
-          expect(within(actions[0]).getByText(/Trotro/)).toBeInTheDocument()
-          expect(within(actions[1]).getByText(/Tran/)).toBeInTheDocument()
+          expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
+            page: 1,
+            tri: 'INVERSE',
+          })
+          expect(screen.getByText('Action page 1 INVERSE')).toBeInTheDocument()
         })
 
         it('met à jour les actions avec la page demandée ', async () => {
           // When
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
+            })
+          )
           await userEvent.click(screen.getByLabelText('Page 2'))
 
           // Then
-          expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', 2)
-          expect(screen.getByText('Action page 2')).toBeInTheDocument()
+          expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
+            page: 2,
+            tri: 'ALPHABETIQUE',
+          })
+          expect(
+            screen.getByText('Action page 2 ALPHABETIQUE')
+          ).toBeInTheDocument()
         })
 
         it("permet d'accéder aux animations collectives", async () => {

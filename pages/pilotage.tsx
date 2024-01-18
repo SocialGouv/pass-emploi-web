@@ -15,6 +15,7 @@ import {
 } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
+import { TriActionsAQualifier } from 'services/actions.service'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { SessionsAClore } from 'services/sessions.service'
@@ -98,14 +99,20 @@ function Pilotage({
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
-  async function chargerActions(page: number): Promise<{
+  async function chargerActions(
+    page: number,
+    tri?: TriActionsAQualifier
+  ): Promise<{
     actions: ActionPilotage[]
     metadonnees: MetadonneesPagination
   }> {
     const { getActionsAQualifierClientSide } = await import(
       'services/actions.service'
     )
-    const result = await getActionsAQualifierClientSide(conseiller.id, page)
+    const result = await getActionsAQualifierClientSide(conseiller.id, {
+      page,
+      tri,
+    })
 
     setTotalActions(result.metadonnees.nombreTotal)
     return result

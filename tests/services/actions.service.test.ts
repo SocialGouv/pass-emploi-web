@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
+import { apiDelete, apiGet, apiPost } from 'clients/api.client'
 import {
   desCategories,
   unCommentaire,
@@ -25,7 +25,6 @@ import {
   getSituationsNonProfessionnelles,
   qualifier,
   recupererLesCommentaires,
-  modifierAction,
 } from 'services/actions.service'
 import { ApiError } from 'utils/httpClient'
 
@@ -429,11 +428,14 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await getActionsAQualifierClientSide('whatever', 1)
+      const actual = await getActionsAQualifierClientSide('whatever', {
+        page: 1,
+        tri: 'ALPHABETIQUE',
+      })
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/v2/conseillers/whatever/actions?page=1&aQualifier=true',
+        '/v2/conseillers/whatever/actions?page=1&aQualifier=true&tri=BENEFICIAIRE_ALPHABETIQUE',
         'accessToken'
       )
       expect(actual).toStrictEqual({
