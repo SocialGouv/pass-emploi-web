@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQualificationModal'
+import ConfirmationMultiQualificationModalSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
@@ -49,12 +50,21 @@ export default function TableauActionsAQualifier({
     afficherModaleMultiQualification,
     setAfficherModaleMultiQualification,
   ] = useState<boolean>(false)
+  const [
+    afficherModaleMultiQualificationNonSNP,
+    setAfficherModaleMultiQualificationNonSNP,
+  ] = useState<boolean>(false)
   const [actionSansCategorieSelectionnee, setActionSansCategorieSelectionnee] =
     useState<boolean>(false)
   const [
     plusieursBeneficiairesSelectionnes,
     setPlusieursBeneficiairesSelectionnes,
   ] = useState<boolean>(false)
+
+  const boutonsDisabled =
+    actionsSelectionnees.length === 0 ||
+    actionSansCategorieSelectionnee ||
+    plusieursBeneficiairesSelectionnes
 
   function selectionnerAction({ id, categorie }: ActionPilotage) {
     const selection = [...actionsSelectionnees]
@@ -93,7 +103,7 @@ export default function TableauActionsAQualifier({
     return actionsSelectionnees.some((action) => action.idAction === id)
   }
 
-  function recupererNombreBeneficiairesSelectionnes(): Set<BaseJeune> {
+  function recupererBeneficiairesSelectionnes(): Set<BaseJeune> {
     return new Set(
       actionsSelectionnees.map(
         ({ idAction }) =>
@@ -102,15 +112,17 @@ export default function TableauActionsAQualifier({
     )
   }
 
-  async function qualifier() {
+  async function qualifier(enSNP: boolean) {
     await onQualification(
-      true,
+      enSNP,
       actionsSelectionnees as Array<{
         idAction: string
         codeQualification: string
       }>
     )
-    setAfficherModaleMultiQualification(false)
+    enSNP
+      ? setAfficherModaleMultiQualification(false)
+      : setAfficherModaleMultiQualificationNonSNP(false)
     setActionsSelectionnees([])
   }
 
@@ -119,7 +131,7 @@ export default function TableauActionsAQualifier({
       actionsSelectionnees.some((action) => !action.codeQualification)
     )
 
-    const beneficiairesSelectionnes = recupererNombreBeneficiairesSelectionnes()
+    const beneficiairesSelectionnes = recupererBeneficiairesSelectionnes()
     setBeneficiaireSelectionne(beneficiairesSelectionnes.values().next().value)
     setPlusieursBeneficiairesSelectionnes(beneficiairesSelectionnes.size > 1)
   }, [actionsSelectionnees])
@@ -151,14 +163,18 @@ export default function TableauActionsAQualifier({
             `${actionsSelectionnees.length} actions sélectionnées. S’agit-il de SNP ou de non SNP ?`}
         </p>
         <Button
+          onClick={() => setAfficherModaleMultiQualificationNonSNP(true)}
+          style={ButtonStyle.SECONDARY}
+          label='Enregistrer les actions en non SNP'
+          disabled={boutonsDisabled}
+        >
+          Enregistrer les actions en non SNP
+        </Button>
+        <Button
           onClick={() => setAfficherModaleMultiQualification(true)}
           style={ButtonStyle.PRIMARY}
           label='Qualifier les actions en SNP'
-          disabled={
-            actionsSelectionnees.length === 0 ||
-            actionSansCategorieSelectionnee ||
-            plusieursBeneficiairesSelectionnes
-          }
+          disabled={boutonsDisabled}
         >
           Qualifier les actions en SNP
         </Button>
@@ -265,9 +281,18 @@ export default function TableauActionsAQualifier({
         <ConfirmationMultiQualificationModal
           actions={actionsSelectionnees}
           beneficiaire={beneficiaireSelectionne!}
-          onConfirmation={qualifier}
+          onConfirmation={() => qualifier(true)}
           onCancel={() => setAfficherModaleMultiQualification(false)}
           onLienExterne={onLienExterne}
+        />
+      )}
+
+      {afficherModaleMultiQualificationNonSNP && (
+        <ConfirmationMultiQualificationModalSNP
+          actions={actionsSelectionnees}
+          beneficiaire={beneficiaireSelectionne!}
+          onConfirmation={() => qualifier(false)}
+          onCancel={() => setAfficherModaleMultiQualificationNonSNP(false)}
         />
       )}
     </>

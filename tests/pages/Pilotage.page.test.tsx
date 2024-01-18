@@ -300,7 +300,12 @@ describe('Pilotage', () => {
               ).toBeInTheDocument()
             })
 
-            it('désactive la qualification en SNP', () => {
+            it('désactive la qualification', () => {
+              expect(
+                screen.getByRole('button', {
+                  name: 'Enregistrer les actions en non SNP',
+                })
+              ).toHaveAttribute('disabled')
               expect(
                 screen.getByRole('button', {
                   name: 'Qualifier les actions en SNP',
@@ -379,6 +384,48 @@ describe('Pilotage', () => {
                     },
                   ],
                   true
+                )
+              })
+            })
+
+            describe('quand le conseiller enregisre en non SNP', () => {
+              beforeEach(async () => {
+                await userEvent.click(
+                  screen.getByRole('button', {
+                    name: 'Enregistrer les actions en non SNP',
+                  })
+                )
+              })
+
+              it('affiche la modale d’enregistrement en non SNP', () => {
+                expect(
+                  screen.getByText(
+                    `Enregistrer l’action de ${actions[0].beneficiaire.prenom} ${actions[0].beneficiaire.nom} en non SNP ?`
+                  )
+                ).toBeInTheDocument()
+                expect(
+                  screen.getByText(
+                    'Les actions non-SNP ne sont pas transmises à i-milo, pour ne pas fausser le calcul d’heures de votre bénéficiaire.'
+                  )
+                ).toBeInTheDocument()
+                expect(
+                  screen.getByRole('button', { name: 'Annuler' })
+                ).toBeInTheDocument()
+                expect(
+                  screen.getByRole('button', { name: 'Enregistrer en non SNP' })
+                ).toBeInTheDocument()
+              })
+
+              it('enregistre l’action', async () => {
+                //When
+                await userEvent.click(
+                  screen.getByRole('button', { name: 'Enregistrer en non SNP' })
+                )
+
+                //Then
+                expect(qualifierActions).toHaveBeenCalledWith(
+                  [{ codeQualification: 'NON_SNP', idAction: actions[0].id }],
+                  false
                 )
               })
             })

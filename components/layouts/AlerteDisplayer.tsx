@@ -127,6 +127,10 @@ const ALERTES: DictAlertes = {
       'Vous pouvez encore modifier ces actions, uniquement dans i-milo.\n' +
       'Délai d’actualisation entre l’app CEJ et i-milo : environ 24h.',
   },
+  multiQualificationNonSNP: {
+    title: 'Actions enregistrées en non-SNP',
+    sub: 'C’est enregistré ! Vous pouvez poursuivre votre travail.',
+  },
   partageOffre: { title: 'L’offre a bien été partagée' },
   suggestionRecherche: {
     title: 'La recherche et ses critères ont bien été partagés',
