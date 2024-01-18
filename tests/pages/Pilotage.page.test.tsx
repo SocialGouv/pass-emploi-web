@@ -203,7 +203,7 @@ describe('Pilotage', () => {
               'href',
               `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`
             )
-            expect(screen.getByText(action.categorie!)).toBeInTheDocument()
+            expect(screen.getByText(action.categorie!.libelle)).toBeInTheDocument()
           })
         })
 

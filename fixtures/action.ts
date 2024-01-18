@@ -98,7 +98,10 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         prenom: 'Hermione',
       },
       dateFinReelle: '18/12/2022',
-      categorie: 'Emploi',
+      categorie: {
+        code: 'EMPLOI',
+        libelle: 'Emploi'
+      }
     },
     {
       id: '04816605-60a7-4666-9dc5-607d71a570ff',
@@ -109,7 +112,10 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         prenom: 'Bryan',
       },
       dateFinReelle: '19/12/2022',
-      categorie: 'Sports,culture,loisir',
+      categorie: {
+        code: 'SPORTS_CULTURE_LOISIR',
+        libelle: 'Sports,culture,loisir'
+      }
     },
     {
       id: 'a9ced2e0-314d-47a2-8275-0502e48dde57',
@@ -120,7 +126,10 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         prenom: 'Mélodie',
       },
       dateFinReelle: '10/01/2023',
-      categorie: 'Formation',
+      categorie: {
+        code: 'FORMATION',
+        libelle: 'Formation',
+      }
     },
     {
       id: '3f09f448-c2db-4129-92ee-2349177bec52',
@@ -131,7 +140,10 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         prenom: 'Amelle',
       },
       dateFinReelle: '30/01/2023',
-      categorie: 'Logement',
+      categorie: {
+        code: 'LOGEMENT',
+        libelle: 'Logement',
+      }
     },
     {
       id: '39095c2f-c4d9-4a8b-b6fe-9a0dc938442c',
@@ -142,7 +154,10 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         prenom: 'Gabriel',
       },
       dateFinReelle: '31/01/2023',
-      categorie: 'Santé',
+      categorie: {
+        code: 'SANTE',
+        libelle: 'Santé',
+      }
     },
   ]
 }
@@ -158,7 +173,10 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         prenom: 'Hermione',
       },
       dateFinReelle: '2022-12-18T14:03:56.395Z',
-      categorie: 'Emploi',
+      categorie: {
+        code: 'EMPLOI',
+        libelle: 'Emploi',
+      }
     },
     {
       id: '04816605-60a7-4666-9dc5-607d71a570ff',
@@ -169,7 +187,10 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         prenom: 'Bryan',
       },
       dateFinReelle: '2022-12-19T14:03:56.395Z',
-      categorie: 'Sports,culture,loisir',
+      categorie: {
+        code: 'SPORTS_CULTURE_LOISIR',
+        libelle: 'Sports,culture,loisir',
+      }
     },
     {
       id: 'a9ced2e0-314d-47a2-8275-0502e48dde57',
@@ -180,7 +201,10 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         prenom: 'Mélodie',
       },
       dateFinReelle: '2023-01-10T15:26:00.055Z',
-      categorie: 'Formation',
+      categorie: {
+        code: 'FORMATION',
+        libelle: 'Formation',
+      }
     },
     {
       id: '3f09f448-c2db-4129-92ee-2349177bec52',
@@ -191,7 +215,10 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         prenom: 'Amelle',
       },
       dateFinReelle: '2023-01-30T15:12:20.342Z',
-      categorie: 'Logement',
+      categorie: {
+        code: 'LOGEMENT',
+        libelle: 'Logement',
+      }
     },
     {
       id: '39095c2f-c4d9-4a8b-b6fe-9a0dc938442c',
@@ -202,7 +229,10 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         prenom: 'Gabriel',
       },
       dateFinReelle: '2023-01-31T15:12:20.342Z',
-      categorie: 'Santé',
+      categorie: {
+        code: 'SANTE',
+        libelle: 'Santé',
+      }
     },
   ]
 }

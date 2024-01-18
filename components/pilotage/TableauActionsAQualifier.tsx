@@ -87,7 +87,7 @@ export default function TableauActionsAQualifier({
                 </TD>
                 <TD>{action.dateFinReelle}</TD>
                 <TD>
-                  <TagCategorieAction categorie={action.categorie} />
+                  <TagCategorieAction categorie={action.categorie?.libelle} />
                 </TD>
                 <TD isBold>
                   <span className='flex flex-row justify-between'>
