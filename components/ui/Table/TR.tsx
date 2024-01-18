@@ -6,38 +6,39 @@ import React, {
   ReactElement,
 } from 'react'
 
-type Children = {
+type CommonProps = {
   children: ReactElement | Array<ReactElement | false | undefined>
+  isSelected?: boolean
 }
-type TRProps = Children & {
+type TRProps = CommonProps & {
   isHeader?: boolean
   asDiv?: boolean
   onClick?: (e: MouseEvent) => void
 }
-type TRLinkProps = Children & {
+type TRLinkProps = CommonProps & {
   href: string
   label: string
-  isSelected?: boolean
 }
 
 const TR = forwardRef(
   (props: TRProps | TRLinkProps, ref: ForwardedRef<any>) => {
-    const style = 'focus-within:bg-primary_lighten rounded-base shadow-base'
+    const { children, isSelected } = props
+    const selectedStyle = 'bg-primary_lighten shadow-m'
+    const style = `focus-within:bg-primary_lighten rounded-base shadow-base ${
+      isSelected ? selectedStyle : ''
+    }`
     const clickableStyle =
       'group cursor-pointer hover:bg-primary_lighten hover:rounded-base'
-    const selectedStyle = 'bg-primary_lighten shadow-m'
 
     if (isLink(props)) {
-      const { href, label, children, isSelected } = props
+      const { href, label } = props
       return (
         <Link
           href={href}
           role='row'
           aria-label={label}
           title={label}
-          className={`table-row shadow-base ${clickableStyle} ${
-            isSelected ? selectedStyle : ''
-          }`}
+          className={`table-row ${style} ${clickableStyle}`}
           ref={ref}
         >
           {React.Children.map(
@@ -47,7 +48,7 @@ const TR = forwardRef(
         </Link>
       )
     } else if (props.asDiv) {
-      const { isHeader, onClick, children } = props
+      const { isHeader, onClick } = props
       return (
         <div
           role='row'
@@ -64,7 +65,7 @@ const TR = forwardRef(
         </div>
       )
     } else {
-      const { isHeader, onClick, children } = props
+      const { isHeader, onClick } = props
       return (
         <tr
           className={`${!isHeader ? style : ''} ${

@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 
 import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
 import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Pagination from 'components/ui/Table/Pagination'
 import { ActionPilotage } from 'interfaces/action'
-import { TriActionsAQualifier } from 'services/actions.service'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { TriActionsAQualifier } from 'services/actions.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 
@@ -32,6 +33,7 @@ export default function OngletActionsPilotage({
   const [actions, setActions] = useState<ActionPilotage[]>(actionsInitiales)
   const [metadonnees, setMetadonnees] =
     useState<MetadonneesPagination>(metadonneesInitiales)
+  const [actionsEnErreur, setActionsEnErreur] = useState<boolean>(false)
 
   const [page, setPage] = useState<number>(1)
   const [tri, setTri] = useState<TriActionsAQualifier>()
@@ -51,28 +53,43 @@ export default function OngletActionsPilotage({
     setMetadonnees(update.metadonnees)
   }
 
-  async function multiQualifierActions(
+  async function qualifierActions(
     qualificationSNP: boolean,
     actionsSelectionnees: Array<{ idAction: string; codeQualification: string }>
   ) {
-    const { multiQualifier } = await import('services/actions.service')
-    await multiQualifier(
-      actionsSelectionnees as Array<{
-        idAction: string
-        codeQualification: string
-      }>,
+    setActionsEnErreur(false)
+    const { qualifierActions: _qualifierActions } = await import(
+      'services/actions.service'
+    )
+    const { idsActionsEnErreur } = await _qualifierActions(
+      actionsSelectionnees,
       qualificationSNP
     )
-    setAlerte(AlerteParam.multiQualificationSNP)
+
+    let actionsQualifiees = actionsSelectionnees
+    if (idsActionsEnErreur.length) {
+      setActionsEnErreur(true)
+      actionsQualifiees = actionsSelectionnees.filter(
+        (action) => !idsActionsEnErreur.some((id) => id === action.idAction)
+      )
+    } else setAlerte(AlerteParam.multiQualificationSNP)
+
     setActions(
       actions.filter(
-        (action) => !actionsSelectionnees.some((a) => a.idAction === action.id)
+        (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
       )
     )
   }
 
   return (
     <>
+      {actionsEnErreur && (
+        <FailureAlert
+          label='Certaines actions n’ont pas pu être qualifiées.'
+          onAcknowledge={() => setActionsEnErreur(false)}
+        />
+      )}
+
       {metadonnees.nombreTotal === 0 && (
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
           <EmptyStateImage
@@ -93,7 +110,7 @@ export default function OngletActionsPilotage({
             tri={tri}
             onTriActions={trierActions}
             onLienExterne={onLienExterne}
-            onQualification={multiQualifierActions}
+            onQualification={qualifierActions}
           />
           {metadonnees.nombrePages > 1 && (
             <div className='mt-6'>

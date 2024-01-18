@@ -12,6 +12,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { ActionPilotage } from 'interfaces/action'
+import { BaseJeune } from 'interfaces/jeune'
 import { TriActionsAQualifier } from 'services/actions.service'
 
 type TableauActionsConseillerProps = {
@@ -25,7 +26,7 @@ type TableauActionsConseillerProps = {
   ) => Promise<void>
 }
 
-interface ActionAQualifier {
+type ActionAQualifier = {
   idAction: string
   codeQualification?: string
 }
@@ -41,6 +42,9 @@ export default function TableauActionsAQualifier({
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
   >([])
+  const [beneficiaireSelectionne, setBeneficiaireSelectionne] =
+    useState<BaseJeune>()
+
   const [
     afficherModaleMultiQualification,
     setAfficherModaleMultiQualification,
@@ -52,60 +56,31 @@ export default function TableauActionsAQualifier({
     setPlusieursBeneficiairesSelectionnes,
   ] = useState<boolean>(false)
 
-  const titreEncartQualification =
-    actionsSelectionnees.length === 0
-      ? 'Sélectionnez au moins un élément ci-dessous pour commencer à qualifier'
-      : `${
-          actionsSelectionnees.length === 1
-            ? '1 action sélectionnée'
-            : `${actionsSelectionnees.length} actions sélectionnées`
-        }. S’agit-il de SNP ou de non SNP ?`
-
-  function selectionnerAction(actionSelectionnee: ActionAQualifier) {
+  function selectionnerAction({ id, categorie }: ActionPilotage) {
     const selection = [...actionsSelectionnees]
 
     const indexAction = actionsSelectionnees.findIndex(
-      (a) => actionSelectionnee.idAction === a.idAction
+      ({ idAction }) => id === idAction
     )
-    if (indexAction !== -1) {
-      selection.splice(indexAction, 1)
-    } else {
-      selection.push(actionSelectionnee)
-    }
+    if (indexAction !== -1) selection.splice(indexAction, 1)
+    else selection.push({ idAction: id, codeQualification: categorie?.code })
 
     setActionsSelectionnees(selection)
-    mettreAJourCheckboxToutSelectionner(selection.length)
   }
 
   function selectionnerToutesLesActions() {
     if (actionsSelectionnees.length === 0) {
       setActionsSelectionnees(
-        actions.map((action) => {
+        actions.map(({ id, categorie }) => {
           return {
-            idAction: action.id,
-            codeQualification: action.categorie?.code,
+            idAction: id,
+            codeQualification: categorie?.code,
           }
         })
       )
-      mettreAJourCheckboxToutSelectionner(actions.length)
     } else {
       setActionsSelectionnees([])
-      mettreAJourCheckboxToutSelectionner(0)
     }
-  }
-
-  function mettreAJourCheckboxToutSelectionner(tailleSelection: number) {
-    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
-    const isChecked = tailleSelection === actions.length
-    const isIndeterminate =
-      tailleSelection !== actions.length && tailleSelection > 0
-
-    toutSelectionnerCheckbox.checked = isChecked
-    toutSelectionnerCheckbox.indeterminate = isIndeterminate
-
-    if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
-    else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
-    else toutSelectionnerCheckbox.ariaChecked = 'false'
   }
 
   function inverserTriBeneficiaires() {
@@ -118,30 +93,13 @@ export default function TableauActionsAQualifier({
     return actionsSelectionnees.some((action) => action.idAction === id)
   }
 
-  function recupererNombreBeneficiairesSelectionnes() {
-    const resultatsUniques = actionsSelectionnees.reduce(
-      (
-        acc: {
-          id: string
-          nom: string
-          prenom: string
-        }[],
-        actionSelectionneee
-      ) => {
-        const actionCorrespondante = actions.find(
-          (a) => a.id === actionSelectionneee.idAction
-        )
-        if (
-          actionCorrespondante &&
-          !acc.includes(actionCorrespondante.beneficiaire)
-        ) {
-          acc.push(actionCorrespondante.beneficiaire)
-        }
-        return acc
-      },
-      []
+  function recupererNombreBeneficiairesSelectionnes(): Set<BaseJeune> {
+    return new Set(
+      actionsSelectionnees.map(
+        ({ idAction }) =>
+          actions.find(({ id }) => idAction === id)!.beneficiaire
+      )
     )
-    return resultatsUniques.length
   }
 
   async function qualifier() {
@@ -154,7 +112,6 @@ export default function TableauActionsAQualifier({
     )
     setAfficherModaleMultiQualification(false)
     setActionsSelectionnees([])
-    mettreAJourCheckboxToutSelectionner(0)
   }
 
   useEffect(() => {
@@ -162,15 +119,37 @@ export default function TableauActionsAQualifier({
       actionsSelectionnees.some((action) => !action.codeQualification)
     )
 
-    const nombreBeneficiairesSelectionnes =
-      recupererNombreBeneficiairesSelectionnes()
-    setPlusieursBeneficiairesSelectionnes(nombreBeneficiairesSelectionnes > 1)
+    const beneficiairesSelectionnes = recupererNombreBeneficiairesSelectionnes()
+    setBeneficiaireSelectionne(beneficiairesSelectionnes.values().next().value)
+    setPlusieursBeneficiairesSelectionnes(beneficiairesSelectionnes.size > 1)
   }, [actionsSelectionnees])
+
+  useEffect(() => {
+    const tailleSelection = actionsSelectionnees.length
+    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
+    const isChecked = tailleSelection === actions.length
+    const isIndeterminate =
+      tailleSelection !== actions.length && tailleSelection > 0
+
+    toutSelectionnerCheckbox.checked = isChecked
+    toutSelectionnerCheckbox.indeterminate = isIndeterminate
+
+    if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
+    else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
+    else toutSelectionnerCheckbox.ariaChecked = 'false'
+  }, [actions.length, actionsSelectionnees.length])
 
   return (
     <>
       <div className='flex items-center bg-primary_lighten rounded-base p-4 justify-between'>
-        <p>{titreEncartQualification}</p>
+        <p>
+          {actionsSelectionnees.length === 0 &&
+            'Sélectionnez au moins un élément ci-dessous pour commencer à qualifier'}
+          {actionsSelectionnees.length === 1 &&
+            '1 action sélectionnée. S’agit-il de SNP ou de non SNP ?'}
+          {actionsSelectionnees.length > 1 &&
+            `${actionsSelectionnees.length} actions sélectionnées. S’agit-il de SNP ou de non SNP ?`}
+        </p>
         <Button
           onClick={() => setAfficherModaleMultiQualification(true)}
           style={ButtonStyle.PRIMARY}
@@ -196,6 +175,7 @@ export default function TableauActionsAQualifier({
                   title='Tout sélectionner'
                   onChange={selectionnerToutesLesActions}
                   className='flex items-center w-full'
+                  aria-label='Tout sélectionner'
                   ref={toutSelectionnerCheckboxRef}
                 />
               </TH>
@@ -231,7 +211,13 @@ export default function TableauActionsAQualifier({
                 label={`Accéder au détail de l’action : ${action.titre}`}
                 isSelected={selectionContientId(action.id)}
               >
-                <TD>
+                <TD
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    selectionnerAction(action)
+                  }}
+                >
                   <input
                     id={`selectionner-${action.id}`}
                     type='checkbox'
@@ -242,15 +228,13 @@ export default function TableauActionsAQualifier({
                         : 'Sélectionner'
                     } ${action.titre}`}
                     className='w-4 h-4'
+                    aria-label={`Sélection ${action.titre} ${
+                      action.categorie?.libelle ?? ''
+                    }`}
                     onClick={(e) => {
                       e.stopPropagation()
                     }}
-                    onChange={() =>
-                      selectionnerAction({
-                        idAction: action.id,
-                        codeQualification: action?.categorie?.code,
-                      })
-                    }
+                    onChange={() => selectionnerAction(action)}
                   />
                 </TD>
                 <TD isBold={selectionContientId(action.id)}>
@@ -279,7 +263,8 @@ export default function TableauActionsAQualifier({
 
       {afficherModaleMultiQualification && (
         <ConfirmationMultiQualificationModal
-          actions={actions.filter((action) => selectionContientId(action.id))}
+          actions={actionsSelectionnees}
+          beneficiaire={beneficiaireSelectionne!}
           onConfirmation={qualifier}
           onCancel={() => setAfficherModaleMultiQualification(false)}
           onLienExterne={onLienExterne}

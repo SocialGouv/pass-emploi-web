@@ -1,14 +1,14 @@
 import { MouseEvent, useRef } from 'react'
 
-import Modal from './Modal'
-import ExternalLink from './ui/Navigation/ExternalLink'
-import InformationMessage from './ui/Notifications/InformationMessage'
-
+import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { ActionPilotage } from 'interfaces/action'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
+import { BaseJeune } from 'interfaces/jeune'
 
 interface ConfirmationMultiQualificationModalProps {
-  actions: ActionPilotage[]
+  actions: Array<{ idAction: string; codeQualification?: string }>
+  beneficiaire: BaseJeune
   onConfirmation: () => void
   onCancel: () => void
   onLienExterne: (label: string) => void
@@ -16,6 +16,7 @@ interface ConfirmationMultiQualificationModalProps {
 
 export default function ConfirmationMultiQualificationModal({
   actions,
+  beneficiaire,
   onCancel,
   onConfirmation,
   onLienExterne,
@@ -26,9 +27,7 @@ export default function ConfirmationMultiQualificationModal({
 
   const titreModale = `Qualifier ${
     actions.length > 1 ? `les ${actions.length} actions` : 'l’action'
-  } de ${actions[0].beneficiaire.prenom} ${
-    actions[0].beneficiaire.nom
-  } en SNP ?`
+  } de ${beneficiaire.prenom} ${beneficiaire.nom} en SNP ?`
 
   return (
     <Modal title={titreModale} onClose={onCancel} ref={modalRef}>
