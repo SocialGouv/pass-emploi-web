@@ -1,15 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 
 import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
 import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
 import Pagination from 'components/ui/Table/Pagination'
 import { ActionPilotage } from 'interfaces/action'
+import { TriActionsAQualifier } from 'services/actions.service'
 import { MetadonneesPagination } from 'types/pagination'
 
 interface OngletActionsPilotageProps {
   actionsInitiales: ActionPilotage[]
   metadonneesInitiales: MetadonneesPagination
-  getActions: (page: number) => Promise<{
+  getActions: (
+    page: number,
+    tri?: TriActionsAQualifier
+  ) => Promise<{
     actions: ActionPilotage[]
     metadonnees: MetadonneesPagination
   }>
@@ -24,25 +28,23 @@ export default function OngletActionsPilotage({
   const [metadonnees, setMetadonnees] =
     useState<MetadonneesPagination>(metadonneesInitiales)
 
-  const [pageCourante, setPageCourante] = useState<number>(1)
+  const [page, setPage] = useState<number>(1)
+  const [tri, setTri] = useState<TriActionsAQualifier>()
 
-  const pageChangee = useRef<boolean>(false)
-
-  function changerPage(page: number) {
-    if (page < 1 || page > metadonnees.nombrePages) return
-    setPageCourante(page)
-    pageChangee.current = true
+  async function trierActions(nouveauTri: TriActionsAQualifier) {
+    setTri(nouveauTri)
+    const update = await getActions(page, nouveauTri)
+    setActions(update.actions)
+    setMetadonnees(update.metadonnees)
   }
 
-  useEffect(() => {
-    if (pageChangee.current) {
-      getActions(pageCourante).then((update) => {
-        setActions(update.actions)
-        setMetadonnees(update.metadonnees)
-        setPageCourante(Math.min(pageCourante, update.metadonnees.nombrePages))
-      })
-    }
-  }, [pageCourante])
+  async function changerPage(nouvellePage: number) {
+    if (nouvellePage < 1 || nouvellePage > metadonnees.nombrePages) return
+    setPage(nouvellePage)
+    const update = await getActions(nouvellePage, tri ?? undefined)
+    setActions(update.actions)
+    setMetadonnees(update.metadonnees)
+  }
 
   return (
     <>
@@ -61,13 +63,17 @@ export default function OngletActionsPilotage({
 
       {metadonnees.nombreTotal > 0 && (
         <>
-          <TableauActionsAQualifier actions={actions} />
+          <TableauActionsAQualifier
+            actions={actions}
+            tri={tri}
+            onTriActions={trierActions}
+          />
           {metadonnees.nombrePages > 1 && (
             <div className='mt-6'>
               <Pagination
                 nomListe='actions'
                 nombreDePages={metadonnees.nombrePages}
-                pageCourante={pageCourante}
+                pageCourante={page}
                 allerALaPage={changerPage}
               />
             </div>

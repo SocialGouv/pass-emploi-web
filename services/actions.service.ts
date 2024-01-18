@@ -90,14 +90,14 @@ export async function getActionsJeuneServerSide(
 
 export async function getActionsAQualifierClientSide(
   idConseiller: string,
-  page: number
+  options: { page: number; tri?: TriActionsAQualifier }
 ): Promise<{
   actions: ActionPilotage[]
   metadonnees: MetadonneesPagination
 }> {
   const session = await getSession()
 
-  return getActionsAQualifier(idConseiller, page, session!.accessToken)
+  return getActionsAQualifier(idConseiller, options, session!.accessToken)
 }
 
 export async function getActionsAQualifierServerSide(
@@ -107,7 +107,7 @@ export async function getActionsAQualifierServerSide(
   actions: ActionPilotage[]
   metadonnees: MetadonneesPagination
 }> {
-  return getActionsAQualifier(idConseiller, 1, accessToken)
+  return getActionsAQualifier(idConseiller, { page: 1 }, accessToken)
 }
 
 export async function creerAction(
@@ -271,23 +271,39 @@ async function getActionsJeune(
   }
 }
 
+export type TriActionsAQualifier = 'ALPHABETIQUE' | 'INVERSE'
 async function getActionsAQualifier(
   idConseiller: string,
-  page: number,
+  {
+    page,
+    tri,
+  }: {
+    page: number
+    tri?: TriActionsAQualifier
+  },
   accessToken: string
 ): Promise<{
   actions: ActionPilotage[]
   metadonnees: MetadonneesPagination
 }> {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    aQualifier: 'true',
+  })
+  if (tri)
+    queryParams.append(
+      'tri',
+      tri === 'ALPHABETIQUE'
+        ? 'BENEFICIAIRE_ALPHABETIQUE'
+        : 'BENEFICIAIRE_INVERSE'
+    )
+
   const {
     content: { pagination, resultats },
   } = await apiGet<{
     pagination: { total: number; limit: number }
     resultats: ActionPilotageJson[]
-  }>(
-    `/v2/conseillers/${idConseiller}/actions?page=${page}&aQualifier=true`,
-    accessToken
-  )
+  }>(`/v2/conseillers/${idConseiller}/actions?${queryParams}`, accessToken)
 
   const nombrePages = Math.ceil(pagination.total / pagination.limit)
 
