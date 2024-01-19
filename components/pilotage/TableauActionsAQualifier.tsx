@@ -5,6 +5,7 @@ import ConfirmationMultiQualificationModalSNP from 'components/ConfirmationMulti
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -182,6 +183,22 @@ export default function TableauActionsAQualifier({
         >
           Qualifier les actions en SNP
         </Button>
+      </div>
+
+      <div className='mt-4'>
+        {actionSansCategorieSelectionnee && (
+          <FailureAlert
+            label='Qualification impossible.'
+            sub='Vous ne pouvez pas qualifier une ou plusieurs actions sans catégorie. Cliquez sur l’action pour pouvoir la modifier et lui ajouter une catégorie.'
+          />
+        )}
+
+        {plusieursBeneficiairesSelectionnes && (
+          <FailureAlert
+            label='Qualification impossible.'
+            sub='Vous ne pouvez pas qualifier les actions de plusieurs bénéficiaires. Sélectionnez seulement un ou une bénéficiaire.'
+          />
+        )}
       </div>
 
       {actions.length > 0 && (
