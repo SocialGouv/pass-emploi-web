@@ -5,6 +5,7 @@ import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifi
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Pagination from 'components/ui/Table/Pagination'
 import { ActionPilotage } from 'interfaces/action'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { TriActionsAQualifier } from 'services/actions.service'
 import { MetadonneesPagination } from 'types/pagination'
@@ -61,8 +62,16 @@ export default function OngletActionsPilotage({
     const { qualifierActions: _qualifierActions } = await import(
       'services/actions.service'
     )
+
+    let actionsPayload = [...actionsSelectionnees]
+    if (!qualificationSNP) {
+      actionsPayload = actionsPayload.map((a) => ({
+        ...a,
+        codeQualification: CODE_QUALIFICATION_NON_SNP,
+      }))
+    }
     const { idsActionsEnErreur } = await _qualifierActions(
-      actionsSelectionnees,
+      actionsPayload,
       qualificationSNP
     )
 
@@ -72,8 +81,12 @@ export default function OngletActionsPilotage({
       actionsQualifiees = actionsSelectionnees.filter(
         (action) => !idsActionsEnErreur.some((id) => id === action.idAction)
       )
-    } else setAlerte(AlerteParam.multiQualificationSNP)
-
+    } else
+      setAlerte(
+        qualificationSNP
+          ? AlerteParam.multiQualificationSNP
+          : AlerteParam.multiQualificationNonSNP
+      )
     setActions(
       actions.filter(
         (action) => !actionsQualifiees.some((a) => a.idAction === action.id)

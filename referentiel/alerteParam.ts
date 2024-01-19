@@ -18,6 +18,7 @@ export enum AlerteParam {
   qualificationSNP = 'qualificationSNP',
   qualificationNonSNP = 'qualificationNonSNP',
   multiQualificationSNP = 'multiQualificationSNP',
+  multiQualificationNonSNP = 'multiQualificationNonSNP',
   // Listes de diffusion
   creationListeDiffusion = 'creationListeDiffusion',
   modificationListeDiffusion = 'modificationListeDiffusion',
