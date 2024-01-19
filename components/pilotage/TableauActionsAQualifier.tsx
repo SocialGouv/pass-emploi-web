@@ -103,13 +103,13 @@ export default function TableauActionsAQualifier({
     return actionsSelectionnees.some((action) => action.idAction === id)
   }
 
-  function recupererBeneficiairesSelectionnes(): Set<BaseJeune> {
-    return new Set(
-      actionsSelectionnees.map(
-        ({ idAction }) =>
-          actions.find(({ id }) => idAction === id)!.beneficiaire
-      )
-    )
+  function recupererBeneficiairesSelectionnes(): Map<string, BaseJeune> {
+    const mapBeneficiaires = new Map<string, BaseJeune>()
+    actionsSelectionnees.forEach(({ idAction }) => {
+      const { beneficiaire } = actions.find(({ id }) => idAction === id)!
+      mapBeneficiaires.set(beneficiaire.id, beneficiaire)
+    })
+    return mapBeneficiaires
   }
 
   async function qualifier(enSNP: boolean) {
@@ -125,6 +125,10 @@ export default function TableauActionsAQualifier({
       : setAfficherModaleMultiQualificationNonSNP(false)
     setActionsSelectionnees([])
   }
+
+  useEffect(() => {
+    setActionsSelectionnees([])
+  }, [actions])
 
   useEffect(() => {
     setActionSansCategorieSelectionnee(
