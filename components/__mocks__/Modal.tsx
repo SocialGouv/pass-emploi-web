@@ -1,7 +1,18 @@
-import { forwardRef, ReactNode } from 'react'
+import { forwardRef, ReactNode, useImperativeHandle } from 'react'
 
 const FakeModal = forwardRef(
-  ({ children, title }: { title: string; children: ReactNode }, _) => {
+  (
+    {
+      children,
+      title,
+      onClose,
+    }: { title: string; children: ReactNode; onClose?: () => void },
+    ref
+  ) => {
+    useImperativeHandle(ref, () => ({
+      closeModal: onClose,
+    }))
+
     return (
       <>
         <h2>{title}</h2>

@@ -100,8 +100,8 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
       dateFinReelle: '18/12/2022',
       categorie: {
         code: 'EMPLOI',
-        libelle: 'Emploi'
-      }
+        libelle: 'Emploi',
+      },
     },
     {
       id: '04816605-60a7-4666-9dc5-607d71a570ff',
@@ -114,8 +114,8 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
       dateFinReelle: '19/12/2022',
       categorie: {
         code: 'SPORTS_CULTURE_LOISIR',
-        libelle: 'Sports,culture,loisir'
-      }
+        libelle: 'Sports,culture,loisir',
+      },
     },
     {
       id: 'a9ced2e0-314d-47a2-8275-0502e48dde57',
@@ -129,7 +129,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
       categorie: {
         code: 'FORMATION',
         libelle: 'Formation',
-      }
+      },
     },
     {
       id: '3f09f448-c2db-4129-92ee-2349177bec52',
@@ -143,7 +143,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
       categorie: {
         code: 'LOGEMENT',
         libelle: 'Logement',
-      }
+      },
     },
     {
       id: '39095c2f-c4d9-4a8b-b6fe-9a0dc938442c',
@@ -157,7 +157,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
       categorie: {
         code: 'SANTE',
         libelle: 'Santé',
-      }
+      },
     },
   ]
 }
@@ -176,7 +176,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
       categorie: {
         code: 'EMPLOI',
         libelle: 'Emploi',
-      }
+      },
     },
     {
       id: '04816605-60a7-4666-9dc5-607d71a570ff',
@@ -190,7 +190,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
       categorie: {
         code: 'SPORTS_CULTURE_LOISIR',
         libelle: 'Sports,culture,loisir',
-      }
+      },
     },
     {
       id: 'a9ced2e0-314d-47a2-8275-0502e48dde57',
@@ -204,7 +204,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
       categorie: {
         code: 'FORMATION',
         libelle: 'Formation',
-      }
+      },
     },
     {
       id: '3f09f448-c2db-4129-92ee-2349177bec52',
@@ -218,7 +218,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
       categorie: {
         code: 'LOGEMENT',
         libelle: 'Logement',
-      }
+      },
     },
     {
       id: '39095c2f-c4d9-4a8b-b6fe-9a0dc938442c',
@@ -232,7 +232,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
       categorie: {
         code: 'SANTE',
         libelle: 'Santé',
-      }
+      },
     },
   ]
 }

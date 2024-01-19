@@ -1,12 +1,15 @@
 import { GetServerSidePropsContext } from 'next/types'
 
-import { uneListeDActionsAQualifier } from 'fixtures/action'
+import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getServerSideProps } from 'pages/pilotage'
-import { getActionsAQualifierServerSide } from 'services/actions.service'
+import {
+  getActionsAQualifierServerSide,
+  getSituationsNonProfessionnelles,
+} from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
 import { getSessionsACloreServerSide } from 'services/sessions.service'
@@ -17,6 +20,7 @@ jest.mock('services/actions.service')
 jest.mock('services/evenements.service')
 jest.mock('services/conseiller.service')
 jest.mock('services/sessions.service')
+jest.mock('services/referentiel.service')
 
 describe('PilotagePage server side', () => {
   it('requiert une session valide', async () => {
@@ -71,6 +75,9 @@ describe('PilotagePage server side', () => {
           nombrePages: 1,
         },
       })
+      ;(getSituationsNonProfessionnelles as jest.Mock).mockResolvedValue(
+        desCategories()
+      )
       ;(getSessionsACloreServerSide as jest.Mock).mockResolvedValue(
         uneListeDeSessionsAClore()
       )
@@ -109,6 +116,10 @@ describe('PilotagePage server side', () => {
         'conseiller-id',
         'accessToken'
       )
+      expect(getSituationsNonProfessionnelles).toHaveBeenCalledWith(
+        { avecNonSNP: false },
+        'accessToken'
+      )
       expect(getConseillerServerSide).toHaveBeenCalledWith(
         { id: 'conseiller-id' },
         'accessToken'
@@ -128,6 +139,7 @@ describe('PilotagePage server side', () => {
             donnees: uneListeDActionsAQualifier(),
             metadonnees: { nombreTotal: 5, nombrePages: 1 },
           },
+          categoriesActions: desCategories(),
           animationsCollectives: {
             donnees: uneListeDAnimationCollectiveAClore(),
             metadonnees: { nombreTotal: 5, nombrePages: 1 },
@@ -156,6 +168,7 @@ describe('PilotagePage server side', () => {
             donnees: uneListeDActionsAQualifier(),
             metadonnees: { nombreTotal: 5, nombrePages: 1 },
           },
+          categoriesActions: desCategories(),
           onglet: 'ANIMATIONS_COLLECTIVES',
         },
       })

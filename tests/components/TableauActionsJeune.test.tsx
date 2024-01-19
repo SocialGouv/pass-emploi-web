@@ -17,7 +17,6 @@ describe('TableauActionsJeune', () => {
       // Given
       render(
         <TableauActionsJeune
-          afficherFiltresEtatsQualification={false}
           jeune={uneBaseJeune()}
           actions={[uneAction()]}
           isLoading={false}

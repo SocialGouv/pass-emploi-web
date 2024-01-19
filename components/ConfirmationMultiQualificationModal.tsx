@@ -29,6 +29,11 @@ export default function ConfirmationMultiQualificationModal({
     actions.length > 1 ? `les ${actions.length} actions` : 'l’action'
   } de ${beneficiaire.prenom} ${beneficiaire.nom} en SNP ?`
 
+  async function qualifier(e: MouseEvent<HTMLButtonElement>) {
+    modalRef.current!.closeModal(e)
+    onConfirmation()
+  }
+
   return (
     <Modal title={titreModale} onClose={onCancel} ref={modalRef}>
       <div className='px-10 text-center'>
@@ -47,7 +52,7 @@ export default function ConfirmationMultiQualificationModal({
         >
           Annuler
         </Button>
-        <Button type='button' onClick={onConfirmation}>
+        <Button type='button' onClick={qualifier}>
           Qualifier et envoyer à i-milo
         </Button>
       </div>

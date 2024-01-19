@@ -3,9 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import { uneListeDActionsAQualifier } from 'fixtures/action'
+import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { ActionPilotage } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
 import Pilotage from 'pages/pilotage'
 import {
   getActionsAQualifierClientSide,
@@ -35,11 +34,11 @@ describe('PilotagePage client side - Actions', () => {
         dateFinReelle: '16/01/2024',
       }
       ;(getActionsAQualifierClientSide as jest.Mock).mockImplementation(
-        async (_, { page, tri }) => ({
+        async (_, { page, tri, filtres }) => ({
           actions: [
             {
-              id: `action-page-${page}-${tri}`,
-              titre: `Action page ${page} ${tri}`,
+              id: `action-page-${page}-${tri}-${filtres.length}filtres`,
+              titre: `Action page ${page} ${tri} ${filtres.length}filtres`,
               beneficiaire: {
                 id: 'hermione',
                 nom: 'Granger',
@@ -64,6 +63,7 @@ describe('PilotagePage client side - Actions', () => {
               donnees: [...uneListeDActionsAQualifier(), actionSansCategorie],
               metadonnees: { nombrePages: 3, nombreTotal: 25 },
             }}
+            categoriesActions={desCategories()}
             animationsCollectives={{
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
@@ -161,8 +161,11 @@ describe('PilotagePage client side - Actions', () => {
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 1,
         tri: 'ALPHABETIQUE',
+        filtres: []
       })
-      expect(screen.getByText('Action page 1 ALPHABETIQUE')).toBeInTheDocument()
+      expect(
+        screen.getByText('Action page 1 ALPHABETIQUE 0filtres')
+      ).toBeInTheDocument()
     })
 
     it('permet de trier les actions par nom du bénéficiaire par ordre alphabétique inversé', async () => {
@@ -183,8 +186,56 @@ describe('PilotagePage client side - Actions', () => {
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 1,
         tri: 'INVERSE',
+        filtres: []
       })
-      expect(screen.getByText('Action page 1 INVERSE')).toBeInTheDocument()
+      expect(
+        screen.getByText('Action page 1 INVERSE 0filtres')
+      ).toBeInTheDocument()
+    })
+
+    describe('filtrer les actions par catégorie', () => {
+      beforeEach(async () => {
+        // Given
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
+          })
+        )
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // When
+        await userEvent.click(screen.getByText('Catégorie'))
+        await userEvent.click(screen.getByLabelText('SNP 1'))
+        await userEvent.click(screen.getByLabelText('SNP 2'))
+        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+      })
+
+      it('filtre les actions', () => {
+        // Then
+        expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
+          page: 1,
+          tri: 'ALPHABETIQUE',
+          filtres: ['SNP_1', 'SNP_2'],
+        })
+        expect(
+          screen.getByText('Action page 1 ALPHABETIQUE 2filtres')
+        ).toBeInTheDocument()
+      })
+
+      it('conserve les filtres de statut en changeant de page', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
+          page: 2,
+          tri: 'ALPHABETIQUE',
+          filtres: ['SNP_1', 'SNP_2'],
+        })
+        expect(
+          screen.getByText('Action page 2 ALPHABETIQUE 2filtres')
+        ).toBeInTheDocument()
+      })
     })
 
     it('met à jour les actions avec la page demandée ', async () => {
@@ -194,14 +245,20 @@ describe('PilotagePage client side - Actions', () => {
           name: 'Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique',
         })
       )
+      await userEvent.click(screen.getByText('Catégorie'))
+      await userEvent.click(screen.getByLabelText('SNP 1'))
+      await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
       await userEvent.click(screen.getByLabelText('Page 2'))
 
       // Then
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 2,
         tri: 'ALPHABETIQUE',
+        filtres: ['SNP_1'],
       })
-      expect(screen.getByText('Action page 2 ALPHABETIQUE')).toBeInTheDocument()
+      expect(
+        screen.getByText('Action page 2 ALPHABETIQUE 1filtres')
+      ).toBeInTheDocument()
     })
 
     describe('multi-qualification', () => {
@@ -425,6 +482,7 @@ describe('PilotagePage client side - Actions', () => {
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
           }}
+          categoriesActions={desCategories()}
           animationsCollectives={{
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },

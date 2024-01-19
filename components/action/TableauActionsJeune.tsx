@@ -12,21 +12,14 @@ import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import {
-  Action,
-  EtatQualificationAction,
-  StatutAction,
-} from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
   jeune: BaseJeune
   actions: Action[]
   isLoading: boolean
-  onFiltres: (filtres: {
-    statuts: StatutAction[]
-    etatsQualification: EtatQualificationAction[]
-  }) => void
+  onFiltres: (statuts: StatutAction[]) => void
   onTri: (tri: TRI) => void
   tri: TRI
 }
@@ -42,7 +35,7 @@ export default function TableauActionsJeune({
   const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
 
   function reinitialiserFiltres() {
-    onFiltres({ statuts: [], etatsQualification: [] })
+    onFiltres([])
     setStatutsValides([])
   }
 
@@ -64,7 +57,6 @@ export default function TableauActionsJeune({
     onTri(nouveauTri)
   }
 
-  const headerColumnWithButtonHover = 'rounded-base hover:bg-primary_lighten'
   const columnHeaderButtonStyle = 'flex items-center w-full h-full p-4'
 
   function getOrdreTriParDate() {
@@ -75,10 +67,7 @@ export default function TableauActionsJeune({
 
   function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
     setStatutsValides(statutsSelectionnes)
-    onFiltres({
-      statuts: statutsSelectionnes,
-      etatsQualification: [],
-    })
+    onFiltres(statutsSelectionnes)
   }
 
   return (
@@ -116,7 +105,7 @@ export default function TableauActionsJeune({
           <THead>
             <TR isHeader={true}>
               <TH>Titre de l’action</TH>
-              <TH className={headerColumnWithButtonHover} estCliquable={true}>
+              <TH estCliquable={true}>
                 <button
                   onClick={trierParDateEcheance}
                   aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
@@ -130,7 +119,7 @@ export default function TableauActionsJeune({
                   />
                 </button>
               </TH>
-              <TH className={headerColumnWithButtonHover} estCliquable={true}>
+              <TH estCliquable={true}>
                 <FiltresStatutsActions
                   defaultValue={statutsValides}
                   onFiltres={filtrerActionsParStatuts}

@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { apiDelete, apiGet, apiPost } from 'clients/api.client'
 import {
   desCategories,
+  desCategoriesAvecNONSNP,
   unCommentaire,
   uneAction,
   uneActionJson,
@@ -291,7 +292,6 @@ describe('ActionsApiService', () => {
         tri: 'date_decroissante',
         page: 1,
         statuts: [],
-        etatsQualification: [],
       })
 
       // THEN
@@ -329,7 +329,6 @@ describe('ActionsApiService', () => {
         tri: 'date_decroissante',
         page: 1,
         statuts: [StatutAction.EnCours],
-        etatsQualification: [],
       })
 
       // THEN
@@ -370,7 +369,6 @@ describe('ActionsApiService', () => {
         tri: 'date_decroissante',
         page: 1,
         statuts: [StatutAction.Qualifiee],
-        etatsQualification: [],
       })
 
       // THEN
@@ -432,11 +430,12 @@ describe('ActionsApiService', () => {
       const actual = await getActionsAQualifierClientSide('whatever', {
         page: 1,
         tri: 'ALPHABETIQUE',
+        filtres: ['SANTE', 'EMPLOI'],
       })
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
-        '/v2/conseillers/whatever/actions?page=1&aQualifier=true&tri=BENEFICIAIRE_ALPHABETIQUE',
+        '/v2/conseillers/whatever/actions?page=1&aQualifier=true&tri=BENEFICIAIRE_ALPHABETIQUE&codesCategories=SANTE&codesCategories=EMPLOI',
         'accessToken'
       )
       expect(actual).toStrictEqual({
@@ -660,20 +659,42 @@ describe('ActionsApiService', () => {
   describe('.getSituationsNonProfessionnelles', () => {
     it('retourne la liste des situations non professionnelles', async () => {
       // GIVEN
-      const situationsNonProfessionnelles = desCategories()
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: situationsNonProfessionnelles,
+        content: desCategoriesAvecNONSNP(),
       })
 
       // WHEN
-      const result = await getSituationsNonProfessionnelles('accessToken')
+      const result = await getSituationsNonProfessionnelles(
+        { avecNonSNP: true },
+        'accessToken'
+      )
 
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/qualifications-actions/types',
         'accessToken'
       )
-      expect(result).toEqual(situationsNonProfessionnelles)
+      expect(result).toEqual(desCategoriesAvecNONSNP())
+    })
+
+    it('retourne la liste des situations non professionnelles', async () => {
+      // GIVEN
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: desCategoriesAvecNONSNP(),
+      })
+
+      // WHEN
+      const result = await getSituationsNonProfessionnelles(
+        { avecNonSNP: false },
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiGet).toHaveBeenCalledWith(
+        '/referentiels/qualifications-actions/types',
+        'accessToken'
+      )
+      expect(result).toEqual(desCategories())
     })
   })
 })

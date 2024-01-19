@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
 import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQualificationModal'
 import ConfirmationMultiQualificationModalSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -13,14 +14,16 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { ActionPilotage } from 'interfaces/action'
+import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import { TriActionsAQualifier } from 'services/actions.service'
 
 type TableauActionsConseillerProps = {
+  categories: SituationNonProfessionnelle[]
   actions: Array<ActionPilotage>
   tri: TriActionsAQualifier | undefined
-  onTriActions: (tri: TriActionsAQualifier) => void
+  onTri: (tri: TriActionsAQualifier) => void
+  onFiltres: (categories: string[]) => void
   onLienExterne: (label: string) => void
   onQualification: (
     qualificationSNP: boolean,
@@ -34,12 +37,16 @@ type ActionAQualifier = {
 }
 
 export default function TableauActionsAQualifier({
+  categories,
   actions,
   tri,
-  onTriActions,
+  onTri,
+  onFiltres,
   onLienExterne,
   onQualification,
 }: TableauActionsConseillerProps) {
+  const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
+
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
@@ -66,6 +73,17 @@ export default function TableauActionsAQualifier({
     actionsSelectionnees.length === 0 ||
     actionSansCategorieSelectionnee ||
     plusieursBeneficiairesSelectionnes
+
+  function inverserTriBeneficiaires() {
+    const nouvelOrdre = tri === 'ALPHABETIQUE' ? 'INVERSE' : 'ALPHABETIQUE'
+    onTri(nouvelOrdre)
+    setActionsSelectionnees([])
+  }
+
+  function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
+    setCategoriesValidees(categoriesSelectionnees)
+    onFiltres(categoriesSelectionnees)
+  }
 
   function selectionnerAction({ id, categorie }: ActionPilotage) {
     const selection = [...actionsSelectionnees]
@@ -94,12 +112,6 @@ export default function TableauActionsAQualifier({
     }
   }
 
-  function inverserTriBeneficiaires() {
-    const nouvelOrdre = tri === 'ALPHABETIQUE' ? 'INVERSE' : 'ALPHABETIQUE'
-    onTriActions(nouvelOrdre)
-    setActionsSelectionnees([])
-  }
-
   function selectionContientId(id: string) {
     return actionsSelectionnees.some((action) => action.idAction === id)
   }
@@ -121,10 +133,6 @@ export default function TableauActionsAQualifier({
         codeQualification: string
       }>
     )
-    enSNP
-      ? setAfficherModaleMultiQualification(false)
-      : setAfficherModaleMultiQualificationNonSNP(false)
-    setActionsSelectionnees([])
   }
 
   useEffect(() => {
@@ -235,7 +243,13 @@ export default function TableauActionsAQualifier({
                 </button>
               </TH>
               <TH>Titre de l’action</TH>
-              <TH>Catégorie</TH>
+              <TH estCliquable={true}>
+                <FiltresCategoriesActions
+                  categories={categories}
+                  defaultValue={categoriesValidees}
+                  onFiltres={filtrerActionsParCategorie}
+                />
+              </TH>
               <TH>Date de réalisation</TH>
             </TR>
           </THead>

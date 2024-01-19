@@ -38,9 +38,9 @@ export default async function Qualification({
   const { getAction, getSituationsNonProfessionnelles } = await import(
     'services/actions.service'
   )
-  const [actionContent, situationsNonProfessionnelles] = await Promise.all([
+  const [actionContent, categories] = await Promise.all([
     getAction(params.action_id, accessToken),
-    getSituationsNonProfessionnelles(accessToken),
+    getSituationsNonProfessionnelles({ avecNonSNP: true }, accessToken),
   ])
   if (!actionContent) notFound()
 
@@ -56,7 +56,7 @@ export default async function Qualification({
       <QualificationPage
         beneficiaire={jeune}
         action={action}
-        categories={situationsNonProfessionnelles}
+        categories={categories}
         returnTo={returnTo}
       />
     </>
