@@ -17,6 +17,7 @@ export enum AlerteParam {
   ajoutCommentaireAction = 'ajoutCommentaireAction',
   qualificationSNP = 'qualificationSNP',
   qualificationNonSNP = 'qualificationNonSNP',
+  multiQualificationSNP = 'multiQualificationSNP',
   // Listes de diffusion
   creationListeDiffusion = 'creationListeDiffusion',
   modificationListeDiffusion = 'modificationListeDiffusion',

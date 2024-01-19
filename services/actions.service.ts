@@ -193,6 +193,21 @@ export async function qualifier(
   return jsonToQualification(content)
 }
 
+export async function qualifierActions(
+  actions: Array<{ idAction: string; codeQualification: string }>,
+  estSNP: boolean
+): Promise<{ idsActionsEnErreur: string[] }> {
+  const session = await getSession()
+  const payload = { estSNP, qualifications: actions }
+
+  const { content } = await apiPost<{ idsActionsEnErreur: string[] }>(
+    '/conseillers/milo/actions/qualifier',
+    payload,
+    session!.accessToken
+  )
+  return content
+}
+
 export async function deleteAction(idAction: string): Promise<void> {
   const session = await getSession()
   await apiDelete(`/actions/${idAction}`, session!.accessToken)

@@ -24,6 +24,7 @@ import {
   getActionsJeuneServerSide,
   getSituationsNonProfessionnelles,
   qualifier,
+  qualifierActions,
   recupererLesCommentaires,
 } from 'services/actions.service'
 import { ApiError } from 'utils/httpClient'
@@ -570,6 +571,37 @@ describe('ActionsApiService', () => {
         isSituationNonProfessionnelle: true,
       }
       expect(actual).toStrictEqual(expected)
+    })
+  })
+
+  describe('.qualifierActions', () => {
+    it('qualifie plusieurs actions', async () => {
+      // Given
+      ;(apiPost as jest.Mock).mockResolvedValue({
+        content: {
+          idsActionsEnErreur: ['id-action-en-erreur'],
+        },
+      })
+
+      // WHEN
+      const actionsAQualifier = [
+        { idAction: 'id-action', codeQualification: 'SANTE' },
+        { idAction: 'id-action-en-erreur', codeQualification: 'EMPLOI' },
+      ]
+      const actual = await qualifierActions(actionsAQualifier, true)
+
+      // THEN
+      expect(apiPost).toHaveBeenCalledWith(
+        '/conseillers/milo/actions/qualifier',
+        {
+          estSNP: true,
+          qualifications: actionsAQualifier,
+        },
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        idsActionsEnErreur: ['id-action-en-erreur'],
+      })
     })
   })
 
