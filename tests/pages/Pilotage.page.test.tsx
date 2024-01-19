@@ -318,7 +318,7 @@ describe('Pilotage', () => {
             beforeEach(async () => {
               await userEvent.click(
                 screen.getByRole('checkbox', {
-                  name: `Sélection ${actions[0].titre} ${actions[0].categorie?.libelle ?? ''}`,
+                  name: /Sélection Faire du polynectar/,
                 })
               )
             })
@@ -427,6 +427,69 @@ describe('Pilotage', () => {
                   [{ codeQualification: 'NON_SNP', idAction: actions[0].id }],
                   false
                 )
+              })
+            })
+          })
+
+          describe('quand deux actions sont sélectionnées', () => {
+            describe('quand une action n’a pas de catégorie', () => {
+              beforeEach(async () => {  
+                await userEvent.click(
+                  screen.getByRole('checkbox', {
+                    name: /Sélection Regarder Tchoupi faire du tricycle/,
+                  })
+                )
+              })
+              it('désactive la qualification', () => {
+                expect(
+                  screen.getByRole('button', {
+                    name: 'Enregistrer les actions en non SNP',
+                  })
+                ).toHaveAttribute('disabled')
+                expect(
+                  screen.getByRole('button', {
+                    name: 'Qualifier les actions en SNP',
+                  })
+                ).toHaveAttribute('disabled')
+              })
+  
+              it('affiche un message d’erreur', () => {
+                expect(
+                  screen.getByText('Vous ne pouvez pas qualifier une ou plusieurs actions sans catégorie. Cliquez sur l’action pour pouvoir la modifier et lui ajouter une catégorie.')
+                ).toBeInTheDocument()
+              })
+            })
+
+            describe('quand deux bénéficiaires sont sélectionnés', () => {
+              beforeEach(async () => {  
+                await userEvent.click(
+                  screen.getByRole('checkbox', {
+                    name: /Sélection Faire du polynectar/,
+                  })
+                )
+                await userEvent.click(
+                  screen.getByRole('checkbox', {
+                    name: /Sélection Identifier des pistes de métier/,
+                  })
+                )
+              })
+              it('désactive la qualification', () => {
+                expect(
+                  screen.getByRole('button', {
+                    name: 'Enregistrer les actions en non SNP',
+                  })
+                ).toHaveAttribute('disabled')
+                expect(
+                  screen.getByRole('button', {
+                    name: 'Qualifier les actions en SNP',
+                  })
+                ).toHaveAttribute('disabled')
+              })
+  
+              it('affiche un message d’erreur', () => {
+                expect(
+                  screen.getByText('Vous ne pouvez pas qualifier les actions de plusieurs bénéficiaires. Sélectionnez seulement un ou une bénéficiaire.')
+                ).toBeInTheDocument()
               })
             })
           })
