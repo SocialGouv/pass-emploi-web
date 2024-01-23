@@ -126,7 +126,7 @@ export default function OngletActions({
             <>
               <TableauActionsJeune
                 jeune={jeune}
-                actions={actionsAffichees}
+                actionsFiltrees={actionsAffichees}
                 isLoading={isLoading}
                 onFiltres={filtrerActions}
                 onTri={trierActions}

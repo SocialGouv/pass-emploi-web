@@ -119,7 +119,7 @@ export default function OngletActionsPilotage({
         />
       )}
 
-      {metadonnees.nombreTotal === 0 && (
+      {metadonneesInitiales.nombreTotal === 0 && (
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
           <EmptyStateImage
             focusable='false'
@@ -132,11 +132,11 @@ export default function OngletActionsPilotage({
         </div>
       )}
 
-      {metadonnees.nombreTotal > 0 && (
+      {metadonneesInitiales.nombreTotal > 0 && (
         <>
           <TableauActionsAQualifier
             categories={categories}
-            actions={actions}
+            actionsFilrees={actions}
             tri={tri}
             onTri={trierActions}
             onFiltres={filtrerActions}

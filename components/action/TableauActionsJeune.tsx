@@ -17,7 +17,7 @@ import { BaseJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
   jeune: BaseJeune
-  actions: Action[]
+  actionsFiltrees: Action[]
   isLoading: boolean
   onFiltres: (statuts: StatutAction[]) => void
   onTri: (tri: TRI) => void
@@ -26,7 +26,7 @@ interface TableauActionsJeuneProps {
 
 export default function TableauActionsJeune({
   jeune,
-  actions,
+  actionsFiltrees,
   isLoading,
   onFiltres,
   onTri,
@@ -74,16 +74,15 @@ export default function TableauActionsJeune({
     <>
       {isLoading && <SpinningLoader />}
 
-      {actions.length === 0 && (
+      {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
           <EmptyStateImage
             focusable='false'
             aria-hidden='true'
             className='m-auto w-[200px] h-[200px]'
           />
-          <p className='text-base-bold text-center'>
-            Aucune action ne correspondant aux filtres.
-          </p>
+          <p className='text-base-bold text-center'>Aucun résultat.</p>
+          <p className='text-center'>Modifiez vos filtres.</p>
           <Button
             type='button'
             style={ButtonStyle.PRIMARY}
@@ -95,7 +94,7 @@ export default function TableauActionsJeune({
         </div>
       )}
 
-      {actions.length > 0 && (
+      {actionsFiltrees.length > 0 && (
         <Table
           asDiv={true}
           caption={{
@@ -129,7 +128,7 @@ export default function TableauActionsJeune({
           </THead>
 
           <TBody>
-            {actions.map((action: Action) => (
+            {actionsFiltrees.map((action: Action) => (
               <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
             ))}
           </TBody>
