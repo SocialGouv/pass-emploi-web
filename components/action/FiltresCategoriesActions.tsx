@@ -2,6 +2,7 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { Badge } from 'components/ui/Indicateurs/Badge'
 import { SituationNonProfessionnelle } from 'interfaces/action'
 
 type FiltresCategoriesActionsProps = {
@@ -66,15 +67,23 @@ export default function FiltresCategoriesActions({
         onClick={() => setAfficherFiltres(!afficherFiltres)}
         aria-label='Catégorie - Filtrer les actions'
         title='Filtrer les actions par catégorie'
-        className='flex items-center p-4 w-full h-full'
+        className='flex items-center p-4 w-full h-full gap-2'
       >
         Catégorie
         <IconComponent
           name={IconName.Filter}
           aria-hidden={true}
           focusable={false}
-          className='h-6 w-6 ml-2 fill-primary'
+          className='h-6 w-6 fill-primary'
         />
+        {categoriesSelectionnees.length > 0 && (
+          <Badge
+            count={categoriesSelectionnees.length}
+            bgColor='primary'
+            textColor='blanc'
+            size={6}
+          />
+        )}
       </button>
 
       {afficherFiltres && (
