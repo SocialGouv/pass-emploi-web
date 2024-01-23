@@ -35,7 +35,7 @@ export default function AlerteDisplayer({
       {alerte && alerteAAfficher && (
         <SuccessAlert label={alerteAAfficher.title} onAcknowledge={closeAlerte}>
           <>
-            {alerteAAfficher.sub}
+            <p className='whitespace-pre-line'>{alerteAAfficher.sub}</p>
 
             {alerteAAfficher.link && (
               <AlertLink

@@ -137,7 +137,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
         )}
         <h2
           id='modal-title'
-          className='text-l-bold text-primary text-center flex-auto mb-4'
+          className='text-l-bold text-primary text-center flex-auto mb-4 whitespace-pre-line'
         >
           {title}
         </h2>

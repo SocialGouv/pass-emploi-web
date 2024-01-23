@@ -163,7 +163,7 @@ export default function TableauJeunes({
   useMatomo(matomoTitle())
 
   const columnHeaderButtonStyle =
-    'flex border-none items-center w-full h-full p-4'
+    'flex border-none items-center align-top w-full h-full p-4'
 
   return (
     <>
