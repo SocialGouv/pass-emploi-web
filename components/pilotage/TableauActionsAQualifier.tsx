@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
+import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
 import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQualificationModal'
 import ConfirmationMultiQualificationModalSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -13,14 +15,16 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { ActionPilotage } from 'interfaces/action'
+import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import { TriActionsAQualifier } from 'services/actions.service'
 
 type TableauActionsConseillerProps = {
-  actions: Array<ActionPilotage>
+  categories: SituationNonProfessionnelle[]
+  actionsFilrees: ActionPilotage[]
   tri: TriActionsAQualifier | undefined
-  onTriActions: (tri: TriActionsAQualifier) => void
+  onTri: (tri: TriActionsAQualifier) => void
+  onFiltres: (categories: string[]) => void
   onLienExterne: (label: string) => void
   onQualification: (
     qualificationSNP: boolean,
@@ -34,12 +38,16 @@ type ActionAQualifier = {
 }
 
 export default function TableauActionsAQualifier({
-  actions,
+  categories,
+  actionsFilrees,
   tri,
-  onTriActions,
+  onTri,
+  onFiltres,
   onLienExterne,
   onQualification,
 }: TableauActionsConseillerProps) {
+  const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
+
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
@@ -67,6 +75,22 @@ export default function TableauActionsAQualifier({
     actionSansCategorieSelectionnee ||
     plusieursBeneficiairesSelectionnes
 
+  function inverserTriBeneficiaires() {
+    const nouvelOrdre = tri === 'ALPHABETIQUE' ? 'INVERSE' : 'ALPHABETIQUE'
+    onTri(nouvelOrdre)
+    setActionsSelectionnees([])
+  }
+
+  function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
+    setCategoriesValidees(categoriesSelectionnees)
+    onFiltres(categoriesSelectionnees)
+  }
+
+  function reinitialiserFiltres() {
+    onFiltres([])
+    setCategoriesValidees([])
+  }
+
   function selectionnerAction({ id, categorie }: ActionPilotage) {
     const selection = [...actionsSelectionnees]
 
@@ -82,7 +106,7 @@ export default function TableauActionsAQualifier({
   function selectionnerToutesLesActions() {
     if (actionsSelectionnees.length === 0) {
       setActionsSelectionnees(
-        actions.map(({ id, categorie }) => {
+        actionsFilrees.map(({ id, categorie }) => {
           return {
             idAction: id,
             codeQualification: categorie?.code,
@@ -94,12 +118,6 @@ export default function TableauActionsAQualifier({
     }
   }
 
-  function inverserTriBeneficiaires() {
-    const nouvelOrdre = tri === 'ALPHABETIQUE' ? 'INVERSE' : 'ALPHABETIQUE'
-    onTriActions(nouvelOrdre)
-    setActionsSelectionnees([])
-  }
-
   function selectionContientId(id: string) {
     return actionsSelectionnees.some((action) => action.idAction === id)
   }
@@ -107,7 +125,7 @@ export default function TableauActionsAQualifier({
   function recupererBeneficiairesSelectionnes(): Map<string, BaseJeune> {
     const mapBeneficiaires = new Map<string, BaseJeune>()
     actionsSelectionnees.forEach(({ idAction }) => {
-      const { beneficiaire } = actions.find(({ id }) => idAction === id)!
+      const { beneficiaire } = actionsFilrees.find(({ id }) => idAction === id)!
       mapBeneficiaires.set(beneficiaire.id, beneficiaire)
     })
     return mapBeneficiaires
@@ -121,15 +139,11 @@ export default function TableauActionsAQualifier({
         codeQualification: string
       }>
     )
-    enSNP
-      ? setAfficherModaleMultiQualification(false)
-      : setAfficherModaleMultiQualificationNonSNP(false)
-    setActionsSelectionnees([])
   }
 
   useEffect(() => {
     setActionsSelectionnees([])
-  }, [actions])
+  }, [actionsFilrees])
 
   useEffect(() => {
     setActionSansCategorieSelectionnee(
@@ -142,11 +156,13 @@ export default function TableauActionsAQualifier({
   }, [actionsSelectionnees])
 
   useEffect(() => {
+    if (!actionsFilrees.length) return
+
     const tailleSelection = actionsSelectionnees.length
     const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
-    const isChecked = tailleSelection === actions.length
+    const isChecked = tailleSelection === actionsFilrees.length
     const isIndeterminate =
-      tailleSelection !== actions.length && tailleSelection > 0
+      tailleSelection !== actionsFilrees.length && tailleSelection > 0
 
     toutSelectionnerCheckbox.checked = isChecked
     toutSelectionnerCheckbox.indeterminate = isIndeterminate
@@ -154,7 +170,7 @@ export default function TableauActionsAQualifier({
     if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
     else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
     else toutSelectionnerCheckbox.ariaChecked = 'false'
-  }, [actions.length, actionsSelectionnees.length])
+  }, [actionsFilrees.length, actionsSelectionnees.length])
 
   return (
     <>
@@ -201,7 +217,27 @@ export default function TableauActionsAQualifier({
         )}
       </div>
 
-      {actions.length > 0 && (
+      {actionsFilrees.length === 0 && (
+        <div className='flex flex-col justify-center'>
+          <EmptyStateImage
+            focusable='false'
+            aria-hidden='true'
+            className='m-auto w-[200px] h-[200px]'
+          />
+          <p className='text-base-bold text-center'>Aucun résultat.</p>
+          <p className='text-center'>Modifiez vos filtres.</p>
+          <Button
+            type='button'
+            style={ButtonStyle.PRIMARY}
+            onClick={reinitialiserFiltres}
+            className='mx-auto mt-8'
+          >
+            Réinitialiser les filtres
+          </Button>
+        </div>
+      )}
+
+      {actionsFilrees.length > 0 && (
         <Table asDiv={true} caption={{ text: 'Liste des actions à qualifier' }}>
           <THead>
             <TR isHeader={true}>
@@ -235,13 +271,19 @@ export default function TableauActionsAQualifier({
                 </button>
               </TH>
               <TH>Titre de l’action</TH>
-              <TH>Catégorie</TH>
+              <TH estCliquable={true}>
+                <FiltresCategoriesActions
+                  categories={categories}
+                  defaultValue={categoriesValidees}
+                  onFiltres={filtrerActionsParCategorie}
+                />
+              </TH>
               <TH>Date de réalisation</TH>
             </TR>
           </THead>
 
           <TBody>
-            {actions.map((action: ActionPilotage) => (
+            {actionsFilrees.map((action: ActionPilotage) => (
               <TR
                 key={action.id}
                 href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}

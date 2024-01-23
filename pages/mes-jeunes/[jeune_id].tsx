@@ -17,11 +17,7 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import {
-  Action,
-  EtatQualificationAction,
-  StatutAction,
-} from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
   Conseiller,
@@ -199,7 +195,6 @@ function FicheJeune({
   async function chargerActions(
     page: number,
     statuts: StatutAction[],
-    etatsQualification: EtatQualificationAction[],
     tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
     const { getActionsJeuneClientSide } = await import(
@@ -208,7 +203,6 @@ function FicheJeune({
     const result = await getActionsJeuneClientSide(jeune.id, {
       page,
       statuts,
-      etatsQualification,
       tri,
     })
 

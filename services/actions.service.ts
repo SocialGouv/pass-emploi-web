@@ -6,7 +6,6 @@ import {
   Action,
   ActionPilotage,
   Commentaire,
-  EtatQualificationAction,
   QualificationAction,
   SituationNonProfessionnelle,
   StatutAction,
@@ -19,6 +18,7 @@ import {
   ActionsCountJson,
   actionStatusToFiltre,
   actionStatusToJson,
+  CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
   jsonToAction,
   jsonToActionPilotage,
@@ -72,7 +72,6 @@ export async function getActionsJeuneClientSide(
   options: {
     page: number
     statuts: StatutAction[]
-    etatsQualification: EtatQualificationAction[]
     tri?: string
   }
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
@@ -90,7 +89,7 @@ export async function getActionsJeuneServerSide(
 
 export async function getActionsAQualifierClientSide(
   idConseiller: string,
-  options: { page: number; tri?: TriActionsAQualifier }
+  options: { page: number; tri?: TriActionsAQualifier; filtres?: string[] }
 ): Promise<{
   actions: ActionPilotage[]
   metadonnees: MetadonneesPagination
@@ -238,13 +237,18 @@ export async function recupererLesCommentaires(
 }
 
 export async function getSituationsNonProfessionnelles(
+  { avecNonSNP }: { avecNonSNP: boolean },
   accessToken: string
 ): Promise<SituationNonProfessionnelle[]> {
   const { content } = await apiGet<SituationNonProfessionnelle[]>(
     '/referentiels/qualifications-actions/types',
     accessToken
   )
-  return content
+  return avecNonSNP
+    ? content
+    : content.filter(
+        (categorie) => categorie.code !== CODE_QUALIFICATION_NON_SNP
+      )
 }
 
 async function getActionsJeune(
@@ -292,9 +296,11 @@ async function getActionsAQualifier(
   {
     page,
     tri,
+    filtres,
   }: {
     page: number
     tri?: TriActionsAQualifier
+    filtres?: string[]
   },
   accessToken: string
 ): Promise<{
@@ -305,13 +311,19 @@ async function getActionsAQualifier(
     page: page.toString(),
     aQualifier: 'true',
   })
-  if (tri)
+
+  if (tri) {
     queryParams.append(
       'tri',
       tri === 'ALPHABETIQUE'
         ? 'BENEFICIAIRE_ALPHABETIQUE'
         : 'BENEFICIAIRE_INVERSE'
     )
+  }
+
+  if (filtres) {
+    filtres.forEach((filtre) => queryParams.append('codesCategories', filtre))
+  }
 
   const {
     content: { pagination, resultats },

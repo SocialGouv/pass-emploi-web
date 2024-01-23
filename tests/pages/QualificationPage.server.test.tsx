@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 
 import Qualification from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/page'
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage'
-import { desCategories, uneAction } from 'fixtures/action'
+import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { StatutAction } from 'interfaces/action'
 import {
@@ -119,7 +119,7 @@ describe('QualificationPage server side', () => {
         // Given
         const action = uneAction({ status: StatutAction.Terminee })
         const beneficiaire = uneBaseJeune()
-        const situationsNonProfessionnelles = desCategories()
+        const situationsNonProfessionnelles = desCategoriesAvecNONSNP()
         ;(getAction as jest.Mock).mockResolvedValue({
           action,
           jeune: beneficiaire,
@@ -138,6 +138,7 @@ describe('QualificationPage server side', () => {
         // Then
         expect(getAction).toHaveBeenCalledWith(action.id, 'accessToken')
         expect(getSituationsNonProfessionnelles).toHaveBeenCalledWith(
+          { avecNonSNP: true },
           'accessToken'
         )
         expect(QualificationPage).toHaveBeenCalledWith(

@@ -4,7 +4,7 @@ import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
 import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Pagination from 'components/ui/Table/Pagination'
-import { ActionPilotage } from 'interfaces/action'
+import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { TriActionsAQualifier } from 'services/actions.service'
@@ -12,12 +12,14 @@ import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 
 interface OngletActionsPilotageProps {
+  categories: SituationNonProfessionnelle[]
   actionsInitiales: ActionPilotage[]
   metadonneesInitiales: MetadonneesPagination
-  getActions: (
-    page: number,
+  getActions: (options: {
+    page: number
     tri?: TriActionsAQualifier
-  ) => Promise<{
+    filtres?: string[]
+  }) => Promise<{
     actions: ActionPilotage[]
     metadonnees: MetadonneesPagination
   }>
@@ -25,6 +27,7 @@ interface OngletActionsPilotageProps {
 }
 
 export default function OngletActionsPilotage({
+  categories,
   actionsInitiales,
   metadonneesInitiales,
   getActions,
@@ -38,10 +41,23 @@ export default function OngletActionsPilotage({
 
   const [page, setPage] = useState<number>(1)
   const [tri, setTri] = useState<TriActionsAQualifier>()
+  const [filtres, setFiltres] = useState<string[]>([])
 
   async function trierActions(nouveauTri: TriActionsAQualifier) {
     setTri(nouveauTri)
-    const update = await getActions(page, nouveauTri)
+    const update = await getActions({ page, tri: nouveauTri, filtres })
+    setActions(update.actions)
+    setMetadonnees(update.metadonnees)
+  }
+
+  async function filtrerActions(categoriesSelectionnees: string[]) {
+    const update = await getActions({
+      page: 1,
+      tri,
+      filtres: categoriesSelectionnees,
+    })
+    setPage(1)
+    setFiltres(categoriesSelectionnees)
     setActions(update.actions)
     setMetadonnees(update.metadonnees)
   }
@@ -49,7 +65,7 @@ export default function OngletActionsPilotage({
   async function changerPage(nouvellePage: number) {
     if (nouvellePage < 1 || nouvellePage > metadonnees.nombrePages) return
     setPage(nouvellePage)
-    const update = await getActions(nouvellePage, tri ?? undefined)
+    const update = await getActions({ page: nouvellePage, tri, filtres })
     setActions(update.actions)
     setMetadonnees(update.metadonnees)
   }
@@ -103,7 +119,7 @@ export default function OngletActionsPilotage({
         />
       )}
 
-      {metadonnees.nombreTotal === 0 && (
+      {metadonneesInitiales.nombreTotal === 0 && (
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
           <EmptyStateImage
             focusable='false'
@@ -116,12 +132,14 @@ export default function OngletActionsPilotage({
         </div>
       )}
 
-      {metadonnees.nombreTotal > 0 && (
+      {metadonneesInitiales.nombreTotal > 0 && (
         <>
           <TableauActionsAQualifier
-            actions={actions}
+            categories={categories}
+            actionsFilrees={actions}
             tri={tri}
-            onTriActions={trierActions}
+            onTri={trierActions}
+            onFiltres={filtrerActions}
             onLienExterne={onLienExterne}
             onQualification={qualifierActions}
           />

@@ -3,6 +3,7 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { Badge } from 'components/ui/Indicateurs/Badge'
 import { StatutAction } from 'interfaces/action'
 
 type FiltresStatutsActionsProps = {
@@ -62,15 +63,23 @@ export default function FiltresStatutsActions({
         onClick={() => setAfficherFiltresStatuts(!afficherFiltresStatuts)}
         aria-label='Statut - Filtrer les actions'
         title='Filtrer les actions par statut'
-        className='flex items-center p-4 w-full h-full'
+        className='flex items-center p-4 w-full h-full gap-2'
       >
         Statut
         <IconComponent
           name={IconName.Filter}
           aria-hidden={true}
           focusable={false}
-          className='h-6 w-6 ml-2 fill-primary'
+          className='h-6 w-6 fill-primary'
         />
+        {statutsSelectionnes.length > 0 && (
+          <Badge
+            count={statutsSelectionnes.length}
+            bgColor='primary'
+            textColor='blanc'
+            size={6}
+          />
+        )}
       </button>
 
       {afficherFiltresStatuts && (

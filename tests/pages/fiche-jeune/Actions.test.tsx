@@ -16,11 +16,7 @@ import {
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
-import {
-  Action,
-  EtatQualificationAction,
-  StatutAction,
-} from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
@@ -45,7 +41,8 @@ describe('Actions dans la fiche jeune', () => {
       content: 'Action 5',
       status: StatutAction.Terminee,
       qualification: {
-        libelle: 'SNP',
+        libelle: 'Santé',
+        code: 'SANTE',
         isSituationNonProfessionnelle: true,
       },
     }),
@@ -54,7 +51,8 @@ describe('Actions dans la fiche jeune', () => {
       content: 'Action 6',
       status: StatutAction.Qualifiee,
       qualification: {
-        libelle: 'SNP',
+        libelle: 'Emploi',
+        code: 'EMPLOI',
         isSituationNonProfessionnelle: true,
       },
     }),
@@ -226,7 +224,6 @@ describe('Actions dans la fiche jeune', () => {
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
           statuts: [],
-          etatsQualification: [],
           tri: 'date_echeance_decroissante',
         })
         expect(screen.getByText('Action page 2')).toBeInTheDocument()
@@ -241,14 +238,12 @@ describe('Actions dans la fiche jeune', () => {
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: pageCourante - 1,
           statuts: [],
-          etatsQualification: [],
           tri: 'date_echeance_decroissante',
         })
 
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: pageCourante - 2,
           statuts: [],
-          etatsQualification: [],
           tri: 'date_echeance_decroissante',
         })
         expect(
@@ -298,7 +293,6 @@ describe('Actions dans la fiche jeune', () => {
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
           statuts: [StatutAction.EnCours],
-          etatsQualification: [],
           tri: 'date_echeance_decroissante',
         })
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
@@ -319,7 +313,6 @@ describe('Actions dans la fiche jeune', () => {
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
           statuts: [StatutAction.EnCours],
-          etatsQualification: [],
           tri: 'date_echeance_decroissante',
         })
       })
@@ -362,13 +355,11 @@ describe('Actions dans la fiche jeune', () => {
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
           statuts: [],
-          etatsQualification: [],
           tri: 'date_echeance_croissante',
         })
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
           statuts: [],
-          etatsQualification: [],
           tri: 'date_echeance_decroissante',
         })
         expect(screen.getByText('Action triée')).toBeInTheDocument()
@@ -394,7 +385,6 @@ describe('Actions dans la fiche jeune', () => {
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
           statuts: [],
-          etatsQualification: [],
           tri: 'date_echeance_croissante',
         })
       })

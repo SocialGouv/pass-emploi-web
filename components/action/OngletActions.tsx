@@ -6,11 +6,7 @@ import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
-import {
-  Action,
-  EtatQualificationAction,
-  StatutAction,
-} from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { MetadonneesPagination } from 'types/pagination'
@@ -27,7 +23,6 @@ interface OngletActionsProps {
   getActions: (
     page: number,
     statuts: StatutAction[],
-    etatsQualification: EtatQualificationAction[],
     tri: string
   ) => Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }>
   lectureSeule?: boolean
@@ -51,10 +46,7 @@ export default function OngletActions({
     actionsInitiales.actions
   )
   const [tri, setTri] = useState<TRI>(TRI.dateEcheanceDecroissante)
-
   const [filtresParStatuts, setFiltresParStatuts] = useState<StatutAction[]>([])
-  const [filtresParEtatsQualification, setFiltresParEtatsQualification] =
-    useState<EtatQualificationAction[]>([])
 
   const [nombrePages, setNombrePages] = useState<number>(
     actionsInitiales.metadonnees.nombrePages
@@ -72,27 +64,14 @@ export default function OngletActions({
     stateChanged.current = true
   }
 
-  function filtrerActions({
-    statuts,
-    etatsQualification,
-  }: {
-    statuts: StatutAction[]
-    etatsQualification: EtatQualificationAction[]
-  }) {
+  function filtrerActions(statuts: StatutAction[]) {
     if (
       statuts.every((statut) => filtresParStatuts.includes(statut)) &&
-      filtresParStatuts.every((filtre) => statuts.includes(filtre)) &&
-      etatsQualification.every((etat) =>
-        filtresParEtatsQualification.includes(etat)
-      ) &&
-      filtresParEtatsQualification.every((filtre) =>
-        etatsQualification.includes(filtre)
-      )
+      filtresParStatuts.every((filtre) => statuts.includes(filtre))
     )
       return
 
     setFiltresParStatuts(statuts)
-    setFiltresParEtatsQualification(etatsQualification)
     setPageCourante(1)
     stateChanged.current = true
   }
@@ -107,18 +86,15 @@ export default function OngletActions({
     if (stateChanged.current) {
       setIsLoading(true)
 
-      getActions(
-        pageCourante,
-        filtresParStatuts,
-        filtresParEtatsQualification,
-        tri
-      ).then(({ actions, metadonnees }) => {
-        setActionsAffichees(actions)
-        setNombrePages(metadonnees.nombrePages)
-        setIsLoading(false)
-      })
+      getActions(pageCourante, filtresParStatuts, tri).then(
+        ({ actions, metadonnees }) => {
+          setActionsAffichees(actions)
+          setNombrePages(metadonnees.nombrePages)
+          setIsLoading(false)
+        }
+      )
     }
-  }, [tri, filtresParStatuts, filtresParEtatsQualification, pageCourante])
+  }, [tri, filtresParStatuts, pageCourante])
 
   return (
     <>
@@ -150,7 +126,7 @@ export default function OngletActions({
             <>
               <TableauActionsJeune
                 jeune={jeune}
-                actions={actionsAffichees}
+                actionsFiltrees={actionsAffichees}
                 isLoading={isLoading}
                 onFiltres={filtrerActions}
                 onTri={trierActions}

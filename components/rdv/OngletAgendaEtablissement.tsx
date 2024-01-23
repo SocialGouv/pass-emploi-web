@@ -225,10 +225,7 @@ export default function OngletAgendaEtablissement({
                   title='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
                 />
               </TH>
-              <TH
-                estCliquable={true}
-                className='rounded-base hover:bg-primary_lighten'
-              >
+              <TH estCliquable={true}>
                 <FiltresStatutAnimationsCollectives
                   onFiltres={setStatutsValides}
                   defaultValue={statutsValides}
