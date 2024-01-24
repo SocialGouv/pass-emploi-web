@@ -27,6 +27,11 @@ export interface ActionPilotage {
   }
 }
 
+export interface ActionAQualifier {
+  idAction: string
+  codeQualification?: string
+}
+
 export interface QualificationAction {
   libelle: string
   code: string
