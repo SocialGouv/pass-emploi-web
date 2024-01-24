@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
 import ActionRow from 'components/action/ActionRow'
+import EncartQualificationActions from 'components/action/EncartQualificationActions'
 import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
 import { TRI } from 'components/action/OngletActions'
+import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQualificationModal'
+import ConfirmationMultiQualificationModalNonSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import Table from 'components/ui/Table/Table'
@@ -12,7 +16,7 @@ import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { Action, StatutAction } from 'interfaces/action'
+import { Action, ActionAQualifier, StatutAction } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
@@ -20,7 +24,12 @@ interface TableauActionsJeuneProps {
   actionsFiltrees: Action[]
   isLoading: boolean
   onFiltres: (statuts: StatutAction[]) => void
+  onLienExterne: (label: string) => void
   onTri: (tri: TRI) => void
+  onQualification: (
+    qualificationSNP: boolean,
+    actionsSelectionnees: Array<{ idAction: string; codeQualification: string }>
+  ) => Promise<void>
   tri: TRI
 }
 
@@ -29,10 +38,34 @@ export default function TableauActionsJeune({
   actionsFiltrees,
   isLoading,
   onFiltres,
+  onLienExterne,
   onTri,
+  onQualification,
   tri,
 }: TableauActionsJeuneProps) {
   const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
+  const [actionsSelectionnees, setActionsSelectionnees] = useState<
+    ActionAQualifier[]
+  >([])
+  const [actionSansCategorieSelectionnee, setActionSansCategorieSelectionnee] =
+    useState<boolean>(false)
+  const [actionNonTermineeSelectionnee, setActionNonTermineeSelectionnee] =
+    useState<boolean>(false)
+  const [
+    afficherModaleMultiQualification,
+    setAfficherModaleMultiQualification,
+  ] = useState<boolean>(false)
+  const [
+    afficherModaleMultiQualificationNonSNP,
+    setAfficherModaleMultiQualificationNonSNP,
+  ] = useState<boolean>(false)
+
+  const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
+
+  const boutonsDisabled =
+    actionsSelectionnees.length === 0 ||
+    actionSansCategorieSelectionnee ||
+    actionNonTermineeSelectionnee
 
   function reinitialiserFiltres() {
     onFiltres([])
@@ -70,6 +103,91 @@ export default function TableauActionsJeune({
     onFiltres(statutsSelectionnes)
   }
 
+  function selectionnerToutesLesActions() {
+    if (actionsSelectionnees.length === 0) {
+      setActionsSelectionnees(
+        actionsFiltrees.map(({ id, qualification }) => {
+          return {
+            idAction: id,
+            codeQualification: qualification?.code,
+          }
+        })
+      )
+    } else {
+      setActionsSelectionnees([])
+    }
+  }
+
+  function selectionnerAction({ id, qualification }: Action) {
+    const selection = [...actionsSelectionnees]
+
+    const indexAction = actionsSelectionnees.findIndex(
+      ({ idAction }) => id === idAction
+    )
+    if (indexAction !== -1) selection.splice(indexAction, 1)
+    else
+      selection.push({ idAction: id, codeQualification: qualification?.code })
+
+    setActionsSelectionnees(selection)
+  }
+
+  function selectionContientId(id: string) {
+    return actionsSelectionnees.some((action) => action.idAction === id)
+  }
+
+  async function qualifier(enSNP: boolean) {
+    await onQualification(
+      enSNP,
+      actionsSelectionnees as Array<{
+        idAction: string
+        codeQualification: string
+      }>
+    )
+  }
+
+  function indiqueSelectionContientActionNonTerminee(): boolean {
+    for (const action of actionsSelectionnees) {
+      const { status } = actionsFiltrees.find(
+        ({ id }) => action.idAction === id
+      )!
+
+      if (status !== StatutAction.Terminee) return true
+    }
+
+    return false
+  }
+
+  useEffect(() => {
+    setActionsSelectionnees([])
+  }, [actionsFiltrees])
+
+  useEffect(() => {
+    setActionSansCategorieSelectionnee(
+      actionsSelectionnees.some((action) => !action.codeQualification)
+    )
+
+    const aUneActionNonSelectionnee =
+      indiqueSelectionContientActionNonTerminee()
+    setActionNonTermineeSelectionnee(aUneActionNonSelectionnee)
+  }, [actionsSelectionnees])
+
+  useEffect(() => {
+    if (!actionsFiltrees.length) return
+
+    const tailleSelection = actionsSelectionnees.length
+    const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
+    const isChecked = tailleSelection === actionsFiltrees.length
+    const isIndeterminate =
+      tailleSelection !== actionsFiltrees.length && tailleSelection > 0
+
+    toutSelectionnerCheckbox.checked = isChecked
+    toutSelectionnerCheckbox.indeterminate = isIndeterminate
+
+    if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
+    else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
+    else toutSelectionnerCheckbox.ariaChecked = 'false'
+  }, [actionsFiltrees.length, actionsSelectionnees.length])
+
   return (
     <>
       {isLoading && <SpinningLoader />}
@@ -95,45 +213,108 @@ export default function TableauActionsJeune({
       )}
 
       {actionsFiltrees.length > 0 && (
-        <Table
-          asDiv={true}
-          caption={{
-            text: `Liste des actions de ${jeune.prenom} ${jeune.nom}`,
-          }}
-        >
-          <THead>
-            <TR isHeader={true}>
-              <TH>Titre de l’action</TH>
-              <TH estCliquable={true}>
-                <button
-                  onClick={trierParDateEcheance}
-                  aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
-                  title={getOrdreTriParDate()}
-                  className={columnHeaderButtonStyle}
-                >
-                  Date de l’action
-                  <SortIcon
-                    isSorted={getIsSortedByDateEcheance()}
-                    isDesc={getIsSortedDesc()}
-                  />
-                </button>
-              </TH>
-              <TH>Catégorie</TH>
-              <TH estCliquable={true}>
-                <FiltresStatutsActions
-                  defaultValue={statutsValides}
-                  onFiltres={filtrerActionsParStatuts}
-                />
-              </TH>
-            </TR>
-          </THead>
+        <>
+          <EncartQualificationActions
+            boutonsDisabled={boutonsDisabled}
+            nombreActionsSelectionnees={actionsSelectionnees.length}
+            onQualificationNonSNP={setAfficherModaleMultiQualificationNonSNP}
+            onQualificationSNP={setAfficherModaleMultiQualification}
+          />
 
-          <TBody>
-            {actionsFiltrees.map((action: Action) => (
-              <ActionRow key={action.id} action={action} jeuneId={jeune.id} />
-            ))}
-          </TBody>
-        </Table>
+          <div className='mt-4'>
+            {actionSansCategorieSelectionnee && (
+              <FailureAlert
+                label='Qualification impossible.'
+                sub='Vous ne pouvez pas qualifier une ou plusieurs actions sans catégorie. Cliquez sur l’action pour pouvoir la modifier et lui ajouter une catégorie.'
+              />
+            )}
+
+            {actionNonTermineeSelectionnee && (
+              <FailureAlert
+                label='Qualification impossible.'
+                sub='Vous ne pouvez pas qualifier une ou plusieurs actions non terminées. Cliquez sur l’action pour pouvoir la modifier changer son statut.'
+              />
+            )}
+          </div>
+
+          <Table
+            asDiv={true}
+            caption={{
+              text: `Liste des actions de ${jeune.prenom} ${jeune.nom}`,
+            }}
+          >
+            <THead>
+              <TR isHeader={true}>
+                <TH estCliquable={true}>
+                  <div className='flex justify-center w-full h-full p-4'>
+                    <input
+                      id='qualification-tout-selectionner'
+                      type='checkbox'
+                      title='Tout sélectionner'
+                      onChange={selectionnerToutesLesActions}
+                      className='flex items-center cursor-pointer w-4 h-4 p-4'
+                      aria-label='Tout sélectionner'
+                      ref={toutSelectionnerCheckboxRef}
+                    />
+                  </div>
+                </TH>
+                <TH>Titre de l’action</TH>
+                <TH estCliquable={true}>
+                  <button
+                    onClick={trierParDateEcheance}
+                    aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
+                    title={getOrdreTriParDate()}
+                    className={columnHeaderButtonStyle}
+                  >
+                    Date de l’action
+                    <SortIcon
+                      isSorted={getIsSortedByDateEcheance()}
+                      isDesc={getIsSortedDesc()}
+                    />
+                  </button>
+                </TH>
+                <TH>Catégorie</TH>
+                <TH estCliquable={true}>
+                  <FiltresStatutsActions
+                    defaultValue={statutsValides}
+                    onFiltres={filtrerActionsParStatuts}
+                  />
+                </TH>
+              </TR>
+            </THead>
+
+            <TBody>
+              {actionsFiltrees.map((action: Action) => (
+                <ActionRow
+                  key={action.id}
+                  action={action}
+                  jeuneId={jeune.id}
+                  onSelection={selectionnerAction}
+                  isChecked={selectionContientId(action.id)}
+                />
+              ))}
+            </TBody>
+          </Table>
+        </>
+      )}
+
+      {afficherModaleMultiQualification && (
+        <ConfirmationMultiQualificationModal
+          actions={actionsSelectionnees}
+          beneficiaire={jeune}
+          onConfirmation={() => qualifier(true)}
+          onCancel={() => setAfficherModaleMultiQualification(false)}
+          onLienExterne={onLienExterne}
+        />
+      )}
+
+      {afficherModaleMultiQualificationNonSNP && (
+        <ConfirmationMultiQualificationModalNonSNP
+          actions={actionsSelectionnees}
+          beneficiaire={jeune}
+          onConfirmation={() => qualifier(false)}
+          onCancel={() => setAfficherModaleMultiQualificationNonSNP(false)}
+        />
       )}
     </>
   )
