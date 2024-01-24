@@ -22,6 +22,8 @@ describe('TableauActionsJeune', () => {
           isLoading={false}
           onFiltres={jest.fn()}
           onTri={jest.fn()}
+          onLienExterne={jest.fn()}
+          onQualification={jest.fn()}
           tri={TRI.dateDecroissante}
         />
       )
