@@ -5,11 +5,15 @@ import EmptyState from 'components/EmptyState'
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Pagination from 'components/ui/Table/Pagination'
 import { Action, StatutAction } from 'interfaces/action'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
+import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
+import { AlerteParam } from 'referentiel/alerteParam'
 import { MetadonneesPagination } from 'types/pagination'
+import { useAlerte } from 'utils/alerteContext'
 
 interface OngletActionsProps {
   conseiller: Conseiller
@@ -25,6 +29,7 @@ interface OngletActionsProps {
     statuts: StatutAction[],
     tri: string
   ) => Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }>
+  onLienExterne: (label: string) => void
   lectureSeule?: boolean
 }
 
@@ -40,8 +45,11 @@ export default function OngletActions({
   getActions,
   jeune,
   conseiller,
+  onLienExterne,
   lectureSeule,
 }: OngletActionsProps) {
+  const [_, setAlerte] = useAlerte()
+
   const [actionsAffichees, setActionsAffichees] = useState<Action[]>(
     actionsInitiales.actions
   )
@@ -54,6 +62,8 @@ export default function OngletActions({
   const [pageCourante, setPageCourante] = useState<number>(
     actionsInitiales.page
   )
+
+  const [actionsEnErreur, setActionsEnErreur] = useState<boolean>(false)
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const stateChanged = useRef<boolean>(false)
@@ -80,6 +90,48 @@ export default function OngletActions({
     setTri(nouveauTri)
     setPageCourante(1)
     stateChanged.current = true
+  }
+
+  async function qualifierActions(
+    qualificationSNP: boolean,
+    actionsSelectionnees: Array<{ idAction: string; codeQualification: string }>
+  ) {
+    document.querySelector('header')?.scrollIntoView()
+
+    setActionsEnErreur(false)
+    const { qualifierActions: _qualifierActions } = await import(
+      'services/actions.service'
+    )
+
+    let actionsPayload = [...actionsSelectionnees]
+    if (!qualificationSNP) {
+      actionsPayload = actionsPayload.map((a) => ({
+        ...a,
+        codeQualification: CODE_QUALIFICATION_NON_SNP,
+      }))
+    }
+    const { idsActionsEnErreur } = await _qualifierActions(
+      actionsPayload,
+      qualificationSNP
+    )
+
+    let actionsQualifiees = actionsSelectionnees
+    if (idsActionsEnErreur.length) {
+      setActionsEnErreur(true)
+      actionsQualifiees = actionsSelectionnees.filter(
+        (action) => !idsActionsEnErreur.some((id) => id === action.idAction)
+      )
+    } else
+      setAlerte(
+        qualificationSNP
+          ? AlerteParam.multiQualificationSNP
+          : AlerteParam.multiQualificationNonSNP
+      )
+    setActionsAffichees(
+      actionsAffichees.filter(
+        (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
+      )
+    )
   }
 
   useEffect(() => {
@@ -122,6 +174,13 @@ export default function OngletActions({
             </div>
           )}
 
+          {actionsEnErreur && (
+            <FailureAlert
+              label='Certaines actions n’ont pas pu être qualifiées.'
+              onAcknowledge={() => setActionsEnErreur(false)}
+            />
+          )}
+
           {actionsInitiales.metadonnees.nombreTotal > 0 && (
             <>
               <TableauActionsJeune
@@ -129,7 +188,9 @@ export default function OngletActions({
                 actionsFiltrees={actionsAffichees}
                 isLoading={isLoading}
                 onFiltres={filtrerActions}
+                onLienExterne={onLienExterne}
                 onTri={trierActions}
+                onQualification={qualifierActions}
                 tri={tri}
               />
               {nombrePages > 1 && (
