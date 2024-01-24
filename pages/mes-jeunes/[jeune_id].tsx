@@ -508,6 +508,7 @@ function FicheJeune({
                 actionsInitiales={actionsInitiales}
                 lectureSeule={lectureSeule}
                 getActions={chargerActions}
+                onLienExterne={setTrackingLabel}
               />
             </div>
           )}
