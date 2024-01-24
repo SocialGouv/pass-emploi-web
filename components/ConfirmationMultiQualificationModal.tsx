@@ -27,7 +27,7 @@ export default function ConfirmationMultiQualificationModal({
 
   const titreModale = `Qualifier ${
     actions.length > 1 ? `les ${actions.length} actions` : 'l’action'
-  } de ${beneficiaire.prenom} ${beneficiaire.nom} en SNP ?`
+  } \nde ${beneficiaire.prenom} ${beneficiaire.nom} en SNP ?`
 
   async function qualifier(e: MouseEvent<HTMLButtonElement>) {
     modalRef.current!.closeModal(e)

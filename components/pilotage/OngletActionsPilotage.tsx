@@ -108,6 +108,10 @@ export default function OngletActionsPilotage({
         (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
       )
     )
+
+    document
+      .querySelector('[role="main"]')
+      ?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (

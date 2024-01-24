@@ -175,30 +175,32 @@ export default function TableauActionsAQualifier({
   return (
     <>
       <div className='flex items-center bg-primary_lighten rounded-base p-4 justify-between'>
-        <p>
+        <p className='whitespace-pre-wrap'>
           {actionsSelectionnees.length === 0 &&
-            'Sélectionnez au moins un élément ci-dessous pour commencer à qualifier'}
+            'Sélectionnez au moins un élément ci-dessous \npour commencer à qualifier'}
           {actionsSelectionnees.length === 1 &&
-            '1 action sélectionnée. S’agit-il de SNP ou de non SNP ?'}
+            '1 action sélectionnée. \nS’agit-il de SNP ou de non SNP ?'}
           {actionsSelectionnees.length > 1 &&
-            `${actionsSelectionnees.length} actions sélectionnées. S’agit-il de SNP ou de non SNP ?`}
+            `${actionsSelectionnees.length} actions sélectionnées. \nS’agit-il de SNP ou de non SNP ?`}
         </p>
-        <Button
-          onClick={() => setAfficherModaleMultiQualificationNonSNP(true)}
-          style={ButtonStyle.SECONDARY}
-          label='Enregistrer les actions en non SNP'
-          disabled={boutonsDisabled}
-        >
-          Enregistrer les actions en non SNP
-        </Button>
-        <Button
-          onClick={() => setAfficherModaleMultiQualification(true)}
-          style={ButtonStyle.PRIMARY}
-          label='Qualifier les actions en SNP'
-          disabled={boutonsDisabled}
-        >
-          Qualifier les actions en SNP
-        </Button>
+        <div className='flex gap-2'>
+          <Button
+            onClick={() => setAfficherModaleMultiQualificationNonSNP(true)}
+            style={ButtonStyle.SECONDARY}
+            label='Enregistrer les actions en non SNP'
+            disabled={boutonsDisabled}
+          >
+            Enregistrer les actions en non SNP
+          </Button>
+          <Button
+            onClick={() => setAfficherModaleMultiQualification(true)}
+            style={ButtonStyle.PRIMARY}
+            label='Qualifier les actions en SNP'
+            disabled={boutonsDisabled}
+          >
+            Qualifier les actions en SNP
+          </Button>
+        </div>
       </div>
 
       <div className='mt-4'>
@@ -242,15 +244,17 @@ export default function TableauActionsAQualifier({
           <THead>
             <TR isHeader={true}>
               <TH estCliquable={true}>
-                <input
-                  id='qualification-tout-selectionner'
-                  type='checkbox'
-                  title='Tout sélectionner'
-                  onChange={selectionnerToutesLesActions}
-                  className='flex items-center w-full'
-                  aria-label='Tout sélectionner'
-                  ref={toutSelectionnerCheckboxRef}
-                />
+                <div className='flex justify-center w-full h-full p-4'>
+                  <input
+                    id='qualification-tout-selectionner'
+                    type='checkbox'
+                    title='Tout sélectionner'
+                    onChange={selectionnerToutesLesActions}
+                    className='justify-self-center cursor-pointer w-4 h-4 p-4'
+                    aria-label='Tout sélectionner'
+                    ref={toutSelectionnerCheckboxRef}
+                  />
+                </div>
               </TH>
               <TH estCliquable={true}>
                 <button
@@ -306,7 +310,7 @@ export default function TableauActionsAQualifier({
                         ? 'Désélectionner'
                         : 'Sélectionner'
                     } ${action.titre}`}
-                    className='w-4 h-4'
+                    className='w-4 h-4 cursor-pointer'
                     aria-label={`Sélection ${action.titre} ${
                       action.categorie?.libelle ?? ''
                     }`}
