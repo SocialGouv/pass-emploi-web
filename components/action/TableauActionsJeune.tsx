@@ -118,6 +118,7 @@ export default function TableauActionsJeune({
                   />
                 </button>
               </TH>
+              <TH>Catégorie</TH>
               <TH estCliquable={true}>
                 <FiltresStatutsActions
                   defaultValue={statutsValides}
