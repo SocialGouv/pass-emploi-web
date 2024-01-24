@@ -7,15 +7,22 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
-import { Action, StatutAction } from 'interfaces/action'
+import { Action, QualificationAction, StatutAction } from 'interfaces/action'
 import { toShortDate } from 'utils/date'
 
 interface ActionRowProps {
   action: Action
   jeuneId: string
+  isChecked: boolean
+  onSelection: (action: Action) => void
 }
 
-export default function ActionRow({ action, jeuneId }: ActionRowProps) {
+export default function ActionRow({
+  action,
+  jeuneId,
+  isChecked,
+  onSelection,
+}: ActionRowProps) {
   const router = useRouter()
   const pathPrefix = router.asPath.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
@@ -31,7 +38,32 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
     <TR
       href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
       label={`Détail de l'action ${action.content}`}
+      isSelected={isChecked}
     >
+      <TD
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          onSelection(action)
+        }}
+      >
+        <input
+          id={`selectionner-${action.id}`}
+          type='checkbox'
+          checked={isChecked}
+          title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
+            action.content
+          }`}
+          className='w-4 h-4 cursor-pointer'
+          aria-label={`Sélection ${action.content} ${
+            action.qualification?.libelle ?? ''
+          }`}
+          onClick={(e) => {
+            e.stopPropagation()
+          }}
+          onChange={() => onSelection(action)}
+        />
+      </TD>
       <TD className='rounded-l-base'>
         <div className='flex items-center'>
           {action.status === StatutAction.Qualifiee &&

@@ -139,7 +139,7 @@ export default function OngletActionsPilotage({
         <>
           <TableauActionsAQualifier
             categories={categories}
-            actionsFilrees={actions}
+            actionsFiltrees={actions}
             tri={tri}
             onTri={trierActions}
             onFiltres={filtrerActions}
