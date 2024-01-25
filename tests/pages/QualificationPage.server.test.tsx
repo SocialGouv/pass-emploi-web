@@ -17,8 +17,7 @@ jest.mock('utils/auth/auth', () => ({
 }))
 jest.mock('services/actions.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage',
-  () => jest.fn()
+  'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage'
 )
 
 describe('QualificationPage server side', () => {
