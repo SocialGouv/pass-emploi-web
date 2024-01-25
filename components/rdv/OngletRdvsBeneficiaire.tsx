@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
@@ -20,8 +20,7 @@ export default function OngletRdvsBeneficiaire({
   beneficiaire,
   conseiller,
 }: OngletRdvsBeneficiaireProps) {
-  const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 

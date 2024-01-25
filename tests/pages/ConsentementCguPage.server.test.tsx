@@ -5,10 +5,7 @@ import ConsentementCgu, {
   metadata,
 } from 'app/(connected)/(full-page)/consentement-cgu/page'
 
-jest.mock(
-  'app/(connected)/(full-page)/consentement-cgu/ConsentementCguPage',
-  () => jest.fn()
-)
+jest.mock('app/(connected)/(full-page)/consentement-cgu/ConsentementCguPage')
 jest.mock('next/headers', () => ({ headers: jest.fn(() => new Map()) }))
 
 describe('ConsentementCGUPage server side', () => {

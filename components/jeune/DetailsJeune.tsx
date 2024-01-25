@@ -10,7 +10,7 @@ import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
 
 const UpdateIdentifiantPartenaireModal = dynamic(
-  import('components/jeune/UpdateIdentifiantPartenaireModal'),
+  () => import('components/jeune/UpdateIdentifiantPartenaireModal'),
   { ssr: false }
 )
 

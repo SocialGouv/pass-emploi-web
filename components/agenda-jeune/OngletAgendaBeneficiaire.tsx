@@ -57,7 +57,6 @@ export default function OngletAgendaBeneficiaire({
         }
       )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

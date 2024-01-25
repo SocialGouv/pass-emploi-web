@@ -9,8 +9,7 @@ jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock(
-  'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage',
-  () => jest.fn()
+  'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
 )
 
 describe('EtablissementPage server side', () => {

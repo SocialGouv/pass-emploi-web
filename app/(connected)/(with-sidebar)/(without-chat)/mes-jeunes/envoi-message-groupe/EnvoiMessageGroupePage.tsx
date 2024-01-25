@@ -35,7 +35,7 @@ import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const LeavePageConfirmationModal = dynamic(
-  import('components/LeavePageConfirmationModal'),
+  () => import('components/LeavePageConfirmationModal'),
   { ssr: false }
 )
 

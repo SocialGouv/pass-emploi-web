@@ -1,5 +1,6 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 
 import { BlocSituation } from 'components/jeune/BlocSituation'
@@ -13,12 +14,11 @@ import {
   ConseillerHistorique,
   EtatSituation,
 } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type HistoriqueProps = PageProps & {
+type HistoriqueProps = {
   idJeune: string
   situations: Array<{
     etat?: EtatSituation
@@ -34,7 +34,7 @@ export enum Onglet {
   CONSEILLERS = 'CONSEILLERS',
 }
 
-function Historique({
+function HistoriquePage({
   idJeune,
   situations,
   conseillers,
@@ -125,52 +125,4 @@ function Historique({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<HistoriqueProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-  const {
-    session: { accessToken, user },
-  } = sessionOrRedirect
-
-  const { getJeuneDetails, getConseillersDuJeuneServerSide } = await import(
-    'services/jeunes.service'
-  )
-
-  const jeune = await getJeuneDetails(
-    context.query.jeune_id as string,
-    accessToken
-  )
-
-  if (!jeune) {
-    return { notFound: true }
-  }
-
-  const conseillers = await getConseillersDuJeuneServerSide(
-    jeune.id,
-    accessToken
-  )
-
-  const lectureSeule = jeune.idConseiller !== user.id
-
-  return {
-    props: {
-      idJeune: jeune.id,
-      situations: jeune.situations,
-      conseillers,
-      lectureSeule,
-      pageTitle: `${lectureSeule ? 'Etablissement' : 'Portefeuille'} - ${
-        jeune.prenom
-      } ${jeune.nom} - Historique`,
-      pageHeader: 'Historique',
-    },
-  }
-}
-
-export default withTransaction(Historique.name, 'page')(Historique)
+export default withTransaction(HistoriquePage.name, 'page')(HistoriquePage)
