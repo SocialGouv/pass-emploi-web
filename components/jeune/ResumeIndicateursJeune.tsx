@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -21,8 +21,7 @@ export function ResumeIndicateursJeune({
   finDeLaSemaine,
   indicateursSemaine,
 }: ResumeIndicateursJeuneProps) {
-  const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 

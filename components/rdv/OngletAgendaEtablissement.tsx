@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { redirect } from 'next/navigation'
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -54,8 +54,6 @@ export default function OngletAgendaEtablissement({
   periodeIndex,
   changerPeriode,
 }: OngletAgendaEtablissementProps) {
-  const router = useRouter()
-
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
   const [evenementsFiltres, setEvenementsFiltres] =
@@ -100,7 +98,8 @@ export default function OngletAgendaEtablissement({
       }
     } catch (e) {
       if (e instanceof ApiError && e.statusCode === 401) {
-        await router.push('/api/auth/federated-logout')
+        // TODO redirect in http-client quand le router "page" aura disparu
+        redirect('/api/auth/federated-logout')
       }
       setFailed(true)
     } finally {

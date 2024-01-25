@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -27,10 +28,10 @@ export function PageRetourPortal({ lien }: { lien: string }) {
   }
 }
 
-export function PageFilArianePortal({ path }: { path: string }) {
+export function PageFilArianePortal() {
   const [isBrowser, setIsBrowser] = useState(false)
 
-  const pageFilArianeContainer = <FilAriane path={path} />
+  const pageFilArianeContainer = <FilAriane path={usePathname()!} />
 
   useEffect(() => {
     setIsBrowser(true)

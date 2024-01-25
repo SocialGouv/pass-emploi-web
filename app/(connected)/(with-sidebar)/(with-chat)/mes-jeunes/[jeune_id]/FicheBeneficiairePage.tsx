@@ -1,8 +1,9 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
@@ -23,14 +24,8 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import {
-  Conseiller,
-  estMilo,
-  estPoleEmploi,
-  estUserPoleEmploi,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
-import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
+import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
   DetailJeune,
@@ -38,44 +33,35 @@ import {
   MetadonneesFavoris,
 } from 'interfaces/jeune'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useCurrentJeune } from 'utils/chat/currentJeuneContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { compareDates } from 'utils/date'
-import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
+const OngletActions = dynamic(() => import('components/action/OngletActions'))
+const OngletAgendaBeneficiaire = dynamic(
+  () => import('components/agenda-jeune/OngletAgendaBeneficiaire')
+)
+const OngletRdvsBeneficiaire = dynamic(
+  () => import('components/rdv/OngletRdvsBeneficiaire')
+)
+const BlocFavoris = dynamic(() => import('components/jeune/BlocFavoris'))
+
 const DeleteJeuneActifModal = dynamic(
-  import('components/jeune/DeleteJeuneActifModal'),
+  () => import('components/jeune/DeleteJeuneActifModal'),
   { ssr: false }
 )
 const DeleteJeuneInactifModal = dynamic(
-  import('components/jeune/DeleteJeuneInactifModal'),
+  () => import('components/jeune/DeleteJeuneInactifModal'),
   { ssr: false }
 )
 
-const OngletActions = dynamic(import('components/action/OngletActions'))
-const OngletAgendaBeneficiaire = dynamic(
-  import('components/agenda-jeune/OngletAgendaBeneficiaire')
-)
-const OngletRdvsBeneficiaire = dynamic(
-  import('components/rdv/OngletRdvsBeneficiaire')
-)
-const BlocFavoris = dynamic(import('components/jeune/BlocFavoris'))
-
-export enum Onglet {
-  AGENDA = 'AGENDA',
-  ACTIONS = 'ACTIONS',
-  RDVS = 'RDVS',
-  FAVORIS = 'FAVORIS',
-}
+export type Onglet = 'AGENDA' | 'ACTIONS' | 'RDVS' | 'FAVORIS'
 
 const ongletProps: {
   [key in Onglet]: { queryParam: string; trackingLabel: string }
@@ -86,7 +72,7 @@ const ongletProps: {
   FAVORIS: { queryParam: 'favoris', trackingLabel: 'Favoris' },
 }
 
-interface FicheJeuneProps extends PageProps {
+type FicheBeneficiaireProps = {
   jeune: DetailJeune
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
@@ -95,14 +81,14 @@ interface FicheJeuneProps extends PageProps {
     metadonnees: MetadonneesPagination
     page: number
   }
-  lectureSeule?: boolean
+  lectureSeule: boolean
+  onglet: Onglet
   metadonneesFavoris?: MetadonneesFavoris
-  onglet?: Onglet
   offresPE?: Offre[]
   recherchesPE?: Recherche[]
 }
 
-function FicheJeune({
+function FicheBeneficiairePage({
   jeune,
   rdvs,
   categoriesActions,
@@ -112,9 +98,9 @@ function FicheJeune({
   lectureSeule,
   offresPE,
   recherchesPE,
-}: FicheJeuneProps) {
+}: FicheBeneficiaireProps) {
   const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
@@ -127,7 +113,7 @@ function FicheJeune({
     MotifSuppressionJeune[]
   >([])
 
-  const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.AGENDA)
+  const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
   const [totalActions, setTotalActions] = useState<number>(
     actionsInitiales.metadonnees.nombreTotal
   )
@@ -187,15 +173,8 @@ function FicheJeune({
       `${pageTracking} - Consultation ${ongletProps[tab].trackingLabel}`
     )
 
-    await router.replace(
-      {
-        pathname: `${pathPrefix}/${jeune.id}`,
-        query: { onglet: ongletProps[tab].queryParam },
-      },
-      undefined,
-      {
-        shallow: true,
-      }
+    router.replace(
+      `${pathPrefix}/${jeune.id}?onglet=${ongletProps[tab].queryParam}`
     )
   }
 
@@ -252,7 +231,7 @@ function FicheJeune({
 
       removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
-      await router.push('/mes-jeunes')
+      router.push('/mes-jeunes')
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
@@ -270,7 +249,7 @@ function FicheJeune({
 
       removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
-      await router.push('/mes-jeunes')
+      router.push('/mes-jeunes')
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
@@ -295,7 +274,6 @@ function FicheJeune({
     if (!lectureSeule) setIdCurrentJeune(jeune.id)
   }, [jeune, lectureSeule])
 
-  // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
   useEffect(() => {
     if (!estPoleEmploi(conseiller) && !indicateursSemaine) {
       getIndicateursJeuneAlleges(
@@ -436,40 +414,40 @@ function FicheJeune({
           <TabList className='mt-10'>
             <Tab
               label='Agenda'
-              selected={currentTab === Onglet.AGENDA}
+              selected={currentTab === 'AGENDA'}
               controls='agenda'
-              onSelectTab={() => switchTab(Onglet.AGENDA)}
+              onSelectTab={() => switchTab('AGENDA')}
               iconName={IconName.EventFill}
             />
             <Tab
               label='Actions'
               count={!estPoleEmploi(conseiller) ? totalActions : undefined}
-              selected={currentTab === Onglet.ACTIONS}
+              selected={currentTab === 'ACTIONS'}
               controls='liste-actions'
-              onSelectTab={() => switchTab(Onglet.ACTIONS)}
+              onSelectTab={() => switchTab('ACTIONS')}
               iconName={IconName.ChecklistRtlFill}
             />
             <Tab
               label='Rendez-vous'
               count={!estPoleEmploi(conseiller) ? rdvs.length : undefined}
-              selected={currentTab === Onglet.RDVS}
+              selected={currentTab === 'RDVS'}
               controls='liste-rdvs'
-              onSelectTab={() => switchTab(Onglet.RDVS)}
+              onSelectTab={() => switchTab('RDVS')}
               iconName={IconName.EventFill}
             />
             {metadonneesFavoris && (
               <Tab
                 label='Favoris'
                 count={totalFavoris}
-                selected={currentTab === Onglet.FAVORIS}
+                selected={currentTab === 'FAVORIS'}
                 controls='liste-favoris'
-                onSelectTab={() => switchTab(Onglet.FAVORIS)}
+                onSelectTab={() => switchTab('FAVORIS')}
                 iconName={IconName.FavoriteFill}
               />
             )}
           </TabList>
 
-          {currentTab === Onglet.AGENDA && (
+          {currentTab === 'AGENDA' && (
             <div
               role='tabpanel'
               aria-labelledby='agenda--tab'
@@ -480,12 +458,12 @@ function FicheJeune({
               <OngletAgendaBeneficiaire
                 idBeneficiaire={jeune.id}
                 recupererAgenda={recupererAgenda}
-                goToActions={() => switchTab(Onglet.ACTIONS)}
+                goToActions={() => switchTab('ACTIONS')}
               />
             </div>
           )}
 
-          {currentTab === Onglet.RDVS && (
+          {currentTab === 'RDVS' && (
             <div
               role='tabpanel'
               aria-labelledby='liste-rdvs--tab'
@@ -501,7 +479,7 @@ function FicheJeune({
             </div>
           )}
 
-          {currentTab === Onglet.ACTIONS && (
+          {currentTab === 'ACTIONS' && (
             <div
               role='tabpanel'
               aria-labelledby='liste-actions--tab'
@@ -521,7 +499,7 @@ function FicheJeune({
             </div>
           )}
 
-          {currentTab === Onglet.FAVORIS && metadonneesFavoris && (
+          {currentTab === 'FAVORIS' && metadonneesFavoris && (
             <div
               role='tabpanel'
               aria-labelledby='liste-favoris--tab'
@@ -584,166 +562,7 @@ function FicheJeune({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-  const {
-    session: { accessToken, user },
-  } = sessionOrRedirect
-
-  const userIsPoleEmploi = estUserPoleEmploi(user)
-  const page = parseInt(context.query.page as string, 10) || 1
-
-  const { getConseillerServerSide } = await import(
-    'services/conseiller.service'
-  )
-  const { getJeuneDetails, getMetadonneesFavorisJeune } = await import(
-    'services/jeunes.service'
-  )
-  const { getSessionsMiloBeneficiaire } = await import(
-    'services/sessions.service'
-  )
-  const { getRendezVousJeune } = await import('services/evenements.service')
-  const { getActionsJeuneServerSide } = await import('services/actions.service')
-  const { getOffres, getRecherchesSauvegardees } = await import(
-    'services/favoris.service'
-  )
-
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401) {
-      return {
-        redirect: {
-          destination: '/api/auth/federated-logout',
-          permanent: false,
-        },
-      }
-    }
-    throw e
-  }
-
-  if (!conseiller) {
-    return { notFound: true }
-  }
-
-  const [jeune, metadonneesFavoris, rdvs, actions, categoriesActions] =
-    await Promise.all([
-      getJeuneDetails(context.query.jeune_id as string, accessToken),
-      getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
-      userIsPoleEmploi
-        ? ([] as EvenementListItem[])
-        : getRendezVousJeune(
-            context.query.jeune_id as string,
-            PeriodeEvenements.FUTURS,
-            accessToken
-          ),
-      userIsPoleEmploi
-        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-        : getActionsJeuneServerSide(
-            context.query.jeune_id as string,
-            page,
-            accessToken
-          ),
-      userIsPoleEmploi
-        ? ([] as SituationNonProfessionnelle[])
-        : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
-    ])
-
-  let sessionsMilo: EvenementListItem[] = []
-
-  if (peutAccederAuxSessions(conseiller)) {
-    try {
-      sessionsMilo = await getSessionsMiloBeneficiaire(
-        context.query.jeune_id as string,
-        accessToken,
-        DateTime.now().startOf('day')
-      )
-    } catch (e) {
-      if (e instanceof ApiError && e.statusCode === 401) {
-        return {
-          redirect: {
-            destination: '/api/auth/federated-logout',
-            permanent: false,
-          },
-        }
-      }
-
-      sessionsMilo = []
-    }
-  }
-
-  if (!jeune) {
-    return { notFound: true }
-  }
-
-  let offresPE: Offre[] = []
-  let recherchesPE: Recherche[] = []
-
-  if (metadonneesFavoris?.autoriseLePartage) {
-    ;[offresPE, recherchesPE] = await Promise.all([
-      userIsPoleEmploi
-        ? getOffres(context.query.jeune_id as string, accessToken)
-        : [],
-      userIsPoleEmploi
-        ? getRecherchesSauvegardees(
-            context.query.jeune_id as string,
-            accessToken
-          )
-        : [],
-    ])
-  }
-
-  const rdvsEtSessionsTriesParDate = [...rdvs]
-    .concat(sessionsMilo)
-    .sort((event1, event2) =>
-      compareDates(DateTime.fromISO(event1.date), DateTime.fromISO(event2.date))
-    )
-
-  const props: FicheJeuneProps = {
-    jeune,
-    metadonneesFavoris,
-    rdvs: rdvsEtSessionsTriesParDate,
-    actionsInitiales: { ...actions, page },
-    categoriesActions,
-    pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
-    pageHeader: `${jeune.prenom} ${jeune.nom}`,
-    offresPE,
-    recherchesPE,
-  }
-
-  if (context.query.onglet) {
-    switch (context.query.onglet) {
-      case 'actions':
-        props.onglet = Onglet.ACTIONS
-        break
-      case 'rdvs':
-        props.onglet = Onglet.RDVS
-        break
-      case 'favoris':
-        props.onglet = Onglet.FAVORIS
-        break
-      default:
-        props.onglet = Onglet.AGENDA
-    }
-  }
-
-  if (jeune.idConseiller !== user.id) {
-    props.lectureSeule = true
-    props.pageTitle = `Établissement - ${jeune.prenom} ${jeune.nom}`
-  }
-
-  return {
-    props,
-  }
-}
-
-export default withTransaction(FicheJeune.name, 'page')(FicheJeune)
+export default withTransaction(
+  FicheBeneficiairePage.name,
+  'page'
+)(FicheBeneficiairePage)

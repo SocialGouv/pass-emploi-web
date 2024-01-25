@@ -1,9 +1,10 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage'
 import {
   desActionsInitiales,
   desCategories,
@@ -22,7 +23,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
-import FicheJeune, { Onglet } from 'pages/mes-jeunes/[jeune_id]'
 import {
   getActionsJeuneClientSide,
   qualifierActions,
@@ -66,11 +66,7 @@ describe('Actions dans la fiche jeune', () => {
   let replace: jest.Mock
   beforeEach(async () => {
     replace = jest.fn(() => Promise.resolve())
-    ;(useRouter as jest.Mock).mockReturnValue({
-      replace: replace,
-      push: jest.fn(),
-      asPath: '/mes-jeunes',
-    })
+    ;(useRouter as jest.Mock).mockReturnValue({ replace })
   })
 
   describe("quand l'utilisateur est un conseiller Pôle emploi", () => {
@@ -146,11 +142,7 @@ describe('Actions dans la fiche jeune', () => {
       expect(() =>
         screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
       ).toThrow()
-      expect(replace).toHaveBeenCalledWith(
-        { pathname: '/mes-jeunes/jeune-1', query: { onglet: 'actions' } },
-        undefined,
-        { shallow: true }
-      )
+      expect(replace).toHaveBeenCalledWith('/mes-jeunes/jeune-1?onglet=actions')
     })
 
     describe('permet la multi qualification', () => {
@@ -342,7 +334,7 @@ describe('Actions dans la fiche jeune', () => {
             page: 1,
             metadonnees: { nombreTotal: 14, nombrePages: 2 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
 
         // Then
@@ -371,7 +363,7 @@ describe('Actions dans la fiche jeune', () => {
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
       })
 
@@ -438,7 +430,7 @@ describe('Actions dans la fiche jeune', () => {
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
 
         // When
@@ -496,7 +488,7 @@ describe('Actions dans la fiche jeune', () => {
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
 
         // When
@@ -555,7 +547,7 @@ describe('Actions dans la fiche jeune', () => {
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
 
         headerColonneDate = screen.getByRole('button', {
@@ -616,7 +608,7 @@ interface FicheJeuneParams {
     metadonnees: MetadonneesPagination
     page: number
   }
-  onglet?: Onglet
+  onglet?: 'ACTIONS'
 }
 
 async function renderFicheJeuneMILO({
@@ -625,14 +617,14 @@ async function renderFicheJeuneMILO({
   onglet,
 }: FicheJeuneParams) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
         categoriesActions={desCategories()}
         rdvs={[]}
         actionsInitiales={actionsInitiales ?? desActionsInitiales()}
-        onglet={onglet}
-        pageTitle={''}
+        onglet={onglet ?? 'AGENDA'}
+        lectureSeule={false}
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
@@ -649,16 +641,17 @@ async function renderFicheJeunePE(
   recherchesPE: Recherche[]
 ) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
         categoriesActions={[]}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
-        pageTitle={''}
         metadonneesFavoris={metadonnees}
         offresPE={offresPE}
         recherchesPE={recherchesPE}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: {

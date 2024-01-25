@@ -14,8 +14,7 @@ jest.mock('utils/auth/auth', () => ({
 }))
 jest.mock('services/evenements.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage',
-  () => jest.fn()
+  'app/(connected)/(with-sidebar)/(without-chat)/evenements/[id_evenement]/cloture/CloturePage'
 )
 
 describe('CloturePage server side', () => {
