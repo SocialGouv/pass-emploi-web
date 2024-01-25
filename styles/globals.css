@@ -19,6 +19,7 @@ html {
   margin: 0;
   background-color: theme('colors.blanc');
   color: #000;
+  overflow-y: hidden;
 }
 
 body {

@@ -39,7 +39,7 @@ interface MesJeunesProps extends PageProps {
 }
 
 function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
-  const [chatCredentials] = useChatCredentials()
+  const chatCredentials = useChatCredentials()
   const [alerte, setAlerte] = useAlerte()
 
   const [conseiller, setConseiller] = useConseiller()

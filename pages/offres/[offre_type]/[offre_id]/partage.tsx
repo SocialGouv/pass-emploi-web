@@ -33,7 +33,7 @@ type PartageOffresProps = PageProps & {
 }
 
 function PartageOffre({ offre, returnTo }: PartageOffresProps) {
-  const [chatCredentials] = useChatCredentials()
+  const chatCredentials = useChatCredentials()
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 

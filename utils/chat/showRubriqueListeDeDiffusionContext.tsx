@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useState } from 'react'
 
 type ShowRubriqueListeDeDiffusionState = [
   boolean | undefined,
-  (showRubriqueListeDeDiffusion: boolean | undefined) => void
+  (showRubriqueListeDeDiffusion: boolean | undefined) => void,
 ]
 
 const ShowRubriqueListeDeDiffusion = createContext<

@@ -1,16 +1,17 @@
 'use client'
 
-import { createContext, ReactNode, useContext, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 import { ChatCredentials } from 'interfaces/message'
+import { getChatCredentials, signIn } from 'services/messages.service'
 
-type MaybeChatCredentials = ChatCredentials | undefined
-type ChatCredentialsState = [
-  MaybeChatCredentials,
-  (credentials: MaybeChatCredentials) => void,
-]
-
-const ChatCredentialsContext = createContext<ChatCredentialsState | undefined>(
+const ChatCredentialsContext = createContext<ChatCredentials | undefined>(
   undefined
 )
 
@@ -21,20 +22,25 @@ export function ChatCredentialsProvider({
   children: ReactNode
   credentials?: ChatCredentials
 }) {
-  const chatCredentialsState = useState<MaybeChatCredentials>(credentials)
+  const [chatCredentials, setChatCredentials] = useState<
+    ChatCredentials | undefined
+  >(credentials)
+
+  useEffect(() => {
+    if (!chatCredentials) {
+      getChatCredentials()
+        .then((c) => signIn(c.token).then(() => c))
+        .then(setChatCredentials)
+    }
+  }, [chatCredentials])
+
   return (
-    <ChatCredentialsContext.Provider value={chatCredentialsState}>
+    <ChatCredentialsContext.Provider value={chatCredentials}>
       {children}
     </ChatCredentialsContext.Provider>
   )
 }
 
-export function useChatCredentials(): ChatCredentialsState {
-  const chatCredentialsContext = useContext(ChatCredentialsContext)
-  if (!chatCredentialsContext) {
-    throw new Error(
-      'useChatCredentials must be used within ChatCredentialsProvider'
-    )
-  }
-  return chatCredentialsContext
+export function useChatCredentials(): ChatCredentials | undefined {
+  return useContext(ChatCredentialsContext)
 }

@@ -26,7 +26,7 @@ export default function MessagesListeDeDiffusion({
   onBack,
   messagerieFullScreen,
 }: MessagesListeDeDiffusionProps) {
-  const [chatCredentials] = useChatCredentials()
+  const chatCredentials = useChatCredentials()
 
   const [messages, setMessages] = useState<ByDay<MessageListeDiffusion>[]>()
 
@@ -92,11 +92,11 @@ export default function MessagesListeDeDiffusion({
             Messages envoyés à la liste de diffusion
           </span>
           <ul
-            className='overflow-y-auto p-4'
+            className='h-full min-h-0 p-4 overflow-y-auto'
             aria-describedby='description-messages'
           >
-            {messages.map((messagesOfADay: ByDay<MessageListeDiffusion>) => (
-              <li key={messagesOfADay.date.toMillis()} className='mb-5'>
+            {messages.map((messagesOfADay: ByDay<MessageListeDiffusion>, i) => (
+              <li key={messagesOfADay.date.toMillis() + i} className='mb-5'>
                 <div
                   className='text-base-regular text-center mb-3'
                   id={'date-messages-' + messagesOfADay.date.toMillis()}
@@ -109,11 +109,16 @@ export default function MessagesListeDeDiffusion({
                     'date-messages-' + messagesOfADay.date.toMillis()
                   }
                 >
-                  {messagesOfADay.messages.map((message) => (
+                  {messagesOfADay.messages.map((message, j) => (
                     <li
-                      key={message.id}
+                      key={message.id + i + j}
                       className={`mb-4 ${messagerieFullScreen ? '' : 'px-4'}`}
-                      ref={(e) => e?.scrollIntoView()}
+                      ref={(e) =>
+                        e?.scrollIntoView({
+                          block: 'nearest',
+                          inline: 'nearest',
+                        })
+                      }
                     >
                       <DisplayMessageListeDeDiffusion
                         message={message}

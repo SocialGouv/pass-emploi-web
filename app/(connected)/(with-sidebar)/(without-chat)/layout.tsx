@@ -1,31 +1,21 @@
-'use client'
-
 import { ReactNode } from 'react'
 
-import template from './layout.module.css'
+import PageLayout from 'app/(connected)/(with-sidebar)/PageLayout'
+import sidebarLayout from 'app/(connected)/(with-sidebar)/sidebar.module.css'
+import Sidebar from 'components/Sidebar'
 
-import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
-import Footer from 'components/layouts/Footer'
-import Header from 'components/layouts/Header'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
-
-export default function LayoutWithoutChat({
+export default async function LayoutWithoutChat({
   children,
 }: {
   children: ReactNode
 }) {
-  const [conseiller] = useConseiller()
-
   return (
-    <div className={template.page}>
-      <Header />
-
-      <div className={template.content}>
-        <AlerteDisplayer />
-        {children}
+    <div className='flex h-[100vh] w-[100vw]'>
+      <div className={sidebarLayout.sidebar}>
+        <Sidebar />
       </div>
 
-      <Footer conseiller={conseiller} />
+      <PageLayout fullWidth={false}>{children}</PageLayout>
     </div>
   )
 }

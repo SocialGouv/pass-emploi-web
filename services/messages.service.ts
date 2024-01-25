@@ -175,10 +175,13 @@ export async function countMessagesNotRead(
   const session = await getSession()
 
   const chats = await getChatsDuConseiller(session!.user.id)
-  return idsJeunes.reduce((mappedCounts, idJeune) => {
-    mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
-    return mappedCounts
-  }, {} as { [idJeune: string]: number })
+  return idsJeunes.reduce(
+    (mappedCounts, idJeune) => {
+      mappedCounts[idJeune] = chats[idJeune]?.newConseillerMessageCount ?? 0
+      return mappedCounts
+    },
+    {} as { [idJeune: string]: number }
+  )
 }
 
 export async function sendNouveauMessage({

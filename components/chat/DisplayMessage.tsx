@@ -68,12 +68,14 @@ export default function DisplayMessage({
           message.infoEvenement && (
             <LienEvenement infoEvenement={message.infoEvenement} />
           )}
+
         {message.type === TypeMessage.MESSAGE_EVENEMENT_EMPLOI &&
           message.infoEvenementEmploi && (
             <LienEvenementEmploi
               infoEvenementEmploi={message.infoEvenementEmploi}
             />
           )}
+
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&
           message.infoPiecesJointes.map(({ id, nom }) => (

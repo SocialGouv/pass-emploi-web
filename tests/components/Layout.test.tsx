@@ -189,7 +189,10 @@ describe('<Layout />', () => {
     it('affiche le ChatContainer avec les jeunes avec un message non lu en premier', async () => {
       // Then
       expect(ChatContainer).toHaveBeenCalledWith(
-        { jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]] },
+        {
+          jeunesChats: [jeunesChats[2], jeunesChats[0], jeunesChats[1]],
+          menuState: [false, expect.any(Function)],
+        },
         {}
       )
     })

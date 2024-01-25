@@ -1,8 +1,9 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
@@ -24,7 +25,6 @@ import RecapitulatifErreursFormulaire, {
 import { InfoFichier } from 'interfaces/fichier'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FormNouveauMessageGroupe } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -33,23 +33,22 @@ import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
 const LeavePageConfirmationModal = dynamic(
   import('components/LeavePageConfirmationModal'),
   { ssr: false }
 )
 
-interface EnvoiMessageGroupeProps extends PageProps {
+type EnvoiMessageGroupeProps = {
   listesDiffusion: ListeDeDiffusion[]
   returnTo: string
 }
 
-function EnvoiMessageGroupe({
+function EnvoiMessageGroupePage({
   listesDiffusion,
   returnTo,
 }: EnvoiMessageGroupeProps) {
-  const [chatCredentials] = useChatCredentials()
+  const chatCredentials = useChatCredentials()
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
@@ -187,7 +186,7 @@ function EnvoiMessageGroupe({
       await sendNouveauMessageGroupe(formNouveauMessage)
 
       setAlerte(AlerteParam.envoiMessage)
-      await router.push(returnTo)
+      router.push(returnTo)
     } catch (error) {
       setErreurEnvoi(
         error instanceof ApiError
@@ -403,44 +402,7 @@ function EnvoiMessageGroupe({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  EnvoiMessageGroupeProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-
-  const { getListesDeDiffusionServerSide } = await import(
-    'services/listes-de-diffusion.service'
-  )
-  const listesDeDiffusion = await getListesDeDiffusionServerSide(
-    user.id,
-    accessToken
-  )
-
-  const referer: string | undefined = context.req.headers.referer
-
-  const previousUrl =
-    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  return {
-    props: {
-      listesDiffusion: listesDeDiffusion,
-      withoutChat: true,
-      pageTitle: 'Message multi-destinataires',
-      returnTo: previousUrl,
-    },
-  }
-}
-
 export default withTransaction(
-  EnvoiMessageGroupe.name,
+  EnvoiMessageGroupePage.name,
   'page'
-)(EnvoiMessageGroupe)
+)(EnvoiMessageGroupePage)

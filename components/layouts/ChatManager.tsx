@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
+import ChatNav from 'components/chat/ChatNav'
 import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
-import {
-  getChatCredentials,
-  observeConseillerChats,
-  signIn,
-} from 'services/messages.service'
+import { observeConseillerChats } from 'services/messages.service'
+import styles from 'styles/components/Layouts.module.css'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -16,21 +14,21 @@ const CHEMIN_DU_SON = '/sounds/notification.mp3'
 interface ChatManagerProps {
   displayChat: boolean
   setHasMessageNonLu: (value: boolean) => void
-  pageEstMessagerie?: boolean
 }
 
 export default function ChatManager({
   displayChat,
   setHasMessageNonLu,
-  pageEstMessagerie,
 }: ChatManagerProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const [chatCredentials, setChatCredentials] = useChatCredentials()
+  const chatCredentials = useChatCredentials()
 
   const [chats, setChats] = useState<JeuneChat[]>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
   const destructorRef = useRef<() => void>(() => undefined)
+
+  const [showChatNav, setShowChatNav] = useState<boolean>(false)
 
   function hasMessageNonLu(updatedChats: JeuneChat[]): boolean {
     return updatedChats.some(
@@ -49,16 +47,6 @@ export default function ChatManager({
     // https://github.com/vercel/next.js/discussions/17963
     setAudio(new Audio(CHEMIN_DU_SON))
   }, [])
-
-  useEffect(() => {
-    if (!chatCredentials) {
-      getChatCredentials()
-        .then((credentials) =>
-          signIn(credentials.token).then(() => credentials)
-        )
-        .then(setChatCredentials)
-    }
-  }, [chatCredentials])
 
   useEffect(() => {
     if (!chatCredentials || !audio || !portefeuille) return
@@ -100,12 +88,18 @@ export default function ChatManager({
     }
   }, [portefeuille, chatCredentials, audio, conseiller.notificationsSonores])
 
-  return displayChat ? (
-    <ChatContainer
-      jeunesChats={chats}
-      messagerieFullScreen={pageEstMessagerie}
-    />
-  ) : (
-    <></>
+  if (!displayChat) return null
+
+  return (
+    <>
+      <aside className={styles.chatRoom}>
+        <ChatContainer
+          jeunesChats={chats}
+          menuState={[showChatNav, setShowChatNav]}
+        />
+      </aside>
+
+      {showChatNav && <ChatNav menuState={[showChatNav, setShowChatNav]} />}
+    </>
   )
 }
