@@ -1,8 +1,9 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
@@ -11,13 +12,8 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import {
-  estMilo,
-  estUserPoleEmploi,
-  StructureConseiller,
-} from 'interfaces/conseiller'
+import { estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollective, EvenementListItem } from 'interfaces/evenement'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -26,21 +22,19 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const OngletAgendaConseiller = dynamic(
-  import('components/rdv/OngletAgendaConseiller')
+  () => import('components/rdv/OngletAgendaConseiller')
 )
 const OngletAgendaEtablissement = dynamic(
-  import('components/rdv/OngletAgendaEtablissement')
+  () => import('components/rdv/OngletAgendaEtablissement')
 )
 
 type Onglet = 'CONSEILLER' | 'ETABLISSEMENT'
-
-interface AgendaProps extends PageProps {
-  pageTitle: string
-  onglet?: Onglet
-  periodeIndexInitial?: number
+type AgendaPageProps = {
+  onglet: Onglet
+  periodeIndexInitial: number
 }
 
-function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
+function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -58,12 +52,8 @@ function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
       trackingLabel: 'Mission Locale',
     },
   }
-  const [currentTab, setCurrentTab] = useState<Onglet>(
-    onglet ?? 'ETABLISSEMENT'
-  )
-  const [periodeIndex, setPeriodeIndex] = useState<number>(
-    periodeIndexInitial ?? 0
-  )
+  const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
+  const [periodeIndex, setPeriodeIndex] = useState<number>(periodeIndexInitial)
 
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
@@ -84,37 +74,16 @@ function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
 
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
-
     setTrackingTitle(trackingLabelOnglet(tab))
-    await router.replace(
-      {
-        pathname: '/agenda',
-        query: {
-          onglet: ongletProps[tab].queryParam,
-          periodeIndex: periodeIndex,
-        },
-      },
-      undefined,
-      {
-        shallow: true,
-      }
+    router.replace(
+      `/agenda?onglet=${ongletProps[tab].queryParam}&periodeIndex=${periodeIndex}`
     )
   }
 
   async function switchPeriode(index: number) {
     setPeriodeIndex(index)
-    await router.replace(
-      {
-        pathname: '/agenda',
-        query: {
-          onglet: ongletProps[currentTab].queryParam,
-          periodeIndex: index,
-        },
-      },
-      undefined,
-      {
-        shallow: true,
-      }
+    router.replace(
+      `/agenda?onglet=${ongletProps[currentTab].queryParam}&periodeIndex=${index}`
     )
   }
 
@@ -286,40 +255,4 @@ function Agenda({ onglet, periodeIndexInitial }: AgendaProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<AgendaProps> = async (
-  context
-): Promise<GetServerSidePropsResult<AgendaProps>> => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user },
-  } = sessionOrRedirect
-  if (estUserPoleEmploi(user)) {
-    return { notFound: true }
-  }
-
-  const props: AgendaProps = {
-    pageTitle: 'Tableau de bord - Agenda',
-    pageHeader: 'Agenda',
-  }
-
-  if (context.query.periodeIndex)
-    props.periodeIndexInitial = parseInt(
-      context.query.periodeIndex.toString(),
-      10
-    )
-
-  if (context.query.onglet)
-    props.onglet =
-      context.query.onglet === 'etablissement' ? 'ETABLISSEMENT' : 'CONSEILLER'
-
-  return { props }
-}
-
-export default withTransaction(Agenda.name, 'page')(Agenda)
+export default withTransaction(AgendaPage.name, 'page')(AgendaPage)

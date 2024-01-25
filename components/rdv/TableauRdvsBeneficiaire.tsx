@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -28,8 +28,7 @@ export default function TableauRdvsBeneficiaire({
   beneficiaire,
   additionalColumn = 'Modalité',
 }: TableauRdvsBeneficiaireProps) {
-  const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
   const isRdvPasses = additionalColumn === 'Présent'

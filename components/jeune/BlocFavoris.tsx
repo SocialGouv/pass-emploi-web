@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -17,8 +17,7 @@ export default function BlocFavoris({
   idJeune,
   metadonneesFavoris: { offres, recherches, autoriseLePartage },
 }: BlocFavorisProps) {
-  const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
   const aDesFavoris = offres.total > 0 || recherches.total > 0

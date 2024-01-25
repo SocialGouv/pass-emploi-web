@@ -6,7 +6,7 @@ import LoginPage from 'app/(connexion)/login/LoginPage'
 import Login, { metadata } from 'app/(connexion)/login/page'
 
 jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
-jest.mock('app/(connexion)/login/LoginPage', () => jest.fn())
+jest.mock('app/(connexion)/login/LoginPage')
 
 describe('LoginPage server side', () => {
   it('redirige si l’utilisateur est déjà connecté', async () => {

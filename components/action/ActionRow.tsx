@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import TagStatutAction from 'components/action/TagStatutAction'
@@ -23,8 +23,7 @@ export default function ActionRow({
   isChecked,
   onSelection,
 }: ActionRowProps) {
-  const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
