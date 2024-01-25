@@ -1,13 +1,12 @@
 import { act, screen } from '@testing-library/react'
-import { useRouter } from 'next/router'
 import React from 'react'
 
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage'
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
-import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -18,7 +17,6 @@ jest.mock('services/agenda.service')
 describe('Situations dans la fiche jeune', () => {
   describe('quand l’utilisateur est un conseiller MILO', () => {
     beforeEach(async () => {
-      ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
       ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
@@ -80,12 +78,13 @@ async function renderFicheJeune(
   }>
 ) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune({ situations: situations })}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
-        pageTitle={''}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: { structure: StructureConseiller.MILO },

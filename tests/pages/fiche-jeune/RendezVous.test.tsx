@@ -1,8 +1,9 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage'
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { desEvenementsListItems } from 'fixtures/evenement'
@@ -16,7 +17,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
-import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { recupererAgenda } from 'services/agenda.service'
 import { getOffres } from 'services/favoris.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
@@ -27,14 +27,10 @@ jest.mock('services/agenda.service')
 jest.mock('services/favoris.service')
 
 describe('Rendez-vous de la fiche jeune', () => {
-  let rdvs: EvenementListItem[]
-  rdvs = desEvenementsListItems()
-
+  let rdvs: EvenementListItem[] = desEvenementsListItems()
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
-      push: jest.fn(),
-      asPath: '/mes-jeunes',
     })
     ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
@@ -161,12 +157,13 @@ async function renderFicheJeune(
   rdvs: EvenementListItem[] = []
 ) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
-        pageTitle={''}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: {
@@ -187,15 +184,16 @@ async function renderFicheJeunePE(
   recherchesPE: Recherche[]
 ) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
-        pageTitle={''}
         metadonneesFavoris={metadonnees}
         offresPE={offresPE}
         recherchesPE={recherchesPE}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: {
