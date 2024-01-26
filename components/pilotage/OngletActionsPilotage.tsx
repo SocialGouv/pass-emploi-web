@@ -74,6 +74,8 @@ export default function OngletActionsPilotage({
     qualificationSNP: boolean,
     actionsSelectionnees: Array<{ idAction: string; codeQualification: string }>
   ) {
+    document.querySelector('header')?.scrollIntoView({ behavior: 'smooth' })
+
     setActionsEnErreur(false)
     const { qualifierActions: _qualifierActions } = await import(
       'services/actions.service'
@@ -103,15 +105,12 @@ export default function OngletActionsPilotage({
           ? AlerteParam.multiQualificationSNP
           : AlerteParam.multiQualificationNonSNP
       )
+
     setActions(
       actions.filter(
         (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
       )
     )
-
-    document
-      .querySelector('[role="main"]')
-      ?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
