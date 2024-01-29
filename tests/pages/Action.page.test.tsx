@@ -85,16 +85,15 @@ describe("Page Détail d'une action d'un jeune", () => {
       describe('Au clique sur un statut', () => {
         it("déclenche le changement de statut de l'action", async () => {
           // Given
-          const statutRadio = screen.getByText('En cours')
+          const statutRadio = screen.getByText('À Faire')
 
           // When
           await userEvent.click(statutRadio)
 
           // Then
-          expect(modifierAction).toHaveBeenCalledWith(
-            action.id,
-            { statut: StatutAction.EnCours }
-          )
+          expect(modifierAction).toHaveBeenCalledWith(action.id, {
+            statut: StatutAction.AFaire,
+          })
         })
       })
 
@@ -323,7 +322,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         })
 
         it('ne permet pas de modifier le statut de l’action', () => {
-          expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
+          expect(screen.getByLabelText('À Faire')).toHaveAttribute('disabled')
           expect(screen.getByLabelText('Terminée')).toHaveAttribute('disabled')
         })
       })
@@ -367,7 +366,7 @@ describe("Page Détail d'une action d'un jeune", () => {
         })
 
         it('ne permet pas de modifier le statut de l’action', () => {
-          expect(screen.getByLabelText('En cours')).toHaveAttribute('disabled')
+          expect(screen.getByLabelText('À Faire')).toHaveAttribute('disabled')
           expect(screen.getByLabelText('Terminée')).toHaveAttribute('disabled')
         })
 

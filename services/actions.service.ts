@@ -363,7 +363,7 @@ function extraireNombreActionsAvecStatut(
   statut: StatutAction
 ): number {
   switch (statut) {
-    case StatutAction.EnCours:
+    case StatutAction.AFaire:
       return metadonnees.nombrePasCommencees + metadonnees.nombreEnCours
     case StatutAction.Terminee:
       return metadonnees.nombreAQualifier
