@@ -22,7 +22,7 @@ import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
 import FicheJeune, { Onglet } from 'pages/mes-jeunes/[jeune_id]'
-import { getActionsJeuneClientSide } from 'services/actions.service'
+import { getActionsJeuneClientSide, qualifierActions } from 'services/actions.service'
 import { recupererAgenda } from 'services/agenda.service'
 import { getOffres } from 'services/favoris.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
@@ -33,6 +33,7 @@ jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
 jest.mock('services/favoris.service')
 jest.mock('services/actions.service')
+jest.mock('components/Modal')
 
 describe('Actions dans la fiche jeune', () => {
   const actions = uneListeDActions().concat([
@@ -146,6 +147,161 @@ describe('Actions dans la fiche jeune', () => {
         undefined,
         { shallow: true }
       )
+    })
+
+    describe('permet la multi qualification', () => {
+      beforeEach(async () => {
+        await renderFicheJeuneMILO({
+          structure: StructureConseiller.MILO,
+          actionsInitiales: {
+            actions,
+            page: 1,
+            metadonnees: { nombreTotal: 15, nombrePages: 2 },
+          },
+        })
+
+        // When
+        const tabActions = screen.getByRole('tab', { name: 'Actions 15' })
+        await userEvent.click(tabActions)
+
+        ;(qualifierActions as jest.Mock).mockResolvedValue({
+          idsActionsEnErreur: [],
+        })
+      })
+
+      describe('quand le conseiller qualifie en SNP', () => {
+        beforeEach(async () => {
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /Sélection Action 5/,
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier les actions en SNP',
+            })
+          )
+        })
+
+        it('affiche la modale de qualification en SNP', () => {
+          expect(
+            screen.getByText(
+              'Les informations seront envoyées à i-milo, qui comptera automatiquement les heures associées à chaque type de SNP.'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Annuler' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          ).toBeInTheDocument()
+        })
+
+        it('qualifie l’action', async () => {
+          //When
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          )
+
+          //Then
+          expect(qualifierActions).toHaveBeenCalledWith(
+            [
+              {
+                codeQualification: actions[4].qualification!.code,
+                idAction: actions[4].id,
+              },
+            ],
+            true
+          )
+        })
+      })
+
+      describe('quand le conseiller enregisre en non SNP', () => {
+        beforeEach(async () => {
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /Sélection Action 5/,
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Enregistrer les actions en non SNP',
+            })
+          )
+        })
+
+        it('affiche la modale d’enregistrement en non SNP', () => {
+          expect(
+            screen.getByText(
+              'Les actions non-SNP ne sont pas transmises à i-milo, pour ne pas fausser le calcul d’heures de votre bénéficiaire.'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Annuler' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Enregistrer en non SNP' })
+          ).toBeInTheDocument()
+        })
+
+        it('enregistre l’action', async () => {
+          //When
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Enregistrer en non SNP' })
+          )
+
+          //Then
+          expect(qualifierActions).toHaveBeenCalledWith(
+            [{ codeQualification: 'NON_SNP', idAction: actions[4].id }],
+            false
+          )
+        })
+      })
+
+      describe('quand deux actions sont sélectionnées', () => {
+        beforeEach(async () => {
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /Sélection Action 5/,
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /Sélection Consulter les offres d'emploi/,
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier les actions en SNP',
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          )
+        })
+        it('Qualifie les actions', () => {
+          //Then
+          expect(qualifierActions).toHaveBeenCalledWith(
+            [
+              {
+                codeQualification: actions[4].qualification!.code,
+                idAction: actions[4].id,
+              },
+              {
+                codeQualification: actions[3].qualification!.code,
+                idAction: actions[3].id,
+              },
+            ],
+            true
+          )
+        })
+      })
     })
 
     it('permet la création d’une action', async () => {

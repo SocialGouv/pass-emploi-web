@@ -121,12 +121,14 @@ export default function OngletActions({
       actionsQualifiees = actionsSelectionnees.filter(
         (action) => !idsActionsEnErreur.some((id) => id === action.idAction)
       )
-    } else
+    } else {
       setAlerte(
         qualificationSNP
           ? AlerteParam.multiQualificationSNP
           : AlerteParam.multiQualificationNonSNP
       )
+    }
+
     setActionsAffichees(
       actionsAffichees.filter(
         (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
