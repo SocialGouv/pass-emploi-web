@@ -222,7 +222,7 @@ describe('Agenda de la fiche jeune', () => {
                   date: UNE_DATE_SEMAINE_EN_COURS,
                   type: 'action',
                   titre: 'Identifier ses atouts et ses compétences',
-                  statut: StatutAction.EnCours,
+                  statut: StatutAction.AFaire,
                 } as EntreeAgenda,
                 {
                   id: '1',
@@ -280,7 +280,7 @@ describe('Agenda de la fiche jeune', () => {
                   date: SAMEDI_JANVIER_1,
                   type: 'action',
                   titre: 'Action du samedi 1',
-                  statut: StatutAction.EnCours,
+                  statut: StatutAction.AFaire,
                 } as EntreeAgenda,
                 {
                   id: '1',
