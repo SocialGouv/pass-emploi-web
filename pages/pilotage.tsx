@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { ActionPilotage } from 'interfaces/action'
+import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
 import {
   Conseiller,
   estUserPoleEmploi,
@@ -15,6 +15,10 @@ import {
 } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
+import {
+  getSituationsNonProfessionnelles,
+  TriActionsAQualifier,
+} from 'services/actions.service'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { SessionsAClore } from 'services/sessions.service'
@@ -62,6 +66,7 @@ type PilotageProps = PageProps & {
     metadonnees: MetadonneesPagination
   }
   sessions?: SessionsAClore[]
+  categoriesActions: SituationNonProfessionnelle[]
   onglet?: Onglet
 }
 
@@ -69,6 +74,7 @@ function Pilotage({
   actions,
   animationsCollectives,
   sessions,
+  categoriesActions,
   onglet,
 }: PilotageProps) {
   const [conseiller, setConseiller] = useConseiller()
@@ -98,14 +104,18 @@ function Pilotage({
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
-  async function chargerActions(page: number): Promise<{
+  async function chargerActions(options: {
+    page: number
+    tri?: TriActionsAQualifier
+    filtres?: string[]
+  }): Promise<{
     actions: ActionPilotage[]
     metadonnees: MetadonneesPagination
   }> {
     const { getActionsAQualifierClientSide } = await import(
       'services/actions.service'
     )
-    const result = await getActionsAQualifierClientSide(conseiller.id, page)
+    const result = await getActionsAQualifierClientSide(conseiller.id, options)
 
     setTotalActions(result.metadonnees.nombreTotal)
     return result
@@ -248,9 +258,11 @@ function Pilotage({
           className='mt-6 pb-8 border-b border-primary_lighten'
         >
           <OngletActionsPilotage
+            categories={categoriesActions}
             actionsInitiales={actions.donnees}
             metadonneesInitiales={actions.metadonnees}
             getActions={chargerActions}
+            onLienExterne={setTrackingLabel}
           />
         </div>
       )}
@@ -345,7 +357,10 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
   }
   if (!conseiller) return { notFound: true }
 
-  const actions = await getActionsAQualifierServerSide(user.id, accessToken)
+  const [actions, categoriesActions] = await Promise.all([
+    getActionsAQualifierServerSide(user.id, accessToken),
+    getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
+  ])
 
   let evenements
   let sessions: SessionsAClore[] | undefined
@@ -379,6 +394,7 @@ export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
       donnees: actions.actions,
       metadonnees: actions.metadonnees,
     },
+    categoriesActions,
   }
 
   if (evenements) {

@@ -6,7 +6,6 @@ import {
   Action,
   ActionPilotage,
   Commentaire,
-  EtatQualificationAction,
   QualificationAction,
   SituationNonProfessionnelle,
   StatutAction,
@@ -19,6 +18,7 @@ import {
   ActionsCountJson,
   actionStatusToFiltre,
   actionStatusToJson,
+  CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
   jsonToAction,
   jsonToActionPilotage,
@@ -72,7 +72,6 @@ export async function getActionsJeuneClientSide(
   options: {
     page: number
     statuts: StatutAction[]
-    etatsQualification: EtatQualificationAction[]
     tri?: string
   }
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
@@ -90,14 +89,14 @@ export async function getActionsJeuneServerSide(
 
 export async function getActionsAQualifierClientSide(
   idConseiller: string,
-  page: number
+  options: { page: number; tri?: TriActionsAQualifier; filtres?: string[] }
 ): Promise<{
   actions: ActionPilotage[]
   metadonnees: MetadonneesPagination
 }> {
   const session = await getSession()
 
-  return getActionsAQualifier(idConseiller, page, session!.accessToken)
+  return getActionsAQualifier(idConseiller, options, session!.accessToken)
 }
 
 export async function getActionsAQualifierServerSide(
@@ -107,7 +106,7 @@ export async function getActionsAQualifierServerSide(
   actions: ActionPilotage[]
   metadonnees: MetadonneesPagination
 }> {
-  return getActionsAQualifier(idConseiller, 1, accessToken)
+  return getActionsAQualifier(idConseiller, { page: 1 }, accessToken)
 }
 
 export async function creerAction(
@@ -147,19 +146,17 @@ export async function modifierAction(
 ): Promise<void> {
   const session = await getSession()
 
-  const actionModifiee = { 
-    status: modifications.statut ? actionStatusToJson(modifications.statut) : undefined,
+  const actionModifiee = {
+    status: modifications.statut
+      ? actionStatusToJson(modifications.statut)
+      : undefined,
     contenu: modifications.titre,
     description: modifications.description,
     dateEcheance: modifications.dateEcheance,
-    codeQualification: modifications.codeCategorie
+    codeQualification: modifications.codeCategorie,
   }
 
-  await apiPut(
-    `/actions/${idAction}`,
-    actionModifiee,
-    session!.accessToken
-  )
+  await apiPut(`/actions/${idAction}`, actionModifiee, session!.accessToken)
 }
 
 export async function qualifier(
@@ -195,6 +192,21 @@ export async function qualifier(
   return jsonToQualification(content)
 }
 
+export async function qualifierActions(
+  actions: Array<{ idAction: string; codeQualification: string }>,
+  estSNP: boolean
+): Promise<{ idsActionsEnErreur: string[] }> {
+  const session = await getSession()
+  const payload = { estSNP, qualifications: actions }
+
+  const { content } = await apiPost<{ idsActionsEnErreur: string[] }>(
+    '/conseillers/milo/actions/qualifier',
+    payload,
+    session!.accessToken
+  )
+  return content
+}
+
 export async function deleteAction(idAction: string): Promise<void> {
   const session = await getSession()
   await apiDelete(`/actions/${idAction}`, session!.accessToken)
@@ -225,13 +237,18 @@ export async function recupererLesCommentaires(
 }
 
 export async function getSituationsNonProfessionnelles(
+  { avecNonSNP }: { avecNonSNP: boolean },
   accessToken: string
 ): Promise<SituationNonProfessionnelle[]> {
   const { content } = await apiGet<SituationNonProfessionnelle[]>(
     '/referentiels/qualifications-actions/types',
     accessToken
   )
-  return content
+  return avecNonSNP
+    ? content
+    : content.filter(
+        (categorie) => categorie.code !== CODE_QUALIFICATION_NON_SNP
+      )
 }
 
 async function getActionsJeune(
@@ -273,23 +290,47 @@ async function getActionsJeune(
   }
 }
 
+export type TriActionsAQualifier = 'ALPHABETIQUE' | 'INVERSE'
 async function getActionsAQualifier(
   idConseiller: string,
-  page: number,
+  {
+    page,
+    tri,
+    filtres,
+  }: {
+    page: number
+    tri?: TriActionsAQualifier
+    filtres?: string[]
+  },
   accessToken: string
 ): Promise<{
   actions: ActionPilotage[]
   metadonnees: MetadonneesPagination
 }> {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    aQualifier: 'true',
+  })
+
+  if (tri) {
+    queryParams.append(
+      'tri',
+      tri === 'ALPHABETIQUE'
+        ? 'BENEFICIAIRE_ALPHABETIQUE'
+        : 'BENEFICIAIRE_INVERSE'
+    )
+  }
+
+  if (filtres) {
+    filtres.forEach((filtre) => queryParams.append('codesCategories', filtre))
+  }
+
   const {
     content: { pagination, resultats },
   } = await apiGet<{
     pagination: { total: number; limit: number }
     resultats: ActionPilotageJson[]
-  }>(
-    `/v2/conseillers/${idConseiller}/actions?page=${page}&aQualifier=true`,
-    accessToken
-  )
+  }>(`/v2/conseillers/${idConseiller}/actions?${queryParams}`, accessToken)
 
   const nombrePages = Math.ceil(pagination.total / pagination.limit)
 

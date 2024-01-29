@@ -18,13 +18,6 @@
     );
 }
 
-.container.messagerie_full_screen {
-  grid-template-areas: 'sidebar chat page';
-  grid-template-columns: var(--sidebar-width) var(--chat-width) var(
-      --page-width-when-chat
-    );
-}
-
 .sidebar {
   grid-area: sidebar;
   display: none;
@@ -53,12 +46,6 @@
   width: 100%;
   max-width: 600px;
   padding: 40px 1rem;
-}
-
-.content.messagerie_full_screen {
-  max-width: 100%;
-  padding: 0;
-  overflow: auto;
 }
 
 .content.content_when_chat {

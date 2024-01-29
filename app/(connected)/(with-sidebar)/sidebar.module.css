@@ -5,6 +5,7 @@
 @media screen and (min-width: theme('screens.layout_s')) {
   .sidebar {
     width: 10vw;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

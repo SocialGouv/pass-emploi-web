@@ -1,0 +1,39 @@
+.page {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.content {
+  flex-grow: 1;
+  width: 100%;
+}
+
+.content.content_fullWidth {
+  padding: 1rem;
+}
+
+.content.content_centered {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 1rem;
+}
+
+@media screen and (min-width: theme('screens.layout_s')) {
+  .content.content_centered {
+    padding: 40px 0;
+  }
+}
+
+@media screen and (min-width: theme('screens.layout_l')) {
+  .content.content_fullWidth {
+    padding: 1.5rem;
+  }
+}
+
+@media screen and (min-width: theme('screens.layout_xl')) {
+  .content.content_fullWidth {
+    padding: 2rem;
+  }
+}

@@ -17,9 +17,8 @@ describe('TableauActionsJeune', () => {
       // Given
       render(
         <TableauActionsJeune
-          afficherFiltresEtatsQualification={false}
           jeune={uneBaseJeune()}
-          actions={[uneAction()]}
+          actionsFiltrees={[uneAction()]}
           isLoading={false}
           onFiltres={jest.fn()}
           onTri={jest.fn()}

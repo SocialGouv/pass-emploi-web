@@ -19,7 +19,7 @@ export default function HeaderChat({
   onClickIcon?: () => void
 }) {
   return (
-    <div className=' items-center mx-4 my-6 short:hidden'>
+    <div className='items-center mx-4 my-6 short:hidden'>
       <div className='pb-3 flex items-center justify-between'>
         <button
           className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary focus:pr-2'

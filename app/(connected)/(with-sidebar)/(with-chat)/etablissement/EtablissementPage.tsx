@@ -1,5 +1,6 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import React, { useState } from 'react'
 
 import EmptyStateImage from 'assets/images/illustration-people-grey.svg'
@@ -16,14 +17,8 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import {
-  estMilo,
-  estSuperviseur,
-  estUserPoleEmploi,
-  StructureConseiller,
-} from 'interfaces/conseiller'
+import { estMilo, estSuperviseur } from 'interfaces/conseiller'
 import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -31,10 +26,8 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFullDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type MissionLocaleProps = PageProps
-
-const Etablissement = (_: MissionLocaleProps) => {
-  const initialTracking = `Etablissement`
+function EtablissementPage() {
+  const initialTracking = 'Etablissement'
 
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -107,6 +100,7 @@ const Etablissement = (_: MissionLocaleProps) => {
           minCaracteres={2}
         />
       )}
+
       {!conseiller.agence && (
         <EncartAgenceRequise
           conseiller={conseiller}
@@ -115,6 +109,7 @@ const Etablissement = (_: MissionLocaleProps) => {
           onChangeAffichageModal={trackAgenceModal}
         />
       )}
+
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
@@ -179,6 +174,7 @@ const Etablissement = (_: MissionLocaleProps) => {
           )}
         </div>
       )}
+
       {resultatsRecherche?.length === 0 && (
         <>
           <EmptyStateImage
@@ -195,32 +191,7 @@ const Etablissement = (_: MissionLocaleProps) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  MissionLocaleProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user },
-  } = sessionOrRedirect
-  if (estUserPoleEmploi(user)) return { notFound: true }
-
-  return {
-    props: {
-      pageTitle: 'Établissement',
-      pageHeader:
-        'Rechercher un bénéficiaire de ' +
-        (user.structure === StructureConseiller.MILO
-          ? 'ma Mission Locale'
-          : 'mon agence'),
-    },
-  }
-}
-
-export default withTransaction(Etablissement.name, 'page')(Etablissement)
+export default withTransaction(
+  EtablissementPage.name,
+  'page'
+)(EtablissementPage)

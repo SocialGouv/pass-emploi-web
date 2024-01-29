@@ -4,6 +4,7 @@ import React from 'react'
 
 import TagStatutAction from 'components/action/TagStatutAction'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
 import { Action, StatutAction } from 'interfaces/action'
@@ -51,6 +52,11 @@ export default function ActionRow({ action, jeuneId }: ActionRowProps) {
       </TD>
       <TD>
         <span className='flex flex-row items-center'>{dateEcheance}</span>
+      </TD>
+      <TD>
+        <span className='flex flex-row items-center'>
+          <TagCategorieAction categorie={action.qualification?.libelle} />
+        </span>
       </TD>
       <TD className='rounded-r-base w-[160px]'>
         <span className='flex items-center justify-between'>

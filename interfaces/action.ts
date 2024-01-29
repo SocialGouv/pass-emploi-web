@@ -21,6 +21,10 @@ export interface ActionPilotage {
     prenom: string
   }
   dateFinReelle: string
+  categorie?: {
+    code: string
+    libelle: string
+  }
 }
 
 export interface QualificationAction {

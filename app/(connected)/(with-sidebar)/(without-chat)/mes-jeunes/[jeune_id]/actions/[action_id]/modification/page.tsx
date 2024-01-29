@@ -46,7 +46,7 @@ export default async function ModificationAction({
   const [actionContent, situationsNonProfessionnelles, actionsPredefinies] =
     await Promise.all([
       getAction(params.action_id, accessToken),
-      getSituationsNonProfessionnelles(accessToken),
+      getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
       getActionsPredefinies(accessToken),
     ])
   if (!actionContent) notFound()

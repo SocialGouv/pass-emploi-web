@@ -35,7 +35,7 @@ export default function AlerteDisplayer({
       {alerte && alerteAAfficher && (
         <SuccessAlert label={alerteAAfficher.title} onAcknowledge={closeAlerte}>
           <>
-            {alerteAAfficher.sub}
+            <p className='whitespace-pre-line'>{alerteAAfficher.sub}</p>
 
             {alerteAAfficher.link && (
               <AlertLink
@@ -119,6 +119,16 @@ const ALERTES: DictAlertes = {
   },
   qualificationNonSNP: {
     title: 'Action qualifiée en non SNP.',
+    sub: 'C’est enregistré ! Vous pouvez poursuivre votre travail.',
+  },
+  multiQualificationSNP: {
+    title: 'Actions qualifiées en SNP !',
+    sub:
+      'Vous pouvez encore modifier ces actions, uniquement dans i-milo.\n' +
+      'Délai d’actualisation entre l’app CEJ et i-milo : environ 24h.',
+  },
+  multiQualificationNonSNP: {
+    title: 'Actions enregistrées en non-SNP',
     sub: 'C’est enregistré ! Vous pouvez poursuivre votre travail.',
   },
   partageOffre: { title: 'L’offre a bien été partagée' },
