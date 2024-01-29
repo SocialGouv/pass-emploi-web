@@ -5,8 +5,6 @@ import ActionRow from 'components/action/ActionRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
 import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
 import { TRI } from 'components/action/OngletActions'
-import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQualificationModal'
-import ConfirmationMultiQualificationModalNonSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
@@ -51,14 +49,6 @@ export default function TableauActionsJeune({
     useState<boolean>(false)
   const [actionNonTermineeSelectionnee, setActionNonTermineeSelectionnee] =
     useState<boolean>(false)
-  const [
-    afficherModaleMultiQualification,
-    setAfficherModaleMultiQualification,
-  ] = useState<boolean>(false)
-  const [
-    afficherModaleMultiQualificationNonSNP,
-    setAfficherModaleMultiQualificationNonSNP,
-  ] = useState<boolean>(false)
 
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
 
@@ -106,12 +96,14 @@ export default function TableauActionsJeune({
   function selectionnerToutesLesActions() {
     if (actionsSelectionnees.length === 0) {
       setActionsSelectionnees(
-        actionsFiltrees.map(({ id, qualification }) => {
-          return {
-            idAction: id,
-            codeQualification: qualification?.code,
-          }
-        })
+        actionsFiltrees
+          .filter((action) => action.status === StatutAction.Terminee)
+          .map(({ id, qualification }) => {
+            return {
+              idAction: id,
+              codeQualification: qualification?.code,
+            }
+          })
       )
     } else {
       setActionsSelectionnees([])
@@ -133,16 +125,6 @@ export default function TableauActionsJeune({
 
   function selectionContientId(id: string) {
     return actionsSelectionnees.some((action) => action.idAction === id)
-  }
-
-  async function qualifier(enSNP: boolean) {
-    await onQualification(
-      enSNP,
-      actionsSelectionnees as Array<{
-        idAction: string
-        codeQualification: string
-      }>
-    )
   }
 
   function indiqueSelectionContientActionNonTerminee(): boolean {
@@ -215,10 +197,12 @@ export default function TableauActionsJeune({
       {actionsFiltrees.length > 0 && (
         <>
           <EncartQualificationActions
+            actionsSelectionnees={actionsSelectionnees}
             boutonsDisabled={boutonsDisabled}
+            jeune={jeune}
             nombreActionsSelectionnees={actionsSelectionnees.length}
-            onQualificationNonSNP={setAfficherModaleMultiQualificationNonSNP}
-            onQualificationSNP={setAfficherModaleMultiQualification}
+            onLienExterne={onLienExterne}
+            onQualification={onQualification}
           />
 
           <div className='mt-4'>
@@ -226,13 +210,6 @@ export default function TableauActionsJeune({
               <FailureAlert
                 label='Qualification impossible.'
                 sub='Vous ne pouvez pas qualifier une ou plusieurs actions sans catégorie. Cliquez sur l’action pour pouvoir la modifier et lui ajouter une catégorie.'
-              />
-            )}
-
-            {actionNonTermineeSelectionnee && (
-              <FailureAlert
-                label='Qualification impossible.'
-                sub='Vous ne pouvez pas qualifier une ou plusieurs actions non terminées. Cliquez sur l’action pour pouvoir la modifier changer son statut.'
               />
             )}
           </div>
@@ -296,25 +273,6 @@ export default function TableauActionsJeune({
             </TBody>
           </Table>
         </>
-      )}
-
-      {afficherModaleMultiQualification && (
-        <ConfirmationMultiQualificationModal
-          actions={actionsSelectionnees}
-          beneficiaire={jeune}
-          onConfirmation={() => qualifier(true)}
-          onCancel={() => setAfficherModaleMultiQualification(false)}
-          onLienExterne={onLienExterne}
-        />
-      )}
-
-      {afficherModaleMultiQualificationNonSNP && (
-        <ConfirmationMultiQualificationModalNonSNP
-          actions={actionsSelectionnees}
-          beneficiaire={jeune}
-          onConfirmation={() => qualifier(false)}
-          onCancel={() => setAfficherModaleMultiQualificationNonSNP(false)}
-        />
       )}
     </>
   )
