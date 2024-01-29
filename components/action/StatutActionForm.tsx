@@ -15,7 +15,7 @@ function StatutActionForm({
   lectureSeule,
 }: StatutActionFormProps) {
   const statuts = Object.values(StatutAction).filter(
-    (statut) => statut === 'EnCours' || statut === 'Terminee'
+    (statut) => statut === 'AFaire' || statut === 'Terminee'
   )
 
   function estStatutCourant(statutAction: StatutAction): boolean {

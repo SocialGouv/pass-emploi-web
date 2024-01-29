@@ -22,7 +22,7 @@ describe('FiltresStatutsAction', () => {
         name: 'Choisir un ou plusieurs statuts à filtrer',
       })
     ).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: 'En cours' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'À Faire' })).toBeInTheDocument()
     expect(
       screen.getByRole('radio', { name: 'Terminée - À qualifier' })
     ).toBeInTheDocument()
@@ -44,7 +44,7 @@ describe('FiltresStatutsAction', () => {
 
   it('réinitialise les statuts non validés', async () => {
     // Given
-    await userEvent.click(screen.getByLabelText('En cours'))
+    await userEvent.click(screen.getByLabelText('À Faire'))
     await userEvent.click(screen.getByText('Statut'))
 
     // When
@@ -54,12 +54,12 @@ describe('FiltresStatutsAction', () => {
     expect(screen.getByLabelText('Tout sélectionner')).toHaveAttribute(
       'checked'
     )
-    expect(screen.getByLabelText('En cours')).not.toHaveAttribute('checked')
+    expect(screen.getByLabelText('À Faire')).not.toHaveAttribute('checked')
   })
 
   it('filtre les actions avec le statut sélectionné', async () => {
     // Given
-    await userEvent.click(screen.getByLabelText('En cours'))
+    await userEvent.click(screen.getByLabelText('À Faire'))
     await userEvent.click(screen.getByLabelText('Annulée'))
 
     // When
