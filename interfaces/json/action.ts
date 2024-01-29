@@ -160,7 +160,7 @@ export function jsonToActionStatus({
   switch (status) {
     case 'not_started':
     case 'in_progress':
-      return StatutAction.EnCours
+      return StatutAction.AFaire
     case 'done':
       if (qualification?.heures !== undefined) return StatutAction.Qualifiee
       return StatutAction.Terminee
@@ -168,13 +168,13 @@ export function jsonToActionStatus({
       return StatutAction.Annulee
     default:
       console.warn(`Statut d'action ${status} incorrect, traité comme EnCours`)
-      return StatutAction.EnCours
+      return StatutAction.AFaire
   }
 }
 
 export function actionStatusToJson(status: StatutAction): ActionStatusJson {
   switch (status) {
-    case StatutAction.EnCours:
+    case StatutAction.AFaire:
       return 'in_progress'
     case StatutAction.Terminee:
     case StatutAction.Qualifiee:
@@ -188,7 +188,7 @@ export function actionStatusToJson(status: StatutAction): ActionStatusJson {
 
 export function actionStatusToFiltre(status: StatutAction): string {
   switch (status) {
-    case StatutAction.EnCours:
+    case StatutAction.AFaire:
       return '&statuts=in_progress&statuts=not_started'
     case StatutAction.Terminee:
       return '&statuts=done&etats=A_QUALIFIER'

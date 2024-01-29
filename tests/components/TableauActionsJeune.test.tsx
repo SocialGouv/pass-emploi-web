@@ -50,7 +50,7 @@ describe('TableauActionsJeune', () => {
     beforeEach(async () => {
       // Given
       await userEvent.click(screen.getByText('Statut'))
-      await userEvent.click(screen.getByLabelText('En cours'))
+      await userEvent.click(screen.getByLabelText('À Faire'))
       await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
     })
 
@@ -62,7 +62,7 @@ describe('TableauActionsJeune', () => {
       expect(
         screen.getByLabelText('Terminée - À qualifier')
       ).not.toHaveAttribute('checked')
-      expect(screen.getByLabelText('En cours')).toHaveAttribute('checked')
+      expect(screen.getByLabelText('À Faire')).toHaveAttribute('checked')
       expect(screen.getByLabelText('Qualifiée')).not.toHaveAttribute('checked')
       expect(screen.getByLabelText('Annulée')).not.toHaveAttribute('checked')
     })
