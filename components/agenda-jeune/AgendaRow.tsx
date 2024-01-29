@@ -49,7 +49,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
   function determineActionEnRetard() {
     return (
       entree.type === 'action' &&
-      entree.statut === StatutAction.EnCours &&
+      entree.statut === StatutAction.AFaire &&
       entree.date < DateTime.now()
     )
   }

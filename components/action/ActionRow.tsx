@@ -30,7 +30,7 @@ export default function ActionRow({
 
   const actionEstEnRetard =
     DateTime.fromISO(action.dateEcheance) < DateTime.now() &&
-    action.status === StatutAction.EnCours
+    action.status === StatutAction.AFaire
 
   const actionEstTerminee = action.status === StatutAction.Terminee
 
