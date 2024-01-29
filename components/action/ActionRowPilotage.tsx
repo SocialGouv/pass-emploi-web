@@ -6,17 +6,17 @@ import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
 import { ActionPilotage } from 'interfaces/action'
 
-interface ActionRowProps {
+interface ActionRowPilotageProps {
   action: ActionPilotage
   isChecked: boolean
   onSelection: (action: ActionPilotage) => void
 }
 
-export default function ActionRow({
+export default function ActionRowPilotage({
   action,
   isChecked,
   onSelection,
-}: ActionRowProps) {
+}: ActionRowPilotageProps) {
   return (
     <TR
       href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
