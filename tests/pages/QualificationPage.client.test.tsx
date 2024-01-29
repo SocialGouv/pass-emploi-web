@@ -99,7 +99,7 @@ describe('QualificationPage client side', () => {
         '* Date de fin de l’action'
       )
       expect(inputDateDebut).toHaveAttribute('type', 'date')
-      expect(inputDateDebut).toHaveValue('2022-02-20')
+      expect(inputDateDebut).toHaveValue('2022-09-02')
 
       expect(inputDateFin).toHaveAttribute('type', 'date')
       expect(inputDateFin).toHaveValue('2022-09-02')
@@ -216,7 +216,7 @@ describe('QualificationPage client side', () => {
           expect(qualifier).toHaveBeenCalledWith(action.id, 'SNP_3', {
             commentaire: 'Nouveau titre et commentaire de l’action',
             dateDebutModifiee: DateTime.fromISO(
-              '2022-02-20T00:00:00.000+01:00' // en février, l'offset est +1 (DST)
+              '2022-09-02T00:00:00.000+02:00'
             ),
             dateFinModifiee: DateTime.fromISO('2022-09-05T00:00:00.000+02:00'),
           })

@@ -55,7 +55,7 @@ function QualificationPage({
     ValueWithError<string | undefined>
   >({ value: action.qualification?.code })
 
-  const dateActionDebut = action && DateTime.fromISO(action?.dateEcheance)
+  const dateActionDebut = action && DateTime.fromISO(action?.dateFinReelle!)
   const localDateDebut =
     dateActionDebut && toFrenchFormat(dateActionDebut, DATE_DASH_SEPARATOR)
   const dateActionFin = action && DateTime.fromISO(action.dateFinReelle!)
