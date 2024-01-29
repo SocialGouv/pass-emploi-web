@@ -7,7 +7,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
-import { Action, QualificationAction, StatutAction } from 'interfaces/action'
+import { Action, StatutAction } from 'interfaces/action'
 import { toShortDate } from 'utils/date'
 
 interface ActionRowProps {
@@ -31,6 +31,8 @@ export default function ActionRow({
   const actionEstEnRetard =
     DateTime.fromISO(action.dateEcheance) < DateTime.now() &&
     action.status === StatutAction.EnCours
+
+  const actionEstTerminee = action.status === StatutAction.Terminee
 
   const dateEcheance = toShortDate(action.dateEcheance)
 
@@ -58,6 +60,7 @@ export default function ActionRow({
           aria-label={`Sélection ${action.content} ${
             action.qualification?.libelle ?? ''
           }`}
+          disabled={!actionEstTerminee}
           onClick={(e) => {
             e.stopPropagation()
           }}
@@ -77,7 +80,9 @@ export default function ActionRow({
                 className='w-4 h-4 fill-accent_2 mr-2'
               />
             )}
-          <span className='flex items-baseline wrap text-base-bold text-ellipsis overflow-hidden max-w-[400px]'>
+          <span
+            className={`flex items-baseline wrap text-base-bold text-ellipsis overflow-hidden max-w-[400px] ${!actionEstTerminee ? 'text-disabled' : ''}`}
+          >
             {action.content}
           </span>
         </div>

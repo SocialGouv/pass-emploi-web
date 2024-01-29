@@ -4,8 +4,6 @@ import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
 import ActionRowPilotage from 'components/action/ActionRowPilotage'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
 import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
-import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQualificationModal'
-import ConfirmationMultiQualificationModalSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
@@ -53,14 +51,6 @@ export default function TableauActionsAQualifier({
   const [beneficiaireSelectionne, setBeneficiaireSelectionne] =
     useState<BaseJeune>()
 
-  const [
-    afficherModaleMultiQualification,
-    setAfficherModaleMultiQualification,
-  ] = useState<boolean>(false)
-  const [
-    afficherModaleMultiQualificationNonSNP,
-    setAfficherModaleMultiQualificationNonSNP,
-  ] = useState<boolean>(false)
   const [actionSansCategorieSelectionnee, setActionSansCategorieSelectionnee] =
     useState<boolean>(false)
   const [
@@ -175,10 +165,12 @@ export default function TableauActionsAQualifier({
   return (
     <>
       <EncartQualificationActions
+        actionsSelectionnees={actionsSelectionnees}
         boutonsDisabled={boutonsDisabled}
+        jeune={beneficiaireSelectionne}
         nombreActionsSelectionnees={actionsSelectionnees.length}
-        onQualificationNonSNP={setAfficherModaleMultiQualificationNonSNP}
-        onQualificationSNP={setAfficherModaleMultiQualification}
+        onLienExterne={onLienExterne}
+        onQualification={onQualification}
       />
 
       <div className='mt-4'>
@@ -275,25 +267,6 @@ export default function TableauActionsAQualifier({
             ))}
           </TBody>
         </Table>
-      )}
-
-      {afficherModaleMultiQualification && (
-        <ConfirmationMultiQualificationModal
-          actions={actionsSelectionnees}
-          beneficiaire={beneficiaireSelectionne!}
-          onConfirmation={() => qualifier(true)}
-          onCancel={() => setAfficherModaleMultiQualification(false)}
-          onLienExterne={onLienExterne}
-        />
-      )}
-
-      {afficherModaleMultiQualificationNonSNP && (
-        <ConfirmationMultiQualificationModalSNP
-          actions={actionsSelectionnees}
-          beneficiaire={beneficiaireSelectionne!}
-          onConfirmation={() => qualifier(false)}
-          onCancel={() => setAfficherModaleMultiQualificationNonSNP(false)}
-        />
       )}
     </>
   )
