@@ -9,7 +9,12 @@ import {
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { recupererLesCommentaires } from 'services/actions.service'
+import {
+  getAction,
+  getSituationsNonProfessionnelles,
+  recupererLesCommentaires,
+} from 'services/actions.service'
+import { getActionsPredefinies } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type ModificationActionParams = { action_id: string }
@@ -19,7 +24,6 @@ export async function generateMetadata({
 }: {
   params: ModificationActionParams
 }): Promise<Metadata> {
-  const { getAction } = await import('services/actions.service')
   const { accessToken } = await getMandatorySessionServerSide()
   const actionContent = await getAction(params.action_id, accessToken)
 
@@ -36,12 +40,6 @@ export default async function ModificationAction({
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (user.structure === StructureConseiller.POLE_EMPLOI) notFound()
-
-  const { getAction, getSituationsNonProfessionnelles } = await import(
-    'services/actions.service'
-  )
-
-  const { getActionsPredefinies } = await import('services/referentiel.service')
 
   const [actionContent, situationsNonProfessionnelles, actionsPredefinies] =
     await Promise.all([

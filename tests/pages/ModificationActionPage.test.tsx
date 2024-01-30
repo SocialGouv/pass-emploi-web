@@ -3,7 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 
 import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/ModificationActionPage'
-import { desActionsPredefinies, desCategories, uneAction } from 'fixtures/action'
+import {
+  desActionsPredefinies,
+  desCategories,
+  uneAction,
+} from 'fixtures/action'
 import {
   ActionPredefinie,
   SituationNonProfessionnelle,
@@ -17,7 +21,8 @@ jest.mock('components/Modal')
 describe('ModificationActionPage client side', () => {
   const action = uneAction()
   const actionsPredefinies: ActionPredefinie[] = desActionsPredefinies()
-  const situationsNonProfessionnelles: SituationNonProfessionnelle[] = desCategories()
+  const situationsNonProfessionnelles: SituationNonProfessionnelle[] =
+    desCategories()
 
   beforeEach(async () => {
     // Given
@@ -129,7 +134,9 @@ describe('ModificationActionPage client side', () => {
 
     beforeEach(async () => {
       // Given
-      submit = screen.getByRole('button', { name: 'Enregistrer les modifications' })
+      submit = screen.getByRole('button', {
+        name: 'Enregistrer les modifications',
+      })
     })
 
     describe('formulaire valide', () => {
@@ -156,16 +163,13 @@ describe('ModificationActionPage client side', () => {
 
       it("modifier l'action", () => {
         // Then
-        expect(modifierAction).toHaveBeenCalledWith(
-          'id-action-1',
-          {
-            codeCategorie: situationsNonProfessionnelles[2].code,
-            titre: actionsPredefinies[1].titre,
-            description: 'Description action',
-            dateEcheance: '2023-12-20',
-            statut: 'EnCours',
-          }
-        )
+        expect(modifierAction).toHaveBeenCalledWith('id-action-1', {
+          codeCategorie: situationsNonProfessionnelles[2].code,
+          titre: actionsPredefinies[1].titre,
+          description: 'Description action',
+          dateEcheance: '2023-12-20',
+          statut: 'EnCours',
+        })
       })
 
       describe('succès', () => {
