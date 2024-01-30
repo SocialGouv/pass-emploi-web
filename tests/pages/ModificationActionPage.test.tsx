@@ -186,7 +186,7 @@ describe('ModificationActionPage client side', () => {
             titre: actionsPredefinies[1].titre,
             description: 'Description action',
             dateEcheance: '2023-12-20',
-            statut: 'EnCours',
+            statut: 'AFaire',
           })
         })
 
