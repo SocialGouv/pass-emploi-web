@@ -25,7 +25,6 @@ import {
 } from 'interfaces/action'
 import { ActionFormData } from 'interfaces/json/action'
 import {
-  DATE_DASH_SEPARATOR,
   dateIsInInterval,
   toFrenchFormat,
   toShortDate,
@@ -76,12 +75,17 @@ export function EditionActionForm({
     action?.status ?? StatutAction.Terminee
   )
 
-  const dateAction = action && DateTime.fromISO(action.dateEcheance)
-  const localDate =
-    dateAction && toFrenchFormat(dateAction, DATE_DASH_SEPARATOR)
-  const [dateEcheance, setDateEcheance] = useState<
+  const dateEcheance =
+    action && DateTime.fromISO(action.dateEcheance).toISODate()
+  const [dateAction, setDateAction] = useState<
     ValueWithError<string | undefined>
-  >({ value: localDate })
+  >({ value: dateEcheance })
+  const dateFinReelle =
+    action?.dateFinReelle && DateTime.fromISO(action.dateFinReelle).toISODate()
+  const [dateRealisation, setDateRealisation] = useState<
+    ValueWithError<string | undefined>
+  >({ value: dateFinReelle })
+
   const INPUT_MAX_LENGTH = 250
 
   const optionsTitre = actionsPredefinies.concat({
@@ -101,13 +105,29 @@ export function EditionActionForm({
     setShowHelperCategories(!showHelperCategories)
   }
 
+  function modifierStatut(
+    nouveauStatut: StatutAction.EnCours | StatutAction.Terminee
+  ) {
+    setDateAction({ value: dateEcheance })
+    if (nouveauStatut === StatutAction.Terminee) {
+      setDateRealisation({ value: dateFinReelle ?? DateTime.now().toISODate() })
+    } else {
+      setDateRealisation({ value: undefined })
+    }
+    setStatut(nouveauStatut)
+  }
+
   function formulaireEstValide(): boolean {
     const categorieEstValide = validerCategorie()
     const titreEstValide = validerTitre() && validerTitrePersonnalise()
-    const dateEcheanceEstValide = validerDateEcheance()
+    const dateActionEstValide = validerDateAction()
+    const dateRealisationEstValide = validerDateRealisation()
 
     return Boolean(
-      categorieEstValide && titreEstValide && dateEcheanceEstValide
+      categorieEstValide &&
+        titreEstValide &&
+        dateActionEstValide &&
+        dateRealisationEstValide
     )
   }
 
@@ -145,26 +165,28 @@ export function EditionActionForm({
     return true
   }
 
-  function validerDateEcheance() {
+  function validerDateAction() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
+    if (action && statut === StatutAction.Terminee) return true
 
-    if (!dateEcheance.value) {
-      setDateEcheance({
-        ...dateEcheance,
-        error: 'Le champ “Date” est vide. Renseignez une date de l’action.',
+    if (!dateAction.value) {
+      setDateAction({
+        ...dateAction,
+        error:
+          'Le champ “Date de l’action” est vide. Renseignez une date de l’action.',
       })
       return false
     } else if (
       !dateIsInInterval(
-        DateTime.fromFormat(dateEcheance.value, 'yyyy-MM-dd'),
+        DateTime.fromISO(dateAction.value),
         unAnAvant,
         deuxAnsApres
       )
     ) {
-      setDateEcheance({
-        ...dateEcheance,
-        error: `Le champ “Date” est invalide. Le date attendue est comprise entre le ${toShortDate(
+      setDateAction({
+        ...dateAction,
+        error: `Le champ “Date de l’action” est invalide. Le date attendue est comprise entre le ${toShortDate(
           unAnAvant
         )} et le ${toShortDate(deuxAnsApres)}.`,
       })
@@ -172,6 +194,37 @@ export function EditionActionForm({
     }
     return true
   }
+
+  function validerDateRealisation() {
+    const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
+    const deuxAnsApres = DateTime.now().plus({ year: 2 })
+    if (!action || statut === StatutAction.EnCours) return true
+
+    if (!dateRealisation.value) {
+      setDateRealisation({
+        ...dateRealisation,
+        error:
+          'Le champ “Date de réalisation” est vide. Renseignez une date de l’action.',
+      })
+      return false
+    } else if (
+      !dateIsInInterval(
+        DateTime.fromISO(dateRealisation.value),
+        unAnAvant,
+        deuxAnsApres
+      )
+    ) {
+      setDateRealisation({
+        ...dateRealisation,
+        error: `Le champ “Date de réalisation” est invalide. Le date attendue est comprise entre le ${toShortDate(
+          unAnAvant
+        )} et le ${toShortDate(deuxAnsApres)}.`,
+      })
+      return false
+    }
+    return true
+  }
+
   function getErreurs(): LigneErreur[] {
     const erreurs = []
 
@@ -199,9 +252,17 @@ export function EditionActionForm({
       })
     }
 
-    if (dateEcheance.error) {
+    if (dateAction.error) {
       const ancre = '#date-action'
-      const label = 'Le champ Date est vide.'
+      const label = 'Le champ Date de l’action est vide.'
+      const titreChamp = 'Date'
+
+      erreurs.push({ ancre, label, titreChamp })
+    }
+
+    if (dateRealisation.error) {
+      const ancre = '#date-realisation'
+      const label = 'Le champ Date de réalisation est vide.'
       const titreChamp = 'Date'
 
       erreurs.push({ ancre, label, titreChamp })
@@ -222,11 +283,11 @@ export function EditionActionForm({
       codeCategorie: codeCategorie.value!,
       titre:
         titre.value !== TITRE_AUTRE ? titre.value! : titrePersonnalise.value!,
-      dateEcheance: dateEcheance.value!,
+      dateEcheance: dateAction.value!,
+      dateFinReelle: dateRealisation.value,
       description,
       statut,
     }
-
     await soumettreAction(actionFormData)
   }
 
@@ -351,58 +412,87 @@ export function EditionActionForm({
                 id='statut-action--arealiser'
                 label='À faire'
                 name='statut-action'
-                onChange={() => setStatut(StatutAction.EnCours)}
+                onChange={() => modifierStatut(StatutAction.EnCours)}
               />
               <RadioBox
                 isSelected={statut === StatutAction.Terminee}
                 id='statut-action--terminee'
                 label='Terminée'
                 name='statut-action'
-                onChange={() => setStatut(StatutAction.Terminee)}
+                onChange={() => modifierStatut(StatutAction.Terminee)}
               />
             </div>
           </fieldset>
 
-          <Label htmlFor='date-action' inputRequired={true}>
-            Date
-          </Label>
-          {dateEcheance.error && (
-            <InputError id='date-action--error' className='mb-2'>
-              {dateEcheance.error}
-            </InputError>
+          {(!action || statut === StatutAction.EnCours) && (
+            <>
+              <Label htmlFor='date-action' inputRequired={true}>
+                Date de l’action
+              </Label>
+              {dateAction.error && (
+                <InputError id='date-action--error' className='mb-2'>
+                  {dateAction.error}
+                </InputError>
+              )}
+              <Input
+                type='date'
+                id='date-action'
+                required={true}
+                value={dateAction.value}
+                onChange={(value: string) => setDateAction({ value })}
+                onBlur={validerDateAction}
+                invalid={Boolean(dateAction.error)}
+              />
+              <div className='gap-2 flex flex-wrap'>
+                <BoutonDateRapide
+                  date={DateTime.now()}
+                  label="Aujourd'hui"
+                  ariaControls='date-action'
+                  onClick={(date) => {
+                    setDateAction({ value: date })
+                  }}
+                />
+                <BoutonDateRapide
+                  date={DateTime.now().plus({ day: 1 })}
+                  label='Demain'
+                  ariaControls='date-action'
+                  onClick={(date) => {
+                    setDateAction({ value: date })
+                  }}
+                />
+                <BoutonDateRapide
+                  date={DateTime.now().plus({ week: 1 }).startOf('week')}
+                  label='Semaine prochaine'
+                  ariaControls='date-action'
+                  onClick={(date) => {
+                    setDateAction({ value: date })
+                  }}
+                />
+              </div>
+            </>
           )}
-          <Input
-            type='date'
-            id='date-action'
-            required={true}
-            defaultValue={dateEcheance.value}
-            onChange={(value: string) => setDateEcheance({ value })}
-            onBlur={validerDateEcheance}
-            invalid={Boolean(dateEcheance.error)}
-          />
-          <div className='gap-2 flex flex-wrap'>
-            <BoutonDateRapide
-              date={DateTime.now()}
-              label="Aujourd'hui"
-              onClick={(date) => {
-                setDateEcheance({ value: date })
-              }}
-            />
-            <BoutonDateRapide
-              date={DateTime.now().plus({ day: 1 })}
-              label='Demain'
-              onClick={(date) => {
-                setDateEcheance({ value: date })
-              }}
-            />
-            <BoutonDateRapide
-              date={DateTime.now().plus({ week: 1 }).startOf('week')}
-              label='Semaine prochaine'
-              onClick={(date) => {
-                setDateEcheance({ value: date })
-              }}
-            />
-          </div>
+
+          {action && statut === StatutAction.Terminee && (
+            <>
+              <Label htmlFor='date-realisation' inputRequired={true}>
+                Date de réalisation
+              </Label>
+              {dateRealisation.error && (
+                <InputError id='date-realisation--error' className='mb-2'>
+                  {dateRealisation.error}
+                </InputError>
+              )}
+              <Input
+                type='date'
+                id='date-realisation'
+                required={true}
+                value={dateRealisation.value}
+                onChange={(value: string) => setDateRealisation({ value })}
+                onBlur={validerDateRealisation}
+                invalid={Boolean(dateRealisation.error)}
+              />
+            </>
+          )}
         </Etape>
 
         <div className='mt-8 flex justify-center'>
@@ -450,10 +540,12 @@ export function EditionActionForm({
 
 function BoutonDateRapide({
   date,
+  ariaControls,
   label,
   onClick,
 }: {
   date: DateTime
+  ariaControls: string
   label: string
   onClick: (date: string) => void
 }) {
@@ -461,7 +553,7 @@ function BoutonDateRapide({
     <input
       type='button'
       id={label}
-      aria-controls='date-action'
+      aria-controls={ariaControls}
       className='text-s-medium border border-solid border-grey_700 rounded-base px-2 py-1 cursor-pointer hover:border-primary hover:bg-primary_lighten'
       value={`${label} (${toFrenchFormat(date, WEEKDAY)})`}
       onClick={() => {

@@ -141,6 +141,7 @@ export async function modifierAction(
     titre?: string
     description?: string
     dateEcheance?: string
+    dateFinReelle?: string
     codeCategorie?: string
   }
 ): Promise<void> {
@@ -153,6 +154,7 @@ export async function modifierAction(
     contenu: modifications.titre,
     description: modifications.description,
     dateEcheance: modifications.dateEcheance,
+    dateFinReelle: modifications.dateFinReelle,
     codeQualification: modifications.codeCategorie,
   }
 

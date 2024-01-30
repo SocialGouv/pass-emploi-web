@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 
 import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
-import { desActionsPredefinies, desCategories  } from 'fixtures/action'
+import { desActionsPredefinies, desCategories } from 'fixtures/action'
 import {
   ActionPredefinie,
   SituationNonProfessionnelle,
@@ -106,7 +106,9 @@ describe('NouvelleActionPage client side', () => {
 
   it('contient un champ pour saisir une date d’échéance', () => {
     // Then
-    expect(screen.getByLabelText('* Date')).toHaveAttribute('required')
+    expect(screen.getByLabelText('* Date de l’action')).toHaveAttribute(
+      'required'
+    )
   })
 
   it('contient des boutons pour faciliter le choix de la date d’échéance', async () => {
@@ -171,7 +173,9 @@ describe('NouvelleActionPage client side', () => {
       await userEvent.click(submit)
 
       // Then
-      expect(screen.getByText(/Le champ “Date” est vide/)).toBeInTheDocument()
+      expect(
+        screen.getByText(/Le champ “Date de l’action” est vide/)
+      ).toBeInTheDocument()
       expect(creerAction).not.toHaveBeenCalled()
     })
 
@@ -183,7 +187,7 @@ describe('NouvelleActionPage client side', () => {
       // Then
       expect(
         screen.getByText(
-          `Le champ “Date” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
+          `Le champ “Date de l’action” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
         )
       ).toBeInTheDocument()
     })
