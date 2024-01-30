@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
 import ActionRow from 'components/action/ActionRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
+import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
 import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
 import { TRI } from 'components/action/OngletActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -14,14 +15,22 @@ import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { Action, ActionAQualifier, StatutAction } from 'interfaces/action'
+import {
+  Action,
+  ActionAQualifier,
+  SituationNonProfessionnelle,
+  StatutAction,
+} from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 
 interface TableauActionsJeuneProps {
   jeune: BaseJeune
+  categories: SituationNonProfessionnelle[]
   actionsFiltrees: Action[]
   isLoading: boolean
-  onFiltres: (statuts: StatutAction[]) => void
+  onFiltres: (
+    filtres: Array<{ colonne: 'categories' | 'statuts'; values: any[] }>
+  ) => void
   onLienExterne: (label: string) => void
   onTri: (tri: TRI) => void
   onQualification: (
@@ -33,6 +42,7 @@ interface TableauActionsJeuneProps {
 
 export default function TableauActionsJeune({
   jeune,
+  categories,
   actionsFiltrees,
   isLoading,
   onFiltres,
@@ -42,6 +52,8 @@ export default function TableauActionsJeune({
   tri,
 }: TableauActionsJeuneProps) {
   const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
+  const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
+
   const [actionsSelectionnees, setActionsSelectionnees] = useState<
     ActionAQualifier[]
   >([])
@@ -60,6 +72,7 @@ export default function TableauActionsJeune({
   function reinitialiserFiltres() {
     onFiltres([])
     setStatutsValides([])
+    setCategoriesValidees([])
   }
 
   function getIsSortedByDateEcheance(): boolean {
@@ -88,9 +101,20 @@ export default function TableauActionsJeune({
     }`
   }
 
+  function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
+    setCategoriesValidees(categoriesSelectionnees)
+    onFiltres([
+      { colonne: 'categories', values: categoriesSelectionnees },
+      { colonne: 'statuts', values: statutsValides },
+    ])
+  }
+
   function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
     setStatutsValides(statutsSelectionnes)
-    onFiltres(statutsSelectionnes)
+    onFiltres([
+      { colonne: 'categories', values: categoriesValidees },
+      { colonne: 'statuts', values: statutsSelectionnes },
+    ])
   }
 
   function selectionnerToutesLesActions() {
@@ -250,7 +274,13 @@ export default function TableauActionsJeune({
                     />
                   </button>
                 </TH>
-                <TH>Catégorie</TH>
+                <TH estCliquable={true}>
+                  <FiltresCategoriesActions
+                    categories={categories}
+                    defaultValue={categoriesValidees}
+                    onFiltres={filtrerActionsParCategorie}
+                  />
+                </TH>
                 <TH estCliquable={true}>
                   <FiltresStatutsActions
                     defaultValue={statutsValides}
