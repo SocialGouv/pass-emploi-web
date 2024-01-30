@@ -2,22 +2,21 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 
-import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/ModificationActionPage'
-import { desActionsPredefinies, desCategories, uneAction } from 'fixtures/action'
+import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
+import { desActionsPredefinies, desCategories } from 'fixtures/action'
 import {
   ActionPredefinie,
   SituationNonProfessionnelle,
 } from 'interfaces/action'
-import { modifierAction } from 'services/actions.service'
+import { creerAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
 jest.mock('components/Modal')
 
-describe('ModificationActionPage client side', () => {
-  const action = uneAction()
+describe('NouvelleActionPage client side', () => {
+  const categories: SituationNonProfessionnelle[] = desCategories()
   const actionsPredefinies: ActionPredefinie[] = desActionsPredefinies()
-  const situationsNonProfessionnelles: SituationNonProfessionnelle[] = desCategories()
 
   beforeEach(async () => {
     // Given
@@ -25,18 +24,16 @@ describe('ModificationActionPage client side', () => {
 
     // When
     renderWithContexts(
-      <ModificationActionPage
-        action={action}
-        situationsNonProfessionnelles={situationsNonProfessionnelles}
-        aDesCommentaires={false}
+      <NouvelleActionPage
         idJeune='id-jeune'
+        categories={categories}
         actionsPredefinies={actionsPredefinies}
         returnTo='/lien/retour'
       />
     )
   })
 
-  it("permet d'annuler la modification de l'action", () => {
+  it("permet d'annuler la création de l'action", () => {
     // Then
     expect(
       screen.getByRole('link', {
@@ -50,7 +47,7 @@ describe('ModificationActionPage client side', () => {
     // Then
     const select = screen.getByRole('combobox', { name: /Catégorie/ })
 
-    situationsNonProfessionnelles.forEach(({ label }) => {
+    categories.forEach(({ label }) => {
       expect(
         within(select).getByRole('option', { name: label })
       ).toBeInTheDocument()
@@ -103,13 +100,15 @@ describe('ModificationActionPage client side', () => {
 
   it('contient des boutons pour choisir le statut de l‘action', async () => {
     // Then
-    expect(screen.getByRole('radio', { name: 'À faire' })).toBeChecked()
-    expect(screen.getByRole('radio', { name: 'Terminée' })).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: 'À faire' })).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Terminée' })).toBeChecked()
   })
 
   it('contient un champ pour saisir une date d’échéance', () => {
     // Then
-    expect(screen.getByLabelText('* Date')).toHaveAttribute('required')
+    expect(screen.getByLabelText('* Date de l’action')).toHaveAttribute(
+      'required'
+    )
   })
 
   it('contient des boutons pour faciliter le choix de la date d’échéance', async () => {
@@ -129,7 +128,68 @@ describe('ModificationActionPage client side', () => {
 
     beforeEach(async () => {
       // Given
-      submit = screen.getByRole('button', { name: 'Enregistrer les modifications' })
+      submit = screen.getByRole('button', { name: 'Créer l’action' })
+    })
+
+    it("affiche un message d'erreur quand la catégorie est vide", async () => {
+      // When
+      await userEvent.click(submit)
+
+      // Then
+      expect(
+        screen.getByText(/Le champ “Catégorie" est vide/)
+      ).toBeInTheDocument()
+      expect(creerAction).not.toHaveBeenCalled()
+    })
+
+    it("affiche un message d'erreur quand le titre est vide", async () => {
+      // When
+      await userEvent.click(submit)
+
+      // Then
+      expect(
+        screen.getByText(/Le champ “Titre de l’action" est vide/)
+      ).toBeInTheDocument()
+      expect(creerAction).not.toHaveBeenCalled()
+    })
+
+    it("affiche un message d'erreur quand le titre est autre et le titre personnalisé est vide", async () => {
+      // When
+      await userEvent.selectOptions(
+        screen.getByRole('combobox', { name: /Titre/ }),
+        'Autre'
+      )
+      await userEvent.click(submit)
+
+      // Then
+      expect(
+        screen.getByText(/Le champ "Titre personnalisé" est vide/)
+      ).toBeInTheDocument()
+      expect(creerAction).not.toHaveBeenCalled()
+    })
+
+    it("affiche un message d'erreur quand la date d'échéance est vide", async () => {
+      //Given
+      await userEvent.click(submit)
+
+      // Then
+      expect(
+        screen.getByText(/Le champ “Date de l’action” est vide/)
+      ).toBeInTheDocument()
+      expect(creerAction).not.toHaveBeenCalled()
+    })
+
+    it("affiche un message d'erreur quand date d'échéance n'est pas dans l'intervalle : un an avant, deux ans après", async () => {
+      const dateEcheance = screen.getByLabelText(/Date/)
+      await userEvent.type(dateEcheance, '2000-07-30')
+      await userEvent.tab()
+
+      // Then
+      expect(
+        screen.getByText(
+          `Le champ “Date de l’action” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
+        )
+      ).toBeInTheDocument()
     })
 
     describe('formulaire valide', () => {
@@ -137,7 +197,7 @@ describe('ModificationActionPage client side', () => {
         // Given
         await userEvent.selectOptions(
           screen.getByRole('combobox', { name: /Catégorie/ }),
-          situationsNonProfessionnelles[2].label
+          categories[2].label
         )
         await userEvent.selectOptions(
           screen.getByRole('combobox', { name: /Titre/ }),
@@ -145,7 +205,6 @@ describe('ModificationActionPage client side', () => {
         )
 
         const description = screen.getByRole('textbox', { name: /Description/ })
-        await userEvent.clear(description)
         await userEvent.type(description, 'Description action')
 
         await userEvent.click(screen.getByRole('button', { name: /Demain/ }))
@@ -154,17 +213,17 @@ describe('ModificationActionPage client side', () => {
         await userEvent.click(submit)
       })
 
-      it("modifier l'action", () => {
+      it("crée l'action", () => {
         // Then
-        expect(modifierAction).toHaveBeenCalledWith(
-          'id-action-1',
+        expect(creerAction).toHaveBeenCalledWith(
           {
-            codeCategorie: situationsNonProfessionnelles[2].code,
+            codeCategorie: categories[2].code,
             titre: actionsPredefinies[1].titre,
             description: 'Description action',
             dateEcheance: '2023-12-20',
-            statut: 'EnCours',
-          }
+            statut: 'Terminee',
+          },
+          'id-jeune'
         )
       })
 
@@ -174,7 +233,7 @@ describe('ModificationActionPage client side', () => {
           expect(
             screen.getByRole('heading', {
               level: 2,
-              name: 'Modifications enregistrées',
+              name: 'Action enregistrée !',
             })
           ).toBeInTheDocument()
         })
@@ -183,7 +242,22 @@ describe('ModificationActionPage client side', () => {
           // Then
           expect(
             screen.getByRole('link', { name: 'Consulter la liste des actions' })
-          ).toHaveAttribute('href', '/mes-jeunes/id-jeune?onglet=actions')
+          ).toHaveAttribute('href', '/lien/retour')
+        })
+
+        it('permet de créer une nouvelle action', async () => {
+          // When
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Créer une nouvelle action' })
+          )
+
+          // Then
+          expect(
+            screen.queryByText(/Action enregistrée/)
+          ).not.toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Créer l’action' })
+          ).toBeInTheDocument()
         })
       })
     })

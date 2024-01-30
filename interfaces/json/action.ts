@@ -79,6 +79,7 @@ export type ActionFormData = {
   dateEcheance: string
   statut: StatutAction
   description?: string
+  dateFinReelle?: string
 }
 
 export const CODE_QUALIFICATION_NON_SNP = 'NON_SNP'
@@ -133,11 +134,12 @@ export function jsonToActionPilotage(
     dateFinReelle: toShortDate(action.dateFinReelle),
   }
 
-  if(action.categorie) actionPilotage.categorie = {
-    code: action.categorie.code,
-    libelle: action.categorie.libelle
-  }
-  
+  if (action.categorie)
+    actionPilotage.categorie = {
+      code: action.categorie.code,
+      libelle: action.categorie.libelle,
+    }
+
   return actionPilotage
 }
 
