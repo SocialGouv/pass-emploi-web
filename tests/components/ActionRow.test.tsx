@@ -23,13 +23,13 @@ describe('<ActionRow/>', () => {
     expect(screen.getByText('En retard')).toBeInTheDocument()
   })
 
-  it("devrait afficher un badge 'A Faire' quand l'action a été commencée", () => {
+  it("devrait afficher un badge 'À faire' quand l'action a été commencée", () => {
     const actionCommencee = uneAction({
-      status: StatutAction.AFaire,
+      status: StatutAction.Afaire,
       dateEcheance: DateTime.now().plus({ day: 1 }),
     })
     render(<ActionRow action={actionCommencee} jeuneId={'1'} />)
-    expect(screen.getByText('À Faire')).toBeInTheDocument()
+    expect(screen.getByText('À faire')).toBeInTheDocument()
   })
 
   it("devrait afficher un badge 'Terminée' quand l'action est terminée", () => {
