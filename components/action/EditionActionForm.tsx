@@ -106,7 +106,7 @@ export function EditionActionForm({
   }
 
   function modifierStatut(
-    nouveauStatut: StatutAction.EnCours | StatutAction.Terminee
+    nouveauStatut: StatutAction.AFaire | StatutAction.Terminee
   ) {
     setDateAction({ value: dateEcheance })
     if (nouveauStatut === StatutAction.Terminee) {
@@ -198,7 +198,7 @@ export function EditionActionForm({
   function validerDateRealisation() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
-    if (statut === StatutAction.EnCours) return true
+    if (statut === StatutAction.AFaire) return true
 
     if (!dateRealisation.value) {
       setDateRealisation({
@@ -411,11 +411,11 @@ export function EditionActionForm({
             </legend>
             <div className='mb-7 flex flex-wrap'>
               <RadioBox
-                isSelected={statut === StatutAction.EnCours}
+                isSelected={statut === StatutAction.AFaire}
                 id='statut-action--arealiser'
                 label='À faire'
                 name='statut-action'
-                onChange={() => modifierStatut(StatutAction.EnCours)}
+                onChange={() => modifierStatut(StatutAction.AFaire)}
               />
               <RadioBox
                 isSelected={statut === StatutAction.Terminee}
@@ -427,7 +427,7 @@ export function EditionActionForm({
             </div>
           </fieldset>
 
-          {statut === StatutAction.EnCours && (
+          {statut === StatutAction.AFaire && (
             <>
               <Label htmlFor='date-action' inputRequired={true}>
                 Date de l’action
