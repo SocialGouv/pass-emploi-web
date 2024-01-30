@@ -44,7 +44,7 @@ export interface TotalActions {
 }
 
 export enum StatutAction {
-  AFaire = 'AFaire',
+  Afaire = 'Afaire',
   Terminee = 'Terminee',
   Qualifiee = 'Qualifiee',
   Annulee = 'Annulee',
