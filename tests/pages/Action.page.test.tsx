@@ -90,7 +90,7 @@ describe("Page Détail d'une action d'un jeune", () => {
 
           // Then
           expect(modifierAction).toHaveBeenCalledWith(action.id, {
-            statut: StatutAction.Afaire,
+            statut: StatutAction.AFaire,
           })
         })
       })
