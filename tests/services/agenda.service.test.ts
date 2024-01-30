@@ -79,14 +79,14 @@ describe('AgendaService', () => {
           {
             id: 'id-action-1',
             date: DateTime.fromISO('2022-02-20T14:50:46.000Z'),
-            statut: 'AFaire',
+            statut: 'Afaire',
             titre: 'Identifier ses atouts et ses compétences',
             type: 'action',
           },
           {
             id: 'id-action-2',
             date: DateTime.fromISO('2022-02-20T14:50:46.000Z'),
-            statut: 'AFaire',
+            statut: 'Afaire',
             titre: 'Compléter son cv',
             type: 'action',
           },
