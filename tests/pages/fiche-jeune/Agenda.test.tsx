@@ -253,7 +253,7 @@ describe('Agenda de la fiche jeune', () => {
             )
           ).toBeInTheDocument()
           expect(
-            within(semaineEnCours).getByText('En cours')
+            within(semaineEnCours).getByText('À Faire')
           ).toBeInTheDocument()
 
           const semaineSuivante = screen.getByRole('region', {
