@@ -25,7 +25,7 @@ describe('<ActionRow/>', () => {
 
   it("devrait afficher un badge 'À faire' quand l'action a été commencée", () => {
     const actionCommencee = uneAction({
-      status: StatutAction.Afaire,
+      status: StatutAction.AFaire,
       dateEcheance: DateTime.now().plus({ day: 1 }),
     })
     render(<ActionRow action={actionCommencee} jeuneId={'1'} />)
