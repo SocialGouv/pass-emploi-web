@@ -49,13 +49,7 @@ export interface QualificationActionJson {
 
 export interface MetadonneesActionsJson {
   nombreTotal: number
-  nombrePasCommencees: number
-  nombreEnCours: number
-  nombreTerminees: number
-  nombreAnnulees: number
-  nombreNonQualifiables: number
-  nombreAQualifier: number
-  nombreQualifiees: number
+  nombreFiltrees: number
   nombreActionsParPage: number
 }
 
