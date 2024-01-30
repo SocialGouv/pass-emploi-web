@@ -222,7 +222,7 @@ describe('Agenda de la fiche jeune', () => {
                   date: UNE_DATE_SEMAINE_EN_COURS,
                   type: 'action',
                   titre: 'Identifier ses atouts et ses compétences',
-                  statut: StatutAction.AFaire,
+                  statut: StatutAction.Afaire,
                 } as EntreeAgenda,
                 {
                   id: '1',
@@ -253,7 +253,7 @@ describe('Agenda de la fiche jeune', () => {
             )
           ).toBeInTheDocument()
           expect(
-            within(semaineEnCours).getByText('À Faire')
+            within(semaineEnCours).getByText('À faire')
           ).toBeInTheDocument()
 
           const semaineSuivante = screen.getByRole('region', {
@@ -280,7 +280,7 @@ describe('Agenda de la fiche jeune', () => {
                   date: SAMEDI_JANVIER_1,
                   type: 'action',
                   titre: 'Action du samedi 1',
-                  statut: StatutAction.AFaire,
+                  statut: StatutAction.Afaire,
                 } as EntreeAgenda,
                 {
                   id: '1',
