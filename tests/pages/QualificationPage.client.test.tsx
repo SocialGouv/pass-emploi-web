@@ -33,7 +33,7 @@ describe('QualificationPage client side', () => {
       lastUpdate: '2022-02-16T15:50:46.000+01:00',
       creator: 'Nils',
       creatorType: 'conseiller',
-      status: StatutAction.Afaire,
+      status: StatutAction.AFaire,
       dateEcheance: '2022-02-20T14:50:46.000Z',
       dateFinReelle: '2022-09-02T11:00:00.000Z',
       jeune: {
