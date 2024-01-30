@@ -98,7 +98,7 @@ describe("Page Détail d'une action d'un jeune", () => {
       describe('Quand l’action a le statut EnCours', () => {
         it("n’affiche pas la date de réalisation", async () => {
           // Given
-          const statutRadio = screen.getByText('En cours')
+          const statutRadio = screen.getByText('À faire')
 
           // When
           await userEvent.click(statutRadio)
