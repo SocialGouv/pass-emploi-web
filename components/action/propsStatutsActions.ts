@@ -12,7 +12,7 @@ const propsStatutsActions: {
     color: 'disabled',
     altColor: 'grey_100',
   },
-  Afaire: {
+  AFaire: {
     label: 'À faire',
     color: 'primary_darken',
     altColor: 'accent_3_lighten',
