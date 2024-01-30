@@ -7,7 +7,11 @@ import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Pagination from 'components/ui/Table/Pagination'
-import { Action, StatutAction } from 'interfaces/action'
+import {
+  Action,
+  SituationNonProfessionnelle,
+  StatutAction,
+} from 'interfaces/action'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
@@ -18,6 +22,7 @@ import { useAlerte } from 'utils/alerteContext'
 interface OngletActionsProps {
   conseiller: Conseiller
   jeune: BaseJeune
+  categories: SituationNonProfessionnelle[]
 
   actionsInitiales: {
     actions: Action[]
@@ -26,7 +31,7 @@ interface OngletActionsProps {
   }
   getActions: (
     page: number,
-    statuts: StatutAction[],
+    filtres: { statuts: StatutAction[]; categories: string[] },
     tri: string
   ) => Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }>
   onLienExterne: (label: string) => void
@@ -41,6 +46,7 @@ export enum TRI {
 }
 
 export default function OngletActions({
+  categories,
   actionsInitiales,
   getActions,
   jeune,
@@ -55,6 +61,7 @@ export default function OngletActions({
   )
   const [tri, setTri] = useState<TRI>(TRI.dateEcheanceDecroissante)
   const [filtresParStatuts, setFiltresParStatuts] = useState<StatutAction[]>([])
+  const [filtresParCategories, setFiltresParCategories] = useState<string[]>([])
 
   const [nombrePages, setNombrePages] = useState<number>(
     actionsInitiales.metadonnees.nombrePages
@@ -74,14 +81,16 @@ export default function OngletActions({
     stateChanged.current = true
   }
 
-  function filtrerActions(statuts: StatutAction[]) {
-    if (
-      statuts.every((statut) => filtresParStatuts.includes(statut)) &&
-      filtresParStatuts.every((filtre) => statuts.includes(filtre))
+  function filtrerActions(
+    filtres: Array<{ colonne: 'categories' | 'statuts'; values: any[] }>
+  ) {
+    const nouveauxStatuts = filtres.find(({ colonne }) => colonne === 'statuts')
+    const nouvellesCategories = filtres.find(
+      ({ colonne }) => colonne === 'categories'
     )
-      return
 
-    setFiltresParStatuts(statuts)
+    setFiltresParStatuts(nouveauxStatuts?.values ?? [])
+    setFiltresParCategories(nouvellesCategories?.values ?? [])
     setPageCourante(1)
     stateChanged.current = true
   }
@@ -163,15 +172,17 @@ export default function OngletActions({
     if (stateChanged.current) {
       setIsLoading(true)
 
-      getActions(pageCourante, filtresParStatuts, tri).then(
-        ({ actions, metadonnees }) => {
-          setActionsAffichees(actions)
-          setNombrePages(metadonnees.nombrePages)
-          setIsLoading(false)
-        }
-      )
+      getActions(
+        pageCourante,
+        { statuts: filtresParStatuts, categories: filtresParCategories },
+        tri
+      ).then(({ actions, metadonnees }) => {
+        setActionsAffichees(actions)
+        setNombrePages(metadonnees.nombrePages)
+        setIsLoading(false)
+      })
     }
-  }, [tri, filtresParStatuts, pageCourante])
+  }, [tri, filtresParStatuts, filtresParCategories, pageCourante])
 
   return (
     <>
@@ -210,6 +221,7 @@ export default function OngletActions({
             <>
               <TableauActionsJeune
                 jeune={jeune}
+                categories={categories}
                 actionsFiltrees={actionsAffichees}
                 isLoading={isLoading}
                 onFiltres={filtrerActions}

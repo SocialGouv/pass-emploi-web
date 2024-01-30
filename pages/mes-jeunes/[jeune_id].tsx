@@ -17,7 +17,11 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { Action, StatutAction } from 'interfaces/action'
+import {
+  Action,
+  SituationNonProfessionnelle,
+  StatutAction,
+} from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
 import {
   Conseiller,
@@ -37,6 +41,7 @@ import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
+import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
@@ -84,6 +89,7 @@ const ongletProps: {
 interface FicheJeuneProps extends PageProps {
   jeune: DetailJeune
   rdvs: EvenementListItem[]
+  categoriesActions: SituationNonProfessionnelle[]
   actionsInitiales: {
     actions: Action[]
     metadonnees: MetadonneesPagination
@@ -99,6 +105,7 @@ interface FicheJeuneProps extends PageProps {
 function FicheJeune({
   jeune,
   rdvs,
+  categoriesActions,
   actionsInitiales,
   metadonneesFavoris,
   onglet,
@@ -194,7 +201,7 @@ function FicheJeune({
 
   async function chargerActions(
     page: number,
-    statuts: StatutAction[],
+    filtres: { statuts: StatutAction[]; categories: string[] },
     tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
     const { getActionsJeuneClientSide } = await import(
@@ -202,7 +209,7 @@ function FicheJeune({
     )
     const result = await getActionsJeuneClientSide(jeune.id, {
       page,
-      statuts,
+      filtres,
       tri,
     })
 
@@ -505,6 +512,7 @@ function FicheJeune({
               <OngletActions
                 conseiller={conseiller}
                 jeune={jeune}
+                categories={categoriesActions}
                 actionsInitiales={actionsInitiales}
                 lectureSeule={lectureSeule}
                 getActions={chargerActions}
@@ -627,24 +635,28 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     return { notFound: true }
   }
 
-  const [jeune, metadonneesFavoris, rdvs, actions] = await Promise.all([
-    getJeuneDetails(context.query.jeune_id as string, accessToken),
-    getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
-    userIsPoleEmploi
-      ? ([] as EvenementListItem[])
-      : getRendezVousJeune(
-          context.query.jeune_id as string,
-          PeriodeEvenements.FUTURS,
-          accessToken
-        ),
-    userIsPoleEmploi
-      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : getActionsJeuneServerSide(
-          context.query.jeune_id as string,
-          page,
-          accessToken
-        ),
-  ])
+  const [jeune, metadonneesFavoris, rdvs, actions, categoriesActions] =
+    await Promise.all([
+      getJeuneDetails(context.query.jeune_id as string, accessToken),
+      getMetadonneesFavorisJeune(context.query.jeune_id as string, accessToken),
+      userIsPoleEmploi
+        ? ([] as EvenementListItem[])
+        : getRendezVousJeune(
+            context.query.jeune_id as string,
+            PeriodeEvenements.FUTURS,
+            accessToken
+          ),
+      userIsPoleEmploi
+        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+        : getActionsJeuneServerSide(
+            context.query.jeune_id as string,
+            page,
+            accessToken
+          ),
+      userIsPoleEmploi
+        ? ([] as SituationNonProfessionnelle[])
+        : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
+    ])
 
   let sessionsMilo: EvenementListItem[] = []
 
@@ -701,6 +713,7 @@ export const getServerSideProps: GetServerSideProps<FicheJeuneProps> = async (
     metadonneesFavoris,
     rdvs: rdvsEtSessionsTriesParDate,
     actionsInitiales: { ...actions, page },
+    categoriesActions,
     pageTitle: `Portefeuille - ${jeune.prenom} ${jeune.nom}`,
     pageHeader: `${jeune.prenom} ${jeune.nom}`,
     offresPE,
