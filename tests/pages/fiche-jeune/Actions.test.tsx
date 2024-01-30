@@ -440,7 +440,7 @@ describe('Actions dans la fiche jeune', () => {
 
         // When
         await userEvent.click(screen.getByText('Statut'))
-        await userEvent.click(screen.getByLabelText('À Faire'))
+        await userEvent.click(screen.getByLabelText('À faire'))
         await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
       })
 
@@ -448,7 +448,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
-          statuts: [StatutAction.AFaire],
+          statuts: [StatutAction.Afaire],
           tri: 'date_echeance_decroissante',
         })
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
@@ -468,7 +468,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
-          statuts: [StatutAction.AFaire],
+          statuts: [StatutAction.Afaire],
           tri: 'date_echeance_decroissante',
         })
       })

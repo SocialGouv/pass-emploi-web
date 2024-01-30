@@ -36,7 +36,7 @@ describe('ActionsApiService', () => {
   describe('.getAction', () => {
     it('renvoie une action non commencée', async () => {
       // GIVEN
-      const action = uneAction({ status: StatutAction.AFaire })
+      const action = uneAction({ status: StatutAction.Afaire })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
@@ -69,7 +69,7 @@ describe('ActionsApiService', () => {
 
     it('renvoie une action commencée', async () => {
       // GIVEN
-      const action = uneAction({ status: StatutAction.AFaire })
+      const action = uneAction({ status: StatutAction.Afaire })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
@@ -328,7 +328,7 @@ describe('ActionsApiService', () => {
       const actual = await getActionsJeuneClientSide('whatever', {
         tri: 'date_decroissante',
         page: 1,
-        statuts: [StatutAction.AFaire],
+        statuts: [StatutAction.Afaire],
       })
 
       // THEN
@@ -483,7 +483,7 @@ describe('ActionsApiService', () => {
           titre: 'content',
           description: 'comment',
           dateEcheance: '2022-07-30',
-          statut: StatutAction.AFaire,
+          statut: StatutAction.Afaire,
         },
         'id-jeune'
       )
