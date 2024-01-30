@@ -448,7 +448,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
-          statuts: [StatutAction.Afaire],
+          statuts: [StatutAction.AFaire],
           tri: 'date_echeance_decroissante',
         })
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
@@ -468,7 +468,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
-          statuts: [StatutAction.Afaire],
+          statuts: [StatutAction.AFaire],
           tri: 'date_echeance_decroissante',
         })
       })
