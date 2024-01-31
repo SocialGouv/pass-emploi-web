@@ -8,7 +8,7 @@ import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
 import { Action, StatutAction } from 'interfaces/action'
-import { toShortDate } from 'utils/date'
+import { MONTH_LONG, toFrenchFormat, toShortDate } from 'utils/date'
 
 interface ActionRowProps {
   action: Action
@@ -33,7 +33,10 @@ export default function ActionRow({
 
   const actionEstTerminee = action.status === StatutAction.Terminee
 
-  const dateEcheance = toShortDate(action.dateEcheance)
+  const dateEcheance = toFrenchFormat(
+    DateTime.fromISO(action.dateEcheance),
+    MONTH_LONG
+  )
 
   return (
     <TR
