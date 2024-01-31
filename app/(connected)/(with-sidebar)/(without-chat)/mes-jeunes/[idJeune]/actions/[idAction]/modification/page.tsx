@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import ModificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/ModificationActionPage'
+import ModificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/modification/ModificationActionPage'
 import {
   PageHeaderPortal,
   PageRetourPortal,
@@ -17,7 +17,7 @@ import {
 import { getActionsPredefinies } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type ModificationActionParams = { action_id: string }
+type ModificationActionParams = { idAction: string }
 
 export async function generateMetadata({
   params,
@@ -25,14 +25,14 @@ export async function generateMetadata({
   params: ModificationActionParams
 }): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
-  const actionContent = await getAction(params.action_id, accessToken)
+  const actionContent = await getAction(params.idAction, accessToken)
 
   return {
     title: `Modifier l’action ${actionContent?.action.content} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.nom}`,
   }
 }
 
-type ModificationParams = { action_id: string }
+type ModificationParams = { idAction: string }
 export default async function ModificationAction({
   params,
 }: {
@@ -43,7 +43,7 @@ export default async function ModificationAction({
 
   const [actionContent, situationsNonProfessionnelles, actionsPredefinies] =
     await Promise.all([
-      getAction(params.action_id, accessToken),
+      getAction(params.idAction, accessToken),
       getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
       getActionsPredefinies(accessToken),
     ])
@@ -53,7 +53,7 @@ export default async function ModificationAction({
   if (action.status === StatutAction.Qualifiee) notFound()
 
   const commentaires = await recupererLesCommentaires(
-    params.action_id as string,
+    params.idAction,
     accessToken
   )
   if (!commentaires) notFound()

@@ -2,8 +2,8 @@ import { render } from '@testing-library/react'
 
 import RendezVousPasses, {
   generateMetadata,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/rendez-vous-passes/page'
-import RendezVousPassesPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/rendez-vous-passes/RendezVousPassesPage'
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/page'
+import RendezVousPassesPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { unDetailJeune } from 'fixtures/jeune'
 import { getRendezVousJeune } from 'services/evenements.service'
@@ -14,7 +14,7 @@ jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock(
-  'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/rendez-vous-passes/RendezVousPassesPage'
+  'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
 )
 jest.mock('services/evenements.service')
 jest.mock('services/jeunes.service')
@@ -37,7 +37,7 @@ describe('RendezVousPassesPage server side', () => {
       })
 
       // When
-      const params = { jeune_id: 'id-jeune' }
+      const params = { idJeune: 'id-jeune' }
       const metadata = await generateMetadata({ params })
       render(await RendezVousPasses({ params }))
 
@@ -68,7 +68,7 @@ describe('RendezVousPassesPage server side', () => {
       })
 
       // When
-      render(await RendezVousPasses({ params: { jeune_id: 'id-jeune' } }))
+      render(await RendezVousPasses({ params: { idJeune: 'id-jeune' } }))
 
       // Then
       expect(getRendezVousJeune).not.toHaveBeenCalled()

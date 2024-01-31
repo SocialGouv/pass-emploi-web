@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react'
 import React from 'react'
 
-import RendezVousPasses from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/rendez-vous-passes/RendezVousPassesPage'
+import RendezVousPasses from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { EvenementListItem } from 'interfaces/evenement'

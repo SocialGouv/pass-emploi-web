@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
 import { DateTime } from 'luxon'
 
-import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage'
-import FicheBeneficiaire from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/page'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+import FicheBeneficiaire from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/page'
 import { uneAction } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
@@ -30,7 +30,7 @@ jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock(
-  'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage'
+  'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 )
 jest.mock('services/jeunes.service')
 jest.mock('services/sessions.service')
@@ -95,7 +95,7 @@ describe('FicheBeneficiairePage server side', () => {
       })
 
       // When
-      render(await FicheBeneficiaire({ params: { jeune_id: 'id-jeune' } }))
+      render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
     })
 
     it('récupère les infos du jeune', async () => {
@@ -182,7 +182,7 @@ describe('FicheBeneficiairePage server side', () => {
       // When
       render(
         await FicheBeneficiaire({
-          params: { jeune_id: 'id-jeune' },
+          params: { idJeune: 'id-jeune' },
           searchParams: { page: '3' },
         })
       )
@@ -215,7 +215,7 @@ describe('FicheBeneficiairePage server side', () => {
       // When
       render(
         await FicheBeneficiaire({
-          params: { jeune_id: 'id-jeune' },
+          params: { idJeune: 'id-jeune' },
           searchParams: { onglet: 'actions' },
         })
       )
@@ -241,7 +241,7 @@ describe('FicheBeneficiairePage server side', () => {
       )
 
       // When
-      render(await FicheBeneficiaire({ params: { jeune_id: 'id-jeune' } }))
+      render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
     })
 
     it('ne recupère pas les rendez-vous', async () => {
@@ -275,7 +275,7 @@ describe('FicheBeneficiairePage server side', () => {
       })
 
       // When
-      render(await FicheBeneficiaire({ params: { jeune_id: 'id-jeune' } }))
+      render(await FicheBeneficiaire({ params: { idJeune: 'id-jeune' } }))
 
       // Then
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')

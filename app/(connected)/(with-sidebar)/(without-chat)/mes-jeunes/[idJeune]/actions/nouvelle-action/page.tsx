@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import React from 'react'
 
-import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
+import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/nouvelle-action/NouvelleActionPage'
 import {
   PageHeaderPortal,
   PageRetourPortal,
@@ -11,7 +11,7 @@ import { getIdentitesBeneficiairesServerSide } from 'services/jeunes.service'
 import { getActionsPredefinies } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type NouvelleActionParams = { jeune_id: string }
+type NouvelleActionParams = { idJeune: string }
 
 export async function generateMetadata({
   params,
@@ -20,7 +20,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
   const [beneficiaire] = await getIdentitesBeneficiairesServerSide(
-    [params.jeune_id],
+    [params.idJeune],
     user.id,
     accessToken
   )
@@ -41,14 +41,14 @@ export default async function NouvelleAction({
     getActionsPredefinies(accessToken),
   ])
 
-  const returnTo = `/mes-jeunes/${params.jeune_id}?onglet=actions`
+  const returnTo = `/mes-jeunes/${params.idJeune}?onglet=actions`
   return (
     <>
       <PageRetourPortal lien={returnTo} />
       <PageHeaderPortal header='Créer une nouvelle action' />
 
       <NouvelleActionPage
-        idJeune={params.jeune_id}
+        idJeune={params.idJeune}
         categories={categories}
         actionsPredefinies={actionsPredefinies}
         returnTo={returnTo}

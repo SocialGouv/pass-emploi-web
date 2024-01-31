@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react'
 import { notFound } from 'next/navigation'
 
-import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/ModificationActionPage'
+import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/modification/ModificationActionPage'
 import ModificationAction, {
   generateMetadata,
-} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/page'
+} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/modification/page'
 import {
   desActionsPredefinies,
   desCategories,
@@ -27,7 +27,7 @@ jest.mock('utils/auth/auth', () => ({
 jest.mock('services/actions.service')
 jest.mock('services/referentiel.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/ModificationActionPage'
+  'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/modification/ModificationActionPage'
 )
 
 describe('ModificationActionPage server side', () => {
@@ -35,7 +35,7 @@ describe('ModificationActionPage server side', () => {
     const jeune = uneBaseJeune()
     const actionsPredefinies = desActionsPredefinies()
     const categories = desCategories()
-    const params = { action_id: 'id-action' }
+    const params = { idAction: 'id-action' }
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
@@ -113,7 +113,7 @@ describe('ModificationActionPage server side', () => {
       })
 
       // When
-      const promise = ModificationAction({ params: { action_id: 'id-action' } })
+      const promise = ModificationAction({ params: { idAction: 'id-action' } })
 
       // Then
       await expect(promise).rejects.toEqual(new Error('NEXT NOT_FOUND'))

@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/historique/HistoriquePage'
+import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
@@ -14,7 +14,7 @@ import {
 } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type HistoriqueParams = { jeune_id: string }
+type HistoriqueParams = { idJeune: string }
 
 export async function generateMetadata({
   params,
@@ -22,7 +22,7 @@ export async function generateMetadata({
   params: HistoriqueParams
 }): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const beneficiaire = await getJeuneDetails(params.jeune_id, accessToken)
+  const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
   if (!beneficiaire) notFound()
 
   const lectureSeule = user.id !== beneficiaire.idConseiller
@@ -37,7 +37,7 @@ export default async function Historique({
   params: HistoriqueParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const beneficiaire = await getJeuneDetails(params.jeune_id, accessToken)
+  const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
   if (!beneficiaire) notFound()
 
   const conseillers = await getConseillersDuJeuneServerSide(
