@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage'
+import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import {
   PageHeaderPortal,
   PageRetourPortal,
@@ -11,7 +11,7 @@ import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type QualificationParams = { action_id: string }
+type QualificationParams = { idAction: string }
 
 export async function generateMetadata({
   params,
@@ -21,7 +21,7 @@ export async function generateMetadata({
   const { accessToken } = await getMandatorySessionServerSide()
 
   const { getAction } = await import('services/actions.service')
-  const actionContent = await getAction(params.action_id, accessToken)
+  const actionContent = await getAction(params.idAction, accessToken)
 
   return {
     title: `Qualifier l’action ${actionContent?.action.content} - ${actionContent?.jeune.prenom} ${actionContent?.jeune.prenom}`,
@@ -39,7 +39,7 @@ export default async function Qualification({
     'services/actions.service'
   )
   const [actionContent, categories] = await Promise.all([
-    getAction(params.action_id, accessToken),
+    getAction(params.idAction, accessToken),
     getSituationsNonProfessionnelles({ avecNonSNP: true }, accessToken),
   ])
   if (!actionContent) notFound()

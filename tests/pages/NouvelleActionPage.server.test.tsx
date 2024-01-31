@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
 
-import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage'
+import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/nouvelle-action/NouvelleActionPage'
 import NouvelleAction, {
   generateMetadata,
-} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/page'
+} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/nouvelle-action/page'
 import { desCategories } from 'fixtures/action'
 import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import { getIdentitesBeneficiairesServerSide } from 'services/jeunes.service'
@@ -17,7 +17,7 @@ jest.mock('services/jeunes.service')
 jest.mock('services/actions.service')
 jest.mock('services/referentiel.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/nouvelle-action/NouvelleActionPage',
+  'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/nouvelle-action/NouvelleActionPage',
   () => ({ __esModule: true, default: jest.fn(), TITRE_AUTRE: 'Autre' })
 )
 
@@ -38,7 +38,7 @@ describe('NouvelleActionPage server side', () => {
 
     // When
     const metadata = await generateMetadata({
-      params: { jeune_id: 'id-jeune' },
+      params: { idJeune: 'id-jeune' },
     })
 
     // Then
@@ -70,7 +70,7 @@ describe('NouvelleActionPage server side', () => {
     // When
     render(
       await NouvelleAction({
-        params: { jeune_id: 'id-jeune' },
+        params: { idJeune: 'id-jeune' },
       })
     )
 
