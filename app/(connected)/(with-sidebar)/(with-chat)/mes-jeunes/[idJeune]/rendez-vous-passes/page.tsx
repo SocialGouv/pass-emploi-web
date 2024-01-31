@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import RendezVousPassesPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/rendez-vous-passes/RendezVousPassesPage'
+import RendezVousPassesPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
@@ -13,7 +13,7 @@ import { getRendezVousJeune } from 'services/evenements.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-type RendezVousPassesParams = { jeune_id: string }
+type RendezVousPassesParams = { idJeune: string }
 
 export async function generateMetadata({
   params,
@@ -21,7 +21,7 @@ export async function generateMetadata({
   params: RendezVousPassesParams
 }): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
-  const beneficiaire = await getJeuneDetails(params.jeune_id, accessToken)
+  const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
   if (!beneficiaire) notFound()
 
   return { title: 'Rendez-vous passés - ' + getNomJeuneComplet(beneficiaire) }
@@ -36,11 +36,11 @@ export default async function RendezVousPasses({
   const isPoleEmploi = estUserPoleEmploi(user)
 
   const [beneficiaire, rdvs] = await Promise.all([
-    getJeuneDetails(params.jeune_id, accessToken),
+    getJeuneDetails(params.idJeune, accessToken),
     isPoleEmploi
       ? []
       : await getRendezVousJeune(
-          params.jeune_id,
+          params.idJeune,
           PeriodeEvenements.PASSES,
           accessToken
         ),

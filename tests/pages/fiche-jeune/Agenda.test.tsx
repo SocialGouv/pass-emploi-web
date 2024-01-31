@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'

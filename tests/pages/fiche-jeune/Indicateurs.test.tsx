@@ -2,7 +2,7 @@ import { act, screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import React from 'react'
 
-import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {

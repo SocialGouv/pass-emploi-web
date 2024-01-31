@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/historique/HistoriquePage'
+import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
 import { desConseillersJeune } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {

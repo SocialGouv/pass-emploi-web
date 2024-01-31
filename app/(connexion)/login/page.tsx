@@ -53,14 +53,13 @@ async function redirectIfAlreadyConnected(
 
   if (session) {
     const redirectUrl: string =
-      (searchParams?.redirectUrl as string) ?? `/${querySource || ''}`
+      searchParams?.redirectUrl ?? `/${querySource || ''}`
     redirect(redirectUrl)
   }
 }
 
 function getIsFromEmail(searchParams?: LoginSearchParams): boolean {
   return Boolean(
-    searchParams?.source ||
-      (searchParams?.redirectUrl as string)?.includes('notif-mail')
+    searchParams?.source || searchParams?.redirectUrl?.includes('notif-mail')
   )
 }

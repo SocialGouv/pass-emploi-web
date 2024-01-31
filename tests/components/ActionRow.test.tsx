@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -10,7 +11,7 @@ import { StatutAction } from 'interfaces/action'
 
 describe('<ActionRow/>', () => {
   beforeEach(async () => {
-    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
   })
 
   it("devrait afficher les informations des actions d'un jeune", () => {

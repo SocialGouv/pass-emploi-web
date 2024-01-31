@@ -1,25 +1,24 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 
 import { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { IndicateursSemaine } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type IndicateursProps = PageProps & {
+type IndicateursProps = {
   idJeune: string
   lectureSeule: boolean
 }
 
-function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
+function IndicateursPage({ idJeune, lectureSeule }: IndicateursProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
@@ -173,44 +172,4 @@ function IndicateursOffres({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<IndicateursProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { accessToken, user },
-  } = sessionOrRedirect
-  if (estUserPoleEmploi(user)) {
-    return { notFound: true }
-  }
-
-  const idBeneficiaire = context.query.jeune_id as string
-  const { getJeuneDetails } = await import('services/jeunes.service')
-  const beneficiaire = await getJeuneDetails(idBeneficiaire, accessToken)
-
-  if (!beneficiaire) {
-    return { notFound: true }
-  }
-
-  const lectureSeule = beneficiaire.idConseiller !== user.id
-
-  return {
-    props: {
-      idJeune: context.query.jeune_id as string,
-      lectureSeule,
-      pageTitle: `${
-        lectureSeule ? 'Etablissement' : 'Portefeuille'
-      } - Bénéficiaire - Indicateurs`,
-      pageHeader: 'Indicateurs',
-    },
-  }
-}
-
-export default withTransaction(Indicateurs.name, 'page')(Indicateurs)
+export default withTransaction(IndicateursPage.name, 'page')(IndicateursPage)
