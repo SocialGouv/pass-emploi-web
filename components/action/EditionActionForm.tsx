@@ -438,7 +438,7 @@ export function EditionActionForm({
                 type='date'
                 id='date-action'
                 required={true}
-                value={dateAction.value}
+                value={dateAction.value ?? ''}
                 onChange={(value: string) => setDateAction({ value })}
                 onBlur={validerDateAction}
                 invalid={Boolean(dateAction.error)}
@@ -486,7 +486,7 @@ export function EditionActionForm({
                 type='date'
                 id='date-realisation'
                 required={true}
-                value={dateRealisation.value}
+                value={dateRealisation.value ?? ''}
                 onChange={(value: string) => setDateRealisation({ value })}
                 onBlur={validerDateRealisation}
                 invalid={Boolean(dateRealisation.error)}
