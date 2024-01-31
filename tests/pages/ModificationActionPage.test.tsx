@@ -215,7 +215,10 @@ describe('ModificationActionPage client side', () => {
   })
 
   describe('Action terminée', () => {
-    const action = uneAction({ status: StatutAction.Terminee })
+    const action = uneAction({
+      status: StatutAction.Terminee,
+      dateFinReelle: '2022-12-21T14:50:46.000Z',
+    })
     beforeEach(async () => {
       // When
       renderWithContexts(
@@ -267,6 +270,7 @@ describe('ModificationActionPage client side', () => {
 
     it("affiche un message d'erreur quand date d'échéance n'est pas dans l'intervalle : un an avant, deux ans après", async () => {
       const dateRealisation = screen.getByLabelText(/Date/)
+      await userEvent.clear(dateRealisation)
       await userEvent.type(dateRealisation, '2000-07-30')
       await userEvent.tab()
 
