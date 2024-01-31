@@ -549,7 +549,6 @@ describe('ActionsApiService', () => {
       // WHEN
       const actual = await qualifier('id-action', 'SANTE', {
         commentaire: 'commentaire',
-        dateDebutModifiee: DateTime.fromISO('2022-09-05T22:00:00.000Z'),
         dateFinModifiee: DateTime.fromISO('2022-09-06T22:00:00.000Z'),
       })
 
@@ -559,7 +558,6 @@ describe('ActionsApiService', () => {
         {
           commentaireQualification: 'commentaire',
           codeQualification: 'SANTE',
-          dateDebut: '2022-09-06T00:00:00.000+02:00',
           dateFinReelle: '2022-09-07T00:00:00.000+02:00',
         },
         'accessToken'

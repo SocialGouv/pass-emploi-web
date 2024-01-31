@@ -87,20 +87,14 @@ describe('QualificationPage client side', () => {
       ).toHaveValue(action.content + ' - ' + action.comment)
     })
 
-    it("affiche les dates de début et de fin de l'action", () => {
+    it("affiche la date de fin de l'action", () => {
       // Then
       const etape2 = screen.getByRole('group', {
-        name: 'Étape 2: Dates',
+        name: 'Étape 2: Date',
       })
-      const inputDateDebut = within(etape2).getByLabelText(
-        '* Date de début de l’action'
-      )
       const inputDateFin = within(etape2).getByLabelText(
         '* Date de fin de l’action'
       )
-      expect(inputDateDebut).toHaveAttribute('type', 'date')
-      expect(inputDateDebut).toHaveValue('2022-09-02')
-
       expect(inputDateFin).toHaveAttribute('type', 'date')
       expect(inputDateFin).toHaveValue('2022-09-02')
     })
@@ -215,9 +209,6 @@ describe('QualificationPage client side', () => {
           // Then
           expect(qualifier).toHaveBeenCalledWith(action.id, 'SNP_3', {
             commentaire: 'Nouveau titre et commentaire de l’action',
-            dateDebutModifiee: DateTime.fromISO(
-              '2022-09-02T00:00:00.000+02:00'
-            ),
             dateFinModifiee: DateTime.fromISO('2022-09-05T00:00:00.000+02:00'),
           })
         })
@@ -270,7 +261,7 @@ describe('QualificationPage client side', () => {
       ).toBeInTheDocument()
       expect(() =>
         screen.getByRole('group', {
-          name: 'Étape 2: Dates',
+          name: 'Étape 2: Date',
         })
       ).toThrow()
     })
@@ -293,7 +284,6 @@ describe('QualificationPage client side', () => {
           actionAQualifier.id,
           CODE_QUALIFICATION_NON_SNP,
           {
-            dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
             dateFinModifiee: DateTime.fromISO(action.dateEcheance),
           }
         )

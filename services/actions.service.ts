@@ -165,7 +165,6 @@ export async function qualifier(
   idAction: string,
   type: string,
   options?: {
-    dateDebutModifiee?: DateTime
     dateFinModifiee?: DateTime
     commentaire?: string
   }
@@ -174,13 +173,10 @@ export async function qualifier(
 
   const payload: {
     codeQualification: string
-    dateDebut?: string
     dateFinReelle?: string
     commentaireQualification?: string
   } = { codeQualification: type }
 
-  if (options?.dateDebutModifiee)
-    payload.dateDebut = options.dateDebutModifiee.toISO()
   if (options?.dateFinModifiee)
     payload.dateFinReelle = options.dateFinModifiee.toISO()
   if (options?.commentaire)
