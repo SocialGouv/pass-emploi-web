@@ -3,7 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
+import {
+  desCategories,
+  uneListeDActionsAQualifier,
+  uneListeDActionsAQualifierJson,
+} from 'fixtures/action'
 import { ActionPilotage } from 'interfaces/action'
 import Pilotage from 'pages/pilotage'
 import {
@@ -12,6 +16,9 @@ import {
 } from 'services/actions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+import { MONTH_LONG, toFrenchFormat } from '../../../utils/date'
+import { DateTime } from 'luxon'
+import { action } from '@storybook/addon-actions'
 
 jest.mock('services/actions.service')
 jest.mock('components/Modal')
@@ -161,7 +168,7 @@ describe('PilotagePage client side - Actions', () => {
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 1,
         tri: 'ALPHABETIQUE',
-        filtres: []
+        filtres: [],
       })
       expect(
         screen.getByText('Action page 1 ALPHABETIQUE 0filtres')
@@ -186,7 +193,7 @@ describe('PilotagePage client side - Actions', () => {
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 1,
         tri: 'INVERSE',
-        filtres: []
+        filtres: [],
       })
       expect(
         screen.getByText('Action page 1 INVERSE 0filtres')
