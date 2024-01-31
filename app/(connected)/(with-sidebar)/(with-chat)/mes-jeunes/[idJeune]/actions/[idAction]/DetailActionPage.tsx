@@ -1,7 +1,8 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
@@ -15,9 +16,8 @@ import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, Commentaire, StatutAction } from 'interfaces/action'
-import { estMilo, estUserPoleEmploi } from 'interfaces/conseiller'
+import { estMilo } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -25,20 +25,19 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { MONTH_LONG, toFrenchFormat } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-interface PageActionProps extends PageProps {
+type DetailActionProps = {
   action: Action
   jeune: BaseJeune
   lectureSeule: boolean
   commentaires: Commentaire[]
-  pageTitle: string
 }
 
-function PageAction({
+function DetailActionPage({
   action,
   jeune,
   commentaires,
   lectureSeule,
-}: PageActionProps) {
+}: DetailActionProps) {
   const router = useRouter()
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -230,55 +229,4 @@ function PageAction({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<PageActionProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-  if (estUserPoleEmploi(user)) {
-    return { notFound: true }
-  }
-  const { jeune_id, action_id } = context.query
-
-  const { getAction, recupererLesCommentaires } = await import(
-    'services/actions.service'
-  )
-  const actionEtJeune = await getAction(action_id as string, accessToken)
-
-  if (!actionEtJeune) return { notFound: true }
-  if (jeune_id !== actionEtJeune.jeune.id) return { notFound: true }
-
-  const commentaires = await recupererLesCommentaires(
-    action_id as string,
-    accessToken
-  )
-  if (!commentaires) return { notFound: true }
-
-  const { action, jeune } = actionEtJeune
-
-  const lectureSeule = jeune.idConseiller !== user.id
-
-  const props: PageActionProps = {
-    action,
-    jeune,
-    commentaires,
-    lectureSeule,
-    pageTitle: `${
-      lectureSeule ? 'Etablissement' : 'Portefeuille'
-    } - Actions de ${jeune.prenom} ${jeune.nom} - ${action.content}`,
-    pageHeader: 'Détails de l’action',
-  }
-
-  return { props }
-}
-
-export default withTransaction(PageAction.name, 'page')(PageAction)
+export default withTransaction(DetailActionPage.name, 'page')(DetailActionPage)

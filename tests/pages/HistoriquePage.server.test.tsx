@@ -5,10 +5,10 @@ import { useRouter } from 'next/router'
 import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
-import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/historique/HistoriquePage'
+import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
 import Historique, {
   generateMetadata,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/historique/page'
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/page'
 import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -29,7 +29,7 @@ jest.mock('utils/auth/auth', () => ({
 }))
 jest.mock('services/jeunes.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/historique/HistoriquePage'
+  'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
 )
 
 describe('HistoriquePage server side', () => {
@@ -60,7 +60,7 @@ describe('HistoriquePage server side', () => {
     })
 
     // When
-    const params = { jeune_id: 'id-jeune' }
+    const params = { idJeune: 'id-jeune' }
     metadata = await generateMetadata({ params })
     render(await Historique({ params }))
   })

@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation'
 
 import FicheBeneficiairePage, {
   Onglet,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage' // Onglet,
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage' // Onglet,
 import {
   PageFilArianePortal,
   PageHeaderPortal,
@@ -33,7 +33,7 @@ import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { compareDates } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
-type FicheBeneficiaireParams = { jeune_id: string }
+type FicheBeneficiaireParams = { idJeune: string }
 type FicheBeneficiaireSearchParams = { page?: string; onglet?: string }
 
 export async function generateMetadata({
@@ -42,7 +42,7 @@ export async function generateMetadata({
   params: FicheBeneficiaireParams
 }): Promise<Metadata> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const jeune = await getJeuneDetails(params.jeune_id, accessToken)
+  const jeune = await getJeuneDetails(params.idJeune, accessToken)
   if (!jeune) notFound()
 
   if (jeune.idConseiller !== user.id) {
@@ -77,18 +77,18 @@ export default async function FicheBeneficiaire({
 
   const [jeune, metadonneesFavoris, rdvs, actions, categoriesActions] =
     await Promise.all([
-      getJeuneDetails(params.jeune_id, accessToken),
-      getMetadonneesFavorisJeune(params.jeune_id, accessToken),
+      getJeuneDetails(params.idJeune, accessToken),
+      getMetadonneesFavorisJeune(params.idJeune, accessToken),
       userIsPoleEmploi
         ? ([] as EvenementListItem[])
         : getRendezVousJeune(
-            params.jeune_id,
+            params.idJeune,
             PeriodeEvenements.FUTURS,
             accessToken
           ),
       userIsPoleEmploi
         ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-        : getActionsJeuneServerSide(params.jeune_id, page, accessToken),
+        : getActionsJeuneServerSide(params.idJeune, page, accessToken),
       userIsPoleEmploi
         ? ([] as SituationNonProfessionnelle[])
         : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
@@ -99,7 +99,7 @@ export default async function FicheBeneficiaire({
   if (peutAccederAuxSessions(conseiller)) {
     try {
       sessionsMilo = await getSessionsMiloBeneficiaire(
-        params.jeune_id,
+        params.idJeune,
         accessToken,
         DateTime.now().startOf('day')
       )
@@ -116,9 +116,9 @@ export default async function FicheBeneficiaire({
   let recherchesPE: Recherche[] = []
   if (metadonneesFavoris?.autoriseLePartage) {
     ;[offresPE, recherchesPE] = await Promise.all([
-      userIsPoleEmploi ? getOffres(params.jeune_id, accessToken) : [],
+      userIsPoleEmploi ? getOffres(params.idJeune, accessToken) : [],
       userIsPoleEmploi
-        ? getRecherchesSauvegardees(params.jeune_id, accessToken)
+        ? getRecherchesSauvegardees(params.idJeune, accessToken)
         : [],
     ])
   }
