@@ -129,11 +129,34 @@ export default function OngletActions({
       )
     }
 
-    setActionsAffichees(
-      actionsAffichees.filter(
-        (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
+    if (filtresParStatuts.length) {
+      setActionsAffichees(
+        actionsAffichees.filter(
+          (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
+        )
       )
-    )
+    } else {
+      setActionsAffichees(
+        actionsAffichees.map((affichee) => {
+          if (
+            !actionsQualifiees.some(({ idAction }) => idAction === affichee.id)
+          )
+            return affichee
+          return {
+            ...affichee,
+            status: StatutAction.Qualifiee,
+            qualification: qualificationSNP
+              ? affichee.qualification
+              : {
+                  code: CODE_QUALIFICATION_NON_SNP,
+                  isSituationNonProfessionnelle: false,
+                  libelle:
+                    'Action non qualifiée en Situation Non Professionnelle',
+                },
+          }
+        })
+      )
+    }
   }
 
   useEffect(() => {
