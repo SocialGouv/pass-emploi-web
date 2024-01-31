@@ -5,6 +5,8 @@ import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
 import { ActionPilotage } from 'interfaces/action'
+import { MONTH_LONG, toFrenchFormat } from '../../utils/date'
+import { DateTime } from 'luxon'
 
 interface ActionRowPilotageProps {
   action: ActionPilotage
@@ -17,6 +19,10 @@ export default function ActionRowPilotage({
   isChecked,
   onSelection,
 }: ActionRowPilotageProps) {
+  const dateFinReelle = toFrenchFormat(
+    DateTime.fromISO(action.dateFinReelle),
+    MONTH_LONG
+  )
   return (
     <TR
       href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
@@ -57,7 +63,7 @@ export default function ActionRowPilotage({
       </TD>
       <TD>
         <span className='flex flex-row justify-between'>
-          {action.dateFinReelle}
+          {dateFinReelle}
           <IconComponent
             name={IconName.ChevronRight}
             focusable={false}

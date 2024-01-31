@@ -97,7 +97,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Granger',
         prenom: 'Hermione',
       },
-      dateFinReelle: '18/12/2022',
+      dateFinReelle: '18 décembre 2022',
       categorie: {
         code: 'EMPLOI',
         libelle: 'Emploi',
@@ -111,7 +111,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Fury',
         prenom: 'Bryan',
       },
-      dateFinReelle: '19/12/2022',
+      dateFinReelle: '19 décembre 2022',
       categorie: {
         code: 'SPORTS_CULTURE_LOISIR',
         libelle: 'Sports,culture,loisir',
@@ -125,7 +125,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Tran',
         prenom: 'Mélodie',
       },
-      dateFinReelle: '10/01/2023',
+      dateFinReelle: '10 janvier 2023',
       categorie: {
         code: 'FORMATION',
         libelle: 'Formation',
@@ -139,7 +139,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Caramelle',
         prenom: 'Amelle',
       },
-      dateFinReelle: '30/01/2023',
+      dateFinReelle: '30 janvier 2023',
       categorie: {
         code: 'LOGEMENT',
         libelle: 'Logement',
@@ -153,7 +153,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Android',
         prenom: 'Gabriel',
       },
-      dateFinReelle: '31/01/2023',
+      dateFinReelle: '31 janvier 2023',
       categorie: {
         code: 'SANTE',
         libelle: 'Santé',
@@ -172,7 +172,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         nom: 'Granger',
         prenom: 'Hermione',
       },
-      dateFinReelle: '2022-12-18T14:03:56.395Z',
+      dateFinReelle: '18 décembre 2022',
       categorie: {
         code: 'EMPLOI',
         libelle: 'Emploi',
@@ -186,7 +186,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         nom: 'Fury',
         prenom: 'Bryan',
       },
-      dateFinReelle: '2022-12-19T14:03:56.395Z',
+      dateFinReelle: '19 décembre 2022',
       categorie: {
         code: 'SPORTS_CULTURE_LOISIR',
         libelle: 'Sports,culture,loisir',
@@ -200,7 +200,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         nom: 'Tran',
         prenom: 'Mélodie',
       },
-      dateFinReelle: '2023-01-10T15:26:00.055Z',
+      dateFinReelle: '10 janvier 2023',
       categorie: {
         code: 'FORMATION',
         libelle: 'Formation',
@@ -214,7 +214,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         nom: 'Caramelle',
         prenom: 'Amelle',
       },
-      dateFinReelle: '2023-01-30T15:12:20.342Z',
+      dateFinReelle: '30 janvier 2023',
       categorie: {
         code: 'LOGEMENT',
         libelle: 'Logement',
@@ -228,7 +228,7 @@ export const uneListeDActionsAQualifierJson = (): ActionPilotageJson[] => {
         nom: 'Android',
         prenom: 'Gabriel',
       },
-      dateFinReelle: '2023-01-31T15:12:20.342Z',
+      dateFinReelle: '31 janvier 2023',
       categorie: {
         code: 'SANTE',
         libelle: 'Santé',
