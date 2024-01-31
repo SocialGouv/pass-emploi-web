@@ -62,9 +62,6 @@ function QualificationPage({
   const localDateFin =
     dateActionFin && toFrenchFormat(dateActionFin, DATE_DASH_SEPARATOR)
 
-  const [dateDebut, setDateDebut] = useState<
-    ValueWithError<string | undefined>
-  >({ value: localDateDebut })
   const [dateFin, setDateFin] = useState<ValueWithError<string | undefined>>({
     value: localDateFin,
   })
@@ -128,28 +125,13 @@ function QualificationPage({
       })
   }
 
-  function validerDateDebut() {
-    let error
-    if (!dateDebut.value) {
-      error =
-        'Le champ Date de début de l’action n’est pas renseigné. Veuillez renseigner la date de début de l’action.'
-    }
-    setDateDebut({ ...dateDebut, error })
-  }
-
   function isFormValid(): boolean {
-    return (
-      isCommentaireValid() &&
-      Boolean(codeCategorie) &&
-      Boolean(dateFin) &&
-      Boolean(dateDebut)
-    )
+    return isCommentaireValid() && Boolean(codeCategorie) && Boolean(dateFin)
   }
 
   async function qualifierNonSNP() {
     const { qualifier } = await import('services/actions.service')
     await qualifier(action.id, CODE_QUALIFICATION_NON_SNP, {
-      dateDebutModifiee: DateTime.fromISO(action.dateEcheance),
       dateFinModifiee: DateTime.fromISO(action.dateEcheance),
     })
   }
@@ -158,7 +140,6 @@ function QualificationPage({
     const { qualifier } = await import('services/actions.service')
     await qualifier(action.id, codeCategorie.value!, {
       commentaire: commentaire.value,
-      dateDebutModifiee: DateTime.fromISO(dateDebut.value!).startOf('day'),
       dateFinModifiee: DateTime.fromISO(dateFin.value!).startOf('day'),
     })
   }
@@ -199,14 +180,6 @@ function QualificationPage({
         ancre: '#commentaire',
         label: 'Le champ Titre et description de l’action est vide.',
         titreChamp: 'Titre et description de l’action',
-      })
-    }
-
-    if (dateDebut.error) {
-      erreurs.push({
-        ancre: '#input-date-debut',
-        label: 'Le champ Date de début de l’action est vide.',
-        titreChamp: 'Date de début de l’action',
       })
     }
 
@@ -317,24 +290,7 @@ function QualificationPage({
             </Etape>
 
             {estSNP && (
-              <Etape numero={2} titre='Dates'>
-                <Label htmlFor='input-date-debut' inputRequired={true}>
-                  Date de début de l’action
-                </Label>
-                {dateDebut.error && (
-                  <InputError id='input-date-debut--error' className='mb-2'>
-                    {dateDebut.error}
-                  </InputError>
-                )}
-                <Input
-                  type='date'
-                  id='input-date-debut'
-                  defaultValue={localDateDebut}
-                  onChange={(value: string) => setDateDebut({ value })}
-                  onBlur={validerDateDebut}
-                  required={true}
-                  invalid={Boolean(dateDebut.error)}
-                />
+              <Etape numero={2} titre='Date'>
                 <Label htmlFor='input-date-fin' inputRequired={true}>
                   Date de fin de l’action
                 </Label>
@@ -347,7 +303,7 @@ function QualificationPage({
                   type='date'
                   id='input-date-fin'
                   defaultValue={localDateFin}
-                  min={DateTime.fromISO(dateDebut.value!).toISODate()}
+                  min={localDateDebut}
                   onChange={(value: string) => setDateFin({ value })}
                   onBlur={validerDateFin}
                   required={true}

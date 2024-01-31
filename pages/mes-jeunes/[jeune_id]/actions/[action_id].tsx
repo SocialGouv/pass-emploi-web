@@ -60,11 +60,18 @@ function PageAction({
     DateTime.fromISO(action.dateEcheance),
     MONTH_LONG
   )
+  const dateRealisationLongFormat = toFrenchFormat(
+    DateTime.fromISO(action.dateFinReelle ?? action.dateEcheance),
+    MONTH_LONG
+  )
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const { modifierAction } = await import('services/actions.service')
     await modifierAction(action.id, { statut: statutChoisi })
     setStatut(statutChoisi)
+
+    if (statutChoisi === StatutAction.Terminee)
+      action.dateFinReelle = DateTime.now().toISODate()
   }
 
   function onAjoutCommentaire(estEnSucces: boolean) {
@@ -195,6 +202,17 @@ function PageAction({
             <span>Date de l’action :</span>
           </dt>
           <dd className='text-base-regular pl-6'>{dateEcheanceLongFormat}</dd>
+          {(statut === StatutAction.Terminee ||
+            statut === StatutAction.Qualifiee) && (
+            <>
+              <dt className='text-base-bold pb-6'>
+                <span>Date de réalisation :</span>
+              </dt>
+              <dd className='text-base-regular pl-6'>
+                {dateRealisationLongFormat}
+              </dd>
+            </>
+          )}
         </dl>
       </div>
 

@@ -11,7 +11,6 @@ import { unDetailJeune } from 'fixtures/jeune'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
-import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import PageAction, {
   getServerSideProps,
 } from 'pages/mes-jeunes/[jeune_id]/actions/[action_id]'
@@ -20,7 +19,6 @@ import {
   ajouterCommentaire,
   deleteAction,
   getAction,
-  qualifier,
   recupererLesCommentaires,
   modifierAction,
 } from 'services/actions.service'
@@ -95,6 +93,32 @@ describe("Page Détail d'une action d'un jeune", () => {
             action.id,
             { statut: StatutAction.EnCours }
           )
+        })
+      })
+
+      describe('Quand l’action a le statut EnCours', () => {
+        it("n’affiche pas la date de réalisation", async () => {
+          // Given
+          const statutRadio = screen.getByText('En cours')
+
+          // When
+          await userEvent.click(statutRadio)
+
+          // Then
+          expect(() => screen.getByText('Date de réalisation :')).toThrow()
+        })
+      })
+
+      describe('Quand l’action passe en statut Terminée', () => {
+        it("affiche la date de réalisation", async () => {
+          // Given
+          const statutRadio = screen.getByText('Terminée - À qualifier')
+
+          // When
+          await userEvent.click(statutRadio)
+
+          // Then
+          expect(screen.getByText('Date de réalisation :')).toBeInTheDocument()
         })
       })
 
