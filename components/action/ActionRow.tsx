@@ -60,9 +60,7 @@ export default function ActionRow({
             action.qualification?.libelle ?? ''
           }`}
           disabled={!actionEstTerminee}
-          onClick={(e) => {
-            e.stopPropagation()
-          }}
+          onClick={(e) => e.stopPropagation()}
           onChange={() => onSelection(action)}
         />
       </TD>

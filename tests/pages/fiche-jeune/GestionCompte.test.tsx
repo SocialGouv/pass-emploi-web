@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales } from 'fixtures/action'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
@@ -277,6 +277,7 @@ async function renderFicheJeune(
         jeune={jeune}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
+        categoriesActions={desCategories()}
         onglet='AGENDA'
         lectureSeule={false}
       />,

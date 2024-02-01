@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { desCategories } from 'fixtures/action'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -34,6 +35,7 @@ describe('PilotagePage client side - Sessions', () => {
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
             }}
+            categoriesActions={desCategories()}
             animationsCollectives={{
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
@@ -130,6 +132,7 @@ describe('PilotagePage client side - Sessions', () => {
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
           }}
+          categoriesActions={desCategories()}
           animationsCollectives={{
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
