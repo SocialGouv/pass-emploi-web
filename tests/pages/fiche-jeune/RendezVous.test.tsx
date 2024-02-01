@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales } from 'fixtures/action'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
@@ -162,6 +162,7 @@ async function renderFicheJeune(
         jeune={unDetailJeune()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
+        categoriesActions={desCategories()}
         onglet='AGENDA'
         lectureSeule={false}
       />,
@@ -189,6 +190,7 @@ async function renderFicheJeunePE(
         jeune={unDetailJeune()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
+        categoriesActions={desCategories()}
         metadonneesFavoris={metadonnees}
         offresPE={offresPE}
         recherchesPE={recherchesPE}

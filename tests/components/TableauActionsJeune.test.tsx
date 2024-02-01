@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 
 import { TRI } from 'components/action/OngletActions'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
-import { uneAction, uneListeDActions } from 'fixtures/action'
+import { desCategories, uneAction, uneListeDActions } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { Action, StatutAction } from 'interfaces/action'
-import { qualifierActions } from 'services/actions.service'
 import { BaseJeune } from 'interfaces/jeune'
+import { qualifierActions } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
@@ -52,6 +52,7 @@ describe('TableauActionsJeune', () => {
             actionSansCategorie,
             actionAvecCategorie,
           ]}
+          categories={desCategories()}
           isLoading={false}
           onFiltres={jest.fn()}
           onTri={jest.fn()}

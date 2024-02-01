@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales } from 'fixtures/action'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
@@ -37,6 +37,7 @@ describe('Historique des conseillers dans la fiche jeune', () => {
           jeune={unDetailJeune()}
           rdvs={[]}
           actionsInitiales={desActionsInitiales()}
+          categoriesActions={desCategories()}
           metadonneesFavoris={metadonneesFavoris}
           offresPE={offresPE}
           recherchesPE={recherchesPE}
