@@ -1,11 +1,11 @@
 require('dotenv').config({ path: '.env.local' })
-const serviceName = process.env.APP || 'pa-front-local'
+const serviceName = process.env.NEXT_PUBLIC_APP || 'pa-front-local'
 const apm = require('elastic-apm-node').start({
   serviceName: `ssr-${serviceName}`,
   secretToken: process.env.APM_SECRET_TOKEN || '',
-  serverUrl: process.env.APM_URL || '',
-  environment: process.env.ENVIRONMENT || 'development',
-  active: process.env.APM_IS_ACTIVE === 'true',
+  serverUrl: process.env.NEXT_PUBLIC_APM_URL || '',
+  environment: process.env.NEXT_PUBLIC_ENVIRONMENT || 'development',
+  active: process.env.NEXT_PUBLIC_APM_IS_ACTIVE === 'true',
 })
 
 require('next-logger')
