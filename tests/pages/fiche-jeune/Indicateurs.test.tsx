@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
-import { desActionsInitiales } from 'fixtures/action'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
@@ -36,6 +36,7 @@ describe('Indicateurs dans la fiche jeune', () => {
             jeune={unDetailJeune()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
+            categoriesActions={desCategories()}
             metadonneesFavoris={uneMetadonneeFavoris()}
             onglet='AGENDA'
             lectureSeule={false}

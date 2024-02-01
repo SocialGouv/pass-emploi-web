@@ -19,7 +19,6 @@ interface MiloCreationJeuneProps extends PageProps {
   dossierId: string
   dossier: DossierMilo | null
   erreurMessageHttpMilo: string
-  etape: number
 }
 
 function MiloCreationJeune({
@@ -164,7 +163,6 @@ export const getServerSideProps: GetServerSideProps<
       dossierId: dossierId || '',
       dossier,
       erreurMessageHttpMilo,
-      etape,
       pageTitle: `Créer compte bénéficiaire - étape ${etape} sur 2 - Portefeuille`,
       pageHeader: `Créer un compte bénéficiaire`,
       returnTo: '/mes-jeunes',
