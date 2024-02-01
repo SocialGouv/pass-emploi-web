@@ -168,7 +168,7 @@ function ModificationPage({
           </p>
           <div className='mt-10 flex justify-center gap-4'>
             <Button
-              onClick={suppressionModalRef.current!.closeModal}
+              onClick={(e) => suppressionModalRef.current!.closeModal(e)}
               style={ButtonStyle.SECONDARY}
               label={`Annuler la suppression de l’action ${action.content}`}
             >
