@@ -1,16 +1,14 @@
-import { AgentConfigOptions, init, apm } from '@elastic/apm-rum'
-
-const serviceName = process.env.APP || 'pa-front-local'
-const config: AgentConfigOptions = {
-  serviceName: `rum-${serviceName}`,
-  serverUrl: process.env.APM_URL || '',
-  environment: process.env.ENVIRONMENT || 'development',
-  active: process.env.APM_IS_ACTIVE === 'true',
-  distributedTracingOrigins: [process.env.NEXT_PUBLIC_API_ENDPOINT || ''],
-}
+import { apm, init } from '@elastic/apm-rum'
 
 export function initRum() {
-  return init(config)
+  const appName = process.env.APP || 'pa-front-local'
+  init({
+    serviceName: `rum-${appName}`,
+    serverUrl: process.env.NEXT_PUBLIC_APM_URL || '',
+    environment: process.env.NEXT_PUBLIC_ENVIRONMENT || 'development',
+    active: process.env.NEXT_PUBLIC_APM_IS_ACTIVE === 'true',
+    distributedTracingOrigins: [process.env.NEXT_PUBLIC_API_ENDPOINT || ''],
+  })
 }
 
 export function captureRUMError(error: Error | string) {
