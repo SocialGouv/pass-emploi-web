@@ -1,5 +1,5 @@
 require('dotenv').config({ path: '.env.local' })
-const serviceName = process.env.NEXT_PUBLIC_APP || 'pa-front-local'
+const serviceName = process.env.APP || 'pa-front-local'
 const apm = require('elastic-apm-node').start({
   serviceName: `ssr-${serviceName}`,
   secretToken: process.env.APM_SECRET_TOKEN || '',
