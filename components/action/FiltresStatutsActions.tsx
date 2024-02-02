@@ -24,7 +24,7 @@ export default function FiltresStatutsActions({
   function renderFiltresStatuts(statut: StatutAction): JSX.Element {
     const id = `statut-${statut.toLowerCase()}`
     return (
-      <label key={id} htmlFor={id} className='flex pb-8'>
+      <label key={id} htmlFor={id} className='flex items-center pb-4'>
         <input
           type='radio'
           value={statut}
@@ -95,7 +95,7 @@ export default function FiltresStatutsActions({
             <label
               key='statut-tout-selectionner'
               htmlFor='statut-tout-selectionner'
-              className='flex pb-8 text-base-bold'
+              className='flex items-center pb-4 text-base-bold'
             >
               <input
                 type='radio'
