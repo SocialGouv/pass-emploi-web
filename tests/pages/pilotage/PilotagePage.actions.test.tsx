@@ -1,13 +1,12 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import {
-  desCategories,
-  uneListeDActionsAQualifier,
-  uneListeDActionsAQualifierJson,
-} from 'fixtures/action'
+import { MONTH_LONG, toFrenchFormat } from '../../../utils/date'
+
+import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { ActionPilotage } from 'interfaces/action'
 import Pilotage from 'pages/pilotage'
 import {
@@ -16,9 +15,6 @@ import {
 } from 'services/actions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { MONTH_LONG, toFrenchFormat } from '../../../utils/date'
-import { DateTime } from 'luxon'
-import { action } from '@storybook/addon-actions'
 
 jest.mock('services/actions.service')
 jest.mock('components/Modal')
@@ -135,10 +131,16 @@ describe('PilotagePage client side - Actions', () => {
     })
 
     it('affiche les actions du conseiller à qualifier', async () => {
+      //Given
+
       // Then
       actions.forEach((action) => {
+        const dateFinReelle = toFrenchFormat(
+          DateTime.fromISO(action.dateFinReelle),
+          MONTH_LONG
+        )
         expect(screen.getByText(action.titre)).toBeInTheDocument()
-        expect(screen.getByText(action.dateFinReelle)).toBeInTheDocument()
+        expect(screen.getByText(dateFinReelle)).toBeInTheDocument()
         expect(
           screen.getByText(
             `${action.beneficiaire.nom} ${action.beneficiaire.prenom}`

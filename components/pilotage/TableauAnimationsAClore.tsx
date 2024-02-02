@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -9,6 +10,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
+import { MONTH_LONG, toFrenchFormat } from 'utils/date'
 
 interface TableauAnimationsACloreProps {
   animationsCollectives: AnimationCollectivePilotage[]
@@ -39,7 +41,7 @@ export default function TableauAnimationsAClore({
                 href={`/mes-jeunes/edition-rdv?idRdv=${ac.id}`}
                 label={`Accéder au détail de l’animation collective : ${ac.titre}`}
               >
-                <TD>{ac.date}</TD>
+                <TD>{toFrenchFormat(DateTime.fromISO(ac.date), MONTH_LONG)}</TD>
                 <TD isBold>{ac.titre}</TD>
                 <TD>
                   <span className='flex flex-row justify-between'>

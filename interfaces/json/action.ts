@@ -8,7 +8,6 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
-import { MONTH_LONG, toFrenchFormat, toShortDate } from 'utils/date'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
 
