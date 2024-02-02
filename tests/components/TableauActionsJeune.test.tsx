@@ -22,28 +22,45 @@ describe('TableauActionsJeune', () => {
 
   beforeEach(async () => {
     actions = uneListeDActions()
-    actionSansCategorie = uneAction({id: 'id-action-sans-categorie', content: 'Regarder Tchoupi faire du tricycle', qualification: undefined})
-    actionAvecCategorie = uneAction({id: 'id-action-avec-categorie', content: 'Cueillir des champignons avec Petit Ours', status: StatutAction.Terminee, qualification: { code: 'SANTE', libelle: 'Santé', isSituationNonProfessionnelle: true}})
+    actionSansCategorie = uneAction({
+      id: 'id-action-sans-categorie',
+      content: 'Regarder Tchoupi faire du tricycle',
+      qualification: undefined,
+    })
+    actionAvecCategorie = uneAction({
+      id: 'id-action-avec-categorie',
+      content: 'Cueillir des champignons avec Petit Ours',
+      status: StatutAction.Terminee,
+      qualification: {
+        code: 'SANTE',
+        libelle: 'Santé',
+        isSituationNonProfessionnelle: true,
+      },
+    })
     jeune = uneBaseJeune({ nom: 'Neutron', prenom: 'Jimmy' })
-
     ;(qualifierActions as jest.Mock).mockResolvedValue({
       idsActionsEnErreur: [],
     })
     ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
 
     await act(async () =>
-        renderWithContexts(
-      <TableauActionsJeune
-        jeune={jeune}
-        actionsFiltrees={[...actions, actionSansCategorie, actionAvecCategorie]}
-        isLoading={false}
-        onFiltres={jest.fn()}
-        onTri={jest.fn()}
-        onLienExterne={jest.fn()}
-        onQualification={jest.fn()}
-        tri={TRI.dateDecroissante}
-      />
-    ))
+      renderWithContexts(
+        <TableauActionsJeune
+          jeune={jeune}
+          actionsFiltrees={[
+            ...actions,
+            actionSansCategorie,
+            actionAvecCategorie,
+          ]}
+          isLoading={false}
+          onFiltres={jest.fn()}
+          onTri={jest.fn()}
+          onLienExterne={jest.fn()}
+          onQualification={jest.fn()}
+          tri={TRI.dateDecroissante}
+        />
+      )
+    )
   })
 
   describe('Filtre statut', () => {
@@ -97,7 +114,7 @@ describe('TableauActionsJeune', () => {
       const tableauDActions = screen.getByRole('table', {
         name: /Liste des actions/,
       })
-  
+
       // Then
       expect(
         within(tableauDActions).getByRole('columnheader', {
@@ -113,14 +130,14 @@ describe('TableauActionsJeune', () => {
         within(tableauDActions).getByRole('columnheader', {
           name: 'Catégorie',
         })
-        ).toBeInTheDocument()
+      ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
           name: 'Statut',
         })
       ).toBeInTheDocument()
     })
-  
+
     it('affiche information catégorie manquante', async () => {
       // Then
       expect(
@@ -131,7 +148,7 @@ describe('TableauActionsJeune', () => {
         ).getByText('Catégorie manquante')
       ).toBeInTheDocument()
     })
-  
+
     describe('multi-qualification', () => {
       describe('quand aucune action n’est sélectionnée', () => {
         it('invite à sélectionner une action', () => {
@@ -141,7 +158,7 @@ describe('TableauActionsJeune', () => {
             )
           ).toBeInTheDocument()
         })
-  
+
         it('désactive la qualification', () => {
           expect(
             screen.getByRole('button', {
@@ -155,7 +172,7 @@ describe('TableauActionsJeune', () => {
           ).toHaveAttribute('disabled')
         })
       })
-  
+
       describe('quand une action est sélectionnée', () => {
         beforeEach(async () => {
           await userEvent.click(
@@ -164,12 +181,14 @@ describe('TableauActionsJeune', () => {
             })
           )
         })
-  
+
         it('permet de qualifier l’action', async () => {
           //Then
-          expect(screen.getByRole('checkbox', {
-            name: /Sélection Cueillir des champignons avec Petit Ours/,
-          })).toBeChecked
+          expect(
+            screen.getByRole('checkbox', {
+              name: /Sélection Cueillir des champignons avec Petit Ours/,
+            })
+          ).toBeChecked
           expect(
             screen.getByText(
               '1 action sélectionnée. S’agit-il de SNP ou de non SNP ?'
