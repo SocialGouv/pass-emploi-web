@@ -8,7 +8,7 @@ import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
 import { Action, StatutAction } from 'interfaces/action'
-import { MONTH_LONG, toFrenchFormat, toShortDate } from 'utils/date'
+import { MONTH_LONG, toFrenchFormat } from 'utils/date'
 
 interface ActionRowProps {
   action: Action

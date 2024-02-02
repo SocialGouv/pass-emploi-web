@@ -1,7 +1,10 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
+
+import { MONTH_LONG, toFrenchFormat } from '../../../utils/date'
 
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
@@ -115,7 +118,11 @@ describe('PilotagePage client side - Animations collectives', () => {
 
       // Then
       animationsCollectives.forEach((animation) => {
-        expect(within(tableau).getByText(animation.date)).toBeInTheDocument()
+        const dateFormater = toFrenchFormat(
+          DateTime.fromISO(animation.date),
+          MONTH_LONG
+        )
+        expect(within(tableau).getByText(dateFormater)).toBeInTheDocument()
         expect(within(tableau).getByText(animation.titre)).toBeInTheDocument()
         expect(
           within(tableau).getByText(`${animation.nombreInscrits}`)

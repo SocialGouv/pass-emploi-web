@@ -5,7 +5,6 @@ import {
   typesEvenement,
   uneAnimationCollective,
   uneListeDAnimationCollectiveAClore,
-  uneListeDAnimationCollectiveACloreJson,
   unEvenement,
   unEvenementJeuneJson,
   unEvenementJson,
@@ -291,7 +290,7 @@ describe('EvenementsApiService', () => {
       // GIVEN
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
-          resultats: uneListeDAnimationCollectiveACloreJson(),
+          resultats: uneListeDAnimationCollectiveAClore(),
           pagination: { total: 5, limit: 10 },
         },
       })
@@ -319,7 +318,7 @@ describe('EvenementsApiService', () => {
       // GIVEN
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
-          resultats: uneListeDAnimationCollectiveACloreJson(),
+          resultats: uneListeDAnimationCollectiveAClore(),
           pagination: { total: 5, limit: 10 },
         },
       })
