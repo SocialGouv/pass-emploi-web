@@ -24,7 +24,7 @@ export default function FiltresCategoriesActions({
   function renderFiltres(categorie: SituationNonProfessionnelle) {
     const id = `categorie-${categorie.code}`
     return (
-      <label key={id} htmlFor={id} className='flex pb-8'>
+      <label key={id} htmlFor={id} className='flex items-center pb-4'>
         <input
           type='checkbox'
           value={categorie.code}

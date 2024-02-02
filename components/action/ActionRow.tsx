@@ -66,7 +66,7 @@ export default function ActionRow({
           onChange={() => onSelection(action)}
         />
       </TD>
-      <TD className='rounded-l-base'>
+      <TD className='rounded-l-base max-w-[400px]'>
         <div className='flex items-center'>
           {action.status === StatutAction.Qualifiee &&
             action.qualification?.isSituationNonProfessionnelle && (
@@ -80,7 +80,7 @@ export default function ActionRow({
               />
             )}
           <span
-            className={`flex items-baseline wrap text-base-bold text-ellipsis overflow-hidden max-w-[400px] ${!actionEstTerminee ? 'text-disabled' : ''}`}
+            className={`flex items-baseline wrap text-ellipsis overflow-hidden ${!actionEstTerminee ? 'text-disabled' : ''} ${isChecked ? 'text-base-bold' : ''}`}
           >
             {action.content}
           </span>
@@ -90,7 +90,7 @@ export default function ActionRow({
         <span className='flex flex-row items-center'>{dateEcheance}</span>
       </TD>
       <TD>
-        <span className='flex flex-row items-center'>
+        <span className='flex items-baseline text-ellipsis wrap overflow-hidden max-w-[300px]'>
           <TagCategorieAction categorie={action.qualification?.libelle} />
         </span>
       </TD>
