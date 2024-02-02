@@ -1,7 +1,12 @@
 import { apm, init } from '@elastic/apm-rum'
 
 export function initRum() {
-  const appName = process.env.APP || 'pa-front-local'
+  console.log('>>>', {
+    app: process.env.APP,
+    publicapp: process.env.NEXT_PUBLIC_APP,
+  })
+
+  const appName = process.env.NEXT_PUBLIC_APP || 'pa-front-local'
   init({
     serviceName: `rum-${appName}`,
     serverUrl: process.env.NEXT_PUBLIC_APM_URL || '',

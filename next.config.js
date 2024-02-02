@@ -11,10 +11,6 @@ module.exports = withBundleAnalyzer({
   swcMinify: true,
   productionBrowserSourceMaps: true,
 
-  env: {
-    APP: process.env.APP, // NEXT_PUBLIC_APP=$APP not working client side
-  },
-
   async redirects() {
     return [
       {
