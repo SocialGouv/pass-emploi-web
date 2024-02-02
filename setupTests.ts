@@ -2,9 +2,11 @@ import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 
 global.fetch = jest.fn(async () => new Response())
-// https://github.com/jsdom/jsdom/issues/1695
-window.HTMLElement.prototype.scrollIntoView = jest.fn()
-window.HTMLElement.prototype.scrollTo = jest.fn()
+if (typeof window !== 'undefined') {
+  // https://github.com/jsdom/jsdom/issues/1695
+  window.HTMLElement.prototype.scrollIntoView = jest.fn()
+  window.HTMLElement.prototype.scrollTo = jest.fn()
+}
 
 jest.mock('utils/analytics/useMatomo')
 jest.mock('utils/hooks/useLeanBeWidget')
@@ -49,6 +51,6 @@ jest.mock('next-auth/react', () => ({
 }))
 
 afterEach(() => {
-  sessionStorage.clear()
+  if (typeof sessionStorage !== 'undefined') sessionStorage.clear()
   cleanup()
 })
