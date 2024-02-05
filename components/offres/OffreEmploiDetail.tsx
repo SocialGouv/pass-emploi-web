@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import React from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
@@ -8,7 +7,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { DetailOffreEmploi } from 'interfaces/offre'
-import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
+import { toMonthday } from 'utils/date'
 
 type DetailOffreEmploiProps = {
   offre: DetailOffreEmploi
@@ -20,11 +19,7 @@ export default function OffreEmploiDetail({
   onLienExterne,
 }: DetailOffreEmploiProps) {
   const dateActualisation: string | undefined =
-    offre.dateActualisation &&
-    toFrenchFormat(
-      DateTime.fromISO(offre.dateActualisation),
-      WEEKDAY_MONTH_LONG
-    )
+    offre.dateActualisation && toMonthday(offre.dateActualisation)
 
   const hasDetail = Boolean(offre.description || offre.urlPostulation)
   const hasProfil = Boolean(

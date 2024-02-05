@@ -25,7 +25,7 @@ import {
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toFullDate } from 'utils/date'
+import { toRelativeDateTime } from 'utils/date'
 
 enum SortColumn {
   NOM = 'NOM',
@@ -165,6 +165,16 @@ export default function TableauJeunes({
   const columnHeaderButtonStyle =
     'flex border-none items-center align-top w-full h-full p-4'
 
+  function getRowLabel(jeune: JeuneAvecInfosComplementaires) {
+    const labelFiche = `Accéder à la fiche de ${jeune.prenom} ${jeune.nom}`
+    const labelActivite = jeune.isActivated
+      ? `dernière activité ${toRelativeDateTime(jeune.lastActivity!)}`
+      : 'non activé'
+    const labelMessages = `${jeune.messagesNonLus} messages non lus`
+
+    return `${labelFiche}, ${labelActivite}, ${labelMessages}`
+  }
+
   return (
     <>
       {sortedJeunes.length === 0 && (
@@ -287,11 +297,7 @@ export default function TableauJeunes({
                 <TR
                   key={jeune.id}
                   href={`/mes-jeunes/${jeune.id}`}
-                  label={`Accéder à la fiche de ${jeune.prenom} ${
-                    jeune.nom
-                  }, dernière activité ${toFullDate(jeune.lastActivity)}, ${
-                    jeune.messagesNonLus
-                  } messages non lus`}
+                  label={getRowLabel(jeune)}
                 >
                   <TD isBold className='rounded-l-base'>
                     <span className='flex items-baseline'>
@@ -342,7 +348,8 @@ export default function TableauJeunes({
                   )}
 
                   <TD>
-                    {toFullDate(jeune.lastActivity)}
+                    {jeune.isActivated &&
+                      toRelativeDateTime(jeune.lastActivity!)}
                     {!jeune.isActivated && (
                       <span className='text-warning'>Compte non activé</span>
                     )}

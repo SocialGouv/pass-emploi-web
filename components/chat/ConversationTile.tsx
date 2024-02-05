@@ -6,7 +6,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import { UserType } from 'interfaces/conseiller'
 import { JeuneChat } from 'interfaces/jeune'
-import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
+import { toRelativeDateTime } from 'utils/date'
 
 interface ConversationTileProps {
   id: string
@@ -23,7 +23,7 @@ export function ConversationTile({
 }: ConversationTileProps) {
   const lastMessageSentAt: string | undefined =
     jeuneChat.lastMessageSentAt &&
-    toFrenchFormat(jeuneChat.lastMessageSentAt, `'le' ${DATETIME_LONG}`)
+    toRelativeDateTime(jeuneChat.lastMessageSentAt)
 
   const isLastMessageSeenByJeune = checkIfLastMessageSeenByJeune()
 

@@ -4,12 +4,7 @@ import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { MessageListeDiffusion, TypeMessage } from 'interfaces/message'
-import {
-  TIME_24_A11Y_SEPARATOR,
-  TIME_24_H_SEPARATOR,
-  toFrenchFormat,
-  toShortDate,
-} from 'utils/date'
+import { toShortDate, toFrenchTime } from 'utils/date'
 
 interface DisplayMessageListeDeDiffusionProps {
   message: MessageListeDiffusion
@@ -22,8 +17,8 @@ export default function DisplayMessageListeDeDiffusion({
   onAfficherDetailMessage,
   messagerieFullScreen,
 }: DisplayMessageListeDeDiffusionProps) {
-  const creationTime = toFrenchFormat(message.creationDate, TIME_24_H_SEPARATOR)
-  const a11yTime = toFrenchFormat(message.creationDate, TIME_24_A11Y_SEPARATOR)
+  const creationTime = toFrenchTime(message.creationDate)
+  const a11yTime = toFrenchTime(message.creationDate, { a11y: true })
 
   return (
     <>

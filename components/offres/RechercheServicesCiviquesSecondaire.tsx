@@ -9,7 +9,6 @@ import { Switch } from 'components/ui/Form/Switch'
 import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
-import { DATE_DASH_SEPARATOR } from 'utils/date'
 
 type RechercheServicesCiviquesSecondaireProps = {
   onCriteresChange: (nbCriteres: number) => void
@@ -32,7 +31,7 @@ export default function RechercheServicesCiviquesSecondaire({
     } else {
       onQueryUpdate({
         ...query,
-        dateDebut: DateTime.now().toFormat(DATE_DASH_SEPARATOR),
+        dateDebut: DateTime.now().toISODate(),
       })
     }
   }

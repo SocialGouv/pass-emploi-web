@@ -22,7 +22,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { MONTH_LONG, toFrenchFormat } from 'utils/date'
+import { toLongMonthDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface PageActionProps extends PageProps {
@@ -55,15 +55,6 @@ function PageAction({
   const conseillerEstMilo = estMilo(conseiller)
   const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
   const qualifiee = conseillerEstMilo && statut === StatutAction.Qualifiee
-
-  const dateEcheanceLongFormat = toFrenchFormat(
-    DateTime.fromISO(action.dateEcheance),
-    MONTH_LONG
-  )
-  const dateRealisationLongFormat = toFrenchFormat(
-    DateTime.fromISO(action.dateFinReelle ?? action.dateEcheance),
-    MONTH_LONG
-  )
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const { modifierAction } = await import('services/actions.service')
@@ -201,7 +192,9 @@ function PageAction({
           <dt className='text-base-bold pb-6'>
             <span>Date de l’action :</span>
           </dt>
-          <dd className='text-base-regular pl-6'>{dateEcheanceLongFormat}</dd>
+          <dd className='text-base-regular pl-6'>
+            {toLongMonthDate(action.dateEcheance)}
+          </dd>
           {(statut === StatutAction.Terminee ||
             statut === StatutAction.Qualifiee) && (
             <>
@@ -209,7 +202,7 @@ function PageAction({
                 <span>Date de réalisation :</span>
               </dt>
               <dd className='text-base-regular pl-6'>
-                {dateRealisationLongFormat}
+                {toLongMonthDate(action.dateFinReelle!)}
               </dd>
             </>
           )}

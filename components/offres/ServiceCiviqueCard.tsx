@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import React from 'react'
 
 import OffreCard from 'components/offres/OffreCard'
@@ -6,7 +5,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import { BaseServiceCivique } from 'interfaces/offre'
-import { toFrenchString } from 'utils/date'
+import { toLongMonthDate } from 'utils/date'
 
 interface ServiceCiviqueCardProps {
   offre: BaseServiceCivique
@@ -63,15 +62,7 @@ export default function ServiceCiviqueCard({
           <>
             <dt className='sr-only'>Date de début</dt>
             <dd>
-              <DataTag
-                text={
-                  'Dès le ' +
-                  toFrenchString(
-                    DateTime.fromISO(offre.dateDeDebut),
-                    DateTime.DATE_FULL
-                  )
-                }
-              />
+              <DataTag text={'Dès le ' + toLongMonthDate(offre.dateDeDebut)} />
             </dd>
           </>
         )}

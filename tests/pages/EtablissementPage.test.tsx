@@ -11,7 +11,7 @@ import { modifierAgence } from 'services/conseiller.service'
 import { rechercheJeunesDeLEtablissement } from 'services/jeunes.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { toFullDate } from 'utils/date'
+import { toRelativeDateTime } from 'utils/date'
 
 jest.mock('services/jeunes.service')
 jest.mock('services/referentiel.service')
@@ -150,7 +150,7 @@ describe('EtablissementPage client side', () => {
           ).toBeInTheDocument()
           expect(
             within(tableauDeJeunes).getByText(
-              toFullDate('2023-03-01T14:11:38.040Z')
+              toRelativeDateTime('2023-03-01T14:11:38.040Z')
             )
           ).toBeInTheDocument()
           expect(
