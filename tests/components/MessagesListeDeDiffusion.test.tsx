@@ -9,7 +9,7 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import { getMessagesListeDeDiffusion } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { TIME_24_A11Y_SEPARATOR, toFrenchFormat, toShortDate } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 jest.mock('services/messages.service')
 
@@ -27,7 +27,7 @@ describe('<MessagesListeDeDiffusion />', () => {
 
     // When
     await act(async () => {
-      await renderWithContexts(
+      renderWithContexts(
         <MessagesListeDeDiffusion
           liste={listeDeDiffusion}
           onAfficherDetailMessage={afficherDetailMessage}
@@ -76,10 +76,7 @@ describe('<MessagesListeDeDiffusion />', () => {
       })
 
       jour.messages.forEach(({ creationDate }) => {
-        const creationTime = toFrenchFormat(
-          creationDate,
-          TIME_24_A11Y_SEPARATOR
-        )
+        const creationTime = creationDate.toFormat("H 'heure' mm")
 
         expect(
           within(listeMessages).getByRole('button', {
@@ -95,10 +92,7 @@ describe('<MessagesListeDeDiffusion />', () => {
   it('affiche le détail d’un message', async () => {
     // Given
     const message = messages[0].messages[0]
-    const creationTime = toFrenchFormat(
-      message.creationDate,
-      TIME_24_A11Y_SEPARATOR
-    )
+    const creationTime = message.creationDate.toFormat("H 'heure' mm")
 
     // When
     await userEvent.click(

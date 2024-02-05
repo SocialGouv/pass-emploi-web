@@ -23,7 +23,6 @@ import {
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
-import { DATETIME_LONG, toFrenchFormat, toFrenchString } from 'utils/date'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
@@ -115,21 +114,21 @@ describe('Détails Session', () => {
           session.session.nom
         )
         expect(getByDescriptionTerm('Début :')).toHaveTextContent(
-          toFrenchFormat(
-            DateTime.fromISO(session.session.dateHeureDebut),
-            DATETIME_LONG
+          DateTime.fromISO(session.session.dateHeureDebut).toFormat(
+            "dd/MM/yyyy 'à' HH'h'mm"
           )
         )
         expect(getByDescriptionTerm('Fin :')).toHaveTextContent(
-          toFrenchFormat(
-            DateTime.fromISO(session.session.dateHeureFin),
-            DATETIME_LONG
+          DateTime.fromISO(session.session.dateHeureFin).toFormat(
+            "dd/MM/yyyy 'à' HH'h'mm"
           )
         )
         expect(
           getByDescriptionTerm('Date limite d’inscription :')
         ).toHaveTextContent(
-          toFrenchString(DateTime.fromISO(session.session.dateMaxInscription!))
+          DateTime.fromISO(session.session.dateMaxInscription!).toFormat(
+            'dd/MM/yyyy'
+          )
         )
         expect(getByDescriptionTerm('Animateur :')).toHaveTextContent(
           session.session.animateur!

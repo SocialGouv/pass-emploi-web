@@ -1,15 +1,6 @@
 import { DateTime, Interval } from 'luxon'
 import { DateTimeFormatOptions } from 'luxon/src/misc'
 
-export const WEEKDAY_MONTH_LONG: string = 'EEEE d MMMM'
-export const WEEKDAY: string = 'EEEE d'
-export const MONTH_LONG: string = 'dd MMMM yyyy'
-export const TIME_24_H_SEPARATOR: string = "HH'h'mm"
-export const TIME_24_A11Y_SEPARATOR: string = "HH 'heure' mm"
-export const TIME_24_SIMPLE: string = 'HH:mm'
-export const DATE_DASH_SEPARATOR: string = 'yyyy-MM-dd'
-export const DATETIME_LONG: string = `dd/MM/yyyy 'à' ${TIME_24_H_SEPARATOR}`
-
 export const AUJOURDHUI_LABEL = 'aujourd’hui'
 
 export function dateIsToday(dateToCheck: DateTime): boolean {
@@ -20,36 +11,63 @@ export function dateIsYesterday(dateToCheck: DateTime): boolean {
   return DateTime.now().minus({ day: 1 }).hasSame(dateToCheck, 'day')
 }
 
-export function toFrenchString(
-  datetime: DateTime,
-  format?: DateTimeFormatOptions
-): string {
-  return datetime.toLocaleString(format, { locale: 'fr-FR' })
-}
-
+/** 21/06/2023 */
 export function toShortDate(date: string | DateTime): string {
-  const datetime = date instanceof DateTime ? date : DateTime.fromISO(date)
-  return toFrenchString(datetime, DateTime.DATE_SHORT)
+  return toFrenchString(date)
 }
 
-export function toFrenchFormat(date: DateTime, format: string): string {
-  return date.toFormat(format, { locale: 'fr-FR' })
+/** 21 juin 2023 */
+export function toLongMonthDate(date: string | DateTime): string {
+  return toFrenchString(date, DateTime.DATE_FULL)
 }
 
-export function toFullDate(dateStr?: string): string {
-  if (!dateStr) return ''
+const WEEKDAY_MONTH_LONG = 'EEEE d MMMM'
+/** mercredi 2 juin */
+export function toMonthday(date: string | DateTime): string {
+  return toFrenchFormat(date, WEEKDAY_MONTH_LONG)
+}
 
-  const dateTime = DateTime.fromISO(dateStr)
+const WEEKDAY = 'EEEE d'
+/** mercredi 2 */
+export function toWeekday(date: string | DateTime): string {
+  return toFrenchFormat(date, WEEKDAY)
+}
+
+const TIME_H_SEPARATOR = "HH'h'mm"
+const TIME_A11Y_SEPARATOR = "H 'heure' mm"
+/** 02h39 (a11y : 2 heure 39) */
+export function toFrenchTime(
+  date: string | DateTime,
+  { a11y }: { a11y: boolean } = { a11y: false }
+): string {
+  return toFrenchFormat(date, a11y ? TIME_A11Y_SEPARATOR : TIME_H_SEPARATOR)
+}
+
+const DATETIME_LONG = `dd/MM/yyyy 'à' ${TIME_H_SEPARATOR}`
+const DATETIME_LONG_A11Y = `d MMMM yyyy 'à' ${TIME_A11Y_SEPARATOR}`
+/** 02/06/2023 à 02h39 (a11y : 2 juin 2023 à 2h30)  */
+export function toFrenchDateTime(
+  date: string | DateTime,
+  { a11y }: { a11y: boolean } = { a11y: false }
+): string {
+  if (a11y) return toFrenchFormat(date, DATETIME_LONG_A11Y)
+  return toFrenchFormat(date, DATETIME_LONG)
+}
+
+export function toRelativeDateTime(date: string | DateTime): string {
+  if (!date) return ''
+
+  const dateTime = date instanceof DateTime ? date : DateTime.fromISO(date)
   let dateString: string
   if (dateIsToday(dateTime)) {
-    dateString = "Aujourd'hui"
+    dateString = 'Aujourd’hui'
   } else if (dateIsYesterday(dateTime)) {
     dateString = 'Hier'
   } else {
     dateString = `Le ${toShortDate(dateTime)}`
   }
 
-  return `${dateString} à ${toFrenchFormat(dateTime, TIME_24_H_SEPARATOR)}`
+  return `${dateString} à ${toFrenchTime(dateTime)}`
 }
 
 export function compareDates(
@@ -94,4 +112,17 @@ export function formatJourIfToday(date: DateTime): string {
   return dateIsToday(date)
     ? AUJOURDHUI_LABEL
     : toFrenchFormat(date, WEEKDAY_MONTH_LONG)
+}
+
+function toFrenchString(
+  date: string | DateTime,
+  format?: DateTimeFormatOptions
+): string {
+  const datetime = date instanceof DateTime ? date : DateTime.fromISO(date)
+  return datetime.toLocaleString(format, { locale: 'fr-FR' })
+}
+
+function toFrenchFormat(date: string | DateTime, format: string): string {
+  const datetime = date instanceof DateTime ? date : DateTime.fromISO(date)
+  return datetime.toFormat(format, { locale: 'fr-FR' })
 }

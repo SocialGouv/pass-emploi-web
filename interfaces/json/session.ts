@@ -7,11 +7,7 @@ import {
   TypeEvenement,
 } from 'interfaces/evenement'
 import { StatutAnimationCollectiveJson } from 'interfaces/json/evenement'
-import {
-  minutesEntreDeuxDates,
-  TIME_24_H_SEPARATOR,
-  toFrenchFormat,
-} from 'utils/date'
+import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
 
 type InscriptionSessionJson = {
   idJeune: string
@@ -102,9 +98,7 @@ export function sessionJsonToEntree(
   session: SessionMiloBeneficiaireJson
 ): EntreeAgenda {
   const date = DateTime.fromISO(session.dateHeureDebut)
-  const titre = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${
-    session.nomOffre
-  }`
+  const titre = `${toFrenchTime(date)} - ${session.nomOffre}`
 
   return {
     id: session.id,

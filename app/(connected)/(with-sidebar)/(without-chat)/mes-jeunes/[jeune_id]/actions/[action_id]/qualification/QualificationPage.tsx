@@ -28,7 +28,6 @@ import { Action, SituationNonProfessionnelle } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import useMatomo from 'utils/analytics/useMatomo'
-import { DATE_DASH_SEPARATOR, toFrenchFormat } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -55,15 +54,12 @@ function QualificationPage({
     ValueWithError<string | undefined>
   >({ value: action.qualification?.code })
 
-  const dateActionDebut = action && DateTime.fromISO(action?.dateFinReelle!)
-  const localDateDebut =
-    dateActionDebut && toFrenchFormat(dateActionDebut, DATE_DASH_SEPARATOR)
-  const dateActionFin = action && DateTime.fromISO(action.dateFinReelle!)
-  const localDateFin =
-    dateActionFin && toFrenchFormat(dateActionFin, DATE_DASH_SEPARATOR)
-
+  const dateActionDebut =
+    action && DateTime.fromISO(action?.dateFinReelle!).toISODate()
+  const dateActionFin =
+    action && DateTime.fromISO(action.dateFinReelle!).toISODate()
   const [dateFin, setDateFin] = useState<ValueWithError<string | undefined>>({
-    value: localDateFin,
+    value: dateActionFin,
   })
 
   const [isQualificationEnCours, setIsQualificationEnCours] =
@@ -302,8 +298,8 @@ function QualificationPage({
                 <Input
                   type='date'
                   id='input-date-fin'
-                  defaultValue={localDateFin}
-                  min={localDateDebut}
+                  defaultValue={dateActionFin}
+                  min={dateActionDebut}
                   onChange={(value: string) => setDateFin({ value })}
                   onBlur={validerDateFin}
                   required={true}

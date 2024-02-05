@@ -4,8 +4,6 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import { MONTH_LONG, toFrenchFormat } from '../../../utils/date'
-
 import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { ActionPilotage } from 'interfaces/action'
 import Pilotage from 'pages/pilotage'
@@ -135,9 +133,9 @@ describe('PilotagePage client side - Actions', () => {
 
       // Then
       actions.forEach((action) => {
-        const dateFinReelle = toFrenchFormat(
-          DateTime.fromISO(action.dateFinReelle),
-          MONTH_LONG
+        const dateFinReelle = DateTime.fromISO(action.dateFinReelle).toFormat(
+          'dd MMMM yyyy',
+          { locale: 'fr-FR' }
         )
         expect(screen.getByText(action.titre)).toBeInTheDocument()
         expect(screen.getByText(dateFinReelle)).toBeInTheDocument()

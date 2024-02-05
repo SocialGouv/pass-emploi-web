@@ -1,13 +1,11 @@
-import { DateTime } from 'luxon'
 import React from 'react'
-
-import { MONTH_LONG, toFrenchFormat } from '../../utils/date'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
 import { ActionPilotage } from 'interfaces/action'
+import { toLongMonthDate } from 'utils/date'
 
 interface ActionRowPilotageProps {
   action: ActionPilotage
@@ -20,12 +18,7 @@ export default function ActionRowPilotage({
   isChecked,
   onSelection,
 }: ActionRowPilotageProps) {
-  const dateFinReelle = toFrenchFormat(
-    DateTime.fromISO(action.dateFinReelle),
-    MONTH_LONG
-  )
-  console.log('dateformated' + action.dateFinReelle)
-  console.log('dateformatedfrench' + dateFinReelle)
+  const dateFinReelle = toLongMonthDate(action.dateFinReelle)
 
   return (
     <TR

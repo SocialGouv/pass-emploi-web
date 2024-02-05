@@ -4,8 +4,7 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import { MONTH_LONG, toFrenchFormat } from '../../../utils/date'
-
+import { desCategories } from 'fixtures/action'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -52,6 +51,7 @@ describe('PilotagePage client side - Animations collectives', () => {
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
             }}
+            categoriesActions={desCategories()}
             animationsCollectives={{
               donnees: uneListeDAnimationCollectiveAClore(),
               metadonnees: { nombrePages: 3, nombreTotal: 25 },
@@ -118,9 +118,9 @@ describe('PilotagePage client side - Animations collectives', () => {
 
       // Then
       animationsCollectives.forEach((animation) => {
-        const dateFormater = toFrenchFormat(
-          DateTime.fromISO(animation.date),
-          MONTH_LONG
+        const dateFormater = DateTime.fromISO(animation.date).toFormat(
+          'dd MMMM yyyy',
+          { locale: 'fr-FR' }
         )
         expect(within(tableau).getByText(dateFormater)).toBeInTheDocument()
         expect(within(tableau).getByText(animation.titre)).toBeInTheDocument()
@@ -162,6 +162,7 @@ describe('PilotagePage client side - Animations collectives', () => {
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
           }}
+          categoriesActions={desCategories()}
           animationsCollectives={{
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
@@ -208,6 +209,7 @@ describe('PilotagePage client side - Animations collectives', () => {
               donnees: [],
               metadonnees: { nombrePages: 0, nombreTotal: 0 },
             }}
+            categoriesActions={desCategories()}
           />,
           {
             customConseiller: { structure: StructureConseiller.MILO },
