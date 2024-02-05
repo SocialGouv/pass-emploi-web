@@ -14,7 +14,7 @@ import {
   sessionMiloJsonToAnimationCollective,
 } from 'interfaces/json/session'
 import { InformationBeneficiaireSession, Session } from 'interfaces/session'
-import { minutesEntreDeuxDates, toShortDate } from 'utils/date'
+import { minutesEntreDeuxDates, toLongMonthDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
 export type SessionsAClore = {
@@ -40,7 +40,7 @@ export async function getSessionsACloreServerSide(
     id: session.id,
     titre: session.titre,
     sousTitre: session.sousTitre,
-    date: toShortDate(session.date),
+    date: toLongMonthDate(session.date),
   }))
 }
 

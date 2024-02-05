@@ -5,6 +5,7 @@ import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
 import { ActionPilotage } from 'interfaces/action'
+import { toLongMonthDate } from 'utils/date'
 
 interface ActionRowPilotageProps {
   action: ActionPilotage
@@ -17,6 +18,8 @@ export default function ActionRowPilotage({
   isChecked,
   onSelection,
 }: ActionRowPilotageProps) {
+  const dateFinReelle = toLongMonthDate(action.dateFinReelle)
+
   return (
     <TR
       href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
@@ -56,7 +59,7 @@ export default function ActionRowPilotage({
       </TD>
       <TD>
         <span className='flex flex-row justify-between'>
-          {action.dateFinReelle}
+          {dateFinReelle}
           <IconComponent
             name={IconName.ChevronRight}
             focusable={false}

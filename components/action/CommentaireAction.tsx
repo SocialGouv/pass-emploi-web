@@ -1,9 +1,8 @@
-import { DateTime } from 'luxon'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Commentaire } from 'interfaces/action'
-import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
+import { toFrenchDateTime } from 'utils/date'
 
 interface CommentaireActionProps {
   commentaire: Commentaire
@@ -14,11 +13,6 @@ export function CommentaireAction({
   commentaire,
   idConseiller,
 }: CommentaireActionProps) {
-  const commentaireDateTime = toFrenchFormat(
-    DateTime.fromISO(commentaire.date),
-    DATETIME_LONG
-  )
-
   return (
     <>
       <dt className='flex items-center pb-2'>
@@ -36,7 +30,9 @@ export function CommentaireAction({
             : `${commentaire.createur.prenom} ${commentaire.createur.nom}`}
         </span>
         <span className='mr-2'>·</span>
-        <span>{commentaireDateTime}</span>
+        <span aria-label={toFrenchDateTime(commentaire.date, { a11y: true })}>
+          {toFrenchDateTime(commentaire.date)}
+        </span>
       </dt>
       <dd className='pb-8 block'>{commentaire.message}</dd>
     </>

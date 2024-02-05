@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -128,10 +129,16 @@ describe('PilotagePage client side - Actions', () => {
     })
 
     it('affiche les actions du conseiller à qualifier', async () => {
+      //Given
+
       // Then
       actions.forEach((action) => {
+        const dateFinReelle = DateTime.fromISO(action.dateFinReelle).toFormat(
+          'dd MMMM yyyy',
+          { locale: 'fr-FR' }
+        )
         expect(screen.getByText(action.titre)).toBeInTheDocument()
-        expect(screen.getByText(action.dateFinReelle)).toBeInTheDocument()
+        expect(screen.getByText(dateFinReelle)).toBeInTheDocument()
         expect(
           screen.getByText(
             `${action.beneficiaire.nom} ${action.beneficiaire.prenom}`
@@ -161,7 +168,7 @@ describe('PilotagePage client side - Actions', () => {
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 1,
         tri: 'ALPHABETIQUE',
-        filtres: []
+        filtres: [],
       })
       expect(
         screen.getByText('Action page 1 ALPHABETIQUE 0filtres')
@@ -186,7 +193,7 @@ describe('PilotagePage client side - Actions', () => {
       expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
         page: 1,
         tri: 'INVERSE',
-        filtres: []
+        filtres: [],
       })
       expect(
         screen.getByText('Action page 1 INVERSE 0filtres')

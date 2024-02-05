@@ -8,7 +8,6 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
-import { toShortDate } from 'utils/date'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
 
@@ -125,7 +124,7 @@ export function jsonToActionPilotage(
       nom: action.jeune.nom,
       prenom: action.jeune.prenom,
     },
-    dateFinReelle: toShortDate(action.dateFinReelle),
+    dateFinReelle: action.dateFinReelle,
   }
 
   if (action.categorie)

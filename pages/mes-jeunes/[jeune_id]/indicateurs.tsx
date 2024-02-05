@@ -11,7 +11,7 @@ import { PageProps } from 'interfaces/pageProps'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toFrenchString } from 'utils/date'
+import { toShortDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type IndicateursProps = PageProps & {
@@ -53,8 +53,7 @@ function Indicateurs({ idJeune, lectureSeule }: IndicateursProps) {
   return (
     <div>
       <h2 className='text-m-bold text-content_color mb-6'>
-        Semaine du {toFrenchString(debutSemaine)} au{' '}
-        {toFrenchString(finSemaine)}
+        Semaine du {toShortDate(debutSemaine)} au {toShortDate(finSemaine)}
       </h2>
 
       <IndicateursActions actions={indicateursSemaine?.actions} />

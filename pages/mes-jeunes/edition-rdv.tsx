@@ -1,11 +1,8 @@
 import { withTransaction } from '@elastic/apm-rum-react'
-import { DateTime } from 'luxon'
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-
-import { JeuneFromListe } from '../../interfaces/jeune'
 
 import PageActionsPortal from 'components/PageActionsPortal'
 import { EditionRdvForm } from 'components/rdv/EditionRdvForm'
@@ -23,6 +20,7 @@ import {
   isCodeTypeAnimationCollective,
   Modification,
 } from 'interfaces/evenement'
+import { JeuneFromListe } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import {
@@ -34,7 +32,7 @@ import { getJeunesDeLEtablissementClientSide } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
+import { toFrenchDateTime } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 import redirectedFromHome from 'utils/redirectedFromHome'
@@ -331,10 +329,11 @@ function EditionRdv({
                     <ul>
                       {historiqueModif!.map(({ date, auteur }) => (
                         <li key={date}>
-                          {toFrenchFormat(
-                            DateTime.fromISO(date),
-                            DATETIME_LONG
-                          )}{' '}
+                          <span
+                            aria-label={toFrenchDateTime(date, { a11y: true })}
+                          >
+                            {toFrenchDateTime(date)}
+                          </span>{' '}
                           :{' '}
                           <span className='text-s-bold'>
                             {auteur.prenom} {auteur.nom}
