@@ -1,6 +1,7 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { FormEvent, useRef, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -13,11 +14,6 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import {
-  Conseiller,
-  estUserMilo,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { PageProps } from 'interfaces/pageProps'
 import {
@@ -30,16 +26,14 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { ApiError } from 'utils/httpClient'
 
 type ClotureSessionProps = PageProps & {
   session: Session
   returnTo: string
-  withoutChat: true
   inscriptionsInitiales: InformationBeneficiaireSession[]
 }
 
-function ClotureSession({
+function ClotureSessionPage({
   returnTo,
   session,
   inscriptionsInitiales,
@@ -320,68 +314,7 @@ function ClotureSession({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  ClotureSessionProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-
-  const { getConseillerServerSide } = await import(
-    'services/conseiller.service'
-  )
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401) {
-      return {
-        redirect: {
-          destination: '/api/auth/federated-logout',
-          permanent: false,
-        },
-      }
-    }
-    throw e
-  }
-  if (!conseiller) return { notFound: true }
-
-  if (!estUserMilo(user) || !peutAccederAuxSessions(conseiller))
-    return {
-      redirect: { destination: '/mes-jeunes', permanent: false },
-    }
-
-  const { getDetailsSession } = await import('services/sessions.service')
-  const session = await getDetailsSession(
-    user.id,
-    context.query.session_id as string,
-    accessToken
-  )
-  if (session?.session.statut !== StatutAnimationCollective.AClore)
-    return { notFound: true }
-
-  const inscriptionsInitiales = session.inscriptions.map((inscription) => {
-    return { idJeune: inscription.idJeune, statut: inscription.statut }
-  })
-
-  const props: ClotureSessionProps = {
-    session,
-    inscriptionsInitiales,
-    returnTo: `/agenda/sessions/${session.session.id}?redirectUrl=${context.query.redirectUrl}`,
-    pageTitle: `Clore - Session ${session.offre.titre}`,
-    pageHeader: 'Clôture de la session',
-    withoutChat: true,
-  }
-
-  return { props }
-}
-
-export default withTransaction(ClotureSession.name, 'page')(ClotureSession)
+export default withTransaction(
+  ClotureSessionPage.name,
+  'page'
+)(ClotureSessionPage)
