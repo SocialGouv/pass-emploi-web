@@ -6,7 +6,7 @@ import React from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
 import { IndicateursSemaine } from 'interfaces/jeune'
-import { toFrenchString } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 type ResumeIndicateursJeuneProps = {
   idJeune: string
@@ -31,8 +31,7 @@ export function ResumeIndicateursJeune({
         Les indicateurs de la semaine
       </h2>
       <p className='mb-4'>
-        du {toFrenchString(debutDeLaSemaine)} au{' '}
-        {toFrenchString(finDeLaSemaine)}
+        du {toShortDate(debutDeLaSemaine)} au {toShortDate(finDeLaSemaine)}
       </p>
       <div
         className={`flex flex-wrap gap-6 ${

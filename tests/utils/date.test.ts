@@ -12,7 +12,7 @@ import {
   compareDatesDesc,
   dateIsToday,
   dateIsYesterday,
-  toFullDate,
+  toRelativeDateTime,
 } from 'utils/date'
 
 describe('dateUtils', () => {
@@ -96,40 +96,35 @@ describe('dateUtils', () => {
   })
 
   describe('.toFullDate', () => {
-    it(`formate la date d'aujourd'hui`, () => {
+    const now = DateTime.fromISO('2018-12-31T13:59:59.000Z')
+    beforeEach(async () => {
       //Given
-      jest
-        .spyOn(DateTime, 'now')
-        .mockReturnValue(DateTime.fromISO('2018-12-31T13:59:59.000Z'))
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+    })
 
+    it(`formate la date d'aujourd'hui`, () => {
       //When
-      const uneDate = toFullDate('2018-12-31T13:12:00.000+01:00')
+      const uneDate = toRelativeDateTime(now.set({ hour: 13, minute: 12 }))
 
       //Then
-      expect(uneDate).toEqual("Aujourd'hui à 13h12")
+      expect(uneDate).toEqual('Aujourd’hui à 13h12')
     })
 
     it(`formate la date d'hier`, () => {
-      //Given
-      jest
-        .spyOn(DateTime, 'now')
-        .mockReturnValue(DateTime.fromISO('2018-12-31T13:59:59.000Z'))
-
       //When
-      const uneDate = toFullDate('2018-12-30T13:12:00.000+01:00')
+      const uneDate = toRelativeDateTime(
+        now.minus({ day: 1 }).set({ hour: 13, minute: 12 })
+      )
 
       //Then
       expect(uneDate).toEqual('Hier à 13h12')
     })
 
     it(`formate autre date`, () => {
-      //Given
-      jest
-        .spyOn(DateTime, 'now')
-        .mockReturnValue(DateTime.fromISO('2018-12-31T13:59:59.000Z'))
-
       //When
-      const uneDate = toFullDate('2018-12-25T13:12:00.000+01:00')
+      const uneDate = toRelativeDateTime(
+        now.set({ day: 25, hour: 13, minute: 12 })
+      )
 
       //Then
       expect(uneDate).toEqual('Le 25/12/2018 à 13h12')

@@ -24,12 +24,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { ActionFormData } from 'interfaces/json/action'
-import {
-  dateIsInInterval,
-  toFrenchFormat,
-  toShortDate,
-  WEEKDAY,
-} from 'utils/date'
+import { dateIsInInterval, toShortDate, toWeekday } from 'utils/date'
 
 interface EditionRdvFormProps {
   actionsPredefinies: ActionPredefinie[]
@@ -558,7 +553,7 @@ function BoutonDateRapide({
       id={label}
       aria-controls={ariaControls}
       className='text-s-medium border border-solid border-grey_700 rounded-base px-2 py-1 cursor-pointer hover:border-primary hover:bg-primary_lighten'
-      value={`${label} (${toFrenchFormat(date, WEEKDAY)})`}
+      value={`${label} (${toWeekday(date)})`}
       onClick={() => {
         onClick(date.toISODate())
       }}

@@ -14,11 +14,7 @@ import {
   jsonToTypeSessionMilo,
   SessionMiloBeneficiairesJson,
 } from 'interfaces/json/session'
-import {
-  minutesEntreDeuxDates,
-  TIME_24_H_SEPARATOR,
-  toFrenchFormat,
-} from 'utils/date'
+import { minutesEntreDeuxDates, toFrenchTime } from 'utils/date'
 
 type Auteur = { id: string; nom: string; prenom: string }
 
@@ -125,11 +121,11 @@ export function jsonToListItem(
 
 export function rdvJsonToEntree(rdv: EvenementJeuneJson): EntreeAgenda {
   const date = DateTime.fromISO(rdv.date)
-  const titre = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${rdv.title}`
+  const titre = `${toFrenchTime(date)} - ${rdv.title}`
 
   return {
     id: rdv.id,
-    date: date,
+    date,
     type: 'evenement',
     titre,
     source: rdv.source,

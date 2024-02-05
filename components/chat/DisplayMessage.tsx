@@ -9,7 +9,7 @@ import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import { UserType } from 'interfaces/conseiller'
 import { Message, TypeMessage } from 'interfaces/message'
-import { TIME_24_H_SEPARATOR, toFrenchFormat } from 'utils/date'
+import { toFrenchTime } from 'utils/date'
 
 interface DisplayMessageProps {
   message: Message
@@ -26,7 +26,7 @@ export default function DisplayMessage({
 }: DisplayMessageProps) {
   const isSentByConseiller =
     message.sentBy === UserType.CONSEILLER.toLowerCase()
-  const creationTime = toFrenchFormat(message.creationDate, TIME_24_H_SEPARATOR)
+  const creationTime = toFrenchTime(message.creationDate)
   const isSeenByJeune = Boolean(
     lastSeenByJeune && lastSeenByJeune > message.creationDate
   )

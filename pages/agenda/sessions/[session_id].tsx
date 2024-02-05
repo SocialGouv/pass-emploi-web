@@ -29,7 +29,7 @@ import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
-import { DATETIME_LONG, toFrenchFormat, toFrenchString } from 'utils/date'
+import { toFrenchDateTime, toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
@@ -357,21 +357,25 @@ function FicheDetailsSession({
 
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Début :</dt>
-            <dd className='ml-2 inline text-base-medium'>
-              {toFrenchFormat(
-                DateTime.fromISO(session.session.dateHeureDebut),
-                DATETIME_LONG
-              )}
+            <dd
+              className='ml-2 inline text-base-medium'
+              aria-label={toFrenchDateTime(session.session.dateHeureDebut, {
+                a11y: true,
+              })}
+            >
+              {toFrenchDateTime(session.session.dateHeureDebut)}
             </dd>
           </div>
 
           <div className='mb-3'>
             <dt className='inline text-base-regular'>Fin :</dt>
-            <dd className='ml-2 inline text-base-medium'>
-              {toFrenchFormat(
-                DateTime.fromISO(session.session.dateHeureFin),
-                DATETIME_LONG
-              )}
+            <dd
+              className='ml-2 inline text-base-medium'
+              aria-label={toFrenchDateTime(session.session.dateHeureFin, {
+                a11y: true,
+              })}
+            >
+              {toFrenchDateTime(session.session.dateHeureFin)}
             </dd>
           </div>
 
@@ -381,9 +385,7 @@ function FicheDetailsSession({
             </dt>
             <dd className='ml-2 inline text-base-medium'>
               {session.session.dateMaxInscription ? (
-                toFrenchString(
-                  DateTime.fromISO(session.session.dateMaxInscription)
-                )
+                toShortDate(session.session.dateMaxInscription)
               ) : (
                 <>
                   --
