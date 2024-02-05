@@ -856,7 +856,7 @@ export function EditionRdvForm({
             </InputError>
           )}
           <Input
-            type='time'
+            type='time' // FIXME type='text' ou 'number' ('time' c'est pour des horaires)
             id='duree'
             required={true}
             defaultValue={duree.value}
