@@ -6,7 +6,6 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { Offre, Recherche } from 'interfaces/favoris'
 import useMatomo from 'utils/analytics/useMatomo'
-import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type TabFavorisProps = {
   offres: Offre[]

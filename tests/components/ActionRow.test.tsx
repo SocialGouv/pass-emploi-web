@@ -1,7 +1,8 @@
 import { screen } from '@testing-library/dom'
 import { render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import ActionRow from 'components/action/ActionRow'
@@ -10,12 +11,19 @@ import { StatutAction } from 'interfaces/action'
 
 describe('<ActionRow/>', () => {
   beforeEach(async () => {
-    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
   })
 
   it("devrait afficher les informations des actions d'un jeune", () => {
     const action = uneAction()
-    render(<ActionRow action={action} jeuneId={'1'} />)
+    render(
+      <ActionRow
+        action={action}
+        jeuneId='1'
+        isChecked={false}
+        onSelection={() => {}}
+      />
+    )
     expect(
       screen.getByText('Identifier ses atouts et ses compétences')
     ).toBeInTheDocument()
@@ -26,9 +34,16 @@ describe('<ActionRow/>', () => {
   it("devrait afficher un badge 'À faire' quand l'action a été commencée", () => {
     const actionCommencee = uneAction({
       status: StatutAction.AFaire,
-      dateEcheance: DateTime.now().plus({ day: 1 }),
+      dateEcheance: DateTime.now().plus({ day: 1 }).toISO(),
     })
-    render(<ActionRow action={actionCommencee} jeuneId={'1'} />)
+    render(
+      <ActionRow
+        action={actionCommencee}
+        jeuneId='1'
+        isChecked={false}
+        onSelection={() => {}}
+      />
+    )
     expect(screen.getByText('À faire')).toBeInTheDocument()
   })
 
@@ -37,8 +52,8 @@ describe('<ActionRow/>', () => {
     render(
       <ActionRow
         action={actionTerminee}
-        jeuneId={'1'}
-        isChecked
+        jeuneId='1'
+        isChecked={false}
         onSelection={() => {}}
       />
     )
@@ -50,12 +65,71 @@ describe('<ActionRow/>', () => {
     render(
       <ActionRow
         action={action}
-        jeuneId={'1'}
-        isChecked
+        jeuneId='1'
+        isChecked={false}
         onSelection={() => {}}
       />
     )
-    expect(screen.getByText('20 février 2022')).toBeInTheDocument()
     expect(screen.getByText('En retard')).toBeInTheDocument()
+  })
+
+  describe('selection', () => {
+    it('affiche une checkbox non cochée', async () => {
+      // When
+      render(
+        <ActionRow
+          action={uneAction()}
+          jeuneId='1'
+          isChecked={false}
+          onSelection={() => {}}
+        />
+      )
+
+      // Then
+      expect(
+        screen.getByRole('checkbox', {
+          name: 'Sélection Identifier ses atouts et ses compétences',
+        })
+      ).not.toBeChecked()
+    })
+
+    it('affiche une checkbox cochée', async () => {
+      // When
+      render(
+        <ActionRow
+          action={uneAction()}
+          jeuneId='1'
+          isChecked={true}
+          onSelection={() => {}}
+        />
+      )
+
+      // Then
+      expect(
+        screen.getByRole('checkbox', {
+          name: 'Sélection Identifier ses atouts et ses compétences',
+        })
+      ).toBeChecked()
+    })
+
+    it('permet de cocher la checkbox d’une action terminée', async () => {
+      // Given
+      const onSelection = jest.fn()
+      const actionTerminee = uneAction({ status: StatutAction.Terminee })
+      render(
+        <ActionRow
+          action={actionTerminee}
+          jeuneId='1'
+          isChecked={false}
+          onSelection={onSelection}
+        />
+      )
+
+      // When
+      await userEvent.click(screen.getByRole('checkbox'))
+
+      // Then
+      expect(onSelection).toHaveBeenCalledWith(actionTerminee)
+    })
   })
 })

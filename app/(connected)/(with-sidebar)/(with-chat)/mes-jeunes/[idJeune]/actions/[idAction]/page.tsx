@@ -1,0 +1,69 @@
+import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import React from 'react'
+
+import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/DetailActionPage'
+import {
+  PageFilArianePortal,
+  PageHeaderPortal,
+} from 'components/PageNavigationPortals'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { getAction, recupererLesCommentaires } from 'services/actions.service'
+import { getMandatorySessionServerSide } from 'utils/auth/auth'
+
+type DetailActionParams = { idJeune: string; idAction: string }
+
+export async function generateMetadata({
+  params,
+}: {
+  params: DetailActionParams
+}): Promise<Metadata> {
+  const { user, accessToken } = await getMandatorySessionServerSide()
+  if (estUserPoleEmploi(user)) notFound()
+
+  const actionEtJeune = await getAction(params.idAction, accessToken)
+  if (!actionEtJeune) notFound()
+
+  const { action, jeune } = actionEtJeune
+  const lectureSeule = jeune.idConseiller !== user.id
+
+  return {
+    title: `${action.content} - Actions de ${jeune.prenom} ${jeune.nom} - ${
+      lectureSeule ? 'Etablissement' : 'Portefeuille'
+    }`,
+  }
+}
+
+export default async function DetailAction({
+  params,
+}: {
+  params: DetailActionParams
+}) {
+  const { user, accessToken } = await getMandatorySessionServerSide()
+  if (estUserPoleEmploi(user)) notFound()
+  const { idJeune, idAction } = params
+
+  const actionEtJeune = await getAction(idAction, accessToken)
+  if (!actionEtJeune) notFound()
+  if (idJeune !== actionEtJeune.jeune.id) notFound()
+
+  const commentaires = await recupererLesCommentaires(idAction, accessToken)
+  if (!commentaires) notFound()
+
+  const { action, jeune } = actionEtJeune
+  const lectureSeule = jeune.idConseiller !== user.id
+
+  return (
+    <>
+      <PageFilArianePortal />
+      <PageHeaderPortal header='Détails de l’action' />
+
+      <DetailActionPage
+        action={action}
+        jeune={jeune}
+        commentaires={commentaires}
+        lectureSeule={lectureSeule}
+      />
+    </>
+  )
+}

@@ -1,8 +1,8 @@
 import { act, screen } from '@testing-library/react'
 import React from 'react'
 
-import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[jeune_id]/FicheBeneficiairePage'
-import { desActionsInitiales } from 'fixtures/action'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -83,6 +83,7 @@ async function renderFicheJeune(
         jeune={unDetailJeune({ situations: situations })}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
+        categoriesActions={desCategories()}
         onglet='AGENDA'
         lectureSeule={false}
       />,

@@ -65,7 +65,7 @@ describe('<Layout />', () => {
     ]
     ;(useRouter as jest.Mock).mockReturnValue({
       asPath: '/mes-jeunes/id-jeune/actions/id-action',
-      route: '/mes-jeunes/[jeune_id]/actions/[action_id]',
+      route: '/mes-jeunes/[idJeune]/actions/[idAction]',
     })
     ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(jeunes)
     ;(getConseillerClientSide as jest.Mock).mockResolvedValue(
