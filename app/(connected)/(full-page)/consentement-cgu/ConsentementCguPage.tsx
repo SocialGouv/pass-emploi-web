@@ -59,6 +59,7 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
   return (
     <>
       <HeaderCGU conseiller={conseiller} />
+
       <main role='main'>
         <Suspense fallback={<SpinningLoader />}>
           {estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerBRSA />}
