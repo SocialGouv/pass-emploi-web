@@ -55,13 +55,9 @@ function QualificationPage({
     ValueWithError<string | undefined>
   >({ value: action.qualification?.code })
 
-  const dateActionDebut = action && DateTime.fromISO(action?.dateFinReelle!)
-  const localDateDebut =
-    dateActionDebut && toFrenchFormat(dateActionDebut, DATE_DASH_SEPARATOR)
   const dateActionFin = action && DateTime.fromISO(action.dateFinReelle!)
   const localDateFin =
     dateActionFin && toFrenchFormat(dateActionFin, DATE_DASH_SEPARATOR)
-
   const [dateFin, setDateFin] = useState<ValueWithError<string | undefined>>({
     value: localDateFin,
   })
@@ -303,7 +299,6 @@ function QualificationPage({
                   type='date'
                   id='input-date-fin'
                   defaultValue={localDateFin}
-                  min={localDateDebut}
                   onChange={(value: string) => setDateFin({ value })}
                   onBlur={validerDateFin}
                   required={true}
