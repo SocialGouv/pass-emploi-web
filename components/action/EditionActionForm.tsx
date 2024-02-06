@@ -168,7 +168,7 @@ export function EditionActionForm({
   function validerDateAction() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
-    if (action && statut === StatutAction.Terminee) return true
+    if (statut === StatutAction.Terminee) return true
 
     if (!dateAction.value) {
       setDateAction({
@@ -198,7 +198,7 @@ export function EditionActionForm({
   function validerDateRealisation() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
-    if (!action || statut === StatutAction.EnCours) return true
+    if (statut === StatutAction.EnCours) return true
 
     if (!dateRealisation.value) {
       setDateRealisation({
@@ -283,7 +283,10 @@ export function EditionActionForm({
       codeCategorie: codeCategorie.value!,
       titre:
         titre.value !== TITRE_AUTRE ? titre.value! : titrePersonnalise.value!,
-      dateEcheance: dateAction.value!,
+      dateEcheance:
+        statut === StatutAction.Terminee
+          ? dateRealisation.value!
+          : dateAction.value!,
       dateFinReelle: dateRealisation.value,
       description,
       statut,
@@ -424,7 +427,7 @@ export function EditionActionForm({
             </div>
           </fieldset>
 
-          {(!action || statut === StatutAction.EnCours) && (
+          {statut === StatutAction.EnCours && (
             <>
               <Label htmlFor='date-action' inputRequired={true}>
                 Date de l’action
@@ -438,7 +441,7 @@ export function EditionActionForm({
                 type='date'
                 id='date-action'
                 required={true}
-                value={dateAction.value}
+                value={dateAction.value ?? ''}
                 onChange={(value: string) => setDateAction({ value })}
                 onBlur={validerDateAction}
                 invalid={Boolean(dateAction.error)}
@@ -472,7 +475,7 @@ export function EditionActionForm({
             </>
           )}
 
-          {action && statut === StatutAction.Terminee && (
+          {statut === StatutAction.Terminee && (
             <>
               <Label htmlFor='date-realisation' inputRequired={true}>
                 Date de réalisation
@@ -486,7 +489,7 @@ export function EditionActionForm({
                 type='date'
                 id='date-realisation'
                 required={true}
-                value={dateRealisation.value}
+                value={dateRealisation.value ?? ''}
                 onChange={(value: string) => setDateRealisation({ value })}
                 onBlur={validerDateRealisation}
                 invalid={Boolean(dateRealisation.error)}

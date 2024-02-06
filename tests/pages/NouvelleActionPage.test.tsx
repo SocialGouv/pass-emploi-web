@@ -106,12 +106,19 @@ describe('NouvelleActionPage client side', () => {
 
   it('contient un champ pour saisir une date d’échéance', () => {
     // Then
-    expect(screen.getByLabelText('* Date de l’action')).toHaveAttribute(
+    expect(screen.getByLabelText('* Date de réalisation')).toHaveAttribute(
       'required'
     )
   })
 
   it('contient des boutons pour faciliter le choix de la date d’échéance', async () => {
+    // When
+    await userEvent.click(screen.getByRole('radio', { name: 'À faire' }))
+
+    // Then
+    expect(screen.getByLabelText('* Date de l’action')).toHaveAttribute(
+      'required'
+    )
     expect(
       screen.getByRole('button', { name: "Aujourd'hui (mardi 19)" })
     ).toHaveAttribute('aria-controls', 'date-action')
@@ -168,18 +175,18 @@ describe('NouvelleActionPage client side', () => {
       expect(creerAction).not.toHaveBeenCalled()
     })
 
-    it("affiche un message d'erreur quand la date d'échéance est vide", async () => {
+    it("affiche un message d'erreur quand la date de réalisation est vide", async () => {
       //Given
       await userEvent.click(submit)
 
       // Then
       expect(
-        screen.getByText(/Le champ “Date de l’action” est vide/)
+        screen.getByText(/Le champ “Date de réalisation” est vide/)
       ).toBeInTheDocument()
       expect(creerAction).not.toHaveBeenCalled()
     })
 
-    it("affiche un message d'erreur quand date d'échéance n'est pas dans l'intervalle : un an avant, deux ans après", async () => {
+    it("affiche un message d'erreur quand la date de réalisation n'est pas dans l'intervalle : un an avant, deux ans après", async () => {
       const dateEcheance = screen.getByLabelText(/Date/)
       await userEvent.type(dateEcheance, '2000-07-30')
       await userEvent.tab()
@@ -187,7 +194,7 @@ describe('NouvelleActionPage client side', () => {
       // Then
       expect(
         screen.getByText(
-          `Le champ “Date de l’action” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
+          `Le champ “Date de réalisation” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
         )
       ).toBeInTheDocument()
     })
@@ -207,7 +214,10 @@ describe('NouvelleActionPage client side', () => {
         const description = screen.getByRole('textbox', { name: /Description/ })
         await userEvent.type(description, 'Description action')
 
-        await userEvent.click(screen.getByRole('button', { name: /Demain/ }))
+        await userEvent.type(
+          screen.getByLabelText(/Date de réalisation/),
+          '2023-12-20'
+        )
 
         // When
         await userEvent.click(submit)
@@ -221,6 +231,7 @@ describe('NouvelleActionPage client side', () => {
             titre: actionsPredefinies[1].titre,
             description: 'Description action',
             dateEcheance: '2023-12-20',
+            dateFinReelle: '2023-12-20',
             statut: 'Terminee',
           },
           'id-jeune'

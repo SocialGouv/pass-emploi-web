@@ -174,13 +174,12 @@ export function jsonToActionStatus({
 
 export function actionStatusToJson(status: StatutAction): ActionStatusJson {
   switch (status) {
-    case StatutAction.EnCours:
-      return 'in_progress'
     case StatutAction.Terminee:
     case StatutAction.Qualifiee:
       return 'done'
     case StatutAction.Annulee:
       return 'canceled'
+    case StatutAction.EnCours:
     default:
       return 'in_progress'
   }

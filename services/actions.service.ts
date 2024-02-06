@@ -13,6 +13,7 @@ import {
 } from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import {
+  ActionFormData,
   ActionJson,
   ActionPilotageJson,
   ActionsCountJson,
@@ -110,19 +111,15 @@ export async function getActionsAQualifierServerSide(
 }
 
 export async function creerAction(
-  action: {
-    codeCategorie: string
-    titre: string
-    dateEcheance: string
-    statut: StatutAction
-    description?: string
-  },
+  action: ActionFormData,
   idJeune: string
 ): Promise<void> {
   const session = await getSession()
   const payload = {
     content: action.titre,
-    dateEcheance: DateTime.fromISO(action.dateEcheance).toISO(),
+    dateEcheance: DateTime.fromISO(
+      action.dateFinReelle ?? action.dateEcheance!
+    ).toISO(),
     codeQualification: action.codeCategorie,
     comment: action.description,
     status: actionStatusToJson(action.statut),
@@ -136,14 +133,7 @@ export async function creerAction(
 
 export async function modifierAction(
   idAction: string,
-  modifications: {
-    statut?: StatutAction
-    titre?: string
-    description?: string
-    dateEcheance?: string
-    dateFinReelle?: string
-    codeCategorie?: string
-  }
+  modifications: Partial<ActionFormData>
 ): Promise<void> {
   const session = await getSession()
 
