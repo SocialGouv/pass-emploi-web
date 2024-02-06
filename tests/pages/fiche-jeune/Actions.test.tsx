@@ -128,13 +128,6 @@ describe('Actions dans la fiche jeune', () => {
       actions.forEach((action) => {
         expect(screen.getByText(action.content)).toBeInTheDocument()
       })
-      expect(
-        within(
-          screen.getByRole('row', {
-            name: `Détail de l'action ${actions[5].content}`,
-          })
-        ).getByLabelText(`Qualifiée en Situation Non Professionnelle`)
-      ).toBeInTheDocument()
 
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
         'Actions 14'

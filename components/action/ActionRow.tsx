@@ -65,24 +65,11 @@ export default function ActionRow({
         />
       </TD>
       <TD className='rounded-l-base max-w-[400px]'>
-        <div className='flex items-center'>
-          {action.status === StatutAction.Qualifiee &&
-            action.qualification?.isSituationNonProfessionnelle && (
-              <IconComponent
-                role='img'
-                focusable={false}
-                name={IconName.Suitcase}
-                aria-label='Qualifiée en Situation Non Professionnelle'
-                title='SNP'
-                className='w-4 h-4 fill-accent_2 mr-2'
-              />
-            )}
-          <span
-            className={`flex items-baseline wrap text-ellipsis overflow-hidden ${!actionEstTerminee ? 'text-disabled' : ''} ${isChecked ? 'text-base-bold' : ''}`}
-          >
-            {action.content}
-          </span>
-        </div>
+        <span
+          className={`flex items-center items-baseline wrap text-ellipsis overflow-hidden ${!actionEstTerminee ? 'text-disabled' : ''} ${isChecked ? 'text-base-bold' : ''}`}
+        >
+          {action.content}
+        </span>
       </TD>
       <TD>
         <span className='flex flex-row items-center'>{dateEcheance}</span>
