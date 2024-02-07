@@ -15,7 +15,6 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { StatutAnimationCollective } from 'interfaces/evenement'
-import { PageProps } from 'interfaces/pageProps'
 import {
   estAClore,
   InformationBeneficiaireSession,
@@ -27,7 +26,7 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
-type ClotureSessionProps = PageProps & {
+type ClotureSessionProps = {
   session: Session
   returnTo: string
   inscriptionsInitiales: InformationBeneficiaireSession[]

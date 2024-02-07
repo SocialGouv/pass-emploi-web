@@ -55,7 +55,7 @@ export default async function DetailsSession({
 
   const idSession = params.idSession
 
-  let redirectTo = searchParams.redirectUrl
+  let redirectTo = searchParams?.redirectUrl
   if (!redirectTo) {
     const referer = headers().get('referer')
     redirectTo =
