@@ -413,19 +413,19 @@ function FicheBeneficiairePage({
 
           <TabList className='mt-10'>
             <Tab
-              label='Agenda'
-              selected={currentTab === 'AGENDA'}
-              controls='agenda'
-              onSelectTab={() => switchTab('AGENDA')}
-              iconName={IconName.EventFill}
-            />
-            <Tab
               label='Actions'
               count={!estPoleEmploi(conseiller) ? totalActions : undefined}
               selected={currentTab === 'ACTIONS'}
               controls='liste-actions'
               onSelectTab={() => switchTab('ACTIONS')}
               iconName={IconName.ChecklistRtlFill}
+            />
+            <Tab
+              label='Agenda'
+              selected={currentTab === 'AGENDA'}
+              controls='agenda'
+              onSelectTab={() => switchTab('AGENDA')}
+              iconName={IconName.EventFill}
             />
             <Tab
               label='Rendez-vous'

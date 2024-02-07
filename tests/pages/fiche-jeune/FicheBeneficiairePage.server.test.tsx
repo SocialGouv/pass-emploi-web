@@ -109,7 +109,7 @@ describe('FicheBeneficiairePage server side', () => {
           metadonneesFavoris: expect.objectContaining({}),
           offresPE: expect.arrayContaining([]),
           recherchesPE: expect.arrayContaining([]),
-          onglet: 'AGENDA',
+          onglet: 'ACTIONS',
           lectureSeule: false,
         },
         {}

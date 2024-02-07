@@ -131,8 +131,8 @@ export default async function FicheBeneficiaire({
 
   let onglet: Onglet
   switch (searchParams?.onglet) {
-    case 'actions':
-      onglet = 'ACTIONS'
+    case 'agenda':
+      onglet = 'AGENDA'
       break
     case 'rdvs':
       onglet = 'RDVS'
@@ -140,8 +140,9 @@ export default async function FicheBeneficiaire({
     case 'favoris':
       onglet = 'FAVORIS'
       break
+    case 'actions':
     default:
-      onglet = 'AGENDA'
+      onglet = 'ACTIONS'
   }
 
   return (
