@@ -59,15 +59,11 @@ export default function TableauActionsJeune({
   >([])
   const [actionSansCategorieSelectionnee, setActionSansCategorieSelectionnee] =
     useState<boolean>(false)
-  const [actionNonTermineeSelectionnee, setActionNonTermineeSelectionnee] =
-    useState<boolean>(false)
 
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
 
   const boutonsDisabled =
-    actionsSelectionnees.length === 0 ||
-    actionSansCategorieSelectionnee ||
-    actionNonTermineeSelectionnee
+    actionsSelectionnees.length === 0 || actionSansCategorieSelectionnee
 
   function reinitialiserFiltres() {
     onFiltres([])
@@ -151,18 +147,6 @@ export default function TableauActionsJeune({
     return actionsSelectionnees.some((action) => action.idAction === id)
   }
 
-  function indiqueSelectionContientActionNonTerminee(): boolean {
-    for (const action of actionsSelectionnees) {
-      const { status } = actionsFiltrees.find(
-        ({ id }) => action.idAction === id
-      )!
-
-      if (status !== StatutAction.Terminee) return true
-    }
-
-    return false
-  }
-
   useEffect(() => {
     setActionsSelectionnees([])
   }, [actionsFiltrees])
@@ -171,20 +155,19 @@ export default function TableauActionsJeune({
     setActionSansCategorieSelectionnee(
       actionsSelectionnees.some((action) => !action.codeQualification)
     )
-
-    const aUneActionNonSelectionnee =
-      indiqueSelectionContientActionNonTerminee()
-    setActionNonTermineeSelectionnee(aUneActionNonSelectionnee)
   }, [actionsSelectionnees])
 
   useEffect(() => {
     if (!actionsFiltrees.length) return
+    const nbActionsTerminees = actionsFiltrees.filter(
+      ({ status }) => status === StatutAction.Terminee
+    ).length
 
     const tailleSelection = actionsSelectionnees.length
     const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
-    const isChecked = tailleSelection === actionsFiltrees.length
+    const isChecked = tailleSelection === nbActionsTerminees
     const isIndeterminate =
-      tailleSelection !== actionsFiltrees.length && tailleSelection > 0
+      tailleSelection !== nbActionsTerminees && tailleSelection > 0
 
     toutSelectionnerCheckbox.checked = isChecked
     toutSelectionnerCheckbox.indeterminate = isIndeterminate

@@ -121,16 +121,6 @@ export default function TableauActionsAQualifier({
     return mapBeneficiaires
   }
 
-  async function qualifier(enSNP: boolean) {
-    await onQualification(
-      enSNP,
-      actionsSelectionnees as Array<{
-        idAction: string
-        codeQualification: string
-      }>
-    )
-  }
-
   useEffect(() => {
     setActionsSelectionnees([])
   }, [actionsFiltrees])
