@@ -6,11 +6,7 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
-import {
-  Conseiller,
-  estUserMilo,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
+import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
@@ -35,8 +31,10 @@ export async function generateMetadata({
     accessToken
   )
 
+  if (!session) notFound()
+
   return {
-    title: `Clore - Session ${session?.offre.titre}`,
+    title: `Clore - Session ${session.offre.titre}`,
   }
 }
 
@@ -60,14 +58,14 @@ export default async function ClotureSession({
   }
   if (!conseiller) notFound()
 
-  if (!estUserMilo(user) || !peutAccederAuxSessions(conseiller))
-    redirect('/mes-jeunes')
+  if (!peutAccederAuxSessions(conseiller)) redirect('/mes-jeunes')
 
   const session = await getDetailsSession(
     user.id,
     params.idSession,
     accessToken
   )
+  if (!session) notFound()
   if (session?.session.statut !== StatutAnimationCollective.AClore) notFound()
 
   const inscriptionsInitiales = session.inscriptions.map((inscription) => {

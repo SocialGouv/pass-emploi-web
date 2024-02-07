@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
-import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/[idSession]'
+import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
 import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
@@ -14,7 +14,6 @@ import {
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import { DATETIME_LONG, toFrenchFormat, toFrenchString } from 'utils/date'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
@@ -104,21 +103,21 @@ describe('Détails Session Page Client', () => {
         session.session.nom
       )
       expect(getByDescriptionTerm('Début :')).toHaveTextContent(
-        toFrenchFormat(
-          DateTime.fromISO(session.session.dateHeureDebut),
-          DATETIME_LONG
+        DateTime.fromISO(session.session.dateHeureDebut).toFormat(
+          `dd/MM/yyyy 'à' HH'h'mm`
         )
       )
       expect(getByDescriptionTerm('Fin :')).toHaveTextContent(
-        toFrenchFormat(
-          DateTime.fromISO(session.session.dateHeureFin),
-          DATETIME_LONG
+        DateTime.fromISO(session.session.dateHeureFin).toFormat(
+          `dd/MM/yyyy 'à' HH'h'mm`
         )
       )
       expect(
         getByDescriptionTerm('Date limite d’inscription :')
       ).toHaveTextContent(
-        toFrenchString(DateTime.fromISO(session.session.dateMaxInscription!))
+        DateTime.fromISO(session.session.dateMaxInscription!).toFormat(
+          'dd/MM/yyyy'
+        )
       )
       expect(getByDescriptionTerm('Animateur :')).toHaveTextContent(
         session.session.animateur!

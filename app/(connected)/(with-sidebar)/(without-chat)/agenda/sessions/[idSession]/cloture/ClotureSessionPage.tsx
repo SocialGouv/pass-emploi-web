@@ -168,7 +168,7 @@ function ClotureSessionPage({
     await cloreSession(conseiller.id, session.session.id, emargements)
     setAlerte(AlerteParam.clotureSession)
     setTrackingLabel('Session - Clôture succès')
-    await router.push(returnTo)
+    router.push(returnTo)
   }
 
   function afficherStatut(beneficiaire: InformationBeneficiaireSession) {

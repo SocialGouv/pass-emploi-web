@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 
-import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/[idSession]'
+import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import DetailsSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/page'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneBaseJeune } from 'fixtures/jeune'
@@ -16,12 +16,10 @@ jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock('services/conseiller.service')
-jest.mock('components/Modal')
-jest.mock('components/PageActionsPortal')
 jest.mock('services/jeunes.service')
 jest.mock('services/sessions.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/[idSession]'
+  'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 )
 
 describe('Détails Session Page Server', () => {

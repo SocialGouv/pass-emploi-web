@@ -28,7 +28,7 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { toFrenchDateTime, toShortDate } from 'utils/date'
 
 const DesinscriptionBeneficiaireModal = dynamic(
-  import('components/session-imilo/DesinscriptionBeneficiaireModal'),
+  () => import('components/session-imilo/DesinscriptionBeneficiaireModal'),
   { ssr: false }
 )
 
@@ -250,7 +250,7 @@ function DetailsSessionPage({
         : AlerteParam.modificationInformationCollective
     )
     setTrackingLabel(initialTracking + ' - Modification succès')
-    await router.push(returnTo)
+    router.push(returnTo)
   }
 
   useMatomo(trackingLabel)

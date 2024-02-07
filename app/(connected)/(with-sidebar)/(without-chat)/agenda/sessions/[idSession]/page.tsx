@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 
-import FicheDetailsSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/[idSession]'
+import FicheDetailsSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import {
   PageHeaderPortal,
   PageRetourPortal,
@@ -76,8 +76,7 @@ export default async function DetailsSession({
   }
   if (!conseiller) notFound()
 
-  if (!estUserMilo(user) || !peutAccederAuxSessions(conseiller))
-    redirect('/mes-jeunes')
+  if (!peutAccederAuxSessions(conseiller)) redirect('/mes-jeunes')
 
   const beneficiairesStructureMilo = await getBeneficiairesDeLaStructureMilo(
     conseiller.structureMilo!.id,
@@ -86,7 +85,7 @@ export default async function DetailsSession({
 
   return (
     <>
-      <PageRetourPortal lien={redirectTo!} />
+      <PageRetourPortal lien={redirectTo} />
       <PageHeaderPortal header='Clôture de la session' />
 
       <FicheDetailsSession

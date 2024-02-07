@@ -59,7 +59,7 @@ describe('Cloture Session server side', () => {
       )
     })
 
-    it('requiert la connexion', async () => {
+    it('prépare la page', async () => {
       // Given
       const session = unDetailSession({
         session: {

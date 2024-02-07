@@ -1,6 +1,6 @@
 import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
 
-import { BaseBeneficiaireASelectionner } from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/[idSession]'
+import { BaseBeneficiaireASelectionner } from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import RadioBox from 'components/action/RadioBox'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
