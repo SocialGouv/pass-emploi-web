@@ -20,7 +20,6 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
 import { JeuneEtablissement } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
@@ -32,7 +31,7 @@ const DesinscriptionBeneficiaireModal = dynamic(
   { ssr: false }
 )
 
-type DetailSessionProps = PageProps & {
+type DetailSessionProps = {
   beneficiairesStructureMilo: JeuneEtablissement[]
   session: Session
   returnTo: string
