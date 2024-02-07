@@ -5188,7 +5188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/nprogress@npm:^0.2.1":
+"@types/nprogress@npm:^0.2.2":
   version: 0.2.3
   resolution: "@types/nprogress@npm:0.2.3"
   checksum: cac0fe73aca79bc1472a1556f56303df72026f2fcd8dbe311fe84b1f46e454b9040c1e69223d94e3bf156a5986382170c52ebda19aa70f555f1b6855d8f744a6
@@ -9004,9 +9004,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:4.4.0":
-  version: 4.4.0
-  resolution: "elastic-apm-node@npm:4.4.0"
+"elastic-apm-node@npm:4.4.1":
+  version: 4.4.1
+  resolution: "elastic-apm-node@npm:4.4.1"
   dependencies:
     "@elastic/ecs-pino-format": "npm:^1.5.0"
     "@opentelemetry/api": "npm:^1.4.1"
@@ -9026,7 +9026,7 @@ __metadata:
     fast-safe-stringify: "npm:^2.0.7"
     fast-stream-to-buffer: "npm:^1.0.0"
     http-headers: "npm:^3.0.2"
-    import-in-the-middle: "npm:1.7.2"
+    import-in-the-middle: "npm:1.7.3"
     json-bigint: "npm:^1.0.0"
     lru-cache: "npm:^10.0.1"
     measured-reporting: "npm:^1.51.1"
@@ -9045,7 +9045,7 @@ __metadata:
     sql-summary: "npm:^1.0.1"
     stream-chopper: "npm:^3.0.1"
     unicode-byte-truncate: "npm:^1.0.0"
-  checksum: 1b597516bcbb553bdc28ab33da64706eeae3391dd06708316b3461fdec03071e1cd5c0d7bdb8eb797870a6295504d27559c4fe641b7902e5ac1939ef12dead2b
+  checksum: 3786ddd39beacf37a71a2db76c601695e3575f63650fbac2dc5170ec1e1e9313faa9006d16463e28d47e735ef0edd82b60806c9eea3fcb15e8716e5aa4d90b01
   languageName: node
   linkType: hard
 
@@ -11225,9 +11225,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-react-parser@npm:5.1.1":
-  version: 5.1.1
-  resolution: "html-react-parser@npm:5.1.1"
+"html-react-parser@npm:5.1.2":
+  version: 5.1.2
+  resolution: "html-react-parser@npm:5.1.2"
   dependencies:
     domhandler: "npm:5.0.3"
     html-dom-parser: "npm:5.0.7"
@@ -11235,7 +11235,7 @@ __metadata:
     style-to-js: "npm:1.1.10"
   peerDependencies:
     react: 0.14 || 15 || 16 || 17 || 18
-  checksum: b3c4ab88f2f2c0b30622bf03c3874e417eb9f04586182518273b36c4e8b0ae10ea54c6ef33d01f33f74aa35e24090eff2f3d55d52fee4677c5f22fad3a6c8e38
+  checksum: d3d724eb48bd35bc2f7a7d0d9a150cba984acdd4775b4c3eaafb2ded9c2c1905a42525b014d6ead876ce7a5e57d4b7f0220f769c24db049bb5c1ba3b53543e06
   languageName: node
   linkType: hard
 
@@ -11505,15 +11505,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-in-the-middle@npm:1.7.2":
-  version: 1.7.2
-  resolution: "import-in-the-middle@npm:1.7.2"
+"import-in-the-middle@npm:1.7.3":
+  version: 1.7.3
+  resolution: "import-in-the-middle@npm:1.7.3"
   dependencies:
     acorn: "npm:^8.8.2"
     acorn-import-assertions: "npm:^1.9.0"
     cjs-module-lexer: "npm:^1.2.2"
     module-details-from-path: "npm:^1.0.3"
-  checksum: 9fe0acf8758180dc472f94f76171c3a9fab42378ddec85bed4e843849315d9a4e9900b0c0e7b9b110334cb779a35ea2b6fd9777d45815082b2de8ad42f184506
+  checksum: 68a904ba5893670a212a9e6b651fb535feab274cdd86b38a095a2a9ff3d344306fa6a1b4aa2dc21bfa3206f81912ad1b633b5da5e81ddfbbce4a5d62900bf65f
   languageName: node
   linkType: hard
 
@@ -14409,18 +14409,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nextjs-toploader@npm:1.6.4":
-  version: 1.6.4
-  resolution: "nextjs-toploader@npm:1.6.4"
+"nextjs-toploader@npm:1.6.6":
+  version: 1.6.6
+  resolution: "nextjs-toploader@npm:1.6.6"
   dependencies:
-    "@types/nprogress": "npm:^0.2.1"
+    "@types/nprogress": "npm:^0.2.2"
     nprogress: "npm:^0.2.0"
     prop-types: "npm:^15.8.1"
   peerDependencies:
     next: ">= 6.0.0"
     react: ">= 16.0.0"
     react-dom: ">= 16.0.0"
-  checksum: 16ac074113d93dd77760d409c933586537f399af62f034bb5569f63453734a55e2a10d9e3830fa2e89e88807e8684416cc0eeb356ccce23524204abf716ed21f
+  checksum: 1be1aece9291058895a44a6f496dc355635616ad9c46eec1061cf13f685ce9fef9362346aaecde88a6ad7a0bc9e512c35851884eb1af15058bdedc85ab6d7f24
   languageName: node
   linkType: hard
 
@@ -15243,14 +15243,14 @@ __metadata:
     crypto-js: "npm:4.2.0"
     css-loader: "npm:^6.10.0"
     dotenv: "npm:16.4.1"
-    elastic-apm-node: "npm:4.4.0"
+    elastic-apm-node: "npm:4.4.1"
     eslint: "npm:^8.56.0"
     eslint-config-next: "npm:14.1.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-prettier: "npm:^5.1.3"
     eslint-plugin-storybook: "npm:^0.6.15"
     firebase: "npm:10.7.2"
-    html-react-parser: "npm:5.1.1"
+    html-react-parser: "npm:5.1.2"
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
     jsonwebtoken: "npm:9.0.2"
@@ -15261,7 +15261,7 @@ __metadata:
     next-auth: "npm:4.24.5"
     next-logger: "npm:3.0.2"
     next-themes: "npm:0.2.1"
-    nextjs-toploader: "npm:1.6.4"
+    nextjs-toploader: "npm:1.6.6"
     pino: "npm:8.17.2"
     pino-pretty: "npm:^10.3.1"
     postcss: "npm:^8.4.35"
