@@ -315,6 +315,7 @@ export default function TableauActionsAQualifier({
                       action.categorie?.libelle ?? ''
                     }`}
                     onClick={(e) => {
+                      e.preventDefault()
                       e.stopPropagation()
                     }}
                     onChange={() => selectionnerAction(action)}
