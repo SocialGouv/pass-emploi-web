@@ -6,7 +6,7 @@ import { apm } from '@elastic/apm-rum'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useTheme } from 'next-themes'
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 import AppHead from 'components/AppHead'
 import DeprecatedHeader from 'components/deprecated/DeprecatedHeader'
@@ -52,25 +52,9 @@ export default function Layout({ children }: LayoutProps) {
   const [portefeuille, setPortefeuille] =
     usePortefeuillePotentiellementPasRecupere()
 
-  const containerRef = useRef<HTMLDivElement>(null)
   const [hasMessageNonLu, setHasMessageNonLu] = useState(false)
 
   const withChat = !withoutChat
-
-  useEffect(() => {
-    // https://dev.to/admitkard/mobile-issue-with-100vh-height-100-100vh-3-solutions-3nae
-    function resizeContainerToInnerHeight() {
-      if (containerRef.current) {
-        containerRef.current.style.height = `${window.innerHeight}px`
-        containerRef.current.style.gridTemplateRows = `${window.innerHeight}px`
-      }
-    }
-
-    resizeContainerToInnerHeight()
-    window.addEventListener('resize', resizeContainerToInnerHeight, true)
-    return () =>
-      window.removeEventListener('resize', resizeContainerToInnerHeight, true)
-  }, [])
 
   useEffect(() => {
     if (!conseiller) {
@@ -118,7 +102,6 @@ export default function Layout({ children }: LayoutProps) {
 
       {conseiller && portefeuille && (
         <div
-          ref={containerRef}
           className={`${styles.container} ${
             withChat ? styles.container_with_chat : ''
           }`}
