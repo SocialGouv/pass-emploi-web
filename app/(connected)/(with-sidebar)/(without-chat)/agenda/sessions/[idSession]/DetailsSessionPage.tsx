@@ -1,8 +1,9 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { FormEvent, useRef, useState } from 'react'
 
 import PageActionsPortal from 'components/PageActionsPortal'
@@ -18,11 +19,6 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import {
-  Conseiller,
-  estUserMilo,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
 import { JeuneEtablissement } from 'interfaces/jeune'
 import { PageProps } from 'interfaces/pageProps'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
@@ -30,11 +26,9 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { toFrenchDateTime, toShortDate } from 'utils/date'
-import { ApiError } from 'utils/httpClient'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
 const DesinscriptionBeneficiaireModal = dynamic(
-  import('components/session-imilo/DesinscriptionBeneficiaireModal'),
+  () => import('components/session-imilo/DesinscriptionBeneficiaireModal'),
   { ssr: false }
 )
 
@@ -56,7 +50,7 @@ export type BaseBeneficiaireASelectionner = {
   value: string
 }
 
-function FicheDetailsSession({
+function DetailsSessionPage({
   beneficiairesStructureMilo,
   session,
   returnTo,
@@ -256,7 +250,7 @@ function FicheDetailsSession({
         : AlerteParam.modificationInformationCollective
     )
     setTrackingLabel(initialTracking + ' - Modification succès')
-    await router.push(returnTo)
+    router.push(returnTo)
   }
 
   useMatomo(trackingLabel)
@@ -552,81 +546,7 @@ function FicheDetailsSession({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  DetailSessionProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-  if (!estUserMilo(user)) return { notFound: true }
-
-  const idSession = context.query.session_id as string
-
-  let redirectTo = context.query.redirectUrl as string
-  if (!redirectTo) {
-    const referer = context.req.headers.referer
-    redirectTo =
-      referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  }
-
-  const { getDetailsSession } = await import('services/sessions.service')
-  const session = await getDetailsSession(user.id, idSession, accessToken)
-  if (!session) return { notFound: true }
-
-  const { getConseillerServerSide } = await import(
-    'services/conseiller.service'
-  )
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401) {
-      return {
-        redirect: {
-          destination: '/api/auth/federated-logout',
-          permanent: false,
-        },
-      }
-    }
-    throw e
-  }
-  if (!conseiller?.structureMilo?.id) return { notFound: true }
-
-  if (!peutAccederAuxSessions(conseiller))
-    return {
-      redirect: { destination: '/mes-jeunes', permanent: false },
-    }
-
-  const {
-    getBeneficiairesDeLaStructureMilo: getBeneficiairesDeLaStructureMilo,
-  } = await import('services/jeunes.service')
-
-  const beneficiairesStructureMilo = await getBeneficiairesDeLaStructureMilo(
-    conseiller.structureMilo.id,
-    accessToken
-  )
-
-  return {
-    props: {
-      beneficiairesStructureMilo: beneficiairesStructureMilo.jeunes,
-      pageTitle: `Détail session ${session.session.nom} - Agenda`,
-      pageHeader: 'Détail de la session i-milo',
-      returnTo: redirectTo,
-      session: session,
-      withoutChat: true,
-    },
-  }
-}
-
 export default withTransaction(
-  FicheDetailsSession.name,
+  DetailsSessionPage.name,
   'page'
-)(FicheDetailsSession)
+)(DetailsSessionPage)

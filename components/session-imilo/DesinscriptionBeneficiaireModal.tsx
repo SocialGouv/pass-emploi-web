@@ -1,5 +1,6 @@
 import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
 
+import { BaseBeneficiaireASelectionner } from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import RadioBox from 'components/action/RadioBox'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -8,7 +9,6 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import { ValueWithError } from 'components/ValueWithError'
 import { StatutBeneficiaire } from 'interfaces/session'
-import { BaseBeneficiaireASelectionner } from 'pages/agenda/sessions/[session_id]'
 
 interface DesinscriptionBeneficiaireModalProps {
   onConfirmation: (beneficiaireDesinscrit: {
