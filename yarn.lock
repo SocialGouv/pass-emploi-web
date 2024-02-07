@@ -4820,9 +4820,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "@testing-library/jest-dom@npm:6.2.0"
+"@testing-library/jest-dom@npm:^6.4.2":
+  version: 6.4.2
+  resolution: "@testing-library/jest-dom@npm:6.4.2"
   dependencies:
     "@adobe/css-tools": "npm:^4.3.2"
     "@babel/runtime": "npm:^7.9.2"
@@ -4834,11 +4834,14 @@ __metadata:
     redent: "npm:^3.0.0"
   peerDependencies:
     "@jest/globals": ">= 28"
+    "@types/bun": "*"
     "@types/jest": ">= 28"
     jest: ">= 28"
     vitest: ">= 0.32"
   peerDependenciesMeta:
     "@jest/globals":
+      optional: true
+    "@types/bun":
       optional: true
     "@types/jest":
       optional: true
@@ -4846,13 +4849,13 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 71421693e0ad6a46be7d16f00b58a45725c238693972b8b5b1fd9ab797902ccf1209cf259afe8da1bf59d7c958762c46ee85d1aa5b164a5ec330981ea2376b08
+  checksum: e7eba527b34ce30cde94424d2ec685bdfed51daaafb7df9b68b51aec6052e99a50c8bfe654612dacdf857a1eb81d68cf294fc89de558ee3a992bf7a6019fffcc
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^14.1.2":
-  version: 14.1.2
-  resolution: "@testing-library/react@npm:14.1.2"
+"@testing-library/react@npm:^14.2.1":
+  version: 14.2.1
+  resolution: "@testing-library/react@npm:14.2.1"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
     "@testing-library/dom": "npm:^9.0.0"
@@ -4860,7 +4863,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: b5b0990d3aa0ea8b37c55804e0d5d584fc638a5c7d4df90da9a0fdb00bc981b27b6991468b2dc719982a5d0b0107a41596063ce51ad519eeab47b22bc04d6779
+  checksum: 83b35cf8bf5640f1b63b32223ebc75799dc1a8e034d819120b26838fba0b0ab10bdbe6ad07dd8ae8287365f2b0c52dc9892a6fa11bb24d3e63ad97dfb7f2f296
   languageName: node
   linkType: hard
 
@@ -8291,21 +8294,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-loader@npm:^6.9.0":
-  version: 6.9.0
-  resolution: "css-loader@npm:6.9.0"
+"css-loader@npm:^6.10.0":
+  version: 6.10.0
+  resolution: "css-loader@npm:6.10.0"
   dependencies:
     icss-utils: "npm:^5.1.0"
-    postcss: "npm:^8.4.31"
+    postcss: "npm:^8.4.33"
     postcss-modules-extract-imports: "npm:^3.0.0"
-    postcss-modules-local-by-default: "npm:^4.0.3"
-    postcss-modules-scope: "npm:^3.1.0"
+    postcss-modules-local-by-default: "npm:^4.0.4"
+    postcss-modules-scope: "npm:^3.1.1"
     postcss-modules-values: "npm:^4.0.0"
     postcss-value-parser: "npm:^4.2.0"
     semver: "npm:^7.5.4"
   peerDependencies:
+    "@rspack/core": 0.x || 1.x
     webpack: ^5.0.0
-  checksum: dded9ddbf3d7d2befe6a6c8fc861a46790626219a732ada3e52d02833dd2731d81b5f9ac7be51d3871b48d1a4b840668598e033f5f82790e892c6942139dbf9c
+  peerDependenciesMeta:
+    "@rspack/core":
+      optional: true
+    webpack:
+      optional: true
+  checksum: acadd2a93f505bf8a8d1c6912a476ef953585f195412b6aa1f2581053bcce8563b833f2a6666c1e1521f4b35fb315176563495a38933becc89e3143cfa7dce45
   languageName: node
   linkType: hard
 
@@ -15221,8 +15230,8 @@ __metadata:
     "@storybook/react": "npm:^6.5.16"
     "@svgr/webpack": "npm:8.1.0"
     "@testing-library/dom": "npm:^9.3.4"
-    "@testing-library/jest-dom": "npm:^6.2.0"
-    "@testing-library/react": "npm:^14.1.2"
+    "@testing-library/jest-dom": "npm:^6.4.2"
+    "@testing-library/react": "npm:^14.2.1"
     "@testing-library/user-event": "npm:^14.5.2"
     "@types/crypto-js": "npm:^4.2.2"
     "@types/jest": "npm:^29.5.12"
@@ -15232,7 +15241,7 @@ __metadata:
     "@types/react": "npm:^18.2.55"
     autoprefixer: "npm:^10.4.17"
     crypto-js: "npm:4.2.0"
-    css-loader: "npm:^6.9.0"
+    css-loader: "npm:^6.10.0"
     dotenv: "npm:16.4.1"
     elastic-apm-node: "npm:4.4.0"
     eslint: "npm:^8.56.0"
@@ -15667,7 +15676,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-modules-local-by-default@npm:^4.0.0, postcss-modules-local-by-default@npm:^4.0.3":
+"postcss-modules-local-by-default@npm:^4.0.0":
   version: 4.0.3
   resolution: "postcss-modules-local-by-default@npm:4.0.3"
   dependencies:
@@ -15677,6 +15686,19 @@ __metadata:
   peerDependencies:
     postcss: ^8.1.0
   checksum: be49b86efbfb921f42287e227584aac91af9826fc1083db04958ae283dfe215ca539421bfba71f9da0f0b10651f28e95a64b5faca7166f578a1933b8646051f7
+  languageName: node
+  linkType: hard
+
+"postcss-modules-local-by-default@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "postcss-modules-local-by-default@npm:4.0.4"
+  dependencies:
+    icss-utils: "npm:^5.0.0"
+    postcss-selector-parser: "npm:^6.0.2"
+    postcss-value-parser: "npm:^4.1.0"
+  peerDependencies:
+    postcss: ^8.1.0
+  checksum: 9ebf464867eb10b29b73501b1466dcac8352ed852ef68ec23571f515daa74401d7ace9a6c72f354542081fdbb47d098c9bc6b05373b553a6e35779d072f967bb
   languageName: node
   linkType: hard
 
@@ -15690,7 +15712,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-modules-scope@npm:^3.0.0, postcss-modules-scope@npm:^3.1.0":
+"postcss-modules-scope@npm:^3.0.0":
   version: 3.1.0
   resolution: "postcss-modules-scope@npm:3.1.0"
   dependencies:
@@ -15698,6 +15720,17 @@ __metadata:
   peerDependencies:
     postcss: ^8.1.0
   checksum: bc8e12e9312d7070f34ccef2929f65154102e2b2984a385eaf2ef25b6d4e22234de71116c240a05b541a79946b717d6fa8c5d314f6697bf05f295261693050fe
+  languageName: node
+  linkType: hard
+
+"postcss-modules-scope@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "postcss-modules-scope@npm:3.1.1"
+  dependencies:
+    postcss-selector-parser: "npm:^6.0.4"
+  peerDependencies:
+    postcss: ^8.1.0
+  checksum: 3ef6ac14fcda1581bc43e37622256bd87b99ea49c59b2aae648d057d57f5ecc634648cce9910166220a797567af674bc09246ccc010f1dd58d2863b805719109
   languageName: node
   linkType: hard
 
