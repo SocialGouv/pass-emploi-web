@@ -9,12 +9,7 @@ import { desEvenementsListItems } from 'fixtures/evenement'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { EvenementListItem } from 'interfaces/evenement'
 import { getNomJeuneComplet } from 'interfaces/jeune'
-import {
-  TIME_24_H_SEPARATOR,
-  toFrenchFormat,
-  toShortDate,
-  WEEKDAY_MONTH_LONG,
-} from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 describe('<TableauRdvsBeneficiaire>', () => {
   beforeEach(async () => {
@@ -61,9 +56,8 @@ describe('<TableauRdvsBeneficiaire>', () => {
       // Then
       listeRdv.forEach((rdv) => {
         const date = DateTime.fromISO(rdv.date)
-        const horaires = `${toShortDate(date)} - ${toFrenchFormat(
-          date,
-          TIME_24_H_SEPARATOR
+        const horaires = `${toShortDate(date)} - ${date.toFormat(
+          "HH'h'mm"
         )} - ${rdv.duree} min`
         expect(screen.getByText(rdv.type)).toBeInTheDocument()
         expect(screen.getByText(rdv.modality!)).toBeInTheDocument()
@@ -74,9 +68,9 @@ describe('<TableauRdvsBeneficiaire>', () => {
     it('permet la modification des rendez-vous', () => {
       listeRdv.forEach((rdv) => {
         const link = screen.getByLabelText(
-          `Consulter l’événement du ${toFrenchFormat(
-            DateTime.fromISO(rdv.date),
-            WEEKDAY_MONTH_LONG
+          `Consulter l’événement du ${DateTime.fromISO(rdv.date).toFormat(
+            'EEEE d MMMM',
+            { locale: 'fr-FR' }
           )} avec ${getNomJeuneComplet(uneBaseJeune())}`
         )
         expect(link).toHaveAttribute(

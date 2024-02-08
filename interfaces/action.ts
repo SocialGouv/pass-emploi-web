@@ -27,6 +27,11 @@ export interface ActionPilotage {
   }
 }
 
+export interface ActionAQualifier {
+  idAction: string
+  codeQualification?: string
+}
+
 export interface QualificationAction {
   libelle: string
   code: string
@@ -39,7 +44,7 @@ export interface TotalActions {
 }
 
 export enum StatutAction {
-  EnCours = 'EnCours',
+  AFaire = 'AFaire',
   Terminee = 'Terminee',
   Qualifiee = 'Qualifiee',
   Annulee = 'Annulee',

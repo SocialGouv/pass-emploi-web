@@ -23,7 +23,7 @@ import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toFullDate } from 'utils/date'
+import { toRelativeDateTime } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function EtablissementPage() {
@@ -145,7 +145,10 @@ function EtablissementPage() {
                       )}
                     </TD>
                   )}
-                  <TD>{toFullDate(jeune.dateDerniereActivite)}</TD>
+                  <TD>
+                    {jeune.dateDerniereActivite &&
+                      toRelativeDateTime(jeune.dateDerniereActivite)}
+                  </TD>
                   <TD>
                     <span className='flex items-center'>
                       <div className='relative w-fit mx-auto'>

@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react'
-import { useRouter } from 'next/router'
 import React from 'react'
 
-import { desActionsInitiales } from 'fixtures/action'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
@@ -11,22 +11,17 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
-import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
-
-jest.mock('components/Modal')
 
 describe('Historique des conseillers dans la fiche jeune', () => {
   describe("quand l'utilisateur est un conseiller Pole emploi", () => {
     it('affiche un lien vers l’historique des conseillers du jeune', async () => {
       // Given
-      ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
       ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
@@ -37,15 +32,17 @@ describe('Historique des conseillers dans la fiche jeune', () => {
       const recherchesPE = uneListeDeRecherches()
 
       // When
-      await renderWithContexts(
-        <FicheJeune
+      renderWithContexts(
+        <FicheBeneficiairePage
           jeune={unDetailJeune()}
           rdvs={[]}
           actionsInitiales={desActionsInitiales()}
-          pageTitle={''}
+          categoriesActions={desCategories()}
           metadonneesFavoris={metadonneesFavoris}
           offresPE={offresPE}
           recherchesPE={recherchesPE}
+          lectureSeule={false}
+          onglet='AGENDA'
         />,
         {
           customConseiller: { structure: StructureConseiller.POLE_EMPLOI },

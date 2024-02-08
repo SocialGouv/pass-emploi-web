@@ -7,7 +7,7 @@
   display: grid;
   grid-template-areas: 'sidebar page';
   grid-template-columns: var(--sidebar-width) var(--page-width);
-  grid-template-rows: 100vh;
+  grid-template-rows: 100dvh;
   position: fixed;
 }
 

@@ -1,10 +1,11 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import { desActionsInitiales } from 'fixtures/action'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
@@ -18,7 +19,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
-import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -38,11 +38,7 @@ describe('Agenda de la fiche jeune', () => {
   beforeEach(() => {
     jest.spyOn(DateTime, 'now').mockReturnValue(LUNDI_JANVIER_3)
     replace = jest.fn(() => Promise.resolve())
-    ;(useRouter as jest.Mock).mockReturnValue({
-      replace: replace,
-      push: jest.fn(),
-      asPath: '/mes-jeunes',
-    })
+    ;(useRouter as jest.Mock).mockReturnValue({ replace })
     ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
     )
@@ -222,7 +218,7 @@ describe('Agenda de la fiche jeune', () => {
                   date: UNE_DATE_SEMAINE_EN_COURS,
                   type: 'action',
                   titre: 'Identifier ses atouts et ses compétences',
-                  statut: StatutAction.EnCours,
+                  statut: StatutAction.AFaire,
                 } as EntreeAgenda,
                 {
                   id: '1',
@@ -253,7 +249,7 @@ describe('Agenda de la fiche jeune', () => {
             )
           ).toBeInTheDocument()
           expect(
-            within(semaineEnCours).getByText('En cours')
+            within(semaineEnCours).getByText('À faire')
           ).toBeInTheDocument()
 
           const semaineSuivante = screen.getByRole('region', {
@@ -280,7 +276,7 @@ describe('Agenda de la fiche jeune', () => {
                   date: SAMEDI_JANVIER_1,
                   type: 'action',
                   titre: 'Action du samedi 1',
-                  statut: StatutAction.EnCours,
+                  statut: StatutAction.AFaire,
                 } as EntreeAgenda,
                 {
                   id: '1',
@@ -460,12 +456,14 @@ describe('Agenda de la fiche jeune', () => {
 
 async function renderFicheJeuneMILO(structure: StructureConseiller) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
-        pageTitle={''}
+        categoriesActions={desCategories()}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
@@ -482,15 +480,17 @@ async function renderFicheJeunePE(
   recherchesPE: Recherche[]
 ) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
-        pageTitle={''}
+        categoriesActions={desCategories()}
         metadonneesFavoris={metadonnees}
         offresPE={offresPE}
         recherchesPE={recherchesPE}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: {

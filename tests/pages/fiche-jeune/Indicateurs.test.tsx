@@ -1,25 +1,22 @@
 import { act, screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
 import React from 'react'
 
-import { desActionsInitiales } from 'fixtures/action'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
   unDetailJeune,
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
-import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
-jest.mock('components/Modal')
 
 describe('Indicateurs dans la fiche jeune', () => {
   describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
@@ -27,7 +24,6 @@ describe('Indicateurs dans la fiche jeune', () => {
       // Given
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
       jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
-      ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
       ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
         desIndicateursSemaine()
       )
@@ -35,13 +31,15 @@ describe('Indicateurs dans la fiche jeune', () => {
 
       // When
       await act(async () => {
-        await renderWithContexts(
-          <FicheJeune
+        renderWithContexts(
+          <FicheBeneficiairePage
             jeune={unDetailJeune()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
-            pageTitle={''}
+            categoriesActions={desCategories()}
             metadonneesFavoris={uneMetadonneeFavoris()}
+            onglet='AGENDA'
+            lectureSeule={false}
           />,
           {}
         )

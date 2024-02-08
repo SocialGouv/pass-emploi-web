@@ -35,13 +35,7 @@ import { BaseJeune, compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
-import {
-  DATE_DASH_SEPARATOR,
-  dateIsInInterval,
-  TIME_24_SIMPLE,
-  toFrenchFormat,
-  toFrenchString,
-} from 'utils/date'
+import { dateIsInInterval, toShortDate } from 'utils/date'
 
 interface EditionRdvFormProps {
   conseiller: Conseiller
@@ -101,15 +95,15 @@ export function EditionRdvForm({
     evenement?.modality
   )
   const regexDate = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/
-  const dateRdv = evenement && DateTime.fromISO(evenement.date)
-  const localDate = dateRdv && toFrenchFormat(dateRdv, DATE_DASH_SEPARATOR)
+  const dateRdv = evenement && DateTime.fromISO(evenement.date).toISODate()
   const [date, setDate] = useState<ValueWithError<string | undefined>>({
-    value: localDate,
+    value: dateRdv,
   })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
-  const localTime = dateRdv && toFrenchString(dateRdv, DateTime.TIME_24_SIMPLE)
+  const timeRdv =
+    evenement && DateTime.fromISO(evenement.date).toFormat('HH:mm')
   const [horaire, setHoraire] = useState<ValueWithError<string | undefined>>({
-    value: localTime,
+    value: timeRdv,
   })
   const regexDuree = /^\d{2}:\d{2}$/
   const dureeRdv = dureeFromMinutes(evenement?.duree)
@@ -223,8 +217,8 @@ export function EditionRdvForm({
     return (
       previousIds.toString() !== currentIds.toString() ||
       modalite !== evenement.modality ||
-      date.value !== localDate ||
-      horaire.value !== localTime ||
+      date.value !== dateRdv ||
+      horaire.value !== timeRdv ||
       duree.value !== dureeRdv ||
       adresse !== evenement.adresse ||
       organisme !== evenement.organisme ||
@@ -316,11 +310,9 @@ export function EditionRdvForm({
     ) {
       setDate({
         ...date,
-        error: `La date est invalide. Le date attendue est comprise entre le ${unAnAvant
-          .plus({ day: 1 })
-          .toFormat('dd/MM/yyyy')} et le ${deuxAnsApres.toFormat(
-          'dd/MM/yyyy'
-        )}.`,
+        error: `La date est invalide. Le date attendue est comprise entre le ${toShortDate(
+          unAnAvant.plus({ day: 1 })
+        )} et le ${toShortDate(deuxAnsApres)}.`,
       })
     } else if (!validateDate()) {
       setDate({
@@ -497,16 +489,13 @@ export function EditionRdvForm({
     if (!formHasChanges()) return Promise.resolve()
 
     const [dureeHeures, dureeMinutes] = duree.value!.split(':')
-    const dateTime: DateTime = DateTime.fromFormat(
-      `${date.value} ${horaire.value}`,
-      `${DATE_DASH_SEPARATOR} ${TIME_24_SIMPLE}`
-    )
+    const dateTime = DateTime.fromISO(`${date.value}T${horaire.value}`).toISO()
     const dureeEnMinutes =
       parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10)
     const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous.value!,
-      date: dateTime.toISO(),
+      date: dateTime,
       duration: dureeEnMinutes,
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,
@@ -867,7 +856,7 @@ export function EditionRdvForm({
             </InputError>
           )}
           <Input
-            type='time'
+            type='time' // FIXME type='text' ou 'number' ('time' c'est pour des horaires)
             id='duree'
             required={true}
             defaultValue={duree.value}

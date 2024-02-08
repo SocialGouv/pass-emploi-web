@@ -31,7 +31,6 @@ import {
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
-import { DATETIME_LONG, toFrenchFormat } from 'utils/date'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('components/Modal')
@@ -1067,7 +1066,7 @@ describe('EditionRdv', () => {
         evenement.historique.slice(0, 2).forEach(({ date, auteur }) => {
           expect(
             getByTextContent(
-              `${toFrenchFormat(DateTime.fromISO(date), DATETIME_LONG)} : ${
+              `${DateTime.fromISO(date).toFormat("dd/MM/yyyy 'à' HH'h'mm")} : ${
                 auteur.prenom
               } ${auteur.nom}`,
               historique

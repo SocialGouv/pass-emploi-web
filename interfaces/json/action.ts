@@ -8,7 +8,6 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
-import { toShortDate } from 'utils/date'
 
 type ActionStatusJson = 'not_started' | 'in_progress' | 'done' | 'canceled'
 
@@ -49,13 +48,7 @@ export interface QualificationActionJson {
 
 export interface MetadonneesActionsJson {
   nombreTotal: number
-  nombrePasCommencees: number
-  nombreEnCours: number
-  nombreTerminees: number
-  nombreAnnulees: number
-  nombreNonQualifiables: number
-  nombreAQualifier: number
-  nombreQualifiees: number
+  nombreFiltrees: number
   nombreActionsParPage: number
 }
 
@@ -131,7 +124,7 @@ export function jsonToActionPilotage(
       nom: action.jeune.nom,
       prenom: action.jeune.prenom,
     },
-    dateFinReelle: toShortDate(action.dateFinReelle),
+    dateFinReelle: action.dateFinReelle,
   }
 
   if (action.categorie)
@@ -160,7 +153,7 @@ export function jsonToActionStatus({
   switch (status) {
     case 'not_started':
     case 'in_progress':
-      return StatutAction.EnCours
+      return StatutAction.AFaire
     case 'done':
       if (qualification?.heures !== undefined) return StatutAction.Qualifiee
       return StatutAction.Terminee
@@ -168,7 +161,7 @@ export function jsonToActionStatus({
       return StatutAction.Annulee
     default:
       console.warn(`Statut d'action ${status} incorrect, traité comme EnCours`)
-      return StatutAction.EnCours
+      return StatutAction.AFaire
   }
 }
 
@@ -179,7 +172,7 @@ export function actionStatusToJson(status: StatutAction): ActionStatusJson {
       return 'done'
     case StatutAction.Annulee:
       return 'canceled'
-    case StatutAction.EnCours:
+    case StatutAction.AFaire:
     default:
       return 'in_progress'
   }
@@ -187,7 +180,7 @@ export function actionStatusToJson(status: StatutAction): ActionStatusJson {
 
 export function actionStatusToFiltre(status: StatutAction): string {
   switch (status) {
-    case StatutAction.EnCours:
+    case StatutAction.AFaire:
       return '&statuts=in_progress&statuts=not_started'
     case StatutAction.Terminee:
       return '&statuts=done&etats=A_QUALIFIER'

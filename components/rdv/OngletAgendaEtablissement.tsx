@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { redirect } from 'next/navigation'
 import React, { ReactElement, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -26,11 +26,7 @@ import {
   buildAgendaData,
 } from 'presentation/AgendaRows'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import {
-  TIME_24_H_SEPARATOR,
-  toFrenchFormat,
-  WEEKDAY_MONTH_LONG,
-} from 'utils/date'
+import { toFrenchTime, toMonthday } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
 type OngletAgendaEtablissementProps = {
@@ -54,8 +50,6 @@ export default function OngletAgendaEtablissement({
   periodeIndex,
   changerPeriode,
 }: OngletAgendaEtablissementProps) {
-  const router = useRouter()
-
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
   const [evenementsFiltres, setEvenementsFiltres] =
@@ -100,7 +94,8 @@ export default function OngletAgendaEtablissement({
       }
     } catch (e) {
       if (e instanceof ApiError && e.statusCode === 401) {
-        await router.push('/api/auth/federated-logout')
+        // TODO redirect in http-client quand le router "page" aura disparu
+        redirect('/api/auth/federated-logout')
       }
       setFailed(true)
     } finally {
@@ -239,7 +234,7 @@ export default function OngletAgendaEtablissement({
               Item={({ item: ac }) => (
                 <TR key={ac.id} href={getHref(ac)} label={labelLien(ac)}>
                   <TD>
-                    {heure(ac)} - {ac.duree} min
+                    {toFrenchTime(ac.date)} - {ac.duree} min
                   </TD>
                   <TD>
                     {ac.titre}
@@ -290,17 +285,9 @@ export default function OngletAgendaEtablissement({
 }
 
 function labelLien(ac: AnimationCollective): string {
-  return `Consulter ${ac.type} ${statusProps(ac).label} du ${fullDate(
-    ac
-  )} à ${heure(ac)}`
-}
-
-function fullDate({ date }: AnimationCollective): string {
-  return toFrenchFormat(date, WEEKDAY_MONTH_LONG)
-}
-
-function heure({ date }: AnimationCollective): string {
-  return toFrenchFormat(date, TIME_24_H_SEPARATOR)
+  return `Consulter ${ac.type} ${statusProps(ac).label} du ${toMonthday(
+    ac.date
+  )} à ${toFrenchTime(ac.date)}`
 }
 
 function tagType({ isSession, type }: AnimationCollective): ReactElement {

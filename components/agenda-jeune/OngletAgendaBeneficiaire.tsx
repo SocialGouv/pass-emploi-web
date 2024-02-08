@@ -11,7 +11,7 @@ import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Agenda, EntreeAgenda } from 'interfaces/agenda'
 import { estPoleEmploi } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
+import { toMonthday } from 'utils/date'
 
 interface OngletAgendaBeneficiaireProps {
   idBeneficiaire: string
@@ -46,7 +46,7 @@ export default function OngletAgendaBeneficiaire({
 
           entrees.forEach((entree) => {
             const semaine = entree.date < separation ? courante : suivante
-            const jour = semaine.jours[toFrenchFulldate(entree.date)]
+            const jour = semaine.jours[toMonthday(entree.date)]
             if (!jour) return
             jour.entrees.push(entree)
             semaine.aEvenement = true
@@ -57,7 +57,6 @@ export default function OngletAgendaBeneficiaire({
         }
       )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -177,7 +176,7 @@ function preparerSemaines(
   const separation = dateDeDebut.plus({ week: 1 })
   for (let date = dateDeDebut; date < dateDeFin; date = date.plus({ day: 1 })) {
     const semaine = date < separation ? courante : suivante
-    semaine.jours[toFrenchFulldate(date)] = { date, entrees: [] }
+    semaine.jours[toMonthday(date)] = { date, entrees: [] }
   }
   return { courante, suivante, separation }
 }
@@ -195,22 +194,12 @@ function getLibelleSemaineEnCours(): string {
   const maintenant = DateTime.now()
   const lundi = maintenant.startOf('week')
   const dimanche = lundi.plus({ day: 6 })
-  return `Du ${toFrenchFulldate(lundi)} au ${toFrenchFormat(
-    dimanche,
-    WEEKDAY_MONTH_LONG
-  )}`
+  return `Du ${toMonthday(lundi)} au ${toMonthday(dimanche)}`
 }
 
 function getLibelleSemaineSuivante(): string {
   const maintenant = DateTime.now()
   const lundiSuivant = maintenant.plus({ week: 1 }).startOf('week')
   const dimancheSuivant = lundiSuivant.plus({ day: 6 })
-  return `Du ${toFrenchFormat(
-    lundiSuivant,
-    WEEKDAY_MONTH_LONG
-  )} au ${toFrenchFulldate(dimancheSuivant)}`
-}
-
-function toFrenchFulldate(date: DateTime) {
-  return toFrenchFormat(date, WEEKDAY_MONTH_LONG)
+  return `Du ${toMonthday(lundiSuivant)} au ${toMonthday(dimancheSuivant)}`
 }

@@ -11,7 +11,7 @@ import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 import { AgendaData, AgendaRows } from 'presentation/AgendaRows'
-import { toFrenchFormat, WEEKDAY_MONTH_LONG } from 'utils/date'
+import { toMonthday } from 'utils/date'
 
 type TableauEvenementsConseillerProps = {
   idConseiller: string
@@ -106,9 +106,7 @@ function ButtonChargerEvenementsJour({
         className='m-auto'
         onClick={chargerEvenementsJours}
         isLoading={isLoading}
-        label={
-          'Afficher l’agenda du ' + toFrenchFormat(jour, WEEKDAY_MONTH_LONG)
-        }
+        label={'Afficher l’agenda du ' + toMonthday(jour)}
       >
         Afficher l’agenda du jour
       </Button>

@@ -1,9 +1,10 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import { desActionsInitiales } from 'fixtures/action'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
@@ -11,7 +12,6 @@ import {
   uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import { MetadonneesFavoris } from 'interfaces/jeune'
-import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -23,8 +23,6 @@ describe('Favoris dans la fiche jeune', () => {
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       replace: jest.fn(() => Promise.resolve()),
-      push: jest.fn(),
-      asPath: '/mes-jeunes',
     })
     ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
@@ -77,13 +75,15 @@ describe('Favoris dans la fiche jeune', () => {
 
 async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
+        categoriesActions={desCategories()}
         metadonneesFavoris={metadonneesFavoris}
-        pageTitle={''}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: { id: 'id-conseiller' },

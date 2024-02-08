@@ -18,7 +18,7 @@ export const uneAction = (overrides: Partial<Action> = {}): Action => {
     lastUpdate: '2022-02-16T15:50:46.000+01:00',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: StatutAction.EnCours,
+    status: StatutAction.AFaire,
     dateEcheance: '2022-02-20T14:50:46.000Z',
   }
 
@@ -35,7 +35,7 @@ export const uneListeDActions = (): Action[] => [
     lastUpdate: '2022-02-18T15:50:46.000+01:00',
     creator: 'Nils',
     creatorType: 'conseiller',
-    status: StatutAction.EnCours,
+    status: StatutAction.AFaire,
     dateEcheance: '2022-02-20T14:50:46.000Z',
   },
   {
@@ -97,7 +97,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Granger',
         prenom: 'Hermione',
       },
-      dateFinReelle: '18/12/2022',
+      dateFinReelle: '2022-12-18T14:03:56.395Z',
       categorie: {
         code: 'EMPLOI',
         libelle: 'Emploi',
@@ -111,7 +111,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Fury',
         prenom: 'Bryan',
       },
-      dateFinReelle: '19/12/2022',
+      dateFinReelle: '2022-12-19T14:03:56.395Z',
       categorie: {
         code: 'SPORTS_CULTURE_LOISIR',
         libelle: 'Sports,culture,loisir',
@@ -125,7 +125,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Tran',
         prenom: 'Mélodie',
       },
-      dateFinReelle: '10/01/2023',
+      dateFinReelle: '2023-01-10T15:26:00.055Z',
       categorie: {
         code: 'FORMATION',
         libelle: 'Formation',
@@ -139,7 +139,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Caramelle',
         prenom: 'Amelle',
       },
-      dateFinReelle: '30/01/2023',
+      dateFinReelle: '2023-01-30T15:12:20.342Z',
       categorie: {
         code: 'LOGEMENT',
         libelle: 'Logement',
@@ -153,7 +153,7 @@ export const uneListeDActionsAQualifier = (): ActionPilotage[] => {
         nom: 'Android',
         prenom: 'Gabriel',
       },
-      dateFinReelle: '31/01/2023',
+      dateFinReelle: '2023-01-31T15:12:20.342Z',
       categorie: {
         code: 'SANTE',
         libelle: 'Santé',

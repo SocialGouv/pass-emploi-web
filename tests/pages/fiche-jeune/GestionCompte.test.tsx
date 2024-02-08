@@ -1,9 +1,10 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import { desActionsInitiales } from 'fixtures/action'
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
+import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
@@ -15,7 +16,6 @@ import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune, DetailJeune } from 'interfaces/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
-import FicheJeune from 'pages/mes-jeunes/[jeune_id]'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
 import {
@@ -41,11 +41,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
   beforeEach(async () => {
     push = jest.fn()
-    ;(useRouter as jest.Mock).mockReturnValue({
-      replace: jest.fn(),
-      push: push,
-      asPath: '/mes-jeunes',
-    })
+    ;(useRouter as jest.Mock).mockReturnValue({ push })
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
     portefeuille = desItemsJeunes().map(extractBaseJeune)
@@ -276,12 +272,14 @@ async function renderFicheJeune(
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={jeune}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
-        pageTitle={''}
+        categoriesActions={desCategories()}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },

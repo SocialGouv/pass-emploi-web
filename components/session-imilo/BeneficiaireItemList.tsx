@@ -1,12 +1,17 @@
 import React from 'react'
 
+import { BeneficiaireSelectionneSession } from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { StatutBeneficiaire } from 'interfaces/session'
-import { BeneficiaireSelectionneSession } from 'pages/agenda/sessions/[session_id]'
 
 type BeneficiaireItemListProps = {
-  beneficiaire: BeneficiaireSelectionneSession
+  beneficiaire: {
+    id: string
+    value: string
+    statut: string
+    commentaire?: string
+  }
   dateLimiteDepassee: boolean
   onDesinscrire: (id: string) => void
   onReinscrire: (id: string) => void

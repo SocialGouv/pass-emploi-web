@@ -1,11 +1,13 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
+import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import {
   desActionsInitiales,
+  desCategories,
   uneAction,
   uneListeDActions,
 } from 'fixtures/action'
@@ -21,8 +23,10 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { MetadonneesFavoris } from 'interfaces/jeune'
-import FicheJeune, { Onglet } from 'pages/mes-jeunes/[jeune_id]'
-import { getActionsJeuneClientSide } from 'services/actions.service'
+import {
+  getActionsJeuneClientSide,
+  qualifierActions,
+} from 'services/actions.service'
 import { recupererAgenda } from 'services/agenda.service'
 import { getOffres } from 'services/favoris.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
@@ -33,6 +37,7 @@ jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
 jest.mock('services/favoris.service')
 jest.mock('services/actions.service')
+jest.mock('components/Modal')
 
 describe('Actions dans la fiche jeune', () => {
   const actions = uneListeDActions().concat([
@@ -61,11 +66,7 @@ describe('Actions dans la fiche jeune', () => {
   let replace: jest.Mock
   beforeEach(async () => {
     replace = jest.fn(() => Promise.resolve())
-    ;(useRouter as jest.Mock).mockReturnValue({
-      replace: replace,
-      push: jest.fn(),
-      asPath: '/mes-jeunes',
-    })
+    ;(useRouter as jest.Mock).mockReturnValue({ replace })
   })
 
   describe("quand l'utilisateur est un conseiller Pôle emploi", () => {
@@ -127,13 +128,6 @@ describe('Actions dans la fiche jeune', () => {
       actions.forEach((action) => {
         expect(screen.getByText(action.content)).toBeInTheDocument()
       })
-      expect(
-        within(
-          screen.getByRole('row', {
-            name: `Détail de l'action ${actions[5].content}`,
-          })
-        ).getByLabelText(`Qualifiée en Situation Non Professionnelle`)
-      ).toBeInTheDocument()
 
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
         'Actions 14'
@@ -141,11 +135,161 @@ describe('Actions dans la fiche jeune', () => {
       expect(() =>
         screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
       ).toThrow()
-      expect(replace).toHaveBeenCalledWith(
-        { pathname: '/mes-jeunes/jeune-1', query: { onglet: 'actions' } },
-        undefined,
-        { shallow: true }
-      )
+      expect(replace).toHaveBeenCalledWith('/mes-jeunes/jeune-1?onglet=actions')
+    })
+
+    describe('permet la multi qualification', () => {
+      beforeEach(async () => {
+        await renderFicheJeuneMILO({
+          structure: StructureConseiller.MILO,
+          actionsInitiales: {
+            actions,
+            page: 1,
+            metadonnees: { nombreTotal: 15, nombrePages: 2 },
+          },
+        })
+
+        // When
+        const tabActions = screen.getByRole('tab', { name: 'Actions 15' })
+        await userEvent.click(tabActions)
+        ;(qualifierActions as jest.Mock).mockResolvedValue({
+          idsActionsEnErreur: [],
+        })
+      })
+
+      describe('quand le conseiller qualifie en SNP', () => {
+        beforeEach(async () => {
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /Sélection Action 5/,
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier les actions en SNP',
+            })
+          )
+        })
+
+        it('affiche la modale de qualification en SNP', () => {
+          expect(
+            screen.getByText(
+              'Les informations seront envoyées à i-milo, qui comptera automatiquement les heures associées à chaque type de SNP.'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Annuler' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          ).toBeInTheDocument()
+        })
+
+        it('qualifie l’action', async () => {
+          //When
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          )
+
+          //Then
+          expect(qualifierActions).toHaveBeenCalledWith(
+            [
+              {
+                codeQualification: actions[4].qualification!.code,
+                idAction: actions[4].id,
+              },
+            ],
+            true
+          )
+        })
+      })
+
+      describe('quand le conseiller enregisre en non SNP', () => {
+        beforeEach(async () => {
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /Sélection Action 5/,
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Enregistrer les actions en non SNP',
+            })
+          )
+        })
+
+        it('affiche la modale d’enregistrement en non SNP', () => {
+          expect(
+            screen.getByText(
+              'Les actions non-SNP ne sont pas transmises à i-milo, pour ne pas fausser le calcul d’heures de votre bénéficiaire.'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Annuler' })
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('button', { name: 'Enregistrer en non SNP' })
+          ).toBeInTheDocument()
+        })
+
+        it('enregistre l’action', async () => {
+          //When
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Enregistrer en non SNP' })
+          )
+
+          //Then
+          expect(qualifierActions).toHaveBeenCalledWith(
+            [{ codeQualification: 'NON_SNP', idAction: actions[4].id }],
+            false
+          )
+        })
+      })
+
+      describe('quand deux actions sont sélectionnées', () => {
+        beforeEach(async () => {
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /Sélection Action 5/,
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: /Sélection Consulter les offres d'emploi/,
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier les actions en SNP',
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          )
+        })
+        it('Qualifie les actions', () => {
+          //Then
+          expect(qualifierActions).toHaveBeenCalledWith(
+            [
+              {
+                codeQualification: actions[4].qualification!.code,
+                idAction: actions[4].id,
+              },
+              {
+                codeQualification: actions[3].qualification!.code,
+                idAction: actions[3].id,
+              },
+            ],
+            true
+          )
+        })
+      })
     })
 
     it('permet la création d’une action', async () => {
@@ -183,7 +327,7 @@ describe('Actions dans la fiche jeune', () => {
             page: 1,
             metadonnees: { nombreTotal: 14, nombrePages: 2 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
 
         // Then
@@ -212,7 +356,7 @@ describe('Actions dans la fiche jeune', () => {
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
       })
 
@@ -223,7 +367,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
-          statuts: [],
+          filtres: { statuts: [], categories: [] },
           tri: 'date_echeance_decroissante',
         })
         expect(screen.getByText('Action page 2')).toBeInTheDocument()
@@ -237,13 +381,13 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: pageCourante - 1,
-          statuts: [],
+          filtres: { statuts: [], categories: [] },
           tri: 'date_echeance_decroissante',
         })
 
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: pageCourante - 2,
-          statuts: [],
+          filtres: { statuts: [], categories: [] },
           tri: 'date_echeance_decroissante',
         })
         expect(
@@ -279,12 +423,12 @@ describe('Actions dans la fiche jeune', () => {
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
 
         // When
         await userEvent.click(screen.getByText('Statut'))
-        await userEvent.click(screen.getByLabelText('En cours'))
+        await userEvent.click(screen.getByLabelText('À faire'))
         await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
       })
 
@@ -292,7 +436,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
-          statuts: [StatutAction.EnCours],
+          filtres: { statuts: [StatutAction.AFaire], categories: [] },
           tri: 'date_echeance_decroissante',
         })
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
@@ -312,7 +456,65 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
-          statuts: [StatutAction.EnCours],
+          filtres: { statuts: [StatutAction.AFaire], categories: [] },
+          tri: 'date_echeance_decroissante',
+        })
+      })
+    })
+
+    describe('filtrer les actions par catégories', () => {
+      let pageCourante: number
+      beforeEach(async () => {
+        // Given
+        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+          async () => ({
+            actions: [uneAction({ content: 'Action filtrée' })],
+            metadonnees: { nombreTotal: 52, nombrePages: 3 },
+          })
+        )
+        pageCourante = 1
+
+        await renderFicheJeuneMILO({
+          structure: StructureConseiller.MILO,
+          actionsInitiales: {
+            actions,
+            page: pageCourante,
+            metadonnees: { nombreTotal: 52, nombrePages: 6 },
+          },
+          onglet: 'ACTIONS',
+        })
+
+        // When
+        await userEvent.click(screen.getByText('Catégorie'))
+        await userEvent.click(screen.getByLabelText('SNP 1'))
+        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+      })
+
+      it('filtre les actions', () => {
+        // Then
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 1,
+          filtres: { statuts: [], categories: ['SNP_1'] },
+          tri: 'date_echeance_decroissante',
+        })
+        expect(screen.getByText('Action filtrée')).toBeInTheDocument()
+      })
+
+      it('met à jour la pagination', () => {
+        expect(screen.getAllByLabelText(/Page \d+/)).toHaveLength(3)
+        expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 2')).toBeInTheDocument()
+        expect(screen.getByLabelText('Page 3')).toBeInTheDocument()
+      })
+
+      it('conserve les filtres en changeant de page', async () => {
+        // When
+        await userEvent.click(screen.getByLabelText('Page 2'))
+
+        // Then
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
+          page: 2,
+          filtres: { statuts: [], categories: ['SNP_1'] },
           tri: 'date_echeance_decroissante',
         })
       })
@@ -338,7 +540,7 @@ describe('Actions dans la fiche jeune', () => {
             page: pageCourante,
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
           },
-          onglet: Onglet.ACTIONS,
+          onglet: 'ACTIONS',
         })
 
         headerColonneDate = screen.getByRole('button', {
@@ -354,12 +556,12 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
-          statuts: [],
+          filtres: { statuts: [], categories: [] },
           tri: 'date_echeance_croissante',
         })
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 1,
-          statuts: [],
+          filtres: { statuts: [], categories: [] },
           tri: 'date_echeance_decroissante',
         })
         expect(screen.getByText('Action triée')).toBeInTheDocument()
@@ -384,7 +586,7 @@ describe('Actions dans la fiche jeune', () => {
         // Then
         expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
           page: 2,
-          statuts: [],
+          filtres: { statuts: [], categories: [] },
           tri: 'date_echeance_croissante',
         })
       })
@@ -399,7 +601,7 @@ interface FicheJeuneParams {
     metadonnees: MetadonneesPagination
     page: number
   }
-  onglet?: Onglet
+  onglet?: 'ACTIONS'
 }
 
 async function renderFicheJeuneMILO({
@@ -408,13 +610,14 @@ async function renderFicheJeuneMILO({
   onglet,
 }: FicheJeuneParams) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
+        categoriesActions={desCategories()}
         rdvs={[]}
         actionsInitiales={actionsInitiales ?? desActionsInitiales()}
-        onglet={onglet}
-        pageTitle={''}
+        onglet={onglet ?? 'AGENDA'}
+        lectureSeule={false}
       />,
       {
         customConseiller: { id: 'id-conseiller', structure: structure },
@@ -431,15 +634,17 @@ async function renderFicheJeunePE(
   recherchesPE: Recherche[]
 ) {
   await act(async () => {
-    await renderWithContexts(
-      <FicheJeune
+    renderWithContexts(
+      <FicheBeneficiairePage
         jeune={unDetailJeune()}
+        categoriesActions={[]}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
-        pageTitle={''}
         metadonneesFavoris={metadonnees}
         offresPE={offresPE}
         recherchesPE={recherchesPE}
+        onglet='AGENDA'
+        lectureSeule={false}
       />,
       {
         customConseiller: {

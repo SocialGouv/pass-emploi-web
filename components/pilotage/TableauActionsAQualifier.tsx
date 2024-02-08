@@ -1,27 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
+import ActionRowPilotage from 'components/action/ActionRowPilotage'
+import EncartQualificationActions from 'components/action/EncartQualificationActions'
 import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
-import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQualificationModal'
-import ConfirmationMultiQualificationModalSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
-import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
+import {
+  ActionAQualifier,
+  ActionPilotage,
+  SituationNonProfessionnelle,
+} from 'interfaces/action'
 import { BaseJeune } from 'interfaces/jeune'
 import { TriActionsAQualifier } from 'services/actions.service'
 
 type TableauActionsConseillerProps = {
   categories: SituationNonProfessionnelle[]
-  actionsFilrees: ActionPilotage[]
+  actionsFiltrees: ActionPilotage[]
   tri: TriActionsAQualifier | undefined
   onTri: (tri: TriActionsAQualifier) => void
   onFiltres: (categories: string[]) => void
@@ -32,14 +33,9 @@ type TableauActionsConseillerProps = {
   ) => Promise<void>
 }
 
-type ActionAQualifier = {
-  idAction: string
-  codeQualification?: string
-}
-
 export default function TableauActionsAQualifier({
   categories,
-  actionsFilrees,
+  actionsFiltrees,
   tri,
   onTri,
   onFiltres,
@@ -55,14 +51,6 @@ export default function TableauActionsAQualifier({
   const [beneficiaireSelectionne, setBeneficiaireSelectionne] =
     useState<BaseJeune>()
 
-  const [
-    afficherModaleMultiQualification,
-    setAfficherModaleMultiQualification,
-  ] = useState<boolean>(false)
-  const [
-    afficherModaleMultiQualificationNonSNP,
-    setAfficherModaleMultiQualificationNonSNP,
-  ] = useState<boolean>(false)
   const [actionSansCategorieSelectionnee, setActionSansCategorieSelectionnee] =
     useState<boolean>(false)
   const [
@@ -106,7 +94,7 @@ export default function TableauActionsAQualifier({
   function selectionnerToutesLesActions() {
     if (actionsSelectionnees.length === 0) {
       setActionsSelectionnees(
-        actionsFilrees.map(({ id, categorie }) => {
+        actionsFiltrees.map(({ id, categorie }) => {
           return {
             idAction: id,
             codeQualification: categorie?.code,
@@ -125,25 +113,17 @@ export default function TableauActionsAQualifier({
   function recupererBeneficiairesSelectionnes(): Map<string, BaseJeune> {
     const mapBeneficiaires = new Map<string, BaseJeune>()
     actionsSelectionnees.forEach(({ idAction }) => {
-      const { beneficiaire } = actionsFilrees.find(({ id }) => idAction === id)!
+      const { beneficiaire } = actionsFiltrees.find(
+        ({ id }) => idAction === id
+      )!
       mapBeneficiaires.set(beneficiaire.id, beneficiaire)
     })
     return mapBeneficiaires
   }
 
-  async function qualifier(enSNP: boolean) {
-    await onQualification(
-      enSNP,
-      actionsSelectionnees as Array<{
-        idAction: string
-        codeQualification: string
-      }>
-    )
-  }
-
   useEffect(() => {
     setActionsSelectionnees([])
-  }, [actionsFilrees])
+  }, [actionsFiltrees])
 
   useEffect(() => {
     setActionSansCategorieSelectionnee(
@@ -156,13 +136,13 @@ export default function TableauActionsAQualifier({
   }, [actionsSelectionnees])
 
   useEffect(() => {
-    if (!actionsFilrees.length) return
+    if (!actionsFiltrees.length) return
 
     const tailleSelection = actionsSelectionnees.length
     const toutSelectionnerCheckbox = toutSelectionnerCheckboxRef.current!
-    const isChecked = tailleSelection === actionsFilrees.length
+    const isChecked = tailleSelection === actionsFiltrees.length
     const isIndeterminate =
-      tailleSelection !== actionsFilrees.length && tailleSelection > 0
+      tailleSelection !== actionsFiltrees.length && tailleSelection > 0
 
     toutSelectionnerCheckbox.checked = isChecked
     toutSelectionnerCheckbox.indeterminate = isIndeterminate
@@ -170,38 +150,18 @@ export default function TableauActionsAQualifier({
     if (isChecked) toutSelectionnerCheckbox.ariaChecked = 'true'
     else if (isIndeterminate) toutSelectionnerCheckbox.ariaChecked = 'mixed'
     else toutSelectionnerCheckbox.ariaChecked = 'false'
-  }, [actionsFilrees.length, actionsSelectionnees.length])
+  }, [actionsFiltrees.length, actionsSelectionnees.length])
 
   return (
     <>
-      <div className='flex items-center bg-primary_lighten rounded-base p-4 justify-between'>
-        <p className='whitespace-pre-wrap'>
-          {actionsSelectionnees.length === 0 &&
-            'Sélectionnez au moins un élément ci-dessous \npour commencer à qualifier'}
-          {actionsSelectionnees.length === 1 &&
-            '1 action sélectionnée. \nS’agit-il de SNP ou de non SNP ?'}
-          {actionsSelectionnees.length > 1 &&
-            `${actionsSelectionnees.length} actions sélectionnées. \nS’agit-il de SNP ou de non SNP ?`}
-        </p>
-        <div className='flex gap-2'>
-          <Button
-            onClick={() => setAfficherModaleMultiQualificationNonSNP(true)}
-            style={ButtonStyle.SECONDARY}
-            label='Enregistrer les actions en non SNP'
-            disabled={boutonsDisabled}
-          >
-            Enregistrer les actions en non SNP
-          </Button>
-          <Button
-            onClick={() => setAfficherModaleMultiQualification(true)}
-            style={ButtonStyle.PRIMARY}
-            label='Qualifier les actions en SNP'
-            disabled={boutonsDisabled}
-          >
-            Qualifier les actions en SNP
-          </Button>
-        </div>
-      </div>
+      <EncartQualificationActions
+        actionsSelectionnees={actionsSelectionnees}
+        boutonsDisabled={boutonsDisabled}
+        jeune={beneficiaireSelectionne}
+        nombreActionsSelectionnees={actionsSelectionnees.length}
+        onLienExterne={onLienExterne}
+        onQualification={onQualification}
+      />
 
       <div className='mt-4'>
         {actionSansCategorieSelectionnee && (
@@ -219,7 +179,7 @@ export default function TableauActionsAQualifier({
         )}
       </div>
 
-      {actionsFilrees.length === 0 && (
+      {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
           <EmptyStateImage
             focusable='false'
@@ -239,7 +199,7 @@ export default function TableauActionsAQualifier({
         </div>
       )}
 
-      {actionsFilrees.length > 0 && (
+      {actionsFiltrees.length > 0 && (
         <Table asDiv={true} caption={{ text: 'Liste des actions à qualifier' }}>
           <THead>
             <TR isHeader={true}>
@@ -287,81 +247,16 @@ export default function TableauActionsAQualifier({
           </THead>
 
           <TBody>
-            {actionsFilrees.map((action: ActionPilotage) => (
-              <TR
+            {actionsFiltrees.map((action: ActionPilotage) => (
+              <ActionRowPilotage
+                action={action}
                 key={action.id}
-                href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
-                label={`Accéder au détail de l’action : ${action.titre}`}
-                isSelected={selectionContientId(action.id)}
-              >
-                <TD
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    selectionnerAction(action)
-                  }}
-                >
-                  <input
-                    id={`selectionner-${action.id}`}
-                    type='checkbox'
-                    checked={selectionContientId(action.id)}
-                    title={`${
-                      selectionContientId(action.id)
-                        ? 'Désélectionner'
-                        : 'Sélectionner'
-                    } ${action.titre}`}
-                    className='w-4 h-4 cursor-pointer'
-                    aria-label={`Sélection ${action.titre} ${
-                      action.categorie?.libelle ?? ''
-                    }`}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                    }}
-                    onChange={() => selectionnerAction(action)}
-                  />
-                </TD>
-                <TD isBold={selectionContientId(action.id)}>
-                  {action.beneficiaire.nom} {action.beneficiaire.prenom}
-                </TD>
-                <TD isBold>{action.titre}</TD>
-                <TD>
-                  <TagCategorieAction categorie={action.categorie?.libelle} />
-                </TD>
-                <TD>
-                  <span className='flex flex-row justify-between'>
-                    {action.dateFinReelle}
-                    <IconComponent
-                      name={IconName.ChevronRight}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='w-6 h-6 fill-primary'
-                    />
-                  </span>
-                </TD>
-              </TR>
+                isChecked={selectionContientId(action.id)}
+                onSelection={selectionnerAction}
+              />
             ))}
           </TBody>
         </Table>
-      )}
-
-      {afficherModaleMultiQualification && (
-        <ConfirmationMultiQualificationModal
-          actions={actionsSelectionnees}
-          beneficiaire={beneficiaireSelectionne!}
-          onConfirmation={() => qualifier(true)}
-          onCancel={() => setAfficherModaleMultiQualification(false)}
-          onLienExterne={onLienExterne}
-        />
-      )}
-
-      {afficherModaleMultiQualificationNonSNP && (
-        <ConfirmationMultiQualificationModalSNP
-          actions={actionsSelectionnees}
-          beneficiaire={beneficiaireSelectionne!}
-          onConfirmation={() => qualifier(false)}
-          onCancel={() => setAfficherModaleMultiQualificationNonSNP(false)}
-        />
       )}
     </>
   )

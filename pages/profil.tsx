@@ -16,6 +16,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import {
   Conseiller,
   estMilo,
@@ -25,7 +26,11 @@ import {
 import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
-import { trackEvent } from 'utils/analytics/matomo'
+import {
+  trackEvent,
+  trackPage,
+  userStructureDimensionString,
+} from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { ApiError } from 'utils/httpClient'
@@ -58,6 +63,9 @@ function Profil({ referentielAgences }: ProfilProps) {
   ] = useState(false)
   const [portefeuilleAvecBeneficiaires, setPortefeuilleAvecBeneficiaires] =
     useState<boolean>(false)
+
+  const [showInformationEmailManquant, setShowInformationEmailManquant] =
+    useState<boolean>(Boolean(conseillerEstMilo && !conseiller.email))
 
   const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
   const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
@@ -130,10 +138,36 @@ function Profil({ referentielAgences }: ProfilProps) {
     })
   }
 
+  function trackAccederAIMilo() {
+    trackPage({
+      structure: userStructureDimensionString(StructureConseiller.MILO),
+      customTitle: 'Accès i-milo',
+    })
+  }
+
   useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
     <>
+      {showInformationEmailManquant && (
+        <div className='mb-6'>
+          <InformationMessage
+            label='Votre adresse mail n’est pas renseignée'
+            onAcknowledge={() => setShowInformationEmailManquant(false)}
+          >
+            <div className='flex flex-col'>
+              Renseignez votre adresse e-mail dans l’encart ”Contacts
+              personnels” de votre profil i-milo.
+              <ExternalLink
+                href={process.env.NEXT_PUBLIC_IMILO_COORDONNEES_URL as string}
+                label='Accéder à i-milo'
+                onClick={trackAccederAIMilo}
+              />
+            </div>
+          </InformationMessage>
+        </div>
+      )}
+
       <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
         <h2 className='text-m-bold text-grey_800 mb-4'>Informations</h2>
         <h3 className='text-base-bold'>

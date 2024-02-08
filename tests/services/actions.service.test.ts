@@ -36,7 +36,7 @@ describe('ActionsApiService', () => {
   describe('.getAction', () => {
     it('renvoie une action non commencée', async () => {
       // GIVEN
-      const action = uneAction({ status: StatutAction.EnCours })
+      const action = uneAction({ status: StatutAction.AFaire })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
@@ -69,7 +69,7 @@ describe('ActionsApiService', () => {
 
     it('renvoie une action commencée', async () => {
       // GIVEN
-      const action = uneAction({ status: StatutAction.EnCours })
+      const action = uneAction({ status: StatutAction.AFaire })
       ;(apiGet as jest.Mock).mockImplementation((url: string) => {
         if (url.includes(action.id))
           return {
@@ -283,7 +283,11 @@ describe('ActionsApiService', () => {
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
-          metadonnees: { nombreTotal: 82, nombreActionsParPage: 10 },
+          metadonnees: {
+            nombreTotal: 82,
+            nombreFiltrees: 82,
+            nombreActionsParPage: 10,
+          },
         },
       })
 
@@ -291,7 +295,7 @@ describe('ActionsApiService', () => {
       const actual = await getActionsJeuneClientSide('whatever', {
         tri: 'date_decroissante',
         page: 1,
-        statuts: [],
+        filtres: { statuts: [], categories: [] },
       })
 
       // THEN
@@ -312,13 +316,7 @@ describe('ActionsApiService', () => {
           actions: uneListeDActionsJson(),
           metadonnees: {
             nombreTotal: 82,
-            nombrePasCommencees: 9,
-            nombreEnCours: 42,
-            nombreTerminees: 30,
-            nombreAnnulees: 1,
-            nombreNonQualifiables: 52,
-            nombreAQualifier: 12,
-            nombreQualifiees: 18,
+            nombreFiltrees: 51,
             nombreActionsParPage: 10,
           },
         },
@@ -328,7 +326,7 @@ describe('ActionsApiService', () => {
       const actual = await getActionsJeuneClientSide('whatever', {
         tri: 'date_decroissante',
         page: 1,
-        statuts: [StatutAction.EnCours],
+        filtres: { statuts: [StatutAction.AFaire], categories: [] },
       })
 
       // THEN
@@ -352,13 +350,7 @@ describe('ActionsApiService', () => {
           actions: uneListeDActionsJson(),
           metadonnees: {
             nombreTotal: 82,
-            nombrePasCommencees: 9,
-            nombreEnCours: 42,
-            nombreTerminees: 30,
-            nombreAnnulees: 1,
-            nombreNonQualifiables: 52,
-            nombreAQualifier: 12,
-            nombreQualifiees: 18,
+            nombreFiltrees: 18,
             nombreActionsParPage: 10,
           },
         },
@@ -368,7 +360,10 @@ describe('ActionsApiService', () => {
       const actual = await getActionsJeuneClientSide('whatever', {
         tri: 'date_decroissante',
         page: 1,
-        statuts: [StatutAction.Qualifiee],
+        filtres: {
+          statuts: [StatutAction.Qualifiee],
+          categories: [],
+        },
       })
 
       // THEN
@@ -384,6 +379,43 @@ describe('ActionsApiService', () => {
         },
       })
     })
+
+    it('parse le paramètre pour filtrer les actions par catégorie et compte le nombre de pages', async () => {
+      // GIVEN
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: {
+          actions: uneListeDActionsJson(),
+          metadonnees: {
+            nombreTotal: 82,
+            nombreFiltrees: 21,
+            nombreActionsParPage: 10,
+          },
+        },
+      })
+
+      // WHEN
+      const actual = await getActionsJeuneClientSide('whatever', {
+        tri: 'date_decroissante',
+        page: 1,
+        filtres: {
+          statuts: [],
+          categories: ['SANTE'],
+        },
+      })
+
+      // THEN
+      expect(apiGet).toHaveBeenCalledWith(
+        '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&categories=SANTE',
+        'accessToken'
+      )
+      expect(actual).toStrictEqual({
+        actions: expect.arrayContaining([]),
+        metadonnees: {
+          nombreTotal: 82,
+          nombrePages: 3,
+        },
+      })
+    })
   })
 
   describe('.getActionsJeuneServerSide', () => {
@@ -393,7 +425,11 @@ describe('ActionsApiService', () => {
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
           actions: uneListeDActionsJson(),
-          metadonnees: { nombreTotal: 82, nombreActionsParPage: 10 },
+          metadonnees: {
+            nombreTotal: 82,
+            nombreFiltrees: 82,
+            nombreActionsParPage: 10,
+          },
         },
       })
 
@@ -483,7 +519,7 @@ describe('ActionsApiService', () => {
           titre: 'content',
           description: 'comment',
           dateEcheance: '2022-07-30',
-          statut: StatutAction.EnCours,
+          statut: StatutAction.AFaire,
         },
         'id-jeune'
       )

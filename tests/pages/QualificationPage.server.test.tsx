@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
 import { notFound } from 'next/navigation'
 
-import Qualification from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/page'
-import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage'
+import Qualification from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/page'
+import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { StatutAction } from 'interfaces/action'
@@ -17,8 +17,7 @@ jest.mock('utils/auth/auth', () => ({
 }))
 jest.mock('services/actions.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/qualification/QualificationPage',
-  () => jest.fn()
+  'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 )
 
 describe('QualificationPage server side', () => {
@@ -31,7 +30,7 @@ describe('QualificationPage server side', () => {
 
       // When
       const promise = Qualification({
-        params: { action_id: 'id-action' },
+        params: { idAction: 'id-action' },
       })
 
       // Then
@@ -54,7 +53,7 @@ describe('QualificationPage server side', () => {
 
         // When
         const promise = Qualification({
-          params: { action_id: 'id-action' },
+          params: { idAction: 'id-action' },
         })
 
         // Then
@@ -76,7 +75,7 @@ describe('QualificationPage server side', () => {
 
         // When
         const promise = Qualification({
-          params: { action_id: 'id-action' },
+          params: { idAction: 'id-action' },
         })
 
         // Then
@@ -105,7 +104,7 @@ describe('QualificationPage server side', () => {
 
         // When
         const promise = Qualification({
-          params: { action_id: 'id-action' },
+          params: { idAction: 'id-action' },
         })
 
         // Then
@@ -131,7 +130,7 @@ describe('QualificationPage server side', () => {
         // When
         render(
           await Qualification({
-            params: { action_id: action.id },
+            params: { idAction: action.id },
           })
         )
 

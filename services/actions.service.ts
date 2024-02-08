@@ -72,7 +72,10 @@ export async function getActionsJeuneClientSide(
   idJeune: string,
   options: {
     page: number
-    statuts: StatutAction[]
+    filtres: {
+      statuts: StatutAction[]
+      categories: string[]
+    }
     tri?: string
   }
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
@@ -85,7 +88,11 @@ export async function getActionsJeuneServerSide(
   page: number,
   accessToken: string
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-  return getActionsJeune(idJeune, { page, statuts: [] }, accessToken)
+  return getActionsJeune(
+    idJeune,
+    { page, filtres: { statuts: [], categories: [] } },
+    accessToken
+  )
 }
 
 export async function getActionsAQualifierClientSide(
@@ -243,20 +250,27 @@ async function getActionsJeune(
   idJeune: string,
   {
     tri,
-    statuts,
+    filtres,
     page,
   }: {
     page: number
-    statuts: StatutAction[]
+    filtres: {
+      statuts: StatutAction[]
+      categories: string[]
+    }
+
     tri?: string
   },
   accessToken: string
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
   const triActions = tri ?? 'date_echeance_decroissante'
-  const filtresStatuts = statuts
+  const filtresStatuts = filtres.statuts
     .map((statut) => actionStatusToFiltre(statut))
     .join('')
-  const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}`
+  const filtresCategories = filtres.categories
+    .map((categorie) => '&categories=' + categorie)
+    .join('')
+  const url = `/v2/jeunes/${idJeune}/actions?page=${page}&tri=${triActions}${filtresStatuts}${filtresCategories}`
 
   const {
     content: { actions: actionsJson, metadonnees },
@@ -265,13 +279,9 @@ async function getActionsJeune(
     metadonnees: MetadonneesActionsJson
   }>(url, accessToken)
 
-  const nombreActions = statuts.length
-    ? calculeNombreActionsFiltrees(statuts, metadonnees)
-    : metadonnees.nombreTotal
   const nombrePages = Math.ceil(
-    nombreActions / metadonnees.nombreActionsParPage
+    metadonnees.nombreFiltrees / metadonnees.nombreActionsParPage
   )
-
   return {
     actions: actionsJson.map(jsonToAction),
     metadonnees: { nombreTotal: metadonnees.nombreTotal, nombrePages },
@@ -328,36 +338,5 @@ async function getActionsAQualifier(
       nombreTotal: pagination.total,
       nombrePages: nombrePages,
     },
-  }
-}
-
-function calculeNombreActionsFiltrees(
-  statuts: StatutAction[],
-  metadonnees: MetadonneesActionsJson
-): number {
-  let total = 0
-
-  statuts.forEach((statut) => {
-    total += extraireNombreActionsAvecStatut(metadonnees, statut)
-  })
-
-  return total
-}
-
-function extraireNombreActionsAvecStatut(
-  metadonnees: MetadonneesActionsJson,
-  statut: StatutAction
-): number {
-  switch (statut) {
-    case StatutAction.EnCours:
-      return metadonnees.nombrePasCommencees + metadonnees.nombreEnCours
-    case StatutAction.Terminee:
-      return metadonnees.nombreAQualifier
-    case StatutAction.Qualifiee:
-      return metadonnees.nombreQualifiees
-    case StatutAction.Annulee:
-      return metadonnees.nombreAnnulees
-    default:
-      return 0
   }
 }

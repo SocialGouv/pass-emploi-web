@@ -1,12 +1,12 @@
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
 import { IndicateursSemaine } from 'interfaces/jeune'
-import { toFrenchString } from 'utils/date'
+import { toShortDate } from 'utils/date'
 
 type ResumeIndicateursJeuneProps = {
   idJeune: string
@@ -21,8 +21,7 @@ export function ResumeIndicateursJeune({
   finDeLaSemaine,
   indicateursSemaine,
 }: ResumeIndicateursJeuneProps) {
-  const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
@@ -32,8 +31,7 @@ export function ResumeIndicateursJeune({
         Les indicateurs de la semaine
       </h2>
       <p className='mb-4'>
-        du {toFrenchString(debutDeLaSemaine)} au{' '}
-        {toFrenchString(finDeLaSemaine)}
+        du {toShortDate(debutDeLaSemaine)} au {toShortDate(finDeLaSemaine)}
       </p>
       <div
         className={`flex flex-wrap gap-6 ${

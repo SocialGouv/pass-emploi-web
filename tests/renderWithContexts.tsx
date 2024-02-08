@@ -1,5 +1,5 @@
 import { render, RenderResult } from '@testing-library/react'
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
@@ -16,7 +16,7 @@ import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
 export default function renderWithContexts(
-  children: JSX.Element,
+  children: ReactNode,
   options: {
     customConseiller?: Partial<Conseiller>
     customPortefeuille?: Partial<{
@@ -64,7 +64,7 @@ export default function renderWithContexts(
 
   const showRubriqueListeDeDiffusion = { ...customShowRubriqueListeDeDiffusion }
   const listeDeDiffusionSelectionnee = { ...customListeDeDiffusionSelectionnee }
-  const withContexts = (element: JSX.Element) =>
+  const withContexts = (element: ReactNode) =>
     provideContexts(
       element,
       conseiller,
@@ -78,14 +78,14 @@ export default function renderWithContexts(
   const renderResult: RenderResult = render(withContexts(children))
 
   const rerender = renderResult.rerender
-  renderResult.rerender = (rerenderChildren: JSX.Element) =>
+  renderResult.rerender = (rerenderChildren: ReactNode) =>
     rerender(withContexts(rerenderChildren))
 
   return renderResult
 }
 
 function provideContexts(
-  children: JSX.Element,
+  children: ReactNode,
   conseiller: Conseiller,
   portefeuille: Partial<{
     value: BaseJeune[]

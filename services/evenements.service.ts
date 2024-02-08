@@ -19,7 +19,6 @@ import {
 } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { MetadonneesPagination } from 'types/pagination'
-import { toShortDate } from 'utils/date'
 import { ApiError } from 'utils/httpClient'
 
 export async function getRendezVousConseiller(
@@ -184,10 +183,7 @@ async function getAnimationsCollectivesAClore(
   const nombrePages = Math.ceil(pagination.total / pagination.limit)
 
   return {
-    animationsCollectives: resultats.map(({ date, ...ac }) => ({
-      ...ac,
-      date: toShortDate(date),
-    })),
+    animationsCollectives: resultats,
     metadonnees: {
       nombreTotal: pagination.total,
       nombrePages: nombrePages,

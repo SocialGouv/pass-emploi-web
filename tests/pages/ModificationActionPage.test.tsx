@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 
-import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[jeune_id]/actions/[action_id]/modification/ModificationActionPage'
+import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/modification/ModificationActionPage'
 import {
   desActionsPredefinies,
   desCategories,
@@ -186,7 +186,7 @@ describe('ModificationActionPage client side', () => {
             titre: actionsPredefinies[1].titre,
             description: 'Description action',
             dateEcheance: '2023-12-20',
-            statut: 'EnCours',
+            statut: 'AFaire',
           })
         })
 
@@ -215,7 +215,10 @@ describe('ModificationActionPage client side', () => {
   })
 
   describe('Action terminée', () => {
-    const action = uneAction({ status: StatutAction.Terminee })
+    const action = uneAction({
+      status: StatutAction.Terminee,
+      dateFinReelle: '2022-12-21T14:50:46.000Z',
+    })
     beforeEach(async () => {
       // When
       renderWithContexts(
@@ -267,6 +270,7 @@ describe('ModificationActionPage client side', () => {
 
     it("affiche un message d'erreur quand date d'échéance n'est pas dans l'intervalle : un an avant, deux ans après", async () => {
       const dateRealisation = screen.getByLabelText(/Date/)
+      await userEvent.clear(dateRealisation)
       await userEvent.type(dateRealisation, '2000-07-30')
       await userEvent.tab()
 

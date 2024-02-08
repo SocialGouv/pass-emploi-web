@@ -9,11 +9,6 @@ import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseil
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
 import { buildAgendaData } from 'presentation/AgendaRows'
-import {
-  TIME_24_H_SEPARATOR,
-  toFrenchFormat,
-  WEEKDAY_MONTH_LONG,
-} from 'utils/date'
 
 describe('<TableauRdvsConseiller>', () => {
   const chargerEvenementsJour: (jour: DateTime) => Promise<void> = jest.fn()
@@ -49,10 +44,7 @@ describe('<TableauRdvsConseiller>', () => {
     it('affiche les informations des rendez-vous', () => {
       // Then
       listeRdv.forEach((rdv) => {
-        const horaires = `${toFrenchFormat(
-          DateTime.fromISO(rdv.date),
-          TIME_24_H_SEPARATOR
-        )} - ${rdv.duree} min`
+        const horaires = `${DateTime.fromISO(rdv.date).toFormat("HH'h'mm")} - ${rdv.duree} min`
 
         expect(
           screen.getByText(`${rdv.labelBeneficiaires}`)
@@ -66,10 +58,7 @@ describe('<TableauRdvsConseiller>', () => {
     it('permet la modification des rendez-vous', () => {
       listeRdv.forEach((rdv) => {
         const link = screen.getByLabelText(
-          `Consulter l’événement du ${toFrenchFormat(
-            DateTime.fromISO(rdv.date),
-            WEEKDAY_MONTH_LONG
-          )} avec ${rdv.labelBeneficiaires}`
+          `Consulter l’événement du ${DateTime.fromISO(rdv.date).toFormat('EEEE d MMMM', { locale: 'fr-FR' })} avec ${rdv.labelBeneficiaires}`
         )
         expect(link).toHaveAttribute(
           'href',

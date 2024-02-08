@@ -57,22 +57,12 @@ export const config = {
 } satisfies NextAuthOptions
 
 // Use it in server contexts
-export function getSessionServerSide(
-  ...args:
-    | [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']]
-    | [NextApiRequest, NextApiResponse]
-    | []
-) {
-  return getServerSession(...args, config)
+export function getSessionServerSide(): Promise<Session | null> {
+  return getServerSession(config)
 }
 
-export async function getMandatorySessionServerSide(
-  ...args:
-    | [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']]
-    | [NextApiRequest, NextApiResponse]
-    | []
-): Promise<Session> {
-  const session = await getSessionServerSide(...args)
+export async function getMandatorySessionServerSide(): Promise<Session> {
+  const session = await getSessionServerSide()
   if (!session) redirect('/login') // FIXME redirectUrl
   // const redirectQueryParam =
   //   resolvedUrl !== '/'

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import TagStatutAction from 'components/action/TagStatutAction'
@@ -16,8 +16,7 @@ interface AgendaRowProps {
 }
 
 export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
-  const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
@@ -49,7 +48,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
   function determineActionEnRetard() {
     return (
       entree.type === 'action' &&
-      entree.statut === StatutAction.EnCours &&
+      entree.statut === StatutAction.AFaire &&
       entree.date < DateTime.now()
     )
   }

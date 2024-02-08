@@ -27,9 +27,9 @@ export interface BaseJeune {
 }
 
 export interface JeuneFromListe extends BaseJeune {
-  lastActivity: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
+  lastActivity?: string
   conseillerPrecedent?: {
     nom: string
     prenom: string

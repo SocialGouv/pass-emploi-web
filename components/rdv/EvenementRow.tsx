@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -9,12 +9,7 @@ import TR from 'components/ui/Table/TR'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
-import {
-  TIME_24_H_SEPARATOR,
-  toFrenchFormat,
-  toShortDate,
-  WEEKDAY_MONTH_LONG,
-} from 'utils/date'
+import { toShortDate, toFrenchTime, toMonthday } from 'utils/date'
 
 interface EvenementRowProps {
   evenement: EvenementListItem
@@ -31,17 +26,14 @@ export function EvenementRow({
   withDate,
   withIndicationPresenceBeneficiaire = false,
 }: EvenementRowProps) {
-  const router = useRouter()
-  const pathPrefix = router.asPath.startsWith('/etablissement')
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
   const date = DateTime.fromISO(evenement.date)
   const shortDate = toShortDate(date)
-  const fullDate = toFrenchFormat(date, WEEKDAY_MONTH_LONG)
-  const timeAndDuration = `${toFrenchFormat(date, TIME_24_H_SEPARATOR)} - ${
-    evenement.duree
-  } min`
+  const fullDate = toMonthday(date)
+  const timeAndDuration = `${toFrenchTime(date)} - ${evenement.duree} min`
 
   const labelBeneficiaires = beneficiaireUnique
     ? getNomJeuneComplet(beneficiaireUnique)

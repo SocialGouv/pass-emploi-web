@@ -56,7 +56,7 @@ export function TagCategorieAction({ categorie }: TagCategorieActionProps) {
   if (categorie)
     return (
       <Tag
-        className='rounded-l '
+        className='rounded-l text-wrap'
         backgroundColor='primary_lighten'
         color='primary'
         label={categorie}

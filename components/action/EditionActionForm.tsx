@@ -24,12 +24,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { ActionFormData } from 'interfaces/json/action'
-import {
-  dateIsInInterval,
-  toFrenchFormat,
-  toShortDate,
-  WEEKDAY,
-} from 'utils/date'
+import { dateIsInInterval, toShortDate, toWeekday } from 'utils/date'
 
 interface EditionRdvFormProps {
   actionsPredefinies: ActionPredefinie[]
@@ -106,7 +101,7 @@ export function EditionActionForm({
   }
 
   function modifierStatut(
-    nouveauStatut: StatutAction.EnCours | StatutAction.Terminee
+    nouveauStatut: StatutAction.AFaire | StatutAction.Terminee
   ) {
     setDateAction({ value: dateEcheance })
     if (nouveauStatut === StatutAction.Terminee) {
@@ -198,7 +193,7 @@ export function EditionActionForm({
   function validerDateRealisation() {
     const unAnAvant = DateTime.now().minus({ year: 1, day: 1 })
     const deuxAnsApres = DateTime.now().plus({ year: 2 })
-    if (statut === StatutAction.EnCours) return true
+    if (statut === StatutAction.AFaire) return true
 
     if (!dateRealisation.value) {
       setDateRealisation({
@@ -411,11 +406,11 @@ export function EditionActionForm({
             </legend>
             <div className='mb-7 flex flex-wrap'>
               <RadioBox
-                isSelected={statut === StatutAction.EnCours}
+                isSelected={statut === StatutAction.AFaire}
                 id='statut-action--arealiser'
                 label='À faire'
                 name='statut-action'
-                onChange={() => modifierStatut(StatutAction.EnCours)}
+                onChange={() => modifierStatut(StatutAction.AFaire)}
               />
               <RadioBox
                 isSelected={statut === StatutAction.Terminee}
@@ -427,7 +422,7 @@ export function EditionActionForm({
             </div>
           </fieldset>
 
-          {statut === StatutAction.EnCours && (
+          {statut === StatutAction.AFaire && (
             <>
               <Label htmlFor='date-action' inputRequired={true}>
                 Date de l’action
@@ -558,7 +553,7 @@ function BoutonDateRapide({
       id={label}
       aria-controls={ariaControls}
       className='text-s-medium border border-solid border-grey_700 rounded-base px-2 py-1 cursor-pointer hover:border-primary hover:bg-primary_lighten'
-      value={`${label} (${toFrenchFormat(date, WEEKDAY)})`}
+      value={`${label} (${toWeekday(date)})`}
       onClick={() => {
         onClick(date.toISODate())
       }}
