@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
@@ -53,12 +54,17 @@ export default async function DetailAction({
   const { action, jeune } = actionEtJeune
   const lectureSeule = jeune.idConseiller !== user.id
 
+  const referer = headers().get('referer')
+  const refererEstPilotage = /\/pilotage$/
+  const from = refererEstPilotage.test(referer) ? 'pilotage' : 'beneficiaire'
+
   return (
     <>
       <PageFilArianePortal />
       <PageHeaderPortal header='Détails de l’action' />
 
       <DetailActionPage
+        from={from}
         action={action}
         jeune={jeune}
         commentaires={commentaires}

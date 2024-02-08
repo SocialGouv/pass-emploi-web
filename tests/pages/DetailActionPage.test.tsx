@@ -51,6 +51,7 @@ describe('ActionPage client side', () => {
           jeune={jeune}
           commentaires={commentaires}
           lectureSeule={false}
+          from='beneficiaire'
         />,
         {
           customAlerte: { alerteSetter },
@@ -169,6 +170,7 @@ describe('ActionPage client side', () => {
           jeune={jeune}
           commentaires={commentaires}
           lectureSeule={true}
+          from='beneficiaire'
         />,
         {
           customAlerte: { alerteSetter },
@@ -217,13 +219,17 @@ describe('ActionPage client side', () => {
 
       beforeEach(async () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+      })
 
+      it("affiche un lien pour qualifier l'action", async () => {
+        //When
         renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
             commentaires={[]}
             lectureSeule={false}
+            from='beneficiaire'
           />,
           {
             customConseiller: {
@@ -232,15 +238,43 @@ describe('ActionPage client side', () => {
             customAlerte: { alerteSetter },
           }
         )
-      })
 
-      it("affiche un lien pour qualifier l'action", async () => {
+        //Then
         expect(
           screen.getByRole('link', { name: 'Qualifier l’action' })
         ).toHaveAttribute(
           'href',
-          '/mes-jeunes/jeune-1/actions/id-action-1/qualification'
+          '/mes-jeunes/jeune-1/actions/id-action-1/qualification?returnTo=beneficiaire'
         )
+      })
+
+      describe('quand le conseiller vient de la page pilotage', () => {
+        it('affiche un lien pour qualifier l’action qui retourne vers pilotage', () => {
+          //When
+          renderWithContexts(
+            <DetailActionPage
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              lectureSeule={false}
+              from='pilotage'
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+              },
+              customAlerte: { alerteSetter },
+            }
+          )
+
+          //Then
+          expect(
+            screen.getByRole('link', { name: 'Qualifier l’action' })
+          ).toHaveAttribute(
+            'href',
+            '/mes-jeunes/jeune-1/actions/id-action-1/qualification?returnTo=pilotage'
+          )
+        })
       })
     })
 
@@ -261,6 +295,7 @@ describe('ActionPage client side', () => {
             jeune={jeune}
             commentaires={[]}
             lectureSeule={false}
+            from='beneficiaire'
           />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
@@ -304,6 +339,7 @@ describe('ActionPage client side', () => {
             jeune={jeune}
             commentaires={[]}
             lectureSeule={false}
+            from='beneficiaire'
           />,
           {
             customConseiller: {
