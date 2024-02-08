@@ -407,6 +407,41 @@ describe('Page Profil conseiller', () => {
           expect(modifierAgence).not.toHaveBeenCalled()
         })
       })
+
+      describe('si son adresse email n’est pas encore renseignée', () => {
+        const agences = uneListeDAgencesMILO()
+
+        it('contient à renseigner son adresse mail', async () => {
+          // Given
+          const conseiller = unConseiller({
+            structure: StructureConseiller.MILO,
+            email: undefined,
+          })
+
+          // When
+          await act(async () => {
+            renderWithContexts(
+              <Profil referentielAgences={agences} pageTitle='' />,
+              {
+                customConseiller: conseiller,
+              }
+            )
+          })
+
+          // Then
+          expect(
+            screen.getByText('Votre adresse mail n’est pas renseignée')
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Renseignez votre adresse e-mail dans l’encart ”Contacts personnels” de votre profil i-milo.'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByRole('link', { name: /Accéder à i-milo/ })
+          ).toBeInTheDocument()
+        })
+      })
     })
 
     describe('quand le conseiller est PE BRSA', () => {
