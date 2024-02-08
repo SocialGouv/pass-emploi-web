@@ -56,7 +56,8 @@ export default async function DetailAction({
 
   const referer = headers().get('referer')
   const refererEstPilotage = /\/pilotage$/
-  const from = refererEstPilotage.test(referer) ? 'pilotage' : 'beneficiaire'
+  const from =
+    referer && refererEstPilotage.test(referer) ? 'pilotage' : 'beneficiaire'
 
   return (
     <>
