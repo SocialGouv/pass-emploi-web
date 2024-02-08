@@ -12,6 +12,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type QualificationParams = { idAction: string }
+type QualificationSearchParams = Partial<{ returnTo: string }>
 
 export async function generateMetadata({
   params,
@@ -29,8 +30,10 @@ export async function generateMetadata({
 }
 export default async function Qualification({
   params,
+  searchParams,
 }: {
   params: QualificationParams
+  searchParams: QualificationSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (user.structure !== StructureConseiller.MILO) notFound()
@@ -47,7 +50,10 @@ export default async function Qualification({
   const { action, jeune } = actionContent
   if (action.status !== StatutAction.Terminee) notFound()
 
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
+  const returnTo =
+    searchParams?.returnTo === 'pilotage'
+      ? '/pilotage'
+      : `/mes-jeunes/${jeune.id}/actions/${action.id}`
   return (
     <>
       <PageHeaderPortal header='Qualifier l’action' />

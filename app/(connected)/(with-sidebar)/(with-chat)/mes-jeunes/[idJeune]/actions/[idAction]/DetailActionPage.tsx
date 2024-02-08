@@ -30,6 +30,7 @@ type DetailActionProps = {
   jeune: BaseJeune
   lectureSeule: boolean
   commentaires: Commentaire[]
+  from: 'pilotage' | 'beneficiaire'
 }
 
 function DetailActionPage({
@@ -37,6 +38,7 @@ function DetailActionPage({
   jeune,
   commentaires,
   lectureSeule,
+  from,
 }: DetailActionProps) {
   const router = useRouter()
   const [conseiller] = useConseiller()
@@ -86,7 +88,7 @@ function DetailActionPage({
           {estAQualifier && !lectureSeule && (
             <ButtonLink
               style={ButtonStyle.PRIMARY}
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?returnTo=${from}`}
             >
               Qualifier l’action
               <IconComponent
