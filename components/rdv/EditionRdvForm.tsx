@@ -140,6 +140,8 @@ export function EditionRdvForm({
     Boolean(nombreMaxParticipants.value) &&
     idsJeunes.value.length > nombreMaxParticipants.value!
 
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
   ): boolean {
@@ -487,6 +489,8 @@ export function EditionRdvForm({
       return Promise.resolve()
     }
     if (!formHasChanges()) return Promise.resolve()
+
+    setIsLoading(true)
 
     const [dureeHeures, dureeMinutes] = duree.value!.split(':')
     const dateTime = DateTime.fromISO(`${date.value}T${horaire.value}`).toISO()
@@ -974,7 +978,7 @@ export function EditionRdvForm({
               </Button>
             )}
             {!evenement && (
-              <Button type='submit'>
+              <Button type='submit' isLoading={isLoading}>
                 <IconComponent
                   name={IconName.Add}
                   focusable={false}
