@@ -58,7 +58,8 @@ export default async function ModificationAction({
   )
   if (!commentaires) notFound()
 
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
+  // FIXME : dirty fix, problème de rafraichissement de l’action
+  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
   return (
     <>
       <PageHeaderPortal header='Modifier l’action' />

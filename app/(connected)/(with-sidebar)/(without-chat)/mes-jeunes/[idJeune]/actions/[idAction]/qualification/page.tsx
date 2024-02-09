@@ -50,7 +50,8 @@ export default async function Qualification({
   const { action, jeune } = actionContent
   if (action.status !== StatutAction.Terminee) notFound()
 
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
+  // FIXME : dirty fix, problème de l’action
+  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
   const returnToListe =
     searchParams?.liste === 'pilotage'
       ? '/pilotage'
