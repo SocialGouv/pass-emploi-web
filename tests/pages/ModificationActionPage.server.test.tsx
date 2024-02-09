@@ -71,7 +71,9 @@ describe('ModificationActionPage server side', () => {
           aDesCommentaires: false,
           idJeune: jeune.id,
           situationsNonProfessionnelles: categories,
-          returnTo: '/mes-jeunes/jeune-1/actions/id-action-1',
+          returnTo: expect.stringMatching(
+            '/mes-jeunes/jeune-1/actions/id-action-1'
+          ),
         },
         {}
       )

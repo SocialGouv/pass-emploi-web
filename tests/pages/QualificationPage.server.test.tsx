@@ -151,7 +151,9 @@ describe('QualificationPage server side', () => {
           {
             action,
             categories: situationsNonProfessionnelles,
-            returnTo: '/mes-jeunes/jeune-1/actions/id-action-1',
+            returnTo: expect.stringMatching(
+              '/mes-jeunes/jeune-1/actions/id-action-1'
+            ),
             returnToListe: '/pilotage',
             beneficiaire,
           },

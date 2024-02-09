@@ -10,11 +10,11 @@ interface LienRetourProps {
 export default function LienRetour({ returnUrlOrPath }: LienRetourProps) {
   function getLabelLienRetour(pathOrUrl: string): string | undefined {
     const regExps: RegExp[] = Array.from(mapRoutesToLabels.keys())
-    const path = pathOrUrl.startsWith('http')
+    const pathname = pathOrUrl.startsWith('http')
       ? new URL(pathOrUrl).pathname
-      : pathOrUrl
+      : pathOrUrl.split('?')[0]
 
-    const route = regExps.find((regex) => regex.test(path))
+    const route = regExps.find((regex) => regex.test(pathname))
     if (route) {
       return mapRoutesToLabels.get(route) ?? pathOrUrl
     }
