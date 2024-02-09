@@ -241,9 +241,10 @@ describe('ActionPage client side', () => {
 
         //Then
         expect(
-          screen.getByRole('link', { name: 'Qualifier l’action' })
-        ).toHaveAttribute(
-          'href',
+          screen
+            .getByRole('link', { name: 'Qualifier l’action' })
+            .getAttribute('href')
+        ).toMatch(
           '/mes-jeunes/jeune-1/actions/id-action-1/qualification?liste=beneficiaire'
         )
       })
@@ -269,9 +270,10 @@ describe('ActionPage client side', () => {
 
           //Then
           expect(
-            screen.getByRole('link', { name: 'Qualifier l’action' })
-          ).toHaveAttribute(
-            'href',
+            screen
+              .getByRole('link', { name: 'Qualifier l’action' })
+              .getAttribute('href')
+          ).toMatch(
             '/mes-jeunes/jeune-1/actions/id-action-1/qualification?liste=pilotage'
           )
         })
@@ -388,6 +390,7 @@ describe('ActionPage client side', () => {
             jeune={jeune}
             commentaires={[]}
             lectureSeule={false}
+            from='beneficiaire'
           />,
           {
             customConseiller: {
