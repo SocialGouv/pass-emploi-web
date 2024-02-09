@@ -8,11 +8,11 @@ import {
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
+import RechercheOffresPage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/RechercheOffresPage'
 import { listeBaseOffresEmploi, uneBaseOffreEmploi } from 'fixtures/offre'
 import { desLocalites, unDepartement, uneCommune } from 'fixtures/referentiel'
 import { BaseOffreEmploi } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
-import RechercheOffres from 'pages/recherche-offres'
 import {
   getOffreEmploiClientSide,
   searchOffresEmploi,
@@ -39,9 +39,7 @@ describe('Page Recherche Offres Emploi', () => {
     })
     ;(getCommunesEtDepartements as jest.Mock).mockResolvedValue(desLocalites())
 
-    rendered = renderWithContexts(
-      <RechercheOffres pageTitle={'Recherche offres'} />
-    )
+    rendered = renderWithContexts(<RechercheOffresPage />)
     await userEvent.click(screen.getByRole('radio', { name: 'Offre d’emploi' }))
   })
 
@@ -665,7 +663,7 @@ describe('Page Recherche Offres Emploi', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffres pageTitle={'Recherche offre'} />, {})
+      renderWithContexts(<RechercheOffresPage />, {})
 
       // Then
       expect(screen.getByLabelText('Offre d’emploi')).toBeChecked()

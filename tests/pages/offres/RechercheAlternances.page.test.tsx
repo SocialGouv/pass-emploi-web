@@ -6,55 +6,46 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { DateTime } from 'luxon'
 import React from 'react'
 
+import RechercheOffresPage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/RechercheOffresPage'
 import { unConseiller } from 'fixtures/conseiller'
-import {
-  listeBaseServicesCiviques,
-  uneBaseServiceCivique,
-} from 'fixtures/offre'
-import { desCommunes, desLocalites, uneCommune } from 'fixtures/referentiel'
+import { listeBaseAlternances, uneBaseAlternance } from 'fixtures/offre'
+import { desLocalites, unDepartement, uneCommune } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { BaseServiceCivique } from 'interfaces/offre'
+import { BaseOffreEmploi } from 'interfaces/offre'
 import { Localite } from 'interfaces/referentiel'
-import RechercheOffres from 'pages/recherche-offres'
-import { domainesServiceCivique } from 'referentiel/domaines-service-civique'
 import {
-  getCommunes,
-  getCommunesEtDepartements,
-} from 'services/referentiel.service'
-import { searchServicesCiviques } from 'services/services-civiques.service'
+  getOffreEmploiClientSide,
+  searchAlternances,
+} from 'services/offres-emploi.service'
+import { getCommunesEtDepartements } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('services/offres-emploi.service')
 jest.mock('services/referentiel.service')
-jest.mock('services/services-civiques.service')
 
-describe('Page Recherche Offres Service civique', () => {
-  let servicesCiviques: BaseServiceCivique[]
-  let communes: Localite[]
+describe('Page Recherche Alternances', () => {
+  let alternances: BaseOffreEmploi[]
+  let localites: Localite[]
 
   let rendered: RenderResult
-
   describe('quand le conseiller n’est pas PE BRSA', () => {
     beforeEach(async () => {
-      communes = desCommunes()
-      servicesCiviques = listeBaseServicesCiviques()
+      localites = desLocalites()
+      alternances = listeBaseAlternances()
+      ;(searchAlternances as jest.Mock).mockResolvedValue({
+        metadonnees: { nombreTotal: 37, nombrePages: 4 },
+        offres: alternances,
+      })
       ;(getCommunesEtDepartements as jest.Mock).mockResolvedValue(
         desLocalites()
       )
-      ;(getCommunes as jest.Mock).mockResolvedValue(desCommunes())
-      ;(searchServicesCiviques as jest.Mock).mockResolvedValue({
-        metadonnees: { nombreTotal: 37, nombrePages: 4 },
-        offres: servicesCiviques,
-      })
 
-      rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {})
-      await userEvent.click(
-        screen.getByRole('radio', { name: 'Service civique' })
-      )
+      rendered = renderWithContexts(<RechercheOffresPage />, {})
+      await userEvent.click(screen.getByRole('radio', { name: 'Alternance' }))
     })
 
     it('permet de definir des critères de recherche', () => {
@@ -65,52 +56,98 @@ describe('Page Recherche Offres Service civique', () => {
 
       expect(etape2).toBeInTheDocument()
       expect(
-        within(etape2).getByRole('combobox', {
-          name: 'Localisation Saisissez une ville',
+        within(etape2).getByRole('checkbox', {
+          name: 'Recherche avec un numéro d’offre Pôle emploi',
         })
       ).toBeInTheDocument()
+
+      expect(
+        within(etape2).queryByLabelText(/Numéro d’offre/)
+      ).not.toBeInTheDocument()
+      expect(
+        within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
+      ).toHaveAttribute('type', 'text')
+      expect(
+        within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
+      ).not.toHaveAttribute('disabled')
+      expect(
+        within(etape2).getByRole('combobox', {
+          name: 'Lieu de travail Saisissez une ville ou un département',
+        })
+      ).toBeInTheDocument()
+      expect(
+        within(etape2).getByRole('combobox', {
+          name: 'Lieu de travail Saisissez une ville ou un département',
+        })
+      ).not.toHaveAttribute('disabled')
       expect(() =>
         within(etape2).getAllByRole('option', { hidden: true })
       ).toThrow()
     })
 
+    it('affiche le champ de saisie de l’offre si l’utilisateur souhaite faire une recherche par ID', async () => {
+      // Given
+      const etape2 = screen.getByRole('group', {
+        name: 'Étape 2: Critères de recherche',
+      })
+      const checkbox = screen.getByRole('checkbox', {
+        name: 'Recherche avec un numéro d’offre Pôle emploi',
+      })
+      // When
+      await userEvent.click(checkbox)
+
+      // Then
+      expect(within(etape2).getByLabelText(/Numéro d’offre/)).toHaveAttribute(
+        'type',
+        'text'
+      )
+      expect(
+        within(etape2).getByLabelText('Mots clés (Métier, code ROME)')
+      ).toHaveAttribute('disabled')
+      expect(
+        within(etape2).getByRole('combobox', {
+          name: 'Lieu de travail Saisissez une ville ou un département',
+        })
+      ).toHaveAttribute('disabled')
+    })
+
     describe('autocomplétion localisation', () => {
       it('retire les accents à la saisie', async () => {
         // Given
-        const inputLocalisation = screen.getByLabelText(/Localisation/)
+        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
 
         // When
-        await saisirCommune('Épinay-sur-Seine')
+        await saisirLocalite('Ardèche')
 
         // Then
-        expect(inputLocalisation).toHaveValue('EPINAY SUR SEINE')
-        expect(getCommunes).toHaveBeenCalledTimes(1)
-        expect(getCommunes).toHaveBeenCalledWith('EPINAY SUR SEINE')
+        expect(inputLocalisation).toHaveValue('ARDECHE')
+        expect(getCommunesEtDepartements).toHaveBeenCalledTimes(1)
+        expect(getCommunesEtDepartements).toHaveBeenCalledWith('ARDECHE')
       })
 
-      it('récupère les communes à la saisie', async () => {
+      it('récupère les communes et les départements à la saisie', async () => {
         // When
-        await saisirCommune('Epinay-sur-Seine')
+        await saisirLocalite('Paris')
 
         // Then
-        expect(getCommunes).toHaveBeenCalledTimes(1)
-        expect(getCommunes).toHaveBeenCalledWith('EPINAY SUR SEINE')
+        expect(getCommunesEtDepartements).toHaveBeenCalledTimes(1)
+        expect(getCommunesEtDepartements).toHaveBeenCalledWith('PARIS')
         expect(screen.getAllByRole('option', { hidden: true })).toHaveLength(
-          communes.length
+          localites.length
         )
-        communes.forEach((commune) => {
+        localites.forEach((localite) => {
           expect(
             screen.getByRole('option', {
               hidden: true,
-              name: commune.libelle,
+              name: sanitize(localite.libelle),
             })
-          ).toHaveValue(commune.libelle)
+          ).toHaveValue(sanitize(localite.libelle))
         })
       })
 
       it('affiche une erreur quand la localisation est incorrecte', async () => {
         // Given
-        const inputLocalisation = screen.getByLabelText(/Localisation/)
+        const inputLocalisation = screen.getByLabelText(/Lieu de travail/)
         const submitButton = screen.getByRole('button', {
           name: 'Rechercher',
         })
@@ -125,9 +162,9 @@ describe('Page Recherche Offres Service civique', () => {
 
         // Then
         expect(
-          screen.getByText('Veuillez saisir une commune correcte.')
+          screen.getByText('Veuillez saisir une localisation correcte.')
         ).toBeInTheDocument()
-        expect(searchServicesCiviques).toHaveBeenCalledTimes(0)
+        expect(searchAlternances).toHaveBeenCalledTimes(0)
       })
     })
 
@@ -145,10 +182,14 @@ describe('Page Recherche Offres Service civique', () => {
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
         // Then
+        const etape3 = screen.getByRole('group', {
+          name: 'Étape 3: Plus de critères',
+        })
+        expect(etape3).toBeInTheDocument()
         expect(screen.getByText('Voir moins de critères')).toBeInTheDocument()
       })
 
-      it('permet de selectionner un domaine', async () => {
+      it('ne permet pas de selectionner de type de contrat', async () => {
         // When
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
@@ -156,19 +197,14 @@ describe('Page Recherche Offres Service civique', () => {
         const etape3 = screen.getByRole('group', {
           name: 'Étape 3: Plus de critères',
         })
-        const selectDomaine = within(etape3).getByRole('combobox', {
-          name: 'Sélectionner domaine',
-        })
-        domainesServiceCivique.forEach((domaine) => {
-          expect(
-            within(selectDomaine).getByRole('option', {
-              name: domaine.libelle,
-            })
-          ).toHaveValue(domaine.code)
-        })
+        expect(() =>
+          within(etape3).getByRole('group', {
+            name: 'Type de contrat',
+          })
+        ).toThrow()
       })
 
-      it("permet d'afficher uniquement les offres débutant dès que possible", async () => {
+      it('permet de selectionner un ou plusieurs temps de travail', async () => {
         // When
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
@@ -176,59 +212,38 @@ describe('Page Recherche Offres Service civique', () => {
         const etape3 = screen.getByRole('group', {
           name: 'Étape 3: Plus de critères',
         })
-        const dateDebutGroupe = within(etape3).getByRole('group', {
-          name: 'Date de début',
+        const tempsTravailGroup = within(etape3).getByRole('group', {
+          name: 'Temps de travail',
         })
+        expect(tempsTravailGroup).toBeInTheDocument()
         expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
-            name: /Dès que possible/,
+          within(tempsTravailGroup).getByRole('checkbox', {
+            name: 'Temps partiel',
           })
-        ).toBeChecked()
+        ).toBeInTheDocument()
         expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
-            name: /À partir de/,
+          within(tempsTravailGroup).getByRole('checkbox', {
+            name: 'Temps plein',
           })
-        ).not.toBeChecked()
-        expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
-            name: /À partir de/,
-          })
-        ).toHaveAttribute('disabled')
+        ).toBeInTheDocument()
       })
 
-      it('permet de définir une date de début', async () => {
-        // Given
-        const today = '2022-10-12'
-        jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO(today))
-
+      it("permet d'afficher uniquement les offres débutant accepté", async () => {
         // When
         await userEvent.click(screen.getByText('Voir plus de critères'))
+
+        // Then
         const etape3 = screen.getByRole('group', {
           name: 'Étape 3: Plus de critères',
         })
-        expect(() => within(etape3).getByLabelText('Date de début')).toThrow()
-
-        await userEvent.click(screen.getByLabelText(/Dès que possible/))
-
-        // Then
-        const dateDebutGroupe = within(etape3).getByRole('group', {
-          name: 'Date de début',
+        const experienceGroup = within(etape3).getByRole('group', {
+          name: 'Expérience',
         })
         expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
-            name: /Dès que possible/,
+          within(experienceGroup).getByRole('checkbox', {
+            name: /Afficher uniquement les offres débutant accepté/,
           })
         ).not.toBeChecked()
-        expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
-            name: /À partir de/,
-          })
-        ).toBeChecked()
-        const inputDate = within(dateDebutGroupe).getByLabelText(
-          'Sélectionner une date de début'
-        )
-        expect(inputDate).toHaveAttribute('type', 'date')
-        expect(inputDate).toHaveAttribute('value', today)
       })
 
       it('permet de définir un rayon de recherche si une commune est sélectionnée', async () => {
@@ -241,7 +256,7 @@ describe('Page Recherche Offres Service civique', () => {
           within(etape3).getByRole('group', { name: 'Distance' })
         ).toThrow()
 
-        await saisirCommune('paris 14 (75)')
+        await saisirLocalite('paris 14 (75)')
 
         // Then
         const distanceGroup = within(etape3).getByRole('group', {
@@ -261,20 +276,17 @@ describe('Page Recherche Offres Service civique', () => {
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
         // When-Then
-        await userEvent.selectOptions(
-          screen.getByLabelText('Sélectionner domaine'),
-          domainesServiceCivique[2].libelle
+        await userEvent.click(
+          screen.getByLabelText(
+            /Afficher uniquement les offres débutant accepté/
+          )
         )
         expect(screen.getByText('[1] filtre sélectionné')).toBeInTheDocument()
 
-        await userEvent.click(screen.getByLabelText(/Dès que possible/))
-        fireEvent.change(
-          screen.getByLabelText('Sélectionner une date de début'),
-          { target: { value: '2022-11-01' } }
-        )
+        await userEvent.click(screen.getByLabelText('Temps plein'))
         expect(screen.getByText('[2] filtres sélectionnés')).toBeInTheDocument()
 
-        await saisirCommune('paris 14 (75)')
+        await saisirLocalite('paris 14 (75)')
         fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
           target: { value: 43 },
         })
@@ -286,18 +298,14 @@ describe('Page Recherche Offres Service civique', () => {
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
         // Then
-        expect(screen.getByLabelText(/domaine/)).toHaveValue(
-          domainesServiceCivique[2].code
-        )
-        expect(screen.getByLabelText(/Dès que possible/)).not.toBeChecked()
-        expect(screen.getByLabelText(/À partir de/)).toBeChecked()
-        expect(screen.getByLabelText(/date de début/)).toHaveValue('2022-11-01')
+        expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
+        expect(screen.getByLabelText(/Temps plein/)).toBeChecked()
         expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
       })
     })
 
     describe('partage des critères de recherche', () => {
-      it('ne permet pas de partager s’il n’y a pas de commune renseignée', async () => {
+      it('ne permet pas de partager s’il n’y a ni mots clés ni localité renseignés', async () => {
         await userEvent.click(
           screen.getByRole('button', {
             name: `Partager les critères de recherche`,
@@ -306,14 +314,16 @@ describe('Page Recherche Offres Service civique', () => {
 
         expect(
           screen.getByText(
-            'Pour suggérer des critères de recherche, vous devez saisir une ville.'
+            'Pour suggérer des critères de recherche, vous devez saisir un mot clé et un lieu de travail.'
           )
         ).toBeInTheDocument()
       })
 
-      it('affiche le bouton de partage de critère s’il y a une commune renseignés', async () => {
+      it('affiche le bouton de partage de critère s’il y a des mots clés et une localité renseignés', async () => {
         // When
-        await saisirCommune('paris 14 (75)')
+        const inputMotsCles = screen.getByLabelText(/Mots clés/)
+        await userEvent.type(inputMotsCles, 'Prof')
+        await saisirLocalite('paris 14 (75)')
 
         // Then
         expect(
@@ -330,7 +340,9 @@ describe('Page Recherche Offres Service civique', () => {
 
       it('construit le bon lien qui correspond aux critères de recherches', async () => {
         // Given
-        await saisirCommune('paris 14 (75)')
+        const inputMotsCles = screen.getByLabelText(/Mots clés/)
+        await userEvent.type(inputMotsCles, 'Prof')
+        await saisirLocalite('paris 14 (75)')
 
         // Then
         expect(
@@ -339,13 +351,13 @@ describe('Page Recherche Offres Service civique', () => {
           })
         ).toHaveAttribute(
           'href',
-          `/offres/partage-recherche?type=SERVICE_CIVIQUE&titre=PARIS%2014%20(75)&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
+          `/offres/partage-recherche?type=ALTERNANCE&titre=Prof%20-%20PARIS%2014%20(75)&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014%20(75)&codeLocalite=75114`
         )
       })
     })
 
     describe('recherche', () => {
-      it('permet de rechercher des offres de services civiques', async () => {
+      it('permet de rechercher des alternances', async () => {
         // Given
         const submitButton = screen.getByRole('button', {
           name: 'Rechercher',
@@ -355,22 +367,69 @@ describe('Page Recherche Offres Service civique', () => {
         await userEvent.click(submitButton)
 
         // Then
-        expect(searchServicesCiviques).toHaveBeenCalledWith({}, 1)
+        expect(searchAlternances).toHaveBeenCalledWith({}, 1)
+      })
+
+      it('permet de faire ue recherche d’offre par Id ', async () => {
+        // Given
+        const checkbox = screen.getByRole('checkbox', {
+          name: 'Recherche avec un numéro d’offre Pôle emploi',
+        })
+        await userEvent.click(checkbox)
+        await userEvent.type(
+          screen.getByLabelText(/Numéro d’offre/),
+          'id-offre'
+        )
+
+        const submitButton = screen.getByRole('button', {
+          name: 'Rechercher',
+        })
+
+        // When
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(getOffreEmploiClientSide).toHaveBeenCalledWith('id-offre')
+      })
+
+      it('construit la recherche avec un département', async () => {
+        // Given
+        const inputMotsCles = screen.getByLabelText(/Mots clés/)
+        const submitButton = screen.getByRole('button', {
+          name: 'Rechercher',
+        })
+
+        // When
+        await userEvent.type(inputMotsCles, 'prof industrie')
+        await saisirLocalite('pAris')
+        await userEvent.click(submitButton)
+
+        // Then
+        expect(searchAlternances).toHaveBeenCalledWith(
+          {
+            motsCles: 'prof industrie',
+            departement: unDepartement(),
+          },
+          1
+        )
       })
 
       it('construit la recherche avec une commune', async () => {
         // Given
+        const inputMotsCles = screen.getByLabelText(/Mots clés/)
         const submitButton = screen.getByRole('button', {
           name: 'Rechercher',
         })
 
         // When
-        await saisirCommune('paris 14 (75)')
+        await userEvent.type(inputMotsCles, 'prof industrie')
+        await saisirLocalite('paris 14 (75)')
         await userEvent.click(submitButton)
 
         // Then
-        expect(searchServicesCiviques).toHaveBeenCalledWith(
+        expect(searchAlternances).toHaveBeenCalledWith(
           {
+            motsCles: 'prof industrie',
             commune: uneCommune(),
             rayon: 10,
           },
@@ -380,18 +439,19 @@ describe('Page Recherche Offres Service civique', () => {
 
       it('construit la recherche avec les critères d’affinage', async () => {
         // Given
-        await saisirCommune('paris 14 (75)')
+        await saisirLocalite('paris 14 (75)')
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
-        await userEvent.selectOptions(
-          screen.getByLabelText('Sélectionner domaine'),
-          domainesServiceCivique[2].libelle
+        await userEvent.click(
+          screen.getByLabelText(
+            /Afficher uniquement les offres débutant accepté/
+          )
         )
-        await userEvent.click(screen.getByLabelText(/Dès que possible/))
-        fireEvent.change(
-          screen.getByLabelText('Sélectionner une date de début'),
-          { target: { value: '2022-11-01' } }
-        )
+
+        await userEvent.click(screen.getByLabelText('Temps plein'))
+        await userEvent.click(screen.getByLabelText('Temps partiel'))
+        await userEvent.click(screen.getByLabelText('Temps partiel'))
+
         fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
           target: { value: 43 },
         })
@@ -402,11 +462,11 @@ describe('Page Recherche Offres Service civique', () => {
         )
 
         // Then
-        expect(searchServicesCiviques).toHaveBeenCalledWith(
+        expect(searchAlternances).toHaveBeenCalledWith(
           {
             commune: uneCommune(),
-            domaine: domainesServiceCivique[2].code,
-            dateDebut: '2022-11-01',
+            debutantAccepte: true,
+            durees: ['Temps plein'],
             rayon: 43,
           },
           1
@@ -415,24 +475,22 @@ describe('Page Recherche Offres Service civique', () => {
 
       it('vide les critères lorsqu’on change le type d’offre', async () => {
         // Given
-        await saisirCommune('paris 14 (75)')
+        await saisirLocalite('paris 14 (75)')
         await userEvent.click(screen.getByText('Voir plus de critères'))
 
-        await userEvent.selectOptions(
-          screen.getByLabelText('Sélectionner domaine'),
-          domainesServiceCivique[2].libelle
+        await userEvent.click(
+          screen.getByLabelText(
+            /Afficher uniquement les offres débutant accepté/
+          )
         )
-        await userEvent.click(screen.getByLabelText(/Dès que possible/))
-        fireEvent.change(
-          screen.getByLabelText('Sélectionner une date de début'),
-          { target: { value: '2022-11-01' } }
-        )
+
+        await userEvent.click(screen.getByLabelText('Temps plein'))
         fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
           target: { value: 43 },
         })
 
-        await userEvent.click(screen.getByText('Immersion'))
         await userEvent.click(screen.getByText('Service civique'))
+        await userEvent.click(screen.getByText('Alternance'))
 
         // When
         await userEvent.click(
@@ -440,7 +498,7 @@ describe('Page Recherche Offres Service civique', () => {
         )
 
         // Then
-        expect(searchServicesCiviques).toHaveBeenCalledWith({}, 1)
+        expect(searchAlternances).toHaveBeenCalledWith({}, 1)
       })
     })
 
@@ -457,45 +515,53 @@ describe('Page Recherche Offres Service civique', () => {
 
         // Then
         offresList = screen.getByRole('list', {
-          description: 'Liste des résultats (37 offres)',
+          description: `Liste des résultats (37 offres)`,
         })
       })
 
-      it('affiche toutes les offres', async () => {
+      it('affiche les offres', async () => {
         expect(within(offresList).getAllByRole('listitem').length).toEqual(
-          servicesCiviques.length
+          alternances.length
         )
       })
 
       it('affiche chaque offre', async () => {
-        servicesCiviques.forEach((offre) => {
+        alternances.forEach((alternance) => {
           const offreCard = within(offresList).getByRole('heading', {
             level: 3,
-            name: offre.titre,
+            name: 'Offre n°' + alternance.id,
           }).parentElement!
-          expect(within(offreCard).getByText(offre.domaine)).toBeInTheDocument()
+          expect(within(offreCard).getByText('Alternance')).toBeInTheDocument()
           expect(
-            within(offreCard).getByText(offre.organisation!)
+            within(offreCard).getByText(alternance.titre)
           ).toBeInTheDocument()
-          expect(within(offreCard).getByText(offre.ville!)).toBeInTheDocument()
+          expect(
+            within(offreCard).getByText(alternance.typeContrat)
+          ).toBeInTheDocument()
+          expect(
+            within(offreCard).getByText(alternance.duree!)
+          ).toBeInTheDocument()
+          expect(
+            within(offreCard).getByText(alternance.nomEntreprise!)
+          ).toBeInTheDocument()
+          expect(
+            within(offreCard).getByText(alternance.localisation!)
+          ).toBeInTheDocument()
           expect(
             within(offreCard).getByRole('link', {
-              name: 'Voir le détail de l’offre ' + offre.titre,
+              name: 'Voir le détail de l’offre ' + alternance.titre,
             })
-          ).toHaveAttribute('href', '/offres/service-civique/' + offre.id)
+          ).toHaveAttribute('href', '/offres/emploi/' + alternance.id)
         })
       })
 
       it('permet de partager chaque offre', () => {
-        servicesCiviques.forEach((offre) => {
+        alternances.forEach((offre) => {
           expect(
             within(offresList).getByRole('link', {
               name: `Partager offre ${offre.titre}`,
             })
-          ).toHaveAttribute(
-            'href',
-            `/offres/service-civique/${offre.id}/partage`
-          )
+          ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
         })
       })
 
@@ -524,7 +590,7 @@ describe('Page Recherche Offres Service civique', () => {
         expect(within(offresList).getAllByRole('listitem').length).toBeTruthy()
 
         // When
-        await userEvent.type(screen.getByLabelText(/Localisation/), 'Rennes')
+        await userEvent.type(screen.getByLabelText(/Mots clés/), 'Boulanger')
 
         // Then
         expect(
@@ -536,10 +602,10 @@ describe('Page Recherche Offres Service civique', () => {
 
       describe('pagination', () => {
         beforeEach(() => {
-          ;(searchServicesCiviques as jest.Mock).mockImplementation(
+          ;(searchAlternances as jest.Mock).mockImplementation(
             (_query, page) => ({
               metadonnees: { nombreTotal: 37, nombrePages: 4 },
-              offres: [uneBaseServiceCivique({ titre: 'Offre page ' + page })],
+              offres: [uneBaseAlternance({ titre: 'Offre page ' + page })],
             })
           )
         })
@@ -549,7 +615,7 @@ describe('Page Recherche Offres Service civique', () => {
           await userEvent.click(screen.getByLabelText('Page 2'))
 
           // Then
-          expect(searchServicesCiviques).toHaveBeenCalledWith({}, 2)
+          expect(searchAlternances).toHaveBeenCalledWith({}, 2)
           expect(screen.getByText('Offre page 2')).toBeInTheDocument()
         })
 
@@ -559,8 +625,8 @@ describe('Page Recherche Offres Service civique', () => {
           await userEvent.click(screen.getByLabelText('Page suivante'))
 
           // Then
-          expect(searchServicesCiviques).toHaveBeenCalledWith({}, 2)
-          expect(searchServicesCiviques).toHaveBeenCalledWith({}, 3)
+          expect(searchAlternances).toHaveBeenCalledWith({}, 2)
+          expect(searchAlternances).toHaveBeenCalledWith({}, 3)
 
           expect(screen.getByLabelText(`Page 3`)).toHaveAttribute(
             'aria-current',
@@ -573,7 +639,7 @@ describe('Page Recherche Offres Service civique', () => {
           await userEvent.click(screen.getByLabelText(`Page 1`))
 
           // Then
-          expect(searchServicesCiviques).toHaveBeenCalledTimes(1)
+          expect(searchAlternances).toHaveBeenCalledTimes(1)
         })
       })
     })
@@ -581,47 +647,48 @@ describe('Page Recherche Offres Service civique', () => {
     describe('sauvegarde', () => {
       it('retient l’état de la recherche', async () => {
         // Given
-        await saisirCommune('paris 14 (75)')
+        await userEvent.type(
+          screen.getByLabelText(/Mots clés/),
+          'prof industrie'
+        )
+        await saisirLocalite('paris 14 (75)')
         await userEvent.click(screen.getByText('Voir plus de critères'))
-        await userEvent.selectOptions(
-          screen.getByLabelText('Sélectionner domaine'),
-          domainesServiceCivique[2].libelle
+
+        await userEvent.click(
+          screen.getByLabelText(
+            /Afficher uniquement les offres débutant accepté/
+          )
         )
-        await userEvent.click(screen.getByLabelText(/Dès que possible/))
-        fireEvent.change(
-          screen.getByLabelText('Sélectionner une date de début'),
-          { target: { value: '2022-11-01' } }
-        )
+        await userEvent.click(screen.getByLabelText('Temps plein'))
         fireEvent.change(screen.getByLabelText(/Dans un rayon de/), {
           target: { value: 43 },
         })
         await userEvent.click(
-          screen.getByRole('button', { name: 'Rechercher' })
+          screen.getByRole('button', {
+            name: 'Rechercher',
+          })
         )
         await userEvent.click(screen.getByRole('button', { name: 'Page 2' }))
 
         // When
         rendered.unmount()
-        renderWithContexts(<RechercheOffres pageTitle='' />, {})
+        renderWithContexts(<RechercheOffresPage />, {})
 
         // Then
-        expect(screen.getByLabelText('Service civique')).toBeChecked()
-        expect(screen.getByLabelText(/Localisation/)).toHaveValue(
+        expect(screen.getByLabelText('Alternance')).toBeChecked()
+        expect(screen.getByLabelText(/Lieu de travail/)).toHaveValue(
           'PARIS 14 (75)'
         )
         expect(screen.getByText('[3] filtres sélectionnés')).toBeInTheDocument()
         await userEvent.click(screen.getByText('Voir plus de critères'))
-        expect(screen.getByLabelText(/domaine/)).toHaveValue(
-          domainesServiceCivique[2].code
-        )
-        expect(screen.getByLabelText(/Dès que possible/)).not.toBeChecked()
-        expect(screen.getByLabelText(/date de début/)).toHaveValue('2022-11-01')
+        expect(screen.getByLabelText(/débutant accepté/)).toBeChecked()
+        expect(screen.getByLabelText('Temps plein')).toBeChecked()
         expect(screen.getByLabelText(/rayon/)).toHaveValue('43')
         const offresList = screen.getByRole('list', {
           description: 'Liste des résultats (37 offres)',
         })
         expect(within(offresList).getAllByRole('listitem').length).toEqual(
-          servicesCiviques.length
+          alternances.length
         )
         expect(screen.getByRole('button', { name: 'Page 2' })).toHaveAttribute(
           'aria-current',
@@ -630,23 +697,28 @@ describe('Page Recherche Offres Service civique', () => {
       })
     })
   })
-
   describe('quand le conseiller est PE BRSA', () => {
     it('n’affiche pas la recherche en tant que conseiller PE BRSA', () => {
-      rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {
+      rendered = renderWithContexts(<RechercheOffresPage />, {
         customConseiller: unConseiller({
           structure: StructureConseiller.POLE_EMPLOI_BRSA,
         }),
       })
       // Then
-      expect(() =>
-        screen.getByRole('radio', { name: 'Service civique' })
-      ).toThrow()
+      expect(() => screen.getByRole('radio', { name: 'Alternance' })).toThrow()
     })
   })
 })
 
-async function saisirCommune(text: string) {
-  await userEvent.type(screen.getByLabelText(/Localisation/), text)
+async function saisirLocalite(text: string) {
+  await userEvent.type(screen.getByLabelText(/Lieu de travail/), text)
   await act(() => new Promise((r) => setTimeout(r, 500)))
+}
+
+function sanitize(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['-]/g, ' ')
+    .toUpperCase()
 }

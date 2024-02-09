@@ -1,6 +1,7 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
 import isEqual from 'lodash.isequal'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import React, { useState } from 'react'
@@ -16,7 +17,6 @@ import {
   BaseServiceCivique,
   TypeOffre,
 } from 'interfaces/offre'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
@@ -29,10 +29,10 @@ import { useSessionStorage } from 'utils/hooks/useSessionStorage'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ResultatsRechercheOffre = dynamic(
-  import('components/offres/ResultatsRechercheOffres')
+  () => import('components/offres/ResultatsRechercheOffres')
 )
 
-function RechercheOffres(_: PageProps) {
+function RechercheOffresPage() {
   const [alerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
 
@@ -362,23 +362,7 @@ function RechercheOffres(_: PageProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const props: PageProps = {
-    pageTitle: 'Recherche d’offres',
-    pageHeader: 'Offres',
-  }
-
-  return { props }
-}
-
-export default withTransaction(RechercheOffres.name, 'page')(RechercheOffres)
+export default withTransaction(
+  RechercheOffresPage.name,
+  'page'
+)(RechercheOffresPage)

@@ -1,7 +1,8 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { ChangeEvent, useState } from 'react'
 
 import QrcodeAppStore from 'assets/images/qrcode_app_store.svg'
@@ -18,12 +19,10 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import {
-  Conseiller,
   estMilo,
   estPoleEmploiBRSA,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { PageProps } from 'interfaces/pageProps'
 import { Agence } from 'interfaces/referentiel'
 import { textesBRSA, textesCEJ } from 'lang/textes'
 import {
@@ -33,7 +32,6 @@ import {
 } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationDeleteConseillerModal = dynamic(
@@ -45,11 +43,11 @@ const ConfirmationSuppressionCompteConseillerModal = dynamic(
   { ssr: false }
 )
 
-type ProfilProps = PageProps & {
+type ProfilProps = {
   referentielAgences: Agence[]
 }
 
-function Profil({ referentielAgences }: ProfilProps) {
+function ProfilPage({ referentielAgences }: ProfilProps) {
   const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -117,12 +115,8 @@ function Profil({ referentielAgences }: ProfilProps) {
       )
       await supprimerConseiller(conseiller.id)
       setShowModaleSuppressionCompte(false)
-      setTimeout(async () => {
-        setShowModaleConfirmationSuppression(true)
-      }, 10)
-      setTimeout(async () => {
-        await router.push('/api/auth/federated-logout')
-      }, 3000)
+      setTimeout(async () => setShowModaleConfirmationSuppression(true), 10)
+      setTimeout(async () => router.push('/api/auth/federated-logout'), 3000)
     } catch (e) {
       console.error(e)
     }
@@ -361,63 +355,4 @@ function Email(props: { email: string }) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<ProfilProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-
-  let referentielAgences: Agence[] = []
-
-  if (user.structure === StructureConseiller.MILO) {
-    const { getConseillerServerSide } = await import(
-      'services/conseiller.service'
-    )
-    let conseiller: Conseiller | undefined
-    try {
-      conseiller = await getConseillerServerSide(user, accessToken)
-    } catch (e) {
-      if (e instanceof ApiError && e.statusCode === 401) {
-        return {
-          redirect: {
-            destination: '/api/auth/federated-logout',
-            permanent: false,
-          },
-        }
-      }
-      throw e
-    }
-    if (!conseiller) {
-      throw new Error(`Conseiller ${user.id} inexistant`)
-    }
-
-    const { getAgencesServerSide } = await import(
-      'services/referentiel.service'
-    )
-    if (!conseiller.agence) {
-      referentielAgences = await getAgencesServerSide(
-        user.structure,
-        accessToken
-      )
-    }
-  }
-
-  return {
-    props: {
-      referentielAgences: referentielAgences,
-      pageTitle: 'Mon profil',
-      pageHeader: 'Profil',
-    },
-  }
-}
-
-export default withTransaction(Profil.name, 'page')(Profil)
+export default withTransaction(ProfilPage.name, 'page')(ProfilPage)

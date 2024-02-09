@@ -4,13 +4,13 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories } from 'fixtures/action'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { Agence } from 'interfaces/referentiel'
-import Pilotage from 'pages/pilotage'
 import { modifierAgence } from 'services/conseiller.service'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
@@ -46,7 +46,7 @@ describe('PilotagePage client side - Animations collectives', () => {
       await act(async () =>
         renderWithContexts(
           <Pilotage
-            pageTitle=''
+            onglet='ANIMATIONS_COLLECTIVES'
             actions={{
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
@@ -72,7 +72,6 @@ describe('PilotagePage client side - Animations collectives', () => {
           }
         )
       )
-      await userEvent.click(screen.getByRole('tab', { name: 'AC app CEJ 25' }))
     })
 
     it('résume les activités', async () => {
@@ -156,8 +155,7 @@ describe('PilotagePage client side - Animations collectives', () => {
       // Given
       renderWithContexts(
         <Pilotage
-          withoutChat={true}
-          pageTitle=''
+          onglet='ANIMATIONS_COLLECTIVES'
           actions={{
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
@@ -169,9 +167,6 @@ describe('PilotagePage client side - Animations collectives', () => {
           }}
         />
       )
-
-      // When
-      await userEvent.click(screen.getByRole('tab', { name: /AC app CEJ/ }))
 
       // Then
       expect(
@@ -204,7 +199,7 @@ describe('PilotagePage client side - Animations collectives', () => {
       await act(async () => {
         renderWithContexts(
           <Pilotage
-            pageTitle=''
+            onglet='ANIMATIONS_COLLECTIVES'
             actions={{
               donnees: [],
               metadonnees: { nombrePages: 0, nombreTotal: 0 },
@@ -216,9 +211,6 @@ describe('PilotagePage client side - Animations collectives', () => {
           }
         )
       })
-
-      // When
-      await userEvent.click(screen.getByRole('tab', { name: /AC app CEJ/ }))
     })
 
     it('n’affiche pas la liste des animations à clore', async () => {

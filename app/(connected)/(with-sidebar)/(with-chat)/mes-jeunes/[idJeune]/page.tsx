@@ -129,7 +129,7 @@ export default async function FicheBeneficiaire({
       compareDates(DateTime.fromISO(event1.date), DateTime.fromISO(event2.date))
     )
 
-  let onglet: Onglet
+  let onglet: Onglet = 'ACTIONS'
   switch (searchParams?.onglet) {
     case 'agenda':
       onglet = 'AGENDA'
@@ -140,9 +140,6 @@ export default async function FicheBeneficiaire({
     case 'favoris':
       onglet = 'FAVORIS'
       break
-    case 'actions':
-    default:
-      onglet = 'ACTIONS'
   }
 
   return (

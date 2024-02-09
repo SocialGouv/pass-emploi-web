@@ -1,5 +1,6 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -14,18 +15,11 @@ import Button from 'components/ui/Button/Button'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { TotalActions } from 'interfaces/action'
+import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import {
-  estMilo,
-  estPoleEmploi,
-  estUserPoleEmploi,
-} from 'interfaces/conseiller'
-import {
-  compareJeunesByNom,
   JeuneAvecInfosComplementaires,
   JeuneAvecNbActionsNonTerminees,
 } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -33,12 +27,15 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
-interface MesJeunesProps extends PageProps {
+type PortefeuilleProps = {
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
   isFromEmail: boolean
 }
 
-function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
+function PortefeuillePage({
+  conseillerJeunes,
+  isFromEmail,
+}: PortefeuilleProps) {
   const chatCredentials = useChatCredentials()
   const [alerte, setAlerte] = useAlerte()
 
@@ -197,59 +194,4 @@ function MesJeunes({ conseillerJeunes, isFromEmail }: MesJeunesProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<MesJeunesProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-
-  const { getJeunesDuConseillerServerSide } = await import(
-    'services/jeunes.service'
-  )
-  const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
-
-  let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
-  if (estUserPoleEmploi(user)) {
-    jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
-      ...jeune,
-      nbActionsNonTerminees: 0,
-    }))
-  } else {
-    const { countActionsJeunes } = await import('services/actions.service')
-    const totauxActions: TotalActions[] = await countActionsJeunes(
-      user.id,
-      accessToken
-    )
-
-    jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
-      const totalJeune = totauxActions.find(
-        (action) => action.idJeune === jeune.id
-      )
-
-      return {
-        ...jeune,
-        nbActionsNonTerminees: totalJeune?.nbActionsNonTerminees ?? 0,
-      }
-    })
-  }
-
-  const props: MesJeunesProps = {
-    conseillerJeunes: [...jeunesAvecNbActionsNonTerminees].sort(
-      compareJeunesByNom
-    ),
-    isFromEmail: Boolean(context.query?.source),
-    pageTitle: 'Portefeuille',
-  }
-
-  return { props }
-}
-
-export default withTransaction(MesJeunes.name, 'page')(MesJeunes)
+export default withTransaction(PortefeuillePage.name, 'page')(PortefeuillePage)

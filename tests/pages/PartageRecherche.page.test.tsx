@@ -286,7 +286,7 @@ describe('Partage Recherche', () => {
 
           // Then
           expect(alerteSetter).toHaveBeenCalledWith('suggestionRecherche')
-          expect(push).toHaveBeenCalledWith('/recherche-offres')
+          expect(push).toHaveBeenCalledWith('/offres')
         })
       })
     })

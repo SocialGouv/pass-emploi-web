@@ -8,6 +8,7 @@ import {
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
+import RechercheOffresPage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/RechercheOffresPage'
 import { listeBaseImmersions, uneBaseImmersion } from 'fixtures/offre'
 import {
   desCommunes,
@@ -17,7 +18,6 @@ import {
 } from 'fixtures/referentiel'
 import { BaseImmersion } from 'interfaces/offre'
 import { Commune, Metier } from 'interfaces/referentiel'
-import RechercheOffres from 'pages/recherche-offres'
 import { searchImmersions } from 'services/immersions.service'
 import { getCommunes, getMetiers } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -44,7 +44,7 @@ describe('Page Recherche Immersions', () => {
     ;(getMetiers as jest.Mock).mockResolvedValue(metiers)
     ;(getCommunes as jest.Mock).mockResolvedValue(communes)
 
-    rendered = renderWithContexts(<RechercheOffres pageTitle='' />, {})
+    rendered = renderWithContexts(<RechercheOffresPage />, {})
     await userEvent.click(screen.getByRole('radio', { name: 'Immersion' }))
   })
 
@@ -539,7 +539,7 @@ describe('Page Recherche Immersions', () => {
 
       // When
       rendered.unmount()
-      renderWithContexts(<RechercheOffres pageTitle='' />, {})
+      renderWithContexts(<RechercheOffresPage />, {})
 
       // Then
       expect(screen.getByLabelText('Immersion')).toBeChecked()

@@ -4,9 +4,9 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { ActionPilotage } from 'interfaces/action'
-import Pilotage from 'pages/pilotage'
 import {
   getActionsAQualifierClientSide,
   qualifierActions,
@@ -59,7 +59,7 @@ describe('PilotagePage client side - Actions', () => {
       await act(async () =>
         renderWithContexts(
           <Pilotage
-            pageTitle=''
+            onglet='ACTIONS'
             actions={{
               donnees: [...uneListeDActionsAQualifier(), actionSansCategorie],
               metadonnees: { nombrePages: 3, nombreTotal: 25 },
@@ -72,7 +72,6 @@ describe('PilotagePage client side - Actions', () => {
           />
         )
       )
-      await userEvent.click(screen.getByRole('tab', { name: 'Actions 25' }))
     })
 
     it('résume les activités', async () => {
@@ -483,8 +482,7 @@ describe('PilotagePage client side - Actions', () => {
       // When
       renderWithContexts(
         <Pilotage
-          withoutChat={true}
-          pageTitle=''
+          onglet='ACTIONS'
           actions={{
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
