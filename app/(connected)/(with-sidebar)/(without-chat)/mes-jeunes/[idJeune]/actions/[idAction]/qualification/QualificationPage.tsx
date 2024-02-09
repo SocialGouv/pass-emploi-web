@@ -34,15 +34,17 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 type QualificationProps = {
   action: Action
   categories: SituationNonProfessionnelle[]
-  returnTo: string
   beneficiaire: BaseJeune
+  returnTo: string
+  returnToListe: string
 }
 
 function QualificationPage({
   action,
   categories,
-  returnTo,
   beneficiaire,
+  returnTo,
+  returnToListe,
 }: QualificationProps) {
   const [portefeuille] = usePortefeuille()
 
@@ -383,10 +385,7 @@ function QualificationPage({
             <ButtonLink href={returnTo} style={ButtonStyle.SECONDARY}>
               Voir le détail
             </ButtonLink>
-            <ButtonLink
-              href={`/mes-jeunes/${beneficiaire.id}?onglet=actions`}
-              style={ButtonStyle.PRIMARY}
-            >
+            <ButtonLink href={returnToListe} style={ButtonStyle.PRIMARY}>
               Revenir à ma liste d‘actions
             </ButtonLink>
           </div>

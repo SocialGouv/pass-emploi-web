@@ -244,7 +244,7 @@ describe('ActionPage client side', () => {
           screen.getByRole('link', { name: 'Qualifier l’action' })
         ).toHaveAttribute(
           'href',
-          '/mes-jeunes/jeune-1/actions/id-action-1/qualification?returnTo=beneficiaire'
+          '/mes-jeunes/jeune-1/actions/id-action-1/qualification?liste=beneficiaire'
         )
       })
 
@@ -272,7 +272,7 @@ describe('ActionPage client side', () => {
             screen.getByRole('link', { name: 'Qualifier l’action' })
           ).toHaveAttribute(
             'href',
-            '/mes-jeunes/jeune-1/actions/id-action-1/qualification?returnTo=pilotage'
+            '/mes-jeunes/jeune-1/actions/id-action-1/qualification?liste=pilotage'
           )
         })
       })

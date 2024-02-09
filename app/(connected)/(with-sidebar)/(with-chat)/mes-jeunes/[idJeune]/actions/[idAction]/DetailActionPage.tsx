@@ -88,7 +88,7 @@ function DetailActionPage({
           {estAQualifier && !lectureSeule && (
             <ButtonLink
               style={ButtonStyle.PRIMARY}
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?returnTo=${from}`}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?liste=${from}`}
             >
               Qualifier l’action
               <IconComponent

@@ -134,6 +134,7 @@ describe('QualificationPage server side', () => {
         render(
           await Qualification({
             params: { idAction: action.id },
+            searchParams: { liste: 'pilotage' },
           })
         )
 
@@ -151,6 +152,7 @@ describe('QualificationPage server side', () => {
             action,
             categories: situationsNonProfessionnelles,
             returnTo: '/mes-jeunes/jeune-1/actions/id-action-1',
+            returnToListe: '/pilotage',
             beneficiaire,
           },
           {}
