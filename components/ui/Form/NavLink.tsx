@@ -7,6 +7,7 @@ type NavLinkProps = {
   label: string | null
   iconName: IconName
   showLabelOnSmallScreen: boolean
+  badgeLabel?: string
   href?: string
   isActive?: boolean
   className?: string
@@ -21,6 +22,7 @@ export default function NavLink({
   iconName,
   className,
   isExternal = false,
+  badgeLabel,
   showLabelOnSmallScreen = false,
   onClick,
 }: NavLinkProps) {
@@ -42,14 +44,16 @@ export default function NavLink({
             }`}
             name={iconName}
           />
-
-          <span
-            className={`text-left break-words ${className ?? ''} ${
-              isActive ? 'text-primary' : 'text-blanc'
-            }`}
-          >
-            {label}
-          </span>
+          <div className='relative'>
+            <span
+              className={`text-left break-words ${className ?? ''} ${
+                isActive ? 'text-primary' : 'text-blanc'
+              }`}
+            >
+              {label}
+            </span>
+            {badgeLabel && <BadgeNavLink label={badgeLabel} />}
+          </div>
         </>
       )}
 
@@ -63,14 +67,16 @@ export default function NavLink({
             }`}
             name={iconName}
           />
-
-          <span
-            className={`text-left sr-only layout_l:not-sr-only break-words ${
-              className ?? ''
-            } ${isActive ? 'text-primary' : 'text-blanc'}`}
-          >
-            {label}
-          </span>
+          <div className='relative'>
+            <span
+              className={`text-left sr-only layout_l:not-sr-only break-words relative ${
+                className ?? ''
+              } ${isActive ? 'text-primary' : 'text-blanc'}`}
+            >
+              {label}
+            </span>
+            {badgeLabel && <BadgeNavLink label={badgeLabel} />}
+          </div>
         </>
       )}
     </>
@@ -109,5 +115,19 @@ export default function NavLink({
         </button>
       )}
     </li>
+  )
+}
+
+function BadgeNavLink({ label }: { label: string }) {
+  return (
+    <>
+      <IconComponent
+        focusable='false'
+        aria-hidden='false'
+        className='w-4 h-4 fill-warning absolute top-0 -right-5 bg-blanc rounded-full'
+        name={IconName.Error}
+      />
+      <span className='sr-only'>{label}</span>
+    </>
   )
 }

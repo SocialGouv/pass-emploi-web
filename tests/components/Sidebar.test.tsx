@@ -33,7 +33,7 @@ describe('<Sidebar/>', () => {
     ).toHaveAttribute('href', '/recherche-offres')
     expect(within(navigation).getByLabelText(/Aide/)).toBeInTheDocument()
     expect(
-      within(navigation).getByRole('link', { name: 'Nils Tavernier' })
+      within(navigation).getByRole('link', { name: /Nils Tavernier/ })
     ).toHaveAttribute('href', '/profil')
     expect(
       within(navigation).getByRole('link', { name: 'Pilotage' })
@@ -62,6 +62,16 @@ describe('<Sidebar/>', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Réaffectation' })
     ).toHaveAttribute('href', '/reaffectation')
+  })
+
+  it('affiche un badge si le conseiller n’a pas d’adresse e-mail', async () => {
+    //WHEN
+    renderSidebar({ email: undefined })
+
+    //THEN
+    expect(
+      screen.getByText('Une information en attente de mise à jour')
+    ).toBeInTheDocument()
   })
 
   it("n'affiche pas le lien de l’agenda lorsque le conseiller est Pole emploi", () => {
