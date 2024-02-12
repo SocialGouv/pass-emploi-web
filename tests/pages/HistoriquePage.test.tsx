@@ -39,7 +39,14 @@ describe('HistoriquePage client side', () => {
         // Then
         expect(
           screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Situations')
+        ).toHaveAccessibleName('Informations')
+      })
+      it('afiche les informations de beneficiaire ', () => {
+        //Given
+        renderHistorique([], [], StructureConseiller.MILO)
+        //When
+        //Then
+        expect(screen.getByText('Bénéficiaire')).toBeInTheDocument()
       })
 
       describe('quand le jeune n’a aucune situation', () => {

@@ -39,8 +39,8 @@ export function BlocInformationJeune({
   const shortCreationDate = toShortDate(creationDate)
 
   return (
-    <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800 mb-4'>Informations</h2>
+    <div className='border border-solid rounded-base w-full p-4 border-grey_100 mb-3'>
+      <h2 className='text-m-bold text-grey_800 mb-4'>Bénéficiaire</h2>
       <dl>
         <div className='flex'>
           <dt className='text-base-regular'>Ajouté le :</dt>
