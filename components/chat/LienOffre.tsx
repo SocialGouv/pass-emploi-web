@@ -45,6 +45,7 @@ export default function LienOffre({
 function typeToUrlParam(typeOffre: TypeOffre): string {
   switch (typeOffre) {
     case TypeOffre.ALTERNANCE:
+      return 'alternance'
     case TypeOffre.EMPLOI:
       return 'emploi'
     case TypeOffre.SERVICE_CIVIQUE:

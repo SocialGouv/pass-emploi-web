@@ -3,8 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import isEqual from 'lodash.isequal'
 import dynamic from 'next/dynamic'
-import Head from 'next/head'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import FormRechercheOffres from 'components/offres/FormRechercheOffres'
 import PartageRechercheButton from 'components/offres/suggestions/PartageRechercheButton'
@@ -284,19 +283,17 @@ function RechercheOffresPage() {
     }
   }
 
+  useEffect(() => {
+    const postfix = document.title.split(' - ').at(-1)
+    document.title =
+      (pageCourante > 0 ? `Page ${pageCourante} - ` : '') +
+      `Recherche d’offres ${typeOffre ? typeOffreToTitle(typeOffre) + ' ' : ''}- ${postfix}`
+  }, [typeOffre, pageCourante])
+
   useMatomo(trackingTitle, aDesBeneficiaires)
 
   return (
     <>
-      {typeOffre && (
-        <Head>
-          <title>
-            Recherche d’offres {typeOffreToTitle(typeOffre)}
-            {pageCourante > 0 ? ' - page ' + pageCourante : ''}
-          </title>
-        </Head>
-      )}
-
       {searchError && (
         <FailureAlert
           label={searchError}

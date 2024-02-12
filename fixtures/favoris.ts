@@ -33,7 +33,7 @@ export function uneListeDOffres(): Offre[] {
       type: 'Alternance',
       organisation: 'organisation',
       localisation: 'localisation',
-      urlParam: 'emploi',
+      urlParam: 'alternance',
     },
   ]
 }

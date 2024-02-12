@@ -32,6 +32,7 @@ jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
   useSearchParams: jest.fn(),
 }))
+jest.mock('next/headers', () => ({ headers: jest.fn() }))
 jest.mock('next/dist/client/components/redirect', () => ({
   isRedirectError: jest.fn(({ message }) =>
     message.startsWith('NEXT REDIRECT')

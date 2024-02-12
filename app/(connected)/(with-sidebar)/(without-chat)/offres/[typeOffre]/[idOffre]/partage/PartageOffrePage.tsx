@@ -1,6 +1,7 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
@@ -18,21 +19,18 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
-type PartageOffresProps = PageProps & {
+type PartageOffrePageProps = {
   offre: DetailOffre
-  withoutChat: true
   returnTo: string
 }
 
-function PartageOffre({ offre, returnTo }: PartageOffresProps) {
+function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
   const chatCredentials = useChatCredentials()
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
@@ -93,7 +91,7 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
         message: message || messageDefault,
       })
       setAlerte(AlerteParam.partageOffre)
-      await router.push(returnTo)
+      router.push(returnTo)
     } finally {
       setIsPartageEnCours(false)
     }
@@ -159,66 +157,6 @@ function PartageOffre({ offre, returnTo }: PartageOffresProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  PartageOffresProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const { accessToken } = sessionOrRedirect.session
-  const typeOffre = context.query.offre_type as string
-
-  let offre: DetailOffre | undefined
-  switch (typeOffre) {
-    case 'emploi':
-      const { getOffreEmploiServerSide } = await import(
-        'services/offres-emploi.service'
-      )
-      offre = await getOffreEmploiServerSide(
-        context.query.offre_id as string,
-        accessToken
-      )
-      break
-    case 'service-civique':
-      const { getServiceCiviqueServerSide } = await import(
-        'services/services-civiques.service'
-      )
-      offre = await getServiceCiviqueServerSide(
-        context.query.offre_id as string,
-        accessToken
-      )
-      break
-    case 'immersion':
-      const { getImmersionServerSide } = await import(
-        'services/immersions.service'
-      )
-      offre = await getImmersionServerSide(
-        context.query.offre_id as string,
-        accessToken
-      )
-      break
-  }
-  if (!offre) return { notFound: true }
-
-  const referer = context.req.headers.referer
-  const redirectTo =
-    referer && !redirectedFromHome(referer) ? referer : '/offres'
-  return {
-    props: {
-      offre,
-      pageTitle: 'Recherche d’offres - Partager offre',
-      pageHeader: 'Partager une offre',
-      withoutChat: true,
-      returnTo: redirectTo,
-    },
-  }
-}
-
 function getDefaultMessage(typeOffre: TypeOffre): string {
   switch (typeOffre) {
     case TypeOffre.EMPLOI:
@@ -232,4 +170,4 @@ function getDefaultMessage(typeOffre: TypeOffre): string {
   }
 }
 
-export default withTransaction(PartageOffre.name, 'page')(PartageOffre)
+export default withTransaction(PartageOffrePage.name, 'page')(PartageOffrePage)

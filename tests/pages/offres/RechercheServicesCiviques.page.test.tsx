@@ -339,7 +339,7 @@ describe('Page Recherche Offres Service civique', () => {
           })
         ).toHaveAttribute(
           'href',
-          `/offres/partage-recherche?type=SERVICE_CIVIQUE&titre=PARIS%2014%20(75)&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
+          `/offres/service-civique/partage-recherche?titre=PARIS%2014%20(75)&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
         )
       })
     })
