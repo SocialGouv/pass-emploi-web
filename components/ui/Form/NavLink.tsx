@@ -52,17 +52,7 @@ export default function NavLink({
             >
               {label}
             </span>
-            {badgeLabel && (
-              <>
-                <IconComponent
-                  focusable='false'
-                  aria-hidden='false'
-                  className='w-4 h-4 fill-warning absolute top-0 -right-5'
-                  name={IconName.Error}
-                />
-                <span className='sr-only'>{badgeLabel}</span>
-              </>
-            )}
+            {badgeLabel && <BadgeNavLink label={badgeLabel} />}
           </div>
         </>
       )}
@@ -85,17 +75,7 @@ export default function NavLink({
             >
               {label}
             </span>
-            {badgeLabel && (
-              <>
-                <IconComponent
-                  focusable='false'
-                  aria-hidden='false'
-                  className='w-4 h-4 fill-warning absolute top-0 -right-5'
-                  name={IconName.Error}
-                />
-                <span className='sr-only'>{badgeLabel}</span>
-              </>
-            )}
+            {badgeLabel && <BadgeNavLink label={badgeLabel} />}
           </div>
         </>
       )}
@@ -135,5 +115,19 @@ export default function NavLink({
         </button>
       )}
     </li>
+  )
+}
+
+function BadgeNavLink({ label }: { label: string }) {
+  return (
+    <>
+      <IconComponent
+        focusable='false'
+        aria-hidden='false'
+        className='w-4 h-4 fill-warning absolute top-0 -right-5 bg-blanc rounded-full'
+        name={IconName.Error}
+      />
+      <span className='sr-only'>{label}</span>
+    </>
   )
 }

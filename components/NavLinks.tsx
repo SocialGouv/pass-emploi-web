@@ -43,7 +43,7 @@ export default function NavLinks({
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
   const lienProfilBadgeLabel = !conseiller.email
     ? 'Une information en attente de mise à jour'
-    : ''
+    : undefined
 
   function isCurrentRoute(href: string) {
     return pathname!.startsWith(href)
