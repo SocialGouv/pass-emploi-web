@@ -611,25 +611,27 @@ describe('Home', () => {
     })
 
     describe('si le conseiller n’a pas renseigné son adresse email', () => {
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {},
-      })
+      beforeEach(() => {
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {},
+        })
 
-      const conseiller = unConseiller({
-        agence: { nom: 'MLS3F SAINT-LOUIS', id: 'id-agence' },
-        structureMilo: {
-          nom: 'Mission Locale Aubenas',
-          id: 'id-test',
-        },
-        structure: StructureConseiller.MILO,
-        email: undefined,
-      })
+        const conseiller = unConseiller({
+          agence: { nom: 'MLS3F SAINT-LOUIS', id: 'id-agence' },
+          structureMilo: {
+            nom: 'Mission Locale Aubenas',
+            id: 'id-test',
+          },
+          structure: StructureConseiller.MILO,
+          email: undefined,
+        })
 
-      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
-      ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
-        uneListeDAgencesMILO()
-      )
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
+        ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
+          uneListeDAgencesMILO()
+        )
+      })
 
       it('renvoie les props nécessaires pour demander l’adresse email', async () => {
         // When

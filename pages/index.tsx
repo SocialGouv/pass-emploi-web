@@ -201,7 +201,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
 
   return {
     redirect: {
-      destination: `${redirectUrl}`,
+      destination: redirectUrl,
       permanent: false,
     },
   }
