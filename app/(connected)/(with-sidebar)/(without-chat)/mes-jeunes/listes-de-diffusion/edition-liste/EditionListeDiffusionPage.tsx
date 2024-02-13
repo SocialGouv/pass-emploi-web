@@ -1,7 +1,8 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import { BeneficiaireIndicationReaffectaction } from 'components/jeune/BeneficiaireIndications'
@@ -22,25 +23,23 @@ import RecapitulatifErreursFormulaire, {
 import { ValueWithError } from 'components/ValueWithError'
 import { compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
 const ConfirmationDeleteListeDiffusionModal = dynamic(
-  import('components/ConfirmationDeleteListeDiffusionModal'),
+  () => import('components/ConfirmationDeleteListeDiffusionModal'),
   { ssr: false }
 )
 
-type EditionListeDiffusionProps = PageProps & {
+type EditionListeDiffusionProps = {
   returnTo: string
   liste?: ListeDeDiffusion
 }
 
-function EditionListeDiffusion({
+function EditionListeDiffusionPage({
   returnTo,
   liste,
 }: EditionListeDiffusionProps) {
@@ -145,7 +144,7 @@ function EditionListeDiffusion({
         await modifierListe(liste.id, payload)
       }
       // FIXME : dirty fix, problème de rafraichissement de la liste
-      await router.push(returnTo + '?misc=' + Math.random())
+      router.push(returnTo + '?misc=' + Math.random())
     } catch (erreur) {
       setShowErreurTraitement(true)
       console.error(erreur)
@@ -182,7 +181,7 @@ function EditionListeDiffusion({
       await supprimerListeDeDiffusion(liste!.id)
       setAlerte(AlerteParam.suppressionListeDiffusion)
       // FIXME : dirty fix, problème de rafraichissement de la liste
-      await router.push(returnTo + '?misc=' + Math.random())
+      router.push(returnTo + '?misc=' + Math.random())
     } catch (e) {
       console.error(e)
       setShowErreurTraitement(true)
@@ -314,53 +313,7 @@ function EditionListeDiffusion({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  EditionListeDiffusionProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession)
-    return { redirect: sessionOrRedirect.redirect }
-
-  const { accessToken } = sessionOrRedirect.session
-
-  const referer: string | undefined = context.req.headers.referer
-
-  const previousUrl =
-    referer && !redirectedFromHome(referer)
-      ? referer
-      : '/mes-jeunes/listes-de-diffusion'
-
-  const props: EditionListeDiffusionProps = {
-    pageTitle: 'Créer - Listes de diffusion - Portefeuille',
-    pageHeader: 'Créer une nouvelle liste',
-    returnTo: previousUrl,
-    withoutChat: true,
-  }
-
-  const idListe = context.query.idListe
-  if (idListe) {
-    const { recupererListeDeDiffusion } = await import(
-      'services/listes-de-diffusion.service'
-    )
-    const liste = await recupererListeDeDiffusion(
-      idListe as string,
-      accessToken
-    )
-    if (!liste) {
-      return { notFound: true }
-    }
-    props.liste = liste
-    props.pageTitle = 'Modifier - Listes de diffusion - Portefeuille'
-    props.pageHeader = 'Modifier la liste'
-  }
-
-  return { props }
-}
-
 export default withTransaction(
-  EditionListeDiffusion.name,
+  EditionListeDiffusionPage.name,
   'page'
-)(EditionListeDiffusion)
+)(EditionListeDiffusionPage)

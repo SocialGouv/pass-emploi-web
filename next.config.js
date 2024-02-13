@@ -23,6 +23,16 @@ module.exports = withBundleAnalyzer({
         permanent: true,
       },
       {
+        source: '/mes-jeunes/milo',
+        destination: '/mes-jeunes',
+        permanent: true,
+      },
+      {
+        source: '/mes-jeunes/pole-emploi',
+        destination: '/mes-jeunes',
+        permanent: true,
+      },
+      {
         source: '/mes-jeunes/:id_jeune/actions',
         destination: '/mes-jeunes/:id_jeune?onglet=actions',
         permanent: true,
