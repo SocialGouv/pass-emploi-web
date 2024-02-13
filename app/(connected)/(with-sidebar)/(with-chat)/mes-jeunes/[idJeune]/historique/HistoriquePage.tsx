@@ -3,25 +3,26 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useState } from 'react'
 
+import { BlocDeuxInformationJeune } from '../../../../../../../components/jeune/BlocDeuxInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { estMilo } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
+  DetailJeune,
   EtatSituation,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import { toShortDate } from '../../../../../../../utils/date'
-import { BlocInformationJeune } from '../../../../../../../components/jeune/BlocInformationJeune'
 
 type HistoriqueProps = {
   idJeune: string
+  jeune: DetailJeune
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
@@ -29,7 +30,6 @@ type HistoriqueProps = {
   }>
   conseillers: ConseillerHistorique[]
   lectureSeule: boolean
-  creationDate: string
 }
 
 export enum Onglet {
@@ -42,7 +42,7 @@ function HistoriquePage({
   situations,
   conseillers,
   lectureSeule,
-  creationDate,
+  jeune,
 }: HistoriqueProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -71,8 +71,6 @@ function HistoriquePage({
   }, [currentTab])
 
   useMatomo(tracking, aDesBeneficiaires)
-
-  const shortCreationDate = toShortDate(creationDate)
 
   return (
     <>
@@ -103,18 +101,17 @@ function HistoriquePage({
           id='liste-situations'
           className='mt-8 pb-8'
         >
-          <BlocInformationJeune
-            idJeune={idJeune}
-            creationDate={'date'}
-            dateFinCEJ={'datefin'}
-            email={'email'}
-            conseiller={'conseiller'}
-            onIdentifiantPartenaireCopie={'IdPartenaire'}
-            identifiantPartenaire={'idPartenaire'}
-            onIdentifiantPartenaireClick={() => {}}
-            urlDossier={'string'}
-            onDossierMiloClick={() => {}}
-          />
+          <div className='mb-3'>
+            <BlocDeuxInformationJeune
+              idJeune={idJeune}
+              creationDate={jeune.creationDate}
+              dateFinCEJ={jeune.dateFinCEJ}
+              email={jeune.email}
+              urlDossier={jeune.urlDossier}
+              onDossierMiloClick={() => {}}
+              conseiller={conseiller}
+            />
+          </div>
           <BlocSituation
             idJeune={idJeune}
             situations={situations}
