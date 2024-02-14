@@ -1,9 +1,10 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
+import RenseignementEmailModal from 'components/RenseignementEmailModal'
 import RenseignementStructureModal from 'components/RenseignementStructureModal'
 import {
   aEtablissement,
@@ -29,14 +30,25 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface HomePageProps extends PageProps {
   redirectUrl: string
+  afficherModaleAgence: boolean
+  afficherModaleEmail: boolean
   referentielAgences?: Agence[]
 }
 
-function Home({ redirectUrl, referentielAgences }: HomePageProps) {
+function Home({
+  afficherModaleAgence,
+  afficherModaleEmail,
+  redirectUrl,
+  referentielAgences,
+}: HomePageProps) {
   const router = useRouter()
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [_, setAlerte] = useAlerte()
+  const [showModaleEmail, setShowModaleEmail] =
+    useState<boolean>(afficherModaleEmail)
+  const [showModaleAgence, setShowModaleAgence] =
+    useState<boolean>(afficherModaleAgence)
 
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Pop-in sélection agence'
@@ -76,25 +88,36 @@ function Home({ redirectUrl, referentielAgences }: HomePageProps) {
     })
   }
 
+  useEffect(() => {
+    if (!showModaleAgence && !showModaleEmail) redirectToUrl()
+  }, [showModaleAgence, showModaleEmail])
+
   useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
     <>
-      {!referentielAgences && (
+      {showModaleAgence && !referentielAgences && (
         <RenseignementStructureModal
           onContacterSupport={() => trackContacterSupport('structure')}
           onAccederImilo={trackAccederImilo}
-          onClose={redirectToUrl}
+          onClose={() => setShowModaleAgence(false)}
         />
       )}
 
-      {referentielAgences && (
+      {showModaleAgence && referentielAgences && (
         <RenseignementAgenceModal
           conseiller={conseiller}
           referentielAgences={referentielAgences}
           onAgenceChoisie={selectAgence}
           onContacterSupport={() => trackContacterSupport('agence')}
-          onClose={redirectToUrl}
+          onClose={() => setShowModaleAgence(false)}
+        />
+      )}
+
+      {showModaleEmail && (
+        <RenseignementEmailModal
+          onAccederImilo={trackAccederImilo}
+          onClose={() => setShowModaleEmail(false)}
         />
       )}
     </>
@@ -152,28 +175,34 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (
   const redirectUrl =
     (context.query.redirectUrl as string) ?? '/mes-jeunes' + sourceQueryParam
 
-  if (estPassEmploi(conseiller) || aEtablissement(conseiller)) {
-    return {
-      redirect: {
-        destination: `${redirectUrl}`,
-        permanent: false,
-      },
+  const emailEstManquant = estMilo(conseiller) && !conseiller.email
+  const agenceEstManquante =
+    !estPassEmploi(conseiller) && !aEtablissement(conseiller)
+
+  if (emailEstManquant || agenceEstManquante) {
+    let props: HomePageProps = {
+      afficherModaleAgence: agenceEstManquante,
+      afficherModaleEmail: emailEstManquant,
+      redirectUrl,
+      pageTitle: 'Accueil',
     }
+
+    if (!estMilo(conseiller) && agenceEstManquante) {
+      const { getAgencesServerSide } = await import(
+        'services/referentiel.service'
+      )
+      props.referentielAgences = await getAgencesServerSide(
+        conseiller.structure,
+        accessToken
+      )
+    }
+    return { props }
   }
 
-  if (estMilo(conseiller) && !conseiller.structureMilo)
-    return { props: { redirectUrl, pageTitle: 'Accueil' } }
-
-  const { getAgencesServerSide } = await import('services/referentiel.service')
-  const referentielAgences = await getAgencesServerSide(
-    conseiller.structure,
-    accessToken
-  )
   return {
-    props: {
-      redirectUrl,
-      referentielAgences,
-      pageTitle: 'Accueil',
+    redirect: {
+      destination: redirectUrl,
+      permanent: false,
     },
   }
 }

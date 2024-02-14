@@ -36,9 +36,17 @@ describe('Home', () => {
         ;(useRouter as jest.Mock).mockReturnValue({ replace })
 
         // When
-        renderWithContexts(<Home redirectUrl='/mes-jeunes' pageTitle='' />, {
-          customConseiller: { structure: StructureConseiller.MILO },
-        })
+        renderWithContexts(
+          <Home
+            afficherModaleAgence={true}
+            afficherModaleEmail={false}
+            redirectUrl='/mes-jeunes'
+            pageTitle=''
+          />,
+          {
+            customConseiller: { structure: StructureConseiller.MILO },
+          }
+        )
       })
 
       it('contient un message pour demander la structure du conseiller', () => {
@@ -67,6 +75,48 @@ describe('Home', () => {
       })
     })
 
+    describe('quand le conseiller doit renseigner son adresse email', () => {
+      let replace: jest.Mock
+
+      beforeEach(() => {
+        // Given
+        replace = jest.fn(() => Promise.resolve())
+        ;(useRouter as jest.Mock).mockReturnValue({ replace })
+
+        // When
+        renderWithContexts(
+          <Home
+            afficherModaleAgence={false}
+            afficherModaleEmail={true}
+            redirectUrl='/mes-jeunes'
+            pageTitle=''
+          />,
+          {
+            customConseiller: { structure: StructureConseiller.MILO },
+          }
+        )
+      })
+
+      it('contient un message pour demander l’adresse email du conseiller', () => {
+        // Then
+        expect(
+          screen.getByText(/Votre adresse email n’est pas renseignée/)
+        ).toBeInTheDocument()
+      })
+
+      it('affiche un lien vers i-milo', async () => {
+        // Then
+        expect(
+          screen.getByRole('link', {
+            name: 'Accéder à i-milo (nouvelle fenêtre)',
+          })
+        ).toHaveAttribute(
+          'href',
+          'https://admin.i-milo.fr/moncompte/coordonnees/'
+        )
+      })
+    })
+
     describe('quand le conseiller n’est pas Mission Locale', () => {
       let agences: Agence[]
       let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -82,6 +132,8 @@ describe('Home', () => {
         // When
         renderWithContexts(
           <Home
+            afficherModaleAgence={true}
+            afficherModaleEmail={false}
             referentielAgences={agences}
             redirectUrl='/mes-jeunes'
             pageTitle=''
@@ -240,6 +292,8 @@ describe('Home', () => {
         // When
         renderWithContexts(
           <Home
+            afficherModaleAgence={true}
+            afficherModaleEmail={false}
             referentielAgences={agences}
             redirectUrl='/mes-jeunes'
             pageTitle=''
@@ -475,6 +529,7 @@ describe('Home', () => {
 
         const conseiller = unConseiller({
           structure: StructureConseiller.MILO,
+          email: 'tchoupi@proton.com',
         })
 
         ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
@@ -492,6 +547,8 @@ describe('Home', () => {
         // Then
         expect(actual).toEqual({
           props: {
+            afficherModaleAgence: true,
+            afficherModaleEmail: false,
             redirectUrl: '/mes-jeunes',
             pageTitle: 'Accueil',
           },
@@ -525,6 +582,8 @@ describe('Home', () => {
         // Then
         expect(actual).toEqual({
           props: {
+            afficherModaleAgence: true,
+            afficherModaleEmail: false,
             redirectUrl: '/mes-jeunes',
             referentielAgences: uneListeDAgencesMILO(),
             pageTitle: 'Accueil',
@@ -541,8 +600,51 @@ describe('Home', () => {
         // Then
         expect(actual).toEqual({
           props: {
+            afficherModaleAgence: true,
+            afficherModaleEmail: false,
             redirectUrl: '/agenda',
             referentielAgences: uneListeDAgencesMILO(),
+            pageTitle: 'Accueil',
+          },
+        })
+      })
+    })
+
+    describe('si le conseiller n’a pas renseigné son adresse email', () => {
+      beforeEach(() => {
+        ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
+          validSession: true,
+          session: {},
+        })
+
+        const conseiller = unConseiller({
+          agence: { nom: 'MLS3F SAINT-LOUIS', id: 'id-agence' },
+          structureMilo: {
+            nom: 'Mission Locale Aubenas',
+            id: 'id-test',
+          },
+          structure: StructureConseiller.MILO,
+          email: undefined,
+        })
+
+        ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
+        ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
+          uneListeDAgencesMILO()
+        )
+      })
+
+      it('renvoie les props nécessaires pour demander l’adresse email', async () => {
+        // When
+        const actual = await getServerSideProps({
+          query: {},
+        } as unknown as GetServerSidePropsContext)
+
+        // Then
+        expect(actual).toEqual({
+          props: {
+            afficherModaleAgence: false,
+            afficherModaleEmail: true,
+            redirectUrl: '/mes-jeunes',
             pageTitle: 'Accueil',
           },
         })

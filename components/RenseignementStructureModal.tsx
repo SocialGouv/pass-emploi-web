@@ -1,9 +1,9 @@
 import React from 'react'
 
 import Modal from 'components/Modal'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
-import styles from 'styles/components/Button.module.css'
 
 interface RenseignementStructureModalProps {
   onContacterSupport: () => void
@@ -16,8 +16,6 @@ export default function RenseignementStructureModal({
   onAccederImilo,
   onClose,
 }: RenseignementStructureModalProps) {
-  const buttonsStyle = 'w-fit flex items-center justify-center text-s-bold'
-
   return (
     <Modal
       title='Votre structure n’est pas renseignée'
@@ -33,39 +31,22 @@ export default function RenseignementStructureModal({
         Sinon, vous ne pourrez pas consulter les sessions de votre structure.
       </p>
 
-      <div className='flex justify-center mt-4'>
-        <a
+      <div className='flex justify-center mt-4 gap-4'>
+        <ButtonLink
           href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
-          target='_blank'
-          rel='noreferrer noopener'
-          className={`${buttonsStyle} ${styles.button} ${styles.buttonTertiary}`}
           onClick={onContacterSupport}
-        >
-          <IconComponent
-            name={IconName.Mail}
-            aria-hidden={true}
-            focusable={false}
-            className='inline w-4 h-4 mr-2'
-          />
-          Contacter le support{' '}
-          <span className='sr-only'>(nouvelle fenêtre)</span>
-        </a>
+          externalLink={true}
+          style={ButtonStyle.TERTIARY}
+          label='Contacter le support'
+        />
 
-        <a
+        <ButtonLink
           href={process.env.NEXT_PUBLIC_IMILO_URL as string}
-          target='_blank'
-          rel='noreferrer noopener'
-          className={`${buttonsStyle} ${styles.button} ${styles.buttonPrimary} ml-4`}
           onClick={onAccederImilo}
-        >
-          Accéder à i-milo <span className='sr-only'>(nouvelle fenêtre)</span>
-          <IconComponent
-            name={IconName.OpenInNew}
-            aria-hidden={true}
-            focusable={false}
-            className='inline w-4 h-4 ml-2'
-          />
-        </a>
+          externalLink={true}
+          style={ButtonStyle.PRIMARY}
+          label='Accéder à i-milo'
+        />
       </div>
     </Modal>
   )
