@@ -7,7 +7,7 @@ import { BlocDeuxInformationJeune } from '../../../../../../../components/jeune/
 
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { estMilo } from 'interfaces/conseiller'

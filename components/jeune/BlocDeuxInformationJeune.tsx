@@ -17,7 +17,6 @@ interface BlocInformationJeuneProps {
 }
 
 export function BlocDeuxInformationJeune({
-  idJeune,
   creationDate,
   dateFinCEJ,
   email,
@@ -25,10 +24,6 @@ export function BlocDeuxInformationJeune({
   urlDossier,
   onDossierMiloClick,
 }: BlocInformationJeuneProps) {
-  const pathPrefix = usePathname()?.startsWith('/etablissement')
-    ? '/etablissement/beneficiaires'
-    : '/mes-jeunes'
-
   const conseillerEstMilo = estMilo(conseiller)
   const shortCreationDate = toShortDate(creationDate)
 
@@ -52,23 +47,23 @@ export function BlocDeuxInformationJeune({
         {conseillerEstMilo && (
           <div className='flex'>
             <dt className='text-base-regular'>Date de fin du CEJ :</dt>
-            <dd>
-              <span className='text-base-bold ml-1'>
-                {dateFinCEJ ? toShortDate(dateFinCEJ) : '--'}
-              </span>
+            <dd className='text-base-bold ml-1'>
+              {dateFinCEJ ? (
+                toShortDate(dateFinCEJ)
+              ) : (
+                <>
+                  <span> Information non disponible</span>
+                </>
+              )}
             </dd>
           </div>
         )}
       </dl>
-
-      {!conseillerEstMilo && (
-        <LienVersHistorique idJeune={idJeune} pathPrefix={pathPrefix} />
-      )}
     </div>
   )
 }
 
-function Email(props: { email: string }) {
+function Email({ email }: { email: string }) {
   return (
     <div className='flex items-center'>
       <dt>
@@ -80,58 +75,27 @@ function Email(props: { email: string }) {
           className='w-4 h-4 fill-primary mr-2'
         />
       </dt>
-      <dd className='text-primary'>{props.email}</dd>
+      <dd className='text-primary'>{email}</dd>
     </div>
   )
 }
 
-function IndentifiantPartenaire(props: {
-  identifiantPartenaire: string | undefined
-  onCopy: () => void
+function DossierExterne({
+  href,
+  onClick,
+}: {
+  href: string
   onClick: () => void
 }) {
-  return (
-    <div className='flex'>
-      <dt className='text-base-regular mr-2'>Identifiant Pôle emploi :</dt>
-      <dd className='text-base-bold' onCopy={props.onCopy}>
-        {props.identifiantPartenaire ?? (
-          <>
-            <span className='sr-only'>non renseigné</span>
-            <span>-</span>
-          </>
-        )}
-      </dd>
-      <button
-        className='ml-5 flex items-center text-primary'
-        aria-label={
-          props.identifiantPartenaire
-            ? 'Modifier l’identifiant Pôle emploi'
-            : 'Ajouter l’identifiant Pôle emploi'
-        }
-        onClick={props.onClick}
-      >
-        <IconComponent
-          name={IconName.Edit}
-          aria-hidden={true}
-          focusable={false}
-          className='w-4 h-4 mr-1 fill-primary'
-        />
-        {props.identifiantPartenaire ? 'Modifier' : 'Ajouter'}
-      </button>
-    </div>
-  )
-}
-
-function DossierExterne(props: { href: string; onClick: () => void }) {
   return (
     <>
       <dt className='sr-only'>Dossier externe</dt>
       <dd className='mt-2'>
         <a
           className='underline text-primary hover:text-primary_darken flex items-center'
-          href={props.href}
+          href={href}
           target='_blank'
-          onClick={props.onClick}
+          onClick={onClick}
           rel='noopener noreferrer'
         >
           Dossier jeune i-milo{' '}
@@ -147,28 +111,5 @@ function DossierExterne(props: { href: string; onClick: () => void }) {
         </a>
       </dd>
     </>
-  )
-}
-
-function LienVersHistorique({
-  idJeune,
-  pathPrefix,
-}: {
-  idJeune: string
-  pathPrefix: string
-}) {
-  return (
-    <Link
-      href={`${pathPrefix}/${idJeune}/historique`}
-      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
-    >
-      Voir l’historique des conseillers
-      <IconComponent
-        name={IconName.ChevronRight}
-        className='w-4 h-5 fill-[inherit]'
-        aria-hidden={true}
-        focusable={false}
-      />
-    </Link>
   )
 }

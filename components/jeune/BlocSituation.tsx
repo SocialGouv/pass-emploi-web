@@ -27,7 +27,7 @@ export function BlocSituation({
 
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800 mb-1'>Historique situations </h2>
+      <h2 className='text-m-bold text-grey_800 mb-1'>Historique situations</h2>
 
       {!(situations && situations.length) && <SansSituation />}
 

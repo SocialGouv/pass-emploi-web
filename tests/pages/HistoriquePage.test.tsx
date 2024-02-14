@@ -26,7 +26,7 @@ describe('HistoriquePage client side', () => {
     },
   ]
   const listeConseillers = desConseillersJeune()
-  const jeune = unDetailJeune()
+  const jeune = unDetailJeune({ urlDossier: 'https://dossier-milo.fr' })
 
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
@@ -43,13 +43,17 @@ describe('HistoriquePage client side', () => {
           screen.getByRole('tab', { selected: true })
         ).toHaveAccessibleName('Informations')
       })
-      it('afiche les informations de la fiche d’un jeune ', () => {
+      it('afiche les informations de la fiche d’un bénéficiaire', () => {
         //When
         renderHistorique([], [], StructureConseiller.MILO, jeune)
         //Then
         expect(screen.getByText('Bénéficiaire')).toBeInTheDocument()
         expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
         expect(screen.getByText('07/12/2021')).toBeInTheDocument()
+        expect(screen.getByText('Dossier jeune i-milo')).toHaveAttribute(
+          'href',
+          'https://dossier-milo.fr'
+        )
       })
 
       describe('quand le jeune n’a aucune situation', () => {
