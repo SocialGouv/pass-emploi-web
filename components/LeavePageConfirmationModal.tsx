@@ -1,5 +1,3 @@
-import { UrlObject } from 'url'
-
 import { MouseEvent, useRef } from 'react'
 
 import Modal from './Modal'
@@ -9,7 +7,7 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 
 interface LeavePageConfirmationModalProps {
-  destination: string | UrlObject
+  destination: string
   onCancel: () => void
   titre: string
   commentaire: string

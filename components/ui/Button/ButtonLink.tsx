@@ -1,5 +1,3 @@
-import { UrlObject } from 'url'
-
 import Link from 'next/link'
 import React, { ReactNode } from 'react'
 
@@ -8,7 +6,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import styles from 'styles/components/Button.module.css'
 
 interface Props {
-  href: string | UrlObject
+  href: string
   externalLink?: boolean
   children?: ReactNode
   label?: string
