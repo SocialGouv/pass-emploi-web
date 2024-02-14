@@ -3,8 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useState } from 'react'
 
-import { BlocDeuxInformationJeune } from '../../../../../../../components/jeune/BlocDeuxInformationJeune'
-
+import { BlocDeuxInformationJeune } from 'components/jeune/BlocDeuxInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { IconName } from 'components/ui/IconComponent'
@@ -111,6 +110,7 @@ function HistoriquePage({
               urlDossier={jeune.urlDossier}
               onDossierMiloClick={() => {}}
               conseiller={conseiller}
+              titre='Bénéficiaire'
             />
           </div>
           <BlocSituation

@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
-import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
+import { BlocDeuxInformationJeune } from './BlocDeuxInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
@@ -81,7 +81,7 @@ export default function DetailsJeune({
           />
         )}
 
-        <BlocInformationJeune
+        <BlocDeuxInformationJeune
           idJeune={jeune.id}
           creationDate={jeune.creationDate}
           dateFinCEJ={jeune.dateFinCEJ}
@@ -92,6 +92,8 @@ export default function DetailsJeune({
           onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
           urlDossier={jeune.urlDossier}
           onDossierMiloClick={onDossierMiloClick}
+          titre='Informations'
+          afficheLienVoirPlus={true}
         />
       </div>
 

@@ -7,6 +7,7 @@ import { Conseiller, estMilo } from 'interfaces/conseiller'
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneProps {
+  titre: string
   idJeune: string
   creationDate: string
   dateFinCEJ: string | undefined
@@ -14,22 +15,35 @@ interface BlocInformationJeuneProps {
   conseiller: Conseiller
   urlDossier: string | undefined
   onDossierMiloClick: () => void
+  onIdentifiantPartenaireCopie?: () => void
+  identifiantPartenaire?: string | undefined
+  onIdentifiantPartenaireClick?: () => void
+  afficheLienVoirPlus?: boolean
 }
 
 export function BlocDeuxInformationJeune({
+  idJeune,
+  titre,
   creationDate,
   dateFinCEJ,
   email,
   conseiller,
   urlDossier,
   onDossierMiloClick,
+  onIdentifiantPartenaireCopie,
+  identifiantPartenaire,
+  onIdentifiantPartenaireClick,
+  afficheLienVoirPlus,
 }: BlocInformationJeuneProps) {
+  const pathPrefix = usePathname()?.startsWith('/etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
   const conseillerEstMilo = estMilo(conseiller)
   const shortCreationDate = toShortDate(creationDate)
 
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800 mb-4'>Bénéficiaire</h2>
+      <h2 className='text-m-bold text-grey_800 mb-4'>{titre}</h2>
       <dl>
         <div className='flex'>
           <dt className='text-base-regular'>Ajouté le :</dt>
@@ -39,6 +53,15 @@ export function BlocDeuxInformationJeune({
         </div>
 
         {email && <Email email={email} />}
+        {!conseillerEstMilo &&
+          onIdentifiantPartenaireCopie &&
+          onIdentifiantPartenaireClick && (
+            <IndentifiantPartenaire
+              identifiantPartenaire={identifiantPartenaire}
+              onCopy={onIdentifiantPartenaireCopie}
+              onClick={onIdentifiantPartenaireClick}
+            />
+          )}
 
         {urlDossier && (
           <DossierExterne href={urlDossier} onClick={onDossierMiloClick} />
@@ -58,6 +81,9 @@ export function BlocDeuxInformationJeune({
             </dd>
           </div>
         )}
+        {afficheLienVoirPlus && (
+          <LienVersHistorique idJeune={idJeune} pathPrefix={pathPrefix} />
+        )}
       </dl>
     </div>
   )
@@ -76,6 +102,43 @@ function Email({ email }: { email: string }) {
         />
       </dt>
       <dd className='text-primary'>{email}</dd>
+    </div>
+  )
+}
+
+function IndentifiantPartenaire(props: {
+  identifiantPartenaire: string | undefined
+  onCopy: () => void
+  onClick: () => void
+}) {
+  return (
+    <div className='flex'>
+      <dt className='text-base-regular mr-2'>Identifiant Pôle emploi :</dt>
+      <dd className='text-base-bold' onCopy={props.onCopy}>
+        {props.identifiantPartenaire ?? (
+          <>
+            <span className='sr-only'>non renseigné</span>
+            <span>-</span>
+          </>
+        )}
+      </dd>
+      <button
+        className='ml-5 flex items-center text-primary'
+        aria-label={
+          props.identifiantPartenaire
+            ? 'Modifier l’identifiant Pôle emploi'
+            : 'Ajouter l’identifiant Pôle emploi'
+        }
+        onClick={props.onClick}
+      >
+        <IconComponent
+          name={IconName.Edit}
+          aria-hidden={true}
+          focusable={false}
+          className='w-4 h-4 mr-1 fill-primary'
+        />
+        {props.identifiantPartenaire ? 'Modifier' : 'Ajouter'}
+      </button>
     </div>
   )
 }
@@ -111,5 +174,28 @@ function DossierExterne({
         </a>
       </dd>
     </>
+  )
+}
+
+function LienVersHistorique({
+  idJeune,
+  pathPrefix,
+}: {
+  idJeune: string
+  pathPrefix: string
+}) {
+  return (
+    <Link
+      href={`${pathPrefix}/${idJeune}/historique`}
+      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
+    >
+      Voir plus d’informations
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-[inherit]'
+        aria-hidden={true}
+        focusable={false}
+      />
+    </Link>
   )
 }
