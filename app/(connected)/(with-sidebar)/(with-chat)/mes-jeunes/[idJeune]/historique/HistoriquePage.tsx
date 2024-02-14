@@ -4,6 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useState } from 'react'
 
 import { BlocDeuxInformationJeune } from '../../../../../../../components/jeune/BlocDeuxInformationJeune'
+
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -81,7 +82,7 @@ function HistoriquePage({
             selected={currentTab === Onglet.INFORMATIONS}
             controls='liste-situations'
             onSelectTab={() => setCurrentTab(Onglet.INFORMATIONS)}
-            iconName={IconName.EventFill}
+            iconName={IconName.Description}
           />
         )}
         <Tab

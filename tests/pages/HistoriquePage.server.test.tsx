@@ -20,10 +20,7 @@ import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
 } from 'services/jeunes.service'
-import renderWithContexts from 'tests/renderWithContexts'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
-import DetailsJeune from '../../components/jeune/DetailsJeune'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
