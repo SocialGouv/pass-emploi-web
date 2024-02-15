@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
 import { BlocDeuxInformationJeune } from './BlocDeuxInformationJeune'
+
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
