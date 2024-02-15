@@ -20,9 +20,7 @@ import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
 } from 'services/jeunes.service'
-import renderWithContexts from 'tests/renderWithContexts'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
@@ -66,6 +64,11 @@ describe('HistoriquePage server side', () => {
   })
 
   it('prépare la page', async () => {
+    //Given
+    let DetailJeune = unDetailJeune({
+      id: 'id-jeune',
+      situations: listeSituations,
+    })
     // Then
     expect(metadata).toEqual({
       title: 'Historique - Jirac Kenji - Portefeuille',
@@ -82,6 +85,7 @@ describe('HistoriquePage server side', () => {
         lectureSeule: false,
         situations: listeSituations,
         conseillers: listeConseillers,
+        jeune: DetailJeune,
       },
       {}
     )

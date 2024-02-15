@@ -52,7 +52,7 @@ describe('Historique des conseillers dans la fiche jeune', () => {
       // Then
       expect(
         screen.getByRole('link', {
-          name: 'Voir l’historique des conseillers',
+          name: 'Voir plus d’informations',
         })
       ).toHaveAttribute('href', '/mes-jeunes/jeune-1/historique')
     })

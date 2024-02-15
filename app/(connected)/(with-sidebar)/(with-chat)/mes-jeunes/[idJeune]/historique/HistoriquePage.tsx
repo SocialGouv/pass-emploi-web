@@ -3,6 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useState } from 'react'
 
+import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { IconName } from 'components/ui/IconComponent'
@@ -12,6 +13,7 @@ import { estMilo } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
+  DetailJeune,
   EtatSituation,
 } from 'interfaces/jeune'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -20,6 +22,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type HistoriqueProps = {
   idJeune: string
+  jeune: DetailJeune
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
@@ -30,7 +33,7 @@ type HistoriqueProps = {
 }
 
 export enum Onglet {
-  SITUATIONS = 'SITUATIONS',
+  INFORMATIONS = 'INFORMATIONS',
   CONSEILLERS = 'CONSEILLERS',
 }
 
@@ -39,11 +42,12 @@ function HistoriquePage({
   situations,
   conseillers,
   lectureSeule,
+  jeune,
 }: HistoriqueProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [currentTab, setCurrentTab] = useState<Onglet | undefined>(
-    estMilo(conseiller) ? Onglet.SITUATIONS : Onglet.CONSEILLERS
+    estMilo(conseiller) ? Onglet.INFORMATIONS : Onglet.CONSEILLERS
   )
 
   const situationsTracking = `Détail jeune – Situations${
@@ -59,7 +63,7 @@ function HistoriquePage({
   useEffect(() => {
     if (currentTab) {
       setTracking(
-        currentTab === Onglet.SITUATIONS
+        currentTab === Onglet.INFORMATIONS
           ? situationsTracking
           : conseillersTracking
       )
@@ -73,11 +77,11 @@ function HistoriquePage({
       <TabList className='mt-10'>
         {estMilo(conseiller) && (
           <Tab
-            label='Situations'
-            selected={currentTab === Onglet.SITUATIONS}
-            controls='liste-situations'
-            onSelectTab={() => setCurrentTab(Onglet.SITUATIONS)}
-            iconName={IconName.EventFill}
+            label='Informations'
+            selected={currentTab === Onglet.INFORMATIONS}
+            controls='liste-informations'
+            onSelectTab={() => setCurrentTab(Onglet.INFORMATIONS)}
+            iconName={IconName.Description}
           />
         )}
         <Tab
@@ -89,14 +93,26 @@ function HistoriquePage({
         />
       </TabList>
 
-      {currentTab === Onglet.SITUATIONS && (
+      {currentTab === Onglet.INFORMATIONS && (
         <div
           role='tabpanel'
-          aria-labelledby='liste-situations--tab'
+          aria-labelledby='liste-informations--tab'
           tabIndex={0}
-          id='liste-situations'
+          id='liste-informations'
           className='mt-8 pb-8'
         >
+          <div className='mb-3'>
+            <BlocInformationJeune
+              idJeune={idJeune}
+              creationDate={jeune.creationDate}
+              dateFinCEJ={jeune.dateFinCEJ}
+              email={jeune.email}
+              urlDossier={jeune.urlDossier}
+              onDossierMiloClick={() => {}}
+              conseiller={conseiller}
+              titre='Bénéficiaire'
+            />
+          </div>
           <BlocSituation
             idJeune={idJeune}
             situations={situations}

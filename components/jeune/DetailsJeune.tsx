@@ -1,7 +1,8 @@
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
-import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
+import { BlocInformationJeune } from './BlocInformationJeune'
+
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { DetailJeune } from 'interfaces/jeune'
@@ -92,6 +93,8 @@ export default function DetailsJeune({
           onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
           urlDossier={jeune.urlDossier}
           onDossierMiloClick={onDossierMiloClick}
+          titre='Informations'
+          afficheLienVoirPlus={true}
         />
       </div>
 

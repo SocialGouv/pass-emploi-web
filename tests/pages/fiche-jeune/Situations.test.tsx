@@ -29,7 +29,7 @@ describe('Situations dans la fiche jeune', () => {
         await renderFicheJeune([])
 
         // Then
-        expect(screen.getByText('Situation')).toBeInTheDocument()
+        expect(screen.getByText('Historique situations')).toBeInTheDocument()
         expect(screen.getByText('Sans situation')).toBeInTheDocument()
       })
     })
@@ -50,7 +50,7 @@ describe('Situations dans la fiche jeune', () => {
         await renderFicheJeune(situations)
 
         // Then
-        expect(screen.getByText('Situation')).toBeInTheDocument()
+        expect(screen.getByText('Historique situations')).toBeInTheDocument()
         expect(screen.getByText('Emploi')).toBeInTheDocument()
         expect(screen.getByText('en cours')).toBeInTheDocument()
         expect(() => screen.getByText('Contrat en Alternance')).toThrow()

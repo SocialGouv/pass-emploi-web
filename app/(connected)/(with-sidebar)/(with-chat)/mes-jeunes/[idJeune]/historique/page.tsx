@@ -56,6 +56,7 @@ export default async function Historique({
         idJeune={beneficiaire.id}
         situations={beneficiaire.situations}
         lectureSeule={lectureSeule}
+        jeune={beneficiaire}
       />
     </>
   )

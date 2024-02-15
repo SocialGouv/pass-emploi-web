@@ -4,11 +4,12 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
-import { desConseillersJeune } from 'fixtures/jeune'
+import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
+  DetailJeune,
   EtatSituation,
 } from 'interfaces/jeune'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -25,6 +26,7 @@ describe('HistoriquePage client side', () => {
     },
   ]
   const listeConseillers = desConseillersJeune()
+  const jeune = unDetailJeune({ urlDossier: 'https://dossier-milo.fr' })
 
   beforeEach(async () => {
     ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
@@ -34,18 +36,30 @@ describe('HistoriquePage client side', () => {
     describe('pour les Situations', () => {
       it('affiche un onglet dédié', () => {
         // Given
-        renderHistorique([], [], StructureConseiller.MILO)
+        renderHistorique([], [], StructureConseiller.MILO, jeune)
 
         // Then
         expect(
           screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Situations')
+        ).toHaveAccessibleName('Informations')
+      })
+      it('afiche les informations de la fiche d’un bénéficiaire', () => {
+        //When
+        renderHistorique([], [], StructureConseiller.MILO, jeune)
+        //Then
+        expect(screen.getByText('Bénéficiaire')).toBeInTheDocument()
+        expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
+        expect(screen.getByText('07/12/2021')).toBeInTheDocument()
+        expect(screen.getByText('Dossier jeune i-milo')).toHaveAttribute(
+          'href',
+          'https://dossier-milo.fr'
+        )
       })
 
       describe('quand le jeune n’a aucune situation', () => {
         it('affiche les informations concernant la situation du jeune', () => {
           // Given
-          renderHistorique([], [], StructureConseiller.MILO)
+          renderHistorique([], [], StructureConseiller.MILO, jeune)
 
           // Then
           expect(screen.getByText('Sans situation')).toBeInTheDocument()
@@ -55,7 +69,7 @@ describe('HistoriquePage client side', () => {
       describe('quand le jeune a une liste de situations', () => {
         it('affiche les informations concernant la situation du jeune ', () => {
           // Given
-          renderHistorique(listeSituations, [], StructureConseiller.MILO)
+          renderHistorique(listeSituations, [], StructureConseiller.MILO, jeune)
 
           // Then
           expect(screen.getByText('Emploi')).toBeInTheDocument()
@@ -69,7 +83,7 @@ describe('HistoriquePage client side', () => {
     describe('pour l’Historique des conseillers', () => {
       it('affiche un onglet dédié', async () => {
         // Given
-        renderHistorique([], [], StructureConseiller.MILO)
+        renderHistorique([], [], StructureConseiller.MILO, jeune)
 
         // When
         const tabConseillers = screen.getByRole('tab', {
@@ -85,7 +99,7 @@ describe('HistoriquePage client side', () => {
 
       it('affiche la liste complète des conseillers du jeune', async () => {
         // Given
-        renderHistorique([], listeConseillers, StructureConseiller.MILO)
+        renderHistorique([], listeConseillers, StructureConseiller.MILO, jeune)
 
         // When
         const tabConseillers = screen.getByRole('tab', {
@@ -104,7 +118,7 @@ describe('HistoriquePage client side', () => {
   describe('quand l’utilisateur est un conseiller Pôle Empoi', () => {
     it('affiche uniquement l’onglet Historique des conseiller', () => {
       // Given
-      renderHistorique([], [], StructureConseiller.POLE_EMPLOI)
+      renderHistorique([], [], StructureConseiller.POLE_EMPLOI, jeune)
 
       // Then
       expect(() => screen.getByText('Situations')).toThrow()
@@ -115,7 +129,12 @@ describe('HistoriquePage client side', () => {
 
     it('affiche la liste complète des conseillers du jeune', async () => {
       // Given
-      renderHistorique([], listeConseillers, StructureConseiller.POLE_EMPLOI)
+      renderHistorique(
+        [],
+        listeConseillers,
+        StructureConseiller.POLE_EMPLOI,
+        jeune
+      )
 
       //Then
       listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
@@ -132,7 +151,8 @@ function renderHistorique(
     dateFin?: string
   }>,
   conseillers: ConseillerHistorique[],
-  structure: StructureConseiller
+  structure: StructureConseiller,
+  beneficiaire: DetailJeune
 ) {
   renderWithContexts(
     <Historique
@@ -140,6 +160,7 @@ function renderHistorique(
       situations={situations}
       conseillers={conseillers}
       lectureSeule={false}
+      jeune={beneficiaire}
     />,
     { customConseiller: { structure: structure } }
   )
