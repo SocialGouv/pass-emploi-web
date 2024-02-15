@@ -79,7 +79,7 @@ function HistoriquePage({
           <Tab
             label='Informations'
             selected={currentTab === Onglet.INFORMATIONS}
-            controls='liste-situations'
+            controls='liste-informations'
             onSelectTab={() => setCurrentTab(Onglet.INFORMATIONS)}
             iconName={IconName.Description}
           />
@@ -96,9 +96,9 @@ function HistoriquePage({
       {currentTab === Onglet.INFORMATIONS && (
         <div
           role='tabpanel'
-          aria-labelledby='liste-situations--tab'
+          aria-labelledby='liste-informations--tab'
           tabIndex={0}
-          id='liste-situations'
+          id='liste-informations'
           className='mt-8 pb-8'
         >
           <div className='mb-3'>
