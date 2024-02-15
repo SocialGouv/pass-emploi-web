@@ -120,13 +120,11 @@ export default function NavLinks({
 
       {items.includes(NavItem.RechercheOffres) && (
         <NavLink
-          isActive={
-            isCurrentRoute('/recherche-offres') || isCurrentRoute('/offres')
-          }
-          href='/recherche-offres'
+          isActive={isCurrentRoute('/offres')}
+          href='/offres'
           label='Offres'
           iconName={
-            isCurrentRoute('/recherche-offres') || isCurrentRoute('/offres')
+            isCurrentRoute('/offres')
               ? IconName.PageViewFill
               : IconName.PageViewOutline
           }

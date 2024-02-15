@@ -1,49 +1,39 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
-import {
-  Conseiller,
-  estUserPoleEmploi,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
+import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
-import { PageProps } from 'interfaces/pageProps'
-import {
-  getSituationsNonProfessionnelles,
-  TriActionsAQualifier,
-} from 'services/actions.service'
+import { TriActionsAQualifier } from 'services/actions.service'
 import { getAnimationsCollectivesACloreClientSide } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { SessionsAClore } from 'services/sessions.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const OngletActionsPilotage = dynamic(
-  import('components/pilotage/OngletActionsPilotage')
+  () => import('components/pilotage/OngletActionsPilotage')
 )
 const OngletAnimationsCollectivesPilotage = dynamic(
-  import('components/pilotage/OngletAnimationsCollectivesPilotage')
+  () => import('components/pilotage/OngletAnimationsCollectivesPilotage')
 )
 const OngletSessionsImiloPilotage = dynamic(
-  import('components/pilotage/OngletSessionsImiloPilotage')
+  () => import('components/pilotage/OngletSessionsImiloPilotage')
 )
-const EncartAgenceRequise = dynamic(import('components/EncartAgenceRequise'))
+const EncartAgenceRequise = dynamic(
+  () => import('components/EncartAgenceRequise')
+)
 
-export enum Onglet {
-  ACTIONS = 'ACTIONS',
-  ANIMATIONS_COLLECTIVES = 'ANIMATIONS_COLLECTIVES',
-  SESSIONS_IMILO = 'SESSIONS_IMILO',
-}
+export type Onglet = 'ACTIONS' | 'ANIMATIONS_COLLECTIVES' | 'SESSIONS_IMILO'
 
 const ongletProps: {
   [key in Onglet]: { queryParam: string; trackingLabel: string }
@@ -59,18 +49,18 @@ const ongletProps: {
   },
 }
 
-type PilotageProps = PageProps & {
+type PilotageProps = {
   actions: { donnees: ActionPilotage[]; metadonnees: MetadonneesPagination }
+  categoriesActions: SituationNonProfessionnelle[]
+  onglet: Onglet
+  sessions?: SessionsAClore[]
   animationsCollectives?: {
     donnees: AnimationCollectivePilotage[]
     metadonnees: MetadonneesPagination
   }
-  sessions?: SessionsAClore[]
-  categoriesActions: SituationNonProfessionnelle[]
-  onglet?: Onglet
 }
 
-function Pilotage({
+function PilotagePage({
   actions,
   animationsCollectives,
   sessions,
@@ -81,7 +71,7 @@ function Pilotage({
   const [portefeuille] = usePortefeuille()
   const router = useRouter()
 
-  const [currentTab, setCurrentTab] = useState<Onglet>(onglet ?? Onglet.ACTIONS)
+  const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
   const [totalActions, setTotalActions] = useState<number>(
     actions.metadonnees.nombreTotal
   )
@@ -152,17 +142,7 @@ function Pilotage({
     setTrackingLabel(
       pageTracking + ' - Consultation ' + ongletProps[tab].trackingLabel
     )
-    await router.replace(
-      {
-        pathname: `/pilotage`,
-        query: { onglet: ongletProps[tab].queryParam },
-      },
-      undefined,
-      {
-        shallow: true,
-      }
-    )
-
+    router.replace('pilotage?onglet=' + ongletProps[tab].queryParam)
     setCurrentTab(tab)
   }
 
@@ -224,32 +204,32 @@ function Pilotage({
         <Tab
           label='Actions'
           count={totalActions}
-          selected={currentTab === Onglet.ACTIONS}
+          selected={currentTab === 'ACTIONS'}
           controls='liste-actions-à-qualifier'
-          onSelectTab={() => switchTab(Onglet.ACTIONS)}
+          onSelectTab={() => switchTab('ACTIONS')}
           iconName={IconName.EventFill}
         />
         <Tab
           label='AC app CEJ'
           count={conseiller.agence?.id ? totalAnimationsCollectives : undefined}
-          selected={currentTab === Onglet.ANIMATIONS_COLLECTIVES}
+          selected={currentTab === 'ANIMATIONS_COLLECTIVES'}
           controls='liste-animations-collectives-a-clore'
-          onSelectTab={() => switchTab(Onglet.ANIMATIONS_COLLECTIVES)}
+          onSelectTab={() => switchTab('ANIMATIONS_COLLECTIVES')}
           iconName={IconName.EventFill}
         />
         {peutAccederAuxSessions(conseiller) && (
           <Tab
             label='Sessions i-milo'
             count={sessions?.length}
-            selected={currentTab === Onglet.SESSIONS_IMILO}
+            selected={currentTab === 'SESSIONS_IMILO'}
             controls='liste-sessions-i-milo-a-clore'
-            onSelectTab={() => switchTab(Onglet.SESSIONS_IMILO)}
+            onSelectTab={() => switchTab('SESSIONS_IMILO')}
             iconName={IconName.EventFill}
           />
         )}
       </TabList>
 
-      {currentTab === Onglet.ACTIONS && (
+      {currentTab === 'ACTIONS' && (
         <div
           role='tabpanel'
           aria-labelledby='liste-actions-à-qualifier--tab'
@@ -267,7 +247,7 @@ function Pilotage({
         </div>
       )}
 
-      {currentTab === Onglet.ANIMATIONS_COLLECTIVES && (
+      {currentTab === 'ANIMATIONS_COLLECTIVES' && (
         <div
           role='tabpanel'
           aria-labelledby='liste-animations-collectives-a-clore--tab'
@@ -296,7 +276,7 @@ function Pilotage({
         </div>
       )}
 
-      {currentTab === Onglet.SESSIONS_IMILO &&
+      {currentTab === 'SESSIONS_IMILO' &&
         peutAccederAuxSessions(conseiller) && (
           <div
             role='tabpanel'
@@ -312,117 +292,4 @@ function Pilotage({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<PilotageProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { accessToken, user },
-  } = sessionOrRedirect
-  if (estUserPoleEmploi(user)) return { notFound: true }
-
-  const { getActionsAQualifierServerSide } = await import(
-    'services/actions.service'
-  )
-  const { getConseillerServerSide } = await import(
-    'services/conseiller.service'
-  )
-  const { getAnimationsCollectivesACloreServerSide } = await import(
-    'services/evenements.service'
-  )
-  const { getSessionsACloreServerSide } = await import(
-    'services/sessions.service'
-  )
-
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401) {
-      return {
-        redirect: {
-          destination: '/api/auth/federated-logout',
-          permanent: false,
-        },
-      }
-    }
-    throw e
-  }
-  if (!conseiller) return { notFound: true }
-
-  const [actions, categoriesActions] = await Promise.all([
-    getActionsAQualifierServerSide(user.id, accessToken),
-    getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
-  ])
-
-  let evenements
-  let sessions: SessionsAClore[] | undefined
-
-  if (conseiller.agence?.id)
-    evenements = await getAnimationsCollectivesACloreServerSide(
-      conseiller.agence.id,
-      accessToken
-    )
-
-  if (peutAccederAuxSessions(conseiller)) {
-    try {
-      sessions = await getSessionsACloreServerSide(user.id, accessToken)
-    } catch (e) {
-      if (e instanceof ApiError && e.statusCode === 401) {
-        return {
-          redirect: {
-            destination: '/api/auth/federated-logout',
-            permanent: false,
-          },
-        }
-      }
-
-      sessions = []
-    }
-  }
-
-  const props: PilotageProps = {
-    pageTitle: 'Pilotage',
-    actions: {
-      donnees: actions.actions,
-      metadonnees: actions.metadonnees,
-    },
-    categoriesActions,
-  }
-
-  if (evenements) {
-    props.animationsCollectives = {
-      donnees: evenements.animationsCollectives,
-      metadonnees: evenements.metadonnees,
-    }
-  }
-
-  if (sessions) {
-    props.sessions = sessions
-  }
-
-  if (context.query.onglet) {
-    switch (context.query.onglet) {
-      case 'animationsCollectives':
-        props.onglet = Onglet.ANIMATIONS_COLLECTIVES
-        break
-      case 'sessionsImilo':
-        props.onglet = Onglet.SESSIONS_IMILO
-        break
-      case 'actions':
-      default:
-        props.onglet = Onglet.ACTIONS
-    }
-  }
-
-  return { props }
-}
-
-export default withTransaction(Pilotage.name, 'page')(Pilotage)
+export default withTransaction(PilotagePage.name, 'page')(PilotagePage)

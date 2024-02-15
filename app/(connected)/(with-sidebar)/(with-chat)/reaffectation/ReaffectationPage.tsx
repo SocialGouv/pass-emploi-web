@@ -1,5 +1,6 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import React, {
   FormEvent,
@@ -33,25 +34,23 @@ import {
   getNomJeuneComplet,
   JeuneFromListe,
 } from 'interfaces/jeune'
-import { PageProps } from 'interfaces/pageProps'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
 type StructureReaffectation =
   | StructureConseiller.POLE_EMPLOI
   | StructureConseiller.POLE_EMPLOI_BRSA
 
 const ConseillerIntrouvableSuggestionModal = dynamic(
-  import('components/ConseillerIntrouvableSuggestionModal'),
+  () => import('components/ConseillerIntrouvableSuggestionModal'),
   { ssr: false }
 )
 
-type ReaffectationProps = PageProps & {
+type ReaffectationProps = {
   estSuperviseurPEBRSA: boolean
 }
 
-function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
+function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
   const [portefeuille] = usePortefeuille()
   const conseillerInitialRef = useRef<{
     resetRechercheConseiller: () => void
@@ -582,39 +581,10 @@ function Reaffectation({ estSuperviseurPEBRSA }: ReaffectationProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user },
-  } = sessionOrRedirect
-  if (!user.estSuperviseur) {
-    return { notFound: true }
-  }
-
-  const referer = context.req.headers.referer
-  const redirectTo =
-    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-
-  return {
-    props: {
-      returnTo: redirectTo,
-      pageTitle: 'Réaffectation',
-      withoutChat: true,
-      estSuperviseurPEBRSA: user.estSuperviseurPEBRSA,
-    },
-  }
-}
-
-export default withTransaction(Reaffectation.name, 'page')(Reaffectation)
+export default withTransaction(
+  ReaffectationPage.name,
+  'page'
+)(ReaffectationPage)
 
 const ChoixConseiller = forwardRef(
   (

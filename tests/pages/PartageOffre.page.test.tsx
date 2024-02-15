@@ -177,7 +177,7 @@ describe('Page Partage Offre', () => {
         // Then
         expect(actual).toMatchObject({
           props: {
-            returnTo: '/recherche-offres',
+            returnTo: '/offres',
           },
         })
       })

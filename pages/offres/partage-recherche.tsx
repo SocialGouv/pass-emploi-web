@@ -121,7 +121,7 @@ function PartageRecherche({
     try {
       await partagerRecherche()
       setAlerte(AlerteParam.suggestionRecherche)
-      await router.push('/recherche-offres')
+      await router.push('/offres')
     } finally {
       setIsPartageEnCours(false)
     }
@@ -283,7 +283,7 @@ export const getServerSideProps: GetServerSideProps<
   if (!typeOffre) return { notFound: true }
 
   const referer = context.req.headers.referer
-  const redirectTo = referer ?? '/recherche-offres'
+  const redirectTo = referer ?? '/offres'
   let criteresRecherche: CriteresRecherche
 
   switch (typeOffre) {

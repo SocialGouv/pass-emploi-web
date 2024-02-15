@@ -30,7 +30,7 @@ export default function BlocFavoris({
           titre='Votre bénéficiaire n’a rien mis en favori pour l’instant.'
           sousTitre='Suggérez-lui des offres d’emploi avec la partie “Offres”'
           lien={{
-            href: '/recherche-offres',
+            href: '/offres',
             label: 'Rechercher une offre',
             iconName: IconName.Search,
           }}

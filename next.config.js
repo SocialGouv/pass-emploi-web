@@ -27,6 +27,7 @@ module.exports = withBundleAnalyzer({
         destination: '/mes-jeunes/:id_jeune?onglet=actions',
         permanent: true,
       },
+      { source: '/recherche-offres', destination: '/offres', permanent: true },
     ]
   },
 

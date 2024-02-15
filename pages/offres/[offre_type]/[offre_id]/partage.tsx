@@ -207,7 +207,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const referer = context.req.headers.referer
   const redirectTo =
-    referer && !redirectedFromHome(referer) ? referer : '/recherche-offres'
+    referer && !redirectedFromHome(referer) ? referer : '/offres'
   return {
     props: {
       offre,

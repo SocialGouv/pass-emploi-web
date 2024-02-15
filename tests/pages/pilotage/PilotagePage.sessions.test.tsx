@@ -1,12 +1,12 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { desCategories } from 'fixtures/action'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
+import { desCategories } from 'fixtures/action'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import Pilotage from 'pages/pilotage'
 import {
   getSessionsACloreServerSide,
   SessionsAClore,
@@ -30,7 +30,7 @@ describe('PilotagePage client side - Sessions', () => {
       await act(async () =>
         renderWithContexts(
           <Pilotage
-            pageTitle=''
+            onglet='SESSIONS_IMILO'
             actions={{
               donnees: [],
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
@@ -57,9 +57,6 @@ describe('PilotagePage client side - Sessions', () => {
           }
         )
       )
-      await userEvent.click(
-        screen.getByRole('tab', { name: 'Sessions i-milo 3' })
-      )
     })
 
     it('résume les activités', async () => {
@@ -76,13 +73,6 @@ describe('PilotagePage client side - Sessions', () => {
     })
 
     describe('sessions i-milo', () => {
-      beforeEach(async () => {
-        // Given
-        await userEvent.click(
-          screen.getByRole('tab', { name: 'Sessions i-milo 3' })
-        )
-      })
-
       it('affiche un tableau de sessions à clore ', () => {
         // Given
         const tableau = screen.getByRole('table', {
@@ -126,8 +116,7 @@ describe('PilotagePage client side - Sessions', () => {
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
       renderWithContexts(
         <Pilotage
-          withoutChat={true}
-          pageTitle=''
+          onglet='SESSIONS_IMILO'
           actions={{
             donnees: [],
             metadonnees: { nombrePages: 0, nombreTotal: 0 },
@@ -152,11 +141,6 @@ describe('PilotagePage client side - Sessions', () => {
             },
           },
         }
-      )
-
-      // When
-      await userEvent.click(
-        screen.getByRole('tab', { name: /Sessions i-milo/ })
       )
 
       // Then

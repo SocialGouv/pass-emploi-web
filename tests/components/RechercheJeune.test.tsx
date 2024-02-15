@@ -2,8 +2,8 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
+import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
-import MesJeunes from 'pages/mes-jeunes'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -17,9 +17,9 @@ describe('Recherche', () => {
     ;(signIn as jest.Mock).mockResolvedValue(undefined)
     ;(countMessagesNotRead as jest.Mock).mockResolvedValue({})
 
-    await act(() => {
+    await act(async () => {
       renderWithContexts(
-        <MesJeunes conseillerJeunes={jeunes} isFromEmail pageTitle='' />
+        <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
       )
     })
   })
