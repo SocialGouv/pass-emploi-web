@@ -3,7 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useState } from 'react'
 
-import { BlocDeuxInformationJeune } from 'components/jeune/BlocDeuxInformationJeune'
+import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { IconName } from 'components/ui/IconComponent'
@@ -102,7 +102,7 @@ function HistoriquePage({
           className='mt-8 pb-8'
         >
           <div className='mb-3'>
-            <BlocDeuxInformationJeune
+            <BlocInformationJeune
               idJeune={idJeune}
               creationDate={jeune.creationDate}
               dateFinCEJ={jeune.dateFinCEJ}

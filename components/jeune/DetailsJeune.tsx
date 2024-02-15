@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
-import { BlocDeuxInformationJeune } from './BlocDeuxInformationJeune'
+import { BlocInformationJeune } from './BlocInformationJeune'
 
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
@@ -82,7 +82,7 @@ export default function DetailsJeune({
           />
         )}
 
-        <BlocDeuxInformationJeune
+        <BlocInformationJeune
           idJeune={jeune.id}
           creationDate={jeune.creationDate}
           dateFinCEJ={jeune.dateFinCEJ}

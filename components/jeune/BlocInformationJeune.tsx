@@ -21,7 +21,7 @@ interface BlocInformationJeuneProps {
   afficheLienVoirPlus?: boolean
 }
 
-export function BlocDeuxInformationJeune({
+export function BlocInformationJeune({
   idJeune,
   titre,
   creationDate,
