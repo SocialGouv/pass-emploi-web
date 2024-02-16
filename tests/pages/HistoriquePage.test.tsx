@@ -3,8 +3,14 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/router'
 import React from 'react'
 
+import { unAgenda } from '../../fixtures/agenda'
+import { recupererAgenda } from '../../services/agenda.service'
 import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
-import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
+import {
+  desConseillersJeune,
+  desIndicateursSemaine,
+  unDetailJeune,
+} from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
@@ -15,6 +21,7 @@ import {
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('HistoriquePage client side', () => {
+  ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
   const listeSituations = [
     {
       etat: EtatSituation.EN_COURS,
@@ -78,6 +85,24 @@ describe('HistoriquePage client side', () => {
           expect(screen.getByText('prévue')).toBeInTheDocument()
         })
       })
+    })
+    describe('pour l’indicateur des conseillers', () => {
+      it('affiche un onglet dédié', async () => {
+        // Given
+        renderHistorique([], [], StructureConseiller.MILO, jeune)
+
+        // When
+        const tabConseillers = screen.getByRole('tab', {
+          name: 'Indicateurs',
+        })
+        await userEvent.click(tabConseillers)
+
+        // Then
+        expect(
+          screen.getByRole('tab', { selected: true })
+        ).toHaveAccessibleName('Indicateurs')
+      })
+      it('affiche les indicateurs des bénéficiaires', () => {})
     })
 
     describe('pour l’Historique des conseillers', () => {
