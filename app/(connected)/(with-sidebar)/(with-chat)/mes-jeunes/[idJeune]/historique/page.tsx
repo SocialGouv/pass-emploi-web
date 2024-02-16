@@ -49,7 +49,7 @@ export default async function Historique({
   return (
     <>
       <PageFilArianePortal />
-      <PageHeaderPortal header='Historique' />
+      <PageHeaderPortal header={`${beneficiaire.prenom} ${beneficiaire.nom}`} />
 
       <HistoriquePage
         conseillers={conseillers}
