@@ -24,6 +24,7 @@ describe('<DetailsJeune>', () => {
     const jeune = unDetailJeune({
       isActivated: true,
       urlDossier: 'https://dossier-milo.fr',
+      dateFinCEJ: '2024-12-07T17:30:07.756Z',
     })
 
     // When
@@ -31,7 +32,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-        onDossierMiloClick={() => {}}
       />
     )
 
@@ -40,11 +40,7 @@ describe('<DetailsJeune>', () => {
       screen.getByText('pas encore connecté', { exact: false })
     ).toThrow()
     expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
-    expect(screen.getByText('Dossier jeune i-milo')).toHaveAttribute(
-      'href',
-      'https://dossier-milo.fr'
-    )
-    expect(screen.getByText('07/12/2021')).toBeInTheDocument()
+    expect(screen.getByText('07/12/2024')).toBeInTheDocument()
     expect(
       screen.getByText('Date de fin du CEJ', { exact: false })
     ).toBeInTheDocument()
@@ -60,7 +56,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-        onDossierMiloClick={() => {}}
       />
     )
 
@@ -77,7 +72,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-        onDossierMiloClick={() => {}}
       />
     )
 
@@ -98,7 +92,6 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-            onDossierMiloClick={() => {}}
           />
         )
 
@@ -122,7 +115,6 @@ describe('<DetailsJeune>', () => {
               conseiller={unConseiller({
                 structure: StructureConseiller.POLE_EMPLOI,
               })}
-              onDossierMiloClick={() => {}}
             />
           )
 
@@ -150,7 +142,6 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
-            onDossierMiloClick={() => {}}
           />,
           {
             customAlerte: { alerteSetter },
@@ -233,7 +224,6 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
-            onDossierMiloClick={() => {}}
           />,
           {
             customAlerte: { alerteSetter },
@@ -315,7 +305,6 @@ describe('<DetailsJeune>', () => {
         <DetailsJeune
           jeune={jeune}
           conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-          onDossierMiloClick={() => {}}
         />
       )
 

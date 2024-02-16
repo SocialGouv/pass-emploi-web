@@ -27,9 +27,7 @@ export function ResumeIndicateursJeune({
 
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800'>
-        Les indicateurs de la semaine
-      </h2>
+      <h2 className='text-m-bold text-grey_800'>Cette semaine</h2>
       <p className='mb-4'>
         du {toShortDate(debutDeLaSemaine)} au {toShortDate(finDeLaSemaine)}
       </p>
@@ -56,29 +54,18 @@ export function ResumeIndicateursJeune({
                   ? 'Terminées'
                   : 'Terminée'
               }
-              bgColor='accent_2_lighten'
-              textColor='accent_2'
+              bgColor='accent_3_lighten'
+              textColor='primary'
               iconName={IconName.CheckCircleFill}
             />
             <TileIndicateur
               valeur={indicateursSemaine?.actions.enRetard.toString() ?? '-'}
               label='En retard'
-              bgColor='alert_lighten'
-              textColor='content_color'
+              bgColor='warning_lighten'
+              textColor='warning'
               iconName={IconName.Error}
             />
           </ul>
-        </div>
-        <div className='text-content_color text-base-bold'>
-          <h3 className='mb-2'>Les événements</h3>
-          <div className='flex gap-2'>
-            <TileIndicateur
-              valeur={indicateursSemaine?.rendezVous.toString() ?? '-'}
-              label='Cette semaine'
-              bgColor='primary_lighten'
-              textColor='primary_darken'
-            />
-          </div>
         </div>
       </div>
       <LienVersIndicateurs idJeune={idJeune} pathPrefix={pathPrefix} />

@@ -1,11 +1,15 @@
+import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 
-import { BlocInformationJeune } from './BlocInformationJeune'
-
-import { BlocSituation } from 'components/jeune/BlocSituation'
-import { Conseiller, estMilo, StructureConseiller } from 'interfaces/conseiller'
-import { DetailJeune } from 'interfaces/jeune'
+import { BlocInformationJeuneFicheBeneficiaire } from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
+import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
+import {
+  Conseiller,
+  estPoleEmploi,
+  StructureConseiller,
+} from 'interfaces/conseiller'
+import { DetailJeune, IndicateursSemaine } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -18,13 +22,13 @@ const UpdateIdentifiantPartenaireModal = dynamic(
 interface DetailsJeuneProps {
   jeune: DetailJeune
   conseiller: Conseiller
-  onDossierMiloClick: () => void
+  indicateursSemaine: IndicateursSemaine | undefined
 }
 
 export default function DetailsJeune({
   jeune,
   conseiller,
-  onDossierMiloClick,
+  indicateursSemaine,
 }: DetailsJeuneProps) {
   const [_, setAlerte] = useAlerte()
 
@@ -35,6 +39,10 @@ export default function DetailsJeune({
     useState<boolean>(false)
 
   const aDesBeneficiaires = jeune.id ? 'oui' : 'non'
+
+  const aujourdHui = DateTime.now()
+  const debutSemaine = aujourdHui.startOf('week')
+  const finSemaine = aujourdHui.endOf('week')
 
   function openIdentifiantPartenaireModal() {
     setShowIdentifiantPartenaireModal(true)
@@ -74,27 +82,24 @@ export default function DetailsJeune({
   return (
     <>
       <div className='flex flex-row items-stretch gap-x-6'>
-        {estMilo(conseiller) && (
-          <BlocSituation
+        {!estPoleEmploi(conseiller) && (
+          <ResumeIndicateursJeune
             idJeune={jeune.id}
-            situations={jeune.situations}
-            versionResumee={true}
+            debutDeLaSemaine={debutSemaine}
+            finDeLaSemaine={finSemaine}
+            indicateursSemaine={indicateursSemaine}
           />
         )}
 
-        <BlocInformationJeune
+        <BlocInformationJeuneFicheBeneficiaire
           idJeune={jeune.id}
-          creationDate={jeune.creationDate}
           dateFinCEJ={jeune.dateFinCEJ}
           email={jeune.email}
+          situations={jeune.situations}
           conseiller={conseiller}
           onIdentifiantPartenaireCopie={trackEventOnCopieIdentifiantPartenaire}
           identifiantPartenaire={identifiantPartenaire}
           onIdentifiantPartenaireClick={openIdentifiantPartenaireModal}
-          urlDossier={jeune.urlDossier}
-          onDossierMiloClick={onDossierMiloClick}
-          titre='Informations'
-          afficheLienVoirPlus={true}
         />
       </div>
 

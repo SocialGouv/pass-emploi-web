@@ -49,12 +49,11 @@ describe('Indicateurs dans la fiche jeune', () => {
     it('affiche les indicateurs du jeune', async () => {
       // Then
       const indicateurs = screen.getByRole('heading', {
-        name: 'Les indicateurs de la semaine',
+        name: 'Cette semaine',
       }).parentElement
       expect(
         within(indicateurs!).getByText('du 29/08/2022 au 04/09/2022')
       ).toBeInTheDocument()
-
       const indicateursActions = screen.getByRole('heading', {
         name: 'Les actions',
       }).parentElement
@@ -66,13 +65,6 @@ describe('Indicateurs dans la fiche jeune', () => {
       ).toBeInTheDocument()
       expect(
         getByTextContent('2En retard', indicateursActions!)
-      ).toBeInTheDocument()
-
-      const indicateursRdv = screen.getByRole('heading', {
-        name: 'Les événements',
-      }).parentElement
-      expect(
-        getByTextContent('3Cette semaine', indicateursRdv!)
       ).toBeInTheDocument()
     })
 
