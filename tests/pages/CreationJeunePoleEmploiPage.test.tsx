@@ -1,18 +1,18 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
+import CreationJeunePoleEmploiPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/pole-emploi/CreationJeunePoleEmploiPage'
 import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
 import { BaseJeune } from 'interfaces/jeune'
-import PoleEmploiCreationJeune from 'pages/mes-jeunes/pole-emploi/creation-jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { createCompteJeunePoleEmploi } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/jeunes.service')
 
-describe('PoleEmploiCreationJeune', () => {
+describe('CreationJeunePoleEmploiPage client side', () => {
   let submitButton: HTMLElement
 
   let push: Function
@@ -27,7 +27,7 @@ describe('PoleEmploiCreationJeune', () => {
     portefeuilleSetter = jest.fn()
     portefeuille = desItemsJeunes().map(extractBaseJeune)
 
-    renderWithContexts(<PoleEmploiCreationJeune />, {
+    renderWithContexts(<CreationJeunePoleEmploiPage />, {
       customAlerte: { alerteSetter },
       customPortefeuille: { setter: portefeuilleSetter },
     })

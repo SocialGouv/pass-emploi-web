@@ -1,7 +1,8 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import PageActionsPortal from 'components/PageActionsPortal'
@@ -11,22 +12,14 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   estAClore,
-  estClos,
   estCreeParSiMILO,
   Evenement,
-  isCodeTypeAnimationCollective,
   Modification,
 } from 'interfaces/evenement'
-import { JeuneFromListe } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
-import { PageProps } from 'interfaces/pageProps'
-import {
-  isTypeAnimationCollective,
-  TypeEvenementReferentiel,
-} from 'interfaces/referentiel'
+import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getJeunesDeLEtablissementClientSide } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -35,21 +28,20 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchDateTime } from 'utils/date'
 import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
 import { usePortefeuille } from 'utils/portefeuilleContext'
-import redirectedFromHome from 'utils/redirectedFromHome'
 
 const ConfirmationUpdateRdvModal = dynamic(
-  import('components/ConfirmationUpdateRdvModal'),
+  () => import('components/ConfirmationUpdateRdvModal'),
   { ssr: false }
 )
 const LeavePageConfirmationModal = dynamic(
-  import('components/LeavePageConfirmationModal'),
+  () => import('components/LeavePageConfirmationModal'),
   { ssr: false }
 )
-const DeleteRdvModal = dynamic(import('components/rdv/DeleteRdvModal'), {
+const DeleteRdvModal = dynamic(() => import('components/rdv/DeleteRdvModal'), {
   ssr: false,
 })
 
-interface EditionRdvProps extends PageProps {
+export type EditionRdvProps = {
   conseillerEstObservateur: boolean
   lectureSeule: boolean
   returnTo: string
@@ -59,7 +51,7 @@ interface EditionRdvProps extends PageProps {
   evenementTypeAC?: boolean
 }
 
-function EditionRdv({
+function EditionRdvPage({
   conseillerEstObservateur,
   lectureSeule,
   returnTo,
@@ -164,7 +156,7 @@ function EditionRdv({
     } else {
       await modifierEvenement(evenement.id, payload)
     }
-    await router.push(returnTo)
+    router.push(returnTo)
   }
 
   async function creerNouvelEvenement(
@@ -203,7 +195,7 @@ function EditionRdv({
         ? AlerteParam.suppressionAnimationCollective
         : AlerteParam.suppressionRDV
       setAlerte(alertType)
-      await router.push(returnTo)
+      router.push(returnTo)
     } catch (e) {
       setShowDeleteRdvError(true)
     }
@@ -420,127 +412,4 @@ function EditionRdv({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<EditionRdvProps> = async (
-  context
-) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const {
-    session: { user, accessToken },
-  } = sessionOrRedirect
-  if (estUserPoleEmploi(user))
-    return {
-      redirect: { destination: '/mes-jeunes', permanent: false },
-    }
-
-  const referer = context.req.headers.referer
-  const returnTo =
-    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
-  const { getJeunesDuConseillerServerSide } = await import(
-    'services/jeunes.service'
-  )
-  const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
-
-  const idRdv = context.query.idRdv as string | undefined
-  if (idRdv) {
-    const { getDetailsEvenement } = await import('services/evenements.service')
-    const evenement = await getDetailsEvenement(idRdv, accessToken)
-    if (!evenement) return { notFound: true }
-
-    return {
-      props: {
-        returnTo: returnTo,
-        ...buildPropsModificationEvenement(evenement, jeunes),
-      },
-    }
-  } else {
-    const { getTypesRendezVous } = await import('services/evenements.service')
-    const typesEvenements = await getTypesRendezVous(accessToken)
-    const creationAC = context.query.type === 'ac'
-
-    return {
-      props: {
-        returnTo: returnTo,
-        ...buildPropsCreationEvenement(
-          typesEvenements,
-          creationAC,
-          context.query.idJeune as string | undefined
-        ),
-      },
-    }
-  }
-}
-
-export default withTransaction(EditionRdv.name, 'page')(EditionRdv)
-
-function buildPropsModificationEvenement(
-  evenement: Evenement,
-  jeunes: JeuneFromListe[]
-): Omit<EditionRdvProps, 'returnTo'> {
-  const estUneAC = isCodeTypeAnimationCollective(evenement.type.code)
-  const aUnBeneficiaireInscritALEvenement: boolean =
-    Boolean(evenement) &&
-    evenement!.jeunes.some((jeuneEvenement) =>
-      jeunes.some((jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id)
-    )
-  const conseillerEstObservateur =
-    !estUneAC && !aUnBeneficiaireInscritALEvenement
-
-  const lectureSeule =
-    evenement &&
-    (conseillerEstObservateur ||
-      estCreeParSiMILO(evenement) ||
-      estClos(evenement))
-
-  return {
-    conseillerEstObservateur: false,
-    lectureSeule,
-    evenement,
-    typesRendezVous: [],
-    evenementTypeAC: estUneAC,
-    withoutChat: true,
-    pageTitle: lectureSeule
-      ? `Detail - ${evenement.titre} `
-      : `Modifier le rendez-vous ${evenement.titre}`,
-    pageHeader: estUneAC
-      ? 'Détail de l’animation collective'
-      : 'Détail du rendez-vous',
-  }
-}
-
-function buildPropsCreationEvenement(
-  typesEvenements: TypeEvenementReferentiel[],
-  creationAC: boolean,
-  idJeune?: string
-): Omit<EditionRdvProps, 'returnTo'> {
-  const typesRdvCEJ: TypeEvenementReferentiel[] = []
-  const typesRdvAC: TypeEvenementReferentiel[] = []
-  typesEvenements.forEach((t) => {
-    if (isTypeAnimationCollective(t)) typesRdvAC.push(t)
-    else typesRdvCEJ.push(t)
-  })
-
-  const props: Omit<EditionRdvProps, 'returnTo'> = {
-    conseillerEstObservateur: false,
-    lectureSeule: false,
-    typesRendezVous: creationAC ? typesRdvAC : typesRdvCEJ,
-    withoutChat: true,
-    evenementTypeAC: creationAC,
-    pageTitle: creationAC
-      ? 'Créer une animation collective'
-      : 'Créer un rendez-vous',
-    pageHeader: creationAC
-      ? 'Créer une animation collective'
-      : 'Créer un rendez-vous',
-  }
-
-  if (idJeune) props.idJeune = idJeune
-
-  return props
-}
+export default withTransaction(EditionRdvPage.name, 'page')(EditionRdvPage)
