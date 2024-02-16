@@ -72,6 +72,7 @@ import NumberCircleTwoIcon from 'assets/icons/numbers/number_circle_2.svg'
 import NumberCircleThreeIcon from 'assets/icons/numbers/number_circle_3.svg'
 import NumberCircleFourIcon from 'assets/icons/numbers/number_circle_4.svg'
 import NumberCircleFiveIcon from 'assets/icons/numbers/number_circle_5.svg'
+import BarChart from 'assets/icons/informations/bar_chart.svg'
 
 export enum IconName {
   AccountCircleFill = 'AccountCircleFill',
@@ -84,6 +85,7 @@ export enum IconName {
   ArrowForward = 'ArrowForward',
   ArrowUpward = 'ArrowUpward',
   AttachFile = 'AttachFile',
+  BarChart = 'BarChart',
   BookmarkFill = 'BookmarkFill',
   BookmarkOutline = 'BookmarkOutline',
   Cancel = 'Cancel',
@@ -159,6 +161,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ArrowForward]: ArrowForwardIcon,
   [IconName.ArrowUpward]: ArrowUpwardIcon,
   [IconName.BookmarkFill]: BookmarkFillIcon,
+  [IconName.BarChart]: BarChart,
   [IconName.BookmarkOutline]: BookmarkOutlineIcon,
   [IconName.ChatFill]: ChatFillIcon,
   [IconName.ChatOutline]: ChatOutlineIcon,
