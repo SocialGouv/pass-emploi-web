@@ -12,6 +12,7 @@ import { Message, TypeMessage } from 'interfaces/message'
 import { toFrenchTime } from 'utils/date'
 
 interface DisplayMessageProps {
+  beneficiaireNomComplet: string
   message: Message
   conseillerNomComplet: string | undefined
   lastSeenByJeune: DateTime | undefined
@@ -20,6 +21,7 @@ interface DisplayMessageProps {
 
 export default function DisplayMessage({
   message,
+  beneficiaireNomComplet,
   conseillerNomComplet,
   isConseillerCourant,
   lastSeenByJeune,
@@ -48,6 +50,10 @@ export default function DisplayMessage({
           <p className='text-s-bold capitalize mb-1'>
             {isConseillerCourant ? 'Vous' : conseillerNomComplet}
           </p>
+        )}
+
+        {!isSentByConseiller && (
+          <span className='sr-only'>{beneficiaireNomComplet} :</span>
         )}
 
         <TexteAvecLien texte={message.content} lighten={!isSentByConseiller} />
