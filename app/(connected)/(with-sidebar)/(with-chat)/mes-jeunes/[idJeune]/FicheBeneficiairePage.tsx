@@ -8,7 +8,6 @@ import React, { useEffect, useState } from 'react'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
 import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
-import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { TabFavoris } from 'components/jeune/TabFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -161,10 +160,6 @@ function FicheBeneficiairePage({
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
     : 0
-
-  function trackDossierMiloClick() {
-    setTrackingLabel(pageTracking + ' - Dossier i-Milo')
-  }
 
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
@@ -351,19 +346,12 @@ function FicheBeneficiairePage({
         <DetailsJeune
           jeune={jeune}
           conseiller={conseiller}
-          onDossierMiloClick={trackDossierMiloClick}
+          indicateursSemaine={indicateursSemaine}
         />
       </div>
 
       {!estPoleEmploi(conseiller) && (
         <>
-          <ResumeIndicateursJeune
-            idJeune={jeune.id}
-            debutDeLaSemaine={debutSemaine}
-            finDeLaSemaine={finSemaine}
-            indicateursSemaine={indicateursSemaine}
-          />
-
           <div className='flex justify-between mt-6 mb-4'>
             <div className='flex'>
               {!lectureSeule && (

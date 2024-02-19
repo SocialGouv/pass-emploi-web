@@ -1,5 +1,3 @@
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -7,56 +5,54 @@ import { Conseiller, estMilo } from 'interfaces/conseiller'
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneProps {
-  titre: string
-  idJeune: string
-  creationDate: string
-  dateFinCEJ: string | undefined
-  email: string | undefined
   conseiller: Conseiller
-  urlDossier: string | undefined
+  creationDate: string
   onDossierMiloClick: () => void
+  dateFinCEJ?: string
+  email?: string
+  urlDossier?: string
   onIdentifiantPartenaireCopie?: () => void
-  identifiantPartenaire?: string | undefined
+  identifiantPartenaire?: string
   onIdentifiantPartenaireClick?: () => void
-  afficheLienVoirPlus?: boolean
 }
 
 export function BlocInformationJeune({
-  idJeune,
-  titre,
+  conseiller,
   creationDate,
   dateFinCEJ,
   email,
-  conseiller,
   urlDossier,
   onDossierMiloClick,
   onIdentifiantPartenaireCopie,
   identifiantPartenaire,
   onIdentifiantPartenaireClick,
-  afficheLienVoirPlus,
 }: BlocInformationJeuneProps) {
-  const pathPrefix = usePathname()?.startsWith('/etablissement')
-    ? '/etablissement/beneficiaires'
-    : '/mes-jeunes'
   const conseillerEstMilo = estMilo(conseiller)
-  const shortCreationDate = toShortDate(creationDate)
 
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
-      <h2 className='text-m-bold text-grey_800 mb-4'>{titre}</h2>
+      <h2 className='text-m-bold text-grey_800 mb-2'>Bénéficiaire</h2>
+
       <dl>
-        <div className='flex'>
-          <dt className='text-base-regular'>Ajouté le :</dt>
-          <dd>
-            <span className='text-base-bold ml-1'>{shortCreationDate}</span>
-          </dd>
-        </div>
+        {conseillerEstMilo && (
+          <div className='flex'>
+            <dt className='text-base-regular'>Ajouté le :</dt>
+            <dd className='text-base-bold ml-1'>
+              {creationDate ? (
+                toShortDate(creationDate)
+              ) : (
+                <InformationNonDisponible />
+              )}
+            </dd>
+          </div>
+        )}
 
         {email && <Email email={email} />}
+
         {!conseillerEstMilo &&
           onIdentifiantPartenaireCopie &&
           onIdentifiantPartenaireClick && (
-            <IndentifiantPartenaire
+            <IdentifiantPartenaire
               identifiantPartenaire={identifiantPartenaire}
               onCopy={onIdentifiantPartenaireCopie}
               onClick={onIdentifiantPartenaireClick}
@@ -74,22 +70,17 @@ export function BlocInformationJeune({
               {dateFinCEJ ? (
                 toShortDate(dateFinCEJ)
               ) : (
-                <>
-                  <span> Information non disponible</span>
-                </>
+                <InformationNonDisponible />
               )}
             </dd>
           </div>
-        )}
-        {afficheLienVoirPlus && (
-          <LienVersHistorique idJeune={idJeune} pathPrefix={pathPrefix} />
         )}
       </dl>
     </div>
   )
 }
 
-function Email({ email }: { email: string }) {
+export function Email({ email }: { email: string }) {
   return (
     <div className='flex items-center'>
       <dt>
@@ -106,7 +97,7 @@ function Email({ email }: { email: string }) {
   )
 }
 
-function IndentifiantPartenaire(props: {
+export function IdentifiantPartenaire(props: {
   identifiantPartenaire: string | undefined
   onCopy: () => void
   onClick: () => void
@@ -177,25 +168,11 @@ function DossierExterne({
   )
 }
 
-function LienVersHistorique({
-  idJeune,
-  pathPrefix,
-}: {
-  idJeune: string
-  pathPrefix: string
-}) {
+export function InformationNonDisponible() {
   return (
-    <Link
-      href={`${pathPrefix}/${idJeune}/historique`}
-      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
-    >
-      Voir plus d’informations
-      <IconComponent
-        name={IconName.ChevronRight}
-        className='w-4 h-5 fill-[inherit]'
-        aria-hidden={true}
-        focusable={false}
-      />
-    </Link>
+    <>
+      --
+      <span className='sr-only'>information non disponible</span>
+    </>
   )
 }

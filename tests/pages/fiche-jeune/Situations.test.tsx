@@ -29,7 +29,6 @@ describe('Situations dans la fiche jeune', () => {
         await renderFicheJeune([])
 
         // Then
-        expect(screen.getByText('Historique situations')).toBeInTheDocument()
         expect(screen.getByText('Sans situation')).toBeInTheDocument()
       })
     })
@@ -50,22 +49,10 @@ describe('Situations dans la fiche jeune', () => {
         await renderFicheJeune(situations)
 
         // Then
-        expect(screen.getByText('Historique situations')).toBeInTheDocument()
         expect(screen.getByText('Emploi')).toBeInTheDocument()
-        expect(screen.getByText('en cours')).toBeInTheDocument()
         expect(() => screen.getByText('Contrat en Alternance')).toThrow()
         expect(() => screen.getByText('prévue')).toThrow()
       })
-    })
-
-    it('affiche un lien vers l’historique des situations', async () => {
-      // Given
-      await renderFicheJeune([])
-
-      // Then
-      expect(
-        screen.getByRole('link', { name: 'Voir le détail des situations' })
-      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/historique')
     })
   })
 })
