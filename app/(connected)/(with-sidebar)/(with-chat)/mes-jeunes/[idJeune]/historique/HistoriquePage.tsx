@@ -103,14 +103,12 @@ function HistoriquePage({
         >
           <div className='mb-3'>
             <BlocInformationJeune
-              idJeune={idJeune}
               creationDate={jeune.creationDate}
               dateFinCEJ={jeune.dateFinCEJ}
               email={jeune.email}
               urlDossier={jeune.urlDossier}
               onDossierMiloClick={() => {}}
               conseiller={conseiller}
-              titre='Bénéficiaire'
             />
           </div>
           <BlocSituation

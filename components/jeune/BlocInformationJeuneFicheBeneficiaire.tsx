@@ -15,7 +15,6 @@ import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneFicheBeneficiaireProps {
   conseiller: Conseiller
-  onDossierMiloClick: () => void
   idJeune: string
   dateFinCEJ?: string
   email?: string
