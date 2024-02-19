@@ -1,6 +1,7 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { FormEvent, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
@@ -14,13 +15,12 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import { TypeOffre } from 'interfaces/offre'
-import { PageProps } from 'interfaces/pageProps'
 import { TypeLocalite } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type CriteresRecherche =
+export type CriteresRecherche =
   | CriteresRechercheOffreEmploiProps
   | CriteresRechercheImmersionProps
   | CriteresRechercheServiceCiviqueProps
@@ -48,14 +48,13 @@ type CriteresRechercheServiceCiviqueProps = CriteresRechercheBase & {
   longitude: string
 }
 
-type PartageRechercheProps = PageProps & {
+type PartageRechercheProps = {
   type: TypeOffre
   criteresRecherche: CriteresRecherche
-  withoutChat: true
   returnTo: string
 }
 
-function PartageRecherche({
+function PartageRecherchePage({
   type,
   criteresRecherche,
   returnTo,
@@ -121,7 +120,7 @@ function PartageRecherche({
     try {
       await partagerRecherche()
       setAlerte(AlerteParam.suggestionRecherche)
-      await router.push('/offres')
+      router.push('/offres')
     } finally {
       setIsPartageEnCours(false)
     }
@@ -268,64 +267,7 @@ function PartageRecherche({
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  PartageRechercheProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-
-  const typeOffre = context.query.type as TypeOffre
-  if (!typeOffre) return { notFound: true }
-
-  const referer = context.req.headers.referer
-  const redirectTo = referer ?? '/offres'
-  let criteresRecherche: CriteresRecherche
-
-  switch (typeOffre) {
-    case TypeOffre.EMPLOI:
-    case TypeOffre.ALTERNANCE:
-      criteresRecherche = {
-        titre: context.query.titre as string,
-        motsCles: context.query.motsCles as string,
-        typeLocalite: context.query.typeLocalite as TypeLocalite,
-        labelLocalite: context.query.labelLocalite as string,
-        codeLocalite: context.query.codeLocalite as string,
-      }
-      break
-    case TypeOffre.IMMERSION:
-      criteresRecherche = {
-        titre: context.query.titre as string,
-        labelMetier: context.query.labelMetier as string,
-        codeMetier: context.query.codeMetier as string,
-        labelLocalite: context.query.labelLocalite as string,
-        latitude: context.query.latitude as string,
-        longitude: context.query.longitude as string,
-      }
-      break
-    case TypeOffre.SERVICE_CIVIQUE:
-      criteresRecherche = {
-        titre: context.query.titre as string,
-        labelLocalite: context.query.labelLocalite as string,
-        latitude: context.query.latitude as string,
-        longitude: context.query.longitude as string,
-      }
-      break
-  }
-
-  return {
-    props: {
-      type: typeOffre,
-      criteresRecherche: criteresRecherche,
-      withoutChat: true,
-      returnTo: redirectTo,
-      pageTitle: 'Partager une recherche',
-    },
-  }
-}
-
-export default withTransaction(PartageRecherche.name, 'page')(PartageRecherche)
+export default withTransaction(
+  PartageRecherchePage.name,
+  'page'
+)(PartageRecherchePage)

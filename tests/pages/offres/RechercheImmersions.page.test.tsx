@@ -286,7 +286,7 @@ describe('Page Recherche Immersions', () => {
         })
       ).toHaveAttribute(
         'href',
-        `/offres/partage-recherche?type=IMMERSION&titre=D%C3%A9veloppeur%20/%20D%C3%A9veloppeuse%20web%20-%20PARIS%2014%20(75)&labelMetier=D%C3%A9veloppeur%20/%20D%C3%A9veloppeuse%20web&codeMetier=M1805&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
+        `/offres/immersion/partage-recherche?titre=D%C3%A9veloppeur%20/%20D%C3%A9veloppeuse%20web%20-%20PARIS%2014%20(75)&labelMetier=D%C3%A9veloppeur%20/%20D%C3%A9veloppeuse%20web&codeMetier=M1805&labelLocalite=PARIS%2014%20(75)&latitude=48.830108&longitude=2.323026`
       )
     })
   })

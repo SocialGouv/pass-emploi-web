@@ -15,9 +15,12 @@ export default function OffreEmploiCard({
   offre,
   withPartage = false,
 }: OffreEmploiCardProps) {
+  const typeOffre =
+    offre.type === TypeOffre.ALTERNANCE ? 'alternance' : 'emploi'
+
   return (
     <OffreCard
-      offrePath={'emploi/' + offre.id}
+      offrePath={typeOffre + '/' + offre.id}
       titreLien={offre.titre}
       withPartage={withPartage}
     >

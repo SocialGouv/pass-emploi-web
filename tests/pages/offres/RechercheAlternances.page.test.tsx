@@ -351,7 +351,7 @@ describe('Page Recherche Alternances', () => {
           })
         ).toHaveAttribute(
           'href',
-          `/offres/partage-recherche?type=ALTERNANCE&titre=Prof%20-%20PARIS%2014%20(75)&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014%20(75)&codeLocalite=75114`
+          `/offres/alternance/partage-recherche?titre=Prof%20-%20PARIS%2014%20(75)&motsCles=Prof&typeLocalite=COMMUNE&labelLocalite=PARIS%2014%20(75)&codeLocalite=75114`
         )
       })
     })
@@ -551,7 +551,7 @@ describe('Page Recherche Alternances', () => {
             within(offreCard).getByRole('link', {
               name: 'Voir le détail de l’offre ' + alternance.titre,
             })
-          ).toHaveAttribute('href', '/offres/emploi/' + alternance.id)
+          ).toHaveAttribute('href', '/offres/alternance/' + alternance.id)
         })
       })
 
@@ -561,7 +561,7 @@ describe('Page Recherche Alternances', () => {
             within(offresList).getByRole('link', {
               name: `Partager offre ${offre.titre}`,
             })
-          ).toHaveAttribute('href', `/offres/emploi/${offre.id}/partage`)
+          ).toHaveAttribute('href', `/offres/alternance/${offre.id}/partage`)
         })
       })
 

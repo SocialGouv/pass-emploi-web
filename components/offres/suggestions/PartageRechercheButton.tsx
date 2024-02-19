@@ -57,8 +57,9 @@ export default function PartageRechercheButton({
   function getPartageRechercheUrl(): string {
     switch (typeOffre!) {
       case TypeOffre.EMPLOI:
+        return getPartageRechercheOffreEmploiOuAlternanceUrl('emploi')
       case TypeOffre.ALTERNANCE:
-        return getPartageRechercheOffreEmploiUrl()
+        return getPartageRechercheOffreEmploiOuAlternanceUrl('alternance')
       case TypeOffre.IMMERSION:
         return getPartageRechercheImmersionUrl()
       case TypeOffre.SERVICE_CIVIQUE:
@@ -66,12 +67,11 @@ export default function PartageRechercheButton({
     }
   }
 
-  function getPartageRechercheOffreEmploiUrl(): string {
+  function getPartageRechercheOffreEmploiOuAlternanceUrl(type: string): string {
     const localite =
       suggestionOffreEmploi.commune ?? suggestionOffreEmploi.departement!
-    const url = '/offres/partage-recherche'
-      .concat(`?type=${typeOffre}`)
-      .concat(`&titre=${suggestionOffreEmploi.motsCles} - ${localite.libelle}`)
+    const url = `/offres/${type}/partage-recherche`
+      .concat(`?titre=${suggestionOffreEmploi.motsCles} - ${localite.libelle}`)
       .concat(`&motsCles=${suggestionOffreEmploi.motsCles}`)
       .concat(`&typeLocalite=${localite.type}`)
       .concat(`&labelLocalite=${localite.libelle}`)
@@ -80,10 +80,9 @@ export default function PartageRechercheButton({
   }
 
   function getPartageRechercheImmersionUrl(): string {
-    const url = '/offres/partage-recherche'
-      .concat(`?type=${typeOffre}`)
+    const url = '/offres/immersion/partage-recherche'
       .concat(
-        `&titre=${suggestionImmersion.metier.value!.libelle} - ${
+        `?titre=${suggestionImmersion.metier.value!.libelle} - ${
           suggestionImmersion.commune.value!.libelle
         }`
       )
@@ -96,9 +95,8 @@ export default function PartageRechercheButton({
   }
 
   function getPartageRechercheServiceCiviqueUrl(): string {
-    const url = '/offres/partage-recherche'
-      .concat(`?type=${typeOffre}`)
-      .concat(`&titre=${suggestionServiceCivique.commune!.libelle}`)
+    const url = '/offres/service-civique/partage-recherche'
+      .concat(`?titre=${suggestionServiceCivique.commune!.libelle}`)
       .concat(`&labelLocalite=${suggestionServiceCivique.commune!.libelle}`)
       .concat(`&latitude=${suggestionServiceCivique.commune!.latitude}`)
       .concat(`&longitude=${suggestionServiceCivique.commune!.longitude}`)

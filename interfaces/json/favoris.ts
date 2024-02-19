@@ -32,7 +32,7 @@ export function jsonToOffre(offreJson: OffreJson): Offre {
   const offre: Offre = {
     id: offreJson.idOffre,
     titre: offreJson.titre,
-    type: jsonToTypeOffre(offreJson.type),
+    type: jsonToLabelTypeOffre(offreJson.type),
     urlParam: jsonToUrlParam(offreJson.type),
   }
 
@@ -42,7 +42,7 @@ export function jsonToOffre(offreJson: OffreJson): Offre {
   return offre
 }
 
-export function jsonToTypeOffre(type: TypeOffreJson): string {
+export function jsonToLabelTypeOffre(type: TypeOffreJson): string {
   switch (type) {
     case 'OFFRE_EMPLOI':
       return 'Offre d’emploi'
@@ -61,8 +61,9 @@ export function jsonToTypeOffre(type: TypeOffreJson): string {
 export function jsonToUrlParam(type: TypeOffreJson): string {
   switch (type) {
     case 'OFFRE_EMPLOI':
-    case 'OFFRE_ALTERNANCE':
       return 'emploi'
+    case 'OFFRE_ALTERNANCE':
+      return 'alternance'
     case 'OFFRE_IMMERSION':
       return 'immersion'
     case 'OFFRE_SERVICE_CIVIQUE':
