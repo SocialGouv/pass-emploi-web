@@ -1,11 +1,13 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import { unAgenda } from '../../fixtures/agenda'
-import { recupererAgenda } from '../../services/agenda.service'
+import { getIndicateursJeuneComplets } from '../../services/jeunes.service'
+
 import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
+import { unAgenda } from 'fixtures/agenda'
 import {
   desConseillersJeune,
   desIndicateursSemaine,
@@ -18,10 +20,13 @@ import {
   DetailJeune,
   EtatSituation,
 } from 'interfaces/jeune'
+import { recupererAgenda } from 'services/agenda.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
+jest.mock('services/jeunes.service')
+jest.mock('services/agenda.service')
+
 describe('HistoriquePage client side', () => {
-  ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
   const listeSituations = [
     {
       etat: EtatSituation.EN_COURS,
@@ -36,23 +41,24 @@ describe('HistoriquePage client side', () => {
   const jeune = unDetailJeune({ urlDossier: 'https://dossier-milo.fr' })
 
   beforeEach(async () => {
+    ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
     ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
   })
 
   describe('quand l’utilisateur est un conseiller Mission Locale', () => {
     describe('pour les Situations', () => {
-      it('affiche un onglet dédié', () => {
+      it('affiche un onglet dédié', async () => {
         // Given
-        renderHistorique([], [], StructureConseiller.MILO, jeune)
+        await renderHistorique([], [], StructureConseiller.MILO, jeune)
 
         // Then
         expect(
           screen.getByRole('tab', { selected: true })
         ).toHaveAccessibleName('Informations')
       })
-      it('afiche les informations de la fiche d’un bénéficiaire', () => {
+      it('afiche les informations de la fiche d’un bénéficiaire', async () => {
         //When
-        renderHistorique([], [], StructureConseiller.MILO, jeune)
+        await renderHistorique([], [], StructureConseiller.MILO, jeune)
         //Then
         expect(screen.getByText('Bénéficiaire')).toBeInTheDocument()
         expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
@@ -64,9 +70,9 @@ describe('HistoriquePage client side', () => {
       })
 
       describe('quand le jeune n’a aucune situation', () => {
-        it('affiche les informations concernant la situation du jeune', () => {
+        it('affiche les informations concernant la situation du jeune', async () => {
           // Given
-          renderHistorique([], [], StructureConseiller.MILO, jeune)
+          await renderHistorique([], [], StructureConseiller.MILO, jeune)
 
           // Then
           expect(screen.getByText('Sans situation')).toBeInTheDocument()
@@ -74,9 +80,15 @@ describe('HistoriquePage client side', () => {
       })
 
       describe('quand le jeune a une liste de situations', () => {
-        it('affiche les informations concernant la situation du jeune ', () => {
+        it('affiche les informations concernant la situation du jeune ', async () => {
           // Given
-          renderHistorique(listeSituations, [], StructureConseiller.MILO, jeune)
+
+          await renderHistorique(
+            listeSituations,
+            [],
+            StructureConseiller.MILO,
+            jeune
+          )
 
           // Then
           expect(screen.getByText('Emploi')).toBeInTheDocument()
@@ -89,7 +101,7 @@ describe('HistoriquePage client side', () => {
     describe('pour l’indicateur des conseillers', () => {
       it('affiche un onglet dédié', async () => {
         // Given
-        renderHistorique([], [], StructureConseiller.MILO, jeune)
+        await renderHistorique([], [], StructureConseiller.MILO, jeune)
 
         // When
         const tabConseillers = screen.getByRole('tab', {
@@ -108,7 +120,7 @@ describe('HistoriquePage client side', () => {
     describe('pour l’Historique des conseillers', () => {
       it('affiche un onglet dédié', async () => {
         // Given
-        renderHistorique([], [], StructureConseiller.MILO, jeune)
+        await renderHistorique([], [], StructureConseiller.MILO, jeune)
 
         // When
         const tabConseillers = screen.getByRole('tab', {
@@ -124,7 +136,12 @@ describe('HistoriquePage client side', () => {
 
       it('affiche la liste complète des conseillers du jeune', async () => {
         // Given
-        renderHistorique([], listeConseillers, StructureConseiller.MILO, jeune)
+        await renderHistorique(
+          [],
+          listeConseillers,
+          StructureConseiller.MILO,
+          jeune
+        )
 
         // When
         const tabConseillers = screen.getByRole('tab', {
@@ -141,9 +158,9 @@ describe('HistoriquePage client side', () => {
   })
 
   describe('quand l’utilisateur est un conseiller Pôle Empoi', () => {
-    it('affiche uniquement l’onglet Historique des conseiller', () => {
+    it('affiche uniquement l’onglet Historique des conseiller', async () => {
       // Given
-      renderHistorique([], [], StructureConseiller.POLE_EMPLOI, jeune)
+      await renderHistorique([], [], StructureConseiller.POLE_EMPLOI, jeune)
 
       // Then
       expect(() => screen.getByText('Situations')).toThrow()
@@ -154,7 +171,7 @@ describe('HistoriquePage client side', () => {
 
     it('affiche la liste complète des conseillers du jeune', async () => {
       // Given
-      renderHistorique(
+      await renderHistorique(
         [],
         listeConseillers,
         StructureConseiller.POLE_EMPLOI,
@@ -169,7 +186,7 @@ describe('HistoriquePage client side', () => {
   })
 })
 
-function renderHistorique(
+async function renderHistorique(
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
@@ -179,14 +196,21 @@ function renderHistorique(
   structure: StructureConseiller,
   beneficiaire: DetailJeune
 ) {
-  renderWithContexts(
-    <Historique
-      idJeune={'id'}
-      situations={situations}
-      conseillers={conseillers}
-      lectureSeule={false}
-      jeune={beneficiaire}
-    />,
-    { customConseiller: { structure: structure } }
+  const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
+  jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
+  ;(getIndicateursJeuneComplets as jest.Mock).mockResolvedValue(
+    desIndicateursSemaine()
   )
+  await act(async () => {
+    renderWithContexts(
+      <Historique
+        idJeune={'id'}
+        situations={situations}
+        conseillers={conseillers}
+        lectureSeule={false}
+        jeune={beneficiaire}
+      />,
+      { customConseiller: { structure: structure } }
+    )
+  })
 }
