@@ -2,12 +2,13 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import TileIndicateur from 'components/ui/TileIndicateur'
@@ -160,7 +161,10 @@ function HistoriquePage({
           <h2 className='text-m-bold text-grey_800 mb-6'>
             Semaine du {toShortDate(debutSemaine)} au {toShortDate(finSemaine)}
           </h2>
-          <IndicateursActions actions={indicateursSemaine?.actions} />
+          <IndicateursActions
+            actions={indicateursSemaine?.actions}
+            idJeune={idJeune}
+          />
           <IndicateursRendezvous rendezVous={indicateursSemaine?.rendezVous} />
           <IndicateursOffres
             offres={indicateursSemaine?.offres}
@@ -188,9 +192,12 @@ function HistoriquePage({
     </>
   )
 }
-function IndicateursActions({
-  actions,
-}: Partial<Pick<IndicateursSemaine, 'actions'>>) {
+
+interface IndicateursActionsProps
+  extends Partial<Pick<IndicateursSemaine, 'actions'>> {
+  idJeune?: string
+}
+function IndicateursActions({ actions, idJeune }: IndicateursActionsProps) {
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
@@ -222,9 +229,11 @@ function IndicateursActions({
           textColor='primary_darken'
         />
       </ul>
+      {idJeune && <LienVersActions idJeune={idJeune}></LienVersActions>}
     </div>
   )
 }
+
 function IndicateursRendezvous({
   rendezVous,
 }: Partial<Pick<IndicateursSemaine, 'rendezVous'>>) {
@@ -242,6 +251,7 @@ function IndicateursRendezvous({
     </div>
   )
 }
+
 function IndicateursOffres({
   offres,
   favoris,
@@ -288,6 +298,24 @@ function IndicateursOffres({
         />
       </ul>
     </div>
+  )
+}
+
+function LienVersActions({ idJeune }: { idJeune?: string }) {
+  const pathPrefix = `mes-jeunes`
+  return (
+    <Link
+      href={`${pathPrefix}/${idJeune}?onglet=actions`}
+      className='flex items-right text-content_color underline hover:text-primary hover:fill-primary mt-4'
+    >
+      Voir toutes les actions
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-[inherit]'
+        aria-hidden={true}
+        focusable={false}
+      />
+    </Link>
   )
 }
 

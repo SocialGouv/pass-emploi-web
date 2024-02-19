@@ -23,6 +23,7 @@ import AccountCircleFillIcon from 'assets/icons/informations/account_circle_fill
 import AccountCircleOutlineIcon from 'assets/icons/informations/account_circle_outline.svg'
 import ArrowCircleRightFillIcon from 'assets/icons/informations/arrow_circle_right_fill.svg'
 import ArrowCircleRightOutlineIcon from 'assets/icons/informations/arrow_circle_right_outline.svg'
+import BarChart from 'assets/icons/informations/bar_chart.svg'
 import CancelIcon from 'assets/icons/informations/cancel.svg'
 import ChatFillIcon from 'assets/icons/informations/chat_fill.svg'
 import ChatOutlineIcon from 'assets/icons/informations/chat_outline.svg'
@@ -72,7 +73,6 @@ import NumberCircleTwoIcon from 'assets/icons/numbers/number_circle_2.svg'
 import NumberCircleThreeIcon from 'assets/icons/numbers/number_circle_3.svg'
 import NumberCircleFourIcon from 'assets/icons/numbers/number_circle_4.svg'
 import NumberCircleFiveIcon from 'assets/icons/numbers/number_circle_5.svg'
-import BarChart from 'assets/icons/informations/bar_chart.svg'
 
 export enum IconName {
   AccountCircleFill = 'AccountCircleFill',
