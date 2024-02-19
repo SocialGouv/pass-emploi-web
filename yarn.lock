@@ -5239,14 +5239,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.2.55":
-  version: 18.2.55
-  resolution: "@types/react@npm:18.2.55"
+"@types/react@npm:*, @types/react@npm:17 || 18, @types/react@npm:^18.2.55":
+  version: 18.2.56
+  resolution: "@types/react@npm:18.2.56"
   dependencies:
     "@types/prop-types": "npm:*"
     "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/6b1c73beafbbc582dc54ffd92b3779f6d850e8f6b5ce5d04b31e9498a3d77bfc416bb08f0d8d63ab4f4649ccd6639996472416871c01c74a528b16a55faeaf38
+  checksum: 10c0/a6dab9569799538a9e01d340a721ef1a6f5532bd11cae8d8ab9af00dab2edcafaa00950f7bf2f9ae5bbb1839d890e9ac6eb1ea1186200894b7178dde7b503269
   languageName: node
   linkType: hard
 
@@ -11165,13 +11165,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-dom-parser@npm:5.0.7":
-  version: 5.0.7
-  resolution: "html-dom-parser@npm:5.0.7"
+"html-dom-parser@npm:5.0.8":
+  version: 5.0.8
+  resolution: "html-dom-parser@npm:5.0.8"
   dependencies:
     domhandler: "npm:5.0.3"
     htmlparser2: "npm:9.1.0"
-  checksum: 10c0/ff3fdbc538d81ed665619f3b5da513e577afb30648beceb649f13dace9f1f66f145e75c9eb7b15fb9e7951ba940c116913d8ab15d099caeabcb4c514ad4ca078
+  checksum: 10c0/a0fcd84e0729c7b18c5df03ac0d2de6feae61846e746a7aab11315d6eb3e2352d12897cb8af7667b493a55f3fed066550037d8c37efaa1fe05ebedb28921b7d1
   languageName: node
   linkType: hard
 
@@ -11232,17 +11232,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-react-parser@npm:5.1.2":
-  version: 5.1.2
-  resolution: "html-react-parser@npm:5.1.2"
+"html-react-parser@npm:5.1.7":
+  version: 5.1.7
+  resolution: "html-react-parser@npm:5.1.7"
   dependencies:
+    "@types/react": "npm:17 || 18"
     domhandler: "npm:5.0.3"
-    html-dom-parser: "npm:5.0.7"
+    html-dom-parser: "npm:5.0.8"
     react-property: "npm:2.0.2"
     style-to-js: "npm:1.1.10"
   peerDependencies:
     react: 0.14 || 15 || 16 || 17 || 18
-  checksum: 10c0/d3d724eb48bd35bc2f7a7d0d9a150cba984acdd4775b4c3eaafb2ded9c2c1905a42525b014d6ead876ce7a5e57d4b7f0220f769c24db049bb5c1ba3b53543e06
+  checksum: 10c0/343bbd5c572405d647255a94c31d4d8d6eb7b9d18f6890822db697bd3e783323d9ba934e048c06a643b4c746398d721c9362b9cdb1cbb39569a01f702cb79d24
   languageName: node
   linkType: hard
 
@@ -15250,7 +15251,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.1.3"
     eslint-plugin-storybook: "npm:^0.6.15"
     firebase: "npm:10.8.0"
-    html-react-parser: "npm:5.1.2"
+    html-react-parser: "npm:5.1.7"
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
     jsonwebtoken: "npm:9.0.2"
