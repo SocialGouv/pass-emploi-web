@@ -1,5 +1,6 @@
+'use client'
+
 import { withTransaction } from '@elastic/apm-rum-react'
-import { GetServerSideProps } from 'next'
 import React, { useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -15,7 +16,6 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
-import { PageProps } from 'interfaces/pageProps'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -23,11 +23,11 @@ import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type ListesDiffusionProps = PageProps & {
+type ListesDiffusionPageProps = {
   listesDiffusion: ListeDeDiffusion[]
 }
 
-function ListesDiffusion({ listesDiffusion }: ListesDiffusionProps) {
+function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
   const [conseiller] = useConseiller()
   const [alerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
@@ -179,32 +179,7 @@ function TitreListe({ liste }: { liste: ListeDeDiffusion }): JSX.Element {
   return <>{liste.titre}</>
 }
 
-export const getServerSideProps: GetServerSideProps<
-  ListesDiffusionProps
-> = async (context) => {
-  const { default: withMandatorySessionOrRedirect } = await import(
-    'utils/auth/withMandatorySessionOrRedirect'
-  )
-  const sessionOrRedirect = await withMandatorySessionOrRedirect(context)
-  if (!sessionOrRedirect.validSession) {
-    return { redirect: sessionOrRedirect.redirect }
-  }
-  const { user, accessToken } = sessionOrRedirect.session
-
-  const { getListesDeDiffusionServerSide } = await import(
-    'services/listes-de-diffusion.service'
-  )
-  const listesDeDiffusion = await getListesDeDiffusionServerSide(
-    user.id,
-    accessToken
-  )
-  return {
-    props: {
-      pageTitle: 'Listes de diffusion - Portefeuille',
-      pageHeader: 'Mes listes de diffusion',
-      listesDiffusion: listesDeDiffusion,
-    },
-  }
-}
-
-export default withTransaction(ListesDiffusion.name, 'page')(ListesDiffusion)
+export default withTransaction(
+  ListesDiffusionPage.name,
+  'page'
+)(ListesDiffusionPage)
