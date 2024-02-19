@@ -66,6 +66,8 @@ export default function Conversation({
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
+  const beneficiaireNomComplet = `${jeuneChat.prenom} ${jeuneChat.nom}`
+
   function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
   }
@@ -303,6 +305,7 @@ export default function Conversation({
                         <DisplayMessage
                           key={message.id}
                           message={message}
+                          beneficiaireNomComplet={beneficiaireNomComplet}
                           conseillerNomComplet={getConseillerNomComplet(
                             message
                           )}
