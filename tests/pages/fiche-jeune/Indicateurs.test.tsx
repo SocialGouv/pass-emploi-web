@@ -74,7 +74,7 @@ describe('Indicateurs dans la fiche jeune', () => {
         screen.getByRole('link', {
           name: 'Voir plus d’indicateurs',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/indicateurs')
+      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/informations')
     })
   })
 })
