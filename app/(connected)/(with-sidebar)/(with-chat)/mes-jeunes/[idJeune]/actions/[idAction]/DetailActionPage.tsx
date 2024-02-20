@@ -2,7 +2,6 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
@@ -40,10 +39,9 @@ function DetailActionPage({
   lectureSeule,
   from,
 }: DetailActionProps) {
-  const router = useRouter()
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const [alerte, setAlerte] = useAlerte()
+  const [alerte, _] = useAlerte()
 
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
@@ -64,15 +62,6 @@ function DetailActionPage({
 
     if (statutChoisi === StatutAction.Terminee)
       action.dateFinReelle = DateTime.now().toISODate()
-  }
-
-  function onAjoutCommentaire(estEnSucces: boolean) {
-    if (!estEnSucces) {
-      setShowEchecMessage(true)
-    } else {
-      setAlerte(AlerteParam.ajoutCommentaireAction)
-      router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
-    }
   }
 
   // FIXME : dirty fix, problème de l’action
@@ -216,12 +205,7 @@ function DetailActionPage({
       <HistoriqueAction action={action} />
 
       {Boolean(commentaires.length) && (
-        <CommentairesAction
-          idAction={action.id}
-          commentairesInitiaux={commentaires}
-          onAjout={onAjoutCommentaire}
-          lectureSeule={lectureSeule}
-        />
+        <CommentairesAction commentairesInitiaux={commentaires} />
       )}
     </>
   )

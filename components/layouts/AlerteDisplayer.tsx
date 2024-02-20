@@ -108,9 +108,6 @@ const ALERTES: DictAlertes = {
   modificationIdentifiantPartenaire: {
     title: 'L’identifiant Pôle emploi a bien été mis à jour',
   },
-  ajoutCommentaireAction: {
-    title: 'Votre jeune a été alerté que vous avez écrit un commentaire',
-  },
   qualificationSNP: {
     title: 'Action qualifiée',
     sub:
