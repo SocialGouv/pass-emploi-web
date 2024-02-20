@@ -52,7 +52,7 @@ describe('Page Recherche Offres Emploi', () => {
     expect(etape2).toBeInTheDocument()
     expect(
       within(etape2).getByRole('checkbox', {
-        name: 'Recherche avec un numéro d’offre Pôle emploi',
+        name: 'Recherche avec un numéro d’offre France Travail',
       })
     ).toBeInTheDocument()
     expect(
@@ -85,7 +85,7 @@ describe('Page Recherche Offres Emploi', () => {
       name: 'Étape 2: Critères de recherche',
     })
     const checkbox = screen.getByRole('checkbox', {
-      name: 'Recherche avec un numéro d’offre Pôle emploi',
+      name: 'Recherche avec un numéro d’offre France Travail',
     })
     // When
     await userEvent.click(checkbox)
@@ -381,7 +381,7 @@ describe('Page Recherche Offres Emploi', () => {
     it('permet de faire ue recherche d’offre par Id ', async () => {
       // Given
       const checkbox = screen.getByRole('checkbox', {
-        name: 'Recherche avec un numéro d’offre Pôle emploi',
+        name: 'Recherche avec un numéro d’offre France Travail',
       })
       await userEvent.click(checkbox)
       await userEvent.type(screen.getByLabelText(/Numéro d’offre/), 'id-offre')

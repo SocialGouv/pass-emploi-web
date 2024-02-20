@@ -18,7 +18,7 @@ jest.mock(
 )
 
 describe('IndicateursPage server side', () => {
-  describe('Pour un conseiller Pole Emploi', () => {
+  describe('Pour un conseiller France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

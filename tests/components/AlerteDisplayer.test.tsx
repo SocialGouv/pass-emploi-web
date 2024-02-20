@@ -289,7 +289,7 @@ describe('AlerteDisplayer', () => {
     })
   })
 
-  describe('quand on renseigne une agence Pole emploi', () => {
+  describe('quand on renseigne une agence France Travail', () => {
     it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {

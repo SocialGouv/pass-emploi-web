@@ -28,7 +28,7 @@ describe('RendezVousPassesPage server side', () => {
     ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
   })
 
-  describe('quand le conseiller n’est pas Pôle emploi', () => {
+  describe('quand le conseiller n’est pas France Travail', () => {
     it('récupère les rendez-vous passés d’un jeune avec son conseiller', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
@@ -60,7 +60,7 @@ describe('RendezVousPassesPage server side', () => {
     })
   })
 
-  describe('quand le conseiller est Pôle emploi', () => {
+  describe('quand le conseiller est France Travail', () => {
     it('ne recupère pas les rendez-vous', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({

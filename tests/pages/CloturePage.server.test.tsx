@@ -86,7 +86,7 @@ describe('CloturePage server side', () => {
     })
   })
 
-  describe('quand l’utilisateur est Pole Emploi', () => {
+  describe('quand l’utilisateur est France Travail', () => {
     it('renvoie sur la liste des jeunes', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

@@ -223,7 +223,7 @@ describe('PortefeuillePage client side', () => {
     })
   })
 
-  describe('quand le conseiller est Pôle emploi', () => {
+  describe('quand le conseiller est France Travail', () => {
     beforeEach(async () => {
       //GIVEN
       const jeune = unJeuneAvecActionsNonTerminees()

@@ -223,7 +223,7 @@ describe('EditionRdv', () => {
       })
     })
 
-    describe('quand l’utilisateur est Pôle Emploi', () => {
+    describe('quand l’utilisateur est France Travail', () => {
       it('renvoie sur la liste des jeunes', async () => {
         // Given
         ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
