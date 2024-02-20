@@ -245,7 +245,7 @@ describe('AlerteDisplayer', () => {
 
       // Then
       expect(
-        screen.getByText(/L’identifiant Pôle emploi a bien été mis à jour/)
+        screen.getByText(/L’identifiant France Travail a bien été mis à jour/)
       ).toBeInTheDocument()
     })
   })

@@ -20,7 +20,7 @@ export const IntegrationPoleEmploi = ({
         Cette fonctionnalité n&apos;est pas encore disponible.
       </p>
       <p className='text-s-regular'>
-        Gérez les {label} de ce bénéficiaire depuis vos outils Pôle emploi.
+        Gérez les {label} de ce bénéficiaire depuis vos outils France Travail.
       </p>
     </div>
   </div>

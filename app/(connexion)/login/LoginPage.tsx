@@ -95,7 +95,7 @@ function LoginPage({
             </li>
             <li>
               <FormButton
-                label='Connexion conseiller Pôle emploi CEJ'
+                label='Connexion conseiller France Travail CEJ'
                 className='mt-4 whitespace-nowrap'
                 handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
               />
@@ -125,7 +125,7 @@ function LoginPage({
               <ul>
                 <li>
                   <FormButton
-                    label='Connexion conseiller Pôle emploi BRSA'
+                    label='Connexion conseiller France Travail BRSA'
                     className='mt-6 whitespace-nowrap'
                     style={ButtonStyle.PRIMARY_BRSA}
                     handleSubmit={(event) =>
