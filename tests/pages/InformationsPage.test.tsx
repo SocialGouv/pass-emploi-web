@@ -6,7 +6,8 @@ import React from 'react'
 
 import { getIndicateursJeuneComplets } from '../../services/jeunes.service'
 
-import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
+import { getByTextContent } from '../querySelector'
+import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desConseillersJeune,
@@ -26,7 +27,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
 
-describe('HistoriquePage client side', () => {
+describe('InformationsPage client side', () => {
   const listeSituations = [
     {
       etat: EtatSituation.EN_COURS,
@@ -99,22 +100,75 @@ describe('HistoriquePage client side', () => {
       })
     })
     describe('pour l’indicateur des conseillers', () => {
-      it('affiche un onglet dédié', async () => {
-        // Given
+      beforeEach(async () => {
+        //Given
         await renderHistorique([], [], StructureConseiller.MILO, jeune)
 
         // When
-        const tabConseillers = screen.getByRole('tab', {
+        const tabIndicateurs = screen.getByRole('tab', {
           name: 'Indicateurs',
         })
-        await userEvent.click(tabConseillers)
-
-        // Then
+        await userEvent.click(tabIndicateurs)
+      })
+      it('affiche un onglet dédié', async () => {
+        //Then
         expect(
           screen.getByRole('tab', { selected: true })
         ).toHaveAccessibleName('Indicateurs')
+        expect(
+          screen.getByText('Semaine du 29/08/2022 au 04/09/2022')
+        ).toBeInTheDocument()
       })
-      it('affiche les indicateurs des bénéficiaires', () => {})
+      it('affiche les indicateurs des actions', async () => {
+        const indicateursActions = screen.getByRole('heading', {
+          name: 'Les actions',
+        }).parentElement
+        //Then
+        expect(
+          getByTextContent('0Créées', indicateursActions!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('1Terminée', indicateursActions!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('2En retard', indicateursActions!)
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('link', { name: 'Voir toutes les actions' })
+        ).toHaveAttribute('href', '/mes-jeunes/id?onglet=actions')
+      })
+
+      it('affiche l’indicateur de rendez-vous', async () => {
+        const indicateursRdv = screen.getByRole('heading', {
+          name: 'Les événements',
+        }).parentElement
+        //Then
+        expect(
+          getByTextContent('3Cette semaine', indicateursRdv!)
+        ).toBeInTheDocument()
+      })
+      it('affiche les indicateurs des offres', async () => {
+        //Then
+        const indicateursOffres = screen.getByRole('heading', {
+          name: 'Les offres',
+        }).parentElement
+        expect(
+          getByTextContent('10Offres consultées', indicateursOffres!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('4Offres partagées', indicateursOffres!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('6Favoris ajoutés', indicateursOffres!)
+        ).toBeInTheDocument()
+        expect(
+          getByTextContent('7Recherches sauvegardées', indicateursOffres!)
+        ).toBeInTheDocument()
+
+        expect(
+          screen.getByRole('link', { name: 'Voir tous les favoris' })
+        ).toHaveAttribute('href', '/mes-jeunes/id/favoris')
+      })
     })
 
     describe('pour l’Historique des conseillers', () => {

@@ -19,7 +19,7 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/mes-jeunes\/(milo|pole-emploi)\/creation-jeune$/, 'Création'],
   [/\/mes-jeunes\/[\w-]+$/, labelFicheBeneficiaire],
   [/\/mes-jeunes\/[\w-]+\/favoris$/, labelFavoris],
-  [/\/mes-jeunes\/[\w-]+\/historique$/, labelInformations],
+  [/\/mes-jeunes\/[\w-]+\/informations$/, labelInformations],
   [/\/mes-jeunes\/[\w-]+\/indicateurs$/, labelIndicateurs],
   [/\/mes-jeunes\/[\w-]+\/rendez-vous-passes$/, labelRdvPasses],
   [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, labelAction],
@@ -28,7 +28,7 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/etablissement$/, 'Bénéficiaires'],
   [/\/etablissement\/beneficiaires\/[\w-]+$/, labelFicheBeneficiaire],
   [/\/etablissement\/beneficiaires\/[\w-]+\/favoris$/, labelFavoris],
-  [/\/etablissement\/beneficiaires\/[\w-]+\/historique$/, labelInformations],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/informations$/, labelInformations],
   [/\/etablissement\/beneficiaires\/[\w-]+\/indicateurs$/, labelIndicateurs],
   [
     /\/etablissement\/beneficiaires\/[\w-]+\/rendez-vous-passes$/,

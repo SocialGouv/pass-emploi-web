@@ -1,21 +1,13 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { GetServerSidePropsResult, Metadata } from 'next'
-import { useRouter } from 'next/router'
-import { GetServerSidePropsContext } from 'next/types'
+import { render } from '@testing-library/react'
+import { Metadata } from 'next'
 import React from 'react'
 
-import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
+import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 import Historique, {
   generateMetadata,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/page'
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/page'
 import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
-import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  CategorieSituation,
-  ConseillerHistorique,
-  EtatSituation,
-} from 'interfaces/jeune'
+import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
@@ -27,7 +19,7 @@ jest.mock('utils/auth/auth', () => ({
 }))
 jest.mock('services/jeunes.service')
 jest.mock(
-  'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/historique/HistoriquePage'
+  'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 )
 
 describe('HistoriquePage server side', () => {
@@ -71,7 +63,7 @@ describe('HistoriquePage server side', () => {
     })
     // Then
     expect(metadata).toEqual({
-      title: 'Historique - Jirac Kenji - Portefeuille',
+      title: 'Informations - Jirac Kenji - Portefeuille',
     })
 
     expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')

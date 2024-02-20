@@ -54,6 +54,16 @@ describe('Situations dans la fiche jeune', () => {
         expect(() => screen.getByText('prévue')).toThrow()
       })
     })
+
+    it('affiche un lien vers l’historique des situations', async () => {
+      // Given
+      await renderFicheJeune([])
+
+      // Then
+      expect(
+        screen.getByRole('link', { name: 'Voir le détail des situations' })
+      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/informations')
+    })
   })
 })
 

@@ -170,9 +170,17 @@ function DossierExterne({
 
 export function InformationNonDisponible() {
   return (
-    <>
-      --
-      <span className='sr-only'>information non disponible</span>
-    </>
+    <Link
+      href={`${pathPrefix}/${idJeune}/informations`}
+      className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
+    >
+      Voir plus d’informations
+      <IconComponent
+        name={IconName.ChevronRight}
+        className='w-4 h-5 fill-[inherit]'
+        aria-hidden={true}
+        focusable={false}
+      />
+    </Link>
   )
 }

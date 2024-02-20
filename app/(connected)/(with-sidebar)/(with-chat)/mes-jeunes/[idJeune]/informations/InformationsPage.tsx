@@ -3,8 +3,10 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import { LienVersFavoris } from 'components/jeune/BlocFavoris'
 import { BlocInformationJeune } from 'components/jeune/BlocInformationJeune'
 import { BlocSituation } from 'components/jeune/BlocSituation'
 import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
@@ -26,7 +28,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type HistoriqueProps = {
+type InformationsPageProps = {
   idJeune: string
   jeune: DetailJeune
   situations: Array<{
@@ -44,13 +46,13 @@ export enum Onglet {
   INDICATEUR = 'INDICATEUR',
 }
 
-function HistoriquePage({
+function InformationsPage({
   idJeune,
   situations,
   conseillers,
   lectureSeule,
   jeune,
-}: HistoriqueProps) {
+}: InformationsPageProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [currentTab, setCurrentTab] = useState<Onglet | undefined>(
@@ -74,7 +76,7 @@ function HistoriquePage({
   const finSemaine = aujourdHui.endOf('week')
 
   useEffect(() => {
-    if (!indicateursSemaine) {
+    if (!indicateursSemaine && idJeune) {
       getIndicateursJeuneComplets(
         conseiller.id,
         idJeune,
@@ -95,6 +97,9 @@ function HistoriquePage({
   }, [currentTab])
 
   useMatomo(tracking, aDesBeneficiaires)
+  const pathPrefix = usePathname()?.startsWith('etablissement')
+    ? '/etablissement/beneficiaires'
+    : '/mes-jeunes'
 
   return (
     <>
@@ -164,11 +169,14 @@ function HistoriquePage({
           <IndicateursActions
             actions={indicateursSemaine?.actions}
             idJeune={idJeune}
+            pathPrefix={pathPrefix}
           />
           <IndicateursRendezvous rendezVous={indicateursSemaine?.rendezVous} />
           <IndicateursOffres
             offres={indicateursSemaine?.offres}
             favoris={indicateursSemaine?.favoris}
+            idJeune={idJeune}
+            pathPrefix={pathPrefix}
           />
         </div>
       )}
@@ -196,8 +204,13 @@ function HistoriquePage({
 interface IndicateursActionsProps
   extends Partial<Pick<IndicateursSemaine, 'actions'>> {
   idJeune?: string
+  pathPrefix: string
 }
-function IndicateursActions({ actions, idJeune }: IndicateursActionsProps) {
+function IndicateursActions({
+  actions,
+  idJeune,
+  pathPrefix,
+}: IndicateursActionsProps) {
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
@@ -229,7 +242,7 @@ function IndicateursActions({ actions, idJeune }: IndicateursActionsProps) {
           textColor='primary_darken'
         />
       </ul>
-      {idJeune && <LienVersActions idJeune={idJeune}></LienVersActions>}
+      {idJeune && <LienVersActions idJeune={idJeune} pathPrefix={pathPrefix} />}
     </div>
   )
 }
@@ -251,11 +264,18 @@ function IndicateursRendezvous({
     </div>
   )
 }
+interface IndicateursOffresProps
+  extends Partial<Pick<IndicateursSemaine, 'offres' | 'favoris'>> {
+  idJeune?: string
+  pathPrefix: string
+}
 
 function IndicateursOffres({
   offres,
   favoris,
-}: Partial<Pick<IndicateursSemaine, 'offres' | 'favoris'>>) {
+  idJeune,
+  pathPrefix,
+}: IndicateursOffresProps) {
   return (
     <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les offres</h3>
@@ -297,26 +317,40 @@ function IndicateursOffres({
           textColor='primary_darken'
         />
       </ul>
+      {idJeune && (
+        <LienVersFavoris
+          titre='Voir tous les favoris'
+          idJeune={idJeune}
+          pathPrefix={pathPrefix}
+        />
+      )}
     </div>
   )
 }
 
-function LienVersActions({ idJeune }: { idJeune?: string }) {
-  const pathPrefix = `mes-jeunes`
+function LienVersActions({
+  idJeune,
+  pathPrefix,
+}: {
+  idJeune?: string
+  pathPrefix: string
+}) {
   return (
-    <Link
-      href={`${pathPrefix}/${idJeune}?onglet=actions`}
-      className='flex items-right text-content_color underline hover:text-primary hover:fill-primary mt-4'
-    >
-      Voir toutes les actions
-      <IconComponent
-        name={IconName.ChevronRight}
-        className='w-4 h-5 fill-[inherit]'
-        aria-hidden={true}
-        focusable={false}
-      />
-    </Link>
+    <div className='flex justify-end mt-4'>
+      <Link
+        href={`${pathPrefix}/${idJeune}?onglet=actions`}
+        className='flex float-right items-center text-content_color underline hover:text-primary hover:fill-primary'
+      >
+        Voir toutes les actions
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
+      </Link>
+    </div>
   )
 }
 
-export default withTransaction(HistoriquePage.name, 'page')(HistoriquePage)
+export default withTransaction(InformationsPage.name, 'page')(InformationsPage)
