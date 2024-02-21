@@ -15,7 +15,6 @@ import {
 import { QualificationAction, StatutAction } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import {
-  ajouterCommentaire,
   creerAction,
   deleteAction,
   getAction,
@@ -648,26 +647,6 @@ describe('ActionsApiService', () => {
         '/actions/id-action',
         'accessToken'
       )
-    })
-  })
-
-  describe('.ajouterCommentaire', () => {
-    it('ajoute un commentaire à une action', async () => {
-      // GIVEN
-      const commentaire = unCommentaire()
-      ;(apiPost as jest.Mock).mockResolvedValue({ content: commentaire })
-      // WHEN
-      const result = await ajouterCommentaire('id-action', 'comment')
-
-      // THEN
-      expect(apiPost).toHaveBeenCalledWith(
-        '/actions/id-action/commentaires',
-        {
-          commentaire: 'comment',
-        },
-        'accessToken'
-      )
-      expect(result).toEqual(commentaire)
     })
   })
 

@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -9,11 +9,7 @@ import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  ajouterCommentaire,
-  deleteAction,
-  modifierAction,
-} from 'services/actions.service'
+import { deleteAction, modifierAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
@@ -104,55 +100,6 @@ describe('ActionPage client side', () => {
 
         // Then
         expect(screen.getByText('Date de réalisation :')).toBeInTheDocument()
-      })
-    })
-
-    describe("A l'ajout de commentaire", () => {
-      describe("quand c'est un succès", () => {
-        it('affiche un message de succès', async () => {
-          // Given
-          ;(ajouterCommentaire as jest.Mock).mockResolvedValue(unCommentaire())
-          const textbox = screen.getByRole('textbox')
-          fireEvent.change(textbox, { target: { value: 'test' } })
-          const submitButton = screen.getByRole('button', {
-            name: 'Ajouter un commentaire',
-          })
-
-          // When
-          await userEvent.click(submitButton)
-
-          // Then
-          expect(ajouterCommentaire).toHaveBeenCalledWith('id-action-1', 'test')
-          expect(alerteSetter).toHaveBeenCalledWith('ajoutCommentaireAction')
-          expect(routerPush).toHaveBeenCalledWith(
-            '/mes-jeunes/jeune-1/actions/id-action-1'
-          )
-          expect(textbox).toHaveValue('')
-        })
-
-        it('ne permet pas de supprimer l’action', () => {
-          expect(
-            screen.queryByRole('button', { name: 'Supprimer l’action' })
-          ).not.toBeInTheDocument()
-        })
-      })
-
-      describe("quand c'est un échec", () => {
-        it('affiche une alerte', async () => {
-          // Given
-          ;(ajouterCommentaire as jest.Mock).mockRejectedValue({})
-          const textbox = screen.getByRole('textbox')
-          fireEvent.change(textbox, { target: { value: 'test' } })
-          const submitButton = screen.getByRole('button', {
-            name: 'Ajouter un commentaire',
-          })
-
-          // When
-          await userEvent.click(submitButton)
-
-          // Then
-          expect(screen.getByRole('alert')).toBeInTheDocument()
-        })
       })
     })
   })
