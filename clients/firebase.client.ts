@@ -111,8 +111,10 @@ export type CreateFirebaseMessageWithOffre = BaseCreateFirebaseMessage & {
   offre: BaseOffre
 }
 
-const chatCollection = process.env.NEXT_PUBLIC_FIREBASE_CHAT_COLLECTION_NAME || ''
-const groupeCollection = process.env.NEXT_PUBLIC_FIREBASE_GROUPE_COLLECTION_NAME || ''
+const chatCollection =
+  process.env.NEXT_PUBLIC_FIREBASE_CHAT_COLLECTION_NAME || ''
+const groupeCollection =
+  process.env.NEXT_PUBLIC_FIREBASE_GROUPE_COLLECTION_NAME || ''
 
 export async function signIn(token: string): Promise<void> {
   const initializedApp = retrieveApp()
@@ -177,20 +179,21 @@ export function findAndObserveChatsDuConseiller(
         where('conseillerId', '==', idConseiller)
       ),
       (querySnapshot: QuerySnapshot<FirebaseChat, FirebaseChat>) => {
-        if (querySnapshot.empty) return
-        onChatsFound(
-          querySnapshot.docs.reduce(
-            (chats, snapshot) => {
-              const chatFirebase = snapshot.data()
-              chats[chatFirebase.jeuneId] = chatFromFirebase(
-                snapshot.id,
-                chatFirebase
-              )
-              return chats
-            },
-            {} as { [idJeune: string]: Chat }
+        if (querySnapshot.empty) onChatsFound({})
+        else
+          onChatsFound(
+            querySnapshot.docs.reduce(
+              (chats, snapshot) => {
+                const chatFirebase = snapshot.data()
+                chats[chatFirebase.jeuneId] = chatFromFirebase(
+                  snapshot.id,
+                  chatFirebase
+                )
+                return chats
+              },
+              {} as { [idJeune: string]: Chat }
+            )
           )
-        )
       }
     )
   } catch (e) {

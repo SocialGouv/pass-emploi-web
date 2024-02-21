@@ -133,9 +133,13 @@ describe('<ChatRoom />', () => {
       )
 
       // Then
+      expect(screen.getByText('Vous pouvez échanger :')).toBeInTheDocument()
+      expect(
+        screen.getByText('directement avec un bénéficiaire')
+      ).toBeInTheDocument()
       expect(
         screen.getByText(
-          'Vous devriez avoir des bénéficiaires inscrits pour discuter avec eux'
+          'en envoyant un message à plusieurs bénéficiaires simultanément'
         )
       ).toBeInTheDocument()
     })
