@@ -5,6 +5,7 @@ import EmptyStateImage from 'assets/images/illustration-messagerie.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { JeuneChat } from 'interfaces/jeune'
 
 interface ListeConversationsProps {
@@ -25,12 +26,14 @@ export default function ListeConversations({
         aria-busy={!conversations}
         className='relative h-full overflow-y-auto'
       >
-        {(!conversations || conversations.length === 0) && (
+        {!conversations && <SpinningLoader />}
+
+        {conversations?.length === 0 && (
           <>
             <div className='flex flex-col justify-center items-center'>
               <EmptyStateImage
-                focusable='false'
-                aria-hidden='true'
+                focusable={false}
+                aria-hidden={true}
                 className='w-[360px] h-[200px]'
               />
               <div className='mx-4'>
