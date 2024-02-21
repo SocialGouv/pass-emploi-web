@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
-import { redirect } from 'next/navigation'
 import React, { ReactElement, useEffect, useState } from 'react'
 
+import { AgendaData, AgendaRows, buildAgendaData } from 'components/AgendaRows'
 import EmptyState from 'components/EmptyState'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -20,14 +20,8 @@ import {
   AnimationCollective,
   StatutAnimationCollective,
 } from 'interfaces/evenement'
-import {
-  AgendaData,
-  AgendaRows,
-  buildAgendaData,
-} from 'presentation/AgendaRows'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchTime, toMonthday } from 'utils/date'
-import { ApiError } from 'utils/httpClient'
 
 type OngletAgendaEtablissementProps = {
   recupererAnimationsCollectives: (
@@ -93,10 +87,6 @@ export default function OngletAgendaEtablissement({
         setEvenements([...animationsCollectives])
       }
     } catch (e) {
-      if (e instanceof ApiError && e.statusCode === 401) {
-        // TODO redirect in http-client quand le router "page" aura disparu
-        redirect('/api/auth/federated-logout')
-      }
       setFailed(true)
     } finally {
       setPeriode({ debut: dateDebut, fin: dateFin })

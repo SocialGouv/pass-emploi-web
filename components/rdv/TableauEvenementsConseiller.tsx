@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import React, { useState } from 'react'
 
 import FailureIcon from 'assets/icons/informations/info.svg'
+import { AgendaData, AgendaRows } from 'components/AgendaRows'
 import { EvenementRow } from 'components/rdv/EvenementRow'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Table from 'components/ui/Table/Table'
@@ -10,7 +11,6 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
-import { AgendaData, AgendaRows } from 'presentation/AgendaRows'
 import { toMonthday } from 'utils/date'
 
 type TableauEvenementsConseillerProps = {

@@ -304,7 +304,7 @@ describe('EtablissementPage client side', () => {
 
       // When
       await act(async () => {
-        await renderWithContexts(<EtablissementPage />, {
+        renderWithContexts(<EtablissementPage />, {
           customConseiller: { structure: StructureConseiller.MILO },
         })
       })

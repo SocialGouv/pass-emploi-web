@@ -13,7 +13,7 @@
     "build-source-map": "NODE_ENV=production next build && source-map-explorer .next/static/**/*.js",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
-    "test": "TZ=Europe/Paris jest --config jest.config.js --coverage",
+    "test": "TZ=Europe/Paris jest --config jest.config.js",
     "test:watch": "jest --config jest.config.js --watch",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"

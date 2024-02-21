@@ -26,7 +26,7 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchDateTime } from 'utils/date'
-import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
+import { useConfirmBeforeLeaving } from 'utils/hooks/useConfirmBeforeLeaving'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationUpdateRdvModal = dynamic(
@@ -215,7 +215,7 @@ function EditionRdvPage({
     setShowPlusHistorique(newShowPlusHistorique)
   }
 
-  useLeavePageModal(hasChanges && confirmBeforeLeaving, openLeavePageModal)
+  useConfirmBeforeLeaving(hasChanges && confirmBeforeLeaving)
 
   useMatomo(trackingTitle, aDesBeneficiaires)
 

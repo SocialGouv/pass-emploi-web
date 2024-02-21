@@ -13,7 +13,7 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo()
 
       //WHEN
-      await act(() => {
+      await act(async () => {
         renderWithContexts(
           <DossierJeuneMilo
             dossier={dossier}
@@ -51,7 +51,7 @@ describe('<DossierMilo', () => {
       const dossier = unDossierMilo({ email: undefined })
 
       //WHEN
-      await act(() => {
+      await act(async () => {
         renderWithContexts(
           <DossierJeuneMilo
             dossier={dossier}

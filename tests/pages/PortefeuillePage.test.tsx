@@ -120,10 +120,9 @@ describe('PortefeuillePage client side', () => {
       // Given
       ;(useRouter as jest.Mock).mockReturnValue({
         refresh: refresh,
-        asPath: '/mes-jeunes',
       })
 
-      await act(() => {
+      await act(async () => {
         conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
         renderWithContexts(
           <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />,
@@ -175,7 +174,7 @@ describe('PortefeuillePage client side', () => {
         structureMilo: { id: '2' },
       })
 
-      await act(() => {
+      await act(async () => {
         renderWithContexts(
           <PortefeuillePage
             conseillerJeunes={[jeune, beneficiaireAvecStructureDifferente]}
@@ -237,7 +236,7 @@ describe('PortefeuillePage client side', () => {
       //GIVEN
       const jeune = unJeuneAvecActionsNonTerminees()
 
-      await act(() => {
+      await act(async () => {
         renderWithContexts(
           <PortefeuillePage conseillerJeunes={[jeune]} isFromEmail />,
           {
@@ -274,7 +273,7 @@ describe('PortefeuillePage client side', () => {
   describe("quand le conseiller n'a pas de jeune", () => {
     it("n'affiche pas la recherche de jeune", async () => {
       // GIVEN
-      await act(() => {
+      await act(async () => {
         renderWithContexts(
           <PortefeuillePage conseillerJeunes={[]} isFromEmail />
         )
@@ -290,7 +289,7 @@ describe('PortefeuillePage client side', () => {
 
     it('affiche un message invitant à ajouter des bénéficiaires', async () => {
       // GIVEN
-      await act(() => {
+      await act(async () => {
         renderWithContexts(
           <PortefeuillePage conseillerJeunes={[]} isFromEmail />
         )
@@ -311,7 +310,7 @@ describe('PortefeuillePage client side', () => {
         const conseiller = unConseiller({
           aDesBeneficiairesARecuperer: true,
         })
-        await act(() => {
+        await act(async () => {
           renderWithContexts(
             <PortefeuillePage conseillerJeunes={[]} isFromEmail />,
             { customConseiller: conseiller }
@@ -344,7 +343,7 @@ describe('PortefeuillePage client side', () => {
       ;(countMessagesNotRead as jest.Mock).mockRejectedValue(new Error())
 
       // WHEN
-      await act(() => {
+      await act(async () => {
         renderWithContexts(
           <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
         )

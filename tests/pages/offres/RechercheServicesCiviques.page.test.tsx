@@ -28,7 +28,6 @@ import { searchServicesCiviques } from 'services/services-civiques.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/referentiel.service')
 jest.mock('services/services-civiques.service')
 
@@ -118,7 +117,7 @@ describe('Page Recherche Offres Service civique', () => {
         // When
         await userEvent.type(inputLocalisation, 'paris14')
 
-        await act(() => {
+        await act(async () => {
           fireEvent.blur(inputLocalisation)
         })
         await userEvent.click(submitButton)

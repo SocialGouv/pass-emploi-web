@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { buildAgendaData } from 'presentation/AgendaRows'
+import { buildAgendaData } from 'components/AgendaRows'
 
 const lundi = DateTime.fromISO('2029-12-31')
 const mardi = DateTime.fromISO('2030-01-01')

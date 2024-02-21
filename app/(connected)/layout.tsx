@@ -1,14 +1,13 @@
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 
-import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { MODAL_ROOT_ID } from 'components/ids'
+import LienEvitement from 'components/LienEvitement'
+import { estPoleEmploiBRSA } from 'interfaces/conseiller'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import AppContextProviders from 'utils/AppContextProviders'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import { ApiError } from 'utils/httpClient'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { accessToken, user } = await getMandatorySessionServerSide()
@@ -27,19 +26,10 @@ export default async function LayoutWhenConnected({
 }) {
   const { accessToken, user } = await getMandatorySessionServerSide()
 
-  let conseiller: Conseiller | undefined
-  let portefeuille: JeuneFromListe[]
-  try {
-    ;[conseiller, portefeuille] = await Promise.all([
-      getConseillerServerSide(user, accessToken),
-      getJeunesDuConseillerServerSide(user.id, accessToken),
-    ])
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401) {
-      // TODO redirect in http-client quand le router "page" aura disparu
-      redirect('/api/auth/federated-logout')
-    }
-  }
+  const [conseiller, portefeuille] = await Promise.all([
+    getConseillerServerSide(user, accessToken),
+    getJeunesDuConseillerServerSide(user.id, accessToken),
+  ])
 
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
@@ -48,12 +38,18 @@ export default async function LayoutWhenConnected({
   const theme = estPoleEmploiBRSA(conseiller) ? 'brsa' : 'cej'
 
   return (
-    <AppContextProviders
-      conseiller={conseiller}
-      portefeuille={portefeuille!}
-      theme={theme}
-    >
-      {children}
-    </AppContextProviders>
+    <>
+      <LienEvitement />
+
+      <AppContextProviders
+        conseiller={conseiller}
+        portefeuille={portefeuille}
+        theme={theme}
+      >
+        {children}
+      </AppContextProviders>
+
+      <div id={MODAL_ROOT_ID} />
+    </>
   )
 }

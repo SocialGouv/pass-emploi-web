@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Router from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
@@ -145,24 +145,35 @@ export default function DossierJeuneMilo({
           Retour
         </Link>
 
-        {!erreurMessageHttpPassEmploi &&
-          actionButtons(dossier, addJeune, creationEnCours)}
+        {!erreurMessageHttpPassEmploi && (
+          <ActionButtons
+            dossier={dossier}
+            addJeune={addJeune}
+            creationEnCours={creationEnCours}
+          />
+        )}
       </div>
     </>
   )
 }
 
-function actionButtons(
-  dossier: DossierMilo,
-  addJeune: () => Promise<void>,
+function ActionButtons({
+  dossier,
+  addJeune,
+  creationEnCours,
+}: {
+  dossier: DossierMilo
+  addJeune: () => Promise<void>
   creationEnCours: boolean
-) {
+}) {
+  const router = useRouter()
+
   return dossier.email ? (
     <Button type='button' onClick={addJeune} disabled={creationEnCours}>
       {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
     </Button>
   ) : (
-    <Button type='button' onClick={() => Router.reload()}>
+    <Button type='button' onClick={() => router.refresh()}>
       <RefreshIcon className='mr-2.5' aria-hidden={true} focusable={false} />
       Rafraîchir le compte
     </Button>
