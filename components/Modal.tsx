@@ -11,12 +11,11 @@ import { createPortal } from 'react-dom'
 
 import IconComponent, { IconName } from './ui/IconComponent'
 
+import { MODAL_ROOT_ID } from 'components/ids'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import styles from 'styles/components/Modal.module.css'
-
-export const MODAL_ROOT_ID = 'modal-root'
 
 interface ModalProps {
   title: string

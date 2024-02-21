@@ -3,6 +3,7 @@
 import { ReactNode } from 'react'
 
 import layout from 'app/(connected)/(with-sidebar)/PageLayout.module.css'
+import { ID_CONTENU } from 'components/ids'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import Footer from 'components/layouts/Footer'
 import Header from 'components/layouts/Header'
@@ -22,6 +23,7 @@ export default function PageLayout({
       <Header />
 
       <main
+        id={ID_CONTENU}
         className={`${layout.content} ${
           fullWidth ? layout.content_fullWidth : layout.content_centered
         }`}

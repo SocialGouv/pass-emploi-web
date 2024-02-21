@@ -37,7 +37,7 @@ import {
 } from 'interfaces/message'
 import { BaseOffre, TypeOffre } from 'interfaces/offre'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
-import { captureRUMError } from 'utils/monitoring/elastic'
+import { captureError } from 'utils/monitoring/elastic'
 
 type TypeMessageFirebase =
   | 'NOUVEAU_CONSEILLER'
@@ -144,7 +144,7 @@ export async function addMessage(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -160,7 +160,7 @@ export async function updateChat(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -198,7 +198,7 @@ export function findAndObserveChatsDuConseiller(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -221,7 +221,7 @@ export async function getChatsDuConseiller(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -254,7 +254,7 @@ export async function getMessagesGroupe(
     return querySnapshots.docs.map(docSnapshotToMessageListeDiffusion)
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -274,7 +274,7 @@ export function observeChat(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -305,7 +305,7 @@ export function observeDerniersMessagesDuChat(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }

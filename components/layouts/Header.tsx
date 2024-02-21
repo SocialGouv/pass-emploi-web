@@ -1,7 +1,6 @@
 import React from 'react'
 
-import { PAGE_ACTIONS_ROOT_ID } from 'components/PageActionsPortal'
-import { PAGE_NAVIGATION_ROOT_ID } from 'components/PageNavigationPortals'
+import { PAGE_ACTIONS_ROOT_ID, PAGE_NAVIGATION_ROOT_ID } from 'components/ids'
 
 export default function Header() {
   return (

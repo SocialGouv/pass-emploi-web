@@ -1,8 +1,9 @@
 import { render } from '@testing-library/react'
 import { notFound } from 'next/navigation'
 
-import Qualification from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/page'
-import { generateMetadata } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/page'
+import Qualification, {
+  generateMetadata,
+} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/page'
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
@@ -155,7 +156,6 @@ describe('QualificationPage server side', () => {
               '/mes-jeunes/jeune-1/actions/id-action-1'
             ),
             returnToListe: '/pilotage',
-            beneficiaire,
           },
           {}
         )

@@ -270,7 +270,7 @@ describe('<Conversation />', () => {
 
     it('marque la conversation en "lu"', async () => {
       // When
-      await act(() => {
+      await act(async () => {
         messageInput.focus()
       })
 
@@ -349,8 +349,9 @@ describe('<Conversation />', () => {
   describe("quand on reçoit un message de partage d'offre", () => {
     let message: HTMLElement
     beforeEach(() => {
-      message = screen.getByText('Decrypted: Je vous partage cette offre')
-        .parentElement!
+      message = screen.getByText(
+        'Decrypted: Je vous partage cette offre'
+      ).parentElement!
     })
 
     it("affiche le titre de l'offre", async () => {
@@ -378,8 +379,9 @@ describe('<Conversation />', () => {
   describe("quand on reçoit un message de partage d'événement", () => {
     let message: HTMLElement
     beforeEach(() => {
-      message = screen.getByText('Decrypted: Je vous partage cet événement')
-        .parentElement!
+      message = screen.getByText(
+        'Decrypted: Je vous partage cet événement'
+      ).parentElement!
     })
 
     it("affiche le titre de l'événement", async () => {

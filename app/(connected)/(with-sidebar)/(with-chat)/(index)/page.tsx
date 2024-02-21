@@ -5,7 +5,6 @@ import HomePage from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePag
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
 import {
   aEtablissement,
-  Conseiller,
   doitSignerLesCGU,
   estMilo,
   estPassEmploi,
@@ -13,7 +12,6 @@ import {
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import { ApiError } from 'utils/httpClient'
 
 export const metadata: Metadata = { title: 'Accueil' }
 
@@ -28,14 +26,7 @@ export default async function Home({
     ? `?source=${searchParams.source}`
     : ''
 
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401)
-      redirect('/api/auth/federated-logout')
-    throw e
-  }
+  const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller) {
     throw new Error(`Conseiller ${user.id} inexistant`)
   }

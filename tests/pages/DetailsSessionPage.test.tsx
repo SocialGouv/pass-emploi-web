@@ -15,7 +15,6 @@ import {
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
@@ -61,7 +60,7 @@ describe('Détails Session Page Client', () => {
         },
       ]
       // When
-      await renderWithContexts(
+      renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficiaires}
@@ -184,7 +183,7 @@ describe('Détails Session Page Client', () => {
 
     it('affiche un switch désactivé par défaut', async () => {
       // When
-      await renderWithContexts(
+      renderWithContexts(
         <DetailsSessionPage
           session={sessionInvisible}
           beneficiairesStructureMilo={beneficaires}
@@ -199,7 +198,7 @@ describe('Détails Session Page Client', () => {
     })
     it('affiche un switch dont la valeur correspond à la visibilité de la session', async () => {
       // When
-      await renderWithContexts(
+      renderWithContexts(
         <DetailsSessionPage
           session={sessionVisible}
           beneficiairesStructureMilo={beneficaires}
@@ -217,7 +216,7 @@ describe('Détails Session Page Client', () => {
       it('change la visibilité', async () => {
         // Given
         ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
-        await renderWithContexts(
+        renderWithContexts(
           <DetailsSessionPage
             session={sessionInvisible}
             beneficiairesStructureMilo={beneficaires}
@@ -344,7 +343,7 @@ describe('Détails Session Page Client', () => {
           ],
         })
 
-        await renderWithContexts(
+        renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={beneficaires}
@@ -429,7 +428,7 @@ describe('Détails Session Page Client', () => {
           ],
         })
 
-        await renderWithContexts(
+        renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={beneficaires}
@@ -502,7 +501,7 @@ describe('Détails Session Page Client', () => {
         ],
       })
 
-      await renderWithContexts(
+      renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficaires}
@@ -566,7 +565,7 @@ describe('Détails Session Page Client', () => {
         ],
       })
 
-      await renderWithContexts(
+      renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficaires}
@@ -693,7 +692,7 @@ describe('Détails Session Page Client', () => {
         inscriptions: [],
       })
 
-      await renderWithContexts(
+      renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficaires}
@@ -846,7 +845,7 @@ describe('Détails Session Page Client', () => {
         },
       ]
 
-      await renderWithContexts(
+      renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficaires}
@@ -930,7 +929,7 @@ describe('Détails Session Page Client', () => {
           },
         })
 
-        await renderWithContexts(
+        renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={beneficairesEtablissement}
@@ -981,7 +980,7 @@ describe('Détails Session Page Client', () => {
           },
         })
 
-        await renderWithContexts(
+        renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={beneficaires}

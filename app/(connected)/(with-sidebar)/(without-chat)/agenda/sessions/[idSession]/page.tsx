@@ -7,16 +7,11 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
-import {
-  Conseiller,
-  estUserMilo,
-  peutAccederAuxSessions,
-} from 'interfaces/conseiller'
+import { estUserMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getBeneficiairesDeLaStructureMilo } from 'services/jeunes.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import { ApiError } from 'utils/httpClient'
 import redirectedFromHome from 'utils/redirectedFromHome'
 
 type DetailsSessionParams = {
@@ -65,15 +60,7 @@ export default async function DetailsSession({
   const session = await getDetailsSession(user.id, idSession, accessToken)
   if (!session) notFound()
 
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401) {
-      redirect('/api/auth/federated-logout')
-    }
-    throw e
-  }
+  const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller) notFound()
 
   if (!peutAccederAuxSessions(conseiller)) redirect('/mes-jeunes')

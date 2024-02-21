@@ -11,16 +11,6 @@ if (typeof window !== 'undefined') {
 jest.mock('utils/analytics/useMatomo')
 jest.mock('utils/hooks/useLeanBeWidget')
 
-jest.mock('next/router', () => ({
-  __esModule: true,
-  useRouter: jest.fn(),
-  default: {
-    events: {
-      on: jest.fn(),
-      off: jest.fn(),
-    },
-  },
-}))
 jest.mock('next/navigation', () => ({
   notFound: jest.fn(() => {
     throw new Error('NEXT NOT_FOUND')

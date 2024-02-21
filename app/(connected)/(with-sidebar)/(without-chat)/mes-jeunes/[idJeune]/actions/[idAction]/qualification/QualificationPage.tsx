@@ -25,7 +25,6 @@ import RecapitulatifErreursFormulaire, {
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
 import { Action, SituationNonProfessionnelle } from 'interfaces/action'
-import { BaseJeune } from 'interfaces/jeune'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import useMatomo from 'utils/analytics/useMatomo'
 import { ApiError } from 'utils/httpClient'
@@ -34,7 +33,6 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 type QualificationProps = {
   action: Action
   categories: SituationNonProfessionnelle[]
-  beneficiaire: BaseJeune
   returnTo: string
   returnToListe: string
 }
@@ -42,7 +40,6 @@ type QualificationProps = {
 function QualificationPage({
   action,
   categories,
-  beneficiaire,
   returnTo,
   returnToListe,
 }: QualificationProps) {

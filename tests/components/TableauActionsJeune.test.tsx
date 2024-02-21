@@ -1,6 +1,6 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 import { TRI } from 'components/action/OngletActions'
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
@@ -41,7 +41,7 @@ describe('TableauActionsJeune', () => {
     ;(qualifierActions as jest.Mock).mockResolvedValue({
       idsActionsEnErreur: [],
     })
-    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
 
     await act(async () =>
       renderWithContexts(

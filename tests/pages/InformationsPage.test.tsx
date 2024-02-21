@@ -1,7 +1,7 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
 import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
@@ -43,7 +43,7 @@ describe('InformationsPage client side', () => {
 
   beforeEach(async () => {
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
-    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
   })
 
   describe('quand l’utilisateur est un conseiller Mission Locale', () => {

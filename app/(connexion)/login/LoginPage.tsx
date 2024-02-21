@@ -8,7 +8,7 @@ import React, { FormEvent, useEffect, useState } from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'
 import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
-import { MODAL_ROOT_ID } from 'components/Modal'
+import { MODAL_ROOT_ID } from 'components/ids'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import { FormButton } from 'components/ui/Form/FormButton'
 import { trackPage } from 'utils/analytics/matomo'
@@ -40,7 +40,7 @@ function LoginPage({
   }
 
   async function signin(provider?: string) {
-    const redirectUrl: string = searchParams!.get('redirectUrl') as string
+    const redirectUrl = searchParams.get('redirectUrl')
     try {
       const callbackUrl: string = redirectUrl
         ? '/?' + new URLSearchParams({ redirectUrl })
@@ -53,7 +53,7 @@ function LoginPage({
   }
 
   useEffect(() => {
-    const provider = searchParams!.get('provider')
+    const provider = searchParams.get('provider')
     switch (provider) {
       case 'pe':
       case 'pe-brsa':

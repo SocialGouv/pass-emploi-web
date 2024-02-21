@@ -2,9 +2,10 @@
 
 import React, { ReactNode } from 'react'
 
-import layout from 'app/(connected)/(with-sidebar)/messagerie/layout.module.css'
 import sidebarLayout from 'app/(connected)/(with-sidebar)/sidebar.module.css'
+import layout from 'app/(connected)/messagerie/layout.module.css'
 import ChatContainer from 'components/chat/ChatContainer'
+import { ID_CONTENU } from 'components/ids'
 import Footer from 'components/layouts/Footer'
 import Sidebar from 'components/Sidebar'
 import { useChats } from 'utils/chat/chatsContext'
@@ -24,7 +25,7 @@ export default function LayoutPageMessagerie({
         <Sidebar />
       </div>
 
-      <div className={layout.chatRoom}>
+      <div id={ID_CONTENU} className={layout.chatRoom}>
         <ChatContainer
           jeunesChats={chats}
           menuState={[false, () => {}]}

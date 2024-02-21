@@ -30,7 +30,7 @@ import { FormNouveauMessageGroupe } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
-import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
+import { useConfirmBeforeLeaving } from 'utils/hooks/useConfirmBeforeLeaving'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -211,10 +211,7 @@ function EnvoiMessageGroupePage({
     aDesBeneficiaires
   )
 
-  useLeavePageModal(
-    formHasChanges() && confirmBeforeLeaving,
-    openLeavePageConfirmationModal
-  )
+  useConfirmBeforeLeaving(formHasChanges() && confirmBeforeLeaving)
 
   function enleverFichier() {
     setErreurUploadPieceJointe(undefined)
