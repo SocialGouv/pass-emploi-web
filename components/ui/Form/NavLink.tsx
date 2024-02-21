@@ -26,7 +26,7 @@ export default function NavLink({
   showLabelOnSmallScreen = false,
   onClick,
 }: NavLinkProps) {
-  const linkStyle = `flex w-full p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start transition-all border-2  ${
+  const linkStyle = `flex w-full p-2 mb-2 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start transition-all border-2  ${
     isActive
       ? 'bg-primary_lighten border-blanc text-base-bold'
       : 'border-primary hover:border-blanc text-base-medium'
