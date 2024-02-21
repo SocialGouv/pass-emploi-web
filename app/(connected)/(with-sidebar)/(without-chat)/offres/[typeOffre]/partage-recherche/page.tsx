@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 import PartageRecherchePage, {
   CriteresRecherche,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
+} from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
 import { PageRetourPortal } from 'components/PageNavigationPortals'
 import { TypeOffre } from 'interfaces/offre'
 

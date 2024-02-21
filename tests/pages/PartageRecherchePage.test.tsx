@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import PartageRecherchePage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
+import PartageRecherchePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
 import { TypeOffre } from 'interfaces/offre'
 import { AlerteParam } from 'referentiel/alerteParam'
 import {

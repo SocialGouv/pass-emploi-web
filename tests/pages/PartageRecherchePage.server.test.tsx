@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
 import { headers } from 'next/headers'
 
-import PartageRecherche from 'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/partage-recherche/page'
-import PartageRecherchePage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
+import PartageRecherche from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/page'
+import PartageRecherchePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
 import { TypeOffre } from 'interfaces/offre'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -10,7 +10,7 @@ jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock(
-  'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
+  'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/partage-recherche/PartageRecherchePage'
 )
 
 describe('Partage Recherche', () => {
