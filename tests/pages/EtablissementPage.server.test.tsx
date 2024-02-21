@@ -13,7 +13,7 @@ jest.mock(
 )
 
 describe('EtablissementPage server side', () => {
-  describe('quand le conseiller est Pole emploi', () => {
+  describe('quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

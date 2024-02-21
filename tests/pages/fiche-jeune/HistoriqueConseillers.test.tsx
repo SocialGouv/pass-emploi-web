@@ -19,7 +19,7 @@ jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
 
 describe('Historique des conseillers dans la fiche jeune', () => {
-  describe("quand l'utilisateur est un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur est un conseiller France Travail", () => {
     it('affiche un lien vers l’historique des conseillers du jeune', async () => {
       // Given
       ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(

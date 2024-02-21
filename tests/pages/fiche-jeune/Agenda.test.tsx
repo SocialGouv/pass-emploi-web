@@ -45,7 +45,7 @@ describe('Agenda de la fiche jeune', () => {
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
   })
 
-  describe("quand l'utilisateur est un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur est un conseiller France Travail", () => {
     it('ne tente pas de récupérer l’agenda du bénéficiaire', async () => {
       // Given
       const metadonneesFavoris = uneMetadonneeFavoris()
@@ -66,7 +66,7 @@ describe('Agenda de la fiche jeune', () => {
     })
   })
 
-  describe('quand l’utilisateur n’est pas un conseiller Pole emploi', () => {
+  describe('quand l’utilisateur n’est pas un conseiller France Travail', () => {
     it('affiche un onglet Agenda', async () => {
       // Given
       ;(recupererAgenda as jest.Mock).mockResolvedValue(

@@ -107,7 +107,7 @@ describe('ModificationActionPage server side', () => {
     })
   })
 
-  describe('pour un conseiller Pôle emploi', () => {
+  describe('pour un conseiller France Travail', () => {
     it('la page n’existe pas', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

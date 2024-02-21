@@ -39,7 +39,7 @@ describe('Rendez-vous de la fiche jeune', () => {
     ;(getOffres as jest.Mock).mockResolvedValue(uneListeDOffres())
   })
 
-  describe("quand l'utilisateur n'est pas un conseiller Pôle emploi", () => {
+  describe("quand l'utilisateur n'est pas un conseiller France Travail", () => {
     describe('conseiller sans sessions milo', () => {
       beforeEach(async () => {
         await renderFicheJeune(StructureConseiller.MILO, rdvs)
@@ -123,7 +123,7 @@ describe('Rendez-vous de la fiche jeune', () => {
     })
   })
 
-  describe("quand l'utilisateur est un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur est un conseiller France Travail", () => {
     let offresPE: Offre[],
       recherchesPE: Recherche[],
       metadonneesFavoris: MetadonneesFavoris

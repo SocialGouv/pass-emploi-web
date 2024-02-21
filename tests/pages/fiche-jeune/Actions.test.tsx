@@ -69,7 +69,7 @@ describe('Actions dans la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({ replace })
   })
 
-  describe("quand l'utilisateur est un conseiller Pôle emploi", () => {
+  describe("quand l'utilisateur est un conseiller France Travail", () => {
     let offresPE: Offre[],
       recherchesPE: Recherche[],
       metadonneesFavoris: MetadonneesFavoris
@@ -95,7 +95,7 @@ describe('Actions dans la fiche jeune', () => {
     })
   })
 
-  describe("quand l'utilisateur n'est pas un conseiller Pôle emploi", () => {
+  describe("quand l'utilisateur n'est pas un conseiller France Travail", () => {
     let setIdJeune: (id: string | undefined) => void
     beforeEach(async () => {
       // Given

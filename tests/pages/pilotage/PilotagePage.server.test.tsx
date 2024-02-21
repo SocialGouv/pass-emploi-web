@@ -27,7 +27,7 @@ jest.mock('services/conseiller.service')
 jest.mock('services/evenements.service')
 
 describe('PilotagePage server side', () => {
-  describe('quand le conseiller est Pôle emploi', () => {
+  describe('quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

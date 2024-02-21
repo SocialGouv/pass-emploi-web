@@ -85,7 +85,7 @@ describe('HomePage server side', () => {
     })
   })
 
-  describe('si le conseiller Pôle emploi n’a pas renseigné son agence', () => {
+  describe('si le conseiller France Travail n’a pas renseigné son agence', () => {
     it('prépare la page', async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
 

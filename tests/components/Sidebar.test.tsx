@@ -74,7 +74,7 @@ describe('<Sidebar/>', () => {
     ).toBeInTheDocument()
   })
 
-  it("n'affiche pas le lien de l’agenda lorsque le conseiller est Pole emploi", () => {
+  it("n'affiche pas le lien de l’agenda lorsque le conseiller est France Travail", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
@@ -82,7 +82,7 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Agenda')).toThrow()
   })
 
-  it("n'affiche pas le lien de rendez-vous lorsque le conseiller est Pole emploi", () => {
+  it("n'affiche pas le lien de rendez-vous lorsque le conseiller est France Travail", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
@@ -90,7 +90,7 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Pilotage')).toThrow()
   })
 
-  it("n'affiche pas le lien de Mission Locale lorsque le conseiller est Pole emploi", () => {
+  it("n'affiche pas le lien de Mission Locale lorsque le conseiller est France Travail", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 

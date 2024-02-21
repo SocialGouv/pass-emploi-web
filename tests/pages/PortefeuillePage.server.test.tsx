@@ -46,7 +46,7 @@ describe('PortefeuillePage server side', () => {
     )
   })
 
-  describe('pour un conseiller Pole emploi', () => {
+  describe('pour un conseiller France Travail', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
@@ -79,7 +79,7 @@ describe('PortefeuillePage server side', () => {
     })
   })
 
-  describe('pour un conseiller pas Pole emploi', () => {
+  describe('pour un conseiller pas France Travail', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

@@ -104,7 +104,7 @@ export function IdentifiantPartenaire(props: {
 }) {
   return (
     <div className='flex'>
-      <dt className='text-base-regular mr-2'>Identifiant Pôle emploi :</dt>
+      <dt className='text-base-regular mr-2'>Identifiant France Travail :</dt>
       <dd className='text-base-bold' onCopy={props.onCopy}>
         {props.identifiantPartenaire ?? (
           <>
@@ -117,8 +117,8 @@ export function IdentifiantPartenaire(props: {
         className='ml-5 flex items-center text-primary'
         aria-label={
           props.identifiantPartenaire
-            ? 'Modifier l’identifiant Pôle emploi'
-            : 'Ajouter l’identifiant Pôle emploi'
+            ? 'Modifier l’identifiant France Travail'
+            : 'Ajouter l’identifiant France Travail'
         }
         onClick={props.onClick}
       >

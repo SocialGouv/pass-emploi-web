@@ -111,7 +111,7 @@ describe('FicheBeneficiairePage client side', () => {
     })
   })
 
-  describe('pour les conseillers non Pôle Emploi', () => {
+  describe('pour les conseillers non France Travail', () => {
     it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
       // When
       await act(async () => {

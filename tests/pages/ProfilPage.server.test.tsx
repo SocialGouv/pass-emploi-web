@@ -17,7 +17,7 @@ jest.mock('services/conseiller.service')
 jest.mock('services/referentiel.service')
 
 describe('ProfilPage server side', () => {
-  describe('en tant que Pôle Emploi', () => {
+  describe('en tant que France Travail', () => {
     it('charge la page avec les bonnes props', async () => {
       // Given
       const conseiller = unConseiller({

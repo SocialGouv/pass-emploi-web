@@ -43,10 +43,10 @@ describe('LoginPage client side', () => {
         name: 'Connexion conseiller Mission Locale',
       })
       const poleEmploiCEJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi CEJ',
+        name: 'Connexion conseiller France Travail CEJ',
       })
       const poleEmploiBRSAButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi BRSA',
+        name: 'Connexion conseiller France Travail BRSA',
       })
 
       const buttonsNb = screen.getAllByRole('button')
@@ -61,7 +61,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller PE CEJ", async () => {
       // Given
       const peButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi CEJ',
+        name: 'Connexion conseiller France Travail CEJ',
       })
 
       // When
@@ -78,7 +78,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller PE BRSA", async () => {
       // Given
       const peBRSAButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi BRSA',
+        name: 'Connexion conseiller France Travail BRSA',
       })
 
       // When
@@ -190,10 +190,10 @@ describe('LoginPage client side', () => {
       })
 
       const poleEmploiCEJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi CEJ',
+        name: 'Connexion conseiller France Travail CEJ',
       })
       const poleEmploiBRSAButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Pôle emploi BRSA',
+        name: 'Connexion conseiller France Travail BRSA',
       })
 
       const buttonsNb = screen.getAllByRole('button')

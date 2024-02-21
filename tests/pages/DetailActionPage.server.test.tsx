@@ -24,7 +24,7 @@ jest.mock(
 jest.mock('next/headers', () => ({ headers: jest.fn(() => new Map()) }))
 
 describe('ActionPage server side', () => {
-  describe('quand le conseiller est Pôle emploi', () => {
+  describe('quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
@@ -42,7 +42,7 @@ describe('ActionPage server side', () => {
     })
   })
 
-  describe("quand le conseiller n'est pas Pôle emploi", () => {
+  describe("quand le conseiller n'est pas France Travail", () => {
     beforeEach(async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
         accessToken: 'accessToken',

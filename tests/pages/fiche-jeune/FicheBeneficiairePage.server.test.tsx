@@ -228,7 +228,7 @@ describe('FicheBeneficiairePage server side', () => {
     })
   })
 
-  describe('Quand le conseiller est Pôle emploi', () => {
+  describe('Quand le conseiller est France Travail', () => {
     beforeEach(async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({

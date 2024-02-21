@@ -19,7 +19,7 @@ jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
 
 describe('Indicateurs dans la fiche jeune', () => {
-  describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur n'est pas un conseiller France Travail", () => {
     beforeEach(async () => {
       // Given
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
