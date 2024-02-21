@@ -5,7 +5,6 @@ import EmptyStateImage from 'assets/images/illustration-messagerie.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { JeuneChat } from 'interfaces/jeune'
 
 interface ListeConversationsProps {
@@ -26,20 +25,26 @@ export default function ListeConversations({
         aria-busy={!conversations}
         className='relative h-full overflow-y-auto'
       >
-        {!conversations && <SpinningLoader />}
-
-        {conversations && conversations.length === 0 && (
-          <div className='bg-grey_100 flex flex-col justify-center items-center'>
-            <EmptyStateImage
-              focusable='false'
-              aria-hidden='true'
-              className='w-[360px] h-[200px]'
-            />
-            <p className='mt-4 text-base-medium w-2/3 text-center'>
-              Vous devriez avoir des bénéficiaires inscrits pour discuter avec
-              eux
-            </p>
-          </div>
+        {(!conversations || conversations.length === 0) && (
+          <>
+            <div className='flex flex-col justify-center items-center'>
+              <EmptyStateImage
+                focusable='false'
+                aria-hidden='true'
+                className='w-[360px] h-[200px]'
+              />
+              <div className='mx-4'>
+                <p className='text-base-bold'>Vous pouvez échanger :</p>
+                <ul className='list-disc mt-2 mx-4'>
+                  <li>directement avec un bénéficiaire</li>
+                  <li>
+                    en envoyant un message à plusieurs bénéficiaires
+                    simultanément
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </>
         )}
 
         {conversations && conversations.length > 0 && (
