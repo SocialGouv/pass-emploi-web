@@ -134,19 +134,17 @@ export default function NavLinks({
         )}
 
         {!estPoleEmploi(conseiller) && items.includes(NavItem.Pilotage) && (
-          <>
-            <NavLink
-              iconName={
-                isCurrentRoute('/pilotage')
-                  ? IconName.LeaderboardFill
-                  : IconName.LeaderboardOutline
-              }
-              label='Pilotage'
-              href='/pilotage'
-              isActive={isCurrentRoute('/pilotage')}
-              showLabelOnSmallScreen={showLabelsOnSmallScreen}
-            />
-          </>
+          <NavLink
+            iconName={
+              isCurrentRoute('/pilotage')
+                ? IconName.LeaderboardFill
+                : IconName.LeaderboardOutline
+            }
+            label='Pilotage'
+            href='/pilotage'
+            isActive={isCurrentRoute('/pilotage')}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
         )}
 
         {!estPoleEmploi(conseiller) &&
