@@ -88,52 +88,52 @@ export default function NavLinks({
   }
 
   return (
-    <ul>
-      {items.includes(NavItem.Jeunes) && (
-        <NavLink
-          isActive={isCurrentRoute('/mes-jeunes')}
-          href='/mes-jeunes'
-          className='break-all'
-          label='Portefeuille'
-          iconName={
-            isCurrentRoute('/mes-jeunes')
-              ? IconName.PeopleFill
-              : IconName.PeopleOutline
-          }
-          showLabelOnSmallScreen={showLabelsOnSmallScreen}
-        />
-      )}
+    <>
+      <ul>
+        {items.includes(NavItem.Jeunes) && (
+          <NavLink
+            isActive={isCurrentRoute('/mes-jeunes')}
+            href='/mes-jeunes'
+            className='break-all'
+            label='Portefeuille'
+            iconName={
+              isCurrentRoute('/mes-jeunes')
+                ? IconName.PeopleFill
+                : IconName.PeopleOutline
+            }
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
+        )}
 
-      {!estPoleEmploi(conseiller) && items.includes(NavItem.Rdvs) && (
-        <NavLink
-          isActive={isCurrentRoute('/agenda')}
-          href='/agenda'
-          label='Agenda'
-          iconName={
-            isCurrentRoute('/agenda')
-              ? IconName.EventFill
-              : IconName.EventOutline
-          }
-          showLabelOnSmallScreen={showLabelsOnSmallScreen}
-        />
-      )}
+        {!estPoleEmploi(conseiller) && items.includes(NavItem.Rdvs) && (
+          <NavLink
+            isActive={isCurrentRoute('/agenda')}
+            href='/agenda'
+            label='Agenda'
+            iconName={
+              isCurrentRoute('/agenda')
+                ? IconName.EventFill
+                : IconName.EventOutline
+            }
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
+        )}
 
-      {items.includes(NavItem.RechercheOffres) && (
-        <NavLink
-          isActive={isCurrentRoute('/offres')}
-          href='/offres'
-          label='Offres'
-          iconName={
-            isCurrentRoute('/offres')
-              ? IconName.PageViewFill
-              : IconName.PageViewOutline
-          }
-          showLabelOnSmallScreen={showLabelsOnSmallScreen}
-        />
-      )}
+        {items.includes(NavItem.RechercheOffres) && (
+          <NavLink
+            isActive={isCurrentRoute('/offres')}
+            href='/offres'
+            label='Offres'
+            iconName={
+              isCurrentRoute('/offres')
+                ? IconName.PageViewFill
+                : IconName.PageViewOutline
+            }
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
+        )}
 
-      {!estPoleEmploi(conseiller) && items.includes(NavItem.Pilotage) && (
-        <>
+        {!estPoleEmploi(conseiller) && items.includes(NavItem.Pilotage) && (
           <NavLink
             iconName={
               isCurrentRoute('/pilotage')
@@ -145,102 +145,106 @@ export default function NavLinks({
             isActive={isCurrentRoute('/pilotage')}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
-        </>
-      )}
+        )}
 
-      {!estPoleEmploi(conseiller) && items.includes(NavItem.Etablissement) && (
-        <NavLink
-          iconName={
-            isCurrentRoute('/etablissement')
-              ? IconName.ArrowCircleRightFill
-              : IconName.ArrowCircleRightOutline
-          }
-          className='break-all'
-          label='Bénéficiaires'
-          href='/etablissement'
-          isActive={isCurrentRoute('/etablissement')}
-          showLabelOnSmallScreen={showLabelsOnSmallScreen}
-        />
-      )}
+        {!estPoleEmploi(conseiller) &&
+          items.includes(NavItem.Etablissement) && (
+            <NavLink
+              iconName={
+                isCurrentRoute('/etablissement')
+                  ? IconName.ArrowCircleRightFill
+                  : IconName.ArrowCircleRightOutline
+              }
+              className='break-all'
+              label='Bénéficiaires'
+              href='/etablissement'
+              isActive={isCurrentRoute('/etablissement')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          )}
 
-      {estSuperviseur(conseiller) && items.includes(NavItem.Reaffectation) && (
-        <NavLink
-          iconName={IconName.ArrowForward}
-          className='break-all'
-          label='Réaffectation'
-          href='/reaffectation'
-          isActive={isCurrentRoute('/reaffectation')}
-          showLabelOnSmallScreen={showLabelsOnSmallScreen}
-        />
-      )}
+        {estSuperviseur(conseiller) &&
+          items.includes(NavItem.Reaffectation) && (
+            <NavLink
+              iconName={IconName.ArrowForward}
+              className='break-all'
+              label='Réaffectation'
+              href='/reaffectation'
+              isActive={isCurrentRoute('/reaffectation')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          )}
 
-      {!estMilo(conseiller) && items.includes(NavItem.Messagerie) && (
-        <NavLink
-          iconName={
-            isCurrentRoute('/messagerie')
-              ? IconName.ChatFill
-              : IconName.ChatOutline
-          }
-          className='break-all'
-          label='Messagerie'
-          href='/messagerie'
-          isActive={isCurrentRoute('/messagerie')}
-          showLabelOnSmallScreen={showLabelsOnSmallScreen}
-        />
-      )}
-
-      {items.includes(NavItem.Raccourci) && (
-        <NavLink
-          iconName={IconName.Add}
-          label='Créer un raccourci'
-          href='/raccourci'
-          isActive={isCurrentRoute('/raccourci')}
-          showLabelOnSmallScreen={showLabelsOnSmallScreen}
-        />
-      )}
-
-      {process.env.NEXT_PUBLIC_ENABLE_LEANBE === 'true' &&
-        items.includes(NavItem.Actualites) && (
-          <ActualitesMenuButton
-            conseiller={conseiller}
-            onClick={trackActualite}
+        {!estMilo(conseiller) && items.includes(NavItem.Messagerie) && (
+          <NavLink
+            iconName={
+              isCurrentRoute('/messagerie')
+                ? IconName.ChatFill
+                : IconName.ChatOutline
+            }
+            className='break-all'
+            label='Messagerie'
+            href='/messagerie'
+            isActive={isCurrentRoute('/messagerie')}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
           />
         )}
 
-      {items.includes(NavItem.Aide) && (
-        <NavLink
-          href={getAideHref(conseiller.structure)}
-          label='Aide'
-          iconName={IconName.Help}
-          isExternal={true}
-          showLabelOnSmallScreen={showLabelsOnSmallScreen}
-          onClick={trackAide}
-        />
-      )}
+        {items.includes(NavItem.Raccourci) && (
+          <NavLink
+            iconName={IconName.Add}
+            label='Créer un raccourci'
+            href='/raccourci'
+            isActive={isCurrentRoute('/raccourci')}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+          />
+        )}
 
-      {items.includes(NavItem.Profil) && (
+        {process.env.NEXT_PUBLIC_ENABLE_LEANBE === 'true' &&
+          items.includes(NavItem.Actualites) && (
+            <ActualitesMenuButton
+              conseiller={conseiller}
+              onClick={trackActualite}
+            />
+          )}
+      </ul>
+      <ul>
+        <div className='border border-solid border-blanc mb-2'></div>
+        {items.includes(NavItem.Aide) && (
+          <NavLink
+            href={getAideHref(conseiller.structure)}
+            label='Aide'
+            iconName={IconName.Help}
+            isExternal={true}
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            onClick={trackAide}
+          />
+        )}
+
+        {items.includes(NavItem.Profil) && (
+          <NavLink
+            isActive={isCurrentRoute('/profil')}
+            href='/profil'
+            label={`${conseiller.firstName} ${conseiller.lastName}`}
+            iconName={
+              isCurrentRoute('/profil')
+                ? IconName.AccountCircleFill
+                : IconName.AccountCircleOutline
+            }
+            className='break-all'
+            showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            badgeLabel={lienProfilBadgeLabel}
+          />
+        )}
+
         <NavLink
-          isActive={isCurrentRoute('/profil')}
-          href='/profil'
-          label={`${conseiller.firstName} ${conseiller.lastName}`}
-          iconName={
-            isCurrentRoute('/profil')
-              ? IconName.AccountCircleFill
-              : IconName.AccountCircleOutline
-          }
+          label='Déconnexion'
+          iconName={IconName.Logout}
           className='break-all'
+          onClick={logout}
           showLabelOnSmallScreen={showLabelsOnSmallScreen}
-          badgeLabel={lienProfilBadgeLabel}
         />
-      )}
-
-      <NavLink
-        label='Déconnexion'
-        iconName={IconName.Logout}
-        className='break-all'
-        onClick={logout}
-        showLabelOnSmallScreen={showLabelsOnSmallScreen}
-      />
-    </ul>
+      </ul>
+    </>
   )
 }

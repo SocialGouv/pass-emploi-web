@@ -44,6 +44,7 @@ import LeaderboardOutlineIcon from 'assets/icons/informations/leaderboard_outlin
 import LocationOnIcon from 'assets/icons/informations/location_on.svg'
 import LockIcon from 'assets/icons/informations/lock.svg'
 import MailIcon from 'assets/icons/informations/mail.svg'
+import NotificationIcon from 'assets/icons/informations/notification.svg'
 import PageViewFillIcon from 'assets/icons/informations/page_view_fill.svg'
 import PageViewOutlineIcon from 'assets/icons/informations/page_view_outline.svg'
 import PeopleFillIcon from 'assets/icons/informations/people_fill.svg'
@@ -122,6 +123,7 @@ export enum IconName {
   Mail = 'Mail',
   Menu = 'Menu',
   Note = 'Note',
+  Notification = 'Notification',
   NumberCircleOne = 'NumberCircleOne',
   NumberCircleTwo = 'NumberCircleTwo',
   NumberCircleThree = 'NumberCircleThree',
@@ -217,6 +219,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Pending]: PendingIcon,
   [IconName.Remove]: RemoveIcon,
   [IconName.Note]: NoteIcon,
+  [IconName.Notification]: NotificationIcon,
   [IconName.VisibilityOn]: VisibilityOnIcon,
   [IconName.VisibilityOff]: VisibilityOffIcon,
 }
