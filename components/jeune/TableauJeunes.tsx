@@ -373,8 +373,8 @@ export default function TableauJeunes({
                       <div className='relative w-fit mx-auto'>
                         <IconComponent
                           name={IconName.Note}
-                          aria-hidden='true'
-                          focusable='false'
+                          aria-hidden={true}
+                          focusable={false}
                           className='w-6 h-6 fill-primary'
                         />
                         {jeune.messagesNonLus > 0 && (
@@ -391,8 +391,8 @@ export default function TableauJeunes({
                       </div>
                       <IconComponent
                         name={IconName.ChevronRight}
-                        focusable='false'
-                        aria-hidden='true'
+                        focusable={false}
+                        aria-hidden={true}
                         className='w-6 h-6 fill-primary'
                       />
                     </span>

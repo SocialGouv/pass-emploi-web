@@ -239,8 +239,8 @@ function EditionRdv({
             >
               <IconComponent
                 name={IconName.Delete}
-                aria-hidden='true'
-                focusable='false'
+                aria-hidden={true}
+                focusable={false}
                 className='mr-2 w-4 h-4'
               />
               Supprimer

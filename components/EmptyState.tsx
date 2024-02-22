@@ -48,8 +48,8 @@ export default function EmptyState({
     <>
       <IllustrationComponent
         name={illustrationName}
-        focusable='false'
-        aria-hidden='true'
+        focusable={false}
+        aria-hidden={true}
         className='w-48 h-48 m-auto mt-12'
       />
 

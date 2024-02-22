@@ -79,7 +79,7 @@ export function SelecteurPeriode({
           <IconComponent
             name={IconName.ChevronLeft}
             className='w-6 h-6 fill-primary mr-2 hover:fill-primary_darken'
-            focusable='false'
+            focusable={false}
             title='Aller à la période précédente'
           />
         </button>
@@ -97,7 +97,7 @@ export function SelecteurPeriode({
           <IconComponent
             name={IconName.ChevronRight}
             className='w-6 h-6 fill-primary ml-2 hover:fill-primary_darken'
-            focusable='false'
+            focusable={false}
             title='Aller à la période suivante'
           />
         </button>

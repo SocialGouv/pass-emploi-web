@@ -184,8 +184,8 @@ export default function TableauActionsJeune({
       {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
           <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='m-auto w-[200px] h-[200px]'
           />
           <p className='text-base-bold text-center'>Aucun résultat.</p>

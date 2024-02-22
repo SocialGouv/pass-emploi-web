@@ -364,8 +364,8 @@ export default function Conversation({
                 >
                   <IconComponent
                     name={IconName.Close}
-                    aria-hidden='true'
-                    focusable='false'
+                    aria-hidden={true}
+                    focusable={false}
                     className='w-6 h-6 ml-2 fill-primary stroke-primary'
                   />
                 </button>
@@ -394,8 +394,8 @@ export default function Conversation({
             >
               <IconComponent
                 name={IconName.Send}
-                aria-hidden='true'
-                focusable='false'
+                aria-hidden={true}
+                focusable={false}
                 className='m-auto w-6 h-6 fill-blanc'
               />
             </button>

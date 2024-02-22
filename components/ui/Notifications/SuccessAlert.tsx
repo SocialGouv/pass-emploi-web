@@ -36,8 +36,8 @@ export default function SuccessAlert({
           >
             <IconComponent
               name={IconName.Close}
-              focusable='false'
-              aria-hidden='true'
+              focusable={false}
+              aria-hidden={true}
               className='h-6 w-6 fill-success shrink-0'
             />
           </button>

@@ -12,8 +12,8 @@ export const IntegrationPoleEmploi = ({
   <div className='bg-primary_lighten rounded-base flex items-center p-4'>
     <Exclamation
       className='mr-4 fill-primary h-8 w-8'
-      focusable='false'
-      aria-hidden='true'
+      focusable={false}
+      aria-hidden={true}
     />
     <div>
       <p className='text-s-bold'>

@@ -7,8 +7,8 @@ export function LienPieceJointe({ id, nom }: { id: string; nom: string }) {
     <div className='flex flex-row justify-end'>
       <IconComponent
         name={IconName.AttachFile}
-        aria-hidden='true'
-        focusable='false'
+        aria-hidden={true}
+        focusable={false}
         className='w-6 h-6'
       />
       <a

@@ -76,8 +76,8 @@ export default function MessagesListeDeDiffusion({
       {messages && messages.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='w-[360px] h-[200px]'
           />
           <p className='mt-4 text-base-medium w-2/3 text-center'>

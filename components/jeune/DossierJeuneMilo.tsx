@@ -139,7 +139,7 @@ export default function DossierJeuneMilo({
             name={IconName.ArrowBackward}
             className='mr-2.5 w-3 h-3'
             role='img'
-            focusable='false'
+            focusable={false}
             aria-label="Retour Création d'un compte jeune étape 1"
           />
           Retour
