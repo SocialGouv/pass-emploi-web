@@ -25,6 +25,11 @@ export default function ResultatsRechercheOffre({
   nbPages,
   onChangerPage,
 }: ResultatsRechercheOffreProps) {
+  function scrollToRef(element: HTMLElement | null) {
+    if (element)
+      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }
+
   return (
     <div className={isSearching ? 'animate-pulse' : ''}>
       {isSearching && <ResultTitle total={nbTotal} />}
@@ -32,7 +37,7 @@ export default function ResultatsRechercheOffre({
       {offres && offres.length > 0 && (
         <>
           <ResultTitle total={nbTotal} />
-          <ul aria-describedby='result-title'>
+          <ul aria-describedby='result-title' ref={scrollToRef}>
             {offres.map((offre) => (
               <li key={`${offre.type}-${offre.id}`} className='mb-4'>
                 {(offre.type === TypeOffre.EMPLOI ||
@@ -55,6 +60,7 @@ export default function ResultatsRechercheOffre({
         <>
           <ResultTitle total={nbTotal} />
           <EmptyState
+            ref={scrollToRef}
             illustrationName={IllustrationName.Search}
             titre='Pour le moment, aucune offre ne correspond à vos critères.'
             sousTitre='Modifiez vos critères de recherche ou partagez ces critères tels quels aux bénéficiaires.'
@@ -75,16 +81,8 @@ export default function ResultatsRechercheOffre({
 }
 
 function ResultTitle({ total }: { total: number | undefined }) {
-  function scrollToRef(element: HTMLHeadingElement | null) {
-    if (element) element.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
-    <h2
-      ref={scrollToRef}
-      id='result-title'
-      className='text-m-medium text-primary mb-5'
-    >
+    <h2 id='result-title' className='text-m-medium text-primary mb-5'>
       Liste des résultats
       {total !== undefined &&
         ` (${total > 1000 ? 'plus de 1000' : total} offres)`}
