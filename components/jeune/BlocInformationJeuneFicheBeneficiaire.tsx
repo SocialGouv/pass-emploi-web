@@ -103,7 +103,7 @@ function LienVersHistorique({
 }) {
   return (
     <Link
-      href={`${pathPrefix}/${idJeune}/historique`}
+      href={`${pathPrefix}/${idJeune}/informations`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
     >
       Voir plus d’informations

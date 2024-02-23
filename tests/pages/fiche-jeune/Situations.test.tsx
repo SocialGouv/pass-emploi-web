@@ -61,7 +61,7 @@ describe('Situations dans la fiche jeune', () => {
 
       // Then
       expect(
-        screen.getByRole('link', { name: 'Voir le détail des situations' })
+        screen.getByRole('link', { name: 'Voir plus d’informations' })
       ).toHaveAttribute('href', '/mes-jeunes/jeune-1/informations')
     })
   })

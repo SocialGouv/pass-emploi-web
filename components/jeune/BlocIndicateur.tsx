@@ -159,13 +159,7 @@ function IndicateursOffres({
           textColor='primary_darken'
         />
       </ul>
-      {idJeune && (
-        <LienVersFavoris
-          titre='Voir tous les favoris'
-          idJeune={idJeune}
-          pathPrefix={pathPrefix}
-        />
-      )}
+      {idJeune && <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />}
     </div>
   )
 }

@@ -4,9 +4,6 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/router'
 import React from 'react'
 
-import { getIndicateursJeuneComplets } from '../../services/jeunes.service'
-
-import { getByTextContent } from '../querySelector'
 import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 import { unAgenda } from 'fixtures/agenda'
 import {
@@ -22,6 +19,8 @@ import {
   EtatSituation,
 } from 'interfaces/jeune'
 import { recupererAgenda } from 'services/agenda.service'
+import { getIndicateursJeuneComplets } from 'services/jeunes.service'
+import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/jeunes.service')

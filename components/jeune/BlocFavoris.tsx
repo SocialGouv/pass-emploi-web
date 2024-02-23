@@ -45,11 +45,7 @@ export default function BlocFavoris({
             <RecherchesSauvegardees total={recherches.total} />
 
             {autoriseLePartage && (
-              <LienVersFavoris
-                titre='Voir la liste des favoris'
-                idJeune={idJeune}
-                pathPrefix={pathPrefix}
-              />
+              <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />
             )}
           </dl>
         </div>
@@ -97,11 +93,9 @@ function RecherchesSauvegardees({ total }: { total: number }) {
 }
 
 export function LienVersFavoris({
-  titre,
   idJeune,
   pathPrefix,
 }: {
-  titre: string
   idJeune?: string
   pathPrefix: string
 }) {
@@ -111,7 +105,7 @@ export function LienVersFavoris({
         href={`${pathPrefix}/${idJeune}/favoris`}
         className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
       >
-        {titre}
+        Voir tous les favoris
         <IconComponent
           name={IconName.ChevronRight}
           className='w-4 h-5 fill-[inherit]'
