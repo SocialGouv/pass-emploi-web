@@ -27,8 +27,8 @@ export default function TileIndicateur({
         {iconName && (
           <IconComponent
             name={iconName}
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='inline w-3 h-3 fill-[currentColor]'
           />
         )}

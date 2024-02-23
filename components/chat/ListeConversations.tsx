@@ -78,8 +78,8 @@ export default function ListeConversations({
           className='absolute bottom-8 self-center'
         >
           <MessageGroupeIcon
-            aria-hidden='true'
-            focusable='false'
+            aria-hidden={true}
+            focusable={false}
             className='w-4 shrink-0 mr-2'
           />
           Message multi-destinataires

@@ -87,8 +87,8 @@ export default function ActionRow({
           />
           <IconComponent
             name={IconName.ChevronRight}
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className=' w-6 h-6 fill-primary'
           />
         </span>

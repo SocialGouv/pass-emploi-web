@@ -27,8 +27,8 @@ export function AjouterJeuneButton({ structure }: AjouterJeuneButtonProps) {
         <ButtonLink href={href}>
           <IconComponent
             name={IconName.Add}
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='mr-2 w-4 h-4'
           />
           Ajouter un bénéficiaire

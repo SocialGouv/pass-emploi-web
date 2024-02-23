@@ -361,8 +361,8 @@ function FicheBeneficiairePage({
                   >
                     <IconComponent
                       name={IconName.Add}
-                      focusable='false'
-                      aria-hidden='true'
+                      focusable={false}
+                      aria-hidden={true}
                       className='mr-2 w-4 h-4'
                     />
                     Créer un rendez-vous
@@ -374,8 +374,8 @@ function FicheBeneficiairePage({
                   >
                     <IconComponent
                       name={IconName.Add}
-                      focusable='false'
-                      aria-hidden='true'
+                      focusable={false}
+                      aria-hidden={true}
                       className='mr-2 w-4 h-4'
                     />
                     Créer une action
@@ -390,8 +390,8 @@ function FicheBeneficiairePage({
               >
                 <IconComponent
                   name={IconName.Add}
-                  focusable='false'
-                  aria-hidden='true'
+                  focusable={false}
+                  aria-hidden={true}
                   className='mr-2 w-4 h-4'
                 />
                 Inscrire à une animation collective

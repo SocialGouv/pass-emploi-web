@@ -20,7 +20,7 @@ export default function AlertLink({ href, label, onClick }: AlertLinkProps) {
       <IconComponent
         name={IconName.ChevronRight}
         className='w-5 h-5 fill-[inherit]'
-        focusable='false'
+        focusable={false}
         aria-hidden={true}
       />
     </Link>

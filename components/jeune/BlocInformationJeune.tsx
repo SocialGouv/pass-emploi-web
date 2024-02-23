@@ -156,7 +156,7 @@ function DossierExterne({
           <span className='sr-only'>(nouvelle fenêtre)</span>
           <IconComponent
             name={IconName.OpenInNew}
-            focusable='false'
+            focusable={false}
             role='img'
             title='ouvrir'
             aria-hidden={true}

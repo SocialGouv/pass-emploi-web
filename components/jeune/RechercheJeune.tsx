@@ -58,7 +58,7 @@ export const RechercheJeune = ({
         >
           <IconComponent
             name={IconName.Search}
-            focusable='false'
+            focusable={false}
             aria-hidden={true}
             className='w-6 h-6 fill-[currentColor]'
           />

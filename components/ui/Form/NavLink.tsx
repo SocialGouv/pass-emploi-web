@@ -37,8 +37,8 @@ export default function NavLink({
       {showLabelOnSmallScreen && (
         <>
           <IconComponent
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className={`w-6 h-6 mr-2 ${
               isActive ? 'fill-primary' : 'fill-blanc'
             }`}
@@ -60,8 +60,8 @@ export default function NavLink({
       {!showLabelOnSmallScreen && (
         <>
           <IconComponent
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className={`mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 ${
               isActive ? 'fill-primary' : 'fill-blanc'
             }`}
@@ -122,8 +122,8 @@ function BadgeNavLink({ label }: { label: string }) {
   return (
     <>
       <IconComponent
-        focusable='false'
-        aria-hidden='false'
+        focusable={false}
+        aria-hidden={false}
         className='w-4 h-4 fill-warning absolute top-0 -right-5 bg-blanc rounded-full'
         name={IconName.Error}
       />

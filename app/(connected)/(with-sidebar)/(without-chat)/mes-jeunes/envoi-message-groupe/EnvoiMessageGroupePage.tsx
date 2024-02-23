@@ -382,8 +382,8 @@ function EnvoiMessageGroupePage({
           >
             <IconComponent
               name={IconName.Send}
-              aria-hidden='true'
-              focusable='false'
+              aria-hidden={true}
+              focusable={false}
               className='mr-2 h-4 w-4 fill-blanc'
             />
             Envoyer

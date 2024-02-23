@@ -34,8 +34,8 @@ function ActualitesMenuButton({
       onClick={onClick}
     >
       <IconComponent
-        focusable='false'
-        aria-hidden='true'
+        focusable={false}
+        aria-hidden={true}
         className='inline mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 fill-blanc'
         name={IconName.Notification}
       />

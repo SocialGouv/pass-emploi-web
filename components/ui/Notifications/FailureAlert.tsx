@@ -32,8 +32,8 @@ export default function FailureAlert({
           >
             <IconComponent
               name={IconName.Close}
-              focusable='false'
-              aria-hidden='true'
+              focusable={false}
+              aria-hidden={true}
               className='h-6 w-6 fill-warning'
             />
           </button>

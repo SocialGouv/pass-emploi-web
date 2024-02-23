@@ -304,14 +304,14 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
           <div className='flex flex-col items-center'>
             {estPoleEmploiBRSA(conseiller) && (
               <QrcodeAppStoreBRSA
-                focusable='false'
+                focusable={false}
                 aria-label='QR code à scanner pour télécharger l’application sur Google Play'
                 role='img'
               />
             )}
             {!estPoleEmploiBRSA(conseiller) && (
               <QrcodeAppStore
-                focusable='false'
+                focusable={false}
                 aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
                 role='img'
               />
@@ -321,14 +321,14 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
           <div className='flex flex-col items-center'>
             {estPoleEmploiBRSA(conseiller) && (
               <QrcodePlayStoreBRSA
-                focusable='false'
+                focusable={false}
                 aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
                 role='img'
               />
             )}
             {!estPoleEmploiBRSA(conseiller) && (
               <QrcodePlayStore
-                focusable='false'
+                focusable={false}
                 aria-label='QR code à scanner pour télécharger l’application sur Google Play'
                 role='img'
               />
