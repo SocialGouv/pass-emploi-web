@@ -19,6 +19,7 @@ import {
   DetailJeune,
   EtatSituation,
   IndicateursSemaine,
+  MetadonneesFavoris,
 } from 'interfaces/jeune'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -34,7 +35,7 @@ type InformationsPageProps = {
     dateFin?: string
   }>
   conseillers: ConseillerHistorique[]
-
+  metaDonneesFavoris?: MetadonneesFavoris
   lectureSeule: boolean
 }
 
@@ -50,6 +51,7 @@ function InformationsPage({
   conseillers,
   lectureSeule,
   jeune,
+  metaDonneesFavoris,
 }: InformationsPageProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
@@ -169,6 +171,7 @@ function InformationsPage({
               indicateursSemaine={indicateursSemaine}
               idJeune={idJeune}
               pathPrefix={pathPrefix}
+              metaDonneesFavoris={metaDonneesFavoris}
             />
           )}
         </div>

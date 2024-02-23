@@ -10,6 +10,7 @@ import {
   desConseillersJeune,
   desIndicateursSemaine,
   unDetailJeune,
+  uneMetadonneeFavoris,
 } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -263,6 +264,7 @@ async function renderHistorique(
         conseillers={conseillers}
         lectureSeule={false}
         jeune={beneficiaire}
+        metaDonneesFavoris={uneMetadonneeFavoris()}
       />,
       { customConseiller: { structure: structure } }
     )

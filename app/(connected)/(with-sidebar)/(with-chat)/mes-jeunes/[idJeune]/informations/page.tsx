@@ -11,6 +11,7 @@ import { getNomJeuneComplet } from 'interfaces/jeune'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
+  getMetadonneesFavorisJeune,
 } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -38,8 +39,12 @@ export default async function Informations({
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
-  if (!beneficiaire) notFound()
 
+  if (!beneficiaire) notFound()
+  const metaDonneesJeune = await getMetadonneesFavorisJeune(
+    params.idJeune,
+    accessToken
+  )
   const conseillers = await getConseillersDuJeuneServerSide(
     beneficiaire.id,
     accessToken
@@ -57,6 +62,7 @@ export default async function Informations({
         situations={beneficiaire.situations}
         lectureSeule={lectureSeule}
         jeune={beneficiaire}
+        metaDonneesFavoris={metaDonneesJeune}
       />
     </>
   )

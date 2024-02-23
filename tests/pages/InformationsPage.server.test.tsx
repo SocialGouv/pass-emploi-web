@@ -13,6 +13,7 @@ import {
   getJeuneDetails,
 } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
+import Informations from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/page'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
@@ -52,7 +53,7 @@ describe('HistoriquePage server side', () => {
     // When
     const params = { idJeune: 'id-jeune' }
     metadata = await generateMetadata({ params })
-    render(await Historique({ params }))
+    render(await Informations({ params }))
   })
 
   it('prépare la page', async () => {

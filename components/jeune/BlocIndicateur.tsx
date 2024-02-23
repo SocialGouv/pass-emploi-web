@@ -6,7 +6,7 @@ import { LienVersFavoris } from './BlocFavoris'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { IndicateursSemaine } from 'interfaces/jeune'
+import { IndicateursSemaine, MetadonneesFavoris } from 'interfaces/jeune'
 import { toShortDate } from 'utils/date'
 
 export function BlocIndicateurs({
@@ -15,12 +15,14 @@ export function BlocIndicateurs({
   indicateursSemaine,
   idJeune,
   pathPrefix,
+  metaDonneesFavoris,
 }: {
   debutSemaine: DateTime
   finSemaine: DateTime
   indicateursSemaine: IndicateursSemaine
   idJeune: string
   pathPrefix: string
+  metaDonneesFavoris?: MetadonneesFavoris
 }) {
   return (
     <>
@@ -38,6 +40,7 @@ export function BlocIndicateurs({
         favoris={indicateursSemaine?.favoris}
         idJeune={idJeune}
         pathPrefix={pathPrefix}
+        metadonneesFavoris={metaDonneesFavoris}
       />
     </>
   )
@@ -45,7 +48,7 @@ export function BlocIndicateurs({
 
 interface IndicateursActionsProps
   extends Partial<Pick<IndicateursSemaine, 'actions'>> {
-  idJeune?: string
+  idJeune: string
   pathPrefix: string
 }
 function IndicateursActions({
@@ -84,7 +87,7 @@ function IndicateursActions({
           textColor='primary_darken'
         />
       </ul>
-      {idJeune && <LienVersActions idJeune={idJeune} pathPrefix={pathPrefix} />}
+      <LienVersActions idJeune={idJeune} pathPrefix={pathPrefix} />
     </div>
   )
 }
@@ -108,8 +111,9 @@ function IndicateursRendezvous({
 }
 interface IndicateursOffresProps
   extends Partial<Pick<IndicateursSemaine, 'offres' | 'favoris'>> {
-  idJeune?: string
+  idJeune: string
   pathPrefix: string
+  metadonneesFavoris?: MetadonneesFavoris
 }
 
 function IndicateursOffres({
@@ -117,6 +121,7 @@ function IndicateursOffres({
   favoris,
   idJeune,
   pathPrefix,
+  metadonneesFavoris,
 }: IndicateursOffresProps) {
   return (
     <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
@@ -159,7 +164,9 @@ function IndicateursOffres({
           textColor='primary_darken'
         />
       </ul>
-      {idJeune && <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />}
+      {metadonneesFavoris?.autoriseLePartage && (
+        <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />
+      )}
     </div>
   )
 }
