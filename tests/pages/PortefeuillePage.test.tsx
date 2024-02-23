@@ -289,7 +289,9 @@ describe('PortefeuillePage client side', () => {
 
       //THEN
       expect(
-        screen.getByText('Il n’y a aucun bénéficiaire dans votre portefeuille.')
+        screen.getByText(
+          'Vous n’avez pas encore de bénéficiaire rattaché à votre portefeuille.'
+        )
       ).toBeInTheDocument()
       expect(() => screen.getAllByRole('row')).toThrow()
     })

@@ -3,6 +3,7 @@ import { ComponentPropsWithoutRef } from 'react'
 import IllustrationArrowForward from 'assets/images/illustration-arrow-forward.svg'
 import IllustrationCheck from 'assets/images/illustration-check.svg'
 import IllustrationChecklist from 'assets/images/illustration-checklist-grey.svg'
+import IllustrationCurvyArrow from 'assets/images/illustration-curvy-arrow.svg'
 import IllustrationDelete from 'assets/images/illustration-delete.svg'
 import IllustrationError from 'assets/images/illustration-error.svg'
 import IllustrationEtablissement from 'assets/images/illustration-etablissement.svg'
@@ -19,6 +20,7 @@ export enum IllustrationName {
   ArrowForward = 'ArrowForward',
   Check = 'Check',
   Checklist = 'Checklist',
+  CurvyArrow = 'CurvyArrow',
   Delete = 'Delete',
   Error = 'Error',
   Etablissement = 'Etablissement',
@@ -36,6 +38,7 @@ const illustrationsByName: { [key in IllustrationName]: any } = {
   [IllustrationName.ArrowForward]: IllustrationArrowForward,
   [IllustrationName.Check]: IllustrationCheck,
   [IllustrationName.Checklist]: IllustrationChecklist,
+  [IllustrationName.CurvyArrow]: IllustrationCurvyArrow,
   [IllustrationName.Delete]: IllustrationDelete,
   [IllustrationName.Error]: IllustrationError,
   [IllustrationName.Etablissement]: IllustrationEtablissement,

@@ -1,19 +1,17 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
+import dynamic from 'next/dynamic'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import EmptyState from 'components/EmptyState'
-import {
-  AjouterJeuneButton,
-  getAjouterJeuneHref,
-} from 'components/jeune/AjouterJeuneButton'
+import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import TableauJeunes from 'components/jeune/TableauJeunes'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
-import { IconName } from 'components/ui/IconComponent'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import {
@@ -26,6 +24,14 @@ import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+
+const TutorielAjoutBeneficiaireMilo = dynamic(
+  () => import('components/mes-jeunes/TutorielAjoutBeneficiaireMilo')
+)
+
+const TutorielAjoutBeneficiairePoleEmploi = dynamic(
+  () => import('components/mes-jeunes/TutorielAjoutBeneficiairePoleEmploi')
+)
 
 type PortefeuilleProps = {
   conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
@@ -159,16 +165,20 @@ function PortefeuillePage({
 
       {conseillerJeunes.length === 0 &&
         !conseiller.aDesBeneficiairesARecuperer && (
-          <div className='mx-auto my-0 flex flex-col items-center'>
-            <EmptyState
-              illustrationName={IllustrationName.People}
-              titre='Il n’y a aucun bénéficiaire dans votre portefeuille.'
-              lien={{
-                href: getAjouterJeuneHref(conseiller.structure),
-                label: 'Ajouter un bénéficiaire',
-                iconName: IconName.Add,
-              }}
+          <div className='w-2/3 m-auto relative'>
+            <h2 className='text-m-bold text-content_color text-center mb-8'>
+              Vous n’avez pas encore de bénéficiaire rattaché à votre
+              portefeuille.
+            </h2>
+            <IllustrationComponent
+              name={IllustrationName.CurvyArrow}
+              className='absolute top-0 -right-16 fill-primary w-[100px]'
+              aria-hidden={true}
+              focusable={false}
             />
+
+            {estMilo(conseiller) && <TutorielAjoutBeneficiaireMilo />}
+            {!estMilo(conseiller) && <TutorielAjoutBeneficiairePoleEmploi />}
           </div>
         )}
 
