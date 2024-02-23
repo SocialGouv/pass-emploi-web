@@ -99,6 +99,7 @@ describe('InformationsPage client side', () => {
         })
       })
     })
+
     describe('pour l’indicateur des conseillers', () => {
       beforeEach(async () => {
         //Given
