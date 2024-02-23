@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ForwardedRef, forwardRef } from 'react'
 
 import Button from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -38,12 +38,15 @@ export function hasBouton(
   return Object.prototype.hasOwnProperty.call(props, 'bouton')
 }
 
-export default function EmptyState({
-  illustrationName,
-  titre,
-  sousTitre,
-  ...props
-}: EmptyStateProps | EmptyStateWithLinkProps | EmptyStateWithButtonProps) {
+function EmptyState(
+  {
+    illustrationName,
+    titre,
+    sousTitre,
+    ...props
+  }: EmptyStateProps | EmptyStateWithLinkProps | EmptyStateWithButtonProps,
+  ref: ForwardedRef<HTMLParagraphElement>
+) {
   return (
     <>
       <IllustrationComponent
@@ -53,7 +56,10 @@ export default function EmptyState({
         className='w-48 h-48 m-auto mt-12'
       />
 
-      <p className='text-base-bold text-center text-content_color mt-8'>
+      <p
+        className='text-base-bold text-center text-content_color mt-8'
+        ref={ref}
+      >
         {titre}
       </p>
 
@@ -97,3 +103,5 @@ export default function EmptyState({
     </>
   )
 }
+
+export default forwardRef(EmptyState)
