@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
@@ -24,9 +25,11 @@ jest.mock('components/PageActionsPortal')
 
 describe('PortefeuillePage client side', () => {
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+  let refresh: jest.Mock
   const jeunes = desJeunesAvecActionsNonTerminees()
   beforeEach(() => {
     alerteSetter = jest.fn()
+    refresh = jest.fn(() => Promise.resolve())
     ;(signIn as jest.Mock).mockResolvedValue(undefined)
     ;(countMessagesNotRead as jest.Mock).mockImplementation((ids: string[]) =>
       Promise.resolve(
@@ -115,6 +118,11 @@ describe('PortefeuillePage client side', () => {
     let conseiller: Conseiller
     beforeEach(async () => {
       // Given
+      ;(useRouter as jest.Mock).mockReturnValue({
+        refresh: refresh,
+        asPath: '/mes-jeunes',
+      })
+
       await act(() => {
         conseiller = unConseiller({ aDesBeneficiairesARecuperer: true })
         renderWithContexts(
@@ -148,6 +156,7 @@ describe('PortefeuillePage client side', () => {
       // Then
       expect(recupererBeneficiaires).toHaveBeenCalledWith()
       expect(alerteSetter).toHaveBeenCalledWith('recuperationBeneficiaires')
+      expect(refresh).toHaveBeenCalled()
     })
   })
 

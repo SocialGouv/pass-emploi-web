@@ -8,15 +8,15 @@ export default function TutorielAjoutBeneficiairePoleEmploi() {
   const etapes = [
     {
       icon: IconName.NumberCircleOne,
-      texte: 'Cliquer sur « Ajouter un bénéficiaire ».',
+      texte: 'Cliquez sur « Ajouter un bénéficiaire ».',
     },
     {
       icon: IconName.NumberCircleTwo,
-      texte: 'Renseignez le nom, prénom et l’adresse email du bénéficiaire.',
+      texte: 'Renseignez le nom, prénom et l’adresse e-mail du bénéficiaire.',
     },
     {
       icon: IconName.NumberCircleThree,
-      texte: 'Cliquer sur « créer le compte ».',
+      texte: 'Cliquez sur « créer le compte ».',
     },
     {
       icon: IconName.NumberCircleFour,
@@ -33,7 +33,7 @@ export default function TutorielAjoutBeneficiairePoleEmploi() {
   return (
     <>
       <EtapesTutoAjoutBeneficiaire etapes={etapes} />
-      <InformationMessage label='Attention à bien renseigner l’email qui se trouve sous le dossier MAP du bénéficiaire.' />
+      <InformationMessage label='Attention à bien renseigner l’e-mail qui se trouve sous le dossier MAP du bénéficiaire.' />
     </>
   )
 }
