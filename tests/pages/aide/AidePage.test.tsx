@@ -1,0 +1,115 @@
+import { screen } from '@testing-library/react'
+import React from 'react'
+
+import AidePage from 'app/(connected)/(with-sidebar)/(without-chat-full-screen)/aide/AidePage'
+import { unConseiller } from 'fixtures/conseiller'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import renderWithContexts from 'tests/renderWithContexts'
+
+describe('Aide client side', () => {
+  describe('conseiller Milo', () => {
+    let conseiller: Conseiller
+    beforeEach(async () => {
+      conseiller = unConseiller({
+        id: 'id-conseiller',
+        structure: StructureConseiller.MILO,
+        agence: { nom: 'Agence', id: 'id-test' },
+        structureMilo: { nom: 'Agence', id: 'id-test' },
+      })
+
+      renderWithContexts(<AidePage />, { customConseiller: conseiller })
+    })
+
+    it('affiche un lien vers le site ressources', () => {
+      expect(
+        screen.getByRole('link', { name: /Voir le site ressources/ })
+      ).toHaveAttribute('href', 'http://perdu.com/')
+    })
+
+    it('affiche un lien vers pour nous contacter', () => {
+      expect(
+        screen.getByRole('link', { name: /Nous contacter/ })
+      ).toHaveAttribute('href', 'http://perdu.com/assistance/')
+    })
+
+    it('affiche un lien vers pour en savoir plus sur les clubs utilisateur', () => {
+      expect(
+        screen.getByRole('link', { name: /En savoir plus/ })
+      ).toHaveAttribute(
+        'href',
+        'http://perdu.com/club-utilisateur-et-demandes-devolution/'
+      )
+    })
+
+    it('affiche un lien vers pour embarquer les bénéficiaires', () => {
+      expect(
+        screen.getByRole('link', { name: /Voir les ressources/ })
+      ).toHaveAttribute('href', 'http://perdu.com/embarquer-vos-jeunes/')
+    })
+
+    it('affiche un lien vers pour consulter le guide d’utilisation', () => {
+      expect(
+        screen.getByRole('link', { name: /Voir le guide/ })
+      ).toHaveAttribute(
+        'href',
+        'http://perdu.com/ressources-documentaires/guides-dutilisation/'
+      )
+    })
+
+    it('affiche un lien vers pour consulter les tutos vidéo', () => {
+      expect(
+        screen.getByRole('link', { name: /Voir les vidéos/ })
+      ).toHaveAttribute('href', 'http://perdu.com/videos/')
+    })
+
+    it('affiche un lien vers pour consulter les FAQ', () => {
+      expect(
+        screen.getByRole('link', { name: /Voir les FAQ/ })
+      ).toHaveAttribute('href', 'http://perdu.com/faq/')
+    })
+  })
+
+  describe('conseiller Pôle Emploi', () => {
+    beforeEach(async () => {
+      renderWithContexts(<AidePage />, {
+        customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+      })
+    })
+
+    it('affiche un lien vers pour nous contacter', () => {
+      expect(
+        screen.getByRole('link', { name: /Nous contacter/ })
+      ).toHaveAttribute('href', 'http://perdu.com/formuler-une-demande/')
+    })
+
+    it('affiche un texte lié à l’aide pour la réaffectation', () => {
+      expect(
+        screen.getByText(
+          'Vous aider dans la gestion de vos modules de réaffectation'
+        )
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('conseiller Pôle Emploi BRSA', () => {
+    beforeEach(async () => {
+      renderWithContexts(<AidePage />, {
+        customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+      })
+    })
+
+    it('affiche un lien vers pour nous contacter', () => {
+      expect(
+        screen.getByRole('link', { name: /Nous contacter/ })
+      ).toHaveAttribute('href', 'http://perdu.com/formuler-une-demande/')
+    })
+
+    it('affiche un texte lié à l’aide pour la réaffectation', () => {
+      expect(
+        screen.getByText(
+          'Vous aider dans la gestion de vos modules de réaffectation'
+        )
+      ).toBeInTheDocument()
+    })
+  })
+})

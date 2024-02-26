@@ -6,13 +6,8 @@ import React from 'react'
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
-import {
-  estMilo,
-  estPoleEmploi,
-  estSuperviseur,
-  StructureConseiller,
-} from 'interfaces/conseiller'
-import { trackEvent, trackPage } from 'utils/analytics/matomo'
+import { estMilo, estPoleEmploi, estSuperviseur } from 'interfaces/conseiller'
+import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -49,19 +44,6 @@ export default function NavLinks({
     return pathname!.startsWith(href)
   }
 
-  function getAideHref(structure: StructureConseiller): string {
-    switch (structure) {
-      case StructureConseiller.MILO:
-        return process.env.NEXT_PUBLIC_FAQ_MILO_EXTERNAL_LINK ?? ''
-      case StructureConseiller.POLE_EMPLOI:
-        return process.env.NEXT_PUBLIC_FAQ_PE_EXTERNAL_LINK ?? ''
-      case StructureConseiller.POLE_EMPLOI_BRSA:
-        return process.env.NEXT_PUBLIC_FAQ_PE_BRSA_EXTERNAL_LINK ?? ''
-      default:
-        return ''
-    }
-  }
-
   async function logout() {
     trackEvent({
       structure: conseiller.structure,
@@ -81,10 +63,6 @@ export default function NavLinks({
       nom: '',
       avecBeneficiaires: aDesBeneficiaires,
     })
-  }
-
-  async function trackAide() {
-    trackPage({ structure: conseiller.structure, customTitle: 'Aide' })
   }
 
   return (
@@ -212,12 +190,10 @@ export default function NavLinks({
         <div className='border border-solid border-blanc mb-2'></div>
         {items.includes(NavItem.Aide) && (
           <NavLink
-            href={getAideHref(conseiller.structure)}
-            label='Aide'
+            href='/aide'
+            label='Aide et ressources'
             iconName={IconName.Help}
-            isExternal={true}
             showLabelOnSmallScreen={showLabelsOnSmallScreen}
-            onClick={trackAide}
           />
         )}
 

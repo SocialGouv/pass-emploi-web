@@ -31,7 +31,9 @@ describe('<Sidebar/>', () => {
     expect(
       within(navigation).getByRole('link', { name: 'Offres' })
     ).toHaveAttribute('href', '/offres')
-    expect(within(navigation).getByLabelText(/Aide/)).toBeInTheDocument()
+    expect(
+      within(navigation).getByRole('link', { name: 'Aide et ressources' })
+    ).toHaveAttribute('href', '/aide')
     expect(
       within(navigation).getByRole('link', { name: /Nils Tavernier/ })
     ).toHaveAttribute('href', '/profil')
