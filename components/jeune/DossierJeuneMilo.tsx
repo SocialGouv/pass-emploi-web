@@ -15,7 +15,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
   onCreateCompte: (data: JeuneMiloFormData) => Promise<void>
-  erreurMessageHttpPassEmploi: string
+  erreurMessageHttpPassEmploi?: string
 }
 
 export default function DossierJeuneMilo({
@@ -28,7 +28,7 @@ export default function DossierJeuneMilo({
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
-  const addJeune = async () => {
+  async function addJeune() {
     if (!creationEnCours) {
       const newJeune = {
         idDossier: dossier.id,
@@ -132,7 +132,7 @@ export default function DossierJeuneMilo({
 
       <div className='flex items-center mt-14'>
         <Link
-          href={'/mes-jeunes/milo/creation-jeune'}
+          href={'/mes-jeunes/creation-jeune/milo'}
           className='flex items-center text-base-bold text-primary_darken mr-6'
         >
           <IconComponent

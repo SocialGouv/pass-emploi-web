@@ -88,12 +88,12 @@ export async function modifierNotificationsSonores(
 }
 
 export async function getDossierJeune(
-  idDossier: string,
-  accessToken: string
+  idDossier: string
 ): Promise<DossierMilo | undefined> {
+  const session = await getSession()
   const { content: dossier } = await apiGet<DossierMilo | undefined>(
     `/conseillers/milo/dossiers/${idDossier}`,
-    accessToken
+    session!.accessToken
   )
   return dossier
 }

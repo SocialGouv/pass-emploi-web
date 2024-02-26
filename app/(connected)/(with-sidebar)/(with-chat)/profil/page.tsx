@@ -4,7 +4,7 @@ import React from 'react'
 
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { Conseiller, estUserMilo } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
@@ -17,7 +17,7 @@ export default async function Profil() {
   const { user, accessToken } = await getMandatorySessionServerSide()
 
   let referentielAgences: Agence[] = []
-  if (user.structure === StructureConseiller.MILO) {
+  if (estUserMilo(user)) {
     let conseiller: Conseiller | undefined
     try {
       conseiller = await getConseillerServerSide(user, accessToken)

@@ -1,27 +1,23 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
+import CreationJeuneMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/milo/CreationJeuneMiloPage'
 import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
 import { unDossierMilo } from 'fixtures/milo'
 import { BaseJeune } from 'interfaces/jeune'
-import MiloCreationJeune from 'pages/mes-jeunes/milo/creation-jeune'
-import { createCompteJeuneMilo } from 'services/conseiller.service'
+import {
+  createCompteJeuneMilo,
+  getDossierJeune,
+} from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
 
-describe('MiloCreationJeune', () => {
+describe('CreationJeuneMiloPage client side', () => {
   describe("quand le dossier n'a pas encore été saisi", () => {
     beforeEach(() => {
-      renderWithContexts(
-        <MiloCreationJeune
-          dossierId=''
-          dossier={null}
-          erreurMessageHttpMilo=''
-          pageTitle=''
-        />
-      )
+      renderWithContexts(<CreationJeuneMiloPage />)
     })
 
     it('devrait afficher le champ de recherche de dossier', () => {
@@ -58,31 +54,15 @@ describe('MiloCreationJeune', () => {
     })
   })
 
-  describe('quand le dossier a été saisi', () => {
-    it("quand le dossier est invalide avec un message d'erreur", () => {
-      // Given
-      const messageErreur = "un message d'erreur"
-      renderWithContexts(
-        <MiloCreationJeune
-          dossierId='1'
-          dossier={null}
-          erreurMessageHttpMilo={messageErreur}
-          pageTitle=''
-        />
-      )
-
-      // Then
-      expect(screen.getByText(messageErreur)).toBeInTheDocument()
-    })
-  })
-
-  describe('quand on clique sur le bouton créer un compte', () => {
+  describe('quand on a recherché un dossier', () => {
     let push: Function
     let setAlerte: () => void
     let setPortefeuille: (updatedBeneficiaires: BaseJeune[]) => void
-    let portefeuille: BaseJeune[]
+    const dossier = unDossierMilo()
+    const portefeuille = desItemsJeunes().map(extractBaseJeune)
     beforeEach(async () => {
       // Given
+      ;(getDossierJeune as jest.Mock).mockResolvedValue(dossier)
       ;(createCompteJeuneMilo as jest.Mock).mockResolvedValue(uneBaseJeune())
 
       push = jest.fn(() => Promise.resolve())
@@ -90,20 +70,17 @@ describe('MiloCreationJeune', () => {
       setPortefeuille = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
-      const dossier = unDossierMilo()
-      portefeuille = desItemsJeunes().map(extractBaseJeune)
+      renderWithContexts(<CreationJeuneMiloPage />, {
+        customAlerte: { alerteSetter: setAlerte },
+        customPortefeuille: { setter: setPortefeuille },
+      })
 
-      renderWithContexts(
-        <MiloCreationJeune
-          dossierId='1'
-          dossier={dossier}
-          erreurMessageHttpMilo={''}
-          pageTitle=''
-        />,
-        {
-          customAlerte: { alerteSetter: setAlerte },
-          customPortefeuille: { setter: setPortefeuille },
-        }
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Numéro de dossier' }),
+        '123456'
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Valider le numéro' })
       )
     })
 

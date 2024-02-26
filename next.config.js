@@ -33,8 +33,13 @@ module.exports = withBundleAnalyzer({
         permanent: true,
       },
       {
-        source: '/mes-jeunes/:id_jeune/actions',
-        destination: '/mes-jeunes/:id_jeune?onglet=actions',
+        source: '/mes-jeunes/:idJeune/actions',
+        destination: '/mes-jeunes/:idJeune?onglet=actions',
+        permanent: true,
+      },
+      {
+        source: '/mes-jeunes/milo/:numeroDossier',
+        destination: '/api/milo/:numeroDossier',
         permanent: true,
       },
       { source: '/recherche-offres', destination: '/offres', permanent: true },
