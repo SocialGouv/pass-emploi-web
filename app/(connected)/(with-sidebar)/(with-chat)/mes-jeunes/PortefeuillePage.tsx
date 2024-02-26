@@ -2,6 +2,7 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
@@ -44,6 +45,7 @@ function PortefeuillePage({
 }: PortefeuilleProps) {
   const chatCredentials = useChatCredentials()
   const [alerte, setAlerte] = useAlerte()
+  const router = useRouter()
 
   const [conseiller, setConseiller] = useConseiller()
   const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>()
@@ -77,6 +79,7 @@ function PortefeuillePage({
       await _recupererBeneficiaires()
       setAlerte(AlerteParam.recuperationBeneficiaires)
       setConseiller({ ...conseiller, aDesBeneficiairesARecuperer: false })
+      router.refresh()
     } finally {
       setIsRecuperationBeneficiairesLoading(false)
     }
