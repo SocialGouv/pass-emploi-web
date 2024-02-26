@@ -96,7 +96,7 @@ export function LienVersFavoris({
   idJeune,
   pathPrefix,
 }: {
-  idJeune?: string
+  idJeune: string
   pathPrefix: string
 }) {
   return (

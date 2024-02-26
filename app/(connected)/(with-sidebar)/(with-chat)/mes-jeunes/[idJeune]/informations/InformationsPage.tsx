@@ -12,7 +12,8 @@ import { ListeConseillersJeune } from 'components/jeune/ListeConseillersJeune'
 import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
-import { estMilo } from 'interfaces/conseiller'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
+import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
@@ -30,20 +31,17 @@ type InformationsPageProps = {
   idJeune: string
   jeune: DetailJeune
   situations: Array<{
-    etat?: EtatSituation
     categorie: CategorieSituation
+    etat?: EtatSituation
     dateFin?: string
   }>
   conseillers: ConseillerHistorique[]
-  metaDonneesFavoris?: MetadonneesFavoris
   lectureSeule: boolean
+  onglet: Onglet
+  metadonneesFavoris?: MetadonneesFavoris
 }
 
-export enum Onglet {
-  INFORMATIONS = 'INFORMATIONS',
-  CONSEILLERS = 'CONSEILLERS',
-  INDICATEUR = 'INDICATEUR',
-}
+export type Onglet = 'INFORMATIONS' | 'INDICATEURS' | 'CONSEILLERS'
 
 function InformationsPage({
   idJeune,
@@ -51,13 +49,19 @@ function InformationsPage({
   conseillers,
   lectureSeule,
   jeune,
-  metaDonneesFavoris,
+  onglet,
+  metadonneesFavoris,
 }: InformationsPageProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const [currentTab, setCurrentTab] = useState<Onglet | undefined>(
-    estMilo(conseiller) ? Onglet.INFORMATIONS : Onglet.CONSEILLERS
-  )
+
+  const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
+  const aujourdHui = DateTime.now()
+  const debutSemaine = aujourdHui.startOf('week')
+  const finSemaine = aujourdHui.endOf('week')
+  const [indicateursSemaine, setIndicateursSemaine] = useState<
+    IndicateursSemaine | undefined
+  >()
 
   const situationsTracking = `Détail jeune – Situations${
     lectureSeule ? ' - hors portefeuille' : ''
@@ -65,18 +69,15 @@ function InformationsPage({
   const conseillersTracking = `Détail jeune – Historique conseillers${
     lectureSeule ? ' - hors portefeuille' : ''
   }`
-
-  const [tracking, setTracking] = useState<string | undefined>()
-  const [indicateursSemaine, setIndicateursSemaine] = useState<
-    IndicateursSemaine | undefined
-  >()
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-  const aujourdHui = DateTime.now()
-  const debutSemaine = aujourdHui.startOf('week')
-  const finSemaine = aujourdHui.endOf('week')
+  const [tracking, setTracking] = useState<string | undefined>()
 
   useEffect(() => {
-    if (!indicateursSemaine && idJeune) {
+    if (
+      currentTab === 'INDICATEURS' &&
+      !indicateursSemaine &&
+      !estPoleEmploi(conseiller)
+    ) {
       getIndicateursJeuneComplets(
         conseiller.id,
         idJeune,
@@ -84,14 +85,12 @@ function InformationsPage({
         finSemaine
       ).then(setIndicateursSemaine)
     }
-  }, [idJeune, debutSemaine, finSemaine, indicateursSemaine])
+  }, [currentTab, indicateursSemaine, conseiller])
 
   useEffect(() => {
     if (currentTab) {
       setTracking(
-        currentTab === Onglet.INFORMATIONS
-          ? situationsTracking
-          : conseillersTracking
+        currentTab === 'INFORMATIONS' ? situationsTracking : conseillersTracking
       )
     }
   }, [currentTab])
@@ -104,33 +103,32 @@ function InformationsPage({
   return (
     <>
       <TabList className='mt-10'>
-        {estMilo(conseiller) && (
+        <Tab
+          label='Informations'
+          selected={currentTab === 'INFORMATIONS'}
+          controls='liste-informations'
+          onSelectTab={() => setCurrentTab('INFORMATIONS')}
+          iconName={IconName.Description}
+        />
+        {!estPoleEmploi(conseiller) && (
           <Tab
-            label='Informations'
-            selected={currentTab === Onglet.INFORMATIONS}
-            controls='liste-informations'
-            onSelectTab={() => setCurrentTab(Onglet.INFORMATIONS)}
-            iconName={IconName.Description}
+            label='Indicateurs'
+            selected={currentTab === 'INDICATEURS'}
+            controls='liste-indicateurs'
+            onSelectTab={() => setCurrentTab('INDICATEURS')}
+            iconName={IconName.BarChart}
           />
         )}
         <Tab
-          label='Indicateurs'
-          selected={currentTab === Onglet.INDICATEUR}
-          controls='liste-indicateurs'
-          onSelectTab={() => setCurrentTab(Onglet.INDICATEUR)}
-          iconName={IconName.BarChart}
-        />
-
-        <Tab
           label='Historique des conseillers'
-          selected={currentTab === Onglet.CONSEILLERS}
+          selected={currentTab === 'CONSEILLERS'}
           controls='liste-conseillers'
-          onSelectTab={() => setCurrentTab(Onglet.CONSEILLERS)}
+          onSelectTab={() => setCurrentTab('CONSEILLERS')}
           iconName={IconName.ChecklistRtlFill}
         />
       </TabList>
 
-      {currentTab === Onglet.INFORMATIONS && (
+      {currentTab === 'INFORMATIONS' && (
         <div
           role='tabpanel'
           aria-labelledby='liste-informations--tab'
@@ -138,32 +136,34 @@ function InformationsPage({
           id='liste-informations'
           className='mt-8 pb-8'
         >
-          <div className='mb-3'>
-            <BlocInformationJeune
-              creationDate={jeune.creationDate}
-              dateFinCEJ={jeune.dateFinCEJ}
-              email={jeune.email}
-              urlDossier={jeune.urlDossier}
-              onDossierMiloClick={() => {}}
-              conseiller={conseiller}
-            />
-          </div>
-          <BlocSituation
-            idJeune={idJeune}
-            situations={situations}
-            versionResumee={false}
+          <BlocInformationJeune
+            creationDate={jeune.creationDate}
+            dateFinCEJ={jeune.dateFinCEJ}
+            email={jeune.email}
+            urlDossier={jeune.urlDossier}
+            onDossierMiloClick={() => {}}
+            conseiller={conseiller}
           />
+
+          {estMilo(conseiller) && (
+            <BlocSituation
+              idJeune={idJeune}
+              situations={situations}
+              versionResumee={false}
+            />
+          )}
         </div>
       )}
 
-      {currentTab === Onglet.INDICATEUR && (
+      {currentTab === 'INDICATEURS' && (
         <div
-          className='border border-solid rounded-base w-full p-4 mt-3 border-grey_100 mt-8 pb-8'
+          className='mt-8 pb-8'
           role='tabpanel'
           aria-labelledby='liste-indicateurs--tab'
           tabIndex={0}
           id='liste-indicateurs'
         >
+          {!indicateursSemaine && <SpinningLoader />}
           {indicateursSemaine && (
             <BlocIndicateurs
               debutSemaine={debutSemaine}
@@ -171,13 +171,13 @@ function InformationsPage({
               indicateursSemaine={indicateursSemaine}
               idJeune={idJeune}
               pathPrefix={pathPrefix}
-              metaDonneesFavoris={metaDonneesFavoris}
+              metadonneesFavoris={metadonneesFavoris}
             />
           )}
         </div>
       )}
 
-      {currentTab === Onglet.CONSEILLERS && (
+      {currentTab === 'CONSEILLERS' && (
         <div
           role='tabpanel'
           aria-labelledby='liste-conseillers--tab'

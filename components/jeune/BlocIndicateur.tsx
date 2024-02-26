@@ -2,8 +2,7 @@ import { DateTime } from 'luxon'
 import Link from 'next/link'
 import React from 'react'
 
-import { LienVersFavoris } from './BlocFavoris'
-
+import { LienVersFavoris } from 'components/jeune/BlocFavoris'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
 import { IndicateursSemaine, MetadonneesFavoris } from 'interfaces/jeune'
@@ -15,14 +14,14 @@ export function BlocIndicateurs({
   indicateursSemaine,
   idJeune,
   pathPrefix,
-  metaDonneesFavoris,
+  metadonneesFavoris,
 }: {
   debutSemaine: DateTime
   finSemaine: DateTime
   indicateursSemaine: IndicateursSemaine
   idJeune: string
   pathPrefix: string
-  metaDonneesFavoris?: MetadonneesFavoris
+  metadonneesFavoris?: MetadonneesFavoris
 }) {
   return (
     <>
@@ -30,24 +29,23 @@ export function BlocIndicateurs({
         Semaine du {toShortDate(debutSemaine)} au {toShortDate(finSemaine)}
       </h2>
       <IndicateursActions
-        actions={indicateursSemaine?.actions}
+        actions={indicateursSemaine.actions}
         idJeune={idJeune}
         pathPrefix={pathPrefix}
       />
-      <IndicateursRendezvous rendezVous={indicateursSemaine?.rendezVous} />
+      <IndicateursRendezvous rendezVous={indicateursSemaine.rendezVous} />
       <IndicateursOffres
-        offres={indicateursSemaine?.offres}
-        favoris={indicateursSemaine?.favoris}
+        offres={indicateursSemaine.offres}
+        favoris={indicateursSemaine.favoris}
         idJeune={idJeune}
         pathPrefix={pathPrefix}
-        metadonneesFavoris={metaDonneesFavoris}
+        metadonneesFavoris={metadonneesFavoris}
       />
     </>
   )
 }
 
-interface IndicateursActionsProps
-  extends Partial<Pick<IndicateursSemaine, 'actions'>> {
+interface IndicateursActionsProps extends Pick<IndicateursSemaine, 'actions'> {
   idJeune: string
   pathPrefix: string
 }
@@ -94,7 +92,7 @@ function IndicateursActions({
 
 function IndicateursRendezvous({
   rendezVous,
-}: Partial<Pick<IndicateursSemaine, 'rendezVous'>>) {
+}: Pick<IndicateursSemaine, 'rendezVous'>) {
   return (
     <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les événements</h3>
@@ -110,7 +108,7 @@ function IndicateursRendezvous({
   )
 }
 interface IndicateursOffresProps
-  extends Partial<Pick<IndicateursSemaine, 'offres' | 'favoris'>> {
+  extends Pick<IndicateursSemaine, 'offres' | 'favoris'> {
   idJeune: string
   pathPrefix: string
   metadonneesFavoris?: MetadonneesFavoris

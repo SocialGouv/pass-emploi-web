@@ -57,6 +57,7 @@ describe('InformationsPage client side', () => {
           screen.getByRole('tab', { selected: true })
         ).toHaveAccessibleName('Informations')
       })
+
       it('afiche les informations de la fiche d’un bénéficiaire', async () => {
         //When
         await renderHistorique([], [], StructureConseiller.MILO, jeune)
@@ -111,6 +112,7 @@ describe('InformationsPage client side', () => {
         })
         await userEvent.click(tabIndicateurs)
       })
+
       it('affiche un onglet dédié', async () => {
         //Then
         expect(
@@ -120,6 +122,7 @@ describe('InformationsPage client side', () => {
           screen.getByText('Semaine du 29/08/2022 au 04/09/2022')
         ).toBeInTheDocument()
       })
+
       it('affiche les indicateurs des actions', async () => {
         const indicateursActions = screen.getByRole('heading', {
           name: 'Les actions',
@@ -213,30 +216,18 @@ describe('InformationsPage client side', () => {
   })
 
   describe('quand l’utilisateur est un conseiller Pôle Empoi', () => {
-    it('affiche uniquement l’onglet Historique des conseiller', async () => {
+    it('n’affiche pas l’onglet Indicateurs', async () => {
       // Given
       await renderHistorique([], [], StructureConseiller.POLE_EMPLOI, jeune)
 
       // Then
-      expect(() => screen.getByText('Situations')).toThrow()
+      expect(() => screen.getByText('Indicateurs')).toThrow()
+      expect(
+        screen.getByRole('tab', { name: 'Historique des conseillers' })
+      ).toBeInTheDocument()
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Historique des conseillers'
+        'Informations'
       )
-    })
-
-    it('affiche la liste complète des conseillers du jeune', async () => {
-      // Given
-      await renderHistorique(
-        [],
-        listeConseillers,
-        StructureConseiller.POLE_EMPLOI,
-        jeune
-      )
-
-      //Then
-      listeConseillers.forEach(({ nom, prenom }: ConseillerHistorique) => {
-        expect(screen.getByText(`${nom} ${prenom}`)).toBeInTheDocument()
-      })
     })
   })
 })
@@ -264,7 +255,8 @@ async function renderHistorique(
         conseillers={conseillers}
         lectureSeule={false}
         jeune={beneficiaire}
-        metaDonneesFavoris={uneMetadonneeFavoris()}
+        metadonneesFavoris={uneMetadonneeFavoris()}
+        onglet={'INFORMATIONS'}
       />,
       { customConseiller: { structure: structure } }
     )

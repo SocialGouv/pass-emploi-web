@@ -1,9 +1,8 @@
 import { render } from '@testing-library/react'
 import { Metadata } from 'next'
-import React from 'react'
 
 import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
-import Historique, {
+import Informations, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/page'
 import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
@@ -13,7 +12,6 @@ import {
   getJeuneDetails,
 } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import Informations from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/page'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
@@ -79,6 +77,7 @@ describe('HistoriquePage server side', () => {
         situations: listeSituations,
         conseillers: listeConseillers,
         jeune: DetailJeune,
+        onglet: 'INFORMATIONS',
       },
       {}
     )

@@ -2,11 +2,14 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import InformationsPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
+import InformationsPage, {
+  Onglet,
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { getNomJeuneComplet } from 'interfaces/jeune'
 import {
   getConseillersDuJeuneServerSide,
@@ -16,6 +19,7 @@ import {
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type InformationsParams = { idJeune: string }
+type InformationsSearchParams = Partial<{ onglet: Onglet }>
 
 export async function generateMetadata({
   params,
@@ -34,21 +38,19 @@ export async function generateMetadata({
 
 export default async function Informations({
   params,
+  searchParams,
 }: {
   params: InformationsParams
+  searchParams?: InformationsSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
   const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
-
   if (!beneficiaire) notFound()
-  const metaDonneesJeune = await getMetadonneesFavorisJeune(
-    params.idJeune,
-    accessToken
-  )
-  const conseillers = await getConseillersDuJeuneServerSide(
-    beneficiaire.id,
-    accessToken
-  )
+
+  const [metadonneesJeune, conseillers] = await Promise.all([
+    getMetadonneesFavorisJeune(params.idJeune, accessToken),
+    getConseillersDuJeuneServerSide(beneficiaire.id, accessToken),
+  ])
 
   const lectureSeule = beneficiaire.idConseiller !== user.id
   return (
@@ -62,8 +64,27 @@ export default async function Informations({
         situations={beneficiaire.situations}
         lectureSeule={lectureSeule}
         jeune={beneficiaire}
-        metaDonneesFavoris={metaDonneesJeune}
+        metadonneesFavoris={metadonneesJeune}
+        onglet={searchParamToOnglet(
+          searchParams?.onglet,
+          estUserPoleEmploi(user)
+        )}
       />
     </>
   )
+}
+
+function searchParamToOnglet(
+  onglet: string | undefined,
+  estPoleEmploi: boolean
+): Onglet {
+  switch (onglet) {
+    case 'indicateurs':
+      return estPoleEmploi ? 'INFORMATIONS' : 'INDICATEURS'
+    case 'conseillers':
+      return 'CONSEILLERS'
+    case 'informations':
+    default:
+      return 'INFORMATIONS'
+  }
 }

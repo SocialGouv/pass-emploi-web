@@ -82,7 +82,7 @@ function LienVersIndicateurs({
 }) {
   return (
     <Link
-      href={`${pathPrefix}/${idJeune}/informations`}
+      href={`${pathPrefix}/${idJeune}/informations?onglet=indicateurs`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'
     >
       Voir plus d’indicateurs
