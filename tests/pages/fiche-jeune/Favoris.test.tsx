@@ -53,7 +53,7 @@ describe('Favoris dans la fiche jeune', () => {
       expect(screen.getByText('Immersion :')).toBeInTheDocument()
       expect(screen.getByText('Service civique :')).toBeInTheDocument()
       expect(
-        screen.getByRole('link', { name: 'Voir la liste des favoris' })
+        screen.getByRole('link', { name: 'Voir tous les favoris' })
       ).toHaveAttribute('href', '/mes-jeunes/jeune-1/favoris')
     })
 

@@ -23,6 +23,7 @@ import AccountCircleFillIcon from 'assets/icons/informations/account_circle_fill
 import AccountCircleOutlineIcon from 'assets/icons/informations/account_circle_outline.svg'
 import ArrowCircleRightFillIcon from 'assets/icons/informations/arrow_circle_right_fill.svg'
 import ArrowCircleRightOutlineIcon from 'assets/icons/informations/arrow_circle_right_outline.svg'
+import BarChartIcon from 'assets/icons/informations/bar_chart.svg'
 import CancelIcon from 'assets/icons/informations/cancel.svg'
 import ChatFillIcon from 'assets/icons/informations/chat_fill.svg'
 import ChatOutlineIcon from 'assets/icons/informations/chat_outline.svg'
@@ -84,6 +85,7 @@ export enum IconName {
   ArrowForward = 'ArrowForward',
   ArrowUpward = 'ArrowUpward',
   AttachFile = 'AttachFile',
+  BarChart = 'BarChart',
   BookmarkFill = 'BookmarkFill',
   BookmarkOutline = 'BookmarkOutline',
   Cancel = 'Cancel',
@@ -159,6 +161,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ArrowForward]: ArrowForwardIcon,
   [IconName.ArrowUpward]: ArrowUpwardIcon,
   [IconName.BookmarkFill]: BookmarkFillIcon,
+  [IconName.BarChart]: BarChartIcon,
   [IconName.BookmarkOutline]: BookmarkOutlineIcon,
   [IconName.ChatFill]: ChatFillIcon,
   [IconName.ChatOutline]: ChatOutlineIcon,

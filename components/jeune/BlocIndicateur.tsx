@@ -1,75 +1,59 @@
-'use client'
-
-import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
+import React from 'react'
 
-import { IconName } from 'components/ui/IconComponent'
+import { LienVersFavoris } from 'components/jeune/BlocFavoris'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { IndicateursSemaine } from 'interfaces/jeune'
-import { getIndicateursJeuneComplets } from 'services/jeunes.service'
-import useMatomo from 'utils/analytics/useMatomo'
-import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { IndicateursSemaine, MetadonneesFavoris } from 'interfaces/jeune'
 import { toShortDate } from 'utils/date'
-import { usePortefeuille } from 'utils/portefeuilleContext'
 
-type IndicateursProps = {
+export function BlocIndicateurs({
+  debutSemaine,
+  finSemaine,
+  indicateursSemaine,
+  idJeune,
+  pathPrefix,
+  metadonneesFavoris,
+}: {
+  debutSemaine: DateTime
+  finSemaine: DateTime
+  indicateursSemaine: IndicateursSemaine
   idJeune: string
-  lectureSeule: boolean
-}
-
-function IndicateursPage({ idJeune, lectureSeule }: IndicateursProps) {
-  const [conseiller] = useConseiller()
-  const [portefeuille] = usePortefeuille()
-
-  const [indicateursSemaine, setIndicateursSemaine] = useState<
-    IndicateursSemaine | undefined
-  >()
-
-  const aujourdHui = DateTime.now()
-  const debutSemaine = aujourdHui.startOf('week')
-  const finSemaine = aujourdHui.endOf('week')
-
-  // On récupère les indicateurs ici parce qu'on a besoin de la timezone du navigateur
-  useEffect(() => {
-    if (!indicateursSemaine) {
-      getIndicateursJeuneComplets(
-        conseiller.id,
-        idJeune,
-        debutSemaine,
-        finSemaine
-      ).then(setIndicateursSemaine)
-    }
-  }, [idJeune, debutSemaine, finSemaine, indicateursSemaine])
-
-  const tracking = `Détail jeune – Indicateurs${
-    lectureSeule ? ' - hors portefeuille' : ''
-  }`
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
-  useMatomo(tracking, aDesBeneficiaires)
-
+  pathPrefix: string
+  metadonneesFavoris?: MetadonneesFavoris
+}) {
   return (
-    <div>
-      <h2 className='text-m-bold text-content_color mb-6'>
+    <>
+      <h2 className='text-m-bold text-grey_800 mb-6'>
         Semaine du {toShortDate(debutSemaine)} au {toShortDate(finSemaine)}
       </h2>
-
-      <IndicateursActions actions={indicateursSemaine?.actions} />
-
-      <IndicateursRendezvous rendezVous={indicateursSemaine?.rendezVous} />
-
-      <IndicateursOffres
-        offres={indicateursSemaine?.offres}
-        favoris={indicateursSemaine?.favoris}
+      <IndicateursActions
+        actions={indicateursSemaine.actions}
+        idJeune={idJeune}
+        pathPrefix={pathPrefix}
       />
-    </div>
+      <IndicateursRendezvous rendezVous={indicateursSemaine.rendezVous} />
+      <IndicateursOffres
+        offres={indicateursSemaine.offres}
+        favoris={indicateursSemaine.favoris}
+        idJeune={idJeune}
+        pathPrefix={pathPrefix}
+        metadonneesFavoris={metadonneesFavoris}
+      />
+    </>
   )
 }
 
+interface IndicateursActionsProps extends Pick<IndicateursSemaine, 'actions'> {
+  idJeune: string
+  pathPrefix: string
+}
 function IndicateursActions({
   actions,
-}: Partial<Pick<IndicateursSemaine, 'actions'>>) {
+  idJeune,
+  pathPrefix,
+}: IndicateursActionsProps) {
   return (
     <div className='border border-solid rounded-base w-full p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les actions</h3>
@@ -101,13 +85,14 @@ function IndicateursActions({
           textColor='primary_darken'
         />
       </ul>
+      <LienVersActions idJeune={idJeune} pathPrefix={pathPrefix} />
     </div>
   )
 }
 
 function IndicateursRendezvous({
   rendezVous,
-}: Partial<Pick<IndicateursSemaine, 'rendezVous'>>) {
+}: Pick<IndicateursSemaine, 'rendezVous'>) {
   return (
     <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les événements</h3>
@@ -122,11 +107,20 @@ function IndicateursRendezvous({
     </div>
   )
 }
+interface IndicateursOffresProps
+  extends Pick<IndicateursSemaine, 'offres' | 'favoris'> {
+  idJeune: string
+  pathPrefix: string
+  metadonneesFavoris?: MetadonneesFavoris
+}
 
 function IndicateursOffres({
   offres,
   favoris,
-}: Partial<Pick<IndicateursSemaine, 'offres' | 'favoris'>>) {
+  idJeune,
+  pathPrefix,
+  metadonneesFavoris,
+}: IndicateursOffresProps) {
   return (
     <div className='border border-solid rounded-base w-full mt-6 p-4 border-grey_100'>
       <h3 className='text-m-bold text-content_color mb-4'>Les offres</h3>
@@ -168,8 +162,33 @@ function IndicateursOffres({
           textColor='primary_darken'
         />
       </ul>
+      {metadonneesFavoris?.autoriseLePartage && (
+        <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />
+      )}
     </div>
   )
 }
-
-export default withTransaction(IndicateursPage.name, 'page')(IndicateursPage)
+function LienVersActions({
+  idJeune,
+  pathPrefix,
+}: {
+  idJeune?: string
+  pathPrefix: string
+}) {
+  return (
+    <div className='flex justify-end mt-4'>
+      <Link
+        href={`${pathPrefix}/${idJeune}?onglet=actions`}
+        className='flex float-right items-center text-content_color underline hover:text-primary hover:fill-primary'
+      >
+        Voir toutes les actions
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-5 fill-[inherit]'
+          aria-hidden={true}
+          focusable={false}
+        />
+      </Link>
+    </div>
+  )
+}

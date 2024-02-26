@@ -88,13 +88,13 @@ export function BlocInformationJeuneFicheBeneficiaire({
             />
           )}
 
-        <LienVersHistorique idJeune={idJeune} pathPrefix={pathPrefix} />
+        <LienVersInformations idJeune={idJeune} pathPrefix={pathPrefix} />
       </dl>
     </div>
   )
 }
 
-function LienVersHistorique({
+function LienVersInformations({
   idJeune,
   pathPrefix,
 }: {
@@ -103,7 +103,7 @@ function LienVersHistorique({
 }) {
   return (
     <Link
-      href={`${pathPrefix}/${idJeune}/historique`}
+      href={`${pathPrefix}/${idJeune}/informations?onglet=informations`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
     >
       Voir plus d’informations

@@ -92,7 +92,7 @@ function RecherchesSauvegardees({ total }: { total: number }) {
   )
 }
 
-function LienVersFavoris({
+export function LienVersFavoris({
   idJeune,
   pathPrefix,
 }: {
@@ -105,7 +105,7 @@ function LienVersFavoris({
         href={`${pathPrefix}/${idJeune}/favoris`}
         className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
       >
-        Voir la liste des favoris
+        Voir tous les favoris
         <IconComponent
           name={IconName.ChevronRight}
           className='w-4 h-5 fill-[inherit]'

@@ -47,7 +47,7 @@ export function BlocSituation({
       )}
 
       {versionResumee && (
-        <LienVersHistorique idJeune={idJeune} pathPrefix={pathPrefix} />
+        <LienVersSituations idJeune={idJeune} pathPrefix={pathPrefix} />
       )}
     </div>
   )
@@ -95,7 +95,7 @@ function Situation({
   )
 }
 
-function LienVersHistorique({
+function LienVersSituations({
   idJeune,
   pathPrefix,
 }: {
@@ -104,7 +104,7 @@ function LienVersHistorique({
 }) {
   return (
     <Link
-      href={`${pathPrefix}/${idJeune}/historique`}
+      href={`${pathPrefix}/${idJeune}/informations?onglet=informations`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
     >
       Voir le détail des situations
