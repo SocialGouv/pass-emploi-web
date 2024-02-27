@@ -1,9 +1,11 @@
+import { ReactNode } from 'react'
+
 import FailureIcon from 'assets/icons/informations/info.svg'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 type FailureMessageProps = {
   label: string
-  sub?: string
+  sub?: ReactNode
   onAcknowledge?: () => void
 }
 
@@ -39,7 +41,7 @@ export default function FailureAlert({
           </button>
         )}
       </div>
-      {sub && <p>{sub}</p>}
+      {sub && <>{sub}</>}
     </div>
   )
 }

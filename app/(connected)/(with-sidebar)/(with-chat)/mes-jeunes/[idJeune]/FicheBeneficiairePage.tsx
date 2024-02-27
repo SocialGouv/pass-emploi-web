@@ -23,7 +23,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { estMilo, estPassEmploi, estPoleEmploi } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
@@ -303,19 +303,43 @@ function FicheBeneficiairePage({
         />
       )}
 
-      {!jeune.isActivated && (
-        <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
-      )}
+      {!jeune.isActivated &&
+        (estPoleEmploi(conseiller) || estPassEmploi(conseiller)) && (
+          <FailureAlert
+            label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
+            sub={
+              <p className='pl-8'>
+                <strong>
+                  Il ne pourra pas échanger de messages avec vous.
+                </strong>
+              </p>
+            }
+          />
+        )}
 
       {!jeune.isActivated && estMilo(conseiller) && (
-        <div className='mb-8'>
-          <InformationMessage label='Le lien d’activation est valable 12h.'>
-            <p>
-              Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
-              l’option : mot de passe oublié.
-            </p>
-          </InformationMessage>
-        </div>
+        <FailureAlert
+          label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
+          sub={
+            <ul className='list-disc pl-[48px]'>
+              <li>
+                <strong>
+                  Il ne pourra pas échanger de messages avec vous.
+                </strong>
+              </li>
+              <li>
+                <strong>
+                  Le lien d’activation envoyé par i-milo à l’adresse e-mail du
+                  jeune n’est valable que 12h.
+                </strong>
+              </li>
+              <li>
+                Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
+                l’option : mot de passe oublié.
+              </li>
+            </ul>
+          }
+        />
       )}
 
       {jeune.isReaffectationTemporaire && (
