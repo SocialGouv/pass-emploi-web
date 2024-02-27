@@ -258,7 +258,9 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
         // Then
         expect(
-          screen.getByText(/Le lien d’activation est valable 12h/)
+          screen.getByText(
+            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du jeune n’est valable que 12h/
+          )
         ).toBeInTheDocument()
       })
     })

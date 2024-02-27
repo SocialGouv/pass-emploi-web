@@ -216,7 +216,13 @@ export default function TableauActionsJeune({
             {actionSansCategorieSelectionnee && (
               <FailureAlert
                 label='Qualification impossible.'
-                sub='Vous ne pouvez pas qualifier une ou plusieurs actions sans catégorie. Cliquez sur l’action pour pouvoir la modifier et lui ajouter une catégorie.'
+                sub={
+                  <p>
+                    Vous ne pouvez pas qualifier une ou plusieurs actions sans
+                    catégorie. Cliquez sur l’action pour pouvoir la modifier et
+                    lui ajouter une catégorie.
+                  </p>
+                }
               />
             )}
           </div>

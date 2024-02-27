@@ -167,14 +167,25 @@ export default function TableauActionsAQualifier({
         {actionSansCategorieSelectionnee && (
           <FailureAlert
             label='Qualification impossible.'
-            sub='Vous ne pouvez pas qualifier une ou plusieurs actions sans catégorie. Cliquez sur l’action pour pouvoir la modifier et lui ajouter une catégorie.'
+            sub={
+              <p>
+                Vous ne pouvez pas qualifier une ou plusieurs actions sans
+                catégorie. Cliquez sur l’action pour pouvoir la modifier et lui
+                ajouter une catégorie.
+              </p>
+            }
           />
         )}
 
         {plusieursBeneficiairesSelectionnes && (
           <FailureAlert
             label='Qualification impossible.'
-            sub='Vous ne pouvez pas qualifier les actions de plusieurs bénéficiaires. Sélectionnez seulement un ou une bénéficiaire.'
+            sub={
+              <p>
+                Vous ne pouvez pas qualifier les actions de plusieurs
+                bénéficiaires. Sélectionnez seulement un ou une bénéficiaire.
+              </p>
+            }
           />
         )}
       </div>
