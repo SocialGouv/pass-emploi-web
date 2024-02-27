@@ -85,7 +85,10 @@ export default async function FicheBeneficiaire({
   if (!jeune) notFound()
 
   let sessionsMilo: EvenementListItem[] = []
-  if (peutAccederAuxSessions(conseiller)) {
+  if (
+    peutAccederAuxSessions(conseiller) &&
+    conseiller.structureMilo!.id === jeune.structureMilo?.id
+  ) {
     sessionsMilo = await getSessionsMiloBeneficiaire(
       params.idJeune,
       accessToken,

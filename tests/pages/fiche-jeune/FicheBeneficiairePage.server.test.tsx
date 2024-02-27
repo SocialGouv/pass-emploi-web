@@ -34,7 +34,6 @@ jest.mock(
 )
 jest.mock('services/jeunes.service')
 jest.mock('services/sessions.service')
-// jest.mock('services/agenda.service')
 jest.mock('services/evenements.service')
 jest.mock('services/actions.service')
 jest.mock('services/favoris.service')
@@ -56,7 +55,9 @@ describe('FicheBeneficiairePage server side', () => {
   ]
 
   beforeEach(() => {
-    ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
+    ;(getJeuneDetails as jest.Mock).mockResolvedValue(
+      unDetailJeune({ structureMilo: { id: 'id-test' } })
+    )
     ;(getConseillersDuJeuneServerSide as jest.Mock).mockResolvedValue(
       desConseillersJeune()
     )
@@ -103,7 +104,7 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         {
-          jeune: unDetailJeune(),
+          jeune: unDetailJeune({ structureMilo: { id: 'id-test' } }),
           rdvs: expect.arrayContaining([]),
           actionsInitiales: expect.objectContaining({}),
           metadonneesFavoris: expect.objectContaining({}),
