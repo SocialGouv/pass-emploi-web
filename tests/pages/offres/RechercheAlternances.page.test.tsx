@@ -23,7 +23,6 @@ import { getCommunesEtDepartements } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/offres-emploi.service')
 jest.mock('services/referentiel.service')
 
@@ -155,7 +154,7 @@ describe('Page Recherche Alternances', () => {
         // When
         await userEvent.type(inputLocalisation, 'paris14')
 
-        await act(() => {
+        await act(async () => {
           fireEvent.blur(inputLocalisation)
         })
         await userEvent.click(submitButton)

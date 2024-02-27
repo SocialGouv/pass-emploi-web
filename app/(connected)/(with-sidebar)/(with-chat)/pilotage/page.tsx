@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
 import PilotagePage, {
   Onglet,
@@ -9,7 +9,6 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import {
-  Conseiller,
   estUserPoleEmploi,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
@@ -26,7 +25,6 @@ import {
 } from 'services/sessions.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import { ApiError } from 'utils/httpClient'
 
 export const metadata: Metadata = {
   title: 'Pilotage',
@@ -41,15 +39,7 @@ export default async function Pilotage({
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (estUserPoleEmploi(user)) notFound()
 
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401)
-      redirect('/api/auth/federated-logout')
-
-    throw e
-  }
+  const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller) notFound()
 
   const [actions, categoriesActions] = await Promise.all([
@@ -73,14 +63,7 @@ export default async function Pilotage({
   }
 
   if (peutAccederAuxSessions(conseiller)) {
-    try {
-      sessions = await getSessionsACloreServerSide(user.id, accessToken)
-    } catch (e) {
-      if (e instanceof ApiError && e.statusCode === 401)
-        redirect('/api/auth/federated-logout')
-
-      sessions = []
-    }
+    sessions = await getSessionsACloreServerSide(user.id, accessToken)
   }
 
   let onglet: Onglet = 'ACTIONS'

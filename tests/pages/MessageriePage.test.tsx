@@ -1,7 +1,7 @@
 import { act, screen } from '@testing-library/react'
 import React from 'react'
 
-import MessageriePage from 'app/(connected)/(with-sidebar)/messagerie/MessageriePage'
+import MessageriePage from 'app/(connected)/messagerie/MessageriePage'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
@@ -16,7 +16,6 @@ import {
 } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/jeunes.service')
 jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
@@ -67,7 +66,7 @@ describe('MessageriePage client side', () => {
   describe('tunnel de messagerie', () => {
     it('affiche un message de bienvenue au landing sur la page', async () => {
       //When
-      await renderWithContexts(<MessageriePage />, {
+      renderWithContexts(<MessageriePage />, {
         customConseiller: {
           structure: StructureConseiller.POLE_EMPLOI,
         },

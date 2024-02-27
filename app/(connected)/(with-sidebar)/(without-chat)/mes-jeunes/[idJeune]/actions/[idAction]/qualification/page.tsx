@@ -63,7 +63,6 @@ export default async function Qualification({
       <PageRetourPortal lien={returnTo} />
 
       <QualificationPage
-        beneficiaire={jeune}
         action={action}
         categories={categories}
         returnTo={returnTo}

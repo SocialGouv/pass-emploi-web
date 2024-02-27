@@ -15,7 +15,6 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { qualifier } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/actions.service')
 
 describe('QualificationPage client side', () => {

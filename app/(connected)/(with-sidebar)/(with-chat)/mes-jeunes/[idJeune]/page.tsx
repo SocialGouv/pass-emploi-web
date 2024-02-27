@@ -1,17 +1,16 @@
 import { DateTime } from 'luxon'
 import { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
 import FicheBeneficiairePage, {
   Onglet,
-} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage' // Onglet,
+} from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { SituationNonProfessionnelle } from 'interfaces/action'
 import {
-  Conseiller,
   estUserPoleEmploi,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
@@ -31,7 +30,6 @@ import {
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import { compareDates } from 'utils/date'
-import { ApiError } from 'utils/httpClient'
 
 type FicheBeneficiaireParams = { idJeune: string }
 type FicheBeneficiaireSearchParams = { page?: string; onglet?: string }
@@ -63,16 +61,7 @@ export default async function FicheBeneficiaire({
 
   const page = searchParams?.page ? parseInt(searchParams.page) : 1
 
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401) {
-      // TODO redirect in http-client quand le router "page" aura disparu
-      redirect('/api/auth/federated-logout')
-    }
-    throw e
-  }
+  const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller) notFound()
 
   const [jeune, metadonneesFavoris, rdvs, actions, categoriesActions] =
@@ -97,19 +86,11 @@ export default async function FicheBeneficiaire({
 
   let sessionsMilo: EvenementListItem[] = []
   if (peutAccederAuxSessions(conseiller)) {
-    try {
-      sessionsMilo = await getSessionsMiloBeneficiaire(
-        params.idJeune,
-        accessToken,
-        DateTime.now().startOf('day')
-      )
-    } catch (e) {
-      if (e instanceof ApiError && e.statusCode === 401) {
-        // TODO redirect in http-client quand le router "page" aura disparu
-        redirect('/api/auth/federated-logout')
-      }
-      sessionsMilo = []
-    }
+    sessionsMilo = await getSessionsMiloBeneficiaire(
+      params.idJeune,
+      accessToken,
+      DateTime.now().startOf('day')
+    )
   }
 
   let offresPE: Offre[] = []

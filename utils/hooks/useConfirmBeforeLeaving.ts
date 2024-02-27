@@ -1,34 +1,29 @@
-import Router from 'next/router'
 import { useCallback, useEffect } from 'react'
 
-export function useLeavePageModal(
-  enabled: boolean,
-  openModal: (destination: string) => void
-) {
+export function useConfirmBeforeLeaving(enabled: boolean) {
   useBeforeUnload(enabled)
 
-  useEffect(() => {
-    function handler(destination: string) {
-      if (enabled) {
-        openModal(destination)
-        throw new Error('Navigation annulée pour confirmation')
-      }
-    }
-
-    Router.events.on('beforeHistoryChange', handler)
-
-    return () => {
-      Router.events.off('beforeHistoryChange', handler)
-    }
-  }, [enabled, openModal])
+  // FIXME not possible with /app router
+  // useEffect(() => {
+  //   function handler(destination: string) {
+  //     if (enabled) {
+  //       openModal(destination)
+  //       throw new Error('Navigation annulée pour confirmation')
+  //     }
+  //   }
+  //
+  //   Router.events.on('beforeHistoryChange', handler)
+  //
+  //   return () => {
+  //     Router.events.off('beforeHistoryChange', handler)
+  //   }
+  // }, [enabled, openModal])
 }
 
 function useBeforeUnload(enabled: boolean) {
   const handler = useCallback(
     (event: BeforeUnloadEvent) => {
-      if (!enabled) {
-        return
-      }
+      if (!enabled) return
 
       const message =
         'Vous allez quitter la page. Toutes les données seront perdues.'

@@ -23,7 +23,6 @@ import { getCommunes, getMetiers } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/immersions.service')
 jest.mock('services/referentiel.service')
 
@@ -112,7 +111,7 @@ describe('Page Recherche Immersions', () => {
       // When
       await userEvent.type(inputMetier, 'devlopr')
 
-      await act(() => {
+      await act(async () => {
         fireEvent.blur(inputMetier)
       })
       await userEvent.click(submitButton)

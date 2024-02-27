@@ -1,24 +1,22 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
-import Profil from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
-import Layout from 'components/layouts/Layout'
+import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
 import { BaseJeune, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
 import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
 import { observeConseillerChats, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { ChatsProvider } from 'utils/chat/chatsContext'
 
 jest.mock('services/messages.service')
 jest.mock('services/jeunes.service')
 jest.mock('services/conseiller.service')
-jest.mock('components/layouts/SidebarLayout', () => jest.fn(() => <></>))
 jest.mock('components/chat/ChatRoom', () => jest.fn(() => <></>))
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
-jest.mock('components/AppHead', () => jest.fn(() => <></>))
 
 const mockAudio = jest.fn()
 // @ts-ignore
@@ -33,10 +31,7 @@ describe('Intégration notifications sonores', () => {
   beforeEach(async () => {
     const now = DateTime.now()
     jest.spyOn(DateTime, 'now').mockReturnValue(now)
-    ;(useRouter as jest.Mock).mockReturnValue({
-      asPath: '/path/to/page',
-      route: '/path/to/page',
-    })
+    ;(usePathname as jest.Mock).mockReturnValue('/path/to/page')
     ;(signIn as jest.Mock).mockResolvedValue(undefined)
     ;(observeConseillerChats as jest.Mock).mockImplementation(
       (_cleChiffrement, jeunes, fn) => {
@@ -59,9 +54,7 @@ describe('Intégration notifications sonores', () => {
   describe('quand le conseiller active ses notification', () => {
     it("il reçoit bien une notification lors d'un nouveau message.", async () => {
       // Given
-      await act(() => {
-        renderWithNotificationsSonores(false)
-      })
+      await renderWithNotificationsSonores(false)
       await unNouveauMessageArrive(updateChatsRef, jeunes)
       expect(mockAudio).toHaveBeenCalledTimes(0)
 
@@ -77,9 +70,7 @@ describe('Intégration notifications sonores', () => {
   describe('quand le conseiller désactive ses notification', () => {
     it("il ne reçoit pas de notification lors d'un nouveau message.", async () => {
       // Given
-      await act(() => {
-        renderWithNotificationsSonores(true)
-      })
+      await renderWithNotificationsSonores(true)
       await unNouveauMessageArrive(updateChatsRef, jeunes)
       expect(mockAudio).toHaveBeenCalledTimes(1)
 
@@ -93,17 +84,19 @@ describe('Intégration notifications sonores', () => {
   })
 })
 
-function renderWithNotificationsSonores(notificationsSonores: boolean) {
-  renderWithContexts(
-    <Layout>
-      <Profil referentielAgences={[]} pageTitle={'Profil'} />
-    </Layout>,
-    {
-      customConseiller: unConseiller({
-        notificationsSonores: notificationsSonores,
-      }),
-    }
-  )
+async function renderWithNotificationsSonores(notificationsSonores: boolean) {
+  await act(async () => {
+    renderWithContexts(
+      <ChatsProvider>
+        <ProfilPage referentielAgences={[]} />
+      </ChatsProvider>,
+      {
+        customConseiller: unConseiller({
+          notificationsSonores: notificationsSonores,
+        }),
+      }
+    )
+  })
 }
 
 async function toggleNotifications() {

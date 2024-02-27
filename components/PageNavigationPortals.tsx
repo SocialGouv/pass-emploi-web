@@ -5,9 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import FilAriane from 'components/FilAriane'
+import { PAGE_NAVIGATION_ROOT_ID } from 'components/ids'
 import LienRetour from 'components/LienRetour'
-
-export const PAGE_NAVIGATION_ROOT_ID = 'page-navigation-root'
 
 export function PageRetourPortal({ lien }: { lien: string }) {
   const [isBrowser, setIsBrowser] = useState(false)

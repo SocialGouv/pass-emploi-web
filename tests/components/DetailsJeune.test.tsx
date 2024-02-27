@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
 import { unConseiller } from 'fixtures/conseiller'
@@ -15,7 +15,7 @@ jest.mock('components/Modal')
 
 describe('<DetailsJeune>', () => {
   beforeEach(() => {
-    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
     ;(modifierIdentifiantPartenaire as jest.Mock).mockResolvedValue(undefined)
   })
 

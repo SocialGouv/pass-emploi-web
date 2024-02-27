@@ -2,18 +2,18 @@ import { screen } from '@testing-library/dom'
 import { render, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
+import { buildAgendaData } from 'components/AgendaRows'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
-import { buildAgendaData } from 'presentation/AgendaRows'
 
 describe('<TableauRdvsConseiller>', () => {
   const chargerEvenementsJour: (jour: DateTime) => Promise<void> = jest.fn()
   beforeEach(async () => {
-    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
   })
 
   describe('Quand il y a des rendez-vous', () => {

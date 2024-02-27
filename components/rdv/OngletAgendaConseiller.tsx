@@ -1,16 +1,14 @@
 import { DateTime } from 'luxon'
-import { redirect } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import { AgendaData, buildAgendaData } from 'components/AgendaRows'
 import EmptyState from 'components/EmptyState'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
-import { AgendaData, buildAgendaData } from 'presentation/AgendaRows'
 import { compareDates } from 'utils/date'
-import { ApiError } from 'utils/httpClient'
 
 type OngletAgendaConseillerProps = {
   conseiller: Conseiller
@@ -93,19 +91,11 @@ export default function OngletAgendaConseiller({
 
     let sessions: EvenementListItem[] = []
     if (peutAccederAuxSessions(conseiller)) {
-      try {
-        sessions = await recupererSessionsBeneficiaires(
-          conseiller.id,
-          dateDebut,
-          dateFin
-        )
-      } catch (e) {
-        if (e instanceof ApiError && e.statusCode === 401) {
-          // TODO redirect in http-client quand le router "page" aura disparu
-          redirect('/api/auth/federated-logout')
-        }
-        throw e
-      }
+      sessions = await recupererSessionsBeneficiaires(
+        conseiller.id,
+        dateDebut,
+        dateFin
+      )
     }
 
     return rdvs

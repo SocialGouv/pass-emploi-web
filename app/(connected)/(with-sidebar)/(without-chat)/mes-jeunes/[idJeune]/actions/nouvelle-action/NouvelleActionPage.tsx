@@ -4,7 +4,6 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useState } from 'react'
 
 import { EditionActionForm } from 'components/action/EditionActionForm'
-import LeavePageConfirmationModal from 'components/LeavePageConfirmationModal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IllustrationComponent, {
@@ -16,7 +15,7 @@ import {
 } from 'interfaces/action'
 import { ActionFormData } from 'interfaces/json/action'
 import useMatomo from 'utils/analytics/useMatomo'
-import { useLeavePageModal } from 'utils/hooks/useLeavePageModal'
+import { useConfirmBeforeLeaving } from 'utils/hooks/useConfirmBeforeLeaving'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type EditionActionProps = {
@@ -36,7 +35,6 @@ function NouvelleActionPage({
 
   const [succesCreation, setSuccesCreation] = useState<boolean>(false)
 
-  const [showLeavePageModal, setShowLeavePageModal] = useState<boolean>(false)
   const [confirmBeforeLeaving, setConfirmBeforeLeaving] =
     useState<boolean>(true)
 
@@ -58,20 +56,11 @@ function NouvelleActionPage({
 
   function resetForm() {
     setSuccesCreation(false)
+    setConfirmBeforeLeaving(true)
     setTrackingTitle(initialTracking)
   }
 
-  function openLeavePageConfirmationModal() {
-    setShowLeavePageModal(true)
-    setConfirmBeforeLeaving(false)
-  }
-
-  function closeLeavePageConfirmationModal() {
-    setShowLeavePageModal(false)
-    setConfirmBeforeLeaving(true)
-  }
-
-  useLeavePageModal(confirmBeforeLeaving, openLeavePageConfirmationModal)
+  useConfirmBeforeLeaving(confirmBeforeLeaving)
 
   useMatomo(trackingTitle, aDesBeneficiaires)
 
@@ -108,15 +97,6 @@ function NouvelleActionPage({
             </ButtonLink>
           </div>
         </div>
-      )}
-
-      {showLeavePageModal && (
-        <LeavePageConfirmationModal
-          titre={`Souhaitez-vous quitter la création de l’action ?`}
-          commentaire='Les informations saisies seront perdues.'
-          onCancel={closeLeavePageConfirmationModal}
-          destination={returnTo}
-        />
       )}
     </>
   )
