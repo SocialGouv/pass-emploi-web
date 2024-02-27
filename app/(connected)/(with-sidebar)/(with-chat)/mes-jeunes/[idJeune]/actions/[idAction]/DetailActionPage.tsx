@@ -65,7 +65,7 @@ function DetailActionPage({
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
     action.status !== StatutAction.Terminee &&
     action.status !== StatutAction.Qualifiee &&
-    !commentaires.length > 0
+    Boolean(commentaires.length > 0)
 
   const suppressionModalRef = useRef<{
     closeModal: (e: MouseEvent) => void
