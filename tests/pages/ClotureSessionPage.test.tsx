@@ -10,7 +10,6 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { cloreSession } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/sessions.service')
 jest.mock('services/conseiller.service')
 

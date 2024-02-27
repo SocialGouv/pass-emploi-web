@@ -37,7 +37,7 @@ import {
 } from 'interfaces/message'
 import { BaseOffre, TypeOffre } from 'interfaces/offre'
 import { EncryptedTextWithInitializationVector } from 'utils/chat/chatCrypto'
-import { captureRUMError } from 'utils/monitoring/elastic'
+import { captureError } from 'utils/monitoring/elastic'
 
 type TypeMessageFirebase =
   | 'NOUVEAU_CONSEILLER'
@@ -111,8 +111,10 @@ export type CreateFirebaseMessageWithOffre = BaseCreateFirebaseMessage & {
   offre: BaseOffre
 }
 
-const chatCollection = process.env.NEXT_PUBLIC_FIREBASE_CHAT_COLLECTION_NAME || ''
-const groupeCollection = process.env.NEXT_PUBLIC_FIREBASE_GROUPE_COLLECTION_NAME || ''
+const chatCollection =
+  process.env.NEXT_PUBLIC_FIREBASE_CHAT_COLLECTION_NAME || ''
+const groupeCollection =
+  process.env.NEXT_PUBLIC_FIREBASE_GROUPE_COLLECTION_NAME || ''
 
 export async function signIn(token: string): Promise<void> {
   const initializedApp = retrieveApp()
@@ -142,7 +144,7 @@ export async function addMessage(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -158,7 +160,7 @@ export async function updateChat(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -177,25 +179,26 @@ export function findAndObserveChatsDuConseiller(
         where('conseillerId', '==', idConseiller)
       ),
       (querySnapshot: QuerySnapshot<FirebaseChat, FirebaseChat>) => {
-        if (querySnapshot.empty) return
-        onChatsFound(
-          querySnapshot.docs.reduce(
-            (chats, snapshot) => {
-              const chatFirebase = snapshot.data()
-              chats[chatFirebase.jeuneId] = chatFromFirebase(
-                snapshot.id,
-                chatFirebase
-              )
-              return chats
-            },
-            {} as { [idJeune: string]: Chat }
+        if (querySnapshot.empty) onChatsFound({})
+        else
+          onChatsFound(
+            querySnapshot.docs.reduce(
+              (chats, snapshot) => {
+                const chatFirebase = snapshot.data()
+                chats[chatFirebase.jeuneId] = chatFromFirebase(
+                  snapshot.id,
+                  chatFirebase
+                )
+                return chats
+              },
+              {} as { [idJeune: string]: Chat }
+            )
           )
-        )
       }
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -218,7 +221,7 @@ export async function getChatsDuConseiller(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -251,7 +254,7 @@ export async function getMessagesGroupe(
     return querySnapshots.docs.map(docSnapshotToMessageListeDiffusion)
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -271,7 +274,7 @@ export function observeChat(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }
@@ -302,7 +305,7 @@ export function observeDerniersMessagesDuChat(
     )
   } catch (e) {
     console.error(e)
-    captureRUMError(e as Error)
+    captureError(e as Error)
     throw e
   }
 }

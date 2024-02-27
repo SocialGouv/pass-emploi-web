@@ -8,10 +8,11 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type QualificationParams = { idAction: string }
+type QualificationSearchParams = Partial<{ liste: string }>
 
 export async function generateMetadata({
   params,
@@ -29,11 +30,13 @@ export async function generateMetadata({
 }
 export default async function Qualification({
   params,
+  searchParams,
 }: {
   params: QualificationParams
+  searchParams?: QualificationSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (user.structure !== StructureConseiller.MILO) notFound()
+  if (!estUserMilo(user)) notFound()
 
   const { getAction, getSituationsNonProfessionnelles } = await import(
     'services/actions.service'
@@ -47,17 +50,23 @@ export default async function Qualification({
   const { action, jeune } = actionContent
   if (action.status !== StatutAction.Terminee) notFound()
 
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
+  // FIXME : dirty fix, problème de l’action
+  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
+  const returnToListe =
+    searchParams?.liste === 'pilotage'
+      ? '/pilotage'
+      : `/mes-jeunes/${jeune.id}?onglet=actions`
+
   return (
     <>
       <PageHeaderPortal header='Qualifier l’action' />
       <PageRetourPortal lien={returnTo} />
 
       <QualificationPage
-        beneficiaire={jeune}
         action={action}
         categories={categories}
         returnTo={returnTo}
+        returnToListe={returnToListe}
       />
     </>
   )

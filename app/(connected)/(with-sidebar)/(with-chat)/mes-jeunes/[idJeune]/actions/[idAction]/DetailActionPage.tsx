@@ -2,7 +2,6 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
@@ -30,6 +29,7 @@ type DetailActionProps = {
   jeune: BaseJeune
   lectureSeule: boolean
   commentaires: Commentaire[]
+  from: 'pilotage' | 'beneficiaire'
 }
 
 function DetailActionPage({
@@ -37,11 +37,11 @@ function DetailActionPage({
   jeune,
   commentaires,
   lectureSeule,
+  from,
 }: DetailActionProps) {
-  const router = useRouter()
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const [alerte, setAlerte] = useAlerte()
+  const [alerte, _] = useAlerte()
 
   const [statut, setStatut] = useState<StatutAction>(action.status)
   const [showEchecMessage, setShowEchecMessage] = useState<boolean>(false)
@@ -64,14 +64,8 @@ function DetailActionPage({
       action.dateFinReelle = DateTime.now().toISODate()
   }
 
-  function onAjoutCommentaire(estEnSucces: boolean) {
-    if (!estEnSucces) {
-      setShowEchecMessage(true)
-    } else {
-      setAlerte(AlerteParam.ajoutCommentaireAction)
-      router.push(`/mes-jeunes/${jeune.id}/actions/${action.id}`)
-    }
-  }
+  // FIXME : dirty fix, problème de l’action
+  const random = Math.random()
 
   useMatomo(
     alerte && alerte.key === AlerteParam.envoiMessage
@@ -86,7 +80,7 @@ function DetailActionPage({
           {estAQualifier && !lectureSeule && (
             <ButtonLink
               style={ButtonStyle.PRIMARY}
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification`}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/qualification?liste=${from}&misc=${random}`}
             >
               Qualifier l’action
               <IconComponent
@@ -150,7 +144,7 @@ function DetailActionPage({
           </h2>
           {!qualifiee && (
             <ButtonLink
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification?misc=${random}`}
               style={ButtonStyle.SECONDARY}
             >
               <IconComponent
@@ -211,12 +205,7 @@ function DetailActionPage({
       <HistoriqueAction action={action} />
 
       {Boolean(commentaires.length) && (
-        <CommentairesAction
-          idAction={action.id}
-          commentairesInitiaux={commentaires}
-          onAjout={onAjoutCommentaire}
-          lectureSeule={lectureSeule}
-        />
+        <CommentairesAction commentairesInitiaux={commentaires} />
       )}
     </>
   )

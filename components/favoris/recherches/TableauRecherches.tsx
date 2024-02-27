@@ -26,7 +26,7 @@ export default function TableauRecherches({
           titre='Votre bénéficiaire n’a sauvegardé aucune recherche pour l’instant.'
           sousTitre='Suggérez des recherches-types d’offres à votre bénéficiaire depuis la partie “Offres”.'
           lien={{
-            href: '/recherche-offres',
+            href: '/offres',
             label: 'Rechercher une offre',
             iconName: IconName.Search,
           }}

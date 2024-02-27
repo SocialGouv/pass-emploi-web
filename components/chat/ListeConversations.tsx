@@ -28,18 +28,26 @@ export default function ListeConversations({
       >
         {!conversations && <SpinningLoader />}
 
-        {conversations && conversations.length === 0 && (
-          <div className='bg-grey_100 flex flex-col justify-center items-center'>
-            <EmptyStateImage
-              focusable='false'
-              aria-hidden='true'
-              className='w-[360px] h-[200px]'
-            />
-            <p className='mt-4 text-base-medium w-2/3 text-center'>
-              Vous devriez avoir des bénéficiaires inscrits pour discuter avec
-              eux
-            </p>
-          </div>
+        {conversations?.length === 0 && (
+          <>
+            <div className='flex flex-col justify-center items-center'>
+              <EmptyStateImage
+                focusable={false}
+                aria-hidden={true}
+                className='w-[360px] h-[200px]'
+              />
+              <div className='mx-4'>
+                <p className='text-base-bold'>Vous pouvez échanger :</p>
+                <ul className='list-disc mt-2 mx-4'>
+                  <li>directement avec un bénéficiaire</li>
+                  <li>
+                    en envoyant un message à plusieurs bénéficiaires
+                    simultanément
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </>
         )}
 
         {conversations && conversations.length > 0 && (
@@ -70,8 +78,8 @@ export default function ListeConversations({
           className='absolute bottom-8 self-center'
         >
           <MessageGroupeIcon
-            aria-hidden='true'
-            focusable='false'
+            aria-hidden={true}
+            focusable={false}
             className='w-4 shrink-0 mr-2'
           />
           Message multi-destinataires

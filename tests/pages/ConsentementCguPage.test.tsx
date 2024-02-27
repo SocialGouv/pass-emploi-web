@@ -11,7 +11,6 @@ import { modifierDateSignatureCGU } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 
 describe('ConsentementCGUPage client side', () => {
   let routerPush: Function

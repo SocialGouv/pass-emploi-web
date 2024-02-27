@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Router from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
@@ -15,7 +15,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 interface DossierJeuneMiloProps {
   dossier: DossierMilo
   onCreateCompte: (data: JeuneMiloFormData) => Promise<void>
-  erreurMessageHttpPassEmploi: string
+  erreurMessageHttpPassEmploi?: string
 }
 
 export default function DossierJeuneMilo({
@@ -28,7 +28,7 @@ export default function DossierJeuneMilo({
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
-  const addJeune = async () => {
+  async function addJeune() {
     if (!creationEnCours) {
       const newJeune = {
         idDossier: dossier.id,
@@ -132,37 +132,48 @@ export default function DossierJeuneMilo({
 
       <div className='flex items-center mt-14'>
         <Link
-          href={'/mes-jeunes/milo/creation-jeune'}
+          href={'/mes-jeunes/creation-jeune/milo'}
           className='flex items-center text-base-bold text-primary_darken mr-6'
         >
           <IconComponent
             name={IconName.ArrowBackward}
             className='mr-2.5 w-3 h-3'
             role='img'
-            focusable='false'
+            focusable={false}
             aria-label="Retour Création d'un compte jeune étape 1"
           />
           Retour
         </Link>
 
-        {!erreurMessageHttpPassEmploi &&
-          actionButtons(dossier, addJeune, creationEnCours)}
+        {!erreurMessageHttpPassEmploi && (
+          <ActionButtons
+            dossier={dossier}
+            addJeune={addJeune}
+            creationEnCours={creationEnCours}
+          />
+        )}
       </div>
     </>
   )
 }
 
-function actionButtons(
-  dossier: DossierMilo,
-  addJeune: () => Promise<void>,
+function ActionButtons({
+  dossier,
+  addJeune,
+  creationEnCours,
+}: {
+  dossier: DossierMilo
+  addJeune: () => Promise<void>
   creationEnCours: boolean
-) {
+}) {
+  const router = useRouter()
+
   return dossier.email ? (
     <Button type='button' onClick={addJeune} disabled={creationEnCours}>
       {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
     </Button>
   ) : (
-    <Button type='button' onClick={() => Router.reload()}>
+    <Button type='button' onClick={() => router.refresh()}>
       <RefreshIcon className='mr-2.5' aria-hidden={true} focusable={false} />
       Rafraîchir le compte
     </Button>

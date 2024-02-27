@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
 import { unConseiller } from 'fixtures/conseiller'
@@ -15,7 +15,7 @@ jest.mock('components/Modal')
 
 describe('<DetailsJeune>', () => {
   beforeEach(() => {
-    ;(useRouter as jest.Mock).mockReturnValue({ asPath: '/mes-jeunes' })
+    ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
     ;(modifierIdentifiantPartenaire as jest.Mock).mockResolvedValue(undefined)
   })
 
@@ -24,6 +24,7 @@ describe('<DetailsJeune>', () => {
     const jeune = unDetailJeune({
       isActivated: true,
       urlDossier: 'https://dossier-milo.fr',
+      dateFinCEJ: '2024-12-07T17:30:07.756Z',
     })
 
     // When
@@ -31,7 +32,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-        onDossierMiloClick={() => {}}
       />
     )
 
@@ -40,11 +40,7 @@ describe('<DetailsJeune>', () => {
       screen.getByText('pas encore connecté', { exact: false })
     ).toThrow()
     expect(screen.getByText('kenji.jirac@email.fr')).toBeInTheDocument()
-    expect(screen.getByText('Dossier jeune i-milo')).toHaveAttribute(
-      'href',
-      'https://dossier-milo.fr'
-    )
-    expect(screen.getByText('07/12/2021')).toBeInTheDocument()
+    expect(screen.getByText('07/12/2024')).toBeInTheDocument()
     expect(
       screen.getByText('Date de fin du CEJ', { exact: false })
     ).toBeInTheDocument()
@@ -60,7 +56,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-        onDossierMiloClick={() => {}}
       />
     )
 
@@ -77,7 +72,6 @@ describe('<DetailsJeune>', () => {
       <DetailsJeune
         jeune={jeune}
         conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-        onDossierMiloClick={() => {}}
       />
     )
 
@@ -98,7 +92,6 @@ describe('<DetailsJeune>', () => {
           <DetailsJeune
             jeune={jeune}
             conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-            onDossierMiloClick={() => {}}
           />
         )
 
@@ -122,7 +115,6 @@ describe('<DetailsJeune>', () => {
               conseiller={unConseiller({
                 structure: StructureConseiller.POLE_EMPLOI,
               })}
-              onDossierMiloClick={() => {}}
             />
           )
 
@@ -138,7 +130,7 @@ describe('<DetailsJeune>', () => {
       alerteSetter = jest.fn()
     })
 
-    describe('pour un jeune Pôle emploi qui n’a pas d’identifiant partenaire', () => {
+    describe('pour un jeune France Travail qui n’a pas d’identifiant partenaire', () => {
       beforeEach(() => {
         const jeune = unDetailJeune({
           idPartenaire: undefined,
@@ -150,7 +142,6 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
-            onDossierMiloClick={() => {}}
           />,
           {
             customAlerte: { alerteSetter },
@@ -160,12 +151,12 @@ describe('<DetailsJeune>', () => {
 
       it('permet l’ajout de l’identifiant', () => {
         expect(
-          screen.getByText('Identifiant Pôle emploi :')
+          screen.getByText('Identifiant France Travail :')
         ).toBeInTheDocument()
         expect(screen.getByText('-')).toBeInTheDocument()
         expect(
           screen.getByRole('button', {
-            name: 'Ajouter l’identifiant Pôle emploi',
+            name: 'Ajouter l’identifiant France Travail',
           })
         ).toBeInTheDocument()
       })
@@ -174,7 +165,7 @@ describe('<DetailsJeune>', () => {
         beforeEach(async () => {
           await userEvent.click(
             screen.getByRole('button', {
-              name: 'Ajouter l’identifiant Pôle emploi',
+              name: 'Ajouter l’identifiant France Travail',
             })
           )
         })
@@ -182,7 +173,7 @@ describe('<DetailsJeune>', () => {
         it('affiche une pop-in pour ajouter un identifiant', async () => {
           expect(
             screen.getByLabelText(
-              'Identifiant Pôle emploi (10 caractères maximum)'
+              'Identifiant France Travail (10 caractères maximum)'
             )
           ).toBeInTheDocument()
           expect(
@@ -196,7 +187,7 @@ describe('<DetailsJeune>', () => {
           // Given
           await userEvent.type(
             screen.getByLabelText(
-              'Identifiant Pôle emploi (10 caractères maximum)'
+              'Identifiant France Travail (10 caractères maximum)'
             ),
             '12345'
           )
@@ -221,7 +212,7 @@ describe('<DetailsJeune>', () => {
       })
     })
 
-    describe('pour un jeune Pôle emploi a déjà un identifiant partenaire', () => {
+    describe('pour un jeune France Travail a déjà un identifiant partenaire', () => {
       beforeEach(() => {
         const jeune = unDetailJeune({
           idPartenaire: '12345',
@@ -233,7 +224,6 @@ describe('<DetailsJeune>', () => {
             conseiller={unConseiller({
               structure: StructureConseiller.POLE_EMPLOI,
             })}
-            onDossierMiloClick={() => {}}
           />,
           {
             customAlerte: { alerteSetter },
@@ -243,12 +233,12 @@ describe('<DetailsJeune>', () => {
 
       it('permet la modification de l’identifiant', () => {
         expect(
-          screen.getByText('Identifiant Pôle emploi :')
+          screen.getByText('Identifiant France Travail :')
         ).toBeInTheDocument()
         expect(screen.getByText('12345')).toBeInTheDocument()
         expect(
           screen.getByRole('button', {
-            name: 'Modifier l’identifiant Pôle emploi',
+            name: 'Modifier l’identifiant France Travail',
           })
         ).toBeInTheDocument()
       })
@@ -257,7 +247,7 @@ describe('<DetailsJeune>', () => {
         beforeEach(async () => {
           await userEvent.click(
             screen.getByRole('button', {
-              name: 'Modifier l’identifiant Pôle emploi',
+              name: 'Modifier l’identifiant France Travail',
             })
           )
         })
@@ -265,7 +255,7 @@ describe('<DetailsJeune>', () => {
         it('affiche une pop-in pour modifier l’identifiant', async () => {
           expect(
             screen.getByLabelText(
-              'Identifiant Pôle emploi (10 caractères maximum)'
+              'Identifiant France Travail (10 caractères maximum)'
             )
           ).toBeInTheDocument()
           expect(
@@ -279,7 +269,7 @@ describe('<DetailsJeune>', () => {
           // Given
           await userEvent.type(
             screen.getByLabelText(
-              'Identifiant Pôle emploi (10 caractères maximum)'
+              'Identifiant France Travail (10 caractères maximum)'
             ),
             '6789'
           )
@@ -315,15 +305,14 @@ describe('<DetailsJeune>', () => {
         <DetailsJeune
           jeune={jeune}
           conseiller={unConseiller({ structure: StructureConseiller.MILO })}
-          onDossierMiloClick={() => {}}
         />
       )
 
       // Then
-      expect(() => screen.getByText('Identifiant Pôle emploi :')).toThrow()
+      expect(() => screen.getByText('Identifiant France Travail :')).toThrow()
       expect(() =>
         screen.getByRole('button', {
-          name: 'Ajouter l’identifiant Pôle emploi',
+          name: 'Ajouter l’identifiant France Travail',
         })
       ).toThrow()
     })

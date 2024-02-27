@@ -10,8 +10,8 @@ import isEmailValid from 'utils/isEmailValid'
 
 type FormulaireJeunePoleEmploiProps = {
   creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => void
-  creationError: string
   creationEnCours: boolean
+  creationError?: string
 }
 
 function FormulaireJeunePoleEmploi({
@@ -28,7 +28,7 @@ function FormulaireJeunePoleEmploi({
   const [email, setEmail] = useState<ValueWithError>({
     value: '',
   })
-  const [error, setError] = useState<string>(creationError)
+  const [error, setError] = useState<string | undefined>(creationError)
 
   useEffect(() => {
     setError(creationError)

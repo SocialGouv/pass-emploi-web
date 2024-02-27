@@ -207,19 +207,6 @@ export async function deleteAction(idAction: string): Promise<void> {
   await apiDelete(`/actions/${idAction}`, session!.accessToken)
 }
 
-export async function ajouterCommentaire(
-  idAction: string,
-  commentaire: string
-): Promise<Commentaire> {
-  const session = await getSession()
-  const commentaireAjoute = await apiPost<CommentaireJson>(
-    `/actions/${idAction}/commentaires`,
-    { commentaire },
-    session!.accessToken
-  )
-  return commentaireAjoute.content
-}
-
 export async function recupererLesCommentaires(
   idAction: string,
   accessToken: string

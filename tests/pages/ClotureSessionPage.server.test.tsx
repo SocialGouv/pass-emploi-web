@@ -154,7 +154,7 @@ describe('Cloture Session server side', () => {
     })
   })
 
-  describe('quand l’utilisateur est Pôle Emploi', () => {
+  describe('quand l’utilisateur est France Travail', () => {
     it('renvoie sur la liste des bénéficiaires', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

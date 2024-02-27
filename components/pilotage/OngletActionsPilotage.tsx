@@ -125,8 +125,8 @@ export default function OngletActionsPilotage({
       {metadonneesInitiales.nombreTotal === 0 && (
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
           <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='w-[360px] h-[200px]'
           />
           <p className='mt-4 text-base-medium w-2/3 text-center'>

@@ -6,12 +6,11 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
-import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
+import { peutAccederAuxSessions } from 'interfaces/conseiller'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getDetailsSession } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
-import { ApiError } from 'utils/httpClient'
 
 type ClotureSessionParams = {
   idSession: string
@@ -47,15 +46,7 @@ export default async function ClotureSession({
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
 
-  let conseiller: Conseiller | undefined
-  try {
-    conseiller = await getConseillerServerSide(user, accessToken)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 401)
-      redirect('/api/auth/federated-logout')
-
-    throw e
-  }
+  const conseiller = await getConseillerServerSide(user, accessToken)
   if (!conseiller) notFound()
 
   if (!peutAccederAuxSessions(conseiller)) redirect('/mes-jeunes')

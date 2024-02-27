@@ -8,7 +8,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
-import { StructureConseiller } from 'interfaces/conseiller'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   getAction,
   getSituationsNonProfessionnelles,
@@ -39,7 +39,7 @@ export default async function ModificationAction({
   params: ModificationParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (user.structure === StructureConseiller.POLE_EMPLOI) notFound()
+  if (estUserPoleEmploi(user)) notFound()
 
   const [actionContent, situationsNonProfessionnelles, actionsPredefinies] =
     await Promise.all([
@@ -58,7 +58,8 @@ export default async function ModificationAction({
   )
   if (!commentaires) notFound()
 
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
+  // FIXME : dirty fix, problème de rafraichissement de l’action
+  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
   return (
     <>
       <PageHeaderPortal header='Modifier l’action' />

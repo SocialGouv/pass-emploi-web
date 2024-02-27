@@ -42,7 +42,7 @@ describe('ReferentielApiService', () => {
       expect(actual).toStrictEqual(uneListeDAgencesMILO())
     })
 
-    it('renvoie le référentiel des agences Pôle emploi', async () => {
+    it('renvoie le référentiel des agences France Travail', async () => {
       // Given
       structure = StructureConseiller.POLE_EMPLOI
       // WHEN
@@ -74,7 +74,7 @@ describe('ReferentielApiService', () => {
       expect(actual).toStrictEqual(uneListeDAgencesMILO())
     })
 
-    it('renvoie le référentiel des agences Pôle emploi', async () => {
+    it('renvoie le référentiel des agences France Travail', async () => {
       // Given
       structure = StructureConseiller.POLE_EMPLOI
       // WHEN

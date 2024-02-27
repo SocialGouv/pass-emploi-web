@@ -29,7 +29,7 @@ describe('Détails Session Page Server', () => {
     ;(getDetailsSession as jest.Mock).mockResolvedValue(unDetailSession())
   })
 
-  describe('Quand le conseiller est Pôle emploi', () => {
+  describe('Quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

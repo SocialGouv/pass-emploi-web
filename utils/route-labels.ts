@@ -1,27 +1,24 @@
 const labelFicheBeneficiaire = 'Fiche bénéficiaire'
-const labelSession = 'Détail session'
 const labelFavoris = 'Favoris'
-const labelHistorique = 'Historique'
-const labelIndicateurs = 'Indicateurs'
+const labelInformations = 'Informations'
 const labelRdvPasses = 'Rendez-vous passés'
 const labelAction = 'Détail action'
 
 const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   // Agenda
-  [/\/mes-jeunes\/edition-rdv\?idRdv=.*$/, 'Fiche événement'],
+  [/\/mes-jeunes\/edition-rdv$/, 'Fiche événement'],
   [/\/agenda$/, 'Agenda'],
-  [/\/agenda\/sessions\/[\w-]+(.*?)/, labelSession],
+  [/\/agenda\/sessions\/[\w-]+$/, 'Détail session'],
 
   // Listes de diffusion
   [/\/mes-jeunes\/listes-de-diffusion$/, 'Mes listes'],
 
   // Portefeuille
   [/\/mes-jeunes$/, 'Portefeuille'],
-  [/\/mes-jeunes\/(milo|pole-emploi)\/creation-jeune$/, 'Création'],
-  [/\/mes-jeunes\/[\w-]+(?:\?onglet=\w+)?$/, labelFicheBeneficiaire],
+  [/\/mes-jeunes\/creation-jeune\/(milo|pole-emploi)$/, 'Création'],
+  [/\/mes-jeunes\/[\w-]+$/, labelFicheBeneficiaire],
   [/\/mes-jeunes\/[\w-]+\/favoris$/, labelFavoris],
-  [/\/mes-jeunes\/[\w-]+\/historique$/, labelHistorique],
-  [/\/mes-jeunes\/[\w-]+\/indicateurs$/, labelIndicateurs],
+  [/\/mes-jeunes\/[\w-]+\/informations$/, labelInformations],
   [/\/mes-jeunes\/[\w-]+\/rendez-vous-passes$/, labelRdvPasses],
   [/\/mes-jeunes\/[\w-]+\/actions\/[\w-]+$/, labelAction],
 
@@ -29,8 +26,7 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
   [/\/etablissement$/, 'Bénéficiaires'],
   [/\/etablissement\/beneficiaires\/[\w-]+$/, labelFicheBeneficiaire],
   [/\/etablissement\/beneficiaires\/[\w-]+\/favoris$/, labelFavoris],
-  [/\/etablissement\/beneficiaires\/[\w-]+\/historique$/, labelHistorique],
-  [/\/etablissement\/beneficiaires\/[\w-]+\/indicateurs$/, labelIndicateurs],
+  [/\/etablissement\/beneficiaires\/[\w-]+\/informations$/, labelInformations],
   [
     /\/etablissement\/beneficiaires\/[\w-]+\/rendez-vous-passes$/,
     labelRdvPasses,

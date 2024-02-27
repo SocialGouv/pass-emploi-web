@@ -23,6 +23,7 @@ import AccountCircleFillIcon from 'assets/icons/informations/account_circle_fill
 import AccountCircleOutlineIcon from 'assets/icons/informations/account_circle_outline.svg'
 import ArrowCircleRightFillIcon from 'assets/icons/informations/arrow_circle_right_fill.svg'
 import ArrowCircleRightOutlineIcon from 'assets/icons/informations/arrow_circle_right_outline.svg'
+import BarChartIcon from 'assets/icons/informations/bar_chart.svg'
 import CancelIcon from 'assets/icons/informations/cancel.svg'
 import ChatFillIcon from 'assets/icons/informations/chat_fill.svg'
 import ChatOutlineIcon from 'assets/icons/informations/chat_outline.svg'
@@ -44,6 +45,7 @@ import LeaderboardOutlineIcon from 'assets/icons/informations/leaderboard_outlin
 import LocationOnIcon from 'assets/icons/informations/location_on.svg'
 import LockIcon from 'assets/icons/informations/lock.svg'
 import MailIcon from 'assets/icons/informations/mail.svg'
+import NotificationIcon from 'assets/icons/informations/notification.svg'
 import PageViewFillIcon from 'assets/icons/informations/page_view_fill.svg'
 import PageViewOutlineIcon from 'assets/icons/informations/page_view_outline.svg'
 import PeopleFillIcon from 'assets/icons/informations/people_fill.svg'
@@ -83,6 +85,7 @@ export enum IconName {
   ArrowForward = 'ArrowForward',
   ArrowUpward = 'ArrowUpward',
   AttachFile = 'AttachFile',
+  BarChart = 'BarChart',
   BookmarkFill = 'BookmarkFill',
   BookmarkOutline = 'BookmarkOutline',
   Cancel = 'Cancel',
@@ -122,6 +125,7 @@ export enum IconName {
   Mail = 'Mail',
   Menu = 'Menu',
   Note = 'Note',
+  Notification = 'Notification',
   NumberCircleOne = 'NumberCircleOne',
   NumberCircleTwo = 'NumberCircleTwo',
   NumberCircleThree = 'NumberCircleThree',
@@ -157,6 +161,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.ArrowForward]: ArrowForwardIcon,
   [IconName.ArrowUpward]: ArrowUpwardIcon,
   [IconName.BookmarkFill]: BookmarkFillIcon,
+  [IconName.BarChart]: BarChartIcon,
   [IconName.BookmarkOutline]: BookmarkOutlineIcon,
   [IconName.ChatFill]: ChatFillIcon,
   [IconName.ChatOutline]: ChatOutlineIcon,
@@ -217,6 +222,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Pending]: PendingIcon,
   [IconName.Remove]: RemoveIcon,
   [IconName.Note]: NoteIcon,
+  [IconName.Notification]: NotificationIcon,
   [IconName.VisibilityOn]: VisibilityOnIcon,
   [IconName.VisibilityOff]: VisibilityOffIcon,
 }

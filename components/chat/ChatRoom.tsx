@@ -101,24 +101,26 @@ export default function ChatRoom({
         <RechercheJeune onSearchFilterBy={filtrerConversations} />
       </div>
 
-      <button
-        className='flex items-center text-primary bg-blanc rounded-base p-4 mb-2 mx-4'
-        onClick={onAccesListesDiffusion}
-      >
-        <IconComponent
-          name={IconName.PeopleFill}
-          className='mr-2 h-6 w-6 fill-primary'
-          aria-hidden={true}
-          focusable={false}
-        />
-        <span className='grow text-left'>Voir mes listes de diffusion</span>
-        <IconComponent
-          name={IconName.ChevronRight}
-          className='mr-2 h-6 w-6 fill-[currentColor]'
-          aria-hidden={true}
-          focusable={false}
-        />
-      </button>
+      {chatsFiltres && (
+        <button
+          className='flex items-center text-primary bg-blanc rounded-base p-4 mb-2 mx-4'
+          onClick={onAccesListesDiffusion}
+        >
+          <IconComponent
+            name={IconName.PeopleFill}
+            className='mr-2 h-6 w-6 fill-primary'
+            aria-hidden={true}
+            focusable={false}
+          />
+          <span className='grow text-left'>Voir mes listes de diffusion</span>
+          <IconComponent
+            name={IconName.ChevronRight}
+            className='mr-2 h-6 w-6 fill-[currentColor]'
+            aria-hidden={true}
+            focusable={false}
+          />
+        </button>
+      )}
 
       <ListeConversations
         conversations={chatsFiltres}

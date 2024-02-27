@@ -1,11 +1,13 @@
-import { GetServerSidePropsContext } from 'next/types'
+import { render } from '@testing-library/react'
+import { notFound } from 'next/navigation'
 
+import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/page'
+import PilotagePage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { getServerSideProps } from 'pages/pilotage'
 import {
   getActionsAQualifierServerSide,
   getSituationsNonProfessionnelles,
@@ -13,60 +15,40 @@ import {
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
 import { getSessionsACloreServerSide } from 'services/sessions.service'
-import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
+import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
+jest.mock('utils/auth/auth', () => ({
+  getMandatorySessionServerSide: jest.fn(),
+}))
+jest.mock('app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage')
 jest.mock('services/actions.service')
-jest.mock('services/evenements.service')
-jest.mock('services/conseiller.service')
 jest.mock('services/sessions.service')
-jest.mock('services/referentiel.service')
+jest.mock('services/conseiller.service')
+jest.mock('services/evenements.service')
 
 describe('PilotagePage server side', () => {
-  it('requiert une session valide', async () => {
-    // Given
-    ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-      validSession: false,
-      redirect: { destination: 'whatever' },
-    })
-
-    // When
-    const actual = await getServerSideProps({} as GetServerSidePropsContext)
-
-    // Then
-    expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-    expect(actual).toEqual({ redirect: { destination: 'whatever' } })
-  })
-
-  describe('quand le conseiller est Pôle emploi', () => {
+  describe('quand le conseiller est France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          user: { structure: 'POLE_EMPLOI' },
-        },
+      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
+        user: { structure: 'POLE_EMPLOI' },
       })
 
       // When
-      const actual = await getServerSideProps({} as GetServerSidePropsContext)
+      const promise = Pilotage({})
 
       // Then
-      expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ notFound: true })
+      await expect(promise).rejects.toEqual(new Error('NEXT NOT_FOUND'))
+      expect(notFound).toHaveBeenCalledWith()
     })
   })
 
   describe('quand le conseiller est connecté', () => {
     beforeEach(async () => {
       // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        redirect: { destination: 'whatever' },
-        session: {
-          accessToken: 'accessToken',
-          user: { id: 'conseiller-id' },
-        },
+      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
+        accessToken: 'accessToken',
+        user: { id: 'conseiller-id' },
       })
       ;(getActionsAQualifierServerSide as jest.Mock).mockResolvedValue({
         actions: uneListeDActionsAQualifier(),
@@ -107,9 +89,7 @@ describe('PilotagePage server side', () => {
 
     it('prépare la page', async () => {
       // When
-      const actual = await getServerSideProps({
-        query: { onglet: 'actions' },
-      } as unknown as GetServerSidePropsContext)
+      render(await Pilotage({}))
 
       // Then
       expect(getActionsAQualifierServerSide).toHaveBeenCalledWith(
@@ -132,9 +112,8 @@ describe('PilotagePage server side', () => {
         'conseiller-id',
         'accessToken'
       )
-      expect(actual).toEqual({
-        props: {
-          pageTitle: 'Pilotage',
+      expect(PilotagePage).toHaveBeenCalledWith(
+        {
           actions: {
             donnees: uneListeDActionsAQualifier(),
             metadonnees: { nombreTotal: 5, nombrePages: 1 },
@@ -147,7 +126,8 @@ describe('PilotagePage server side', () => {
           sessions: uneListeDeSessionsAClore(),
           onglet: 'ACTIONS',
         },
-      })
+        {}
+      )
     })
 
     it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
@@ -155,23 +135,27 @@ describe('PilotagePage server side', () => {
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(unConseiller())
 
       // When
-      const actual = await getServerSideProps({
-        query: { onglet: 'animationsCollectives' },
-      } as unknown as GetServerSidePropsContext)
+      render(
+        await Pilotage({
+          searchParams: { onglet: 'animationsCollectives' },
+        })
+      )
 
       // Then
       expect(getAnimationsCollectivesACloreServerSide).not.toHaveBeenCalled()
-      expect(actual).toEqual({
-        props: {
-          pageTitle: 'Pilotage',
+      expect(PilotagePage).toHaveBeenCalledWith(
+        {
+          onglet: 'ANIMATIONS_COLLECTIVES',
           actions: {
             donnees: uneListeDActionsAQualifier(),
             metadonnees: { nombreTotal: 5, nombrePages: 1 },
           },
           categoriesActions: desCategories(),
-          onglet: 'ANIMATIONS_COLLECTIVES',
+          animationsCollectives: undefined,
+          sessions: undefined,
         },
-      })
+        {}
+      )
     })
   })
 })

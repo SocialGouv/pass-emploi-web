@@ -24,7 +24,7 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
           titre='Votre bénéficiaire n’a mis aucune offre en favori pour l’instant.'
           sousTitre='Partagez des offres d’emploi, d’alternance, de service civique ou d’immersion à votre bénéficiaire depuis la partie “Offres”.'
           lien={{
-            href: '/recherche-offres',
+            href: '/offres',
             label: 'Rechercher une offre',
             iconName: IconName.Search,
           }}

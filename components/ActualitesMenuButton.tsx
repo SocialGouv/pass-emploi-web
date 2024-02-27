@@ -34,10 +34,10 @@ function ActualitesMenuButton({
       onClick={onClick}
     >
       <IconComponent
-        focusable='false'
-        aria-hidden='true'
+        focusable={false}
+        aria-hidden={true}
         className='inline mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 fill-blanc'
-        name={IconName.Info}
+        name={IconName.Notification}
       />
       <span className='text-md text-left sr-only layout_l:not-sr-only break-words text-blanc'>
         Actualités

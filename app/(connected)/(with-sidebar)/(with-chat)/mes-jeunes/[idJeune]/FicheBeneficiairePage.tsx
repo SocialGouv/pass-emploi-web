@@ -8,7 +8,6 @@ import React, { useEffect, useState } from 'react'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
 import { ResumeFavorisBeneficiaire } from 'components/jeune/ResumeFavorisBeneficiaire'
-import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { TabFavoris } from 'components/jeune/TabFavoris'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -24,7 +23,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { estMilo, estPassEmploi, estPoleEmploi } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
@@ -161,10 +160,6 @@ function FicheBeneficiairePage({
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
     : 0
-
-  function trackDossierMiloClick() {
-    setTrackingLabel(pageTracking + ' - Dossier i-Milo')
-  }
 
   async function switchTab(tab: Onglet) {
     setCurrentTab(tab)
@@ -308,19 +303,43 @@ function FicheBeneficiairePage({
         />
       )}
 
-      {!jeune.isActivated && (
-        <FailureAlert label='Ce bénéficiaire ne s’est pas encore connecté à l’application' />
-      )}
+      {!jeune.isActivated &&
+        (estPoleEmploi(conseiller) || estPassEmploi(conseiller)) && (
+          <FailureAlert
+            label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
+            sub={
+              <p className='pl-8'>
+                <strong>
+                  Il ne pourra pas échanger de messages avec vous.
+                </strong>
+              </p>
+            }
+          />
+        )}
 
       {!jeune.isActivated && estMilo(conseiller) && (
-        <div className='mb-8'>
-          <InformationMessage label='Le lien d’activation est valable 12h.'>
-            <p>
-              Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
-              l’option : mot de passe oublié.
-            </p>
-          </InformationMessage>
-        </div>
+        <FailureAlert
+          label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
+          sub={
+            <ul className='list-disc pl-[48px]'>
+              <li>
+                <strong>
+                  Il ne pourra pas échanger de messages avec vous.
+                </strong>
+              </li>
+              <li>
+                <strong>
+                  Le lien d’activation envoyé par i-milo à l’adresse e-mail du
+                  jeune n’est valable que 12h.
+                </strong>
+              </li>
+              <li>
+                Si le délai est dépassé, veuillez orienter ce bénéficiaire vers
+                l’option : mot de passe oublié.
+              </li>
+            </ul>
+          }
+        />
       )}
 
       {jeune.isReaffectationTemporaire && (
@@ -351,19 +370,12 @@ function FicheBeneficiairePage({
         <DetailsJeune
           jeune={jeune}
           conseiller={conseiller}
-          onDossierMiloClick={trackDossierMiloClick}
+          indicateursSemaine={indicateursSemaine}
         />
       </div>
 
       {!estPoleEmploi(conseiller) && (
         <>
-          <ResumeIndicateursJeune
-            idJeune={jeune.id}
-            debutDeLaSemaine={debutSemaine}
-            finDeLaSemaine={finSemaine}
-            indicateursSemaine={indicateursSemaine}
-          />
-
           <div className='flex justify-between mt-6 mb-4'>
             <div className='flex'>
               {!lectureSeule && (
@@ -373,8 +385,8 @@ function FicheBeneficiairePage({
                   >
                     <IconComponent
                       name={IconName.Add}
-                      focusable='false'
-                      aria-hidden='true'
+                      focusable={false}
+                      aria-hidden={true}
                       className='mr-2 w-4 h-4'
                     />
                     Créer un rendez-vous
@@ -386,8 +398,8 @@ function FicheBeneficiairePage({
                   >
                     <IconComponent
                       name={IconName.Add}
-                      focusable='false'
-                      aria-hidden='true'
+                      focusable={false}
+                      aria-hidden={true}
                       className='mr-2 w-4 h-4'
                     />
                     Créer une action
@@ -402,8 +414,8 @@ function FicheBeneficiairePage({
               >
                 <IconComponent
                   name={IconName.Add}
-                  focusable='false'
-                  aria-hidden='true'
+                  focusable={false}
+                  aria-hidden={true}
                   className='mr-2 w-4 h-4'
                 />
                 Inscrire à une animation collective

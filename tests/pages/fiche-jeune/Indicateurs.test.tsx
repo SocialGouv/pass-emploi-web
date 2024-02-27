@@ -19,7 +19,7 @@ jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
 
 describe('Indicateurs dans la fiche jeune', () => {
-  describe("quand l'utilisateur n'est pas un conseiller Pole emploi", () => {
+  describe("quand l'utilisateur n'est pas un conseiller France Travail", () => {
     beforeEach(async () => {
       // Given
       const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
@@ -49,12 +49,11 @@ describe('Indicateurs dans la fiche jeune', () => {
     it('affiche les indicateurs du jeune', async () => {
       // Then
       const indicateurs = screen.getByRole('heading', {
-        name: 'Les indicateurs de la semaine',
+        name: 'Cette semaine',
       }).parentElement
       expect(
         within(indicateurs!).getByText('du 29/08/2022 au 04/09/2022')
       ).toBeInTheDocument()
-
       const indicateursActions = screen.getByRole('heading', {
         name: 'Les actions',
       }).parentElement
@@ -67,13 +66,6 @@ describe('Indicateurs dans la fiche jeune', () => {
       expect(
         getByTextContent('2En retard', indicateursActions!)
       ).toBeInTheDocument()
-
-      const indicateursRdv = screen.getByRole('heading', {
-        name: 'Les événements',
-      }).parentElement
-      expect(
-        getByTextContent('3Cette semaine', indicateursRdv!)
-      ).toBeInTheDocument()
     })
 
     it('affiche un lien vers tous les indicateurs du jeune', async () => {
@@ -82,7 +74,10 @@ describe('Indicateurs dans la fiche jeune', () => {
         screen.getByRole('link', {
           name: 'Voir plus d’indicateurs',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/indicateurs')
+      ).toHaveAttribute(
+        'href',
+        '/mes-jeunes/jeune-1/informations?onglet=indicateurs'
+      )
     })
   })
 })

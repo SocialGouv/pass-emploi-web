@@ -30,10 +30,10 @@ describe('<Sidebar/>', () => {
     ).toHaveAttribute('href', '/agenda')
     expect(
       within(navigation).getByRole('link', { name: 'Offres' })
-    ).toHaveAttribute('href', '/recherche-offres')
+    ).toHaveAttribute('href', '/offres')
     expect(within(navigation).getByLabelText(/Aide/)).toBeInTheDocument()
     expect(
-      within(navigation).getByRole('link', { name: 'Nils Tavernier' })
+      within(navigation).getByRole('link', { name: /Nils Tavernier/ })
     ).toHaveAttribute('href', '/profil')
     expect(
       within(navigation).getByRole('link', { name: 'Pilotage' })
@@ -64,7 +64,17 @@ describe('<Sidebar/>', () => {
     ).toHaveAttribute('href', '/reaffectation')
   })
 
-  it("n'affiche pas le lien de l’agenda lorsque le conseiller est Pole emploi", () => {
+  it('affiche un badge si le conseiller n’a pas d’adresse e-mail', async () => {
+    //WHEN
+    renderSidebar({ email: undefined })
+
+    //THEN
+    expect(
+      screen.getByText('Une information en attente de mise à jour')
+    ).toBeInTheDocument()
+  })
+
+  it("n'affiche pas le lien de l’agenda lorsque le conseiller est France Travail", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
@@ -72,7 +82,7 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Agenda')).toThrow()
   })
 
-  it("n'affiche pas le lien de rendez-vous lorsque le conseiller est Pole emploi", () => {
+  it("n'affiche pas le lien de rendez-vous lorsque le conseiller est France Travail", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
@@ -80,7 +90,7 @@ describe('<Sidebar/>', () => {
     expect(() => screen.getByText('Pilotage')).toThrow()
   })
 
-  it("n'affiche pas le lien de Mission Locale lorsque le conseiller est Pole emploi", () => {
+  it("n'affiche pas le lien de Mission Locale lorsque le conseiller est France Travail", () => {
     // WHEN
     renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 

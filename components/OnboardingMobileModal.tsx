@@ -38,17 +38,13 @@ export default function OnboardingMobileModal({
     )
   }
 
-  function tutorielRaccourci(): JSX.Element {
-    return <TutorielRaccourci />
-  }
-
   return (
     <Modal
       title='Bienvenue sur l’espace mobile du conseiller'
       onClose={onClose}
     >
       {etape === 1 && accueil()}
-      {etape === 2 && tutorielRaccourci()}
+      {etape === 2 && <TutorielRaccourci />}
       <div className='mt-8'>
         <Button onClick={onClose} className='w-full'>
           Terminer

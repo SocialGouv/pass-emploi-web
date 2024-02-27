@@ -6,7 +6,7 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { DetailOffreEmploi } from 'interfaces/offre'
+import { DetailOffreEmploi, TypeOffre } from 'interfaces/offre'
 import { toMonthday } from 'utils/date'
 
 type DetailOffreEmploiProps = {
@@ -45,12 +45,15 @@ export default function OffreEmploiDetail({
   const ulStyle = 'list-disc list-inside'
   const liStyle = 'mb-4 last:mb-0'
 
+  const typeOffre =
+    offre.type === TypeOffre.ALTERNANCE ? 'alternance' : 'emploi'
+
   return (
     <>
       <PageActionsPortal>
         <LienPartageOffre
           titreOffre={offre.titre}
-          href={`/offres/emploi/${offre.id}/partage`}
+          href={`/offres/${typeOffre}/${offre.id}/partage`}
           style={ButtonStyle.PRIMARY}
         />
       </PageActionsPortal>

@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -9,11 +9,7 @@ import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseJeune } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
-import {
-  ajouterCommentaire,
-  deleteAction,
-  modifierAction,
-} from 'services/actions.service'
+import { deleteAction, modifierAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
@@ -51,6 +47,7 @@ describe('ActionPage client side', () => {
           jeune={jeune}
           commentaires={commentaires}
           lectureSeule={false}
+          from='beneficiaire'
         />,
         {
           customAlerte: { alerteSetter },
@@ -105,55 +102,6 @@ describe('ActionPage client side', () => {
         expect(screen.getByText('Date de réalisation :')).toBeInTheDocument()
       })
     })
-
-    describe("A l'ajout de commentaire", () => {
-      describe("quand c'est un succès", () => {
-        it('affiche un message de succès', async () => {
-          // Given
-          ;(ajouterCommentaire as jest.Mock).mockResolvedValue(unCommentaire())
-          const textbox = screen.getByRole('textbox')
-          fireEvent.change(textbox, { target: { value: 'test' } })
-          const submitButton = screen.getByRole('button', {
-            name: 'Ajouter un commentaire',
-          })
-
-          // When
-          await userEvent.click(submitButton)
-
-          // Then
-          expect(ajouterCommentaire).toHaveBeenCalledWith('id-action-1', 'test')
-          expect(alerteSetter).toHaveBeenCalledWith('ajoutCommentaireAction')
-          expect(routerPush).toHaveBeenCalledWith(
-            '/mes-jeunes/jeune-1/actions/id-action-1'
-          )
-          expect(textbox).toHaveValue('')
-        })
-
-        it('ne permet pas de supprimer l’action', () => {
-          expect(
-            screen.queryByRole('button', { name: 'Supprimer l’action' })
-          ).not.toBeInTheDocument()
-        })
-      })
-
-      describe("quand c'est un échec", () => {
-        it('affiche une alerte', async () => {
-          // Given
-          ;(ajouterCommentaire as jest.Mock).mockRejectedValue({})
-          const textbox = screen.getByRole('textbox')
-          fireEvent.change(textbox, { target: { value: 'test' } })
-          const submitButton = screen.getByRole('button', {
-            name: 'Ajouter un commentaire',
-          })
-
-          // When
-          await userEvent.click(submitButton)
-
-          // Then
-          expect(screen.getByRole('alert')).toBeInTheDocument()
-        })
-      })
-    })
   })
 
   describe("quand le conseiller n'est pas le conseiller du jeune", () => {
@@ -169,6 +117,7 @@ describe('ActionPage client side', () => {
           jeune={jeune}
           commentaires={commentaires}
           lectureSeule={true}
+          from='beneficiaire'
         />,
         {
           customAlerte: { alerteSetter },
@@ -217,13 +166,17 @@ describe('ActionPage client side', () => {
 
       beforeEach(async () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
+      })
 
+      it("affiche un lien pour qualifier l'action", async () => {
+        //When
         renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
             commentaires={[]}
             lectureSeule={false}
+            from='beneficiaire'
           />,
           {
             customConseiller: {
@@ -232,15 +185,45 @@ describe('ActionPage client side', () => {
             customAlerte: { alerteSetter },
           }
         )
+
+        //Then
+        expect(
+          screen
+            .getByRole('link', { name: 'Qualifier l’action' })
+            .getAttribute('href')
+        ).toMatch(
+          '/mes-jeunes/jeune-1/actions/id-action-1/qualification?liste=beneficiaire'
+        )
       })
 
-      it("affiche un lien pour qualifier l'action", async () => {
-        expect(
-          screen.getByRole('link', { name: 'Qualifier l’action' })
-        ).toHaveAttribute(
-          'href',
-          '/mes-jeunes/jeune-1/actions/id-action-1/qualification'
-        )
+      describe('quand le conseiller vient de la page pilotage', () => {
+        it('affiche un lien pour qualifier l’action qui retourne vers pilotage', () => {
+          //When
+          renderWithContexts(
+            <DetailActionPage
+              action={actionAQualifier}
+              jeune={jeune}
+              commentaires={[]}
+              lectureSeule={false}
+              from='pilotage'
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.MILO,
+              },
+              customAlerte: { alerteSetter },
+            }
+          )
+
+          //Then
+          expect(
+            screen
+              .getByRole('link', { name: 'Qualifier l’action' })
+              .getAttribute('href')
+          ).toMatch(
+            '/mes-jeunes/jeune-1/actions/id-action-1/qualification?liste=pilotage'
+          )
+        })
       })
     })
 
@@ -261,6 +244,7 @@ describe('ActionPage client side', () => {
             jeune={jeune}
             commentaires={[]}
             lectureSeule={false}
+            from='beneficiaire'
           />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
@@ -304,6 +288,7 @@ describe('ActionPage client side', () => {
             jeune={jeune}
             commentaires={[]}
             lectureSeule={false}
+            from='beneficiaire'
           />,
           {
             customConseiller: {
@@ -352,6 +337,7 @@ describe('ActionPage client side', () => {
             jeune={jeune}
             commentaires={[]}
             lectureSeule={false}
+            from='beneficiaire'
           />,
           {
             customConseiller: {

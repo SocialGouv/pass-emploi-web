@@ -66,6 +66,8 @@ export default function Conversation({
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
+  const beneficiaireNomComplet = `${jeuneChat.prenom} ${jeuneChat.nom}`
+
   function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
   }
@@ -303,6 +305,7 @@ export default function Conversation({
                         <DisplayMessage
                           key={message.id}
                           message={message}
+                          beneficiaireNomComplet={beneficiaireNomComplet}
                           conseillerNomComplet={getConseillerNomComplet(
                             message
                           )}
@@ -361,8 +364,8 @@ export default function Conversation({
                 >
                   <IconComponent
                     name={IconName.Close}
-                    aria-hidden='true'
-                    focusable='false'
+                    aria-hidden={true}
+                    focusable={false}
                     className='w-6 h-6 ml-2 fill-primary stroke-primary'
                   />
                 </button>
@@ -391,8 +394,8 @@ export default function Conversation({
             >
               <IconComponent
                 name={IconName.Send}
-                aria-hidden='true'
-                focusable='false'
+                aria-hidden={true}
+                focusable={false}
                 className='m-auto w-6 h-6 fill-blanc'
               />
             </button>

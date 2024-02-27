@@ -15,7 +15,6 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { qualifier } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
 jest.mock('services/actions.service')
 
 describe('QualificationPage client side', () => {
@@ -51,6 +50,7 @@ describe('QualificationPage client side', () => {
         action={action}
         categories={categories}
         returnTo='/mes-jeunes/jeune-1/actions/id-action-1'
+        returnToListe='/pilotage'
       />,
       {
         customAlerte: { alerteSetter },
@@ -237,7 +237,7 @@ describe('QualificationPage client side', () => {
           // Then
           expect(
             screen.getByRole('link', { name: 'Revenir à ma liste d‘actions' })
-          ).toHaveAttribute('href', '/mes-jeunes/jeune-1?onglet=actions')
+          ).toHaveAttribute('href', '/pilotage')
         })
       })
     })

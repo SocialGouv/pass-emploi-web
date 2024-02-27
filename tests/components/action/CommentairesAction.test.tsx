@@ -1,19 +1,16 @@
 import { screen } from '@testing-library/dom'
 import { within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { unCommentaire } from 'fixtures/action'
 import { unConseiller } from 'fixtures/conseiller'
 import { Commentaire } from 'interfaces/action'
-import { ajouterCommentaire } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
 
 describe('<CommentairesAction/>', () => {
-  let onAjoutStub = jest.fn()
   const commentaireDuJeune = unCommentaire({
     id: 'id-commentaire-1',
     message: 'un message de jeune',
@@ -36,17 +33,6 @@ describe('<CommentairesAction/>', () => {
       type: 'conseiller',
     },
   })
-  const nouveauCommentaire = unCommentaire({
-    id: 'id-commentaire-3',
-    message: 'nouveau commentaire conseiller',
-    date: '2022-02-21T14:50:46.000Z',
-    createur: {
-      id: 'id-conseiller',
-      nom: 'Tavernier',
-      prenom: 'Nils',
-      type: 'conseiller',
-    },
-  })
 
   describe('quand il y a des commentaires', () => {
     describe('render', () => {
@@ -55,16 +41,10 @@ describe('<CommentairesAction/>', () => {
       beforeEach(() => {
         // Given
         commentaires = [commentaireDuConseiller, commentaireDuJeune]
-        ;(ajouterCommentaire as jest.Mock).mockResolvedValue(nouveauCommentaire)
 
         // When
         renderWithContexts(
-          <CommentairesAction
-            idAction={'id-action'}
-            commentairesInitiaux={commentaires}
-            onAjout={onAjoutStub}
-            lectureSeule={false}
-          />,
+          <CommentairesAction commentairesInitiaux={commentaires} />,
           {
             customConseiller: unConseiller({ id: 'id-conseiller' }),
           }
@@ -95,57 +75,6 @@ describe('<CommentairesAction/>', () => {
           within(
             screen.getByText('un message de conseiller').parentElement!
           ).getByText('vous')
-        ).toBeInTheDocument()
-      })
-
-      describe('quand on ajoute un commentaire', () => {
-        beforeEach(async () => {
-          // Given
-          const textbox = screen.getByRole('textbox')
-          await userEvent.type(textbox, 'test')
-
-          // When
-          const submitButton = screen.getByRole('button', {
-            name: 'Ajouter un commentaire',
-          })
-          await userEvent.click(submitButton)
-        })
-
-        it('le crée et met à jour la liste', () => {
-          // Then
-          expect(ajouterCommentaire).toHaveBeenCalledWith('id-action', 'test')
-          expect(
-            screen.getByText(commentaireDuJeune.message)
-          ).toBeInTheDocument()
-          expect(
-            screen.getByText(commentaireDuConseiller.message)
-          ).toBeInTheDocument()
-          expect(
-            screen.getByText(nouveauCommentaire.message)
-          ).toBeInTheDocument()
-        })
-
-        it("vide l'input", () => {
-          expect(screen.getByRole('textbox')).toHaveValue('')
-        })
-      })
-    })
-
-    describe("quand il n'y a pas de commentaire", () => {
-      it('affiche le message idoine', () => {
-        // When
-        renderWithContexts(
-          <CommentairesAction
-            idAction={'id-action'}
-            commentairesInitiaux={[]}
-            onAjout={onAjoutStub}
-            lectureSeule={false}
-          />
-        )
-
-        // Then
-        expect(
-          screen.getByText("Vous n'avez pas encore de commentaire")
         ).toBeInTheDocument()
       })
     })

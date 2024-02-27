@@ -167,14 +167,25 @@ export default function TableauActionsAQualifier({
         {actionSansCategorieSelectionnee && (
           <FailureAlert
             label='Qualification impossible.'
-            sub='Vous ne pouvez pas qualifier une ou plusieurs actions sans catégorie. Cliquez sur l’action pour pouvoir la modifier et lui ajouter une catégorie.'
+            sub={
+              <p>
+                Vous ne pouvez pas qualifier une ou plusieurs actions sans
+                catégorie. Cliquez sur l’action pour pouvoir la modifier et lui
+                ajouter une catégorie.
+              </p>
+            }
           />
         )}
 
         {plusieursBeneficiairesSelectionnes && (
           <FailureAlert
             label='Qualification impossible.'
-            sub='Vous ne pouvez pas qualifier les actions de plusieurs bénéficiaires. Sélectionnez seulement un ou une bénéficiaire.'
+            sub={
+              <p>
+                Vous ne pouvez pas qualifier les actions de plusieurs
+                bénéficiaires. Sélectionnez seulement un ou une bénéficiaire.
+              </p>
+            }
           />
         )}
       </div>
@@ -182,8 +193,8 @@ export default function TableauActionsAQualifier({
       {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
           <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='m-auto w-[200px] h-[200px]'
           />
           <p className='text-base-bold text-center'>Aucun résultat.</p>

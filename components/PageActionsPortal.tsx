@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
+import { PAGE_ACTIONS_ROOT_ID } from 'components/ids'
 import { ElementsOnly } from 'types/components'
-
-export const PAGE_ACTIONS_ROOT_ID = 'page-actions-root'
 
 type PageActionsPortalProps = {
   children: ElementsOnly

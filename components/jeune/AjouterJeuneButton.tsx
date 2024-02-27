@@ -9,10 +9,10 @@ interface AjouterJeuneButtonProps {
 export function getAjouterJeuneHref(structure: StructureConseiller): string {
   switch (structure) {
     case StructureConseiller.MILO:
-      return '/mes-jeunes/milo/creation-jeune'
+      return '/mes-jeunes/creation-jeune/milo'
     case StructureConseiller.POLE_EMPLOI:
     case StructureConseiller.POLE_EMPLOI_BRSA:
-      return '/mes-jeunes/pole-emploi/creation-jeune'
+      return '/mes-jeunes/creation-jeune/pole-emploi'
     default:
       return ''
   }
@@ -27,8 +27,8 @@ export function AjouterJeuneButton({ structure }: AjouterJeuneButtonProps) {
         <ButtonLink href={href}>
           <IconComponent
             name={IconName.Add}
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='mr-2 w-4 h-4'
           />
           Ajouter un bénéficiaire

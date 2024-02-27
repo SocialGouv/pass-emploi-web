@@ -62,7 +62,7 @@ describe('FavorisPage client side', () => {
       name: 'Ouvrir l’offre offre 4',
     })
 
-    expect(offre).toHaveAttribute('href', '/offres/emploi/idOffre4')
+    expect(offre).toHaveAttribute('href', '/offres/alternance/idOffre4')
   })
 
   it('affiche la liste de ses recherches', async () => {

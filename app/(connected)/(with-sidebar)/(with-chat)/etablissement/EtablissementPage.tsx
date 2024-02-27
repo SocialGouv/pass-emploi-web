@@ -181,8 +181,8 @@ function EtablissementPage() {
       {resultatsRecherche?.length === 0 && (
         <>
           <EmptyStateImage
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='m-auto w-[200px] h-[200px]'
           />
           <p className='text-base-bold text-center'>

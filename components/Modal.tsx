@@ -11,12 +11,11 @@ import { createPortal } from 'react-dom'
 
 import IconComponent, { IconName } from './ui/IconComponent'
 
+import { MODAL_ROOT_ID } from 'components/ids'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import styles from 'styles/components/Modal.module.css'
-
-export const MODAL_ROOT_ID = 'modal-root'
 
 interface ModalProps {
   title: string
@@ -110,7 +109,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
             <IconComponent
               name={IconName.Close}
               role='img'
-              focusable='false'
+              focusable={false}
               aria-label='Fermer la fenêtre'
               className='w-6 h-6 fill-content_color'
             />
@@ -130,8 +129,8 @@ const Modal = forwardRef((props: ModalProps, ref) => {
         {titleIllustration && (
           <IllustrationComponent
             name={titleIllustration}
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className='w-1/3 m-auto fill-primary mb-8'
           />
         )}
@@ -149,7 +148,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   const modalContainer = (
     <div
       role='dialog'
-      aria-modal='true'
+      aria-modal={true}
       aria-labelledby='modal-title'
       className={styles.modalOverlay}
     >

@@ -11,7 +11,7 @@ jest.mock('utils/auth/auth', () => ({
 jest.mock('app/(connected)/(with-sidebar)/(with-chat)/agenda/AgendaPage')
 
 describe('AgendaPage server side', () => {
-  describe('Pour un conseiller Pôle Emploi', () => {
+  describe('Pour un conseiller France Travail', () => {
     it('renvoie une 404', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

@@ -1,14 +1,15 @@
-import { UrlObject } from 'url'
-
 import Link from 'next/link'
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 
 import { ButtonStyle } from 'components/ui/Button/Button'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import styles from 'styles/components/Button.module.css'
 
 interface Props {
-  href: string | UrlObject
-  children: ReactNode
+  href: string
+  externalLink?: boolean
+  children?: ReactNode
+  label?: string
   style?: ButtonStyle
   className?: string
   onClick?: () => void
@@ -18,21 +19,50 @@ export default function ButtonLink({
   children,
   href,
   className,
+  externalLink,
+  label,
   style = ButtonStyle.PRIMARY,
   onClick = () => {},
 }: Props) {
   return (
-    <Link
-      href={href}
-      className={`${
-        className ? className : ''
-      } flex items-center justify-center text-s-bold ${
-        styles.button
-      } ${getColorStyleClassName(style)}`}
-      onClick={onClick}
-    >
-      {children}
-    </Link>
+    <>
+      {!externalLink && (
+        <Link
+          href={href}
+          className={`${
+            className ? className : ''
+          } flex items-center justify-center text-s-bold ${
+            styles.button
+          } ${getColorStyleClassName(style)}`}
+          onClick={onClick}
+        >
+          {children}
+        </Link>
+      )}
+
+      {externalLink && (
+        <a
+          href={href}
+          target='_blank'
+          rel='noreferrer noopener'
+          className={`${
+            className ? className : ''
+          } flex items-center justify-center text-s-bold ${
+            styles.button
+          } ${getColorStyleClassName(style)}`}
+          aria-label={`${label} (nouvelle fenêtre)`}
+          onClick={onClick}
+        >
+          {label}
+          <IconComponent
+            name={IconName.OpenInNew}
+            className='ml-1.5 w-4 h-4 fill-[currentColor]'
+            focusable={false}
+            aria-hidden={true}
+          />
+        </a>
+      )}
+    </>
   )
 }
 

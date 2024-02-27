@@ -245,7 +245,7 @@ describe('AlerteDisplayer', () => {
 
       // Then
       expect(
-        screen.getByText(/L’identifiant Pôle emploi a bien été mis à jour/)
+        screen.getByText(/L’identifiant France Travail a bien été mis à jour/)
       ).toBeInTheDocument()
     })
   })
@@ -289,7 +289,7 @@ describe('AlerteDisplayer', () => {
     })
   })
 
-  describe('quand on renseigne une agence Pole emploi', () => {
+  describe('quand on renseigne une agence France Travail', () => {
     it("affiche l'alerte de succès", () => {
       renderWithContexts(<AlerteDisplayer />, {
         customAlerte: {

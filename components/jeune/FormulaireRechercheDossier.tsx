@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { FormEvent, useEffect, useState } from 'react'
 
 import IndicationRechercheDossier from 'components/jeune/IndicationRechercheDossier'
@@ -8,45 +7,38 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 
 type FormulaireRechercheDossierProps = {
-  dossierId?: string
+  onRechercheDossier: (idDossier: string) => void
   errMessage?: string
 }
 
-function FormulaireRechercheDossier({
-  dossierId,
+export default function FormulaireRechercheDossier({
+  onRechercheDossier,
   errMessage,
 }: FormulaireRechercheDossierProps) {
-  const router = useRouter()
-  const [numeroDossier, setNumeroDossier] = useState<string>(dossierId || '')
-  const [messageErreur, setMessageErreur] = useState<string>(errMessage || '')
+  const [idDossier, setIdDossier] = useState<string | undefined>()
+  const [messageErreur, setMessageErreur] = useState<string | undefined>()
 
-  useEffect(() => {
-    setMessageErreur(errMessage || '')
-  }, [errMessage])
+  function handleSearchSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
 
-  const validate = () => {
-    if (numeroDossier === '') {
+    if (!idDossier) {
       setMessageErreur(
         'Le champ "Numéro de dossier" est vide. Renseigner un numéro. Exemple : 123456'
       )
-      return false
+      return
     }
-    return true
+
+    onRechercheDossier(idDossier)
   }
 
-  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const isValid = validate()
-    if (isValid) {
-      router.push(`/mes-jeunes/milo/creation-jeune?dossierId=${numeroDossier}`)
-    }
+  function handleSearchInputChanges(value: string) {
+    setMessageErreur(undefined)
+    setIdDossier(value)
   }
 
-  const handleSearchInputChanges = (value: string) => {
-    setNumeroDossier(value)
-    errMessage = ''
-    setMessageErreur('')
-  }
+  useEffect(() => {
+    setMessageErreur(errMessage)
+  }, [errMessage])
 
   return (
     <>
@@ -57,7 +49,7 @@ function FormulaireRechercheDossier({
 
       <IndicationRechercheDossier />
 
-      <form method='POST' onSubmit={handleSearchSubmit}>
+      <form onSubmit={handleSearchSubmit}>
         <Label htmlFor='recherche-numero'>Numéro de dossier</Label>
         <div className='w-8/12'></div>
 
@@ -70,7 +62,6 @@ function FormulaireRechercheDossier({
         <Input
           type='text'
           id='recherche-numero'
-          defaultValue={numeroDossier}
           onChange={handleSearchInputChanges}
           invalid={Boolean(messageErreur)}
           aria-describedby='recherche-numero--error'
@@ -81,5 +72,3 @@ function FormulaireRechercheDossier({
     </>
   )
 }
-
-export default FormulaireRechercheDossier

@@ -78,12 +78,12 @@ export default function ContenuCGUConseillerCEJ() {
         mire de connexion i-Milo.
       </p>
       <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        B- Conseiller Pôle Emploi
+        B- Conseiller France Travail
       </h4>
       <p className='mb-4'>
-        L’authentification se fait via les identifiants métier Pôle emploi
+        L’authentification se fait via les identifiants métier France Travail
         (système « PEAMA ») : le DGASI et un mot de passe. Par ailleurs ces
-        Conseillers pourront ajouter le numéro Pôle emploi des jeunes suivis.
+        Conseillers pourront ajouter le numéro France Travail des jeunes suivis.
       </p>
 
       <h3 className='text-base-bold text-content_color mt-2 mb-2'>
@@ -94,7 +94,9 @@ export default function ContenuCGUConseillerCEJ() {
         <li>
           soit via l’application CEJ pour les « Conseillers Mission Locale » ;
         </li>
-        <li>soit via l’outil mis à disposition par « Pôle Emploi » sur MAP.</li>
+        <li>
+          soit via l’outil mis à disposition par « France Travail » sur MAP.
+        </li>
       </ul>
       <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
         A – Création et visualisation des actions
@@ -201,8 +203,8 @@ export default function ContenuCGUConseillerCEJ() {
         Les Usagers peuvent supprimer leur compte sur l’application à tout
         moment en cliquant sur le bouton « Supprimer ». Il perdra toutes les
         informations liées au compte. <br />
-        Néanmoins, s’il était suivi par un agent Pôle Emploi, ses actions et ses
-        rendez-vous seront conservées dans l’outil Pôle Emploi.
+        Néanmoins, s’il était suivi par un agent France Travail, ses actions et
+        ses rendez-vous seront conservées dans l’outil France Travail.
       </p>
       <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
         B – Suppression par le Conseiller

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { ReactNode } from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
@@ -54,7 +54,7 @@ export default function OffreCard({
         <div className='absolute top-6 right-6'>
           <LienPartageOffre
             titreOffre={titreLien}
-            href={`/offres/${offrePath}/partage`}
+            href={`${hrefDetail}/partage`}
             style={ButtonStyle.SECONDARY}
           />
         </div>

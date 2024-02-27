@@ -23,23 +23,23 @@
     "@elastic/apm-rum-react": "2.0.2",
     "@next/bundle-analyzer": "14.1.0",
     "crypto-js": "4.2.0",
-    "dotenv": "16.4.1",
+    "dotenv": "16.4.4",
     "elastic-apm-node": "4.4.1",
     "firebase": "10.8.0",
-    "html-react-parser": "5.1.2",
+    "html-react-parser": "5.1.7",
     "jsonwebtoken": "9.0.2",
     "lodash.isequal": "4.5.0",
     "luxon": "3.4.4",
     "matomo-tracker": "2.2.4",
     "next": "14.1.0",
-    "next-auth": "4.24.5",
+    "next-auth": "4.24.6",
     "next-logger": "3.0.2",
     "next-themes": "0.2.1",
     "nextjs-toploader": "1.6.6",
-    "pino": "8.18.0",
+    "pino": "8.19.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-router-dom": "6.22.0"
+    "react-router-dom": "6.22.1"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^6.5.16",
@@ -61,7 +61,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/lodash.isequal": "^4.5.8",
     "@types/luxon": "^3.4.2",
-    "@types/react": "^18.2.55",
+    "@types/react": "^18.2.56",
     "autoprefixer": "^10.4.17",
     "css-loader": "^6.10.0",
     "eslint": "^8.56.0",
@@ -86,7 +86,8 @@
     "fast-glob/glob-parent": "5.1.2",
     "meow/trim-newlines": "3.0.1",
     "postcss": "^8.4.31",
-    "remark-parse/trim": "0.0.3"
+    "remark-parse/trim": "0.0.3",
+    "undici": "5.28.3"
   },
   "browser": {
     "elastic-apm-node": false

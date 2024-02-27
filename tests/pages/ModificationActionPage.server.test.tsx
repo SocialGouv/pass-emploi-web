@@ -71,7 +71,9 @@ describe('ModificationActionPage server side', () => {
           aDesCommentaires: false,
           idJeune: jeune.id,
           situationsNonProfessionnelles: categories,
-          returnTo: '/mes-jeunes/jeune-1/actions/id-action-1',
+          returnTo: expect.stringMatching(
+            '/mes-jeunes/jeune-1/actions/id-action-1'
+          ),
         },
         {}
       )
@@ -105,7 +107,7 @@ describe('ModificationActionPage server side', () => {
     })
   })
 
-  describe('pour un conseiller Pôle emploi', () => {
+  describe('pour un conseiller France Travail', () => {
     it('la page n’existe pas', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({

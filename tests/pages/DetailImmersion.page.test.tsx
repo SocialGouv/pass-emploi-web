@@ -1,150 +1,78 @@
 import { act, screen, within } from '@testing-library/react'
-import { GetServerSidePropsContext } from 'next/types'
 import React from 'react'
 
+import OffrePage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/[idOffre]/OffrePage'
 import { unDetailImmersion } from 'fixtures/offre'
 import { DetailImmersion } from 'interfaces/offre'
-import DetailOffre, {
-  getServerSideProps,
-} from 'pages/offres/[offre_type]/[offre_id]'
-import { getImmersionServerSide } from 'services/immersions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-import withMandatorySessionOrRedirect from 'utils/auth/withMandatorySessionOrRedirect'
 
-jest.mock('utils/auth/withMandatorySessionOrRedirect')
-jest.mock('services/immersions.service')
 jest.mock('components/PageActionsPortal')
 
-describe('Page Détail Offre Emploi', () => {
-  describe('client side', () => {
-    let offre: DetailImmersion
+describe('OffrePage client side - Immersion', () => {
+  let offre: DetailImmersion
 
-    beforeEach(async () => {
-      // Given
-      offre = unDetailImmersion()
+  beforeEach(async () => {
+    // Given
+    offre = unDetailImmersion()
 
-      // When
-      await act(() => {
-        renderWithContexts(
-          <DetailOffre offre={offre} pageTitle={'Détail de l’offre'} />
-        )
-      })
-    })
-
-    it("permet de partager l'offre", () => {
-      // Then
-      expect(
-        screen.getByRole('link', { name: `Partager offre ${offre.titre}` })
-      ).toHaveAttribute('href', `/offres/immersion/${offre.id}/partage`)
-    })
-
-    it('affiche le titre de l’offre', () => {
-      // Then
-      expect(
-        screen.getByRole('heading', {
-          level: 2,
-          name: offre.titre,
-        })
-      ).toBeInTheDocument()
-    })
-
-    it("affiche les informations principales de l'offre", () => {
-      const section = screen.getByRole('region', {
-        name: "Informations de l'offre",
-      })
-      expect(
-        within(section).getByRole('heading', { level: 3 })
-      ).toHaveAccessibleName("Informations de l'offre")
-
-      expect(getByDescriptionTerm('Établissement', section)).toHaveTextContent(
-        offre.nomEtablissement
-      )
-      expect(
-        getByDescriptionTerm('Secteur d’activité', section)
-      ).toHaveTextContent(offre.secteurActivite)
-      expect(getByDescriptionTerm('Ville', section)).toHaveTextContent(
-        offre.ville
-      )
-      expect(
-        within(section).getByText(/Prévenez votre conseiller/)
-      ).toBeInTheDocument()
-    })
-
-    it("affiche le contact pour l'offre", () => {
-      const section = screen.getByRole('region', {
-        name: 'Informations du Contact',
-      })
-      expect(
-        within(section).getByRole('heading', { level: 3 })
-      ).toHaveAccessibleName('Informations du Contact')
-
-      const { contact } = offre
-
-      expect(getByDescriptionTerm('Adresse', section)).toHaveTextContent(
-        contact.adresse!
-      )
+    // When
+    await act(async () => {
+      renderWithContexts(<OffrePage offre={offre} />)
     })
   })
 
-  describe('server side', () => {
-    const detailImmersion = unDetailImmersion()
-    beforeEach(() => {
-      ;(getImmersionServerSide as jest.Mock).mockResolvedValue(detailImmersion)
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: true,
-        session: {
-          accessToken: 'accessToken',
-        },
+  it("permet de partager l'offre", () => {
+    // Then
+    expect(
+      screen.getByRole('link', { name: `Partager offre ${offre.titre}` })
+    ).toHaveAttribute('href', `/offres/immersion/${offre.id}/partage`)
+  })
+
+  it('affiche le titre de l’offre', () => {
+    // Then
+    expect(
+      screen.getByRole('heading', {
+        level: 2,
+        name: offre.titre,
       })
+    ).toBeInTheDocument()
+  })
+
+  it("affiche les informations principales de l'offre", () => {
+    const section = screen.getByRole('region', {
+      name: "Informations de l'offre",
     })
+    expect(
+      within(section).getByRole('heading', { level: 3 })
+    ).toHaveAccessibleName("Informations de l'offre")
 
-    it('requiert la connexion', async () => {
-      // Given
-      ;(withMandatorySessionOrRedirect as jest.Mock).mockResolvedValue({
-        validSession: false,
-        redirect: { destination: 'whatever' },
-      })
+    expect(getByDescriptionTerm('Établissement', section)).toHaveTextContent(
+      offre.nomEtablissement
+    )
+    expect(
+      getByDescriptionTerm('Secteur d’activité', section)
+    ).toHaveTextContent(offre.secteurActivite)
+    expect(getByDescriptionTerm('Ville', section)).toHaveTextContent(
+      offre.ville
+    )
+    expect(
+      within(section).getByText(/Prévenez votre conseiller/)
+    ).toBeInTheDocument()
+  })
 
-      // When
-      const actual = await getServerSideProps({} as GetServerSidePropsContext)
-
-      // Then
-      expect(withMandatorySessionOrRedirect).toHaveBeenCalled()
-      expect(actual).toEqual({ redirect: { destination: 'whatever' } })
+  it("affiche le contact pour l'offre", () => {
+    const section = screen.getByRole('region', {
+      name: 'Informations du Contact',
     })
+    expect(
+      within(section).getByRole('heading', { level: 3 })
+    ).toHaveAccessibleName('Informations du Contact')
 
-    it('charge la page avec les détails de l’offre', async () => {
-      // When
-      const actual = await getServerSideProps({
-        query: { offre_type: 'immersion', offre_id: 'id-offre' },
-      } as unknown as GetServerSidePropsContext)
+    const { contact } = offre
 
-      // Then
-      expect(getImmersionServerSide).toHaveBeenCalledWith(
-        'id-offre',
-        'accessToken'
-      )
-      expect(actual).toEqual({
-        props: {
-          offre: detailImmersion,
-          pageTitle: `Détail de l’offre n° ${detailImmersion.id} - Recherche d\'offres`,
-          pageHeader: 'Offre d’immersion',
-        },
-      })
-    })
-
-    it("renvoie une 404 si l'offre n'existe pas", async () => {
-      // Given
-      ;(getImmersionServerSide as jest.Mock).mockResolvedValue(undefined)
-
-      // When
-      const actual = await getServerSideProps({
-        query: { offre_type: 'immersion', offre_id: 'offre-id' },
-      } as unknown as GetServerSidePropsContext)
-
-      // Then
-      expect(actual).toEqual({ notFound: true })
-    })
+    expect(getByDescriptionTerm('Adresse', section)).toHaveTextContent(
+      contact.adresse!
+    )
   })
 })

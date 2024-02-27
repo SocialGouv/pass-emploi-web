@@ -106,10 +106,7 @@ const ALERTES: DictAlertes = {
       'Votre message multi-destinataires a été envoyé en tant que message individuel à chacun des bénéficiaires',
   },
   modificationIdentifiantPartenaire: {
-    title: 'L’identifiant Pôle emploi a bien été mis à jour',
-  },
-  ajoutCommentaireAction: {
-    title: 'Votre jeune a été alerté que vous avez écrit un commentaire',
+    title: 'L’identifiant France Travail a bien été mis à jour',
   },
   qualificationSNP: {
     title: 'Action qualifiée',

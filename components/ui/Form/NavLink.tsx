@@ -7,6 +7,7 @@ type NavLinkProps = {
   label: string | null
   iconName: IconName
   showLabelOnSmallScreen: boolean
+  badgeLabel?: string
   href?: string
   isActive?: boolean
   className?: string
@@ -21,10 +22,11 @@ export default function NavLink({
   iconName,
   className,
   isExternal = false,
+  badgeLabel,
   showLabelOnSmallScreen = false,
   onClick,
 }: NavLinkProps) {
-  const linkStyle = `flex w-full p-2 mb-6 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start transition-all border-2  ${
+  const linkStyle = `flex w-full p-2 mb-2 items-center layout_base:justify-center rounded-base layout_s:justify-start layout_l:justify-start transition-all border-2  ${
     isActive
       ? 'bg-primary_lighten border-blanc text-base-bold'
       : 'border-primary hover:border-blanc text-base-medium'
@@ -35,42 +37,46 @@ export default function NavLink({
       {showLabelOnSmallScreen && (
         <>
           <IconComponent
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className={`w-6 h-6 mr-2 ${
               isActive ? 'fill-primary' : 'fill-blanc'
             }`}
             name={iconName}
           />
-
-          <span
-            className={`text-left break-words ${className ?? ''} ${
-              isActive ? 'text-primary' : 'text-blanc'
-            }`}
-          >
-            {label}
-          </span>
+          <div className='relative'>
+            <span
+              className={`text-left break-words ${className ?? ''} ${
+                isActive ? 'text-primary' : 'text-blanc'
+              }`}
+            >
+              {label}
+            </span>
+            {badgeLabel && <BadgeNavLink label={badgeLabel} />}
+          </div>
         </>
       )}
 
       {!showLabelOnSmallScreen && (
         <>
           <IconComponent
-            focusable='false'
-            aria-hidden='true'
+            focusable={false}
+            aria-hidden={true}
             className={`mr-0 w-4 h-4 layout_base:w-6 layout_base:h-6 layout_l:mr-2 ${
               isActive ? 'fill-primary' : 'fill-blanc'
             }`}
             name={iconName}
           />
-
-          <span
-            className={`text-left sr-only layout_l:not-sr-only break-words ${
-              className ?? ''
-            } ${isActive ? 'text-primary' : 'text-blanc'}`}
-          >
-            {label}
-          </span>
+          <div className='relative'>
+            <span
+              className={`text-left sr-only layout_l:not-sr-only break-words relative ${
+                className ?? ''
+              } ${isActive ? 'text-primary' : 'text-blanc'}`}
+            >
+              {label}
+            </span>
+            {badgeLabel && <BadgeNavLink label={badgeLabel} />}
+          </div>
         </>
       )}
     </>
@@ -109,5 +115,19 @@ export default function NavLink({
         </button>
       )}
     </li>
+  )
+}
+
+function BadgeNavLink({ label }: { label: string }) {
+  return (
+    <>
+      <IconComponent
+        focusable={false}
+        aria-hidden={false}
+        className='w-4 h-4 fill-warning absolute top-0 -right-5 bg-blanc rounded-full'
+        name={IconName.Error}
+      />
+      <span className='sr-only'>{label}</span>
+    </>
   )
 }

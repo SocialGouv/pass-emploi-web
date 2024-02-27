@@ -111,7 +111,7 @@ describe('FicheBeneficiairePage client side', () => {
     })
   })
 
-  describe('pour les conseillers non Pôle Emploi', () => {
+  describe('pour les conseillers non France Travail', () => {
     it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
       // When
       await act(async () => {
@@ -136,6 +136,39 @@ describe('FicheBeneficiairePage client side', () => {
           name: 'Inscrire à une animation collective',
         })
       ).toHaveAttribute('href', '/agenda?onglet=etablissement')
+    })
+
+    describe('quand le compte du bénéficiaire n’est pas activé', () => {
+      it('affiche un message', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <FicheBeneficiairePage
+              jeune={unDetailJeune({ isActivated: false })}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              categoriesActions={desCategories()}
+              onglet='AGENDA'
+              lectureSeule={false}
+            />,
+            {
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByText(
+            /Ce bénéficiaire ne s’est pas encore connecté à l’application/
+          )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du jeune n’est valable que 12h/
+          )
+        ).toBeInTheDocument()
+      })
     })
   })
 
@@ -182,6 +215,36 @@ describe('FicheBeneficiairePage client side', () => {
       expect(screen.getByText(/Services civiques/)).toBeInTheDocument()
       expect(screen.getByText(/Immersions/)).toBeInTheDocument()
       expect(screen.getByText(/Alertes/)).toBeInTheDocument()
+    })
+
+    describe('quand le compte du bénéficiaire n’est pas activé', () => {
+      it('affiche un message', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <FicheBeneficiairePage
+              jeune={unDetailJeune({ isActivated: false })}
+              rdvs={[]}
+              actionsInitiales={desActionsInitiales()}
+              categoriesActions={desCategories()}
+              onglet='AGENDA'
+              lectureSeule={false}
+            />
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByText(
+            /Ce bénéficiaire ne s’est pas encore connecté à l’application/
+          )
+        ).toBeInTheDocument()
+        expect(() =>
+          screen.getByText(
+            /Le lien d’activation envoyé par i-milo sur l‘adresse e-mail du jeune n’est valable que 12h/
+          )
+        ).toThrow()
+      })
     })
   })
 

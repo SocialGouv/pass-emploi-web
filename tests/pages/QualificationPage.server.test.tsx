@@ -1,7 +1,9 @@
 import { render } from '@testing-library/react'
 import { notFound } from 'next/navigation'
 
-import Qualification from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/page'
+import Qualification, {
+  generateMetadata,
+} from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/page'
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
 import { uneBaseJeune } from 'fixtures/jeune'
@@ -119,6 +121,7 @@ describe('QualificationPage server side', () => {
         const action = uneAction({ status: StatutAction.Terminee })
         const beneficiaire = uneBaseJeune()
         const situationsNonProfessionnelles = desCategoriesAvecNONSNP()
+        const params = { idAction: 'id-action' }
         ;(getAction as jest.Mock).mockResolvedValue({
           action,
           jeune: beneficiaire,
@@ -128,14 +131,19 @@ describe('QualificationPage server side', () => {
         )
 
         // When
+        const metadata = await generateMetadata({ params })
         render(
           await Qualification({
             params: { idAction: action.id },
+            searchParams: { liste: 'pilotage' },
           })
         )
 
         // Then
-        expect(getAction).toHaveBeenCalledWith(action.id, 'accessToken')
+        expect(getAction).toHaveBeenCalledWith('id-action', 'accessToken')
+        expect(metadata).toEqual({
+          title: `Qualifier l’action ${action.content} - ${beneficiaire.prenom} ${beneficiaire.prenom}`,
+        })
         expect(getSituationsNonProfessionnelles).toHaveBeenCalledWith(
           { avecNonSNP: true },
           'accessToken'
@@ -144,8 +152,10 @@ describe('QualificationPage server side', () => {
           {
             action,
             categories: situationsNonProfessionnelles,
-            returnTo: '/mes-jeunes/jeune-1/actions/id-action-1',
-            beneficiaire,
+            returnTo: expect.stringMatching(
+              '/mes-jeunes/jeune-1/actions/id-action-1'
+            ),
+            returnToListe: '/pilotage',
           },
           {}
         )
