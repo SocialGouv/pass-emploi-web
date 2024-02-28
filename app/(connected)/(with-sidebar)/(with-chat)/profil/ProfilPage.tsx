@@ -5,10 +5,6 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { ChangeEvent, useState } from 'react'
 
-import QrcodeAppStore from 'assets/images/qrcode_app_store.svg'
-import QrcodeAppStoreBRSA from 'assets/images/qrcode_brsa_app_store.svg'
-import QrcodePlayStoreBRSA from 'assets/images/qrcode_brsa_play_store.svg'
-import QrcodePlayStore from 'assets/images/qrcode_play_store.svg'
 import {
   FormContainer,
   RenseignementAgenceMissionLocaleForm,
@@ -18,13 +14,8 @@ import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import {
-  estMilo,
-  estPoleEmploiBRSA,
-  StructureConseiller,
-} from 'interfaces/conseiller'
+import { estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
-import { textesBRSA, textesCEJ } from 'lang/textes'
 import {
   trackEvent,
   trackPage,
@@ -267,74 +258,6 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
             checked={conseiller.notificationsSonores}
             onChange={toggleNotificationsSonores}
           />
-        </div>
-      </section>
-
-      <section className='border border-solid rounded-base w-full p-4 border-grey_100 mb-8'>
-        <h2 className='text-m-bold text-grey_800 mb-4'>
-          {estPoleEmploiBRSA(conseiller) && textesBRSA.profilTitreSection3}
-          {!estPoleEmploiBRSA(conseiller) && textesCEJ.profilTitreSection3}
-        </h2>
-        {estPoleEmploiBRSA(conseiller) && (
-          <p className='mb-4'>{textesBRSA.introModeDemoTexte}</p>
-        )}
-        {!estPoleEmploiBRSA(conseiller) && (
-          <p className='mb-4'>{textesCEJ.introModeDemoTexte}</p>
-        )}
-        {estPoleEmploiBRSA(conseiller) && (
-          <p className='mb-4'>
-            Pour accéder au mode démo, vous devez télécharger l’application sur
-            le store de votre choix, l’ouvrir puis
-            <strong> appuyer 3 fois sur le logo </strong>“pass emploi” visible
-            sur la page de connexion.
-          </p>
-        )}
-        {!estPoleEmploiBRSA(conseiller) && (
-          <p className='mb-4'>
-            Pour accéder au mode démo, vous devez télécharger l’application sur
-            le store de votre choix, l’ouvrir puis
-            <strong> appuyer 3 fois sur le logo </strong>“Contrat d’Engagement
-            Jeune” visible sur la page de connexion.
-          </p>
-        )}
-        <p>
-          L’application est disponible sur Google Play Store et sur l’App Store.
-        </p>
-        <div className='flex justify-evenly mt-8'>
-          <div className='flex flex-col items-center'>
-            {estPoleEmploiBRSA(conseiller) && (
-              <QrcodeAppStoreBRSA
-                focusable={false}
-                aria-label='QR code à scanner pour télécharger l’application sur Google Play'
-                role='img'
-              />
-            )}
-            {!estPoleEmploiBRSA(conseiller) && (
-              <QrcodeAppStore
-                focusable={false}
-                aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
-                role='img'
-              />
-            )}
-            <p className='text-s-bold'>App Store</p>
-          </div>
-          <div className='flex flex-col items-center'>
-            {estPoleEmploiBRSA(conseiller) && (
-              <QrcodePlayStoreBRSA
-                focusable={false}
-                aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
-                role='img'
-              />
-            )}
-            {!estPoleEmploiBRSA(conseiller) && (
-              <QrcodePlayStore
-                focusable={false}
-                aria-label='QR code à scanner pour télécharger l’application sur Google Play'
-                role='img'
-              />
-            )}
-            <p className='text-s-bold'>Google Play</p>
-          </div>
         </div>
       </section>
     </>
