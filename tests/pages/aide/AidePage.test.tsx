@@ -32,7 +32,7 @@ describe('Aide client side', () => {
       ).toHaveAttribute('href', 'http://perdu.com/assistance/')
     })
 
-    it('affiche un lien vers pour en savoir plus sur les clubs utilisateur', () => {
+    it('affiche un lien vers pour en savoir plus sur les clubs utilisateurs', () => {
       expect(
         screen.getByRole('link', { name: /En savoir plus/ })
       ).toHaveAttribute(
@@ -67,9 +67,13 @@ describe('Aide client side', () => {
         screen.getByRole('link', { name: /Voir les FAQ/ })
       ).toHaveAttribute('href', 'http://perdu.com/faq/')
     })
+
+    it('affiche un wording CEJ', () => {
+      expect(() => screen.getByText('pass emploi')).toThrow()
+    })
   })
 
-  describe('conseiller Pôle Emploi', () => {
+  describe('conseiller France Travail', () => {
     beforeEach(async () => {
       renderWithContexts(<AidePage />, {
         customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
@@ -85,16 +89,20 @@ describe('Aide client side', () => {
     it('affiche un texte lié à l’aide pour la réaffectation', () => {
       expect(
         screen.getByText(
-          'Vous aider dans la gestion de vos modules de réaffectation'
+          'Vous aider dans la réaffectation de vos bénéficiaires'
         )
       ).toBeInTheDocument()
     })
+
+    it('affiche un wording CEJ', () => {
+      expect(() => screen.getByText('pass emploi')).toThrow()
+    })
   })
 
-  describe('conseiller Pôle Emploi BRSA', () => {
+  describe('conseiller France Travail BRSA', () => {
     beforeEach(async () => {
       renderWithContexts(<AidePage />, {
-        customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+        customConseiller: { structure: StructureConseiller.POLE_EMPLOI_BRSA },
       })
     })
 
@@ -107,9 +115,13 @@ describe('Aide client side', () => {
     it('affiche un texte lié à l’aide pour la réaffectation', () => {
       expect(
         screen.getByText(
-          'Vous aider dans la gestion de vos modules de réaffectation'
+          'Vous aider dans la réaffectation de vos bénéficiaires'
         )
       ).toBeInTheDocument()
+    })
+
+    it('affiche un wording pass emploi', () => {
+      expect(() => screen.getByText('CEJ')).toThrow()
     })
   })
 })

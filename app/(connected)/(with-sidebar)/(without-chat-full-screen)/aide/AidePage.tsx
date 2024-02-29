@@ -3,14 +3,15 @@
 import Image from 'next/image'
 import React from 'react'
 
-import avecNosRessourcesImage from 'assets/images/avec_nos_ressources.jpg'
-import avecNosRessourcesImageBRSA from 'assets/images/avec_nos_ressources_brsa.jpg'
-import QrcodeAppStore from 'assets/images/qrcode_app_store.svg'
+import avecNosRessourcesImage from 'assets/images/avec_nos_ressources.webp'
+import avecNosRessourcesImageBRSA from 'assets/images/avec_nos_ressources_brsa.webp'
+import QrcodeAppStoreCEJ from 'assets/images/qrcode_app_store.svg'
 import QrcodeAppStoreBRSA from 'assets/images/qrcode_brsa_app_store.svg'
 import QrcodePlayStoreBRSA from 'assets/images/qrcode_brsa_play_store.svg'
-import QrcodePlayStore from 'assets/images/qrcode_play_store.svg'
+import QrcodePlayStoreCEJ from 'assets/images/qrcode_play_store.svg'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
@@ -28,6 +29,21 @@ export default function AidePage() {
   const [conseiller] = useConseiller()
 
   const conseillerEstBRSA = estPoleEmploiBRSA(conseiller)
+
+  const QrcodeAppStore = conseillerEstBRSA
+    ? QrcodeAppStoreBRSA
+    : QrcodeAppStoreCEJ
+  const QrcodePlayStore = conseillerEstBRSA
+    ? QrcodePlayStoreBRSA
+    : QrcodePlayStoreCEJ
+
+  const urlQrcodeAppStore = conseillerEstBRSA
+    ? process.env.NEXT_PUBLIC_APP_STORE_BRSA
+    : process.env.NEXT_PUBLIC_APP_STORE_CEJ
+
+  const urlQrcodePlayStore = conseillerEstBRSA
+    ? process.env.NEXT_PUBLIC_PLAY_STORE_BRSA
+    : process.env.NEXT_PUBLIC_PLAY_STORE_CEJ
 
   const urlSiteRessource = (() => {
     switch (conseiller.structure) {
@@ -66,33 +82,34 @@ export default function AidePage() {
         Découvrez notre site ressources, conçu spécialement pour vous guider pas
         à pas
       </h2>
-      <ExternalLink
-        label='Voir le site ressources'
-        href={urlSiteRessource!}
-        onClick={trackAide}
-      />
+      <div className='text-primary hover:text-primary_darken'>
+        <ExternalLink
+          label='Voir le site ressources'
+          href={urlSiteRessource!}
+          onClick={trackAide}
+        />
+      </div>
       <section>
         <h3 className='text-m-bold my-8'>
           Partagez vos remarques ou suggestions
         </h3>
-        <div className='flex gap-4 mb-16'>
-          <div className='bg-primary_lighten rounded-base flex flex-col w-1/2 px-16 py-4'>
+        <ul className='flex flex-col mb-16 w-full layout_m:flex-row gap-4'>
+          <li className='bg-primary_lighten rounded-base flex flex-col w-full px-16 py-4'>
             <IllustrationComponent
               name={IllustrationName.Question}
-              className='w-24 self-center fill-primary'
+              className='w-24 h-24 self-center fill-primary'
+              aria-hidden={true}
             />
-            <p className='text-m-bold mb-2'>
+            <h4 className='text-m-bold mb-2'>
               Faire une demande ou poser une question au support ?
-            </p>
+            </h4>
             <p>Nous sommes à votre disposition pour : </p>
-            <ul>
+            <ul className='list-disc'>
               <li>Répondre à vos questions</li>
               <li>Collecter vos retours utilisateurs</li>
 
-              {(estPoleEmploi(conseiller) || conseillerEstBRSA) && (
-                <li>
-                  Vous aider dans la gestion de vos modules de réaffectation
-                </li>
+              {estPoleEmploi(conseiller) && (
+                <li>Vous aider dans la réaffectation de vos bénéficiaires</li>
               )}
             </ul>
             <ButtonLink
@@ -102,15 +119,16 @@ export default function AidePage() {
               className='mt-8 w-fit self-center'
               label='Nous contacter'
             />
-          </div>
-          <div className='bg-primary_lighten rounded-base flex flex-col w-1/2 px-16 py-4'>
+          </li>
+          <li className='bg-primary_lighten rounded-base flex flex-col w-full px-16 py-4'>
             <IllustrationComponent
               name={IllustrationName.Forum}
-              className='w-24 self-center fill-primary'
+              className='w-24 h-24 self-center fill-primary'
+              aria-hidden={true}
             />
-            <p className='text-m-bold mb-2'>
+            <h4 className='text-m-bold mb-2'>
               Les clubs et les tests utilisateurs
-            </p>
+            </h4>
             <p>
               Co-construisons ensemble une application qui répond à vos besoins
               lors des clubs et tests utilisateurs.
@@ -122,20 +140,20 @@ export default function AidePage() {
               label='En savoir plus'
               className='mt-8 w-fit self-center'
             />
-          </div>
-        </div>
+          </li>
+        </ul>
       </section>
       <section className='mb-16'>
         <h3 className='text-m-bold mb-8'>
-          Embarquez facilement vos bénéficiaires{' '}
+          Embarquez facilement vos bénéficiaires
         </h3>
-        <div className='flex border border-grey_100 rounded-base py-8'>
-          <div className='flex flex-col w-1/2 px-16  border-r border-grey_100'>
-            <p className='text-m-bold mb-2'>Avec nos ressources</p>
+        <ul className='flex flex-col layout_m:flex-row gap-4 border border-grey_100 rounded-base py-8'>
+          <li className='flex flex-col w-full px-16 py-4 border-r border-grey_100'>
+            <h4 className='text-m-bold mb-2'>Avec nos ressources</h4>
             <div className='flex gap-16'>
               <div className='flex flex-col justify-between'>
                 <p>
-                  Retrouvez toutes les ressources vidéos, guide, flyers pour
+                  Retrouvez toutes les ressources vidéos, guide, flyers, pour
                   aider votre bénéficiaire à prendre en main l’application{' '}
                   {conseillerEstBRSA ? 'pass emploi' : 'du CEJ'}
                 </p>
@@ -153,16 +171,15 @@ export default function AidePage() {
                     ? avecNosRessourcesImageBRSA
                     : avecNosRessourcesImage
                 }
-                alt=''
-                aria-hidden={true}
-                className='w-1/3'
+                alt={`Flyer ”Se lancer sur ${conseillerEstBRSA ? 'pass emploi' : 'le CEJ'}” à retrouver sur le site ressources.`}
+                className='w-1/3 object-contain'
               />
             </div>
-          </div>
-          <div className='flex flex-col w-1/2 px-16 border-r border-grey_100'>
-            <p className='text-m-bold mb-2'>
+          </li>
+          <li className='flex flex-col w-full px-16 py-4'>
+            <h4 className='text-m-bold mb-2'>
               Avec le mode démo {conseillerEstBRSA ? 'pass emploi' : 'du CEJ'}
-            </p>
+            </h4>
             <div className='flex gap-16'>
               <div className='flex flex-col justify-between'>
                 <p className='mb-2'>
@@ -173,7 +190,7 @@ export default function AidePage() {
                 <p className='mb-2'>
                   Pour accéder au mode démo, vous devez télécharger
                   l’application sur le store de votre choix puis{' '}
-                  <strong>appuyer 3 fois</strong> sur le logo ”
+                  <strong>appuyer 3 fois sur le logo</strong> ”
                   {conseillerEstBRSA
                     ? 'pass emploi'
                     : 'Contrat d’Engagement Jeune'}
@@ -185,59 +202,60 @@ export default function AidePage() {
               </div>
             </div>
             <div className='flex gap-4'>
-              {!conseillerEstBRSA && (
-                <>
-                  <div>
-                    <QrcodeAppStore
-                      focusable={false}
-                      aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
-                      role='img'
-                    />
-                    <p className='text-s-bold text-center'>App Store</p>
-                  </div>
-                  <div>
-                    <QrcodePlayStore
-                      focusable={false}
-                      aria-label='QR code à scanner pour télécharger l’application sur Google Play'
-                      role='img'
-                    />
-                    <p className='text-s-bold text-center'>Play Store</p>
-                  </div>
-                </>
-              )}
-
-              {conseillerEstBRSA && (
-                <>
-                  <div>
-                    <QrcodeAppStoreBRSA
-                      focusable={false}
-                      aria-label='QR code à scanner pour télécharger l’application sur l’App Store'
-                      role='img'
-                    />
-                    <p className='text-s-bold text-center'>App Store</p>
-                  </div>
-                  <div>
-                    <QrcodePlayStoreBRSA
-                      focusable={false}
-                      aria-label='QR code à scanner pour télécharger l’application sur Google Play'
-                      role='img'
-                    />
-                    <p className='text-s-bold text-center'>Play Store</p>
-                  </div>
-                </>
-              )}
+              <div>
+                <QrcodeAppStore focusable={false} aria-hidden={true} />
+                <a
+                  href={urlQrcodeAppStore}
+                  className='text-center text-primary underline inline-flex items-center hover:text-primary hover:text-primary_darken'
+                  target='_blank'
+                  rel='noreferrer noopener'
+                >
+                  <span className='sr-only'>
+                    Télécharger l’application sur l’
+                  </span>
+                  App Store
+                  <IconComponent
+                    name={IconName.OpenInNew}
+                    className='ml-1.5 w-4 h-4 fill-[currentColor]'
+                    focusable={false}
+                    aria-hidden={true}
+                  />
+                  <span className='sr-only'>(nouvelle fenêtre)</span>
+                </a>
+              </div>
+              <div>
+                <QrcodePlayStore focusable={false} aria-hidden={true} />
+                <a
+                  href={urlQrcodePlayStore}
+                  className='text-center text-primary underline inline-flex items-center hover:text-primary_darken'
+                  target='_blank'
+                  rel='noreferrer noopener'
+                >
+                  <span className='sr-only'>
+                    Télécharger l’application sur le
+                  </span>
+                  Play Store
+                  <IconComponent
+                    name={IconName.OpenInNew}
+                    className='ml-1.5 w-4 h-4 fill-[currentColor]'
+                    focusable={false}
+                    aria-hidden={true}
+                  />
+                  <span className='sr-only'>(nouvelle fenêtre)</span>
+                </a>
+              </div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ul>
       </section>
       <section>
         <h3 className='text-m-bold mb-8'>
           Consultez nos ressources pour vous aider
         </h3>
-        <div className='flex gap-4'>
-          <div className='flex flex-col w-1/3 border border-grey_100 rounded-base py-8 px-16 justify-between'>
+        <ul className='flex flex-col layout_m:flex-row gap-4'>
+          <li className='flex flex-col w-full border border-grey_100 rounded-base py-8 px-16 justify-between'>
             <div className='flex flex-col'>
-              <p className='text-m-bold mb-2'>Notre guide d’utilisation</p>
+              <h4 className='text-m-bold mb-2'>Notre guide d’utilisation</h4>
               <p>
                 Approfondissez votre compréhension de l’application et découvrez
                 les meilleures façons de l’utiliser.
@@ -250,10 +268,10 @@ export default function AidePage() {
               label='Voir le guide'
               className='mt-8 w-fit self-center'
             />
-          </div>
-          <div className='flex flex-col w-1/3 border border-grey_100 rounded-base py-8 px-16 justify-between'>
+          </li>
+          <li className='flex flex-col w-full border border-grey_100 rounded-base py-8 px-16 justify-between'>
             <div className='flex flex-col'>
-              <p className='text-m-bold mb-2'>Nos tutoriels vidéo</p>
+              <h4 className='text-m-bold mb-2'>Nos tutoriels vidéo</h4>
               <p>
                 Découvrez les différentes fonctionnalités de l’application à
                 travers des vidéos explicatives
@@ -266,10 +284,10 @@ export default function AidePage() {
               label='Voir les vidéos'
               className='mt-8 w-fit self-center'
             />
-          </div>
-          <div className='flex flex-col w-1/3 border border-grey_100 rounded-base py-8 px-16 justify-between'>
+          </li>
+          <li className='flex flex-col w-full border border-grey_100 rounded-base py-8 px-16 justify-between'>
             <div className='flex flex-col'>
-              <p className='text-m-bold mb-2'>Notre Foire aux questions</p>
+              <h4 className='text-m-bold mb-2'>Notre Foire aux questions</h4>
               <p>Trouvez des réponses immédiates aux questions fréquentes.</p>
             </div>
             <ButtonLink
@@ -279,8 +297,8 @@ export default function AidePage() {
               label='Voir les FAQ'
               className='mt-8 w-fit self-center'
             />
-          </div>
-        </div>
+          </li>
+        </ul>
       </section>
     </>
   )

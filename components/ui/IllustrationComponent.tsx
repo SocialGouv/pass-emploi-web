@@ -1,6 +1,5 @@
 import { ComponentPropsWithoutRef } from 'react'
 
-import IllustrationAvecNosRessources from 'assets/images/avec_nos_ressources.jpg'
 import IllustrationArrowForward from 'assets/images/illustration-arrow-forward.svg'
 import IllustrationCheck from 'assets/images/illustration-check.svg'
 import IllustrationChecklist from 'assets/images/illustration-checklist-grey.svg'
@@ -21,7 +20,6 @@ import IllustrationSendWhite from 'assets/images/illustration-send-white.svg'
 
 export enum IllustrationName {
   ArrowForward = 'ArrowForward',
-  AvecNosRessources = 'AvecNosRessources',
   Check = 'Check',
   Checklist = 'Checklist',
   CurvyArrow = 'CurvyArrow',
@@ -42,7 +40,6 @@ export enum IllustrationName {
 
 const illustrationsByName: { [key in IllustrationName]: any } = {
   [IllustrationName.ArrowForward]: IllustrationArrowForward,
-  [IllustrationName.AvecNosRessources]: IllustrationAvecNosRessources,
   [IllustrationName.Check]: IllustrationCheck,
   [IllustrationName.Checklist]: IllustrationChecklist,
   [IllustrationName.CurvyArrow]: IllustrationCurvyArrow,
