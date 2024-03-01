@@ -109,7 +109,7 @@ describe('Aide client side', () => {
     it('affiche un lien vers pour nous contacter', () => {
       expect(
         screen.getByRole('link', { name: /Nous contacter/ })
-      ).toHaveAttribute('href', 'http://perdu.com/formuler-une-demande/')
+      ).toHaveAttribute('href', 'http://perdu.com/assistance/')
     })
 
     it('affiche un texte lié à l’aide pour la réaffectation', () => {
