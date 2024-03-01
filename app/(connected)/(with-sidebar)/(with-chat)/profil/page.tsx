@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import React from 'react'
 
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
@@ -18,8 +17,6 @@ export default async function Profil() {
   let referentielAgences: Agence[] = []
   if (estUserMilo(user)) {
     const conseiller = await getConseillerServerSide(user, accessToken)
-    if (!conseiller) notFound()
-
     if (!conseiller.agence) {
       referentielAgences = await getAgencesServerSide(
         user.structure,

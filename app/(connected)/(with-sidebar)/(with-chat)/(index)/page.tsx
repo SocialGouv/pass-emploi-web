@@ -15,7 +15,11 @@ import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = { title: 'Accueil' }
 
-type HomeSearchParams = Partial<{ redirectUrl: string; source: string }>
+type HomeSearchParams = Partial<{
+  redirectUrl: string
+  source: string
+  onboarding: boolean
+}>
 export default async function Home({
   searchParams,
 }: {
@@ -27,19 +31,17 @@ export default async function Home({
     : ''
 
   const conseiller = await getConseillerServerSide(user, accessToken)
-  if (!conseiller) {
-    throw new Error(`Conseiller ${user.id} inexistant`)
-  }
-
   if (doitSignerLesCGU(conseiller)) redirect('/consentement-cgu')
 
   const redirectUrl =
     searchParams?.redirectUrl ?? '/mes-jeunes' + sourceQueryParam
 
+  const afficherModaleOnboarding = Boolean(searchParams?.onboarding)
   const emailEstManquant = estMilo(conseiller) && !conseiller.email
   const agenceEstManquante =
     !estPassEmploi(conseiller) && !aEtablissement(conseiller)
-  if (!emailEstManquant && !agenceEstManquante) redirect(`${redirectUrl}`)
+  if (!afficherModaleOnboarding && !emailEstManquant && !agenceEstManquante)
+    redirect(`${redirectUrl}`)
 
   let referentielAgences = undefined
   if (!estMilo(conseiller)) {
@@ -54,6 +56,7 @@ export default async function Home({
       <PageHeaderPortal header='Accueil' />
 
       <HomePage
+        afficherModaleOnboarding={afficherModaleOnboarding}
         afficherModaleAgence={agenceEstManquante}
         afficherModaleEmail={emailEstManquant}
         redirectUrl={redirectUrl}

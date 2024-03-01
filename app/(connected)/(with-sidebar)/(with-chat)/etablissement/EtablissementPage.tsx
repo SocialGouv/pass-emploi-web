@@ -3,13 +3,15 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-people-grey.svg'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import SituationTag from 'components/jeune/SituationTag'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -180,7 +182,8 @@ function EtablissementPage() {
 
       {resultatsRecherche?.length === 0 && (
         <>
-          <EmptyStateImage
+          <IllustrationComponent
+            name={IllustrationName.People}
             focusable={false}
             aria-hidden={true}
             className='m-auto w-[200px] h-[200px]'

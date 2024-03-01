@@ -16,20 +16,16 @@ import {
   jsonToConseiller,
 } from 'interfaces/json/conseiller'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
-import { ApiError } from 'utils/httpClient'
-
-export async function getConseillerClientSide(): Promise<
-  Conseiller | undefined
-> {
-  const session = await getSession()
-  return getConseiller(session!.user, session!.accessToken)
-}
 
 export async function getConseillerServerSide(
   user: Session.HydratedUser,
   accessToken: string
-): Promise<Conseiller | undefined> {
-  return getConseiller(user, accessToken)
+): Promise<Conseiller> {
+  const { content: conseillerJson } = await apiGet<ConseillerJson>(
+    `/conseillers/${user.id}`,
+    accessToken
+  )
+  return jsonToConseiller(conseillerJson, user)
 }
 
 export async function getConseillers(
@@ -122,22 +118,4 @@ export async function recupererBeneficiaires(): Promise<void> {
 export async function supprimerConseiller(idConseiller: string): Promise<void> {
   const session = await getSession()
   await apiDelete(`/conseillers/${idConseiller}`, session!.accessToken)
-}
-
-async function getConseiller(
-  user: Session.HydratedUser,
-  accessToken: string
-): Promise<Conseiller | undefined> {
-  try {
-    const { content: conseillerJson } = await apiGet<ConseillerJson>(
-      `/conseillers/${user.id}`,
-      accessToken
-    )
-    return jsonToConseiller(conseillerJson, user)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 404) {
-      return undefined
-    }
-    throw e
-  }
 }

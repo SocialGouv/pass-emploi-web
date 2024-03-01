@@ -47,8 +47,6 @@ export default async function ClotureSession({
   const { user, accessToken } = await getMandatorySessionServerSide()
 
   const conseiller = await getConseillerServerSide(user, accessToken)
-  if (!conseiller) notFound()
-
   if (!peutAccederAuxSessions(conseiller)) redirect('/mes-jeunes')
 
   const session = await getDetailsSession(

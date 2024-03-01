@@ -61,27 +61,31 @@ export default async function FicheBeneficiaire({
 
   const page = searchParams?.page ? parseInt(searchParams.page) : 1
 
-  const conseiller = await getConseillerServerSide(user, accessToken)
-  if (!conseiller) notFound()
-
-  const [jeune, metadonneesFavoris, rdvs, actions, categoriesActions] =
-    await Promise.all([
-      getJeuneDetails(params.idJeune, accessToken),
-      getMetadonneesFavorisJeune(params.idJeune, accessToken),
-      userIsPoleEmploi
-        ? ([] as EvenementListItem[])
-        : getRendezVousJeune(
-            params.idJeune,
-            PeriodeEvenements.FUTURS,
-            accessToken
-          ),
-      userIsPoleEmploi
-        ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-        : getActionsJeuneServerSide(params.idJeune, page, accessToken),
-      userIsPoleEmploi
-        ? ([] as SituationNonProfessionnelle[])
-        : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
-    ])
+  const [
+    conseiller,
+    jeune,
+    metadonneesFavoris,
+    rdvs,
+    actions,
+    categoriesActions,
+  ] = await Promise.all([
+    getConseillerServerSide(user, accessToken),
+    getJeuneDetails(params.idJeune, accessToken),
+    getMetadonneesFavorisJeune(params.idJeune, accessToken),
+    userIsPoleEmploi
+      ? ([] as EvenementListItem[])
+      : getRendezVousJeune(
+          params.idJeune,
+          PeriodeEvenements.FUTURS,
+          accessToken
+        ),
+    userIsPoleEmploi
+      ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
+      : getActionsJeuneServerSide(params.idJeune, page, accessToken),
+    userIsPoleEmploi
+      ? ([] as SituationNonProfessionnelle[])
+      : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
+  ])
   if (!jeune) notFound()
 
   let sessionsMilo: EvenementListItem[] = []
