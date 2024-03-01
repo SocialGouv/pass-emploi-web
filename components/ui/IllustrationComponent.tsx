@@ -11,12 +11,15 @@ import IllustrationEvent from 'assets/images/illustration-event-grey.svg'
 import IllustrationForum from 'assets/images/illustration-forum.svg'
 import IllustrationInfo from 'assets/images/illustration-info.svg'
 import IllustrationMaintenance from 'assets/images/illustration-maintenance.svg'
-import IllustrationPeople from 'assets/images/illustration-people-grey.svg'
+import IllustrationMessagerie from 'assets/images/illustration-messagerie.svg'
+import IllustrationPeople from 'assets/images/illustration-people.svg'
 import IllustrationQuestion from 'assets/images/illustration-question-mark.svg'
 import IllustrationSablier from 'assets/images/illustration-sablier.svg'
-import IllustrationSearch from 'assets/images/illustration-search-grey.svg'
+import IllustrationSearch from 'assets/images/illustration-search.svg'
 import IllustrationSend from 'assets/images/illustration-send-grey.svg'
 import IllustrationSendWhite from 'assets/images/illustration-send-white.svg'
+import IllustrationLogoCEJ from 'assets/images/logo_app_cej.svg'
+import IllustrationLogoPassemploi from 'assets/images/logo_pass_emploi.svg'
 
 export enum IllustrationName {
   ArrowForward = 'ArrowForward',
@@ -29,7 +32,10 @@ export enum IllustrationName {
   Event = 'Event',
   Forum = 'Forum',
   Info = 'Info',
+  LogoCEJ = 'LogoCEJ',
+  LogoPassemploi = 'LogoPassemploi',
   Maintenance = 'Maintenance',
+  Messagerie = 'Messagerie',
   People = 'People',
   Question = 'Question',
   Sablier = 'Sablier',
@@ -49,7 +55,10 @@ const illustrationsByName: { [key in IllustrationName]: any } = {
   [IllustrationName.Event]: IllustrationEvent,
   [IllustrationName.Forum]: IllustrationForum,
   [IllustrationName.Info]: IllustrationInfo,
+  [IllustrationName.LogoCEJ]: IllustrationLogoCEJ,
+  [IllustrationName.LogoPassemploi]: IllustrationLogoPassemploi,
   [IllustrationName.Maintenance]: IllustrationMaintenance,
+  [IllustrationName.Messagerie]: IllustrationMessagerie,
   [IllustrationName.People]: IllustrationPeople,
   [IllustrationName.Question]: IllustrationQuestion,
   [IllustrationName.Sablier]: IllustrationSablier,

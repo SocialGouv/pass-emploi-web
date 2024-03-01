@@ -1,17 +1,20 @@
 import { Metadata } from 'next'
-import { headers } from 'next/headers'
 
 import ConsentementCguPage from 'app/(connected)/(full-page)/consentement-cgu/ConsentementCguPage'
-import redirectedFromHome from 'utils/redirectedFromHome'
+import { getConseillerServerSide } from 'services/conseiller.service'
+import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = {
   title: 'Consentement CGU',
 }
 
-export default function ConsentementCgu() {
-  const referer = headers().get('referer')
-  const redirectTo =
-    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
+export default async function ConsentementCgu() {
+  const { user, accessToken } = await getMandatorySessionServerSide()
+  const conseiller = await getConseillerServerSide(user, accessToken)
+
+  const searchParams = new URLSearchParams()
+  if (!conseiller.dateSignatureCGU) searchParams.set('onboarding', 'true')
+  const redirectTo = '/?' + searchParams
 
   return <ConsentementCguPage returnTo={redirectTo} />
 }

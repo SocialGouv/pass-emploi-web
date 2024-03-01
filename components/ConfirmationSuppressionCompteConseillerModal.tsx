@@ -3,7 +3,10 @@ import IconComponent, { IconName } from './ui/IconComponent'
 
 export default function ConfirmationSuppressionCompteConseillerModal() {
   return (
-    <Modal title='Votre compte conseiller a bien été supprimé'>
+    <Modal
+      title='Votre compte conseiller a bien été supprimé'
+      onClose={() => {}}
+    >
       <div className='px-20 text-center'>
         <IconComponent
           name={IconName.Schedule}

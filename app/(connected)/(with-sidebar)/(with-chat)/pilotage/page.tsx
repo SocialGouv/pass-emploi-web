@@ -39,10 +39,8 @@ export default async function Pilotage({
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (estUserPoleEmploi(user)) notFound()
 
-  const conseiller = await getConseillerServerSide(user, accessToken)
-  if (!conseiller) notFound()
-
-  const [actions, categoriesActions] = await Promise.all([
+  const [conseiller, actions, categoriesActions] = await Promise.all([
+    getConseillerServerSide(user, accessToken),
     getActionsAQualifierServerSide(user.id, accessToken),
     getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
   ])

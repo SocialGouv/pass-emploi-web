@@ -1,12 +1,10 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import RenseignementAgenceModal from 'components/RenseignementAgenceModal'
-import RenseignementEmailModal from 'components/RenseignementEmailModal'
-import RenseignementStructureModal from 'components/RenseignementStructureModal'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -22,12 +20,27 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type HomePageProps = {
   redirectUrl: string
+  afficherModaleOnboarding: boolean
   afficherModaleAgence: boolean
   afficherModaleEmail: boolean
   referentielAgences?: Agence[]
 }
 
+const RenseignementAgenceModal = dynamic(
+  () => import('components/RenseignementAgenceModal')
+)
+const RenseignementEmailModal = dynamic(
+  () => import('components/RenseignementEmailModal')
+)
+const RenseignementStructureModal = dynamic(
+  () => import('components/RenseignementStructureModal')
+)
+const OnboardingModal = dynamic(
+  () => import('components/onboarding/OnboardingModal')
+)
+
 function HomePage({
+  afficherModaleOnboarding,
   afficherModaleAgence,
   afficherModaleEmail,
   redirectUrl,
@@ -37,6 +50,10 @@ function HomePage({
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [_, setAlerte] = useAlerte()
+
+  const [showModaleOnboarding, setShowModaleOnboarding] = useState<boolean>(
+    afficherModaleOnboarding
+  )
   const [showModaleEmail, setShowModaleEmail] =
     useState<boolean>(afficherModaleEmail)
   const [showModaleAgence, setShowModaleAgence] =
@@ -59,7 +76,7 @@ function HomePage({
     redirectToUrl()
   }
 
-  async function redirectToUrl() {
+  function redirectToUrl() {
     router.replace(redirectUrl)
   }
 
@@ -81,13 +98,21 @@ function HomePage({
   }
 
   useEffect(() => {
-    if (!showModaleAgence && !showModaleEmail) redirectToUrl()
-  }, [showModaleAgence, showModaleEmail])
+    if (!showModaleOnboarding && !showModaleAgence && !showModaleEmail)
+      redirectToUrl()
+  }, [showModaleOnboarding, showModaleAgence, showModaleEmail])
 
   useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
     <>
+      {showModaleEmail && (
+        <RenseignementEmailModal
+          onAccederImilo={trackAccederImilo}
+          onClose={() => setShowModaleEmail(false)}
+        />
+      )}
+
       {showModaleAgence && !referentielAgences && (
         <RenseignementStructureModal
           onContacterSupport={() => trackContacterSupport('structure')}
@@ -106,10 +131,10 @@ function HomePage({
         />
       )}
 
-      {showModaleEmail && (
-        <RenseignementEmailModal
-          onAccederImilo={trackAccederImilo}
-          onClose={() => setShowModaleEmail(false)}
+      {showModaleOnboarding && (
+        <OnboardingModal
+          conseiller={conseiller}
+          onClose={() => setShowModaleOnboarding(false)}
         />
       )}
     </>

@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
 import ActionRow from 'components/action/ActionRow'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
 import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
 import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
 import { TRI } from 'components/action/OngletActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
@@ -183,7 +185,8 @@ export default function TableauActionsJeune({
 
       {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
-          <EmptyStateImage
+          <IllustrationComponent
+            name={IllustrationName.Search}
             focusable={false}
             aria-hidden={true}
             className='m-auto w-[200px] h-[200px]'

@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-search-grey.svg'
 import ActionRowPilotage from 'components/action/ActionRowPilotage'
 import EncartQualificationActions from 'components/action/EncartQualificationActions'
 import FiltresCategoriesActions from 'components/action/FiltresCategoriesActions'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
@@ -192,7 +194,8 @@ export default function TableauActionsAQualifier({
 
       {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>
-          <EmptyStateImage
+          <IllustrationComponent
+            name={IllustrationName.Search}
             focusable={false}
             aria-hidden={true}
             className='m-auto w-[200px] h-[200px]'
