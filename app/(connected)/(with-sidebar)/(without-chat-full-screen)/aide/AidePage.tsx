@@ -21,13 +21,17 @@ import {
   estPoleEmploiBRSA,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { trackPage } from 'utils/analytics/matomo'
+import { trackEvent } from 'utils/analytics/matomo'
+import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export default function AidePage() {
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
 
   const conseillerEstBRSA = estPoleEmploiBRSA(conseiller)
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   const QrcodeAppStore = conseillerEstBRSA
     ? QrcodeAppStoreBRSA
@@ -81,9 +85,17 @@ export default function AidePage() {
 
   const urlFAQ = `${urlSiteRessource}${conseillerEstBRSA ? 'foire-aux-questions/' : 'faq/'}`
 
-  async function trackAide() {
-    trackPage({ structure: conseiller.structure, customTitle: 'Aide' })
+  async function trackEventAideEtRessources(action: string) {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Aide et ressources',
+      action: action,
+      nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
+    })
   }
+
+  useMatomo('Aide et ressources', aDesBeneficiaires)
 
   return (
     <>
@@ -95,7 +107,7 @@ export default function AidePage() {
         <ExternalLink
           label='Voir le site ressources'
           href={urlSiteRessource!}
-          onClick={trackAide}
+          onClick={() => trackEventAideEtRessources('Voir le site ressources')}
         />
       </div>
       <section>
@@ -127,6 +139,7 @@ export default function AidePage() {
               externalLink={true}
               className='mt-8 w-fit self-center'
               label='Nous contacter'
+              onClick={() => trackEventAideEtRessources('Demande support')}
             />
           </li>
           <li className='bg-primary_lighten rounded-base flex flex-col w-full px-16 py-4'>
@@ -148,6 +161,9 @@ export default function AidePage() {
               externalLink={true}
               label='En savoir plus'
               className='mt-8 w-fit self-center'
+              onClick={() =>
+                trackEventAideEtRessources('Info club utilisateur')
+              }
             />
           </li>
         </ul>
@@ -172,6 +188,11 @@ export default function AidePage() {
                   externalLink={true}
                   label='Voir les ressources'
                   className='mt-8 w-fit'
+                  onClick={() =>
+                    trackEventAideEtRessources(
+                      'Ressources pour les bénéficiaires'
+                    )
+                  }
                 />
               </div>
               <Image
@@ -276,6 +297,9 @@ export default function AidePage() {
               externalLink={true}
               label='Voir le guide'
               className='mt-8 w-fit self-center'
+              onClick={() =>
+                trackEventAideEtRessources('Voir le guide d’utilisation')
+              }
             />
           </li>
           <li className='flex flex-col w-full border border-grey_100 rounded-base py-8 px-16 justify-between'>
@@ -292,6 +316,9 @@ export default function AidePage() {
               externalLink={true}
               label='Voir les vidéos'
               className='mt-8 w-fit self-center'
+              onClick={() =>
+                trackEventAideEtRessources('Voir les vidéos tutoriels')
+              }
             />
           </li>
           <li className='flex flex-col w-full border border-grey_100 rounded-base py-8 px-16 justify-between'>
@@ -305,6 +332,7 @@ export default function AidePage() {
               externalLink={true}
               label='Voir les FAQ'
               className='mt-8 w-fit self-center'
+              onClick={() => trackEventAideEtRessources('Voir les FAQ')}
             />
           </li>
         </ul>
