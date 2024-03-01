@@ -63,7 +63,11 @@ export default async function Pilotage({
   }
 
   if (peutAccederAuxSessions(conseiller)) {
-    sessions = await getSessionsACloreServerSide(user.id, accessToken)
+    try {
+      sessions = await getSessionsACloreServerSide(user.id, accessToken)
+    } catch (_e) {
+      sessions = undefined
+    }
   }
 
   let onglet: Onglet = 'ACTIONS'
