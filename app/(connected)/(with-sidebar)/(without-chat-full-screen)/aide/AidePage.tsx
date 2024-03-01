@@ -17,7 +17,6 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import {
-  estMilo,
   estPoleEmploi,
   estPoleEmploiBRSA,
   StructureConseiller,
@@ -56,21 +55,31 @@ export default function AidePage() {
     }
   })()
 
-  const urlNousContacter = estMilo(conseiller)
-    ? urlSiteRessource + 'assistance/'
-    : urlSiteRessource + 'formuler-une-demande/'
+  const urlNousContacter = (() => {
+    switch (conseiller.structure) {
+      case StructureConseiller.MILO:
+      case StructureConseiller.POLE_EMPLOI_BRSA:
+        return urlSiteRessource + 'assistance/'
+      case StructureConseiller.POLE_EMPLOI:
+        return urlSiteRessource + 'formuler-une-demande/'
+    }
+  })()
 
-  const urlClubsTestsUtilisateurs =
-    urlSiteRessource + 'club-utilisateur-et-demandes-devolution/'
+  const urlClubsTestsUtilisateurs = `${urlSiteRessource}${conseillerEstBRSA ? 'club-utilisateur/' : 'club-utilisateur-et-demandes-devolution/'}`
 
-  const urlEmbarquerBeneficiaires = urlSiteRessource + 'embarquer-vos-jeunes/'
+  const urlEmbarquerBeneficiaires = `${urlSiteRessource}${
+    conseillerEstBRSA ? 'embarquer-vos-beneficiaires/' : 'embarquer-vos-jeunes/'
+  }`
 
-  const urlGuideRessources =
-    urlSiteRessource + 'ressources-documentaires/guides-dutilisation/'
+  const urlGuideRessources = `${urlSiteRessource}${
+    conseillerEstBRSA
+      ? 'guide-dutilisation/'
+      : 'ressources-documentaires/guides-dutilisation/'
+  }`
 
   const urlVideos = urlSiteRessource + 'videos/'
 
-  const urlFAQ = urlSiteRessource + 'faq/'
+  const urlFAQ = `${urlSiteRessource}${conseillerEstBRSA ? 'foire-aux-questions/' : 'faq/'}`
 
   async function trackAide() {
     trackPage({ structure: conseiller.structure, customTitle: 'Aide' })
@@ -113,7 +122,7 @@ export default function AidePage() {
               )}
             </ul>
             <ButtonLink
-              href={urlNousContacter}
+              href={urlNousContacter!}
               style={ButtonStyle.PRIMARY}
               externalLink={true}
               className='mt-8 w-fit self-center'
