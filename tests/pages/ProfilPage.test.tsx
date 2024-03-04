@@ -64,16 +64,6 @@ describe('ProfilPage client side', () => {
       )
     })
 
-    it('affiche les informations du mode démo', () => {
-      //THEN
-      expect(
-        screen.getByRole('heading', {
-          level: 2,
-          name: 'Application CEJ jeune - mode démo',
-        })
-      ).toBeInTheDocument()
-    })
-
     it('affiche un bouton pour supprimer le compte', () =>
       // Then
       expect(screen.getByText('Supprimer mon compte')).toBeInTheDocument())
@@ -325,30 +315,6 @@ describe('ProfilPage client side', () => {
           screen.getByRole('link', { name: /Accéder à i-milo/ })
         ).toBeInTheDocument()
       })
-    })
-  })
-
-  describe('quand le conseiller est PE BRSA', () => {
-    it('affiche les informations du mode démo pour BRSA', async () => {
-      // Given
-      conseiller = unConseiller({
-        structure: StructureConseiller.POLE_EMPLOI_BRSA,
-        email: 'pe-brsa@pole-emploi.fr',
-      })
-
-      // When
-      await act(async () => {
-        renderWithContexts(<ProfilPage referentielAgences={[]} />, {
-          customConseiller: conseiller,
-        })
-      })
-      //THEN
-      expect(
-        screen.getByRole('heading', {
-          level: 2,
-          name: 'Application pass emploi - mode démo',
-        })
-      ).toBeInTheDocument()
     })
   })
 
