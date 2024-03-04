@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'
@@ -189,10 +189,28 @@ function PilotagePage({
               {peutAccederAuxSessions(conseiller) && (
                 <div>
                   <dt className='text-base-bold'>Sessions i-milo</dt>
-                  <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
-                    <div className='text-xl-bold'>{sessions?.length}</div>
-                    <span className='text-base-bold'> À clore</span>
-                  </dd>
+                  {!sessions && (
+                    <dd className='mt-2 rounded-base px-3 py-2 text-warning bg-warning_lighten'>
+                      <div className='text-xl-bold flex gap-2 items-center'>
+                        <IconComponent
+                          name={IconName.Error}
+                          focusable={false}
+                          aria-hidden={true}
+                          className='w-4 h-4 fill-warning'
+                        />
+                        Erreur
+                      </div>
+                      <span className='text-base-bold'>
+                        Impossible de récupérer les sessions
+                      </span>
+                    </dd>
+                  )}
+                  {sessions && (
+                    <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
+                      <div className='text-xl-bold'>{sessions?.length}</div>
+                      <span className='text-base-bold'> À clore</span>
+                    </dd>
+                  )}
                 </div>
               )}
             </>
@@ -217,7 +235,7 @@ function PilotagePage({
           onSelectTab={() => switchTab('ANIMATIONS_COLLECTIVES')}
           iconName={IconName.EventFill}
         />
-        {peutAccederAuxSessions(conseiller) && (
+        {peutAccederAuxSessions(conseiller) && sessions !== null && (
           <Tab
             label='Sessions i-milo'
             count={sessions?.length}
@@ -277,7 +295,8 @@ function PilotagePage({
       )}
 
       {currentTab === 'SESSIONS_IMILO' &&
-        peutAccederAuxSessions(conseiller) && (
+        peutAccederAuxSessions(conseiller) &&
+        sessions !== null && (
           <div
             role='tabpanel'
             aria-labelledby='liste-sessions-i-milo-a-clore--tab'

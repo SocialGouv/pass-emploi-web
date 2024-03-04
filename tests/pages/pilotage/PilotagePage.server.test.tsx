@@ -130,6 +130,42 @@ describe('PilotagePage server side', () => {
       )
     })
 
+    it('ne pète pas si la récupération des sessions échoue', async () => {
+      // Given
+      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
+        unConseiller({
+          structure: StructureConseiller.MILO,
+          structureMilo: { id: '06', nom: 'test' },
+        })
+      )
+      ;(getSessionsACloreServerSide as jest.Mock).mockRejectedValueOnce(
+        new Error('lol')
+      )
+
+      // When
+      render(
+        await Pilotage({
+          searchParams: { onglet: 'sessionsImilo' },
+        })
+      )
+
+      // Then
+      expect(getSessionsACloreServerSide).toHaveBeenCalled()
+      expect(PilotagePage).toHaveBeenCalledWith(
+        {
+          onglet: 'SESSIONS_IMILO',
+          actions: {
+            donnees: uneListeDActionsAQualifier(),
+            metadonnees: { nombreTotal: 5, nombrePages: 1 },
+          },
+          categoriesActions: desCategories(),
+          animationsCollectives: undefined,
+          sessions: undefined,
+        },
+        {}
+      )
+    })
+
     it('ne récupère pas les animations collectives si le conseiller n’a pas renseigné son agence', async () => {
       // Given
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(unConseiller())
