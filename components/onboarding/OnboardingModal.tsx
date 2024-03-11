@@ -19,7 +19,9 @@ type OnboardingModalProps = {
 export default function OnboardingModal(props: OnboardingModalProps) {
   switch (props.conseiller.structure) {
     case StructureConseiller.POLE_EMPLOI:
-      return <OnboardingPEModal {...props} />
+      return <OnboardingPEModal {...props} estConseillerPE={true} />
+    case StructureConseiller.POLE_EMPLOI_BRSA:
+      return <OnboardingPEModal {...props} estConseillerPE={false} />
     case StructureConseiller.MILO:
       return <OnboardingMILOModal {...props} />
     default:
