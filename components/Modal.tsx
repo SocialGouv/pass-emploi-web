@@ -1,3 +1,5 @@
+import { StaticImport } from 'next/dist/shared/lib/get-img-props'
+import Image from 'next/image'
 import {
   forwardRef,
   MouseEvent,
@@ -19,10 +21,11 @@ import styles from 'styles/components/Modal.module.css'
 
 interface ModalProps {
   title: string
-  onClose?: () => void
+  onClose: () => void
   children: ReactNode
   titleIcon?: IconName
   titleIllustration?: IllustrationName
+  titleImageSrc?: string | StaticImport
 }
 
 const Modal = forwardRef((props: ModalProps, ref) => {
@@ -32,6 +35,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
     title,
     titleIcon,
     titleIllustration,
+    titleImageSrc,
   } = props
 
   useImperativeHandle(ref, () => ({
@@ -44,9 +48,25 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   const keyListeners = useRef(
     new Map([
       ['Tab', handleTabKey],
-      ['Escape', handleClose],
+      ['Escape', closeIfFocusInside],
     ])
   )
+
+  function closeIfFocusInside(e: KeyboardEvent | MouseEvent) {
+    if (!modalRef.current) return
+
+    const focusableModalElements: NodeListOf<HTMLElement> =
+      modalRef.current.querySelectorAll(
+        'a[href], button, textarea, input, select'
+      )
+    if (
+      Array.from(focusableModalElements).some(
+        (element) => element === document.activeElement
+      )
+    ) {
+      handleClose(e)
+    }
+  }
 
   function focusOnRender(element: HTMLElement | null) {
     if (element && !previousFocusedElement.current) {
@@ -79,9 +99,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   function handleClose(e: KeyboardEvent | MouseEvent) {
     e.preventDefault()
     if (previousFocusedElement.current) previousFocusedElement.current.focus()
-    if (onClose) {
-      onClose()
-    }
+    onClose()
   }
 
   function keyListener(e: KeyboardEvent) {
@@ -98,24 +116,22 @@ const Modal = forwardRef((props: ModalProps, ref) => {
 
   const modalTemplate = (
     <div className='rounded-l bg-blanc max-w-[620px] p-3' ref={modalRef}>
-      {onClose && (
-        <div className='flex justify-end'>
-          <button
-            type='button'
-            onClick={handleClose}
-            ref={focusOnRender}
-            className='p-2 border-none hover:bg-primary_lighten hover:rounded-l'
-          >
-            <IconComponent
-              name={IconName.Close}
-              role='img'
-              focusable={false}
-              aria-label='Fermer la fenêtre'
-              className='w-6 h-6 fill-content_color'
-            />
-          </button>
-        </div>
-      )}
+      <div className='flex justify-end'>
+        <button
+          type='button'
+          onClick={handleClose}
+          ref={focusOnRender}
+          className='p-2 border-none hover:bg-primary_lighten hover:rounded-l'
+        >
+          <IconComponent
+            name={IconName.Close}
+            role='img'
+            focusable={false}
+            aria-label='Fermer la fenêtre'
+            className='w-6 h-6 fill-content_color'
+          />
+        </button>
+      </div>
 
       <div className='px-6 pb-6'>
         {titleIcon && (
@@ -132,6 +148,14 @@ const Modal = forwardRef((props: ModalProps, ref) => {
             focusable={false}
             aria-hidden={true}
             className='w-1/3 m-auto fill-primary mb-8'
+          />
+        )}
+        {titleImageSrc && (
+          <Image
+            src={titleImageSrc}
+            alt=''
+            aria-hidden={true}
+            className='m-auto mb-8'
           />
         )}
         <h2

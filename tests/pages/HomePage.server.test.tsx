@@ -61,7 +61,7 @@ describe('HomePage server side', () => {
   })
 
   describe('si le conseiller Milo n’a pas renseigné sa structure', () => {
-    it('prépare la page', async () => {
+    it('prépare la page pour renseigner sa structure', async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
 
       const conseiller = unConseiller({
@@ -78,6 +78,7 @@ describe('HomePage server side', () => {
         {
           afficherModaleAgence: true,
           afficherModaleEmail: false,
+          afficherModaleOnboarding: false,
           redirectUrl: '/mes-jeunes',
         },
         {}
@@ -86,7 +87,7 @@ describe('HomePage server side', () => {
   })
 
   describe('si le conseiller France Travail n’a pas renseigné son agence', () => {
-    it('prépare la page', async () => {
+    it('prépare la page pour renseigner son agence', async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
 
       const conseiller = unConseiller({
@@ -106,6 +107,7 @@ describe('HomePage server side', () => {
         {
           afficherModaleAgence: true,
           afficherModaleEmail: false,
+          afficherModaleOnboarding: false,
           redirectUrl: '/agenda',
           referentielAgences: uneListeDAgencesPoleEmploi(),
         },
@@ -115,7 +117,7 @@ describe('HomePage server side', () => {
   })
 
   describe('si le conseiller n’a pas renseigné son adresse email', () => {
-    it('prépare la page', async () => {
+    it('prépare la page pour renseigner son adresse email', async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
 
       const conseiller = unConseiller({
@@ -138,6 +140,7 @@ describe('HomePage server side', () => {
         {
           afficherModaleAgence: false,
           afficherModaleEmail: true,
+          afficherModaleOnboarding: false,
           redirectUrl: '/mes-jeunes',
           referentielAgences: undefined,
         },
@@ -146,8 +149,37 @@ describe('HomePage server side', () => {
     })
   })
 
+  describe('si c’est un nouveau conseiller', () => {
+    it('prépare la page avec l’onboarding', async () => {
+      ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
+      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(unConseiller())
+      ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
+        uneListeDAgencesPoleEmploi()
+      )
+
+      // When
+      render(
+        await Home({
+          searchParams: { onboarding: true, redirectUrl: '/agenda' },
+        })
+      )
+
+      // Then
+      expect(HomePage).toHaveBeenCalledWith(
+        {
+          afficherModaleAgence: false,
+          afficherModaleEmail: false,
+          afficherModaleOnboarding: true,
+          redirectUrl: '/agenda',
+          referentielAgences: uneListeDAgencesPoleEmploi(),
+        },
+        {}
+      )
+    })
+  })
+
   describe('si le conseiller doit signer la dernière version des CGU', () => {
-    it('redirige vers le portefeuille', async () => {
+    it('redirige vers la signature des CGUs', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
 

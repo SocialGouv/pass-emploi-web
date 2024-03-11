@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const conseiller = await getConseillerServerSide(user, accessToken)
   const siteTitle =
     'Espace conseiller ' +
-    (conseiller && estPoleEmploiBRSA(conseiller) ? 'pass emploi' : 'CEJ')
+    (estPoleEmploiBRSA(conseiller) ? 'pass emploi' : 'CEJ')
 
   return { title: { template: '%s - ' + siteTitle, default: siteTitle } }
 }
@@ -30,11 +30,6 @@ export default async function LayoutWhenConnected({
     getConseillerServerSide(user, accessToken),
     getJeunesDuConseillerServerSide(user.id, accessToken),
   ])
-
-  if (!conseiller) {
-    throw new Error(`Conseiller ${user.id} inexistant`)
-  }
-
   const theme = estPoleEmploiBRSA(conseiller) ? 'brsa' : 'cej'
 
   return (

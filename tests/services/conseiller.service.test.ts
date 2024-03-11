@@ -8,7 +8,6 @@ import {
 } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
-  getConseillerClientSide,
   getConseillers,
   getConseillerServerSide,
   modifierAgence,
@@ -21,39 +20,6 @@ import {
 jest.mock('clients/api.client')
 
 describe('ConseillerApiService', () => {
-  describe('.getConseillerClientSide', () => {
-    it('renvoie les informations d’un conseiller', async () => {
-      // Given
-      const idConseiller = 'idConseiller'
-      const accessToken = 'accessToken'
-      const dateSignatureCGU = '2023-10-03T00:00:00.000+02:00'
-      ;(apiGet as jest.Mock).mockResolvedValue({
-        content: unConseillerJson({
-          agence: {
-            nom: 'Milo Marseille',
-            id: 'id-agence',
-          },
-          dateSignatureCGU: dateSignatureCGU,
-        }),
-      })
-
-      // When
-      const actual = await getConseillerClientSide()
-
-      // Then
-      expect(apiGet).toHaveBeenCalledWith(
-        `/conseillers/${idConseiller}`,
-        accessToken
-      )
-      expect(actual).toEqual(
-        unConseiller({
-          agence: { nom: 'Milo Marseille', id: 'id-agence' },
-          dateSignatureCGU: dateSignatureCGU,
-        })
-      )
-    })
-  })
-
   describe('.getConseillerServerSide', () => {
     it('renvoie les informations d’un conseiller', async () => {
       // Given
