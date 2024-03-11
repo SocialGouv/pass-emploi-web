@@ -86,9 +86,9 @@
     "chokidar/glob-parent": "5.1.2",
     "fast-glob/glob-parent": "5.1.2",
     "meow/trim-newlines": "3.0.1",
+    "openid-client/jose": "^4.15.5",
     "postcss": "^8.4.31",
-    "remark-parse/trim": "0.0.3",
-    "undici": "5.28.3"
+    "remark-parse/trim": "0.0.3"
   },
   "browser": {
     "elastic-apm-node": false
