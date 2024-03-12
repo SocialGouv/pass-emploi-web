@@ -116,15 +116,22 @@ function PortefeuillePage({
   )
 
   useEffect(() => {
-    if (!chatCredentials || !conseillerJeunes.length) return
+    if (!conseillerJeunes.length) return
+    const mapSansMessage = conseillerJeunes.reduce(
+      (mappedCounts, jeune) => ({ ...mappedCounts, [jeune.id]: 0 }),
+      {} as { [idJeune: string]: number }
+    )
 
-    countMessagesNotRead(conseillerJeunes.map((j) => j.id))
-      .catch(() =>
-        conseillerJeunes.reduce(
-          (mappedCounts, jeune) => ({ ...mappedCounts, [jeune.id]: 0 }),
-          {} as { [idJeune: string]: number }
-        )
-      )
+    let promiseMessagesNotRead: Promise<{ [idJeune: string]: number }>
+    if (!chatCredentials) {
+      promiseMessagesNotRead = Promise.resolve(mapSansMessage)
+    } else {
+      promiseMessagesNotRead = countMessagesNotRead(
+        conseillerJeunes.map((j) => j.id)
+      ).catch(() => mapSansMessage)
+    }
+
+    promiseMessagesNotRead
       .then((mappedCounts: { [idJeune: string]: number }) =>
         conseillerJeunes.map((jeune) => ({
           ...jeune,

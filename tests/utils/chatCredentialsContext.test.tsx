@@ -1,18 +1,11 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { JeuneChat } from 'interfaces/jeune'
-import {
-  getChatCredentials,
-  observeConseillerChats,
-  signIn,
-} from 'services/messages.service'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { getChatCredentials, signIn } from 'services/messages.service'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
-import { ChatsProvider } from 'utils/chat/chatsContext'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
-import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
 jest.mock('services/messages.service')
 
@@ -24,24 +17,71 @@ describe('ChatCredentialsProvider', () => {
       cleChiffrement: 'cleChiffrement',
     })
     ;(signIn as jest.Mock).mockResolvedValue({})
+  })
+
+  it('se connecte à la messagerie', async () => {
+    // When
+    await act(async () =>
+      render(
+        <ConseillerProvider conseiller={unConseiller()}>
+          <ChatCredentialsProvider>
+            <div />
+          </ChatCredentialsProvider>
+        </ConseillerProvider>
+      )
+    )
+
+    // Then
+    expect(getChatCredentials).toHaveBeenCalledWith()
+    expect(signIn).toHaveBeenCalledWith('tokenFirebase')
+  })
+
+  it('n’utilise pas la messagerie si CVM est activé', async () => {
+    // Given
+    process.env.NEXT_PUBLIC_ENABLE_CVM = 'true'
 
     // When
     await act(async () =>
       render(
-        <ChatCredentialsProvider>
-          <div />
-        </ChatCredentialsProvider>
+        <ConseillerProvider
+          conseiller={unConseiller({
+            structure: StructureConseiller.POLE_EMPLOI,
+          })}
+        >
+          <ChatCredentialsProvider>
+            <div />
+          </ChatCredentialsProvider>
+        </ConseillerProvider>
       )
     )
+
+    // Then
+    expect(getChatCredentials).not.toHaveBeenCalled()
+    expect(signIn).not.toHaveBeenCalled()
   })
 
-  it('récupère les informations pour se connecter à la messagerie', async () => {
-    // Then
-    expect(getChatCredentials).toHaveBeenCalledWith()
-  })
+  it('n’utilise pas la messagerie si le conseiller est un early adopter CVM', async () => {
+    // Given
+    process.env.NEXT_PUBLIC_CVM_EARLY_ADOPTERS = 'id1,id2,id-early-adopter'
 
-  it('se connecte à la messagerie', () => {
+    // When
+    await act(async () =>
+      render(
+        <ConseillerProvider
+          conseiller={unConseiller({
+            id: 'id-early-adopter',
+            structure: StructureConseiller.POLE_EMPLOI,
+          })}
+        >
+          <ChatCredentialsProvider>
+            <div />
+          </ChatCredentialsProvider>
+        </ConseillerProvider>
+      )
+    )
+
     // Then
-    expect(signIn).toHaveBeenCalledWith('tokenFirebase')
+    expect(getChatCredentials).not.toHaveBeenCalled()
+    expect(signIn).not.toHaveBeenCalled()
   })
 })
