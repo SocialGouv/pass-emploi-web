@@ -2,6 +2,9 @@ import dynamic from 'next/dynamic'
 
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 
+const OnboardingMILOModal = dynamic(
+  () => import('components/onboarding/OnboardingMILOModal')
+)
 const OnboardingPEModal = dynamic(
   () => import('components/onboarding/OnboardingPEModal')
 )
@@ -17,6 +20,8 @@ export default function OnboardingModal(props: OnboardingModalProps) {
   switch (props.conseiller.structure) {
     case StructureConseiller.POLE_EMPLOI:
       return <OnboardingPEModal {...props} />
+    case StructureConseiller.MILO:
+      return <OnboardingMILOModal {...props} />
     default:
       return <OnboardingAVenirModal {...props} />
   }
