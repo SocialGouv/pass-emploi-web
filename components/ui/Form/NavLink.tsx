@@ -44,9 +44,9 @@ export default function NavLink({
             }`}
             name={iconName}
           />
-          <div className='relative'>
+          <div className='relative text-left'>
             <span
-              className={`text-left break-words ${className ?? ''} ${
+              className={`break-words ${className ?? ''} ${
                 isActive ? 'text-primary' : 'text-blanc'
               }`}
             >
@@ -67,9 +67,9 @@ export default function NavLink({
             }`}
             name={iconName}
           />
-          <div className='relative'>
+          <div className='relative text-left'>
             <span
-              className={`text-left sr-only layout_l:not-sr-only break-words relative ${
+              className={`sr-only layout_l:not-sr-only break-words relative ${
                 className ?? ''
               } ${isActive ? 'text-primary' : 'text-blanc'}`}
             >
