@@ -8,6 +8,7 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
+import { utiliseChat } from 'interfaces/conseiller'
 import { DetailOffre } from 'interfaces/offre'
 import { getImmersionServerSide } from 'services/immersions.service'
 import { getOffreEmploiServerSide } from 'services/offres-emploi.service'
@@ -31,6 +32,9 @@ export default async function PartageOffre({
 }: {
   params: PartageOffreParams
 }) {
+  const { user } = await getMandatorySessionServerSide()
+  if (!utiliseChat(user)) notFound()
+
   const offre = await fetchOffre(params)
 
   const referer = headers().get('referer')

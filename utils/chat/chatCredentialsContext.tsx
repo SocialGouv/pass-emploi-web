@@ -1,15 +1,10 @@
 'use client'
 
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
-
+import { utiliseChat } from 'interfaces/conseiller'
 import { ChatCredentials } from 'interfaces/message'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { getChatCredentials, signIn } from 'services/messages.service'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 const ChatCredentialsContext = createContext<ChatCredentials | undefined>(
   undefined
@@ -22,17 +17,18 @@ export function ChatCredentialsProvider({
   children: ReactNode
   credentials?: ChatCredentials
 }) {
+  const [conseiller] = useConseiller()
   const [chatCredentials, setChatCredentials] = useState<
     ChatCredentials | undefined
   >(credentials)
 
   useEffect(() => {
-    if (!chatCredentials) {
+    if (utiliseChat(conseiller) && !chatCredentials) {
       getChatCredentials()
         .then((c) => signIn(c.token).then(() => c))
         .then(setChatCredentials)
     }
-  }, [chatCredentials])
+  }, [conseiller, chatCredentials])
 
   return (
     <ChatCredentialsContext.Provider value={chatCredentials}>
