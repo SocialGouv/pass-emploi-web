@@ -18,29 +18,39 @@ import { Conseiller } from 'interfaces/conseiller'
 type OnboardingPEModalProps = {
   conseiller: Conseiller
   onClose: () => void
-  estConseillerPE: boolean
+  estBRSA?: boolean
 }
 
 export default function OnboardingPEModal({
   conseiller,
   onClose,
-  estConseillerPE,
+  estBRSA,
 }: OnboardingPEModalProps) {
   const [etape, setEtape] = useState<
     'ACCUEIL' | 'PORTEFEUIILLE' | 'MESSAGERIE' | 'OFFRES'
   >('ACCUEIL')
 
-  const messagerieImage = estConseillerPE
-    ? onboardingMessagerie
-    : onboardingMessagerieBRSA
-  const offresImage = estConseillerPE ? onboardingOffres : onboardingOffresBRSA
-  const portefeuilleImage = estConseillerPE
-    ? onboardingPortefeuille
-    : onboardingPortefeuilleBRSA
-  const titreOnboarding = estConseillerPE ? 'CEJ' : 'pass emploi'
-  const illustrationName = estConseillerPE
-    ? IllustrationName.LogoCEJ
-    : IllustrationName.LogoPassemploi
+  const {
+    messagerieImage,
+    offresImage,
+    portefeuilleImage,
+    titreOnboarding,
+    illustrationName,
+  } = estBRSA
+    ? {
+        messagerieImage: onboardingMessagerie,
+        offresImage: onboardingOffres,
+        portefeuilleImage: onboardingPortefeuille,
+        titreOnboarding: 'CEJ',
+        illustrationName: IllustrationName.LogoCEJ,
+      }
+    : {
+        messagerieImage: onboardingMessagerieBRSA,
+        offresImage: onboardingOffresBRSA,
+        portefeuilleImage: onboardingPortefeuilleBRSA,
+        titreOnboarding: 'pass emploi',
+        illustrationName: IllustrationName.LogoPassemploi,
+      }
   return (
     <>
       {etape === 'ACCUEIL' && (
