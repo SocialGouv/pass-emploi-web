@@ -1,11 +1,11 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useRouter } from 'next/navigation'
 
 import HomePage from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePage'
 import { uneListeDAgencesPoleEmploi } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
-import { useRouter } from 'next/navigation'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modifierAgence } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -265,66 +265,68 @@ describe('HomePage client side', () => {
   })
 
   describe('quand c’est un nouveau conseiller', () => {
-    it('affiche l’onboarding', async () => {
-      // When
-      await act(async () => {
-        renderWithContexts(
-          <HomePage
-            afficherModaleAgence={false}
-            afficherModaleEmail={false}
-            afficherModaleOnboarding={true}
-            redirectUrl='/mes-jeunes'
-          />,
-          {
-            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-          }
-        )
+    describe('quand le conseiller est Pôle emploi', () => {
+      it('affiche l’onboarding', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <HomePage
+              afficherModaleAgence={false}
+              afficherModaleEmail={false}
+              afficherModaleOnboarding={true}
+              redirectUrl='/mes-jeunes'
+            />,
+            {
+              customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            }
+          )
+        })
+
+        // Then
+
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Bienvenue Nils dans votre espace conseiller CEJ',
+          })
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('heading', {
+            level: 3,
+            name: 'Découvrez les principales fonctionnalités de l’outil',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', { level: 2, name: 'Le portefeuille' })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', { level: 2, name: 'La messagerie' })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', { level: 2, name: 'Les offres' })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Commencer' }))
+        // Then
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
       })
-
-      // Then
-
-      expect(
-        screen.getByRole('heading', {
-          level: 2,
-          name: 'Bienvenue Nils dans votre espace conseiller CEJ',
-        })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('heading', {
-          level: 3,
-          name: 'Découvrez les principales fonctionnalités de l’outil',
-        })
-      ).toBeInTheDocument()
-
-      // When
-      await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
-      // Then
-      expect(
-        screen.getByRole('heading', { level: 2, name: 'Le portefeuille' })
-      ).toBeInTheDocument()
-
-      // When
-      await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
-      // Then
-      expect(
-        screen.getByRole('heading', { level: 2, name: 'La messagerie' })
-      ).toBeInTheDocument()
-
-      // When
-      await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
-      // Then
-      expect(
-        screen.getByRole('heading', { level: 2, name: 'Les offres' })
-      ).toBeInTheDocument()
-
-      // When
-      await userEvent.click(screen.getByRole('button', { name: 'Commencer' }))
-      // Then
-      expect(replace).toHaveBeenCalledWith('/mes-jeunes')
     })
 
-    describe('Autre', () => {
-      it('prévient que l’onboarding arrive prochainement', async () => {
+    describe('quand le conseiller est Milo', () => {
+      it('affiche l’onboarding', async () => {
         // When
         await act(async () => {
           renderWithContexts(
@@ -341,10 +343,81 @@ describe('HomePage client side', () => {
         })
 
         // Then
+
         expect(
           screen.getByRole('heading', {
             level: 2,
             name: 'Bienvenue Nils dans votre espace conseiller CEJ',
+          })
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('heading', {
+            level: 3,
+            name: 'Découvrez les principales fonctionnalités de l’outil',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Le portefeuille et l’agenda',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'La messagerie et le pilotage',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Les offres et la réaffectation',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Commencer' }))
+        // Then
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
+      })
+    })
+
+    describe('Autre', () => {
+      it('prévient que l’onboarding arrive prochainement', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <HomePage
+              afficherModaleAgence={false}
+              afficherModaleEmail={false}
+              afficherModaleOnboarding={true}
+              redirectUrl='/mes-jeunes'
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.POLE_EMPLOI_BRSA,
+              },
+            }
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Bienvenue Nils dans votre espace conseiller pass emploi',
           })
         ).toBeInTheDocument()
 
