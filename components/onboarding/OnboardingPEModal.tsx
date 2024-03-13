@@ -1,8 +1,11 @@
 import { StaticImport } from 'next/dist/shared/lib/get-img-props'
 import React, { MouseEvent, ReactNode, useRef, useState } from 'react'
 
+import onboardingMessagerieBRSA from 'assets/images/onboarding_messagerie_brsa.webp'
 import onboardingMessagerie from 'assets/images/onboarding_messagerie_pole-emploi.webp'
+import onboardingOffresBRSA from 'assets/images/onboarding_offres_brsa.webp'
 import onboardingOffres from 'assets/images/onboarding_offres_pole-emploi.webp'
+import onboardingPortefeuilleBRSA from 'assets/images/onboarding_portefeuille_brsa.webp'
 import onboardingPortefeuille from 'assets/images/onboarding_portefeuille_pole-emploi.webp'
 import Modal from 'components/Modal'
 import OnboardingListItem from 'components/onboarding/OnboardingListItem'
@@ -15,22 +18,46 @@ import { Conseiller } from 'interfaces/conseiller'
 type OnboardingPEModalProps = {
   conseiller: Conseiller
   onClose: () => void
+  estBRSA?: boolean
 }
 
 export default function OnboardingPEModal({
   conseiller,
   onClose,
+  estBRSA,
 }: OnboardingPEModalProps) {
   const [etape, setEtape] = useState<
     'ACCUEIL' | 'PORTEFEUIILLE' | 'MESSAGERIE' | 'OFFRES'
   >('ACCUEIL')
 
+  const {
+    messagerieImage,
+    offresImage,
+    portefeuilleImage,
+    titreOnboarding,
+    illustrationName,
+  } = estBRSA
+    ? {
+        messagerieImage: onboardingMessagerieBRSA,
+        offresImage: onboardingOffresBRSA,
+        portefeuilleImage: onboardingPortefeuilleBRSA,
+        titreOnboarding: 'pass emploi',
+        illustrationName: IllustrationName.LogoPassemploi,
+      }
+    : {
+        messagerieImage: onboardingMessagerie,
+        offresImage: onboardingOffres,
+        portefeuilleImage: onboardingPortefeuille,
+        titreOnboarding: 'CEJ',
+        illustrationName: IllustrationName.LogoCEJ,
+      }
+
   return (
     <>
       {etape === 'ACCUEIL' && (
         <OnboardingPEEtapeModal
-          illustratioName={IllustrationName.LogoCEJ}
-          titre={`Bienvenue ${conseiller.firstName} dans votre espace conseiller CEJ`}
+          illustrationName={illustrationName}
+          titre={`Bienvenue ${conseiller.firstName} dans votre espace conseiller ${titreOnboarding}`}
           onClose={onClose}
           onContinue={() => setEtape('PORTEFEUIILLE')}
         >
@@ -56,7 +83,7 @@ export default function OnboardingPEModal({
 
       {etape === 'PORTEFEUIILLE' && (
         <OnboardingPEEtapeModal
-          imageSrc={onboardingPortefeuille}
+          imageSrc={portefeuilleImage}
           titre='Le portefeuille'
           onClose={onClose}
           onContinue={() => setEtape('MESSAGERIE')}
@@ -72,7 +99,7 @@ export default function OnboardingPEModal({
 
       {etape === 'MESSAGERIE' && (
         <OnboardingPEEtapeModal
-          imageSrc={onboardingMessagerie}
+          imageSrc={messagerieImage}
           titre='La messagerie'
           onClose={onClose}
           onContinue={() => setEtape('OFFRES')}
@@ -88,7 +115,7 @@ export default function OnboardingPEModal({
 
       {etape === 'OFFRES' && (
         <OnboardingPEEtapeModal
-          imageSrc={onboardingOffres}
+          imageSrc={offresImage}
           titre='Les offres'
           onClose={onClose}
         >
@@ -104,14 +131,14 @@ export default function OnboardingPEModal({
 }
 
 function OnboardingPEEtapeModal({
-  illustratioName,
+  illustrationName,
   imageSrc,
   titre,
   children,
   onClose,
   onContinue,
 }: {
-  illustratioName?: IllustrationName
+  illustrationName?: IllustrationName
   imageSrc?: StaticImport
   titre: string
   children: ReactNode
@@ -128,7 +155,7 @@ function OnboardingPEEtapeModal({
       onClose={onClose}
       ref={modalRef}
       titleImageSrc={imageSrc}
-      titleIllustration={illustratioName}
+      titleIllustration={illustrationName}
     >
       {children}
 
