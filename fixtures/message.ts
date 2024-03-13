@@ -11,7 +11,7 @@ import { TypeOffre } from 'interfaces/offre'
 export const unMessage = (args: Partial<Message> = {}): Message => {
   const defaults: Message = {
     id: 'idMessage',
-    content: `Encrypted: content`,
+    content: 'Encrypted: content',
     creationDate: DateTime.now(),
     sentBy: 'conseiller',
     iv: 'iv',
