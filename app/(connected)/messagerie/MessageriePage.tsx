@@ -151,7 +151,7 @@ function MessageriePage() {
 
                     <div className='flex'>
                       <h2 className='w-full text-left text-primary text-l-bold'>
-                        Détail du message1
+                        Détail du message
                       </h2>
                     </div>
                   </div>
