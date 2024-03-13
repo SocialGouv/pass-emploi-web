@@ -1,14 +1,12 @@
 import { StaticImport } from 'next/dist/shared/lib/get-img-props'
 import React, { MouseEvent, ReactNode, useRef, useState } from 'react'
 
-
-import onboardingMessagerie from 'assets/images/onboarding_messagerie_pole-emploi.webp'
-import onboardingOffresBRSA from 'assets/images/onboarding_offres_brsa.webp'
 import onboardingMessagerieBRSA from 'assets/images/onboarding_messagerie_brsa.webp'
+import onboardingMessagerie from 'assets/images/onboarding_messagerie_pole-emploi.webp'
 import onboardingOffres from 'assets/images/onboarding_offres_pole-emploi.webp'
-
-import onboardingPortefeuille from 'assets/images/onboarding_portefeuille_pole-emploi.webp'
+import onboardingOffresBRSA from 'assets/images/onboarding_offres_pole-emploi.webp'
 import onboardingPortefeuilleBRSA from 'assets/images/onboarding_portefeuille_brsa.webp'
+import onboardingPortefeuille from 'assets/images/onboarding_portefeuille_pole-emploi.webp'
 import Modal from 'components/Modal'
 import OnboardingListItem from 'components/onboarding/OnboardingListItem'
 import ProgressBar from 'components/onboarding/ProgressBar'
@@ -53,17 +51,7 @@ export default function OnboardingPEModal({
         titreOnboarding: 'CEJ',
         illustrationName: IllustrationName.LogoCEJ,
       }
-  const messagerieImage = estConseillerPE
-    ? onboardingMessagerie
-    : onboardingMessagerieBRSA
-  const offresImage = estConseillerPE ? onboardingOffres : onboardingOffresBRSA
-  const portefeuilleImage = estConseillerPE
-    ? onboardingPortefeuille
-    : onboardingPortefeuilleBRSA
-  const titreOnboarding = estConseillerPE ? 'CEJ' : 'pass emploi'
-  const illustrationName = estConseillerPE
-    ? IllustrationName.LogoCEJ
-    : IllustrationName.LogoPassemploi
+
   return (
     <>
       {etape === 'ACCUEIL' && (
