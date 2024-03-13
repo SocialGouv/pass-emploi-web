@@ -5,8 +5,8 @@ import onboardingMessagerieBRSA from 'assets/images/onboarding_messagerie_brsa.w
 import onboardingMessagerie from 'assets/images/onboarding_messagerie_pole-emploi.webp'
 import onboardingOffresBRSA from 'assets/images/onboarding_offres_brsa.webp'
 import onboardingOffres from 'assets/images/onboarding_offres_pole-emploi.webp'
-import onboardingPortefeuilleBRSA from 'assets/images/onboarding_portefeuille_brsa.webp'
 import onboardingPortefeuille from 'assets/images/onboarding_portefeuille_pole-emploi.webp'
+import onboardingPortefeuilleBRSA from 'assets/images/onboarding_portefeuille_pole-emploi.webp'
 import Modal from 'components/Modal'
 import OnboardingListItem from 'components/onboarding/OnboardingListItem'
 import ProgressBar from 'components/onboarding/ProgressBar'
@@ -38,18 +38,18 @@ export default function OnboardingPEModal({
     illustrationName,
   } = estBRSA
     ? {
-        messagerieImage: onboardingMessagerie,
-        offresImage: onboardingOffres,
-        portefeuilleImage: onboardingPortefeuille,
-        titreOnboarding: 'CEJ',
-        illustrationName: IllustrationName.LogoCEJ,
-      }
-    : {
         messagerieImage: onboardingMessagerieBRSA,
         offresImage: onboardingOffresBRSA,
         portefeuilleImage: onboardingPortefeuilleBRSA,
         titreOnboarding: 'pass emploi',
         illustrationName: IllustrationName.LogoPassemploi,
+      }
+    : {
+        messagerieImage: onboardingMessagerie,
+        offresImage: onboardingOffres,
+        portefeuilleImage: onboardingPortefeuille,
+        titreOnboarding: 'CEJ',
+        illustrationName: IllustrationName.LogoCEJ,
       }
   return (
     <>

@@ -394,8 +394,8 @@ describe('HomePage client side', () => {
       })
     })
 
-    describe('Autre', () => {
-      it('prévient que l’onboarding arrive prochainement', async () => {
+    describe('quand le conseiller est BRSA', () => {
+      it('affiche l’onboarding', async () => {
         // When
         await act(async () => {
           renderWithContexts(
@@ -424,7 +424,7 @@ describe('HomePage client side', () => {
         expect(
           screen.getByRole('heading', {
             level: 3,
-            name: 'Découvrez prochainement les principales fonctionnalités de l’outil',
+            name: 'Découvrez les principales fonctionnalités de l’outil',
           })
         ).toBeInTheDocument()
       })
