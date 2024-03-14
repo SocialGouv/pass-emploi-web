@@ -36,7 +36,7 @@ export default async function Home({
   const redirectUrl =
     searchParams?.redirectUrl ?? '/mes-jeunes' + sourceQueryParam
 
-  const afficherModaleOnboarding = Boolean(searchParams?.onboarding)
+  const afficherModaleOnboarding = true
   const emailEstManquant = estMilo(conseiller) && !conseiller.email
   const agenceEstManquante =
     !estPassEmploi(conseiller) && !aEtablissement(conseiller)
