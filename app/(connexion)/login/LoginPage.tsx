@@ -78,7 +78,7 @@ function LoginPage({
           <h2>
             <span className='sr-only'>Contrat d’engagement jeune</span>
             <LogoCEJ
-              className='m-auto h-[64px] w-[120px] fill-primary_darken'
+              className='m-auto max-w-[120px] fill-primary_darken'
               focusable={false}
               aria-hidden={true}
             />
@@ -117,7 +117,7 @@ function LoginPage({
               <h2 className='mt-16'>
                 <span className='sr-only'>pass emploi</span>
                 <LogoPassEmploi
-                  className='m-auto fill-primary_darken'
+                  className='m-auto fill-primary_darken max-w-[120px]'
                   focusable={false}
                   aria-hidden={true}
                 />

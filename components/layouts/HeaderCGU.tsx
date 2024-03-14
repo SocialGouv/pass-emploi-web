@@ -17,7 +17,7 @@ export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
       {estPoleEmploiBRSA(conseiller) && (
         <LogoPassEmploi
           role='img'
-          className='mb-8 mx-auto fill-primary_darken'
+          className='mb-8 mx-auto fill-primary max-w-[120px]'
           focusable={false}
           aria-label='pass emploi'
           title='pass emploi'
