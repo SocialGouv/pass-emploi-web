@@ -1,13 +1,15 @@
 import { DateTime } from 'luxon'
 import React, {
   FormEvent,
+  Fragment,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react'
 
-import DisplayMessage from 'components/chat/DisplayMessage'
+import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
+import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import HeaderChat from 'components/chat/HeaderChat'
 import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -18,12 +20,13 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { ByDay, Message } from 'interfaces/message'
+import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
   observeDerniersMessages,
   observeJeuneReadingDate,
   setReadByConseiller,
+  supprimerMessage as _supprimerMessage,
 } from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -201,6 +204,22 @@ export default function Conversation({
     })
   }
 
+  async function supprimerMessage(
+    message: Message,
+    indexJour: number,
+    indexMessage: number
+  ) {
+    const isLastMessage =
+      indexJour === messagesByDay!.length - 1 &&
+      indexMessage === messagesByDay![indexJour].messages.length - 1
+    await _supprimerMessage(
+      jeuneChat.chatId,
+      message,
+      chatCredentials!.cleChiffrement,
+      { isLastMessage }
+    )
+  }
+
   useEffect(() => {
     unsubscribeFromMessages.current = observerMessages(jeuneChat.chatId, 1)
     setReadByConseiller(jeuneChat.chatId)
@@ -294,26 +313,38 @@ export default function Conversation({
 
             {messagesByDay.length > 0 && (
               <ul ref={conteneurMessagesRef}>
-                {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
+                {messagesByDay.map((messagesOfADay: ByDay<Message>, i) => (
                   <li key={messagesOfADay.date.toMillis()} className='mb-5'>
                     <div className='text-base-regular text-center mb-3'>
                       <span>{displayDate(messagesOfADay.date)}</span>
                     </div>
 
                     <ul>
-                      {messagesOfADay.messages.map((message: Message) => (
-                        <DisplayMessage
-                          key={message.id}
-                          message={message}
-                          beneficiaireNomComplet={beneficiaireNomComplet}
-                          conseillerNomComplet={getConseillerNomComplet(
-                            message
+                      {messagesOfADay.messages.map((message: Message, j) => (
+                        <Fragment key={message.id}>
+                          {!fromConseiller(message) && (
+                            <DisplayMessageBeneficiaire
+                              message={message}
+                              beneficiaireNomComplet={beneficiaireNomComplet}
+                            />
                           )}
-                          lastSeenByJeune={lastSeenByJeune}
-                          isConseillerCourant={
-                            message.conseillerId === conseiller.id
-                          }
-                        />
+
+                          {fromConseiller(message) && (
+                            <DisplayMessageConseiller
+                              message={message}
+                              conseillerNomComplet={getConseillerNomComplet(
+                                message
+                              )}
+                              lastSeenByJeune={lastSeenByJeune}
+                              isConseillerCourant={
+                                message.conseillerId === conseiller.id
+                              }
+                              onSuppression={() =>
+                                supprimerMessage(message, i, j)
+                              }
+                            />
+                          )}
+                        </Fragment>
                       ))}
                     </ul>
                   </li>

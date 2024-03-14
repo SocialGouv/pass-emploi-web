@@ -568,7 +568,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
     it('marque le message comme supprimé', async () => {
       // When
-      await supprimerMessage(jeuneChat, message, cleChiffrement)
+      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement)
 
       // Then
       expect(updateMessage).toHaveBeenCalledWith(jeuneChat.chatId, message.id, {
@@ -581,7 +581,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
     it('met à jour la conversation si le dernier message est supprimé', async () => {
       // When
-      await supprimerMessage(jeuneChat, message, cleChiffrement, {
+      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement, {
         isLastMessage: true,
       })
 

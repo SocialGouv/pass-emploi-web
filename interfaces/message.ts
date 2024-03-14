@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 
+import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { TypeOffre } from 'interfaces/offre'
 
@@ -74,4 +75,8 @@ export interface InfoSessionMilo {
 
 export function isDeleted(message: Message): boolean {
   return message.status === 'deleted'
+}
+
+export function fromConseiller(message: Message): boolean {
+  return message.sentBy === UserType.CONSEILLER.toLowerCase()
 }

@@ -1,0 +1,210 @@
+import { DateTime } from 'luxon'
+import React, { useState } from 'react'
+
+import LienEvenement from 'components/chat/LienEvenement'
+import LienEvenementEmploi from 'components/chat/LienEvenementEmploi'
+import LienOffre from 'components/chat/LienOffre'
+import { LienPieceJointe } from 'components/chat/LienPieceJointe'
+import LienSessionMilo from 'components/chat/LienSessionMilo'
+import TexteAvecLien from 'components/chat/TexteAvecLien'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
+import { isDeleted, Message, TypeMessage } from 'interfaces/message'
+import { toFrenchDateTime, toFrenchTime } from 'utils/date'
+
+interface DisplayMessageConseillerProps {
+  message: Message
+  conseillerNomComplet: string | undefined
+  lastSeenByJeune: DateTime | undefined
+  isConseillerCourant: boolean
+  onSuppression: () => Promise<void>
+}
+
+export default function DisplayMessageConseiller({
+  message,
+  conseillerNomComplet,
+  isConseillerCourant,
+  lastSeenByJeune,
+  onSuppression,
+}: DisplayMessageConseillerProps) {
+  const [editionEnCours, setEditionEnCours] = useState<boolean>(false)
+
+  async function supprimerMessage() {
+    setEditionEnCours(true)
+    try {
+      await onSuppression()
+    } finally {
+      setEditionEnCours(false)
+    }
+  }
+
+  return (
+    <li className='mb-5' id={message.id} data-testid={message.id}>
+      {editionEnCours && (
+        <div className='w-fit ml-auto'>
+          <SpinningLoader />
+        </div>
+      )}
+
+      {!editionEnCours && (
+        <>
+          {isDeleted(message) && <MessageSupprime />}
+
+          {!isDeleted(message) && (
+            <>
+              <MessageConseiller
+                message={message}
+                conseillerNomComplet={conseillerNomComplet}
+                isConseillerCourant={isConseillerCourant}
+              />
+
+              <FooterMessage
+                creationDate={message.creationDate}
+                lastSeenByJeune={lastSeenByJeune}
+                onSuppression={supprimerMessage}
+              />
+            </>
+          )}
+        </>
+      )}
+    </li>
+  )
+}
+
+function MessageSupprime() {
+  return (
+    <div className='text-xs-regular text-grey_800 max-w-[90%] p-4 rounded-base w-max text-left bg-blanc mt-0 mr-0 mb-1 ml-auto'>
+      Vous avez supprimé ce message
+    </div>
+  )
+}
+
+function MessageConseiller({
+  message,
+  conseillerNomComplet,
+  isConseillerCourant,
+}: Pick<
+  DisplayMessageConseillerProps,
+  'message' | 'conseillerNomComplet' | 'isConseillerCourant'
+>) {
+  return (
+    <div
+      className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left bg-blanc mt-0 mr-0 mb-1 ml-auto ${
+        isConseillerCourant ? 'text-primary_darken' : 'text-accent_2'
+      }`}
+    >
+      <p className='text-s-bold capitalize mb-1'>
+        {isConseillerCourant ? 'Vous' : conseillerNomComplet}
+      </p>
+
+      <TexteAvecLien texte={message.content} />
+
+      {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
+        <LienOffre infoOffre={message.infoOffre} isSentByConseiller={true} />
+      )}
+
+      {message.type === TypeMessage.MESSAGE_SESSION_MILO &&
+        message.infoSessionImilo && (
+          <LienSessionMilo infoSessionMilo={message.infoSessionImilo} />
+        )}
+
+      {message.type === TypeMessage.MESSAGE_EVENEMENT &&
+        message.infoEvenement && (
+          <LienEvenement infoEvenement={message.infoEvenement} />
+        )}
+
+      {message.type === TypeMessage.MESSAGE_EVENEMENT_EMPLOI &&
+        message.infoEvenementEmploi && (
+          <LienEvenementEmploi
+            infoEvenementEmploi={message.infoEvenementEmploi}
+          />
+        )}
+
+      {message.type === TypeMessage.MESSAGE_PJ &&
+        message.infoPiecesJointes &&
+        message.infoPiecesJointes.map(({ id, nom }) => (
+          <LienPieceJointe key={id} id={id} nom={nom} />
+        ))}
+    </div>
+  )
+}
+
+function FooterMessage({
+  creationDate,
+  lastSeenByJeune,
+  onSuppression,
+}: {
+  creationDate: DateTime
+  lastSeenByJeune: DateTime | undefined
+  onSuppression: () => void
+}) {
+  const [afficherMenuEdition, setAfficherMenuEdition] = useState<boolean>(false)
+
+  const isSeenByJeune = Boolean(
+    lastSeenByJeune && lastSeenByJeune > creationDate
+  )
+
+  function permuterMenuEdition() {
+    setAfficherMenuEdition(!afficherMenuEdition)
+  }
+
+  function scrollToRef(element: HTMLElement | null) {
+    if (element)
+      element?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest',
+      })
+  }
+
+  return (
+    <div className='relative flex items-center gap-2 justify-end text-xs-medium text-content'>
+      <button
+        type='button'
+        onClick={permuterMenuEdition}
+        className={
+          afficherMenuEdition ? 'bg-primary rounded-full' : 'fill-grey_800'
+        }
+      >
+        <IconComponent
+          focusable={false}
+          aria-hidden={true}
+          className={`inline w-4 h-4 m-1 ${afficherMenuEdition ? 'fill-blanc' : 'fill-grey_800'}`}
+          name={IconName.More}
+        />
+        <span className='sr-only'>
+          Éditer votre message du{' '}
+          {toFrenchDateTime(creationDate, { a11y: true })}
+        </span>
+      </button>
+      {afficherMenuEdition && (
+        <div
+          className='absolute top-[2em] z-10 bg-blanc rounded-base p-4 shadow-m'
+          ref={scrollToRef}
+        >
+          <button
+            type='button'
+            onClick={() => onSuppression()}
+            className='flex items-center text-warning text-s-bold gap-2'
+          >
+            <IconComponent
+              focusable={false}
+              aria-hidden={true}
+              className='inline w-4 h-4 fill-[currentColor]'
+              name={IconName.Delete}
+            />
+            Supprimer le message
+          </button>
+        </div>
+      )}
+
+      <span>
+        <span className='sr-only'>Envoyé à </span>
+        <span aria-label={toFrenchTime(creationDate, { a11y: true })}>
+          {toFrenchTime(creationDate)}
+        </span>
+        {!isSeenByJeune ? ' · Envoyé' : ' · Lu'}
+      </span>
+    </div>
+  )
+}

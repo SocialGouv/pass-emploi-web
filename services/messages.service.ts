@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon'
-import { message } from 'memfs/lib/internal/errors'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
@@ -305,7 +304,7 @@ export async function partagerOffre({
 }
 
 export async function supprimerMessage(
-  { chatId }: JeuneChat,
+  chatId: string,
   message: Message,
   cleChiffrement: string,
   { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
@@ -314,10 +313,13 @@ export async function supprimerMessage(
   const nouveauMessage = message.iv
     ? encryptWithCustomIv(messageSuppression, cleChiffrement, message.iv)
     : messageSuppression
+  const oldMessage = message.iv
+    ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
+    : messageSuppression
 
   await updateMessage(chatId, message.id, {
     message: nouveauMessage,
-    oldMessage: message.content,
+    oldMessage,
     date: DateTime.now(),
     status: 'deleted',
   })
