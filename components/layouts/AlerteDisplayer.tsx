@@ -26,6 +26,12 @@ export default function AlerteDisplayer({
     setAlerte(undefined)
   }
 
+  function getAlertLabel(): string {
+    if (typeof alerteAAfficher!.title === 'function')
+      return alerteAAfficher!.title(alerte?.params?.variable)
+    return alerteAAfficher!.title
+  }
+
   useEffect(() => {
     setAlerteAAfficher(alerte && alertes[alerte.key])
   }, [alerte, alertes, setAlerte])
@@ -33,13 +39,13 @@ export default function AlerteDisplayer({
   return (
     <div className={hideOnLargeScreen ? 'layout_s:hidden' : ''}>
       {alerte && alerteAAfficher && (
-        <SuccessAlert label={alerteAAfficher.title} onAcknowledge={closeAlerte}>
+        <SuccessAlert label={getAlertLabel()} onAcknowledge={closeAlerte}>
           <>
             <p className='whitespace-pre-line'>{alerteAAfficher.sub}</p>
 
             {alerteAAfficher.link && (
               <AlertLink
-                href={alerteAAfficher.link.buildHref(alerte.target)}
+                href={alerteAAfficher.link.buildHref(alerte.params?.target)}
                 label={alerteAAfficher.link.label}
                 onClick={closeAlerte}
               />
@@ -52,7 +58,7 @@ export default function AlerteDisplayer({
 }
 
 type AlerteAffichee = {
-  title: string
+  title: string | ((variable?: string) => string)
   sub?: string
   link?: {
     label: string
@@ -93,7 +99,8 @@ const ALERTES: DictAlertes = {
     title: 'Le compte du bénéficiaire a bien été supprimé',
   },
   creationBeneficiaire: {
-    title: 'Le bénéficiaire a été ajouté à votre portefeuille',
+    title: (variable?: string) =>
+      `${variable} a été ajouté(e) à votre portefeuille`,
     link: {
       label: 'Voir le détail du bénéficiaire',
       buildHref: (target?: string) => '/mes-jeunes/' + target,

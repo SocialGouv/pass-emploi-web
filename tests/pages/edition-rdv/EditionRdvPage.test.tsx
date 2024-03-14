@@ -596,10 +596,9 @@ describe('EditionRdvPage client side', () => {
             await userEvent.click(buttonValider)
 
             // Then
-            expect(alerteSetter).toHaveBeenCalledWith(
-              'creationRDV',
-              '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
-            )
+            expect(alerteSetter).toHaveBeenCalledWith('creationRDV', {
+              target: '963afb47-2b15-46a9-8c0c-0e95240b2eb5',
+            })
             expect(push).toHaveBeenCalledWith('/agenda?onglet=conseiller')
           })
         })

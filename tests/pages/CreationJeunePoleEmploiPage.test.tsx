@@ -140,10 +140,10 @@ describe('CreationJeunePoleEmploiPage client side', () => {
         ...portefeuille,
         uneBaseJeune(),
       ])
-      expect(alerteSetter).toHaveBeenCalledWith(
-        'creationBeneficiaire',
-        'jeune-1'
-      )
+      expect(alerteSetter).toHaveBeenCalledWith('creationBeneficiaire', {
+        variable: 'Kenji Jirac',
+        target: 'jeune-1',
+      })
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
 

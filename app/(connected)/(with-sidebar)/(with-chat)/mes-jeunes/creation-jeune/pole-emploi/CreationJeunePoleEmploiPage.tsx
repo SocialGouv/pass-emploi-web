@@ -36,7 +36,10 @@ function PoleEmploiCreationJeune(): ReactElement {
       })
 
       setPortefeuille(portefeuille.concat(beneficiaireCree))
-      setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
+      setAlerte(AlerteParam.creationBeneficiaire, {
+        variable: `${beneficiaireCree.prenom} ${beneficiaireCree.nom}`,
+        target: beneficiaireCree.id,
+      })
       router.push('/mes-jeunes')
     } catch (error) {
       setCreationError(

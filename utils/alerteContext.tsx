@@ -4,13 +4,18 @@ import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { AlerteParam } from 'referentiel/alerteParam'
 
+type AlerteParams = Partial<{
+  variable: string
+  target: string
+}>
+
 export type Alerte = {
   key: AlerteParam
-  target?: string
+  params?: AlerteParams
 }
 type AlerteState = [
   Alerte | undefined,
-  (key: AlerteParam | undefined, target?: string) => void,
+  (key: AlerteParam | undefined, params?: AlerteParams) => void,
 ]
 
 const AlerteContext = createContext<AlerteState | undefined>(undefined)
@@ -22,11 +27,11 @@ export function AlerteProvider({
 }: {
   children: ReactNode
   alerteForTests?: Alerte
-  setterForTests?: (key: AlerteParam | undefined, target?: string) => void
+  setterForTests?: (key: AlerteParam | undefined, params?: AlerteParams) => void
 }) {
   const [alerte, setAlerte] = useState<Alerte | undefined>(alerteForTests)
-  const defaultSetter = (key: AlerteParam | undefined, target?: string) =>
-    setAlerte(key && { key, target })
+  const defaultSetter = (key: AlerteParam | undefined, params?: AlerteParams) =>
+    setAlerte(key && { key, params })
   const setter = setterForTests ?? defaultSetter
 
   return (

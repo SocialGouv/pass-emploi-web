@@ -167,7 +167,7 @@ function EditionRdvPage({
     const alertType = evenementTypeAC
       ? AlerteParam.creationAnimationCollective
       : AlerteParam.creationRDV
-    setAlerte(alertType, idNouvelEvenement)
+    setAlerte(alertType, { target: idNouvelEvenement })
   }
 
   async function modifierEvenement(

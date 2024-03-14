@@ -103,7 +103,10 @@ describe('CreationJeuneMiloPage client side', () => {
         ...portefeuille,
         uneBaseJeune(),
       ])
-      expect(setAlerte).toHaveBeenCalledWith('creationBeneficiaire', 'jeune-1')
+      expect(setAlerte).toHaveBeenCalledWith('creationBeneficiaire', {
+        variable: 'Kenji Jirac',
+        target: 'jeune-1',
+      })
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
 

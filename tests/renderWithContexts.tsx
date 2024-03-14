@@ -29,7 +29,10 @@ export default function renderWithContexts(
     }>
     customAlerte?: Partial<{
       alerte: Alerte
-      alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+      alerteSetter: (
+        key: AlerteParam | undefined,
+        params?: Partial<{ variable: string; target: string }>
+      ) => void
     }>
     customShowRubriqueListeDeDiffusion?: Partial<{
       value: boolean | undefined
@@ -97,7 +100,10 @@ function provideContexts(
   }>,
   alerte: Partial<{
     alerte: Alerte
-    alerteSetter: (key: AlerteParam | undefined, target?: string) => void
+    alerteSetter: (
+      key: AlerteParam | undefined,
+      params?: Partial<{ variable: string; target: string }>
+    ) => void
   }>,
   showRubriqueListeDeDiffusion: Partial<{
     value: boolean | undefined

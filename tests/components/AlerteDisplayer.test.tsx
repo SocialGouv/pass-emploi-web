@@ -20,7 +20,9 @@ describe('AlerteDisplayer', () => {
         customAlerte: {
           alerte: {
             key: AlerteParam.creationRDV,
-            target: 'id-rdv',
+            params: {
+              target: 'id-rdv',
+            },
           },
           alerteSetter,
         },
@@ -92,7 +94,9 @@ describe('AlerteDisplayer', () => {
         customAlerte: {
           alerte: {
             key: AlerteParam.creationAnimationCollective,
-            target: 'id-ac',
+            params: {
+              target: 'id-ac',
+            },
           },
           alerteSetter,
         },
@@ -183,7 +187,10 @@ describe('AlerteDisplayer', () => {
         customAlerte: {
           alerte: {
             key: AlerteParam.creationBeneficiaire,
-            target: 'id-beneficiaire',
+            params: {
+              variable: 'Peppa Pig',
+              target: 'id-beneficiaire',
+            },
           },
           alerteSetter,
         },
@@ -193,7 +200,7 @@ describe('AlerteDisplayer', () => {
     it("affiche l'alerte de succès", () => {
       // Then
       expect(
-        screen.getByText(/Le bénéficiaire a été ajouté à votre portefeuille/)
+        screen.getByText('Peppa Pig a été ajouté(e) à votre portefeuille')
       ).toBeInTheDocument()
     })
 
