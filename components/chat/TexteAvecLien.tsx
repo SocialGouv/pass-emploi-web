@@ -13,9 +13,13 @@ export default function TexteAvecLien({ texte, lighten }: TexteAvecLienProps) {
   }
 
   function formateTexteAvecLien() {
-    const messageFormate = texte.split(/\r?\n|\s+/).map((mot) => {
-      if (detecteLien(mot)) {
-        return `<a id="lienExterne">
+    const messageFormate = texte
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .split(/\r?\n|\s+/)
+      .map((mot) => {
+        if (detecteLien(mot)) {
+          return `<a id="lienExterne">
           <span>${mot}</span>  
           <span class='ml-1'>    
            <svg aria-hidden={true} focusable={false} viewBox="0 0 12 12" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
@@ -23,10 +27,10 @@ export default function TexteAvecLien({ texte, lighten }: TexteAvecLienProps) {
           </svg>
           </span>
         </a>`
-      } else {
-        return mot
-      }
-    })
+        } else {
+          return mot
+        }
+      })
 
     const options = {
       replace: ({ attribs, children }: any) => {
