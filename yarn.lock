@@ -5438,18 +5438,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
-  version: 18.2.64
-  resolution: "@types/react@npm:18.2.64"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    "@types/scheduler": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/ab3ba9597990d08ffd419a5ad28fd22393c7a9a241ae455fb1d5d193d209471aa1909fa7ad016fd8d161eab6d0babba77b013b56a5170bedf78833085b9ee424
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^18.2.65":
+"@types/react@npm:*, @types/react@npm:^18.2.65":
   version: 18.2.65
   resolution: "@types/react@npm:18.2.65"
   dependencies:
@@ -9299,9 +9288,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:4.4.1":
-  version: 4.4.1
-  resolution: "elastic-apm-node@npm:4.4.1"
+"elastic-apm-node@npm:4.5.0":
+  version: 4.5.0
+  resolution: "elastic-apm-node@npm:4.5.0"
   dependencies:
     "@elastic/ecs-pino-format": "npm:^1.5.0"
     "@opentelemetry/api": "npm:^1.4.1"
@@ -9340,7 +9329,7 @@ __metadata:
     sql-summary: "npm:^1.0.1"
     stream-chopper: "npm:^3.0.1"
     unicode-byte-truncate: "npm:^1.0.0"
-  checksum: 10c0/3786ddd39beacf37a71a2db76c601695e3575f63650fbac2dc5170ec1e1e9313faa9006d16463e28d47e735ef0edd82b60806c9eea3fcb15e8716e5aa4d90b01
+  checksum: 10c0/f4a7b36ede6e4d9658349e3fb5d8d145245c7549880a0e8f0bff5cf0759c7aefdca204889e5c682de5907b9a5befa3baa691055be58741475d8caa7455361c3a
   languageName: node
   linkType: hard
 
@@ -15605,7 +15594,7 @@ __metadata:
     crypto-js: "npm:4.2.0"
     css-loader: "npm:^6.10.0"
     dotenv: "npm:16.4.5"
-    elastic-apm-node: "npm:4.4.1"
+    elastic-apm-node: "npm:4.5.0"
     eslint: "npm:^8.57.0"
     eslint-config-next: "npm:14.1.3"
     eslint-config-prettier: "npm:^9.1.0"
