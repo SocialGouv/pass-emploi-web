@@ -66,6 +66,7 @@ import FirstPageIcon from 'assets/icons/navigation/first_page.svg'
 import LastPageIcon from 'assets/icons/navigation/last_page.svg'
 import LogoutIcon from 'assets/icons/navigation/logout.svg'
 import MenuIcon from 'assets/icons/navigation/menu.svg'
+import MoreIcon from 'assets/icons/navigation/more.svg'
 import OpenInNewIcon from 'assets/icons/navigation/open_in_new.svg'
 import SwapVertIcon from 'assets/icons/navigation/swap_vert.svg'
 import NumberCircleOneIcon from 'assets/icons/numbers/number_circle_1.svg'
@@ -111,7 +112,6 @@ export enum IconName {
   EventOutline = 'EventOutline',
   FavoriteFill = 'FavoriteFill',
   Filter = 'Filter',
-
   FirstPage = 'FirstPage',
   Flag = 'Flag',
   Help = 'Help',
@@ -124,6 +124,7 @@ export enum IconName {
   Logout = 'Logout',
   Mail = 'Mail',
   Menu = 'Menu',
+  More = 'More',
   Note = 'Note',
   Notification = 'Notification',
   NumberCircleOne = 'NumberCircleOne',
@@ -194,6 +195,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Logout]: LogoutIcon,
   [IconName.Mail]: MailIcon,
   [IconName.Menu]: MenuIcon,
+  [IconName.More]: MoreIcon,
   [IconName.NumberCircleOne]: NumberCircleOneIcon,
   [IconName.NumberCircleTwo]: NumberCircleTwoIcon,
   [IconName.NumberCircleThree]: NumberCircleThreeIcon,

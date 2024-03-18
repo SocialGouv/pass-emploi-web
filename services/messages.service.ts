@@ -15,6 +15,7 @@ import {
   signIn as _signIn,
   signOut as _signOut,
   updateChat,
+  updateMessage,
 } from 'clients/firebase.client'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
@@ -293,7 +294,7 @@ export async function partagerOffre({
     date: now,
   }
 
-  await envoyerMessage(
+  await envoyerPartageOffre(
     idsDestinataires,
     nouveauMessage,
     'MESSAGE_OFFRE_PARTAGEE',
@@ -302,9 +303,35 @@ export async function partagerOffre({
   )
 }
 
-async function envoyerMessage(
+export async function supprimerMessage(
+  chatId: string,
+  message: Message,
+  cleChiffrement: string,
+  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+) {
+  const messageSuppression = '(message supprimé)'
+  const nouveauMessage = message.iv
+    ? encryptWithCustomIv(messageSuppression, cleChiffrement, message.iv)
+    : messageSuppression
+  const oldMessage = message.iv
+    ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
+    : messageSuppression
+
+  await updateMessage(chatId, message.id, {
+    message: nouveauMessage,
+    oldMessage,
+    date: DateTime.now(),
+    status: 'deleted',
+  })
+
+  if (isLastMessage) {
+    await updateChat(chatId, { lastMessageContent: nouveauMessage })
+  }
+}
+
+async function envoyerPartageOffre(
   idsDestinataires: string[],
-  nouveauMessage: CreateFirebaseMessage | CreateFirebaseMessageWithOffre,
+  nouveauMessage: CreateFirebaseMessageWithOffre,
   type: MessageType,
   session: Session,
   date: DateTime

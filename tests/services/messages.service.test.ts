@@ -11,6 +11,7 @@ import {
   signIn as firebaseSignIn,
   signOut as firebaseSignOut,
   updateChat,
+  updateMessage,
 } from 'clients/firebase.client'
 import {
   desItemsJeunes,
@@ -23,6 +24,7 @@ import {
   desMessagesListeDeDiffusionParJour,
   desMessagesListeDiffusion,
   desMessagesParJour,
+  unMessage,
 } from 'fixtures/message'
 import { unDetailOffreEmploi } from 'fixtures/offre'
 import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
@@ -40,6 +42,7 @@ import {
   setReadByConseiller,
   signIn,
   signOut,
+  supprimerMessage,
   toggleFlag,
 } from 'services/messages.service'
 
@@ -478,10 +481,13 @@ describe('MessagesFirebaseAndApiService', () => {
       newMessageGroupe = 'Regarde cette offre qui pourrait t’intéresser.'
       offre = unDetailOffreEmploi()
 
-      chats = idsJeunes.reduce((mappedChats, idJeune) => {
-        mappedChats[idJeune] = unChat({ chatId: `chat-${idJeune}` })
-        return mappedChats
-      }, {} as { [idJeune: string]: Chat })
+      chats = idsJeunes.reduce(
+        (mappedChats, idJeune) => {
+          mappedChats[idJeune] = unChat({ chatId: `chat-${idJeune}` })
+          return mappedChats
+        },
+        {} as { [idJeune: string]: Chat }
+      )
       ;(getChatsDuConseiller as jest.Mock).mockResolvedValue(chats)
 
       await partagerOffre({
@@ -549,6 +555,40 @@ describe('MessagesFirebaseAndApiService', () => {
         },
         accessToken
       )
+    })
+  })
+
+  describe('.supprimerMessage', () => {
+    const jeuneChat = unJeuneChat()
+    const message = unMessage()
+    const now = DateTime.now()
+    beforeEach(async () => {
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+    })
+
+    it('marque le message comme supprimé', async () => {
+      // When
+      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement)
+
+      // Then
+      expect(updateMessage).toHaveBeenCalledWith(jeuneChat.chatId, message.id, {
+        message: 'Encrypted: (message supprimé)',
+        date: now,
+        oldMessage: `Encrypted: content`,
+        status: 'deleted',
+      })
+    })
+
+    it('met à jour la conversation si le dernier message est supprimé', async () => {
+      // When
+      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement, {
+        isLastMessage: true,
+      })
+
+      // Then
+      expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+        lastMessageContent: 'Encrypted: (message supprimé)',
+      })
     })
   })
 })

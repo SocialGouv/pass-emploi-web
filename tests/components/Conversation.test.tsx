@@ -1,7 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import Conversation from 'components/chat/Conversation'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
@@ -14,6 +14,7 @@ import {
   observeJeuneReadingDate,
   sendNouveauMessage,
   setReadByConseiller,
+  supprimerMessage,
 } from 'services/messages.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -26,7 +27,7 @@ describe('<Conversation />', () => {
   let jeuneChat: JeuneChat
 
   let conseillersJeunes: ConseillerHistorique[]
-  let rerender: (children: JSX.Element) => void
+  let rerender: (children: ReactElement) => void
   const messagesParJour = desMessagesParJour()
   let unsubscribe: () => void
   beforeEach(async () => {
@@ -34,7 +35,7 @@ describe('<Conversation />', () => {
     conseillersJeunes = desConseillersJeune()
     unsubscribe = jest.fn()
     ;(observeJeuneReadingDate as jest.Mock).mockImplementation(
-      (idChat: string, fn: (date: DateTime) => void) => {
+      (_: string, fn: (date: DateTime) => void) => {
         fn(DateTime.now())
         return () => {}
       }
@@ -144,7 +145,7 @@ describe('<Conversation />', () => {
     )
   })
 
-  it('supprime les inputs qui ont commencé a étre saisis (fichier et texte) quand il est rechanger', async () => {
+  it('supprime les inputs qui ont commencé a étre saisis (fichier et texte) quand la conversation est actualisée', async () => {
     // Given
     const file = new File(['un contenu'], 'imageupload.png', {
       type: 'image/png',
@@ -181,21 +182,20 @@ describe('<Conversation />', () => {
       ).toBeInTheDocument()
     })
 
-    const casesMessages: Message[] = []
-    messagesDUnJour.messages.map((message) => casesMessages.push(message))
-
-    for (let messageN = 0; messageN < casesMessages.length - 1; messageN++) {
-      it(`affiche le contenu du message`, () => {
+    const casesMessages = messagesDUnJour.messages.map((message) => [message])
+    describe.each(casesMessages)('pour chaque message', (message) => {
+      it(`affiche le contenu du message ${message.id}`, () => {
         // Then
         expect(
-          screen.getByText(casesMessages[messageN].content)
+          screen.getByText(
+            (_, element) =>
+              message.content ===
+              element?.textContent?.trim().replaceAll(/\s+/g, ' ')
+          )
         ).toBeInTheDocument()
       })
-    }
 
-    it.each(casesMessages)(
-      `affiche le nom complet du conseiller`,
-      (message) => {
+      it('affiche le nom complet du conseiller', () => {
         // Then
         const messageItem = screen.getByTestId(message.id)
         const conseiller = conseillersJeunes.find(
@@ -207,20 +207,62 @@ describe('<Conversation />', () => {
             { exact: false }
           )
         ).toBeInTheDocument()
-      }
+      })
+    })
+  })
+
+  it('permet de supprimer un message', async () => {
+    // When
+    await userEvent.click(
+      screen.getAllByRole('button', {
+        name: /Voir les actions possibles pour votre message/,
+      })[1]
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: /Supprimer le message/ })
+    )
+
+    // Then
+    expect(supprimerMessage).toHaveBeenCalledWith(
+      'idChat',
+      messagesParJour[0].messages[0],
+      'cleChiffrement',
+      { isLastMessage: false }
+    )
+
+    // When
+    await userEvent.click(
+      screen
+        .getAllByRole('button', {
+          name: /Voir les actions possibles pour votre message/,
+        })
+        .at(-1)!
+    )
+    await userEvent.click(
+      screen.getByRole('button', { name: /Supprimer le message/ })
+    )
+
+    // Then
+    expect(supprimerMessage).toHaveBeenCalledWith(
+      'idChat',
+      messagesParJour[messagesParJour.length - 1].messages[
+        messagesParJour[messagesParJour.length - 1].messages.length - 1
+      ],
+      'cleChiffrement',
+      { isLastMessage: true }
     )
   })
 
-  it('indique la présence d’un lien externe dans le message s’il en a un', () => {
-    // Then
-    expect(
-      screen.getByRole('link', {
-        name: 'https://www.pass-emploi.com/ (nouvelle fenêtre)',
-      })
-    ).toBeInTheDocument()
-  })
+  describe('lien externe', () => {
+    it('indique la présence d’un lien externe dans le message s’il en a un', () => {
+      // Then
+      expect(
+        screen.getByRole('link', {
+          name: 'https://www.pass-emploi.com/ (nouvelle fenêtre)',
+        })
+      ).toBeInTheDocument()
+    })
 
-  describe('au clic ouvre une boîte de dialogue de confirmation', () => {
     it('continue et redirige vers un lien externe', async () => {
       // Given
       const modaleConfirmation = jest
