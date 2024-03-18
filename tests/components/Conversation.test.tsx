@@ -145,7 +145,7 @@ describe('<Conversation />', () => {
     )
   })
 
-  it('supprime les inputs qui ont commencé a étre saisis (fichier et texte) quand il la conversation est actualisée', async () => {
+  it('supprime les inputs qui ont commencé a étre saisis (fichier et texte) quand la conversation est actualisée', async () => {
     // Given
     const file = new File(['un contenu'], 'imageupload.png', {
       type: 'image/png',
@@ -214,7 +214,9 @@ describe('<Conversation />', () => {
   it('permet de supprimer un message', async () => {
     // When
     await userEvent.click(
-      screen.getAllByRole('button', { name: /Éditer votre message/ })[1]
+      screen.getAllByRole('button', {
+        name: /Voir les actions possibles pour votre message/,
+      })[1]
     )
     await userEvent.click(
       screen.getByRole('button', { name: /Supprimer le message/ })
@@ -230,7 +232,11 @@ describe('<Conversation />', () => {
 
     // When
     await userEvent.click(
-      screen.getAllByRole('button', { name: /Éditer votre message/ }).at(-1)!
+      screen
+        .getAllByRole('button', {
+          name: /Voir les actions possibles pour votre message/,
+        })
+        .at(-1)!
     )
     await userEvent.click(
       screen.getByRole('button', { name: /Supprimer le message/ })

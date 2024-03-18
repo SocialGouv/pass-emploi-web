@@ -158,34 +158,40 @@ function FooterMessage({
   }
 
   return (
-    <div className='relative flex items-center gap-2 justify-end text-xs-medium text-content'>
+    <div
+      onClick={permuterMenuEdition}
+      className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
+    >
       <button
         type='button'
-        onClick={permuterMenuEdition}
         className={
-          afficherMenuEdition ? 'bg-primary rounded-full' : 'fill-grey_800'
+          afficherMenuEdition
+            ? 'bg-primary rounded-full fill-blanc'
+            : 'fill-grey_800 hover:rounded-full hover:shadow-m'
         }
+        title={`${afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour votre message du ${toFrenchDateTime(creationDate)}`}
       >
         <IconComponent
           focusable={false}
           aria-hidden={true}
-          className={`inline w-4 h-4 m-1 ${afficherMenuEdition ? 'fill-blanc' : 'fill-grey_800'}`}
+          className='inline w-4 h-4 m-1'
           name={IconName.More}
         />
         <span className='sr-only'>
-          Éditer votre message du{' '}
-          {toFrenchDateTime(creationDate, { a11y: true })}
+          {afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour
+          votre message du {toFrenchDateTime(creationDate, { a11y: true })}
         </span>
       </button>
+
       {afficherMenuEdition && (
         <div
-          className='absolute top-[2em] z-10 bg-blanc rounded-base p-4 shadow-m'
+          className='absolute top-[2em] z-10 bg-blanc rounded-base p-2 shadow-m'
           ref={scrollToRef}
         >
           <button
             type='button'
             onClick={() => onSuppression()}
-            className='flex items-center text-warning text-s-bold gap-2'
+            className='p-2 flex items-center text-warning text-s-bold gap-2 hover:rounded-base hover:bg-warning hover:text-blanc hover:shadow-m'
           >
             <IconComponent
               focusable={false}

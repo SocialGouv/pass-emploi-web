@@ -53,7 +53,7 @@ describe('<DiplayMessageConseiller />', () => {
     // When
     await userEvent.click(
       screen.getByRole('button', {
-        name: 'Éditer votre message du 12 avril 2024 à 5 heure 21',
+        name: 'Voir les actions possibles pour votre message du 12 avril 2024 à 5 heure 21',
       })
     )
     await userEvent.click(screen.getByRole('button', { name: /Supprimer/ }))
