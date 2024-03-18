@@ -83,6 +83,19 @@ export function peutAccederAuxSessions(conseiller: Conseiller): boolean {
   return estMilo(conseiller) && Boolean(conseiller.structureMilo)
 }
 
+export function utiliseChat({
+  id,
+  structure,
+}: Conseiller | Session.HydratedUser): boolean {
+  return (
+    structure !== StructureConseiller.POLE_EMPLOI ||
+    (process.env.NEXT_PUBLIC_ENABLE_CVM !== 'true' &&
+      !(process.env.NEXT_PUBLIC_CVM_EARLY_ADOPTERS ?? '')
+        .split(',')
+        .includes(id))
+  )
+}
+
 export function doitSignerLesCGU(conseiller: Conseiller): boolean {
   return (
     !conseiller.dateSignatureCGU ||

@@ -8,9 +8,12 @@ import sidebarLayout from 'app/(connected)/(with-sidebar)/sidebar.module.css'
 import ChatContainer from 'components/chat/ChatContainer'
 import ChatNav from 'components/chat/ChatNav'
 import Sidebar from 'components/Sidebar'
+import { utiliseChat } from 'interfaces/conseiller'
 import { useChats } from 'utils/chat/chatsContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 export default function LayoutWithChat({ children }: { children: ReactNode }) {
+  const [conseiller] = useConseiller()
   const chats = useChats()
   const [showChatNav, setShowChatNav] = useState<boolean>(false)
 
@@ -22,12 +25,14 @@ export default function LayoutWithChat({ children }: { children: ReactNode }) {
 
       <PageLayout fullWidth={true}>{children}</PageLayout>
 
-      <aside className={layout.chatRoom}>
-        <ChatContainer
-          jeunesChats={chats}
-          menuState={[showChatNav, setShowChatNav]}
-        />
-      </aside>
+      {utiliseChat(conseiller) && (
+        <aside className={layout.chatRoom}>
+          <ChatContainer
+            jeunesChats={chats}
+            menuState={[showChatNav, setShowChatNav]}
+          />
+        </aside>
+      )}
 
       {showChatNav && <ChatNav menuState={[showChatNav, setShowChatNav]} />}
     </div>

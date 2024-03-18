@@ -1,10 +1,12 @@
 import React from 'react'
 
 import MessageGroupeIcon from 'assets/icons/actions/outgoing_mail.svg'
-import EmptyStateImage from 'assets/images/illustration-messagerie.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { JeuneChat } from 'interfaces/jeune'
 
@@ -31,7 +33,8 @@ export default function ListeConversations({
         {conversations?.length === 0 && (
           <>
             <div className='flex flex-col justify-center items-center'>
-              <EmptyStateImage
+              <IllustrationComponent
+                name={IllustrationName.Messagerie}
                 focusable={false}
                 aria-hidden={true}
                 className='w-[360px] h-[200px]'

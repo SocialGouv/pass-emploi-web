@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
@@ -14,25 +14,29 @@ jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
 
 describe('HomePage client side', () => {
+  let replace: jest.Mock
+  beforeEach(() => {
+    // Given
+    replace = jest.fn(() => Promise.resolve())
+    ;(useRouter as jest.Mock).mockReturnValue({ replace })
+  })
+
   describe('quand le conseiller doit renseigner sa structure', () => {
-    let replace: jest.Mock
-
-    beforeEach(() => {
-      // Given
-      replace = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ replace })
-
+    beforeEach(async () => {
       // When
-      renderWithContexts(
-        <HomePage
-          afficherModaleAgence={true}
-          afficherModaleEmail={false}
-          redirectUrl='/mes-jeunes'
-        />,
-        {
-          customConseiller: { structure: StructureConseiller.MILO },
-        }
-      )
+      await act(async () => {
+        renderWithContexts(
+          <HomePage
+            afficherModaleAgence={true}
+            afficherModaleEmail={false}
+            afficherModaleOnboarding={false}
+            redirectUrl='/mes-jeunes'
+          />,
+          {
+            customConseiller: { structure: StructureConseiller.MILO },
+          }
+        )
+      })
     })
 
     it('contient un message pour demander la structure du conseiller', () => {
@@ -64,28 +68,28 @@ describe('HomePage client side', () => {
   describe('quand le conseiller doit renseigner son agence', () => {
     let agences: Agence[]
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-    let replace: jest.Mock
 
-    beforeEach(() => {
+    beforeEach(async () => {
       // Given
       alerteSetter = jest.fn()
-      replace = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ replace })
       agences = uneListeDAgencesPoleEmploi()
 
       // When
-      renderWithContexts(
-        <HomePage
-          afficherModaleAgence={true}
-          afficherModaleEmail={false}
-          referentielAgences={agences}
-          redirectUrl='/mes-jeunes'
-        />,
-        {
-          customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-          customAlerte: { alerteSetter },
-        }
-      )
+      await act(async () => {
+        renderWithContexts(
+          <HomePage
+            afficherModaleAgence={true}
+            afficherModaleEmail={false}
+            afficherModaleOnboarding={false}
+            referentielAgences={agences}
+            redirectUrl='/mes-jeunes'
+          />,
+          {
+            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            customAlerte: { alerteSetter },
+          }
+        )
+      })
     })
 
     it("contient un message pour demander l'agence du conseiller", () => {
@@ -223,24 +227,21 @@ describe('HomePage client side', () => {
   })
 
   describe('quand le conseiller doit renseigner son adresse email', () => {
-    let replace: jest.Mock
-
-    beforeEach(() => {
-      // Given
-      replace = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ replace })
-
+    beforeEach(async () => {
       // When
-      renderWithContexts(
-        <HomePage
-          afficherModaleAgence={false}
-          afficherModaleEmail={true}
-          redirectUrl='/mes-jeunes'
-        />,
-        {
-          customConseiller: { structure: StructureConseiller.MILO },
-        }
-      )
+      await act(async () => {
+        renderWithContexts(
+          <HomePage
+            afficherModaleAgence={false}
+            afficherModaleEmail={true}
+            afficherModaleOnboarding={false}
+            redirectUrl='/mes-jeunes'
+          />,
+          {
+            customConseiller: { structure: StructureConseiller.MILO },
+          }
+        )
+      })
     })
 
     it('contient un message pour demander l’adresse email du conseiller', () => {
@@ -260,6 +261,173 @@ describe('HomePage client side', () => {
         'href',
         'https://admin.i-milo.fr/moncompte/coordonnees/'
       )
+    })
+  })
+
+  describe('quand c’est un nouveau conseiller', () => {
+    describe('quand le conseiller est Pôle emploi', () => {
+      it('affiche l’onboarding', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <HomePage
+              afficherModaleAgence={false}
+              afficherModaleEmail={false}
+              afficherModaleOnboarding={true}
+              redirectUrl='/mes-jeunes'
+            />,
+            {
+              customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
+            }
+          )
+        })
+
+        // Then
+
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Bienvenue Nils dans votre espace conseiller CEJ',
+          })
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('heading', {
+            level: 3,
+            name: 'Découvrez les principales fonctionnalités de l’outil',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', { level: 2, name: 'Le portefeuille' })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', { level: 2, name: 'La messagerie' })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', { level: 2, name: 'Les offres' })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Commencer' }))
+        // Then
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
+      })
+    })
+
+    describe('quand le conseiller est Milo', () => {
+      it('affiche l’onboarding', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <HomePage
+              afficherModaleAgence={false}
+              afficherModaleEmail={false}
+              afficherModaleOnboarding={true}
+              redirectUrl='/mes-jeunes'
+            />,
+            {
+              customConseiller: { structure: StructureConseiller.MILO },
+            }
+          )
+        })
+
+        // Then
+
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Bienvenue Nils dans votre espace conseiller CEJ',
+          })
+        ).toBeInTheDocument()
+        expect(
+          screen.getByRole('heading', {
+            level: 3,
+            name: 'Découvrez les principales fonctionnalités de l’outil',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Le portefeuille et l’agenda',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'La messagerie et le pilotage',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Continuer' }))
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Les offres et la réaffectation',
+          })
+        ).toBeInTheDocument()
+
+        // When
+        await userEvent.click(screen.getByRole('button', { name: 'Commencer' }))
+        // Then
+        expect(replace).toHaveBeenCalledWith('/mes-jeunes')
+      })
+    })
+
+    describe('quand le conseiller est BRSA', () => {
+      it('affiche l’onboarding', async () => {
+        // When
+        await act(async () => {
+          renderWithContexts(
+            <HomePage
+              afficherModaleAgence={false}
+              afficherModaleEmail={false}
+              afficherModaleOnboarding={true}
+              redirectUrl='/mes-jeunes'
+            />,
+            {
+              customConseiller: {
+                structure: StructureConseiller.POLE_EMPLOI_BRSA,
+              },
+            }
+          )
+        })
+
+        // Then
+        expect(
+          screen.getByRole('heading', {
+            level: 2,
+            name: 'Bienvenue Nils dans votre espace conseiller pass emploi',
+          })
+        ).toBeInTheDocument()
+
+        expect(
+          screen.getByRole('heading', {
+            level: 3,
+            name: 'Découvrez les principales fonctionnalités de l’outil',
+          })
+        ).toBeInTheDocument()
+      })
     })
   })
 })

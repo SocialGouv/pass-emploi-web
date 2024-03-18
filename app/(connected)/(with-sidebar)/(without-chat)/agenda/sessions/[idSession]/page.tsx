@@ -61,8 +61,6 @@ export default async function DetailsSession({
   if (!session) notFound()
 
   const conseiller = await getConseillerServerSide(user, accessToken)
-  if (!conseiller) notFound()
-
   if (!peutAccederAuxSessions(conseiller)) redirect('/mes-jeunes')
 
   const beneficiairesStructureMilo = await getBeneficiairesDeLaStructureMilo(

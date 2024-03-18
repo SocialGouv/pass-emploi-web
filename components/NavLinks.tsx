@@ -6,7 +6,12 @@ import React from 'react'
 import ActualitesMenuButton from 'components/ActualitesMenuButton'
 import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
-import { estMilo, estPoleEmploi, estSuperviseur } from 'interfaces/conseiller'
+import {
+  estMilo,
+  estPoleEmploi,
+  estSuperviseur,
+  utiliseChat,
+} from 'interfaces/conseiller'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -153,20 +158,22 @@ export default function NavLinks({
             />
           )}
 
-        {!estMilo(conseiller) && items.includes(NavItem.Messagerie) && (
-          <NavLink
-            iconName={
-              isCurrentRoute('/messagerie')
-                ? IconName.ChatFill
-                : IconName.ChatOutline
-            }
-            className='break-all'
-            label='Messagerie'
-            href='/messagerie'
-            isActive={isCurrentRoute('/messagerie')}
-            showLabelOnSmallScreen={showLabelsOnSmallScreen}
-          />
-        )}
+        {!estMilo(conseiller) &&
+          utiliseChat(conseiller) &&
+          items.includes(NavItem.Messagerie) && (
+            <NavLink
+              iconName={
+                isCurrentRoute('/messagerie')
+                  ? IconName.ChatFill
+                  : IconName.ChatOutline
+              }
+              className='break-all'
+              label='Messagerie'
+              href='/messagerie'
+              isActive={isCurrentRoute('/messagerie')}
+              showLabelOnSmallScreen={showLabelsOnSmallScreen}
+            />
+          )}
 
         {items.includes(NavItem.Raccourci) && (
           <NavLink

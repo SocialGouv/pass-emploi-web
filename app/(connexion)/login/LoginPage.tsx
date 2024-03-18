@@ -14,7 +14,7 @@ import { FormButton } from 'components/ui/Form/FormButton'
 import { trackPage } from 'utils/analytics/matomo'
 
 const OnboardingMobileModal = dynamic(
-  () => import('components/OnboardingMobileModal')
+  () => import('components/onboarding/OnboardingMobileModal')
 )
 
 interface LoginProps {
