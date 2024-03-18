@@ -77,6 +77,10 @@ export function isDeleted(message: Message): boolean {
   return message.status === 'deleted'
 }
 
+export function isEdited(message: Message): boolean {
+  return message.status === 'edited'
+}
+
 export function fromConseiller(message: Message): boolean {
   return message.sentBy === UserType.CONSEILLER.toLowerCase()
 }

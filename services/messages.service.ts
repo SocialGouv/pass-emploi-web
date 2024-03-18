@@ -303,6 +303,34 @@ export async function partagerOffre({
   )
 }
 
+export async function modifierMessage(
+  chatId: string,
+  message: Message,
+  nouveauContenu: string,
+  cleChiffrement: string,
+  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+) {
+  {
+    const nouveauMessage = message.iv
+      ? encryptWithCustomIv(nouveauContenu, cleChiffrement, message.iv)
+      : nouveauContenu
+    const oldMessage = message.iv
+      ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
+      : message.content
+
+    await updateMessage(chatId, message.id, {
+      message: nouveauMessage,
+      oldMessage,
+      date: DateTime.now(),
+      status: 'edited',
+    })
+
+    if (isLastMessage) {
+      await updateChat(chatId, { lastMessageContent: nouveauMessage })
+    }
+  }
+}
+
 export async function supprimerMessage(
   chatId: string,
   message: Message,
@@ -315,7 +343,7 @@ export async function supprimerMessage(
     : messageSuppression
   const oldMessage = message.iv
     ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
-    : messageSuppression
+    : message.content
 
   await updateMessage(chatId, message.id, {
     message: nouveauMessage,

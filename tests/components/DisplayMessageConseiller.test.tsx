@@ -21,7 +21,7 @@ describe('<DiplayMessageConseiller />', () => {
     sentBy: 'conseiller',
     content: 'coucou',
     conseillerId: customConseiller.id,
-    creationDate: DateTime.fromISO('2024-04-12T05:21'),
+    creationDate: DateTime.fromISO('2023-04-12T05:21'),
   })
   const supprimerMessage = jest.fn()
   const modifierMessage = jest.fn()
@@ -46,8 +46,12 @@ describe('<DiplayMessageConseiller />', () => {
     it('affiche un message envoyé par le conseiller connecté', async () => {
       // Then
       expect(screen.getByText('Vous')).toBeInTheDocument()
+      expect(screen.getByText('· Lu')).toBeInTheDocument()
       expect(
         screen.queryByRole('button', { name: /Supprimer/ })
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: /Modifier/ })
       ).not.toBeInTheDocument()
     })
 
@@ -55,7 +59,7 @@ describe('<DiplayMessageConseiller />', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Voir les actions possibles pour votre message du 12 avril 2024 à 5 heure 21',
+          name: 'Voir les actions possibles pour votre message du 12 avril 2023 à 5 heure 21',
         })
       )
       await userEvent.click(screen.getByRole('button', { name: /Supprimer/ }))
@@ -68,13 +72,16 @@ describe('<DiplayMessageConseiller />', () => {
       // When
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Voir les actions possibles pour votre message du 12 avril 2024 à 5 heure 21',
+          name: 'Voir les actions possibles pour votre message du 12 avril 2023 à 5 heure 21',
         })
       )
       await userEvent.click(screen.getByRole('button', { name: /Modifier/ }))
 
       // Then
       expect(modifierMessage).toHaveBeenCalledWith()
+      expect(
+        screen.queryByRole('button', { name: /Modifier/ })
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -91,7 +98,7 @@ describe('<DiplayMessageConseiller />', () => {
           lastSeenByJeune={DateTime.now()}
           isConseillerCourant={true}
           onSuppression={async () => {}}
-          onModification={async () => {}}
+          onModification={() => {}}
         />
       )
     })
@@ -104,7 +111,25 @@ describe('<DiplayMessageConseiller />', () => {
   })
 
   it('affiche un message modifié', async () => {
+    // Given
+    const message = unMessage({ status: 'edited' })
+
+    // When
+    await act(async () => {
+      renderWithContexts(
+        <DisplayMessageConseiller
+          message={message}
+          conseillerNomComplet='Nils Tavernier'
+          lastSeenByJeune={DateTime.now().plus({ minute: 1 })}
+          isConseillerCourant={true}
+          onSuppression={async () => {}}
+          onModification={() => {}}
+        />
+      )
+    })
+
     // Then
-    expect(true).toEqual(false)
+    expect(screen.getByText('· Modifié')).toBeInTheDocument()
+    expect(screen.queryByText('· Lu')).not.toBeInTheDocument()
   })
 })

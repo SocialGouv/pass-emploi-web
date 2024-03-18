@@ -9,7 +9,7 @@ import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { isDeleted, Message, TypeMessage } from 'interfaces/message'
+import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
 import { toFrenchDateTime, toFrenchTime } from 'utils/date'
 
 interface DisplayMessageConseillerProps {
@@ -18,7 +18,8 @@ interface DisplayMessageConseillerProps {
   lastSeenByJeune: DateTime | undefined
   isConseillerCourant: boolean
   onSuppression: () => Promise<void>
-  onModification: () => Promise<void>
+  onModification: () => void
+  isEnCoursDeModification?: boolean
 }
 
 export default function DisplayMessageConseiller({
@@ -27,6 +28,8 @@ export default function DisplayMessageConseiller({
   isConseillerCourant,
   lastSeenByJeune,
   onSuppression,
+  onModification,
+  isEnCoursDeModification,
 }: DisplayMessageConseillerProps) {
   const [editionEnCours, setEditionEnCours] = useState<boolean>(false)
 
@@ -57,12 +60,15 @@ export default function DisplayMessageConseiller({
                 message={message}
                 conseillerNomComplet={conseillerNomComplet}
                 isConseillerCourant={isConseillerCourant}
+                isEnCoursDeModification={isEnCoursDeModification}
               />
 
               <FooterMessage
                 creationDate={message.creationDate}
                 lastSeenByJeune={lastSeenByJeune}
                 onSuppression={supprimerMessage}
+                onModification={onModification}
+                estModifie={isEdited(message)}
               />
             </>
           )}
@@ -84,15 +90,19 @@ function MessageConseiller({
   message,
   conseillerNomComplet,
   isConseillerCourant,
+  isEnCoursDeModification,
 }: Pick<
   DisplayMessageConseillerProps,
-  'message' | 'conseillerNomComplet' | 'isConseillerCourant'
+  | 'message'
+  | 'conseillerNomComplet'
+  | 'isConseillerCourant'
+  | 'isEnCoursDeModification'
 >) {
   return (
     <div
       className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left bg-blanc mt-0 mr-0 mb-1 ml-auto ${
         isConseillerCourant ? 'text-primary_darken' : 'text-accent_2'
-      }`}
+      } ${isEnCoursDeModification ? 'border-2 border-solid border-primary_darken' : ''}`}
     >
       <p className='text-s-bold capitalize mb-1'>
         {isConseillerCourant ? 'Vous' : conseillerNomComplet}
@@ -134,10 +144,14 @@ function FooterMessage({
   creationDate,
   lastSeenByJeune,
   onSuppression,
+  onModification,
+  estModifie,
 }: {
   creationDate: DateTime
   lastSeenByJeune: DateTime | undefined
   onSuppression: () => void
+  onModification: () => void
+  estModifie?: boolean
 }) {
   const [afficherMenuEdition, setAfficherMenuEdition] = useState<boolean>(false)
 
@@ -191,6 +205,19 @@ function FooterMessage({
         >
           <button
             type='button'
+            onClick={() => onModification()}
+            className='p-2 flex items-center text-s-bold gap-2 hover:text-primary hover:rounded-base hover:bg-primary_lighten hover:shadow-m'
+          >
+            <IconComponent
+              focusable={false}
+              aria-hidden={true}
+              className='inline w-4 h-4 fill-[currentColor]'
+              name={IconName.Edit}
+            />
+            Modifier le message
+          </button>
+          <button
+            type='button'
             onClick={() => onSuppression()}
             className='p-2 flex items-center text-warning text-s-bold gap-2 hover:rounded-base hover:bg-warning hover:text-blanc hover:shadow-m'
           >
@@ -210,7 +237,8 @@ function FooterMessage({
         <span aria-label={toFrenchTime(creationDate, { a11y: true })}>
           {toFrenchTime(creationDate)}
         </span>
-        {!isSeenByJeune ? ' · Envoyé' : ' · Lu'}
+        {estModifie && ' · Modifié'}
+        {!estModifie && (!isSeenByJeune ? ' · Envoyé' : ' · Lu')}
       </span>
     </div>
   )
