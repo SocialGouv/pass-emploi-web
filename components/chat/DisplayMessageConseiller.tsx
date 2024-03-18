@@ -18,6 +18,7 @@ interface DisplayMessageConseillerProps {
   lastSeenByJeune: DateTime | undefined
   isConseillerCourant: boolean
   onSuppression: () => Promise<void>
+  onModification: () => Promise<void>
 }
 
 export default function DisplayMessageConseiller({
