@@ -250,6 +250,13 @@ export default function Conversation({
       { isLastMessage }
     )
 
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Message',
+      action: 'Modification',
+      nom: '',
+      avecBeneficiaires: 'oui',
+    })
     setMessageAModifier(undefined)
     resetTextbox()
   }
@@ -268,6 +275,14 @@ export default function Conversation({
       chatCredentials!.cleChiffrement,
       { isLastMessage }
     )
+
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Message',
+      action: 'Suppression',
+      nom: '',
+      avecBeneficiaires: 'oui',
+    })
   }
 
   useEffect(() => {
