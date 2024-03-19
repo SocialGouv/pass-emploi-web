@@ -5438,18 +5438,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
-  version: 18.2.64
-  resolution: "@types/react@npm:18.2.64"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    "@types/scheduler": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/ab3ba9597990d08ffd419a5ad28fd22393c7a9a241ae455fb1d5d193d209471aa1909fa7ad016fd8d161eab6d0babba77b013b56a5170bedf78833085b9ee424
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^18.2.65":
+"@types/react@npm:*, @types/react@npm:^18.2.65":
   version: 18.2.65
   resolution: "@types/react@npm:18.2.65"
   dependencies:
@@ -14769,9 +14758,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nextjs-toploader@npm:1.6.6":
-  version: 1.6.6
-  resolution: "nextjs-toploader@npm:1.6.6"
+"nextjs-toploader@npm:1.6.11":
+  version: 1.6.11
+  resolution: "nextjs-toploader@npm:1.6.11"
   dependencies:
     "@types/nprogress": "npm:^0.2.2"
     nprogress: "npm:^0.2.0"
@@ -14780,7 +14769,7 @@ __metadata:
     next: ">= 6.0.0"
     react: ">= 16.0.0"
     react-dom: ">= 16.0.0"
-  checksum: 10c0/1be1aece9291058895a44a6f496dc355635616ad9c46eec1061cf13f685ce9fef9362346aaecde88a6ad7a0bc9e512c35851884eb1af15058bdedc85ab6d7f24
+  checksum: 10c0/02884ceccac931ff158c894e06500207f5407937d7930d133109a6eb395b7fd00f75fa9201d71f7d87bd40e7ff0ee7fa2a4ed1f1e677bd14e4bac1cdf35285a1
   languageName: node
   linkType: hard
 
@@ -15623,7 +15612,7 @@ __metadata:
     next-auth: "npm:4.24.7"
     next-logger: "npm:4.0.0"
     next-themes: "npm:0.3.0"
-    nextjs-toploader: "npm:1.6.6"
+    nextjs-toploader: "npm:1.6.11"
     pino: "npm:8.19.0"
     pino-pretty: "npm:^10.3.1"
     postcss: "npm:^8.4.35"
