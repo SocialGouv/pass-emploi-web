@@ -58,6 +58,8 @@ type MessageType =
   | 'MESSAGE_ENVOYE_MULTIPLE'
   | 'MESSAGE_ENVOYE_MULTIPLE_PJ'
   | 'MESSAGE_OFFRE_PARTAGEE'
+  | 'MESSAGE_MODIFIE'
+  | 'MESSAGE_SUPPRIME'
 
 export async function getChatCredentials(): Promise<ChatCredentials> {
   const session = await getSession()
@@ -233,7 +235,7 @@ export async function sendNouveauMessage({
       [jeuneChat.id],
       session!.accessToken
     ),
-    evenementNouveauMessage(
+    evenementMessage(
       type,
       session!.user.structure,
       session!.user.id,
@@ -328,6 +330,9 @@ export async function modifierMessage(
     if (isLastMessage) {
       await updateChat(chatId, { lastMessageContent: nouveauMessage })
     }
+
+    const { user, accessToken } = (await getSession())!
+    evenementMessage('MESSAGE_MODIFIE', user.structure, user.id, accessToken)
   }
 }
 
@@ -355,6 +360,9 @@ export async function supprimerMessage(
   if (isLastMessage) {
     await updateChat(chatId, { lastMessageContent: nouveauMessage })
   }
+
+  const { user, accessToken } = (await getSession())!
+  evenementMessage('MESSAGE_SUPPRIME', user.structure, user.id, accessToken)
 }
 
 async function envoyerPartageOffre(
@@ -390,7 +398,7 @@ async function envoyerPartageOffre(
       idsDestinataires,
       session.accessToken
     ),
-    evenementNouveauMessage(
+    evenementMessage(
       type,
       session.user.structure,
       session.user.id,
@@ -411,7 +419,7 @@ async function notifierNouveauMessage(
   )
 }
 
-async function evenementNouveauMessage(
+async function evenementMessage(
   type: MessageType,
   structure: string,
   idConseiller: string,

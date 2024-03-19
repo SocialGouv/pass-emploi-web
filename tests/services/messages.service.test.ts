@@ -591,6 +591,25 @@ describe('MessagesFirebaseAndApiService', () => {
         lastMessageContent: 'Encrypted: (message supprimé)',
       })
     })
+
+    it('track la suppression du message', async () => {
+      // When
+      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement)
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_SUPPRIME',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: 'PASS_EMPLOI',
+            id: 'idConseiller',
+          },
+        },
+        accessToken
+      )
+    })
   })
 
   describe('.modifierMessage', () => {
@@ -635,6 +654,30 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
         lastMessageContent: 'Encrypted: nouveau contenu',
       })
+    })
+
+    it('track la modification du message', async () => {
+      // Given
+      await modifierMessage(
+        jeuneChat.chatId,
+        message,
+        'nouveau contenu',
+        cleChiffrement
+      )
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_MODIFIE',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: 'PASS_EMPLOI',
+            id: 'idConseiller',
+          },
+        },
+        accessToken
+      )
     })
   })
 })
