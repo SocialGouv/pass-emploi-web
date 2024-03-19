@@ -58,6 +58,8 @@ type MessageType =
   | 'MESSAGE_ENVOYE_MULTIPLE'
   | 'MESSAGE_ENVOYE_MULTIPLE_PJ'
   | 'MESSAGE_OFFRE_PARTAGEE'
+  | 'MESSAGE_MODIFIE'
+  | 'MESSAGE_SUPPRIME'
 
 export async function getChatCredentials(): Promise<ChatCredentials> {
   const session = await getSession()
@@ -233,7 +235,7 @@ export async function sendNouveauMessage({
       [jeuneChat.id],
       session!.accessToken
     ),
-    evenementNouveauMessage(
+    evenementMessage(
       type,
       session!.user.structure,
       session!.user.id,
@@ -303,6 +305,37 @@ export async function partagerOffre({
   )
 }
 
+export async function modifierMessage(
+  chatId: string,
+  message: Message,
+  nouveauContenu: string,
+  cleChiffrement: string,
+  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+) {
+  {
+    const nouveauMessage = message.iv
+      ? encryptWithCustomIv(nouveauContenu, cleChiffrement, message.iv)
+      : nouveauContenu
+    const oldMessage = message.iv
+      ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
+      : message.content
+
+    await updateMessage(chatId, message.id, {
+      message: nouveauMessage,
+      oldMessage,
+      date: DateTime.now(),
+      status: 'edited',
+    })
+
+    if (isLastMessage) {
+      await updateChat(chatId, { lastMessageContent: nouveauMessage })
+    }
+
+    const { user, accessToken } = (await getSession())!
+    evenementMessage('MESSAGE_MODIFIE', user.structure, user.id, accessToken)
+  }
+}
+
 export async function supprimerMessage(
   chatId: string,
   message: Message,
@@ -315,7 +348,7 @@ export async function supprimerMessage(
     : messageSuppression
   const oldMessage = message.iv
     ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
-    : messageSuppression
+    : message.content
 
   await updateMessage(chatId, message.id, {
     message: nouveauMessage,
@@ -327,6 +360,9 @@ export async function supprimerMessage(
   if (isLastMessage) {
     await updateChat(chatId, { lastMessageContent: nouveauMessage })
   }
+
+  const { user, accessToken } = (await getSession())!
+  evenementMessage('MESSAGE_SUPPRIME', user.structure, user.id, accessToken)
 }
 
 async function envoyerPartageOffre(
@@ -362,7 +398,7 @@ async function envoyerPartageOffre(
       idsDestinataires,
       session.accessToken
     ),
-    evenementNouveauMessage(
+    evenementMessage(
       type,
       session.user.structure,
       session.user.id,
@@ -383,7 +419,7 @@ async function notifierNouveauMessage(
   )
 }
 
-async function evenementNouveauMessage(
+async function evenementMessage(
   type: MessageType,
   structure: string,
   idConseiller: string,

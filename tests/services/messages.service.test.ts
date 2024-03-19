@@ -33,6 +33,7 @@ import { DetailOffreEmploi } from 'interfaces/offre'
 import {
   countMessagesNotRead,
   getMessagesListeDeDiffusion,
+  modifierMessage,
   observeConseillerChats,
   observeDerniersMessages,
   observeJeuneReadingDate,
@@ -589,6 +590,94 @@ describe('MessagesFirebaseAndApiService', () => {
       expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
         lastMessageContent: 'Encrypted: (message supprimé)',
       })
+    })
+
+    it('track la suppression du message', async () => {
+      // When
+      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement)
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_SUPPRIME',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: 'PASS_EMPLOI',
+            id: 'idConseiller',
+          },
+        },
+        accessToken
+      )
+    })
+  })
+
+  describe('.modifierMessage', () => {
+    const jeuneChat = unJeuneChat()
+    const message = unMessage()
+    const now = DateTime.now()
+    beforeEach(async () => {
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+    })
+
+    it('modifie le message', async () => {
+      // When
+      await modifierMessage(
+        jeuneChat.chatId,
+        message,
+        'nouveau contenu',
+        cleChiffrement
+      )
+
+      // Then
+      expect(updateMessage).toHaveBeenCalledWith(jeuneChat.chatId, message.id, {
+        message: 'Encrypted: nouveau contenu',
+        date: now,
+        oldMessage: `Encrypted: content`,
+        status: 'edited',
+      })
+    })
+
+    it('met à jour la conversation si le dernier message est modifié', async () => {
+      // When
+      await modifierMessage(
+        jeuneChat.chatId,
+        message,
+        'nouveau contenu',
+        cleChiffrement,
+        {
+          isLastMessage: true,
+        }
+      )
+
+      // Then
+      expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+        lastMessageContent: 'Encrypted: nouveau contenu',
+      })
+    })
+
+    it('track la modification du message', async () => {
+      // Given
+      await modifierMessage(
+        jeuneChat.chatId,
+        message,
+        'nouveau contenu',
+        cleChiffrement
+      )
+
+      // Then
+      expect(apiPost).toHaveBeenCalledWith(
+        '/evenements',
+        {
+          type: 'MESSAGE_MODIFIE',
+          emetteur: {
+            type: 'CONSEILLER',
+            structure: 'PASS_EMPLOI',
+            id: 'idConseiller',
+          },
+        },
+        accessToken
+      )
     })
   })
 })

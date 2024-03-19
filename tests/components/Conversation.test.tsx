@@ -10,6 +10,7 @@ import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ByDay, Message } from 'interfaces/message'
 import { deleteFichier, uploadFichier } from 'services/fichiers.service'
 import {
+  modifierMessage,
   observeDerniersMessages,
   observeJeuneReadingDate,
   sendNouveauMessage,
@@ -245,12 +246,72 @@ describe('<Conversation />', () => {
     // Then
     expect(supprimerMessage).toHaveBeenCalledWith(
       'idChat',
-      messagesParJour[messagesParJour.length - 1].messages[
-        messagesParJour[messagesParJour.length - 1].messages.length - 1
-      ],
+      messagesParJour.at(-1)!.messages.at(-1)!,
       'cleChiffrement',
       { isLastMessage: true }
     )
+  })
+
+  describe('modification de message', () => {
+    let input: HTMLInputElement
+    const dernierMessage = messagesParJour.at(-1)!.messages.at(-1)!
+    beforeEach(async () => {
+      // Given
+      input = screen.getByRole('textbox')
+      await userEvent.click(
+        screen
+          .getAllByRole('button', {
+            name: /Voir les actions possibles pour votre message/,
+          })
+          .at(-1)!
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: /Modifier le message/ })
+      )
+    })
+
+    it('prépare le message à modifier dans la zone de saisie', async () => {
+      // Then
+      expect(screen.getByText('Modifier le message')).toBeInTheDocument()
+      expect(input).toHaveValue(dernierMessage.content)
+      expect(input).toHaveFocus()
+    })
+
+    it('permet de modifier un message', async () => {
+      // Given
+      await userEvent.type(input, 'nouveau contenu')
+
+      // When
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Envoyer la modification du message',
+        })
+      )
+
+      // Then
+      expect(modifierMessage).toHaveBeenCalledWith(
+        'idChat',
+        dernierMessage,
+        dernierMessage.content + 'nouveau contenu',
+        'cleChiffrement',
+        { isLastMessage: true }
+      )
+      expect(screen.queryByText('Modifier le message')).not.toBeInTheDocument()
+      expect(input).toHaveValue('')
+    })
+
+    it('permet d’annuler la modification d’un message', async () => {
+      // When
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Annuler la modification du message',
+        })
+      )
+
+      // Then
+      expect(screen.queryByText('Modifier le message')).not.toBeInTheDocument()
+      expect(input).toHaveValue('')
+    })
   })
 
   describe('lien externe', () => {
