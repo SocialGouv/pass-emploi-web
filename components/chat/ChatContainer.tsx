@@ -31,7 +31,8 @@ export default function ChatContainer({
     undefined
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
-  const [, setListeSelectionnee] = useListeDeDiffusionSelectionnee()
+  const [listeSelectionnee, setListeSelectionnee] =
+    useListeDeDiffusionSelectionnee()
 
   const [showRubriqueListesDeDiffusion, setShowRubriqueListesDeDiffusion] =
     useShowRubriqueListeDeDiffusion()
@@ -51,9 +52,14 @@ export default function ChatContainer({
       )
 
       if (jeunesChats) {
-        setCurrentChat(
-          jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
+        if (
+          !listeSelectionnee &&
+          !showRubriqueListesDeDiffusion &&
+          !currentChat
         )
+          setCurrentChat(
+            jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
+          )
       }
     } else {
       setCurrentChat(undefined)
