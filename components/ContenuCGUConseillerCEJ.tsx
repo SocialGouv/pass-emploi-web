@@ -73,9 +73,9 @@ export default function ContenuCGUConseillerCEJ() {
         L’authentification se fait via les identifiants de l’outil professionnel
         i-Milo : un identifiant et un mot de passe. Si l’utilisateur est déjà
         authentifié dans son outil i-Milo (également une web app), il accède à
-        son portail pass emploi sans écran d’authentification. Si l’utilisateur
-        n’est pas encore authentifié dans son i-Milo, il s’authentifie via la
-        mire de connexion i-Milo.
+        son portail CEJ sans écran d’authentification. Si l’utilisateur n’est
+        pas encore authentifié dans son i-Milo, il s’authentifie via la mire de
+        connexion i-Milo.
       </p>
       <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
         B- Conseiller France Travail
