@@ -1,13 +1,15 @@
 import { DateTime } from 'luxon'
 import React, {
   FormEvent,
+  Fragment,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react'
 
-import DisplayMessage from 'components/chat/DisplayMessage'
+import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
+import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import HeaderChat from 'components/chat/HeaderChat'
 import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -18,12 +20,14 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
-import { ByDay, Message } from 'interfaces/message'
+import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
+  modifierMessage as _modifierMessage,
   observeDerniersMessages,
   observeJeuneReadingDate,
   setReadByConseiller,
+  supprimerMessage as _supprimerMessage,
 } from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
@@ -44,7 +48,7 @@ export default function Conversation({
   const chatCredentials = useChatCredentials()
   const [conseiller] = useConseiller()
 
-  const [newMessage, setNewMessage] = useState('')
+  const [userInput, setUserInput] = useState('')
   const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
   const [uploadedFileInfo, setUploadedFileInfo] = useState<
     InfoFichier | undefined
@@ -57,6 +61,15 @@ export default function Conversation({
   const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
     undefined
   )
+
+  const [messageAModifier, setMessageAModifier] = useState<
+    | {
+        message: Message
+        indexJour: number
+        indexMessage: number
+      }
+    | undefined
+  >()
 
   const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
   const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
@@ -74,12 +87,12 @@ export default function Conversation({
 
   async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!(newMessage || Boolean(uploadedFileInfo)) || isFileUploading) return
+    if (!(userInput || Boolean(uploadedFileInfo)) || isFileUploading) return
 
     const formNouveauMessage: FormNouveauMessageIndividuel = {
       jeuneChat,
       newMessage:
-        newMessage ||
+        userInput ||
         'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
       cleChiffrement: chatCredentials!.cleChiffrement,
     }
@@ -92,8 +105,7 @@ export default function Conversation({
     _sendNouveauMessage(formNouveauMessage)
 
     setUploadedFileInfo(undefined)
-    inputRef.current!.value = ''
-    setNewMessage('')
+    resetTextbox()
   }
 
   function getConseillerNomComplet(message: Message) {
@@ -201,6 +213,78 @@ export default function Conversation({
     })
   }
 
+  function resetTextbox() {
+    inputRef.current!.value = ''
+    setUserInput('')
+  }
+
+  function preparerModificationmessage(message: Message, i: number, j: number) {
+    setMessageAModifier({
+      message,
+      indexJour: i,
+      indexMessage: j,
+    })
+    inputRef.current!.value = message.content
+    setUserInput(message.content)
+    inputRef.current!.focus()
+  }
+
+  function annulerModificationmessage() {
+    setMessageAModifier(undefined)
+    resetTextbox()
+  }
+
+  async function modifierMessage(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!messageAModifier || !userInput) return
+    const { message, indexJour, indexMessage } = messageAModifier
+
+    const isLastMessage =
+      indexJour === messagesByDay!.length - 1 &&
+      indexMessage === messagesByDay![indexJour].messages.length - 1
+    await _modifierMessage(
+      jeuneChat.chatId,
+      message,
+      userInput,
+      chatCredentials!.cleChiffrement,
+      { isLastMessage }
+    )
+
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Message',
+      action: 'Modification',
+      nom: '',
+      avecBeneficiaires: 'oui',
+    })
+    setMessageAModifier(undefined)
+    resetTextbox()
+  }
+
+  async function supprimerMessage(
+    message: Message,
+    indexJour: number,
+    indexMessage: number
+  ) {
+    const isLastMessage =
+      indexJour === messagesByDay!.length - 1 &&
+      indexMessage === messagesByDay![indexJour].messages.length - 1
+    await _supprimerMessage(
+      jeuneChat.chatId,
+      message,
+      chatCredentials!.cleChiffrement,
+      { isLastMessage }
+    )
+
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Message',
+      action: 'Suppression',
+      nom: '',
+      avecBeneficiaires: 'oui',
+    })
+  }
+
   useEffect(() => {
     unsubscribeFromMessages.current = observerMessages(jeuneChat.chatId, 1)
     setReadByConseiller(jeuneChat.chatId)
@@ -229,8 +313,7 @@ export default function Conversation({
     if (uploadedFileInfo) {
       deleteFile()
     }
-    inputRef.current!.value = ''
-    setNewMessage('')
+    resetTextbox()
   }, [jeuneChat.chatId])
 
   return (
@@ -294,26 +377,44 @@ export default function Conversation({
 
             {messagesByDay.length > 0 && (
               <ul ref={conteneurMessagesRef}>
-                {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
+                {messagesByDay.map((messagesOfADay: ByDay<Message>, i) => (
                   <li key={messagesOfADay.date.toMillis()} className='mb-5'>
                     <div className='text-base-regular text-center mb-3'>
                       <span>{displayDate(messagesOfADay.date)}</span>
                     </div>
 
                     <ul>
-                      {messagesOfADay.messages.map((message: Message) => (
-                        <DisplayMessage
-                          key={message.id}
-                          message={message}
-                          beneficiaireNomComplet={beneficiaireNomComplet}
-                          conseillerNomComplet={getConseillerNomComplet(
-                            message
+                      {messagesOfADay.messages.map((message: Message, j) => (
+                        <Fragment key={message.id}>
+                          {!fromConseiller(message) && (
+                            <DisplayMessageBeneficiaire
+                              message={message}
+                              beneficiaireNomComplet={beneficiaireNomComplet}
+                            />
                           )}
-                          lastSeenByJeune={lastSeenByJeune}
-                          isConseillerCourant={
-                            message.conseillerId === conseiller.id
-                          }
-                        />
+
+                          {fromConseiller(message) && (
+                            <DisplayMessageConseiller
+                              message={message}
+                              conseillerNomComplet={getConseillerNomComplet(
+                                message
+                              )}
+                              lastSeenByJeune={lastSeenByJeune}
+                              isConseillerCourant={
+                                message.conseillerId === conseiller.id
+                              }
+                              onSuppression={() =>
+                                supprimerMessage(message, i, j)
+                              }
+                              onModification={() =>
+                                preparerModificationmessage(message, i, j)
+                              }
+                              isEnCoursDeModification={
+                                message.id === messageAModifier?.message.id
+                              }
+                            />
+                          )}
+                        </Fragment>
                       ))}
                     </ul>
                   </li>
@@ -324,27 +425,58 @@ export default function Conversation({
         )}
       </div>
 
-      <form onSubmit={sendNouveauMessage} className='p-3'>
+      <form
+        onSubmit={messageAModifier ? modifierMessage : sendNouveauMessage}
+        className='p-3'
+      >
         {uploadedFileError && (
           <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
         )}
-        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-y-3 gap-x-3'>
-          <span
-            id='piece-jointe--desc'
-            className='self-center text-xs-regular short:hidden'
-          >
-            Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
-            maximum)
-          </span>
+        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-3'>
+          {!messageAModifier && (
+            <>
+              <span
+                id='piece-jointe--desc'
+                className='self-center text-xs-regular short:hidden'
+              >
+                Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
+                maximum)
+              </span>
 
-          <FileInput
-            id='piece-jointe'
-            ariaDescribedby='piece-jointe--desc'
-            onChange={uploadFichier}
-            isLoading={isFileUploading}
-            disabled={Boolean(uploadedFileInfo)}
-            iconOnly={true}
-          />
+              <FileInput
+                id='piece-jointe'
+                ariaDescribedby='piece-jointe--desc'
+                onChange={uploadFichier}
+                isLoading={isFileUploading}
+                disabled={Boolean(uploadedFileInfo)}
+                iconOnly={true}
+              />
+            </>
+          )}
+
+          {messageAModifier && (
+            <>
+              <span className='self-center text-s-regular'>
+                Modifier le message
+              </span>
+              <button
+                type='button'
+                onClick={annulerModificationmessage}
+                title='Annuler la modification du message'
+                className='w-12 h-12'
+              >
+                <span className='sr-only'>
+                  Annuler la modification du message
+                </span>
+                <IconComponent
+                  aria-hidden={true}
+                  focusable={false}
+                  name={IconName.Close}
+                  className='m-auto h-6 w-6'
+                />
+              </button>
+            </>
+          )}
 
           <div
             className='p-4 bg-blanc rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
@@ -380,7 +512,7 @@ export default function Conversation({
               id='input-new-message'
               className='w-full outline-none text-base-regular'
               onFocus={() => setReadByConseiller(jeuneChat.chatId)}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={(e) => setUserInput(e.target.value)}
               placeholder='Écrivez votre message ici...'
               rows={5}
             />
@@ -388,8 +520,9 @@ export default function Conversation({
           <div className='relative'>
             <button
               type='submit'
-              aria-label='Envoyer le message'
-              disabled={!newMessage && !Boolean(uploadedFileInfo)}
+              aria-label={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
+              title={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
+              disabled={!userInput && !Boolean(uploadedFileInfo)}
               className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed absolute bottom-0'
             >
               <IconComponent

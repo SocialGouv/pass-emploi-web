@@ -57,10 +57,16 @@ export type FirebaseMessage = {
   piecesJointes?: InfoFichier[]
   conseillerId: string | undefined
   type: TypeMessageFirebase | undefined
+  status?: string
   offre?: InfoOffreFirebase
   evenement?: EvenementPartage
   evenementEmploi?: EvenementEmploi
   sessionMilo?: SessionMilo
+}
+
+export type FirebaseMessageHistory = {
+  date: Timestamp
+  previousContent: string
 }
 
 export type FirebaseMessageGroupe = {
@@ -111,6 +117,13 @@ export type CreateFirebaseMessageWithOffre = BaseCreateFirebaseMessage & {
   offre: BaseOffre
 }
 
+type UpdateFirebaseMessage = {
+  message: string
+  date: DateTime
+  oldMessage: string
+  status: 'edited' | 'deleted'
+}
+
 const chatCollection =
   process.env.NEXT_PUBLIC_FIREBASE_CHAT_COLLECTION_NAME || ''
 const groupeCollection =
@@ -141,6 +154,40 @@ export async function addMessage(
         FirebaseMessage
       >,
       firebaseMessage
+    )
+  } catch (e) {
+    console.error(e)
+    captureError(e as Error)
+    throw e
+  }
+}
+
+export async function updateMessage(
+  idChat: string,
+  idMessage: string,
+  data: UpdateFirebaseMessage
+) {
+  const firebaseMessage = {
+    content: data.message,
+    status: data.status,
+  }
+  const historyEntry = {
+    date: Timestamp.fromDate(data.date.toJSDate()),
+    previousContent: data.oldMessage,
+  }
+
+  try {
+    const messageReference = getMessageReference(idChat, idMessage)
+    await updateDoc<FirebaseMessage, FirebaseMessage>(
+      messageReference,
+      firebaseMessage
+    )
+    await addDoc<FirebaseMessageHistory, FirebaseMessageHistory>(
+      collection(messageReference, 'history') as CollectionReference<
+        FirebaseMessageHistory,
+        FirebaseMessageHistory
+      >,
+      historyEntry
     )
   } catch (e) {
     console.error(e)
@@ -382,6 +429,19 @@ function getChatReference(
   )
 }
 
+function getMessageReference(
+  idChat: string,
+  idMessage: string
+): DocumentReference<FirebaseMessage, FirebaseMessage> {
+  return doc<FirebaseMessage, FirebaseMessage>(
+    collection(getChatReference(idChat), 'messages') as CollectionReference<
+      FirebaseMessage,
+      FirebaseMessage
+    >,
+    idMessage
+  )
+}
+
 function createFirebaseMessage(
   data: CreateFirebaseMessage | CreateFirebaseMessageWithOffre
 ): FirebaseMessage {
@@ -470,7 +530,7 @@ function offreFromFirebase(offre: InfoOffreFirebase): InfoOffre {
   return { ...offre, type }
 }
 
-function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
+export function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
   const firebaseChatToUpdate: Partial<FirebaseChat> = {}
   if (chat.seenByConseiller) {
     firebaseChatToUpdate.seenByConseiller = chat.seenByConseiller
@@ -544,6 +604,7 @@ export function docSnapshotToMessage(
     creationDate: DateTime.fromMillis(firebaseMessage.creationDate.toMillis()),
     id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
+    status: firebaseMessage.status,
   }
 
   if (message.type === TypeMessage.MESSAGE_PJ) {

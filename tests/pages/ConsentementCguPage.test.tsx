@@ -42,6 +42,7 @@ describe('ConsentementCGUPage client side', () => {
           /La plateforme pass emploi a pour objet de contribuer à l’insertion professionnelle des Usagers du RSA./
         )
       ).toBeInTheDocument()
+      expect(() => screen.getByText('CEJ')).toThrow()
     })
 
     it('Pour un conseiller CEJ', async () => {
@@ -63,6 +64,7 @@ describe('ConsentementCGUPage client side', () => {
           /La plateforme CEJ a pour objet de contribuer à la diminution du décrochage des jeunes en accompagnement vers l’emploi./
         )
       ).toBeInTheDocument()
+      expect(() => screen.getByText('pass emploi')).toThrow()
     })
   })
 

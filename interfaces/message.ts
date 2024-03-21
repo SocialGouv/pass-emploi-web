@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 
+import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { TypeOffre } from 'interfaces/offre'
 
@@ -21,6 +22,7 @@ export interface Message {
   iv: string | undefined
   conseillerId: string | undefined
   type: TypeMessage
+  status?: string
   infoPiecesJointes?: InfoFichier[]
   infoOffre?: InfoOffre
   infoEvenement?: InfoEvenement
@@ -69,4 +71,16 @@ export interface InfoEvenementEmploi {
 export interface InfoSessionMilo {
   id: string
   titre: string
+}
+
+export function isDeleted(message: Message): boolean {
+  return message.status === 'deleted'
+}
+
+export function isEdited(message: Message): boolean {
+  return message.status === 'edited'
+}
+
+export function fromConseiller(message: Message): boolean {
+  return message.sentBy === UserType.CONSEILLER.toLowerCase()
 }

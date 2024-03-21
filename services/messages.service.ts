@@ -15,6 +15,7 @@ import {
   signIn as _signIn,
   signOut as _signOut,
   updateChat,
+  updateMessage,
 } from 'clients/firebase.client'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
@@ -57,6 +58,8 @@ type MessageType =
   | 'MESSAGE_ENVOYE_MULTIPLE'
   | 'MESSAGE_ENVOYE_MULTIPLE_PJ'
   | 'MESSAGE_OFFRE_PARTAGEE'
+  | 'MESSAGE_MODIFIE'
+  | 'MESSAGE_SUPPRIME'
 
 export async function getChatCredentials(): Promise<ChatCredentials> {
   const session = await getSession()
@@ -232,7 +235,7 @@ export async function sendNouveauMessage({
       [jeuneChat.id],
       session!.accessToken
     ),
-    evenementNouveauMessage(
+    evenementMessage(
       type,
       session!.user.structure,
       session!.user.id,
@@ -293,7 +296,7 @@ export async function partagerOffre({
     date: now,
   }
 
-  await envoyerMessage(
+  await envoyerPartageOffre(
     idsDestinataires,
     nouveauMessage,
     'MESSAGE_OFFRE_PARTAGEE',
@@ -302,9 +305,69 @@ export async function partagerOffre({
   )
 }
 
-async function envoyerMessage(
+export async function modifierMessage(
+  chatId: string,
+  message: Message,
+  nouveauContenu: string,
+  cleChiffrement: string,
+  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+) {
+  {
+    const nouveauMessage = message.iv
+      ? encryptWithCustomIv(nouveauContenu, cleChiffrement, message.iv)
+      : nouveauContenu
+    const oldMessage = message.iv
+      ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
+      : message.content
+
+    await updateMessage(chatId, message.id, {
+      message: nouveauMessage,
+      oldMessage,
+      date: DateTime.now(),
+      status: 'edited',
+    })
+
+    if (isLastMessage) {
+      await updateChat(chatId, { lastMessageContent: nouveauMessage })
+    }
+
+    const { user, accessToken } = (await getSession())!
+    evenementMessage('MESSAGE_MODIFIE', user.structure, user.id, accessToken)
+  }
+}
+
+export async function supprimerMessage(
+  chatId: string,
+  message: Message,
+  cleChiffrement: string,
+  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+) {
+  const messageSuppression = '(message supprimé)'
+  const nouveauMessage = message.iv
+    ? encryptWithCustomIv(messageSuppression, cleChiffrement, message.iv)
+    : messageSuppression
+  const oldMessage = message.iv
+    ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
+    : message.content
+
+  await updateMessage(chatId, message.id, {
+    message: nouveauMessage,
+    oldMessage,
+    date: DateTime.now(),
+    status: 'deleted',
+  })
+
+  if (isLastMessage) {
+    await updateChat(chatId, { lastMessageContent: nouveauMessage })
+  }
+
+  const { user, accessToken } = (await getSession())!
+  evenementMessage('MESSAGE_SUPPRIME', user.structure, user.id, accessToken)
+}
+
+async function envoyerPartageOffre(
   idsDestinataires: string[],
-  nouveauMessage: CreateFirebaseMessage | CreateFirebaseMessageWithOffre,
+  nouveauMessage: CreateFirebaseMessageWithOffre,
   type: MessageType,
   session: Session,
   date: DateTime
@@ -335,7 +398,7 @@ async function envoyerMessage(
       idsDestinataires,
       session.accessToken
     ),
-    evenementNouveauMessage(
+    evenementMessage(
       type,
       session.user.structure,
       session.user.id,
@@ -356,7 +419,7 @@ async function notifierNouveauMessage(
   )
 }
 
-async function evenementNouveauMessage(
+async function evenementMessage(
   type: MessageType,
   structure: string,
   idConseiller: string,

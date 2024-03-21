@@ -21,7 +21,7 @@ interface TrackEventSettings {
   categorie: string
   action: string
   nom: string
-  avecBeneficiaires: string
+  avecBeneficiaires: 'oui' | 'non'
 }
 
 const numeroDimensionAvecBeneficiaires =

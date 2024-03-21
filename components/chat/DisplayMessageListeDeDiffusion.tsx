@@ -27,7 +27,7 @@ export default function DisplayMessageListeDeDiffusion({
           messagerieFullScreen ? 'bg-grey_100' : 'bg-blanc'
         } mb-1`}
       >
-        <TexteAvecLien texte={message.content} lighten={false} />
+        <TexteAvecLien texte={message.content} />
 
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&

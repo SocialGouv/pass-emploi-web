@@ -36,7 +36,10 @@ export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
       <h1 className='text-xl-bold text-primary mb-4'>
         Conditions générales d’utilisation
       </h1>
-      <p className='text-m-bold mb-4'>Application conseiller pass emploi</p>
+      <p className='text-m-bold mb-4'>
+        Application conseiller{' '}
+        {estPoleEmploiBRSA(conseiller) ? 'pass emploi' : 'CEJ'}
+      </p>
       <p className='text-s-regular'>Version 4 – 19 décembre 2022</p>
     </header>
   )
