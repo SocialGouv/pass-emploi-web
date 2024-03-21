@@ -1,6 +1,6 @@
 {
   "name": "pass-emploi-web",
-  "version": "4.11.0",
+  "version": "4.12.0",
   "private": true,
   "engines": {
     "node": "20.10.0",
