@@ -2,7 +2,7 @@ import { ComponentPropsWithoutRef } from 'react'
 
 import IllustrationArrowForward from 'assets/images/illustration-arrow-forward.svg'
 import IllustrationCheck from 'assets/images/illustration-check.svg'
-import IllustrationChecklist from 'assets/images/illustration-checklist-grey.svg'
+import IllustrationChecklist from 'assets/images/illustration-checklist.svg'
 import IllustrationCurvyArrow from 'assets/images/illustration-curvy-arrow.svg'
 import IllustrationDelete from 'assets/images/illustration-delete.svg'
 import IllustrationError from 'assets/images/illustration-error.svg'
@@ -73,8 +73,14 @@ type IllustrationsComponentProps = ComponentPropsWithoutRef<'svg'> & {
 }
 export default function IllustrationComponent({
   name,
+  className,
   ...props
 }: IllustrationsComponentProps) {
   const Icon = illustrationsByName[name]
-  return <Icon {...props} />
+  const withSecondaryFill =
+    (className ?? '') +
+    (className?.includes('--secondary-fill')
+      ? ''
+      : ' [--secondary-fill:theme(colors.warning)]')
+  return <Icon className={withSecondaryFill} {...props} />
 }

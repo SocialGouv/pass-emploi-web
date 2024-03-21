@@ -28,7 +28,7 @@ module.exports = {
     colors: {
       blanc: '#FFFFFF',
       primary: 'var(--primary)',
-      primary_lighten: '#EEF1F8',
+      primary_lighten: 'var(--primary-lighten)',
       primary_darken: 'var(--primary-darken)',
       primary_darken_brsa: '#172B5A',
       success: '#0D7F50',
