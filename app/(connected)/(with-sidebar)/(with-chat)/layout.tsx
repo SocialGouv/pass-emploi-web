@@ -18,7 +18,7 @@ export default function LayoutWithChat({ children }: { children: ReactNode }) {
   const [showChatNav, setShowChatNav] = useState<boolean>(false)
 
   return (
-    <div className='flex h-[100dvh] w-[100vw]'>
+    <div className='flex h-dvh w-screen'>
       <div className={sidebarLayout.sidebar}>
         <Sidebar />
       </div>

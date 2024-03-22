@@ -20,7 +20,7 @@ export default function LayoutPageMessagerie({
   const chats = useChats()
 
   return (
-    <div className='flex h-[100dvh] w-[100vw]'>
+    <div className='flex h-dvh w-screen'>
       <div className={sidebarLayout.sidebar}>
         <Sidebar />
       </div>
