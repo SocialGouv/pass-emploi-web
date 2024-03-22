@@ -18,14 +18,12 @@ jest.mock('services/sessions.service')
 describe('Agenda - Onglet conseiller', () => {
   let replace: jest.Mock
   const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
-  const AOUT_26_23H = DateTime.fromISO('2022-08-26T23:59:59.999+02:00')
+  const AOUT_31_23H = DateTime.fromISO('2022-08-31T23:59:59.999+02:00')
   const SEPTEMBRE_1_0H = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
   const SEPTEMBRE_1_14H = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
-  const SEPTEMBRE_2_23H = DateTime.fromISO('2022-09-02T23:59:59.999+02:00')
-  const SEPTEMBRE_5_0H = DateTime.fromISO('2022-09-05T00:00:00.000+02:00')
-  const SEPTEMBRE_5_23H = DateTime.fromISO('2022-09-05T23:59:59.999+02:00')
+  const SEPTEMBRE_7_23H = DateTime.fromISO('2022-09-07T23:59:59.999+02:00')
   const SEPTEMBRE_8_0H = DateTime.fromISO('2022-09-08T00:00:00.000+02:00')
-  const SEPTEMBRE_9_23H = DateTime.fromISO('2022-09-09T23:59:59.999+02:00')
+  const SEPTEMBRE_14_23H = DateTime.fromISO('2022-09-14T23:59:59.999+02:00')
 
   beforeEach(() => {
     // Given
@@ -90,17 +88,17 @@ describe('Agenda - Onglet conseiller', () => {
       expect(periodesPassees).toBeInTheDocument()
     })
 
-    it('affiche une période de 7 jours à partir de la date du jour mais ne charge que les 2 premiers jours', async () => {
+    it('affiche une période de 7 jours à partir de la date du jour', async () => {
       // Then
       expect(getRendezVousConseiller).toHaveBeenCalledWith(
         '1',
         SEPTEMBRE_1_0H,
-        SEPTEMBRE_2_23H
+        SEPTEMBRE_7_23H
       )
       expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
         '1',
         SEPTEMBRE_1_0H,
-        SEPTEMBRE_2_23H
+        SEPTEMBRE_7_23H
       )
 
       expect(screen.getByRole('table')).toBeInTheDocument()
@@ -118,7 +116,7 @@ describe('Agenda - Onglet conseiller', () => {
       expect(screen.getByText('Matin')).toBeInTheDocument()
       expect(
         screen.getByRole('row', {
-          name: 'Consulter l’événement du vendredi 2 septembre avec Jirac Kenji',
+          name: 'Consulter l’événement du mercredi 7 septembre avec Jirac Kenji',
         })
       ).toBeInTheDocument()
       expect(screen.getByText('lundi 5 septembre')).toBeInTheDocument()
@@ -142,12 +140,12 @@ describe('Agenda - Onglet conseiller', () => {
       expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
         '1',
         AOUT_25_0H,
-        AOUT_26_23H
+        AOUT_31_23H
       )
       expect(getSessionsBeneficiaires).toHaveBeenLastCalledWith(
         '1',
         AOUT_25_0H,
-        AOUT_26_23H
+        AOUT_31_23H
       )
       await waitFor(() =>
         expect(
@@ -161,12 +159,12 @@ describe('Agenda - Onglet conseiller', () => {
       expect(getRendezVousConseiller).toHaveBeenCalledWith(
         '1',
         SEPTEMBRE_1_0H,
-        SEPTEMBRE_2_23H
+        SEPTEMBRE_7_23H
       )
       expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
         '1',
         SEPTEMBRE_1_0H,
-        SEPTEMBRE_2_23H
+        SEPTEMBRE_7_23H
       )
       await waitFor(() =>
         expect(
@@ -180,46 +178,18 @@ describe('Agenda - Onglet conseiller', () => {
       expect(getRendezVousConseiller).toHaveBeenLastCalledWith(
         '1',
         SEPTEMBRE_8_0H,
-        SEPTEMBRE_9_23H
+        SEPTEMBRE_14_23H
       )
       expect(getSessionsBeneficiaires).toHaveBeenLastCalledWith(
         '1',
         SEPTEMBRE_8_0H,
-        SEPTEMBRE_9_23H
+        SEPTEMBRE_14_23H
       )
       await waitFor(() =>
         expect(
           screen.getByRole('row', { name: 'jeudi 8 septembre' })
         ).toBeInTheDocument()
       )
-    })
-
-    it('permet de charger les événements d’une journée', async () => {
-      // When
-      await userEvent.click(
-        screen.getByRole('button', {
-          name: 'Afficher l’agenda du lundi 5 septembre',
-        })
-      )
-
-      // Then
-      expect(getRendezVousConseiller).toHaveBeenCalledWith(
-        '1',
-        SEPTEMBRE_5_0H,
-        SEPTEMBRE_5_23H
-      )
-      expect(getSessionsBeneficiaires).toHaveBeenCalledWith(
-        '1',
-        SEPTEMBRE_5_0H,
-        SEPTEMBRE_5_23H
-      )
-      await waitFor(() => {
-        expect(
-          screen.getAllByRole('row', {
-            name: 'Consulter l’événement du lundi 5 septembre avec Jirac Kenji',
-          })
-        ).toHaveLength(2)
-      })
     })
   })
 })
