@@ -125,11 +125,11 @@ export default function OngletActionsPilotage({
         />
       )}
 
-      {metadonneesInitiales.nombreTotal === 0 && (
+      {metadonneesInitiales.nombreTotal !== 0 && (
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
           <IllustrationComponent
             name={IllustrationName.EventWhite}
-            className='w-[100px] h-48'
+            className='w-48 h-48'
             aria-hidden={true}
             focusable={false}
           />
@@ -139,7 +139,7 @@ export default function OngletActionsPilotage({
         </div>
       )}
 
-      {metadonneesInitiales.nombreTotal > 0 && (
+      {metadonneesInitiales.nombreTotal == 0 && (
         <>
           <TableauActionsAQualifier
             categories={categories}
