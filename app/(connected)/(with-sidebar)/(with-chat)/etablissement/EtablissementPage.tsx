@@ -186,10 +186,10 @@ function EtablissementPage() {
             name={IllustrationName.People}
             focusable={false}
             aria-hidden={true}
-            className='m-auto w-[200px] h-[200px]'
+            className='m-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.grey\_100)]'
           />
           <p className='text-base-bold text-center'>
-            Aucune bénéficiaire ne correspond à votre recherche.
+            Aucun bénéficiaire ne correspond à votre recherche.
           </p>
         </>
       )}
