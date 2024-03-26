@@ -129,11 +129,11 @@ export default function OngletActionsPilotage({
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
           <IllustrationComponent
             name={IllustrationName.EventWhite}
-            className='w-[100px]'
+            className='w-[100px] h-48'
             aria-hidden={true}
             focusable={false}
           />
-          <p className='mt-4 mb-4 text-base-medium w-2/3 text-center'>
+          <p className='mt-2 mb-12 text-base-medium w-2/3 text-center'>
             Vous n’avez pas d’action à qualifier.
           </p>
         </div>
