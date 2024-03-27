@@ -33,6 +33,7 @@ type EditionRdvSearchParams = Partial<{
   idRdv: string
   type: string
   idJeune: string
+  redirectUrl: string
 }>
 
 export async function generateMetadata({
@@ -65,8 +66,11 @@ export default async function EditionRdv({
 }) {
   const props = await buildProps(searchParams)
   const referer = headers().get('referer')
+  const redirectUrl = searchParams?.redirectUrl
+
   const returnTo =
-    referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes'
+    redirectUrl ||
+    (referer && !redirectedFromHome(referer) ? referer : '/mes-jeunes')
 
   if (props.evenement) {
     return (

@@ -244,9 +244,7 @@ function EditionRdvPage({
               style={ButtonStyle.PRIMARY}
               href={`/evenements/${
                 evenement.id
-              }/cloture?redirectUrl=${encodeURIComponent(
-                returnTo + '?onglet=etablissement'
-              )}`}
+              }/cloture?redirectUrl=${encodeURIComponent(returnTo)}`}
             >
               <IconComponent
                 name={IconName.Description}

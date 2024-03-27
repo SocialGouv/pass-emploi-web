@@ -1547,7 +1547,7 @@ describe('EditionRdvPage client side', () => {
           })
           expect(cloreButton).toHaveAttribute(
             'href',
-            `/evenements/${evenement.id}/cloture?redirectUrl=https%3A%2F%2Flocalhost%3A3000%2Fagenda%3Fonglet%3Detablissement`
+            `/evenements/${evenement.id}/cloture?redirectUrl=https%3A%2F%2Flocalhost%3A3000%2Fagenda`
           )
         })
       })
