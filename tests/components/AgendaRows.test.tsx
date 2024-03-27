@@ -16,18 +16,13 @@ describe('buildAgendaData', () => {
     const listeBase: WithDate[] = []
 
     // When
-    const agenda = buildAgendaData(
-      listeBase,
-      periode,
-      ({ date }) => date,
-      [0, 1]
-    )
+    const agenda = buildAgendaData(listeBase, periode, ({ date }) => date)
 
     // Then
     expect(agenda).toStrictEqual(
       new Map([
-        ['2029-12-31', 'NO_DATA'],
-        ['2030-01-01', 'NO_DATA'],
+        ['2029-12-31', undefined],
+        ['2030-01-01', undefined],
         ['2030-01-02', undefined],
         ['2030-01-03', undefined],
         ['2030-01-04', undefined],
@@ -42,17 +37,12 @@ describe('buildAgendaData', () => {
     const withDate = { id: 'mardi', date: mardi.set({ hour: 8 }) }
 
     // When
-    const agenda = buildAgendaData(
-      [withDate],
-      periode,
-      ({ date }) => date,
-      [0, 1]
-    )
+    const agenda = buildAgendaData([withDate], periode, ({ date }) => date)
 
     // Then
     expect(agenda).toStrictEqual(
       new Map<string, any>([
-        ['2029-12-31', 'NO_DATA'],
+        ['2029-12-31', undefined],
         ['2030-01-01', { matin: [withDate], apresMidi: [] }],
         ['2030-01-02', undefined],
         ['2030-01-03', undefined],
@@ -107,7 +97,7 @@ describe('buildAgendaData', () => {
           },
         ],
         ['2030-01-02', { matin: [withDateMercredi], apresMidi: [] }],
-        ['2030-01-03', 'NO_DATA'],
+        ['2030-01-03', undefined],
         [
           '2030-01-04',
           {
@@ -115,8 +105,8 @@ describe('buildAgendaData', () => {
             apresMidi: [withDateVendredi, withDateVendredi2],
           },
         ],
-        ['2030-01-05', 'NO_DATA'],
-        ['2030-01-06', 'NO_DATA'],
+        ['2030-01-05', undefined],
+        ['2030-01-06', undefined],
       ])
     )
   })

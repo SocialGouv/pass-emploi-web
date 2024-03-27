@@ -37,7 +37,6 @@ export default function OngletAgendaConseiller({
 }: OngletAgendaConseillerProps) {
   const [evenements, setEvenements] = useState<EvenementListItem[]>()
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
-  const [indexJoursCharges, setIndexJoursCharges] = useState<number[]>()
   const [agendaEvenements, setAgendaEvenements] =
     useState<AgendaData<EvenementListItem>>()
   const [failed, setFailed] = useState<boolean>(false)
@@ -55,32 +54,14 @@ export default function OngletAgendaConseiller({
     setFailed(false)
     setAgendaEvenements(undefined)
 
-    const deuxiemeJour = dateDebut.plus({ day: 1 }).endOf('day')
-
     try {
-      const evenementsPeriode = await chargerEvenements(dateDebut, deuxiemeJour)
-      setIndexJoursCharges([0, 1])
+      const evenementsPeriode = await chargerEvenements(dateDebut, dateFin)
       setEvenements(evenementsPeriode)
     } catch (e) {
       setFailed(true)
     } finally {
       setPeriode({ debut: dateDebut, fin: dateFin })
     }
-  }
-
-  async function chargerEvenementsJour(jourACharger: DateTime) {
-    const evenementsJour = await chargerEvenements(
-      jourACharger.startOf('day'),
-      jourACharger.endOf('day')
-    )
-
-    setIndexJoursCharges((currents) => {
-      const indexJourACharger: number = jourACharger
-        .diff(periode!.debut)
-        .as('days')
-      return currents!.concat(indexJourACharger)
-    })
-    setEvenements((current) => current!.concat(evenementsJour))
   }
 
   async function chargerEvenements(
@@ -109,17 +90,14 @@ export default function OngletAgendaConseiller({
   }
 
   useEffect(() => {
-    if (evenements && periode && indexJoursCharges) {
+    if (evenements && periode) {
       setAgendaEvenements(
-        buildAgendaData(
-          evenements,
-          periode,
-          ({ date }) => DateTime.fromISO(date),
-          indexJoursCharges
+        buildAgendaData(evenements, periode, ({ date }) =>
+          DateTime.fromISO(date)
         )
       )
     }
-  }, [evenements, periode, indexJoursCharges])
+  }, [evenements, periode])
 
   return (
     <>
@@ -154,7 +132,6 @@ export default function OngletAgendaConseiller({
         <TableauEvenementsConseiller
           idConseiller={conseiller.id}
           agendaEvenements={agendaEvenements}
-          onChargerEvenementsJour={chargerEvenementsJour}
         />
       )}
     </>

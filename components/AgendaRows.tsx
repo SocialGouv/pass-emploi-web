@@ -15,20 +15,18 @@ export const PLAGE_HORAIRE_APRES_MIDI = 'Après-midi'
 type DataJour<T> = { matin: T[]; apresMidi: T[] }
 export type AgendaData<T extends { id: string }> = Map<
   string,
-  undefined | 'NO_DATA' | DataJour<T>
+  undefined | DataJour<T>
 >
 
 export function buildAgendaData<T extends { id: string }>(
   elements: T[],
   periode: { debut: DateTime; fin: DateTime },
-  extractDate: (element: T) => DateTime,
-  indexJoursCharges: number[] = [0, 1, 2, 3, 4, 5, 6]
+  extractDate: (element: T) => DateTime
 ): AgendaData<T> {
   const agenda: AgendaData<T> = new Map()
 
   initialiserAgendaJoursVides(agenda, periode)
   remplirAgenda(agenda, elements, extractDate)
-  verifierJoursChargesSansData(agenda, periode, indexJoursCharges)
 
   return agenda
 }
@@ -36,31 +34,22 @@ export function buildAgendaData<T extends { id: string }>(
 export function AgendaRows<T extends { id: string }>({
   agenda,
   Item,
-  Filler,
 }: {
   agenda: AgendaData<T>
   Item: (props: { item: T }) => React.JSX.Element
-  Filler?: (props: { jourISO: string }) => React.JSX.Element
 }): React.JSX.Element {
   return (
     <>
       {Array.from(agenda.entries()).map(([jour, dataJour], index) => (
         <Fragment key={jour}>
-          {dataJour && dataJour === 'NO_DATA' && Filler && (
+          {!dataJour && (
             <>
               <IntercalaireDate jour={jour} index={index} />
-              <IntercalaireFiller
-                jour={jour}
-                Filler={() => (
-                  <div className='text-base-bold max-w-[250px]'>
-                    Aucun rendez-vous ou événements prévus ce jour.
-                  </div>
-                )}
-              />
+              <IntercalaireFiller jour={jour} />
             </>
           )}
 
-          {dataJour && dataJour !== 'NO_DATA' && (
+          {dataJour && (
             <>
               <IntercalaireDate jour={jour} index={index} />
               {Boolean(dataJour.matin.length) && (
@@ -85,13 +74,6 @@ export function AgendaRows<T extends { id: string }>({
                   ))}
                 </>
               )}
-            </>
-          )}
-
-          {!dataJour && Filler && (
-            <>
-              <IntercalaireDate jour={jour} index={index} />
-              <IntercalaireFiller jour={jour} Filler={Filler} />
             </>
           )}
         </Fragment>
@@ -128,16 +110,12 @@ function IntercalairePlageHoraire({
   )
 }
 
-function IntercalaireFiller({
-  jour,
-  Filler,
-}: {
-  jour: string
-  Filler: (props: { jourISO: string }) => React.JSX.Element
-}) {
+function IntercalaireFiller({ jour }: { jour: string }) {
   return (
     <Intercalaire key={'filler-' + jour} withRowStyle={true}>
-      <Filler jourISO={jour} />
+      <div className='text-base-bold max-w-[250px]'>
+        Aucun rendez-vous ou événements prévus ce jour.
+      </div>
     </Intercalaire>
   )
 }
@@ -172,16 +150,5 @@ function remplirAgenda<T extends { id: string }>(
       (agenda.get(jour) as DataJour<T>).matin.push(element)
     if (isApresMidi(datetime.hour))
       (agenda.get(jour) as DataJour<T>).apresMidi.push(element)
-  })
-}
-
-function verifierJoursChargesSansData<T extends { id: string }>(
-  agenda: AgendaData<T>,
-  periode: { debut: DateTime; fin: DateTime },
-  indexJoursCharges: number[]
-) {
-  indexJoursCharges.forEach((index) => {
-    const jour = periode.debut.plus({ day: index }).toISODate()
-    if (agenda.get(jour) === undefined) agenda.set(jour, 'NO_DATA')
   })
 }
