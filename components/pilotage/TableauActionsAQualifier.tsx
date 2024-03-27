@@ -198,7 +198,7 @@ export default function TableauActionsAQualifier({
             name={IllustrationName.Search}
             focusable={false}
             aria-hidden={true}
-            className='m-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.grey\_100)]'
+            className='m-auto w-48 h-48 [--secondary-fill:theme(colors.grey\_100)]'
           />
           <p className='text-base-bold text-center'>Aucun résultat.</p>
           <p className='text-center'>Modifiez vos filtres.</p>

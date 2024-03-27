@@ -171,7 +171,9 @@ function PilotagePage({
           <div>
             <dt className='text-base-bold'>Les actions</dt>
             <dd className='mt-2 rounded-base px-3 py-2 bg-primary_lighten text-primary_darken'>
-              <div className='text-xl-bold'>{totalActions}</div>
+              <div className='text-xl-bold'>
+                {actions.metadonnees.nombreTotal}
+              </div>
               <span className='text-base-bold'> À qualifier</span>
             </dd>
           </div>
