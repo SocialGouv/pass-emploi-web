@@ -165,7 +165,7 @@ describe('FicheBeneficiairePage client side', () => {
         ).toBeInTheDocument()
         expect(
           screen.getByText(
-            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du jeune n’est valable que 12h/
+            /Le lien d’activation envoyé par i-milo à l’adresse e-mail du jeune n’est valable que 24h/
           )
         ).toBeInTheDocument()
       })
@@ -241,7 +241,7 @@ describe('FicheBeneficiairePage client side', () => {
         ).toBeInTheDocument()
         expect(() =>
           screen.getByText(
-            /Le lien d’activation envoyé par i-milo sur l‘adresse e-mail du jeune n’est valable que 12h/
+            /Le lien d’activation envoyé par i-milo sur l‘adresse e-mail du jeune n’est valable que 24h/
           )
         ).toThrow()
       })
