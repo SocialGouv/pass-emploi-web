@@ -43,7 +43,7 @@ export default function BeneficiaireItemList({
 
   return (
     <>
-      <div className='flex'>
+      <div className='flex items-center'>
         <IconComponent
           name={
             beneficiaireEstInscrit || beneficiaireEstPresent

@@ -330,7 +330,7 @@ function FicheBeneficiairePage({
               <li>
                 <strong>
                   Le lien d’activation envoyé par i-milo à l’adresse e-mail du
-                  jeune n’est valable que 12h.
+                  jeune n’est valable que 24h.
                 </strong>
               </li>
               <li>

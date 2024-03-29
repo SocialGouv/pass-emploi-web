@@ -40,7 +40,7 @@ describe('<DossierMilo', () => {
     it("affiche le mode opératoire d'activation du compte", () => {
       // Then
       expect(
-        screen.getByText(/lien d’activation valable 12h/)
+        screen.getByText(/lien d’activation valable 24h/)
       ).toBeInTheDocument()
     })
   })
@@ -86,7 +86,7 @@ describe('<DossierMilo', () => {
 
     it("n'affiche pas le mode opératoire d'activation du compte", () => {
       // Then
-      expect(() => screen.getByText(/lien d'activation valable 12h/)).toThrow()
+      expect(() => screen.getByText(/lien d'activation valable 24h/)).toThrow()
     })
   })
 })

@@ -32,7 +32,7 @@ export default function TutorielAjoutBeneficiaireMilo() {
         <>
           Le bénéficiaire va ensuite recevoir par e-mail un{' '}
           <strong>
-            lien d’activation envoyé par i-milo. Ce lien est valide 12 heures.
+            lien d’activation envoyé par i-milo. Ce lien est valide 24 heures.
           </strong>
         </>
       ),
