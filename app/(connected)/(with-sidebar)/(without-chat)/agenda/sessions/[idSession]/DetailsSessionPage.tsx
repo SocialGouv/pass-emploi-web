@@ -1,6 +1,7 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
+import jsPDF from 'jspdf'
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
@@ -25,6 +26,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { toFrenchDateTime, toShortDate } from 'utils/date'
+import 'jspdf-autotable'
 
 const DesinscriptionBeneficiaireModal = dynamic(
   () => import('components/session-imilo/DesinscriptionBeneficiaireModal'),
@@ -250,6 +252,62 @@ function DetailsSessionPage({
     )
     setTrackingLabel(initialTracking + ' - Modification succès')
     router.push(returnTo)
+  }
+
+  async function genererPDF(e) {
+    e.preventDefault()
+    const pdf = new jsPDF()
+    let yOffset = 20
+
+    pdf.text(session.offre.titre, 10, 10)
+
+    const listeInscritsHeaders = ['N°', 'Prénom Nom', 'Signature']
+    const listeInscrits = beneficiairesSelectionnes.value
+      .filter((b) => b.statut === StatutBeneficiaire.INSCRIT)
+      .map((beneficiaire, index) => [index + 1, beneficiaire.value, ''])
+
+    const cssColor = getComputedStyle(
+      document.documentElement
+    ).getPropertyValue('--primary-color')
+    const rgbArray = cssColor
+      .substring(4, cssColor.length - 1)
+      .replace(/ /g, '')
+      .split(',')
+
+    const informationsSession = [
+      ['Atelier', session.offre.titre],
+      ['Animateur', session.session.animateur ?? '--'],
+      [
+        'Date et heure',
+        `du ${toFrenchDateTime(session.session.dateHeureDebut)} au ${toFrenchDateTime(session.session.dateHeureDebut)}`,
+      ],
+      ['Nombre d’inscrits', listeInscrits.length],
+    ]
+    pdf.autoTable({
+      startY: yOffset,
+      body: informationsSession,
+      theme: 'grid',
+      margin: { top: 15 },
+      styles: {
+        halign: 'center',
+        valign: 'middle',
+      },
+    })
+
+    pdf.autoTable({
+      startY: 70,
+      head: [listeInscritsHeaders],
+      body: listeInscrits,
+      theme: 'grid',
+      margin: { top: 15 },
+      styles: {
+        headStyles: { fillColor: '#3B69D1' },
+        halign: 'center',
+        valign: 'middle',
+      },
+    })
+
+    pdf.save(`emargement.pdf`)
   }
 
   useMatomo(trackingLabel)
@@ -489,6 +547,10 @@ function DetailsSessionPage({
                   : 'place restante'}
               </span>
             )}
+
+          <Button className='mb-2' onClick={genererPDF}>
+            Exporter la liste des inscrits
+          </Button>
 
           {beneficiairesSelectionnes.value.length > 0 && (
             <ul

@@ -26,6 +26,8 @@
     "firebase": "10.9.0",
     "html-react-parser": "5.1.9",
     "jsonwebtoken": "9.0.2",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "lodash.isequal": "4.5.0",
     "luxon": "3.4.4",
     "matomo-tracker": "2.2.4",
