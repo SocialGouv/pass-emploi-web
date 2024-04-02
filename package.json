@@ -23,8 +23,8 @@
     "crypto-js": "4.2.0",
     "dotenv": "16.4.5",
     "elastic-apm-node": "4.5.0",
-    "firebase": "10.9.0",
-    "html-react-parser": "5.1.9",
+    "firebase": "10.10.0",
+    "html-react-parser": "5.1.10",
     "jsonwebtoken": "9.0.2",
     "lodash.isequal": "4.5.0",
     "luxon": "3.4.4",
@@ -38,7 +38,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "6.22.3",
-    "sharp": "^0.33.2"
+    "sharp": "0.33.3"
   },
   "devDependencies": {
     "@svgr/webpack": "8.1.0",
@@ -51,7 +51,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash.isequal": "^4.5.8",
     "@types/luxon": "^3.4.2",
-    "@types/react": "^18.2.67",
+    "@types/react": "^18.2.73",
     "autoprefixer": "^10.4.19",
     "css-loader": "^6.10.0",
     "eslint": "^8.57.0",
@@ -65,7 +65,7 @@
     "prettier": "^3.2.5",
     "source-map-explorer": "^2.5.3",
     "style-loader": "^3.3.4",
-    "tailwindcss": "3.4.1",
+    "tailwindcss": "^3.4.3",
     "ts-loader": "^9.5.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.4.3"
