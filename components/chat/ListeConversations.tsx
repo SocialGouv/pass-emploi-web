@@ -37,7 +37,7 @@ export default function ListeConversations({
                 name={IllustrationName.Messagerie}
                 focusable={false}
                 aria-hidden={true}
-                className='w-[360px] h-[200px]'
+                className='w-[360px] h-[200px] fill-primary [--secondary-fill:theme(colors.blanc)]'
               />
               <div className='mx-4'>
                 <p className='text-base-bold'>Vous pouvez échanger :</p>

@@ -239,14 +239,12 @@ function EditionRdvPage({
             </Button>
           )}
 
-          {evenement && estAClore(evenement) && (
+          {evenement && estAClore(evenement) && evenement.jeunes.length > 0 && (
             <ButtonLink
               style={ButtonStyle.PRIMARY}
               href={`/evenements/${
                 evenement.id
-              }/cloture?redirectUrl=${encodeURIComponent(
-                returnTo + '?onglet=etablissement'
-              )}`}
+              }/cloture?redirectUrl=${encodeURIComponent(returnTo)}`}
             >
               <IconComponent
                 name={IconName.Description}
@@ -290,9 +288,14 @@ function EditionRdvPage({
 
       {evenement && (
         <>
-          {estAClore(evenement) && (
+          {estAClore(evenement) && evenement.jeunes.length > 0 && (
             <div className='pt-6'>
               <FailureAlert label='Cet événement est passé et doit être clos' />
+            </div>
+          )}
+          {estAClore(evenement) && !evenement.jeunes.length && (
+            <div className='pt-6'>
+              <FailureAlert label='Cet événement est passé et doit être supprimé' />
             </div>
           )}
 
@@ -302,7 +305,7 @@ function EditionRdvPage({
               <dd className='text-base-bold'>{evenement.type.label}</dd>
 
               <div className='mt-2'>
-                <dt className='inline'>Créé(e) par :</dt>
+                <dt className='inline'>Créé(e) par : </dt>
                 <dd className='inline text-s-bold'>
                   {estCreeParSiMILO(evenement) && 'Système d’information MILO'}
                   {!estCreeParSiMILO(evenement) &&

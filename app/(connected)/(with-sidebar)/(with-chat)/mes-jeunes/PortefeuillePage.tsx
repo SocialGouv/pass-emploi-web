@@ -182,7 +182,7 @@ function PortefeuillePage({
             </h2>
             <IllustrationComponent
               name={IllustrationName.CurvyArrow}
-              className='absolute top-0 -right-16 fill-primary w-[100px]'
+              className='absolute top-0 -right-16 fill-primary w-[100px] [--secondary-fill:theme(colors.primary\_lighten)]'
               aria-hidden={true}
               focusable={false}
             />

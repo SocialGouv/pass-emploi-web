@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 
-import EmptyStateImage from 'assets/images/illustration-event-grey.svg'
+import IllustrationComponent, {
+  IllustrationName,
+} from '../ui/IllustrationComponent'
+
 import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Pagination from 'components/ui/Table/Pagination'
@@ -35,6 +38,8 @@ export default function OngletActionsPilotage({
 }: OngletActionsPilotageProps) {
   const [_, setAlerte] = useAlerte()
   const [actions, setActions] = useState<ActionPilotage[]>(actionsInitiales)
+  const [actionsFiltrees, setActionsFitrees] =
+    useState<ActionPilotage[]>(actionsInitiales)
   const [metadonnees, setMetadonnees] =
     useState<MetadonneesPagination>(metadonneesInitiales)
   const [actionsEnErreur, setActionsEnErreur] = useState<boolean>(false)
@@ -46,7 +51,7 @@ export default function OngletActionsPilotage({
   async function trierActions(nouveauTri: TriActionsAQualifier) {
     setTri(nouveauTri)
     const update = await getActions({ page, tri: nouveauTri, filtres })
-    setActions(update.actions)
+    setActionsFitrees(update.actions)
     setMetadonnees(update.metadonnees)
   }
 
@@ -58,7 +63,7 @@ export default function OngletActionsPilotage({
     })
     setPage(1)
     setFiltres(categoriesSelectionnees)
-    setActions(update.actions)
+    setActionsFitrees(update.actions)
     setMetadonnees(update.metadonnees)
   }
 
@@ -66,7 +71,7 @@ export default function OngletActionsPilotage({
     if (nouvellePage < 1 || nouvellePage > metadonnees.nombrePages) return
     setPage(nouvellePage)
     const update = await getActions({ page: nouvellePage, tri, filtres })
-    setActions(update.actions)
+    setActionsFitrees(update.actions)
     setMetadonnees(update.metadonnees)
   }
 
@@ -106,11 +111,12 @@ export default function OngletActionsPilotage({
           : AlerteParam.multiQualificationNonSNP
       )
 
-    setActions(
-      actions.filter(
-        (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
-      )
+    const nouvellesActions = actions.filter(
+      (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
     )
+
+    setActions(nouvellesActions)
+    setActionsFitrees(nouvellesActions)
   }
 
   return (
@@ -122,24 +128,25 @@ export default function OngletActionsPilotage({
         />
       )}
 
-      {metadonneesInitiales.nombreTotal === 0 && (
+      {actions.length === 0 && (
         <div className='bg-grey_100 flex flex-col justify-center items-center'>
-          <EmptyStateImage
-            focusable={false}
+          <IllustrationComponent
+            name={IllustrationName.EventWhite}
+            className='w-48 h-48'
             aria-hidden={true}
-            className='w-[360px] h-[200px]'
+            focusable={false}
           />
-          <p className='mt-4 text-base-medium w-2/3 text-center'>
+          <p className='mt-2 mb-12 text-base-medium w-2/3 text-center'>
             Vous n’avez pas d’action à qualifier.
           </p>
         </div>
       )}
 
-      {metadonneesInitiales.nombreTotal > 0 && (
+      {actions.length > 0 && (
         <>
           <TableauActionsAQualifier
             categories={categories}
-            actionsFiltrees={actions}
+            actionsFiltrees={actionsFiltrees}
             tri={tri}
             onTri={trierActions}
             onFiltres={filtrerActions}

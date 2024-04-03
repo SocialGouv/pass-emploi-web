@@ -27,15 +27,6 @@ yarn dev
 
 Voilà! Ouvrez [http://localhost:3000](http://localhost:3000) sur votre navigateur.
 
-## Storybook
-
-Le projet dispose d'un [storybook](https://storybook.js.org/tutorials/) pour documenter ses composants et les guides de style.
-Pour le démarrer en local: 
-
-```
-yarn storybook
-```
-
 ## Déploiement
 
 Nous utilisons actuellement Scalingo comme hébergeur sur l'application Web. Il existe deux environnements : Staging & Prod

@@ -2,12 +2,13 @@ import { ComponentPropsWithoutRef } from 'react'
 
 import IllustrationArrowForward from 'assets/images/illustration-arrow-forward.svg'
 import IllustrationCheck from 'assets/images/illustration-check.svg'
-import IllustrationChecklist from 'assets/images/illustration-checklist-grey.svg'
+import IllustrationChecklist from 'assets/images/illustration-checklist.svg'
 import IllustrationCurvyArrow from 'assets/images/illustration-curvy-arrow.svg'
 import IllustrationDelete from 'assets/images/illustration-delete.svg'
 import IllustrationError from 'assets/images/illustration-error.svg'
 import IllustrationEtablissement from 'assets/images/illustration-etablissement.svg'
 import IllustrationEvent from 'assets/images/illustration-event-grey.svg'
+import IllustrationEventWhite from 'assets/images/illustration-event-white.svg'
 import IllustrationForum from 'assets/images/illustration-forum.svg'
 import IllustrationInfo from 'assets/images/illustration-info.svg'
 import IllustrationMaintenance from 'assets/images/illustration-maintenance.svg'
@@ -30,6 +31,7 @@ export enum IllustrationName {
   Error = 'Error',
   Etablissement = 'Etablissement',
   Event = 'Event',
+  EventWhite = 'EventWhite',
   Forum = 'Forum',
   Info = 'Info',
   LogoCEJ = 'LogoCEJ',
@@ -53,6 +55,7 @@ const illustrationsByName: { [key in IllustrationName]: any } = {
   [IllustrationName.Error]: IllustrationError,
   [IllustrationName.Etablissement]: IllustrationEtablissement,
   [IllustrationName.Event]: IllustrationEvent,
+  [IllustrationName.EventWhite]: IllustrationEventWhite,
   [IllustrationName.Forum]: IllustrationForum,
   [IllustrationName.Info]: IllustrationInfo,
   [IllustrationName.LogoCEJ]: IllustrationLogoCEJ,
@@ -73,8 +76,14 @@ type IllustrationsComponentProps = ComponentPropsWithoutRef<'svg'> & {
 }
 export default function IllustrationComponent({
   name,
+  className,
   ...props
 }: IllustrationsComponentProps) {
   const Icon = illustrationsByName[name]
-  return <Icon {...props} />
+  const withSecondaryFill =
+    (className ?? '') +
+    (className?.includes('--secondary-fill')
+      ? ''
+      : ' [--secondary-fill:theme(colors.warning)]')
+  return <Icon className={withSecondaryFill} {...props} />
 }

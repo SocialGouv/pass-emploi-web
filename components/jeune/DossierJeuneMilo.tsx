@@ -115,7 +115,7 @@ export default function DossierJeuneMilo({
 
       {dossier.email && (
         <div className='mt-4'>
-          <InformationMessage label='Ce bénéficiaire recevra un lien d’activation valable 12h.'>
+          <InformationMessage label='Ce bénéficiaire recevra un lien d’activation valable 24h.'>
             <p>
               Passé ce délai, il sera nécessaire d’utiliser l’option : mot de
               passe oublié.

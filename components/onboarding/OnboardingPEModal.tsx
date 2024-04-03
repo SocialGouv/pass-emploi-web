@@ -88,7 +88,7 @@ export default function OnboardingPEModal({
           onClose={onClose}
           onContinue={() => setEtape('MESSAGERIE')}
         >
-          <p>
+          <p className='text-m-regular'>
             Créez en toute autonomie les comptes de vos bénéficiaires et accédez
             à leur fiche en un clic. Retrouvez les offres et recherches que vos
             bénéficiaires ont mises en favoris.
@@ -104,7 +104,7 @@ export default function OnboardingPEModal({
           onClose={onClose}
           onContinue={() => setEtape('OFFRES')}
         >
-          <p>
+          <p className='text-m-regular'>
             Dès le compte activé, échangez avec un ou plusieurs bénéficiaires et
             partagez leur des offres d’emploi. Créez et gérez vos listes de
             diffusion pour gagner du temps.
@@ -119,7 +119,7 @@ export default function OnboardingPEModal({
           titre='Les offres'
           onClose={onClose}
         >
-          <p>
+          <p className='text-m-regular'>
             Recherchez des offres d’emploi et d’immersion pertinentes à partager
             à un ou plusieurs de vos bénéficiaires.
           </p>

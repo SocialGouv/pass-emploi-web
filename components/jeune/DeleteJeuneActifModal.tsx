@@ -32,6 +32,7 @@ export default function DeleteJeuneActifModal({
 
   const [showModalEtape1, setShowModalEtape1] = useState<boolean>(true)
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
+  const [suppressionEnCours, setSuppressionEnCours] = useState<boolean>(false)
 
   const MOTIF_SUPPRESSION_AUTRE = 'Autre'
   const [motifSuppressionJeune, setMotifSuppressionJeune] = useState<
@@ -102,7 +103,12 @@ export default function DeleteJeuneActifModal({
           : undefined,
     }
 
-    await soumettreSuppression(payload)
+    setSuppressionEnCours(true)
+    try {
+      await soumettreSuppression(payload)
+    } finally {
+      setSuppressionEnCours(false)
+    }
   }
 
   const descriptionMotif = motifsSuppression.find(
@@ -223,6 +229,7 @@ export default function DeleteJeuneActifModal({
                 type='submit'
                 style={ButtonStyle.PRIMARY}
                 className='ml-6'
+                isLoading={suppressionEnCours}
               >
                 Supprimer le compte
               </Button>
