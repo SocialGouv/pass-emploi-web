@@ -764,6 +764,17 @@ export function EditionRdvForm({
             </>
           )}
 
+          {evenement && (
+            <div className='flex mb-2'>
+              <ButtonLink
+                style={ButtonStyle.PRIMARY}
+                href={`/emargement/${evenement.id}`}
+                externalLink={true}
+                label='Exporter la liste des inscrits'
+              ></ButtonLink>
+            </div>
+          )}
+
           <BeneficiairesMultiselectAutocomplete
             id='select-beneficiaires'
             beneficiaires={buildOptionsJeunes()}
