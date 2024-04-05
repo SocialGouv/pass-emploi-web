@@ -201,13 +201,16 @@ export default function OngletAgendaEtablissement({
               <TH>Horaires</TH>
               <TH>Titre</TH>
               <TH>Type</TH>
-              <TH>
+              <TH
+                title={
+                  'Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                }
+              >
                 Visible{' '}
                 <IconComponent
                   name={IconName.Info}
                   className='inline h-4 w-4 fill-primary'
                   aria-label='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
-                  title='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
                 />
               </TH>
               <TH estCliquable={true}>
