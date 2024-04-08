@@ -298,6 +298,12 @@ function FicheBeneficiairePage({
         </PageActionsPortal>
       )}
 
+      {jeune.estAArchiver && estMilo(conseiller) && (
+        <div className='mb-6'>
+          <FailureAlert label='Le portail CEJ n’arrive pas à récupérer les informations de ce bénéficiaire. Veuillez archiver ce compte si c’est nécessaire.' />
+        </div>
+      )}
+
       {showSuppressionCompteBeneficiaireError && (
         <FailureAlert
           label='Suite à un problème inconnu la suppression a échoué. Vous pouvez réessayer.'
