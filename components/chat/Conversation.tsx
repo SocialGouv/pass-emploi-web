@@ -61,6 +61,9 @@ export default function Conversation({
   const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
     undefined
   )
+  const [isflaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
+    jeuneChat.flaggedByConseiller
+  )
 
   const [messageAModifier, setMessageAModifier] = useState<
     | {
@@ -199,7 +202,8 @@ export default function Conversation({
   }
 
   async function toggleFlag() {
-    const flagged = !jeuneChat.flaggedByConseiller
+    setFlaggedByConseiller(!isflaggedByConseiller)
+    const flagged = !isflaggedByConseiller
     const { toggleFlag: _toggleFlag } = await import(
       'services/messages.service'
     )
@@ -323,14 +327,14 @@ export default function Conversation({
         labelRetour='Retour sur ma messagerie'
         titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
         iconName={
-          jeuneChat.flaggedByConseiller
+          isflaggedByConseiller
             ? IconName.BookmarkFill
             : IconName.BookmarkOutline
         }
         iconLabel={
-          jeuneChat.flaggedByConseiller
-            ? 'Ne plus suivre la conversation'
-            : 'Suivre la conversation'
+          isflaggedByConseiller
+            ? 'Suivre la conversation'
+            : 'Ne plus suivre la conversation'
         }
         onClickIcon={toggleFlag}
       />
