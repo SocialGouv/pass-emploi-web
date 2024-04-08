@@ -38,6 +38,7 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   situations?: Situation[]
   idPartenaire?: string
   conseiller: { id: string }
+  estAArchiver?: boolean
 }
 
 export type JeuneEtablissementJson = {

@@ -54,6 +54,7 @@ export interface DetailJeune extends BaseJeune {
   }>
   idPartenaire?: string
   structureMilo?: { id: string }
+  estAArchiver?: boolean
 }
 
 export interface MetadonneesFavoris {
