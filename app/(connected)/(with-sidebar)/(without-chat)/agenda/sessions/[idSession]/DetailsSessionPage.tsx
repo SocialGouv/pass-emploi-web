@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import { FormEvent, useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import PageActionsPortal from 'components/PageActionsPortal'
 import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
@@ -476,19 +476,30 @@ function DetailsSessionPage({
             }
           />
 
-          {nbPlacesDisponibles.value !== undefined &&
-            !dateLimiteInscriptionDepassee && (
-              <span
-                className={`mb-2 ${
-                  nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
-                }`}
-              >
-                {nbPlacesDisponibles.value}{' '}
-                {nbPlacesDisponibles.value > 1
-                  ? 'places restantes'
-                  : 'place restante'}
-              </span>
+          <div className='flex mb-4 justify-between items-center'>
+            {nbPlacesDisponibles.value !== undefined &&
+              !dateLimiteInscriptionDepassee && (
+                <span
+                  className={`mb-2 ${
+                    nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
+                  }`}
+                >
+                  {nbPlacesDisponibles.value}{' '}
+                  {nbPlacesDisponibles.value > 1
+                    ? 'places restantes'
+                    : 'place restante'}
+                </span>
+              )}
+
+            {beneficiairesSelectionnes.value.length > 0 && (
+              <ButtonLink
+                style={ButtonStyle.PRIMARY}
+                href={`/emargement/${session.session.id}?type=session`}
+                externalLink={true}
+                label='Exporter la liste des inscrits'
+              ></ButtonLink>
             )}
+          </div>
 
           {beneficiairesSelectionnes.value.length > 0 && (
             <ul
