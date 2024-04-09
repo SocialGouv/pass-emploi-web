@@ -764,11 +764,11 @@ export function EditionRdvForm({
             </>
           )}
 
-          {evenement && (
+          {idsJeunes.value.length > 0 && evenement && evenement.statut && (
             <div className='flex mb-2'>
               <ButtonLink
                 style={ButtonStyle.PRIMARY}
-                href={`/emargement/${evenement.id}`}
+                href={`/emargement/${evenement.id}?type=ac`}
                 externalLink={true}
                 label='Exporter la liste des inscrits'
               ></ButtonLink>
