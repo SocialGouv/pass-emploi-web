@@ -33,7 +33,7 @@ export default function LayoutPageMessagerie({
         />
       </div>
 
-      <div className='grow flex flex-col min-h-0'>
+      <div className='flex flex-col min-h-0 w-[100vw] layout_s:w-[70vw] layout_l:w-[61vw]'>
         {children}
         <Footer conseiller={conseiller} />
       </div>
