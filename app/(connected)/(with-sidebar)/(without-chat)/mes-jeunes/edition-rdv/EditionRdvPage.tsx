@@ -363,6 +363,7 @@ function EditionRdvPage({
       )}
 
       <EditionRdvForm
+        aDesBeneficiaires={aDesBeneficiaires}
         jeunesConseiller={portefeuille}
         recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
         typesRendezVous={typesRendezVous}

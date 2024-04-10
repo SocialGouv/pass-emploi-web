@@ -23,8 +23,11 @@ import { JeuneEtablissement } from 'interfaces/jeune'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchDateTime, toShortDate } from 'utils/date'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const DesinscriptionBeneficiaireModal = dynamic(
   () => import('components/session-imilo/DesinscriptionBeneficiaireModal'),
@@ -56,7 +59,10 @@ function DetailsSessionPage({
 }: DetailSessionProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+  const [portefeuille] = usePortefeuille()
+  const [conseiller] = useConseiller()
 
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
 
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
@@ -250,6 +256,16 @@ function DetailsSessionPage({
     )
     setTrackingLabel(initialTracking + ' - Modification succès')
     router.push(returnTo)
+  }
+
+  function trackEmargement() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Emargement',
+      action: 'Export des inscrits à une session',
+      nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
+    })
   }
 
   useMatomo(trackingLabel)
@@ -497,6 +513,7 @@ function DetailsSessionPage({
                 href={`/emargement/${session.session.id}?type=session`}
                 externalLink={true}
                 label='Exporter la liste des inscrits'
+                onClick={trackEmargement}
               ></ButtonLink>
             )}
           </div>
