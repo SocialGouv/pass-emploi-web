@@ -62,104 +62,9 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
       </header>
       <div className='mb-8'>
         <dl>
-          {isSession && (
-            <>
-              <div className='mb-2'>
-                <dt className='inline'>
-                  <span>Type : </span>
-                </dt>
-                <dd className='text-base-bold inline'>
-                  {evenement.offre.type}
-                </dd>
-              </div>
+          {isSession && afficheListeInscritsSession(evenement)}
 
-              <div className='mb-2'>
-                <dt className='inline'>
-                  <span>Titre : </span>
-                </dt>
-                <dd className='text-base-bold inline'>
-                  {evenement.offre.titre} - {evenement.session.nom}
-                </dd>
-              </div>
-
-              <div className='mb-2'>
-                <dt className='inline'>
-                  <span>Animateur : </span>
-                </dt>
-                <dd className='text-base-bold inline'>
-                  {evenement.session.animateur ?? (
-                    <>
-                      --
-                      <span className='sr-only'>
-                        information non disponible
-                      </span>
-                    </>
-                  )}
-                </dd>
-              </div>
-
-              <div className='mb-2'>
-                <dt className='inline'>
-                  <span>Date et heure : </span>
-                </dt>
-                <dd className='text-base-bold inline'>
-                  {toFrenchDateTime(evenement.session.dateHeureDebut)}
-                </dd>
-              </div>
-            </>
-          )}
-
-          {!isSession && (
-            <>
-              <div className='mb-2'>
-                <dt className='inline'>
-                  <span>Atelier : </span>
-                </dt>
-                <dd className='text-base-bold inline'>{evenement.titre}</dd>
-              </div>
-
-              <div className='mb-2'>
-                <dt className='inline'>
-                  <span>Organisme : </span>
-                </dt>
-                <dd className='text-base-bold inline'>
-                  {evenement.organisme ?? (
-                    <>
-                      --
-                      <span className='sr-only'>
-                        information non disponible
-                      </span>
-                    </>
-                  )}
-                </dd>
-              </div>
-
-              <div className='mb-2'>
-                <dt className='inline'>
-                  <span>Date et heure : </span>
-                </dt>
-                <dd className='text-base-bold inline'>
-                  {toFrenchDateTime(evenement.date)}
-                </dd>
-              </div>
-
-              <div className='mb-2'>
-                <dt className='inline'>
-                  <span>Adresse : </span>
-                </dt>
-                <dd className='text-base-bold inline'>
-                  {evenement.adresse ?? (
-                    <>
-                      --
-                      <span className='sr-only'>
-                        information non disponible
-                      </span>
-                    </>
-                  )}
-                </dd>
-              </div>
-            </>
-          )}
+          {!isSession && afficheListeInscritsAC(evenement)}
         </dl>
       </div>
 
@@ -196,6 +101,101 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
 
 function assertIsSession(evenement: Evenement | Session): evenement is Session {
   return Object.prototype.hasOwnProperty.call(evenement, 'inscriptions')
+}
+
+function afficheListeInscritsSession(evenement: Session) {
+  return (
+    <>
+      <div className='mb-2'>
+        <dt className='inline'>
+          <span>Type : </span>
+        </dt>
+        <dd className='text-base-bold inline'>{evenement.offre.type}</dd>
+      </div>
+
+      <div className='mb-2'>
+        <dt className='inline'>
+          <span>Titre : </span>
+        </dt>
+        <dd className='text-base-bold inline'>
+          {evenement.offre.titre} - {evenement.session.nom}
+        </dd>
+      </div>
+
+      <div className='mb-2'>
+        <dt className='inline'>
+          <span>Animateur : </span>
+        </dt>
+        <dd className='text-base-bold inline'>
+          {evenement.session.animateur ?? (
+            <>
+              --
+              <span className='sr-only'>information non disponible</span>
+            </>
+          )}
+        </dd>
+      </div>
+
+      <div className='mb-2'>
+        <dt className='inline'>
+          <span>Date et heure : </span>
+        </dt>
+        <dd className='text-base-bold inline'>
+          {toFrenchDateTime(evenement.session.dateHeureDebut)}
+        </dd>
+      </div>
+    </>
+  )
+}
+
+function afficheListeInscritsAC(evenement: Evenement) {
+  return (
+    <>
+      <div className='mb-2'>
+        <dt className='inline'>
+          <span>Atelier : </span>
+        </dt>
+        <dd className='text-base-bold inline'>{evenement.titre}</dd>
+      </div>
+
+      <div className='mb-2'>
+        <dt className='inline'>
+          <span>Organisme : </span>
+        </dt>
+        <dd className='text-base-bold inline'>
+          {evenement.organisme ?? (
+            <>
+              --
+              <span className='sr-only'>information non disponible</span>
+            </>
+          )}
+        </dd>
+      </div>
+
+      <div className='mb-2'>
+        <dt className='inline'>
+          <span>Date et heure : </span>
+        </dt>
+        <dd className='text-base-bold inline'>
+          {toFrenchDateTime(evenement.date)}
+        </dd>
+      </div>
+
+      <div className='mb-2'>
+        <dt className='inline'>
+          <span>Adresse : </span>
+        </dt>
+        <dd className='text-base-bold inline'>
+          {evenement.adresse ?? (
+            <>
+              --
+              <span className='sr-only'>information non disponible</span>
+            </>
+          )}
+        </dd>
+      </div>
+    </>
+  )
 }
 
 export default withTransaction(
