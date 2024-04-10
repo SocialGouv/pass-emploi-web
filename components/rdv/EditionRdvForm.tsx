@@ -35,9 +35,11 @@ import { BaseJeune, compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
+import { trackEvent } from 'utils/analytics/matomo'
 import { dateIsInInterval, toShortDate } from 'utils/date'
 
 interface EditionRdvFormProps {
+  aDesBeneficiaires: 'non' | 'oui'
   conseiller: Conseiller
   jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeEvenementReferentiel[]
@@ -56,6 +58,7 @@ interface EditionRdvFormProps {
 }
 
 export function EditionRdvForm({
+  aDesBeneficiaires,
   jeunesConseiller,
   recupererJeunesDeLEtablissement,
   typesRendezVous,
@@ -576,6 +579,16 @@ export function EditionRdvForm({
     return erreurs
   }
 
+  function trackEmargement() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Emargement',
+      action: 'Export des inscrits à une AC',
+      nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
+    })
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
@@ -771,6 +784,7 @@ export function EditionRdvForm({
                 href={`/emargement/${evenement.id}?type=ac`}
                 externalLink={true}
                 label='Exporter la liste des inscrits'
+                onClick={trackEmargement}
               ></ButtonLink>
             </div>
           )}
