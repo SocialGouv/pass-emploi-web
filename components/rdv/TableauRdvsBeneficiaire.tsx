@@ -54,7 +54,7 @@ export default function TableauRdvsBeneficiaire({
             <TR isHeader={true}>
               <TH>Horaires</TH>
               <TH>Type</TH>
-              <TH title={informationLabel}>
+              <TH title={isRdvPasses ? informationLabel : undefined}>
                 {additionalColumn}
                 {isRdvPasses && (
                   <IconComponent
