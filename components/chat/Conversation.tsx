@@ -202,7 +202,6 @@ export default function Conversation({
   }
 
   async function toggleFlag() {
-    setFlaggedByConseiller(!isflaggedByConseiller)
     const flagged = !isflaggedByConseiller
     const { toggleFlag: _toggleFlag } = await import(
       'services/messages.service'
@@ -215,6 +214,7 @@ export default function Conversation({
       nom: flagged.toString(),
       avecBeneficiaires: jeuneChat.chatId ? 'oui' : 'non',
     })
+    setFlaggedByConseiller(flagged)
   }
 
   function resetTextbox() {
