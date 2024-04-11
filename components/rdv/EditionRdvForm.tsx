@@ -901,14 +901,21 @@ export function EditionRdvForm({
               helpText: 'exemple : 12 rue Duc, Brest',
             }}
           </Label>
-          <Input
-            type='text'
-            id='adresse'
-            defaultValue={adresse}
-            onChange={setAdresse}
-            icon='location'
-            disabled={lectureSeule}
-          />
+          <div className='relative'>
+            <Input
+              type='text'
+              id='adresse'
+              defaultValue={adresse}
+              onChange={setAdresse}
+              disabled={lectureSeule}
+            />
+            <IconComponent
+              name={IconName.LocationOn}
+              className='w-5 h-5 fill-accent absolute top-1/3 right-5 -translate-y-1/2 fill-accent'
+              focusable={false}
+              aria-hidden={true}
+            />
+          </div>
 
           <Label htmlFor='organisme'>
             {{

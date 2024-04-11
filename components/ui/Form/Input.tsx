@@ -5,7 +5,6 @@ import styles from 'styles/components/Input.module.css'
 type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'onChange'> & {
   onChange: (value: string) => void
   invalid?: boolean
-  icon?: string
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -19,7 +18,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       required = false,
       disabled = false,
       invalid = false,
-      icon,
       ...props
     },
     ref
@@ -37,10 +35,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         aria-invalid={invalid || undefined}
         className={`text-base-medium ${styles.input} ${
           invalid ? styles.invalid : ''
-        } ${
-          icon
-            ? `bg-${icon} bg-[center_right_1rem] bg-[length:24px_24px] bg-no-repeat`
-            : ''
         }`}
         ref={ref}
         {...props}
