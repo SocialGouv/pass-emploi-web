@@ -42,14 +42,20 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background: url(../assets/icons/navigation/chevron_down.svg) center right .5rem no-repeat
-    theme('colors.blanc');
-  background-size: 2rem;
   cursor: pointer;
 }
 
-select svg {
-  fill: theme('colors.primary');
+.select::after {
+  content: '';
+  position: absolute;
+  top: 30%;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  transform: translateY(-50%);
 }
 
 input:disabled,

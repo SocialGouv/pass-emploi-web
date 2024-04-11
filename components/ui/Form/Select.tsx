@@ -19,21 +19,23 @@ export default function Select({
   ...props
 }: SelectProps) {
   return (
-    <select
-      id={id}
-      defaultValue={defaultValue}
-      required={required}
-      disabled={disabled}
-      onChange={(e) => onChange(e.target.value)}
-      className={`${styles.input} truncate ${invalid ? styles.invalid : ''}`}
-      onBlur={onBlur}
-      aria-describedby={invalid ? id + '--error' : undefined}
-      aria-invalid={invalid || undefined}
-      {...props}
-    >
-      {required && <option aria-hidden hidden disabled value='' />}
-      {!required && <option value='' />}
-      {children}
-    </select>
+    <div className='relative select'>
+      <select
+        id={id}
+        defaultValue={defaultValue}
+        required={required}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value)}
+        className={`${styles.input} truncate ${invalid ? styles.invalid : ''}`}
+        onBlur={onBlur}
+        aria-describedby={invalid ? id + '--error' : undefined}
+        aria-invalid={invalid || undefined}
+        {...props}
+      >
+        {required && <option aria-hidden hidden disabled value='' />}
+        {!required && <option value='' />}
+        {children}
+      </select>
+    </div>
   )
 }
