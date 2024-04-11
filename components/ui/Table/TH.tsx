@@ -9,7 +9,7 @@ interface THProps {
 
 export function TH({
   children,
-  asDiv = true,
+  asDiv = false,
   estCliquable = false,
   title,
 }: THProps): React.JSX.Element {
