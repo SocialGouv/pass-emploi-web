@@ -103,14 +103,6 @@ module.exports = {
       m: '0 8px 12px 0px rgba(39, 73, 150, 0.24)',
       none: 'none',
     },
-
-    extend: {
-      backgroundImage: {
-        // path relative to globals.css
-        clock: "url('../assets/icons/informations/schedule.svg')",
-        location: "url('../assets/icons/informations/location_on.svg')",
-      },
-    },
   },
   plugins: [],
 }
