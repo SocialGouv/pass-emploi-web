@@ -138,9 +138,12 @@ function ListeDeDiffusionTile({
         (aBeneficiairesReaffectes ? ` (${informationLabel})` : '')
       }
     >
-      <div className='grow text-left' title={informationLabel}>
+      <div className='grow text-left'>
         {aBeneficiairesReaffectes && (
-          <h4 className='flex items-center text-primary text-base-medium'>
+          <h4
+            className='flex items-center text-primary text-base-medium'
+            title={informationLabel}
+          >
             <IconComponent
               name={IconName.Info}
               role='img'

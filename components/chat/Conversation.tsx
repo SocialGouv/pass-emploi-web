@@ -207,7 +207,7 @@ export default function Conversation({
     const { toggleFlag: _toggleFlag } = await import(
       'services/messages.service'
     )
-    _toggleFlag(jeuneChat.chatId, flagged)
+    await _toggleFlag(jeuneChat.chatId, flagged)
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Conversation suivie',
@@ -333,8 +333,8 @@ export default function Conversation({
         }
         iconLabel={
           isflaggedByConseiller
-            ? 'Suivre la conversation'
-            : 'Ne plus suivre la conversation'
+            ? 'Ne plus suivre la conversation'
+            : 'Suivre la conversation'
         }
         onClickIcon={toggleFlag}
       />
