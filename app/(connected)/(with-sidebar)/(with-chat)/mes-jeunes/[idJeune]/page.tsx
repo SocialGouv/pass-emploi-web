@@ -89,15 +89,20 @@ export default async function FicheBeneficiaire({
   if (!jeune) notFound()
 
   let sessionsMilo: EvenementListItem[] = []
+  let erreurSessions = false
   if (
     peutAccederAuxSessions(conseiller) &&
     conseiller.structureMilo!.id === jeune.structureMilo?.id
   ) {
-    sessionsMilo = await getSessionsMiloBeneficiaire(
-      params.idJeune,
-      accessToken,
-      DateTime.now().startOf('day')
-    )
+    try {
+      sessionsMilo = await getSessionsMiloBeneficiaire(
+        params.idJeune,
+        accessToken,
+        DateTime.now().startOf('day')
+      )
+    } catch (e) {
+      erreurSessions = true
+    }
   }
 
   let offresPE: Offre[] = []
@@ -145,6 +150,7 @@ export default async function FicheBeneficiaire({
         recherchesPE={recherchesPE}
         onglet={onglet}
         lectureSeule={jeune.idConseiller !== user.id}
+        erreurSessions={erreurSessions}
       />
     </>
   )

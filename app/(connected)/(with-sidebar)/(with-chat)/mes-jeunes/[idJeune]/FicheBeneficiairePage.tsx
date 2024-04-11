@@ -82,6 +82,7 @@ type FicheBeneficiaireProps = {
   }
   lectureSeule: boolean
   onglet: Onglet
+  erreurSessions: boolean
   metadonneesFavoris?: MetadonneesFavoris
   offresPE?: Offre[]
   recherchesPE?: Recherche[]
@@ -97,6 +98,7 @@ function FicheBeneficiairePage({
   lectureSeule,
   offresPE,
   recherchesPE,
+  erreurSessions,
 }: FicheBeneficiaireProps) {
   const router = useRouter()
   const pathPrefix = usePathname()?.startsWith('/etablissement')
@@ -493,6 +495,7 @@ function FicheBeneficiairePage({
                 conseiller={conseiller}
                 beneficiaire={jeune}
                 rdvs={rdvs}
+                erreurSessions={erreurSessions}
               />
             </div>
           )}
