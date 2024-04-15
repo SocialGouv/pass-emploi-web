@@ -8,6 +8,7 @@ import React, {
 
 type CommonProps = {
   children: ReactElement | Array<ReactElement | false | undefined>
+  classname?: string
   isSelected?: boolean
 }
 type TRProps = CommonProps & {
@@ -31,14 +32,14 @@ const TR = forwardRef(
       'group cursor-pointer hover:bg-primary_lighten hover:rounded-base'
 
     if (isLink(props)) {
-      const { href, label } = props
+      const { href, label, classname } = props
       return (
         <Link
           href={href}
           role='row'
           aria-label={label}
           title={label}
-          className={`table-row ${style} ${clickableStyle}`}
+          className={`table-row ${style} ${clickableStyle} ${classname}`}
           ref={ref}
         >
           {React.Children.map(
@@ -48,13 +49,13 @@ const TR = forwardRef(
         </Link>
       )
     } else if (props.asDiv) {
-      const { isHeader, onClick } = props
+      const { isHeader, onClick, classname } = props
       return (
         <div
           role='row'
           className={`table-row ${!isHeader ? style : ''} ${
             onClick ? clickableStyle : ''
-          }`}
+          } ${classname}`}
           onClick={onClick}
           ref={ref}
         >
@@ -65,12 +66,12 @@ const TR = forwardRef(
         </div>
       )
     } else {
-      const { isHeader, onClick } = props
+      const { isHeader, onClick, classname } = props
       return (
         <tr
           className={`${!isHeader ? style : ''} ${
             onClick ? clickableStyle : ''
-          }`}
+          } ${classname}`}
           onClick={onClick}
           ref={ref}
         >
