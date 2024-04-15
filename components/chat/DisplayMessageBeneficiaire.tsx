@@ -31,7 +31,22 @@ export default function DisplayMessageBeneficiaire({
           <div className='text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-blanc bg-primary_darken mb-1'>
             <span className='sr-only'>{beneficiaireNomComplet} :</span>
 
-            <TexteAvecLien texte={message.content} lighten={true} />
+            {message.type === TypeMessage.MESSAGE_PJ &&
+              message.infoPiecesJointes &&
+              message.infoPiecesJointes.map(({ id, nom }) => (
+                <>
+                  <p className='whitespace-pre-wrap'>
+                    Votre bénéficiaire vous a transmis une nouvelle pièce
+                    jointe. Celle-ci sera conservée 4 mois. Enregistrez la dans
+                    i-milo pour la conserver de manière sécurisée.
+                  </p>
+                  <LienPieceJointe key={id} id={id} nom={nom} />
+                </>
+              ))}
+
+            {message.type !== TypeMessage.MESSAGE_PJ && (
+              <TexteAvecLien texte={message.content} lighten={true} />
+            )}
 
             {message.type === TypeMessage.MESSAGE_OFFRE &&
               message.infoOffre && (
@@ -57,12 +72,6 @@ export default function DisplayMessageBeneficiaire({
                   infoEvenementEmploi={message.infoEvenementEmploi}
                 />
               )}
-
-            {message.type === TypeMessage.MESSAGE_PJ &&
-              message.infoPiecesJointes &&
-              message.infoPiecesJointes.map(({ id, nom }) => (
-                <LienPieceJointe key={id} id={id} nom={nom} />
-              ))}
           </div>
           <div className='text-xs-medium text-content text-left'>
             <span className='sr-only'>Envoyé à </span>
