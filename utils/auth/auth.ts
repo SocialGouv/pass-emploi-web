@@ -16,12 +16,32 @@ import {
 } from 'utils/auth/authenticator'
 
 export const config = {
+  debug: true,
   providers: [
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_ID || '',
       clientSecret: process.env.KEYCLOAK_SECRET || '',
       issuer: process.env.KEYCLOAK_ISSUER || '',
     }),
+    // {
+    //   id: 'cej-auth',
+    //   name: 'cej-auth',
+    //   wellKnown: `${process.env.KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
+    //   type: 'oauth',
+    //   options: {
+    //     clientId: process.env.KEYCLOAK_ID || '',
+    //     clientSecret: process.env.KEYCLOAK_SECRET || '',
+    //     issuer: process.env.KEYCLOAK_ISSUER || '',
+    //   },
+    //   profile(profile) {
+    //     return {
+    //       id: profile.sub,
+    //       name: profile.name ?? profile.preferred_username,
+    //       email: profile.email,
+    //       image: profile.picture,
+    //     }
+    //   },
+    // },
   ],
   secret: process.env.AUTH_SECRET,
   session: { strategy: 'jwt' },
@@ -34,6 +54,8 @@ export const config = {
       token: JWT
       account?: Account | null
     }) {
+      console.log('JWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWT')
+      console.log(jwt)
       return handleJWTAndRefresh({ jwt, account })
     },
 
@@ -44,6 +66,8 @@ export const config = {
       session: Session
       token: HydratedJWT
     }) {
+      console.log('SESSSIONNN ????')
+      console.log(session.accessToken)
       session.user.id = token.idConseiller ?? ''
       session.user.structure = token.structureConseiller ?? ''
       session.user.estConseiller = token.estConseiller ?? false

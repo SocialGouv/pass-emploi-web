@@ -45,7 +45,13 @@ function LoginPage({
       const callbackUrl: string = redirectUrl
         ? '/?' + new URLSearchParams({ redirectUrl })
         : '/'
-      await signIn('keycloak', { callbackUrl }, { kc_idp_hint: provider ?? '' })
+      const response = await signIn(
+        'keycloak',
+        { callbackUrl },
+        { kc_idp_hint: provider ?? '' }
+      )
+      console.log('RRRRRRRRREEEEPONSSSEEE')
+      console.log(response)
     } catch (error) {
       console.error(error)
       setErrorMsg("une erreur est survenue lors de l'authentification")
