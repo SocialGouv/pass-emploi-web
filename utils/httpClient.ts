@@ -33,9 +33,10 @@ async function callFetch(
     const error: UnexpectedError = new UnexpectedError(
       (e as Error).message || 'Unexpected error'
     )
+    console.error(JSON.stringify(e))
     console.error('fetchJson exception', error)
     captureError(error)
-    throw error
+    throw e
   }
 
   if (!reponse.ok) {
