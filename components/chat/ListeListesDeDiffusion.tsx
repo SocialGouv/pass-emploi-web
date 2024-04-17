@@ -140,13 +140,15 @@ function ListeDeDiffusionTile({
     >
       <div className='grow text-left'>
         {aBeneficiairesReaffectes && (
-          <h4 className='flex items-center text-primary text-base-medium'>
+          <h4
+            className='flex items-center text-primary text-base-medium'
+            title={informationLabel}
+          >
             <IconComponent
               name={IconName.Info}
               role='img'
               focusable={false}
               aria-label={informationLabel}
-              title={informationLabel}
               className='w-3 h-3 mr-2 fill-[currentColor]'
             />
             {liste.titre}

@@ -35,9 +35,11 @@ import { BaseJeune, compareParId, getNomJeuneComplet } from 'interfaces/jeune'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
+import { trackEvent } from 'utils/analytics/matomo'
 import { dateIsInInterval, toShortDate } from 'utils/date'
 
 interface EditionRdvFormProps {
+  aDesBeneficiaires: 'non' | 'oui'
   conseiller: Conseiller
   jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeEvenementReferentiel[]
@@ -56,6 +58,7 @@ interface EditionRdvFormProps {
 }
 
 export function EditionRdvForm({
+  aDesBeneficiaires,
   jeunesConseiller,
   recupererJeunesDeLEtablissement,
   typesRendezVous,
@@ -576,6 +579,16 @@ export function EditionRdvForm({
     return erreurs
   }
 
+  function trackEmargement() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Emargement',
+      action: 'Export des inscrits à une AC',
+      nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
+    })
+  }
+
   useEffect(() => {
     if (formHasChanges()) onChanges(true)
     else onChanges(false)
@@ -764,6 +777,18 @@ export function EditionRdvForm({
             </>
           )}
 
+          {idsJeunes.value.length > 0 && evenement && evenement.statut && (
+            <div className='flex mb-2'>
+              <ButtonLink
+                style={ButtonStyle.PRIMARY}
+                href={`/emargement/${evenement.id}?type=ac`}
+                externalLink={true}
+                label='Exporter la liste des inscrits'
+                onClick={trackEmargement}
+              ></ButtonLink>
+            </div>
+          )}
+
           <BeneficiairesMultiselectAutocomplete
             id='select-beneficiaires'
             beneficiaires={buildOptionsJeunes()}
@@ -876,14 +901,21 @@ export function EditionRdvForm({
               helpText: 'exemple : 12 rue Duc, Brest',
             }}
           </Label>
-          <Input
-            type='text'
-            id='adresse'
-            defaultValue={adresse}
-            onChange={setAdresse}
-            icon='location'
-            disabled={lectureSeule}
-          />
+          <div className='relative'>
+            <Input
+              type='text'
+              id='adresse'
+              defaultValue={adresse}
+              onChange={setAdresse}
+              disabled={lectureSeule}
+            />
+            <IconComponent
+              name={IconName.LocationOn}
+              className='w-5 h-5 fill-accent absolute top-1/3 right-5 -translate-y-1/2 fill-accent'
+              focusable={false}
+              aria-hidden={true}
+            />
+          </div>
 
           <Label htmlFor='organisme'>
             {{

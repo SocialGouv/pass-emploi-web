@@ -153,6 +153,7 @@ function QualificationPage({
           ? error.message
           : 'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
       )
+      document.querySelector('header')?.scrollIntoView({ behavior: 'smooth' })
     } finally {
       setIsQualificationEnCours(false)
     }

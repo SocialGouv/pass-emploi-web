@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import { FormEvent, useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import PageActionsPortal from 'components/PageActionsPortal'
 import BeneficiaireItemList from 'components/session-imilo/BeneficiaireItemList'
@@ -23,8 +23,11 @@ import { JeuneEtablissement } from 'interfaces/jeune'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchDateTime, toShortDate } from 'utils/date'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const DesinscriptionBeneficiaireModal = dynamic(
   () => import('components/session-imilo/DesinscriptionBeneficiaireModal'),
@@ -56,7 +59,10 @@ function DetailsSessionPage({
 }: DetailSessionProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+  const [portefeuille] = usePortefeuille()
+  const [conseiller] = useConseiller()
 
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
 
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
@@ -250,6 +256,16 @@ function DetailsSessionPage({
     )
     setTrackingLabel(initialTracking + ' - Modification succès')
     router.push(returnTo)
+  }
+
+  function trackEmargement() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Emargement',
+      action: 'Export des inscrits à une session',
+      nom: '',
+      avecBeneficiaires: aDesBeneficiaires,
+    })
   }
 
   useMatomo(trackingLabel)
@@ -476,19 +492,31 @@ function DetailsSessionPage({
             }
           />
 
-          {nbPlacesDisponibles.value !== undefined &&
-            !dateLimiteInscriptionDepassee && (
-              <span
-                className={`mb-2 ${
-                  nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
-                }`}
-              >
-                {nbPlacesDisponibles.value}{' '}
-                {nbPlacesDisponibles.value > 1
-                  ? 'places restantes'
-                  : 'place restante'}
-              </span>
+          <div className='flex mb-4 justify-between items-center'>
+            {nbPlacesDisponibles.value !== undefined &&
+              !dateLimiteInscriptionDepassee && (
+                <span
+                  className={`mb-2 ${
+                    nbPlacesDisponibles.value === 0 ? 'text-warning' : ''
+                  }`}
+                >
+                  {nbPlacesDisponibles.value}{' '}
+                  {nbPlacesDisponibles.value > 1
+                    ? 'places restantes'
+                    : 'place restante'}
+                </span>
+              )}
+
+            {beneficiairesSelectionnes.value.length > 0 && (
+              <ButtonLink
+                style={ButtonStyle.PRIMARY}
+                href={`/emargement/${session.session.id}?type=session`}
+                externalLink={true}
+                label='Exporter la liste des inscrits'
+                onClick={trackEmargement}
+              ></ButtonLink>
             )}
+          </div>
 
           {beneficiairesSelectionnes.value.length > 0 && (
             <ul

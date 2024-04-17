@@ -112,6 +112,7 @@ describe('FicheBeneficiairePage server side', () => {
           recherchesPE: expect.arrayContaining([]),
           onglet: 'ACTIONS',
           lectureSeule: false,
+          erreurSessions: false,
         },
         {}
       )
