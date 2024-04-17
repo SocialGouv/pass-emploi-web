@@ -30,6 +30,12 @@ body {
   position: fixed;
 }
 
+@supports not (height: 100dvh) {
+  body {
+    height: 100vh;
+  }
+}
+
 a {
   color: inherit;
 }

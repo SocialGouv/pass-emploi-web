@@ -10,7 +10,7 @@ export default async function LayoutWithoutChat({
   children: ReactNode
 }) {
   return (
-    <div className='flex h-dvh w-screen'>
+    <div className='flex h-screen supports-[height:100dvh]:h-dvh w-screen'>
       <div className={sidebarLayout.sidebar}>
         <Sidebar />
       </div>
