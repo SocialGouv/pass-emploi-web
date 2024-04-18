@@ -31,7 +31,7 @@ describe('FavorisPage client side', () => {
 
   it('permet d’accéder à l’offre d’emploi', async () => {
     // Then
-    const offre = screen.getByRole('row', {
+    const offre = screen.getByRole('link', {
       name: 'Ouvrir l’offre offre 1',
     })
 
@@ -40,7 +40,7 @@ describe('FavorisPage client side', () => {
 
   it('permet d’accéder à l’offre de service civique', async () => {
     // Then
-    const offre = screen.getByRole('row', {
+    const offre = screen.getByRole('link', {
       name: 'Ouvrir l’offre offre 2',
     })
 
@@ -49,7 +49,7 @@ describe('FavorisPage client side', () => {
 
   it('permet d’accéder à l’offre d’immersion', async () => {
     // Then
-    const offre = screen.getByRole('row', {
+    const offre = screen.getByRole('link', {
       name: 'Ouvrir l’offre offre 3',
     })
 
@@ -58,7 +58,7 @@ describe('FavorisPage client side', () => {
 
   it('permet d’accéder à l’offre d’alternance', async () => {
     // Then
-    const offre = screen.getByRole('row', {
+    const offre = screen.getByRole('link', {
       name: 'Ouvrir l’offre offre 4',
     })
 

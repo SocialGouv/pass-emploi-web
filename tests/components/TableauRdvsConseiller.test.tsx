@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/dom'
 import { render, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React from 'react'
@@ -54,9 +53,9 @@ describe('<TableauRdvsConseiller>', () => {
 
     it('permet la modification des rendez-vous', () => {
       listeRdv.forEach((rdv) => {
-        const link = screen.getByLabelText(
-          `Consulter l’événement du ${DateTime.fromISO(rdv.date).toFormat('EEEE d MMMM', { locale: 'fr-FR' })} avec ${rdv.labelBeneficiaires}`
-        )
+        const link = screen.getByRole('link', {
+          name: `Consulter l’événement du ${DateTime.fromISO(rdv.date).toFormat('EEEE d MMMM', { locale: 'fr-FR' })} avec ${rdv.labelBeneficiaires}`,
+        })
         expect(link).toHaveAttribute(
           'href',
           '/mes-jeunes/edition-rdv?idRdv=' + rdv.id

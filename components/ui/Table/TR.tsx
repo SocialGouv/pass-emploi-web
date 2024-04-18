@@ -6,6 +6,9 @@ import React, {
   ReactElement,
 } from 'react'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import TD from 'components/ui/Table/TD'
+
 type CommonProps = {
   children: ReactElement | Array<ReactElement | false | undefined>
   classname?: string
@@ -19,6 +22,7 @@ type TRProps = CommonProps & {
 type TRLinkProps = CommonProps & {
   href: string
   label: string
+  titreRow: string
 }
 
 const TR = forwardRef(
@@ -32,21 +36,36 @@ const TR = forwardRef(
       'group cursor-pointer hover:bg-primary_lighten hover:rounded-base'
 
     if (isLink(props)) {
-      const { href, label, classname } = props
+      const { href, label, classname, titreRow } = props
       return (
-        <Link
-          href={href}
+        <div
           role='row'
-          aria-label={label}
-          title={label}
-          className={`table-row ${style} ${clickableStyle} ${classname}`}
+          className={`table-row ${style} ${classname}`}
           ref={ref}
+          aria-label={titreRow}
         >
           {React.Children.map(
             children,
             (child) => child && React.cloneElement(child, { asDiv: true })
           )}
-        </Link>
+          <TD
+            asDiv={true}
+            className='hover:bg-primary_lighten flex items-center justify-center'
+          >
+            <Link
+              href={href}
+              title={label}
+              className='flex items-center justify-center w-full h-full flex-grow'
+            >
+              <IconComponent
+                name={IconName.ChevronRight}
+                focusable={false}
+                aria-hidden={true}
+                className=' w-6 h-6 fill-blanc rounded-full bg-primary mx-auto'
+              />
+            </Link>
+          </TD>
+        </div>
       )
     } else if (props.asDiv) {
       const { isHeader, onClick, classname } = props
@@ -55,7 +74,7 @@ const TR = forwardRef(
           role='row'
           className={`table-row ${!isHeader ? style : ''} ${
             onClick ? clickableStyle : ''
-          } ${classname}`}
+          } ${classname ?? ''}`}
           onClick={onClick}
           ref={ref}
         >
@@ -71,7 +90,7 @@ const TR = forwardRef(
         <tr
           className={`${!isHeader ? style : ''} ${
             onClick ? clickableStyle : ''
-          } ${classname}`}
+          } ${classname ?? ''}`}
           onClick={onClick}
           ref={ref}
         >

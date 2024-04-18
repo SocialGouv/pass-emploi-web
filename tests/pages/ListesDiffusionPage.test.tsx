@@ -76,7 +76,7 @@ describe('Page Listes de Diffusion', () => {
       // Then
       listesDeDiffusion.forEach((liste) => {
         expect(
-          screen.getByRole('row', {
+          screen.getByRole('link', {
             name: 'Consulter la liste ' + liste.titre,
           })
         ).toHaveAttribute(

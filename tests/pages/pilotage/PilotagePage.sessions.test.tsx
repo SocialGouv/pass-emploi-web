@@ -100,9 +100,9 @@ describe('PilotagePage client side - Sessions', () => {
           expect(within(tableau).getByText(session.date)).toBeInTheDocument()
           expect(within(tableau).getByText(session.titre)).toBeInTheDocument()
           expect(
-            within(tableau).getByLabelText(
-              `Accéder au détail de la session : ${session.titre}`
-            )
+            within(tableau).getByRole('link', {
+              name: `Accéder au détail de la session : ${session.titre}`,
+            })
           ).toHaveAttribute('href', '/agenda/sessions/' + session.id)
         })
       })

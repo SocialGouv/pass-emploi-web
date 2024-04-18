@@ -1,6 +1,5 @@
 import React from 'react'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
@@ -59,15 +58,7 @@ export default function ActionRowPilotage({
         <TagCategorieAction categorie={action.categorie?.libelle} />
       </TD>
       <TD>
-        <span className='flex flex-row justify-between'>
-          {dateFinReelle}
-          <IconComponent
-            name={IconName.ChevronRight}
-            focusable={false}
-            aria-hidden={true}
-            className='w-6 h-6 fill-primary'
-          />
-        </span>
+        <span className='flex flex-row'>{dateFinReelle}</span>
       </TD>
     </TR>
   )
