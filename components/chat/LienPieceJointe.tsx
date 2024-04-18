@@ -13,6 +13,8 @@ export function LienPieceJointe({ id, nom }: { id: string; nom: string }) {
       />
       <a
         href={`/api/fichiers/${id}`}
+        target='_blank'
+        rel='noreferrer noopener'
         aria-label={`Télécharger la pièce jointe ${nom}`}
         className='font-bold break-all'
       >
