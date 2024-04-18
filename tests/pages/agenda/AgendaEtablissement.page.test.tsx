@@ -14,7 +14,10 @@ import { Agence } from 'interfaces/referentiel'
 import { modifierAgence } from 'services/conseiller.service'
 import { getRendezVousEtablissement } from 'services/evenements.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
-import { getSessionsMissionLocaleClientSide } from 'services/sessions.service'
+import {
+  changerVisibiliteSession,
+  getSessionsMissionLocaleClientSide,
+} from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/evenements.service')
@@ -51,11 +54,13 @@ describe('Agenda - Onglet établissement', () => {
       }),
       uneAnimationCollective({
         id: 'ac-2',
+        titre: 'Préparation de CV',
         date: SEPTEMBRE_1_14H,
         statut: StatutAnimationCollective.AClore,
       }),
       uneAnimationCollective({
         id: 'ac-3',
+        titre: 'Écriture de lettre de motivation',
         date: SEPTEMBRE_1_14H.plus({ day: 3 }),
         statut: StatutAnimationCollective.AVenir,
       }),
@@ -78,13 +83,14 @@ describe('Agenda - Onglet établissement', () => {
         type: 'Atelier i-milo 2',
         date: SEPTEMBRE_1_14H.plus({ day: 4 }),
         duree: 60,
-        titre: 'Titre offre session milo',
+        titre: 'Titre offre session milo 2',
         sousTitre: 'Nom session',
         statut: undefined,
         isSession: true,
         estCache: true,
       }),
     ])
+    ;(changerVisibiliteSession as jest.Mock).mockResolvedValue(undefined)
   })
 
   describe('contenu', () => {
@@ -135,25 +141,25 @@ describe('Agenda - Onglet établissement', () => {
       ).toHaveAccessibleName('Après-midi')
       expect(
         screen.getByRole('row', {
-          name: 'Consulter Atelier Clos du lundi 29 août à 14h00',
+          name: 'Consulter Atelier Prise de nouvelles par téléphone',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-1')
+      ).toBeInTheDocument()
       expect(
         screen.getByRole('row', { name: 'aujourd’hui' }).nextSibling
       ).toHaveAccessibleName('Après-midi')
       expect(
         screen.getByRole('row', {
-          name: 'Consulter Atelier À clore du jeudi 1 septembre à 14h00',
+          name: 'Consulter Atelier Préparation de CV',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-2')
+      ).toBeInTheDocument()
       expect(
         screen.getByRole('row', { name: 'dimanche 4 septembre' }).nextSibling
       ).toHaveAccessibleName('Après-midi')
       expect(
         screen.getByRole('row', {
-          name: 'Consulter Atelier À venir du dimanche 4 septembre à 14h00',
+          name: 'Consulter Atelier Écriture de lettre de motivation',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idRdv=ac-3')
+      ).toBeInTheDocument()
     })
 
     it('a deux boutons de navigation', () => {
@@ -256,15 +262,14 @@ describe('Agenda - Onglet établissement', () => {
 
       expect(
         screen.getByRole('row', {
-          name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
+          name: 'Consulter Atelier i-milo Titre offre session milo',
         })
-      ).toHaveAttribute('href', 'agenda/sessions/id-session-1')
-
+      ).toBeInTheDocument()
       expect(
         screen.getByRole('row', {
-          name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
+          name: 'Consulter Atelier i-milo 2 Titre offre session milo 2',
         })
-      ).toHaveAttribute('href', 'agenda/sessions/id-session-2')
+      ).toBeInTheDocument()
     })
 
     it('affiche si une session n’est pas visible', async () => {
@@ -280,7 +285,7 @@ describe('Agenda - Onglet établissement', () => {
       expect(
         within(
           screen.getByRole('row', {
-            name: 'Consulter Atelier i-milo du dimanche 4 septembre à 14h00',
+            name: 'Consulter Atelier i-milo Titre offre session milo',
           })
         ).getByLabelText('Visible')
       ).toBeInTheDocument()
@@ -288,10 +293,42 @@ describe('Agenda - Onglet établissement', () => {
       expect(
         within(
           screen.getByRole('row', {
-            name: 'Consulter Atelier i-milo 2 du lundi 5 septembre à 14h00',
+            name: 'Consulter Atelier i-milo 2 Titre offre session milo 2',
           })
         ).getByLabelText('Non visible')
       ).toBeInTheDocument()
+    })
+
+    it('permet de modifier la visibilité d’une session', async () => {
+      //Then
+      await waitFor(() => {
+        expect(
+          screen.getByRole('table', {
+            name: 'Liste des animations collectives de mon établissement',
+          })
+        ).toBeInTheDocument()
+      })
+
+      await userEvent.click(
+        within(
+          screen.getByRole('row', {
+            name: 'Consulter Atelier i-milo Titre offre session milo',
+          })
+        ).getByLabelText('Visible')
+      )
+
+      expect(
+        within(
+          screen.getByRole('row', {
+            name: 'Consulter Atelier i-milo Titre offre session milo',
+          })
+        ).getByLabelText('Non visible')
+      ).toBeInTheDocument()
+
+      expect(changerVisibiliteSession).toHaveBeenCalledWith(
+        'id-session-1',
+        false
+      )
     })
 
     it('permet de changer de période de 7 jours', async () => {

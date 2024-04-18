@@ -89,6 +89,7 @@ export function EvenementRow({
     <TR
       href={evenement.isSession ? urlSessionMilo : urlRdv}
       label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
+      titreRow={`${fullDate} - ${evenement.type} avec ${labelBeneficiaires}`}
     >
       <TD
         aria-label={withDate ? fullDate + ' - ' + timeAndDuration : ''}
@@ -145,36 +146,28 @@ export function EvenementRow({
       </TD>
 
       <TD className='rounded-r-base'>
-        <span className='flex items-center justify-between'>
-          {evenement.idCreateur === idConseiller && (
-            <>
-              <span className='sr-only'>oui</span>
-              <IconComponent
-                name={IconName.CheckCircleFill}
-                aria-hidden={true}
-                focusable={false}
-                className='h-6 fill-primary'
-              />
-            </>
-          )}
-          {evenement.idCreateur !== idConseiller && (
-            <>
-              <span className='sr-only'>non</span>
-              <IconComponent
-                name={IconName.Cancel}
-                aria-hidden={true}
-                focusable={false}
-                className='h-6 fill-grey_700'
-              />
-            </>
-          )}
-          <IconComponent
-            name={IconName.ChevronRight}
-            focusable={false}
-            aria-hidden={true}
-            className='w-6 h-6 fill-primary'
-          />
-        </span>
+        {evenement.idCreateur === idConseiller && (
+          <>
+            <span className='sr-only'>oui</span>
+            <IconComponent
+              name={IconName.CheckCircleFill}
+              aria-hidden={true}
+              focusable={false}
+              className='h-6 fill-primary'
+            />
+          </>
+        )}
+        {evenement.idCreateur !== idConseiller && (
+          <>
+            <span className='sr-only'>non</span>
+            <IconComponent
+              name={IconName.Cancel}
+              aria-hidden={true}
+              focusable={false}
+              className='h-6 fill-grey_700'
+            />
+          </>
+        )}
       </TD>
     </TR>
   )

@@ -1,6 +1,5 @@
 import React from 'react'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
@@ -43,20 +42,12 @@ export default function TableauAnimationsAClore({
                 <TD>{toLongMonthDate(ac.date)}</TD>
                 <TD isBold>{ac.titre}</TD>
                 <TD>
-                  <span className='flex flex-row justify-between'>
-                    <Badge
-                      count={ac.nombreInscrits}
-                      textColor='accent_1'
-                      bgColor='accent_1_lighten'
-                      size={6}
-                    />
-                    <IconComponent
-                      name={IconName.ChevronRight}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='w-6 h-6 fill-primary'
-                    />
-                  </span>
+                  <Badge
+                    count={ac.nombreInscrits}
+                    textColor='accent_1'
+                    bgColor='accent_1_lighten'
+                    size={6}
+                  />
                 </TD>
               </TR>
             ))}

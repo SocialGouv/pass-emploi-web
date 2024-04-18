@@ -3,7 +3,6 @@ import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import TagStatutAction from 'components/action/TagStatutAction'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
@@ -38,7 +37,7 @@ export default function ActionRow({
   return (
     <TR
       href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
-      label={`Détail de l'action ${action.content}`}
+      label={`Voir le détail de l'action ${action.content}`}
       isSelected={isChecked}
     >
       <TD
@@ -79,17 +78,11 @@ export default function ActionRow({
           <TagCategorieAction categorie={action.qualification?.libelle} />
         </span>
       </TD>
-      <TD className='rounded-r-base w-[160px]'>
-        <span className='flex items-center justify-between'>
+      <TD>
+        <span className='flex items-center'>
           <TagStatutAction
             status={action.status}
             actionEstEnRetard={actionEstEnRetard}
-          />
-          <IconComponent
-            name={IconName.ChevronRight}
-            focusable={false}
-            aria-hidden={true}
-            className=' w-6 h-6 fill-primary'
           />
         </span>
       </TD>

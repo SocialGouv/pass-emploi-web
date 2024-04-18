@@ -67,12 +67,12 @@ describe('<TableauRdvsBeneficiaire>', () => {
 
     it('permet la modification des rendez-vous', () => {
       listeRdv.forEach((rdv) => {
-        const link = screen.getByLabelText(
-          `Consulter l’événement du ${DateTime.fromISO(rdv.date).toFormat(
+        const link = screen.getByRole('link', {
+          name: `Consulter l’événement du ${DateTime.fromISO(rdv.date).toFormat(
             'EEEE d MMMM',
             { locale: 'fr-FR' }
-          )} avec ${getNomJeuneComplet(uneBaseJeune())}`
-        )
+          )} avec ${getNomJeuneComplet(uneBaseJeune())}`,
+        })
         expect(link).toHaveAttribute(
           'href',
           '/mes-jeunes/edition-rdv?idRdv=' + rdv.id

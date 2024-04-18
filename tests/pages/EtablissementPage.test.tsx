@@ -138,7 +138,7 @@ describe('EtablissementPage client side', () => {
             })
           ).toBeInTheDocument()
           expect(
-            screen.getByRole('row', {
+            screen.getByRole('link', {
               name: 'Accéder à la fiche de Page 1 Albert',
             })
           ).toHaveAttribute('href', 'etablissement/beneficiaires/id-jeune')
