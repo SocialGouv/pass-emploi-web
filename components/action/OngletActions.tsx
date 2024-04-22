@@ -192,22 +192,25 @@ export default function OngletActions({
 
       {!estPoleEmploi(conseiller) && (
         <>
-          {actionsInitiales.metadonnees.nombreTotal === 0 && (
+          {actionsInitiales.metadonnees.nombreTotal === 0 && !lectureSeule && (
             <div className='flex flex-col justify-center items-center'>
               <EmptyState
                 illustrationName={IllustrationName.Checklist}
                 titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
-                lien={
-                  !lectureSeule
-                    ? {
-                        href: `/mes-jeunes/${jeune.id}/actions/nouvelle-action`,
-                        label: 'Créer une action',
-                        iconName: IconName.Add,
-                      }
-                    : undefined
-                }
+                lien={{
+                  href: `/mes-jeunes/${jeune.id}/actions/nouvelle-action`,
+                  label: 'Créer une action',
+                  iconName: IconName.Add,
+                }}
               />
             </div>
+          )}
+
+          {actionsInitiales.metadonnees.nombreTotal === 0 && lectureSeule && (
+            <EmptyState
+              illustrationName={IllustrationName.Checklist}
+              titre={`Aucune action prévue pour ${jeune.prenom} ${jeune.nom}.`}
+            />
           )}
 
           {actionsEnErreur && (
