@@ -33,7 +33,7 @@
     "next-auth": "4.24.7",
     "next-logger": "4.0.0",
     "next-themes": "0.3.0",
-    "nextjs-toploader": "1.6.11",
+    "nextjs-toploader": "1.6.12",
     "pino": "8.19.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
