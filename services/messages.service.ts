@@ -1,3 +1,4 @@
+import Fuse, { FuseResult } from 'fuse.js'
 import { DateTime } from 'luxon'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
@@ -9,6 +10,7 @@ import {
   CreateFirebaseMessageWithOffre,
   findAndObserveChatsDuConseiller,
   getChatsDuConseiller,
+  getMessages,
   getMessagesGroupe,
   observeChat,
   observeDerniersMessagesDuChat,
@@ -160,6 +162,36 @@ export function observeJeuneReadingDate(
       onJeuneReadingDate(lastJeuneReadingDate)
     }
   })
+}
+
+export async function chercherMessage(
+  idChat: string,
+  recherche: string,
+  cleChiffrement: string
+): Promise<FuseResult<Message> | undefined> {
+  const start = DateTime.now()
+  const messages = await getMessages(idChat)
+  const dureeRecup = getDuration(start)
+  const startDechiff = DateTime.now()
+  const collection = messages.map((message) =>
+    dechiffrerMessage(message, cleChiffrement)
+  )
+  const dureeDechiff = getDuration(startDechiff)
+
+  const fuse = new Fuse(collection, {
+    keys: ['content', 'infoPiecesJointes.nom'],
+    includeScore: true,
+    ignoreLocation: true,
+  })
+
+  const startSearch = DateTime.now()
+  const search: FuseResult<Message>[] = fuse.search(recherche)
+  const dureeSearch = getDuration(startSearch)
+  const dureeTotal = getDuration(start)
+  console.log(
+    `>>> ${messages.length} msg > recup ${dureeRecup}ms | dechiff ${dureeDechiff}ms | search ${dureeSearch}ms | total ${dureeTotal}ms`
+  )
+  if (search.length) return search[0]
 }
 
 export async function getMessagesListeDeDiffusion(
@@ -496,4 +528,24 @@ function decryptContentAndFilename(
   }
 
   return decryptedMessage
+}
+
+function dechiffrerMessage(message: Message, cleChiffrement: string): Message {
+  if (!message.iv) return message
+
+  return {
+    ...message,
+    ...decryptContentAndFilename(
+      {
+        iv: message.iv,
+        content: message.content,
+        infoPiecesJointes: message.infoPiecesJointes,
+      },
+      cleChiffrement
+    ),
+  }
+}
+
+function getDuration(start: DateTime): number {
+  return start.diffNow().milliseconds * -1
 }

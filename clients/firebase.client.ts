@@ -12,6 +12,7 @@ import {
   DocumentReference,
   DocumentSnapshot,
   Firestore,
+  getDoc,
   getDocs,
   getFirestore,
   limit,
@@ -271,6 +272,23 @@ export async function getChatsDuConseiller(
     captureError(e as Error)
     throw e
   }
+}
+
+export async function getMessages(idChat: string): Promise<Message[]> {
+  const chat = await getDoc(getChatReference(idChat))
+  if (!chat.exists()) return []
+
+  const querySnapshots: QuerySnapshot<FirebaseMessage, FirebaseMessage> =
+    await getDocs(
+      query<FirebaseMessage, FirebaseMessage>(
+        collection(chat.ref, 'messages') as CollectionReference<
+          FirebaseMessage,
+          FirebaseMessage
+        >,
+        orderBy('creationDate')
+      )
+    )
+  return querySnapshots.docs.map(docSnapshotToMessage)
 }
 
 export async function getMessagesGroupe(

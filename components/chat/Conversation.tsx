@@ -1,3 +1,4 @@
+import { FuseResult } from 'fuse.js'
 import { DateTime } from 'luxon'
 import React, {
   FormEvent,
@@ -22,6 +23,7 @@ import { InfoFichier } from 'interfaces/fichier'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
+  chercherMessage,
   FormNouveauMessageIndividuel,
   modifierMessage as _modifierMessage,
   observeDerniersMessages,
@@ -64,6 +66,8 @@ export default function Conversation({
   const [isflaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
     jeuneChat.flaggedByConseiller
   )
+
+  const [pouet, setPouet] = useState<FuseResult<Message> | undefined>()
 
   const [messageAModifier, setMessageAModifier] = useState<
     | {
@@ -320,6 +324,19 @@ export default function Conversation({
     resetTextbox()
   }, [jeuneChat.chatId])
 
+  useEffect(() => {
+    if (pouet) {
+      const item = pouet.item
+      window.alert(
+        pouet.score +
+          ' >> ' +
+          item.content +
+          ' // ' +
+          item.infoPiecesJointes?.map(({ nom }) => nom).join(',')
+      )
+    }
+  }, [pouet])
+
   return (
     <div className='h-full flex flex-col min-h-0 bg-grey_100 overflow-auto'>
       <HeaderChat
@@ -338,6 +355,27 @@ export default function Conversation({
         }
         onClickIcon={toggleFlag}
       />
+
+      <button
+        onClick={async () => {
+          const recherche = window.prompt('Recherche', '')
+          if (recherche) {
+            setPouet(
+              await chercherMessage(
+                jeuneChat.chatId,
+                recherche,
+                chatCredentials!.cleChiffrement
+              )
+            )
+          }
+        }}
+      >
+        <IconComponent
+          name={IconName.Search}
+          title='RECHERCHER'
+          className='w-8 h-8 fill-warning'
+        />
+      </button>
 
       <div
         className='p-4 h-full grow overflow-y-auto short:hidden'
