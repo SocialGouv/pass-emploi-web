@@ -22,7 +22,7 @@
     "@next/bundle-analyzer": "14.1.4",
     "crypto-js": "4.2.0",
     "dotenv": "16.4.5",
-    "elastic-apm-node": "4.5.0",
+    "elastic-apm-node": "4.5.2",
     "firebase": "10.10.0",
     "html-react-parser": "5.1.10",
     "jsonwebtoken": "9.0.2",
@@ -33,7 +33,7 @@
     "next-auth": "4.24.7",
     "next-logger": "4.0.0",
     "next-themes": "0.3.0",
-    "nextjs-toploader": "1.6.11",
+    "nextjs-toploader": "1.6.12",
     "pino": "8.19.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -51,7 +51,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash.isequal": "^4.5.8",
     "@types/luxon": "^3.4.2",
-    "@types/react": "^18.2.73",
+    "@types/react": "^18.2.79",
     "autoprefixer": "^10.4.19",
     "css-loader": "^6.10.0",
     "eslint": "^8.57.0",
@@ -68,7 +68,7 @@
     "tailwindcss": "^3.4.3",
     "ts-loader": "^9.5.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.5"
   },
   "browser": {
     "elastic-apm-node": false
