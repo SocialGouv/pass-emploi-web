@@ -49,7 +49,7 @@ describe('Partage Recherche', () => {
             labelLocalite: LABEL_LOCALITE,
             codeLocalite: CODE_LOCALITE,
           }}
-          returnTo=''
+          returnTo='/return/to'
         />,
         {
           customAlerte: { alerteSetter },
