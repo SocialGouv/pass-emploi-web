@@ -53,7 +53,7 @@
     "@types/luxon": "^3.4.2",
     "@types/react": "^18.2.79",
     "autoprefixer": "^10.4.19",
-    "css-loader": "^6.11.0",
+    "css-loader": "^7.0.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.2",
     "eslint-config-prettier": "^9.1.0",
