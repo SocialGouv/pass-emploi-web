@@ -127,6 +127,7 @@ function EtablissementPage() {
                 {conseillerEstMilo && <TH>Situation</TH>}
                 <TH>Dernière activité</TH>
                 <TH>Conseiller</TH>
+                <TH>Voir le détail</TH>
               </TR>
             </THead>
             <TBody>
@@ -134,7 +135,7 @@ function EtablissementPage() {
                 <TR
                   key={jeune.base.id}
                   href={'etablissement/beneficiaires/' + jeune.base.id}
-                  label={
+                  linkLabel={
                     'Accéder à la fiche de ' + getNomJeuneComplet(jeune.base)
                   }
                 >

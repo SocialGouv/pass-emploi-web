@@ -88,8 +88,8 @@ export function EvenementRow({
   return (
     <TR
       href={evenement.isSession ? urlSessionMilo : urlRdv}
-      label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
-      titreRow={`${fullDate} - ${evenement.type} avec ${labelBeneficiaires}`}
+      linkLabel={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
+      rowLabel={`${fullDate} - ${evenement.type} avec ${labelBeneficiaires}`}
     >
       <TD
         aria-label={withDate ? fullDate + ' - ' + timeAndDuration : ''}

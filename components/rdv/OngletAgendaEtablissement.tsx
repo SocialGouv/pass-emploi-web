@@ -208,6 +208,7 @@ export default function OngletAgendaEtablissement({
                   defaultValue={statutsValides}
                 />
               </TH>
+              <TH>Voir le détail</TH>
             </TR>
           </THead>
           <TBody>

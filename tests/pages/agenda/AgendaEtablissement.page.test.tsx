@@ -327,7 +327,7 @@ describe('Agenda - Onglet établissement', () => {
 
       expect(changerVisibiliteSession).toHaveBeenCalledWith(
         'id-session-1',
-        false
+        true
       )
     })
 

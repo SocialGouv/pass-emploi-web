@@ -19,14 +19,14 @@ type TRProps = CommonProps & {
   asDiv?: boolean
   onClick?: (e: MouseEvent) => void
 }
-type TRLinkProps = CommonProps & {
+type TRWithLinkProps = CommonProps & {
   href: string
-  label: string
-  titreRow: string
+  linkLabel: string
+  rowLabel: string
 }
 
 const TR = forwardRef(
-  (props: TRProps | TRLinkProps, ref: ForwardedRef<any>) => {
+  (props: TRProps | TRWithLinkProps, ref: ForwardedRef<any>) => {
     const { children, isSelected } = props
     const selectedStyle = 'bg-primary_lighten shadow-m'
     const style = `focus-within:bg-primary_lighten rounded-base shadow-base ${
@@ -35,28 +35,21 @@ const TR = forwardRef(
     const clickableStyle =
       'group cursor-pointer hover:bg-primary_lighten hover:rounded-base'
 
-    if (isLink(props)) {
-      const { href, label, classname, titreRow } = props
+    if (hasLink(props)) {
+      const { href, linkLabel, classname, rowLabel } = props
       return (
         <div
           role='row'
           className={`table-row ${style} ${classname}`}
           ref={ref}
-          aria-label={titreRow}
+          aria-label={rowLabel}
         >
           {React.Children.map(
             children,
             (child) => child && React.cloneElement(child, { asDiv: true })
           )}
-          <TD
-            asDiv={true}
-            className='hover:bg-primary_lighten flex items-center justify-center'
-          >
-            <Link
-              href={href}
-              title={label}
-              className='flex items-center justify-center w-full h-full flex-grow'
-            >
+          <TD asDiv={true} className='hover:bg-primary_lighten px-0 py-0'>
+            <Link href={href} title={linkLabel} className='block w-full h-full'>
               <IconComponent
                 name={IconName.ChevronRight}
                 focusable={false}
@@ -103,6 +96,6 @@ const TR = forwardRef(
 TR.displayName = 'TR'
 export default TR
 
-function isLink(props: TRProps | TRLinkProps): props is TRLinkProps {
+function hasLink(props: TRProps | TRWithLinkProps): props is TRWithLinkProps {
   return Object.prototype.hasOwnProperty.call(props, 'href')
 }

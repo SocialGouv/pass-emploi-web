@@ -25,6 +25,7 @@ export default function TableauSessionsImilo({
           <TR isHeader={true}>
             <TH>Date</TH>
             <TH>Titre de la session</TH>
+            <TH>Voir le détail</TH>
           </TR>
         </THead>
 
@@ -33,7 +34,7 @@ export default function TableauSessionsImilo({
             <TR
               key={session.id}
               href={`/agenda/sessions/${session.id}`}
-              label={`Accéder au détail de la session : ${session.titre}`}
+              linkLabel={`Accéder au détail de la session : ${session.titre}`}
             >
               <TD>{session.date}</TD>
               <TD>

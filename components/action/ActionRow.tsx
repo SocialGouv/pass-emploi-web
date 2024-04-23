@@ -37,7 +37,7 @@ export default function ActionRow({
   return (
     <TR
       href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
-      label={`Voir le détail de l'action ${action.content}`}
+      linkLabel={`Voir le détail de l'action ${action.content}`}
       isSelected={isChecked}
     >
       <TD

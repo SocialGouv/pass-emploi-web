@@ -298,7 +298,7 @@ export default function TableauJeunes({
                 <TR
                   key={jeune.id}
                   href={`/mes-jeunes/${jeune.id}`}
-                  label={getRowLabel(jeune)}
+                  linkLabel={getRowLabel(jeune)}
                 >
                   <TD isBold className='rounded-l-base'>
                     <span className='flex items-baseline'>
