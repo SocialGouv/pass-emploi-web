@@ -29,6 +29,7 @@ export default function TableauAnimationsAClore({
               <TH>Date</TH>
               <TH>Titre de l’animation collective</TH>
               <TH>Participants</TH>
+              <TH>Voir le détail</TH>
             </TR>
           </THead>
 
@@ -37,7 +38,7 @@ export default function TableauAnimationsAClore({
               <TR
                 key={ac.id}
                 href={`/mes-jeunes/edition-rdv?idRdv=${ac.id}`}
-                label={`Accéder au détail de l’animation collective : ${ac.titre}`}
+                linkLabel={`Accéder au détail de l’animation collective : ${ac.titre}`}
               >
                 <TD>{toLongMonthDate(ac.date)}</TD>
                 <TD isBold>{ac.titre}</TD>

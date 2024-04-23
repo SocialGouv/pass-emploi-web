@@ -22,7 +22,7 @@ export default function ActionRowPilotage({
   return (
     <TR
       href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
-      label={`Accéder au détail de l’action : ${action.titre}`}
+      linkLabel={`Accéder au détail de l’action : ${action.titre}`}
       isSelected={isChecked}
     >
       <TD

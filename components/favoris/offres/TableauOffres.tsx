@@ -39,6 +39,7 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
               <TH>Titre</TH>
               <TH>Entreprise</TH>
               <TH>Type</TH>
+              <TH>Voir le détail</TH>
             </TR>
           </THead>
           <TBody>

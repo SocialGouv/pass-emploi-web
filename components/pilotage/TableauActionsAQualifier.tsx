@@ -257,6 +257,7 @@ export default function TableauActionsAQualifier({
                 />
               </TH>
               <TH>Date de réalisation</TH>
+              <TH>Voir le détail</TH>
             </TR>
           </THead>
 

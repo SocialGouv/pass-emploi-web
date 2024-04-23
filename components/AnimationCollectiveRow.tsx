@@ -32,9 +32,10 @@ export function AnimationCollectiveRow(
       'services/sessions.service'
     )
 
-    await changerVisibiliteSession(animationCollective.id, estCache)
+    const nouvelleVisibilite = !estCache
+    await changerVisibiliteSession(animationCollective.id, nouvelleVisibilite)
 
-    setEstCache(!estCache)
+    setEstCache(nouvelleVisibilite)
     setLoadingChangerVisibilite(false)
   }
 
@@ -42,8 +43,8 @@ export function AnimationCollectiveRow(
     <TR
       key={animationCollective.id}
       href={getHref(animationCollective)}
-      label={labelLien(animationCollective)}
-      titreRow={`Consulter ${animationCollective.type} ${animationCollective.titre}`}
+      linkLabel={labelLien(animationCollective)}
+      rowLabel={`Consulter ${animationCollective.type} ${animationCollective.titre}`}
     >
       <TD>
         {toFrenchTime(animationCollective.date)} - {animationCollective.duree}{' '}
@@ -62,15 +63,25 @@ export function AnimationCollectiveRow(
             {loadingChangerVisibilite && <SpinningLoader />}
 
             {!loadingChangerVisibilite && (
-              <IconComponent
-                aria-label={estCache ? 'Non visible' : 'Visible'}
-                className='inline h-6 w-6 fill-primary cursor-pointer'
-                focusable={false}
-                name={estCache ? IconName.VisibilityOff : IconName.VisibilityOn}
+              <button
+                type='button'
                 onClick={handleChangerVisibiliteSession}
-                role='img'
-                title={estCache ? 'Non visible' : 'Visible'}
-              />
+                className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+              >
+                <IconComponent
+                  aria-label={estCache ? 'Non visible' : 'Visible'}
+                  className='inline h-6 w-6 fill-primary cursor-pointer'
+                  focusable={false}
+                  name={
+                    estCache ? IconName.VisibilityOff : IconName.VisibilityOn
+                  }
+                  role='img'
+                  title={estCache ? 'Non visible' : 'Visible'}
+                />
+                <span className='sr-only'>
+                  Rendre {estCache ? 'non visible' : 'visible'} l’évènement.
+                </span>
+              </button>
             )}
           </>
         )}

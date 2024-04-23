@@ -11,8 +11,8 @@ export default function OffreRow({ offre }: { offre: Offre }) {
   return (
     <TR
       href={`/offres/${offre.urlParam}/${offre.id}`}
-      label={titre}
-      titreRow={`Offre ${offre.titre}`}
+      linkLabel={titre}
+      rowLabel={`Offre ${offre.titre}`}
     >
       <TD>{offre.id}</TD>
       <TD>{offre.titre}</TD>
