@@ -20,6 +20,7 @@ import {
   query,
   QueryDocumentSnapshot,
   QuerySnapshot,
+  setDoc,
   Timestamp,
   updateDoc,
   where,
@@ -62,6 +63,14 @@ export type FirebaseMessage = {
   evenement?: EvenementPartage
   evenementEmploi?: EvenementEmploi
   sessionMilo?: SessionMilo
+}
+
+export type FirebaseMessageImportant = {
+  idConseiller: string
+  iv: string
+  content: string
+  dateDebut: Timestamp
+  dateFin: Timestamp
 }
 
 export type FirebaseMessageHistory = {
@@ -110,6 +119,15 @@ type BaseCreateFirebaseMessage = {
   message: EncryptedTextWithInitializationVector
   date: DateTime
 }
+
+type BaseCreateFirebaseMessageImportant = {
+  idConseiller: string
+  dateDebut: DateTime
+  dateFin: DateTime
+  message: EncryptedTextWithInitializationVector
+  idMessageImportant?: string
+}
+
 export type CreateFirebaseMessage = BaseCreateFirebaseMessage & {
   infoPieceJointe?: InfoFichier
 }
@@ -126,6 +144,8 @@ type UpdateFirebaseMessage = {
 
 const chatCollection =
   process.env.NEXT_PUBLIC_FIREBASE_CHAT_COLLECTION_NAME || ''
+const messageImportantCollection =
+  process.env.NEXT_PUBLIC_FIREBASE_MESSAGE_IMPORTANT_COLLECTION_NAME || ''
 const groupeCollection =
   process.env.NEXT_PUBLIC_FIREBASE_GROUPE_COLLECTION_NAME || ''
 
@@ -155,6 +175,36 @@ export async function addMessage(
       >,
       firebaseMessage
     )
+  } catch (e) {
+    console.error(e)
+    captureError(e as Error)
+    throw e
+  }
+}
+
+export async function addMessageImportant(
+  data: BaseCreateFirebaseMessageImportant
+) {
+  const firebaseMessage = createFirebaseMessageImportant(data)
+
+  try {
+    const messageImportantSnapshot = await getMessageImportantSnapshot(
+      data.idConseiller
+    )
+    if (messageImportantSnapshot) {
+      await setDoc<FirebaseMessageImportant, FirebaseMessageImportant>(
+        messageImportantSnapshot.ref,
+        firebaseMessage
+      )
+    } else {
+      await addDoc<FirebaseMessageImportant, FirebaseMessageImportant>(
+        collection(getDb(), messageImportantCollection) as CollectionReference<
+          FirebaseMessageImportant,
+          FirebaseMessageImportant
+        >,
+        firebaseMessage
+      )
+    }
   } catch (e) {
     console.error(e)
     captureError(e as Error)
@@ -429,6 +479,30 @@ function getChatReference(
   )
 }
 
+async function getMessageImportantSnapshot(
+  idConseiller: string
+): Promise<
+  | DocumentSnapshot<FirebaseMessageImportant, FirebaseMessageImportant>
+  | undefined
+> {
+  const collectionRef = collection(
+    getDb(),
+    messageImportantCollection
+  ) as CollectionReference<FirebaseMessageImportant, FirebaseMessageImportant>
+
+  const querySnapshots: QuerySnapshot<
+    FirebaseMessageImportant,
+    FirebaseMessageImportant
+  > = await getDocs(
+    query<FirebaseMessageImportant, FirebaseMessageImportant>(
+      collectionRef,
+      where('idConseiller', '==', idConseiller)
+    )
+  )
+
+  if (querySnapshots.docs.length > 0) return querySnapshots.docs[0]
+}
+
 function getMessageReference(
   idChat: string,
   idMessage: string
@@ -471,6 +545,21 @@ function createFirebaseMessage(
       type: typeOffre,
     } = (data as CreateFirebaseMessageWithOffre).offre
     firebaseMessage.offre = { id, titre, type: typeToFirebase(typeOffre) }
+  }
+
+  return firebaseMessage
+}
+
+function createFirebaseMessageImportant(
+  data: BaseCreateFirebaseMessageImportant
+): FirebaseMessageImportant {
+  let { encryptedText, iv } = data.message
+  const firebaseMessage: FirebaseMessageImportant = {
+    content: encryptedText,
+    iv,
+    idConseiller: data.idConseiller,
+    dateDebut: Timestamp.fromMillis(data.dateDebut.toMillis()),
+    dateFin: Timestamp.fromMillis(data.dateFin.toMillis()),
   }
 
   return firebaseMessage

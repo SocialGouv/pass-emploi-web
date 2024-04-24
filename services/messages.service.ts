@@ -5,6 +5,7 @@ import { getSession } from 'next-auth/react'
 import { apiPost } from 'clients/api.client'
 import {
   addMessage,
+  addMessageImportant,
   CreateFirebaseMessage,
   CreateFirebaseMessageWithOffre,
   findAndObserveChatsDuConseiller,
@@ -39,6 +40,11 @@ type FormNouveauMessage = {
 
 export type FormNouveauMessageIndividuel = FormNouveauMessage & {
   jeuneChat: JeuneChat
+}
+export type FormNouveauMessageImportant = FormNouveauMessage & {
+  idConseiller: string
+  dateDebut: DateTime
+  dateFin: DateTime
 }
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
   idsBeneficiaires: string[]
@@ -242,6 +248,23 @@ export async function sendNouveauMessage({
       session!.accessToken
     ),
   ])
+}
+
+export async function sendNouveauMessageImportant({
+  cleChiffrement,
+  idConseiller,
+  newMessage,
+  dateDebut,
+  dateFin,
+}: FormNouveauMessageImportant) {
+  const encryptedMessage = encrypt(newMessage, cleChiffrement)
+
+  await addMessageImportant({
+    idConseiller: idConseiller,
+    dateDebut: dateDebut,
+    dateFin: dateFin,
+    message: encryptedMessage,
+  })
 }
 
 export async function sendNouveauMessageGroupe({
