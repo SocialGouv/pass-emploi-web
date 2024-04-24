@@ -11,6 +11,7 @@ import FilterIcon from 'assets/icons/actions/filter.svg'
 import OutgoingMailIcon from 'assets/icons/actions/outgoing_mail.svg'
 import SearchIcon from 'assets/icons/actions/search.svg'
 import SendIcon from 'assets/icons/actions/send.svg'
+import SettingsIcon from 'assets/icons/actions/settings.svg'
 import ShareIcon from 'assets/icons/actions/share.svg'
 import ContractIcon from 'assets/icons/custom/contract.svg'
 import DecorativePointIcon from 'assets/icons/custom/decorative_point.svg'
@@ -143,6 +144,7 @@ export enum IconName {
   Schedule = 'Schedule',
   Search = 'Search',
   Send = 'Send',
+  Settings = 'Settings',
   Share = 'Share',
   Spinner = 'Spinner',
   Suitcase = 'Suitcase',
@@ -219,6 +221,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Warning]: WarningIcon,
   [IconName.Search]: SearchIcon,
   [IconName.Send]: SendIcon,
+  [IconName.Settings]: SettingsIcon,
   [IconName.Spinner]: SpinnerIcon,
   [IconName.Suitcase]: SuitcaseIcon,
   [IconName.Pending]: PendingIcon,

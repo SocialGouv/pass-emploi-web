@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import { apiPost } from 'clients/api.client'
 import {
   addMessage,
+  addMessageImportant,
   findAndObserveChatsDuConseiller,
   getChatsDuConseiller,
   getMessagesGroupe,
@@ -40,6 +41,7 @@ import {
   partagerOffre,
   sendNouveauMessage,
   sendNouveauMessageGroupe,
+  sendNouveauMessageImportant,
   setReadByConseiller,
   signIn,
   signOut,
@@ -464,6 +466,42 @@ describe('MessagesFirebaseAndApiService', () => {
         },
         accessToken
       )
+    })
+  })
+
+  describe('.sendNouveauMessageImportant', () => {
+    let newMessage: string
+    let idConseiller: string
+    const now = DateTime.now()
+    const demain = DateTime.now().plus({ day: 1 })
+    beforeEach(async () => {
+      // Given
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+      newMessage = 'nouveauMessageImportant'
+      idConseiller = 'id-conseiller'
+      // When
+    })
+
+    it('déclare un nouveau message important dans firebase', async () => {
+      //When
+      await sendNouveauMessageImportant({
+        cleChiffrement,
+        idConseiller,
+        newMessage,
+        dateDebut: now,
+        dateFin: demain,
+      })
+
+      // Then
+      expect(addMessageImportant).toHaveBeenCalledWith({
+        idConseiller: 'id-conseiller',
+        message: {
+          encryptedText: `Encrypted: ${newMessage}`,
+          iv: `IV: ${newMessage}`,
+        },
+        dateDebut: now,
+        dateFin: demain,
+      })
     })
   })
 
