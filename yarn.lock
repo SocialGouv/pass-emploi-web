@@ -8928,7 +8928,7 @@ __metadata:
     next-logger: "npm:4.0.0"
     next-themes: "npm:0.3.0"
     nextjs-toploader: "npm:1.6.12"
-    pino: "npm:8.20.0"
+    pino: "npm:8.21.0"
     pino-pretty: "npm:^11.0.0"
     postcss: "npm:^8.4.38"
     prettier: "npm:^3.2.5"
@@ -9011,7 +9011,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-abstract-transport@npm:^1.0.0, pino-abstract-transport@npm:^1.1.0":
+"pino-abstract-transport@npm:^1.0.0, pino-abstract-transport@npm:^1.2.0":
   version: 1.2.0
   resolution: "pino-abstract-transport@npm:1.2.0"
   dependencies:
@@ -9052,24 +9052,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:8.20.0, pino@npm:^8.11.0, pino@npm:^8.15.0":
-  version: 8.20.0
-  resolution: "pino@npm:8.20.0"
+"pino@npm:8.21.0, pino@npm:^8.11.0, pino@npm:^8.15.0":
+  version: 8.21.0
+  resolution: "pino@npm:8.21.0"
   dependencies:
     atomic-sleep: "npm:^1.0.0"
     fast-redact: "npm:^3.1.1"
     on-exit-leak-free: "npm:^2.1.0"
-    pino-abstract-transport: "npm:^1.1.0"
+    pino-abstract-transport: "npm:^1.2.0"
     pino-std-serializers: "npm:^6.0.0"
     process-warning: "npm:^3.0.0"
     quick-format-unescaped: "npm:^4.0.3"
     real-require: "npm:^0.2.0"
     safe-stable-stringify: "npm:^2.3.1"
     sonic-boom: "npm:^3.7.0"
-    thread-stream: "npm:^2.0.0"
+    thread-stream: "npm:^2.6.0"
   bin:
     pino: bin.js
-  checksum: 10c0/6b973474160e1fa01fa150de0f69b7db9c6c06ae15f992d369669751825c8f2af3bb5600348eaf9be65b4952326bbdfa226f51e425820eb511f0f594fbddbaa7
+  checksum: 10c0/9cf8b3e8741ecc42b56d07fbb3d09f48c96c07a9a6d7196b69a60b56109899f8a7dfa14d85787d165a1038b74c7ca18e76cecce7c26ec14e0f05c73008df7891
   languageName: node
   linkType: hard
 
@@ -10663,7 +10663,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"thread-stream@npm:^2.0.0":
+"thread-stream@npm:^2.6.0":
   version: 2.6.0
   resolution: "thread-stream@npm:2.6.0"
   dependencies:
