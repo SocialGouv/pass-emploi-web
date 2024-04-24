@@ -1,16 +1,22 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { DateTime } from 'luxon'
 import React from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
+import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { BaseJeune, JeuneChat } from 'interfaces/jeune'
-import { toggleFlag } from 'services/messages.service'
+import {
+  sendNouveauMessageImportant,
+  toggleFlag,
+} from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/messages.service')
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
+jest.mock('components/Modal')
 
 describe('<ChatRoom />', () => {
   const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
@@ -34,6 +40,122 @@ describe('<ChatRoom />', () => {
         seenByConseiller: false,
       }),
     ]
+  })
+
+  describe('quand le conseiller veut configurer un message important', () => {
+    let accederConversation: (idJeune: string) => void
+    beforeEach(async () => {
+      accederConversation = jest.fn()
+      await act(async () => {
+        renderWithContexts(
+          <ChatRoom
+            jeunesChats={jeunesChats}
+            showMenu={false}
+            onAccesConversation={accederConversation}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {
+            customConseiller: unConseiller({ id: 'id-conseiller' }),
+          }
+        )
+      })
+    })
+
+    it('affiche un bouton pour configurer son message', () => {
+      expect(
+        screen.getByRole('button', { name: 'Configurer un message important' })
+      ).toBeInTheDocument()
+    })
+
+    describe('quand le conseiller clique sur le bouton', () => {
+      let inputDateDebut: HTMLInputElement
+      let inputDateFin: HTMLInputElement
+      let inputMessage: HTMLTextAreaElement
+      let submitBtn: HTMLButtonElement
+
+      beforeEach(async () => {
+        const now = DateTime.fromISO('2024-04-24')
+        jest.spyOn(DateTime, 'now').mockReturnValue(now)
+
+        const boutonSettings = screen.getByRole('button', {
+          name: 'Configurer un message important',
+        })
+
+        await userEvent.click(boutonSettings)
+        inputDateDebut = screen.getByLabelText('Date de début')
+        inputDateFin = screen.getByLabelText('Date de fin')
+        inputMessage = screen.getByLabelText(/Message/)
+        submitBtn = screen.getByRole('button', { name: 'Envoyer' })
+      })
+
+      it('permet de remplir un formulaire pour ajouter un message important', async () => {
+        //Given
+        const messageImportant =
+          'Actuellement en congés, je ne peux pas vous répondre.'
+
+        //When
+        await userEvent.type(inputDateDebut, '2024-04-24')
+        await userEvent.type(inputDateFin, '2024-04-30')
+        await userEvent.type(inputMessage, messageImportant)
+        await userEvent.click(submitBtn)
+
+        //Then
+        expect(sendNouveauMessageImportant).toHaveBeenCalledWith({
+          cleChiffrement: 'cleChiffrement',
+          dateDebut: DateTime.fromISO('2024-04-24'),
+          dateFin: DateTime.fromISO('2024-04-30'),
+          idConseiller: 'id-conseiller',
+          newMessage: messageImportant,
+        })
+      })
+
+      describe('gère les messages d’erreur', () => {
+        it('quand les dates sont trop lointaines', async () => {
+          //When
+          await userEvent.type(inputDateDebut, '2028-04-24')
+          await userEvent.type(inputDateFin, '2028-04-30')
+          await userEvent.click(submitBtn)
+
+          //Then
+          expect(
+            screen.getByText(
+              'Le champ “Date de début” est invalide. La date de début attendue est comprise entre le 24/04/2024 et le 24/04/2027'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Le champ “Date de fin” est invalide. La date de fin attendue est comprise entre le 24/04/2024 et le 24/04/2027'
+            )
+          ).toBeInTheDocument()
+        })
+
+        it('quand les champs sont vides', async () => {
+          //When
+          await userEvent.click(inputDateDebut)
+          await userEvent.click(inputDateFin)
+          await userEvent.click(inputMessage)
+          await userEvent.click(submitBtn)
+
+          //Then
+          expect(
+            screen.getByText(
+              'Le champ “Date de début” est vide. Renseignez une date de début.'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Le champ “Date de fin” est vide. Renseignez une date de fin.'
+            )
+          ).toBeInTheDocument()
+          expect(
+            screen.getByText(
+              'Le champ “Message” est vide. Renseignez un message.'
+            )
+          ).toBeInTheDocument()
+        })
+      })
+    })
   })
 
   describe('quand le conseiller a des jeunes', () => {
