@@ -188,15 +188,12 @@ export async function addMessageImportant(
   const firebaseMessage = createFirebaseMessageImportant(data)
 
   try {
-    const messageImportantSnapshot = await getMessageImportantSnapshot(
-      data.idConseiller
-    )
-    if (messageImportantSnapshot) {
+    if (data.idMessageImportant)
       await setDoc<FirebaseMessageImportant, FirebaseMessageImportant>(
-        messageImportantSnapshot.ref,
+        getMessageImportantReference(data.idMessageImportant),
         firebaseMessage
       )
-    } else {
+    else {
       await addDoc<FirebaseMessageImportant, FirebaseMessageImportant>(
         collection(getDb(), messageImportantCollection) as CollectionReference<
           FirebaseMessageImportant,
@@ -407,6 +404,30 @@ export function observeDerniersMessagesDuChat(
   }
 }
 
+export async function getMessageImportantSnapshot(
+  idConseiller: string
+): Promise<
+  | DocumentSnapshot<FirebaseMessageImportant, FirebaseMessageImportant>
+  | undefined
+> {
+  const collectionRef = collection(
+    getDb(),
+    messageImportantCollection
+  ) as CollectionReference<FirebaseMessageImportant, FirebaseMessageImportant>
+
+  const querySnapshots: QuerySnapshot<
+    FirebaseMessageImportant,
+    FirebaseMessageImportant
+  > = await getDocs(
+    query<FirebaseMessageImportant, FirebaseMessageImportant>(
+      collectionRef,
+      where('idConseiller', '==', idConseiller)
+    )
+  )
+
+  if (querySnapshots.docs.length > 0) return querySnapshots.docs[0]
+}
+
 function retrieveApp() {
   const appAlreadyInitialized: number = getApps().length
   if (!appAlreadyInitialized) {
@@ -479,28 +500,16 @@ function getChatReference(
   )
 }
 
-async function getMessageImportantSnapshot(
-  idConseiller: string
-): Promise<
-  | DocumentSnapshot<FirebaseMessageImportant, FirebaseMessageImportant>
-  | undefined
-> {
-  const collectionRef = collection(
-    getDb(),
-    messageImportantCollection
-  ) as CollectionReference<FirebaseMessageImportant, FirebaseMessageImportant>
-
-  const querySnapshots: QuerySnapshot<
-    FirebaseMessageImportant,
-    FirebaseMessageImportant
-  > = await getDocs(
-    query<FirebaseMessageImportant, FirebaseMessageImportant>(
-      collectionRef,
-      where('idConseiller', '==', idConseiller)
-    )
+function getMessageImportantReference(
+  idMessageImportant: string
+): DocumentReference<FirebaseMessageImportant, FirebaseMessageImportant> {
+  return doc<FirebaseMessageImportant, FirebaseMessageImportant>(
+    collection(getDb(), messageImportantCollection) as CollectionReference<
+      FirebaseMessageImportant,
+      FirebaseMessageImportant
+    >,
+    idMessageImportant
   )
-
-  if (querySnapshots.docs.length > 0) return querySnapshots.docs[0]
 }
 
 function getMessageReference(

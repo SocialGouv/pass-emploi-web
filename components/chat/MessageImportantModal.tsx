@@ -14,10 +14,12 @@ import IllustrationComponent, {
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { ValueWithError } from 'components/ValueWithError'
+import { MessageImportantPreRempli } from 'services/messages.service'
 import { toShortDate } from 'utils/date'
 
 interface MessageImportantModalProps {
   messageImportantIsLoading: boolean
+  messageImportantPreRempli: MessageImportantPreRempli | null
   onConfirmation: (
     message: string,
     dateDebut: DateTime,
@@ -28,6 +30,7 @@ interface MessageImportantModalProps {
 }
 
 export default function MessageImportantModal({
+  messageImportantPreRempli,
   messageImportantIsLoading,
   succesEnvoiMessageImportant,
   onConfirmation,
@@ -39,14 +42,16 @@ export default function MessageImportantModal({
 
   const [dateDebut, setDateDebut] = useState<
     ValueWithError<string | undefined>
-  >({ value: undefined })
+  >({
+    value: messageImportantPreRempli?.dateDebut ?? undefined,
+  })
 
   const [dateFin, setDateFin] = useState<ValueWithError<string | undefined>>({
-    value: undefined,
+    value: messageImportantPreRempli?.dateFin ?? undefined,
   })
 
   const [message, setMessage] = useState<ValueWithError<string | undefined>>({
-    value: undefined,
+    value: messageImportantPreRempli?.message ?? undefined,
   })
 
   function validerDateDebut() {
@@ -175,7 +180,7 @@ export default function MessageImportantModal({
                     type='date'
                     id='date-debut'
                     required={true}
-                    value={dateDebut.value ?? ''}
+                    defaultValue={dateDebut.value}
                     onChange={(value: string) => setDateDebut({ value })}
                     onBlur={validerDateDebut}
                     invalid={Boolean(dateDebut.error)}
@@ -193,7 +198,7 @@ export default function MessageImportantModal({
                     type='date'
                     id='date-fin'
                     required={true}
-                    value={dateFin.value ?? ''}
+                    defaultValue={dateFin.value}
                     onChange={(value: string) => setDateFin({ value })}
                     onBlur={validerDateFin}
                     invalid={Boolean(dateFin.error)}
@@ -219,6 +224,7 @@ export default function MessageImportantModal({
                 allowOverMax={true}
                 onChange={(value: string) => setMessage({ value: value })}
                 onBlur={validerTexte}
+                defaultValue={message.value ?? ''}
               />
 
               <div className='flex justify-center'>
