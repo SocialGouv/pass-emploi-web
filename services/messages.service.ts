@@ -10,6 +10,7 @@ import {
   CreateFirebaseMessageWithOffre,
   findAndObserveChatsDuConseiller,
   getChatsDuConseiller,
+  getMessageImportantSnapshot,
   getMessagesGroupe,
   observeChat,
   observeDerniersMessagesDuChat,
@@ -41,10 +42,13 @@ type FormNouveauMessage = {
 export type FormNouveauMessageIndividuel = FormNouveauMessage & {
   jeuneChat: JeuneChat
 }
-export type FormNouveauMessageImportant = FormNouveauMessage & {
+export type FormNouveauMessageImportant = {
+  newMessage: string
+  cleChiffrement: string
   idConseiller: string
   dateDebut: DateTime
   dateFin: DateTime
+  idMessageImportant?: string
 }
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
   idsBeneficiaires: string[]
@@ -55,6 +59,13 @@ type FormPartageOffre = {
   offre: BaseOffre
   idsDestinataires: string[]
   cleChiffrement: string
+  message: string
+}
+
+export type MessageImportantPreRempli = {
+  id: string
+  dateDebut: string
+  dateFin: string
   message: string
 }
 
@@ -178,6 +189,31 @@ export async function getMessagesListeDeDiffusion(
   return grouperMessagesParJour(messages, cleChiffrement)
 }
 
+export async function getMessageImportant(
+  idConseiller: string,
+  cleChiffrement: string
+): Promise<MessageImportantPreRempli | undefined> {
+  const snapshot = await getMessageImportantSnapshot(idConseiller)
+  if (!snapshot) return
+
+  const messageImportant = snapshot.data()
+
+  if (messageImportant) {
+    const contenu = decrypt(
+      { encryptedText: messageImportant.content, iv: messageImportant.iv },
+      cleChiffrement
+    )
+    const dateFin = DateTime.fromMillis(
+      messageImportant.dateFin.toMillis()
+    ).toISODate()
+    const dateDebut = DateTime.fromMillis(
+      messageImportant.dateDebut.toMillis()
+    ).toISODate()
+
+    return { message: contenu, dateDebut, dateFin, id: snapshot.id }
+  }
+}
+
 export async function countMessagesNotRead(
   idsJeunes: string[]
 ): Promise<{ [idJeune: string]: number }> {
@@ -256,6 +292,7 @@ export async function sendNouveauMessageImportant({
   newMessage,
   dateDebut,
   dateFin,
+  idMessageImportant,
 }: FormNouveauMessageImportant) {
   const encryptedMessage = encrypt(newMessage, cleChiffrement)
 
@@ -264,6 +301,7 @@ export async function sendNouveauMessageImportant({
     dateDebut: dateDebut,
     dateFin: dateFin,
     message: encryptedMessage,
+    idMessageImportant: idMessageImportant,
   })
 }
 

@@ -7,7 +7,11 @@ import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { JeuneChat } from 'interfaces/jeune'
-import { FormNouveauMessageImportant } from 'services/messages.service'
+import {
+  FormNouveauMessageImportant,
+  getMessageImportant,
+  MessageImportantPreRempli,
+} from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -38,14 +42,25 @@ export default function ChatRoom({
   const chatCredentials = useChatCredentials()
 
   const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
-  const [afficherModaleMessageImportant, setAfficherModaleMessageImportant] =
-    useState<boolean>(false)
+  const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
+    MessageImportantPreRempli | null | undefined
+  >(undefined)
   const [succesEnvoiMessageImportant, setSuccesEnvoiMessageImportant] =
     useState<boolean | undefined>()
   const [messageImportantIsLoading, setMessageImportantIsLoading] =
     useState<boolean>(false)
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
+  async function recupererMessageImportant() {
+    const messageImportant = await getMessageImportant(
+      conseiller.id,
+      chatCredentials!.cleChiffrement
+    )
+    if (!messageImportant) return
+
+    return messageImportant
+  }
 
   async function envoyerMessageImportant(
     message: string,
@@ -60,6 +75,7 @@ export default function ChatRoom({
         dateFin: dateFin,
         dateDebut: dateDebut,
         cleChiffrement: chatCredentials!.cleChiffrement,
+        idMessageImportant: messageImportantPreRempli?.id,
       }
 
       const { sendNouveauMessageImportant } = await import(
@@ -93,6 +109,12 @@ export default function ChatRoom({
       nom: flagged.toString(),
       avecBeneficiaires: aDesBeneficiaires,
     })
+  }
+
+  async function ouvrirModaleMessageImportant() {
+    const messageImportant = await recupererMessageImportant()
+    setSuccesEnvoiMessageImportant(undefined)
+    setMessageImportantPreRempli(messageImportant ?? null)
   }
 
   function filtrerConversations(saisieUtilisateur: string) {
@@ -142,10 +164,7 @@ export default function ChatRoom({
         <div className='flex flex-start wrap gap-4 justify-center my-6 grow layout_s:justify-start layout_s:p-0 layout_base:my-3'>
           <h2 className='text-l-bold text-primary'>Messagerie</h2>
           <button
-            onClick={() => {
-              setSuccesEnvoiMessageImportant(undefined)
-              setAfficherModaleMessageImportant(true)
-            }}
+            onClick={ouvrirModaleMessageImportant}
             title='Configurer un message important'
           >
             <IconComponent
@@ -197,12 +216,13 @@ export default function ChatRoom({
         onSelectConversation={onAccesConversation}
       />
 
-      {afficherModaleMessageImportant && (
+      {messageImportantPreRempli !== undefined && (
         <MessageImportantModal
+          messageImportantPreRempli={messageImportantPreRempli}
           succesEnvoiMessageImportant={succesEnvoiMessageImportant}
           messageImportantIsLoading={messageImportantIsLoading}
           onConfirmation={envoyerMessageImportant}
-          onCancel={() => setAfficherModaleMessageImportant(false)}
+          onCancel={() => setMessageImportantPreRempli(undefined)}
         />
       )}
     </>
