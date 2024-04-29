@@ -149,9 +149,9 @@ function QualificationPage({
       setSuccessQualification(true)
     } catch (error) {
       setErreurQualification(
-        error instanceof ApiError
+        error instanceof ApiError && error.statusCode !== 500
           ? error.message
-          : 'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+          : 'Suite à un problème inconnu, la qualification a échoué. Veuillez réessayer.'
       )
       document.querySelector('header')?.scrollIntoView({ behavior: 'smooth' })
     } finally {
