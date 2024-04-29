@@ -6,6 +6,9 @@ import React, {
   ReactElement,
 } from 'react'
 
+import IconComponent, { IconName } from 'components/ui/IconComponent'
+import TD from 'components/ui/Table/TD'
+
 type CommonProps = {
   children: ReactElement | Array<ReactElement | false | undefined>
   classname?: string
@@ -16,13 +19,14 @@ type TRProps = CommonProps & {
   asDiv?: boolean
   onClick?: (e: MouseEvent) => void
 }
-type TRLinkProps = CommonProps & {
+type TRWithLinkProps = CommonProps & {
   href: string
-  label: string
+  linkLabel: string
+  rowLabel: string
 }
 
 const TR = forwardRef(
-  (props: TRProps | TRLinkProps, ref: ForwardedRef<any>) => {
+  (props: TRProps | TRWithLinkProps, ref: ForwardedRef<any>) => {
     const { children, isSelected } = props
     const selectedStyle = 'bg-primary_lighten shadow-m'
     const style = `focus-within:bg-primary_lighten rounded-base shadow-base ${
@@ -31,22 +35,30 @@ const TR = forwardRef(
     const clickableStyle =
       'group cursor-pointer hover:bg-primary_lighten hover:rounded-base'
 
-    if (isLink(props)) {
-      const { href, label, classname } = props
+    if (hasLink(props)) {
+      const { href, linkLabel, classname, rowLabel } = props
       return (
-        <Link
-          href={href}
+        <div
           role='row'
-          aria-label={label}
-          title={label}
-          className={`table-row ${style} ${clickableStyle} ${classname}`}
+          className={`table-row ${style} ${classname}`}
           ref={ref}
+          aria-label={rowLabel}
         >
           {React.Children.map(
             children,
             (child) => child && React.cloneElement(child, { asDiv: true })
           )}
-        </Link>
+          <TD asDiv={true} className='hover:bg-primary_lighten px-0 py-0'>
+            <Link href={href} title={linkLabel} className='block w-full h-full'>
+              <IconComponent
+                name={IconName.ChevronRight}
+                focusable={false}
+                aria-hidden={true}
+                className=' w-6 h-6 fill-blanc rounded-full bg-primary mx-auto'
+              />
+            </Link>
+          </TD>
+        </div>
       )
     } else if (props.asDiv) {
       const { isHeader, onClick, classname } = props
@@ -55,7 +67,7 @@ const TR = forwardRef(
           role='row'
           className={`table-row ${!isHeader ? style : ''} ${
             onClick ? clickableStyle : ''
-          } ${classname}`}
+          } ${classname ?? ''}`}
           onClick={onClick}
           ref={ref}
         >
@@ -71,7 +83,7 @@ const TR = forwardRef(
         <tr
           className={`${!isHeader ? style : ''} ${
             onClick ? clickableStyle : ''
-          } ${classname}`}
+          } ${classname ?? ''}`}
           onClick={onClick}
           ref={ref}
         >
@@ -84,6 +96,6 @@ const TR = forwardRef(
 TR.displayName = 'TR'
 export default TR
 
-function isLink(props: TRProps | TRLinkProps): props is TRLinkProps {
+function hasLink(props: TRProps | TRWithLinkProps): props is TRWithLinkProps {
   return Object.prototype.hasOwnProperty.call(props, 'href')
 }

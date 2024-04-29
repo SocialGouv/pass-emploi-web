@@ -1,7 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
@@ -144,9 +144,9 @@ describe('PilotagePage client side - Actions', () => {
           )
         ).toBeInTheDocument()
         expect(
-          screen.getByLabelText(
-            `Accéder au détail de l’action : ${action.titre}`
-          )
+          screen.getByRole('link', {
+            name: `Accéder au détail de l’action : ${action.titre}`,
+          })
         ).toHaveAttribute(
           'href',
           `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`

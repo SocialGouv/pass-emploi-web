@@ -289,6 +289,7 @@ export default function TableauJeunes({
                     <SortIcon isSorted={isMessage} isDesc={sortDesc} />
                   </button>
                 </TH>
+                <TH>Voir le détail</TH>
               </TR>
             </THead>
 
@@ -297,7 +298,7 @@ export default function TableauJeunes({
                 <TR
                   key={jeune.id}
                   href={`/mes-jeunes/${jeune.id}`}
-                  label={getRowLabel(jeune)}
+                  linkLabel={getRowLabel(jeune)}
                 >
                   <TD isBold className='rounded-l-base'>
                     <span className='flex items-baseline'>
@@ -369,33 +370,25 @@ export default function TableauJeunes({
                   )}
 
                   <TD className='rounded-r-base'>
-                    <span className='flex'>
-                      <div className='relative w-fit mx-auto'>
-                        <IconComponent
-                          name={IconName.Note}
-                          aria-hidden={true}
-                          focusable={false}
-                          className='w-6 h-6 fill-primary'
-                        />
-                        {jeune.messagesNonLus > 0 && (
-                          <Badge
-                            count={jeune.messagesNonLus}
-                            size={4}
-                            bgColor={'accent_1_lighten'}
-                            textColor={'accent_1'}
-                            style={
-                              'absolute top-[-10px] left-[10px] flex justify-center items-center p-2.5 text-xs-medium'
-                            }
-                          />
-                        )}
-                      </div>
+                    <div className='flex relative w-fit mx-auto'>
                       <IconComponent
-                        name={IconName.ChevronRight}
-                        focusable={false}
+                        name={IconName.Note}
                         aria-hidden={true}
+                        focusable={false}
                         className='w-6 h-6 fill-primary'
                       />
-                    </span>
+                      {jeune.messagesNonLus > 0 && (
+                        <Badge
+                          count={jeune.messagesNonLus}
+                          size={4}
+                          bgColor={'accent_1_lighten'}
+                          textColor={'accent_1'}
+                          style={
+                            'absolute top-[-10px] left-[10px] flex justify-center items-center p-2.5 text-xs-medium'
+                          }
+                        />
+                      )}
+                    </div>
                   </TD>
                 </TR>
               ))}

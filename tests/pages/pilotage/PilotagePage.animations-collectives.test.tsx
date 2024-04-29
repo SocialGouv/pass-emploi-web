@@ -127,9 +127,9 @@ describe('PilotagePage client side - Animations collectives', () => {
           within(tableau).getByText(`${animation.nombreInscrits}`)
         ).toBeInTheDocument()
         expect(
-          within(tableau).getByLabelText(
-            `Accéder au détail de l’animation collective : ${animation.titre}`
-          )
+          within(tableau).getByRole('link', {
+            name: `Accéder au détail de l’animation collective : ${animation.titre}`,
+          })
         ).toHaveAttribute(
           'href',
           '/mes-jeunes/edition-rdv?idRdv=' + animation.id

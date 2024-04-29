@@ -67,6 +67,7 @@ export default function TableauRdvsBeneficiaire({
                 )}
               </TH>
               <TH>Créé par vous</TH>
+              <TH>Voir le détail</TH>
             </TR>
           </THead>
 

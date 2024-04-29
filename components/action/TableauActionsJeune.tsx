@@ -279,6 +279,7 @@ export default function TableauActionsJeune({
                     onFiltres={filtrerActionsParStatuts}
                   />
                 </TH>
+                <TH>Voir le détail</TH>
               </TR>
             </THead>
 

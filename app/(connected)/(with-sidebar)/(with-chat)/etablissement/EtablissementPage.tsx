@@ -8,7 +8,6 @@ import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import SituationTag from 'components/jeune/SituationTag'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
@@ -128,6 +127,7 @@ function EtablissementPage() {
                 {conseillerEstMilo && <TH>Situation</TH>}
                 <TH>Dernière activité</TH>
                 <TH>Conseiller</TH>
+                <TH>Voir le détail</TH>
               </TR>
             </THead>
             <TBody>
@@ -135,7 +135,7 @@ function EtablissementPage() {
                 <TR
                   key={jeune.base.id}
                   href={'etablissement/beneficiaires/' + jeune.base.id}
-                  label={
+                  linkLabel={
                     'Accéder à la fiche de ' + getNomJeuneComplet(jeune.base)
                   }
                 >
@@ -152,17 +152,9 @@ function EtablissementPage() {
                       toRelativeDateTime(jeune.dateDerniereActivite)}
                   </TD>
                   <TD>
-                    <span className='flex items-center'>
-                      <div className='relative w-fit mx-auto'>
-                        {jeune.referent.prenom} {jeune.referent.nom}
-                      </div>
-                      <IconComponent
-                        focusable={false}
-                        aria-hidden={true}
-                        className='w-4 h-4 fill-primary'
-                        name={IconName.ChevronRight}
-                      />
-                    </span>
+                    <div className='flex items-center relative w-fit'>
+                      {jeune.referent.prenom} {jeune.referent.nom}
+                    </div>
                   </TD>
                 </TR>
               ))}

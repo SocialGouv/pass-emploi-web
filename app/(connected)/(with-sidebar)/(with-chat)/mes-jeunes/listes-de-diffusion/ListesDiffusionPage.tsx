@@ -130,6 +130,7 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
                 </button>
               </TH>
               <TH>Nombre de destinataires</TH>
+              <TH>Voir le détail</TH>
             </TR>
           </THead>
           <TBody>
@@ -137,7 +138,7 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
               <TR
                 key={liste.id}
                 href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
-                label={`Consulter la liste ${liste.titre}`}
+                linkLabel={`Consulter la liste ${liste.titre}`}
               >
                 <TD>
                   <TitreListe liste={liste} />
