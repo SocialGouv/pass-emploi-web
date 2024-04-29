@@ -40,7 +40,7 @@ export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
         Application conseiller{' '}
         {estPoleEmploiBRSA(conseiller) ? 'pass emploi' : 'CEJ'}
       </p>
-      <p className='text-s-regular'>Version 4 – 19 décembre 2022</p>
+      <p className='text-s-regular'>Version 5 – 23 avril 2024</p>
     </header>
   )
 }
