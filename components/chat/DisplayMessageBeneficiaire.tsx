@@ -6,6 +6,7 @@ import LienOffre from 'components/chat/LienOffre'
 import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
+import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
 import { toFrenchTime } from 'utils/date'
 
@@ -33,14 +34,51 @@ export default function DisplayMessageBeneficiaire({
 
             {message.type === TypeMessage.MESSAGE_PJ &&
               message.infoPiecesJointes &&
-              message.infoPiecesJointes.map(({ id, nom }) => (
+              message.infoPiecesJointes.map(({ id, nom, statut }) => (
                 <>
-                  <p className='whitespace-pre-wrap'>
-                    Votre bénéficiaire vous a transmis une nouvelle pièce
-                    jointe. Celle-ci sera conservée 4 mois. Enregistrez la dans
-                    i-milo pour la conserver de manière sécurisée.
-                  </p>
-                  <LienPieceJointe key={id} id={id} nom={nom} />
+                  {statut === 'valide' && (
+                    <>
+                      <p className='whitespace-pre-wrap'>
+                        Votre bénéficiaire vous a transmis une nouvelle pièce
+                        jointe. Celle-ci sera conservée 4 mois. Enregistrez la
+                        dans i-milo pour la conserver de manière sécurisée.
+                      </p>
+                      <LienPieceJointe
+                        key={id}
+                        id={id}
+                        nom={nom}
+                        className='fill-blanc'
+                      />
+                    </>
+                  )}
+
+                  {(statut === 'analyse_a_faire' ||
+                    statut === 'analyse_en_cours') && (
+                    <>
+                      <p className='whitespace-pre-wrap'>
+                        Votre bénéficiaire vous a transmis une nouvelle pièce
+                        jointe. Celle-ci sera conservée 4 mois. Enregistrez la
+                        dans i-milo pour la conserver de manière sécurisée.
+                      </p>
+                      <div className='flex flex-row justify-end items-center'>
+                        <SpinningLoader className='w-4 h-4 mr-2 fill-primary_lighten' />
+                        {nom}
+                      </div>
+                    </>
+                  )}
+
+                  {statut === 'non_valide' && (
+                    <p className='whitespace-pre-wrap'>
+                      La pièce-jointe envoyée par votre bénéficiaire a été
+                      bloquée par l’antivirus
+                    </p>
+                  )}
+
+                  {statut === 'expiree' && (
+                    <p className='inline-block p-2 whitespace-pre-wrap border border-primary_lighten rounded-full grey_100'>
+                      Pièce jointe expirée
+                    </p>
+                  )}
                 </>
               ))}
 
