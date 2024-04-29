@@ -31,11 +31,10 @@ export function AnimationCollectiveRow(
     const { changerVisibiliteSession } = await import(
       'services/sessions.service'
     )
+    const doitEtreVisible = estCache
+    await changerVisibiliteSession(animationCollective.id, doitEtreVisible)
 
-    const nouvelleVisibilite = !estCache
-    await changerVisibiliteSession(animationCollective.id, nouvelleVisibilite)
-
-    setEstCache(nouvelleVisibilite)
+    setEstCache(!doitEtreVisible)
     setLoadingChangerVisibilite(false)
   }
 
@@ -57,20 +56,20 @@ export function AnimationCollectiveRow(
         </span>
       </TD>
       <TD>{tagType(animationCollective)}</TD>
-      <TD className='flex text-center'>
+      <TD className='flex justify-center items-center'>
         {animationCollective.isSession && (
           <>
-            {loadingChangerVisibilite && <SpinningLoader />}
+            {loadingChangerVisibilite && <SpinningLoader className='w-6 h-6' />}
 
             {!loadingChangerVisibilite && (
               <button
                 type='button'
                 onClick={handleChangerVisibiliteSession}
-                className='flex text-s-medium text-primary_darken hover:text-primary items-center'
+                className='flex text-s-medium text-primary_darken hover:text-primary items-center justify-center'
               >
                 <IconComponent
                   aria-label={estCache ? 'Non visible' : 'Visible'}
-                  className='inline h-6 w-6 fill-primary cursor-pointer'
+                  className='inline m-auto h-6 w-6 fill-primary cursor-pointer'
                   focusable={false}
                   name={
                     estCache ? IconName.VisibilityOff : IconName.VisibilityOn
