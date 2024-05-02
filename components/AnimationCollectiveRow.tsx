@@ -9,11 +9,18 @@ import {
   AnimationCollective,
   StatutAnimationCollective,
 } from 'interfaces/evenement'
+import { trackEvent } from 'utils/analytics/matomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchTime, toMonthday } from 'utils/date'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export function AnimationCollectiveRow(
   animationCollective: AnimationCollective
 ) {
+  const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
   const [estCache, setEstCache] = useState<boolean>(
     animationCollective.estCache ?? false
   )
@@ -36,6 +43,14 @@ export function AnimationCollectiveRow(
 
     setEstCache(!doitEtreVisible)
     setLoadingChangerVisibilite(false)
+
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Session i-milo',
+      action: 'clic visibilité',
+      nom: '',
+      avecBeneficiaires: aDesBeneficiaires ? 'oui' : 'non',
+    })
   }
 
   return (

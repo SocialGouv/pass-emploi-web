@@ -121,6 +121,14 @@ function DetailsSessionPage({
 
     setVisibiliteSession(!visibiliteSession)
     setLoadingChangerVisibilite(false)
+
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Session i-milo',
+      action: 'clic visibilité agenda',
+      nom: '',
+      avecBeneficiaires: aDesBeneficiaires ? 'oui' : 'non',
+    })
   }
 
   function getBeneficiairesNonSelectionnees(): BaseBeneficiaireASelectionner[] {
