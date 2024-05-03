@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { ApiError } from '../../utils/httpClient'
 import IllustrationComponent, {
   IllustrationName,
 } from '../ui/IllustrationComponent'
@@ -42,11 +43,13 @@ export default function OngletActionsPilotage({
     useState<ActionPilotage[]>(actionsInitiales)
   const [metadonnees, setMetadonnees] =
     useState<MetadonneesPagination>(metadonneesInitiales)
-  const [actionsEnErreur, setActionsEnErreur] = useState<boolean>(false)
 
   const [page, setPage] = useState<number>(1)
   const [tri, setTri] = useState<TriActionsAQualifier>()
   const [filtres, setFiltres] = useState<string[]>([])
+  const [erreurQualification, setErreurQualification] = useState<
+    string | undefined
+  >()
 
   async function trierActions(nouveauTri: TriActionsAQualifier) {
     setTri(nouveauTri)
@@ -81,7 +84,6 @@ export default function OngletActionsPilotage({
   ) {
     document.querySelector('header')?.scrollIntoView({ behavior: 'smooth' })
 
-    setActionsEnErreur(false)
     const { qualifierActions: _qualifierActions } = await import(
       'services/actions.service'
     )
@@ -93,38 +95,51 @@ export default function OngletActionsPilotage({
         codeQualification: CODE_QUALIFICATION_NON_SNP,
       }))
     }
-    const { idsActionsEnErreur } = await _qualifierActions(
-      actionsPayload,
-      qualificationSNP
-    )
-
-    let actionsQualifiees = actionsSelectionnees
-    if (idsActionsEnErreur.length) {
-      setActionsEnErreur(true)
-      actionsQualifiees = actionsSelectionnees.filter(
-        (action) => !idsActionsEnErreur.some((id) => id === action.idAction)
-      )
-    } else
-      setAlerte(
+    setErreurQualification(undefined)
+    try {
+      const { idsActionsEnErreur } = await _qualifierActions(
+        actionsPayload,
         qualificationSNP
-          ? AlerteParam.multiQualificationSNP
-          : AlerteParam.multiQualificationNonSNP
       )
 
-    const nouvellesActions = actions.filter(
-      (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
-    )
+      let actionsQualifiees = actionsSelectionnees
 
-    setActions(nouvellesActions)
-    setActionsFitrees(nouvellesActions)
+      if (idsActionsEnErreur.length) {
+        setErreurQualification(
+          'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+        )
+        actionsQualifiees = actionsSelectionnees.filter(
+          (action) => !idsActionsEnErreur.some((id) => id === action.idAction)
+        )
+      } else
+        setAlerte(
+          qualificationSNP
+            ? AlerteParam.multiQualificationSNP
+            : AlerteParam.multiQualificationNonSNP
+        )
+
+      const nouvellesActions = actions.filter(
+        (action) => !actionsQualifiees.some((a) => a.idAction === action.id)
+      )
+
+      setActions(nouvellesActions)
+      setActionsFitrees(nouvellesActions)
+    } catch (error) {
+      setErreurQualification(
+        error instanceof ApiError && error.statusCode !== 500
+          ? error.message
+          : 'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+      )
+      document.querySelector('header')?.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
   return (
     <>
-      {actionsEnErreur && (
+      {erreurQualification && (
         <FailureAlert
-          label='Certaines actions n’ont pas pu être qualifiées.'
-          onAcknowledge={() => setActionsEnErreur(false)}
+          label={erreurQualification}
+          onAcknowledge={() => setErreurQualification(undefined)}
         />
       )}
 
