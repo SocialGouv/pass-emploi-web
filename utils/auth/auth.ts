@@ -1,9 +1,4 @@
 import apm, { UserObject } from 'elastic-apm-node'
-import type {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from 'next'
 import { redirect } from 'next/navigation'
 import type { NextAuthOptions } from 'next-auth'
 import { Account, getServerSession, Session } from 'next-auth'
@@ -16,6 +11,7 @@ import {
 } from 'utils/auth/authenticator'
 
 export const config = {
+  debug: true,
   providers: [
     KeycloakProvider({
       clientId: process.env.KEYCLOAK_ID || '',
@@ -23,6 +19,25 @@ export const config = {
       issuer: process.env.KEYCLOAK_ISSUER || '',
     }),
   ],
+  // {
+  //   id: 'cej-auth',
+  //   name: 'cej-auth',
+  //   wellKnown: `${process.env.KEYCLOAK_ISSUER}/.well-known/openid-configuration`,
+  //   type: 'oauth',
+  //   options: {
+  //     clientId: process.env.KEYCLOAK_ID || '',
+  //     clientSecret: process.env.KEYCLOAK_SECRET || '',
+  //     issuer: process.env.KEYCLOAK_ISSUER || '',
+  //   },
+  //   profile(profile) {
+  //     return {
+  //       id: profile.sub,
+  //       name: profile.name ?? profile.preferred_username,
+  //       email: profile.email,
+  //       image: profile.picture,
+  //     }
+  //   },
+  // },
   secret: process.env.AUTH_SECRET,
   session: { strategy: 'jwt' },
 
