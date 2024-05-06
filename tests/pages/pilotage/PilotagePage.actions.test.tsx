@@ -4,6 +4,8 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
+import { ApiError } from '../../../utils/httpClient'
+
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { ActionPilotage } from 'interfaces/action'
@@ -472,6 +474,41 @@ describe('PilotagePage client side - Actions', () => {
               )
             ).toBeInTheDocument()
           })
+        })
+      })
+
+      describe('quand milo est down', () => {
+        beforeEach(async () => {
+          ;(qualifierActions as jest.Mock).mockResolvedValue(
+            new ApiError(500, 'internal server error')
+          )
+
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: `Sélection ${actions[0].titre} ${actions[0].categorie?.libelle ?? ''}`,
+            })
+          )
+        })
+
+        it('affiche le message d’error customisé', async () => {
+          //when
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier les actions en SNP',
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          )
+
+          //then
+          expect(
+            screen.getByText(
+              'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+            )
+          ).toBeInTheDocument()
         })
       })
     })
