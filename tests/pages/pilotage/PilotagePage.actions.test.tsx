@@ -510,6 +510,28 @@ describe('PilotagePage client side - Actions', () => {
             )
           ).toBeInTheDocument()
         })
+
+        it('affiche message d’error quand y un des idAction elements', async () => {
+          //when
+          ;(qualifierActions as jest.Mock).mockResolvedValue({
+            idsActionsEnErreur: [1, 2],
+          })
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier les actions en SNP',
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          )
+          expect(
+            screen.getByText(
+              'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+            )
+          ).toBeInTheDocument()
+        })
       })
     })
   })
