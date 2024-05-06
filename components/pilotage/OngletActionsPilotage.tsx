@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 
-import { ApiError } from '../../utils/httpClient'
 import IllustrationComponent, {
   IllustrationName,
 } from '../ui/IllustrationComponent'
@@ -14,6 +13,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { TriActionsAQualifier } from 'services/actions.service'
 import { MetadonneesPagination } from 'types/pagination'
 import { useAlerte } from 'utils/alerteContext'
+import { ApiError } from 'utils/httpClient'
 
 interface OngletActionsPilotageProps {
   categories: SituationNonProfessionnelle[]

@@ -4,8 +4,6 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-import { ApiError } from '../../../utils/httpClient'
-
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
 import { desCategories, uneListeDActionsAQualifier } from 'fixtures/action'
 import { ActionPilotage } from 'interfaces/action'
@@ -15,6 +13,7 @@ import {
 } from 'services/actions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+import { ApiError } from 'utils/httpClient'
 
 jest.mock('services/actions.service')
 jest.mock('components/Modal')
@@ -511,7 +510,7 @@ describe('PilotagePage client side - Actions', () => {
           ).toBeInTheDocument()
         })
 
-        it('affiche message d’error quand y un des idAction elements', async () => {
+        it('affiche un message d’erreur quand des actions ne sont pas qualifiées', async () => {
           //when
           ;(qualifierActions as jest.Mock).mockResolvedValue({
             idsActionsEnErreur: [1, 2],
