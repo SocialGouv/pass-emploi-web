@@ -549,9 +549,10 @@ function decryptContentAndFilename(
 
   if (message.infoPiecesJointes?.length) {
     decryptedMessage.infoPiecesJointes = message.infoPiecesJointes.map(
-      ({ id, nom }) => ({
+      ({ id, nom, statut }) => ({
         id,
         nom: decrypt({ encryptedText: nom, iv }, cleChiffrement),
+        statut,
       })
     )
   }
