@@ -11,6 +11,8 @@ export async function GET() {
   try {
     const issuerLogout = `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout`
     const redirectToSessionLogout = new URLSearchParams({
+      client_id: process.env.KEYCLOAK_ID ?? '',
+      post_logout_redirect_uri: rootUrl ? `${rootUrl}/logout` : '',
       redirect_uri: rootUrl ? `${rootUrl}/logout` : '',
     })
 

@@ -16,11 +16,11 @@ describe('GET api/federated-logout', () => {
     // Then
     await expect(promise).rejects.toEqual(
       new Error(
-        'NEXT REDIRECT KEYCLOAK_ISSUER/protocol/openid-connect/logout?redirect_uri=NEXTAUTH_URL%2Flogout'
+        'NEXT REDIRECT KEYCLOAK_ISSUER/protocol/openid-connect/logout?client_id=&post_logout_redirect_uri=NEXTAUTH_URL%2Flogout&redirect_uri=NEXTAUTH_URL%2Flogout'
       )
     )
     expect(redirect).toHaveBeenCalledWith(
-      'KEYCLOAK_ISSUER/protocol/openid-connect/logout?redirect_uri=NEXTAUTH_URL%2Flogout'
+      'KEYCLOAK_ISSUER/protocol/openid-connect/logout?client_id=&post_logout_redirect_uri=NEXTAUTH_URL%2Flogout&redirect_uri=NEXTAUTH_URL%2Flogout'
     )
   })
 })
