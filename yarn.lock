@@ -8942,7 +8942,7 @@ __metadata:
     next-logger: "npm:4.0.0"
     next-themes: "npm:0.3.0"
     nextjs-toploader: "npm:1.6.12"
-    pino: "npm:8.21.0"
+    pino: "npm:9.0.0"
     pino-pretty: "npm:^11.0.0"
     postcss: "npm:^8.4.38"
     prettier: "npm:^3.2.5"
@@ -9066,9 +9066,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:8.21.0":
-  version: 8.21.0
-  resolution: "pino@npm:8.21.0"
+"pino@npm:9.0.0":
+  version: 9.0.0
+  resolution: "pino@npm:9.0.0"
   dependencies:
     atomic-sleep: "npm:^1.0.0"
     fast-redact: "npm:^3.1.1"
@@ -9083,7 +9083,7 @@ __metadata:
     thread-stream: "npm:^2.6.0"
   bin:
     pino: bin.js
-  checksum: 10c0/9cf8b3e8741ecc42b56d07fbb3d09f48c96c07a9a6d7196b69a60b56109899f8a7dfa14d85787d165a1038b74c7ca18e76cecce7c26ec14e0f05c73008df7891
+  checksum: 10c0/10ef10aee0cf80af8ed83468cff2e29d642b6794b53cf641e1abcaf9e9958d8bcbc6e09d62757054aef3b4415c45d66a5018da11d43b81a23ba299ef5dc4e8b1
   languageName: node
   linkType: hard
 
