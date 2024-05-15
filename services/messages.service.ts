@@ -77,6 +77,7 @@ type MessageType =
   | 'MESSAGE_OFFRE_PARTAGEE'
   | 'MESSAGE_MODIFIE'
   | 'MESSAGE_SUPPRIME'
+  | 'MESSAGE_IMPORTANT'
 
 export async function getChatCredentials(): Promise<ChatCredentials> {
   const session = await getSession()
@@ -303,6 +304,9 @@ export async function sendNouveauMessageImportant({
     message: encryptedMessage,
     idMessageImportant: idMessageImportant,
   })
+
+  const { user, accessToken } = (await getSession())!
+  evenementMessage('MESSAGE_IMPORTANT', user.structure, user.id, accessToken)
 }
 
 export async function sendNouveauMessageGroupe({

@@ -83,13 +83,6 @@ export default function ChatRoom({
       )
       await sendNouveauMessageImportant(formNouveauMessageImportant)
       setSuccesEnvoiMessageImportant(true)
-      trackEvent({
-        structure: conseiller.structure,
-        categorie: 'Conseiller',
-        action: 'Message',
-        nom: 'Message important',
-        avecBeneficiaires: aDesBeneficiaires,
-      })
       setMessageImportantIsLoading(false)
     } catch (error) {
       setMessageImportantIsLoading(false)
