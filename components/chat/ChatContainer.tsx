@@ -51,16 +51,10 @@ export default function ChatContainer({
         (conseillersJeunes) => setConseillers(conseillersJeunes)
       )
 
-      if (jeunesChats) {
-        if (
-          !listeSelectionnee &&
-          !showRubriqueListesDeDiffusion &&
-          !currentChat
+      if (jeunesChats && !listeSelectionnee && !showRubriqueListesDeDiffusion)
+        setCurrentChat(
+          jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
         )
-          setCurrentChat(
-            jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
-          )
-      }
     } else {
       setCurrentChat(undefined)
     }
