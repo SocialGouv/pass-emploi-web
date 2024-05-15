@@ -8,9 +8,11 @@ import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
+import { getMessageImportant } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/jeunes.service')
+jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/chat/Conversation', () =>
   // eslint-disable-next-line react/display-name
@@ -30,6 +32,7 @@ describe('<ChatContainer />', () => {
     ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
       desListesDeDiffusion()
     )
+    ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
     jeunesChats = [
       unJeuneChat({
         ...jeunes[0],

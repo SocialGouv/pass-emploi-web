@@ -294,10 +294,10 @@ export async function sendNouveauMessageImportant({
   dateDebut,
   dateFin,
   idMessageImportant,
-}: FormNouveauMessageImportant) {
+}: FormNouveauMessageImportant): Promise<MessageImportantPreRempli> {
   const encryptedMessage = encrypt(newMessage, cleChiffrement)
 
-  await addMessageImportant({
+  const id = await addMessageImportant({
     idConseiller: idConseiller,
     dateDebut: dateDebut,
     dateFin: dateFin,
@@ -312,6 +312,13 @@ export async function sendNouveauMessageImportant({
     user.id,
     accessToken
   )
+
+  return {
+    id,
+    dateDebut: dateDebut.toISODate(),
+    dateFin: dateFin.toISODate(),
+    message: newMessage,
+  }
 }
 
 export async function sendNouveauMessageGroupe({

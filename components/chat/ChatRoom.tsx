@@ -43,12 +43,19 @@ export default function ChatRoom({
 
   const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
   const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
-    MessageImportantPreRempli | null | undefined
+    MessageImportantPreRempli | undefined
   >(undefined)
   const [succesEnvoiMessageImportant, setSuccesEnvoiMessageImportant] =
     useState<boolean | undefined>()
   const [messageImportantIsLoading, setMessageImportantIsLoading] =
     useState<boolean>(false)
+  const [afficherModaleMessageImportant, setAfficherModaleMessageImportant] =
+    useState<boolean>(false)
+
+  const [
+    afficherNotificationMessageImportant,
+    setAfficherNotificationMessageImportant,
+  ] = useState<boolean>(false)
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
@@ -57,9 +64,7 @@ export default function ChatRoom({
       conseiller.id,
       chatCredentials!.cleChiffrement
     )
-    if (!messageImportant) return
-
-    return messageImportant
+    setMessageImportantPreRempli(messageImportant ?? undefined)
   }
 
   async function envoyerMessageImportant(
@@ -81,12 +86,17 @@ export default function ChatRoom({
       const { sendNouveauMessageImportant } = await import(
         'services/messages.service'
       )
-      await sendNouveauMessageImportant(formNouveauMessageImportant)
+      const nouveauMessageImportant = await sendNouveauMessageImportant(
+        formNouveauMessageImportant
+      )
+      setMessageImportantPreRempli(nouveauMessageImportant)
+
       setSuccesEnvoiMessageImportant(true)
       setMessageImportantIsLoading(false)
     } catch (error) {
-      setMessageImportantIsLoading(false)
       setSuccesEnvoiMessageImportant(false)
+    } finally {
+      setMessageImportantIsLoading(false)
     }
   }
 
@@ -105,9 +115,8 @@ export default function ChatRoom({
   }
 
   async function ouvrirModaleMessageImportant() {
-    const messageImportant = await recupererMessageImportant()
+    setAfficherModaleMessageImportant(true)
     setSuccesEnvoiMessageImportant(undefined)
-    setMessageImportantPreRempli(messageImportant ?? null)
   }
 
   function filtrerConversations(saisieUtilisateur: string) {
@@ -124,6 +133,20 @@ export default function ChatRoom({
 
     setChatsFiltres(chatsFiltresResult)
   }
+
+  useEffect(() => {
+    recupererMessageImportant()
+  }, [])
+
+  useEffect(() => {
+    setAfficherNotificationMessageImportant(
+      Boolean(
+        messageImportantPreRempli?.dateFin &&
+          DateTime.fromISO(messageImportantPreRempli.dateFin).startOf('day') >=
+            DateTime.now().startOf('day')
+      )
+    )
+  }, [messageImportantPreRempli])
 
   useEffect(() => {
     setChatsFiltres(jeunesChats)
@@ -160,12 +183,28 @@ export default function ChatRoom({
             onClick={ouvrirModaleMessageImportant}
             title='Configurer un message important'
           >
-            <IconComponent
-              name={IconName.Settings}
-              className='w-6 h-6 fill-primary'
-              focusable={false}
-              aria-hidden={true}
-            />
+            <div className='relative'>
+              <IconComponent
+                name={IconName.Settings}
+                className='w-6 h-6 fill-primary'
+                focusable={false}
+                aria-hidden={true}
+              />
+              {afficherNotificationMessageImportant && (
+                <>
+                  <IconComponent
+                    name={IconName.DecorativePoint}
+                    className='absolute right-[-8px] top-[-8px] w-3 h-3 fill-warning'
+                    focusable={false}
+                    aria-hidden={true}
+                    title='Un message important est déjà configuré'
+                  />
+                  <span className='sr-only'>
+                    Un message important est déjà configuré
+                  </span>
+                </>
+              )}
+            </div>
             <span className='sr-only'>Configurer un message important</span>
           </button>
         </div>
@@ -209,13 +248,15 @@ export default function ChatRoom({
         onSelectConversation={onAccesConversation}
       />
 
-      {messageImportantPreRempli !== undefined && (
+      {afficherModaleMessageImportant && (
         <MessageImportantModal
           messageImportantPreRempli={messageImportantPreRempli}
           succesEnvoiMessageImportant={succesEnvoiMessageImportant}
           messageImportantIsLoading={messageImportantIsLoading}
           onConfirmation={envoyerMessageImportant}
-          onCancel={() => setMessageImportantPreRempli(undefined)}
+          onCancel={() => {
+            setAfficherModaleMessageImportant(false)
+          }}
         />
       )}
     </>
