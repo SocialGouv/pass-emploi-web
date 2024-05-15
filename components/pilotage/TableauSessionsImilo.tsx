@@ -1,6 +1,5 @@
 import React from 'react'
 
-import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Table from 'components/ui/Table/Table'
 import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
@@ -26,6 +25,7 @@ export default function TableauSessionsImilo({
           <TR isHeader={true}>
             <TH>Date</TH>
             <TH>Titre de la session</TH>
+            <TH>Voir le détail</TH>
           </TR>
         </THead>
 
@@ -34,23 +34,13 @@ export default function TableauSessionsImilo({
             <TR
               key={session.id}
               href={`/agenda/sessions/${session.id}`}
-              label={`Accéder au détail de la session : ${session.titre}`}
+              linkLabel={`Accéder au détail de la session : ${session.titre}`}
             >
               <TD>{session.date}</TD>
               <TD>
-                <div className='flex justify-between items-center'>
-                  <div>
-                    <p className='text-base-bold'>{session.titre}</p>
-                    {session.sousTitre && <p>{session.sousTitre}</p>}
-                  </div>
-                  <span className='flex flex-row justify-end'>
-                    <IconComponent
-                      name={IconName.ChevronRight}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='w-6 h-6 fill-primary'
-                    />
-                  </span>
+                <div>
+                  <p className='text-base-bold'>{session.titre}</p>
+                  {session.sousTitre && <p>{session.sousTitre}</p>}
                 </div>
               </TD>
             </TR>

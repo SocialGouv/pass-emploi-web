@@ -9,7 +9,11 @@ export default function OffreRow({ offre }: { offre: Offre }) {
   const titre = 'Ouvrir l’offre ' + offre.titre
 
   return (
-    <TR href={`/offres/${offre.urlParam}/${offre.id}`} label={titre}>
+    <TR
+      href={`/offres/${offre.urlParam}/${offre.id}`}
+      linkLabel={titre}
+      rowLabel={`Offre ${offre.titre}`}
+    >
       <TD>{offre.id}</TD>
       <TD>{offre.titre}</TD>
       <TD>{offre.organisation}</TD>

@@ -27,6 +27,7 @@ export default function TableauEvenementsConseiller({
           <TH>Type</TH>
           <TH>Modalité</TH>
           <TH>Créé par vous</TH>
+          <TH>Voir le détail</TH>
         </TR>
       </THead>
 

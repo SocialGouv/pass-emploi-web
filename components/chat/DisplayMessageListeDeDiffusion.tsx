@@ -32,7 +32,12 @@ export default function DisplayMessageListeDeDiffusion({
         {message.type === TypeMessage.MESSAGE_PJ &&
           message.infoPiecesJointes &&
           message.infoPiecesJointes.map(({ id, nom }) => (
-            <LienPieceJointe key={id} id={id} nom={nom} />
+            <LienPieceJointe
+              key={id}
+              id={id}
+              nom={nom}
+              className='fill-primary'
+            />
           ))}
 
         {onAfficherDetailMessage && (

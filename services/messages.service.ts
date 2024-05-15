@@ -5,10 +5,12 @@ import { getSession } from 'next-auth/react'
 import { apiPost } from 'clients/api.client'
 import {
   addMessage,
+  addMessageImportant,
   CreateFirebaseMessage,
   CreateFirebaseMessageWithOffre,
   findAndObserveChatsDuConseiller,
   getChatsDuConseiller,
+  getMessageImportantSnapshot,
   getMessagesGroupe,
   observeChat,
   observeDerniersMessagesDuChat,
@@ -40,6 +42,14 @@ type FormNouveauMessage = {
 export type FormNouveauMessageIndividuel = FormNouveauMessage & {
   jeuneChat: JeuneChat
 }
+export type FormNouveauMessageImportant = {
+  newMessage: string
+  cleChiffrement: string
+  idConseiller: string
+  dateDebut: DateTime
+  dateFin: DateTime
+  idMessageImportant?: string
+}
 export type FormNouveauMessageGroupe = FormNouveauMessage & {
   idsBeneficiaires: string[]
   idsListesDeDiffusion: string[]
@@ -52,6 +62,13 @@ type FormPartageOffre = {
   message: string
 }
 
+export type MessageImportantPreRempli = {
+  id: string
+  dateDebut: string
+  dateFin: string
+  message: string
+}
+
 type MessageType =
   | 'MESSAGE_ENVOYE'
   | 'MESSAGE_ENVOYE_PJ'
@@ -60,6 +77,7 @@ type MessageType =
   | 'MESSAGE_OFFRE_PARTAGEE'
   | 'MESSAGE_MODIFIE'
   | 'MESSAGE_SUPPRIME'
+  | 'MESSAGE_IMPORTANT_MODIFIE'
 
 export async function getChatCredentials(): Promise<ChatCredentials> {
   const session = await getSession()
@@ -172,6 +190,31 @@ export async function getMessagesListeDeDiffusion(
   return grouperMessagesParJour(messages, cleChiffrement)
 }
 
+export async function getMessageImportant(
+  idConseiller: string,
+  cleChiffrement: string
+): Promise<MessageImportantPreRempli | undefined> {
+  const snapshot = await getMessageImportantSnapshot(idConseiller)
+  if (!snapshot) return
+
+  const messageImportant = snapshot.data()
+
+  if (messageImportant) {
+    const contenu = decrypt(
+      { encryptedText: messageImportant.content, iv: messageImportant.iv },
+      cleChiffrement
+    )
+    const dateFin = DateTime.fromMillis(
+      messageImportant.dateFin.toMillis()
+    ).toISODate()
+    const dateDebut = DateTime.fromMillis(
+      messageImportant.dateDebut.toMillis()
+    ).toISODate()
+
+    return { message: contenu, dateDebut, dateFin, id: snapshot.id }
+  }
+}
+
 export async function countMessagesNotRead(
   idsJeunes: string[]
 ): Promise<{ [idJeune: string]: number }> {
@@ -242,6 +285,40 @@ export async function sendNouveauMessage({
       session!.accessToken
     ),
   ])
+}
+
+export async function sendNouveauMessageImportant({
+  cleChiffrement,
+  idConseiller,
+  newMessage,
+  dateDebut,
+  dateFin,
+  idMessageImportant,
+}: FormNouveauMessageImportant): Promise<MessageImportantPreRempli> {
+  const encryptedMessage = encrypt(newMessage, cleChiffrement)
+
+  const id = await addMessageImportant({
+    idConseiller: idConseiller,
+    dateDebut: dateDebut,
+    dateFin: dateFin,
+    message: encryptedMessage,
+    idMessageImportant: idMessageImportant,
+  })
+
+  const { user, accessToken } = (await getSession())!
+  evenementMessage(
+    'MESSAGE_IMPORTANT_MODIFIE',
+    user.structure,
+    user.id,
+    accessToken
+  )
+
+  return {
+    id,
+    dateDebut: dateDebut.toISODate(),
+    dateFin: dateFin.toISODate(),
+    message: newMessage,
+  }
 }
 
 export async function sendNouveauMessageGroupe({
@@ -488,9 +565,10 @@ function decryptContentAndFilename(
 
   if (message.infoPiecesJointes?.length) {
     decryptedMessage.infoPiecesJointes = message.infoPiecesJointes.map(
-      ({ id, nom }) => ({
+      ({ id, nom, statut }) => ({
         id,
         nom: decrypt({ encryptedText: nom, iv }, cleChiffrement),
+        statut,
       })
     )
   }

@@ -1,10 +1,14 @@
+import { DocumentSnapshot, Timestamp } from 'firebase/firestore'
 import { DateTime } from 'luxon'
 
 import { apiPost } from 'clients/api.client'
 import {
   addMessage,
+  addMessageImportant,
   findAndObserveChatsDuConseiller,
+  FirebaseMessageImportant,
   getChatsDuConseiller,
+  getMessageImportantSnapshot,
   getMessagesGroupe,
   observeChat,
   observeDerniersMessagesDuChat,
@@ -32,6 +36,7 @@ import { ByDay, Message } from 'interfaces/message'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import {
   countMessagesNotRead,
+  getMessageImportant,
   getMessagesListeDeDiffusion,
   modifierMessage,
   observeConseillerChats,
@@ -40,6 +45,7 @@ import {
   partagerOffre,
   sendNouveauMessage,
   sendNouveauMessageGroupe,
+  sendNouveauMessageImportant,
   setReadByConseiller,
   signIn,
   signOut,
@@ -464,6 +470,86 @@ describe('MessagesFirebaseAndApiService', () => {
         },
         accessToken
       )
+    })
+  })
+
+  describe('.sendNouveauMessageImportant', () => {
+    let newMessage: string
+    let idConseiller: string
+    const now = DateTime.now()
+    const demain = DateTime.now().plus({ day: 1 })
+    beforeEach(async () => {
+      // Given
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+      newMessage = 'nouveauMessageImportant'
+      idConseiller = 'id-conseiller'
+      // When
+    })
+
+    it('déclare un nouveau message important dans firebase', async () => {
+      //When
+      await sendNouveauMessageImportant({
+        cleChiffrement,
+        idConseiller,
+        newMessage,
+        dateDebut: now,
+        dateFin: demain,
+      })
+
+      // Then
+      expect(addMessageImportant).toHaveBeenCalledWith({
+        idConseiller: 'id-conseiller',
+        message: {
+          encryptedText: `Encrypted: ${newMessage}`,
+          iv: `IV: ${newMessage}`,
+        },
+        dateDebut: now,
+        dateFin: demain,
+      })
+    })
+  })
+
+  describe('.getMessageImportant', () => {
+    it('récupère le messsage important depuis firebase', async () => {
+      //Given
+      const messageSnapshot: DocumentSnapshot<
+        FirebaseMessageImportant,
+        FirebaseMessageImportant
+      > = {
+        id: 'document-id',
+        data: () => ({
+          idConseiller: 'idConseiller',
+          iv: 'iv-message',
+          content: 'contenu-message',
+          dateDebut: Timestamp.fromMillis(
+            DateTime.fromISO('2024-04-25').toMillis()
+          ),
+          dateFin: Timestamp.fromMillis(
+            DateTime.fromISO('2024-04-26').toMillis()
+          ),
+        }),
+      } as DocumentSnapshot<FirebaseMessageImportant, FirebaseMessageImportant>
+
+      const expectedMessage = {
+        id: 'document-id',
+        message: 'Decrypted: contenu-message',
+        dateDebut: '2024-04-25',
+        dateFin: '2024-04-26',
+      }
+
+      ;(getMessageImportantSnapshot as jest.Mock).mockResolvedValue(
+        messageSnapshot
+      )
+
+      //When
+      const message = await getMessageImportant(
+        'idConseiller',
+        'cleChiffrement'
+      )
+
+      //Then
+      expect(getMessageImportantSnapshot).toHaveBeenCalledWith('idConseiller')
+      expect(message).toEqual(expectedMessage)
     })
   })
 

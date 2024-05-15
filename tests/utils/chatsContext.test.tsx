@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { RenderResult, act, render, screen } from '@testing-library/react'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
@@ -57,9 +57,10 @@ describe('ChatsProvider', () => {
       token: 'tokenFirebase',
       cleChiffrement: 'cleChiffrement',
     }
+    let renderResult: RenderResult
     beforeEach(async () => {
       // When
-      await act(async () =>
+      renderResult = await act(async () =>
         render(
           <>
             <link rel='icon' href='/favicon.png' />
@@ -88,10 +89,9 @@ describe('ChatsProvider', () => {
 
     it('affiche une notification dans l’onglet s’il y a des messages non lus', async () => {
       // Then
-      expect(screen.getByRole('link', { hidden: true })).toHaveProperty(
-        'href',
-        'http://localhost/favicon_notif.png'
-      )
+      expect(
+        renderResult.container.querySelector("link[rel='icon']")
+      ).toHaveProperty('href', 'http://localhost/favicon_notif.png')
       expect(document.title).toMatch(/Nouveau\(x\) message\(s\) - /)
     })
 

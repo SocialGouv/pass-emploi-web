@@ -1,7 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import Pilotage from 'app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage'
@@ -13,6 +13,7 @@ import {
 } from 'services/actions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+import { ApiError } from 'utils/httpClient'
 
 jest.mock('services/actions.service')
 jest.mock('components/Modal')
@@ -144,9 +145,9 @@ describe('PilotagePage client side - Actions', () => {
           )
         ).toBeInTheDocument()
         expect(
-          screen.getByLabelText(
-            `Accéder au détail de l’action : ${action.titre}`
-          )
+          screen.getByRole('link', {
+            name: `Accéder au détail de l’action : ${action.titre}`,
+          })
         ).toHaveAttribute(
           'href',
           `/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`
@@ -472,6 +473,63 @@ describe('PilotagePage client side - Actions', () => {
               )
             ).toBeInTheDocument()
           })
+        })
+      })
+
+      describe('quand milo est down', () => {
+        beforeEach(async () => {
+          ;(qualifierActions as jest.Mock).mockResolvedValue(
+            new ApiError(500, 'internal server error')
+          )
+
+          await userEvent.click(
+            screen.getByRole('checkbox', {
+              name: `Sélection ${actions[0].titre} ${actions[0].categorie?.libelle ?? ''}`,
+            })
+          )
+        })
+
+        it('affiche le message d’error customisé', async () => {
+          //when
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier les actions en SNP',
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          )
+
+          //then
+          expect(
+            screen.getByText(
+              'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+            )
+          ).toBeInTheDocument()
+        })
+
+        it('affiche un message d’erreur quand des actions ne sont pas qualifiées', async () => {
+          //when
+          ;(qualifierActions as jest.Mock).mockResolvedValue({
+            idsActionsEnErreur: [1, 2],
+          })
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier les actions en SNP',
+            })
+          )
+          await userEvent.click(
+            screen.getByRole('button', {
+              name: 'Qualifier et envoyer à i-milo',
+            })
+          )
+          expect(
+            screen.getByText(
+              'Suite à un problème inconnu la qualification a échoué. Vous pouvez réessayer.'
+            )
+          ).toBeInTheDocument()
         })
       })
     })

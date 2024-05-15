@@ -99,7 +99,7 @@ export default function ContenuCGUConseillerCEJ() {
         </li>
       </ul>
       <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
-        A – Création et visualisation des actions
+        A – Création, visualisation des actions
       </h4>
       <p className='mb-4'>Chaque Conseiller peut, sur son tableau de bord :</p>
       <ul className='list-disc mb-8 ml-8'>
@@ -190,7 +190,7 @@ export default function ContenuCGUConseillerCEJ() {
           Tous les conseillers ont accès à un bouton « Actualités » leur
           présentant les nouveautés de l’application ;
         </li>
-        <li>Envoyer des pièces jointes ouvrables par les Jeunes.</li>
+        <li>Échanger des pièces jointes ouvrables par les Jeunes.</li>
       </ul>
 
       <h3 className='text-base-bold text-content_color mt-2 mb-2'>
@@ -302,7 +302,7 @@ export default function ContenuCGUConseillerCEJ() {
           mettre en ligne de contenus ou informations contraires aux
           dispositions légales et réglementaires en vigueur, en particulier à ne
           pas publier de message racistes, sexistes, injurieux, insultants ou
-          contraires à l’ordre public.
+          contraires à l’ordre public ;
         </li>
       </ul>
       <p className='mb-4'>
@@ -329,10 +329,10 @@ export default function ContenuCGUConseillerCEJ() {
       </p>
       <p className='mb-4'>
         Les pièces jointes déposées par l’Usager ne contiennent pas de données
-        sensibles, particulièrement ce dernier veille à ne pas déposer de
-        données relatives à ses opinions philosophiques, politiques, à sa
-        religion, à sa santé ou à son orientation sexuelle ou sur sa vie
-        sexuelle.
+        sensibles dès lors qu’elles ne sont pas strictement nécessaires à
+        l’accompagnement réalisé, particulièrement des données relatives à ses
+        opinions philosophiques, politiques, à sa religion, à sa santé ou à son
+        orientation sexuelle ou sur sa vie sexuelle.
       </p>
       <p className='mb-4'>
         Toute question ou propos peut être supprimé s’il contrevient à une

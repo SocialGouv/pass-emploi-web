@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+import dynamic from 'next/dynamic'
 import React, { useEffect, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
@@ -5,8 +7,20 @@ import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { JeuneChat } from 'interfaces/jeune'
+import {
+  FormNouveauMessageImportant,
+  getMessageImportant,
+  MessageImportantPreRempli,
+} from 'services/messages.service'
 import { trackEvent } from 'utils/analytics/matomo'
+import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { usePortefeuille } from 'utils/portefeuilleContext'
+
+const MessageImportantModal = dynamic(
+  () => import('components/chat/MessageImportantModal'),
+  { ssr: false }
+)
 
 interface ChatRoomProps {
   jeunesChats: JeuneChat[] | undefined
@@ -24,8 +38,67 @@ export default function ChatRoom({
   onAccesConversation,
 }: ChatRoomProps) {
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
+  const chatCredentials = useChatCredentials()
 
   const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
+  const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
+    MessageImportantPreRempli | undefined
+  >(undefined)
+  const [succesEnvoiMessageImportant, setSuccesEnvoiMessageImportant] =
+    useState<boolean | undefined>()
+  const [messageImportantIsLoading, setMessageImportantIsLoading] =
+    useState<boolean>(false)
+  const [afficherModaleMessageImportant, setAfficherModaleMessageImportant] =
+    useState<boolean>(false)
+
+  const [
+    afficherNotificationMessageImportant,
+    setAfficherNotificationMessageImportant,
+  ] = useState<boolean>(false)
+
+  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+
+  async function recupererMessageImportant() {
+    const messageImportant = await getMessageImportant(
+      conseiller.id,
+      chatCredentials!.cleChiffrement
+    )
+    setMessageImportantPreRempli(messageImportant ?? undefined)
+  }
+
+  async function envoyerMessageImportant(
+    message: string,
+    dateDebut: DateTime,
+    dateFin: DateTime
+  ): Promise<void> {
+    try {
+      setMessageImportantIsLoading(true)
+      const formNouveauMessageImportant: FormNouveauMessageImportant = {
+        idConseiller: conseiller.id,
+        newMessage: message,
+        dateFin: dateFin,
+        dateDebut: dateDebut,
+        cleChiffrement: chatCredentials!.cleChiffrement,
+        idMessageImportant: messageImportantPreRempli?.id,
+      }
+
+      const { sendNouveauMessageImportant } = await import(
+        'services/messages.service'
+      )
+      const nouveauMessageImportant = await sendNouveauMessageImportant(
+        formNouveauMessageImportant
+      )
+      setMessageImportantPreRempli(nouveauMessageImportant)
+
+      setSuccesEnvoiMessageImportant(true)
+      setMessageImportantIsLoading(false)
+    } catch (error) {
+      setSuccesEnvoiMessageImportant(false)
+    } finally {
+      setMessageImportantIsLoading(false)
+    }
+  }
 
   async function toggleFlag(idChat: string, flagged: boolean): Promise<void> {
     const { toggleFlag: _toggleFlag } = await import(
@@ -37,8 +110,13 @@ export default function ChatRoom({
       categorie: 'Conversation suivie',
       action: 'ChatRoom',
       nom: flagged.toString(),
-      avecBeneficiaires: idChat ? 'oui' : 'non',
+      avecBeneficiaires: aDesBeneficiaires,
     })
+  }
+
+  async function ouvrirModaleMessageImportant() {
+    setAfficherModaleMessageImportant(true)
+    setSuccesEnvoiMessageImportant(undefined)
   }
 
   function filtrerConversations(saisieUtilisateur: string) {
@@ -55,6 +133,20 @@ export default function ChatRoom({
 
     setChatsFiltres(chatsFiltresResult)
   }
+
+  useEffect(() => {
+    recupererMessageImportant()
+  }, [])
+
+  useEffect(() => {
+    setAfficherNotificationMessageImportant(
+      Boolean(
+        messageImportantPreRempli?.dateFin &&
+          DateTime.fromISO(messageImportantPreRempli.dateFin).startOf('day') >=
+            DateTime.now().startOf('day')
+      )
+    )
+  }, [messageImportantPreRempli])
 
   useEffect(() => {
     setChatsFiltres(jeunesChats)
@@ -85,9 +177,37 @@ export default function ChatRoom({
           </button>
         </nav>
 
-        <h2 className='text-l-bold text-primary text-center my-6 grow layout_s:text-left layout_s:p-0 layout_base:my-3'>
-          Messagerie
-        </h2>
+        <div className='flex flex-start wrap gap-4 justify-center my-6 grow layout_s:justify-start layout_s:p-0 layout_base:my-3'>
+          <h2 className='text-l-bold text-primary'>Messagerie</h2>
+          <button
+            onClick={ouvrirModaleMessageImportant}
+            title='Configurer un message important'
+          >
+            <div className='relative'>
+              <IconComponent
+                name={IconName.Settings}
+                className='w-6 h-6 fill-primary'
+                focusable={false}
+                aria-hidden={true}
+              />
+              {afficherNotificationMessageImportant && (
+                <>
+                  <IconComponent
+                    name={IconName.DecorativePoint}
+                    className='absolute right-[-8px] top-[-8px] w-3 h-3 fill-warning'
+                    focusable={false}
+                    aria-hidden={true}
+                    title='Un message important est déjà configuré'
+                  />
+                  <span className='sr-only'>
+                    Un message important est déjà configuré
+                  </span>
+                </>
+              )}
+            </div>
+            <span className='sr-only'>Configurer un message important</span>
+          </button>
+        </div>
       </div>
 
       <div className='mx-3'>
@@ -127,6 +247,18 @@ export default function ChatRoom({
         onToggleFlag={toggleFlag}
         onSelectConversation={onAccesConversation}
       />
+
+      {afficherModaleMessageImportant && (
+        <MessageImportantModal
+          messageImportantPreRempli={messageImportantPreRempli}
+          succesEnvoiMessageImportant={succesEnvoiMessageImportant}
+          messageImportantIsLoading={messageImportantIsLoading}
+          onConfirmation={envoyerMessageImportant}
+          onCancel={() => {
+            setAfficherModaleMessageImportant(false)
+          }}
+        />
+      )}
     </>
   )
 }
