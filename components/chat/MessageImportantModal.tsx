@@ -15,11 +15,10 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { ValueWithError } from 'components/ValueWithError'
 import { MessageImportantPreRempli } from 'services/messages.service'
-import { toShortDate } from 'utils/date'
 
 interface MessageImportantModalProps {
   messageImportantIsLoading: boolean
-  messageImportantPreRempli: MessageImportantPreRempli | null
+  messageImportantPreRempli: MessageImportantPreRempli | undefined
   onConfirmation: (
     message: string,
     dateDebut: DateTime,
@@ -62,18 +61,6 @@ export default function MessageImportantModal({
           'Le champ “Date de début” est vide. Renseignez une date de début.',
       })
       return false
-    } else {
-      const dateDebutFormate = DateTime.fromISO(dateDebut.value)
-      const aujourdhui = DateTime.now().startOf('day')
-      const troisAnsApres = aujourdhui.plus({ year: 3 })
-
-      if (dateDebutFormate < aujourdhui || dateDebutFormate > troisAnsApres) {
-        setDateDebut({
-          ...dateDebut,
-          error: `Le champ “Date de début” est invalide. La date de début attendue est comprise entre le ${toShortDate(aujourdhui)} et le ${toShortDate(troisAnsApres)}`,
-        })
-        return false
-      }
     }
     return true
   }
@@ -88,17 +75,6 @@ export default function MessageImportantModal({
     } else {
       const dateDebutFormate = DateTime.fromISO(dateDebut.value!)
       const dateFinFormate = DateTime.fromISO(dateFin.value)
-      const aujourdhui = DateTime.now().startOf('day')
-      const troisAnsApres = aujourdhui.plus({ year: 3 })
-
-      if (dateFinFormate < aujourdhui || dateFinFormate > troisAnsApres) {
-        setDateFin({
-          ...dateFin,
-          error: `Le champ “Date de fin” est invalide. La date de fin attendue est comprise entre le ${toShortDate(aujourdhui)} et le ${toShortDate(troisAnsApres)}`,
-        })
-        return false
-      }
-
       if (dateFinFormate < dateDebutFormate) {
         setDateFin({
           ...dateFin,

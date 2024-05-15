@@ -184,23 +184,29 @@ export async function addMessage(
 
 export async function addMessageImportant(
   data: BaseCreateFirebaseMessageImportant
-) {
+): Promise<string> {
   const firebaseMessage = createFirebaseMessageImportant(data)
 
   try {
-    if (data.idMessageImportant)
+    if (data.idMessageImportant) {
+      const ref = getMessageImportantReference(data.idMessageImportant)
       await setDoc<FirebaseMessageImportant, FirebaseMessageImportant>(
-        getMessageImportantReference(data.idMessageImportant),
+        ref,
         firebaseMessage
       )
-    else {
-      await addDoc<FirebaseMessageImportant, FirebaseMessageImportant>(
+      return ref.id
+    } else {
+      const ref = await addDoc<
+        FirebaseMessageImportant,
+        FirebaseMessageImportant
+      >(
         collection(getDb(), messageImportantCollection) as CollectionReference<
           FirebaseMessageImportant,
           FirebaseMessageImportant
         >,
         firebaseMessage
       )
+      return ref.id
     }
   } catch (e) {
     console.error(e)

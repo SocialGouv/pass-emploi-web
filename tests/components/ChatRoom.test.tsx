@@ -49,6 +49,68 @@ describe('<ChatRoom />', () => {
       accederConversation = jest.fn()
     })
 
+    it('affiche une pastille si un message est configuré', async () => {
+      //Given
+      ;(getMessageImportant as jest.Mock).mockResolvedValue({
+        message: 'contenu du message',
+        dateDebut: DateTime.now().toISODate(),
+        dateFin: DateTime.now().plus({ day: 1 }).toISODate(),
+        id: 'id-message',
+      })
+
+      //When
+      await act(async () => {
+        renderWithContexts(
+          <ChatRoom
+            jeunesChats={jeunesChats}
+            showMenu={false}
+            onAccesConversation={accederConversation}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {
+            customConseiller: unConseiller({ id: 'id-conseiller' }),
+          }
+        )
+      })
+
+      //Then
+      expect(
+        screen.getByText('Un message important est déjà configuré')
+      ).toBeInTheDocument()
+    })
+
+    it('n’affiche pas de pastille s’il n’y a pas de message configuré', async () => {
+      //Given
+      ;(getMessageImportant as jest.Mock).mockResolvedValue({
+        message: 'contenu du message',
+        dateDebut: DateTime.now().minus({ day: 2 }).toISODate(),
+        dateFin: DateTime.now().minus({ day: 1 }).toISODate(),
+        id: 'id-message',
+      })
+
+      //When
+      await act(async () => {
+        renderWithContexts(
+          <ChatRoom
+            jeunesChats={jeunesChats}
+            showMenu={false}
+            onAccesConversation={accederConversation}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {
+            customConseiller: unConseiller({ id: 'id-conseiller' }),
+          }
+        )
+      })
+
+      //Then
+      expect(() =>
+        screen.getByText('Un message important est déjà configuré')
+      ).toThrow()
+    })
+
     it('affiche un bouton pour configurer son message', async () => {
       //When
       await act(async () => {
@@ -80,6 +142,11 @@ describe('<ChatRoom />', () => {
         let submitBtn: HTMLButtonElement
 
         beforeEach(async () => {
+          //Given
+          ;(getMessageImportant as jest.Mock).mockResolvedValue({
+            undefined,
+          })
+
           await act(async () => {
             renderWithContexts(
               <ChatRoom
@@ -131,25 +198,6 @@ describe('<ChatRoom />', () => {
         })
 
         describe('gère les messages d’erreur', () => {
-          it('quand les dates sont trop lointaines', async () => {
-            //When
-            await userEvent.type(inputDateDebut, '2028-04-24')
-            await userEvent.type(inputDateFin, '2028-04-30')
-            await userEvent.click(submitBtn)
-
-            //Then
-            expect(
-              screen.getByText(
-                'Le champ “Date de début” est invalide. La date de début attendue est comprise entre le 24/04/2024 et le 24/04/2027'
-              )
-            ).toBeInTheDocument()
-            expect(
-              screen.getByText(
-                'Le champ “Date de fin” est invalide. La date de fin attendue est comprise entre le 24/04/2024 et le 24/04/2027'
-              )
-            ).toBeInTheDocument()
-          })
-
           it('quand les champs sont vides', async () => {
             //When
             await userEvent.click(inputDateDebut)
