@@ -10,6 +10,7 @@ import {
   CreateFirebaseMessageWithOffre,
   findAndObserveChatsDuConseiller,
   getChatsDuConseiller,
+  getIdLastMessage,
   getMessageImportantSnapshot,
   getMessagesGroupe,
   observeChat,
@@ -386,8 +387,7 @@ export async function modifierMessage(
   chatId: string,
   message: Message,
   nouveauContenu: string,
-  cleChiffrement: string,
-  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+  cleChiffrement: string
 ) {
   {
     const nouveauMessage = message.iv
@@ -404,7 +404,8 @@ export async function modifierMessage(
       status: 'edited',
     })
 
-    if (isLastMessage) {
+    const idLastMessage = await getIdLastMessage(chatId)
+    if (idLastMessage === message.id) {
       await updateChat(chatId, { lastMessageContent: nouveauMessage })
     }
 
@@ -416,8 +417,7 @@ export async function modifierMessage(
 export async function supprimerMessage(
   chatId: string,
   message: Message,
-  cleChiffrement: string,
-  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+  cleChiffrement: string
 ) {
   const messageSuppression = '(message supprimé)'
   const nouveauMessage = message.iv
@@ -434,7 +434,8 @@ export async function supprimerMessage(
     status: 'deleted',
   })
 
-  if (isLastMessage) {
+  const idLastMessage = await getIdLastMessage(chatId)
+  if (idLastMessage === message.id) {
     await updateChat(chatId, { lastMessageContent: nouveauMessage })
   }
 

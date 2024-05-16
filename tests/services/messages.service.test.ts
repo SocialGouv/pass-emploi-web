@@ -8,6 +8,7 @@ import {
   findAndObserveChatsDuConseiller,
   FirebaseMessageImportant,
   getChatsDuConseiller,
+  getIdLastMessage,
   getMessageImportantSnapshot,
   getMessagesGroupe,
   observeChat,
@@ -667,10 +668,11 @@ describe('MessagesFirebaseAndApiService', () => {
     })
 
     it('met à jour la conversation si le dernier message est supprimé', async () => {
+      //Given
+      ;(getIdLastMessage as jest.Mock).mockResolvedValue(message.id)
+
       // When
-      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement, {
-        isLastMessage: true,
-      })
+      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement)
 
       // Then
       expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
@@ -725,15 +727,15 @@ describe('MessagesFirebaseAndApiService', () => {
     })
 
     it('met à jour la conversation si le dernier message est modifié', async () => {
+      //Given
+      ;(getIdLastMessage as jest.Mock).mockResolvedValue(message.id)
+
       // When
       await modifierMessage(
         jeuneChat.chatId,
         message,
         'nouveau contenu',
-        cleChiffrement,
-        {
-          isLastMessage: true,
-        }
+        cleChiffrement
       )
 
       // Then

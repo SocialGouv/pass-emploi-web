@@ -2,6 +2,7 @@ import AES from 'crypto-js/aes'
 import Base64 from 'crypto-js/enc-base64'
 import Utf8 from 'crypto-js/enc-utf8'
 import WordArray from 'crypto-js/lib-typedarrays'
+import { captureError } from 'utils/monitoring/elastic'
 
 export interface EncryptedTextWithInitializationVector {
   encryptedText: string
@@ -38,8 +39,14 @@ export function decrypt(
   encryptedText: EncryptedTextWithInitializationVector,
   cleChiffrement: string
 ): string {
-  const key = Utf8.parse(cleChiffrement)
-  return AES.decrypt(encryptedText.encryptedText, key, {
-    iv: Base64.parse(encryptedText.iv),
-  }).toString(Utf8)
+  try {
+    const key = Utf8.parse(cleChiffrement)
+    return AES.decrypt(encryptedText.encryptedText, key, {
+      iv: Base64.parse(encryptedText.iv),
+    }).toString(Utf8)
+  } catch (e) {
+    console.error(e)
+    captureError(e as Error)
+    return 'Erreur lors du déchiffrement du message'
+  }
 }
