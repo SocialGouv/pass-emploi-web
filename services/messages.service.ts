@@ -191,10 +191,10 @@ export async function getMessagesListeDeDiffusion(
 }
 
 export async function getMessageImportant(
-  idConseiller: string,
   cleChiffrement: string
 ): Promise<MessageImportantPreRempli | undefined> {
-  const snapshot = await getMessageImportantSnapshot(idConseiller)
+  const session = await getSession()
+  const snapshot = await getMessageImportantSnapshot(session!.user.id)
   if (!snapshot) return
 
   const messageImportant = snapshot.data()

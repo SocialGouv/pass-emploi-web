@@ -59,14 +59,6 @@ export default function ChatRoom({
 
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
-  async function recupererMessageImportant() {
-    const messageImportant = await getMessageImportant(
-      conseiller.id,
-      chatCredentials!.cleChiffrement
-    )
-    setMessageImportantPreRempli(messageImportant ?? undefined)
-  }
-
   async function envoyerMessageImportant(
     message: string,
     dateDebut: DateTime,
@@ -135,8 +127,12 @@ export default function ChatRoom({
   }
 
   useEffect(() => {
-    recupererMessageImportant()
-  }, [])
+    if (!chatCredentials) return
+
+    getMessageImportant(chatCredentials.cleChiffrement).then(
+      setMessageImportantPreRempli
+    )
+  }, [chatCredentials])
 
   useEffect(() => {
     setAfficherNotificationMessageImportant(
