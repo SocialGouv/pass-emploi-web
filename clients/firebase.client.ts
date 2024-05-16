@@ -303,6 +303,23 @@ export function findAndObserveChatsDuConseiller(
   }
 }
 
+export async function getIdLastMessage(
+  chatId: string
+): Promise<string | undefined> {
+  const lastMessage = await getDocs(
+    query<FirebaseMessage, FirebaseMessage>(
+      collection(getChatReference(chatId), 'messages') as CollectionReference<
+        FirebaseMessage,
+        FirebaseMessage
+      >,
+      orderBy('creationDate', 'desc'),
+      limit(1)
+    )
+  )
+
+  if (!lastMessage.empty) return lastMessage.docs[0].id
+}
+
 export async function getChatsDuConseiller(
   idConseiller: string
 ): Promise<{ [idJeune: string]: Chat }> {

@@ -227,8 +227,7 @@ describe('<Conversation />', () => {
     expect(supprimerMessage).toHaveBeenCalledWith(
       'idChat',
       messagesParJour[0].messages[0],
-      'cleChiffrement',
-      { isLastMessage: false }
+      'cleChiffrement'
     )
 
     // When
@@ -247,8 +246,7 @@ describe('<Conversation />', () => {
     expect(supprimerMessage).toHaveBeenCalledWith(
       'idChat',
       messagesParJour.at(-1)!.messages.at(-1)!,
-      'cleChiffrement',
-      { isLastMessage: true }
+      'cleChiffrement'
     )
   })
 
@@ -293,8 +291,7 @@ describe('<Conversation />', () => {
         'idChat',
         dernierMessage,
         dernierMessage.content + 'nouveau contenu',
-        'cleChiffrement',
-        { isLastMessage: true }
+        'cleChiffrement'
       )
       expect(screen.queryByText('Modifier le message')).not.toBeInTheDocument()
       expect(input).toHaveValue('')
