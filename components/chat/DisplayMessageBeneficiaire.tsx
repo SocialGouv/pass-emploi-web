@@ -34,51 +34,9 @@ export default function DisplayMessageBeneficiaire({
 
             {message.type === TypeMessage.MESSAGE_PJ &&
               message.infoPiecesJointes &&
-              message.infoPiecesJointes.map(({ id, nom, statut }) => (
-                <>
-                  {statut === 'valide' && (
-                    <>
-                      <p className='whitespace-pre-wrap'>
-                        Votre bénéficiaire vous a transmis une nouvelle pièce
-                        jointe. Celle-ci sera conservée 4 mois. Enregistrez la
-                        dans i-milo pour la conserver de manière sécurisée.
-                      </p>
-                      <LienPieceJointe
-                        key={id}
-                        id={id}
-                        nom={nom}
-                        className='fill-blanc'
-                      />
-                    </>
-                  )}
-
-                  {(statut === 'analyse_a_faire' ||
-                    statut === 'analyse_en_cours') && (
-                    <>
-                      <p className='whitespace-pre-wrap'>
-                        Votre bénéficiaire vous a transmis une nouvelle pièce
-                        jointe. Celle-ci sera conservée 4 mois. Enregistrez la
-                        dans i-milo pour la conserver de manière sécurisée.
-                      </p>
-                      <div className='flex flex-row justify-end items-center'>
-                        <SpinningLoader className='w-4 h-4 mr-2 fill-primary_lighten' />
-                        {nom}
-                      </div>
-                    </>
-                  )}
-
-                  {statut === 'non_valide' && (
-                    <p className='whitespace-pre-wrap'>
-                      La pièce-jointe envoyée par votre bénéficiaire a été
-                      bloquée par l’antivirus
-                    </p>
-                  )}
-
-                  {statut === 'expiree' && (
-                    <p className='text-xs-regular'>Pièce jointe expirée</p>
-                  )}
-                </>
-              ))}
+              message.infoPiecesJointes.map((pj, key) => {
+                return <MessagePJ key={key} {...pj} />
+              })}
 
             {message.type !== TypeMessage.MESSAGE_PJ && (
               <TexteAvecLien texte={message.content} lighten={true} />
@@ -122,4 +80,54 @@ export default function DisplayMessageBeneficiaire({
       )}
     </li>
   )
+}
+
+function MessagePJ({
+  id,
+  nom,
+  statut,
+}: {
+  id: string
+  nom: string
+  statut?: string
+}) {
+  switch (statut) {
+    case 'valide':
+      return (
+        <>
+          <p className='whitespace-pre-wrap'>
+            Votre bénéficiaire vous a transmis une nouvelle pièce jointe.
+            Celle-ci sera conservée 4 mois. Enregistrez la dans i-milo pour la
+            conserver de manière sécurisée.
+          </p>
+          <LienPieceJointe key={id} id={id} nom={nom} className='fill-blanc' />
+        </>
+      )
+    case 'non_valide':
+      return (
+        <p className='whitespace-pre-wrap'>
+          La pièce-jointe envoyée par votre bénéficiaire a été bloquée par
+          l’antivirus
+        </p>
+      )
+    case 'analyse_a_faire':
+    case 'analyse_en_cours':
+      return (
+        <>
+          <p className='whitespace-pre-wrap'>
+            Votre bénéficiaire vous a transmis une nouvelle pièce jointe.
+            Celle-ci sera conservée 4 mois. Enregistrez la dans i-milo pour la
+            conserver de manière sécurisée.
+          </p>
+          <div className='flex flex-row justify-end items-center break-all'>
+            <SpinningLoader className='w-4 h-4 mr-2 fill-primary_lighten' />
+            {nom}
+          </div>
+        </>
+      )
+    case 'expiree':
+      return <p className='text-xs-regular'>Pièce jointe expirée</p>
+    default:
+      return <SpinningLoader className='w-6 h-6 mr-2 fill-primary_lighten' />
+  }
 }
