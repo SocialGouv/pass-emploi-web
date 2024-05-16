@@ -75,9 +75,7 @@ export default function DisplayMessageBeneficiaire({
                   )}
 
                   {statut === 'expiree' && (
-                    <p className='inline-block p-2 whitespace-pre-wrap border border-primary_lighten rounded-full grey_100'>
-                      Pièce jointe expirée
-                    </p>
+                    <p className='text-xs-regular'>Pièce jointe expirée</p>
                   )}
                 </>
               ))}
