@@ -8,6 +8,7 @@ import {
   addMessageImportant,
   CreateFirebaseMessage,
   CreateFirebaseMessageWithOffre,
+  deleteMessageImportant,
   findAndObserveChatsDuConseiller,
   getChatsDuConseiller,
   getIdLastMessage,
@@ -79,6 +80,7 @@ type MessageType =
   | 'MESSAGE_MODIFIE'
   | 'MESSAGE_SUPPRIME'
   | 'MESSAGE_IMPORTANT_MODIFIE'
+  | 'MESSAGE_IMPORTANT_SUPPRIME'
 
 export async function getChatCredentials(): Promise<ChatCredentials> {
   const session = await getSession()
@@ -320,6 +322,12 @@ export async function sendNouveauMessageImportant({
     dateFin: dateFin.toISODate(),
     message: newMessage,
   }
+}
+
+export async function desactiverMessageImportant(
+  idMessageImportant: string
+): Promise<void> {
+  await deleteMessageImportant(idMessageImportant)
 }
 
 export async function sendNouveauMessageGroupe({

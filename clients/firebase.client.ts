@@ -8,6 +8,7 @@ import {
   addDoc,
   collection,
   CollectionReference,
+  deleteDoc,
   doc,
   DocumentReference,
   DocumentSnapshot,
@@ -208,6 +209,19 @@ export async function addMessageImportant(
       )
       return ref.id
     }
+  } catch (e) {
+    console.error(e)
+    captureError(e as Error)
+    throw e
+  }
+}
+
+export async function deleteMessageImportant(
+  idMessageImportant: string
+): Promise<void> {
+  try {
+    const ref = getMessageImportantReference(idMessageImportant)
+    await deleteDoc<FirebaseMessageImportant, FirebaseMessageImportant>(ref)
   } catch (e) {
     console.error(e)
     captureError(e as Error)
