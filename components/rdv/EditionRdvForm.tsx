@@ -776,19 +776,6 @@ export function EditionRdvForm({
               )}
             </>
           )}
-
-          {idsJeunes.value.length > 0 && evenement && evenement.statut && (
-            <div className='flex mb-2'>
-              <ButtonLink
-                style={ButtonStyle.PRIMARY}
-                href={`/emargement/${evenement.id}?type=ac`}
-                externalLink={true}
-                label='Exporter la liste des inscrits'
-                onClick={trackEmargement}
-              ></ButtonLink>
-            </div>
-          )}
-
           <BeneficiairesMultiselectAutocomplete
             id='select-beneficiaires'
             beneficiaires={buildOptionsJeunes()}
@@ -811,6 +798,17 @@ export function EditionRdvForm({
                   : undefined
             }
           />
+          <div className='flex mt-4 justify-end'>
+            {idsJeunes.value.length > 0 && evenement && evenement.statut && (
+              <ButtonLink
+                style={ButtonStyle.PRIMARY}
+                href={`/emargement/${evenement.id}?type=ac`}
+                externalLink={true}
+                label='Exporter la liste des inscrits'
+                onClick={trackEmargement}
+              ></ButtonLink>
+            )}
+          </div>
         </Etape>
 
         <Etape numero={4} titre='Ajoutez les modalités pratiques'>

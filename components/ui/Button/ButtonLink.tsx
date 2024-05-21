@@ -53,13 +53,13 @@ export default function ButtonLink({
           aria-label={`${label} (nouvelle fenêtre)`}
           onClick={onClick}
         >
-          {label}
           <IconComponent
-            name={IconName.OpenInNew}
-            className='ml-1.5 w-4 h-4 fill-[currentColor]'
+            name={IconName.Download}
+            className='mr-2 w-4 h-4 fill-[currentColor]'
             focusable={false}
             aria-hidden={true}
           />
+          {label}
         </a>
       )}
     </>
