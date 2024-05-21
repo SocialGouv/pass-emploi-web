@@ -25,15 +25,19 @@ interface MessageImportantModalProps {
     dateFin: DateTime
   ) => void
   onCancel: () => void
+  onDeleteMessageImportant: () => void
   succesEnvoiMessageImportant?: boolean
+  succesDesactivationMessageImportant?: boolean
 }
 
 export default function MessageImportantModal({
   messageImportantPreRempli,
   messageImportantIsLoading,
   succesEnvoiMessageImportant,
+  succesDesactivationMessageImportant,
   onConfirmation,
   onCancel,
+  onDeleteMessageImportant,
 }: MessageImportantModalProps) {
   const modalRef = useRef<{
     closeModal: (e: KeyboardEvent | MouseEvent) => void
@@ -120,13 +124,18 @@ export default function MessageImportantModal({
     }
   }
 
+  const dateFinMessagePreRempliEstFuture =
+    messageImportantPreRempli?.dateFin &&
+    DateTime.fromISO(messageImportantPreRempli.dateFin).startOf('day') >=
+      DateTime.now().startOf('day')
+
   return (
     <Modal
       title='Configurer un message important'
       onClose={onCancel}
       ref={modalRef}
     >
-      {!succesEnvoiMessageImportant && (
+      {!succesEnvoiMessageImportant && !succesDesactivationMessageImportant && (
         <>
           {succesEnvoiMessageImportant === false && (
             <FailureAlert label="Suite à un problème inconnu l'envoi du message important a échoué. Vous pouvez réessayer." />
@@ -204,14 +213,16 @@ export default function MessageImportantModal({
               />
 
               <div className='flex justify-center'>
-                <Button
-                  type='button'
-                  style={ButtonStyle.SECONDARY}
-                  onClick={(e) => modalRef.current!.closeModal(e)}
-                  className='mr-3'
-                >
-                  Annuler
-                </Button>
+                {dateFinMessagePreRempliEstFuture && (
+                  <Button
+                    type='button'
+                    style={ButtonStyle.SECONDARY}
+                    onClick={onDeleteMessageImportant}
+                    className='mr-3'
+                  >
+                    Désactiver le message
+                  </Button>
+                )}
                 <Button type='submit' isLoading={messageImportantIsLoading}>
                   <IconComponent
                     name={IconName.Send}
@@ -235,6 +246,18 @@ export default function MessageImportantModal({
             focusable={false}
           />
           <SuccessAlert label='Votre message a bien été diffusé à l’ensemble de vos bénéficiaires' />
+        </div>
+      )}
+
+      {succesDesactivationMessageImportant && (
+        <div className='text-center'>
+          <IllustrationComponent
+            name={IllustrationName.Check}
+            className='mx-auto my-8 fill-success_darken w-[180px] h-[180px]'
+            aria-hidden={true}
+            focusable={false}
+          />
+          <SuccessAlert label='Votre message a bien été désactivé' />
         </div>
       )}
     </Modal>

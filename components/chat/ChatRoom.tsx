@@ -8,6 +8,7 @@ import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { JeuneChat } from 'interfaces/jeune'
 import {
+  desactiverMessageImportant,
   FormNouveauMessageImportant,
   getMessageImportant,
   MessageImportantPreRempli,
@@ -47,6 +48,10 @@ export default function ChatRoom({
   >(undefined)
   const [succesEnvoiMessageImportant, setSuccesEnvoiMessageImportant] =
     useState<boolean | undefined>()
+  const [
+    succesDesactivationMessageImportant,
+    setSuccesDesactivationMessageImportant,
+  ] = useState<boolean | undefined>()
   const [messageImportantIsLoading, setMessageImportantIsLoading] =
     useState<boolean>(false)
   const [afficherModaleMessageImportant, setAfficherModaleMessageImportant] =
@@ -84,9 +89,27 @@ export default function ChatRoom({
       setMessageImportantPreRempli(nouveauMessageImportant)
 
       setSuccesEnvoiMessageImportant(true)
-      setMessageImportantIsLoading(false)
     } catch (error) {
       setSuccesEnvoiMessageImportant(false)
+    } finally {
+      setMessageImportantIsLoading(false)
+    }
+  }
+
+  async function supprimerMessageImportant(): Promise<void> {
+    if (!messageImportantPreRempli) return
+    try {
+      setMessageImportantIsLoading(true)
+
+      const { desactiverMessageImportant } = await import(
+        'services/messages.service'
+      )
+      await desactiverMessageImportant(messageImportantPreRempli.id)
+      setMessageImportantPreRempli(undefined)
+
+      setSuccesDesactivationMessageImportant(true)
+    } catch (error) {
+      setSuccesDesactivationMessageImportant(false)
     } finally {
       setMessageImportantIsLoading(false)
     }
@@ -109,6 +132,7 @@ export default function ChatRoom({
   async function ouvrirModaleMessageImportant() {
     setAfficherModaleMessageImportant(true)
     setSuccesEnvoiMessageImportant(undefined)
+    setSuccesDesactivationMessageImportant(undefined)
   }
 
   function filtrerConversations(saisieUtilisateur: string) {
@@ -248,11 +272,15 @@ export default function ChatRoom({
         <MessageImportantModal
           messageImportantPreRempli={messageImportantPreRempli}
           succesEnvoiMessageImportant={succesEnvoiMessageImportant}
+          succesDesactivationMessageImportant={
+            succesDesactivationMessageImportant
+          }
           messageImportantIsLoading={messageImportantIsLoading}
           onConfirmation={envoyerMessageImportant}
           onCancel={() => {
             setAfficherModaleMessageImportant(false)
           }}
+          onDeleteMessageImportant={supprimerMessageImportant}
         />
       )}
     </>

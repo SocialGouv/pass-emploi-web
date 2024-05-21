@@ -5,6 +5,7 @@ import { apiPost } from 'clients/api.client'
 import {
   addMessage,
   addMessageImportant,
+  deleteMessageImportant,
   findAndObserveChatsDuConseiller,
   FirebaseMessageImportant,
   getChatsDuConseiller,
@@ -37,6 +38,7 @@ import { ByDay, Message } from 'interfaces/message'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import {
   countMessagesNotRead,
+  desactiverMessageImportant,
   getMessageImportant,
   getMessagesListeDeDiffusion,
   modifierMessage,
@@ -507,6 +509,18 @@ describe('MessagesFirebaseAndApiService', () => {
         dateDebut: now,
         dateFin: demain,
       })
+    })
+  })
+
+  describe('.desactiverMessageImportant', () => {
+    const idMessageImportant = 'id-message-important'
+
+    it('supprime le message important dans firebase', async () => {
+      //When
+      await desactiverMessageImportant(idMessageImportant)
+
+      // Then
+      expect(deleteMessageImportant).toHaveBeenCalledWith(idMessageImportant)
     })
   })
 

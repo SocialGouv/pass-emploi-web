@@ -9,6 +9,7 @@ import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { BaseJeune, JeuneChat } from 'interfaces/jeune'
 import {
+  desactiverMessageImportant,
   getMessageImportant,
   sendNouveauMessageImportant,
   toggleFlag,
@@ -267,6 +268,50 @@ describe('<ChatRoom />', () => {
           expect(inputMessage).toHaveProperty('value', 'contenu-message')
         })
       })
+    })
+
+    it('permet de supprimer le message important', async () => {
+      //Given
+      ;(getMessageImportant as jest.Mock).mockResolvedValue({
+        message: 'contenu-message',
+        dateDebut: '2024-04-24',
+        dateFin: '2024-05-25',
+        id: 'id-document',
+      })
+
+      const now = DateTime.fromISO('2024-04-24')
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+
+      await act(async () => {
+        renderWithContexts(
+          <ChatRoom
+            jeunesChats={jeunesChats}
+            showMenu={false}
+            onAccesConversation={accederConversation}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {
+            customConseiller: unConseiller({ id: 'id-conseiller' }),
+          }
+        )
+      })
+
+      const boutonSettings = screen.getByRole('button', {
+        name: /Configurer un message important/,
+      })
+
+      await userEvent.click(boutonSettings)
+
+      const supprimerMessage = screen.getByRole('button', {
+        name: 'Désactiver le message',
+      })
+
+      //When
+      await userEvent.click(supprimerMessage)
+
+      //Then
+      expect(desactiverMessageImportant).toHaveBeenCalledWith('id-document')
     })
   })
 
