@@ -8,8 +8,10 @@ import {
   addMessageImportant,
   CreateFirebaseMessage,
   CreateFirebaseMessageWithOffre,
+  deleteMessageImportant,
   findAndObserveChatsDuConseiller,
   getChatsDuConseiller,
+  getIdLastMessage,
   getMessageImportantSnapshot,
   getMessagesGroupe,
   observeChat,
@@ -78,6 +80,7 @@ type MessageType =
   | 'MESSAGE_MODIFIE'
   | 'MESSAGE_SUPPRIME'
   | 'MESSAGE_IMPORTANT_MODIFIE'
+  | 'MESSAGE_IMPORTANT_SUPPRIME'
 
 export async function getChatCredentials(): Promise<ChatCredentials> {
   const session = await getSession()
@@ -321,6 +324,12 @@ export async function sendNouveauMessageImportant({
   }
 }
 
+export async function desactiverMessageImportant(
+  idMessageImportant: string
+): Promise<void> {
+  await deleteMessageImportant(idMessageImportant)
+}
+
 export async function sendNouveauMessageGroupe({
   cleChiffrement,
   idsBeneficiaires,
@@ -386,8 +395,7 @@ export async function modifierMessage(
   chatId: string,
   message: Message,
   nouveauContenu: string,
-  cleChiffrement: string,
-  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+  cleChiffrement: string
 ) {
   {
     const nouveauMessage = message.iv
@@ -404,7 +412,8 @@ export async function modifierMessage(
       status: 'edited',
     })
 
-    if (isLastMessage) {
+    const idLastMessage = await getIdLastMessage(chatId)
+    if (idLastMessage === message.id) {
       await updateChat(chatId, { lastMessageContent: nouveauMessage })
     }
 
@@ -416,8 +425,7 @@ export async function modifierMessage(
 export async function supprimerMessage(
   chatId: string,
   message: Message,
-  cleChiffrement: string,
-  { isLastMessage }: { isLastMessage: boolean } = { isLastMessage: false }
+  cleChiffrement: string
 ) {
   const messageSuppression = '(message supprimé)'
   const nouveauMessage = message.iv
@@ -434,7 +442,8 @@ export async function supprimerMessage(
     status: 'deleted',
   })
 
-  if (isLastMessage) {
+  const idLastMessage = await getIdLastMessage(chatId)
+  if (idLastMessage === message.id) {
     await updateChat(chatId, { lastMessageContent: nouveauMessage })
   }
 

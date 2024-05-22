@@ -8,6 +8,7 @@ import {
   addDoc,
   collection,
   CollectionReference,
+  deleteDoc,
   doc,
   DocumentReference,
   DocumentSnapshot,
@@ -215,6 +216,19 @@ export async function addMessageImportant(
   }
 }
 
+export async function deleteMessageImportant(
+  idMessageImportant: string
+): Promise<void> {
+  try {
+    const ref = getMessageImportantReference(idMessageImportant)
+    await deleteDoc<FirebaseMessageImportant, FirebaseMessageImportant>(ref)
+  } catch (e) {
+    console.error(e)
+    captureError(e as Error)
+    throw e
+  }
+}
+
 export async function updateMessage(
   idChat: string,
   idMessage: string,
@@ -301,6 +315,23 @@ export function findAndObserveChatsDuConseiller(
     captureError(e as Error)
     throw e
   }
+}
+
+export async function getIdLastMessage(
+  chatId: string
+): Promise<string | undefined> {
+  const lastMessage = await getDocs(
+    query<FirebaseMessage, FirebaseMessage>(
+      collection(getChatReference(chatId), 'messages') as CollectionReference<
+        FirebaseMessage,
+        FirebaseMessage
+      >,
+      orderBy('creationDate', 'desc'),
+      limit(1)
+    )
+  )
+
+  if (!lastMessage.empty) return lastMessage.docs[0].id
 }
 
 export async function getChatsDuConseiller(

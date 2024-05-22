@@ -66,12 +66,7 @@ export default function Conversation({
   )
 
   const [messageAModifier, setMessageAModifier] = useState<
-    | {
-        message: Message
-        indexJour: number
-        indexMessage: number
-      }
-    | undefined
+    Message | undefined
   >()
 
   const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
@@ -223,11 +218,7 @@ export default function Conversation({
   }
 
   function preparerModificationmessage(message: Message, i: number, j: number) {
-    setMessageAModifier({
-      message,
-      indexJour: i,
-      indexMessage: j,
-    })
+    setMessageAModifier(message)
     inputRef.current!.value = message.content
     setUserInput(message.content)
     inputRef.current!.focus()
@@ -241,17 +232,12 @@ export default function Conversation({
   async function modifierMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!messageAModifier || !userInput) return
-    const { message, indexJour, indexMessage } = messageAModifier
 
-    const isLastMessage =
-      indexJour === messagesByDay!.length - 1 &&
-      indexMessage === messagesByDay![indexJour].messages.length - 1
     await _modifierMessage(
       jeuneChat.chatId,
-      message,
+      messageAModifier,
       userInput,
-      chatCredentials!.cleChiffrement,
-      { isLastMessage }
+      chatCredentials!.cleChiffrement
     )
 
     trackEvent({
@@ -265,19 +251,11 @@ export default function Conversation({
     resetTextbox()
   }
 
-  async function supprimerMessage(
-    message: Message,
-    indexJour: number,
-    indexMessage: number
-  ) {
-    const isLastMessage =
-      indexJour === messagesByDay!.length - 1 &&
-      indexMessage === messagesByDay![indexJour].messages.length - 1
+  async function supprimerMessage(message: Message) {
     await _supprimerMessage(
       jeuneChat.chatId,
       message,
-      chatCredentials!.cleChiffrement,
-      { isLastMessage }
+      chatCredentials!.cleChiffrement
     )
 
     trackEvent({
@@ -407,14 +385,12 @@ export default function Conversation({
                               isConseillerCourant={
                                 message.conseillerId === conseiller.id
                               }
-                              onSuppression={() =>
-                                supprimerMessage(message, i, j)
-                              }
+                              onSuppression={() => supprimerMessage(message)}
                               onModification={() =>
                                 preparerModificationmessage(message, i, j)
                               }
                               isEnCoursDeModification={
-                                message.id === messageAModifier?.message.id
+                                message.id === messageAModifier?.id
                               }
                             />
                           )}
