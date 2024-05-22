@@ -12,7 +12,7 @@ export function LienPieceJointe({
   className?: string
 }) {
   return (
-    <div className='flex flex-row justify-end'>
+    <div className='flex flex-row justify-end underline'>
       <IconComponent
         name={IconName.AttachFile}
         aria-hidden={true}

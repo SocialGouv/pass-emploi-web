@@ -33,6 +33,7 @@ import CheckCircleFillIcon from 'assets/icons/informations/check_circle_fill.svg
 import CheckCircleOutlineIcon from 'assets/icons/informations/check_circle_outline.svg'
 import ChecklistRtlFillIcon from 'assets/icons/informations/checklist_rtl_fill.svg'
 import DescriptionIcon from 'assets/icons/informations/description.svg'
+import DownloadIcon from 'assets/icons/informations/download.svg'
 import ErrorIcon from 'assets/icons/informations/error.svg'
 import EuroIcon from 'assets/icons/informations/euro.svg'
 import EventFillIcon from 'assets/icons/informations/event_fill.svg'
@@ -106,6 +107,7 @@ export enum IconName {
   DecorativePoint = 'DecorativePoint',
   Delete = 'Delete',
   Description = 'Description',
+  Download = 'Download',
   Edit = 'Edit',
   Euro = 'Euro',
   Error = 'Error',
@@ -230,6 +232,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.Notification]: NotificationIcon,
   [IconName.VisibilityOn]: VisibilityOnIcon,
   [IconName.VisibilityOff]: VisibilityOffIcon,
+  [IconName.Download]: DownloadIcon,
 }
 
 type IconComponentProps = ComponentPropsWithoutRef<'svg'> & {
