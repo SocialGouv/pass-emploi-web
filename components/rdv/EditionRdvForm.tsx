@@ -145,6 +145,11 @@ export function EditionRdvForm({
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const lienEmargement =
+    evenement && evenement.id && evenement.statut
+      ? `/emargement/${evenement.id}?type=ac`
+      : undefined
+
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
   ): boolean {
@@ -607,6 +612,7 @@ export function EditionRdvForm({
     })
   }
 
+  // @ts-ignore
   return (
     <>
       <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
@@ -797,18 +803,9 @@ export function EditionRdvForm({
                   ? 'nombre-participants--error'
                   : undefined
             }
+            trackEmargement={trackEmargement}
+            lienEmargement={lienEmargement}
           />
-          <div className='flex mt-4 justify-end'>
-            {idsJeunes.value.length > 0 && evenement && evenement.statut && (
-              <ButtonLink
-                style={ButtonStyle.PRIMARY}
-                href={`/emargement/${evenement.id}?type=ac`}
-                externalLink={true}
-                label='Exporter la liste des inscrits'
-                onClick={trackEmargement}
-              ></ButtonLink>
-            )}
-          </div>
         </Etape>
 
         <Etape numero={4} titre='Ajoutez les modalités pratiques'>
