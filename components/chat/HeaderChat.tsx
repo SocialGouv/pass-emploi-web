@@ -4,19 +4,25 @@ import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function HeaderChat({
-  iconLabel,
-  iconName,
+  bookmarkLabel,
+  bookmarkIcon,
+  rechercheIcon,
   labelRetour,
   onBack,
-  onClickIcon,
+  onClickBookMark,
+  onClickRecherche,
+  rechercheLabel,
   titre,
 }: {
   onBack: () => void
   labelRetour: string
   titre: string
-  iconName?: IconName
-  iconLabel?: string
-  onClickIcon?: () => void
+  bookmarkIcon?: IconName
+  bookmarkLabel?: string
+  onClickBookMark?: () => void
+  rechercheIcon?: IconName
+  rechercheLabel?: string
+  onClickRecherche?: () => void
 }) {
   return (
     <div className='items-center mx-4 my-6 short:hidden'>
@@ -34,19 +40,34 @@ export default function HeaderChat({
           />
           <span className='text-s-regular text-content underline'>Retour</span>
         </button>
-        {iconName && (
-          <button
-            aria-label={iconLabel}
-            className='border-none rounded-full bg-primary_lighten'
-            onClick={onClickIcon}
-          >
-            <IconComponent
-              name={iconName}
-              title={iconLabel}
-              className='w-8 h-8 fill-primary'
-            />
-          </button>
-        )}
+        <div className='flex gap-4'>
+          {rechercheIcon && (
+            <button
+              aria-label={rechercheLabel}
+              className='border-none rounded-full bg-primary_lighten'
+              onClick={onClickRecherche}
+            >
+              <IconComponent
+                name={rechercheIcon}
+                title={rechercheLabel}
+                className='w-8 h-8 fill-primary'
+              />
+            </button>
+          )}
+          {bookmarkIcon && (
+            <button
+              aria-label={bookmarkLabel}
+              className='border-none rounded-full bg-primary_lighten'
+              onClick={onClickBookMark}
+            >
+              <IconComponent
+                name={bookmarkIcon}
+                title={bookmarkLabel}
+                className='w-8 h-8 fill-primary'
+              />
+            </button>
+          )}
+        </div>
       </div>
       <div className='flex'>
         <BulleMessageSensible />

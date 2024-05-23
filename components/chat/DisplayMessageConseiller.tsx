@@ -10,7 +10,7 @@ import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
-import { toFrenchDateTime, toFrenchTime } from 'utils/date'
+import { toFrenchDateTime, toFrenchTime, toShortDate } from 'utils/date'
 
 interface DisplayMessageConseillerProps {
   message: Message
@@ -20,6 +20,7 @@ interface DisplayMessageConseillerProps {
   onSuppression: () => Promise<void>
   onModification: () => void
   isEnCoursDeModification?: boolean
+  estResultatDeRecherche?: boolean
 }
 
 export default function DisplayMessageConseiller({
@@ -30,6 +31,7 @@ export default function DisplayMessageConseiller({
   onSuppression,
   onModification,
   isEnCoursDeModification,
+  estResultatDeRecherche,
 }: DisplayMessageConseillerProps) {
   const [editionEnCours, setEditionEnCours] = useState<boolean>(false)
 
@@ -63,13 +65,23 @@ export default function DisplayMessageConseiller({
                 isEnCoursDeModification={isEnCoursDeModification}
               />
 
-              <FooterMessage
-                creationDate={message.creationDate}
-                lastSeenByJeune={lastSeenByJeune}
-                onSuppression={supprimerMessage}
-                onModification={onModification}
-                estModifie={isEdited(message)}
-              />
+              {!estResultatDeRecherche && (
+                <FooterMessage
+                  creationDate={message.creationDate}
+                  lastSeenByJeune={lastSeenByJeune}
+                  onSuppression={supprimerMessage}
+                  onModification={onModification}
+                  estModifie={isEdited(message)}
+                />
+              )}
+
+              {estResultatDeRecherche && (
+                <div className='flex justify-end'>
+                  <span className='text-xs-medium text-content'>
+                    Le {toShortDate(message.creationDate)}
+                  </span>
+                </div>
+              )}
             </>
           )}
         </>
