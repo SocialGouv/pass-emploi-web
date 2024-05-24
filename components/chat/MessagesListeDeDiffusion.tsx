@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import EmptyStateImage from 'assets/images/illustration-send-grey.svg'
 import DisplayMessageListeDeDiffusion from 'components/chat/DisplayMessageListeDeDiffusion'
 import HeaderChat from 'components/chat/HeaderChat'
+import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -29,9 +30,15 @@ export default function MessagesListeDeDiffusion({
   const chatCredentials = useChatCredentials()
 
   const [messages, setMessages] = useState<ByDay<MessageListeDiffusion>[]>()
+  const [messagerieEstVisible, setMessagerieEstVisible] =
+    useState<boolean>(true)
 
   function displayDate(date: DateTime) {
     return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
+  }
+
+  function permuterVisibiliteMessagerie() {
+    setMessagerieEstVisible(!messagerieEstVisible)
   }
 
   useEffect(() => {
@@ -51,89 +58,108 @@ export default function MessagesListeDeDiffusion({
             titre={liste.titre}
             labelRetour={'Retour à mes listes de diffusion'}
             onBack={onBack}
+            permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+            messagerieEstVisible={messagerieEstVisible}
           />
 
-          <div className='hidden layout_s:block w-fit ml-4 mb-8'>
-            <ButtonLink
-              href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
-              style={ButtonStyle.TERTIARY}
-              className='mr-auto'
-            >
-              <IconComponent
-                name={IconName.Edit}
+          {messagerieEstVisible && (
+            <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+              <ButtonLink
+                href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
+                style={ButtonStyle.TERTIARY}
+                className='mr-auto'
+              >
+                <IconComponent
+                  name={IconName.Edit}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='w-4 h-4 fill-primary mr-3'
+                />
+                Modifier ma liste
+              </ButtonLink>
+            </div>
+          )}
+        </>
+      )}
+
+      {messagerieEstVisible && (
+        <>
+          {!messages && <SpinningLoader />}
+
+          {messages && messages.length === 0 && (
+            <div className='flex flex-col justify-center items-center'>
+              <EmptyStateImage
                 focusable={false}
                 aria-hidden={true}
-                className='w-4 h-4 fill-primary mr-3'
+                className='w-[360px] h-[200px]'
               />
-              Modifier ma liste
-            </ButtonLink>
-          </div>
-        </>
-      )}
+              <p className='mt-4 text-base-medium w-2/3 text-center'>
+                Vous n’avez envoyé aucun message à cette liste de diffusion
+              </p>
+            </div>
+          )}
 
-      {!messages && <SpinningLoader />}
-
-      {messages && messages.length === 0 && (
-        <div className='flex flex-col justify-center items-center'>
-          <EmptyStateImage
-            focusable={false}
-            aria-hidden={true}
-            className='w-[360px] h-[200px]'
-          />
-          <p className='mt-4 text-base-medium w-2/3 text-center'>
-            Vous n’avez envoyé aucun message à cette liste de diffusion
-          </p>
-        </div>
-      )}
-
-      {messages && messages.length > 0 && (
-        <>
-          <span className='sr-only' id='description-messages'>
-            Messages envoyés à la liste de diffusion
-          </span>
-          <ul
-            className='h-full min-h-0 p-4 overflow-y-auto'
-            aria-describedby='description-messages'
-          >
-            {messages.map((messagesOfADay: ByDay<MessageListeDiffusion>, i) => (
-              <li key={messagesOfADay.date.toMillis() + i} className='mb-5'>
-                <div
-                  className='text-base-regular text-center mb-3'
-                  id={'date-messages-' + messagesOfADay.date.toMillis()}
-                >
-                  {displayDate(messagesOfADay.date)}
-                </div>
-
-                <ul
-                  aria-describedby={
-                    'date-messages-' + messagesOfADay.date.toMillis()
-                  }
-                >
-                  {messagesOfADay.messages.map((message, j) => (
+          {messages && messages.length > 0 && (
+            <>
+              <span className='sr-only' id='description-messages'>
+                Messages envoyés à la liste de diffusion
+              </span>
+              <ul
+                className='h-full min-h-0 p-4 overflow-y-auto'
+                aria-describedby='description-messages'
+              >
+                {messages.map(
+                  (messagesOfADay: ByDay<MessageListeDiffusion>, i) => (
                     <li
-                      key={message.id + i + j}
-                      className={`mb-4 ${messagerieFullScreen ? '' : 'px-4'}`}
-                      ref={(e) =>
-                        e?.scrollIntoView({
-                          block: 'nearest',
-                          inline: 'nearest',
-                        })
-                      }
+                      key={messagesOfADay.date.toMillis() + i}
+                      className='mb-5'
                     >
-                      <DisplayMessageListeDeDiffusion
-                        message={message}
-                        onAfficherDetailMessage={() =>
-                          onAfficherDetailMessage(message)
+                      <div
+                        className='text-base-regular text-center mb-3'
+                        id={'date-messages-' + messagesOfADay.date.toMillis()}
+                      >
+                        {displayDate(messagesOfADay.date)}
+                      </div>
+
+                      <ul
+                        aria-describedby={
+                          'date-messages-' + messagesOfADay.date.toMillis()
                         }
-                        messagerieFullScreen={messagerieFullScreen}
-                      />
+                      >
+                        {messagesOfADay.messages.map((message, j) => (
+                          <li
+                            key={message.id + i + j}
+                            className={`mb-4 ${messagerieFullScreen ? '' : 'px-4'}`}
+                            ref={(e) =>
+                              e?.scrollIntoView({
+                                block: 'nearest',
+                                inline: 'nearest',
+                              })
+                            }
+                          >
+                            <DisplayMessageListeDeDiffusion
+                              message={message}
+                              onAfficherDetailMessage={() =>
+                                onAfficherDetailMessage(message)
+                              }
+                              messagerieFullScreen={messagerieFullScreen}
+                            />
+                          </li>
+                        ))}
+                      </ul>
                     </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
+                  )
+                )}
+              </ul>
+            </>
+          )}
         </>
+      )}
+
+      {!messagerieEstVisible && (
+        <MessagerieCachee
+          permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+        />
       )}
     </>
   )
