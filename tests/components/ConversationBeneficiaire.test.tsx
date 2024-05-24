@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import React, { ReactElement } from 'react'
 
-import Conversation from 'components/chat/Conversation'
+import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour, unMessage } from 'fixtures/message'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
@@ -26,7 +26,7 @@ import { toShortDate } from 'utils/date'
 jest.mock('services/messages.service')
 jest.mock('services/fichiers.service')
 
-describe('<Conversation />', () => {
+describe('<ConversationBeneficiaire />', () => {
   let jeuneChat: JeuneChat
 
   let conseillersJeunes: ConseillerHistorique[]
@@ -67,7 +67,7 @@ describe('<Conversation />', () => {
 
     await act(async () => {
       const renderResult = renderWithContexts(
-        <Conversation
+        <ConversationBeneficiaire
           jeuneChat={jeuneChat}
           conseillers={conseillersJeunes}
           onBack={jest.fn()}
@@ -166,7 +166,7 @@ describe('<Conversation />', () => {
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
-      <Conversation
+      <ConversationBeneficiaire
         jeuneChat={newJeuneChat}
         conseillers={conseillersJeunes}
         onBack={jest.fn()}

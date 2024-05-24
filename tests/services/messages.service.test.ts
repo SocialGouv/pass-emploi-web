@@ -788,9 +788,13 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.rechercherMessagesConversation', () => {
     let jeuneChat: JeuneChat
     let recherche: string
+    const now = DateTime.fromISO('2024-04-24')
+
     beforeEach(() => {
       jeuneChat = unJeuneChat()
       recherche = 'tchoupi'
+
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
       const resultatRecherche = [
         unMessage({

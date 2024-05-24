@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useEffect, useState } from 'react'
 
 import ConversationImage from 'assets/images/conversation.svg'
-import Conversation from 'components/chat/Conversation'
+import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
 import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import { ButtonStyle } from 'components/ui/Button/Button'
@@ -67,7 +67,7 @@ function MessageriePage() {
 
           {currentChat && (
             <div className='px-6 bg-grey_100 h-full min-h-0'>
-              <Conversation
+              <ConversationBeneficiaire
                 onBack={() => setIdCurrentJeune(undefined)}
                 jeuneChat={currentChat}
                 conseillers={conseillers}

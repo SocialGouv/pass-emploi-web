@@ -3,7 +3,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
-import Conversation from 'components/chat/Conversation'
+import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
 import HeaderListeListesDeDiffusion from 'components/messagerie/HeaderListeListesDeDiffusion'
@@ -97,7 +97,7 @@ export default function ChatContainer({
       {!messagerieFullScreen && (
         <>
           {currentChat && (
-            <Conversation
+            <ConversationBeneficiaire
               onBack={() => setIdCurrentJeune(undefined)}
               jeuneChat={currentChat}
               conseillers={conseillers}

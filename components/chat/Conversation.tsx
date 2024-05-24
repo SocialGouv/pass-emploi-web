@@ -14,17 +14,12 @@ import HeaderChat from 'components/chat/HeaderChat'
 import EmptyState from 'components/EmptyState'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FileInput from 'components/ui/Form/FileInput'
-import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
-import Label from 'components/ui/Form/Label'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { ValueWithError } from 'components/ValueWithError'
 import { InfoFichier } from 'interfaces/fichier'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { JeuneChat } from 'interfaces/jeune'
 import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
@@ -40,46 +35,45 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
 
 type ConversationProps = {
-  conseillers: ConseillerHistorique[]
-  jeuneChat: JeuneChat
+  beneficiaireNomComplet: string
   onBack: () => void
+  getConseillerNomComplet: (message: Message) => string | undefined
+  jeuneChat: JeuneChat
+  toggleAfficherRecherche: () => void
 }
-
-export default function Conversation({
-  jeuneChat,
-  conseillers,
+export function Conversation({
+  beneficiaireNomComplet,
   onBack,
+  getConseillerNomComplet,
+  jeuneChat,
+  toggleAfficherRecherche,
 }: ConversationProps) {
   const chatCredentials = useChatCredentials()
   const [conseiller] = useConseiller()
 
   const [userInput, setUserInput] = useState('')
-  const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
-  const [uploadedFileInfo, setUploadedFileInfo] = useState<
-    InfoFichier | undefined
-  >(undefined)
+
+  const [isflaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
+    jeuneChat.flaggedByConseiller
+  )
+
   const [uploadedFileError, setUploadedFileError] = useState<
     string | undefined
   >(undefined)
   const [isFileUploading, setIsFileUploading] = useState<boolean>(false)
 
-  const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
-    undefined
-  )
-  const [isflaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
-    jeuneChat.flaggedByConseiller
-  )
-
-  const [afficherRecherche, setAfficherRecherche] = useState<boolean>(false)
-  const [rechercheMessage, setRechercheMessage] =
-    useState<ValueWithError<string | undefined>>()
-  const [resultatsRecherche, setResultatsRecherche] = useState<
-    Message[] | undefined
-  >()
-
   const [messageAModifier, setMessageAModifier] = useState<
     Message | undefined
   >()
+
+  const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
+  const [uploadedFileInfo, setUploadedFileInfo] = useState<
+    InfoFichier | undefined
+  >(undefined)
+
+  const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
+    undefined
+  )
 
   const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
   const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
@@ -88,64 +82,6 @@ export default function Conversation({
 
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
-
-  const beneficiaireNomComplet = `${jeuneChat.prenom} ${jeuneChat.nom}`
-
-  function displayDate(date: DateTime) {
-    return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
-  }
-
-  async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (!(userInput || Boolean(uploadedFileInfo)) || isFileUploading) return
-
-    const formNouveauMessage: FormNouveauMessageIndividuel = {
-      jeuneChat,
-      newMessage:
-        userInput ||
-        'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
-      cleChiffrement: chatCredentials!.cleChiffrement,
-    }
-
-    if (uploadedFileInfo) formNouveauMessage.infoPieceJointe = uploadedFileInfo
-
-    const { sendNouveauMessage: _sendNouveauMessage } = await import(
-      'services/messages.service'
-    )
-    _sendNouveauMessage(formNouveauMessage)
-
-    setUploadedFileInfo(undefined)
-    resetTextbox()
-  }
-
-  function getConseillerNomComplet(message: Message) {
-    const conseillerTrouve = conseillers.find(
-      (c) => c.id === message.conseillerId
-    )
-    if (conseillerTrouve) {
-      return `${conseillerTrouve?.prenom.toLowerCase()} ${conseillerTrouve?.nom.toLowerCase()}`
-    }
-  }
-
-  function chargerPlusDeMessages() {
-    const pageSuivante = nombrePagesChargees + 1
-    setLoadingMoreMessages(true)
-    const idFirstDisplayedMessage = messagesByDay![0].messages[0].id
-
-    unsubscribeFromMessages.current()
-    unsubscribeFromMessages.current = observerMessages(
-      jeuneChat.chatId,
-      pageSuivante
-    )
-
-    setNombrePagesChargees(pageSuivante)
-    const previousFirstDisplayedMessage =
-      conteneurMessagesRef.current!.querySelector('#' + idFirstDisplayedMessage)
-    previousFirstDisplayedMessage!.scrollIntoView({
-      block: 'nearest',
-      inline: 'nearest',
-    })
-  }
 
   const observerMessages = useCallback(
     (idChatToObserve: string, nombreDePages: number) => {
@@ -180,6 +116,58 @@ export default function Conversation({
     [chatCredentials]
   )
 
+  function resetTextbox() {
+    inputRef.current!.value = ''
+    setUserInput('')
+  }
+
+  function displayDate(date: DateTime) {
+    return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
+  }
+
+  async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!(userInput || Boolean(uploadedFileInfo)) || isFileUploading) return
+
+    const formNouveauMessage: FormNouveauMessageIndividuel = {
+      jeuneChat,
+      newMessage:
+        userInput ||
+        'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
+      cleChiffrement: chatCredentials!.cleChiffrement,
+    }
+
+    if (uploadedFileInfo) formNouveauMessage.infoPieceJointe = uploadedFileInfo
+
+    const { sendNouveauMessage: _sendNouveauMessage } = await import(
+      'services/messages.service'
+    )
+    _sendNouveauMessage(formNouveauMessage)
+
+    setUploadedFileInfo(undefined)
+    resetTextbox()
+  }
+
+  function chargerPlusDeMessages() {
+    const pageSuivante = nombrePagesChargees + 1
+    setLoadingMoreMessages(true)
+    const idFirstDisplayedMessage = messagesByDay![0].messages[0].id
+
+    unsubscribeFromMessages.current()
+    unsubscribeFromMessages.current = observerMessages(
+      jeuneChat.chatId,
+      pageSuivante
+    )
+
+    setNombrePagesChargees(pageSuivante)
+    const previousFirstDisplayedMessage =
+      conteneurMessagesRef.current!.querySelector('#' + idFirstDisplayedMessage)
+    previousFirstDisplayedMessage!.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+    })
+  }
+
   async function uploadFichier(fichierSelectionne: File) {
     setUploadedFileError(undefined)
 
@@ -200,33 +188,6 @@ export default function Conversation({
     } finally {
       setIsFileUploading(false)
     }
-  }
-
-  async function deleteFile() {
-    setUploadedFileInfo(undefined)
-    const { deleteFichier } = await import('services/fichiers.service')
-    await deleteFichier(uploadedFileInfo!.id)
-  }
-
-  async function toggleFlag() {
-    const flagged = !isflaggedByConseiller
-    const { toggleFlag: _toggleFlag } = await import(
-      'services/messages.service'
-    )
-    await _toggleFlag(jeuneChat.chatId, flagged)
-    trackEvent({
-      structure: conseiller.structure,
-      categorie: 'Conversation suivie',
-      action: 'Conversation',
-      nom: flagged.toString(),
-      avecBeneficiaires: jeuneChat.chatId ? 'oui' : 'non',
-    })
-    setFlaggedByConseiller(flagged)
-  }
-
-  function resetTextbox() {
-    inputRef.current!.value = ''
-    setUserInput('')
   }
 
   function preparerModificationMessage(message: Message) {
@@ -279,28 +240,26 @@ export default function Conversation({
     })
   }
 
-  async function rechercherMessages(e: FormEvent) {
-    e.preventDefault()
-    if (!chatCredentials) return
+  async function deleteFile() {
+    setUploadedFileInfo(undefined)
+    const { deleteFichier } = await import('services/fichiers.service')
+    await deleteFichier(uploadedFileInfo!.id)
+  }
 
-    if (!rechercheMessage?.value) {
-      setRechercheMessage({
-        value: undefined,
-        error: 'Le champ “Titre de l’action" est vide. Renseignez un titre.',
-      })
-      return
-    }
-
-    const { rechercherMessagesConversation } = await import(
+  async function toggleFlag() {
+    const flagged = !isflaggedByConseiller
+    const { toggleFlag: _toggleFlag } = await import(
       'services/messages.service'
     )
-
-    const resultats = await rechercherMessagesConversation(
-      jeuneChat.id,
-      rechercheMessage.value,
-      chatCredentials.cleChiffrement
-    )
-    setResultatsRecherche(resultats)
+    await _toggleFlag(jeuneChat.chatId, flagged)
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Conversation suivie',
+      action: 'Conversation',
+      nom: flagged.toString(),
+      avecBeneficiaires: jeuneChat.chatId ? 'oui' : 'non',
+    })
+    setFlaggedByConseiller(flagged)
   }
 
   useEffect(() => {
@@ -314,7 +273,7 @@ export default function Conversation({
     if (
       messagesByDay?.length &&
       nombrePagesChargees === 1 &&
-      !afficherRecherche
+      !toggleAfficherRecherche
     ) {
       const dernierJour = conteneurMessagesRef.current!.lastElementChild
       const lastMessage = dernierJour!.querySelector('li:last-child')
@@ -339,375 +298,225 @@ export default function Conversation({
   }, [jeuneChat.chatId])
 
   return (
-    <div className='h-full flex flex-col min-h-0 bg-grey_100 overflow-auto'>
-      {!afficherRecherche && (
-        <>
-          <HeaderChat
-            onBack={onBack}
-            labelRetour='Retour sur ma messagerie'
-            titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
-            bookmarkIcon={
-              isflaggedByConseiller
-                ? IconName.BookmarkFill
-                : IconName.BookmarkOutline
-            }
-            bookmarkLabel={
-              isflaggedByConseiller
-                ? 'Ne plus suivre la conversation'
-                : 'Suivre la conversation'
-            }
-            onClickBookMark={toggleFlag}
-            rechercheIcon={IconName.Search}
-            rechercheLabel='Rechercher un message dans la conversation'
-            onClickRecherche={() => setAfficherRecherche(!afficherRecherche)}
-          />
+    <>
+      <HeaderChat
+        onBack={onBack}
+        labelRetour='Retour sur ma messagerie'
+        titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
+        bookmarkIcon={
+          isflaggedByConseiller
+            ? IconName.BookmarkFill
+            : IconName.BookmarkOutline
+        }
+        bookmarkLabel={
+          isflaggedByConseiller
+            ? 'Ne plus suivre la conversation'
+            : 'Suivre la conversation'
+        }
+        onClickBookMark={toggleFlag}
+        rechercheIcon={IconName.Search}
+        rechercheLabel='Rechercher un message dans la conversation'
+        onClickRecherche={toggleAfficherRecherche}
+      />
+
+      <div
+        className='p-4 h-full grow overflow-y-auto short:hidden'
+        aria-live='polite'
+        aria-busy={!messagesByDay || loadingMoreMessages}
+      >
+        {!messagesByDay && <SpinningLoader />}
+
+        {messagesByDay && conseiller && (
+          <>
+            {hasNoMoreMessages && (
+              <span className='text-xs-regular text-center block mb-3'>
+                Aucun message plus ancien
+              </span>
+            )}
+
+            {!hasNoMoreMessages && (
+              <Button
+                onClick={chargerPlusDeMessages}
+                style={ButtonStyle.TERTIARY}
+                className='mx-auto mb-3'
+                isLoading={loadingMoreMessages}
+              >
+                <IconComponent
+                  name={IconName.ChevronUp}
+                  aria-hidden={true}
+                  focusable={false}
+                  className='w-4 h-4 fill-[currentColor] mr-2'
+                />
+                Voir messages plus anciens
+              </Button>
+            )}
+
+            {messagesByDay.length === 0 && (
+              <EmptyState
+                illustrationName={IllustrationName.SendWhite}
+                titre='Ceci est le début de votre conversation avec votre bénéficiaire.'
+                sousTitre='Écrivez votre premier message !'
+              />
+            )}
+
+            {messagesByDay.length > 0 && (
+              <ul ref={conteneurMessagesRef}>
+                {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
+                  <li key={messagesOfADay.date.toMillis()} className='mb-5'>
+                    <div className='text-base-regular text-center mb-3'>
+                      <span>{displayDate(messagesOfADay.date)}</span>
+                    </div>
+
+                    <ul>
+                      {messagesOfADay.messages.map((message: Message) => (
+                        <Fragment key={message.id}>
+                          {!fromConseiller(message) && (
+                            <DisplayMessageBeneficiaire
+                              message={message}
+                              beneficiaireNomComplet={beneficiaireNomComplet}
+                            />
+                          )}
+
+                          {fromConseiller(message) && (
+                            <DisplayMessageConseiller
+                              message={message}
+                              conseillerNomComplet={getConseillerNomComplet(
+                                message
+                              )}
+                              lastSeenByJeune={lastSeenByJeune}
+                              isConseillerCourant={
+                                message.conseillerId === conseiller.id
+                              }
+                              onSuppression={() => supprimerMessage(message)}
+                              onModification={() =>
+                                preparerModificationMessage(message)
+                              }
+                              isEnCoursDeModification={
+                                message.id === messageAModifier?.id
+                              }
+                            />
+                          )}
+                        </Fragment>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        )}
+      </div>
+
+      <form
+        onSubmit={messageAModifier ? modifierMessage : sendNouveauMessage}
+        className='p-3'
+      >
+        {uploadedFileError && (
+          <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
+        )}
+        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-3'>
+          {!messageAModifier && (
+            <>
+              <span
+                id='piece-jointe--desc'
+                className='self-center text-xs-regular short:hidden'
+              >
+                Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
+                maximum)
+              </span>
+
+              <FileInput
+                id='piece-jointe'
+                ariaDescribedby='piece-jointe--desc'
+                onChange={uploadFichier}
+                isLoading={isFileUploading}
+                disabled={Boolean(uploadedFileInfo)}
+                iconOnly={true}
+              />
+            </>
+          )}
+
+          {messageAModifier && (
+            <>
+              <span className='self-center text-s-regular'>
+                Modifier le message
+              </span>
+              <button
+                type='button'
+                onClick={annulerModificationmessage}
+                title='Annuler la modification du message'
+                className='w-12 h-12'
+              >
+                <span className='sr-only'>
+                  Annuler la modification du message
+                </span>
+                <IconComponent
+                  aria-hidden={true}
+                  focusable={false}
+                  name={IconName.Close}
+                  className='m-auto h-6 w-6'
+                />
+              </button>
+            </>
+          )}
 
           <div
-            className='p-4 h-full grow overflow-y-auto short:hidden'
-            aria-live='polite'
-            aria-busy={!messagesByDay || loadingMoreMessages}
+            className='p-4 bg-blanc rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
+            onClick={() => inputRef.current!.focus()}
           >
-            {!messagesByDay && <SpinningLoader />}
-
-            {messagesByDay && conseiller && (
-              <>
-                {hasNoMoreMessages && (
-                  <span className='text-xs-regular text-center block mb-3'>
-                    Aucun message plus ancien
-                  </span>
-                )}
-
-                {!hasNoMoreMessages && (
-                  <Button
-                    onClick={chargerPlusDeMessages}
-                    style={ButtonStyle.TERTIARY}
-                    className='mx-auto mb-3'
-                    isLoading={loadingMoreMessages}
-                  >
-                    <IconComponent
-                      name={IconName.ChevronUp}
-                      aria-hidden={true}
-                      focusable={false}
-                      className='w-4 h-4 fill-[currentColor] mr-2'
-                    />
-                    Voir messages plus anciens
-                  </Button>
-                )}
-
-                {messagesByDay.length === 0 && (
-                  <EmptyState
-                    illustrationName={IllustrationName.SendWhite}
-                    titre='Ceci est le début de votre conversation avec votre bénéficiaire.'
-                    sousTitre='Écrivez votre premier message !'
-                  />
-                )}
-
-                {messagesByDay.length > 0 && (
-                  <ul ref={conteneurMessagesRef}>
-                    {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
-                      <li key={messagesOfADay.date.toMillis()} className='mb-5'>
-                        <div className='text-base-regular text-center mb-3'>
-                          <span>{displayDate(messagesOfADay.date)}</span>
-                        </div>
-
-                        <ul>
-                          {messagesOfADay.messages.map((message: Message) => (
-                            <Fragment key={message.id}>
-                              {!fromConseiller(message) && (
-                                <DisplayMessageBeneficiaire
-                                  message={message}
-                                  beneficiaireNomComplet={
-                                    beneficiaireNomComplet
-                                  }
-                                />
-                              )}
-
-                              {fromConseiller(message) && (
-                                <DisplayMessageConseiller
-                                  message={message}
-                                  conseillerNomComplet={getConseillerNomComplet(
-                                    message
-                                  )}
-                                  lastSeenByJeune={lastSeenByJeune}
-                                  isConseillerCourant={
-                                    message.conseillerId === conseiller.id
-                                  }
-                                  onSuppression={() =>
-                                    supprimerMessage(message)
-                                  }
-                                  onModification={() =>
-                                    preparerModificationMessage(message)
-                                  }
-                                  isEnCoursDeModification={
-                                    message.id === messageAModifier?.id
-                                  }
-                                />
-                              )}
-                            </Fragment>
-                          ))}
-                        </ul>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </>
-            )}
-          </div>
-
-          <form
-            onSubmit={messageAModifier ? modifierMessage : sendNouveauMessage}
-            className='p-3'
-          >
-            {uploadedFileError && (
-              <InputError id='piece-jointe--error'>
-                {uploadedFileError}
-              </InputError>
-            )}
-            <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-3'>
-              {!messageAModifier && (
-                <>
-                  <span
-                    id='piece-jointe--desc'
-                    className='self-center text-xs-regular short:hidden'
-                  >
-                    Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG
-                    (5 Mo maximum)
-                  </span>
-
-                  <FileInput
-                    id='piece-jointe'
-                    ariaDescribedby='piece-jointe--desc'
-                    onChange={uploadFichier}
-                    isLoading={isFileUploading}
-                    disabled={Boolean(uploadedFileInfo)}
-                    iconOnly={true}
-                  />
-                </>
-              )}
-
-              {messageAModifier && (
-                <>
-                  <span className='self-center text-s-regular'>
-                    Modifier le message
-                  </span>
-                  <button
-                    type='button'
-                    onClick={annulerModificationmessage}
-                    title='Annuler la modification du message'
-                    className='w-12 h-12'
-                  >
-                    <span className='sr-only'>
-                      Annuler la modification du message
-                    </span>
-                    <IconComponent
-                      aria-hidden={true}
-                      focusable={false}
-                      name={IconName.Close}
-                      className='m-auto h-6 w-6'
-                    />
-                  </button>
-                </>
-              )}
-
-              <div
-                className='p-4 bg-blanc rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
-                onClick={() => inputRef.current!.focus()}
-              >
-                {uploadedFileInfo && (
-                  <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
-                    <span className='break-all overflow-y-auto max-h-56'>
-                      {uploadedFileInfo.nom}
-                    </span>
-                    <button
-                      type='button'
-                      aria-label={
-                        'Supprimer la pièce jointe ' + uploadedFileInfo.nom
-                      }
-                      onClick={deleteFile}
-                    >
-                      <IconComponent
-                        name={IconName.Close}
-                        aria-hidden={true}
-                        focusable={false}
-                        className='w-6 h-6 ml-2 fill-primary stroke-primary'
-                      />
-                    </button>
-                  </div>
-                )}
-
-                <label htmlFor='input-new-message' className='sr-only'>
-                  Message à envoyer
-                </label>
-                <textarea
-                  ref={inputRef}
-                  id='input-new-message'
-                  className='w-full outline-none text-base-regular'
-                  onFocus={() => setReadByConseiller(jeuneChat.chatId)}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  placeholder='Écrivez votre message ici...'
-                  rows={5}
-                />
-              </div>
-              <div className='relative'>
+            {uploadedFileInfo && (
+              <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
+                <span className='break-all overflow-y-auto max-h-56'>
+                  {uploadedFileInfo.nom}
+                </span>
                 <button
-                  type='submit'
-                  aria-label={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
-                  title={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
-                  disabled={!userInput && !Boolean(uploadedFileInfo)}
-                  className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed absolute bottom-0'
+                  type='button'
+                  aria-label={
+                    'Supprimer la pièce jointe ' + uploadedFileInfo.nom
+                  }
+                  onClick={deleteFile}
                 >
                   <IconComponent
-                    name={IconName.Send}
+                    name={IconName.Close}
                     aria-hidden={true}
                     focusable={false}
-                    className='m-auto w-6 h-6 fill-blanc'
+                    className='w-6 h-6 ml-2 fill-primary stroke-primary'
                   />
                 </button>
               </div>
-            </div>
-          </form>
-        </>
-      )}
+            )}
 
-      {afficherRecherche && (
-        <>
-          <HeaderRechercheMessage setAfficherRecherche={setAfficherRecherche} />
-          <RechercheMessageForm
-            rechercherMessages={rechercherMessages}
-            setRechercheMessage={setRechercheMessage}
-            rechercheMessage={rechercheMessage}
-          />
-
-          {resultatsRecherche && (
-            <>
-              <p className='text-base-bold text-center mb-2'>
-                {resultatsRecherche.length}{' '}
-                {resultatsRecherche.length > 1
-                  ? 'résultats trouvés'
-                  : 'résultat trouvé'}
-              </p>
-              {resultatsRecherche.length >= 1 && (
-                <ul className='p-4 overflow-y-auto'>
-                  {resultatsRecherche.map((message, key) => (
-                    <Fragment key={key}>
-                      {!fromConseiller(message) && (
-                        <DisplayMessageBeneficiaire
-                          message={message}
-                          beneficiaireNomComplet={beneficiaireNomComplet}
-                          estResultatDeRecherche={true}
-                        />
-                      )}
-
-                      {fromConseiller(message) && (
-                        <DisplayMessageConseiller
-                          message={message}
-                          conseillerNomComplet={getConseillerNomComplet(
-                            message
-                          )}
-                          lastSeenByJeune={lastSeenByJeune}
-                          isConseillerCourant={
-                            message.conseillerId === conseiller.id
-                          }
-                          onSuppression={() => supprimerMessage(message)}
-                          onModification={() =>
-                            preparerModificationMessage(message)
-                          }
-                          isEnCoursDeModification={
-                            message.id === messageAModifier?.id
-                          }
-                          estResultatDeRecherche={true}
-                        />
-                      )}
-                    </Fragment>
-                  ))}
-                </ul>
-              )}
-
-              {resultatsRecherche.length === 0 && (
-                <>
-                  <IllustrationComponent
-                    name={IllustrationName.Search}
-                    focusable={false}
-                    aria-hidden={true}
-                    className='mx-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.blanc)]'
-                  />
-                  <span className='sr-only'>
-                    Aucun résultat trouvé pour cette recherche
-                  </span>
-                </>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </div>
-  )
-}
-
-function HeaderRechercheMessage({
-  setAfficherRecherche,
-}: {
-  setAfficherRecherche: (value: boolean) => void
-}) {
-  return (
-    <div className='p-4'>
-      <button
-        className='border-none rounded-full bg-primary_lighten flex items-center hover:text-primary focus:pr-2'
-        aria-label='Retourner à la discussion'
-        onClick={() => setAfficherRecherche(false)}
-      >
-        <IconComponent
-          name={IconName.ArrowBackward}
-          aria-hidden={true}
-          focusable={false}
-          className='w-5 h-5 fill-primary mr-3'
-        />
-        <span className='text-s-regular text-content underline'>Retour</span>
-      </button>
-    </div>
-  )
-}
-
-function RechercheMessageForm({
-  rechercherMessages,
-  rechercheMessage,
-  setRechercheMessage,
-}: {
-  rechercherMessages: (e: FormEvent) => void
-  rechercheMessage?: ValueWithError<string | undefined>
-  setRechercheMessage: (value: ValueWithError<string | undefined>) => void
-}) {
-  return (
-    <form onSubmit={rechercherMessages} className='p-4'>
-      <Label htmlFor='recherche-message' inputRequired={true}>
-        Rechercher dans la conversation
-      </Label>
-      {rechercheMessage?.error && (
-        <InputError id='recherche-message--error'>
-          {rechercheMessage.error}
-        </InputError>
-      )}
-      <Input
-        id='recherche-message'
-        type='text'
-        required={true}
-        invalid={Boolean(rechercheMessage?.error)}
-        onChange={(value: string) => setRechercheMessage({ value })}
-      />
-      <Button
-        style={ButtonStyle.PRIMARY}
-        type='submit'
-        label='Rechercher des messages'
-        className='w-full'
-      >
-        <IconComponent
-          name={IconName.Search}
-          focusable={false}
-          aria-hidden={true}
-          className='w-4 h-4 mr-2'
-        />
-        Rechercher
-      </Button>
-    </form>
+            <label htmlFor='input-new-message' className='sr-only'>
+              Message à envoyer
+            </label>
+            <textarea
+              ref={inputRef}
+              id='input-new-message'
+              className='w-full outline-none text-base-regular'
+              onFocus={() => setReadByConseiller(jeuneChat.chatId)}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder='Écrivez votre message ici...'
+              rows={5}
+            />
+          </div>
+          <div className='relative'>
+            <button
+              type='submit'
+              aria-label={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
+              title={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
+              disabled={!userInput && !Boolean(uploadedFileInfo)}
+              className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed absolute bottom-0'
+            >
+              <IconComponent
+                name={IconName.Send}
+                aria-hidden={true}
+                focusable={false}
+                className='m-auto w-6 h-6 fill-blanc'
+              />
+            </button>
+          </div>
+        </div>
+      </form>
+    </>
   )
 }
