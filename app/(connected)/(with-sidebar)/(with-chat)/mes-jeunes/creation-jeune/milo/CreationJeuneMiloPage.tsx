@@ -51,6 +51,7 @@ function CreationJeuneMiloPage() {
       setPortefeuille(portefeuille.concat(beneficiaireCree))
       setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
       router.push('/mes-jeunes')
+      router.refresh()
     } catch (error) {
       setErreurCreation(
         (error as Error).message || "Une erreur inconnue s'est produite"

@@ -229,6 +229,7 @@ function FicheBeneficiairePage({
       removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
       router.push('/mes-jeunes')
+      router.refresh()
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
@@ -247,6 +248,7 @@ function FicheBeneficiairePage({
       removeBeneficiaireFromPortefeuille(jeune.id)
       setAlerte(AlerteParam.suppressionBeneficiaire)
       router.push('/mes-jeunes')
+      router.refresh()
     } catch (e) {
       setShowSuppressionCompteBeneficiaireError(true)
       setTrackingLabel(`${pageTracking} - Erreur suppr. compte`)
