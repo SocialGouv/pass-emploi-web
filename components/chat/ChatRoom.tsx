@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 import React, { useEffect, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
+import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -43,6 +44,8 @@ export default function ChatRoom({
   const chatCredentials = useChatCredentials()
 
   const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
+  const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
+    useState<boolean>(false)
   const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
     MessageImportantPreRempli | undefined
   >(undefined)
@@ -61,6 +64,17 @@ export default function ChatRoom({
     afficherNotificationMessageImportant,
     setAfficherNotificationMessageImportant,
   ] = useState<boolean>(false)
+
+  const [messagerieEstVisible, setMessagerieEstVisible] =
+    useState<boolean>(true)
+
+  function permuterMenuActionsMessagerie() {
+    setAfficherMenuActionsMessagerie(!afficherMenuActionsMessagerie)
+  }
+
+  function permuterVisibiliteMessagerie() {
+    setMessagerieEstVisible(!messagerieEstVisible)
+  }
 
   async function envoyerMessageImportant(
     message: string,
@@ -195,76 +209,133 @@ export default function ChatRoom({
           </button>
         </nav>
 
-        <div className='flex flex-start wrap gap-4 justify-center my-6 grow layout_s:justify-start layout_s:p-0 layout_base:my-3'>
+        <div className='flex wrap gap-4 my-6 grow layout_s:justify-start layout_m:justify-between layout_s:p-0 layout_base:my-3'>
           <h2 className='text-l-bold text-primary'>Messagerie</h2>
-          <button
-            onClick={ouvrirModaleMessageImportant}
-            title='Configurer un message important'
+          <div
+            onClick={permuterMenuActionsMessagerie}
+            className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
           >
-            <div className='relative'>
+            <button
+              type='button'
+              className='bg-primary rounded-full fill-blanc hover:shadow-base'
+              title={`${afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions possibles pour votre messagerie`}
+            >
               <IconComponent
-                name={IconName.Settings}
-                className='w-6 h-6 fill-primary'
                 focusable={false}
                 aria-hidden={true}
+                className='inline w-6 h-6 m-1'
+                name={IconName.More}
               />
-              {afficherNotificationMessageImportant && (
-                <>
+              <span className='sr-only'>
+                {afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions
+                possibles pour votre messagerie
+              </span>
+            </button>
+
+            {afficherMenuActionsMessagerie && (
+              <div className='absolute top-[4em] z-10 bg-blanc rounded-base p-2 shadow-m'>
+                <button
+                  onClick={ouvrirModaleMessageImportant}
+                  className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
+                >
+                  <div className='relative'>
+                    <IconComponent
+                      name={IconName.Settings}
+                      className='inline w-6 h-6 fill-[current-color]'
+                      focusable={false}
+                      aria-hidden={true}
+                    />
+                    {afficherNotificationMessageImportant && (
+                      <>
+                        <IconComponent
+                          name={IconName.DecorativePoint}
+                          className='absolute right-[-8px] top-[-8px] w-3 h-3 fill-warning'
+                          focusable={false}
+                          aria-hidden={true}
+                          title='Un message important est déjà configuré'
+                        />
+                        <span className='sr-only'>
+                          Un message important est déjà configuré
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  Configurer un message important
+                </button>
+
+                <button
+                  onClick={permuterVisibiliteMessagerie}
+                  className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
+                >
                   <IconComponent
-                    name={IconName.DecorativePoint}
-                    className='absolute right-[-8px] top-[-8px] w-3 h-3 fill-warning'
+                    name={
+                      messagerieEstVisible
+                        ? IconName.VisibilityOff
+                        : IconName.VisibilityOn
+                    }
+                    className='inline w-6 h-6 fill-[current-color]'
                     focusable={false}
                     aria-hidden={true}
-                    title='Un message important est déjà configuré'
                   />
-                  <span className='sr-only'>
-                    Un message important est déjà configuré
-                  </span>
-                </>
-              )}
-            </div>
-            <span className='sr-only'>Configurer un message important</span>
-          </button>
+                  {messagerieEstVisible
+                    ? 'Masquer la messagerie'
+                    : 'Rendre visible la messagerie'}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className='mx-3'>
-        <AlerteDisplayer hideOnLargeScreen={true} />
-      </div>
+      {messagerieEstVisible && (
+        <>
+          <div className='mx-3'>
+            <AlerteDisplayer hideOnLargeScreen={true} />
+          </div>
 
-      <div
-        className='flex justify-center my-8 layout_s:hidden'
-        data-testid='form-chat'
-      >
-        <RechercheJeune onSearchFilterBy={filtrerConversations} />
-      </div>
+          <div
+            className='flex justify-center my-8 layout_s:hidden'
+            data-testid='form-chat'
+          >
+            <RechercheJeune onSearchFilterBy={filtrerConversations} />
+          </div>
 
-      {chatsFiltres && (
-        <button
-          className='flex items-center text-primary bg-blanc rounded-base p-4 mb-2 mx-4'
-          onClick={onAccesListesDiffusion}
-        >
-          <IconComponent
-            name={IconName.PeopleFill}
-            className='mr-2 h-6 w-6 fill-primary'
-            aria-hidden={true}
-            focusable={false}
+          {chatsFiltres && (
+            <button
+              className='flex items-center text-primary bg-blanc rounded-base p-4 mb-2 mx-4'
+              onClick={onAccesListesDiffusion}
+            >
+              <IconComponent
+                name={IconName.PeopleFill}
+                className='mr-2 h-6 w-6 fill-primary'
+                aria-hidden={true}
+                focusable={false}
+              />
+              <span className='grow text-left'>
+                Voir mes listes de diffusion
+              </span>
+              <IconComponent
+                name={IconName.ChevronRight}
+                className='mr-2 h-6 w-6 fill-[currentColor]'
+                aria-hidden={true}
+                focusable={false}
+              />
+            </button>
+          )}
+
+          <ListeConversations
+            conversations={chatsFiltres}
+            onToggleFlag={toggleFlag}
+            onSelectConversation={onAccesConversation}
           />
-          <span className='grow text-left'>Voir mes listes de diffusion</span>
-          <IconComponent
-            name={IconName.ChevronRight}
-            className='mr-2 h-6 w-6 fill-[currentColor]'
-            aria-hidden={true}
-            focusable={false}
-          />
-        </button>
+        </>
       )}
 
-      <ListeConversations
-        conversations={chatsFiltres}
-        onToggleFlag={toggleFlag}
-        onSelectConversation={onAccesConversation}
-      />
+      {!messagerieEstVisible && (
+        <MessagerieCachee
+          permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+        />
+      )}
 
       {afficherModaleMessageImportant && (
         <MessageImportantModal

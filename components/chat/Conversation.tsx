@@ -12,7 +12,7 @@ import React, {
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import HeaderChat from 'components/chat/HeaderChat'
-import EmptyState from 'components/EmptyState'
+import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
@@ -84,6 +84,9 @@ export function Conversation({
   const [hasNoMoreMessages, setHasNoMoreMessages] = useState<boolean>(false)
   const unsubscribeFromMessages = useRef<() => void>(() => undefined)
 
+  const [messagerieEstVisible, setMessagerieEstVisible] =
+    useState<boolean>(true)
+
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -119,6 +122,10 @@ export function Conversation({
     },
     [chatCredentials]
   )
+
+  function permuterVisibiliteMessagerie() {
+    setMessagerieEstVisible(!messagerieEstVisible)
+  }
 
   function resetTextbox() {
     inputRef.current!.value = ''
@@ -332,236 +339,254 @@ export function Conversation({
         rechercheIcon={IconName.Search}
         rechercheLabel='Rechercher un message dans la conversation'
         onClickRecherche={toggleAfficherRecherche}
+        permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+        messagerieEstVisible={messagerieEstVisible}
       />
 
-      <div
-        className='p-4 h-full grow overflow-y-auto short:hidden'
-        aria-live='polite'
-        aria-busy={!messagesByDay || loadingMoreMessages}
-      >
-        {!messagesByDay && <SpinningLoader />}
-
-        {messagesByDay && conseiller && (
-          <>
-            {messagesByDay.length !== 0 && (
-              <>
-                {hasNoMoreMessages && (
-                  <span className='text-xs-regular text-center block mb-3'>
-                    Aucun message plus ancien
-                  </span>
-                )}
-
-                {!hasNoMoreMessages && (
-                  <Button
-                    onClick={chargerPlusDeMessages}
-                    style={ButtonStyle.TERTIARY}
-                    className='mx-auto mb-3'
-                    isLoading={loadingMoreMessages}
-                  >
-                    <IconComponent
-                      name={IconName.ChevronUp}
-                      aria-hidden={true}
-                      focusable={false}
-                      className='w-4 h-4 fill-[currentColor] mr-2'
-                    />
-                    Voir messages plus anciens
-                  </Button>
-                )}
-              </>
-            )}
-
-            {messagesByDay.length === 0 && (
-              <>
-                <p className='text-base-bold text-center text-content_color'>
-                  Ceci est le début de votre conversation avec votre
-                  bénéficiaire.
-                </p>
-                <p className='text-base-regular text-center text-content_color mt-4'>
-                  Écrivez votre premier message !
-                </p>
-                <div className='text-primary text-center mt-4'>
-                  <p className='inline-flex items-center text-base'>
-                    <IconComponent
-                      name={IconName.Info}
-                      focusable={false}
-                      aria-hidden={true}
-                      className='inline h-6 w-6 fill-[currentColor]'
-                    />
-                    <strong>Attention à nos propos</strong>
-                  </p>
-                  <p>
-                    Ne sont autorisés, ni les commentaires insultants ou
-                    excessifs, ni les données trop personnelles ou sensibles.
-                  </p>
-                </div>
-
-                <IllustrationComponent
-                  name={IllustrationName.SendWhite}
-                  focusable={false}
-                  aria-hidden={true}
-                  className='w-48 h-48 m-auto mt-8 [--secondary-fill:theme(colors.grey\_100)]'
-                />
-              </>
-            )}
-
-            {messagesByDay.length > 0 && (
-              <ul ref={conteneurMessagesRef}>
-                {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
-                  <li key={messagesOfADay.date.toMillis()} className='mb-5'>
-                    <div className='text-base-regular text-center mb-3'>
-                      <span>{displayDate(messagesOfADay.date)}</span>
-                    </div>
-
-                    <ul>
-                      {messagesOfADay.messages.map((message: Message) => (
-                        <Fragment key={message.id}>
-                          {!fromConseiller(message) && (
-                            <DisplayMessageBeneficiaire
-                              message={message}
-                              beneficiaireNomComplet={beneficiaireNomComplet}
-                            />
-                          )}
-
-                          {fromConseiller(message) && (
-                            <DisplayMessageConseiller
-                              message={message}
-                              conseillerNomComplet={getConseillerNomComplet(
-                                message
-                              )}
-                              lastSeenByJeune={lastSeenByJeune}
-                              isConseillerCourant={
-                                message.conseillerId === conseiller.id
-                              }
-                              onSuppression={() => supprimerMessage(message)}
-                              onModification={() =>
-                                preparerModificationMessage(message)
-                              }
-                              isEnCoursDeModification={
-                                message.id === messageAModifier?.id
-                              }
-                            />
-                          )}
-                        </Fragment>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </>
-        )}
-      </div>
-
-      <form
-        onSubmit={messageAModifier ? modifierMessage : sendNouveauMessage}
-        className='p-3'
-      >
-        {uploadedFileError && (
-          <InputError id='piece-jointe--error'>{uploadedFileError}</InputError>
-        )}
-        <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-3'>
-          {!messageAModifier && (
-            <>
-              <span
-                id='piece-jointe--desc'
-                className='self-center text-xs-regular short:hidden'
-              >
-                Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG (5 Mo
-                maximum)
-              </span>
-
-              <FileInput
-                id='piece-jointe'
-                ariaDescribedby='piece-jointe--desc'
-                onChange={uploadFichier}
-                isLoading={isFileUploading}
-                disabled={Boolean(uploadedFileInfo)}
-                iconOnly={true}
-              />
-            </>
-          )}
-
-          {messageAModifier && (
-            <>
-              <span className='self-center text-s-regular'>
-                Modifier le message
-              </span>
-              <button
-                type='button'
-                onClick={annulerModificationmessage}
-                title='Annuler la modification du message'
-                className='w-12 h-12'
-              >
-                <span className='sr-only'>
-                  Annuler la modification du message
-                </span>
-                <IconComponent
-                  aria-hidden={true}
-                  focusable={false}
-                  name={IconName.Close}
-                  className='m-auto h-6 w-6'
-                />
-              </button>
-            </>
-          )}
-
+      {messagerieEstVisible && (
+        <>
           <div
-            className='p-4 bg-blanc rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
-            onClick={() => inputRef.current!.focus()}
+            className='p-4 h-full grow overflow-y-auto short:hidden'
+            aria-live='polite'
+            aria-busy={!messagesByDay || loadingMoreMessages}
           >
-            {uploadedFileInfo && (
-              <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
-                <span className='break-all overflow-y-auto max-h-56'>
-                  {uploadedFileInfo.nom}
-                </span>
+            {!messagesByDay && <SpinningLoader />}
+
+            {messagesByDay && conseiller && (
+              <>
+                {messagesByDay.length !== 0 && (
+                  <>
+                    {hasNoMoreMessages && (
+                      <span className='text-xs-regular text-center block mb-3'>
+                        Aucun message plus ancien
+                      </span>
+                    )}
+
+                    {!hasNoMoreMessages && (
+                      <Button
+                        onClick={chargerPlusDeMessages}
+                        style={ButtonStyle.TERTIARY}
+                        className='mx-auto mb-3'
+                        isLoading={loadingMoreMessages}
+                      >
+                        <IconComponent
+                          name={IconName.ChevronUp}
+                          aria-hidden={true}
+                          focusable={false}
+                          className='w-4 h-4 fill-[currentColor] mr-2'
+                        />
+                        Voir messages plus anciens
+                      </Button>
+                    )}
+                  </>
+                )}
+
+                {messagesByDay.length === 0 && (
+                  <>
+                    <p className='text-base-bold text-center text-content_color'>
+                      Ceci est le début de votre conversation avec votre
+                      bénéficiaire.
+                    </p>
+                    <p className='text-base-regular text-center text-content_color mt-4'>
+                      Écrivez votre premier message !
+                    </p>
+                    <div className='text-primary text-center mt-4'>
+                      <p className='inline-flex items-center text-base'>
+                        <IconComponent
+                          name={IconName.Info}
+                          focusable={false}
+                          aria-hidden={true}
+                          className='inline h-6 w-6 fill-[currentColor]'
+                        />
+                        <strong>Attention à nos propos</strong>
+                      </p>
+                      <p>
+                        Ne sont autorisés, ni les commentaires insultants ou
+                        excessifs, ni les données trop personnelles ou
+                        sensibles.
+                      </p>
+                    </div>
+                    <IllustrationComponent
+                      name={IllustrationName.SendWhite}
+                      focusable={false}
+                      aria-hidden={true}
+                      className='w-48 h-48 m-auto mt-8 [--secondary-fill:theme(colors.grey\_100)]'
+                    />
+                  </>
+                )}
+
+                {messagesByDay.length > 0 && (
+                  <ul ref={conteneurMessagesRef}>
+                    {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
+                      <li key={messagesOfADay.date.toMillis()} className='mb-5'>
+                        <div className='text-base-regular text-center mb-3'>
+                          <span>{displayDate(messagesOfADay.date)}</span>
+                        </div>
+
+                        <ul>
+                          {messagesOfADay.messages.map((message: Message) => (
+                            <Fragment key={message.id}>
+                              {!fromConseiller(message) && (
+                                <DisplayMessageBeneficiaire
+                                  message={message}
+                                  beneficiaireNomComplet={
+                                    beneficiaireNomComplet
+                                  }
+                                />
+                              )}
+
+                              {fromConseiller(message) && (
+                                <DisplayMessageConseiller
+                                  message={message}
+                                  conseillerNomComplet={getConseillerNomComplet(
+                                    message
+                                  )}
+                                  lastSeenByJeune={lastSeenByJeune}
+                                  isConseillerCourant={
+                                    message.conseillerId === conseiller.id
+                                  }
+                                  onSuppression={() =>
+                                    supprimerMessage(message)
+                                  }
+                                  onModification={() =>
+                                    preparerModificationMessage(message)
+                                  }
+                                  isEnCoursDeModification={
+                                    message.id === messageAModifier?.id
+                                  }
+                                />
+                              )}
+                            </Fragment>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
+          </div>
+
+          <form
+            onSubmit={messageAModifier ? modifierMessage : sendNouveauMessage}
+            className='p-3'
+          >
+            {uploadedFileError && (
+              <InputError id='piece-jointe--error'>
+                {uploadedFileError}
+              </InputError>
+            )}
+            <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-3'>
+              {!messageAModifier && (
+                <>
+                  <span
+                    id='piece-jointe--desc'
+                    className='self-center text-xs-regular short:hidden'
+                  >
+                    Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG
+                    (5 Mo maximum)
+                  </span>
+
+                  <FileInput
+                    id='piece-jointe'
+                    ariaDescribedby='piece-jointe--desc'
+                    onChange={uploadFichier}
+                    isLoading={isFileUploading}
+                    disabled={Boolean(uploadedFileInfo)}
+                    iconOnly={true}
+                  />
+                </>
+              )}
+
+              {messageAModifier && (
+                <>
+                  <span className='self-center text-s-regular'>
+                    Modifier le message
+                  </span>
+                  <button
+                    type='button'
+                    onClick={annulerModificationmessage}
+                    title='Annuler la modification du message'
+                    className='w-12 h-12'
+                  >
+                    <span className='sr-only'>
+                      Annuler la modification du message
+                    </span>
+                    <IconComponent
+                      aria-hidden={true}
+                      focusable={false}
+                      name={IconName.Close}
+                      className='m-auto h-6 w-6'
+                    />
+                  </button>
+                </>
+              )}
+
+              <div
+                className='p-4 bg-blanc rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
+                onClick={() => inputRef.current!.focus()}
+              >
+                {uploadedFileInfo && (
+                  <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
+                    <span className='break-all overflow-y-auto max-h-56'>
+                      {uploadedFileInfo.nom}
+                    </span>
+                    <button
+                      type='button'
+                      aria-label={
+                        'Supprimer la pièce jointe ' + uploadedFileInfo.nom
+                      }
+                      onClick={deleteFile}
+                    >
+                      <IconComponent
+                        name={IconName.Close}
+                        aria-hidden={true}
+                        focusable={false}
+                        className='w-6 h-6 ml-2 fill-primary stroke-primary'
+                      />
+                    </button>
+                  </div>
+                )}
+
+                <label htmlFor='input-new-message' className='sr-only'>
+                  Message à envoyer
+                </label>
+                <textarea
+                  ref={inputRef}
+                  id='input-new-message'
+                  className='w-full outline-none text-base-regular'
+                  onFocus={() => setReadByConseiller(jeuneChat.chatId)}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder='Écrivez votre message ici...'
+                  rows={5}
+                />
+              </div>
+              <div className='relative'>
                 <button
-                  type='button'
-                  aria-label={
-                    'Supprimer la pièce jointe ' + uploadedFileInfo.nom
-                  }
-                  onClick={deleteFile}
+                  type='submit'
+                  aria-label={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
+                  title={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
+                  disabled={!userInput && !Boolean(uploadedFileInfo)}
+                  className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed absolute bottom-0'
                 >
                   <IconComponent
-                    name={IconName.Close}
+                    name={IconName.Send}
                     aria-hidden={true}
                     focusable={false}
-                    className='w-6 h-6 ml-2 fill-primary stroke-primary'
+                    className='m-auto w-6 h-6 fill-blanc'
                   />
                 </button>
               </div>
-            )}
+            </div>
+          </form>
+        </>
+      )}
 
-            <label htmlFor='input-new-message' className='sr-only'>
-              Message à envoyer
-            </label>
-            <textarea
-              ref={inputRef}
-              id='input-new-message'
-              className='w-full outline-none text-base-regular'
-              onFocus={() => setReadByConseiller(jeuneChat.chatId)}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder='Écrivez votre message ici...'
-              rows={5}
-            />
-          </div>
-          <div className='relative'>
-            <button
-              type='submit'
-              aria-label={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
-              title={`Envoyer ${messageAModifier ? 'la modification du message' : 'le message'}`}
-              disabled={!userInput && !Boolean(uploadedFileInfo)}
-              className='bg-primary w-12 h-12 border-none rounded-full disabled:bg-grey_500 disabled:cursor-not-allowed absolute bottom-0'
-            >
-              <IconComponent
-                name={IconName.Send}
-                aria-hidden={true}
-                focusable={false}
-                className='m-auto w-6 h-6 fill-blanc'
-              />
-            </button>
-          </div>
-        </div>
-      </form>
+      {!messagerieEstVisible && (
+        <MessagerieCachee
+          permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+        />
+      )}
     </>
   )
 }

@@ -50,45 +50,9 @@ describe('<ChatRoom />', () => {
       accederConversation = jest.fn()
     })
 
-    it('affiche une pastille si un message est configuré', async () => {
-      //Given
-      ;(getMessageImportant as jest.Mock).mockResolvedValue({
-        message: 'contenu du message',
-        dateDebut: DateTime.now().toISODate(),
-        dateFin: DateTime.now().plus({ day: 1 }).toISODate(),
-        id: 'id-message',
-      })
-
-      //When
-      await act(async () => {
-        renderWithContexts(
-          <ChatRoom
-            jeunesChats={jeunesChats}
-            showMenu={false}
-            onAccesConversation={accederConversation}
-            onAccesListesDiffusion={() => {}}
-            onOuvertureMenu={() => {}}
-          />,
-          {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
-          }
-        )
-      })
-
-      //Then
-      expect(
-        screen.getByText('Un message important est déjà configuré')
-      ).toBeInTheDocument()
-    })
-
     it('n’affiche pas de pastille s’il n’y a pas de message configuré', async () => {
       //Given
-      ;(getMessageImportant as jest.Mock).mockResolvedValue({
-        message: 'contenu du message',
-        dateDebut: DateTime.now().minus({ day: 2 }).toISODate(),
-        dateFin: DateTime.now().minus({ day: 1 }).toISODate(),
-        id: 'id-message',
-      })
+      ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
 
       //When
       await act(async () => {
@@ -105,6 +69,12 @@ describe('<ChatRoom />', () => {
           }
         )
       })
+
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Voir les actions possibles pour votre messagerie',
+        })
+      )
 
       //Then
       expect(() =>
@@ -112,206 +82,270 @@ describe('<ChatRoom />', () => {
       ).toThrow()
     })
 
-    it('affiche un bouton pour configurer son message', async () => {
-      //When
-      await act(async () => {
-        renderWithContexts(
-          <ChatRoom
-            jeunesChats={jeunesChats}
-            showMenu={false}
-            onAccesConversation={accederConversation}
-            onAccesListesDiffusion={() => {}}
-            onOuvertureMenu={() => {}}
-          />,
-          {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
-          }
+    describe('quand un message important existe', () => {
+      it('affiche une pastille si un message est configuré', async () => {
+        //Given
+        ;(getMessageImportant as jest.Mock).mockResolvedValue({
+          message: 'contenu du message',
+          dateDebut: DateTime.now().toISODate(),
+          dateFin: DateTime.now().plus({ day: 1 }).toISODate(),
+          id: 'id-message',
+        })
+
+        await act(async () => {
+          renderWithContexts(
+            <ChatRoom
+              jeunesChats={jeunesChats}
+              showMenu={false}
+              onAccesConversation={accederConversation}
+              onAccesListesDiffusion={() => {}}
+              onOuvertureMenu={() => {}}
+            />,
+            {
+              customConseiller: unConseiller({ id: 'id-conseiller' }),
+            }
+          )
+        })
+
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Voir les actions possibles pour votre messagerie',
+          })
         )
+
+        //Then
+        expect(
+          screen.getByText('Un message important est déjà configuré')
+        ).toBeInTheDocument()
       })
 
-      //Then
-      expect(
-        screen.getByRole('button', { name: 'Configurer un message important' })
-      ).toBeInTheDocument()
-    })
+      it('affiche un bouton pour configurer son message', async () => {
+        //When
+        await act(async () => {
+          renderWithContexts(
+            <ChatRoom
+              jeunesChats={jeunesChats}
+              showMenu={false}
+              onAccesConversation={accederConversation}
+              onAccesListesDiffusion={() => {}}
+              onOuvertureMenu={() => {}}
+            />,
+            {
+              customConseiller: unConseiller({ id: 'id-conseiller' }),
+            }
+          )
+        })
 
-    describe('quand le conseiller clique sur le bouton', () => {
-      describe('quand le conseiller veut créer un nouveau message important', () => {
-        let inputDateDebut: HTMLInputElement
-        let inputDateFin: HTMLInputElement
-        let inputMessage: HTMLTextAreaElement
-        let submitBtn: HTMLButtonElement
-
-        beforeEach(async () => {
-          //Given
-          ;(getMessageImportant as jest.Mock).mockResolvedValue({
-            undefined,
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Voir les actions possibles pour votre messagerie',
           })
+        )
 
-          await act(async () => {
-            renderWithContexts(
-              <ChatRoom
-                jeunesChats={jeunesChats}
-                showMenu={false}
-                onAccesConversation={accederConversation}
-                onAccesListesDiffusion={() => {}}
-                onOuvertureMenu={() => {}}
-              />,
-              {
-                customConseiller: unConseiller({ id: 'id-conseiller' }),
-              }
+        //Then
+        expect(
+          screen.getByRole('button', {
+            name: /Configurer un message important/,
+          })
+        ).toBeInTheDocument()
+      })
+
+      describe('quand le conseiller clique sur le bouton', () => {
+        describe('quand le conseiller veut créer un nouveau message important', () => {
+          let inputDateDebut: HTMLInputElement
+          let inputDateFin: HTMLInputElement
+          let inputMessage: HTMLTextAreaElement
+          let submitBtn: HTMLButtonElement
+
+          beforeEach(async () => {
+            //Given
+            ;(getMessageImportant as jest.Mock).mockResolvedValue({
+              undefined,
+            })
+
+            await act(async () => {
+              renderWithContexts(
+                <ChatRoom
+                  jeunesChats={jeunesChats}
+                  showMenu={false}
+                  onAccesConversation={accederConversation}
+                  onAccesListesDiffusion={() => {}}
+                  onOuvertureMenu={() => {}}
+                />,
+                {
+                  customConseiller: unConseiller({ id: 'id-conseiller' }),
+                }
+              )
+            })
+
+            await userEvent.click(
+              screen.getByRole('button', {
+                name: 'Voir les actions possibles pour votre messagerie',
+              })
             )
+
+            const now = DateTime.fromISO('2024-04-24')
+            jest.spyOn(DateTime, 'now').mockReturnValue(now)
+
+            const boutonSettings = screen.getByRole('button', {
+              name: 'Configurer un message important',
+            })
+
+            await userEvent.click(boutonSettings)
+            inputDateDebut = screen.getByLabelText('Date de début')
+            inputDateFin = screen.getByLabelText('Date de fin')
+            inputMessage = screen.getByLabelText(/Message/)
+            submitBtn = screen.getByRole('button', { name: 'Envoyer' })
           })
 
-          const now = DateTime.fromISO('2024-04-24')
-          jest.spyOn(DateTime, 'now').mockReturnValue(now)
+          it('permet de remplir un formulaire pour ajouter un message important', async () => {
+            //Given
+            const messageImportant =
+              'Actuellement en congés, je ne peux pas vous répondre.'
 
-          const boutonSettings = screen.getByRole('button', {
-            name: 'Configurer un message important',
-          })
-
-          await userEvent.click(boutonSettings)
-          inputDateDebut = screen.getByLabelText('Date de début')
-          inputDateFin = screen.getByLabelText('Date de fin')
-          inputMessage = screen.getByLabelText(/Message/)
-          submitBtn = screen.getByRole('button', { name: 'Envoyer' })
-        })
-
-        it('permet de remplir un formulaire pour ajouter un message important', async () => {
-          //Given
-          const messageImportant =
-            'Actuellement en congés, je ne peux pas vous répondre.'
-
-          //When
-          await userEvent.type(inputDateDebut, '2024-04-24')
-          await userEvent.type(inputDateFin, '2024-04-30')
-          await userEvent.type(inputMessage, messageImportant)
-          await userEvent.click(submitBtn)
-
-          //Then
-          expect(sendNouveauMessageImportant).toHaveBeenCalledWith({
-            cleChiffrement: 'cleChiffrement',
-            dateDebut: DateTime.fromISO('2024-04-24'),
-            dateFin: DateTime.fromISO('2024-04-30'),
-            idConseiller: 'id-conseiller',
-            newMessage: messageImportant,
-          })
-        })
-
-        describe('gère les messages d’erreur', () => {
-          it('quand les champs sont vides', async () => {
             //When
-            await userEvent.click(inputDateDebut)
-            await userEvent.click(inputDateFin)
-            await userEvent.click(inputMessage)
+            await userEvent.type(inputDateDebut, '2024-04-24')
+            await userEvent.type(inputDateFin, '2024-04-30')
+            await userEvent.type(inputMessage, messageImportant)
             await userEvent.click(submitBtn)
 
             //Then
-            expect(
-              screen.getByText(
-                'Le champ “Date de début” est vide. Renseignez une date de début.'
-              )
-            ).toBeInTheDocument()
-            expect(
-              screen.getByText(
-                'Le champ “Date de fin” est vide. Renseignez une date de fin.'
-              )
-            ).toBeInTheDocument()
-            expect(
-              screen.getByText(
-                'Le champ “Message” est vide. Renseignez un message.'
-              )
-            ).toBeInTheDocument()
+            expect(sendNouveauMessageImportant).toHaveBeenCalledWith({
+              cleChiffrement: 'cleChiffrement',
+              dateDebut: DateTime.fromISO('2024-04-24'),
+              dateFin: DateTime.fromISO('2024-04-30'),
+              idConseiller: 'id-conseiller',
+              newMessage: messageImportant,
+            })
+          })
+
+          describe('gère les messages d’erreur', () => {
+            it('quand les champs sont vides', async () => {
+              //When
+              await userEvent.click(inputDateDebut)
+              await userEvent.click(inputDateFin)
+              await userEvent.click(inputMessage)
+              await userEvent.click(submitBtn)
+
+              //Then
+              expect(
+                screen.getByText(
+                  'Le champ “Date de début” est vide. Renseignez une date de début.'
+                )
+              ).toBeInTheDocument()
+              expect(
+                screen.getByText(
+                  'Le champ “Date de fin” est vide. Renseignez une date de fin.'
+                )
+              ).toBeInTheDocument()
+              expect(
+                screen.getByText(
+                  'Le champ “Message” est vide. Renseignez un message.'
+                )
+              ).toBeInTheDocument()
+            })
           })
         })
-      })
 
-      describe('quand le conseiller veut mettre à jour son message important', () => {
-        it('pré-remplit le formulaire', async () => {
-          //Given
-          ;(getMessageImportant as jest.Mock).mockResolvedValue({
-            message: 'contenu-message',
-            dateDebut: '2024-04-24',
-            dateFin: '2024-04-25',
-            id: 'id-document',
-          })
+        describe('quand le conseiller veut mettre à jour son message important', () => {
+          it('pré-remplit le formulaire', async () => {
+            //Given
+            ;(getMessageImportant as jest.Mock).mockResolvedValue({
+              message: 'contenu-message',
+              dateDebut: '2024-04-24',
+              dateFin: '2024-04-25',
+              id: 'id-document',
+            })
 
-          //When
-          await act(async () => {
-            renderWithContexts(
-              <ChatRoom
-                jeunesChats={jeunesChats}
-                showMenu={false}
-                onAccesConversation={accederConversation}
-                onAccesListesDiffusion={() => {}}
-                onOuvertureMenu={() => {}}
-              />,
-              {
-                customConseiller: unConseiller({ id: 'id-conseiller' }),
-              }
+            //When
+            await act(async () => {
+              renderWithContexts(
+                <ChatRoom
+                  jeunesChats={jeunesChats}
+                  showMenu={false}
+                  onAccesConversation={accederConversation}
+                  onAccesListesDiffusion={() => {}}
+                  onOuvertureMenu={() => {}}
+                />,
+                {
+                  customConseiller: unConseiller({ id: 'id-conseiller' }),
+                }
+              )
+            })
+
+            await userEvent.click(
+              screen.getByRole('button', {
+                name: 'Voir les actions possibles pour votre messagerie',
+              })
             )
+
+            const boutonSettings = screen.getByRole('button', {
+              name: 'Configurer un message important',
+            })
+
+            await userEvent.click(boutonSettings)
+
+            const inputDateDebut = screen.getByLabelText('Date de début')
+            const inputDateFin = screen.getByLabelText('Date de fin')
+            const inputMessage = screen.getByLabelText(/Message/)
+
+            //Then
+            expect(inputDateDebut).toHaveProperty('defaultValue', '2024-04-24')
+            expect(inputDateFin).toHaveProperty('defaultValue', '2024-04-25')
+            expect(inputMessage).toHaveProperty('value', 'contenu-message')
           })
-
-          const boutonSettings = screen.getByRole('button', {
-            name: 'Configurer un message important',
-          })
-
-          await userEvent.click(boutonSettings)
-
-          const inputDateDebut = screen.getByLabelText('Date de début')
-          const inputDateFin = screen.getByLabelText('Date de fin')
-          const inputMessage = screen.getByLabelText(/Message/)
-
-          //Then
-          expect(inputDateDebut).toHaveProperty('defaultValue', '2024-04-24')
-          expect(inputDateFin).toHaveProperty('defaultValue', '2024-04-25')
-          expect(inputMessage).toHaveProperty('value', 'contenu-message')
         })
       })
-    })
 
-    it('permet de supprimer le message important', async () => {
-      //Given
-      ;(getMessageImportant as jest.Mock).mockResolvedValue({
-        message: 'contenu-message',
-        dateDebut: '2024-04-24',
-        dateFin: '2024-05-25',
-        id: 'id-document',
-      })
+      it('permet de supprimer le message important', async () => {
+        //Given
+        ;(getMessageImportant as jest.Mock).mockResolvedValue({
+          message: 'contenu-message',
+          dateDebut: '2024-04-24',
+          dateFin: '2024-05-25',
+          id: 'id-document',
+        })
 
-      const now = DateTime.fromISO('2024-04-24')
-      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+        const now = DateTime.fromISO('2024-04-24')
+        jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
-      await act(async () => {
-        renderWithContexts(
-          <ChatRoom
-            jeunesChats={jeunesChats}
-            showMenu={false}
-            onAccesConversation={accederConversation}
-            onAccesListesDiffusion={() => {}}
-            onOuvertureMenu={() => {}}
-          />,
-          {
-            customConseiller: unConseiller({ id: 'id-conseiller' }),
-          }
+        await act(async () => {
+          renderWithContexts(
+            <ChatRoom
+              jeunesChats={jeunesChats}
+              showMenu={false}
+              onAccesConversation={accederConversation}
+              onAccesListesDiffusion={() => {}}
+              onOuvertureMenu={() => {}}
+            />,
+            {
+              customConseiller: unConseiller({ id: 'id-conseiller' }),
+            }
+          )
+        })
+
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Voir les actions possibles pour votre messagerie',
+          })
         )
+
+        const boutonSettings = screen.getByRole('button', {
+          name: /Configurer un message important/,
+        })
+
+        await userEvent.click(boutonSettings)
+
+        const supprimerMessage = screen.getByRole('button', {
+          name: 'Désactiver le message',
+        })
+
+        //When
+        await userEvent.click(supprimerMessage)
+
+        //Then
+        expect(desactiverMessageImportant).toHaveBeenCalledWith('id-document')
       })
-
-      const boutonSettings = screen.getByRole('button', {
-        name: /Configurer un message important/,
-      })
-
-      await userEvent.click(boutonSettings)
-
-      const supprimerMessage = screen.getByRole('button', {
-        name: 'Désactiver le message',
-      })
-
-      //When
-      await userEvent.click(supprimerMessage)
-
-      //Then
-      expect(desactiverMessageImportant).toHaveBeenCalledWith('id-document')
     })
   })
 
