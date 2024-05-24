@@ -22,7 +22,7 @@
     "@next/bundle-analyzer": "14.2.3",
     "crypto-js": "4.2.0",
     "dotenv": "16.4.5",
-    "elastic-apm-node": "4.5.3",
+    "elastic-apm-node": "4.5.4",
     "firebase": "10.11.1",
     "html-react-parser": "5.1.10",
     "jsonwebtoken": "9.0.2",
@@ -38,7 +38,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-router-dom": "6.23.1",
-    "sharp": "0.33.3"
+    "sharp": "0.33.4"
   },
   "devDependencies": {
     "@svgr/webpack": "8.1.0",
@@ -51,9 +51,9 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash.isequal": "^4.5.8",
     "@types/luxon": "^3.4.2",
-    "@types/react": "^18.3.2",
+    "@types/react": "^18.3.3",
     "autoprefixer": "^10.4.19",
-    "css-loader": "^7.1.1",
+    "css-loader": "^7.1.2",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.3",
     "eslint-config-prettier": "^9.1.0",
