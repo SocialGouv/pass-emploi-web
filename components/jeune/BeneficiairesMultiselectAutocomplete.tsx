@@ -1,4 +1,10 @@
-import { useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
+
+import { estClos, Evenement } from '../../interfaces/evenement'
+import { getNomJeuneComplet } from '../../interfaces/jeune'
+import { ButtonStyle } from '../ui/Button/Button'
+import ButtonLink from '../ui/Button/ButtonLink'
+import { ValueWithError } from '../ValueWithError'
 
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -24,6 +30,8 @@ interface BeneficiairesMultiselectAutocompleteProps {
   disabled?: boolean
   renderIndication?: (props: { value: string }) => JSX.Element
   ariaDescribedBy?: string
+  lienEmargement?: string
+  trackEmargement: () => void
 }
 
 const SELECT_ALL_DESTINATAIRES_OPTION = 'Sélectionner tous mes destinataires'
@@ -47,6 +55,8 @@ export default function BeneficiairesMultiselectAutocomplete({
   disabled,
   renderIndication,
   ariaDescribedBy,
+  trackEmargement,
+  lienEmargement,
 }: BeneficiairesMultiselectAutocompleteProps) {
   const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] =
     useState<OptionBeneficiaire[]>(defaultBeneficiaires)
@@ -255,10 +265,19 @@ export default function BeneficiairesMultiselectAutocomplete({
       <p
         aria-label={`${typeSelection} sélectionnés (${countBeneficiairesUniques()})`}
         id='selected-beneficiaires--title'
-        className='text-base-medium mb-2'
+        className='text-base-medium mb-2 flex mb-4 justify-between items-center'
         aria-live='polite'
       >
         {typeSelection} ({countBeneficiairesUniques()})
+        {lienEmargement && (
+          <ButtonLink
+            style={ButtonStyle.PRIMARY}
+            href={lienEmargement}
+            externalLink={true}
+            label='Exporter la liste des inscrits'
+            onClick={trackEmargement}
+          ></ButtonLink>
+        )}
       </p>
 
       {countBeneficiairesUniques() > 0 && (
