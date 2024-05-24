@@ -31,7 +31,7 @@ interface BeneficiairesMultiselectAutocompleteProps {
   renderIndication?: (props: { value: string }) => JSX.Element
   ariaDescribedBy?: string
   lienEmargement?: string
-  trackEmargement: () => void
+  trackEmargement?: () => void
 }
 
 const SELECT_ALL_DESTINATAIRES_OPTION = 'Sélectionner tous mes destinataires'
@@ -269,7 +269,7 @@ export default function BeneficiairesMultiselectAutocomplete({
         aria-live='polite'
       >
         {typeSelection} ({countBeneficiairesUniques()})
-        {lienEmargement && (
+        {lienEmargement && trackEmargement && (
           <ButtonLink
             style={ButtonStyle.PRIMARY}
             href={lienEmargement}
