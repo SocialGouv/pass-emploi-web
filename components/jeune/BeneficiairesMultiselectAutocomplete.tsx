@@ -269,7 +269,7 @@ export default function BeneficiairesMultiselectAutocomplete({
         aria-live='polite'
       >
         {typeSelection} ({countBeneficiairesUniques()})
-        {countBeneficiairesUniques() > 0 && lienEmargement && (
+        {lienEmargement && (
           <ButtonLink
             style={ButtonStyle.PRIMARY}
             href={lienEmargement}
