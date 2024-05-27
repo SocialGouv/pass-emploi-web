@@ -84,6 +84,7 @@ function CreationJeuneMiloPage() {
           dossier={dossier}
           onCreateCompte={creerCompteJeune}
           erreurMessageHttpPassEmploi={erreurCreation}
+          onRefresh={() => rechercherDossier(dossier.id)}
         />
       )}
     </>

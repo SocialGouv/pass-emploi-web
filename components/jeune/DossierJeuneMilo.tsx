@@ -1,5 +1,3 @@
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
@@ -16,12 +14,14 @@ interface DossierJeuneMiloProps {
   dossier: DossierMilo
   onCreateCompte: (data: JeuneMiloFormData) => Promise<void>
   erreurMessageHttpPassEmploi?: string
+  onRefresh: () => void
 }
 
 export default function DossierJeuneMilo({
   dossier,
   onCreateCompte,
   erreurMessageHttpPassEmploi,
+  onRefresh,
 }: DossierJeuneMiloProps) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
@@ -150,6 +150,7 @@ export default function DossierJeuneMilo({
             dossier={dossier}
             addJeune={addJeune}
             creationEnCours={creationEnCours}
+            onRefresh={onRefresh}
           />
         )}
       </div>
@@ -161,19 +162,19 @@ function ActionButtons({
   dossier,
   addJeune,
   creationEnCours,
+  onRefresh,
 }: {
   dossier: DossierMilo
   addJeune: () => Promise<void>
   creationEnCours: boolean
+  onRefresh: () => void
 }) {
-  const router = useRouter()
-
   return dossier.email ? (
     <Button type='button' onClick={addJeune} disabled={creationEnCours}>
       {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
     </Button>
   ) : (
-    <Button type='button' onClick={() => router.refresh()}>
+    <Button type='button' onClick={onRefresh}>
       <RefreshIcon className='mr-2.5' aria-hidden={true} focusable={false} />
       Rafraîchir le compte
     </Button>
