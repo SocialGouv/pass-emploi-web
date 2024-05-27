@@ -28,6 +28,7 @@ import {
 } from 'firebase/firestore'
 import { DateTime } from 'luxon'
 
+import { apiGet } from 'clients/api.client'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
 import { Chat } from 'interfaces/jeune'
@@ -465,6 +466,33 @@ export async function getMessageImportantSnapshot(
   if (querySnapshots.docs.length > 0) return querySnapshots.docs[0]
 }
 
+export async function rechercherMessages(
+  accessToken: string,
+  idBeneficiaire: string,
+  recherche: string
+): Promise<Message[]> {
+  const {
+    content: { resultats },
+  } = await apiGet<{
+    resultats: Array<{
+      id: string
+      message: FirebaseMessage & { creationDate: { _seconds: number } }
+    }>
+  }>(`/jeunes/${idBeneficiaire}/messages?recherche=${recherche}`, accessToken)
+
+  return resultats.map(({ message, id }) =>
+    firebaseMessageToMessage(
+      {
+        ...message,
+        creationDate: Timestamp.fromMillis(
+          message.creationDate._seconds * 1000
+        ),
+      },
+      id
+    )
+  )
+}
+
 function retrieveApp() {
   const appAlreadyInitialized: number = getApps().length
   if (!appAlreadyInitialized) {
@@ -731,13 +759,20 @@ export function docSnapshotToMessage(
   docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
 ): Message {
   const firebaseMessage = docSnapshot.data()
+  return firebaseMessageToMessage(firebaseMessage, docSnapshot.id)
+}
+
+export function firebaseMessageToMessage(
+  firebaseMessage: FirebaseMessage,
+  id: string
+): Message {
   const message: Message = {
+    id,
     sentBy: firebaseMessage.sentBy,
     content: firebaseMessage.content,
     iv: firebaseMessage.iv,
     conseillerId: firebaseMessage.conseillerId,
     creationDate: DateTime.fromMillis(firebaseMessage.creationDate.toMillis()),
-    id: docSnapshot.id,
     type: firebaseToMessageType(firebaseMessage.type),
     status: firebaseMessage.status,
   }

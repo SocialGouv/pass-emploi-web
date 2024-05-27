@@ -10,33 +10,44 @@ import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
-import { toFrenchDateTime, toFrenchTime } from 'utils/date'
+import { toFrenchDateTime, toFrenchTime, toShortDate } from 'utils/date'
 
-interface DisplayMessageConseillerProps {
+type DisplayMessageConseillerProps = ResultatRecherche | MessageConseillerProps
+
+interface ResultatRecherche {
+  message: Message
+  conseillerNomComplet: string | undefined
+  isConseillerCourant: boolean
+  isEnCoursDeModification: false
+  estResultatDeRecherche: true
+}
+
+interface MessageConseillerProps {
   message: Message
   conseillerNomComplet: string | undefined
   lastSeenByJeune: DateTime | undefined
   isConseillerCourant: boolean
   onSuppression: () => Promise<void>
   onModification: () => void
-  isEnCoursDeModification?: boolean
+  isEnCoursDeModification: boolean
 }
 
-export default function DisplayMessageConseiller({
-  message,
-  conseillerNomComplet,
-  isConseillerCourant,
-  lastSeenByJeune,
-  onSuppression,
-  onModification,
-  isEnCoursDeModification,
-}: DisplayMessageConseillerProps) {
+export default function DisplayMessageConseiller(
+  props: DisplayMessageConseillerProps
+) {
+  const {
+    message,
+    conseillerNomComplet,
+    isConseillerCourant,
+    isEnCoursDeModification,
+  } = props
+
   const [editionEnCours, setEditionEnCours] = useState<boolean>(false)
 
   async function supprimerMessage() {
     setEditionEnCours(true)
     try {
-      await onSuppression()
+      await (props as MessageConseillerProps).onSuppression()
     } finally {
       setEditionEnCours(false)
     }
@@ -63,13 +74,21 @@ export default function DisplayMessageConseiller({
                 isEnCoursDeModification={isEnCoursDeModification}
               />
 
-              <FooterMessage
-                creationDate={message.creationDate}
-                lastSeenByJeune={lastSeenByJeune}
-                onSuppression={supprimerMessage}
-                onModification={onModification}
-                estModifie={isEdited(message)}
-              />
+              {!isResultatRecherche(props) && (
+                <FooterMessage
+                  creationDate={message.creationDate}
+                  lastSeenByJeune={props.lastSeenByJeune}
+                  onSuppression={supprimerMessage}
+                  onModification={props.onModification}
+                  estModifie={isEdited(message)}
+                />
+              )}
+
+              {isResultatRecherche(props) && (
+                <span className='flex justify-end text-xs-medium text-content'>
+                  Le {toShortDate(message.creationDate)}
+                </span>
+              )}
             </>
           )}
         </>
@@ -247,4 +266,10 @@ function FooterMessage({
       </span>
     </div>
   )
+}
+
+function isResultatRecherche(
+  props: DisplayMessageConseillerProps
+): props is ResultatRecherche {
+  return Object.prototype.hasOwnProperty.call(props, 'estResultatDeRecherche')
 }

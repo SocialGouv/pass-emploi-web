@@ -19,7 +19,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { JeuneChat } from 'interfaces/jeune'
 import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
@@ -35,39 +35,45 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { dateIsToday, toShortDate } from 'utils/date'
 
 type ConversationProps = {
-  conseillers: ConseillerHistorique[]
-  jeuneChat: JeuneChat
+  beneficiaireNomComplet: string
   onBack: () => void
+  getConseillerNomComplet: (message: Message) => string | undefined
+  jeuneChat: JeuneChat
+  toggleAfficherRecherche: () => void
 }
-
-export default function Conversation({
-  jeuneChat,
-  conseillers,
+export function Conversation({
+  beneficiaireNomComplet,
   onBack,
+  getConseillerNomComplet,
+  jeuneChat,
+  toggleAfficherRecherche,
 }: ConversationProps) {
   const chatCredentials = useChatCredentials()
   const [conseiller] = useConseiller()
 
   const [userInput, setUserInput] = useState('')
-  const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
-  const [uploadedFileInfo, setUploadedFileInfo] = useState<
-    InfoFichier | undefined
-  >(undefined)
+
+  const [isflaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
+    jeuneChat.flaggedByConseiller
+  )
+
   const [uploadedFileError, setUploadedFileError] = useState<
     string | undefined
   >(undefined)
   const [isFileUploading, setIsFileUploading] = useState<boolean>(false)
 
-  const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
-    undefined
-  )
-  const [isflaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
-    jeuneChat.flaggedByConseiller
-  )
-
   const [messageAModifier, setMessageAModifier] = useState<
     Message | undefined
   >()
+
+  const [messagesByDay, setMessagesByDay] = useState<ByDay<Message>[]>()
+  const [uploadedFileInfo, setUploadedFileInfo] = useState<
+    InfoFichier | undefined
+  >(undefined)
+
+  const [lastSeenByJeune, setLastSeenByJeune] = useState<DateTime | undefined>(
+    undefined
+  )
 
   const [nombrePagesChargees, setNombrePagesChargees] = useState<number>(1)
   const [loadingMoreMessages, setLoadingMoreMessages] = useState<boolean>(false)
@@ -76,64 +82,6 @@ export default function Conversation({
 
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
-
-  const beneficiaireNomComplet = `${jeuneChat.prenom} ${jeuneChat.nom}`
-
-  function displayDate(date: DateTime) {
-    return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
-  }
-
-  async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (!(userInput || Boolean(uploadedFileInfo)) || isFileUploading) return
-
-    const formNouveauMessage: FormNouveauMessageIndividuel = {
-      jeuneChat,
-      newMessage:
-        userInput ||
-        'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
-      cleChiffrement: chatCredentials!.cleChiffrement,
-    }
-
-    if (uploadedFileInfo) formNouveauMessage.infoPieceJointe = uploadedFileInfo
-
-    const { sendNouveauMessage: _sendNouveauMessage } = await import(
-      'services/messages.service'
-    )
-    _sendNouveauMessage(formNouveauMessage)
-
-    setUploadedFileInfo(undefined)
-    resetTextbox()
-  }
-
-  function getConseillerNomComplet(message: Message) {
-    const conseillerTrouve = conseillers.find(
-      (c) => c.id === message.conseillerId
-    )
-    if (conseillerTrouve) {
-      return `${conseillerTrouve?.prenom.toLowerCase()} ${conseillerTrouve?.nom.toLowerCase()}`
-    }
-  }
-
-  function chargerPlusDeMessages() {
-    const pageSuivante = nombrePagesChargees + 1
-    setLoadingMoreMessages(true)
-    const idFirstDisplayedMessage = messagesByDay![0].messages[0].id
-
-    unsubscribeFromMessages.current()
-    unsubscribeFromMessages.current = observerMessages(
-      jeuneChat.chatId,
-      pageSuivante
-    )
-
-    setNombrePagesChargees(pageSuivante)
-    const previousFirstDisplayedMessage =
-      conteneurMessagesRef.current!.querySelector('#' + idFirstDisplayedMessage)
-    previousFirstDisplayedMessage!.scrollIntoView({
-      block: 'nearest',
-      inline: 'nearest',
-    })
-  }
 
   const observerMessages = useCallback(
     (idChatToObserve: string, nombreDePages: number) => {
@@ -168,6 +116,58 @@ export default function Conversation({
     [chatCredentials]
   )
 
+  function resetTextbox() {
+    inputRef.current!.value = ''
+    setUserInput('')
+  }
+
+  function displayDate(date: DateTime) {
+    return dateIsToday(date) ? "Aujourd'hui" : `Le ${toShortDate(date)}`
+  }
+
+  async function sendNouveauMessage(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!(userInput || Boolean(uploadedFileInfo)) || isFileUploading) return
+
+    const formNouveauMessage: FormNouveauMessageIndividuel = {
+      jeuneChat,
+      newMessage:
+        userInput ||
+        'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
+      cleChiffrement: chatCredentials!.cleChiffrement,
+    }
+
+    if (uploadedFileInfo) formNouveauMessage.infoPieceJointe = uploadedFileInfo
+
+    const { sendNouveauMessage: _sendNouveauMessage } = await import(
+      'services/messages.service'
+    )
+    _sendNouveauMessage(formNouveauMessage)
+
+    setUploadedFileInfo(undefined)
+    resetTextbox()
+  }
+
+  function chargerPlusDeMessages() {
+    const pageSuivante = nombrePagesChargees + 1
+    setLoadingMoreMessages(true)
+    const idFirstDisplayedMessage = messagesByDay![0].messages[0].id
+
+    unsubscribeFromMessages.current()
+    unsubscribeFromMessages.current = observerMessages(
+      jeuneChat.chatId,
+      pageSuivante
+    )
+
+    setNombrePagesChargees(pageSuivante)
+    const previousFirstDisplayedMessage =
+      conteneurMessagesRef.current!.querySelector('#' + idFirstDisplayedMessage)
+    previousFirstDisplayedMessage!.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+    })
+  }
+
   async function uploadFichier(fichierSelectionne: File) {
     setUploadedFileError(undefined)
 
@@ -190,34 +190,7 @@ export default function Conversation({
     }
   }
 
-  async function deleteFile() {
-    setUploadedFileInfo(undefined)
-    const { deleteFichier } = await import('services/fichiers.service')
-    await deleteFichier(uploadedFileInfo!.id)
-  }
-
-  async function toggleFlag() {
-    const flagged = !isflaggedByConseiller
-    const { toggleFlag: _toggleFlag } = await import(
-      'services/messages.service'
-    )
-    await _toggleFlag(jeuneChat.chatId, flagged)
-    trackEvent({
-      structure: conseiller.structure,
-      categorie: 'Conversation suivie',
-      action: 'Conversation',
-      nom: flagged.toString(),
-      avecBeneficiaires: jeuneChat.chatId ? 'oui' : 'non',
-    })
-    setFlaggedByConseiller(flagged)
-  }
-
-  function resetTextbox() {
-    inputRef.current!.value = ''
-    setUserInput('')
-  }
-
-  function preparerModificationmessage(message: Message, i: number, j: number) {
+  function preparerModificationMessage(message: Message) {
     setMessageAModifier(message)
     inputRef.current!.value = message.content
     setUserInput(message.content)
@@ -267,6 +240,28 @@ export default function Conversation({
     })
   }
 
+  async function deleteFile() {
+    setUploadedFileInfo(undefined)
+    const { deleteFichier } = await import('services/fichiers.service')
+    await deleteFichier(uploadedFileInfo!.id)
+  }
+
+  async function toggleFlag() {
+    const flagged = !isflaggedByConseiller
+    const { toggleFlag: _toggleFlag } = await import(
+      'services/messages.service'
+    )
+    await _toggleFlag(jeuneChat.chatId, flagged)
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Conversation suivie',
+      action: 'Conversation',
+      nom: flagged.toString(),
+      avecBeneficiaires: jeuneChat.chatId ? 'oui' : 'non',
+    })
+    setFlaggedByConseiller(flagged)
+  }
+
   useEffect(() => {
     unsubscribeFromMessages.current = observerMessages(jeuneChat.chatId, 1)
     setReadByConseiller(jeuneChat.chatId)
@@ -275,7 +270,11 @@ export default function Conversation({
   }, [jeuneChat.chatId, observerMessages])
 
   useEffect(() => {
-    if (messagesByDay?.length && nombrePagesChargees === 1) {
+    if (
+      messagesByDay?.length &&
+      nombrePagesChargees === 1 &&
+      !toggleAfficherRecherche
+    ) {
       const dernierJour = conteneurMessagesRef.current!.lastElementChild
       const lastMessage = dernierJour!.querySelector('li:last-child')
 
@@ -299,22 +298,25 @@ export default function Conversation({
   }, [jeuneChat.chatId])
 
   return (
-    <div className='h-full flex flex-col min-h-0 bg-grey_100 overflow-auto'>
+    <>
       <HeaderChat
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
         titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
-        iconName={
+        bookmarkIcon={
           isflaggedByConseiller
             ? IconName.BookmarkFill
             : IconName.BookmarkOutline
         }
-        iconLabel={
+        bookmarkLabel={
           isflaggedByConseiller
             ? 'Ne plus suivre la conversation'
             : 'Suivre la conversation'
         }
-        onClickIcon={toggleFlag}
+        onClickBookMark={toggleFlag}
+        rechercheIcon={IconName.Search}
+        rechercheLabel='Rechercher un message dans la conversation'
+        onClickRecherche={toggleAfficherRecherche}
       />
 
       <div
@@ -359,14 +361,14 @@ export default function Conversation({
 
             {messagesByDay.length > 0 && (
               <ul ref={conteneurMessagesRef}>
-                {messagesByDay.map((messagesOfADay: ByDay<Message>, i) => (
+                {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                   <li key={messagesOfADay.date.toMillis()} className='mb-5'>
                     <div className='text-base-regular text-center mb-3'>
                       <span>{displayDate(messagesOfADay.date)}</span>
                     </div>
 
                     <ul>
-                      {messagesOfADay.messages.map((message: Message, j) => (
+                      {messagesOfADay.messages.map((message: Message) => (
                         <Fragment key={message.id}>
                           {!fromConseiller(message) && (
                             <DisplayMessageBeneficiaire
@@ -387,7 +389,7 @@ export default function Conversation({
                               }
                               onSuppression={() => supprimerMessage(message)}
                               onModification={() =>
-                                preparerModificationmessage(message, i, j)
+                                preparerModificationMessage(message)
                               }
                               isEnCoursDeModification={
                                 message.id === messageAModifier?.id
@@ -515,6 +517,6 @@ export default function Conversation({
           </div>
         </div>
       </form>
-    </div>
+    </>
   )
 }

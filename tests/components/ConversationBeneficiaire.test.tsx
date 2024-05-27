@@ -3,16 +3,18 @@ import userEvent from '@testing-library/user-event'
 import { DateTime } from 'luxon'
 import React, { ReactElement } from 'react'
 
-import Conversation from 'components/chat/Conversation'
+import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour, unMessage } from 'fixtures/message'
 import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ByDay, Message } from 'interfaces/message'
 import { deleteFichier, uploadFichier } from 'services/fichiers.service'
 import {
+  getChatCredentials,
   modifierMessage,
   observeDerniersMessages,
   observeJeuneReadingDate,
+  rechercherMessagesConversation,
   sendNouveauMessage,
   setReadByConseiller,
   supprimerMessage,
@@ -24,7 +26,7 @@ import { toShortDate } from 'utils/date'
 jest.mock('services/messages.service')
 jest.mock('services/fichiers.service')
 
-describe('<Conversation />', () => {
+describe('<ConversationBeneficiaire />', () => {
   let jeuneChat: JeuneChat
 
   let conseillersJeunes: ConseillerHistorique[]
@@ -35,6 +37,10 @@ describe('<Conversation />', () => {
     jeuneChat = unJeuneChat()
     conseillersJeunes = desConseillersJeune()
     unsubscribe = jest.fn()
+    ;(getChatCredentials as jest.Mock).mockResolvedValue({
+      token: 'tokenFirebase',
+      cleChiffrement: 'cleChiffrement',
+    })
     ;(observeJeuneReadingDate as jest.Mock).mockImplementation(
       (_: string, fn: (date: DateTime) => void) => {
         fn(DateTime.now())
@@ -61,7 +67,7 @@ describe('<Conversation />', () => {
 
     await act(async () => {
       const renderResult = renderWithContexts(
-        <Conversation
+        <ConversationBeneficiaire
           jeuneChat={jeuneChat}
           conseillers={conseillersJeunes}
           onBack={jest.fn()}
@@ -160,7 +166,7 @@ describe('<Conversation />', () => {
 
     const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
     rerender(
-      <Conversation
+      <ConversationBeneficiaire
         jeuneChat={newJeuneChat}
         conseillers={conseillersJeunes}
         onBack={jest.fn()}
@@ -555,6 +561,125 @@ describe('<Conversation />', () => {
           name: /Voir les détails de la session/,
         })
       ).toHaveAttribute('href', '/agenda/sessions/id-session-milo')
+    })
+  })
+
+  describe('permet de rechercher un message', () => {
+    it('affiche un bouton pour rechercher un message', async () => {
+      expect(
+        screen.getByRole('button', {
+          name: 'Rechercher un message dans la conversation',
+        })
+      ).toBeInTheDocument()
+    })
+
+    describe('au clic sur le bouton', () => {
+      it('affiche un formulaire de recherche', async () => {
+        //Given
+        const rechercheBtn = screen.getByRole('button', {
+          name: 'Rechercher un message dans la conversation',
+        })
+
+        //When
+        await userEvent.click(rechercheBtn)
+
+        //Then
+        expect(
+          screen.getByRole('textbox', {
+            name: '* Rechercher dans la conversation',
+          })
+        ).toBeInTheDocument()
+      })
+    })
+
+    describe('quand on remplit le formulaire', () => {
+      let formInput: HTMLInputElement
+      let submitBtn: HTMLButtonElement
+
+      beforeEach(async () => {
+        const rechercheBtn = screen.getByRole('button', {
+          name: 'Rechercher un message dans la conversation',
+        })
+        await userEvent.click(rechercheBtn)
+
+        formInput = screen.getByRole('textbox', {
+          name: '* Rechercher dans la conversation',
+        })
+        submitBtn = screen.getByRole('button', {
+          name: 'Rechercher des messages',
+        })
+      })
+
+      it('recherche un mot-clé', async () => {
+        //Given
+        const formInput = screen.getByRole('textbox', {
+          name: '* Rechercher dans la conversation',
+        })
+
+        const submitBtn = screen.getByRole('button', {
+          name: 'Rechercher des messages',
+        })
+
+        //When
+        await userEvent.type(formInput, 'tchoupi')
+        await userEvent.click(submitBtn)
+
+        //Then
+        expect(rechercherMessagesConversation).toHaveBeenCalledWith(
+          jeuneChat.id,
+          'tchoupi',
+          'cleChiffrement'
+        )
+      })
+
+      describe('s’il n’y a pas de résultat', () => {
+        it('affiche un état vide', async () => {
+          ;(rechercherMessagesConversation as jest.Mock).mockResolvedValue([])
+
+          //When
+          await userEvent.type(formInput, 'tchoupi')
+          await userEvent.click(submitBtn)
+
+          //Then
+          expect(
+            screen.getByText('Aucun résultat trouvé pour cette recherche')
+          ).toBeInTheDocument()
+        })
+      })
+
+      describe('s’il y a des résultats', () => {
+        beforeEach(async () => {
+          const now = DateTime.fromISO('2024-05-24')
+          jest.spyOn(DateTime, 'now').mockReturnValue(now)
+          ;(rechercherMessagesConversation as jest.Mock).mockResolvedValue([
+            unMessage({
+              content: 'tchoupi vs trotro',
+              sentBy: 'conseiller',
+              creationDate: DateTime.now().minus({ day: 2 }),
+            }),
+            unMessage({
+              content: 'tchoupi est plus beau que l’âne trotro',
+              sentBy: 'jeune',
+              creationDate: DateTime.now().minus({ day: 1 }),
+            }),
+          ])
+
+          await userEvent.type(formInput, 'tchoupi')
+          await userEvent.click(submitBtn)
+        })
+
+        it('affiche le nombre de résultats', async () => {
+          expect(screen.getByText('2 résultats trouvés')).toBeInTheDocument()
+        })
+        it('affiche le contenu des messages', async () => {
+          expect(screen.getByText('tchoupi vs trotro')).toBeInTheDocument()
+          expect(screen.getByText('Le 22/05/2024')).toBeInTheDocument()
+          expect(
+            screen.getByText('tchoupi est plus beau que l’âne trotro')
+          ).toBeInTheDocument()
+          expect(screen.getByText('Le 23/05/2024')).toBeInTheDocument()
+        })
+      })
     })
   })
 })

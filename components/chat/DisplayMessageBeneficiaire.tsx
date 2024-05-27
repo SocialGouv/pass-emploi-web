@@ -8,16 +8,18 @@ import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
-import { toFrenchTime } from 'utils/date'
+import { toFrenchTime, toShortDate } from 'utils/date'
 
 interface DisplayMessageBeneficiaireProps {
   message: Message
   beneficiaireNomComplet: string
+  estResultatDeRecherche?: boolean
 }
 
 export default function DisplayMessageBeneficiaire({
   message,
   beneficiaireNomComplet,
+  estResultatDeRecherche,
 }: DisplayMessageBeneficiaireProps) {
   return (
     <li className='mb-5' id={message.id} data-testid={message.id}>
@@ -68,13 +70,22 @@ export default function DisplayMessageBeneficiaire({
               )}
           </div>
           <div className='text-xs-medium text-content text-left'>
-            <span className='sr-only'>Envoyé à </span>
-            <span
-              aria-label={toFrenchTime(message.creationDate, { a11y: true })}
-            >
-              {toFrenchTime(message.creationDate)}
-            </span>
-            {isEdited(message) && ' · Modifié'}
+            {!estResultatDeRecherche && (
+              <>
+                <span className='sr-only'>Envoyé à </span>
+                <span
+                  aria-label={toFrenchTime(message.creationDate, {
+                    a11y: true,
+                  })}
+                >
+                  {toFrenchTime(message.creationDate)}
+                </span>
+                {isEdited(message) && ' · Modifié'}
+              </>
+            )}
+            {estResultatDeRecherche && (
+              <span>Le {toShortDate(message.creationDate)}</span>
+            )}
           </div>
         </>
       )}

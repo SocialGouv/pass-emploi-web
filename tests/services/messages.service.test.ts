@@ -14,6 +14,7 @@ import {
   getMessagesGroupe,
   observeChat,
   observeDerniersMessagesDuChat,
+  rechercherMessages,
   signIn as firebaseSignIn,
   signOut as firebaseSignOut,
   updateChat,
@@ -46,6 +47,7 @@ import {
   observeDerniersMessages,
   observeJeuneReadingDate,
   partagerOffre,
+  rechercherMessagesConversation,
   sendNouveauMessage,
   sendNouveauMessageGroupe,
   sendNouveauMessageImportant,
@@ -780,6 +782,64 @@ describe('MessagesFirebaseAndApiService', () => {
         },
         accessToken
       )
+    })
+  })
+
+  describe('.rechercherMessagesConversation', () => {
+    let jeuneChat: JeuneChat
+    let recherche: string
+    const now = DateTime.fromISO('2024-04-24')
+
+    beforeEach(() => {
+      jeuneChat = unJeuneChat()
+      recherche = 'tchoupi'
+
+      jest.spyOn(DateTime, 'now').mockReturnValue(now)
+
+      const resultatRecherche = [
+        unMessage({
+          content: 'tchoupi',
+          infoPiecesJointes: [
+            { id: 'id-pj', nom: 'tchoupi.jpg', statut: 'valide' },
+          ],
+        }),
+      ]
+      ;(rechercherMessages as jest.Mock).mockResolvedValue(resultatRecherche)
+    })
+    it('recherche un mot clé', async () => {
+      //When
+      await rechercherMessagesConversation(
+        jeuneChat.chatId,
+        recherche,
+        cleChiffrement
+      )
+
+      //Then
+      expect(rechercherMessages).toHaveBeenCalledWith(
+        accessToken,
+        jeuneChat.chatId,
+        recherche
+      )
+    })
+
+    it('retourne les résultats', async () => {
+      //Given
+      const resultatDechiffre = unMessage({
+        content: 'Decrypted: tchoupi',
+        infoPiecesJointes: [
+          { id: 'id-pj', nom: 'Decrypted: tchoupi.jpg', statut: 'valide' },
+        ],
+      })
+
+      //When
+      const resultats = await rechercherMessagesConversation(
+        jeuneChat.chatId,
+        recherche,
+        cleChiffrement
+      )
+
+      //Then
+      expect(resultats).toEqual([resultatDechiffre])
     })
   })
 })

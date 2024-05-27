@@ -16,6 +16,7 @@ import {
   getMessagesGroupe,
   observeChat,
   observeDerniersMessagesDuChat,
+  rechercherMessages,
   signIn as _signIn,
   signOut as _signOut,
   updateChat,
@@ -179,6 +180,34 @@ export function observeJeuneReadingDate(
     const lastJeuneReadingDate = chat.lastJeuneReading
     if (lastJeuneReadingDate) {
       onJeuneReadingDate(lastJeuneReadingDate)
+    }
+  })
+}
+
+export async function rechercherMessagesConversation(
+  idBeneficiaire: string,
+  recherche: string,
+  cleChiffrement: string
+): Promise<Message[]> {
+  const session = await getSession()
+  const messages = await rechercherMessages(
+    session!.accessToken,
+    idBeneficiaire,
+    recherche
+  )
+
+  return messages.map((message) => {
+    if (!message.iv) return message
+    return {
+      ...message,
+      ...decryptContentAndFilename(
+        {
+          iv: message.iv,
+          content: message.content,
+          infoPiecesJointes: message.infoPiecesJointes,
+        },
+        cleChiffrement
+      ),
     }
   })
 }
