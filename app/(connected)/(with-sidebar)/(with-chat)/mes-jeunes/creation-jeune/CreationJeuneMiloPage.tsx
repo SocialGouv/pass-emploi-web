@@ -25,9 +25,7 @@ function CreationJeuneMiloPage() {
   const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   async function rechercherDossier(id: string) {
-    setErreurDossier(undefined)
-    setDossier(undefined)
-    setErreurCreation(undefined)
+    clearDossier()
 
     try {
       const { getDossierJeune } = await import('services/conseiller.service')
@@ -59,6 +57,12 @@ function CreationJeuneMiloPage() {
     }
   }
 
+  function clearDossier() {
+    setErreurDossier(undefined)
+    setDossier(undefined)
+    setErreurCreation(undefined)
+  }
+
   useMatomo(
     erreurDossier
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
@@ -85,6 +89,7 @@ function CreationJeuneMiloPage() {
           onCreateCompte={creerCompteJeune}
           erreurMessageHttpPassEmploi={erreurCreation}
           onRefresh={() => rechercherDossier(dossier.id)}
+          onRetour={clearDossier}
         />
       )}
     </>

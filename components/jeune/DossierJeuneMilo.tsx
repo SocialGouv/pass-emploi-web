@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
-import Button from 'components/ui/Button/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
@@ -15,6 +15,7 @@ interface DossierJeuneMiloProps {
   onCreateCompte: (data: JeuneMiloFormData) => Promise<void>
   erreurMessageHttpPassEmploi?: string
   onRefresh: () => void
+  onRetour: () => void
 }
 
 export default function DossierJeuneMilo({
@@ -22,6 +23,7 @@ export default function DossierJeuneMilo({
   onCreateCompte,
   erreurMessageHttpPassEmploi,
   onRefresh,
+  onRetour,
 }: DossierJeuneMiloProps) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
@@ -131,10 +133,7 @@ export default function DossierJeuneMilo({
       )}
 
       <div className='flex items-center mt-14'>
-        <Link
-          href={'/mes-jeunes/creation-jeune'}
-          className='flex items-center text-base-bold text-primary_darken mr-6'
-        >
+        <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
           <IconComponent
             name={IconName.ArrowBackward}
             className='mr-2.5 w-3 h-3'
@@ -143,7 +142,7 @@ export default function DossierJeuneMilo({
             aria-label="Retour Création d'un compte jeune étape 1"
           />
           Retour
-        </Link>
+        </Button>
 
         {!erreurMessageHttpPassEmploi && (
           <ActionButtons
