@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/navigation'
 
-import CreationJeunePoleEmploiPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/pole-emploi/CreationJeunePoleEmploiPage'
+import CreationJeunePoleEmploiPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeunePoleEmploiPage'
 import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
 import { BaseJeune } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'

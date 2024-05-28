@@ -196,7 +196,7 @@ describe('PortefeuillePage client side', () => {
         screen.getByRole('link', {
           name: 'Ajouter un bénéficiaire',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune/milo')
+      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune')
     })
 
     it("affiche la colonne nombre d'actions des jeunes", () => {
@@ -252,7 +252,7 @@ describe('PortefeuillePage client side', () => {
         screen.getByRole('link', {
           name: 'Ajouter un bénéficiaire',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune/pole-emploi')
+      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune')
     })
 
     it("n'affiche pas le nombre d'actions des jeunes", () => {

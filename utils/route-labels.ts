@@ -15,7 +15,7 @@ const mapRoutesToLabels: Map<RegExp, string> = new Map<RegExp, string>([
 
   // Portefeuille
   [/\/mes-jeunes$/, 'Portefeuille'],
-  [/\/mes-jeunes\/creation-jeune\/(milo|pole-emploi)$/, 'Création'],
+  [/\/mes-jeunes\/creation-jeune$/, 'Création'],
   [/\/mes-jeunes\/[\w-]+$/, labelFicheBeneficiaire],
   [/\/mes-jeunes\/[\w-]+\/favoris$/, labelFavoris],
   [/\/mes-jeunes\/[\w-]+\/informations$/, labelInformations],
