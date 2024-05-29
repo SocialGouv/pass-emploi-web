@@ -6,7 +6,9 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import { utiliseChat } from 'interfaces/conseiller'
 import { DetailServiceCivique } from 'interfaces/offre'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toShortDate } from 'utils/date'
 
 type ServiceCiviqueDetailProps = {
@@ -17,6 +19,8 @@ export default function ServiceCiviqueDetail({
   offre,
   onLienExterne,
 }: ServiceCiviqueDetailProps) {
+  const [conseiller] = useConseiller()
+
   const dateDeDebutFormate: string | undefined =
     offre.dateDeDebut && toShortDate(offre.dateDeDebut)
   const dateDeFinFormate: string | undefined =
@@ -48,13 +52,15 @@ export default function ServiceCiviqueDetail({
 
   return (
     <>
-      <PageActionsPortal>
-        <LienPartageOffre
-          titreOffre={offre.titre}
-          href={`/offres/service-civique/${offre.id}/partage`}
-          style={ButtonStyle.PRIMARY}
-        />
-      </PageActionsPortal>
+      {utiliseChat(conseiller) && (
+        <PageActionsPortal>
+          <LienPartageOffre
+            titreOffre={offre.titre}
+            href={`/offres/service-civique/${offre.id}/partage`}
+            style={ButtonStyle.PRIMARY}
+          />
+        </PageActionsPortal>
+      )}
 
       <div className='max-w-2xl mx-auto'>
         <p className='mb-2'>
