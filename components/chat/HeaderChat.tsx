@@ -1,6 +1,5 @@
 import React from 'react'
 
-import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function HeaderChat({
@@ -70,7 +69,6 @@ export default function HeaderChat({
         </div>
       </div>
       <div className='flex'>
-        <BulleMessageSensible />
         <h2 className='w-full text-left text-primary text-m-bold ml-2'>
           {titre}
         </h2>

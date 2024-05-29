@@ -41,6 +41,7 @@ type ConversationProps = {
   jeuneChat: JeuneChat
   toggleAfficherRecherche: () => void
 }
+
 export function Conversation({
   beneficiaireNomComplet,
   onBack,
@@ -356,7 +357,23 @@ export function Conversation({
                 illustrationName={IllustrationName.SendWhite}
                 titre='Ceci est le début de votre conversation avec votre bénéficiaire.'
                 sousTitre='Écrivez votre premier message !'
-              />
+              >
+                <div className='mt-6 text-primary text-center'>
+                  <p className='inline-flex items-center text-base'>
+                    <IconComponent
+                      name={IconName.Info}
+                      focusable={false}
+                      aria-hidden={true}
+                      className='inline h-6 w-6 fill-[currentColor]'
+                    />
+                    <strong>Attention à nos propos</strong>
+                  </p>
+                  <p>
+                    Ne sont autorisés, ni les commentaires insultants ou
+                    excessifs, ni les données trop personnelles ou sensibles.
+                  </p>
+                </div>
+              </EmptyState>
             )}
 
             {messagesByDay.length > 0 && (
