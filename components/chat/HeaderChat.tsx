@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -13,7 +12,6 @@ export default function HeaderChat({
   onClickRecherche,
   rechercheLabel,
   titre,
-  onBeneficiaire,
 }: {
   onBack: () => void
   labelRetour: string

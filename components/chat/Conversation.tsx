@@ -1,8 +1,5 @@
 import { DateTime } from 'luxon'
-import { underline } from 'next/dist/lib/picocolors'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useRouter } from 'next/router'
 import React, {
   FormEvent,
   Fragment,
@@ -311,7 +308,7 @@ export function Conversation({
           <span>
             Discuter avec{' '}
             <Link href={`/mes-jeunes/${jeuneChat.id}`} className={'underline'}>
-              [ {jeuneChat.nom} {jeuneChat.prenom} ]
+              {jeuneChat.nom} {jeuneChat.prenom}
             </Link>
           </span>
         }
