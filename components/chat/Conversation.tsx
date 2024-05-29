@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { useRouter } from 'next/router'
 import React, {
   FormEvent,
   Fragment,
@@ -116,6 +117,10 @@ export function Conversation({
     },
     [chatCredentials]
   )
+  const router = useRouter()
+  const onBeneficiaire = (id: string) => {
+    router.push(`/profile/${id}`)
+  }
 
   function resetTextbox() {
     inputRef.current!.value = ''
@@ -304,6 +309,9 @@ export function Conversation({
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
         titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
+        onBeneficiaire={() => {
+          onBeneficiaire(jeuneChat.id)
+        }}
         bookmarkIcon={
           isflaggedByConseiller
             ? IconName.BookmarkFill
