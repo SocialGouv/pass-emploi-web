@@ -1,4 +1,7 @@
 import { DateTime } from 'luxon'
+import { underline } from 'next/dist/lib/picocolors'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/router'
 import React, {
   FormEvent,
@@ -117,10 +120,6 @@ export function Conversation({
     },
     [chatCredentials]
   )
-  const router = useRouter()
-  const onBeneficiaire = (id: string) => {
-    router.push(`/profile/${id}`)
-  }
 
   function resetTextbox() {
     inputRef.current!.value = ''
@@ -308,10 +307,14 @@ export function Conversation({
       <HeaderChat
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
-        titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
-        onBeneficiaire={() => {
-          onBeneficiaire(jeuneChat.id)
-        }}
+        titre={
+          <span>
+            Discuter avec{' '}
+            <Link href={`/mes-jeunes/${jeuneChat.id}`} className={'underline'}>
+              [ {jeuneChat.nom} {jeuneChat.prenom} ]
+            </Link>
+          </span>
+        }
         bookmarkIcon={
           isflaggedByConseiller
             ? IconName.BookmarkFill
