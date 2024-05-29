@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef } from 'react'
+import React, { ForwardedRef, forwardRef, ReactNode } from 'react'
 
 import Button from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -18,6 +18,7 @@ type EmptyStateProps = {
   illustrationName: IllustrationName
   titre: string
   sousTitre?: string
+  children?: ReactNode
 }
 type EmptyStateWithLinkProps = EmptyStateProps & {
   lien: EmptyStateLinkProps
@@ -43,6 +44,7 @@ function EmptyState(
     illustrationName,
     titre,
     sousTitre,
+    children,
     ...props
   }: EmptyStateProps | EmptyStateWithLinkProps | EmptyStateWithButtonProps,
   ref: ForwardedRef<HTMLParagraphElement>
@@ -100,6 +102,8 @@ function EmptyState(
           </Button>
         </div>
       )}
+
+      {children && <>{children}</>}
     </>
   )
 }
