@@ -133,7 +133,7 @@ export default function DossierJeuneMilo({
         </DeprecatedErrorMessage>
       )}
 
-      <div className='flex items-center mt-14'>
+      <div className='flex items-center mt-14 gap-4'>
         <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
           <IconComponent
             name={IconName.ArrowBackward}
