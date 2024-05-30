@@ -22,8 +22,6 @@ export default function UpdateIdentifiantPartenaireModal({
   const [getIdentifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
   >(identifiantPartenaire)
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   function identifiantPartenaireEstValide() {
     return (
       getIdentifiantPartenaire &&
@@ -42,7 +40,7 @@ export default function UpdateIdentifiantPartenaireModal({
     identifiantPartenaire
       ? 'Détail jeune - modification identifiant PE'
       : 'Détail jeune - ajout identifiant PE',
-    aDesBeneficiaires
+    portefeuille.length > 0
   )
 
   const titre = identifiantPartenaire

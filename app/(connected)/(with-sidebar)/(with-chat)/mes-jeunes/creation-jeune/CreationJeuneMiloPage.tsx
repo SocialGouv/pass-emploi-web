@@ -22,8 +22,6 @@ function CreationJeuneMiloPage() {
   const [erreurDossier, setErreurDossier] = useState<string | undefined>()
   const [erreurCreation, setErreurCreation] = useState<string | undefined>()
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   async function rechercherDossier(id: string) {
     clearDossier()
 
@@ -67,7 +65,7 @@ function CreationJeuneMiloPage() {
     erreurDossier
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
       : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune',
-    aDesBeneficiaires
+    portefeuille.length > 0
   )
 
   return (

@@ -1,16 +1,17 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import FavorisPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/favoris/FavorisPage'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import renderWithContexts from 'tests/renderWithContexts'
 
 describe('FavorisPage client side', () => {
   const offres = uneListeDOffres()
   const recherches = uneListeDeRecherches()
 
   beforeEach(async () => {
-    render(
+    renderWithContexts(
       <FavorisPage
         offres={offres}
         recherches={recherches}

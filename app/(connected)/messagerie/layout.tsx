@@ -10,6 +10,7 @@ import Footer from 'components/layouts/Footer'
 import Sidebar from 'components/Sidebar'
 import { useChats } from 'utils/chat/chatsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export default function LayoutPageMessagerie({
   children,
@@ -17,6 +18,7 @@ export default function LayoutPageMessagerie({
   children: ReactNode
 }) {
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
   const chats = useChats()
 
   return (
@@ -35,7 +37,10 @@ export default function LayoutPageMessagerie({
 
       <div className='flex flex-col min-h-0 w-[100vw] layout_s:w-[70vw] layout_l:w-[61vw]'>
         {children}
-        <Footer conseiller={conseiller} />
+        <Footer
+          conseiller={conseiller}
+          aDesBeneficiaires={portefeuille.length > 0}
+        />
       </div>
     </div>
   )

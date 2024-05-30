@@ -19,8 +19,6 @@ export function AnimationCollectiveRow(
 ) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   const [estCache, setEstCache] = useState<boolean>(
     animationCollective.estCache ?? false
   )
@@ -49,7 +47,7 @@ export function AnimationCollectiveRow(
       categorie: 'Session i-milo',
       action: 'clic visibilité',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires ? 'oui' : 'non',
+      aDesBeneficiaires: portefeuille.length > 0,
     })
   }
 

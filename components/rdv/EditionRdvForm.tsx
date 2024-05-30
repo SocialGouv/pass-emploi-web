@@ -39,7 +39,6 @@ import { trackEvent } from 'utils/analytics/matomo'
 import { dateIsInInterval, toShortDate } from 'utils/date'
 
 interface EditionRdvFormProps {
-  aDesBeneficiaires: 'non' | 'oui'
   conseiller: Conseiller
   jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeEvenementReferentiel[]
@@ -58,7 +57,6 @@ interface EditionRdvFormProps {
 }
 
 export function EditionRdvForm({
-  aDesBeneficiaires,
   jeunesConseiller,
   recupererJeunesDeLEtablissement,
   typesRendezVous,
@@ -590,7 +588,7 @@ export function EditionRdvForm({
       categorie: 'Emargement',
       action: 'Export des inscrits à une AC',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires: jeunesConseiller.length > 0,
     })
   }
 

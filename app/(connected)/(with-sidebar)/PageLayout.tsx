@@ -8,6 +8,7 @@ import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import Footer from 'components/layouts/Footer'
 import Header from 'components/layouts/Header'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export default function PageLayout({
   fullWidth,
@@ -17,6 +18,7 @@ export default function PageLayout({
   children: ReactNode
 }) {
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
 
   return (
     <div className={layout.page}>
@@ -32,7 +34,10 @@ export default function PageLayout({
         {children}
       </main>
 
-      <Footer conseiller={conseiller} />
+      <Footer
+        conseiller={conseiller}
+        aDesBeneficiaires={portefeuille.length > 0}
+      />
     </div>
   )
 }

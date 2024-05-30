@@ -9,11 +9,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
-import {
-  trackEvent,
-  trackPage,
-  userStructureDimensionString,
-} from 'utils/analytics/matomo'
+import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -62,8 +58,6 @@ function HomePage({
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Pop-in sélection agence'
   )
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   async function selectAgence(agence: {
     id?: string
     nom: string
@@ -86,14 +80,15 @@ function HomePage({
       categorie: 'Contact Support',
       action: 'Pop-in sélection ' + etablissement,
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires: portefeuille.length > 0,
     })
   }
 
   function trackAccederImilo() {
     trackPage({
-      structure: userStructureDimensionString(StructureConseiller.MILO),
+      structure: StructureConseiller.MILO,
       customTitle: 'Accès i-milo',
+      aDesBeneficiaires: portefeuille.length > 0,
     })
   }
 
@@ -102,7 +97,7 @@ function HomePage({
       redirectToUrl()
   }, [showModaleOnboarding, showModaleAgence, showModaleEmail])
 
-  useMatomo(trackingLabel, aDesBeneficiaires)
+  useMatomo(trackingLabel, portefeuille.length > 0)
 
   return (
     <>

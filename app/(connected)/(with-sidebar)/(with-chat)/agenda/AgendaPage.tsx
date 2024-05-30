@@ -41,8 +41,6 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
   const router = useRouter()
   const [alerte] = useAlerte()
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   const ongletProps: {
     [key in Onglet]: { queryParam: string; trackingLabel: string }
   } = {
@@ -158,7 +156,7 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
   }
 
-  useMatomo(trackingTitle, aDesBeneficiaires)
+  useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
     <>

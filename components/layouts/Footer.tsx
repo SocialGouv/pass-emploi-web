@@ -4,24 +4,22 @@ import React from 'react'
 
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
-import { trackPage, userStructureDimensionString } from 'utils/analytics/matomo'
+import { trackPage } from 'utils/analytics/matomo'
 
 type FooterProps = {
-  conseiller?: Conseiller
+  conseiller: Conseiller | null
+  aDesBeneficiaires: boolean | null
 }
 
-export default function Footer({ conseiller }: FooterProps) {
+export default function Footer({ conseiller, aDesBeneficiaires }: FooterProps) {
   const liens =
     conseiller && estPoleEmploiBRSA(conseiller) ? liensBRSA : liensCEJ
 
   function trackExternalLink(label: string) {
-    const structure = !conseiller
-      ? 'visiteur'
-      : userStructureDimensionString(conseiller.structure)
-
     trackPage({
-      structure: structure,
       customTitle: label,
+      structure: conseiller?.structure ?? null,
+      aDesBeneficiaires,
     })
   }
 

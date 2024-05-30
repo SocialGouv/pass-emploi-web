@@ -157,8 +157,6 @@ function FicheBeneficiairePage({
     initialTracking += ' - Succès envoi message'
 
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   const totalFavoris = metadonneesFavoris
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
     : 0
@@ -267,7 +265,7 @@ function FicheBeneficiairePage({
     setIdCurrentJeune(undefined)
   }
 
-  useMatomo(trackingLabel, aDesBeneficiaires)
+  useMatomo(trackingLabel, portefeuille.length > 0)
 
   useEffect(() => {
     if (!lectureSeule) setIdCurrentJeune(jeune.id)

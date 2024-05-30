@@ -29,8 +29,6 @@ export default function EncartAgenceRequise({
   const [agences, setAgences] = useState<Agence[]>([])
   const [showAgenceModal, setShowAgenceModal] = useState<boolean>(false)
   const labelEtablissement = estMilo(conseiller) ? 'Mission Locale' : 'agence'
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   async function openAgenceModal() {
     if (!agences.length) {
       setAgences(await getAgences(conseiller.structure))
@@ -58,7 +56,7 @@ export default function EncartAgenceRequise({
       categorie: 'Contact Support',
       action: 'Pop-in sélection agence',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires: portefeuille.length > 0,
     })
   }
 

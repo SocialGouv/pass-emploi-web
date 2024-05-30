@@ -34,8 +34,6 @@ function MessageriePage() {
     MessageListeDiffusion | undefined
   >()
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   useEffect(() => {
     if (idCurrentJeune) {
       getConseillersDuJeuneClientSide(idCurrentJeune).then(
@@ -50,7 +48,7 @@ function MessageriePage() {
     }
   }, [idCurrentJeune, chats])
 
-  useMatomo('Messagerie', aDesBeneficiaires)
+  useMatomo('Messagerie', portefeuille.length > 0)
 
   return (
     <>

@@ -26,9 +26,7 @@ function RendezVousPassesPage({
   const trackingLabel = `Détail jeune - Rendez-vous passés ${
     lectureSeule ? ' - hors portefeuille' : ''
   }`
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
-  useMatomo(trackingLabel, aDesBeneficiaires)
+  useMatomo(trackingLabel, portefeuille.length > 0)
 
   return (
     <TableauRdvsBeneficiaire

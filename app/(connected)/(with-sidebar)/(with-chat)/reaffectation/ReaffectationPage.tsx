@@ -95,8 +95,6 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
   )
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   const numerosEtapes: NumeroEtape[] = estSuperviseurPEBRSA
     ? [2, 3, 4, 5]
     : [1, 2, 3, 4]
@@ -340,7 +338,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
     return !conseillerInitial.value && conseillerInitial.error
   }
 
-  useMatomo(trackingTitle, aDesBeneficiaires)
+  useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
     <>

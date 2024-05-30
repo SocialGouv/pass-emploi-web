@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -27,8 +27,13 @@ export default function DossierJeuneMilo({
 }: DossierJeuneMiloProps) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
+  const [tracking, setTracking] = useState<string>(
+    dossier.email
+      ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
+      : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
+  )
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const aDesBeneficiaires = portefeuille.length > 0
 
   async function addJeune() {
     if (!creationEnCours) {
@@ -46,18 +51,14 @@ export default function DossierJeuneMilo({
     }
   }
 
-  useMatomo(
-    dossier.email
-      ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
-      : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email',
-    aDesBeneficiaires
-  )
+  useMatomo(tracking, aDesBeneficiaires)
 
-  useMatomo(
-    erreurMessageHttpPassEmploi &&
-      'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur',
-    aDesBeneficiaires
-  )
+  useEffect(() => {
+    if (erreurMessageHttpPassEmploi)
+      setTracking(
+        'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
+      )
+  }, [erreurMessageHttpPassEmploi])
 
   return (
     <>

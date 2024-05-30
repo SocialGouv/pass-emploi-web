@@ -47,7 +47,10 @@ function PoleEmploiCreationJeune(): ReactElement {
     }
   }
 
-  useMatomo(creationError ? 'Création jeune PE en erreur' : 'Création jeune PE')
+  useMatomo(
+    creationError ? 'Création jeune PE en erreur' : 'Création jeune PE',
+    portefeuille.length > 0
+  )
 
   return (
     <FormulaireJeunePoleEmploi

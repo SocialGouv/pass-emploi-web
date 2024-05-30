@@ -144,9 +144,7 @@ function PortefeuillePage({
       })
   }, [chatCredentials, conseillerJeunes])
 
-  const adesBeneficiaires = conseillerJeunes.length === 0 ? 'non' : 'oui'
-
-  useMatomo(trackingTitle, adesBeneficiaires)
+  useMatomo(trackingTitle, conseillerJeunes.length > 0)
 
   return (
     <>
