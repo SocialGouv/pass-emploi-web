@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import Link from 'next/link'
 import React, {
   FormEvent,
   Fragment,
@@ -303,7 +304,18 @@ export function Conversation({
       <HeaderChat
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
-        titre={`Discuter avec ${jeuneChat.nom} ${jeuneChat.prenom}`}
+        titre={
+          <span>
+            Discuter avec{' '}
+            <Link
+              aria-label={`Voir la fiche de ${jeuneChat.nom} ${jeuneChat.prenom}`}
+              href={`/mes-jeunes/${jeuneChat.id}`}
+              className='underline'
+            >
+              {jeuneChat.nom} {jeuneChat.prenom}
+            </Link>
+          </span>
+        }
         bookmarkIcon={
           isflaggedByConseiller
             ? IconName.BookmarkFill

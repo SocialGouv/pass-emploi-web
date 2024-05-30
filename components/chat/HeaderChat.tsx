@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
@@ -15,7 +15,7 @@ export default function HeaderChat({
 }: {
   onBack: () => void
   labelRetour: string
-  titre: string
+  titre: string | ReactElement
   bookmarkIcon?: IconName
   bookmarkLabel?: string
   onClickBookMark?: () => void

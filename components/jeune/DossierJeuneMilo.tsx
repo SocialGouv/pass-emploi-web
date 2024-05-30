@@ -133,7 +133,7 @@ export default function DossierJeuneMilo({
         </DeprecatedErrorMessage>
       )}
 
-      <div className='flex items-center mt-14'>
+      <div className='flex items-center mt-14 gap-4'>
         <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
           <IconComponent
             name={IconName.ArrowBackward}
@@ -175,7 +175,11 @@ function ActionButtons({
     </Button>
   ) : (
     <Button type='button' onClick={onRefresh}>
-      <RefreshIcon className='mr-2.5' aria-hidden={true} focusable={false} />
+      <RefreshIcon
+        className='w-4 h-4 mr-2.5'
+        aria-hidden={true}
+        focusable={false}
+      />
       Rafraîchir le compte
     </Button>
   )

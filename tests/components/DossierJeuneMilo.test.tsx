@@ -19,6 +19,8 @@ describe('<DossierMilo', () => {
             dossier={dossier}
             onCreateCompte={jest.fn()}
             erreurMessageHttpPassEmploi=''
+            onRefresh={jest.fn()}
+            onRetour={jest.fn()}
           />
         )
       })
@@ -57,6 +59,8 @@ describe('<DossierMilo', () => {
             dossier={dossier}
             onCreateCompte={jest.fn()}
             erreurMessageHttpPassEmploi=''
+            onRefresh={jest.fn()}
+            onRetour={jest.fn()}
           />
         )
       })
