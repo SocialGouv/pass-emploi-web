@@ -307,7 +307,11 @@ export function Conversation({
         titre={
           <span>
             Discuter avec{' '}
-            <Link href={`/mes-jeunes/${jeuneChat.id}`} className={'underline'}>
+            <Link
+              aria-label={`Voir la fiche de ${jeuneChat.nom} ${jeuneChat.prenom}`}
+              href={`/mes-jeunes/${jeuneChat.id}`}
+              className='underline'
+            >
               {jeuneChat.nom} {jeuneChat.prenom}
             </Link>
           </span>

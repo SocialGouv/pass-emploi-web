@@ -175,7 +175,11 @@ function ActionButtons({
     </Button>
   ) : (
     <Button type='button' onClick={onRefresh}>
-      <RefreshIcon className='mr-2.5' aria-hidden={true} focusable={false} />
+      <RefreshIcon
+        className='w-4 h-4 mr-2.5'
+        aria-hidden={true}
+        focusable={false}
+      />
       Rafraîchir le compte
     </Button>
   )

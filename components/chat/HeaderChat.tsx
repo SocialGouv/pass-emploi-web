@@ -22,7 +22,6 @@ export default function HeaderChat({
   rechercheIcon?: IconName
   rechercheLabel?: string
   onClickRecherche?: () => void
-  onBeneficiaire?: () => void
 }) {
   return (
     <div className='items-center mx-4 my-6 short:hidden'>
