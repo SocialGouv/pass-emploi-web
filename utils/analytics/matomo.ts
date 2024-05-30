@@ -21,7 +21,7 @@ interface TrackEventSettings {
   categorie: string
   action: string
   nom: string
-  aDesBeneficiaires: boolean
+  aDesBeneficiaires: boolean | null
 }
 
 const numeroDimensionAvecBeneficiaires =
@@ -120,6 +120,29 @@ export function trackEvent(trackEventSettings: TrackEventSettings): void {
     'setCustomDimension',
     numeroDimensionAvecBeneficiaires,
     avecBeneficiairesDimencsionString(trackEventSettings.aDesBeneficiaires),
+  ])
+
+  push([
+    'trackEvent',
+    trackEventSettings.categorie,
+    trackEventSettings.categorie + ' ' + trackEventSettings.action,
+    trackEventSettings.categorie + ' ' + trackEventSettings.nom,
+  ])
+}
+
+export function trackEventBeneficiaire(
+  trackEventSettings: Omit<TrackEventSettings, 'aDesBeneficiaires'>
+): void {
+  push(['setCustomDimension', 1, 'jeune'])
+  push([
+    'setCustomDimension',
+    2,
+    userStructureDimensionString(trackEventSettings.structure),
+  ])
+  push([
+    'setCustomDimension',
+    numeroDimensionAvecBeneficiaires,
+    avecBeneficiairesDimencsionString(null),
   ])
 
   push([
