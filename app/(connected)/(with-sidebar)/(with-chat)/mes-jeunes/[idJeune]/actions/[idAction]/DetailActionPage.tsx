@@ -55,8 +55,6 @@ function DetailActionPage({
     lectureSeule ? ' - hors portefeuille' : ''
   }`
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   const conseillerEstMilo = estMilo(conseiller)
   const estAQualifier = conseillerEstMilo && statut === StatutAction.Terminee
   const qualifiee = conseillerEstMilo && statut === StatutAction.Qualifiee
@@ -99,7 +97,7 @@ function DetailActionPage({
     alerte && alerte.key === AlerteParam.envoiMessage
       ? `${trackingTitle} - Succès envoi message`
       : trackingTitle,
-    aDesBeneficiaires
+    portefeuille.length > 0
   )
   return (
     <>

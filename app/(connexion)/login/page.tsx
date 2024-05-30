@@ -39,7 +39,7 @@ export default async function Login({
         isFromEmail={isFromEmail}
       />
 
-      <Footer />
+      <Footer conseiller={null} aDesBeneficiaires={null} />
     </div>
   )
 }

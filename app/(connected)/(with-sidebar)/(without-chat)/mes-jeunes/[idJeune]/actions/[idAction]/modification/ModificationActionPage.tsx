@@ -52,8 +52,6 @@ function ModificationPage({
 
   const initialTracking = 'Actions jeune – Modification'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   const afficherSuppressionAction =
     action.creatorType === UserType.CONSEILLER.toLowerCase() &&
     action.status !== StatutAction.Terminee &&
@@ -89,7 +87,7 @@ function ModificationPage({
     }
   }
 
-  useMatomo(trackingTitle, aDesBeneficiaires)
+  useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
     <>

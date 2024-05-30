@@ -81,8 +81,6 @@ function EditionListeDiffusionPage({
     return titreEstValide && idsBeneficiairesEstValide
   }
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   function hasChanges(): boolean {
     const previousIds = liste?.beneficiaires
       ? liste.beneficiaires.map(({ id }) => id).sort(compareParId)
@@ -209,7 +207,7 @@ function EditionListeDiffusionPage({
 
   useMatomo(
     liste ? 'Modification liste diffusion' : 'Création liste diffusion',
-    aDesBeneficiaires
+    portefeuille.length > 0
   )
 
   return (

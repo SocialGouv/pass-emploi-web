@@ -62,8 +62,6 @@ export default function ChatRoom({
     setAfficherNotificationMessageImportant,
   ] = useState<boolean>(false)
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   async function envoyerMessageImportant(
     message: string,
     dateDebut: DateTime,
@@ -125,7 +123,7 @@ export default function ChatRoom({
       categorie: 'Conversation suivie',
       action: 'ChatRoom',
       nom: flagged.toString(),
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires: portefeuille.length > 0,
     })
   }
 

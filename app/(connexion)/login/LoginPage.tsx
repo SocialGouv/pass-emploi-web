@@ -66,8 +66,9 @@ function LoginPage({
     if (window.innerWidth < MIN_DESKTOP_WIDTH) setAfficherOnboarding(true)
 
     trackPage({
-      structure: 'visiteur',
       customTitle: isFromEmail ? 'Connexion - Origine email' : 'Connexion',
+      structure: null,
+      aDesBeneficiaires: null,
     })
   }, [])
 

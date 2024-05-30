@@ -23,7 +23,7 @@ export async function GET(
     customTitle: `Détail jeune par numéro dossier${
       !Boolean(idJeune) ? ' en erreur' : ''
     }`,
-    avecBeneficiaires: idJeune ? 'oui' : 'non',
+    aDesBeneficiaires: idJeune ? true : null,
     pathname: `/mes-jeunes/milo/${numeroDossier}`,
     refererUrl: refererUrl,
   })

@@ -318,17 +318,20 @@ describe('<ChatRoom />', () => {
   describe('quand le conseiller a des jeunes', () => {
     let accederConversation: (idJeune: string) => void
     beforeEach(async () => {
+      ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
       accederConversation = jest.fn()
-      renderWithContexts(
-        <ChatRoom
-          jeunesChats={jeunesChats}
-          showMenu={false}
-          onAccesConversation={accederConversation}
-          onAccesListesDiffusion={() => {}}
-          onOuvertureMenu={() => {}}
-        />,
-        {}
-      )
+      await act(async () => {
+        renderWithContexts(
+          <ChatRoom
+            jeunesChats={jeunesChats}
+            showMenu={false}
+            onAccesConversation={accederConversation}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {}
+        )
+      })
     })
 
     it('affiche les alertes sur petit écran', () => {
@@ -399,17 +402,22 @@ describe('<ChatRoom />', () => {
 
   describe("quand le conseiller n'a pas de jeunes", () => {
     it('affiche un message informatif', async () => {
+      // Given
+      ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
+
       // When
-      renderWithContexts(
-        <ChatRoom
-          jeunesChats={[]}
-          showMenu={false}
-          onAccesConversation={() => {}}
-          onAccesListesDiffusion={() => {}}
-          onOuvertureMenu={() => {}}
-        />,
-        {}
-      )
+      await act(async () => {
+        renderWithContexts(
+          <ChatRoom
+            jeunesChats={[]}
+            showMenu={false}
+            onAccesConversation={() => {}}
+            onAccesListesDiffusion={() => {}}
+            onOuvertureMenu={() => {}}
+          />,
+          {}
+        )
+      })
 
       // Then
       expect(screen.getByText('Vous pouvez échanger :')).toBeInTheDocument()

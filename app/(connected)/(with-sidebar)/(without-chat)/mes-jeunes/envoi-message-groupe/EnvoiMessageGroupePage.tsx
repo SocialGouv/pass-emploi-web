@@ -72,8 +72,6 @@ function EnvoiMessageGroupePage({
 
   const initialTracking = 'Message - Rédaction'
   const [trackingLabel, setTrackingLabel] = useState<string>(initialTracking)
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({
       id: jeune.id,
@@ -127,11 +125,13 @@ function EnvoiMessageGroupePage({
   function openLeavePageConfirmationModal(destination: string) {
     setLeavePageUrl(destination)
     setShowLeavePageModal(true)
+    setTrackingLabel('Message - Modale Annulation')
     setConfirmBeforeLeaving(false)
   }
 
   function closeLeavePageConfirmationModal() {
     setShowLeavePageModal(false)
+    setTrackingLabel(initialTracking)
     setConfirmBeforeLeaving(true)
   }
 
@@ -205,11 +205,7 @@ function EnvoiMessageGroupePage({
     setTrackingLabel(initialTracking)
   }
 
-  useMatomo(trackingLabel, aDesBeneficiaires)
-  useMatomo(
-    showLeavePageModal ? 'Message - Modale Annulation' : undefined,
-    aDesBeneficiaires
-  )
+  useMatomo(trackingLabel, portefeuille.length > 0)
 
   useConfirmBeforeLeaving(formHasChanges() && confirmBeforeLeaving)
 

@@ -95,7 +95,7 @@ function EditionRdvPage({
       evenementTypeAC ? 'animation collective' : 'rdv'
     } ${idJeune ? ' jeune' : ''} `
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const aDesBeneficiaires = portefeuille.length > 0
 
   function handleDelete(e: React.MouseEvent<HTMLElement>) {
     e.preventDefault()
@@ -363,7 +363,6 @@ function EditionRdvPage({
       )}
 
       <EditionRdvForm
-        aDesBeneficiaires={aDesBeneficiaires}
         jeunesConseiller={portefeuille}
         recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
         typesRendezVous={typesRendezVous}

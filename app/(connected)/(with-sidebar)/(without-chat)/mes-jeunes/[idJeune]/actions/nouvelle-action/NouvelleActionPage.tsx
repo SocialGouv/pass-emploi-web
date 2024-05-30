@@ -40,8 +40,6 @@ function NouvelleActionPage({
 
   const initialTracking = 'Actions jeune – Création action'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   async function creerAction(action: ActionFormData) {
     setConfirmBeforeLeaving(false)
 
@@ -62,7 +60,7 @@ function NouvelleActionPage({
 
   useConfirmBeforeLeaving(confirmBeforeLeaving)
 
-  useMatomo(trackingTitle, aDesBeneficiaires)
+  useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
     <>

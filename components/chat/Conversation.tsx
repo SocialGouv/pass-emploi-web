@@ -219,7 +219,7 @@ export function Conversation({
       categorie: 'Message',
       action: 'Modification',
       nom: '',
-      avecBeneficiaires: 'oui',
+      aDesBeneficiaires: true,
     })
     setMessageAModifier(undefined)
     resetTextbox()
@@ -237,7 +237,7 @@ export function Conversation({
       categorie: 'Message',
       action: 'Suppression',
       nom: '',
-      avecBeneficiaires: 'oui',
+      aDesBeneficiaires: true,
     })
   }
 
@@ -258,7 +258,7 @@ export function Conversation({
       categorie: 'Conversation suivie',
       action: 'Conversation',
       nom: flagged.toString(),
-      avecBeneficiaires: jeuneChat.chatId ? 'oui' : 'non',
+      aDesBeneficiaires: true,
     })
     setFlaggedByConseiller(flagged)
   }

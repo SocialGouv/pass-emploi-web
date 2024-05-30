@@ -42,8 +42,6 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
   const [message, setMessage] = useState<string | undefined>()
   const [isPartageEnCours, setIsPartageEnCours] = useState<boolean>(false)
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   function formIsValid(): boolean {
     const idsDestinatairesEstValide = Boolean(idsDestinataires.value.length > 0)
     if (!idsDestinatairesEstValide)
@@ -109,7 +107,7 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
     }
   }
 
-  useMatomo('Partage offre', aDesBeneficiaires)
+  useMatomo('Partage offre', portefeuille.length > 0)
 
   return (
     <>

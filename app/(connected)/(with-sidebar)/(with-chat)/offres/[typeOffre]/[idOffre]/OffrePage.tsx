@@ -18,8 +18,6 @@ function OffrePage({ offre }: DetailOffreProps) {
   const [portefeuille] = usePortefeuille()
   const [labelMatomo, setLabelMatomo] = useState<string>('Détail offre')
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   function getDetailOffre() {
     switch (offre.type) {
       case TypeOffre.EMPLOI:
@@ -36,7 +34,7 @@ function OffrePage({ offre }: DetailOffreProps) {
     }
   }
 
-  useMatomo(labelMatomo, aDesBeneficiaires)
+  useMatomo(labelMatomo, portefeuille.length > 0)
 
   return getDetailOffre()
 }

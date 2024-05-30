@@ -16,7 +16,6 @@ export default function ConseillerIntrouvableSuggestionModal({
 }: ConseillerIntrouvableSuggestionModalProps) {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
 
   function trackContacterSupportClick() {
     trackEvent({
@@ -24,7 +23,7 @@ export default function ConseillerIntrouvableSuggestionModal({
       categorie: 'Contact Support',
       action: 'Profil',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires: portefeuille.length > 0,
     })
   }
 

@@ -25,6 +25,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type ClotureSessionProps = {
   session: Session
@@ -40,6 +41,7 @@ function ClotureSessionPage({
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
 
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
@@ -183,7 +185,7 @@ function ClotureSessionPage({
     }
   }
 
-  useMatomo(trackingLabel)
+  useMatomo(trackingLabel, portefeuille.length > 0)
 
   return (
     <>

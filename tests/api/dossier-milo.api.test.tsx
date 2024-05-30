@@ -4,7 +4,6 @@
 
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { GetServerSidePropsContext } from 'next/types'
 
 import { GET } from 'app/api/milo/[numeroDossier]/route'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -72,7 +71,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
           customTitle: 'Détail jeune par numéro dossier',
           pathname: '/mes-jeunes/milo/123456',
           refererUrl: 'https://portail-qlf.i-milo.fr',
-          avecBeneficiaires: 'oui',
+          aDesBeneficiaires: true,
         })
       })
     })
@@ -101,7 +100,7 @@ describe('GET /api/milo/[numeroDossier]', () => {
           customTitle: 'Détail jeune par numéro dossier en erreur',
           pathname: '/mes-jeunes/milo/123456',
           refererUrl: 'https://portail-qlf.i-milo.fr',
-          avecBeneficiaires: 'non',
+          aDesBeneficiaires: null,
         })
       })
     })

@@ -42,8 +42,6 @@ function EtablissementPage() {
 
   const conseillerEstMilo = estMilo(conseiller)
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   async function rechercherJeunes(input: string, page: number) {
     if (!input) {
       setResultatsRecherche(undefined)
@@ -83,7 +81,7 @@ function EtablissementPage() {
     setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
 
-  useMatomo(trackingTitle, aDesBeneficiaires)
+  useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
     <>

@@ -81,55 +81,42 @@ export default function TableauJeunes({
     function compareJeunes(
       jeune1: JeuneAvecInfosComplementaires,
       jeune2: JeuneAvecInfosComplementaires
-    ) {
-      if (isName)
-        return sortDesc
-          ? compareJeunesByLastNameDesc(jeune1, jeune2)
-          : compareJeunesByNom(jeune1, jeune2)
+    ): number {
+      switch (currentSortedColumn) {
+        case SortColumn.NOM:
+          return sortDesc
+            ? compareJeunesByLastNameDesc(jeune1, jeune2)
+            : compareJeunesByNom(jeune1, jeune2)
+        case SortColumn.SITUATION:
+          return sortDesc
+            ? compareJeunesBySituationDesc(jeune1, jeune2)
+            : compareJeunesBySituation(jeune1, jeune2)
+        case SortColumn.DERNIERE_ACTIVITE:
+          const sortStatutCompteActif =
+            Number(jeune1.isActivated) - Number(jeune2.isActivated)
 
-      if (isSituation)
-        return sortDesc
-          ? compareJeunesBySituationDesc(jeune1, jeune2)
-          : compareJeunesBySituation(jeune1, jeune2)
-
-      if (isDate) {
-        const sortStatutCompteActif =
-          Number(jeune1.isActivated) - Number(jeune2.isActivated)
-
-        return sortDesc
-          ? compareJeuneByLastActivity(jeune1, jeune2, sortStatutCompteActif)
-          : compareJeuneByLastActivityDesc(
-              jeune1,
-              jeune2,
-              sortStatutCompteActif
-            )
+          return sortDesc
+            ? compareJeuneByLastActivity(jeune1, jeune2, sortStatutCompteActif)
+            : compareJeuneByLastActivityDesc(
+                jeune1,
+                jeune2,
+                sortStatutCompteActif
+              )
+        case SortColumn.NB_ACTIONS_NON_TERMINEES:
+          const sortNbActionsNonTerminees =
+            jeune1.nbActionsNonTerminees - jeune2.nbActionsNonTerminees
+          return sortDesc
+            ? sortNbActionsNonTerminees
+            : -sortNbActionsNonTerminees
+        case SortColumn.MESSAGES:
+          const sortMessagesNonLus =
+            jeune1.messagesNonLus - jeune2.messagesNonLus
+          return sortDesc ? sortMessagesNonLus : -sortMessagesNonLus
       }
-
-      if (isMessage) {
-        const sortMessagesNonLus = jeune1.messagesNonLus - jeune2.messagesNonLus
-        return sortDesc ? sortMessagesNonLus : -sortMessagesNonLus
-      }
-
-      if (isAction) {
-        const sortNbActionsNonTerminees =
-          jeune1.nbActionsNonTerminees - jeune2.nbActionsNonTerminees
-        return sortDesc ? sortNbActionsNonTerminees : -sortNbActionsNonTerminees
-      }
-
-      return 0
     }
 
     setSortedJeunes([...jeunesFiltres].sort(compareJeunes))
-  }, [
-    currentSortedColumn,
-    isDate,
-    isName,
-    isSituation,
-    isMessage,
-    sortDesc,
-    jeunesFiltres,
-    isAction,
-  ])
+  }, [currentSortedColumn, sortDesc, jeunesFiltres])
 
   useEffect(() => {
     setPageJeunes(1)
@@ -141,26 +128,36 @@ export default function TableauJeunes({
     )
   }, [sortedJeunes, pageJeunes])
 
-  const matomoTitle = () => {
-    if (isDate && !sortDesc)
-      return `Mes jeunes - Dernière activité - Ordre chronologique`
-    if (isDate && sortDesc)
-      return 'Mes jeunes - Dernière activité - Ordre antéchronologique'
-    if (isName && !sortDesc) return 'Mes jeunes - Nom - Ordre alphabétique'
-    if (isName && sortDesc)
-      return 'Mes jeunes - Nom - Ordre alphabétique inversé'
-    if (isSituation && !sortDesc)
-      return 'Mes jeunes - Situation - Ordre alphabétique'
-    if (isSituation && sortDesc)
-      return 'Mes jeunes - Situation - Ordre alphabétique inversé'
-    if (isAction && sortDesc) return 'Mes jeunes - Actions - Ordre croissant'
-    if (isAction && !sortDesc) return 'Mes jeunes - Actions - Ordre décroissant'
-    if (isMessage && sortDesc) return 'Mes jeunes - Messages - Ordre croissant'
-    if (isMessage && !sortDesc)
-      return 'Mes jeunes - Messages - Ordre décroissant'
+  const matomoTitle = (): string => {
+    const prefix = 'Mes jeunes'
+    let colonne, ordre: string
+    switch (currentSortedColumn) {
+      case SortColumn.NOM:
+        colonne = 'Nom'
+        ordre = sortDesc ? 'alphabétique inversé' : 'alphabétique'
+        break
+      case SortColumn.SITUATION:
+        colonne = 'Situation'
+        ordre = sortDesc ? 'alphabétique inversé' : 'alphabétique'
+        break
+      case SortColumn.DERNIERE_ACTIVITE:
+        colonne = 'Dernière activité'
+        ordre = sortDesc ? 'antéchronologique' : 'chronologique'
+        break
+      case SortColumn.NB_ACTIONS_NON_TERMINEES:
+        colonne = 'Actions'
+        ordre = sortDesc ? 'croissant' : 'décroissant'
+        break
+      case SortColumn.MESSAGES:
+        colonne = 'Messages'
+        ordre = sortDesc ? 'croissant' : 'décroissant'
+        break
+    }
+
+    return `${prefix} - ${colonne} - Ordre ${ordre}`
   }
 
-  useMatomo(matomoTitle())
+  useMatomo(matomoTitle(), jeunesFiltres.length > 0)
 
   const columnHeaderButtonStyle =
     'flex border-none items-center align-top w-full h-full p-4'

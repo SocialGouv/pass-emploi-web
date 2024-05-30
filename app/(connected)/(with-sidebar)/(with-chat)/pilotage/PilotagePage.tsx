@@ -92,8 +92,6 @@ function PilotagePage({
     pageTracking + ' - Consultation ' + ongletProps[currentTab].trackingLabel
   )
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   async function chargerActions(options: {
     page: number
     tri?: TriActionsAQualifier
@@ -160,7 +158,7 @@ function PilotagePage({
     }
   }, [conseiller.agence?.id])
 
-  useMatomo(trackingLabel, aDesBeneficiaires)
+  useMatomo(trackingLabel, portefeuille.length > 0)
 
   return (
     <>

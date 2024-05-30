@@ -62,7 +62,7 @@ function DetailsSessionPage({
   const [portefeuille] = usePortefeuille()
   const [conseiller] = useConseiller()
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const aDesBeneficiaires = portefeuille.length > 0
   const inputBeneficiaires = useRef<HTMLInputElement>(null)
 
   const [visibiliteSession, setVisibiliteSession] = useState<boolean>(
@@ -127,7 +127,7 @@ function DetailsSessionPage({
       categorie: 'Session i-milo',
       action: 'clic visibilité agenda',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires ? 'oui' : 'non',
+      aDesBeneficiaires,
     })
   }
 
@@ -272,11 +272,11 @@ function DetailsSessionPage({
       categorie: 'Emargement',
       action: 'Export des inscrits à une session',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires,
     })
   }
 
-  useMatomo(trackingLabel)
+  useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
     <>
