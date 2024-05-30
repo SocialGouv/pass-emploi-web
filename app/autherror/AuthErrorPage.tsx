@@ -3,7 +3,6 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 
 import { StructureConseiller } from 'interfaces/conseiller'
-import { trackEvent, trackEventBeneficiaire } from 'utils/analytics/matomo'
 
 type AuthErrorPageProps = {
   erreur: string
@@ -13,27 +12,6 @@ type AuthErrorPageProps = {
   }
 }
 function AuthErrorPage({ erreur, utilisateur }: AuthErrorPageProps) {
-  function trackContacterSupportClick() {
-    if (!utilisateur.type || !utilisateur.structure) return
-
-    if (utilisateur.type === 'CONSEILLER')
-      trackEvent({
-        structure: utilisateur.structure,
-        categorie: 'Contact Support',
-        action: 'Auth',
-        nom: '',
-        aDesBeneficiaires: null,
-      })
-
-    if (utilisateur.type === 'JEUNE')
-      trackEventBeneficiaire({
-        structure: utilisateur.structure,
-        categorie: 'Contact Support',
-        action: 'Auth',
-        nom: '',
-      })
-  }
-
   return (
     <>
       <header>
