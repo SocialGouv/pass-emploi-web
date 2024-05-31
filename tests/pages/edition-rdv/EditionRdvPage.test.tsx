@@ -40,6 +40,8 @@ describe('EditionRdvPage client side', () => {
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
+    let refresh: jest.Mock
+
     beforeEach(() => {
       jeunesConseiller = desItemsJeunes()
       jeunesAutreConseiller = [
@@ -67,7 +69,8 @@ describe('EditionRdvPage client side', () => {
 
       alerteSetter = jest.fn()
       push = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ push })
+      refresh = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({ push, refresh })
     })
 
     describe('contenu', () => {
@@ -1323,6 +1326,7 @@ describe('EditionRdvPage client side', () => {
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
+    let refresh: jest.Mock
     beforeEach(() => {
       jeunesConseiller = desItemsJeunes()
       jeunesAutreConseiller = [
@@ -1350,7 +1354,8 @@ describe('EditionRdvPage client side', () => {
 
       alerteSetter = jest.fn()
       push = jest.fn(() => Promise.resolve())
-      ;(useRouter as jest.Mock).mockReturnValue({ push })
+      refresh = jest.fn()
+      ;(useRouter as jest.Mock).mockReturnValue({ push, refresh })
     })
 
     describe('quand on veut créer une animation collective', () => {

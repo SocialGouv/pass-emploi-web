@@ -157,6 +157,7 @@ function EditionRdvPage({
       await modifierEvenement(evenement.id, payload)
     }
     router.push(returnTo)
+    router.refresh()
   }
 
   async function creerNouvelEvenement(

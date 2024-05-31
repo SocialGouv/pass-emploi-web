@@ -170,6 +170,7 @@ function ClotureSessionPage({
     setAlerte(AlerteParam.clotureSession)
     setTrackingLabel('Session - Clôture succès')
     router.push(returnTo)
+    router.refresh()
   }
 
   function afficherStatut(beneficiaire: InformationBeneficiaireSession) {
