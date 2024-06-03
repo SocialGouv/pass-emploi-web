@@ -17,7 +17,9 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import FileInput from 'components/ui/Form/FileInput'
 import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { IllustrationName } from 'components/ui/IllustrationComponent'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { InfoFichier } from 'interfaces/fichier'
 import { JeuneChat } from 'interfaces/jeune'
@@ -341,36 +343,43 @@ export function Conversation({
 
         {messagesByDay && conseiller && (
           <>
-            {hasNoMoreMessages && (
-              <span className='text-xs-regular text-center block mb-3'>
-                Aucun message plus ancien
-              </span>
-            )}
+            {messagesByDay.length !== 0 && (
+              <>
+                {hasNoMoreMessages && (
+                  <span className='text-xs-regular text-center block mb-3'>
+                    Aucun message plus ancien
+                  </span>
+                )}
 
-            {!hasNoMoreMessages && (
-              <Button
-                onClick={chargerPlusDeMessages}
-                style={ButtonStyle.TERTIARY}
-                className='mx-auto mb-3'
-                isLoading={loadingMoreMessages}
-              >
-                <IconComponent
-                  name={IconName.ChevronUp}
-                  aria-hidden={true}
-                  focusable={false}
-                  className='w-4 h-4 fill-[currentColor] mr-2'
-                />
-                Voir messages plus anciens
-              </Button>
+                {!hasNoMoreMessages && (
+                  <Button
+                    onClick={chargerPlusDeMessages}
+                    style={ButtonStyle.TERTIARY}
+                    className='mx-auto mb-3'
+                    isLoading={loadingMoreMessages}
+                  >
+                    <IconComponent
+                      name={IconName.ChevronUp}
+                      aria-hidden={true}
+                      focusable={false}
+                      className='w-4 h-4 fill-[currentColor] mr-2'
+                    />
+                    Voir messages plus anciens
+                  </Button>
+                )}
+              </>
             )}
 
             {messagesByDay.length === 0 && (
-              <EmptyState
-                illustrationName={IllustrationName.SendWhite}
-                titre='Ceci est le début de votre conversation avec votre bénéficiaire.'
-                sousTitre='Écrivez votre premier message !'
-              >
-                <div className='mt-6 text-primary text-center'>
+              <>
+                <p className='text-base-bold text-center text-content_color'>
+                  Ceci est le début de votre conversation avec votre
+                  bénéficiaire.
+                </p>
+                <p className='text-base-regular text-center text-content_color mt-4'>
+                  Écrivez votre premier message !
+                </p>
+                <div className='text-primary text-center mt-4'>
                   <p className='inline-flex items-center text-base'>
                     <IconComponent
                       name={IconName.Info}
@@ -385,7 +394,14 @@ export function Conversation({
                     excessifs, ni les données trop personnelles ou sensibles.
                   </p>
                 </div>
-              </EmptyState>
+
+                <IllustrationComponent
+                  name={IllustrationName.SendWhite}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='w-48 h-48 m-auto mt-8 [--secondary-fill:theme(colors.grey\_100)]'
+                />
+              </>
             )}
 
             {messagesByDay.length > 0 && (
