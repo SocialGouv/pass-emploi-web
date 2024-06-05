@@ -56,6 +56,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
 
     setAlerte(AlerteParam.clotureAC)
     router.push(returnTo)
+    router.refresh()
   }
 
   return (

@@ -264,6 +264,7 @@ function DetailsSessionPage({
     )
     setTrackingLabel(initialTracking + ' - Modification succès')
     router.push(returnTo)
+    router.refresh()
   }
 
   function trackEmargement() {
