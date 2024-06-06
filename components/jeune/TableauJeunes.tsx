@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
-import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
@@ -39,14 +38,12 @@ interface TableauJeunesProps {
   jeunesFiltres: JeuneAvecInfosComplementaires[]
   totalJeunes: number
   withActions: boolean
-  withSituations: boolean
 }
 
 export default function TableauJeunes({
   jeunesFiltres,
   totalJeunes,
   withActions,
-  withSituations,
 }: TableauJeunesProps) {
   const [conseiller] = useConseiller()
   const [sortedJeunes, setSortedJeunes] =
@@ -63,7 +60,6 @@ export default function TableauJeunes({
   >([])
 
   const isName = currentSortedColumn === SortColumn.NOM
-  const isSituation = currentSortedColumn === SortColumn.SITUATION
   const isDate = currentSortedColumn === SortColumn.DERNIERE_ACTIVITE
   const isAction = currentSortedColumn === SortColumn.NB_ACTIONS_NON_TERMINEES
   const isMessage = currentSortedColumn === SortColumn.MESSAGES
@@ -212,23 +208,6 @@ export default function TableauJeunes({
                     <SortIcon isSorted={isName} isDesc={sortDesc} />
                   </button>
                 </TH>
-                {withSituations && (
-                  <TH estCliquable={true}>
-                    <button
-                      className={columnHeaderButtonStyle}
-                      onClick={() => sortJeunes(SortColumn.SITUATION)}
-                      aria-label={`Afficher la liste des bénéficiaires triée par situation par ordre alphabétique ${
-                        isSituation && !sortDesc ? 'inversé' : ''
-                      }`}
-                      title={`Afficher la liste des bénéficiaires triée par situation par ordre alphabétique ${
-                        isSituation && !sortDesc ? 'inversé' : ''
-                      }`}
-                    >
-                      <span className='mr-1'>Situation</span>
-                      <SortIcon isSorted={isSituation} isDesc={sortDesc} />
-                    </button>
-                  </TH>
-                )}
                 <TH estCliquable={true}>
                   <button
                     className={columnHeaderButtonStyle}
@@ -333,17 +312,6 @@ export default function TableauJeunes({
                       {getNomJeuneComplet(jeune)}
                     </span>
                   </TD>
-
-                  {withSituations && (
-                    <TD>
-                      <SituationTag
-                        className={
-                          'max-w-[100px] layout_l:max-w-[180px] truncate text-ellipsis'
-                        }
-                        situation={jeune.situationCourante}
-                      />
-                    </TD>
-                  )}
 
                   <TD>
                     {jeune.isActivated &&

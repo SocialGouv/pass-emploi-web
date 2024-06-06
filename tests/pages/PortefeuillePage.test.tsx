@@ -206,17 +206,6 @@ describe('PortefeuillePage client side', () => {
       ).toBeInTheDocument()
     })
 
-    it('affiche la colonne situation courante des jeunes', () => {
-      // Then
-      expect(
-        screen.getByRole('columnheader', { name: 'Situation' })
-      ).toBeInTheDocument()
-    })
-
-    it('affiche la situation courante du jeune', () => {
-      expect(screen.getByText(jeune.situationCourante!)).toBeInTheDocument()
-    })
-
     it('affiche si la structure du bénéficiaire est différente', () => {
       const row3 = within(
         screen.getByText(/Kenji/).closest('[role="row"]') as HTMLElement
