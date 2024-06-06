@@ -221,9 +221,9 @@ describe('<ConversationBeneficiaire />', () => {
   it('permet de supprimer un message', async () => {
     // When
     await userEvent.click(
-      screen.getAllByRole('button', {
-        name: /Voir les actions possibles pour votre message/,
-      })[1]
+      screen.getByRole('button', {
+        name: 'Voir les actions possibles pour votre message du 22 décembre 2021 à 0 heure 00',
+      })
     )
     await userEvent.click(
       screen.getByRole('button', { name: /Supprimer le message/ })
@@ -565,6 +565,14 @@ describe('<ConversationBeneficiaire />', () => {
   })
 
   describe('permet de rechercher un message', () => {
+    beforeEach(async () => {
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: 'Voir les actions possibles pour votre messagerie',
+        })
+      )
+    })
+
     it('affiche un bouton pour rechercher un message', async () => {
       expect(
         screen.getByRole('button', {
@@ -681,5 +689,36 @@ describe('<ConversationBeneficiaire />', () => {
         })
       })
     })
+  })
+
+  it('permet de masquer la messagerie', async () => {
+    //Given
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Voir les actions possibles pour votre messagerie',
+      })
+    )
+
+    const masquerBtn = screen.getByRole('button', {
+      name: 'Masquer la messagerie',
+    })
+
+    //When
+    await userEvent.click(masquerBtn)
+
+    //Then
+    expect(() =>
+      screen.getByRole('button', { name: 'Voir messages plus anciens' })
+    ).toThrow()
+    expect(() =>
+      screen.getByRole('button', { name: 'Envoyer le message' })
+    ).toThrow()
+
+    expect(
+      screen.getByText('Vous avez désactivé l’affichage de la messagerie')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Rendre visible la messagerie' })
+    ).toBeInTheDocument()
   })
 })

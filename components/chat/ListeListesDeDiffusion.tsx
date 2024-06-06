@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import HeaderChat from 'components/chat/HeaderChat'
+import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import EmptyState from 'components/EmptyState'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -21,6 +22,13 @@ export default function ListeListesDeDiffusion({
   onBack,
   messagerieFullScreen,
 }: ListeListesDeDiffusionProps) {
+  const [messagerieEstVisible, setMessagerieEstVisible] =
+    useState<boolean>(true)
+
+  function permuterVisibiliteMessagerie() {
+    setMessagerieEstVisible(!messagerieEstVisible)
+  }
+
   return (
     <>
       {!messagerieFullScreen && (
@@ -29,88 +37,102 @@ export default function ListeListesDeDiffusion({
             titre={'Mes listes de diffusion'}
             labelRetour={'Retour sur ma messagerie'}
             onBack={onBack!}
+            permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+            messagerieEstVisible={messagerieEstVisible}
           />
 
-          <div className='hidden layout_s:block w-fit ml-4 mb-8'>
-            <ButtonLink
-              href='/mes-jeunes/listes-de-diffusion'
-              style={ButtonStyle.TERTIARY}
-              className='mr-auto'
-            >
-              <IconComponent
-                name={IconName.Edit}
-                focusable={false}
-                aria-hidden={true}
-                className='w-4 h-4 fill-primary mr-3'
-              />
-              Gérer mes listes de diffusion
-            </ButtonLink>
-          </div>
+          {messagerieEstVisible && (
+            <div className='hidden layout_s:block w-fit ml-4 mb-8'>
+              <ButtonLink
+                href='/mes-jeunes/listes-de-diffusion'
+                style={ButtonStyle.TERTIARY}
+                className='mr-auto'
+              >
+                <IconComponent
+                  name={IconName.Edit}
+                  focusable={false}
+                  aria-hidden={true}
+                  className='w-4 h-4 fill-primary mr-3'
+                />
+                Gérer mes listes de diffusion
+              </ButtonLink>
+            </div>
+          )}
         </>
       )}
 
-      {!listesDeDiffusion && <SpinningLoader />}
+      {messagerieEstVisible && (
+        <>
+          {!listesDeDiffusion && <SpinningLoader />}
 
-      {listesDeDiffusion && listesDeDiffusion.length === 0 && (
-        <div className='bg-grey_100 flex flex-col justify-center items-center'>
-          <EmptyState
-            illustrationName={IllustrationName.SendWhite}
-            titre='Vous n’avez pas encore créé de liste de diffusion.'
-            sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
-            lien={{
-              href: '/mes-jeunes/listes-de-diffusion/edition-liste',
-              label: 'Créer une liste',
-              iconName: IconName.Add,
-            }}
-          />
-        </div>
-      )}
-
-      {listesDeDiffusion && listesDeDiffusion.length > 0 && (
-        <div className='flex flex-col m-4 overflow-y-auto'>
-          <h3
-            id='listes-de-diffusion'
-            className='text-m-medium text-primary mb-4'
-          >
-            Listes ({listesDeDiffusion.length})
-          </h3>
-          <ul
-            aria-describedby='listes-de-diffusion'
-            className='overflow-y-auto'
-          >
-            {listesDeDiffusion.map((liste) => (
-              <li
-                key={liste.id}
-                className='bg-blanc rounded-base mb-2 last:mb-0'
-              >
-                <ListeDeDiffusionTile
-                  liste={liste}
-                  onAfficherListe={onAfficherListe}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {listesDeDiffusion &&
-        listesDeDiffusion.length > 0 &&
-        messagerieFullScreen && (
-          <div className='hidden layout_s:block w-fit mx-auto'>
-            <ButtonLink
-              href='/mes-jeunes/listes-de-diffusion'
-              style={ButtonStyle.TERTIARY}
-            >
-              <IconComponent
-                name={IconName.Edit}
-                focusable={false}
-                aria-hidden={true}
-                className='w-4 h-4 fill-primary mr-3'
+          {listesDeDiffusion && listesDeDiffusion.length === 0 && (
+            <div className='bg-grey_100 flex flex-col justify-center items-center'>
+              <EmptyState
+                illustrationName={IllustrationName.SendWhite}
+                titre='Vous n’avez pas encore créé de liste de diffusion.'
+                sousTitre='Envoyez des messages à plusieurs bénéficiaires à la fois grâce aux listes de diffusion.'
+                lien={{
+                  href: '/mes-jeunes/listes-de-diffusion/edition-liste',
+                  label: 'Créer une liste',
+                  iconName: IconName.Add,
+                }}
               />
-              Gérer mes listes de diffusion
-            </ButtonLink>
-          </div>
-        )}
+            </div>
+          )}
+
+          {listesDeDiffusion && listesDeDiffusion.length > 0 && (
+            <div className='flex flex-col m-4 overflow-y-auto'>
+              <h3
+                id='listes-de-diffusion'
+                className='text-m-medium text-primary mb-4'
+              >
+                Listes ({listesDeDiffusion.length})
+              </h3>
+              <ul
+                aria-describedby='listes-de-diffusion'
+                className='overflow-y-auto'
+              >
+                {listesDeDiffusion.map((liste) => (
+                  <li
+                    key={liste.id}
+                    className='bg-blanc rounded-base mb-2 last:mb-0'
+                  >
+                    <ListeDeDiffusionTile
+                      liste={liste}
+                      onAfficherListe={onAfficherListe}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {listesDeDiffusion &&
+            listesDeDiffusion.length > 0 &&
+            messagerieFullScreen && (
+              <div className='hidden layout_s:block w-fit mx-auto'>
+                <ButtonLink
+                  href='/mes-jeunes/listes-de-diffusion'
+                  style={ButtonStyle.TERTIARY}
+                >
+                  <IconComponent
+                    name={IconName.Edit}
+                    focusable={false}
+                    aria-hidden={true}
+                    className='w-4 h-4 fill-primary mr-3'
+                  />
+                  Gérer mes listes de diffusion
+                </ButtonLink>
+              </div>
+            )}
+        </>
+      )}
+
+      {!messagerieEstVisible && (
+        <MessagerieCachee
+          permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+        />
+      )}
     </>
   )
 }
