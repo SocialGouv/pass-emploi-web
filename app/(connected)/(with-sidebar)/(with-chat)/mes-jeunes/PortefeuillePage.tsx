@@ -203,7 +203,6 @@ function PortefeuillePage({
               jeunesFiltres={jeunesFiltres}
               totalJeunes={conseillerJeunes.length}
               withActions={!estPoleEmploi(conseiller)}
-              withSituations={estMilo(conseiller)}
             />
           )}
         </>
