@@ -13,6 +13,7 @@ import {
   getChatsDuConseiller,
   getIdLastMessage,
   getMessageImportantSnapshot,
+  getMessagesPeriode,
   getMessagesGroupe,
   observeChat,
   observeDerniersMessagesDuChat,
@@ -260,6 +261,31 @@ export async function countMessagesNotRead(
     },
     {} as { [idJeune: string]: number }
   )
+}
+
+export async function getMessagesDuMemeJour(
+  idChat: string,
+  message: Message,
+  cleChiffrement: string
+): Promise<Message[]> {
+  const debut = message.creationDate.startOf('day')
+  const fin = message.creationDate.endOf('day')
+
+  const messages = await getMessagesPeriode(idChat, debut, fin)
+  return messages.map((message) => {
+    if (!message.iv) return message
+    return {
+      ...message,
+      ...decryptContentAndFilename(
+        {
+          iv: message.iv,
+          content: message.content,
+          infoPiecesJointes: message.infoPiecesJointes,
+        },
+        cleChiffrement
+      ),
+    }
+  })
 }
 
 export async function sendNouveauMessage({
