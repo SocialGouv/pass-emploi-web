@@ -10,37 +10,40 @@ import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
-import { toFrenchDateTime, toFrenchTime, toShortDate } from 'utils/date'
+import {
+  toFrenchDateTime,
+  toFrenchTime,
+  toLongMonthDate,
+  toShortDate,
+} from 'utils/date'
 
-type DisplayMessageConseillerProps = ResultatRecherche | MessageConseillerProps
-
-interface ResultatRecherche {
+type Base = {
   message: Message
   conseillerNomComplet: string | undefined
   isConseillerCourant: boolean
-  isEnCoursDeModification: false
-  estResultatDeRecherche: true
 }
 
-interface MessageConseillerProps {
-  message: Message
-  conseillerNomComplet: string | undefined
+type ResultatRechercheProps = Base & {
+  isEnCoursDeModification: false
+  estResultatDeRecherche: true
+  onAllerAuMessage: () => void
+}
+
+type MessageConseillerProps = Base & {
   lastSeenByJeune: DateTime | undefined
-  isConseillerCourant: boolean
   onSuppression: () => Promise<void>
   onModification: () => void
   isEnCoursDeModification: boolean
 }
 
+type DisplayMessageConseillerProps =
+  | ResultatRechercheProps
+  | MessageConseillerProps
+
 export default function DisplayMessageConseiller(
   props: DisplayMessageConseillerProps
 ) {
-  const {
-    message,
-    conseillerNomComplet,
-    isConseillerCourant,
-    isEnCoursDeModification,
-  } = props
+  const { message } = props
 
   const [editionEnCours, setEditionEnCours] = useState<boolean>(false)
 
@@ -67,12 +70,7 @@ export default function DisplayMessageConseiller(
 
           {!isDeleted(message) && (
             <>
-              <MessageConseiller
-                message={message}
-                conseillerNomComplet={conseillerNomComplet}
-                isConseillerCourant={isConseillerCourant}
-                isEnCoursDeModification={isEnCoursDeModification}
-              />
+              <MessageConseiller {...props} />
 
               {!isResultatRecherche(props) && (
                 <FooterMessage
@@ -85,7 +83,10 @@ export default function DisplayMessageConseiller(
               )}
 
               {isResultatRecherche(props) && (
-                <span className='flex justify-end text-xs-medium text-content'>
+                <span
+                  className='flex justify-end text-xs-medium text-content'
+                  aria-label={`Le ${toLongMonthDate(message.creationDate)}`}
+                >
                   Le {toShortDate(message.creationDate)}
                 </span>
               )}
@@ -105,18 +106,14 @@ function MessageSupprime() {
   )
 }
 
-function MessageConseiller({
-  message,
-  conseillerNomComplet,
-  isConseillerCourant,
-  isEnCoursDeModification,
-}: Pick<
-  DisplayMessageConseillerProps,
-  | 'message'
-  | 'conseillerNomComplet'
-  | 'isConseillerCourant'
-  | 'isEnCoursDeModification'
->) {
+function MessageConseiller(props: DisplayMessageConseillerProps) {
+  const {
+    message,
+    conseillerNomComplet,
+    isConseillerCourant,
+    isEnCoursDeModification,
+  } = props
+
   return (
     <div
       className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left bg-blanc mt-0 mr-0 mb-1 ml-auto ${
@@ -160,6 +157,18 @@ function MessageConseiller({
             className='fill-primary'
           />
         ))}
+
+      {isResultatRecherche(props) && (
+        <button
+          className='underline pt-4 text-base-medium'
+          onClick={props.onAllerAuMessage}
+        >
+          Aller au message
+          <span className='sr-only'>
+            du {toLongMonthDate(message.creationDate)}
+          </span>
+        </button>
+      )}
     </div>
   )
 }
@@ -270,6 +279,6 @@ function FooterMessage({
 
 function isResultatRecherche(
   props: DisplayMessageConseillerProps
-): props is ResultatRecherche {
+): props is ResultatRechercheProps {
   return Object.prototype.hasOwnProperty.call(props, 'estResultatDeRecherche')
 }

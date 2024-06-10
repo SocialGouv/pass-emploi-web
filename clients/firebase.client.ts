@@ -508,7 +508,7 @@ export async function getMessagesPeriode(
         >,
         where('creationDate', '>=', toTimestamp(debut)),
         where('creationDate', '<=', toTimestamp(fin)),
-        orderBy('creationDate', 'desc')
+        orderBy('creationDate', 'asc')
       )
     )
 
