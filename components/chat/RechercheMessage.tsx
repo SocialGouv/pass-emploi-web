@@ -1,4 +1,4 @@
-import React, { FormEvent, Fragment, useState } from 'react'
+import React, { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
@@ -49,7 +49,7 @@ export function RechercheMessage({
       {messageSelectionne && (
         <MessagesDuJour
           conversation={jeuneChat}
-          message={messageSelectionne}
+          messageSelectionne={messageSelectionne}
           beneficiaireNomComplet={beneficiaireNomComplet}
           getConseillerNomComplet={getConseillerNomComplet}
           idConseiller={conseiller.id}
@@ -87,8 +87,15 @@ function HeaderRechercheMessage({
   onFermerRecherche: () => void
   onRetourMessage: () => void
 }) {
+  const ref = useRef<HTMLButtonElement | null>(null)
+
+  useEffect(() => {
+    if (messageSelectionne) ref.current!.focus()
+  }, [messageSelectionne])
+
   return (
     <button
+      ref={ref}
       className='m-4 border-none rounded-full bg-primary_lighten flex items-center text-content hover:text-primary focus:pr-2'
       aria-label='Retourner à la discussion'
       onClick={messageSelectionne ? onRetourMessage : onFermerRecherche}

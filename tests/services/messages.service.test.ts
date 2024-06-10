@@ -848,11 +848,15 @@ describe('MessagesFirebaseAndApiService', () => {
       // Given
       const message = unMessage()
       ;(getMessagesPeriode as jest.Mock).mockResolvedValue([
-        { ...message, content: 'contenu du messasge' },
+        { ...message, content: 'contenu du message' },
       ])
 
       // When
-      const messages = await getMessagesDuMemeJour('id-chat', message, 'cle-chiffrement')
+      const messages = await getMessagesDuMemeJour(
+        'id-chat',
+        message,
+        'cle-chiffrement'
+      )
 
       // Then
       expect(getMessagesPeriode).toHaveBeenCalledWith(
@@ -861,7 +865,7 @@ describe('MessagesFirebaseAndApiService', () => {
         message.creationDate.endOf('day')
       )
       expect(messages).toEqual([
-        { ...message, content: 'Decrypted: contenu du messasge' },
+        { ...message, content: 'Decrypted: contenu du message' },
       ])
     })
   })

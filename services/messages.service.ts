@@ -265,11 +265,11 @@ export async function countMessagesNotRead(
 
 export async function getMessagesDuMemeJour(
   idChat: string,
-  message: Message,
+  messageSource: Message,
   cleChiffrement: string
 ): Promise<Message[]> {
-  const debut = message.creationDate.startOf('day')
-  const fin = message.creationDate.endOf('day')
+  const debut = messageSource.creationDate.startOf('day')
+  const fin = messageSource.creationDate.endOf('day')
 
   const messages = await getMessagesPeriode(idChat, debut, fin)
   return messages.map((message) => {

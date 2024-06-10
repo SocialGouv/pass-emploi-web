@@ -1,10 +1,9 @@
-import { DateTime } from 'luxon'
 import React, { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { JeuneChat } from 'interfaces/jeune'
+import { Chat } from 'interfaces/jeune'
 import { fromConseiller, Message } from 'interfaces/message'
 import {
   getMessagesDuMemeJour,
@@ -14,17 +13,17 @@ import {
 import { trackEvent } from 'utils/analytics/matomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toShortDate } from 'utils/date'
+import { toLongMonthDate, toShortDate } from 'utils/date'
 
 export default function MessagesDuJour({
   conversation,
-  message,
+  messageSelectionne,
   beneficiaireNomComplet,
   idConseiller,
   getConseillerNomComplet,
 }: {
-  conversation: JeuneChat
-  message: Message
+  conversation: Chat
+  messageSelectionne: Message
   beneficiaireNomComplet: string
   idConseiller: string
   getConseillerNomComplet: (message: Message) => string | undefined
@@ -32,7 +31,9 @@ export default function MessagesDuJour({
   const chatCredentials = useChatCredentials()
   const [conseiller] = useConseiller()
 
-  const [messagesDuJour, setMessagesDuJour] = useState<Message[]>([message])
+  const [messagesDuJour, setMessagesDuJour] = useState<Message[]>([
+    messageSelectionne,
+  ])
 
   const [messageAModifier, setMessageAModifier] = useState<
     Message | undefined
@@ -60,7 +61,7 @@ export default function MessagesDuJour({
     })
 
     setMessagesDuJour((messages) => {
-      const index = messages.findIndex(({ id }) => id === messageModifie.id)!
+      const index = messages.findIndex(({ id }) => id === messageModifie.id)
       messages[index] = messageModifie
       return messages
     })
@@ -82,7 +83,7 @@ export default function MessagesDuJour({
       aDesBeneficiaires: true,
     })
     setMessagesDuJour((messages) => {
-      const index = messages.findIndex(({ id }) => id === messageSupprime.id)!
+      const index = messages.findIndex(({ id }) => id === messageSupprime.id)
       messages[index] = messageSupprime
       return [...messages]
     })
@@ -93,19 +94,19 @@ export default function MessagesDuJour({
 
     getMessagesDuMemeJour(
       conversation.chatId,
-      message,
+      messageSelectionne,
       chatCredentials.cleChiffrement
     ).then(setMessagesDuJour)
   }, [chatCredentials])
 
   useEffect(() => {
-    document.getElementById(message.id)?.scrollIntoView()
+    document.getElementById(messageSelectionne.id)?.scrollIntoView()
   }, [messagesDuJour])
 
   useEffect(() => {
     if (messageAModifier) {
-      inputRef.current!.value = message.content
-      setUserInput(message.content)
+      inputRef.current!.value = messageSelectionne.content
+      setUserInput(messageSelectionne.content)
       inputRef.current!.focus()
     } else {
       setUserInput('')
@@ -114,11 +115,18 @@ export default function MessagesDuJour({
 
   return (
     <>
-      <p className='text-base-bold text-center mb-2'>
-        Messages du {toShortDate(message.creationDate)}
-      </p>
+      <h2
+        className='text-base-bold text-center mb-2'
+        id='description-messages'
+        aria-label={`Messages du ${toLongMonthDate(messageSelectionne.creationDate)}`}
+      >
+        Messages du {toShortDate(messageSelectionne.creationDate)}
+      </h2>
 
-      <ul className='p-4 overflow-y-auto'>
+      <ul
+        className='p-4 overflow-y-auto'
+        aria-describedby='description-messages'
+      >
         {messagesDuJour.map((message, key) => (
           <Fragment key={key}>
             {!fromConseiller(message) && (
