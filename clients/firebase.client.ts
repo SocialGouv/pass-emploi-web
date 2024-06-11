@@ -240,7 +240,7 @@ export async function updateMessage(
     status: data.status,
   }
   const historyEntry = {
-    date: Timestamp.fromDate(data.date.toJSDate()),
+    date: toTimestamp(data.date),
     previousContent: data.oldMessage,
   }
 
@@ -493,6 +493,28 @@ export async function rechercherMessages(
   )
 }
 
+export async function getMessagesPeriode(
+  idChat: string,
+  debut: DateTime,
+  fin: DateTime
+): Promise<Message[]> {
+  const chatRef = getChatReference(idChat)
+  const querySnapshots: QuerySnapshot<FirebaseMessage, FirebaseMessage> =
+    await getDocs(
+      query<FirebaseMessage, FirebaseMessage>(
+        collection(chatRef, 'messages') as CollectionReference<
+          FirebaseMessage,
+          FirebaseMessage
+        >,
+        where('creationDate', '>=', toTimestamp(debut)),
+        where('creationDate', '<=', toTimestamp(fin)),
+        orderBy('creationDate', 'asc')
+      )
+    )
+
+  return querySnapshots.docs.map(docSnapshotToMessage)
+}
+
 function retrieveApp() {
   const appAlreadyInitialized: number = getApps().length
   if (!appAlreadyInitialized) {
@@ -600,7 +622,7 @@ function createFirebaseMessage(
     iv,
     conseillerId: data.idConseiller,
     sentBy: UserType.CONSEILLER.toLowerCase(),
-    creationDate: Timestamp.fromMillis(data.date.toMillis()),
+    creationDate: toTimestamp(data.date),
     type,
   }
 
@@ -632,8 +654,8 @@ function createFirebaseMessageImportant(
     content: encryptedText,
     iv,
     idConseiller: data.idConseiller,
-    dateDebut: Timestamp.fromMillis(data.dateDebut.toMillis()),
-    dateFin: Timestamp.fromMillis(data.dateFin.toMillis()),
+    dateDebut: toTimestamp(data.dateDebut),
+    dateFin: toTimestamp(data.dateFin),
   }
 
   return firebaseMessage
@@ -706,22 +728,18 @@ export function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
     firebaseChatToUpdate.lastMessageContent = chat.lastMessageContent
   }
   if (chat.lastMessageSentAt) {
-    firebaseChatToUpdate.lastMessageSentAt = Timestamp.fromMillis(
-      chat.lastMessageSentAt.toMillis()
-    )
+    firebaseChatToUpdate.lastMessageSentAt = toTimestamp(chat.lastMessageSentAt)
   }
   if (chat.lastMessageSentBy) {
     firebaseChatToUpdate.lastMessageSentBy = chat.lastMessageSentBy
   }
   if (chat.lastConseillerReading) {
-    firebaseChatToUpdate.lastConseillerReading = Timestamp.fromMillis(
-      chat.lastConseillerReading.toMillis()
+    firebaseChatToUpdate.lastConseillerReading = toTimestamp(
+      chat.lastConseillerReading
     )
   }
   if (chat.lastJeuneReading) {
-    firebaseChatToUpdate.lastJeuneReading = Timestamp.fromMillis(
-      chat.lastJeuneReading.toMillis()
-    )
+    firebaseChatToUpdate.lastJeuneReading = toTimestamp(chat.lastJeuneReading)
   }
   if (chat.lastMessageIv) {
     firebaseChatToUpdate.lastMessageIv = chat.lastMessageIv
@@ -732,6 +750,13 @@ export function chatToFirebase(chat: Partial<Chat>): Partial<FirebaseChat> {
   }
 
   return firebaseChatToUpdate
+}
+
+export function docSnapshotToMessage(
+  docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
+): Message {
+  const firebaseMessage = docSnapshot.data()
+  return firebaseMessageToMessage(firebaseMessage, docSnapshot.id)
 }
 
 function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
@@ -755,14 +780,7 @@ function chatFromFirebase(chatId: string, firebaseChat: FirebaseChat): Chat {
   }
 }
 
-export function docSnapshotToMessage(
-  docSnapshot: QueryDocumentSnapshot<FirebaseMessage>
-): Message {
-  const firebaseMessage = docSnapshot.data()
-  return firebaseMessageToMessage(firebaseMessage, docSnapshot.id)
-}
-
-export function firebaseMessageToMessage(
+function firebaseMessageToMessage(
   firebaseMessage: FirebaseMessage,
   id: string
 ): Message {
@@ -864,4 +882,8 @@ function firebaseToMessageType(
       console.warn(`Type message ${type} incorrect, traité comme Message`)
       return TypeMessage.MESSAGE
   }
+}
+
+function toTimestamp(date: DateTime): Timestamp {
+  return Timestamp.fromDate(date.toJSDate())
 }

@@ -12,6 +12,7 @@ import {
   getIdLastMessage,
   getMessageImportantSnapshot,
   getMessagesGroupe,
+  getMessagesPeriode,
   observeChat,
   observeDerniersMessagesDuChat,
   rechercherMessages,
@@ -47,6 +48,7 @@ import {
   observeDerniersMessages,
   observeJeuneReadingDate,
   partagerOffre,
+  getMessagesDuMemeJour,
   rechercherMessagesConversation,
   sendNouveauMessage,
   sendNouveauMessageGroupe,
@@ -559,10 +561,7 @@ describe('MessagesFirebaseAndApiService', () => {
       )
 
       //When
-      const message = await getMessageImportant(
-        'idConseiller',
-        'cleChiffrement'
-      )
+      const message = await getMessageImportant('cleChiffrement')
 
       //Then
       expect(getMessageImportantSnapshot).toHaveBeenCalledWith('idConseiller')
@@ -806,6 +805,7 @@ describe('MessagesFirebaseAndApiService', () => {
       ]
       ;(rechercherMessages as jest.Mock).mockResolvedValue(resultatRecherche)
     })
+
     it('recherche un mot clé', async () => {
       //When
       await rechercherMessagesConversation(
@@ -840,6 +840,33 @@ describe('MessagesFirebaseAndApiService', () => {
 
       //Then
       expect(resultats).toEqual([resultatDechiffre])
+    })
+  })
+
+  describe('.getMessagesDuJour', () => {
+    it('recupere tous les messages du jour d’une conversation', async () => {
+      // Given
+      const message = unMessage()
+      ;(getMessagesPeriode as jest.Mock).mockResolvedValue([
+        { ...message, content: 'contenu du message' },
+      ])
+
+      // When
+      const messages = await getMessagesDuMemeJour(
+        'id-chat',
+        message,
+        'cle-chiffrement'
+      )
+
+      // Then
+      expect(getMessagesPeriode).toHaveBeenCalledWith(
+        'id-chat',
+        message.creationDate.startOf('day'),
+        message.creationDate.endOf('day')
+      )
+      expect(messages).toEqual([
+        { ...message, content: 'Decrypted: contenu du message' },
+      ])
     })
   })
 })

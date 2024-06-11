@@ -1,7 +1,8 @@
-import React, { FormEvent, Fragment, useState } from 'react'
+import React, { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
+import MessagesDuJour from 'components/chat/MessagesDuJour'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
@@ -33,37 +34,71 @@ export function RechercheMessage({
   const [resultatsRecherche, setResultatsRecherche] = useState<
     Message[] | undefined
   >()
+  const [messageSelectionne, setMessageSelectionne] = useState<
+    Message | undefined
+  >()
 
   return (
     <>
-      <HeaderRechercheMessage onFermerRecherche={toggleAfficherRecherche} />
-      <RechercheMessageForm
-        idJeuneChat={jeuneChat.id}
-        onResultat={setResultatsRecherche}
+      <HeaderRechercheMessage
+        messageSelectionne={messageSelectionne}
+        onFermerRecherche={toggleAfficherRecherche}
+        onRetourMessage={() => setMessageSelectionne(undefined)}
       />
 
-      {resultatsRecherche && (
-        <ResultatsRecherche
-          resultatsRecherche={resultatsRecherche}
+      {messageSelectionne && (
+        <MessagesDuJour
+          conversation={jeuneChat}
+          messageSelectionne={messageSelectionne}
           beneficiaireNomComplet={beneficiaireNomComplet}
           getConseillerNomComplet={getConseillerNomComplet}
           idConseiller={conseiller.id}
         />
+      )}
+
+      {!messageSelectionne && (
+        <>
+          <RechercheMessageForm
+            idJeuneChat={jeuneChat.id}
+            onResultat={setResultatsRecherche}
+          />
+
+          {resultatsRecherche && (
+            <ResultatsRecherche
+              resultatsRecherche={resultatsRecherche}
+              beneficiaireNomComplet={beneficiaireNomComplet}
+              getConseillerNomComplet={getConseillerNomComplet}
+              idConseiller={conseiller.id}
+              onSelectionnerMessage={setMessageSelectionne}
+            />
+          )}
+        </>
       )}
     </>
   )
 }
 
 function HeaderRechercheMessage({
+  messageSelectionne,
   onFermerRecherche,
+  onRetourMessage,
 }: {
+  messageSelectionne?: Message
   onFermerRecherche: () => void
+  onRetourMessage: () => void
 }) {
+  const ref = useRef<HTMLButtonElement | null>(null)
+
+  useEffect(() => {
+    if (messageSelectionne) ref.current!.focus()
+  }, [messageSelectionne])
+
   return (
     <button
+      ref={ref}
       className='m-4 border-none rounded-full bg-primary_lighten flex items-center text-content hover:text-primary focus:pr-2'
       aria-label='Retourner à la discussion'
-      onClick={onFermerRecherche}
+      onClick={messageSelectionne ? onRetourMessage : onFermerRecherche}
     >
       <IconComponent
         name={IconName.ArrowBackward}
@@ -71,7 +106,12 @@ function HeaderRechercheMessage({
         focusable={false}
         className='w-5 h-5 fill-[currentColor] mr-3'
       />
-      <span className='text-s-regular underline'>Retour</span>
+      <span className='text-s-regular underline'>
+        Retour
+        <span className='sr-only'>
+          {messageSelectionne ? ' à la recherche' : ' à la conversation'}
+        </span>
+      </span>
     </button>
   )
 }
@@ -152,11 +192,13 @@ function ResultatsRecherche({
   beneficiaireNomComplet,
   idConseiller,
   getConseillerNomComplet,
+  onSelectionnerMessage,
 }: {
   resultatsRecherche: Message[]
   beneficiaireNomComplet: string
   idConseiller: string
   getConseillerNomComplet: (message: Message) => string | undefined
+  onSelectionnerMessage: (message: Message) => void
 }) {
   return (
     <>
@@ -175,6 +217,7 @@ function ResultatsRecherche({
                   message={message}
                   beneficiaireNomComplet={beneficiaireNomComplet}
                   estResultatDeRecherche={true}
+                  onAllerAuMessage={() => onSelectionnerMessage(message)}
                 />
               )}
 
@@ -185,6 +228,7 @@ function ResultatsRecherche({
                   isConseillerCourant={message.conseillerId === idConseiller}
                   isEnCoursDeModification={false}
                   estResultatDeRecherche={true}
+                  onAllerAuMessage={() => onSelectionnerMessage(message)}
                 />
               )}
             </Fragment>
