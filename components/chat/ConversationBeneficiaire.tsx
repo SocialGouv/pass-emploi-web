@@ -30,7 +30,7 @@ export default function ConversationBeneficiaire({
   }
 
   return (
-    <div className='h-full flex flex-col min-h-0 bg-grey_100 overflow-auto'>
+    <div className='h-full flex flex-col min-h-0 bg-grey_100'>
       {!afficherRecherche && (
         <Conversation
           beneficiaireNomComplet={beneficiaireNomComplet}
