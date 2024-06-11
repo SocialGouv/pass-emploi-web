@@ -32,12 +32,13 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   creationDate: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
+  conseiller: { id: string }
   email?: string
   urlDossier?: string
   dateFinCEJ?: string
   situations?: Situation[]
   idPartenaire?: string
-  conseiller: { id: string }
+  estAArchiver?: boolean
 }
 
 export type JeuneEtablissementJson = {
@@ -155,6 +156,7 @@ export function jsonToDetailJeune({
 }: DetailJeuneJson): DetailJeune {
   return {
     ...jeune,
+    estAArchiver: Boolean(jeune.estAArchiver),
     prenom: firstName,
     nom: lastName,
     idConseiller: conseiller.id,
