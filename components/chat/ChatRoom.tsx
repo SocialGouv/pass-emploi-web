@@ -186,7 +186,7 @@ export default function ChatRoom({
 
   return (
     <>
-      <div className='relative bg-blanc shadow-base mb-6 layout_s:bg-primary_lighten layout_s:shadow-none layout_s:mx-4 layout_base:mt-6'>
+      <div className='relative py-6 gap-4 px-4 bg-blanc flex flex-wrap justify-between shadow-base mb-6 layout_s:bg-primary_lighten layout_s:shadow-none layout_base:my-3'>
         <nav
           role='navigation'
           aria-label='Menu principal'
@@ -209,81 +209,79 @@ export default function ChatRoom({
           </button>
         </nav>
 
-        <div className='flex wrap gap-4 my-6 grow layout_s:justify-start layout_m:justify-between layout_s:p-0 layout_base:my-3'>
-          <h2 className='text-l-bold text-primary'>Messagerie</h2>
-          <div
-            onClick={permuterMenuActionsMessagerie}
-            className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
+        <h2 className='text-l-bold text-primary'>Messagerie</h2>
+        <div
+          onClick={permuterMenuActionsMessagerie}
+          className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
+        >
+          <button
+            type='button'
+            className='bg-primary rounded-full fill-blanc hover:shadow-base'
+            title={`${afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions possibles pour votre messagerie`}
           >
-            <button
-              type='button'
-              className='bg-primary rounded-full fill-blanc hover:shadow-base'
-              title={`${afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions possibles pour votre messagerie`}
-            >
-              <IconComponent
-                focusable={false}
-                aria-hidden={true}
-                className='inline w-6 h-6 m-1'
-                name={IconName.More}
-              />
-              <span className='sr-only'>
-                {afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions
-                possibles pour votre messagerie
-              </span>
-            </button>
+            <IconComponent
+              focusable={false}
+              aria-hidden={true}
+              className='inline w-6 h-6 m-1'
+              name={IconName.More}
+            />
+            <span className='sr-only'>
+              {afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions
+              possibles pour votre messagerie
+            </span>
+          </button>
 
-            {afficherMenuActionsMessagerie && (
-              <div className='absolute top-[4em] z-10 bg-blanc rounded-base p-2 shadow-m'>
-                <button
-                  onClick={ouvrirModaleMessageImportant}
-                  className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
-                >
-                  <div className='relative'>
-                    <IconComponent
-                      name={IconName.Settings}
-                      className='inline w-6 h-6 fill-[current-color]'
-                      focusable={false}
-                      aria-hidden={true}
-                    />
-                    {afficherNotificationMessageImportant && (
-                      <>
-                        <IconComponent
-                          name={IconName.DecorativePoint}
-                          className='absolute right-[-8px] top-[-8px] w-3 h-3 fill-warning'
-                          focusable={false}
-                          aria-hidden={true}
-                          title='Un message important est déjà configuré'
-                        />
-                        <span className='sr-only'>
-                          Un message important est déjà configuré
-                        </span>
-                      </>
-                    )}
-                  </div>
-                  Configurer un message important
-                </button>
-
-                <button
-                  onClick={permuterVisibiliteMessagerie}
-                  className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
-                >
+          {afficherMenuActionsMessagerie && (
+            <div className='absolute top-[4em] z-10 bg-blanc rounded-base p-2 shadow-m'>
+              <button
+                onClick={ouvrirModaleMessageImportant}
+                className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
+              >
+                <div className='relative'>
                   <IconComponent
-                    name={
-                      messagerieEstVisible
-                        ? IconName.VisibilityOff
-                        : IconName.VisibilityOn
-                    }
+                    name={IconName.Settings}
                     className='inline w-6 h-6 fill-[current-color]'
                     focusable={false}
                     aria-hidden={true}
                   />
-                  {messagerieEstVisible
-                    ? 'Masquer la messagerie'
-                    : 'Rendre visible la messagerie'}
-                </button>
-              </div>
-            )}
-          </div>
+                  {afficherNotificationMessageImportant && (
+                    <>
+                      <IconComponent
+                        name={IconName.DecorativePoint}
+                        className='absolute right-[-8px] top-[-8px] w-3 h-3 fill-warning'
+                        focusable={false}
+                        aria-hidden={true}
+                        title='Un message important est déjà configuré'
+                      />
+                      <span className='sr-only'>
+                        Un message important est déjà configuré
+                      </span>
+                    </>
+                  )}
+                </div>
+                Configurer un message important
+              </button>
+
+              <button
+                onClick={permuterVisibiliteMessagerie}
+                className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
+              >
+                <IconComponent
+                  name={
+                    messagerieEstVisible
+                      ? IconName.VisibilityOff
+                      : IconName.VisibilityOn
+                  }
+                  className='inline w-6 h-6 fill-[current-color]'
+                  focusable={false}
+                  aria-hidden={true}
+                />
+                {messagerieEstVisible
+                  ? 'Masquer la messagerie'
+                  : 'Rendre visible la messagerie'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
