@@ -23,7 +23,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { estMilo, estPassEmploi, estPoleEmploi } from 'interfaces/conseiller'
+import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
@@ -82,7 +82,7 @@ type FicheBeneficiaireProps = {
   }
   lectureSeule: boolean
   onglet: Onglet
-  erreurSessions: boolean
+  erreurSessions?: boolean
   metadonneesFavoris?: MetadonneesFavoris
   offresPE?: Offre[]
   recherchesPE?: Recherche[]
@@ -305,21 +305,29 @@ function FicheBeneficiairePage({
         />
       )}
 
-      {!jeune.isActivated &&
-        (estPoleEmploi(conseiller) || estPassEmploi(conseiller)) && (
-          <FailureAlert
-            label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
-            sub={
-              <p className='pl-8'>
-                <strong>
-                  Il ne pourra pas échanger de messages avec vous.
-                </strong>
-              </p>
-            }
-          />
-        )}
+      {jeune.estAArchiver && (
+        <FailureAlert
+          label='La récupération des informations de ce bénéficiaire depuis i-milo a échoué.'
+          sub={
+            <p className='pl-8'>
+              Veuillez vérifier si ce compte doit être archivé.
+            </p>
+          }
+        />
+      )}
 
-      {!jeune.isActivated && estMilo(conseiller) && (
+      {!jeune.estAArchiver && !jeune.isActivated && !estMilo(conseiller) && (
+        <FailureAlert
+          label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
+          sub={
+            <p className='pl-8'>
+              <strong>Il ne pourra pas échanger de messages avec vous.</strong>
+            </p>
+          }
+        />
+      )}
+
+      {!jeune.estAArchiver && !jeune.isActivated && estMilo(conseiller) && (
         <FailureAlert
           label='Ce bénéficiaire ne s’est pas encore connecté à l’application.'
           sub={
