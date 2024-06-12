@@ -5,10 +5,10 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@adobe/css-tools@npm:^4.3.2":
-  version: 4.3.3
-  resolution: "@adobe/css-tools@npm:4.3.3"
-  checksum: 10c0/e76e712df713964b87cdf2aca1f0477f19bebd845484d5fcba726d3ec7782366e2f26ec8cb2dcfaf47081a5c891987d8a9f5c3f30d11e1eb3c1848adc27fcb24
+"@adobe/css-tools@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "@adobe/css-tools@npm:4.4.0"
+  checksum: 10c0/d65ddc719389bf469097df80fb16a8af48a973dea4b57565789d70ac8e7ab4987e6dc0095da3ed5dc16c1b6f8960214a7590312eeda8abd543d91fd0f59e6c94
   languageName: node
   linkType: hard
 
@@ -1685,16 +1685,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/app-compat@npm:0.2.34":
-  version: 0.2.34
-  resolution: "@firebase/app-compat@npm:0.2.34"
+"@firebase/app-compat@npm:0.2.35":
+  version: 0.2.35
+  resolution: "@firebase/app-compat@npm:0.2.35"
   dependencies:
-    "@firebase/app": "npm:0.10.4"
+    "@firebase/app": "npm:0.10.5"
     "@firebase/component": "npm:0.6.7"
     "@firebase/logger": "npm:0.4.2"
     "@firebase/util": "npm:1.9.6"
     tslib: "npm:^2.1.0"
-  checksum: 10c0/8d7e97c26035e061bf3028833297a6fa9796068b66f54111abf141a115f2226ad0e654fb620a18515d071dd5a1274b8d0ad0d0b5e38b6c7c792bbf8a9f798c9d
+  checksum: 10c0/f10556a1b64709709edede0d8b0a90e6de19e89ff1fddd8eda1058b7dfbca5c2ccf14ed93c74e441cf6f7f100de2222f963f746b16954d45d3e403f6f8a6a3cb
   languageName: node
   linkType: hard
 
@@ -1705,24 +1705,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/app@npm:0.10.4":
-  version: 0.10.4
-  resolution: "@firebase/app@npm:0.10.4"
+"@firebase/app@npm:0.10.5":
+  version: 0.10.5
+  resolution: "@firebase/app@npm:0.10.5"
   dependencies:
     "@firebase/component": "npm:0.6.7"
     "@firebase/logger": "npm:0.4.2"
     "@firebase/util": "npm:1.9.6"
     idb: "npm:7.1.1"
     tslib: "npm:^2.1.0"
-  checksum: 10c0/a88bbd2df62992f2bdd468ceb6f44485481def2f9fcdb9ac7181f15b38f9e04b8f1dea821e542b9e78461b5b48220507842880a8662132f6e68c9b0ecb15c755
+  checksum: 10c0/9c5f2feb0433a200e8586ee8971b713266dcbbed14567647d0ec54397042ee31df9a9e24960445df1a2eae86536f2390f98cf8d8260307391fde4e3e0ab315e8
   languageName: node
   linkType: hard
 
-"@firebase/auth-compat@npm:0.5.8":
-  version: 0.5.8
-  resolution: "@firebase/auth-compat@npm:0.5.8"
+"@firebase/auth-compat@npm:0.5.9":
+  version: 0.5.9
+  resolution: "@firebase/auth-compat@npm:0.5.9"
   dependencies:
-    "@firebase/auth": "npm:1.7.3"
+    "@firebase/auth": "npm:1.7.4"
     "@firebase/auth-types": "npm:0.12.2"
     "@firebase/component": "npm:0.6.7"
     "@firebase/util": "npm:1.9.6"
@@ -1730,7 +1730,7 @@ __metadata:
     undici: "npm:5.28.4"
   peerDependencies:
     "@firebase/app-compat": 0.x
-  checksum: 10c0/4a014ae653d639565edb9c9b27f1a459b10d1ac30d0a81c79ed56920d97a578e1042c0066748175d1b3a1cdd72788390750ed90cc9c6303851ec95757a0259bf
+  checksum: 10c0/15b0d56f92216a1cf29c892ca95f0de18bac3ba03583b36aab5e3c82a684661eeb5f63b1f98536e9b48633c6b8147c457369114715caebd829a1bf0568c816a7
   languageName: node
   linkType: hard
 
@@ -1751,9 +1751,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/auth@npm:1.7.3":
-  version: 1.7.3
-  resolution: "@firebase/auth@npm:1.7.3"
+"@firebase/auth@npm:1.7.4":
+  version: 1.7.4
+  resolution: "@firebase/auth@npm:1.7.4"
   dependencies:
     "@firebase/component": "npm:0.6.7"
     "@firebase/logger": "npm:0.4.2"
@@ -1766,7 +1766,7 @@ __metadata:
   peerDependenciesMeta:
     "@react-native-async-storage/async-storage":
       optional: true
-  checksum: 10c0/04554ae85466668745e21d03ac13ccf7f4dbb15fa1bddd5e00e815afc26df8cece308827392de7ba770e9dbed093fd0bbaf0c5d9ed668ff2d5846babc8b6ef0b
+  checksum: 10c0/e36954163af9449626115a418017487dfdf6e66caa1f2575d2dee6384ec7de9be91232a8ef42fa5c0f1f641c10114043b8183b58251ef74105e5efb0262475f0
   languageName: node
   linkType: hard
 
@@ -2109,9 +2109,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/vertexai-preview@npm:0.0.1":
-  version: 0.0.1
-  resolution: "@firebase/vertexai-preview@npm:0.0.1"
+"@firebase/vertexai-preview@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@firebase/vertexai-preview@npm:0.0.2"
   dependencies:
     "@firebase/app-check-interop-types": "npm:0.3.2"
     "@firebase/component": "npm:0.6.7"
@@ -2121,7 +2121,7 @@ __metadata:
   peerDependencies:
     "@firebase/app": 0.x
     "@firebase/app-types": 0.x
-  checksum: 10c0/0b5b15d57becebcd69728610c2691bca90e8ce1a22c810d2d674559e1584f2df0f5e772982fbe8a18f2817b50e0283c8a3b1371d9c66c5b08bf0b9a1b1f9c553
+  checksum: 10c0/d830a110d7f87b16bfd590629116fcee11e9069a20584f26899de9d8dfbd87c9655f679a448f1079ea32225ae157dc8b954ec9c655275c6624240627bb2bfad8
   languageName: node
   linkType: hard
 
@@ -2662,90 +2662,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/bundle-analyzer@npm:14.2.3"
+"@next/bundle-analyzer@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/bundle-analyzer@npm:14.2.4"
   dependencies:
     webpack-bundle-analyzer: "npm:4.10.1"
-  checksum: 10c0/f219e372ca211b161a530fcbcc7395e049e9dc039c37279cae56eed1ddfc678e8f28b12813548f0901276b932dee591067f4683b8502e03156ce1c79ff3a50a4
+  checksum: 10c0/971a3d8042edb8180dc87bb7d2b68c38855e060ccb51a4e42d9c42dad2a8efc610571dd3b3d48f139348ff9830abc20bfdb91dc414cf25d2a843cd88b96b14a8
   languageName: node
   linkType: hard
 
-"@next/env@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/env@npm:14.2.3"
-  checksum: 10c0/25ab3ac2739c8e5ce35e1f50373238c5c428ab6b01d448ba78a6068dcdef88978b64f9a92790c324b2926ccc41390a67107154a0b0fee32fe980a485f4ef20d8
+"@next/env@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/env@npm:14.2.4"
+  checksum: 10c0/cc284e3dd0666df04d8321645d8409c10cb8e325884c226abbb2e7bea20f0a4232f988216aa506a9d0457b46f28b594a61179d1e978c0ca22497cd8cab8196c7
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/eslint-plugin-next@npm:14.2.3"
+"@next/eslint-plugin-next@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/eslint-plugin-next@npm:14.2.4"
   dependencies:
     glob: "npm:10.3.10"
-  checksum: 10c0/de9af2c7465cce4eb4cb50654aa2548d4d2af788c8992d02e2b863b1bf4f99e3b6604d1f0775f8e50aca6a53cf30d51f4ac56810d1625d401548267ca5f1d883
+  checksum: 10c0/077584c9ee12a82940c64a5cc48295e919c74fc352a9bedf41a6b44f2f4e71aea2aa95826957de042a8649e058888d3b27ea7f9ca72e67798e89d14b62f733c1
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-darwin-arm64@npm:14.2.3"
+"@next/swc-darwin-arm64@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-darwin-arm64@npm:14.2.4"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-darwin-x64@npm:14.2.3"
+"@next/swc-darwin-x64@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-darwin-x64@npm:14.2.4"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-linux-arm64-gnu@npm:14.2.3"
+"@next/swc-linux-arm64-gnu@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-linux-arm64-gnu@npm:14.2.4"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-linux-arm64-musl@npm:14.2.3"
+"@next/swc-linux-arm64-musl@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-linux-arm64-musl@npm:14.2.4"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-linux-x64-gnu@npm:14.2.3"
+"@next/swc-linux-x64-gnu@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-linux-x64-gnu@npm:14.2.4"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-linux-x64-musl@npm:14.2.3"
+"@next/swc-linux-x64-musl@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-linux-x64-musl@npm:14.2.4"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-win32-arm64-msvc@npm:14.2.3"
+"@next/swc-win32-arm64-msvc@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-win32-arm64-msvc@npm:14.2.4"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-ia32-msvc@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-win32-ia32-msvc@npm:14.2.3"
+"@next/swc-win32-ia32-msvc@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-win32-ia32-msvc@npm:14.2.4"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:14.2.3":
-  version: 14.2.3
-  resolution: "@next/swc-win32-x64-msvc@npm:14.2.3"
+"@next/swc-win32-x64-msvc@npm:14.2.4":
+  version: 14.2.4
+  resolution: "@next/swc-win32-x64-msvc@npm:14.2.4"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -3178,11 +3178,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^6.4.5":
-  version: 6.4.5
-  resolution: "@testing-library/jest-dom@npm:6.4.5"
+"@testing-library/jest-dom@npm:^6.4.6":
+  version: 6.4.6
+  resolution: "@testing-library/jest-dom@npm:6.4.6"
   dependencies:
-    "@adobe/css-tools": "npm:^4.3.2"
+    "@adobe/css-tools": "npm:^4.4.0"
     "@babel/runtime": "npm:^7.9.2"
     aria-query: "npm:^5.0.0"
     chalk: "npm:^3.0.0"
@@ -3207,7 +3207,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/4cfdd44e2abab2b9d399c47cbfe686729bb65160d7df0f9e2329aaaea7702f6e852a9eefb29b468f00c1e5a5274b684f8cac76959d33299dfa909ba007ea191d
+  checksum: 10c0/8f369c1d27f8128b3794c6b9af5f5b794a47af4670819756e9f4e7cf69e277b30e8b89c548277a279918f648c85c6c7874f1a867e52edd4edb0629a2cf377daa
   languageName: node
   linkType: hard
 
@@ -5417,11 +5417,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-next@npm:14.2.3":
-  version: 14.2.3
-  resolution: "eslint-config-next@npm:14.2.3"
+"eslint-config-next@npm:14.2.4":
+  version: 14.2.4
+  resolution: "eslint-config-next@npm:14.2.4"
   dependencies:
-    "@next/eslint-plugin-next": "npm:14.2.3"
+    "@next/eslint-plugin-next": "npm:14.2.4"
     "@rushstack/eslint-patch": "npm:^1.3.3"
     "@typescript-eslint/parser": "npm:^5.4.2 || ^6.0.0 || 7.0.0 - 7.2.0"
     eslint-import-resolver-node: "npm:^0.3.6"
@@ -5436,7 +5436,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/52a3d48bb783d3e8d76a571a3636f658e4789e1a4a51ebbd14d184b7f6f5dd91281b71d99e49a7bb7e3ab32a2dddd321285110005ca0969a471be5ab2e579887
+  checksum: 10c0/c1bd52a2fc3e5d7094586117a230205ff20dd9acdc8d1f85abe89bc07e2b015bb39bfed87ef9d79af99a6fb2b9666538d8cce4f9f6402fc52ec0ffc329d11ce8
   languageName: node
   linkType: hard
 
@@ -5923,19 +5923,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase@npm:10.12.1":
-  version: 10.12.1
-  resolution: "firebase@npm:10.12.1"
+"firebase@npm:10.12.2":
+  version: 10.12.2
+  resolution: "firebase@npm:10.12.2"
   dependencies:
     "@firebase/analytics": "npm:0.10.4"
     "@firebase/analytics-compat": "npm:0.2.10"
-    "@firebase/app": "npm:0.10.4"
+    "@firebase/app": "npm:0.10.5"
     "@firebase/app-check": "npm:0.8.4"
     "@firebase/app-check-compat": "npm:0.3.11"
-    "@firebase/app-compat": "npm:0.2.34"
+    "@firebase/app-compat": "npm:0.2.35"
     "@firebase/app-types": "npm:0.9.2"
-    "@firebase/auth": "npm:1.7.3"
-    "@firebase/auth-compat": "npm:0.5.8"
+    "@firebase/auth": "npm:1.7.4"
+    "@firebase/auth-compat": "npm:0.5.9"
     "@firebase/database": "npm:1.0.5"
     "@firebase/database-compat": "npm:1.0.5"
     "@firebase/firestore": "npm:4.6.3"
@@ -5953,8 +5953,8 @@ __metadata:
     "@firebase/storage": "npm:0.12.5"
     "@firebase/storage-compat": "npm:0.3.8"
     "@firebase/util": "npm:1.9.6"
-    "@firebase/vertexai-preview": "npm:0.0.1"
-  checksum: 10c0/e852ecb2841122b06c05cb32d8761854440f356268a4306061eb29e87a86d4d5ccbc17552a8729f7580ea99286ad5988a204a3e52f6eaea35153ffe80e84485d
+    "@firebase/vertexai-preview": "npm:0.0.2"
+  checksum: 10c0/8b8162207e82a13819e2b70e9c63ed18614f3786249709e3837b6324c054144c8e1d957db513e3075d9a1c659544c9de353dd3ae9bdd111861c1ea00b04b1e10
   languageName: node
   linkType: hard
 
@@ -8435,20 +8435,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:14.2.3":
-  version: 14.2.3
-  resolution: "next@npm:14.2.3"
+"next@npm:14.2.4":
+  version: 14.2.4
+  resolution: "next@npm:14.2.4"
   dependencies:
-    "@next/env": "npm:14.2.3"
-    "@next/swc-darwin-arm64": "npm:14.2.3"
-    "@next/swc-darwin-x64": "npm:14.2.3"
-    "@next/swc-linux-arm64-gnu": "npm:14.2.3"
-    "@next/swc-linux-arm64-musl": "npm:14.2.3"
-    "@next/swc-linux-x64-gnu": "npm:14.2.3"
-    "@next/swc-linux-x64-musl": "npm:14.2.3"
-    "@next/swc-win32-arm64-msvc": "npm:14.2.3"
-    "@next/swc-win32-ia32-msvc": "npm:14.2.3"
-    "@next/swc-win32-x64-msvc": "npm:14.2.3"
+    "@next/env": "npm:14.2.4"
+    "@next/swc-darwin-arm64": "npm:14.2.4"
+    "@next/swc-darwin-x64": "npm:14.2.4"
+    "@next/swc-linux-arm64-gnu": "npm:14.2.4"
+    "@next/swc-linux-arm64-musl": "npm:14.2.4"
+    "@next/swc-linux-x64-gnu": "npm:14.2.4"
+    "@next/swc-linux-x64-musl": "npm:14.2.4"
+    "@next/swc-win32-arm64-msvc": "npm:14.2.4"
+    "@next/swc-win32-ia32-msvc": "npm:14.2.4"
+    "@next/swc-win32-x64-msvc": "npm:14.2.4"
     "@swc/helpers": "npm:0.5.5"
     busboy: "npm:1.6.0"
     caniuse-lite: "npm:^1.0.30001579"
@@ -8489,7 +8489,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10c0/2c409154720846d07a7a995cc3bfba24b9ee73c87360ce3266528c8a217f5f1ab6f916cffbe1be83509b4e8d7b1d713921bb5c69338b4ecaa57df3212f79a8c5
+  checksum: 10c0/630c2a197b57c1f29caf4672a0f8fb74dbb048e77e4513f567279467332212f3eebcb68279885f1d525d7aaebbb452f522b02c0b5cd3ca66f385341e4b4eac67
   languageName: node
   linkType: hard
 
@@ -8922,10 +8922,10 @@ __metadata:
   dependencies:
     "@elastic/apm-rum": "npm:5.16.0"
     "@elastic/apm-rum-react": "npm:2.0.2"
-    "@next/bundle-analyzer": "npm:14.2.3"
+    "@next/bundle-analyzer": "npm:14.2.4"
     "@svgr/webpack": "npm:8.1.0"
     "@testing-library/dom": "npm:^10.1.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.4.6"
     "@testing-library/react": "npm:^15.0.7"
     "@testing-library/user-event": "npm:^14.5.2"
     "@types/crypto-js": "npm:^4.2.2"
@@ -8940,10 +8940,10 @@ __metadata:
     dotenv: "npm:16.4.5"
     elastic-apm-node: "npm:4.5.4"
     eslint: "npm:^8.57.0"
-    eslint-config-next: "npm:14.2.3"
+    eslint-config-next: "npm:14.2.4"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-prettier: "npm:^5.1.3"
-    firebase: "npm:10.12.1"
+    firebase: "npm:10.12.2"
     html-react-parser: "npm:5.1.10"
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
@@ -8951,7 +8951,7 @@ __metadata:
     lodash.isequal: "npm:4.5.0"
     luxon: "npm:3.4.4"
     matomo-tracker: "npm:2.2.4"
-    next: "npm:14.2.3"
+    next: "npm:14.2.4"
     next-auth: "npm:4.24.7"
     next-logger: "npm:4.0.0"
     next-themes: "npm:0.3.0"
@@ -8966,7 +8966,7 @@ __metadata:
     sharp: "npm:0.33.4"
     source-map-explorer: "npm:^2.5.3"
     style-loader: "npm:^4.0.0"
-    tailwindcss: "npm:^3.4.3"
+    tailwindcss: "npm:^3.4.4"
     ts-loader: "npm:^9.5.1"
     tsconfig-paths-webpack-plugin: "npm:^4.1.0"
     typescript: "npm:^5.4.5"
@@ -10633,9 +10633,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:^3.4.3":
-  version: 3.4.3
-  resolution: "tailwindcss@npm:3.4.3"
+"tailwindcss@npm:^3.4.4":
+  version: 3.4.4
+  resolution: "tailwindcss@npm:3.4.4"
   dependencies:
     "@alloc/quick-lru": "npm:^5.2.0"
     arg: "npm:^5.0.2"
@@ -10662,7 +10662,7 @@ __metadata:
   bin:
     tailwind: lib/cli.js
     tailwindcss: lib/cli.js
-  checksum: 10c0/11e5546494f2888f693ebaa271b218b3a8e52fe59d7b629e54f2dffd6eaafd5ded2e9f0c37ad04e6a866dffb2b116d91becebad77e1441beee8bf016bb2392f9
+  checksum: 10c0/e4f7e1a2e1897871a4744f421ccb5639e8d51012e3644b0c35cf723527fdc8f9cddd3fa3b0fc28c198b0ea6ce44ead21c89cfec549d80bad9b1f3dd9d8bf2d54
   languageName: node
   linkType: hard
 
