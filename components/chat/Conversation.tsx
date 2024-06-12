@@ -57,7 +57,7 @@ export function Conversation({
 
   const [userInput, setUserInput] = useState('')
 
-  const [isflaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
+  const [isFlaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
     jeuneChat.flaggedByConseiller
   )
 
@@ -258,7 +258,7 @@ export function Conversation({
   }
 
   async function toggleFlag() {
-    const flagged = !isflaggedByConseiller
+    const flagged = !isFlaggedByConseiller
     const { toggleFlag: _toggleFlag } = await import(
       'services/messages.service'
     )
@@ -325,19 +325,8 @@ export function Conversation({
             </Link>
           </span>
         }
-        bookmarkIcon={
-          isflaggedByConseiller
-            ? IconName.BookmarkFill
-            : IconName.BookmarkOutline
-        }
-        bookmarkLabel={
-          isflaggedByConseiller
-            ? 'Ne plus suivre la conversation'
-            : 'Suivre la conversation'
-        }
         onClickBookMark={toggleFlag}
-        rechercheIcon={IconName.Search}
-        rechercheLabel='Rechercher un message dans la conversation'
+        isFlaggedByConseiller={isFlaggedByConseiller}
         onClickRecherche={toggleAfficherRecherche}
         permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
         messagerieEstVisible={messagerieEstVisible}

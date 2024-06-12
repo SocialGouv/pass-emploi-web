@@ -576,7 +576,7 @@ describe('<ConversationBeneficiaire />', () => {
     it('affiche un bouton pour rechercher un message', async () => {
       expect(
         screen.getByRole('button', {
-          name: 'Rechercher un message dans la conversation',
+          name: 'Rechercher un message',
         })
       ).toBeInTheDocument()
     })
@@ -585,7 +585,7 @@ describe('<ConversationBeneficiaire />', () => {
       it('affiche un formulaire de recherche', async () => {
         //Given
         const rechercheBtn = screen.getByRole('button', {
-          name: 'Rechercher un message dans la conversation',
+          name: 'Rechercher un message',
         })
 
         //When
@@ -606,7 +606,7 @@ describe('<ConversationBeneficiaire />', () => {
 
       beforeEach(async () => {
         const rechercheBtn = screen.getByRole('button', {
-          name: 'Rechercher un message dans la conversation',
+          name: 'Rechercher un message',
         })
         await userEvent.click(rechercheBtn)
 

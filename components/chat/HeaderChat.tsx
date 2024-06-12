@@ -3,14 +3,11 @@ import React, { ReactElement, useState } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function HeaderChat({
-  bookmarkLabel,
-  bookmarkIcon,
-  rechercheIcon,
   labelRetour,
   onBack,
   onClickBookMark,
+  isFlaggedByConseiller,
   onClickRecherche,
-  rechercheLabel,
   titre,
   permuterVisibiliteMessagerie,
   messagerieEstVisible,
@@ -21,11 +18,8 @@ export default function HeaderChat({
   permuterVisibiliteMessagerie: () => void
   afficherBlurBtn?: boolean
   titre: string | ReactElement
-  bookmarkIcon?: IconName
-  bookmarkLabel?: string
+  isFlaggedByConseiller?: boolean
   onClickBookMark?: () => void
-  rechercheIcon?: IconName
-  rechercheLabel?: string
   onClickRecherche?: () => void
 }) {
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
@@ -33,6 +27,12 @@ export default function HeaderChat({
   function permuterMenuActionsMessagerie() {
     setAfficherMenuActionsMessagerie(!afficherMenuActionsMessagerie)
   }
+
+  const toto =
+    onClickBookMark &&
+    (isFlaggedByConseiller
+      ? { label: 'Ne plus suivre la conversation', icon: IconName.BookmarkFill }
+      : { label: 'Suivre la conversation', icon: IconName.BookmarkOutline })
 
   return (
     <div className='items-center mx-4 my-6 short:hidden'>
@@ -91,35 +91,35 @@ export default function HeaderChat({
                   ? 'Masquer la messagerie'
                   : 'Rendre visible la messagerie'}
               </button>
-              {rechercheIcon && (
+
+              {onClickRecherche && (
                 <button
-                  aria-label={rechercheLabel}
                   className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
                   onClick={onClickRecherche}
                 >
                   <IconComponent
-                    name={rechercheIcon}
+                    name={IconName.Search}
                     className='inline w-6 h-6 fill-[current-color]'
                     focusable={false}
                     aria-hidden={true}
                   />
-                  {rechercheLabel}
+                  Rechercher un message
                 </button>
               )}
-              {bookmarkIcon && (
+
+              {onClickBookMark && (
                 <button
-                  aria-label={bookmarkLabel}
                   className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
                   onClick={onClickBookMark}
                 >
                   <IconComponent
-                    name={bookmarkIcon}
-                    title={bookmarkLabel}
+                    name={toto!.icon}
+                    title={toto!.label}
                     className='inline w-6 h-6 fill-[current-color]'
                     focusable={false}
                     aria-hidden={true}
                   />
-                  {bookmarkLabel}
+                  {toto!.label}
                 </button>
               )}
             </div>
