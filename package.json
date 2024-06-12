@@ -72,7 +72,7 @@
     "typescript": "^5.4.5"
   },
   "resolutions": {
-    "@testing-library/react/@testing-library/dom": "^10.1.0"
+    "@firebase/firestore/@grpc/grpc-js": "^1.9.15"
   },
   "browser": {
     "elastic-apm-node": false
