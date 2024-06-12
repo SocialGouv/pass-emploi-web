@@ -5076,9 +5076,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:4.5.4":
-  version: 4.5.4
-  resolution: "elastic-apm-node@npm:4.5.4"
+"elastic-apm-node@npm:4.6.0":
+  version: 4.6.0
+  resolution: "elastic-apm-node@npm:4.6.0"
   dependencies:
     "@elastic/ecs-pino-format": "npm:^1.5.0"
     "@opentelemetry/api": "npm:^1.4.1"
@@ -5098,7 +5098,7 @@ __metadata:
     fast-safe-stringify: "npm:^2.0.7"
     fast-stream-to-buffer: "npm:^1.0.0"
     http-headers: "npm:^3.0.2"
-    import-in-the-middle: "npm:1.7.4"
+    import-in-the-middle: "npm:1.8.0"
     json-bigint: "npm:^1.0.0"
     lru-cache: "npm:^10.0.1"
     measured-reporting: "npm:^1.51.1"
@@ -5117,7 +5117,7 @@ __metadata:
     sql-summary: "npm:^1.0.1"
     stream-chopper: "npm:^3.0.1"
     unicode-byte-truncate: "npm:^1.0.0"
-  checksum: 10c0/d7be768dbeeb637065d9cb09388fc964f9de4bfbbf176b10d7b2a77655b1708f6727e7153c01020690e46234b26c265338d9fe43322e8e0b3548d129118edf32
+  checksum: 10c0/ec20e8190338dde2fbe4b15a5bca5da86b8dd50c2f4c86f651a1709081baea8e16b84f73de9ab373385289e918e59d01c063141cf5a7927d807771ad1e1e4eea
   languageName: node
   linkType: hard
 
@@ -6548,15 +6548,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-in-the-middle@npm:1.7.4":
-  version: 1.7.4
-  resolution: "import-in-the-middle@npm:1.7.4"
+"import-in-the-middle@npm:1.8.0":
+  version: 1.8.0
+  resolution: "import-in-the-middle@npm:1.8.0"
   dependencies:
     acorn: "npm:^8.8.2"
     acorn-import-attributes: "npm:^1.9.5"
     cjs-module-lexer: "npm:^1.2.2"
     module-details-from-path: "npm:^1.0.3"
-  checksum: 10c0/3ba4ce34c2f1287dcfab375179dcbc7af5358dced56fbe3713ff48780d2f0ca3a1778f1435af5f4e18f14c70a34013a344279a35a1b6e219eaa18fd959666058
+  checksum: 10c0/e29bc6d307c7d7efa5df8e74ca359b6d6d18900eba9dc4d8a77fa0e8b46378e74bfc1ddf93f86fad2d74d65a9ea84f1c0598ae1be8fc99fa77ac15db103c5a6b
   languageName: node
   linkType: hard
 
@@ -8938,7 +8938,7 @@ __metadata:
     crypto-js: "npm:4.2.0"
     css-loader: "npm:^7.1.2"
     dotenv: "npm:16.4.5"
-    elastic-apm-node: "npm:4.5.4"
+    elastic-apm-node: "npm:4.6.0"
     eslint: "npm:^8.57.0"
     eslint-config-next: "npm:14.2.4"
     eslint-config-prettier: "npm:^9.1.0"
@@ -8956,10 +8956,10 @@ __metadata:
     next-logger: "npm:4.0.0"
     next-themes: "npm:0.3.0"
     nextjs-toploader: "npm:1.6.12"
-    pino: "npm:9.1.0"
-    pino-pretty: "npm:^11.1.0"
+    pino: "npm:9.2.0"
+    pino-pretty: "npm:^11.2.1"
     postcss: "npm:^8.4.38"
-    prettier: "npm:^3.2.5"
+    prettier: "npm:^3.3.2"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     react-router-dom: "npm:6.23.1"
@@ -9049,9 +9049,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-pretty@npm:^11.1.0":
-  version: 11.1.0
-  resolution: "pino-pretty@npm:11.1.0"
+"pino-pretty@npm:^11.2.1":
+  version: 11.2.1
+  resolution: "pino-pretty@npm:11.2.1"
   dependencies:
     colorette: "npm:^2.0.7"
     dateformat: "npm:^4.6.3"
@@ -9069,7 +9069,7 @@ __metadata:
     strip-json-comments: "npm:^3.1.1"
   bin:
     pino-pretty: bin.js
-  checksum: 10c0/418be6f854b0d62c83c65e75b0969d5311792bfadeefbfe77d8a7f8c5ba26b8bea40f549222b5f500439f440eb4d6c2fa99d712bdd02881ebae7be3a0193b581
+  checksum: 10c0/6c7f15b5bf8a007c8b7157eae445675b13cd95097ffa512d5ebd661f9e7abd328fa27592b25708756a09f098f87cb03ca81837518cd725c16e3f801129b941d4
   languageName: node
   linkType: hard
 
@@ -9087,9 +9087,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:9.1.0":
-  version: 9.1.0
-  resolution: "pino@npm:9.1.0"
+"pino@npm:9.2.0":
+  version: 9.2.0
+  resolution: "pino@npm:9.2.0"
   dependencies:
     atomic-sleep: "npm:^1.0.0"
     fast-redact: "npm:^3.1.1"
@@ -9104,7 +9104,7 @@ __metadata:
     thread-stream: "npm:^3.0.0"
   bin:
     pino: bin.js
-  checksum: 10c0/d060530ae2e4e8f21d04bb0f44f009f94d207d7f4337f508f618416514214ddaf1b29f8c5c265153a19ce3b6480b451461f40020f916ace9d53a5aa07624b79c
+  checksum: 10c0/5fbd226ff7dab0961232b5aa5eca0530cdc5bb29f6bf17d929e42239293b1a587a26cc311db6abc1090c9dd57e8f7b031eae341b41d00d4a642b4f1736474c80
   languageName: node
   linkType: hard
 
@@ -9322,12 +9322,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.2.5":
-  version: 3.2.5
-  resolution: "prettier@npm:3.2.5"
+"prettier@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "prettier@npm:3.3.2"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/ea327f37a7d46f2324a34ad35292af2ad4c4c3c3355da07313339d7e554320f66f65f91e856add8530157a733c6c4a897dc41b577056be5c24c40f739f5ee8c6
+  checksum: 10c0/39ed27d17f0238da6dd6571d63026566bd790d3d0edac57c285fbab525982060c8f1e01955fe38134ab10f0951a6076da37f015db8173c02f14bc7f0803a384c
   languageName: node
   linkType: hard
 
