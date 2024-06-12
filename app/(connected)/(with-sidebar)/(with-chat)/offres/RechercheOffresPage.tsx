@@ -81,8 +81,6 @@ function RechercheOffresPage() {
     initialTracking += ' - Partage critères recherche succès'
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   function switchTypeOffre(type: TypeOffre) {
     nettoyerResultats()
     setQueryOffresEmploi({ hasError: false })
@@ -290,7 +288,7 @@ function RechercheOffresPage() {
       `Recherche d’offres ${typeOffre ? typeOffreToTitle(typeOffre) + ' ' : ''}- ${postfix}`
   }, [typeOffre, pageCourante])
 
-  useMatomo(trackingTitle, aDesBeneficiaires)
+  useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
     <>

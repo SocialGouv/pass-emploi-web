@@ -1,27 +1,16 @@
 import { useEffect } from 'react'
 
-import { trackPage, userStructureDimensionString } from 'utils/analytics/matomo'
-import { useConseillerPotentiellementPasRecupere } from 'utils/conseiller/conseillerContext'
+import { trackPage } from 'utils/analytics/matomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
-function useMatomo(
-  title: string | undefined,
-  avecBeneficiaires?: string | undefined
-) {
-  const [conseiller] = useConseillerPotentiellementPasRecupere()
+function useMatomo(title: string, aDesBeneficiaires: boolean) {
+  const [conseiller] = useConseiller()
 
   useEffect(() => {
-    if (!title) {
-      return
-    }
-
-    const structure = !conseiller
-      ? 'visiteur'
-      : userStructureDimensionString(conseiller.structure)
-
     trackPage({
-      structure: structure,
+      structure: conseiller.structure,
       customTitle: title,
-      avecBeneficiaires: avecBeneficiaires,
+      aDesBeneficiaires,
     })
   }, [conseiller, title])
 }

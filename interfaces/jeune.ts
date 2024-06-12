@@ -44,14 +44,15 @@ export interface DetailJeune extends BaseJeune {
   isActivated: boolean
   isReaffectationTemporaire: boolean
   idConseiller: string
+  situations: Array<{
+    categorie: CategorieSituation
+    etat?: EtatSituation
+    dateFin?: string
+  }>
+  estAArchiver: boolean
   email?: string
   urlDossier?: string
   dateFinCEJ?: string
-  situations: Array<{
-    etat?: EtatSituation
-    categorie: CategorieSituation
-    dateFin?: string
-  }>
   idPartenaire?: string
   structureMilo?: { id: string }
 }

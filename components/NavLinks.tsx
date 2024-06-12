@@ -40,7 +40,7 @@ export default function NavLinks({
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const aDesBeneficiaires = portefeuille.length > 0
   const lienProfilBadgeLabel = !conseiller.email
     ? 'Une information en attente de mise à jour'
     : undefined
@@ -55,7 +55,7 @@ export default function NavLinks({
       categorie: 'Session',
       action: 'Déconnexion',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires,
     })
     router.push('/api/auth/federated-logout')
   }
@@ -66,7 +66,7 @@ export default function NavLinks({
       categorie: 'Actualite',
       action: 'Click',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires,
     })
   }
 

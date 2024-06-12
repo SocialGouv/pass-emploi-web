@@ -41,12 +41,15 @@ describe('Cloture Session', () => {
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let routerPush: jest.Mock
+  let routerRefresh: jest.Mock
 
   beforeEach(async () => {
     alerteSetter = jest.fn()
     routerPush = jest.fn()
+    routerRefresh = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({
       push: routerPush,
+      refresh: routerRefresh,
     })
 
     // When

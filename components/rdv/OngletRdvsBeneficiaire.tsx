@@ -14,7 +14,7 @@ interface OngletRdvsBeneficiaireProps {
   rdvs: EvenementListItem[]
   beneficiaire: BaseJeune
   conseiller: Conseiller
-  erreurSessions: boolean
+  erreurSessions?: boolean
 }
 
 export default function OngletRdvsBeneficiaire({

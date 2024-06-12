@@ -74,10 +74,9 @@ function QualificationPage({
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)
 
-  const [labelMatomo, setLabelMatomo] = useState<string | undefined>(
+  const [labelMatomo, setLabelMatomo] = useState<string>(
     'Création Situation Non Professionnelle'
   )
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
   const estSNP = codeCategorie.value !== CODE_QUALIFICATION_NON_SNP
 
   function isCommentaireValid(): boolean {
@@ -191,7 +190,7 @@ function QualificationPage({
     setShowHelperCategories(!showHelperCategories)
   }
 
-  useMatomo(labelMatomo, aDesBeneficiaires)
+  useMatomo(labelMatomo, portefeuille.length > 0)
 
   return (
     <>

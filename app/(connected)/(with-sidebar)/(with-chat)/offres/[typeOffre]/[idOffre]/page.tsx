@@ -30,7 +30,9 @@ export default async function Offre({ params }: { params: OffreParams }) {
   return (
     <>
       <PageFilArianePortal />
-      <PageHeaderPortal header={header} /> <OffrePage offre={offre} />
+      <PageHeaderPortal header={header} />
+
+      <OffrePage offre={offre} />
     </>
   )
 }

@@ -24,20 +24,17 @@ export default function LienOffre({
       >
         {infoOffre.titre}
       </p>
-      <div
-        className={`mt-4 w-max ml-auto text-s-regular ${
+
+      <Link
+        href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
+        className={`mt-4 w-max ml-auto text-s-regular underline ${
           isSentByConseiller
-            ? 'text-blanc hover:text-primary_lighten'
+            ? 'text-blanc underline hover:text-primary_lighten'
             : 'text-primary_darken hover:text-primary'
         }`}
       >
-        <Link
-          href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
-          className='text-content_color underline hover:text-primary'
-        >
-          Voir l’offre <span className='sr-only'>{infoOffre.titre}</span>
-        </Link>
-      </div>
+        Voir l’offre <span className='sr-only'>{infoOffre.titre}</span>
+      </Link>
     </div>
   )
 }

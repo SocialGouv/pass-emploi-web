@@ -11,9 +11,9 @@ interface InitSettings {
 }
 
 interface TrackPageSettings {
-  structure: string
-  customTitle?: string
-  avecBeneficiaires?: string
+  customTitle: string
+  structure: StructureConseiller | null
+  aDesBeneficiaires: boolean | null
 }
 
 interface TrackEventSettings {
@@ -21,7 +21,7 @@ interface TrackEventSettings {
   categorie: string
   action: string
   nom: string
-  avecBeneficiaires: 'oui' | 'non'
+  aDesBeneficiaires: boolean | null
 }
 
 const numeroDimensionAvecBeneficiaires =
@@ -39,7 +39,7 @@ function push(args: (number[] | string[] | number | string)[]): void {
 }
 
 // initialize the tracker
-function init({
+export function init({
   url,
   siteId,
   jsTrackerFile = 'matomo.js',
@@ -66,10 +66,10 @@ function init({
   }
 }
 
-function trackPage({
+export function trackPage({
   structure,
   customTitle,
-  avecBeneficiaires,
+  aDesBeneficiaires,
 }: TrackPageSettings): void {
   window._paq = window._paq !== null ? window._paq : []
 
@@ -92,12 +92,12 @@ function trackPage({
     }
     push(['setCustomUrl', pathname])
     push(['setCustomDimension', 1, 'conseiller'])
-    push(['setCustomDimension', 2, structure])
+    push(['setCustomDimension', 2, userStructureDimensionString(structure)])
 
     push([
       'setCustomDimension',
       numeroDimensionAvecBeneficiaires,
-      avecBeneficiaires || 'non',
+      avecBeneficiairesDimencsionString(aDesBeneficiaires),
     ])
 
     push(['setDocumentTitle', customTitle || document.title])
@@ -109,7 +109,7 @@ function trackPage({
   }, 0)
 }
 
-function trackEvent(trackEventSettings: TrackEventSettings): void {
+export function trackEvent(trackEventSettings: TrackEventSettings): void {
   push(['setCustomDimension', 1, 'conseiller'])
   push([
     'setCustomDimension',
@@ -119,7 +119,30 @@ function trackEvent(trackEventSettings: TrackEventSettings): void {
   push([
     'setCustomDimension',
     numeroDimensionAvecBeneficiaires,
-    trackEventSettings.avecBeneficiaires,
+    avecBeneficiairesDimencsionString(trackEventSettings.aDesBeneficiaires),
+  ])
+
+  push([
+    'trackEvent',
+    trackEventSettings.categorie,
+    trackEventSettings.categorie + ' ' + trackEventSettings.action,
+    trackEventSettings.categorie + ' ' + trackEventSettings.nom,
+  ])
+}
+
+export function trackEventBeneficiaire(
+  trackEventSettings: Omit<TrackEventSettings, 'aDesBeneficiaires'>
+): void {
+  push(['setCustomDimension', 1, 'jeune'])
+  push([
+    'setCustomDimension',
+    2,
+    userStructureDimensionString(trackEventSettings.structure),
+  ])
+  push([
+    'setCustomDimension',
+    numeroDimensionAvecBeneficiaires,
+    avecBeneficiairesDimencsionString(null),
   ])
 
   push([
@@ -132,12 +155,12 @@ function trackEvent(trackEventSettings: TrackEventSettings): void {
 
 // https://github.com/matomo-org/matomo-nodejs-tracker
 // https://developer.matomo.org/api-reference/tracking-api
-function trackSSR({
+export function trackSSR({
   structure,
   customTitle,
   pathname,
   refererUrl,
-  avecBeneficiaires,
+  aDesBeneficiaires,
 }: Required<TrackPageSettings> & {
   pathname: string
   refererUrl?: string
@@ -159,12 +182,14 @@ function trackSSR({
     action_name: customTitle,
     urlref: refererUrl,
     dimension1: 'conseiller',
-    dimension2: structure,
-    dimension3: avecBeneficiaires,
+    dimension2: userStructureDimensionString(structure),
+    dimension3: avecBeneficiairesDimencsionString(aDesBeneficiaires),
   })
 }
 
-function userStructureDimensionString(loginMode: StructureConseiller): string {
+function userStructureDimensionString(
+  loginMode: StructureConseiller | null
+): string {
   switch (loginMode) {
     case StructureConseiller.MILO:
       return 'Mission Locale'
@@ -174,7 +199,14 @@ function userStructureDimensionString(loginMode: StructureConseiller): string {
       return 'Pôle emploi BRSA'
     case StructureConseiller.PASS_EMPLOI:
       return 'pass emploi'
+    case null:
+      return 'visiteur'
   }
 }
 
-export { init, trackPage, trackSSR, trackEvent, userStructureDimensionString }
+function avecBeneficiairesDimencsionString(
+  aDesBeneficiaires: boolean | null
+): 'oui' | 'non' | 'non applicable' {
+  if (aDesBeneficiaires === null) return 'non applicable'
+  return aDesBeneficiaires ? 'oui' : 'non'
+}

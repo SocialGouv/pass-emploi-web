@@ -6,7 +6,9 @@ import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import { utiliseChat } from 'interfaces/conseiller'
 import { DetailOffreEmploi, TypeOffre } from 'interfaces/offre'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toMonthday } from 'utils/date'
 
 type DetailOffreEmploiProps = {
@@ -18,6 +20,8 @@ export default function OffreEmploiDetail({
   offre,
   onLienExterne,
 }: DetailOffreEmploiProps) {
+  const [conseiller] = useConseiller()
+
   const dateActualisation: string | undefined =
     offre.dateActualisation && toMonthday(offre.dateActualisation)
 
@@ -50,13 +54,15 @@ export default function OffreEmploiDetail({
 
   return (
     <>
-      <PageActionsPortal>
-        <LienPartageOffre
-          titreOffre={offre.titre}
-          href={`/offres/${typeOffre}/${offre.id}/partage`}
-          style={ButtonStyle.PRIMARY}
-        />
-      </PageActionsPortal>
+      {utiliseChat(conseiller) && (
+        <PageActionsPortal>
+          <LienPartageOffre
+            titreOffre={offre.titre}
+            href={`/offres/${typeOffre}/${offre.id}/partage`}
+            style={ButtonStyle.PRIMARY}
+          />
+        </PageActionsPortal>
+      )}
 
       <div className='max-w-2xl mx-auto'>
         <p className='text-s-regular mb-2'>

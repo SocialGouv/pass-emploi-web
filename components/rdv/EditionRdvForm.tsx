@@ -39,7 +39,6 @@ import { trackEvent } from 'utils/analytics/matomo'
 import { dateIsInInterval, toShortDate } from 'utils/date'
 
 interface EditionRdvFormProps {
-  aDesBeneficiaires: 'non' | 'oui'
   conseiller: Conseiller
   jeunesConseiller: BaseJeune[]
   typesRendezVous: TypeEvenementReferentiel[]
@@ -58,7 +57,6 @@ interface EditionRdvFormProps {
 }
 
 export function EditionRdvForm({
-  aDesBeneficiaires,
   jeunesConseiller,
   recupererJeunesDeLEtablissement,
   typesRendezVous,
@@ -144,6 +142,11 @@ export function EditionRdvForm({
     idsJeunes.value.length > nombreMaxParticipants.value!
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const lienEmargement =
+    evenement && evenement.id && evenement.statut
+      ? `/emargement/${evenement.id}?type=ac`
+      : undefined
 
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
@@ -585,7 +588,7 @@ export function EditionRdvForm({
       categorie: 'Emargement',
       action: 'Export des inscrits à une AC',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires: jeunesConseiller.length > 0,
     })
   }
 
@@ -607,6 +610,7 @@ export function EditionRdvForm({
     })
   }
 
+  // @ts-ignore
   return (
     <>
       <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
@@ -776,19 +780,6 @@ export function EditionRdvForm({
               )}
             </>
           )}
-
-          {idsJeunes.value.length > 0 && evenement && evenement.statut && (
-            <div className='flex mb-2'>
-              <ButtonLink
-                style={ButtonStyle.PRIMARY}
-                href={`/emargement/${evenement.id}?type=ac`}
-                externalLink={true}
-                label='Exporter la liste des inscrits'
-                onClick={trackEmargement}
-              ></ButtonLink>
-            </div>
-          )}
-
           <BeneficiairesMultiselectAutocomplete
             id='select-beneficiaires'
             beneficiaires={buildOptionsJeunes()}
@@ -810,6 +801,8 @@ export function EditionRdvForm({
                   ? 'nombre-participants--error'
                   : undefined
             }
+            trackEmargement={trackEmargement}
+            lienEmargement={lienEmargement}
           />
         </Etape>
 

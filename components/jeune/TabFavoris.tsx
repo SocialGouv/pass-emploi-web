@@ -6,6 +6,7 @@ import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { Offre, Recherche } from 'interfaces/favoris'
 import useMatomo from 'utils/analytics/useMatomo'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type TabFavorisProps = {
   offres: Offre[]
@@ -23,6 +24,8 @@ export function TabFavoris({
   recherches,
   lectureSeule,
 }: TabFavorisProps) {
+  const [portefeuille] = usePortefeuille()
+
   const [currentTab, setCurrentTab] = useState<OngletFavoris>(
     OngletFavoris.OFFRES
   )
@@ -41,7 +44,7 @@ export function TabFavoris({
     )
   }
 
-  useMatomo(tracking)
+  useMatomo(tracking, portefeuille.length > 0)
 
   return (
     <>

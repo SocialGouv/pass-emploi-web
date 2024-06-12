@@ -5,22 +5,28 @@ import PageActionsPortal from 'components/PageActionsPortal'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { DataTag } from 'components/ui/Indicateurs/DataTag'
+import { utiliseChat } from 'interfaces/conseiller'
 import { DetailImmersion } from 'interfaces/offre'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 type ImmersionDetailProps = {
   offre: DetailImmersion
 }
 
 export default function ImmersionDetail({ offre }: ImmersionDetailProps) {
+  const [conseiller] = useConseiller()
+
   return (
     <>
-      <PageActionsPortal>
-        <LienPartageOffre
-          titreOffre={offre.titre}
-          href={`/offres/immersion/${offre.id}/partage`}
-          style={ButtonStyle.PRIMARY}
-        />
-      </PageActionsPortal>
+      {utiliseChat(conseiller) && (
+        <PageActionsPortal>
+          <LienPartageOffre
+            titreOffre={offre.titre}
+            href={`/offres/immersion/${offre.id}/partage`}
+            style={ButtonStyle.PRIMARY}
+          />
+        </PageActionsPortal>
+      )}
 
       <div className='max-w-2xl mx-auto'>
         <h2 className='text-l-bold text-primary'>{offre.titre}</h2>

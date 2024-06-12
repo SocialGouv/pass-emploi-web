@@ -8,17 +8,27 @@ import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
-import { toFrenchTime } from 'utils/date'
+import { toFrenchTime, toLongMonthDate, toShortDate } from 'utils/date'
 
-interface DisplayMessageBeneficiaireProps {
+type MessageBeneficiaireProps = {
   message: Message
   beneficiaireNomComplet: string
 }
 
-export default function DisplayMessageBeneficiaire({
-  message,
-  beneficiaireNomComplet,
-}: DisplayMessageBeneficiaireProps) {
+type ResultatRechercheProps = MessageBeneficiaireProps & {
+  estResultatDeRecherche: true
+  onAllerAuMessage: () => void
+}
+
+type DisplayMessageBeneficiaireProps =
+  | MessageBeneficiaireProps
+  | ResultatRechercheProps
+
+export default function DisplayMessageBeneficiaire(
+  props: DisplayMessageBeneficiaireProps
+) {
+  const { message, beneficiaireNomComplet } = props
+
   return (
     <li className='mb-5' id={message.id} data-testid={message.id}>
       {isDeleted(message) && (
@@ -66,15 +76,39 @@ export default function DisplayMessageBeneficiaire({
                   infoEvenementEmploi={message.infoEvenementEmploi}
                 />
               )}
+
+            {isResultatRecherche(props) && (
+              <button
+                className='underline pt-4 text-base-medium'
+                onClick={props.onAllerAuMessage}
+              >
+                Aller au message
+                <span className='sr-only'>
+                  du {toLongMonthDate(message.creationDate)}
+                </span>
+              </button>
+            )}
           </div>
           <div className='text-xs-medium text-content text-left'>
-            <span className='sr-only'>Envoyé à </span>
-            <span
-              aria-label={toFrenchTime(message.creationDate, { a11y: true })}
-            >
-              {toFrenchTime(message.creationDate)}
-            </span>
-            {isEdited(message) && ' · Modifié'}
+            {!isResultatRecherche(props) && (
+              <>
+                <span className='sr-only'>Envoyé à </span>
+                <span
+                  aria-label={toFrenchTime(message.creationDate, {
+                    a11y: true,
+                  })}
+                >
+                  {toFrenchTime(message.creationDate)}
+                </span>
+                {isEdited(message) && ' · Modifié'}
+              </>
+            )}
+
+            {isResultatRecherche(props) && (
+              <span aria-label={`Le ${toLongMonthDate(message.creationDate)}`}>
+                Le {toShortDate(message.creationDate)}
+              </span>
+            )}
           </div>
         </>
       )}
@@ -130,4 +164,10 @@ function MessagePJ({
     default:
       return <SpinningLoader className='w-6 h-6 mr-2 fill-primary_lighten' />
   }
+}
+
+function isResultatRecherche(
+  props: DisplayMessageBeneficiaireProps
+): props is ResultatRechercheProps {
+  return Object.prototype.hasOwnProperty.call(props, 'estResultatDeRecherche')
 }

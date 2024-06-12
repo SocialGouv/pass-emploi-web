@@ -1,9 +1,7 @@
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
-import Button from 'components/ui/Button/Button'
+import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
@@ -16,17 +14,26 @@ interface DossierJeuneMiloProps {
   dossier: DossierMilo
   onCreateCompte: (data: JeuneMiloFormData) => Promise<void>
   erreurMessageHttpPassEmploi?: string
+  onRefresh: () => void
+  onRetour: () => void
 }
 
 export default function DossierJeuneMilo({
   dossier,
   onCreateCompte,
   erreurMessageHttpPassEmploi,
+  onRefresh,
+  onRetour,
 }: DossierJeuneMiloProps) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
+  const [tracking, setTracking] = useState<string>(
+    dossier.email
+      ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
+      : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email'
+  )
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const aDesBeneficiaires = portefeuille.length > 0
 
   async function addJeune() {
     if (!creationEnCours) {
@@ -44,18 +51,14 @@ export default function DossierJeuneMilo({
     }
   }
 
-  useMatomo(
-    dossier.email
-      ? 'Création jeune SIMILO - Étape 2 - information du dossier jeune avec email'
-      : 'Création jeune SIMILO - Étape 2 - information du dossier jeune sans email',
-    aDesBeneficiaires
-  )
+  useMatomo(tracking, aDesBeneficiaires)
 
-  useMatomo(
-    erreurMessageHttpPassEmploi &&
-      'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur',
-    aDesBeneficiaires
-  )
+  useEffect(() => {
+    if (erreurMessageHttpPassEmploi)
+      setTracking(
+        'Création jeune SIMILO – Etape 2 - information du dossier jeune - création de compte en erreur'
+      )
+  }, [erreurMessageHttpPassEmploi])
 
   return (
     <>
@@ -130,11 +133,8 @@ export default function DossierJeuneMilo({
         </DeprecatedErrorMessage>
       )}
 
-      <div className='flex items-center mt-14'>
-        <Link
-          href={'/mes-jeunes/creation-jeune/milo'}
-          className='flex items-center text-base-bold text-primary_darken mr-6'
-        >
+      <div className='flex items-center mt-14 gap-4'>
+        <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
           <IconComponent
             name={IconName.ArrowBackward}
             className='mr-2.5 w-3 h-3'
@@ -143,13 +143,14 @@ export default function DossierJeuneMilo({
             aria-label="Retour Création d'un compte jeune étape 1"
           />
           Retour
-        </Link>
+        </Button>
 
         {!erreurMessageHttpPassEmploi && (
           <ActionButtons
             dossier={dossier}
             addJeune={addJeune}
             creationEnCours={creationEnCours}
+            onRefresh={onRefresh}
           />
         )}
       </div>
@@ -161,20 +162,24 @@ function ActionButtons({
   dossier,
   addJeune,
   creationEnCours,
+  onRefresh,
 }: {
   dossier: DossierMilo
   addJeune: () => Promise<void>
   creationEnCours: boolean
+  onRefresh: () => void
 }) {
-  const router = useRouter()
-
   return dossier.email ? (
     <Button type='button' onClick={addJeune} disabled={creationEnCours}>
       {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
     </Button>
   ) : (
-    <Button type='button' onClick={() => router.refresh()}>
-      <RefreshIcon className='mr-2.5' aria-hidden={true} focusable={false} />
+    <Button type='button' onClick={onRefresh}>
+      <RefreshIcon
+        className='w-4 h-4 mr-2.5'
+        aria-hidden={true}
+        focusable={false}
+      />
       Rafraîchir le compte
     </Button>
   )

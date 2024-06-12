@@ -4,9 +4,11 @@ import { withTransaction } from '@elastic/apm-rum-react'
 
 import { TutorielRaccourci } from 'components/TutorielRaccourci'
 import useMatomo from 'utils/analytics/useMatomo'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 function RaccourciPage() {
-  useMatomo('Tuto raccourci mobile')
+  const [portefeuille] = usePortefeuille()
+  useMatomo('Tuto raccourci mobile', portefeuille.length > 0)
 
   return <TutorielRaccourci />
 }

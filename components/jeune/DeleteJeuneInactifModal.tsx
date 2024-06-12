@@ -19,9 +19,10 @@ export default function DeleteJeuneInactifModal({
   onDelete,
 }: DeleteJeuneInactifModalProps) {
   const [portefeuille] = usePortefeuille()
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
-  useMatomo('Détail Jeune - Pop-in confirmation suppression', aDesBeneficiaires)
+  useMatomo(
+    'Détail Jeune - Pop-in confirmation suppression',
+    portefeuille.length > 0
+  )
 
   return (
     <Modal

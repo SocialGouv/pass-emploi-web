@@ -16,11 +16,7 @@ import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { estMilo, StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
-import {
-  trackEvent,
-  trackPage,
-  userStructureDimensionString,
-} from 'utils/analytics/matomo'
+import { trackEvent, trackPage } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -58,7 +54,7 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
 
   const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
   const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const aDesBeneficiaires = portefeuille.length > 0
 
   async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
     const conseillerMisAJour = {
@@ -119,14 +115,15 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
       categorie: 'Contact Support',
       action: 'Profil',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires,
     })
   }
 
   function trackAccederAIMilo() {
     trackPage({
-      structure: userStructureDimensionString(StructureConseiller.MILO),
       customTitle: 'Accès i-milo',
+      structure: StructureConseiller.MILO,
+      aDesBeneficiaires,
     })
   }
 

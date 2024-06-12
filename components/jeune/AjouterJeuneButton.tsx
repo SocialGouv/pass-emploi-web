@@ -9,10 +9,9 @@ interface AjouterJeuneButtonProps {
 export function getAjouterJeuneHref(structure: StructureConseiller): string {
   switch (structure) {
     case StructureConseiller.MILO:
-      return '/mes-jeunes/creation-jeune/milo'
     case StructureConseiller.POLE_EMPLOI:
     case StructureConseiller.POLE_EMPLOI_BRSA:
-      return '/mes-jeunes/creation-jeune/pole-emploi'
+      return '/mes-jeunes/creation-jeune'
     default:
       return ''
   }

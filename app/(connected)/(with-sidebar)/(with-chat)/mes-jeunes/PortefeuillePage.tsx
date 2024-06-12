@@ -144,9 +144,7 @@ function PortefeuillePage({
       })
   }, [chatCredentials, conseillerJeunes])
 
-  const adesBeneficiaires = conseillerJeunes.length === 0 ? 'non' : 'oui'
-
-  useMatomo(trackingTitle, adesBeneficiaires)
+  useMatomo(trackingTitle, conseillerJeunes.length > 0)
 
   return (
     <>
@@ -205,7 +203,6 @@ function PortefeuillePage({
               jeunesFiltres={jeunesFiltres}
               totalJeunes={conseillerJeunes.length}
               withActions={!estPoleEmploi(conseiller)}
-              withSituations={estMilo(conseiller)}
             />
           )}
         </>

@@ -13,9 +13,11 @@ import {
   getChatsDuConseiller,
   getIdLastMessage,
   getMessageImportantSnapshot,
+  getMessagesPeriode,
   getMessagesGroupe,
   observeChat,
   observeDerniersMessagesDuChat,
+  rechercherMessages,
   signIn as _signIn,
   signOut as _signOut,
   updateChat,
@@ -183,6 +185,34 @@ export function observeJeuneReadingDate(
   })
 }
 
+export async function rechercherMessagesConversation(
+  idBeneficiaire: string,
+  recherche: string,
+  cleChiffrement: string
+): Promise<Message[]> {
+  const session = await getSession()
+  const messages = await rechercherMessages(
+    session!.accessToken,
+    idBeneficiaire,
+    recherche
+  )
+
+  return messages.map((message) => {
+    if (!message.iv) return message
+    return {
+      ...message,
+      ...decryptContentAndFilename(
+        {
+          iv: message.iv,
+          content: message.content,
+          infoPiecesJointes: message.infoPiecesJointes,
+        },
+        cleChiffrement
+      ),
+    }
+  })
+}
+
 export async function getMessagesListeDeDiffusion(
   idListeDiffusion: string,
   cleChiffrement: string
@@ -231,6 +261,31 @@ export async function countMessagesNotRead(
     },
     {} as { [idJeune: string]: number }
   )
+}
+
+export async function getMessagesDuMemeJour(
+  idChat: string,
+  messageSource: Message,
+  cleChiffrement: string
+): Promise<Message[]> {
+  const debut = messageSource.creationDate.startOf('day')
+  const fin = messageSource.creationDate.endOf('day')
+
+  const messages = await getMessagesPeriode(idChat, debut, fin)
+  return messages.map((message) => {
+    if (!message.iv) return message
+    return {
+      ...message,
+      ...decryptContentAndFilename(
+        {
+          iv: message.iv,
+          content: message.content,
+          infoPiecesJointes: message.infoPiecesJointes,
+        },
+        cleChiffrement
+      ),
+    }
+  })
 }
 
 export async function sendNouveauMessage({
@@ -396,41 +451,11 @@ export async function modifierMessage(
   message: Message,
   nouveauContenu: string,
   cleChiffrement: string
-) {
-  {
-    const nouveauMessage = message.iv
-      ? encryptWithCustomIv(nouveauContenu, cleChiffrement, message.iv)
-      : nouveauContenu
-    const oldMessage = message.iv
-      ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
-      : message.content
-
-    await updateMessage(chatId, message.id, {
-      message: nouveauMessage,
-      oldMessage,
-      date: DateTime.now(),
-      status: 'edited',
-    })
-
-    const idLastMessage = await getIdLastMessage(chatId)
-    if (idLastMessage === message.id) {
-      await updateChat(chatId, { lastMessageContent: nouveauMessage })
-    }
-
-    const { user, accessToken } = (await getSession())!
-    evenementMessage('MESSAGE_MODIFIE', user.structure, user.id, accessToken)
-  }
-}
-
-export async function supprimerMessage(
-  chatId: string,
-  message: Message,
-  cleChiffrement: string
-) {
-  const messageSuppression = '(message supprimé)'
+): Promise<Message> {
+  const status = 'edited'
   const nouveauMessage = message.iv
-    ? encryptWithCustomIv(messageSuppression, cleChiffrement, message.iv)
-    : messageSuppression
+    ? encryptWithCustomIv(nouveauContenu, cleChiffrement, message.iv)
+    : nouveauContenu
   const oldMessage = message.iv
     ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
     : message.content
@@ -439,7 +464,39 @@ export async function supprimerMessage(
     message: nouveauMessage,
     oldMessage,
     date: DateTime.now(),
-    status: 'deleted',
+    status,
+  })
+
+  const idLastMessage = await getIdLastMessage(chatId)
+  if (idLastMessage === message.id) {
+    await updateChat(chatId, { lastMessageContent: nouveauMessage })
+  }
+
+  const { user, accessToken } = (await getSession())!
+  evenementMessage('MESSAGE_MODIFIE', user.structure, user.id, accessToken)
+
+  return { ...message, content: nouveauContenu, status }
+}
+
+export async function supprimerMessage(
+  chatId: string,
+  message: Message,
+  cleChiffrement: string
+): Promise<Message> {
+  const messageSuppression = '(message supprimé)'
+  const nouveauMessage = message.iv
+    ? encryptWithCustomIv(messageSuppression, cleChiffrement, message.iv)
+    : messageSuppression
+  const oldMessage = message.iv
+    ? encryptWithCustomIv(message.content, cleChiffrement, message.iv)
+    : message.content
+  const status = 'deleted'
+
+  await updateMessage(chatId, message.id, {
+    message: nouveauMessage,
+    oldMessage,
+    date: DateTime.now(),
+    status,
   })
 
   const idLastMessage = await getIdLastMessage(chatId)
@@ -449,6 +506,8 @@ export async function supprimerMessage(
 
   const { user, accessToken } = (await getSession())!
   evenementMessage('MESSAGE_SUPPRIME', user.structure, user.id, accessToken)
+
+  return { ...message, content: messageSuppression, status }
 }
 
 async function envoyerPartageOffre(

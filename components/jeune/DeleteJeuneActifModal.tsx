@@ -45,8 +45,6 @@ export default function DeleteJeuneActifModal({
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Détail Jeune - Pop-in confirmation suppression'
   )
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   function openModalEtape2() {
     setShowModalEtape1(false)
     setShowModalEtape2(true)
@@ -115,7 +113,7 @@ export default function DeleteJeuneActifModal({
     ({ motif }) => motif === motifSuppressionJeune?.value
   )?.description
 
-  useMatomo(trackingLabel, aDesBeneficiaires)
+  useMatomo(trackingLabel, portefeuille.length > 0)
 
   return (
     <>

@@ -396,10 +396,12 @@ describe('Détails Session Page Client', () => {
     describe('au clic sur le bouton d’enregistrement', () => {
       it('appelle la méthode changerInscriptionsSession', async () => {
         //Given
-        let routerPush: Function = jest.fn()
+        let push: Function = jest.fn()
+        let refresh: Function = jest.fn()
 
         ;(useRouter as jest.Mock).mockReturnValue({
-          push: routerPush,
+          push,
+          refresh,
         })
         ;(changerInscriptionsSession as jest.Mock).mockResolvedValue(undefined)
         session = unDetailSession({
@@ -866,10 +868,12 @@ describe('Détails Session Page Client', () => {
 
     it('au clic sur le bouton de réinscription, change le statut du bénéficiaire', async () => {
       //Given
-      let routerPush: Function = jest.fn()
+      let push: Function = jest.fn()
+      let refresh: Function = jest.fn()
 
       ;(useRouter as jest.Mock).mockReturnValue({
-        push: routerPush,
+        push,
+        refresh,
       })
       ;(changerInscriptionsSession as jest.Mock).mockResolvedValue(undefined)
 

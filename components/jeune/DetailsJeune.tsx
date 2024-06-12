@@ -38,8 +38,6 @@ export default function DetailsJeune({
   const [showIdentifiantPartenaireModal, setShowIdentifiantPartenaireModal] =
     useState<boolean>(false)
 
-  const aDesBeneficiaires = jeune.id ? 'oui' : 'non'
-
   const aujourdHui = DateTime.now()
   const debutSemaine = aujourdHui.startOf('week')
   const finSemaine = aujourdHui.endOf('week')
@@ -75,7 +73,7 @@ export default function DetailsJeune({
       categorie: 'fiche jeune',
       action: 'copie identifiant pe',
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires: true,
     })
   }
 

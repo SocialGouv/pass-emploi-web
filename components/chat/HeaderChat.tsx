@@ -1,23 +1,39 @@
-import React from 'react'
+import React, { ReactElement, useState } from 'react'
 
-import BulleMessageSensible from 'components/ui/Form/BulleMessageSensible'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function HeaderChat({
-  iconLabel,
-  iconName,
   labelRetour,
   onBack,
-  onClickIcon,
+  onClickBookMark,
+  isFlaggedByConseiller,
+  onClickRecherche,
   titre,
+  permuterVisibiliteMessagerie,
+  messagerieEstVisible,
 }: {
   onBack: () => void
   labelRetour: string
-  titre: string
-  iconName?: IconName
-  iconLabel?: string
-  onClickIcon?: () => void
+  messagerieEstVisible: boolean
+  permuterVisibiliteMessagerie: () => void
+  afficherBlurBtn?: boolean
+  titre: string | ReactElement
+  isFlaggedByConseiller?: boolean
+  onClickBookMark?: () => void
+  onClickRecherche?: () => void
 }) {
+  const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
+    useState<boolean>(false)
+  function permuterMenuActionsMessagerie() {
+    setAfficherMenuActionsMessagerie(!afficherMenuActionsMessagerie)
+  }
+
+  const toto =
+    onClickBookMark &&
+    (isFlaggedByConseiller
+      ? { label: 'Ne plus suivre la conversation', icon: IconName.BookmarkFill }
+      : { label: 'Suivre la conversation', icon: IconName.BookmarkOutline })
+
   return (
     <div className='items-center mx-4 my-6 short:hidden'>
       <div className='pb-3 flex items-center justify-between'>
@@ -34,22 +50,83 @@ export default function HeaderChat({
           />
           <span className='text-s-regular text-content underline'>Retour</span>
         </button>
-        {iconName && (
+        <div
+          onClick={permuterMenuActionsMessagerie}
+          className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
+        >
           <button
-            aria-label={iconLabel}
-            className='border-none rounded-full bg-primary_lighten'
-            onClick={onClickIcon}
+            type='button'
+            className='bg-primary rounded-full fill-blanc hover:shadow-base'
+            title={`${afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions possibles pour votre messagerie`}
           >
             <IconComponent
-              name={iconName}
-              title={iconLabel}
-              className='w-8 h-8 fill-primary'
+              focusable={false}
+              aria-hidden={true}
+              className='inline w-6 h-6 m-1'
+              name={IconName.More}
             />
+            <span className='sr-only'>
+              {afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions
+              possibles pour votre messagerie
+            </span>
           </button>
-        )}
+
+          {afficherMenuActionsMessagerie && (
+            <div className='absolute top-[4em] z-10 bg-blanc rounded-base p-2 shadow-m'>
+              <button
+                onClick={permuterVisibiliteMessagerie}
+                className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
+              >
+                <IconComponent
+                  name={
+                    messagerieEstVisible
+                      ? IconName.VisibilityOff
+                      : IconName.VisibilityOn
+                  }
+                  className='inline w-6 h-6 fill-[current-color]'
+                  focusable={false}
+                  aria-hidden={true}
+                />
+                {messagerieEstVisible
+                  ? 'Masquer la messagerie'
+                  : 'Rendre visible la messagerie'}
+              </button>
+
+              {onClickRecherche && (
+                <button
+                  className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
+                  onClick={onClickRecherche}
+                >
+                  <IconComponent
+                    name={IconName.Search}
+                    className='inline w-6 h-6 fill-[current-color]'
+                    focusable={false}
+                    aria-hidden={true}
+                  />
+                  Rechercher un message
+                </button>
+              )}
+
+              {onClickBookMark && (
+                <button
+                  className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
+                  onClick={onClickBookMark}
+                >
+                  <IconComponent
+                    name={toto!.icon}
+                    title={toto!.label}
+                    className='inline w-6 h-6 fill-[current-color]'
+                    focusable={false}
+                    aria-hidden={true}
+                  />
+                  {toto!.label}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
       <div className='flex'>
-        <BulleMessageSensible />
         <h2 className='w-full text-left text-primary text-m-bold ml-2'>
           {titre}
         </h2>

@@ -31,7 +31,7 @@ export default function AidePage() {
   const [portefeuille] = usePortefeuille()
 
   const conseillerEstBRSA = estPoleEmploiBRSA(conseiller)
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const aDesBeneficiaires = portefeuille.length > 0
 
   const QrcodeAppStore = conseillerEstBRSA
     ? QrcodeAppStoreBRSA
@@ -91,7 +91,7 @@ export default function AidePage() {
       categorie: 'Aide et ressources',
       action: action,
       nom: '',
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires,
     })
   }
 

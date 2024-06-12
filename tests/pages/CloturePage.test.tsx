@@ -16,12 +16,15 @@ describe('CloturePage client side', () => {
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let routerPush: Function
+  let routerRefresh: Function
   beforeEach(async () => {
     // Given
     alerteSetter = jest.fn()
     routerPush = jest.fn()
+    routerRefresh = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({
       push: routerPush,
+      refresh: routerRefresh,
     })
 
     // When

@@ -69,8 +69,11 @@ function InformationsPage({
   const conseillersTracking = `Détail jeune – Historique conseillers${
     lectureSeule ? ' - hors portefeuille' : ''
   }`
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-  const [tracking, setTracking] = useState<string | undefined>()
+  const [tracking, setTracking] = useState<string>(switchTracking(onglet))
+
+  function switchTracking(onglet: Onglet) {
+    return onglet === 'INFORMATIONS' ? situationsTracking : conseillersTracking
+  }
 
   useEffect(() => {
     if (
@@ -89,13 +92,11 @@ function InformationsPage({
 
   useEffect(() => {
     if (currentTab) {
-      setTracking(
-        currentTab === 'INFORMATIONS' ? situationsTracking : conseillersTracking
-      )
+      setTracking(switchTracking(onglet))
     }
   }, [currentTab])
 
-  useMatomo(tracking, aDesBeneficiaires)
+  useMatomo(tracking, portefeuille.length > 0)
   const pathPrefix = usePathname()?.startsWith('etablissement')
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'

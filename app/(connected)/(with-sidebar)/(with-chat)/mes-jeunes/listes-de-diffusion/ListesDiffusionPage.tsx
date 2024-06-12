@@ -39,7 +39,7 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
     ALPHABETIQUE
   )
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
+  const aDesBeneficiaires = portefeuille.length > 0
 
   function inverserTri() {
     const nouvelOrdre = tri === ALPHABETIQUE ? INVERSE : ALPHABETIQUE
@@ -49,7 +49,7 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
       categorie: 'Listes de diffusion',
       action: 'Tri',
       nom: nouvelOrdre,
-      avecBeneficiaires: aDesBeneficiaires,
+      aDesBeneficiaires,
     })
   }
 

@@ -196,7 +196,7 @@ describe('PortefeuillePage client side', () => {
         screen.getByRole('link', {
           name: 'Ajouter un bénéficiaire',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune/milo')
+      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune')
     })
 
     it("affiche la colonne nombre d'actions des jeunes", () => {
@@ -204,17 +204,6 @@ describe('PortefeuillePage client side', () => {
       expect(
         screen.getByRole('columnheader', { name: 'Actions' })
       ).toBeInTheDocument()
-    })
-
-    it('affiche la colonne situation courante des jeunes', () => {
-      // Then
-      expect(
-        screen.getByRole('columnheader', { name: 'Situation' })
-      ).toBeInTheDocument()
-    })
-
-    it('affiche la situation courante du jeune', () => {
-      expect(screen.getByText(jeune.situationCourante!)).toBeInTheDocument()
     })
 
     it('affiche si la structure du bénéficiaire est différente', () => {
@@ -252,7 +241,7 @@ describe('PortefeuillePage client side', () => {
         screen.getByRole('link', {
           name: 'Ajouter un bénéficiaire',
         })
-      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune/pole-emploi')
+      ).toHaveAttribute('href', '/mes-jeunes/creation-jeune')
     })
 
     it("n'affiche pas le nombre d'actions des jeunes", () => {

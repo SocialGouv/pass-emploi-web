@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
-import CreationJeuneMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/milo/CreationJeuneMiloPage'
+import CreationJeuneMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeuneMiloPage'
 import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
 import { unDossierMilo } from 'fixtures/milo'
 import { BaseJeune } from 'interfaces/jeune'

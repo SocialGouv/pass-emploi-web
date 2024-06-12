@@ -22,12 +22,8 @@ function CreationJeuneMiloPage() {
   const [erreurDossier, setErreurDossier] = useState<string | undefined>()
   const [erreurCreation, setErreurCreation] = useState<string | undefined>()
 
-  const aDesBeneficiaires = portefeuille.length === 0 ? 'non' : 'oui'
-
   async function rechercherDossier(id: string) {
-    setErreurDossier(undefined)
-    setDossier(undefined)
-    setErreurCreation(undefined)
+    clearDossier()
 
     try {
       const { getDossierJeune } = await import('services/conseiller.service')
@@ -51,6 +47,7 @@ function CreationJeuneMiloPage() {
       setPortefeuille(portefeuille.concat(beneficiaireCree))
       setAlerte(AlerteParam.creationBeneficiaire, beneficiaireCree.id)
       router.push('/mes-jeunes')
+      router.refresh()
     } catch (error) {
       setErreurCreation(
         (error as Error).message || "Une erreur inconnue s'est produite"
@@ -58,11 +55,17 @@ function CreationJeuneMiloPage() {
     }
   }
 
+  function clearDossier() {
+    setErreurDossier(undefined)
+    setDossier(undefined)
+    setErreurCreation(undefined)
+  }
+
   useMatomo(
     erreurDossier
       ? 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune en erreur'
       : 'Création jeune SIMILO – Etape 1 - récuperation du dossier jeune',
-    aDesBeneficiaires
+    portefeuille.length > 0
   )
 
   return (
@@ -83,6 +86,8 @@ function CreationJeuneMiloPage() {
           dossier={dossier}
           onCreateCompte={creerCompteJeune}
           erreurMessageHttpPassEmploi={erreurCreation}
+          onRefresh={() => rechercherDossier(dossier.id)}
+          onRetour={clearDossier}
         />
       )}
     </>

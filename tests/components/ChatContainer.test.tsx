@@ -14,7 +14,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/jeunes.service')
 jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
-jest.mock('components/chat/Conversation', () =>
+jest.mock('components/chat/ConversationBeneficiaire', () =>
   // eslint-disable-next-line react/display-name
   ({ jeuneChat }: { jeuneChat: JeuneChat }) => <>conversation-{jeuneChat.id}</>
 )
@@ -55,13 +55,15 @@ describe('<ChatContainer />', () => {
   describe('Messagerie', () => {
     it('affiche la messagerie', async () => {
       // When
-      renderWithContexts(
-        <ChatContainer
-          jeunesChats={jeunesChats}
-          menuState={[false, () => {}]}
-        />,
-        {}
-      )
+      await act(async () => {
+        renderWithContexts(
+          <ChatContainer
+            jeunesChats={jeunesChats}
+            menuState={[false, () => {}]}
+          />,
+          {}
+        )
+      })
 
       // Then
       expect(
@@ -105,10 +107,12 @@ describe('<ChatContainer />', () => {
 
   describe('listes de diffusion', () => {
     beforeEach(async () => {
-      renderWithContexts(
-        <ChatContainer jeunesChats={[]} menuState={[false, () => {}]} />,
-        {}
-      )
+      await act(async () => {
+        renderWithContexts(
+          <ChatContainer jeunesChats={[]} menuState={[false, () => {}]} />,
+          {}
+        )
+      })
     })
 
     it('permet d’accéder aux messages envoyés aux listes de diffusion', async () => {

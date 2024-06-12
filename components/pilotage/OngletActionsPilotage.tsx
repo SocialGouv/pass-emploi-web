@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import IllustrationComponent, {
@@ -37,6 +38,7 @@ export default function OngletActionsPilotage({
   getActions,
   onLienExterne,
 }: OngletActionsPilotageProps) {
+  const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [actions, setActions] = useState<ActionPilotage[]>(actionsInitiales)
   const [actionsFiltrees, setActionsFitrees] =
@@ -124,6 +126,7 @@ export default function OngletActionsPilotage({
 
       setActions(nouvellesActions)
       setActionsFitrees(nouvellesActions)
+      router.refresh()
     } catch (error) {
       setErreurQualification(
         error instanceof ApiError && error.statusCode !== 500
