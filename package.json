@@ -22,7 +22,7 @@
     "@next/bundle-analyzer": "14.2.4",
     "crypto-js": "4.2.0",
     "dotenv": "16.4.5",
-    "elastic-apm-node": "4.6.0",
+    "elastic-apm-node": "4.7.0",
     "firebase": "10.12.2",
     "html-react-parser": "5.1.10",
     "jsonwebtoken": "9.0.2",
