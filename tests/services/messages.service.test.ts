@@ -796,12 +796,15 @@ describe('MessagesFirebaseAndApiService', () => {
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
       const resultatRecherche = [
-        unMessage({
-          content: 'tchoupi',
-          infoPiecesJointes: [
-            { id: 'id-pj', nom: 'tchoupi.jpg', statut: 'valide' },
-          ],
-        }),
+        {
+          message: unMessage({
+            content: 'tchoupi',
+            infoPiecesJointes: [
+              { id: 'id-pj', nom: 'tchoupi.jpg', statut: 'valide' },
+            ],
+          }),
+          matches: [{ match: [0, 1], key: 'content' }],
+        },
       ]
       ;(rechercherMessages as jest.Mock).mockResolvedValue(resultatRecherche)
     })
@@ -824,12 +827,15 @@ describe('MessagesFirebaseAndApiService', () => {
 
     it('retourne les résultats', async () => {
       //Given
-      const resultatDechiffre = unMessage({
-        content: 'Decrypted: tchoupi',
-        infoPiecesJointes: [
-          { id: 'id-pj', nom: 'Decrypted: tchoupi.jpg', statut: 'valide' },
-        ],
-      })
+      const resultatDechiffre = {
+        message: unMessage({
+          content: 'Decrypted: tchoupi',
+          infoPiecesJointes: [
+            { id: 'id-pj', nom: 'Decrypted: tchoupi.jpg', statut: 'valide' },
+          ],
+        }),
+        matches: [{ match: [0, 1], key: 'content' }],
+      }
 
       //When
       const resultats = await rechercherMessagesConversation(

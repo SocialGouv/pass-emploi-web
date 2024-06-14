@@ -13,7 +13,11 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 import { ValueWithError } from 'components/ValueWithError'
 import { JeuneChat } from 'interfaces/jeune'
-import { fromConseiller, Message } from 'interfaces/message'
+import {
+  fromConseiller,
+  Message,
+  MessageRechercheMatch,
+} from 'interfaces/message'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
@@ -32,7 +36,7 @@ export function RechercheMessage({
   const [conseiller] = useConseiller()
 
   const [resultatsRecherche, setResultatsRecherche] = useState<
-    Message[] | undefined
+    Array<{ message: Message; matches: MessageRechercheMatch[] }> | undefined
   >()
   const [messageSelectionne, setMessageSelectionne] = useState<
     Message | undefined
@@ -121,7 +125,9 @@ function RechercheMessageForm({
   onResultat,
 }: {
   idJeuneChat: string
-  onResultat: (message: Message[]) => void
+  onResultat: (
+    messages: Array<{ message: Message; matches: MessageRechercheMatch[] }>
+  ) => void
 }) {
   const chatCredentials = useChatCredentials()
 
@@ -194,7 +200,10 @@ function ResultatsRecherche({
   getConseillerNomComplet,
   onSelectionnerMessage,
 }: {
-  resultatsRecherche: Message[]
+  resultatsRecherche: Array<{
+    message: Message
+    matches: MessageRechercheMatch[]
+  }>
   beneficiaireNomComplet: string
   idConseiller: string
   getConseillerNomComplet: (message: Message) => string | undefined
@@ -210,7 +219,7 @@ function ResultatsRecherche({
       </p>
       {resultatsRecherche.length >= 1 && (
         <ul className='p-4 overflow-y-auto'>
-          {resultatsRecherche.map((message, key) => (
+          {resultatsRecherche.map(({ message, matches }, key) => (
             <Fragment key={key}>
               {!fromConseiller(message) && (
                 <DisplayMessageBeneficiaire
@@ -218,6 +227,7 @@ function ResultatsRecherche({
                   beneficiaireNomComplet={beneficiaireNomComplet}
                   estResultatDeRecherche={true}
                   onAllerAuMessage={() => onSelectionnerMessage(message)}
+                  highlight={matches[0]}
                 />
               )}
 
@@ -229,6 +239,7 @@ function ResultatsRecherche({
                   isEnCoursDeModification={false}
                   estResultatDeRecherche={true}
                   onAllerAuMessage={() => onSelectionnerMessage(message)}
+                  highlight={matches[0]}
                 />
               )}
             </Fragment>

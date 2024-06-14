@@ -1,11 +1,18 @@
 import parse, { domToReact } from 'html-react-parser'
 import React from 'react'
 
+import { MessageRechercheMatch } from 'interfaces/message'
+
 type TexteAvecLienProps = {
   texte: string
   lighten?: boolean
+  highlight?: MessageRechercheMatch
 }
-export default function TexteAvecLien({ texte, lighten }: TexteAvecLienProps) {
+export default function TexteAvecLien({
+  texte,
+  lighten,
+  highlight,
+}: TexteAvecLienProps) {
   function confirmationRedirectionLienExterne(
     e: React.MouseEvent<HTMLAnchorElement>,
     lien: string
@@ -70,6 +77,22 @@ export default function TexteAvecLien({ texte, lighten }: TexteAvecLienProps) {
     return str.includes('http') || str.includes('https')
   }
 
-  if (!detecteLien(texte)) return <p className='whitespace-pre-wrap'>{texte}</p>
+  function surlignerTexte(texte: string) {
+    const coordDebut = highlight!.match[0]
+    const coordFin = highlight!.match[1] + 1
+
+    const debut = texte.slice(0, coordDebut)
+    const highlightedText = texte.slice(coordDebut, coordFin)
+    const fin = texte.slice(coordFin)
+
+    return `${debut}<mark>${highlightedText}</mark>${fin}`
+  }
+
+  if (highlight && highlight.key === 'content') {
+    texte = surlignerTexte(texte)
+  }
+
+  if (!detecteLien(texte))
+    return parse(`<p className='whitespace-pre-wrap'>${texte}</p>`)
   return <>{formateTexteAvecLien()}</>
 }

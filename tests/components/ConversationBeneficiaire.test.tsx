@@ -660,16 +660,22 @@ describe('<ConversationBeneficiaire />', () => {
           const now = DateTime.fromISO('2024-05-24')
           jest.spyOn(DateTime, 'now').mockReturnValue(now)
           ;(rechercherMessagesConversation as jest.Mock).mockResolvedValue([
-            unMessage({
-              content: 'tchoupi vs trotro',
-              sentBy: 'conseiller',
-              creationDate: DateTime.now().minus({ day: 2 }),
-            }),
-            unMessage({
-              content: 'tchoupi est plus beau que l’âne trotro',
-              sentBy: 'jeune',
-              creationDate: DateTime.now().minus({ day: 1 }),
-            }),
+            {
+              message: unMessage({
+                content: 'tchoupi vs trotro',
+                sentBy: 'conseiller',
+                creationDate: DateTime.now().minus({ day: 2 }),
+              }),
+              matches: [{ match: [0, 6], key: 'content' }],
+            },
+            {
+              message: unMessage({
+                content: 'tchoupi est plus beau que l’âne trotro',
+                sentBy: 'jeune',
+                creationDate: DateTime.now().minus({ day: 1 }),
+              }),
+              matches: [{ match: [0, 6], key: 'content' }],
+            },
           ])
 
           await userEvent.type(formInput, 'tchoupi')
@@ -680,11 +686,11 @@ describe('<ConversationBeneficiaire />', () => {
           expect(screen.getByText('2 résultats trouvés')).toBeInTheDocument()
         })
         it('affiche le contenu des messages', async () => {
-          expect(screen.getByText('tchoupi vs trotro')).toBeInTheDocument()
+          const markedElements = screen.getAllByText('tchoupi', {
+            selector: 'mark',
+          })
+          expect(markedElements.length).toEqual(2)
           expect(screen.getByText('Le 22/05/2024')).toBeInTheDocument()
-          expect(
-            screen.getByText('tchoupi est plus beau que l’âne trotro')
-          ).toBeInTheDocument()
           expect(screen.getByText('Le 23/05/2024')).toBeInTheDocument()
         })
       })
