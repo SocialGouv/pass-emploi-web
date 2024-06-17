@@ -20,7 +20,7 @@ interface Props {
 
 export enum ButtonStyle {
   PRIMARY = 'PRIMARY',
-  PRIMARY_BRSA = 'PRIMARY_BRSA',
+  PRIMARY_BRSA = 'PRIMARY_BRSA', // TODO renommer
   SECONDARY = 'SECONDARY',
   TERTIARY = 'TERTIARY',
   WARNING = 'WARNING',

@@ -24,7 +24,7 @@ export default function AppContextProviders({
 }: {
   conseiller: Conseiller
   portefeuille: JeuneFromListe[]
-  theme: 'cej' | 'brsa'
+  theme: 'cej' | 'brsa' // TODO renommer brsa
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille

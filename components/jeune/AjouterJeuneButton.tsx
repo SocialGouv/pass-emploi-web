@@ -11,6 +11,7 @@ export function getAjouterJeuneHref(structure: StructureConseiller): string {
     case StructureConseiller.MILO:
     case StructureConseiller.POLE_EMPLOI:
     case StructureConseiller.POLE_EMPLOI_BRSA:
+    case StructureConseiller.POLE_EMPLOI_AIJ:
       return '/mes-jeunes/creation-jeune'
     default:
       return ''
