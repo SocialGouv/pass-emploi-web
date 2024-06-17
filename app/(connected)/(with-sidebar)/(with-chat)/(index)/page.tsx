@@ -7,7 +7,7 @@ import {
   aEtablissement,
   doitSignerLesCGU,
   estMilo,
-  estPassEmploi,
+  _estLegacyPassEmploi,
 } from 'interfaces/conseiller'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAgencesServerSide } from 'services/referentiel.service'
@@ -39,7 +39,7 @@ export default async function Home({
   const afficherModaleOnboarding = Boolean(searchParams?.onboarding)
   const emailEstManquant = estMilo(conseiller) && !conseiller.email
   const agenceEstManquante =
-    !estPassEmploi(conseiller) && !aEtablissement(conseiller)
+    !_estLegacyPassEmploi(conseiller) && !aEtablissement(conseiller)
   if (!afficherModaleOnboarding && !emailEstManquant && !agenceEstManquante)
     redirect(`${redirectUrl}`)
 

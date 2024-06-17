@@ -24,7 +24,7 @@ export default function AppContextProviders({
 }: {
   conseiller: Conseiller
   portefeuille: JeuneFromListe[]
-  theme: 'cej' | 'brsa' // TODO renommer brsa
+  theme: 'cej' | 'pass-emploi'
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille
@@ -48,7 +48,7 @@ export default function AppContextProviders({
                   <AlerteProvider>
                     <ThemeProvider
                       defaultTheme={'cej'}
-                      themes={['cej', 'brsa']}
+                      themes={['cej', 'pass-emploi']}
                       forcedTheme={theme}
                     >
                       {children}

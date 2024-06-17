@@ -4,10 +4,10 @@ import Image from 'next/image'
 import React from 'react'
 
 import avecNosRessourcesImage from 'assets/images/avec_nos_ressources.webp'
-import avecNosRessourcesImageBRSA from 'assets/images/avec_nos_ressources_brsa.webp'
+import avecNosRessourcesImagePassEmploi from 'assets/images/avec_nos_ressources_pass-emploi.webp'
 import QrcodeAppStoreCEJ from 'assets/images/qrcode_app_store.svg'
-import QrcodeAppStoreBRSA from 'assets/images/qrcode_brsa_app_store.svg'
-import QrcodePlayStoreBRSA from 'assets/images/qrcode_brsa_play_store.svg'
+import QrcodeAppStorePassEmploi from 'assets/images/qrcode_passemploi_app_store.svg'
+import QrcodePlayStorePassEmploi from 'assets/images/qrcode_passemploi_play_store.svg'
 import QrcodePlayStoreCEJ from 'assets/images/qrcode_play_store.svg'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -18,7 +18,7 @@ import IllustrationComponent, {
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import {
   estPoleEmploi,
-  estPoleEmploiBRSA,
+  estPassEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -30,60 +30,68 @@ export default function AidePage() {
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
-  const conseillerEstBRSA = estPoleEmploiBRSA(conseiller)
+  const conseillerEstPassEmploi = estPassEmploi(conseiller)
   const aDesBeneficiaires = portefeuille.length > 0
 
-  const QrcodeAppStore = conseillerEstBRSA
-    ? QrcodeAppStoreBRSA
+  const QrcodeAppStore = conseillerEstPassEmploi
+    ? QrcodeAppStorePassEmploi
     : QrcodeAppStoreCEJ
-  const QrcodePlayStore = conseillerEstBRSA
-    ? QrcodePlayStoreBRSA
+  const QrcodePlayStore = conseillerEstPassEmploi
+    ? QrcodePlayStorePassEmploi
     : QrcodePlayStoreCEJ
 
-  const urlQrcodeAppStore = conseillerEstBRSA
-    ? process.env.NEXT_PUBLIC_APP_STORE_BRSA
+  const urlQrcodeAppStore = conseillerEstPassEmploi
+    ? process.env.NEXT_PUBLIC_APP_STORE_PASS_EMPLOI
     : process.env.NEXT_PUBLIC_APP_STORE_CEJ
 
-  const urlQrcodePlayStore = conseillerEstBRSA
-    ? process.env.NEXT_PUBLIC_PLAY_STORE_BRSA
+  const urlQrcodePlayStore = conseillerEstPassEmploi
+    ? process.env.NEXT_PUBLIC_PLAY_STORE_PASS_EMPLOI
     : process.env.NEXT_PUBLIC_PLAY_STORE_CEJ
 
-  const urlSiteRessource = (() => {
+  const urlSiteRessource = ((): string => {
     switch (conseiller.structure) {
       case StructureConseiller.MILO:
         return process.env.NEXT_PUBLIC_FAQ_MILO_EXTERNAL_LINK as string
       case StructureConseiller.POLE_EMPLOI:
         return process.env.NEXT_PUBLIC_FAQ_PE_EXTERNAL_LINK as string
       case StructureConseiller.POLE_EMPLOI_BRSA:
-        return process.env.NEXT_PUBLIC_FAQ_PE_BRSA_EXTERNAL_LINK as string
+      case StructureConseiller.POLE_EMPLOI_AIJ:
+        return process.env.NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string
+      case StructureConseiller.PASS_EMPLOI:
+        return ''
     }
   })()
 
-  const urlNousContacter = (() => {
+  const urlNousContacter = ((): string => {
     switch (conseiller.structure) {
       case StructureConseiller.MILO:
       case StructureConseiller.POLE_EMPLOI_BRSA:
+      case StructureConseiller.POLE_EMPLOI_AIJ:
         return urlSiteRessource + 'assistance/'
       case StructureConseiller.POLE_EMPLOI:
         return urlSiteRessource + 'formuler-une-demande/'
+      case StructureConseiller.PASS_EMPLOI:
+        return ''
     }
   })()
 
-  const urlClubsTestsUtilisateurs = `${urlSiteRessource}${conseillerEstBRSA ? 'club-utilisateur/' : 'club-utilisateur-et-demandes-devolution/'}`
+  const urlClubsTestsUtilisateurs = `${urlSiteRessource}${conseillerEstPassEmploi ? 'club-utilisateur/' : 'club-utilisateur-et-demandes-devolution/'}`
 
   const urlEmbarquerBeneficiaires = `${urlSiteRessource}${
-    conseillerEstBRSA ? 'embarquer-vos-beneficiaires/' : 'embarquer-vos-jeunes/'
+    conseillerEstPassEmploi
+      ? 'embarquer-vos-beneficiaires/'
+      : 'embarquer-vos-jeunes/'
   }`
 
   const urlGuideRessources = `${urlSiteRessource}${
-    conseillerEstBRSA
+    conseillerEstPassEmploi
       ? 'guide-dutilisation/'
       : 'ressources-documentaires/guides-dutilisation/'
   }`
 
   const urlVideos = urlSiteRessource + 'videos/'
 
-  const urlFAQ = `${urlSiteRessource}${conseillerEstBRSA ? 'foire-aux-questions/' : 'faq/'}`
+  const urlFAQ = `${urlSiteRessource}${conseillerEstPassEmploi ? 'foire-aux-questions/' : 'faq/'}`
 
   async function trackEventAideEtRessources(action: string) {
     trackEvent({
@@ -106,7 +114,7 @@ export default function AidePage() {
       <div className='text-primary hover:text-primary_darken'>
         <ExternalLink
           label='Voir le site ressources'
-          href={urlSiteRessource!}
+          href={urlSiteRessource}
           onClick={() => trackEventAideEtRessources('Voir le site ressources')}
         />
       </div>
@@ -134,7 +142,7 @@ export default function AidePage() {
               )}
             </ul>
             <ButtonLink
-              href={urlNousContacter!}
+              href={urlNousContacter}
               style={ButtonStyle.PRIMARY}
               externalLink={true}
               className='mt-8 w-fit self-center'
@@ -180,7 +188,7 @@ export default function AidePage() {
                 <p>
                   Retrouvez toutes les ressources vidéos, guide, flyers, pour
                   aider votre bénéficiaire à prendre en main l’application{' '}
-                  {conseillerEstBRSA ? 'pass emploi' : 'du CEJ'}
+                  {conseillerEstPassEmploi ? 'pass emploi' : 'du CEJ'}
                 </p>
                 <ButtonLink
                   href={urlEmbarquerBeneficiaires}
@@ -197,31 +205,32 @@ export default function AidePage() {
               </div>
               <Image
                 src={
-                  conseillerEstBRSA
-                    ? avecNosRessourcesImageBRSA
+                  conseillerEstPassEmploi
+                    ? avecNosRessourcesImagePassEmploi
                     : avecNosRessourcesImage
                 }
-                alt={`Flyer ”Se lancer sur ${conseillerEstBRSA ? 'pass emploi' : 'le CEJ'}” à retrouver sur le site ressources.`}
+                alt={`Flyer ”Se lancer sur ${conseillerEstPassEmploi ? 'pass emploi' : 'le CEJ'}” à retrouver sur le site ressources.`}
                 className='w-1/3 object-contain'
               />
             </div>
           </li>
           <li className='flex flex-col w-full px-16 py-4'>
             <h4 className='text-m-bold mb-2'>
-              Avec le mode démo {conseillerEstBRSA ? 'pass emploi' : 'du CEJ'}
+              Avec le mode démo{' '}
+              {conseillerEstPassEmploi ? 'pass emploi' : 'du CEJ'}
             </h4>
             <div className='flex gap-16'>
               <div className='flex flex-col justify-between'>
                 <p className='mb-2'>
                   Il vous permet de visualiser l’application{' '}
-                  {conseillerEstBRSA ? 'pass emploi' : 'du CEJ'} utilisée par
-                  vos bénéficiaires.
+                  {conseillerEstPassEmploi ? 'pass emploi' : 'du CEJ'} utilisée
+                  par vos bénéficiaires.
                 </p>
                 <p className='mb-2'>
                   Pour accéder au mode démo, vous devez télécharger
                   l’application sur le store de votre choix puis{' '}
                   <strong>appuyer 3 fois sur le logo</strong> ”
-                  {conseillerEstBRSA
+                  {conseillerEstPassEmploi
                     ? 'pass emploi'
                     : 'Contrat d’Engagement Jeune'}
                   ” sur l’écran de connexion.
@@ -236,7 +245,7 @@ export default function AidePage() {
                 <QrcodeAppStore focusable={false} aria-hidden={true} />
                 <a
                   href={urlQrcodeAppStore}
-                  className='text-center text-primary underline inline-flex items-center hover:text-primary hover:text-primary_darken'
+                  className='text-center text-primary underline inline-flex items-center hover:text-primary_darken'
                   target='_blank'
                   rel='noreferrer noopener'
                 >

@@ -36,7 +36,8 @@ export interface Conseiller extends BaseConseiller {
   dateSignatureCGU?: string
 }
 
-export function estPassEmploi(conseiller: Conseiller): boolean {
+// FIXME ?
+export function _estLegacyPassEmploi(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.PASS_EMPLOI
 }
 
@@ -47,13 +48,11 @@ export function estMilo(conseiller: Conseiller): boolean {
 export function estPoleEmploi(conseiller: Conseiller): boolean {
   return (
     conseiller.structure === StructureConseiller.POLE_EMPLOI ||
-    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
-    conseiller.structure === StructureConseiller.POLE_EMPLOI_AIJ
+    estPassEmploi(conseiller)
   )
 }
 
-// TODO renommer
-export function estPoleEmploiBRSA(conseiller: Conseiller): boolean {
+export function estPassEmploi(conseiller: Conseiller): boolean {
   return (
     conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
     conseiller.structure === StructureConseiller.POLE_EMPLOI_AIJ

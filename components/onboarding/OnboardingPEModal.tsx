@@ -1,11 +1,11 @@
 import { StaticImport } from 'next/dist/shared/lib/get-img-props'
 import React, { MouseEvent, ReactNode, useRef, useState } from 'react'
 
-import onboardingMessagerieBRSA from 'assets/images/onboarding_messagerie_brsa.webp'
+import onboardingMessageriePassEmploi from 'assets/images/onboarding_messagerie_pass-emploi.webp'
 import onboardingMessagerie from 'assets/images/onboarding_messagerie_pole-emploi.webp'
-import onboardingOffresBRSA from 'assets/images/onboarding_offres_brsa.webp'
+import onboardingOffresPassEmploi from 'assets/images/onboarding_offres_pass-emploi.webp'
 import onboardingOffres from 'assets/images/onboarding_offres_pole-emploi.webp'
-import onboardingPortefeuilleBRSA from 'assets/images/onboarding_portefeuille_brsa.webp'
+import onboardingPortefeuillePassEmploi from 'assets/images/onboarding_portefeuille_pass-emploi.webp'
 import onboardingPortefeuille from 'assets/images/onboarding_portefeuille_pole-emploi.webp'
 import Modal from 'components/Modal'
 import OnboardingListItem from 'components/onboarding/OnboardingListItem'
@@ -18,13 +18,13 @@ import { Conseiller } from 'interfaces/conseiller'
 type OnboardingPEModalProps = {
   conseiller: Conseiller
   onClose: () => void
-  estBRSA?: boolean
+  estPassEmploi?: boolean
 }
 
 export default function OnboardingPEModal({
   conseiller,
   onClose,
-  estBRSA,
+  estPassEmploi,
 }: OnboardingPEModalProps) {
   const [etape, setEtape] = useState<
     'ACCUEIL' | 'PORTEFEUIILLE' | 'MESSAGERIE' | 'OFFRES'
@@ -36,11 +36,11 @@ export default function OnboardingPEModal({
     portefeuilleImage,
     titreOnboarding,
     illustrationName,
-  } = estBRSA
+  } = estPassEmploi
     ? {
-        messagerieImage: onboardingMessagerieBRSA,
-        offresImage: onboardingOffresBRSA,
-        portefeuilleImage: onboardingPortefeuilleBRSA,
+        messagerieImage: onboardingMessageriePassEmploi,
+        offresImage: onboardingOffresPassEmploi,
+        portefeuilleImage: onboardingPortefeuillePassEmploi,
         titreOnboarding: 'pass emploi',
         illustrationName: IllustrationName.LogoPassemploi,
       }

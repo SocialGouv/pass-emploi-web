@@ -132,7 +132,7 @@ function LoginPage({
                     <FormButton
                       label='Connexion conseiller France Travail BRSA'
                       className='mt-6 whitespace-nowrap'
-                      style={ButtonStyle.PRIMARY_BRSA}
+                      style={ButtonStyle.PRIMARY_DARK}
                       handleSubmit={(event) =>
                         handleSignin(event, 'pe-brsa-conseiller')
                       }
@@ -145,7 +145,7 @@ function LoginPage({
                     <FormButton
                       label='Connexion conseiller France Travail AIJ'
                       className='mt-6 whitespace-nowrap'
-                      style={ButtonStyle.PRIMARY_BRSA}
+                      style={ButtonStyle.PRIMARY_DARK}
                       handleSubmit={(event) =>
                         handleSignin(event, 'pe-aij-conseiller')
                       }

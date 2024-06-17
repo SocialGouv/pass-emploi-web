@@ -3,7 +3,7 @@
 import React from 'react'
 
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
-import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
+import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
 import { trackPage } from 'utils/analytics/matomo'
 
 type FooterProps = {
@@ -13,7 +13,7 @@ type FooterProps = {
 
 export default function Footer({ conseiller, aDesBeneficiaires }: FooterProps) {
   const liens =
-    conseiller && estPoleEmploiBRSA(conseiller) ? liensBRSA : liensCEJ
+    conseiller && estPassEmploi(conseiller) ? liensPassEmploi : liensCEJ
 
   function trackExternalLink(label: string) {
     trackPage({
@@ -65,7 +65,7 @@ const liensCEJ = [
     label: 'Politique de confidentialité',
   },
 ]
-const liensBRSA = [
+const liensPassEmploi = [
   {
     url: 'https://doc.pass-emploi.beta.gouv.fr/legal/web_pass_emploi_accessibilite/',
     label: "Niveau d'accessibilité: non conforme",
