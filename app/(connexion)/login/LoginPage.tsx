@@ -19,13 +19,13 @@ const OnboardingMobileModal = dynamic(
 
 interface LoginProps {
   ssoPoleEmploiBRSAEstActif?: boolean
-  ssoPassEmploiEstActif?: boolean
+  ssoPoleEmploiAIJEstActif?: boolean
   isFromEmail: boolean
 }
 
 function LoginPage({
-  ssoPassEmploiEstActif,
   ssoPoleEmploiBRSAEstActif,
+  ssoPoleEmploiAIJEstActif,
   isFromEmail,
 }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
@@ -54,12 +54,7 @@ function LoginPage({
 
   useEffect(() => {
     const provider = searchParams.get('provider')
-    switch (provider) {
-      case 'pe':
-      case 'pe-brsa':
-      case 'similo':
-        signin(`${provider}-conseiller`)
-    }
+    if (provider) signin(`${provider}-conseiller`)
   }, [])
 
   useEffect(() => {
@@ -101,19 +96,9 @@ function LoginPage({
                 handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
               />
             </li>
-            {ssoPassEmploiEstActif && (
-              <li>
-                <FormButton
-                  className='mt-4 whitespace-nowrap'
-                  label='Authentification pass emploi'
-                  handleSubmit={(event) => handleSignin(event)}
-                  style={ButtonStyle.TERTIARY}
-                />
-              </li>
-            )}
           </ul>
 
-          {ssoPoleEmploiBRSAEstActif && (
+          {(ssoPoleEmploiBRSAEstActif || ssoPoleEmploiAIJEstActif) && (
             <>
               <h2 className='mt-16'>
                 <span className='sr-only'>pass emploi</span>
@@ -124,16 +109,31 @@ function LoginPage({
                 />
               </h2>
               <ul>
-                <li>
-                  <FormButton
-                    label='Connexion conseiller France Travail BRSA'
-                    className='mt-6 whitespace-nowrap'
-                    style={ButtonStyle.PRIMARY_BRSA}
-                    handleSubmit={(event) =>
-                      handleSignin(event, 'pe-brsa-conseiller')
-                    }
-                  />
-                </li>
+                {ssoPoleEmploiBRSAEstActif && (
+                  <li>
+                    <FormButton
+                      label='Connexion conseiller France Travail BRSA'
+                      className='mt-6 whitespace-nowrap'
+                      style={ButtonStyle.PRIMARY_DARK}
+                      handleSubmit={(event) =>
+                        handleSignin(event, 'pe-brsa-conseiller')
+                      }
+                    />
+                  </li>
+                )}
+
+                {ssoPoleEmploiAIJEstActif && (
+                  <li>
+                    <FormButton
+                      label='Connexion conseiller France Travail AIJ'
+                      className='mt-6 whitespace-nowrap'
+                      style={ButtonStyle.PRIMARY_DARK}
+                      handleSubmit={(event) =>
+                        handleSignin(event, 'pe-aij-conseiller')
+                      }
+                    />
+                  </li>
+                )}
               </ul>
             </>
           )}

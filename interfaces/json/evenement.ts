@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 
 import { EntreeAgenda } from 'interfaces/agenda'
-import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   Evenement,
@@ -35,7 +34,7 @@ export type EvenementJson = {
   adresse?: string
   organisme?: string
   statut?: StatutAnimationCollectiveJson
-  source?: StructureConseiller
+  source?: string
   futPresent?: boolean
   nombreMaxParticipants?: number
 }

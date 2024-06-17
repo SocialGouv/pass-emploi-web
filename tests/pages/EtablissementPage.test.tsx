@@ -273,7 +273,7 @@ describe('EtablissementPage client side', () => {
       // Given
       renderWithContexts(<EtablissementPage />, {
         customConseiller: {
-          structure: StructureConseiller.PASS_EMPLOI,
+          structure: StructureConseiller.POLE_EMPLOI,
           agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
         },
       })

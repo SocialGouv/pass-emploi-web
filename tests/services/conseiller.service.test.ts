@@ -29,7 +29,7 @@ describe('ConseillerApiService', () => {
       const user = {
         id: 'id-user',
         name: 'Albert Durant',
-        structure: StructureConseiller.PASS_EMPLOI,
+        structure: StructureConseiller.MILO,
         email: 'albert.durant@gmail.com',
         estConseiller: true,
         estSuperviseur: false,

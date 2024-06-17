@@ -2,7 +2,7 @@ import React from 'react'
 
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 
-export default function ContenuCGUConseillerBRSA() {
+export default function ContenuCGUConseillerPassEmploi() {
   return (
     <>
       <InformationMessage label='Nous mettons à jour nos conditions générales d’utilisation. Veuillez les lire, cochez la case et valider pour pouvoir continuer à utiliser l’application.' />

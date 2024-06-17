@@ -370,7 +370,7 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE',
             emetteur: {
               type: 'CONSEILLER',
-              structure: 'PASS_EMPLOI',
+              structure: 'MILO',
               id: 'idConseiller',
             },
           },
@@ -410,7 +410,7 @@ describe('MessagesFirebaseAndApiService', () => {
             type: 'MESSAGE_ENVOYE_PJ',
             emetteur: {
               type: 'CONSEILLER',
-              structure: 'PASS_EMPLOI',
+              structure: 'MILO',
               id: 'idConseiller',
             },
           },
@@ -652,7 +652,7 @@ describe('MessagesFirebaseAndApiService', () => {
           type: 'MESSAGE_OFFRE_PARTAGEE',
           emetteur: {
             type: 'CONSEILLER',
-            structure: 'PASS_EMPLOI',
+            structure: 'MILO',
             id: 'idConseiller',
           },
         },
@@ -706,7 +706,7 @@ describe('MessagesFirebaseAndApiService', () => {
           type: 'MESSAGE_SUPPRIME',
           emetteur: {
             type: 'CONSEILLER',
-            structure: 'PASS_EMPLOI',
+            structure: 'MILO',
             id: 'idConseiller',
           },
         },
@@ -775,7 +775,7 @@ describe('MessagesFirebaseAndApiService', () => {
           type: 'MESSAGE_MODIFIE',
           emetteur: {
             type: 'CONSEILLER',
-            structure: 'PASS_EMPLOI',
+            structure: 'MILO',
             id: 'idConseiller',
           },
         },

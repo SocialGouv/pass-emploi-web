@@ -4,8 +4,8 @@ import { Session } from 'next-auth'
 export enum StructureConseiller {
   MILO = 'MILO',
   POLE_EMPLOI = 'POLE_EMPLOI',
-  PASS_EMPLOI = 'PASS_EMPLOI',
   POLE_EMPLOI_BRSA = 'POLE_EMPLOI_BRSA',
+  POLE_EMPLOI_AIJ = 'POLE_EMPLOI_AIJ',
 }
 
 export enum UserType {
@@ -35,10 +35,6 @@ export interface Conseiller extends BaseConseiller {
   dateSignatureCGU?: string
 }
 
-export function estPassEmploi(conseiller: Conseiller): boolean {
-  return conseiller.structure === StructureConseiller.PASS_EMPLOI
-}
-
 export function estMilo(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.MILO
 }
@@ -46,12 +42,15 @@ export function estMilo(conseiller: Conseiller): boolean {
 export function estPoleEmploi(conseiller: Conseiller): boolean {
   return (
     conseiller.structure === StructureConseiller.POLE_EMPLOI ||
-    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
+    estPassEmploi(conseiller)
   )
 }
 
-export function estPoleEmploiBRSA(conseiller: Conseiller): boolean {
-  return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
+export function estPassEmploi(conseiller: Conseiller): boolean {
+  return (
+    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
+    conseiller.structure === StructureConseiller.POLE_EMPLOI_AIJ
+  )
 }
 
 export function estSuperviseur(conseiller: Conseiller): boolean {
@@ -69,7 +68,8 @@ export function estUserMilo(user: Session.HydratedUser): boolean {
 export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
   return (
     user.structure === StructureConseiller.POLE_EMPLOI ||
-    user.structure === StructureConseiller.POLE_EMPLOI_BRSA
+    user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
+    user.structure === StructureConseiller.POLE_EMPLOI_AIJ
   )
 }
 

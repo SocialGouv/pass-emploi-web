@@ -19,7 +19,13 @@ describe('LoginPage client side', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      render(<LoginPage ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />)
+      render(
+        <LoginPage
+          ssoPoleEmploiBRSAEstActif={true}
+          ssoPoleEmploiAIJEstActif={true}
+          isFromEmail={false}
+        />
+      )
     })
 
     it('devrait afficher deux titres de niveau 2', () => {
@@ -38,7 +44,7 @@ describe('LoginPage client side', () => {
       expect(headingBRSA).toBeInTheDocument()
     })
 
-    it('devrait avoir trois boutons', () => {
+    it('devrait avoir quatre boutons', () => {
       const miloButton = screen.getByRole('button', {
         name: 'Connexion conseiller Mission Locale',
       })
@@ -48,6 +54,9 @@ describe('LoginPage client side', () => {
       const poleEmploiBRSAButton = screen.getByRole('button', {
         name: 'Connexion conseiller France Travail BRSA',
       })
+      const poleEmploiAIJButton = screen.getByRole('button', {
+        name: 'Connexion conseiller France Travail AIJ',
+      })
 
       const buttonsNb = screen.getAllByRole('button')
 
@@ -55,7 +64,8 @@ describe('LoginPage client side', () => {
       expect(miloButton).toBeInTheDocument()
       expect(poleEmploiCEJButton).toBeInTheDocument()
       expect(poleEmploiBRSAButton).toBeInTheDocument()
-      expect(buttonsNb.length).toEqual(3)
+      expect(poleEmploiAIJButton).toBeInTheDocument()
+      expect(buttonsNb.length).toEqual(4)
     })
 
     it("permet de s'identifier en tant que conseiller PE CEJ", async () => {
@@ -89,6 +99,23 @@ describe('LoginPage client side', () => {
         'keycloak',
         { callbackUrl: '/?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'pe-brsa-conseiller' }
+      )
+    })
+
+    it("permet de s'identifier en tant que conseiller PE AIJ", async () => {
+      // Given
+      const peAIJButton = screen.getByRole('button', {
+        name: 'Connexion conseiller France Travail AIJ',
+      })
+
+      // When
+      await userEvent.click(peAIJButton)
+
+      // Then
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
+        { kc_idp_hint: 'pe-aij-conseiller' }
       )
     })
 
@@ -165,62 +192,6 @@ describe('LoginPage client side', () => {
           'À ce jour, seul l’accès à la messagerie est disponible sur l’espace mobile.'
         )
       ).toBeInTheDocument()
-    })
-  })
-
-  describe('quand la connexion pass emploi est activée', () => {
-    beforeEach(async () => {
-      render(
-        <LoginPage
-          ssoPoleEmploiBRSAEstActif={true}
-          ssoPassEmploiEstActif={true}
-          isFromEmail={false}
-        />
-      )
-    })
-
-    it('devrait avoir quatre boutons', () => {
-      //GIVEN
-      const passEButton = screen.getByRole('button', {
-        name: 'Authentification pass emploi',
-      })
-
-      const miloButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Mission Locale',
-      })
-
-      const poleEmploiCEJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail CEJ',
-      })
-      const poleEmploiBRSAButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail BRSA',
-      })
-
-      const buttonsNb = screen.getAllByRole('button')
-
-      //THEN
-      expect(passEButton).toBeInTheDocument()
-      expect(miloButton).toBeInTheDocument()
-      expect(poleEmploiCEJButton).toBeInTheDocument()
-      expect(poleEmploiBRSAButton).toBeInTheDocument()
-      expect(buttonsNb.length).toEqual(4)
-    })
-
-    it("permet de s'identifier en tant que conseiller pass emploi", async () => {
-      // Given
-      const peButton = screen.getByRole('button', {
-        name: 'Authentification pass emploi',
-      })
-
-      // When
-      await userEvent.click(peButton)
-
-      // Then
-      expect(signIn).toHaveBeenCalledWith(
-        'keycloak',
-        { callbackUrl: '/?redirectUrl=redirectUrl' },
-        { kc_idp_hint: '' }
-      )
     })
   })
 })

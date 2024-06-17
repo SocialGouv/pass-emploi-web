@@ -152,7 +152,9 @@ describe('HomePage server side', () => {
   describe('si c’est un nouveau conseiller', () => {
     it('prépare la page avec l’onboarding', async () => {
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({})
-      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(unConseiller())
+      ;(getConseillerServerSide as jest.Mock).mockResolvedValue(
+        unConseiller({ structure: StructureConseiller.POLE_EMPLOI })
+      )
       ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
         uneListeDAgencesPoleEmploi()
       )
@@ -167,7 +169,7 @@ describe('HomePage server side', () => {
       // Then
       expect(HomePage).toHaveBeenCalledWith(
         {
-          afficherModaleAgence: false,
+          afficherModaleAgence: true,
           afficherModaleEmail: false,
           afficherModaleOnboarding: true,
           redirectUrl: '/agenda',

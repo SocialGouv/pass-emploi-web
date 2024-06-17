@@ -33,7 +33,7 @@ describe('EtablissementPage server side', () => {
     it('prépare la page en tant que pass emploi', async () => {
       // Given
       ;(getMandatorySessionServerSide as jest.Mock).mockResolvedValue({
-        user: { structure: 'PASS_EMPLOI' },
+        user: { structure: 'MILO' },
       })
       // When
       render(await Etablissement())
