@@ -45,6 +45,11 @@ export interface ByDay<T> {
   messages: T[]
 }
 
+export type MessageRechercheMatch = {
+  match: [number, number]
+  key?: 'content' | 'piecesJointes.nom'
+}
+
 export interface ChatCredentials {
   token: string
   cleChiffrement: string

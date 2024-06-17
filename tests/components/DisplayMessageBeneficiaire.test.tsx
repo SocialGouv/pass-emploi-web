@@ -79,6 +79,33 @@ describe('<DiplayMessageBeneficiaire />', () => {
     expect(screen.getByText(/Modifié/)).toBeInTheDocument()
   })
 
+  it('affiche un résultat de recherche surligné', async () => {
+    const beneficiaireNomComplet = 'Père Castor'
+
+    //Given
+    const message = unMessage({
+      sentBy: 'jeune',
+      content: 'Je vais vous raconter une histoire',
+    })
+
+    //When
+    await act(async () => {
+      renderWithContexts(
+        <DisplayMessageBeneficiaire
+          message={message}
+          beneficiaireNomComplet={beneficiaireNomComplet}
+          highlight={{ match: [0, 1], key: 'content' }}
+        />
+      )
+    })
+
+    // Then
+    const markedElements = screen.getAllByText('Je', {
+      selector: 'mark',
+    })
+    expect(markedElements.length).toEqual(1)
+  })
+
   describe('quand il y a une pièce jointe', () => {
     it('pas de statut', async () => {
       const beneficiaireNomComplet = 'Père Castor'
@@ -247,6 +274,41 @@ describe('<DiplayMessageBeneficiaire />', () => {
 
       // Then
       expect(screen.getByText('Pièce jointe expirée')).toBeInTheDocument()
+    })
+
+    it('affiche un résultat de recherche avec nom de la pj surligné', async () => {
+      const beneficiaireNomComplet = 'Père Castor'
+
+      //Given
+      const message = unMessage({
+        sentBy: 'jeune',
+        content: 'Je vais vous raconter une histoire',
+        infoPiecesJointes: [
+          {
+            id: 'id-pj',
+            nom: 'toto.jpg',
+            statut: 'valide',
+          },
+        ],
+        type: TypeMessage.MESSAGE_PJ,
+      })
+
+      //When
+      await act(async () => {
+        renderWithContexts(
+          <DisplayMessageBeneficiaire
+            message={message}
+            beneficiaireNomComplet={beneficiaireNomComplet}
+            highlight={{ match: [0, 3], key: 'piecesJointes.nom' }}
+          />
+        )
+      })
+
+      // Then
+      const markedElements = screen.getAllByText('toto', {
+        selector: 'mark',
+      })
+      expect(markedElements.length).toEqual(1)
     })
   })
 })

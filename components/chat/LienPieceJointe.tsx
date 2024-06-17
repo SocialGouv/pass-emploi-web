@@ -1,16 +1,31 @@
+import parse from 'html-react-parser'
 import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { MessageRechercheMatch } from 'interfaces/message'
 
 export function LienPieceJointe({
   id,
   nom,
   className,
+  highlight,
 }: {
   id: string
   nom: string
   className?: string
+  highlight?: MessageRechercheMatch
 }) {
+  function surlignerTexte(texte: string) {
+    const indexDebut = highlight!.match[0]
+    const indexFin = highlight!.match[1] + 1
+
+    const debut = texte.slice(0, indexDebut)
+    const highlightedText = texte.slice(indexDebut, indexFin)
+    const fin = texte.slice(indexFin)
+
+    return parse(`${debut}<mark>${highlightedText}</mark>${fin}`)
+  }
+
   return (
     <div className='flex flex-row justify-end underline'>
       <IconComponent
@@ -27,7 +42,7 @@ export function LienPieceJointe({
         className='font-bold break-all'
       >
         <span className='sr-only'>Télécharger la pièce jointe </span>
-        {nom}
+        {highlight ? surlignerTexte(nom) : nom}
       </a>
     </div>
   )
