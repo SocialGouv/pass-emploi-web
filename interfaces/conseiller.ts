@@ -4,7 +4,6 @@ import { Session } from 'next-auth'
 export enum StructureConseiller {
   MILO = 'MILO',
   POLE_EMPLOI = 'POLE_EMPLOI',
-  PASS_EMPLOI = 'PASS_EMPLOI',
   POLE_EMPLOI_BRSA = 'POLE_EMPLOI_BRSA',
   POLE_EMPLOI_AIJ = 'POLE_EMPLOI_AIJ',
 }
@@ -34,11 +33,6 @@ export interface Conseiller extends BaseConseiller {
   agence?: { nom: string; id?: string }
   structureMilo?: { id: string; nom: string }
   dateSignatureCGU?: string
-}
-
-// FIXME ?
-export function _estLegacyPassEmploi(conseiller: Conseiller): boolean {
-  return conseiller.structure === StructureConseiller.PASS_EMPLOI
 }
 
 export function estMilo(conseiller: Conseiller): boolean {

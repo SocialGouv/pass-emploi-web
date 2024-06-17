@@ -32,7 +32,5 @@ export function getWidgetId(structure: StructureConseiller): string {
     case StructureConseiller.POLE_EMPLOI_BRSA:
     case StructureConseiller.POLE_EMPLOI_AIJ:
       return process.env.NEXT_PUBLIC_LEANBE_PASS_EMPLOI_WIDGET_ID ?? ''
-    case StructureConseiller.PASS_EMPLOI:
-      return ''
   }
 }

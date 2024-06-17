@@ -57,8 +57,6 @@ export default function AidePage() {
       case StructureConseiller.POLE_EMPLOI_BRSA:
       case StructureConseiller.POLE_EMPLOI_AIJ:
         return process.env.NEXT_PUBLIC_FAQ_PASS_EMPLOI_EXTERNAL_LINK as string
-      case StructureConseiller.PASS_EMPLOI:
-        return ''
     }
   })()
 
@@ -70,8 +68,6 @@ export default function AidePage() {
         return urlSiteRessource + 'assistance/'
       case StructureConseiller.POLE_EMPLOI:
         return urlSiteRessource + 'formuler-une-demande/'
-      case StructureConseiller.PASS_EMPLOI:
-        return ''
     }
   })()
 

@@ -14,12 +14,6 @@ describe('AgendaService', () => {
   describe('.recupererAgenda', () => {
     it('renvoie des actions et des items rendez-vous', async () => {
       // Given
-      const conseiller = unConseiller({
-        structureMilo: {
-          id: '80620S00',
-          nom: '80-ML PERONNE',
-        },
-      })
       const maintenant = DateTime.fromISO('2022-09-01T00:00:00.000+02:00')
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: {
@@ -58,14 +52,14 @@ describe('AgendaService', () => {
             date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
             titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
-            source: StructureConseiller.PASS_EMPLOI,
+            source: 'PASS_EMPLOI',
           },
           {
             id: '1',
             date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
             titre: '12h00 - Prise de nouvelles par téléphone',
             type: 'evenement',
-            source: StructureConseiller.PASS_EMPLOI,
+            source: 'PASS_EMPLOI',
           },
           {
             id: 'session-2',

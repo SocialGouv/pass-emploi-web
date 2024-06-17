@@ -31,7 +31,6 @@ export default function ConfirmationDeleteConseillerModal({
         return 'AIJ'
       case StructureConseiller.MILO:
       case StructureConseiller.POLE_EMPLOI:
-      case StructureConseiller.PASS_EMPLOI:
         return 'CEJ'
     }
   })()

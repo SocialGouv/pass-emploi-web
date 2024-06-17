@@ -16,7 +16,7 @@ type OnboardingModalProps = {
 }
 export default function OnboardingModal(
   props: OnboardingModalProps
-): ReactElement | null {
+): ReactElement {
   switch (props.conseiller.structure) {
     case StructureConseiller.POLE_EMPLOI:
       return <OnboardingPEModal {...props} />
@@ -25,7 +25,5 @@ export default function OnboardingModal(
       return <OnboardingPEModal {...props} estPassEmploi={true} />
     case StructureConseiller.MILO:
       return <OnboardingMILOModal {...props} />
-    case StructureConseiller.PASS_EMPLOI:
-      return null
   }
 }

@@ -38,7 +38,6 @@ export default async function Login({
         ssoPoleEmploiAIJEstActif={
           process.env.NEXT_PUBLIC_ENABLE_PE_AIJ_SSO === 'true'
         }
-        ssoPassEmploiEstActif={process.env.ENABLE_PASS_EMPLOI_SSO === 'true'}
         isFromEmail={isFromEmail}
       />
 

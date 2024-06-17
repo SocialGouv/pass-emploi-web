@@ -39,7 +39,6 @@ describe('LoginPage server side', () => {
     expect(LoginPage).toHaveBeenCalledWith(
       {
         isFromEmail: true,
-        ssoPassEmploiEstActif: true,
         ssoPoleEmploiBRSAEstActif: true,
         ssoPoleEmploiAIJEstActif: true,
       },

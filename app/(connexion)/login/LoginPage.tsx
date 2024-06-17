@@ -20,12 +20,10 @@ const OnboardingMobileModal = dynamic(
 interface LoginProps {
   ssoPoleEmploiBRSAEstActif?: boolean
   ssoPoleEmploiAIJEstActif?: boolean
-  ssoPassEmploiEstActif?: boolean
   isFromEmail: boolean
 }
 
 function LoginPage({
-  ssoPassEmploiEstActif,
   ssoPoleEmploiBRSAEstActif,
   ssoPoleEmploiAIJEstActif,
   isFromEmail,
@@ -56,13 +54,7 @@ function LoginPage({
 
   useEffect(() => {
     const provider = searchParams.get('provider')
-    switch (provider) {
-      case 'pe':
-      case 'pe-brsa':
-      case 'pe-aij':
-      case 'similo':
-        signin(`${provider}-conseiller`)
-    }
+    if (provider) signin(`${provider}-conseiller`)
   }, [])
 
   useEffect(() => {
@@ -104,16 +96,6 @@ function LoginPage({
                 handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
               />
             </li>
-            {ssoPassEmploiEstActif && (
-              <li>
-                <FormButton
-                  className='mt-4 whitespace-nowrap'
-                  label='Authentification pass emploi'
-                  handleSubmit={(event) => handleSignin(event)}
-                  style={ButtonStyle.TERTIARY}
-                />
-              </li>
-            )}
           </ul>
 
           {(ssoPoleEmploiBRSAEstActif || ssoPoleEmploiAIJEstActif) && (

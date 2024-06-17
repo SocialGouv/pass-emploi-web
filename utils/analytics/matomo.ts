@@ -199,8 +199,6 @@ function userStructureDimensionString(
       return 'Pôle emploi BRSA'
     case StructureConseiller.POLE_EMPLOI_AIJ:
       return 'Pôle emploi AIJ'
-    case StructureConseiller.PASS_EMPLOI:
-      return 'pass emploi'
     case null:
       return 'visiteur'
   }

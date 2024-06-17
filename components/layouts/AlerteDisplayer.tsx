@@ -159,7 +159,6 @@ function getAlertesForStructure(structure?: string): DictAlertes {
     case StructureConseiller.MILO:
       return ALERTES_MILO
     case StructureConseiller.POLE_EMPLOI:
-    case StructureConseiller.PASS_EMPLOI:
     case StructureConseiller.POLE_EMPLOI_BRSA:
     case StructureConseiller.POLE_EMPLOI_AIJ:
       return ALERTES
