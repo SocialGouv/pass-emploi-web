@@ -19,6 +19,7 @@ const OnboardingMobileModal = dynamic(
 
 interface LoginProps {
   ssoPoleEmploiBRSAEstActif?: boolean
+  ssoPoleEmploiAIJEstActif?: boolean
   ssoPassEmploiEstActif?: boolean
   isFromEmail: boolean
 }
@@ -26,6 +27,7 @@ interface LoginProps {
 function LoginPage({
   ssoPassEmploiEstActif,
   ssoPoleEmploiBRSAEstActif,
+  ssoPoleEmploiAIJEstActif,
   isFromEmail,
 }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
@@ -57,6 +59,7 @@ function LoginPage({
     switch (provider) {
       case 'pe':
       case 'pe-brsa':
+      case 'pe-aij':
       case 'similo':
         signin(`${provider}-conseiller`)
     }
@@ -113,7 +116,7 @@ function LoginPage({
             )}
           </ul>
 
-          {ssoPoleEmploiBRSAEstActif && (
+          {(ssoPoleEmploiBRSAEstActif || ssoPoleEmploiAIJEstActif) && (
             <>
               <h2 className='mt-16'>
                 <span className='sr-only'>pass emploi</span>
@@ -124,16 +127,31 @@ function LoginPage({
                 />
               </h2>
               <ul>
-                <li>
-                  <FormButton
-                    label='Connexion conseiller France Travail BRSA'
-                    className='mt-6 whitespace-nowrap'
-                    style={ButtonStyle.PRIMARY_BRSA}
-                    handleSubmit={(event) =>
-                      handleSignin(event, 'pe-brsa-conseiller')
-                    }
-                  />
-                </li>
+                {ssoPoleEmploiBRSAEstActif && (
+                  <li>
+                    <FormButton
+                      label='Connexion conseiller France Travail BRSA'
+                      className='mt-6 whitespace-nowrap'
+                      style={ButtonStyle.PRIMARY_BRSA}
+                      handleSubmit={(event) =>
+                        handleSignin(event, 'pe-brsa-conseiller')
+                      }
+                    />
+                  </li>
+                )}
+
+                {ssoPoleEmploiAIJEstActif && (
+                  <li>
+                    <FormButton
+                      label='Connexion conseiller France Travail AIJ'
+                      className='mt-6 whitespace-nowrap'
+                      style={ButtonStyle.PRIMARY_BRSA}
+                      handleSubmit={(event) =>
+                        handleSignin(event, 'pe-aij-conseiller')
+                      }
+                    />
+                  </li>
+                )}
               </ul>
             </>
           )}
