@@ -131,7 +131,12 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
         {isConseillerCourant ? 'Vous' : conseillerNomComplet}
       </p>
 
-      <TexteAvecLien texte={message.content} highlight={props.highlight} />
+      <TexteAvecLien
+        texte={message.content}
+        highlight={
+          props.highlight?.key === 'content' ? props.highlight : undefined
+        }
+      />
 
       {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
         <LienOffre infoOffre={message.infoOffre} isSentByConseiller={true} />
@@ -162,7 +167,11 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
             id={id}
             nom={nom}
             className='fill-primary'
-            highlight={props.highlight}
+            highlight={
+              props.highlight?.key === 'piecesJointes.nom'
+                ? props.highlight
+                : undefined
+            }
           />
         ))}
 

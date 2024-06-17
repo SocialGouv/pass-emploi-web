@@ -23,8 +23,8 @@ export default function TexteAvecLien({
     }
   }
 
-  function formateTexteAvecLien() {
-    const messageFormate = texte
+  function formateTexteAvecLien(texteAFormater: string) {
+    const messageFormate = texteAFormater
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;')
       .split(/\r?\n|\s+/)
@@ -77,22 +77,24 @@ export default function TexteAvecLien({
     return str.includes('http') || str.includes('https')
   }
 
-  function surlignerTexte(texte: string) {
+  function surlignerTexte(texteASurligner: string) {
     const coordDebut = highlight!.match[0]
     const coordFin = highlight!.match[1] + 1
 
-    const debut = texte.slice(0, coordDebut)
-    const highlightedText = texte.slice(coordDebut, coordFin)
-    const fin = texte.slice(coordFin)
+    const debut = texteASurligner.slice(0, coordDebut)
+    const highlightedText = texteASurligner.slice(coordDebut, coordFin)
+    const fin = texteASurligner.slice(coordFin)
 
     return `${debut}<mark>${highlightedText}</mark>${fin}`
   }
 
-  if (highlight && highlight.key === 'content') {
-    texte = surlignerTexte(texte)
+  let texteAAfficher = texte
+
+  if (highlight) {
+    texteAAfficher = surlignerTexte(texteAAfficher)
   }
 
-  if (!detecteLien(texte))
-    return parse(`<p className='whitespace-pre-wrap'>${texte}</p>`)
-  return <>{formateTexteAvecLien()}</>
+  if (!detecteLien(texteAAfficher))
+    return parse(`<p className='whitespace-pre-wrap'>${texteAAfficher}</p>`)
+  return <>{formateTexteAvecLien(texteAAfficher)}</>
 }

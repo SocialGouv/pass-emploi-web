@@ -8,6 +8,8 @@ import { unConseiller } from 'fixtures/conseiller'
 import { unMessage } from 'fixtures/message'
 import { StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
+import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
+import { TypeMessage } from 'interfaces/message'
 
 describe('<DiplayMessageConseiller />', () => {
   const nomConseiller = 'johnny boi'
@@ -131,5 +133,75 @@ describe('<DiplayMessageConseiller />', () => {
     // Then
     expect(screen.getByText('· Modifié')).toBeInTheDocument()
     expect(screen.queryByText('· Lu')).not.toBeInTheDocument()
+  })
+
+  describe('quand le message est un résultat de recherche', () => {
+    it('affiche le contenu surligné', async () => {
+      //GIVEN
+      const messageRecherche = unMessage({
+        sentBy: 'conseiller',
+        content: 'Hello, tu as pensé à envoyer ton CV ?',
+        conseillerId: customConseiller.id,
+      })
+
+      //WHEN
+      await act(async () => {
+        renderWithContexts(
+          <DisplayMessageConseiller
+            message={messageRecherche}
+            conseillerNomComplet={nomConseiller}
+            isConseillerCourant={message.conseillerId === customConseiller.id}
+            onSuppression={supprimerMessage}
+            onModification={modifierMessage}
+            isEnCoursDeModification={false}
+            highlight={{ match: [0, 4], key: 'content' }}
+          />
+        )
+      })
+
+      //THEN
+      const markedElements = screen.getAllByText('Hello', {
+        selector: 'mark',
+      })
+      expect(markedElements.length).toEqual(1)
+    })
+
+    it('affiche le nom de la pj surligné', async () => {
+      //GIVEN
+      const messageRecherche = unMessage({
+        sentBy: 'conseiller',
+        content: 'Hello, tu as pensé à envoyer ton CV ?',
+        infoPiecesJointes: [
+          {
+            id: 'id-pj',
+            nom: 'toto.jpg',
+            statut: 'valide',
+          },
+        ],
+        type: TypeMessage.MESSAGE_PJ,
+        conseillerId: customConseiller.id,
+      })
+
+      //WHEN
+      await act(async () => {
+        renderWithContexts(
+          <DisplayMessageConseiller
+            message={messageRecherche}
+            conseillerNomComplet={nomConseiller}
+            isConseillerCourant={message.conseillerId === customConseiller.id}
+            onSuppression={supprimerMessage}
+            onModification={modifierMessage}
+            isEnCoursDeModification={false}
+            highlight={{ match: [0, 3], key: 'piecesJointes.nom' }}
+          />
+        )
+      })
+
+      //THEN
+      const markedElements = screen.getAllByText('toto', {
+        selector: 'mark',
+      })
+      expect(markedElements.length).toEqual(1)
+    })
   })
 })

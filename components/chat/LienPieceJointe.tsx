@@ -15,14 +15,13 @@ export function LienPieceJointe({
   className?: string
   highlight?: MessageRechercheMatch
 }) {
-  const texteASurligner = highlight && highlight.key === 'piecesJointes.nom'
   function surlignerTexte(texte: string) {
-    const coordDebut = highlight!.match[0]
-    const coordFin = highlight!.match[1] + 1
+    const indexDebut = highlight!.match[0]
+    const indexFin = highlight!.match[1] + 1
 
-    const debut = texte.slice(0, coordDebut)
-    const highlightedText = texte.slice(coordDebut, coordFin)
-    const fin = texte.slice(coordFin)
+    const debut = texte.slice(0, indexDebut)
+    const highlightedText = texte.slice(indexDebut, indexFin)
+    const fin = texte.slice(indexFin)
 
     return parse(`${debut}<mark>${highlightedText}</mark>${fin}`)
   }
@@ -43,7 +42,7 @@ export function LienPieceJointe({
         className='font-bold break-all'
       >
         <span className='sr-only'>Télécharger la pièce jointe </span>
-        {texteASurligner ? surlignerTexte(nom) : nom}
+        {highlight ? surlignerTexte(nom) : nom}
       </a>
     </div>
   )

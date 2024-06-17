@@ -61,7 +61,11 @@ export default function DisplayMessageBeneficiaire(
               <TexteAvecLien
                 texte={message.content}
                 lighten={true}
-                highlight={props.highlight}
+                highlight={
+                  props.highlight?.key === 'content'
+                    ? props.highlight
+                    : undefined
+                }
               />
             )}
 
@@ -154,7 +158,9 @@ function MessagePJ({
             id={id}
             nom={nom}
             className='fill-blanc'
-            highlight={highlight}
+            highlight={
+              highlight?.key === 'piecesJointes.nom' ? highlight : undefined
+            }
           />
         </>
       )
