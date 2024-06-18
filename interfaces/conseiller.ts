@@ -46,6 +46,10 @@ export function estPoleEmploi(conseiller: Conseiller): boolean {
   )
 }
 
+export function estBRSA(conseiller: Conseiller): boolean {
+  return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
+}
+
 export function estPassEmploi(conseiller: Conseiller): boolean {
   return (
     conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
