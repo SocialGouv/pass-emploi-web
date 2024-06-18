@@ -217,7 +217,7 @@ export default function ChatRoom({
           <button
             type='button'
             className='bg-primary rounded-full fill-blanc hover:shadow-base'
-            title={`${afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions possibles pour votre messagerie`}
+            title={`${afficherMenuActionsMessagerie ? 'Cacher les' : 'Accéder aux'} actions de votre messagerie`}
           >
             <IconComponent
               focusable={false}
@@ -226,8 +226,8 @@ export default function ChatRoom({
               name={IconName.More}
             />
             <span className='sr-only'>
-              {afficherMenuActionsMessagerie ? 'Cacher' : 'Voir'} les actions
-              possibles pour votre messagerie
+              {afficherMenuActionsMessagerie ? 'Cacher les' : 'Accéder aux'}{' '}
+              actions de votre messagerie
             </span>
           </button>
 
