@@ -281,11 +281,7 @@ export function Conversation({
   }, [jeuneChat.chatId, observerMessages])
 
   useEffect(() => {
-    if (
-      messagesByDay?.length &&
-      nombrePagesChargees === 1 &&
-      !toggleAfficherRecherche
-    ) {
+    if (messagesByDay?.length && nombrePagesChargees === 1) {
       const dernierJour = conteneurMessagesRef.current!.lastElementChild
       const lastMessage = dernierJour!.querySelector('li:last-child')
 
