@@ -19,7 +19,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 const ContenuCGUConseillerCEJ = dynamic(
   () => import('components/ContenuCGUConseillerCEJ')
 )
-const ContenuCGUConseillerPAssEmploi = dynamic(
+const ContenuCGUConseillerPassEmploi = dynamic(
   () => import('components/ContenuCGUConseillerPassEmploi')
 )
 
@@ -61,7 +61,7 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
       <HeaderCGU conseiller={conseiller} />
 
       <main role='main'>
-        {estPassEmploi(conseiller) && <ContenuCGUConseillerPAssEmploi />}
+        {estPassEmploi(conseiller) && <ContenuCGUConseillerPassEmploi />}
         {!estPassEmploi(conseiller) && <ContenuCGUConseillerCEJ />}
 
         <form onSubmit={validerLesCGU} className='flex flex-col mt-10'>
