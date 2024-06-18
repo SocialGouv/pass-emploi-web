@@ -10,7 +10,7 @@ import RechercheServicesCiviquesSecondaire from 'components/offres/RechercheServ
 import Button from 'components/ui/Button/Button'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { estPassEmploi } from 'interfaces/conseiller'
+import { estBRSA } from 'interfaces/conseiller'
 import { TypeOffre } from 'interfaces/offre'
 import { Commune, Localite, Metier } from 'interfaces/referentiel'
 import { SearchImmersionsQuery } from 'services/immersions.service'
@@ -70,6 +70,8 @@ export default function FormRechercheOffres({
   const [labelTypeOffre, setLabelTypeOffre] = useState<string | undefined>()
   const [motsCles, setMotsCles] = useState<string | undefined>()
   const [offreLieu, setOffreLieu] = useState<string | undefined>()
+
+  const aAccesRechercheAlternanceServiceCivique = !estBRSA(conseiller)
 
   function formIsInvalid(): boolean {
     switch (typeOffre) {
@@ -174,7 +176,7 @@ export default function FormRechercheOffres({
               label='Offre d’emploi'
             />
 
-            {!estPassEmploi(conseiller) && (
+            {aAccesRechercheAlternanceServiceCivique && (
               <>
                 <RadioBox
                   isSelected={typeOffre === TypeOffre.ALTERNANCE}
