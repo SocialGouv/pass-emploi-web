@@ -72,7 +72,7 @@ describe('<ChatRoom />', () => {
 
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Voir les actions possibles pour votre messagerie',
+          name: 'Accéder aux actions de votre messagerie',
         })
       )
 
@@ -109,7 +109,7 @@ describe('<ChatRoom />', () => {
 
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Voir les actions possibles pour votre messagerie',
+            name: 'Accéder aux actions de votre messagerie',
           })
         )
 
@@ -138,7 +138,7 @@ describe('<ChatRoom />', () => {
 
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Voir les actions possibles pour votre messagerie',
+            name: 'Accéder aux actions de votre messagerie',
           })
         )
 
@@ -180,7 +180,7 @@ describe('<ChatRoom />', () => {
 
             await userEvent.click(
               screen.getByRole('button', {
-                name: 'Voir les actions possibles pour votre messagerie',
+                name: 'Accéder aux actions de votre messagerie',
               })
             )
 
@@ -275,7 +275,7 @@ describe('<ChatRoom />', () => {
 
             await userEvent.click(
               screen.getByRole('button', {
-                name: 'Voir les actions possibles pour votre messagerie',
+                name: 'Accéder aux actions de votre messagerie',
               })
             )
 
@@ -326,7 +326,7 @@ describe('<ChatRoom />', () => {
 
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Voir les actions possibles pour votre messagerie',
+            name: 'Accéder aux actions de votre messagerie',
           })
         )
 

@@ -26,7 +26,7 @@ export default function RubriqueListesDeDiffusion({
   >()
 
   return (
-    <div className='h-full flex flex-col bg-grey_100 '>
+    <div className='h-full flex flex-col'>
       {!listeSelectionnee && (
         <ListeListesDeDiffusion
           listesDeDiffusion={listesDeDiffusion}

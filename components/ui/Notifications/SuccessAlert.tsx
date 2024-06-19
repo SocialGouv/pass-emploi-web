@@ -24,7 +24,7 @@ export default function SuccessAlert({
             name={IconName.CheckCircleFill}
             aria-hidden={true}
             focusable={false}
-            className='w-6 h-6 mr-2 shrink-0 fill-success'
+            className='w-6 h-6 self-start mr-2 shrink-0 fill-success'
           />
           <p className='text-base-bold'>{label}</p>
         </div>

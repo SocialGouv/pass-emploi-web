@@ -568,7 +568,7 @@ describe('<ConversationBeneficiaire />', () => {
     beforeEach(async () => {
       await userEvent.click(
         screen.getByRole('button', {
-          name: 'Voir les actions possibles pour votre messagerie',
+          name: 'Accéder aux actions de votre messagerie',
         })
       )
     })
@@ -701,7 +701,7 @@ describe('<ConversationBeneficiaire />', () => {
     //Given
     await userEvent.click(
       screen.getByRole('button', {
-        name: 'Voir les actions possibles pour votre messagerie',
+        name: 'Accéder aux actions de votre messagerie',
       })
     )
 
