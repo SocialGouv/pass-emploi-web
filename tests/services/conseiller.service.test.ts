@@ -33,7 +33,7 @@ describe('ConseillerApiService', () => {
         email: 'albert.durant@gmail.com',
         estConseiller: true,
         estSuperviseur: false,
-        estSuperviseurPEBRSA: false,
+        estSuperviseurResponsable: false,
         dateSignatureCGU: dateSignature,
       }
       ;(apiGet as jest.Mock).mockResolvedValue({

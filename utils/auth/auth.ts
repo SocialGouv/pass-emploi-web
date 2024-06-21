@@ -48,7 +48,8 @@ export const config = {
       session.user.structure = token.structureConseiller ?? ''
       session.user.estConseiller = token.estConseiller ?? false
       session.user.estSuperviseur = token.estSuperviseur ?? false
-      session.user.estSuperviseurPEBRSA = token.estSuperviseurPEBRSA ?? false
+      session.user.estSuperviseurResponsable =
+        token.estSuperviseurResponsable ?? false
       session.accessToken = token.accessToken ?? ''
       session.error = (token.error as string) ?? ''
       return session

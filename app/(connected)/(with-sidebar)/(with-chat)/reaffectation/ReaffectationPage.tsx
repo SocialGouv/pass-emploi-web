@@ -40,6 +40,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 type StructureReaffectation =
   | StructureConseiller.POLE_EMPLOI
   | StructureConseiller.POLE_EMPLOI_BRSA
+  | StructureConseiller.POLE_EMPLOI_AIJ
 
 const ConseillerIntrouvableSuggestionModal = dynamic(
   () => import('components/ConseillerIntrouvableSuggestionModal'),
@@ -47,10 +48,10 @@ const ConseillerIntrouvableSuggestionModal = dynamic(
 )
 
 type ReaffectationProps = {
-  estSuperviseurPEBRSA: boolean
+  estSuperviseurResponsable: boolean
 }
 
-function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
+function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   const [portefeuille] = usePortefeuille()
   const conseillerInitialRef = useRef<{
     resetRechercheConseiller: () => void
@@ -95,7 +96,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
   )
 
-  const numerosEtapes: NumeroEtape[] = estSuperviseurPEBRSA
+  const numerosEtapes: NumeroEtape[] = estSuperviseurResponsable
     ? [2, 3, 4, 5]
     : [1, 2, 3, 4]
 
@@ -228,7 +229,10 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
       return
     }
     let formInvalid = false
-    if (estSuperviseurPEBRSA && structureReaffectation.value === undefined) {
+    if (
+      estSuperviseurResponsable &&
+      structureReaffectation.value === undefined
+    ) {
       setStructureReaffectation({
         ...structureReaffectation,
         error: 'Veuillez choisir un contrat de réaffectation',
@@ -356,7 +360,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
       </p>
 
       <form onSubmit={reaffecterBeneficiaires} className='grow'>
-        {estSuperviseurPEBRSA && (
+        {estSuperviseurResponsable && (
           <Etape numero={1} titre='Choisissez un accompagnement'>
             {structureReaffectation.error && (
               <InputError id='structure-reaffectation--error' className='mb-2'>
@@ -392,6 +396,21 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
                 label='BRSA'
                 name='structure-reaffectation'
                 id='structure-reaffectation--BRSA'
+              />
+
+              <RadioBox
+                isSelected={
+                  structureReaffectation.value ===
+                  StructureConseiller.POLE_EMPLOI_AIJ
+                }
+                onChange={() =>
+                  handleInputStructureReaffectation(
+                    StructureConseiller.POLE_EMPLOI_AIJ
+                  )
+                }
+                label='AIJ'
+                name='structure-reaffectation'
+                id='structure-reaffectation--AIJ'
               />
             </div>
           </Etape>

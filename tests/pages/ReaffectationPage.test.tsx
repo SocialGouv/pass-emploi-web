@@ -35,13 +35,16 @@ describe('Reaffectation', () => {
     ;(getJeunesDuConseillerParId as jest.Mock).mockResolvedValue(jeunes)
   })
 
-  describe('Conseiller SUPERVISEUR_PE_BRSA', () => {
+  describe('Conseiller SUPERVISEUR_RESPONSABLE', () => {
     beforeEach(async () => {
       // When
       act(() => {
-        renderWithContexts(<ReaffectationPage estSuperviseurPEBRSA={true} />)
+        renderWithContexts(
+          <ReaffectationPage estSuperviseurResponsable={true} />
+        )
       })
     })
+
     describe('Étape 1 : contrat réaffectation', () => {
       it('contient un champ pour sélectionner le contrat de réaffectation', () => {
         // When
@@ -57,6 +60,7 @@ describe('Reaffectation', () => {
         ).toBeInTheDocument()
       })
     })
+
     describe('Étape 3 : conseiller initial', () => {
       let etape: HTMLFieldSetElement
       beforeEach(async () => {
@@ -100,8 +104,8 @@ describe('Reaffectation', () => {
         }
       })
     })
+
     describe('Étape 5 : conseiller destinataire et réaffectation', () => {
-      let checkboxBeneficiaire: HTMLInputElement
       let etape: HTMLFieldSetElement
       let conseillerDestinataireInput: HTMLInputElement
       beforeEach(async () => {
@@ -120,9 +124,6 @@ describe('Reaffectation', () => {
           screen.getByRole('radio', { name: 'Nils Tavernier' })
         )
 
-        checkboxBeneficiaire = screen.getByRole('checkbox', {
-          name: new RegExp(jeunes[1].nom),
-        })
         etape = screen.getByRole('group', {
           name: 'Étape 5: Saisissez le conseiller à qui affecter les bénéficiaires',
         })
@@ -160,11 +161,13 @@ describe('Reaffectation', () => {
     })
   })
 
-  describe('Conseiller non SUPERVISEUR_PE_BRSA', () => {
+  describe('Conseiller non SUPERVISEUR_RESPONSABLE', () => {
     beforeEach(async () => {
       // When
       act(() => {
-        renderWithContexts(<ReaffectationPage estSuperviseurPEBRSA={false} />)
+        renderWithContexts(
+          <ReaffectationPage estSuperviseurResponsable={false} />
+        )
       })
     })
     describe('Étape 1 : type réaffectation', () => {

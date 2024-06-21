@@ -29,7 +29,7 @@ export interface Conseiller extends BaseConseiller {
   aDesBeneficiairesARecuperer: boolean
   structure: StructureConseiller
   estSuperviseur: boolean
-  estSuperviseurPEBRSA: boolean
+  estSuperviseurResponsable: boolean
   agence?: { nom: string; id?: string }
   structureMilo?: { id: string; nom: string }
   dateSignatureCGU?: string
@@ -61,8 +61,8 @@ export function estSuperviseur(conseiller: Conseiller): boolean {
   return conseiller.estSuperviseur
 }
 
-export function estSuperviseurPEBRSA(conseiller: Conseiller): boolean {
-  return conseiller.estSuperviseurPEBRSA
+export function estSuperviseurResponsable(conseiller: Conseiller): boolean {
+  return conseiller.estSuperviseurResponsable
 }
 
 export function estUserMilo(user: Session.HydratedUser): boolean {
