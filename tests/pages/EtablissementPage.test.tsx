@@ -5,7 +5,7 @@ import React from 'react'
 import EtablissementPage from 'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
+import { CategorieSituation, BeneficiaireEtablissement } from 'interfaces/beneficiaire'
 import { Agence } from 'interfaces/referentiel'
 import { modifierAgence } from 'services/conseiller.service'
 import { rechercheJeunesDeLEtablissement } from 'services/jeunes.service'
@@ -20,7 +20,7 @@ jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('EtablissementPage client side', () => {
-  const unJeune = (page: number): JeuneEtablissement => ({
+  const unJeune = (page: number): BeneficiaireEtablissement => ({
     base: {
       id: 'id-jeune',
       nom: 'Page ' + page,

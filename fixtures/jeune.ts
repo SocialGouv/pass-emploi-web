@@ -1,17 +1,17 @@
 import { DateTime } from 'luxon'
 
 import {
-  BaseJeune,
+  BaseBeneficiaire,
   CategorieSituation,
   Chat,
   ConseillerHistorique,
-  DetailJeune,
+  DetailBeneficiaire,
   IndicateursSemaine,
-  JeuneAvecNbActionsNonTerminees,
-  JeuneChat,
-  JeuneFromListe,
+  BeneficiaireAvecNbActionsNonTerminees,
+  BeneficiaireChat,
+  BeneficiaireFromListe,
   MetadonneesFavoris,
-} from 'interfaces/jeune'
+} from 'interfaces/beneficiaire'
 import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 import {
   BaseJeuneJson,
@@ -21,8 +21,10 @@ import {
   MetadonneesFavorisJson,
 } from 'interfaces/json/jeune'
 
-export const uneBaseJeune = (overrides: Partial<BaseJeune> = {}): BaseJeune => {
-  const defaults: BaseJeune = {
+export const uneBaseJeune = (
+  overrides: Partial<BaseBeneficiaire> = {}
+): BaseBeneficiaire => {
+  const defaults: BaseBeneficiaire = {
     id: 'jeune-1',
     prenom: 'Kenji',
     nom: 'Jirac',
@@ -31,9 +33,9 @@ export const uneBaseJeune = (overrides: Partial<BaseJeune> = {}): BaseJeune => {
 }
 
 export const unDetailJeune = (
-  overrides: Partial<DetailJeune> = {}
-): DetailJeune => {
-  const defaults: DetailJeune = {
+  overrides: Partial<DetailBeneficiaire> = {}
+): DetailBeneficiaire => {
+  const defaults: DetailBeneficiaire = {
     ...uneBaseJeune(),
     email: 'kenji.jirac@email.fr',
     isActivated: true,
@@ -94,9 +96,9 @@ export const uneMetadonneeFavorisJson = (
 }
 
 export const unItemJeune = (
-  overrides: Partial<JeuneFromListe> = {}
-): JeuneFromListe => {
-  const defaults: JeuneFromListe = {
+  overrides: Partial<BeneficiaireFromListe> = {}
+): BeneficiaireFromListe => {
+  const defaults: BeneficiaireFromListe = {
     ...uneBaseJeune(),
     isActivated: true,
     isReaffectationTemporaire: false,
@@ -106,7 +108,7 @@ export const unItemJeune = (
   return { ...defaults, ...overrides }
 }
 
-export const desItemsJeunes = (): JeuneFromListe[] => [
+export const desItemsJeunes = (): BeneficiaireFromListe[] => [
   unItemJeune(),
   unItemJeune({
     id: 'jeune-2',
@@ -185,9 +187,9 @@ export const desItemsJeunesJson = (): ItemJeuneJson[] => [
 ]
 
 export const unJeuneAvecActionsNonTerminees = (
-  overrides: Partial<JeuneAvecNbActionsNonTerminees> = {}
-): JeuneAvecNbActionsNonTerminees => {
-  const defaults: JeuneAvecNbActionsNonTerminees = {
+  overrides: Partial<BeneficiaireAvecNbActionsNonTerminees> = {}
+): BeneficiaireAvecNbActionsNonTerminees => {
+  const defaults: BeneficiaireAvecNbActionsNonTerminees = {
     ...unItemJeune(),
     nbActionsNonTerminees: 5,
   }
@@ -195,7 +197,7 @@ export const unJeuneAvecActionsNonTerminees = (
 }
 
 export const desJeunesAvecActionsNonTerminees =
-  (): JeuneAvecNbActionsNonTerminees[] => [
+  (): BeneficiaireAvecNbActionsNonTerminees[] => [
     unJeuneAvecActionsNonTerminees(),
     unJeuneAvecActionsNonTerminees({
       id: 'jeune-2',
@@ -231,8 +233,10 @@ export const unChat = (overrides: Partial<Chat> = {}): Chat => {
   return { ...defaults, ...overrides }
 }
 
-export const unJeuneChat = (overrides: Partial<JeuneChat> = {}): JeuneChat => {
-  const defaults: JeuneChat = {
+export const unJeuneChat = (
+  overrides: Partial<BeneficiaireChat> = {}
+): BeneficiaireChat => {
+  const defaults: BeneficiaireChat = {
     id: 'jeune-1',
     prenom: 'Kenji',
     nom: 'Jirac',
@@ -297,7 +301,7 @@ export const desConseillersJeuneJson = (): ConseillerHistoriqueJson[] => {
   }))
 }
 
-export function extractBaseJeune(base: BaseJeune): BaseJeune {
+export function extractBaseJeune(base: BaseBeneficiaire): BaseBeneficiaire {
   return { id: base.id, nom: base.nom, prenom: base.prenom }
 }
 

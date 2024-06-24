@@ -6,7 +6,7 @@ import EmptyState from 'components/EmptyState'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { InlineDefinitionItem } from 'components/ui/InlineDefinitionItem'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 
 type BlocFavorisProps = {
   idJeune: string

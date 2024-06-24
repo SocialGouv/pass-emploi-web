@@ -2,12 +2,12 @@
 
 import { createContext, ReactNode, useContext, useState } from 'react'
 
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
-type MaybePortefeuille = BaseJeune[] | undefined
+type MaybePortefeuille = BaseBeneficiaire[] | undefined
 type PortefeuilleState = [
   MaybePortefeuille,
-  (updatedBeneficiaires: BaseJeune[]) => void,
+  (updatedBeneficiaires: BaseBeneficiaire[]) => void,
 ]
 
 const PortefeuilleContext = createContext<PortefeuilleState | undefined>(
@@ -21,7 +21,7 @@ export function PortefeuilleProvider({
 }: {
   children: ReactNode
   portefeuille?: MaybePortefeuille
-  setterForTests?: (updatedBeneficiaires: BaseJeune[]) => void
+  setterForTests?: (updatedBeneficiaires: BaseBeneficiaire[]) => void
 }) {
   const [state, setPortefeuille] = useState<MaybePortefeuille>(portefeuille)
   const setter = setterForTests ?? setPortefeuille
@@ -44,8 +44,8 @@ export function usePortefeuillePotentiellementPasRecupere(): PortefeuilleState {
 }
 
 export function usePortefeuille(): [
-  BaseJeune[],
-  (updatedBeneficiaires: BaseJeune[]) => void,
+  BaseBeneficiaire[],
+  (updatedBeneficiaires: BaseBeneficiaire[]) => void,
 ] {
   const [portefeuille, setPortefeuille] =
     usePortefeuillePotentiellementPasRecupere()

@@ -13,7 +13,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { MetadonneesPagination } from 'types/pagination'
@@ -21,7 +21,7 @@ import { useAlerte } from 'utils/alerteContext'
 
 interface OngletActionsProps {
   conseiller: Conseiller
-  jeune: BaseJeune
+  jeune: BaseBeneficiaire
   categories: SituationNonProfessionnelle[]
 
   actionsInitiales: {

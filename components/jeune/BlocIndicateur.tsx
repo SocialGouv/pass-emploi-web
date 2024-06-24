@@ -5,7 +5,7 @@ import React from 'react'
 import { LienVersFavoris } from 'components/jeune/BlocFavoris'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { IndicateursSemaine, MetadonneesFavoris } from 'interfaces/jeune'
+import { IndicateursSemaine, MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { toShortDate } from 'utils/date'
 
 export function BlocIndicateurs({

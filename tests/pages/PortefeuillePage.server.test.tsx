@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 import Portefeuille from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/page'
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { desItemsJeunes } from 'fixtures/jeune'
-import { compareJeunesByNom } from 'interfaces/jeune'
+import { compareBeneficiairesByNom } from 'interfaces/beneficiaire'
 import { countActionsJeunes } from 'services/actions.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -72,7 +72,7 @@ describe('PortefeuillePage server side', () => {
               ...jeune,
               nbActionsNonTerminees: 0,
             }))
-            .sort(compareJeunesByNom),
+            .sort(compareBeneficiairesByNom),
         }),
         {}
       )
@@ -108,7 +108,7 @@ describe('PortefeuillePage server side', () => {
               ...jeune,
               nbActionsNonTerminees: 7,
             }))
-            .sort(compareJeunesByNom),
+            .sort(compareBeneficiairesByNom),
           isFromEmail: false,
         },
         {}

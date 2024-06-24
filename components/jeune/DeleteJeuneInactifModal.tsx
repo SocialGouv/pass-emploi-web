@@ -3,12 +3,12 @@ import React from 'react'
 import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DeleteJeuneInactifModalProps {
-  jeune: BaseJeune
+  jeune: BaseBeneficiaire
   onClose: () => void
   onDelete: () => Promise<void>
 }

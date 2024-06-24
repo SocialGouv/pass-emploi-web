@@ -9,7 +9,7 @@ import {
   unDetailOffreEmploi,
   unDetailServiceCivique,
 } from 'fixtures/offre'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { partagerOffre } from 'services/messages.service'
@@ -20,7 +20,7 @@ jest.mock('services/messages.service')
 describe('PartageOffrePage client side', () => {
   describe('commun', () => {
     let offre: DetailOffre
-    let jeunes: BaseJeune[]
+    let jeunes: BaseBeneficiaire[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function

@@ -13,7 +13,7 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { TypeOffre } from 'interfaces/offre'
 import { TypeLocalite } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -82,7 +82,7 @@ function PartageRecherchePage({
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({
       id: jeune.id,
-      value: getNomJeuneComplet(jeune),
+      value: getNomBeneficiaireComplet(jeune),
     }))
   }
 

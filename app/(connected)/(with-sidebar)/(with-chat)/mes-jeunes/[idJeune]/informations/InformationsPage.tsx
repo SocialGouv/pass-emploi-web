@@ -17,11 +17,11 @@ import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
-  DetailJeune,
+  DetailBeneficiaire,
   EtatSituation,
   IndicateursSemaine,
   MetadonneesFavoris,
-} from 'interfaces/jeune'
+} from 'interfaces/beneficiaire'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -29,7 +29,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type InformationsPageProps = {
   idJeune: string
-  jeune: DetailJeune
+  jeune: DetailBeneficiaire
   situations: Array<{
     categorie: CategorieSituation
     etat?: EtatSituation
