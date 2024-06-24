@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
-import { CategorieSituation } from 'interfaces/jeune'
+import { CategorieSituation } from 'interfaces/beneficiaire'
 
 interface TagProps {
   situation: CategorieSituation

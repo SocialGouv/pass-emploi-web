@@ -7,7 +7,7 @@ import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import {
   modifierAgence,
   modifierNotificationsSonores,
@@ -23,7 +23,7 @@ jest.mock('components/Modal')
 
 describe('ProfilPage client side', () => {
   let conseiller: Conseiller
-  let jeunes: JeuneFromListe[]
+  let jeunes: BeneficiaireFromListe[]
   let push: Function
 
   describe('contenu', () => {

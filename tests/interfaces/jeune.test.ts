@@ -3,12 +3,12 @@ import { DateTime } from 'luxon'
 import { unItemJeune, unJeuneChat } from 'fixtures/jeune'
 import {
   CategorieSituation,
-  compareJeuneChat,
-  compareJeunesBySituation,
-} from 'interfaces/jeune'
+  compareBeneficiaireChat,
+  compareBeneficiairesBySituation,
+} from 'interfaces/beneficiaire'
 
 describe('Jeune', () => {
-  describe('.compareJeunesBySituation', () => {
+  describe('.compareBeneficiairesBySituation', () => {
     it('trie les jeunes par situation par ordre alphabétique', () => {
       // Given
       const unJeuneSituationBenevolat = unItemJeune({
@@ -26,7 +26,7 @@ describe('Jeune', () => {
         unJeuneSituationEmploi,
         unJeuneSansSituation,
         unJeuneSituationBenevolat,
-      ].sort(compareJeunesBySituation)
+      ].sort(compareBeneficiairesBySituation)
 
       // Then
       expect(actual).toStrictEqual([
@@ -38,7 +38,7 @@ describe('Jeune', () => {
     })
   })
 
-  describe('.compareJeuneChat', () => {
+  describe('.compareBeneficiaireChat', () => {
     it('trie d’abord par messages non lus, puis suivis, puis anté-chrnonologique', () => {
       // Given
       const unJeuneChatNonLu = unJeuneChat({
@@ -73,7 +73,7 @@ describe('Jeune', () => {
         unJeuneChatNonLu,
         unJeuneChatRecent,
         unJeuneChatSuivi,
-      ].sort(compareJeuneChat)
+      ].sort(compareBeneficiaireChat)
 
       // Then
       expect(actual).toStrictEqual([

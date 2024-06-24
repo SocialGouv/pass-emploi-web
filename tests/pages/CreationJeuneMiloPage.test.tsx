@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import CreationJeuneMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeuneMiloPage'
 import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
 import { unDossierMilo } from 'fixtures/milo'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import {
   createCompteJeuneMilo,
   getDossierJeune,
@@ -57,7 +57,7 @@ describe('CreationJeuneMiloPage client side', () => {
   describe('quand on a recherché un dossier', () => {
     let push: Function
     let setAlerte: () => void
-    let setPortefeuille: (updatedBeneficiaires: BaseJeune[]) => void
+    let setPortefeuille: (updatedBeneficiaires: BaseBeneficiaire[]) => void
     const dossier = unDossierMilo()
     const portefeuille = desItemsJeunes().map(extractBaseJeune)
     beforeEach(async () => {

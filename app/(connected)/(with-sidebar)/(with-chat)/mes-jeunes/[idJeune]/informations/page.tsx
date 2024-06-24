@@ -10,7 +10,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
@@ -32,7 +32,7 @@ export async function generateMetadata({
 
   const lectureSeule = user.id !== beneficiaire.idConseiller
   return {
-    title: `Informations - ${getNomJeuneComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
+    title: `Informations - ${getNomBeneficiaireComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
   }
 }
 

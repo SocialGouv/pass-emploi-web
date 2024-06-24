@@ -6,7 +6,7 @@ import { unConseiller } from 'fixtures/conseiller'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
+import { CategorieSituation, BeneficiaireEtablissement } from 'interfaces/beneficiaire'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getBeneficiairesDeLaStructureMilo } from 'services/jeunes.service'
 import { getDetailsSession } from 'services/sessions.service'
@@ -51,7 +51,7 @@ describe('Détails Session Page Server', () => {
   })
 
   describe('Quand le conseiller est Milo', () => {
-    const beneficiaires: JeuneEtablissement[] = [
+    const beneficiaires: BeneficiaireEtablissement[] = [
       {
         base: uneBaseJeune({
           id: 'jeune-1',

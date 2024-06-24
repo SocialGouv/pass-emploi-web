@@ -1,13 +1,13 @@
 import {
-  BaseJeune,
+  BaseBeneficiaire,
   CategorieSituation,
-  DetailJeune,
+  DetailBeneficiaire,
   EtatSituation,
   IndicateursSemaine,
-  JeuneEtablissement,
-  JeuneFromListe,
+  BeneficiaireEtablissement,
+  BeneficiaireFromListe,
   MetadonneesFavoris,
-} from 'interfaces/jeune'
+} from 'interfaces/beneficiaire'
 
 interface Situation {
   etat: string
@@ -42,7 +42,7 @@ export interface DetailJeuneJson extends BaseJeuneJson {
 }
 
 export type JeuneEtablissementJson = {
-  jeune: BaseJeune
+  jeune: BaseBeneficiaire
   referent: { id: string; nom: string; prenom: string }
   situation?: string
   dateDerniereActivite?: string
@@ -127,7 +127,7 @@ function toCategorieSituation(categorie?: string): CategorieSituation {
   }
 }
 
-export function jsonToBaseJeune(jeune: BaseJeuneJson): BaseJeune {
+export function jsonToBaseJeune(jeune: BaseJeuneJson): BaseBeneficiaire {
   return {
     id: jeune.id,
     prenom: jeune.firstName,
@@ -139,7 +139,7 @@ export function jsonToItemJeune({
   firstName,
   lastName,
   ...jeune
-}: ItemJeuneJson): JeuneFromListe {
+}: ItemJeuneJson): BeneficiaireFromListe {
   return {
     ...jeune,
     prenom: firstName,
@@ -153,7 +153,7 @@ export function jsonToDetailJeune({
   lastName,
   conseiller,
   ...jeune
-}: DetailJeuneJson): DetailJeune {
+}: DetailJeuneJson): DetailBeneficiaire {
   return {
     ...jeune,
     estAArchiver: Boolean(jeune.estAArchiver),
@@ -173,7 +173,7 @@ export function jsonToDetailJeune({
 export function jsonToJeuneEtablissement({
   jeune,
   ...json
-}: JeuneEtablissementJson): JeuneEtablissement {
+}: JeuneEtablissementJson): BeneficiaireEtablissement {
   return {
     ...json,
     base: jeune,

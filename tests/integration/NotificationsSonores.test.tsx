@@ -6,7 +6,11 @@ import { usePathname } from 'next/navigation'
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
-import { BaseJeune, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
+import {
+  BaseBeneficiaire,
+  BeneficiaireChat,
+  BeneficiaireFromListe,
+} from 'interfaces/beneficiaire'
 import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
 import { observeConseillerChats, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -25,8 +29,8 @@ global.Audio = class FakeAudio {
 }
 
 describe('Intégration notifications sonores', () => {
-  let updateChatsRef: (chats: JeuneChat[]) => void
-  const jeunes: JeuneFromListe[] = desItemsJeunes()
+  let updateChatsRef: (chats: BeneficiaireChat[]) => void
+  const jeunes: BeneficiaireFromListe[] = desItemsJeunes()
 
   beforeEach(async () => {
     const now = DateTime.now()
@@ -37,7 +41,7 @@ describe('Intégration notifications sonores', () => {
       (_cleChiffrement, jeunes, fn) => {
         updateChatsRef = fn
         updateChatsRef(
-          jeunes.map((jeune: BaseJeune) =>
+          jeunes.map((jeune: BaseBeneficiaire) =>
             unJeuneChat({
               ...jeune,
               chatId: `chat-${jeune.id}`,
@@ -108,8 +112,8 @@ async function toggleNotifications() {
 }
 
 async function unNouveauMessageArrive(
-  updateChatsRef: (chat: JeuneChat[]) => void,
-  jeunes: JeuneFromListe[]
+  updateChatsRef: (chat: BeneficiaireChat[]) => void,
+  jeunes: BeneficiaireFromListe[]
 ) {
   await act(async () => {
     const [first, ...autres] = jeunes

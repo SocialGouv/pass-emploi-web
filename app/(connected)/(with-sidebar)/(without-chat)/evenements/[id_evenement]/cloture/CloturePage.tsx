@@ -15,7 +15,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { Evenement } from 'interfaces/evenement'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { BaseBeneficiaire, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 
@@ -30,7 +30,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
 
   const [idsSelectionnes, setIdsSelectionnes] = useState<string[]>([])
 
-  function selectionnerBeneficiaire(jeune: BaseJeune) {
+  function selectionnerBeneficiaire(jeune: BaseBeneficiaire) {
     if (idsSelectionnes.includes(jeune.id)) {
       setIdsSelectionnes(idsSelectionnes.filter((id) => id !== jeune.id))
     } else {
@@ -100,7 +100,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
             </TR>
           </TBody>
           <TBody>
-            {evenement.jeunes.map((jeune: BaseJeune) => (
+            {evenement.jeunes.map((jeune: BaseBeneficiaire) => (
               <TR
                 key={jeune.id}
                 onClick={() => selectionnerBeneficiaire(jeune)}
@@ -110,7 +110,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
                     type='checkbox'
                     id={'checkbox-' + jeune.id}
                     checked={idsSelectionnes.includes(jeune.id)}
-                    title={'Sélectionner ' + getNomJeuneComplet(jeune)}
+                    title={'Sélectionner ' + getNomBeneficiaireComplet(jeune)}
                     onChange={() => false}
                   />
                 </TD>
@@ -119,7 +119,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
                     htmlFor={'checkbox-' + jeune.id}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {getNomJeuneComplet(jeune)}
+                    {getNomBeneficiaireComplet(jeune)}
                   </label>
                 </TD>
               </TR>

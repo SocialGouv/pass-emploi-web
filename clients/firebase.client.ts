@@ -31,7 +31,7 @@ import { DateTime } from 'luxon'
 import { apiGet } from 'clients/api.client'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
-import { Chat } from 'interfaces/jeune'
+import { Chat } from 'interfaces/beneficiaire'
 import {
   InfoOffre,
   Message,

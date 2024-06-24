@@ -12,8 +12,8 @@ import {
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
-  JeuneAvecNbActionsNonTerminees,
-} from 'interfaces/jeune'
+  BeneficiaireAvecNbActionsNonTerminees,
+} from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
@@ -160,8 +160,8 @@ describe('PortefeuillePage client side', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
-    let jeune: JeuneAvecNbActionsNonTerminees
-    let beneficiaireAvecStructureDifferente: JeuneAvecNbActionsNonTerminees
+    let jeune: BeneficiaireAvecNbActionsNonTerminees
+    let beneficiaireAvecStructureDifferente: BeneficiaireAvecNbActionsNonTerminees
 
     beforeEach(async () => {
       //GIVEN

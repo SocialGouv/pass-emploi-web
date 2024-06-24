@@ -12,7 +12,7 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { ValueWithError } from 'components/ValueWithError'
-import { JeuneChat } from 'interfaces/jeune'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   fromConseiller,
   Message,
@@ -24,7 +24,7 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 type RechercheMessageProps = {
   beneficiaireNomComplet: string
   getConseillerNomComplet: (message: Message) => string | undefined
-  jeuneChat: JeuneChat
+  jeuneChat: BeneficiaireChat
   toggleAfficherRecherche: () => void
 }
 export function RechercheMessage({

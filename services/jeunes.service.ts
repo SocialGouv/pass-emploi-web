@@ -3,14 +3,14 @@ import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
-  BaseJeune,
+  BaseBeneficiaire,
   ConseillerHistorique,
-  DetailJeune,
+  DetailBeneficiaire,
   IndicateursSemaine,
-  JeuneEtablissement,
-  JeuneFromListe,
+  BeneficiaireEtablissement,
+  BeneficiaireFromListe,
   MetadonneesFavoris,
-} from 'interfaces/jeune'
+} from 'interfaces/beneficiaire'
 import {
   ConseillerHistoriqueJson,
   toConseillerHistorique,
@@ -38,13 +38,13 @@ export async function getIdentitesBeneficiairesServerSide(
   idsJeunes: string[],
   idConseiller: string,
   accessToken: string
-): Promise<BaseJeune[]> {
+): Promise<BaseBeneficiaire[]> {
   return getIdentitesBeneficiaires(idsJeunes, idConseiller, accessToken)
 }
 
 export async function getIdentitesBeneficiairesClientSide(
   idsJeunes: string[]
-): Promise<BaseJeune[]> {
+): Promise<BaseBeneficiaire[]> {
   const session = await getSession()
   return getIdentitesBeneficiaires(
     idsJeunes,
@@ -56,12 +56,12 @@ export async function getIdentitesBeneficiairesClientSide(
 export async function getJeunesDuConseillerServerSide(
   idConseiller: string,
   accessToken: string
-): Promise<JeuneFromListe[]> {
+): Promise<BeneficiaireFromListe[]> {
   return getJeunesDuConseiller(idConseiller, accessToken)
 }
 
 export async function getJeunesDuConseillerClientSide(): Promise<
-  JeuneFromListe[]
+  BeneficiaireFromListe[]
 > {
   const session = await getSession()
   return getJeunesDuConseiller(session!.user.id, session!.accessToken)
@@ -69,7 +69,7 @@ export async function getJeunesDuConseillerClientSide(): Promise<
 
 export async function getJeunesDuConseillerParId(
   idConseiller: string
-): Promise<JeuneFromListe[]> {
+): Promise<BeneficiaireFromListe[]> {
   const session = await getSession()
   return getJeunesDuConseiller(idConseiller, session!.accessToken)
 }
@@ -77,7 +77,7 @@ export async function getJeunesDuConseillerParId(
 export async function getJeuneDetails(
   idJeune: string,
   accessToken: string
-): Promise<DetailJeune | undefined> {
+): Promise<DetailBeneficiaire | undefined> {
   try {
     const { content: jeune } = await apiGet<DetailJeuneJson>(
       `/jeunes/${idJeune}`,
@@ -114,7 +114,7 @@ export async function createCompteJeunePoleEmploi(newJeune: {
   firstName: string
   lastName: string
   email: string
-}): Promise<BaseJeune> {
+}): Promise<BaseBeneficiaire> {
   const session = await getSession()
   const { content } = await apiPost<BaseJeuneJson>(
     `/conseillers/pole-emploi/jeunes`,
@@ -237,7 +237,7 @@ export async function getIndicateursJeuneComplets(
 
 export async function getJeunesDeLEtablissementClientSide(
   idEtablissement: string
-): Promise<BaseJeune[]> {
+): Promise<BaseBeneficiaire[]> {
   const session = await getSession()
   return getJeunesDeLEtablissement(idEtablissement, session!.accessToken)
 }
@@ -257,7 +257,7 @@ export async function getBeneficiairesDeLaStructureMilo(
   idStructureMilo: string,
   accessToken: string
 ): Promise<{
-  jeunes: JeuneEtablissement[]
+  jeunes: BeneficiaireEtablissement[]
 }> {
   let url = `/structures-milo/${idStructureMilo}/jeunes`
 
@@ -277,7 +277,7 @@ export async function rechercheJeunesDeLEtablissement(
   recherche: string,
   page: number
 ): Promise<{
-  jeunes: JeuneEtablissement[]
+  jeunes: BeneficiaireEtablissement[]
   metadonnees: MetadonneesPagination
 }> {
   const session = await getSession()
@@ -353,11 +353,11 @@ async function getIdentitesBeneficiaires(
   idsJeunes: string[],
   idConseiller: string,
   accessToken: string
-): Promise<BaseJeune[]> {
+): Promise<BaseBeneficiaire[]> {
   if (!idsJeunes.length) return []
   const queryParam = idsJeunes.map((id) => 'ids=' + id).join('&')
 
-  const { content: beneficiaires } = await apiGet<BaseJeune[]>(
+  const { content: beneficiaires } = await apiGet<BaseBeneficiaire[]>(
     `/conseillers/${idConseiller}/jeunes/identites?${queryParam}`,
     accessToken
   )

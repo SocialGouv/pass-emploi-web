@@ -35,7 +35,7 @@ import {
   unMessage,
 } from 'fixtures/message'
 import { unDetailOffreEmploi } from 'fixtures/offre'
-import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
+import { Chat, BeneficiaireChat, BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import {
@@ -309,7 +309,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.sendNouveauMessage', () => {
-    let jeuneChat: JeuneChat
+    let jeuneChat: BeneficiaireChat
     let newMessage: string
     const now = DateTime.now()
     beforeEach(async () => {
@@ -570,7 +570,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.partagerOffre', () => {
-    let destinataires: JeuneFromListe[]
+    let destinataires: BeneficiaireFromListe[]
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }
     let newMessageGroupe: string
@@ -785,7 +785,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.rechercherMessagesConversation', () => {
-    let jeuneChat: JeuneChat
+    let jeuneChat: BeneficiaireChat
     let recherche: string
     const now = DateTime.fromISO('2024-04-24')
 
