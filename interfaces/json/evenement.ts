@@ -8,7 +8,7 @@ import {
   StatutAnimationCollective,
   TypeEvenement,
 } from 'interfaces/evenement'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { BaseBeneficiaire, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import {
   jsonToTypeSessionMilo,
   SessionMiloBeneficiairesJson,
@@ -22,7 +22,7 @@ export type EvenementJson = {
   date: string
   duration: number
   type: TypeEvenement
-  jeunes: Array<BaseJeune & { futPresent?: boolean }>
+  jeunes: Array<BaseBeneficiaire & { futPresent?: boolean }>
   title: string
   createur: Auteur
   invitation: boolean
@@ -189,7 +189,7 @@ function jsonToStatutAnimationCollective(
 function jsonToBeneficiaires(
   jeunes: { nom: string; prenom: string }[]
 ): string | undefined {
-  if (jeunes.length === 1) return getNomJeuneComplet(jeunes[0])
+  if (jeunes.length === 1) return getNomBeneficiaireComplet(jeunes[0])
   return 'Bénéficiaires multiples'
 }
 

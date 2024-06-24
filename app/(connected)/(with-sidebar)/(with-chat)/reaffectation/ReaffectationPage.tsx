@@ -30,10 +30,10 @@ import TR from 'components/ui/Table/TR'
 import { ValueWithError } from 'components/ValueWithError'
 import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
-  compareJeunesByNom,
-  getNomJeuneComplet,
-  JeuneFromListe,
-} from 'interfaces/jeune'
+  compareBeneficiairesByNom,
+  getNomBeneficiaireComplet,
+  BeneficiaireFromListe,
+} from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -74,7 +74,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
   >({ value: undefined })
 
   const [beneficiaires, setBeneficiaires] = useState<
-    JeuneFromListe[] | undefined
+    BeneficiaireFromListe[] | undefined
   >()
   const [idsBeneficiairesSelected, setIdsBeneficiairesSelected] = useState<
     ValueWithError<string[]>
@@ -140,7 +140,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
     setIsReaffectationTemporaire({ value: undefined })
   }
 
-  function selectionnerBeneficiaire(beneficiaire: JeuneFromListe) {
+  function selectionnerBeneficiaire(beneficiaire: BeneficiaireFromListe) {
     setErreurReaffectation(undefined)
     let selection: string[]
 
@@ -208,7 +208,9 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
     )
 
     if (beneficiairesDuConseiller.length > 0) {
-      setBeneficiaires([...beneficiairesDuConseiller].sort(compareJeunesByNom))
+      setBeneficiaires(
+        [...beneficiairesDuConseiller].sort(compareBeneficiairesByNom)
+      )
       setTrackingTitle(
         'Réaffectation jeunes – Etape 3 – Réaff. jeunes vers cons. dest.'
       )
@@ -486,7 +488,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
                   </label>
                 </li>
 
-                {beneficiaires.map((beneficiaire: JeuneFromListe) => (
+                {beneficiaires.map((beneficiaire: BeneficiaireFromListe) => (
                   <li
                     key={beneficiaire.id}
                     onClick={() => selectionnerBeneficiaire(beneficiaire)}
@@ -505,7 +507,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
                       htmlFor={'checkbox-' + beneficiaire.id}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {getNomJeuneComplet(beneficiaire)}
+                      {getNomBeneficiaireComplet(beneficiaire)}
                     </label>
                   </li>
                 ))}

@@ -17,9 +17,9 @@ import IllustrationComponent, {
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import {
-  JeuneAvecInfosComplementaires,
-  JeuneAvecNbActionsNonTerminees,
-} from 'interfaces/jeune'
+  BeneficiaireAvecInfosComplementaires,
+  BeneficiaireAvecNbActionsNonTerminees,
+} from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -36,7 +36,7 @@ const TutorielAjoutBeneficiairePoleEmploi = dynamic(
 )
 
 type PortefeuilleProps = {
-  conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
+  conseillerJeunes: BeneficiaireAvecNbActionsNonTerminees[]
   isFromEmail: boolean
 }
 
@@ -49,9 +49,9 @@ function PortefeuillePage({
   const router = useRouter()
 
   const [conseiller, setConseiller] = useConseiller()
-  const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>()
+  const [jeunes, setJeunes] = useState<BeneficiaireAvecInfosComplementaires[]>()
   const [jeunesFiltres, setJeunesFiltres] =
-    useState<JeuneAvecInfosComplementaires[]>()
+    useState<BeneficiaireAvecInfosComplementaires[]>()
 
   const [
     isRecuperationBeneficiairesLoading,

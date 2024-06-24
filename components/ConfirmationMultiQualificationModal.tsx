@@ -4,11 +4,11 @@ import Modal from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
 interface ConfirmationMultiQualificationModalProps {
   actions: Array<{ idAction: string; codeQualification?: string }>
-  beneficiaire: BaseJeune
+  beneficiaire: BaseBeneficiaire
   onConfirmation: () => void
   onCancel: () => void
   onLienExterne: (label: string) => void

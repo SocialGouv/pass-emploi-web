@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
 import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
-import { DossierMilo } from 'interfaces/jeune'
+import { DossierMilo } from 'interfaces/beneficiaire'
 import { JeuneMiloFormData } from 'interfaces/json/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'

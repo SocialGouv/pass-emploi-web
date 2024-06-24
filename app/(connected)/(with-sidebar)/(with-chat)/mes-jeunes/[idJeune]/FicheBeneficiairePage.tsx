@@ -27,10 +27,10 @@ import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
-  DetailJeune,
+  DetailBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
-} from 'interfaces/jeune'
+} from 'interfaces/beneficiaire'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -72,7 +72,7 @@ const ongletProps: {
 }
 
 type FicheBeneficiaireProps = {
-  jeune: DetailJeune
+  jeune: DetailBeneficiaire
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
   actionsInitiales: {

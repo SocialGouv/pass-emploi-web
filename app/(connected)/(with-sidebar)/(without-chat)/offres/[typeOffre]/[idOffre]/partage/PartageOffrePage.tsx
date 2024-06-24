@@ -17,7 +17,7 @@ import Label from 'components/ui/Form/Label'
 import Textarea from 'components/ui/Form/Textarea'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { ValueWithError } from 'components/ValueWithError'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
@@ -56,7 +56,7 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({
       id: jeune.id,
-      value: getNomJeuneComplet(jeune),
+      value: getNomBeneficiaireComplet(jeune),
     }))
   }
 

@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
 import { Conseiller } from 'interfaces/conseiller'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
@@ -20,8 +20,8 @@ export default function renderWithContexts(
   options: {
     customConseiller?: Partial<Conseiller>
     customPortefeuille?: Partial<{
-      value: BaseJeune[]
-      setter: (portefeuille: BaseJeune[]) => void
+      value: BaseBeneficiaire[]
+      setter: (portefeuille: BaseBeneficiaire[]) => void
     }>
     customCurrentJeune?: Partial<{
       id: string
@@ -88,8 +88,8 @@ function provideContexts(
   children: ReactNode,
   conseiller: Conseiller,
   portefeuille: Partial<{
-    value: BaseJeune[]
-    setter: (portefeuille: BaseJeune[]) => void
+    value: BaseBeneficiaire[]
+    setter: (portefeuille: BaseBeneficiaire[]) => void
   }>,
   currentJeune: Partial<{
     id: string

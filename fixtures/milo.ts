@@ -1,4 +1,4 @@
-import { DossierMilo } from 'interfaces/jeune'
+import { DossierMilo } from 'interfaces/beneficiaire'
 
 export const unDossierMilo = (
   overrides: Partial<DossierMilo> = {}

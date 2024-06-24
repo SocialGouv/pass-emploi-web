@@ -25,7 +25,7 @@ import {
 } from 'clients/firebase.client'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
-import { BaseJeune, Chat, JeuneChat } from 'interfaces/jeune'
+import { BaseBeneficiaire, Chat, BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   ByDay,
   ChatCredentials,
@@ -45,7 +45,7 @@ type FormNouveauMessage = {
 }
 
 export type FormNouveauMessageIndividuel = FormNouveauMessage & {
-  jeuneChat: JeuneChat
+  jeuneChat: BeneficiaireChat
 }
 export type FormNouveauMessageImportant = {
   newMessage: string
@@ -122,8 +122,8 @@ export async function toggleFlag(
 
 export async function observeConseillerChats(
   cleChiffrement: string,
-  jeunes: BaseJeune[],
-  updateChats: (chats: JeuneChat[]) => void
+  jeunes: BaseBeneficiaire[],
+  updateChats: (chats: BeneficiaireChat[]) => void
 ): Promise<() => void> {
   const session = await getSession()
   return findAndObserveChatsDuConseiller(
@@ -133,7 +133,7 @@ export async function observeConseillerChats(
         .filter((jeune) => Boolean(chats[jeune.id]))
         .map((jeune) => {
           const chat = chats[jeune.id]
-          const newJeuneChat: JeuneChat = {
+          const newJeuneChat: BeneficiaireChat = {
             ...jeune,
             ...chat,
             lastMessageContent: chat.lastMessageIv

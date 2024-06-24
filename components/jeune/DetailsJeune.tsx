@@ -9,7 +9,7 @@ import {
   estPoleEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { DetailJeune, IndicateursSemaine } from 'interfaces/jeune'
+import { DetailBeneficiaire, IndicateursSemaine } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -20,7 +20,7 @@ const UpdateIdentifiantPartenaireModal = dynamic(
 )
 
 interface DetailsJeuneProps {
-  jeune: DetailJeune
+  jeune: DetailBeneficiaire
   conseiller: Conseiller
   indicateursSemaine: IndicateursSemaine | undefined
 }

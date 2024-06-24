@@ -19,7 +19,10 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { estMilo, estSuperviseur } from 'interfaces/conseiller'
-import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
+import {
+  getNomBeneficiaireComplet,
+  BeneficiaireEtablissement,
+} from 'interfaces/beneficiaire'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -36,7 +39,7 @@ function EtablissementPage() {
 
   const [recherche, setRecherche] = useState<string>()
   const [resultatsRecherche, setResultatsRecherche] =
-    useState<JeuneEtablissement[]>()
+    useState<BeneficiaireEtablissement[]>()
   const [metadonnees, setMetadonnees] = useState<MetadonneesPagination>()
   const [pageCourante, setPageCourante] = useState<number>()
 
@@ -134,10 +137,11 @@ function EtablissementPage() {
                   key={jeune.base.id}
                   href={'etablissement/beneficiaires/' + jeune.base.id}
                   linkLabel={
-                    'Accéder à la fiche de ' + getNomJeuneComplet(jeune.base)
+                    'Accéder à la fiche de ' +
+                    getNomBeneficiaireComplet(jeune.base)
                   }
                 >
-                  <TD isBold>{getNomJeuneComplet(jeune.base)}</TD>
+                  <TD isBold>{getNomBeneficiaireComplet(jeune.base)}</TD>
                   {conseillerEstMilo && (
                     <TD>
                       {jeune.situation && (

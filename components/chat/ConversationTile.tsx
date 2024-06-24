@@ -5,12 +5,12 @@ import IconCheckbox from 'components/ui/Form/IconCheckbox'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import { UserType } from 'interfaces/conseiller'
-import { JeuneChat } from 'interfaces/jeune'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import { toRelativeDateTime } from 'utils/date'
 
 interface ConversationTileProps {
   id: string
-  jeuneChat: JeuneChat
+  jeuneChat: BeneficiaireChat
   onClick: () => void
   onToggleFlag: (flagged: boolean) => void
 }

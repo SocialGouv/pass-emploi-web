@@ -7,7 +7,7 @@ import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
 import HeaderListeListesDeDiffusion from 'components/messagerie/HeaderListeListesDeDiffusion'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
@@ -16,7 +16,7 @@ import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSele
 import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 
 type ChatContainerProps = {
-  jeunesChats: JeuneChat[] | undefined
+  jeunesChats: BeneficiaireChat[] | undefined
   menuState: [boolean, Dispatch<SetStateAction<boolean>>]
   messagerieFullScreen?: boolean
 }
@@ -27,7 +27,7 @@ export default function ChatContainer({
   messagerieFullScreen,
 }: ChatContainerProps) {
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
-  const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
+  const [currentChat, setCurrentChat] = useState<BeneficiaireChat | undefined>(
     undefined
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])

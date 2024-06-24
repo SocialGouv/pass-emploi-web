@@ -23,7 +23,7 @@ import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { InfoFichier } from 'interfaces/fichier'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FormNouveauMessageGroupe } from 'services/messages.service'
@@ -75,7 +75,7 @@ function EnvoiMessageGroupePage({
   function buildOptionsJeunes(): OptionBeneficiaire[] {
     return portefeuille.map((jeune) => ({
       id: jeune.id,
-      value: getNomJeuneComplet(jeune),
+      value: getNomBeneficiaireComplet(jeune),
     }))
   }
 

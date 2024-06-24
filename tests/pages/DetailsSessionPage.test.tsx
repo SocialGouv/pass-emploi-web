@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
-import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
+import { CategorieSituation, BeneficiaireEtablissement } from 'interfaces/beneficiaire'
 import { Session } from 'interfaces/session'
 import {
   changerInscriptionsSession,
@@ -24,7 +24,7 @@ jest.mock('services/sessions.service')
 describe('Détails Session Page Client', () => {
   describe('contenu', () => {
     let session: Session
-    let beneficiaires: JeuneEtablissement[]
+    let beneficiaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       session = unDetailSession()
@@ -134,7 +134,7 @@ describe('Détails Session Page Client', () => {
     let sessionVisible: Session
     let sessionInvisible: Session
     let toggleVisibiliteSession: HTMLInputElement
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       sessionVisible = unDetailSession()
@@ -240,7 +240,7 @@ describe('Détails Session Page Client', () => {
 
   describe('permet de gérer la liste des inscrits', () => {
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       beneficaires = [
@@ -459,7 +459,7 @@ describe('Détails Session Page Client', () => {
 
   describe('si la date limite d’inscription est dépassée', () => {
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       beneficaires = [
@@ -524,7 +524,7 @@ describe('Détails Session Page Client', () => {
 
   describe('si la date de début est dépassée', () => {
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       beneficaires = [
@@ -611,7 +611,7 @@ describe('Détails Session Page Client', () => {
 
   describe('permet de désinscrire un bénéficiaire', () => {
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       beneficaires = [
@@ -800,7 +800,7 @@ describe('Détails Session Page Client', () => {
   describe('permet de réinscrire un bénéficiaire', () => {
     //Given
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
 
     beforeEach(async () => {
       session = unDetailSession({
@@ -911,7 +911,7 @@ describe('Détails Session Page Client', () => {
     describe('quand la session est à venir', () => {
       it("n'affiche pas le lien Clore", async () => {
         let session: Session
-        let beneficairesEtablissement: JeuneEtablissement[]
+        let beneficairesEtablissement: BeneficiaireEtablissement[]
         // Given
         beneficairesEtablissement = [
           {
@@ -951,7 +951,7 @@ describe('Détails Session Page Client', () => {
 
     describe('quand la session est passée et non close', () => {
       let session: Session
-      let beneficaires: JeuneEtablissement[]
+      let beneficaires: BeneficiaireEtablissement[]
       beforeEach(async () => {
         // Given
         beneficaires = [

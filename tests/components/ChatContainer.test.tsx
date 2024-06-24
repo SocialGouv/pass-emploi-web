@@ -5,7 +5,11 @@ import React from 'react'
 import ChatContainer from 'components/chat/ChatContainer'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import {
+  BaseBeneficiaire,
+  ConseillerHistorique,
+  BeneficiaireChat,
+} from 'interfaces/beneficiaire'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
 import { getMessageImportant } from 'services/messages.service'
@@ -16,13 +20,15 @@ jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/chat/ConversationBeneficiaire', () =>
   // eslint-disable-next-line react/display-name
-  ({ jeuneChat }: { jeuneChat: JeuneChat }) => <>conversation-{jeuneChat.id}</>
+  ({ jeuneChat }: { jeuneChat: BeneficiaireChat }) => (
+    <>conversation-{jeuneChat.id}</>
+  )
 )
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 
 describe('<ChatContainer />', () => {
-  const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
-  let jeunesChats: JeuneChat[]
+  const jeunes: BaseBeneficiaire[] = desItemsJeunes().map(extractBaseJeune)
+  let jeunesChats: BeneficiaireChat[]
 
   let conseillers: ConseillerHistorique[]
   beforeEach(async () => {

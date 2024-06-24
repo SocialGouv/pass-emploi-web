@@ -6,7 +6,7 @@ import Informations, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/page'
 import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
-import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
+import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,

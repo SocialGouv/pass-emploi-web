@@ -3,7 +3,7 @@ import React, { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { Chat } from 'interfaces/jeune'
+import { Chat } from 'interfaces/beneficiaire'
 import { fromConseiller, Message } from 'interfaces/message'
 import {
   getMessagesDuMemeJour,

@@ -6,7 +6,7 @@ import LayoutWhenConnected from 'app/(connected)/layout'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
 import { Conseiller } from 'interfaces/conseiller'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
@@ -24,7 +24,7 @@ jest.mock('utils/portefeuilleContext')
 
 describe('LayoutWhenConnected', () => {
   let conseiller: Conseiller
-  let portefeuille: JeuneFromListe[]
+  let portefeuille: BeneficiaireFromListe[]
 
   it('assure que l’utilisateur est connecté', async () => {
     // Given

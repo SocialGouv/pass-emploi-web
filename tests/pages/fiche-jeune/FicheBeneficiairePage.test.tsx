@@ -12,7 +12,7 @@ import {
 } from 'fixtures/jeune'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'

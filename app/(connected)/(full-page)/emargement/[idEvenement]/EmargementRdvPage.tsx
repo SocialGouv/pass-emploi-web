@@ -11,7 +11,7 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { Evenement } from 'interfaces/evenement'
-import { BaseJeune, compareJeunesByNom } from 'interfaces/jeune'
+import { BaseBeneficiaire, compareBeneficiairesByNom } from 'interfaces/beneficiaire'
 import { Session, StatutBeneficiaire } from 'interfaces/session'
 import { toFrenchDateTime } from 'utils/date'
 
@@ -22,7 +22,7 @@ type EmargementRdvPageProps = {
 
 function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
   const isSession = assertIsSession(evenement)
-  const inscriptions: Array<BaseJeune> = isSession
+  const inscriptions: Array<BaseBeneficiaire> = isSession
     ? evenement.inscriptions
         .filter(
           (beneficiaire) => beneficiaire.statut === StatutBeneficiaire.INSCRIT
@@ -32,14 +32,14 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
           nom: b.nom,
           prenom: b.prenom,
         }))
-        .sort(compareJeunesByNom)
+        .sort(compareBeneficiairesByNom)
     : evenement.jeunes
         .map((b) => ({
           id: b.id,
           nom: b.nom,
           prenom: b.prenom,
         }))
-        .sort(compareJeunesByNom)
+        .sort(compareBeneficiairesByNom)
 
   useEffect(() => {
     window.print()

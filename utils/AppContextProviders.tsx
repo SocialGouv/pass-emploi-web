@@ -6,7 +6,10 @@ import React, { ReactNode } from 'react'
 
 import { extractBaseJeune } from 'fixtures/jeune'
 import { Conseiller } from 'interfaces/conseiller'
-import { compareJeunesByNom, JeuneFromListe } from 'interfaces/jeune'
+import {
+  compareBeneficiairesByNom,
+  BeneficiaireFromListe,
+} from 'interfaces/beneficiaire'
 import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -23,13 +26,13 @@ export default function AppContextProviders({
   children,
 }: {
   conseiller: Conseiller
-  portefeuille: JeuneFromListe[]
+  portefeuille: BeneficiaireFromListe[]
   theme: 'cej' | 'pass-emploi'
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille
     .map(extractBaseJeune)
-    .sort(compareJeunesByNom)
+    .sort(compareBeneficiairesByNom)
 
   apm.setUserContext({
     id: conseiller.id,

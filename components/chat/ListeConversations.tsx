@@ -8,10 +8,10 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { JeuneChat } from 'interfaces/jeune'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 
 interface ListeConversationsProps {
-  conversations: JeuneChat[] | undefined
+  conversations: BeneficiaireChat[] | undefined
   onToggleFlag: (idChat: string, flagged: boolean) => void
   onSelectConversation: (idChat: string) => void
 }
@@ -56,7 +56,7 @@ export default function ListeConversations({
         {conversations && conversations.length > 0 && (
           <>
             <ul className='px-4 pb-24'>
-              {conversations.map((jeuneChat: JeuneChat) => (
+              {conversations.map((jeuneChat: BeneficiaireChat) => (
                 <li key={`chat-${jeuneChat.id}`} className='mb-2'>
                   <ConversationTile
                     jeuneChat={jeuneChat}

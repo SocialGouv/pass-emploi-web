@@ -6,9 +6,9 @@ import { PageHeaderPortal } from 'components/PageNavigationPortals'
 import { TotalActions } from 'interfaces/action'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
-  compareJeunesByNom,
-  JeuneAvecNbActionsNonTerminees,
-} from 'interfaces/jeune'
+  compareBeneficiairesByNom,
+  BeneficiaireAvecNbActionsNonTerminees,
+} from 'interfaces/beneficiaire'
 import { countActionsJeunes } from 'services/actions.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -24,7 +24,7 @@ export default async function Portefeuille({
   const { user, accessToken } = await getMandatorySessionServerSide()
   const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
 
-  let jeunesAvecNbActionsNonTerminees: JeuneAvecNbActionsNonTerminees[]
+  let jeunesAvecNbActionsNonTerminees: BeneficiaireAvecNbActionsNonTerminees[]
   if (estUserPoleEmploi(user)) {
     jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
       ...jeune,
@@ -48,7 +48,7 @@ export default async function Portefeuille({
     })
   }
 
-  jeunesAvecNbActionsNonTerminees.sort(compareJeunesByNom)
+  jeunesAvecNbActionsNonTerminees.sort(compareBeneficiairesByNom)
   return (
     <>
       <PageHeaderPortal header='Portefeuille' />

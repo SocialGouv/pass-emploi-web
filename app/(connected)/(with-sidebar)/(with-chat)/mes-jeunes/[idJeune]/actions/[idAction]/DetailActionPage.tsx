@@ -19,7 +19,7 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Action, Commentaire, StatutAction } from 'interfaces/action'
 import { estMilo, UserType } from 'interfaces/conseiller'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -29,7 +29,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type DetailActionProps = {
   action: Action
-  jeune: BaseJeune
+  jeune: BaseBeneficiaire
   lectureSeule: boolean
   commentaires: Commentaire[]
   from: 'pilotage' | 'beneficiaire'

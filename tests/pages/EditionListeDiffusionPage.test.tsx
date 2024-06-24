@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import EditionListeDiffusionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes-de-diffusion/edition-liste/EditionListeDiffusionPage'
 import { desItemsJeunes } from 'fixtures/jeune'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import { BaseBeneficiaire, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import {
@@ -20,7 +20,7 @@ jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('Page d’édition d’une liste de diffusion', () => {
-  let beneficiaires: BaseJeune[]
+  let beneficiaires: BaseBeneficiaire[]
 
   let alerteSetter: (alert: AlerteParam | undefined) => void
   let routerPush: jest.Mock
@@ -120,11 +120,11 @@ describe('Page d’édition d’une liste de diffusion', () => {
         await userEvent.type(titreInput, 'Liste métiers aéronautique')
         await userEvent.type(
           destinatairesSelect,
-          getNomJeuneComplet(beneficiaires[0])
+          getNomBeneficiaireComplet(beneficiaires[0])
         )
         await userEvent.type(
           destinatairesSelect,
-          getNomJeuneComplet(beneficiaires[2])
+          getNomBeneficiaireComplet(beneficiaires[2])
         )
 
         // When
@@ -223,7 +223,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
     it('charge les bénéficiaires de la liste', () => {
       // Then
-      const jeune0Fullname = getNomJeuneComplet(beneficiaires[0])
+      const jeune0Fullname = getNomBeneficiaireComplet(beneficiaires[0])
       const jeune2Fullname = 'Chirac Jacques'
       expect(() =>
         screen.getByRole('option', {
@@ -291,7 +291,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
           screen.getByLabelText(
             /Recherchez et ajoutez un ou plusieurs bénéficiaires/
           ),
-          getNomJeuneComplet(beneficiaires[1])
+          getNomBeneficiaireComplet(beneficiaires[1])
         )
 
         // When

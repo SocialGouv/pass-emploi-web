@@ -21,7 +21,7 @@ import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
-import { compareParId, getNomJeuneComplet } from 'interfaces/jeune'
+import { compareParId, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
@@ -101,7 +101,7 @@ function EditionListeDiffusionPage({
   function buildOptionsBeneficiaires(): OptionBeneficiaire[] {
     return portefeuille.map((beneficiaire) => ({
       id: beneficiaire.id,
-      value: getNomJeuneComplet(beneficiaire),
+      value: getNomBeneficiaireComplet(beneficiaire),
     }))
   }
 
@@ -109,7 +109,7 @@ function EditionListeDiffusionPage({
     return liste
       ? liste.beneficiaires.map((beneficiaire) => {
           return {
-            value: getNomJeuneComplet(beneficiaire),
+            value: getNomBeneficiaireComplet(beneficiaire),
             id: beneficiaire.id,
             avecIndication: !estUnBeneficiaireDuConseiller(beneficiaire.id),
           }

@@ -6,7 +6,7 @@ import React, { ReactElement } from 'react'
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
 import { desMessagesParJour, unMessage } from 'fixtures/message'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
 import { deleteFichier, uploadFichier } from 'services/fichiers.service'
 import {
@@ -27,7 +27,7 @@ jest.mock('services/messages.service')
 jest.mock('services/fichiers.service')
 
 describe('<ConversationBeneficiaire />', () => {
-  let jeuneChat: JeuneChat
+  let jeuneChat: BeneficiaireChat
 
   let conseillersJeunes: ConseillerHistorique[]
   let rerender: (children: ReactElement) => void

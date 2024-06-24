@@ -31,7 +31,11 @@ import {
   Evenement,
   TYPE_EVENEMENT,
 } from 'interfaces/evenement'
-import { BaseJeune, compareParId, getNomJeuneComplet } from 'interfaces/jeune'
+import {
+  BaseBeneficiaire,
+  compareParId,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
@@ -40,7 +44,7 @@ import { dateIsInInterval, toShortDate } from 'utils/date'
 
 interface EditionRdvFormProps {
   conseiller: Conseiller
-  jeunesConseiller: BaseJeune[]
+  jeunesConseiller: BaseBeneficiaire[]
   typesRendezVous: TypeEvenementReferentiel[]
   redirectTo: string
   conseillerIsCreator: boolean
@@ -52,7 +56,7 @@ interface EditionRdvFormProps {
   onChanges: (hasChanges: boolean) => void
   soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   showConfirmationModal: (payload: EvenementFormData) => void
-  recupererJeunesDeLEtablissement: () => Promise<BaseJeune[]>
+  recupererJeunesDeLEtablissement: () => Promise<BaseBeneficiaire[]>
   onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
 }
 
@@ -74,9 +78,9 @@ export function EditionRdvForm({
   lectureSeule,
 }: EditionRdvFormProps) {
   const defaultJeunes = initJeunesFromRdvOrIdJeune()
-  const [jeunesEtablissement, setJeunesEtablissement] = useState<BaseJeune[]>(
-    []
-  )
+  const [jeunesEtablissement, setJeunesEtablissement] = useState<
+    BaseBeneficiaire[]
+  >([])
   const [idsJeunes, setIdsJeunes] = useState<ValueWithError<string[]>>({
     value: defaultJeunes.map(({ id }) => id),
   })
@@ -160,14 +164,14 @@ export function EditionRdvForm({
     if (!evenementTypeAC) {
       return jeunesConseiller.map((jeune) => ({
         id: jeune.id,
-        value: getNomJeuneComplet(jeune),
+        value: getNomBeneficiaireComplet(jeune),
         avecIndication: false,
       }))
     }
 
     return jeunesEtablissement.map((jeune) => ({
       id: jeune.id,
-      value: getNomJeuneComplet(jeune),
+      value: getNomBeneficiaireComplet(jeune),
       avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
     }))
   }
@@ -176,7 +180,7 @@ export function EditionRdvForm({
     if (evenement && estClos(evenement)) {
       return evenement.jeunes.map((jeune) => ({
         id: jeune.id,
-        value: getNomJeuneComplet(jeune),
+        value: getNomBeneficiaireComplet(jeune),
         avecIndication: jeune.futPresent,
       }))
     }
@@ -184,7 +188,7 @@ export function EditionRdvForm({
     if (evenement) {
       return evenement.jeunes.map((jeune) => ({
         id: jeune.id,
-        value: getNomJeuneComplet(jeune),
+        value: getNomBeneficiaireComplet(jeune),
         avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
       }))
     }
@@ -194,7 +198,7 @@ export function EditionRdvForm({
       return [
         {
           id: jeune.id,
-          value: getNomJeuneComplet(jeune),
+          value: getNomBeneficiaireComplet(jeune),
           avecIndication: false,
         },
       ]

@@ -3,7 +3,7 @@ import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { JeuneChat } from 'interfaces/jeune'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import { observeConseillerChats } from 'services/messages.service'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -19,7 +19,7 @@ global.Audio = class FakeAudio {
 }
 
 describe('ChatsProvider', () => {
-  let updateChatsRef: (chats: JeuneChat[]) => void
+  let updateChatsRef: (chats: BeneficiaireChat[]) => void
   const portefeuille = desItemsJeunes().map(extractBaseJeune)
   const conversations = [
     unJeuneChat({
