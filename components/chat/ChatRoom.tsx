@@ -7,7 +7,7 @@ import { MessagerieCachee } from 'components/chat/MessagerieCachee'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { JeuneChat } from 'interfaces/jeune'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
   FormNouveauMessageImportant,
@@ -25,7 +25,7 @@ const MessageImportantModal = dynamic(
 )
 
 interface ChatRoomProps {
-  jeunesChats: JeuneChat[] | undefined
+  jeunesChats: BeneficiaireChat[] | undefined
   showMenu: boolean
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
@@ -43,7 +43,7 @@ export default function ChatRoom({
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
 
-  const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
+  const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
   const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<

@@ -8,11 +8,11 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
 interface OngletRdvsBeneficiaireProps {
   rdvs: EvenementListItem[]
-  beneficiaire: BaseJeune
+  beneficiaire: BaseBeneficiaire
   conseiller: Conseiller
   erreurSessions?: boolean
 }

@@ -4,7 +4,7 @@ import React from 'react'
 
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
+import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 
 interface BlocSituationProps {
   idJeune: string

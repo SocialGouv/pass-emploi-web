@@ -11,7 +11,7 @@ import {
   StatutAction,
   TotalActions,
 } from 'interfaces/action'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import {
   ActionFormData,
   ActionJson,
@@ -35,7 +35,8 @@ export async function getAction(
   idAction: string,
   accessToken: string
 ): Promise<
-  { action: Action; jeune: BaseJeune & { idConseiller: string } } | undefined
+  | { action: Action; jeune: BaseBeneficiaire & { idConseiller: string } }
+  | undefined
 > {
   try {
     const {

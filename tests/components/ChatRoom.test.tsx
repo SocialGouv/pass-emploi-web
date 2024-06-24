@@ -7,7 +7,7 @@ import ChatRoom from 'components/chat/ChatRoom'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { unConseiller } from 'fixtures/conseiller'
 import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { BaseJeune, JeuneChat } from 'interfaces/jeune'
+import { BaseBeneficiaire, BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
   getMessageImportant,
@@ -21,8 +21,8 @@ jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/Modal')
 
 describe('<ChatRoom />', () => {
-  const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
-  let jeunesChats: JeuneChat[]
+  const jeunes: BaseBeneficiaire[] = desItemsJeunes().map(extractBaseJeune)
+  let jeunesChats: BeneficiaireChat[]
 
   beforeEach(async () => {
     jeunesChats = [

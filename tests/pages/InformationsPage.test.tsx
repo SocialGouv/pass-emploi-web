@@ -16,9 +16,9 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
-  DetailJeune,
+  DetailBeneficiaire,
   EtatSituation,
-} from 'interfaces/jeune'
+} from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -240,7 +240,7 @@ async function renderHistorique(
   }>,
   conseillers: ConseillerHistorique[],
   structure: StructureConseiller,
-  beneficiaire: DetailJeune
+  beneficiaire: DetailBeneficiaire
 ) {
   const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
   jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)

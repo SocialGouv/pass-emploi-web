@@ -7,7 +7,7 @@ import DetailActionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeu
 import { unCommentaire, uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { deleteAction, modifierAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -20,7 +20,7 @@ describe('ActionPage client side', () => {
   let routerPush: Function
   const action = uneAction()
   const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
-  const jeune: BaseJeune & { idConseiller: string } = {
+  const jeune: BaseBeneficiaire & { idConseiller: string } = {
     id: 'jeune-1',
     prenom: 'Nadia',
     nom: 'Sanfamiye',
@@ -157,7 +157,7 @@ describe('ActionPage client side', () => {
       const actionAQualifier = uneAction({
         status: StatutAction.Terminee,
       })
-      const jeune: BaseJeune & { idConseiller: string } = {
+      const jeune: BaseBeneficiaire & { idConseiller: string } = {
         id: 'jeune-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',
@@ -231,7 +231,7 @@ describe('ActionPage client side', () => {
       const actionAQualifier = uneAction({
         status: StatutAction.Terminee,
       })
-      const jeune: BaseJeune & { idConseiller: string } = {
+      const jeune: BaseBeneficiaire & { idConseiller: string } = {
         id: 'jeune-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',
@@ -271,7 +271,7 @@ describe('ActionPage client side', () => {
           isSituationNonProfessionnelle: true,
         },
       })
-      const jeune: BaseJeune & { idConseiller: string } = {
+      const jeune: BaseBeneficiaire & { idConseiller: string } = {
         id: 'jeune-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',
@@ -320,7 +320,7 @@ describe('ActionPage client side', () => {
           isSituationNonProfessionnelle: false,
         },
       })
-      const jeune: BaseJeune & { idConseiller: string } = {
+      const jeune: BaseBeneficiaire & { idConseiller: string } = {
         id: 'jeune-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',

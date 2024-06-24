@@ -13,15 +13,15 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import {
-  compareJeuneByLastActivity,
-  compareJeuneByLastActivityDesc,
-  compareJeunesByLastNameDesc,
-  compareJeunesByNom,
-  compareJeunesBySituation,
-  compareJeunesBySituationDesc,
-  getNomJeuneComplet,
-  JeuneAvecInfosComplementaires,
-} from 'interfaces/jeune'
+  compareBeneficiairesByLastActivity,
+  compareBeneficiairesByLastActivityDesc,
+  compareBeneficiairesByLastNameDesc,
+  compareBeneficiairesByNom,
+  compareBeneficiairesBySituation,
+  compareBeneficiairesBySituationDesc,
+  getNomBeneficiaireComplet,
+  BeneficiaireAvecInfosComplementaires,
+} from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toRelativeDateTime } from 'utils/date'
@@ -35,7 +35,7 @@ enum SortColumn {
 }
 
 interface TableauJeunesProps {
-  jeunesFiltres: JeuneAvecInfosComplementaires[]
+  jeunesFiltres: BeneficiaireAvecInfosComplementaires[]
   totalJeunes: number
   withActions: boolean
 }
@@ -47,7 +47,7 @@ export default function TableauJeunes({
 }: TableauJeunesProps) {
   const [conseiller] = useConseiller()
   const [sortedJeunes, setSortedJeunes] =
-    useState<JeuneAvecInfosComplementaires[]>(jeunesFiltres)
+    useState<BeneficiaireAvecInfosComplementaires[]>(jeunesFiltres)
   const [currentSortedColumn, setCurrentSortedColumn] = useState<SortColumn>(
     SortColumn.NOM
   )
@@ -56,7 +56,7 @@ export default function TableauJeunes({
   const nombrePagesJeunes = Math.ceil(sortedJeunes.length / 10)
   const [pageJeunes, setPageJeunes] = useState<number>(1)
   const [jeunesAffiches, setJeunesAffiches] = useState<
-    JeuneAvecInfosComplementaires[]
+    BeneficiaireAvecInfosComplementaires[]
   >([])
 
   const isName = currentSortedColumn === SortColumn.NOM
@@ -75,25 +75,29 @@ export default function TableauJeunes({
 
   useEffect(() => {
     function compareJeunes(
-      jeune1: JeuneAvecInfosComplementaires,
-      jeune2: JeuneAvecInfosComplementaires
+      jeune1: BeneficiaireAvecInfosComplementaires,
+      jeune2: BeneficiaireAvecInfosComplementaires
     ): number {
       switch (currentSortedColumn) {
         case SortColumn.NOM:
           return sortDesc
-            ? compareJeunesByLastNameDesc(jeune1, jeune2)
-            : compareJeunesByNom(jeune1, jeune2)
+            ? compareBeneficiairesByLastNameDesc(jeune1, jeune2)
+            : compareBeneficiairesByNom(jeune1, jeune2)
         case SortColumn.SITUATION:
           return sortDesc
-            ? compareJeunesBySituationDesc(jeune1, jeune2)
-            : compareJeunesBySituation(jeune1, jeune2)
+            ? compareBeneficiairesBySituationDesc(jeune1, jeune2)
+            : compareBeneficiairesBySituation(jeune1, jeune2)
         case SortColumn.DERNIERE_ACTIVITE:
           const sortStatutCompteActif =
             Number(jeune1.isActivated) - Number(jeune2.isActivated)
 
           return sortDesc
-            ? compareJeuneByLastActivity(jeune1, jeune2, sortStatutCompteActif)
-            : compareJeuneByLastActivityDesc(
+            ? compareBeneficiairesByLastActivity(
+                jeune1,
+                jeune2,
+                sortStatutCompteActif
+              )
+            : compareBeneficiairesByLastActivityDesc(
                 jeune1,
                 jeune2,
                 sortStatutCompteActif
@@ -158,7 +162,7 @@ export default function TableauJeunes({
   const columnHeaderButtonStyle =
     'flex border-none items-center align-top w-full h-full p-4'
 
-  function getRowLabel(jeune: JeuneAvecInfosComplementaires) {
+  function getRowLabel(jeune: BeneficiaireAvecInfosComplementaires) {
     const labelFiche = `Accéder à la fiche de ${jeune.prenom} ${jeune.nom}`
     const labelActivite = jeune.isActivated
       ? `dernière activité ${toRelativeDateTime(jeune.lastActivity!)}`
@@ -274,93 +278,95 @@ export default function TableauJeunes({
             </THead>
 
             <TBody>
-              {jeunesAffiches.map((jeune: JeuneAvecInfosComplementaires) => (
-                <TR
-                  key={jeune.id}
-                  href={`/mes-jeunes/${jeune.id}`}
-                  linkLabel={getRowLabel(jeune)}
-                >
-                  <TD isBold className='rounded-l-base'>
-                    <span className='flex items-baseline'>
-                      {jeune.structureMilo?.id ===
-                        conseiller.structureMilo?.id &&
-                        jeune.isReaffectationTemporaire && (
+              {jeunesAffiches.map(
+                (jeune: BeneficiaireAvecInfosComplementaires) => (
+                  <TR
+                    key={jeune.id}
+                    href={`/mes-jeunes/${jeune.id}`}
+                    linkLabel={getRowLabel(jeune)}
+                  >
+                    <TD isBold className='rounded-l-base'>
+                      <span className='flex items-baseline'>
+                        {jeune.structureMilo?.id ===
+                          conseiller.structureMilo?.id &&
+                          jeune.isReaffectationTemporaire && (
+                            <span
+                              aria-label='bénéficiaire temporaire'
+                              className='self-center mr-2'
+                            >
+                              <IconComponent
+                                name={IconName.Schedule}
+                                aria-hidden={true}
+                                focusable={false}
+                                className='w-4 h-4'
+                                title='bénéficiaire temporaire'
+                              />
+                            </span>
+                          )}
+                        {jeune.structureMilo?.id !==
+                          conseiller.structureMilo?.id && (
                           <span
-                            aria-label='bénéficiaire temporaire'
                             className='self-center mr-2'
+                            aria-label='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                           >
                             <IconComponent
-                              name={IconName.Schedule}
+                              name={IconName.Error}
                               aria-hidden={true}
                               focusable={false}
-                              className='w-4 h-4'
-                              title='bénéficiaire temporaire'
+                              className='w-4 h-4 fill-warning'
+                              title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                             />
                           </span>
                         )}
-                      {jeune.structureMilo?.id !==
-                        conseiller.structureMilo?.id && (
-                        <span
-                          className='self-center mr-2'
-                          aria-label='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
-                        >
-                          <IconComponent
-                            name={IconName.Error}
-                            aria-hidden={true}
-                            focusable={false}
-                            className='w-4 h-4 fill-warning'
-                            title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
-                          />
-                        </span>
+                        {getNomBeneficiaireComplet(jeune)}
+                      </span>
+                    </TD>
+
+                    <TD>
+                      {jeune.isActivated &&
+                        toRelativeDateTime(jeune.lastActivity!)}
+                      {!jeune.isActivated && (
+                        <span className='text-warning'>Compte non activé</span>
                       )}
-                      {getNomJeuneComplet(jeune)}
-                    </span>
-                  </TD>
+                    </TD>
 
-                  <TD>
-                    {jeune.isActivated &&
-                      toRelativeDateTime(jeune.lastActivity!)}
-                    {!jeune.isActivated && (
-                      <span className='text-warning'>Compte non activé</span>
+                    {withActions && (
+                      <TD className='text-primary_darken'>
+                        <div className='mx-auto w-fit'>
+                          <Badge
+                            count={jeune.nbActionsNonTerminees}
+                            size={6}
+                            textColor={'white'}
+                            bgColor={'primary'}
+                          />
+                        </div>
+                      </TD>
                     )}
-                  </TD>
 
-                  {withActions && (
-                    <TD className='text-primary_darken'>
-                      <div className='mx-auto w-fit'>
-                        <Badge
-                          count={jeune.nbActionsNonTerminees}
-                          size={6}
-                          textColor={'white'}
-                          bgColor={'primary'}
+                    <TD className='rounded-r-base'>
+                      <div className='flex relative w-fit mx-auto'>
+                        <IconComponent
+                          name={IconName.Note}
+                          aria-hidden={true}
+                          focusable={false}
+                          className='w-6 h-6 fill-primary'
                         />
+                        {jeune.messagesNonLus > 0 && (
+                          <Badge
+                            count={jeune.messagesNonLus}
+                            size={4}
+                            bgColor={'accent_1_lighten'}
+                            textColor={'accent_1'}
+                            style={
+                              'absolute top-[-10px] left-[10px] flex justify-center items-center p-2.5 text-xs-medium'
+                            }
+                          />
+                        )}
                       </div>
                     </TD>
-                  )}
-
-                  <TD className='rounded-r-base'>
-                    <div className='flex relative w-fit mx-auto'>
-                      <IconComponent
-                        name={IconName.Note}
-                        aria-hidden={true}
-                        focusable={false}
-                        className='w-6 h-6 fill-primary'
-                      />
-                      {jeune.messagesNonLus > 0 && (
-                        <Badge
-                          count={jeune.messagesNonLus}
-                          size={4}
-                          bgColor={'accent_1_lighten'}
-                          textColor={'accent_1'}
-                          style={
-                            'absolute top-[-10px] left-[10px] flex justify-center items-center p-2.5 text-xs-medium'
-                          }
-                        />
-                      )}
-                    </div>
-                  </TD>
-                </TR>
-              ))}
+                  </TR>
+                )
+              )}
             </TBody>
           </Table>
 

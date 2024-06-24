@@ -14,7 +14,7 @@ import {
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { BaseJeune, DetailJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire, DetailBeneficiaire } from 'interfaces/beneficiaire'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
@@ -35,9 +35,9 @@ describe('Gestion du compte dans la fiche jeune', () => {
   let motifsSuppression: MotifSuppressionJeune[]
 
   let alerteSetter: jest.Mock
-  let portefeuilleSetter: (updatedBeneficiaires: BaseJeune[]) => void
+  let portefeuilleSetter: (updatedBeneficiaires: BaseBeneficiaire[]) => void
   let push: jest.Mock
-  let portefeuille: BaseJeune[]
+  let portefeuille: BaseBeneficiaire[]
 
   beforeEach(async () => {
     push = jest.fn()
@@ -269,8 +269,8 @@ describe('Gestion du compte dans la fiche jeune', () => {
 
 async function renderFicheJeune(
   structure: StructureConseiller,
-  jeune: DetailJeune,
-  portefeuilleSetter?: (updatedBeneficiaires: BaseJeune[]) => void,
+  jeune: DetailBeneficiaire,
+  portefeuilleSetter?: (updatedBeneficiaires: BaseBeneficiaire[]) => void,
   alerteSetter?: (key: AlerteParam | undefined, target?: string) => void
 ) {
   await act(async () => {

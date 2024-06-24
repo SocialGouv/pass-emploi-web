@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import CreationJeunePoleEmploiPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeunePoleEmploiPage'
 import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { createCompteJeunePoleEmploi } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -17,8 +17,8 @@ describe('CreationJeunePoleEmploiPage client side', () => {
 
   let push: Function
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  let portefeuilleSetter: (updatedBeneficiaires: BaseJeune[]) => void
-  let portefeuille: BaseJeune[]
+  let portefeuilleSetter: (updatedBeneficiaires: BaseBeneficiaire[]) => void
+  let portefeuille: BaseBeneficiaire[]
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     push = jest.fn(() => Promise.resolve())

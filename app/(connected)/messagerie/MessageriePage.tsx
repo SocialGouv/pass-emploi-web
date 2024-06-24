@@ -10,7 +10,7 @@ import MessagesListeDeDiffusion from 'components/chat/MessagesListeDeDiffusion'
 import { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -28,7 +28,7 @@ function MessageriePage() {
   const [listeSelectionnee, setListeSelectionnee] =
     useListeDeDiffusionSelectionnee()
 
-  const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>()
+  const [currentChat, setCurrentChat] = useState<BeneficiaireChat | undefined>()
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
   const [messageSelectionne, setMessageSelectionne] = useState<
     MessageListeDiffusion | undefined

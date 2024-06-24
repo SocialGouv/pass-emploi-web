@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import EnvoiMessageGroupePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
 import { desItemsJeunes } from 'fixtures/jeune'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { uploadFichier } from 'services/fichiers.service'
@@ -18,7 +18,7 @@ jest.mock('services/fichiers.service')
 jest.mock('services/messages.service')
 
 describe('EnvoiMessageGroupePage client side', () => {
-  let jeunes: JeuneFromListe[]
+  let jeunes: BeneficiaireFromListe[]
   let listesDeDiffusion: ListeDeDiffusion[]
 
   let inputSearchJeune: HTMLSelectElement

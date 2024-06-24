@@ -17,7 +17,7 @@ import {
   uneMetadonneeFavorisJson,
 } from 'fixtures/jeune'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { CategorieSituation } from 'interfaces/jeune'
+import { CategorieSituation } from 'interfaces/beneficiaire'
 import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
 import { MotifSuppressionJeune } from 'interfaces/referentiel'
 import {
