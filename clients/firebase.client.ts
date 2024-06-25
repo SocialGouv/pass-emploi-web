@@ -36,6 +36,7 @@ import {
   InfoOffre,
   Message,
   MessageListeDiffusion,
+  MessageRechercheMatch,
   TypeMessage,
 } from 'interfaces/message'
 import { BaseOffre, TypeOffre } from 'interfaces/offre'
@@ -470,27 +471,36 @@ export async function rechercherMessages(
   accessToken: string,
   idBeneficiaire: string,
   recherche: string
-): Promise<Message[]> {
+): Promise<
+  Array<{
+    message: Message
+    matches: MessageRechercheMatch[]
+  }>
+> {
   const {
     content: { resultats },
   } = await apiGet<{
     resultats: Array<{
       id: string
       message: FirebaseMessage & { creationDate: { _seconds: number } }
+      matches: MessageRechercheMatch[]
     }>
   }>(`/jeunes/${idBeneficiaire}/messages?recherche=${recherche}`, accessToken)
 
-  return resultats.map(({ message, id }) =>
-    firebaseMessageToMessage(
-      {
-        ...message,
-        creationDate: Timestamp.fromMillis(
-          message.creationDate._seconds * 1000
-        ),
-      },
-      id
-    )
-  )
+  return resultats.map(({ message, id, matches }) => {
+    return {
+      matches,
+      message: firebaseMessageToMessage(
+        {
+          ...message,
+          creationDate: Timestamp.fromMillis(
+            message.creationDate._seconds * 1000
+          ),
+        },
+        id
+      ),
+    }
+  })
 }
 
 export async function getMessagesPeriode(

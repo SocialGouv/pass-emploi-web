@@ -1,11 +1,18 @@
 import parse, { domToReact } from 'html-react-parser'
 import React from 'react'
 
+import { MessageRechercheMatch } from 'interfaces/message'
+
 type TexteAvecLienProps = {
   texte: string
   lighten?: boolean
+  highlight?: MessageRechercheMatch
 }
-export default function TexteAvecLien({ texte, lighten }: TexteAvecLienProps) {
+export default function TexteAvecLien({
+  texte,
+  lighten,
+  highlight,
+}: TexteAvecLienProps) {
   function confirmationRedirectionLienExterne(
     e: React.MouseEvent<HTMLAnchorElement>,
     lien: string
@@ -16,8 +23,8 @@ export default function TexteAvecLien({ texte, lighten }: TexteAvecLienProps) {
     }
   }
 
-  function formateTexteAvecLien() {
-    const messageFormate = texte
+  function formateTexteAvecLien(texteAFormater: string) {
+    const messageFormate = texteAFormater
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;')
       .split(/\r?\n|\s+/)
@@ -70,6 +77,24 @@ export default function TexteAvecLien({ texte, lighten }: TexteAvecLienProps) {
     return str.includes('http') || str.includes('https')
   }
 
-  if (!detecteLien(texte)) return <p className='whitespace-pre-wrap'>{texte}</p>
-  return <>{formateTexteAvecLien()}</>
+  function surlignerTexte(texteASurligner: string) {
+    const coordDebut = highlight!.match[0]
+    const coordFin = highlight!.match[1] + 1
+
+    const debut = texteASurligner.slice(0, coordDebut)
+    const highlightedText = texteASurligner.slice(coordDebut, coordFin)
+    const fin = texteASurligner.slice(coordFin)
+
+    return `${debut}<mark>${highlightedText}</mark>${fin}`
+  }
+
+  let texteAAfficher = texte
+
+  if (highlight) {
+    texteAAfficher = surlignerTexte(texteAAfficher)
+  }
+
+  if (!detecteLien(texteAAfficher))
+    return parse(`<p className='whitespace-pre-wrap'>${texteAAfficher}</p>`)
+  return <>{formateTexteAvecLien(texteAAfficher)}</>
 }

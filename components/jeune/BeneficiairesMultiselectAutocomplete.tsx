@@ -1,11 +1,7 @@
 import React, { useRef, useState } from 'react'
 
-import { estClos, Evenement } from '../../interfaces/evenement'
-import { getNomJeuneComplet } from '../../interfaces/jeune'
-import { ButtonStyle } from '../ui/Button/Button'
-import ButtonLink from '../ui/Button/ButtonLink'
-import { ValueWithError } from '../ValueWithError'
-
+import { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'

@@ -11,8 +11,8 @@ export const unConseiller = (
     notificationsSonores: false,
     aDesBeneficiairesARecuperer: false,
     estSuperviseur: false,
-    estSuperviseurPEBRSA: false,
-    structure: StructureConseiller.PASS_EMPLOI,
+    estSuperviseurResponsable: false,
+    structure: StructureConseiller.MILO,
     dateSignatureCGU: '2023-10-03T00:00:00.000+02:00',
   }
   return { ...defaults, ...overrides }

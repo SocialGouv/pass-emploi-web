@@ -33,6 +33,7 @@ export async function getConseillers(
   structure?:
     | StructureConseiller.POLE_EMPLOI
     | StructureConseiller.POLE_EMPLOI_BRSA
+    | StructureConseiller.POLE_EMPLOI_AIJ
 ): Promise<BaseConseiller[]> {
   const session = await getSession()
   let filtreStructure = ''

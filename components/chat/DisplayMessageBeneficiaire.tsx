@@ -7,12 +7,19 @@ import { LienPieceJointe } from 'components/chat/LienPieceJointe'
 import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
+import {
+  isDeleted,
+  isEdited,
+  Message,
+  MessageRechercheMatch,
+  TypeMessage,
+} from 'interfaces/message'
 import { toFrenchTime, toLongMonthDate, toShortDate } from 'utils/date'
 
 type MessageBeneficiaireProps = {
   message: Message
   beneficiaireNomComplet: string
+  highlight?: MessageRechercheMatch
 }
 
 type ResultatRechercheProps = MessageBeneficiaireProps & {
@@ -45,11 +52,21 @@ export default function DisplayMessageBeneficiaire(
             {message.type === TypeMessage.MESSAGE_PJ &&
               message.infoPiecesJointes &&
               message.infoPiecesJointes.map((pj, key) => {
-                return <MessagePJ key={key} {...pj} />
+                return (
+                  <MessagePJ key={key} {...pj} highlight={props.highlight} />
+                )
               })}
 
             {message.type !== TypeMessage.MESSAGE_PJ && (
-              <TexteAvecLien texte={message.content} lighten={true} />
+              <TexteAvecLien
+                texte={message.content}
+                lighten={true}
+                highlight={
+                  props.highlight?.key === 'content'
+                    ? props.highlight
+                    : undefined
+                }
+              />
             )}
 
             {message.type === TypeMessage.MESSAGE_OFFRE &&
@@ -120,10 +137,12 @@ function MessagePJ({
   id,
   nom,
   statut,
+  highlight,
 }: {
   id: string
   nom: string
   statut?: string
+  highlight?: MessageRechercheMatch
 }) {
   switch (statut) {
     case 'valide':
@@ -134,7 +153,15 @@ function MessagePJ({
             Celle-ci sera conservée 4 mois. Enregistrez la dans i-milo pour la
             conserver de manière sécurisée.
           </p>
-          <LienPieceJointe key={id} id={id} nom={nom} className='fill-blanc' />
+          <LienPieceJointe
+            key={id}
+            id={id}
+            nom={nom}
+            className='fill-blanc'
+            highlight={
+              highlight?.key === 'piecesJointes.nom' ? highlight : undefined
+            }
+          />
         </>
       )
     case 'non_valide':

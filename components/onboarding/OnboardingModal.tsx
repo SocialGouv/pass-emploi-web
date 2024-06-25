@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import { ReactElement } from 'react'
 
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 
@@ -8,23 +9,21 @@ const OnboardingMILOModal = dynamic(
 const OnboardingPEModal = dynamic(
   () => import('components/onboarding/OnboardingPEModal')
 )
-const OnboardingAVenirModal = dynamic(
-  () => import('components/onboarding/OnboardingAVenirModal')
-)
 
 type OnboardingModalProps = {
   conseiller: Conseiller
   onClose: () => void
 }
-export default function OnboardingModal(props: OnboardingModalProps) {
+export default function OnboardingModal(
+  props: OnboardingModalProps
+): ReactElement {
   switch (props.conseiller.structure) {
     case StructureConseiller.POLE_EMPLOI:
       return <OnboardingPEModal {...props} />
     case StructureConseiller.POLE_EMPLOI_BRSA:
-      return <OnboardingPEModal {...props} estBRSA={true} />
+    case StructureConseiller.POLE_EMPLOI_AIJ:
+      return <OnboardingPEModal {...props} estPassEmploi={true} />
     case StructureConseiller.MILO:
       return <OnboardingMILOModal {...props} />
-    default:
-      return <OnboardingAVenirModal {...props} />
   }
 }

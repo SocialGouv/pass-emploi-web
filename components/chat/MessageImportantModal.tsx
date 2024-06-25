@@ -154,13 +154,12 @@ export default function MessageImportantModal({
             <div className='mt-4 flex flex-col justify-center'>
               <div className='flex gap-2 mb-4 items-end'>
                 <div className='w-1/2'>
+                  <Label htmlFor='date-debut'>Date de début</Label>
                   {dateDebut.error && (
-                    <InputError id='date-debut--error' className='my-2'>
+                    <InputError id='date-debut--error' className='mb-2'>
                       {dateDebut.error}
                     </InputError>
                   )}
-
-                  <Label htmlFor='date-debut'>Date de début</Label>
                   <Input
                     type='date'
                     id='date-debut'
@@ -172,13 +171,12 @@ export default function MessageImportantModal({
                   />
                 </div>
                 <div className='w-1/2'>
+                  <Label htmlFor='date-fin'>Date de fin</Label>
                   {dateFin.error && (
-                    <InputError id={'date-fin--error'} className='my-2'>
+                    <InputError id={'date-fin--error'} className='mb-2'>
                       {dateFin.error}
                     </InputError>
                   )}
-
-                  <Label htmlFor='date-fin'>Date de fin</Label>
                   <Input
                     type='date'
                     id='date-fin'
@@ -191,18 +189,17 @@ export default function MessageImportantModal({
                 </div>
               </div>
 
-              {message.error && (
-                <InputError id={'message--error'} className='my-2'>
-                  {message.error}
-                </InputError>
-              )}
-
               <Label htmlFor='message-important'>
                 {{
                   main: 'Message',
                   helpText: '150 caractères maximum',
                 }}
               </Label>
+              {message.error && (
+                <InputError id={'message--error'} className='mb-2'>
+                  {message.error}
+                </InputError>
+              )}
               <Textarea
                 id='message-important'
                 maxLength={150}
@@ -210,6 +207,7 @@ export default function MessageImportantModal({
                 onChange={(value: string) => setMessage({ value: value })}
                 onBlur={validerTexte}
                 defaultValue={message.value ?? ''}
+                invalid={Boolean(message.error)}
               />
 
               <div className='flex justify-center'>

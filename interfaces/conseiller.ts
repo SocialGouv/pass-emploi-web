@@ -4,8 +4,8 @@ import { Session } from 'next-auth'
 export enum StructureConseiller {
   MILO = 'MILO',
   POLE_EMPLOI = 'POLE_EMPLOI',
-  PASS_EMPLOI = 'PASS_EMPLOI',
   POLE_EMPLOI_BRSA = 'POLE_EMPLOI_BRSA',
+  POLE_EMPLOI_AIJ = 'POLE_EMPLOI_AIJ',
 }
 
 export enum UserType {
@@ -14,7 +14,7 @@ export enum UserType {
 
 export enum UserRole {
   SUPERVISEUR = 'SUPERVISEUR',
-  SUPERVISEUR_PE_BRSA = 'SUPERVISEUR_PE_BRSA',
+  SUPERVISEUR_RESPONSABLE = 'SUPERVISEUR_RESPONSABLE',
 }
 
 export type BaseConseiller = {
@@ -29,14 +29,10 @@ export interface Conseiller extends BaseConseiller {
   aDesBeneficiairesARecuperer: boolean
   structure: StructureConseiller
   estSuperviseur: boolean
-  estSuperviseurPEBRSA: boolean
+  estSuperviseurResponsable: boolean
   agence?: { nom: string; id?: string }
   structureMilo?: { id: string; nom: string }
   dateSignatureCGU?: string
-}
-
-export function estPassEmploi(conseiller: Conseiller): boolean {
-  return conseiller.structure === StructureConseiller.PASS_EMPLOI
 }
 
 export function estMilo(conseiller: Conseiller): boolean {
@@ -46,20 +42,27 @@ export function estMilo(conseiller: Conseiller): boolean {
 export function estPoleEmploi(conseiller: Conseiller): boolean {
   return (
     conseiller.structure === StructureConseiller.POLE_EMPLOI ||
-    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
+    estPassEmploi(conseiller)
   )
 }
 
-export function estPoleEmploiBRSA(conseiller: Conseiller): boolean {
+export function estBRSA(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA
+}
+
+export function estPassEmploi(conseiller: Conseiller): boolean {
+  return (
+    conseiller.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
+    conseiller.structure === StructureConseiller.POLE_EMPLOI_AIJ
+  )
 }
 
 export function estSuperviseur(conseiller: Conseiller): boolean {
   return conseiller.estSuperviseur
 }
 
-export function estSuperviseurPEBRSA(conseiller: Conseiller): boolean {
-  return conseiller.estSuperviseurPEBRSA
+export function estSuperviseurResponsable(conseiller: Conseiller): boolean {
+  return conseiller.estSuperviseurResponsable
 }
 
 export function estUserMilo(user: Session.HydratedUser): boolean {
@@ -69,7 +72,8 @@ export function estUserMilo(user: Session.HydratedUser): boolean {
 export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
   return (
     user.structure === StructureConseiller.POLE_EMPLOI ||
-    user.structure === StructureConseiller.POLE_EMPLOI_BRSA
+    user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
+    user.structure === StructureConseiller.POLE_EMPLOI_AIJ
   )
 }
 

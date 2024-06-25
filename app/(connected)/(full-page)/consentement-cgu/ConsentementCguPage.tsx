@@ -12,15 +12,15 @@ import Button from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { ValueWithError } from 'components/ValueWithError'
-import { estPoleEmploiBRSA } from 'interfaces/conseiller'
+import { estPassEmploi } from 'interfaces/conseiller'
 import { modifierDateSignatureCGU } from 'services/conseiller.service'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 
 const ContenuCGUConseillerCEJ = dynamic(
   () => import('components/ContenuCGUConseillerCEJ')
 )
-const ContenuCGUConseillerBRSA = dynamic(
-  () => import('components/ContenuCGUConseillerBRSA')
+const ContenuCGUConseillerPassEmploi = dynamic(
+  () => import('components/ContenuCGUConseillerPassEmploi')
 )
 
 type ConsentementCguProps = {
@@ -61,8 +61,8 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
       <HeaderCGU conseiller={conseiller} />
 
       <main role='main'>
-        {estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerBRSA />}
-        {!estPoleEmploiBRSA(conseiller) && <ContenuCGUConseillerCEJ />}
+        {estPassEmploi(conseiller) && <ContenuCGUConseillerPassEmploi />}
+        {!estPassEmploi(conseiller) && <ContenuCGUConseillerCEJ />}
 
         <form onSubmit={validerLesCGU} className='flex flex-col mt-10'>
           <div className='mb-10'>

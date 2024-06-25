@@ -3,10 +3,8 @@ import { MouseEvent, useRef } from 'react'
 import Modal from './Modal'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
-import { Conseiller, estPoleEmploiBRSA } from 'interfaces/conseiller'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 
 interface ConfirmationDeleteConseillerModalProps {
   onConfirmation: () => void
@@ -25,7 +23,18 @@ export default function ConfirmationDeleteConseillerModal({
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)
 
-  const labelStructure = !estPoleEmploiBRSA(conseiller) ? 'CEJ' : 'BRSA'
+  const labelStructure = ((): string => {
+    switch (conseiller.structure) {
+      case StructureConseiller.POLE_EMPLOI_BRSA:
+        return 'BRSA'
+      case StructureConseiller.POLE_EMPLOI_AIJ:
+        return 'AIJ'
+      case StructureConseiller.MILO:
+      case StructureConseiller.POLE_EMPLOI:
+        return 'CEJ'
+    }
+  })()
+
   const title = portefeuilleAvecBeneficiaires
     ? 'Pour supprimer votre compte, vos bénéficiaires doivent être transférés à un conseiller.'
     : `Souhaitez-vous supprimer le compte conseiller ${labelStructure}: ${conseiller.firstName} ${conseiller.lastName} ?`

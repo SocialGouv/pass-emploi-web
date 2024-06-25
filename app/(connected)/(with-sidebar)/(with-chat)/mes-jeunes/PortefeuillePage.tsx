@@ -5,11 +5,12 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { AjouterJeuneButton } from 'components/jeune/AjouterJeuneButton'
 import { RechercheJeune } from 'components/jeune/RechercheJeune'
 import TableauJeunes from 'components/jeune/TableauJeunes'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
@@ -149,7 +150,15 @@ function PortefeuillePage({
   return (
     <>
       <PageActionsPortal>
-        <AjouterJeuneButton structure={conseiller.structure} />
+        <ButtonLink href='/mes-jeunes/creation-jeune'>
+          <IconComponent
+            name={IconName.Add}
+            focusable={false}
+            aria-hidden={true}
+            className='mr-2 w-4 h-4'
+          />
+          Ajouter un bénéficiaire
+        </ButtonLink>
       </PageActionsPortal>
 
       {conseiller.aDesBeneficiairesARecuperer && (

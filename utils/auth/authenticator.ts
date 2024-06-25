@@ -61,8 +61,8 @@ async function hydrateJwtAtFirstSignin(
     structureConseiller: userStructure,
     estConseiller: userType === UserType.CONSEILLER,
     estSuperviseur: Boolean(userRoles?.includes(UserRole.SUPERVISEUR)),
-    estSuperviseurPEBRSA: Boolean(
-      userRoles?.includes(UserRole.SUPERVISEUR_PE_BRSA)
+    estSuperviseurResponsable: Boolean(
+      userRoles?.includes(UserRole.SUPERVISEUR_RESPONSABLE)
     ),
     expiresAtTimestamp: expiresAt,
   }

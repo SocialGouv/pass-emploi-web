@@ -9,7 +9,13 @@ import LienSessionMilo from 'components/chat/LienSessionMilo'
 import TexteAvecLien from 'components/chat/TexteAvecLien'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { isDeleted, isEdited, Message, TypeMessage } from 'interfaces/message'
+import {
+  isDeleted,
+  isEdited,
+  Message,
+  MessageRechercheMatch,
+  TypeMessage,
+} from 'interfaces/message'
 import {
   toFrenchDateTime,
   toFrenchTime,
@@ -21,6 +27,7 @@ type Base = {
   message: Message
   conseillerNomComplet: string | undefined
   isConseillerCourant: boolean
+  highlight?: MessageRechercheMatch
 }
 
 type ResultatRechercheProps = Base & {
@@ -124,7 +131,12 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
         {isConseillerCourant ? 'Vous' : conseillerNomComplet}
       </p>
 
-      <TexteAvecLien texte={message.content} />
+      <TexteAvecLien
+        texte={message.content}
+        highlight={
+          props.highlight?.key === 'content' ? props.highlight : undefined
+        }
+      />
 
       {message.type === TypeMessage.MESSAGE_OFFRE && message.infoOffre && (
         <LienOffre infoOffre={message.infoOffre} isSentByConseiller={true} />
@@ -155,6 +167,11 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
             id={id}
             nom={nom}
             className='fill-primary'
+            highlight={
+              props.highlight?.key === 'piecesJointes.nom'
+                ? props.highlight
+                : undefined
+            }
           />
         ))}
 

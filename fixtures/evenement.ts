@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 
 import { uneBaseJeune } from 'fixtures/jeune'
-import { StructureConseiller } from 'interfaces/conseiller'
 import {
   AnimationCollective,
   AnimationCollectivePilotage,
@@ -223,7 +222,7 @@ export function unEvenementJson(
         auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
       },
     ],
-    source: StructureConseiller.PASS_EMPLOI,
+    source: 'PASS_EMPLOI',
   }
 
   return { ...defaults, ...overrides }
@@ -272,7 +271,7 @@ export function unEvenementJeuneJson(
         auteur: { id: '2', nom: 'Lama', prenom: 'Serge' },
       },
     ],
-    source: StructureConseiller.PASS_EMPLOI,
+    source: 'PASS_EMPLOI',
   }
 
   return { ...defaults, ...overrides }

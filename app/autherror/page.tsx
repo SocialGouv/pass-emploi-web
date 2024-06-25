@@ -36,15 +36,23 @@ export default function AuthError({
       break
     case 'UTILISATEUR_DEJA_PE_BRSA':
       erreur =
-        "Veuillez vous connecter en choisissant France Travail sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
+        "Veuillez vous connecter en choisissant France Travail BRSA sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
       break
     case 'UTILISATEUR_NOUVEAU_PE_BRSA':
       erreur =
-        "Veuillez vous connecter en choisissant France Travail sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
+        "Veuillez vous connecter en choisissant France Travail BRSA sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
+      break
+    case 'UTILISATEUR_DEJA_PE_AIJ':
+      erreur =
+        "Veuillez vous connecter en choisissant France Travail AIJ sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
+      break
+    case 'UTILISATEUR_NOUVEAU_PE_AIJ':
+      erreur =
+        "Veuillez vous connecter en choisissant France Travail AIJ sur l'application Pass Emploi ou contacter votre conseiller pour recréer le compte."
       break
     case 'UTILISATEUR_CONSEILLER_MAUVAISE_STRUCTURE':
       erreur =
-        "Veuillez vous connecter en choisissant le bon accompagnement (CEJ / BRSA). Si vous avez changé d'accompagnement, veuillez supprimer votre compte ou contacter le support."
+        "Veuillez vous connecter en choisissant le bon accompagnement (CEJ / BRSA / AIJ). Si vous avez changé d'accompagnement, veuillez supprimer votre compte ou contacter le support."
       break
     default:
       erreur =

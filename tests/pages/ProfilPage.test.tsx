@@ -31,6 +31,7 @@ describe('ProfilPage client side', () => {
       // Given
       conseiller = unConseiller({
         email: 'nils.tavernier@mail.com',
+        structure: StructureConseiller.POLE_EMPLOI,
         agence: { nom: 'MLS3F SAINT-LOUIS' },
       })
 

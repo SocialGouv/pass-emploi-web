@@ -20,7 +20,7 @@ interface Props {
 
 export enum ButtonStyle {
   PRIMARY = 'PRIMARY',
-  PRIMARY_BRSA = 'PRIMARY_BRSA',
+  PRIMARY_DARK = 'PRIMARY_DARK',
   SECONDARY = 'SECONDARY',
   TERTIARY = 'TERTIARY',
   WARNING = 'WARNING',
@@ -82,8 +82,8 @@ function getColorStyleClassName(style: ButtonStyle): string {
       return styles.buttonTertiary
     case ButtonStyle.WARNING:
       return styles.buttonWarning
-    case ButtonStyle.PRIMARY_BRSA:
-      return styles.buttonPrimaryDarkenBRSA
+    case ButtonStyle.PRIMARY_DARK:
+      return styles.buttonPrimaryDark
     case undefined:
     default:
       return ButtonStyle.PRIMARY

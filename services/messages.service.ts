@@ -31,6 +31,7 @@ import {
   ChatCredentials,
   Message,
   MessageListeDiffusion,
+  MessageRechercheMatch,
   TypeMessage,
 } from 'interfaces/message'
 import { BaseOffre } from 'interfaces/offre'
@@ -185,34 +186,6 @@ export function observeJeuneReadingDate(
   })
 }
 
-export async function rechercherMessagesConversation(
-  idBeneficiaire: string,
-  recherche: string,
-  cleChiffrement: string
-): Promise<Message[]> {
-  const session = await getSession()
-  const messages = await rechercherMessages(
-    session!.accessToken,
-    idBeneficiaire,
-    recherche
-  )
-
-  return messages.map((message) => {
-    if (!message.iv) return message
-    return {
-      ...message,
-      ...decryptContentAndFilename(
-        {
-          iv: message.iv,
-          content: message.content,
-          infoPiecesJointes: message.infoPiecesJointes,
-        },
-        cleChiffrement
-      ),
-    }
-  })
-}
-
 export async function getMessagesListeDeDiffusion(
   idListeDiffusion: string,
   cleChiffrement: string
@@ -221,6 +194,37 @@ export async function getMessagesListeDeDiffusion(
   const messages = await getMessagesGroupe(session!.user.id, idListeDiffusion)
 
   return grouperMessagesParJour(messages, cleChiffrement)
+}
+
+export async function rechercherMessagesConversation(
+  idBeneficiaire: string,
+  recherche: string,
+  cleChiffrement: string
+): Promise<Array<{ message: Message; matches: MessageRechercheMatch[] }>> {
+  const session = await getSession()
+  const resultatsRecherche = await rechercherMessages(
+    session!.accessToken,
+    idBeneficiaire,
+    recherche
+  )
+
+  return resultatsRecherche.map(({ matches, message }) => {
+    if (!message.iv) return { message, matches }
+    return {
+      message: {
+        ...message,
+        ...decryptContentAndFilename(
+          {
+            iv: message.iv,
+            content: message.content,
+            infoPiecesJointes: message.infoPiecesJointes,
+          },
+          cleChiffrement
+        ),
+      },
+      matches,
+    }
+  })
 }
 
 export async function getMessageImportant(

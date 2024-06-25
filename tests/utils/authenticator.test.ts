@@ -9,11 +9,11 @@ import { fetchJson } from 'utils/httpClient'
 jest.mock('utils/httpClient')
 
 describe('Authenticator', () => {
-  let accessToken: string
-  let refreshToken: string
   let now: DateTime
 
   describe('conseiller Milo', () => {
+    let accessToken: string
+    let refreshToken: string
     beforeEach(() => {
       now = DateTime.now()
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
@@ -50,7 +50,7 @@ describe('Authenticator', () => {
           expiresAtTimestamp: 1638434737000,
           idConseiller: '972d013d-3781-418a-9b8d-1e288f346b45',
           estSuperviseur: true,
-          estSuperviseurPEBRSA: false,
+          estSuperviseurResponsable: false,
           estConseiller: true,
           structureConseiller: StructureConseiller.MILO,
         })
@@ -152,12 +152,14 @@ describe('Authenticator', () => {
   })
 
   describe('conseiller autre', () => {
+    let accessToken: string
+    let refreshToken: string
     beforeEach(() => {
       now = DateTime.now()
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
       accessToken =
-        'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJleGItdTZsMmNkS1BzWEdRUXJIb0tIS0lVS2NmbE9xUkcyYTE0QjNWSzRVIn0.eyJleHAiOjE2NDYwMzkwMjgsImlhdCI6MTY0NjAzNzIyOCwiYXV0aF90aW1lIjoxNjQ2MDM3MjI4LCJqdGkiOiI4MmQwOWI2Zi00NjFmLTQ2OWEtODk0Yy01NDYzMmE2NmU5YzUiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODIvYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJzdWIiOiI4NDNkYzljZS1jMWVlLTRmYjUtODYwMy1hYjI3MzEwMzY0N2QiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTIyZjY3OWYtZmFjZi00ZTgzLWEwZjgtYjI0YzBkMzJjNGZiIiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJjb25zZWlsbGVyX3N1cGVydmlzZXVyIl19LCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwYXNzLWVtcGxvaS11c2VyIHByb2ZpbGUiLCJzaWQiOiJhMjJmNjc5Zi1mYWNmLTRlODMtYTBmOC1iMjRjMGQzMmM0ZmIiLCJ1c2VyUm9sZXMiOlsiU1VQRVJWSVNFVVIiXSwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJ1c2VyU3RydWN0dXJlIjoiUEFTU19FTVBMT0kiLCJuYW1lIjoiTmlscyBUYXZlcm5pZXIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI0MSIsInVzZXJUeXBlIjoiQ09OU0VJTExFUiIsImdpdmVuX25hbWUiOiJOaWxzIiwidXNlcklkIjoiNDEiLCJmYW1pbHlfbmFtZSI6IlRhdmVybmllciIsImVtYWlsIjoibmlscy50YXZlcm5pZXJAcGFzc2VtcGxvaS5jb20ifQ.TdAdafg4EVyJkTaBfEiFLjsGjWyAkFgIcBfB72tmYc6uVWvy49u5RJIkqVk60OEjsGX6bfSW_lbAp8nR1tpfVMV_rAHCFnnk3nw2dh-Qp2jmNfvlxY5v1m_KouK-7_XB6xJ-M7-Q2EUQmRn5XFJ31Pka7JaSCaCHae7W-juE4Ocko2eEbYV24OtRqRYXLlAS3WPR9vVufVwRp-hQYghdQ9WvAsdPzGW9yqnl5FlA7ITx_ad8OwCIQtFznXqzXYVq9bqfBqnsxz6lb9KHhL5EGIjqaWxzxLeIZ44Ag3R1hUhDOZYaw2qD1VMu2HnhDqESCiCoYTYRKasKCsyaSFKZ-A'
+        'eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCIsImtpZCI6Ijh4TFNNUERWWExmZGNmdXdSMkdhaWItbTY3S1hoMHQ3c1h1VGUxNnpaLTAifQ.eyJ1c2VySWQiOiIyZDI5ZDFlMS01MmE1LTRkMmUtYWE0MC1hMjQzNWM1ZTgyNGEiLCJ1c2VyUm9sZXMiOlsiU1VQRVJWSVNFVVIiLCJTVVBFUlZJU0VVUl9SRVNQT05TQUJMRSJdLCJ1c2VyU3RydWN0dXJlIjoiUE9MRV9FTVBMT0lfQUlKIiwidXNlclR5cGUiOiJDT05TRUlMTEVSIiwiZW1haWwiOiJ0bmFuMDEwMEBwb2xlLWVtcGxvaS5mciIsImZhbWlseV9uYW1lIjoiVE5BTjAxMDAiLCJnaXZlbl9uYW1lIjoiUmVjZXR0ZSIsImF6cCI6InBhc3MtZW1wbG9pLXN3YWdnZXIiLCJqdGkiOiJfVFdkMU9jRTRFR0tXR2w4bnVLZTUiLCJzdWIiOiJDT05TRUlMTEVSfFBPTEVfRU1QTE9JX0FJSnxUTkFOMDEwMCIsImlhdCI6MTcxOTMwNjU2MiwiZXhwIjoxNzE5NzM4NTYyLCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwcm9maWxlIiwiY2xpZW50X2lkIjoicGFzcy1lbXBsb2ktc3dhZ2dlciIsImlzcyI6Imh0dHBzOi8vaWQucGFzcy1lbXBsb2kuaW5jdWJhdGV1ci5uZXQvYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL2FwaS5wYXNzLWVtcGxvaS5pbmN1YmF0ZXVyLm5ldCJ9.G009wIukvwBX5s7h7GHXw8r_V2WIG2y__lNB4vfDX1J8JVcVDItn9yep5NKaa7XX_iC8tPAscq8C0dg4BbDjtQUR72irfo7mDUQgZ2kXJxbdFPtHf6_wLq67Jzw45hta8GGjBD5CKDSf72jxGlQ6cHr3cFGG9hB_PDETTmzHmPhckLyjpderhXff0SQzQ5YvMvG_fY6PGMC0mOfnEIn6I8ZbIbeNfSqTiwtsJ2SfOIZ3SeWSgOjDvftfYNBZSMx8wRYiat8HuYDc41w6Z0ZyyGoeHzCM5XviJmSzF2u8SV7eQa55UCy0QSg8rxUwEiqHQCuQ7vuRm8lgIV6xOZJbGQ'
       refreshToken =
         'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1N2Q0M2NmNy02YjRiLTRlZTItODNkYi0xOTRjYWUwYjZkMGUifQ.eyJleHAiOjE2Mzg0MzYyMzcsImlhdCI6MTYzODQzNDQzNywianRpIjoiYzRmODI0ZjUtNDhlNS00ZDkwLTkwNWQtNmYxZDhlOGJmYTkxIiwiaXNzIjoiaHR0cHM6Ly9wYS1hdXRoLXN0YWdpbmcub3NjLXNlY251bS1mcjEuc2NhbGluZ28uaW8vYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL3BhLWF1dGgtc3RhZ2luZy5vc2Mtc2VjbnVtLWZyMS5zY2FsaW5nby5pby9hdXRoL3JlYWxtcy9wYXNzLWVtcGxvaSIsInN1YiI6IjQ0ODA5MmRhLTRhZDctNGZjZi04ZmY1LWEzMDNmMzBlYTEwOSIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTBiNDliM2QtNjU3Ny00MWNkLWI5NzAtNTQwNDk5NWI4MmEzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsInNpZCI6ImEwYjQ5YjNkLTY1NzctNDFjZC1iOTcwLTU0MDQ5OTViODJhMyJ9.u9FW5_DfCAbWHff8K3ZazNOea7uoe_Bb2onJ_cVpmFs'
     })
@@ -187,11 +189,11 @@ describe('Authenticator', () => {
             accessToken,
             refreshToken,
             expiresAtTimestamp: expiresAtInSeconds * 1000,
-            idConseiller: '41',
+            idConseiller: '2d29d1e1-52a5-4d2e-aa40-a2435c5e824a',
             estSuperviseur: true,
-            estSuperviseurPEBRSA: false,
+            estSuperviseurResponsable: true,
             estConseiller: true,
-            structureConseiller: StructureConseiller.PASS_EMPLOI,
+            structureConseiller: StructureConseiller.POLE_EMPLOI_AIJ,
           })
         })
 
@@ -216,11 +218,11 @@ describe('Authenticator', () => {
             accessToken,
             refreshToken,
             expiresAtTimestamp: expiresAtInSeconds * 1000,
-            idConseiller: '41',
+            idConseiller: '2d29d1e1-52a5-4d2e-aa40-a2435c5e824a',
             estSuperviseur: true,
-            estSuperviseurPEBRSA: false,
+            estSuperviseurResponsable: true,
             estConseiller: true,
-            structureConseiller: StructureConseiller.PASS_EMPLOI,
+            structureConseiller: StructureConseiller.POLE_EMPLOI_AIJ,
           })
         })
       })

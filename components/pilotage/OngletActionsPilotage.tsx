@@ -1,11 +1,10 @@
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
+import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
 import IllustrationComponent, {
   IllustrationName,
-} from '../ui/IllustrationComponent'
-
-import TableauActionsAQualifier from 'components/pilotage/TableauActionsAQualifier'
+} from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import Pagination from 'components/ui/Table/Pagination'
 import { ActionPilotage, SituationNonProfessionnelle } from 'interfaces/action'

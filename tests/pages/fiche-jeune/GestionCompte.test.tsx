@@ -57,7 +57,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
   describe('pour tous les conseillers', () => {
     it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
       // Given
-      await renderFicheJeune(StructureConseiller.PASS_EMPLOI, unDetailJeune())
+      await renderFicheJeune(StructureConseiller.POLE_EMPLOI, unDetailJeune())
 
       // Then
       const deleteButton = screen.getByText('Supprimer ce compte')
@@ -68,7 +68,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
       beforeEach(async () => {
         // Given
         await renderFicheJeune(
-          StructureConseiller.PASS_EMPLOI,
+          StructureConseiller.POLE_EMPLOI,
           unDetailJeune({ isActivated: true }),
           portefeuilleSetter,
           alerteSetter
@@ -189,7 +189,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
       beforeEach(async () => {
         // Given
         await renderFicheJeune(
-          StructureConseiller.PASS_EMPLOI,
+          StructureConseiller.POLE_EMPLOI,
           unDetailJeune({ isActivated: false }),
           portefeuilleSetter,
           alerteSetter
@@ -237,7 +237,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
       it("affiche l'information", async () => {
         // Given
         await renderFicheJeune(
-          StructureConseiller.PASS_EMPLOI,
+          StructureConseiller.POLE_EMPLOI,
           unDetailJeune({ isReaffectationTemporaire: true })
         )
 
