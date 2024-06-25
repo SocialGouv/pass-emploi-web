@@ -5,7 +5,7 @@ import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { IndicateursSemaine } from 'interfaces/jeune'
+import { IndicateursSemaine } from 'interfaces/beneficiaire'
 import { toShortDate } from 'utils/date'
 
 type ResumeIndicateursJeuneProps = {

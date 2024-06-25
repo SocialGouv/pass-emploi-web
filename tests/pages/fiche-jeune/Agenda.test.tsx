@@ -10,15 +10,15 @@ import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -458,7 +458,7 @@ async function renderFicheJeuneMILO(structure: StructureConseiller) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
@@ -482,7 +482,7 @@ async function renderFicheJeunePE(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

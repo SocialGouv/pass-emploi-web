@@ -5,7 +5,7 @@ import {
   Conseiller,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { ConseillerHistorique } from 'interfaces/jeune'
+import { ConseillerHistorique } from 'interfaces/beneficiaire'
 
 export interface ConseillerHistoriqueJson {
   id: string

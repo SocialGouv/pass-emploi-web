@@ -91,7 +91,7 @@ describe('EvenementsApiService', () => {
     it('met à jour un rendez vous déja existant', async () => {
       // Given
       const rdvFormData: EvenementFormData = {
-        jeunesIds: ['jeune-1', 'jeune-2'],
+        jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
         type: 'AUTRE',
         precision: 'un texte de précision',
         modality: modalites[0],
@@ -113,7 +113,7 @@ describe('EvenementsApiService', () => {
       expect(apiPut).toHaveBeenCalledWith(
         '/rendezvous/id-rdv',
         {
-          jeunesIds: ['jeune-1', 'jeune-2'],
+          jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
           modality: modalites[0],
           date: '2022-03-03T09:30:00.000Z',
           duration: 157,
@@ -345,7 +345,7 @@ describe('EvenementsApiService', () => {
     it('crée un nouvel événement', async () => {
       // Given
       const rdvFormData: EvenementFormData = {
-        jeunesIds: ['jeune-1', 'jeune-2'],
+        jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
         type: 'AUTRE',
         precision: 'un texte de précision',
         modality: modalites[0],
@@ -369,7 +369,7 @@ describe('EvenementsApiService', () => {
       expect(apiPost).toHaveBeenCalledWith(
         '/conseillers/idConseiller/rendezvous',
         {
-          jeunesIds: ['jeune-1', 'jeune-2'],
+          jeunesIds: ['beneficiaire-1', 'beneficiaire-2'],
           modality: modalites[0],
           type: 'AUTRE',
           date: '2022-03-03T09:30:00.000Z',
@@ -404,7 +404,7 @@ describe('EvenementsApiService', () => {
   describe('.cloreAnimationCollective', () => {
     it('clôt une animation collective', async () => {
       // Given
-      const idsJeunes = ['jeune-1', 'jeune-2']
+      const idsJeunes = ['beneficiaire-1', 'beneficiaire-2']
 
       // When
       await cloreAnimationCollective('id-rdv', idsJeunes)
@@ -413,7 +413,7 @@ describe('EvenementsApiService', () => {
       expect(apiPost).toHaveBeenCalledWith(
         '/structures-milo/animations-collectives/id-rdv/cloturer',
         {
-          idsJeunes: ['jeune-1', 'jeune-2'],
+          idsJeunes: ['beneficiaire-1', 'beneficiaire-2'],
         },
         'accessToken'
       )

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 
 type ResumeFavorisJeuneProps = {
   metadonneesFavoris: MetadonneesFavoris

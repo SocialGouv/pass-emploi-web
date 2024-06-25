@@ -7,12 +7,12 @@ import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -32,7 +32,7 @@ describe('FicheBeneficiairePage client side', () => {
     it('modifie le currentJeune', async () => {
       // Given
       const setIdJeune = jest.fn()
-      const jeune = unDetailJeune()
+      const jeune = unDetailBeneficiaire()
 
       // When
       await act(async () => {
@@ -53,7 +53,7 @@ describe('FicheBeneficiairePage client side', () => {
       })
 
       // Then
-      expect(setIdJeune).toHaveBeenCalledWith('jeune-1')
+      expect(setIdJeune).toHaveBeenCalledWith('beneficiaire-1')
     })
   })
 
@@ -67,7 +67,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailJeune()}
+            jeune={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -117,7 +117,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailJeune()}
+            jeune={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -144,7 +144,7 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
-              jeune={unDetailJeune({ isActivated: false })}
+              jeune={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
@@ -223,7 +223,7 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
-              jeune={unDetailJeune({ isActivated: false })}
+              jeune={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
@@ -254,7 +254,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailJeune({ structureMilo: { id: '2' } })}
+            jeune={unDetailBeneficiaire({ structureMilo: { id: '2' } })}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -289,7 +289,7 @@ async function renderFicheJeune(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

@@ -10,7 +10,7 @@ import {
   desCategories,
   uneAction,
 } from 'fixtures/action'
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -32,7 +32,7 @@ jest.mock(
 
 describe('ModificationActionPage server side', () => {
   describe('pour un conseiller Milo', () => {
-    const jeune = uneBaseJeune()
+    const jeune = uneBaseBeneficiaire()
     const actionsPredefinies = desActionsPredefinies()
     const categories = desCategories()
     const params = { idAction: 'id-action' }
@@ -72,7 +72,7 @@ describe('ModificationActionPage server side', () => {
           idJeune: jeune.id,
           situationsNonProfessionnelles: categories,
           returnTo: expect.stringMatching(
-            '/mes-jeunes/jeune-1/actions/id-action-1'
+            '/mes-jeunes/beneficiaire-1/actions/id-action-1'
           ),
         },
         {}

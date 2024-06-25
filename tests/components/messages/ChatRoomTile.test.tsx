@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 import React from 'react'
 
 import { ConversationTile } from 'components/chat/ConversationTile'
-import { unJeuneChat } from 'fixtures/jeune'
+import { unBeneficiaireChat } from 'fixtures/beneficiaire'
 
 describe('<ChatRoomTile />', () => {
   let toggleFlag: (flagged: boolean) => void
@@ -18,7 +18,7 @@ describe('<ChatRoomTile />', () => {
       // Given
       render(
         <ConversationTile
-          jeuneChat={unJeuneChat({
+          jeuneChat={unBeneficiaireChat({
             flaggedByConseiller: true,
           })}
           id='whatever'
@@ -41,7 +41,7 @@ describe('<ChatRoomTile />', () => {
       // Given
       render(
         <ConversationTile
-          jeuneChat={unJeuneChat({
+          jeuneChat={unBeneficiaireChat({
             flaggedByConseiller: false,
           })}
           id='whatever'
@@ -63,7 +63,7 @@ describe('<ChatRoomTile />', () => {
     // When
     render(
       <ConversationTile
-        jeuneChat={unJeuneChat({
+        jeuneChat={unBeneficiaireChat({
           lastMessageSentBy: 'conseiller',
           seenByConseiller: false,
         })}
@@ -81,7 +81,7 @@ describe('<ChatRoomTile />', () => {
     // When
     render(
       <ConversationTile
-        jeuneChat={unJeuneChat({
+        jeuneChat={unBeneficiaireChat({
           lastMessageSentBy: 'conseiller',
           lastMessageSentAt: DateTime.now(),
           lastJeuneReading: DateTime.now().minus({ hour: 1 }),

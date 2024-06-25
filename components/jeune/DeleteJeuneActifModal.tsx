@@ -9,17 +9,19 @@ import Textarea from 'components/ui/Form/Textarea'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { BaseJeune } from 'interfaces/jeune'
-import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { MotifSuppressionJeune } from 'interfaces/referentiel'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
+import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface DeleteJeuneActifModalProps {
-  jeune: BaseJeune
-  motifsSuppression: MotifSuppressionJeune[]
+  jeune: BaseBeneficiaire
+  motifsSuppression: MotifSuppressionBeneficiaire[]
   onClose: () => void
-  soumettreSuppression: (payload: SuppressionJeuneFormData) => Promise<void>
+  soumettreSuppression: (
+    payload: SuppressionBeneficiaireFormData
+  ) => Promise<void>
 }
 
 export default function DeleteJeuneActifModal({
@@ -93,7 +95,7 @@ export default function DeleteJeuneActifModal({
     e.preventDefault()
     if (!motifIsValid()) return
 
-    const payload: SuppressionJeuneFormData = {
+    const payload: SuppressionBeneficiaireFormData = {
       motif: motifSuppressionJeune.value!,
       commentaire:
         motifSuppressionJeune.value === MOTIF_SUPPRESSION_AUTRE

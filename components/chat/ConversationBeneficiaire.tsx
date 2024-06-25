@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 
 import { Conversation } from 'components/chat/Conversation'
 import { RechercheMessage } from 'components/chat/RechercheMessage'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { Message } from 'interfaces/message'
 
 type ConversationBeneficiaireProps = {
   conseillers: ConseillerHistorique[]
-  jeuneChat: JeuneChat
+  jeuneChat: BeneficiaireChat
   onBack: () => void
 }
 

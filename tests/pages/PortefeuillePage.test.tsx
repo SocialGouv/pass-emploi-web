@@ -6,14 +6,14 @@ import React from 'react'
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { unConseiller } from 'fixtures/conseiller'
 import {
-  desJeunesAvecActionsNonTerminees,
-  unJeuneAvecActionsNonTerminees,
-} from 'fixtures/jeune'
+  desBeneficiairesAvecActionsNonTerminees,
+  unBeneficiaireAvecActionsNonTerminees,
+} from 'fixtures/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
-  JeuneAvecNbActionsNonTerminees,
-} from 'interfaces/jeune'
+  BeneficiaireAvecNbActionsNonTerminees,
+} from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
@@ -26,7 +26,7 @@ jest.mock('components/PageActionsPortal')
 describe('PortefeuillePage client side', () => {
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let refresh: jest.Mock
-  const jeunes = desJeunesAvecActionsNonTerminees()
+  const jeunes = desBeneficiairesAvecActionsNonTerminees()
   beforeEach(() => {
     alerteSetter = jest.fn()
     refresh = jest.fn(() => Promise.resolve())
@@ -160,19 +160,20 @@ describe('PortefeuillePage client side', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
-    let jeune: JeuneAvecNbActionsNonTerminees
-    let beneficiaireAvecStructureDifferente: JeuneAvecNbActionsNonTerminees
+    let jeune: BeneficiaireAvecNbActionsNonTerminees
+    let beneficiaireAvecStructureDifferente: BeneficiaireAvecNbActionsNonTerminees
 
     beforeEach(async () => {
       //GIVEN
-      jeune = unJeuneAvecActionsNonTerminees({
+      jeune = unBeneficiaireAvecActionsNonTerminees({
         situationCourante: CategorieSituation.DEMANDEUR_D_EMPLOI,
       })
-      beneficiaireAvecStructureDifferente = unJeuneAvecActionsNonTerminees({
-        prenom: 'Aline',
-        id: 'jeune-2',
-        structureMilo: { id: '2' },
-      })
+      beneficiaireAvecStructureDifferente =
+        unBeneficiaireAvecActionsNonTerminees({
+          prenom: 'Aline',
+          id: 'beneficiaire-2',
+          structureMilo: { id: '2' },
+        })
 
       await act(async () => {
         renderWithContexts(
@@ -223,7 +224,7 @@ describe('PortefeuillePage client side', () => {
   describe('quand le conseiller est France Travail', () => {
     beforeEach(async () => {
       //GIVEN
-      const jeune = unJeuneAvecActionsNonTerminees()
+      const jeune = unBeneficiaireAvecActionsNonTerminees()
 
       await act(async () => {
         renderWithContexts(

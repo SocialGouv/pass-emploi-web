@@ -2,10 +2,14 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
-import CreationJeuneMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeuneMiloPage'
-import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
+import CreationJeuneMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  uneBaseBeneficiaire,
+} from 'fixtures/beneficiaire'
 import { unDossierMilo } from 'fixtures/milo'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import {
   createCompteJeuneMilo,
   getDossierJeune,
@@ -57,13 +61,15 @@ describe('CreationJeuneMiloPage client side', () => {
   describe('quand on a recherché un dossier', () => {
     let push: Function
     let setAlerte: () => void
-    let setPortefeuille: (updatedBeneficiaires: BaseJeune[]) => void
+    let setPortefeuille: (updatedBeneficiaires: BaseBeneficiaire[]) => void
     const dossier = unDossierMilo()
-    const portefeuille = desItemsJeunes().map(extractBaseJeune)
+    const portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
     beforeEach(async () => {
       // Given
       ;(getDossierJeune as jest.Mock).mockResolvedValue(dossier)
-      ;(createCompteJeuneMilo as jest.Mock).mockResolvedValue(uneBaseJeune())
+      ;(createCompteJeuneMilo as jest.Mock).mockResolvedValue(
+        uneBaseBeneficiaire()
+      )
 
       push = jest.fn(() => Promise.resolve())
       setAlerte = jest.fn()
@@ -101,9 +107,12 @@ describe('CreationJeuneMiloPage client side', () => {
 
       expect(setPortefeuille).toHaveBeenCalledWith([
         ...portefeuille,
-        uneBaseJeune(),
+        uneBaseBeneficiaire(),
       ])
-      expect(setAlerte).toHaveBeenCalledWith('creationBeneficiaire', 'jeune-1')
+      expect(setAlerte).toHaveBeenCalledWith(
+        'creationBeneficiaire',
+        'beneficiaire-1'
+      )
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
 

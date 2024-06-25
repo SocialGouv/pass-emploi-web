@@ -15,14 +15,14 @@ import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import {
   getActionsJeuneClientSide,
   qualifierActions,
@@ -135,7 +135,9 @@ describe('Actions dans la fiche jeune', () => {
       expect(() =>
         screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
       ).toThrow()
-      expect(replace).toHaveBeenCalledWith('/mes-jeunes/jeune-1?onglet=actions')
+      expect(replace).toHaveBeenCalledWith(
+        '/mes-jeunes/beneficiaire-1?onglet=actions'
+      )
     })
 
     describe('permet la multi qualification', () => {
@@ -299,7 +301,10 @@ describe('Actions dans la fiche jeune', () => {
       // Then
       expect(
         screen.getByRole('link', { name: 'Créer une action' })
-      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
+      ).toHaveAttribute(
+        'href',
+        '/mes-jeunes/beneficiaire-1/actions/nouvelle-action'
+      )
     })
 
     describe("quand le jeune n'a pas d'action", () => {
@@ -365,11 +370,14 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 2,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(screen.getByText('Action page 2')).toBeInTheDocument()
       })
 
@@ -379,17 +387,23 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page précédente'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: pageCourante - 1,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: pageCourante - 1,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
 
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: pageCourante - 2,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: pageCourante - 2,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(
           screen.getByLabelText(`Page ${pageCourante - 2}`)
         ).toHaveAttribute('aria-current', 'page')
@@ -434,11 +448,14 @@ describe('Actions dans la fiche jeune', () => {
 
       it('filtre les actions', () => {
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          filtres: { statuts: [StatutAction.AFaire], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 1,
+            filtres: { statuts: [StatutAction.AFaire], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
       })
 
@@ -454,11 +471,14 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          filtres: { statuts: [StatutAction.AFaire], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 2,
+            filtres: { statuts: [StatutAction.AFaire], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
       })
     })
 
@@ -492,11 +512,14 @@ describe('Actions dans la fiche jeune', () => {
 
       it('filtre les actions', () => {
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          filtres: { statuts: [], categories: ['SNP_1'] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 1,
+            filtres: { statuts: [], categories: ['SNP_1'] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
       })
 
@@ -512,11 +535,14 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          filtres: { statuts: [], categories: ['SNP_1'] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 2,
+            filtres: { statuts: [], categories: ['SNP_1'] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
       })
     })
 
@@ -554,16 +580,22 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(headerColonneDate)
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_croissante',
-        })
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 1,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_croissante',
+          }
+        )
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 1,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(screen.getByText('Action triée')).toBeInTheDocument()
       })
 
@@ -584,11 +616,14 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_croissante',
-        })
+        expect(getActionsJeuneClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 2,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_croissante',
+          }
+        )
       })
     })
   })
@@ -612,7 +647,7 @@ async function renderFicheJeuneMILO({
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         categoriesActions={desCategories()}
         rdvs={[]}
         actionsInitiales={actionsInitiales ?? desActionsInitiales()}
@@ -636,7 +671,7 @@ async function renderFicheJeunePE(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         categoriesActions={[]}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}

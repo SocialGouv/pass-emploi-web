@@ -8,14 +8,14 @@ import {
   Conseiller,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { BaseJeune, DossierMilo } from 'interfaces/jeune'
+import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
 import {
   BaseConseillerJson,
   ConseillerJson,
   jsonToBaseConseiller,
   jsonToConseiller,
 } from 'interfaces/json/conseiller'
-import { JeuneMiloFormData } from 'interfaces/json/jeune'
+import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 
 export async function getConseillerServerSide(
   user: Session.HydratedUser,
@@ -96,10 +96,10 @@ export async function getDossierJeune(
 }
 
 export async function createCompteJeuneMilo(
-  newJeune: JeuneMiloFormData
-): Promise<BaseJeune> {
+  newJeune: BeneficiaireMiloFormData
+): Promise<BaseBeneficiaire> {
   const session = await getSession()
-  const { content } = await apiPost<BaseJeune>(
+  const { content } = await apiPost<BaseBeneficiaire>(
     `/conseillers/milo/jeunes`,
     { ...newJeune, idConseiller: session!.user.id },
     session!.accessToken

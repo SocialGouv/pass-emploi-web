@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
-import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { JeuneChat } from 'interfaces/jeune'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
   FormNouveauMessageImportant,
@@ -25,7 +25,7 @@ const MessageImportantModal = dynamic(
 )
 
 interface ChatRoomProps {
-  jeunesChats: JeuneChat[] | undefined
+  jeunesChats: BeneficiaireChat[] | undefined
   showMenu: boolean
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
@@ -43,7 +43,7 @@ export default function ChatRoom({
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
 
-  const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
+  const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
   const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
@@ -295,7 +295,7 @@ export default function ChatRoom({
             className='flex justify-center my-8 layout_s:hidden'
             data-testid='form-chat'
           >
-            <RechercheJeune onSearchFilterBy={filtrerConversations} />
+            <RechercheBeneficiaire onSearchFilterBy={filtrerConversations} />
           </div>
 
           {chatsFiltres && (

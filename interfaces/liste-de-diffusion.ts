@@ -1,10 +1,10 @@
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
 export type ListeDeDiffusion = {
   id: string
   titre: string
   beneficiaires: Array<
-    BaseJeune & {
+    BaseBeneficiaire & {
       estDansLePortefeuille: boolean
     }
   >

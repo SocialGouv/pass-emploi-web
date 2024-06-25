@@ -10,13 +10,13 @@ import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
-import { BaseJeune } from 'interfaces/jeune'
 
 type TableauRdvsBeneficiaireProps = {
   idConseiller: string
   rdvs: EvenementListItem[]
-  beneficiaire: BaseJeune
+  beneficiaire: BaseBeneficiaire
   additionalColumn?: ColumnHeaderLabel
 }
 
@@ -94,7 +94,7 @@ function StateAucunRendezvous({
   isRdvPasses,
   pathPrefix,
 }: {
-  beneficiaire: BaseJeune
+  beneficiaire: BaseBeneficiaire
   isRdvPasses: boolean
   pathPrefix: string
 }): React.JSX.Element {

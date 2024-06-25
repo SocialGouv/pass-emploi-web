@@ -9,6 +9,7 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   estClos,
@@ -16,7 +17,6 @@ import {
   Evenement,
   isCodeTypeAnimationCollective,
 } from 'interfaces/evenement'
-import { JeuneFromListe } from 'interfaces/jeune'
 import {
   isTypeAnimationCollective,
   TypeEvenementReferentiel,
@@ -129,7 +129,7 @@ async function buildProps(
 
 function buildPropsModificationEvenement(
   evenement: Evenement,
-  jeunes: JeuneFromListe[]
+  jeunes: BeneficiaireFromListe[]
 ): Omit<EditionRdvProps, 'returnTo'> {
   const estUneAC = isCodeTypeAnimationCollective(evenement.type.code)
   const aUnBeneficiaireInscritALEvenement: boolean =

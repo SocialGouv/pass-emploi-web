@@ -2,8 +2,12 @@ import { RenderResult, act, render, screen } from '@testing-library/react'
 import React from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
-import { JeuneChat } from 'interfaces/jeune'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import { observeConseillerChats } from 'services/messages.service'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'
@@ -19,20 +23,20 @@ global.Audio = class FakeAudio {
 }
 
 describe('ChatsProvider', () => {
-  let updateChatsRef: (chats: JeuneChat[]) => void
-  const portefeuille = desItemsJeunes().map(extractBaseJeune)
+  let updateChatsRef: (chats: BeneficiaireChat[]) => void
+  const portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
   const conversations = [
-    unJeuneChat({
+    unBeneficiaireChat({
       ...portefeuille[0],
       chatId: `chat-${portefeuille[0].id}`,
       seenByConseiller: true,
     }),
-    unJeuneChat({
+    unBeneficiaireChat({
       ...portefeuille[1],
       chatId: `chat-${portefeuille[1].id}`,
       seenByConseiller: true,
     }),
-    unJeuneChat({
+    unBeneficiaireChat({
       ...portefeuille[2],
       chatId: `chat-${portefeuille[2].id}`,
       seenByConseiller: false,
@@ -82,7 +86,7 @@ describe('ChatsProvider', () => {
       // Then
       expect(observeConseillerChats).toHaveBeenCalledWith(
         'cleChiffrement',
-        portefeuille.map(extractBaseJeune),
+        portefeuille.map(extractBaseBeneficiaire),
         expect.any(Function)
       )
     })
@@ -97,7 +101,7 @@ describe('ChatsProvider', () => {
 
     it("notifie quand un nouveau message d'un jeune arrive", async () => {
       // Given
-      const unJeuneChatNonLu = unJeuneChat({
+      const unJeuneChatNonLu = unBeneficiaireChat({
         ...portefeuille[0],
         lastMessageSentBy: 'jeune',
         chatId: `chat-${portefeuille[0].id}`,
@@ -115,7 +119,7 @@ describe('ChatsProvider', () => {
 
     it("ne notifie pas quand c'est un évènement de chat qui ne correspond pas à un nouveau message", async () => {
       // Given
-      const unJeuneChatNonLu = unJeuneChat({
+      const unJeuneChatNonLu = unBeneficiaireChat({
         ...portefeuille[0],
         lastMessageSentBy: 'conseiller',
         chatId: `chat-${portefeuille[0].id}`,
@@ -155,7 +159,7 @@ describe('ChatsProvider', () => {
       )
 
       // When
-      const unJeuneChatNonLu = unJeuneChat({
+      const unJeuneChatNonLu = unBeneficiaireChat({
         ...portefeuille[0],
         lastMessageSentBy: 'jeune',
         chatId: `chat-${portefeuille[0].id}`,

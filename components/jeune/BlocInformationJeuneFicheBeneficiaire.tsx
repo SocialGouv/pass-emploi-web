@@ -9,8 +9,8 @@ import {
 } from 'components/jeune/BlocInformationJeune'
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 import { Conseiller, estMilo } from 'interfaces/conseiller'
-import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneFicheBeneficiaireProps {

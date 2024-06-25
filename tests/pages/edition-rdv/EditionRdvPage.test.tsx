@@ -10,10 +10,17 @@ import {
   typesEvenementCEJ,
   unEvenement,
 } from 'fixtures/evenement'
-import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  uneBaseBeneficiaire,
+} from 'fixtures/beneficiaire'
+import {
+  BaseBeneficiaire,
+  getNomBeneficiaireComplet,
+  BeneficiaireFromListe,
+} from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
-import { BaseJeune, getNomJeuneComplet, JeuneFromListe } from 'interfaces/jeune'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
@@ -33,9 +40,9 @@ jest.mock('components/PageActionsPortal')
 
 describe('EditionRdvPage client side', () => {
   describe('Rendez-vous', () => {
-    let jeunesConseiller: JeuneFromListe[]
-    let jeunesAutreConseiller: BaseJeune[]
-    let jeunesEtablissement: BaseJeune[]
+    let jeunesConseiller: BeneficiaireFromListe[]
+    let jeunesAutreConseiller: BaseBeneficiaire[]
+    let jeunesEtablissement: BaseBeneficiaire[]
     let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -43,13 +50,13 @@ describe('EditionRdvPage client side', () => {
     let refresh: jest.Mock
 
     beforeEach(() => {
-      jeunesConseiller = desItemsJeunes()
+      jeunesConseiller = desItemsBeneficiaires()
       jeunesAutreConseiller = [
-        uneBaseJeune({
+        uneBaseBeneficiaire({
           id: 'jeune-etablissement-1',
           prenom: 'Jeune Etablissement 1',
         }),
-        uneBaseJeune({
+        uneBaseBeneficiaire({
           id: 'jeune-etablissement-2',
           prenom: 'Jeune Etablissement 2',
         }),
@@ -436,7 +443,7 @@ describe('EditionRdvPage client side', () => {
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(
             selectJeunes,
-            getNomJeuneComplet(jeunesConseiller[0])
+            getNomBeneficiaireComplet(jeunesConseiller[0])
           )
 
           //When
@@ -456,7 +463,7 @@ describe('EditionRdvPage client side', () => {
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(
             selectJeunes,
-            getNomJeuneComplet(jeunesConseiller[0])
+            getNomBeneficiaireComplet(jeunesConseiller[0])
           )
           await userEvent.type(inputDate, '2022-03-03')
 
@@ -477,7 +484,7 @@ describe('EditionRdvPage client side', () => {
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(
             selectJeunes,
-            getNomJeuneComplet(jeunesConseiller[0])
+            getNomBeneficiaireComplet(jeunesConseiller[0])
           )
           await userEvent.type(inputDate, '2022-03-03')
           await userEvent.type(inputHoraire, '02:37')
@@ -531,11 +538,11 @@ describe('EditionRdvPage client side', () => {
           // Given
           await userEvent.type(
             selectJeunes,
-            getNomJeuneComplet(jeunesConseiller[0])
+            getNomBeneficiaireComplet(jeunesConseiller[0])
           )
           await userEvent.type(
             selectJeunes,
-            getNomJeuneComplet(jeunesConseiller[2])
+            getNomBeneficiaireComplet(jeunesConseiller[2])
           )
           await userEvent.selectOptions(selectModalite, modalites[0])
           await userEvent.type(inputDate, '2022-03-03')
@@ -760,7 +767,7 @@ describe('EditionRdvPage client side', () => {
       it('initialise le destinataire', async () => {
         // Given
         const idJeune = jeunesConseiller[2].id
-        const jeuneFullname = getNomJeuneComplet(jeunesConseiller[2])
+        const jeuneFullname = getNomBeneficiaireComplet(jeunesConseiller[2])
 
         // When
         renderWithContexts(
@@ -863,8 +870,8 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('sélectionne les jeunes du rendez-vous', () => {
-        const jeune0Fullname = getNomJeuneComplet(jeunesConseiller[0])
-        const jeune2Fullname = getNomJeuneComplet(jeunesConseiller[2])
+        const jeune0Fullname = getNomBeneficiaireComplet(jeunesConseiller[0])
+        const jeune2Fullname = getNomBeneficiaireComplet(jeunesConseiller[2])
         expect(() =>
           screen.getByRole('option', {
             name: jeune0Fullname,
@@ -956,7 +963,7 @@ describe('EditionRdvPage client side', () => {
             name: /Bénéficiaires/,
           })
           const jeuneSelectionne = within(beneficiaires).getByText(
-            getNomJeuneComplet(jeunesConseiller[2])
+            getNomBeneficiaireComplet(jeunesConseiller[2])
           )
           const enleverJeune = within(jeuneSelectionne).getByRole('button', {
             name: /Enlever/,
@@ -982,7 +989,7 @@ describe('EditionRdvPage client side', () => {
           // Given
           await userEvent.type(
             searchJeune,
-            getNomJeuneComplet(jeunesConseiller[1])
+            getNomBeneficiaireComplet(jeunesConseiller[1])
           )
           await userEvent.click(enleverJeune)
           await userEvent.selectOptions(selectModalite, modalites[0])
@@ -1151,7 +1158,7 @@ describe('EditionRdvPage client side', () => {
 
         // Then
         const jeune = within(beneficiaires).getByText(
-          getNomJeuneComplet(jeunesConseiller[0])
+          getNomBeneficiaireComplet(jeunesConseiller[0])
         )
         expect(() =>
           within(jeune).getByLabelText(
@@ -1160,7 +1167,7 @@ describe('EditionRdvPage client side', () => {
         ).toThrow()
         expect(() =>
           screen.getByRole('option', {
-            name: getNomJeuneComplet(jeunesConseiller[0]),
+            name: getNomBeneficiaireComplet(jeunesConseiller[0]),
             hidden: true,
           })
         ).toThrow()
@@ -1318,9 +1325,9 @@ describe('EditionRdvPage client side', () => {
   })
 
   describe('Animation collective', () => {
-    let jeunesConseiller: JeuneFromListe[]
-    let jeunesAutreConseiller: BaseJeune[]
-    let jeunesEtablissement: BaseJeune[]
+    let jeunesConseiller: BeneficiaireFromListe[]
+    let jeunesAutreConseiller: BaseBeneficiaire[]
+    let jeunesEtablissement: BaseBeneficiaire[]
 
     let typesRendezVous: TypeEvenementReferentiel[]
 
@@ -1328,13 +1335,13 @@ describe('EditionRdvPage client side', () => {
     let push: Function
     let refresh: jest.Mock
     beforeEach(() => {
-      jeunesConseiller = desItemsJeunes()
+      jeunesConseiller = desItemsBeneficiaires()
       jeunesAutreConseiller = [
-        uneBaseJeune({
+        uneBaseBeneficiaire({
           id: 'jeune-etablissement-1',
           prenom: 'Jeune Etablissement 1',
         }),
-        uneBaseJeune({
+        uneBaseBeneficiaire({
           id: 'jeune-etablissement-2',
           prenom: 'Jeune Etablissement 2',
         }),
@@ -1391,7 +1398,7 @@ describe('EditionRdvPage client side', () => {
         jeunesEtablissement.forEach((jeune) =>
           expect(
             screen.getByRole('option', {
-              name: getNomJeuneComplet(jeune),
+              name: getNomBeneficiaireComplet(jeune),
               hidden: true,
             })
           ).toBeInTheDocument()
@@ -1452,7 +1459,7 @@ describe('EditionRdvPage client side', () => {
           screen.getByLabelText(
             /Recherchez et ajoutez un ou plusieurs bénéficiaires/
           ),
-          getNomJeuneComplet(jeunesAutreConseiller[0])
+          getNomBeneficiaireComplet(jeunesAutreConseiller[0])
         )
 
         // Then
@@ -1559,8 +1566,8 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('quand on consulte une animation collective close', () => {
-      let jeuneAbsent: BaseJeune & { futPresent: boolean }
-      let jeunePresent: BaseJeune & { futPresent: boolean }
+      let jeuneAbsent: BaseBeneficiaire & { futPresent: boolean }
+      let jeunePresent: BaseBeneficiaire & { futPresent: boolean }
 
       beforeEach(async () => {
         jeuneAbsent = {
@@ -1645,12 +1652,12 @@ describe('EditionRdvPage client side', () => {
         // Then
         expect(
           within(
-            screen.getByText(getNomJeuneComplet(jeunePresent))
+            screen.getByText(getNomBeneficiaireComplet(jeunePresent))
           ).getByLabelText(/Ce bénéficiaire était présent à l’événement/)
         ).toBeInTheDocument()
         expect(
           within(
-            screen.getByText(getNomJeuneComplet(jeuneAbsent))
+            screen.getByText(getNomBeneficiaireComplet(jeuneAbsent))
           ).queryByLabelText(/Ce bénéficiaire était présent à l’événement/)
         ).not.toBeInTheDocument()
       })

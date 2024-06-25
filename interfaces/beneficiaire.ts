@@ -20,13 +20,13 @@ export enum CategorieSituation {
   SANS_SITUATION = 'Sans situation',
 }
 
-export interface BaseJeune {
+export interface BaseBeneficiaire {
   id: string
   prenom: string
   nom: string
 }
 
-export interface JeuneFromListe extends BaseJeune {
+export interface BeneficiaireFromListe extends BaseBeneficiaire {
   isActivated: boolean
   isReaffectationTemporaire: boolean
   lastActivity?: string
@@ -39,7 +39,7 @@ export interface JeuneFromListe extends BaseJeune {
   structureMilo?: { id: string }
 }
 
-export interface DetailJeune extends BaseJeune {
+export interface DetailBeneficiaire extends BaseBeneficiaire {
   creationDate: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
@@ -75,16 +75,17 @@ export interface MetadonneesFavoris {
   }
 }
 
-export type JeuneAvecNbActionsNonTerminees = JeuneFromListe & {
+export type BeneficiaireAvecNbActionsNonTerminees = BeneficiaireFromListe & {
   nbActionsNonTerminees: number
 }
 
-export type JeuneAvecInfosComplementaires = JeuneAvecNbActionsNonTerminees & {
-  messagesNonLus: number
-}
+export type BeneficiaireAvecInfosComplementaires =
+  BeneficiaireAvecNbActionsNonTerminees & {
+    messagesNonLus: number
+  }
 
-export type JeuneEtablissement = {
-  base: BaseJeune
+export type BeneficiaireEtablissement = {
+  base: BaseBeneficiaire
   referent: { id: string; nom: string; prenom: string }
   situation?: CategorieSituation
   dateDerniereActivite?: string
@@ -103,7 +104,7 @@ export interface Chat {
   lastMessageIv: string | undefined
 }
 
-export type JeuneChat = BaseJeune & Chat
+export type BeneficiaireChat = BaseBeneficiaire & Chat
 
 export interface DossierMilo {
   id: string
@@ -139,39 +140,42 @@ export type IndicateursSemaine = {
   }
 }
 
-export function compareJeunesByNom(
-  jeune1: BaseJeune,
-  jeune2: BaseJeune
+export function compareBeneficiairesByNom(
+  beneficiaire1: BaseBeneficiaire,
+  beneficiaire2: BaseBeneficiaire
 ): number {
-  return `${jeune1.nom}${jeune1.prenom}`.localeCompare(
-    `${jeune2.nom}${jeune2.prenom}`
+  return `${beneficiaire1.nom}${beneficiaire1.prenom}`.localeCompare(
+    `${beneficiaire2.nom}${beneficiaire2.prenom}`
   )
 }
 
-export function compareJeunesByLastNameDesc(
-  jeune1: BaseJeune,
-  jeune2: BaseJeune
+export function compareBeneficiairesByLastNameDesc(
+  beneficiaire1: BaseBeneficiaire,
+  beneficiaire2: BaseBeneficiaire
 ): number {
-  return -compareJeunesByNom(jeune1, jeune2)
+  return -compareBeneficiairesByNom(beneficiaire1, beneficiaire2)
 }
 
-export function compareJeunesBySituation(
-  jeune1: JeuneFromListe,
-  jeune2: JeuneFromListe
+export function compareBeneficiairesBySituation(
+  beneficiaire1: BeneficiaireFromListe,
+  beneficiaire2: BeneficiaireFromListe
 ): number {
-  return `${jeune1.situationCourante}`.localeCompare(
-    `${jeune2.situationCourante}`
+  return `${beneficiaire1.situationCourante}`.localeCompare(
+    `${beneficiaire2.situationCourante}`
   )
 }
 
-export function compareJeunesBySituationDesc(
-  jeune1: JeuneFromListe,
-  jeune2: JeuneFromListe
+export function compareBeneficiairesBySituationDesc(
+  beneficiaire1: BeneficiaireFromListe,
+  beneficiaire2: BeneficiaireFromListe
 ): number {
-  return -compareJeunesBySituation(jeune1, jeune2)
+  return -compareBeneficiairesBySituation(beneficiaire1, beneficiaire2)
 }
 
-export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {
+export function compareBeneficiaireChat(
+  a: BeneficiaireChat,
+  b: BeneficiaireChat
+) {
   return (
     comparerParMessageNonLu(a, b) ||
     comparerParConversationSuivie(a, b) ||
@@ -179,57 +183,63 @@ export function compareJeuneChat(a: JeuneChat, b: JeuneChat) {
   )
 }
 
-export function compareJeuneByLastActivity(
-  jeune1: JeuneFromListe,
-  jeune2: JeuneFromListe,
+export function compareBeneficiairesByLastActivity(
+  beneficiaire1: BeneficiaireFromListe,
+  beneficiaire2: BeneficiaireFromListe,
   sortStatutCompteActif: number
 ) {
-  const date1 = jeune1.lastActivity
-    ? DateTime.fromISO(jeune1.lastActivity)
+  const date1 = beneficiaire1.lastActivity
+    ? DateTime.fromISO(beneficiaire1.lastActivity)
     : undefined
-  const date2 = jeune2.lastActivity
-    ? DateTime.fromISO(jeune2.lastActivity)
+  const date2 = beneficiaire2.lastActivity
+    ? DateTime.fromISO(beneficiaire2.lastActivity)
     : undefined
   return compareDates(date1, date2) || sortStatutCompteActif
 }
 
-export function compareJeuneByLastActivityDesc(
-  jeune1: JeuneFromListe,
-  jeune2: JeuneFromListe,
+export function compareBeneficiairesByLastActivityDesc(
+  beneficiaire1: BeneficiaireFromListe,
+  beneficiaire2: BeneficiaireFromListe,
   sortStatutCompteActif: number
 ) {
-  const date1 = jeune1.lastActivity
-    ? DateTime.fromISO(jeune1.lastActivity)
+  const date1 = beneficiaire1.lastActivity
+    ? DateTime.fromISO(beneficiaire1.lastActivity)
     : undefined
-  const date2 = jeune2.lastActivity
-    ? DateTime.fromISO(jeune2.lastActivity)
+  const date2 = beneficiaire2.lastActivity
+    ? DateTime.fromISO(beneficiaire2.lastActivity)
     : undefined
   return compareDatesDesc(date1, date2) || -sortStatutCompteActif
 }
 
-export function getNomJeuneComplet(
-  j: Pick<BaseJeune, 'nom' | 'prenom'>
+export function getNomBeneficiaireComplet(
+  b: Pick<BaseBeneficiaire, 'nom' | 'prenom'>
 ): string {
-  return `${j.nom} ${j.prenom}`
+  return `${b.nom} ${b.prenom}`
 }
 
 export function compareParId(idA: string, idB: string): number {
   return idA.localeCompare(idB)
 }
 
-function comparerParMessageNonLu(a: JeuneChat, b: JeuneChat): number {
+function comparerParMessageNonLu(
+  a: BeneficiaireChat,
+  b: BeneficiaireChat
+): number {
   if (a.seenByConseiller && !b.seenByConseiller) return 1
   if (!a.seenByConseiller && b.seenByConseiller) return -1
   return 0
 }
 
-function comparerParConversationSuivie(a: JeuneChat, b: JeuneChat): number {
+function comparerParConversationSuivie(
+  a: BeneficiaireChat,
+  b: BeneficiaireChat
+): number {
   if (a.flaggedByConseiller && !b.flaggedByConseiller) return -1
   if (!a.flaggedByConseiller && b.flaggedByConseiller) return 1
   return 0
 }
 
-function comparerParDate(a: JeuneChat, b: JeuneChat): number {
+function comparerParDate(a: BeneficiaireChat, b: BeneficiaireChat): number {
   if (a.lastMessageSentAt && b.lastMessageSentAt) {
     return a.lastMessageSentAt <= b.lastMessageSentAt ? 1 : -1
   }

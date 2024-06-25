@@ -9,10 +9,10 @@ import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
 import { unEvenementListItem } from 'fixtures/evenement'
 import { uneListeDOffres } from 'fixtures/favoris'
 import {
-  desConseillersJeune,
-  unDetailJeune,
+  desConseillersBeneficiaire,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getActionsJeuneServerSide } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -56,10 +56,10 @@ describe('FicheBeneficiairePage server side', () => {
 
   beforeEach(() => {
     ;(getJeuneDetails as jest.Mock).mockResolvedValue(
-      unDetailJeune({ structureMilo: { id: 'id-test' } })
+      unDetailBeneficiaire({ structureMilo: { id: 'id-test' } })
     )
     ;(getConseillersDuJeuneServerSide as jest.Mock).mockResolvedValue(
-      desConseillersJeune()
+      desConseillersBeneficiaire()
     )
     ;(getMetadonneesFavorisJeune as jest.Mock).mockResolvedValue(
       uneMetadonneeFavoris()
@@ -104,7 +104,7 @@ describe('FicheBeneficiairePage server side', () => {
       expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
       expect(FicheBeneficiairePage).toHaveBeenCalledWith(
         {
-          jeune: unDetailJeune({ structureMilo: { id: 'id-test' } }),
+          jeune: unDetailBeneficiaire({ structureMilo: { id: 'id-test' } }),
           rdvs: expect.arrayContaining([]),
           actionsInitiales: expect.objectContaining({}),
           metadonneesFavoris: expect.objectContaining({}),

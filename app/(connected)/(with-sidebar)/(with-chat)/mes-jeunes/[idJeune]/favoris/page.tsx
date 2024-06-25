@@ -6,7 +6,7 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -25,7 +25,7 @@ export async function generateMetadata({
 
   const lectureSeule = beneficiaire.idConseiller !== user.id
   return {
-    title: `Favoris - ${getNomJeuneComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
+    title: `Favoris - ${getNomBeneficiaireComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
   }
 }
 

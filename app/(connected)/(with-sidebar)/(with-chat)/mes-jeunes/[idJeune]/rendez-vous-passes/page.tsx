@@ -6,9 +6,9 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { PeriodeEvenements } from 'interfaces/evenement'
-import { getNomJeuneComplet } from 'interfaces/jeune'
 import { getRendezVousJeune } from 'services/evenements.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -24,7 +24,9 @@ export async function generateMetadata({
   const beneficiaire = await getJeuneDetails(params.idJeune, accessToken)
   if (!beneficiaire) notFound()
 
-  return { title: 'Rendez-vous passés - ' + getNomJeuneComplet(beneficiaire) }
+  return {
+    title: 'Rendez-vous passés - ' + getNomBeneficiaireComplet(beneficiaire),
+  }
 }
 
 export default async function RendezVousPasses({
@@ -51,7 +53,9 @@ export default async function RendezVousPasses({
     <>
       <PageFilArianePortal />
       <PageHeaderPortal
-        header={'Rendez-vous passés de ' + getNomJeuneComplet(beneficiaire)}
+        header={
+          'Rendez-vous passés de ' + getNomBeneficiaireComplet(beneficiaire)
+        }
       />
 
       <RendezVousPassesPage

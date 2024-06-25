@@ -21,8 +21,8 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import { InfoFichier } from 'interfaces/fichier'
-import { JeuneChat } from 'interfaces/jeune'
 import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
@@ -41,7 +41,7 @@ type ConversationProps = {
   beneficiaireNomComplet: string
   onBack: () => void
   getConseillerNomComplet: (message: Message) => string | undefined
-  jeuneChat: JeuneChat
+  jeuneChat: BeneficiaireChat
   toggleAfficherRecherche: () => void
 }
 
