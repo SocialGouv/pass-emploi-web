@@ -2,11 +2,14 @@ import { render } from '@testing-library/react'
 
 import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import DetailsSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/page'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { uneBaseJeune } from 'fixtures/jeune'
 import { unDetailSession } from 'fixtures/session'
+import {
+  CategorieSituation,
+  BeneficiaireEtablissement,
+} from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { CategorieSituation, BeneficiaireEtablissement } from 'interfaces/beneficiaire'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getBeneficiairesDeLaStructureMilo } from 'services/jeunes.service'
 import { getDetailsSession } from 'services/sessions.service'
@@ -53,8 +56,8 @@ describe('Détails Session Page Server', () => {
   describe('Quand le conseiller est Milo', () => {
     const beneficiaires: BeneficiaireEtablissement[] = [
       {
-        base: uneBaseJeune({
-          id: 'jeune-1',
+        base: uneBaseBeneficiaire({
+          id: 'beneficiaire-1',
           prenom: 'Harry',
           nom: 'Beau',
         }),
@@ -67,8 +70,8 @@ describe('Détails Session Page Server', () => {
         dateDerniereActivite: '2023-03-01T14:11:38.040Z',
       },
       {
-        base: uneBaseJeune({
-          id: 'jeune-2',
+        base: uneBaseBeneficiaire({
+          id: 'beneficiaire-2',
           prenom: 'Octo',
           nom: 'Puce',
         }),
@@ -89,7 +92,7 @@ describe('Détails Session Page Server', () => {
         accessToken: 'accessToken',
       })
       ;(getBeneficiairesDeLaStructureMilo as jest.Mock).mockReturnValue({
-        jeunes: beneficiaires,
+        beneficiaires: beneficiaires,
       })
       ;(getConseillerServerSide as jest.Mock).mockReturnValue(
         unConseiller({

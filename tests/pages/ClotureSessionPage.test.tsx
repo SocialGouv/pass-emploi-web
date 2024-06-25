@@ -21,13 +21,13 @@ describe('Cloture Session', () => {
     },
     inscriptions: [
       {
-        idJeune: 'jeune-1',
+        idJeune: 'beneficiaire-1',
         nom: 'Beau',
         prenom: 'Harry',
         statut: 'INSCRIT',
       },
       {
-        idJeune: 'jeune-2',
+        idJeune: 'beneficiaire-2',
         nom: 'BE',
         prenom: 'Linda',
         statut: 'REFUS_JEUNE',
@@ -134,11 +134,11 @@ describe('Cloture Session', () => {
       // Then
       expect(cloreSession).toHaveBeenCalledWith('1', 'session-1', [
         {
-          idJeune: 'jeune-1',
+          idJeune: 'beneficiaire-1',
           statut: 'PRESENT',
         },
         {
-          idJeune: 'jeune-2',
+          idJeune: 'beneficiaire-2',
           statut: 'PRESENT',
         },
       ])

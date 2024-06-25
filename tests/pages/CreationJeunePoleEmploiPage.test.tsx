@@ -3,8 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/navigation'
 
-import CreationJeunePoleEmploiPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeunePoleEmploiPage'
-import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
+import CreationJeunePoleEmploiPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireFranceTravailPage'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  uneBaseBeneficiaire,
+} from 'fixtures/beneficiaire'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { createCompteJeunePoleEmploi } from 'services/jeunes.service'
@@ -25,7 +29,7 @@ describe('CreationJeunePoleEmploiPage client side', () => {
     ;(useRouter as jest.Mock).mockReturnValue({ push })
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
-    portefeuille = desItemsJeunes().map(extractBaseJeune)
+    portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
 
     renderWithContexts(<CreationJeunePoleEmploiPage />, {
       customAlerte: { alerteSetter },
@@ -122,7 +126,7 @@ describe('CreationJeunePoleEmploiPage client side', () => {
     it('devrait revenir sur la page des jeunes du conseiller', async () => {
       // Given
       ;(createCompteJeunePoleEmploi as Mock<any>).mockResolvedValue(
-        uneBaseJeune()
+        uneBaseBeneficiaire()
       )
 
       // When
@@ -138,11 +142,11 @@ describe('CreationJeunePoleEmploiPage client side', () => {
 
       expect(portefeuilleSetter).toHaveBeenCalledWith([
         ...portefeuille,
-        uneBaseJeune(),
+        uneBaseBeneficiaire(),
       ])
       expect(alerteSetter).toHaveBeenCalledWith(
         'creationBeneficiaire',
-        'jeune-1'
+        'beneficiaire-1'
       )
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })

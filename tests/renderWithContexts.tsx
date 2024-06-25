@@ -2,7 +2,10 @@ import { render, RenderResult } from '@testing-library/react'
 import React, { ReactNode } from 'react'
 
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+} from 'fixtures/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -55,7 +58,9 @@ export default function renderWithContexts(
 
   const portefeuille = {
     ...customPortefeuille,
-    value: customPortefeuille?.value ?? desItemsJeunes().map(extractBaseJeune),
+    value:
+      customPortefeuille?.value ??
+      desItemsBeneficiaires().map(extractBaseBeneficiaire),
   }
 
   const currentJeune = { ...customCurrentJeune }

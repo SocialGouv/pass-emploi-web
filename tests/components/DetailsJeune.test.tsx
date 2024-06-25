@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 
 import DetailsJeune from 'components/jeune/DetailsJeune'
 import { unConseiller } from 'fixtures/conseiller'
-import { unDetailJeune } from 'fixtures/jeune'
+import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modifierIdentifiantPartenaire } from 'services/jeunes.service'
@@ -21,7 +21,7 @@ describe('<DetailsJeune>', () => {
 
   it("devrait afficher les informations de la fiche d'une jeune", () => {
     // Given
-    const jeune = unDetailJeune({
+    const jeune = unDetailBeneficiaire({
       isActivated: true,
       urlDossier: 'https://dossier-milo.fr',
       dateFinCEJ: '2024-12-07T17:30:07.756Z',
@@ -48,7 +48,7 @@ describe('<DetailsJeune>', () => {
 
   it("n'affiche pas le mail si le jeune n'en a pas", () => {
     // Given
-    const jeune = unDetailJeune()
+    const jeune = unDetailBeneficiaire()
     delete jeune.email
 
     // When
@@ -65,7 +65,7 @@ describe('<DetailsJeune>', () => {
 
   it("n'affiche pas le lien vers le dossier si le jeune n'en a pas", () => {
     // Given
-    const jeune = unDetailJeune({ urlDossier: undefined })
+    const jeune = unDetailBeneficiaire({ urlDossier: undefined })
 
     // When
     renderWithContexts(
@@ -83,7 +83,7 @@ describe('<DetailsJeune>', () => {
     describe('Conseiller MILO', () => {
       it('affiche la date de fin du CEJ si le jeune en a', () => {
         // Given
-        const jeune = unDetailJeune({
+        const jeune = unDetailBeneficiaire({
           dateFinCEJ: '2022-10-10T10:10:10Z',
         })
 
@@ -104,7 +104,7 @@ describe('<DetailsJeune>', () => {
       describe('Conseiller non MILO', () => {
         it("n'affiche pas la date de fin du CEJ", () => {
           // Given
-          const jeune = unDetailJeune({
+          const jeune = unDetailBeneficiaire({
             dateFinCEJ: '2022-10-10T10:10:10Z',
           })
 
@@ -132,7 +132,7 @@ describe('<DetailsJeune>', () => {
 
     describe('pour un jeune France Travail qui n’a pas d’identifiant partenaire', () => {
       beforeEach(() => {
-        const jeune = unDetailJeune({
+        const jeune = unDetailBeneficiaire({
           idPartenaire: undefined,
         })
 
@@ -201,7 +201,7 @@ describe('<DetailsJeune>', () => {
 
           // Then
           expect(modifierIdentifiantPartenaire).toHaveBeenCalledWith(
-            'jeune-1',
+            'beneficiaire-1',
             '12345'
           )
           expect(alerteSetter).toHaveBeenCalledWith(
@@ -214,7 +214,7 @@ describe('<DetailsJeune>', () => {
 
     describe('pour un jeune France Travail a déjà un identifiant partenaire', () => {
       beforeEach(() => {
-        const jeune = unDetailJeune({
+        const jeune = unDetailBeneficiaire({
           idPartenaire: '12345',
         })
 
@@ -283,7 +283,7 @@ describe('<DetailsJeune>', () => {
 
           // Then
           expect(modifierIdentifiantPartenaire).toHaveBeenCalledWith(
-            'jeune-1',
+            'beneficiaire-1',
             '123456789'
           )
           expect(alerteSetter).toHaveBeenCalledWith(
@@ -296,7 +296,7 @@ describe('<DetailsJeune>', () => {
 
     it('ne permet pas l’ajout d’un identifiant partenaire pour un jeune Mission Locale', () => {
       // Given
-      const jeune = unDetailJeune({
+      const jeune = unDetailBeneficiaire({
         idPartenaire: undefined,
       })
 

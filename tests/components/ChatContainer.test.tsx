@@ -3,7 +3,11 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import ChatContainer from 'components/chat/ChatContainer'
-import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import {
   BaseBeneficiaire,
@@ -27,8 +31,10 @@ jest.mock('components/chat/ConversationBeneficiaire', () =>
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 
 describe('<ChatContainer />', () => {
-  const jeunes: BaseBeneficiaire[] = desItemsJeunes().map(extractBaseJeune)
-  let jeunesChats: BeneficiaireChat[]
+  const beneficiaires: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+    extractBaseBeneficiaire
+  )
+  let beneficiairesChats: BeneficiaireChat[]
 
   let conseillers: ConseillerHistorique[]
   beforeEach(async () => {
@@ -39,20 +45,20 @@ describe('<ChatContainer />', () => {
       desListesDeDiffusion()
     )
     ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
-    jeunesChats = [
-      unJeuneChat({
-        ...jeunes[0],
-        chatId: `chat-${jeunes[0].id}`,
+    beneficiairesChats = [
+      unBeneficiaireChat({
+        ...beneficiaires[0],
+        chatId: `chat-${beneficiaires[0].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
-        ...jeunes[1],
-        chatId: `chat-${jeunes[1].id}`,
+      unBeneficiaireChat({
+        ...beneficiaires[1],
+        chatId: `chat-${beneficiaires[1].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
-        ...jeunes[2],
-        chatId: `chat-${jeunes[2].id}`,
+      unBeneficiaireChat({
+        ...beneficiaires[2],
+        chatId: `chat-${beneficiaires[2].id}`,
         seenByConseiller: false,
       }),
     ]
@@ -64,7 +70,7 @@ describe('<ChatContainer />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatContainer
-            jeunesChats={jeunesChats}
+            jeunesChats={beneficiairesChats}
             menuState={[false, () => {}]}
           />,
           {}
@@ -87,27 +93,31 @@ describe('<ChatContainer />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatContainer
-            jeunesChats={jeunesChats}
+            jeunesChats={beneficiairesChats}
             menuState={[false, () => {}]}
           />,
           {
-            customCurrentJeune: { id: jeunes[2].id },
+            customCurrentJeune: { id: beneficiaires[2].id },
           }
         )
       })
     })
 
-    it('affiche le chat du jeune courant', async () => {
+    it('affiche le chat du beneficiaire courant', async () => {
       // Then
       expect(
-        screen.getByText(`conversation-${jeunes[2].id}`)
+        screen.getByText(`conversation-${beneficiaires[2].id}`)
       ).toBeInTheDocument()
     })
 
     it("n'affiche pas les autres chats", async () => {
       // Then
-      expect(() => screen.getByText(`conversation-${jeunes[0].id}`)).toThrow()
-      expect(() => screen.getByText(`conversation-${jeunes[1].id}`)).toThrow()
+      expect(() =>
+        screen.getByText(`conversation-${beneficiaires[0].id}`)
+      ).toThrow()
+      expect(() =>
+        screen.getByText(`conversation-${beneficiaires[1].id}`)
+      ).toThrow()
     })
   })
 

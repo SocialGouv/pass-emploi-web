@@ -5,7 +5,10 @@ import { usePathname } from 'next/navigation'
 
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, unJeuneChat } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import {
   BaseBeneficiaire,
   BeneficiaireChat,
@@ -30,7 +33,7 @@ global.Audio = class FakeAudio {
 
 describe('Intégration notifications sonores', () => {
   let updateChatsRef: (chats: BeneficiaireChat[]) => void
-  const jeunes: BeneficiaireFromListe[] = desItemsJeunes()
+  const jeunes: BeneficiaireFromListe[] = desItemsBeneficiaires()
 
   beforeEach(async () => {
     const now = DateTime.now()
@@ -42,7 +45,7 @@ describe('Intégration notifications sonores', () => {
         updateChatsRef = fn
         updateChatsRef(
           jeunes.map((jeune: BaseBeneficiaire) =>
-            unJeuneChat({
+            unBeneficiaireChat({
               ...jeune,
               chatId: `chat-${jeune.id}`,
               seenByConseiller: true,
@@ -118,14 +121,14 @@ async function unNouveauMessageArrive(
   await act(async () => {
     const [first, ...autres] = jeunes
     updateChatsRef([
-      unJeuneChat({
+      unBeneficiaireChat({
         ...first,
         lastMessageSentBy: 'jeune',
         chatId: `chat-${first.id}`,
         lastMessageContent: 'Ceci est tellement nouveau, donne moi de la notif',
       }),
       ...autres.map((jeune) =>
-        unJeuneChat({
+        unBeneficiaireChat({
           ...jeune,
           chatId: `chat-${jeune.id}`,
           seenByConseiller: true,
