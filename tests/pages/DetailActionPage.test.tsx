@@ -21,7 +21,7 @@ describe('ActionPage client side', () => {
   const action = uneAction()
   const commentaires = [unCommentaire({ id: 'id-commentaire-3' })]
   const jeune: BaseBeneficiaire & { idConseiller: string } = {
-    id: 'jeune-1',
+    id: 'beneficiaire-1',
     prenom: 'Nadia',
     nom: 'Sanfamiye',
     idConseiller: 'id-conseiller',
@@ -158,7 +158,7 @@ describe('ActionPage client side', () => {
         status: StatutAction.Terminee,
       })
       const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'jeune-1',
+        id: 'beneficiaire-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',
         idConseiller: 'id-conseiller',
@@ -192,7 +192,7 @@ describe('ActionPage client side', () => {
             .getByRole('link', { name: 'Qualifier l’action' })
             .getAttribute('href')
         ).toMatch(
-          '/mes-jeunes/jeune-1/actions/id-action-1/qualification?liste=beneficiaire'
+          '/mes-jeunes/beneficiaire-1/actions/id-action-1/qualification?liste=beneficiaire'
         )
       })
 
@@ -221,7 +221,7 @@ describe('ActionPage client side', () => {
               .getByRole('link', { name: 'Qualifier l’action' })
               .getAttribute('href')
           ).toMatch(
-            '/mes-jeunes/jeune-1/actions/id-action-1/qualification?liste=pilotage'
+            '/mes-jeunes/beneficiaire-1/actions/id-action-1/qualification?liste=pilotage'
           )
         })
       })
@@ -232,7 +232,7 @@ describe('ActionPage client side', () => {
         status: StatutAction.Terminee,
       })
       const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'jeune-1',
+        id: 'beneficiaire-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',
         idConseiller: 'id-conseiller',
@@ -272,7 +272,7 @@ describe('ActionPage client side', () => {
         },
       })
       const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'jeune-1',
+        id: 'beneficiaire-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',
         idConseiller: 'id-conseiller',
@@ -321,7 +321,7 @@ describe('ActionPage client side', () => {
         },
       })
       const jeune: BaseBeneficiaire & { idConseiller: string } = {
-        id: 'jeune-1',
+        id: 'beneficiaire-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',
         idConseiller: 'id-conseiller',

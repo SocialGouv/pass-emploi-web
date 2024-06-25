@@ -6,7 +6,7 @@ import Favoris, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/favoris/page'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
-import { unDetailJeune } from 'fixtures/jeune'
+import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { getOffres, getRecherchesSauvegardees } from 'services/favoris.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -27,7 +27,7 @@ describe('Favoris', () => {
 
   beforeEach(async () => {
     // Given
-    ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
+    ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailBeneficiaire())
     ;(getMandatorySessionServerSide as jest.Mock).mockReturnValue({
       accessToken: 'accessToken',
       user: { id: 'id-conseiller', structure: 'MILO' },

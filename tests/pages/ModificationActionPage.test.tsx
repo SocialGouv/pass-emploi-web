@@ -33,7 +33,7 @@ describe('ModificationActionPage client side', () => {
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
           aDesCommentaires={false}
-          idJeune='id-jeune'
+          idBeneficiaire='id-beneficiaire'
           actionsPredefinies={actionsPredefinies}
           returnTo='/lien/retour'
         />
@@ -207,7 +207,10 @@ describe('ModificationActionPage client side', () => {
               screen.getByRole('link', {
                 name: 'Consulter la liste des actions',
               })
-            ).toHaveAttribute('href', '/mes-jeunes/id-jeune?onglet=actions')
+            ).toHaveAttribute(
+              'href',
+              '/mes-jeunes/id-beneficiaire?onglet=actions'
+            )
           })
         })
       })
@@ -226,7 +229,7 @@ describe('ModificationActionPage client side', () => {
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
           aDesCommentaires={false}
-          idJeune='id-jeune'
+          idBeneficiaire='id-beneficiaire'
           actionsPredefinies={actionsPredefinies}
           returnTo='/lien/retour'
         />

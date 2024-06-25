@@ -4,11 +4,11 @@ import React from 'react'
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
 import { TotalActions } from 'interfaces/action'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   compareBeneficiairesByNom,
   BeneficiaireAvecNbActionsNonTerminees,
 } from 'interfaces/beneficiaire'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { countActionsJeunes } from 'services/actions.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -22,39 +22,46 @@ export default async function Portefeuille({
   searchParams?: PortfeuilleSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
+  const beneficiaires = await getJeunesDuConseillerServerSide(
+    user.id,
+    accessToken
+  )
 
-  let jeunesAvecNbActionsNonTerminees: BeneficiaireAvecNbActionsNonTerminees[]
+  let beneficiairesAvecNbActionsNonTerminees: BeneficiaireAvecNbActionsNonTerminees[]
   if (estUserPoleEmploi(user)) {
-    jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => ({
-      ...jeune,
-      nbActionsNonTerminees: 0,
-    }))
+    beneficiairesAvecNbActionsNonTerminees = beneficiaires.map(
+      (beneficiaire) => ({
+        ...beneficiaire,
+        nbActionsNonTerminees: 0,
+      })
+    )
   } else {
     const totauxActions: TotalActions[] = await countActionsJeunes(
       user.id,
       accessToken
     )
 
-    jeunesAvecNbActionsNonTerminees = jeunes.map((jeune) => {
-      const totalJeune = totauxActions.find(
-        (action) => action.idJeune === jeune.id
-      )
+    beneficiairesAvecNbActionsNonTerminees = beneficiaires.map(
+      (beneficiaire) => {
+        const totalBeneficiaire = totauxActions.find(
+          (action) => action.idJeune === beneficiaire.id
+        )
 
-      return {
-        ...jeune,
-        nbActionsNonTerminees: totalJeune?.nbActionsNonTerminees ?? 0,
+        return {
+          ...beneficiaire,
+          nbActionsNonTerminees: totalBeneficiaire?.nbActionsNonTerminees ?? 0,
+        }
       }
-    })
+    )
   }
 
-  jeunesAvecNbActionsNonTerminees.sort(compareBeneficiairesByNom)
+  beneficiairesAvecNbActionsNonTerminees.sort(compareBeneficiairesByNom)
   return (
     <>
       <PageHeaderPortal header='Portefeuille' />
 
       <PortefeuillePage
-        conseillerJeunes={jeunesAvecNbActionsNonTerminees}
+        conseillerJeunes={beneficiairesAvecNbActionsNonTerminees}
         isFromEmail={Boolean(searchParams?.source)}
       />
     </>

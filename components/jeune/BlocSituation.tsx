@@ -7,7 +7,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 
 interface BlocSituationProps {
-  idJeune: string
+  idBeneficiaire: string
   situations: Array<{
     etat?: EtatSituation
     categorie: CategorieSituation
@@ -17,7 +17,7 @@ interface BlocSituationProps {
 }
 
 export function BlocSituation({
-  idJeune,
+  idBeneficiaire,
   situations,
   versionResumee,
 }: BlocSituationProps) {
@@ -47,7 +47,10 @@ export function BlocSituation({
       )}
 
       {versionResumee && (
-        <LienVersSituations idJeune={idJeune} pathPrefix={pathPrefix} />
+        <LienVersSituations
+          idBeneficiaire={idBeneficiaire}
+          pathPrefix={pathPrefix}
+        />
       )}
     </div>
   )
@@ -96,15 +99,15 @@ function Situation({
 }
 
 function LienVersSituations({
-  idJeune,
+  idBeneficiaire,
   pathPrefix,
 }: {
-  idJeune: string
+  idBeneficiaire: string
   pathPrefix: string
 }) {
   return (
     <Link
-      href={`${pathPrefix}/${idJeune}/informations?onglet=informations`}
+      href={`${pathPrefix}/${idBeneficiaire}/informations?onglet=informations`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-3'
     >
       Voir le détail des situations

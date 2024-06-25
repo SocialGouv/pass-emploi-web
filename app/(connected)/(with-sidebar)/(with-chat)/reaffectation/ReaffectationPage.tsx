@@ -28,12 +28,12 @@ import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { ValueWithError } from 'components/ValueWithError'
-import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   compareBeneficiairesByNom,
   getNomBeneficiaireComplet,
   BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
+import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 

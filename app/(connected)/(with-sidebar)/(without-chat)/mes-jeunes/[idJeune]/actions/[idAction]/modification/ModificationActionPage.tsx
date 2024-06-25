@@ -29,7 +29,7 @@ type ModificationProps = {
   action: Action
   actionsPredefinies: ActionPredefinie[]
   aDesCommentaires: boolean
-  idJeune: string
+  idBeneficiaire: string
   situationsNonProfessionnelles: SituationNonProfessionnelle[]
   returnTo: string
 }
@@ -38,7 +38,7 @@ function ModificationPage({
   action,
   actionsPredefinies,
   aDesCommentaires,
-  idJeune,
+  idBeneficiaire,
   situationsNonProfessionnelles,
   returnTo,
 }: ModificationProps) {
@@ -78,7 +78,7 @@ function ModificationPage({
     try {
       await deleteAction(action.id)
       setTrackingTitle('Actions jeune – Suppression')
-      router.push('/mes-jeunes/' + idJeune)
+      router.push('/mes-jeunes/' + idBeneficiaire)
     } catch (error) {
       setShowEchecMessage(true)
       console.log('Erreur lors de la suppression de l action', error)
@@ -144,7 +144,7 @@ function ModificationPage({
           </p>
           <div className='mt-10 flex justify-center gap-4'>
             <ButtonLink
-              href={`/mes-jeunes/${idJeune}?onglet=actions`}
+              href={`/mes-jeunes/${idBeneficiaire}?onglet=actions`}
               style={ButtonStyle.PRIMARY}
             >
               Consulter la liste des actions

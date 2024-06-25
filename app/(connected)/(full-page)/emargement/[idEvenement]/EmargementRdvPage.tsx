@@ -10,8 +10,11 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
+import {
+  BaseBeneficiaire,
+  compareBeneficiairesByNom,
+} from 'interfaces/beneficiaire'
 import { Evenement } from 'interfaces/evenement'
-import { BaseBeneficiaire, compareBeneficiairesByNom } from 'interfaces/beneficiaire'
 import { Session, StatutBeneficiaire } from 'interfaces/session'
 import { toFrenchDateTime } from 'utils/date'
 

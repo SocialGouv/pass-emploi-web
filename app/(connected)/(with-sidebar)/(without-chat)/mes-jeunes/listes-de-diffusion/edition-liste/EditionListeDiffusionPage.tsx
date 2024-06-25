@@ -21,7 +21,10 @@ import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
-import { compareParId, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import {
+  compareParId,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'

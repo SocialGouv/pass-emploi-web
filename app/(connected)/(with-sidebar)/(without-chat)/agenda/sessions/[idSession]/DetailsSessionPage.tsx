@@ -135,10 +135,9 @@ function DetailsSessionPage({
     return beneficiairesStructureMilo
       .filter(
         (beneficiaire) =>
-          !beneficiairesSelectionnes.value.some(
-            (selectedBeneficiaire) =>
-              selectedBeneficiaire.id === beneficiaire.base.id
-          )
+          !beneficiairesSelectionnes.value.some((selectedBeneficiaire) => {
+            return selectedBeneficiaire.id === beneficiaire.base.id
+          })
       )
       .map((beneficiaire) => ({
         id: beneficiaire.base.id,

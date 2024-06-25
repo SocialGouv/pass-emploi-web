@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import {
   Action,
   SituationNonProfessionnelle,
@@ -36,7 +36,7 @@ describe('QualificationPage client side', () => {
       dateEcheance: '2022-02-20T14:50:46.000Z',
       dateFinReelle: '2022-09-02T11:00:00.000Z',
       jeune: {
-        id: 'jeune-1',
+        id: 'beneficiaire-1',
       },
     }
     categories = desCategoriesAvecNONSNP()
@@ -46,10 +46,10 @@ describe('QualificationPage client side', () => {
     // When
     renderWithContexts(
       <QualificationPage
-        beneficiaire={uneBaseJeune()}
+        beneficiaire={uneBaseBeneficiaire()}
         action={action}
         categories={categories}
-        returnTo='/mes-jeunes/jeune-1/actions/id-action-1'
+        returnTo='/mes-jeunes/beneficiaire-1/actions/id-action-1'
         returnToListe='/pilotage'
       />,
       {
@@ -230,7 +230,10 @@ describe('QualificationPage client side', () => {
           // Then
           expect(
             screen.getByRole('link', { name: 'Voir le détail' })
-          ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/id-action-1')
+          ).toHaveAttribute(
+            'href',
+            '/mes-jeunes/beneficiaire-1/actions/id-action-1'
+          )
         })
 
         it('permet de retourner vers la liste des actions', async () => {

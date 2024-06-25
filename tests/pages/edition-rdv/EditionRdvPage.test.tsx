@@ -5,19 +5,22 @@ import { useRouter } from 'next/navigation'
 
 import EditionRdvPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/EditionRdvPage'
 import {
+  desItemsBeneficiaires,
+  uneBaseBeneficiaire,
+} from 'fixtures/beneficiaire'
+import {
   typesAnimationCollective,
   typesEvenement,
   typesEvenementCEJ,
   unEvenement,
 } from 'fixtures/evenement'
-import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
-import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import {
   BaseBeneficiaire,
   getNomBeneficiaireComplet,
   BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
@@ -26,7 +29,7 @@ import {
   supprimerEvenement,
   updateRendezVous,
 } from 'services/evenements.service'
-import { getJeunesDeLEtablissementClientSide } from 'services/jeunes.service'
+import { getBeneficiairesDeLEtablissementClientSide } from 'services/jeunes.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -37,9 +40,9 @@ jest.mock('components/PageActionsPortal')
 
 describe('EditionRdvPage client side', () => {
   describe('Rendez-vous', () => {
-    let jeunesConseiller: BeneficiaireFromListe[]
-    let jeunesAutreConseiller: BaseBeneficiaire[]
-    let jeunesEtablissement: BaseBeneficiaire[]
+    let beneficiairesConseiller: BeneficiaireFromListe[]
+    let beneficiairesAutreConseiller: BaseBeneficiaire[]
+    let beneficiairesEtablissement: BaseBeneficiaire[]
     let typesRendezVous: TypeEvenementReferentiel[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -47,28 +50,32 @@ describe('EditionRdvPage client side', () => {
     let refresh: jest.Mock
 
     beforeEach(() => {
-      jeunesConseiller = desItemsJeunes()
-      jeunesAutreConseiller = [
-        uneBaseJeune({
-          id: 'jeune-etablissement-1',
-          prenom: 'Jeune Etablissement 1',
+      beneficiairesConseiller = desItemsBeneficiaires()
+      beneficiairesAutreConseiller = [
+        uneBaseBeneficiaire({
+          id: 'beneficiaire-etablissement-1',
+          prenom: 'Beneficiaire Etablissement 1',
         }),
-        uneBaseJeune({
-          id: 'jeune-etablissement-2',
-          prenom: 'Jeune Etablissement 2',
+        uneBaseBeneficiaire({
+          id: 'beneficiaire-etablissement-2',
+          prenom: 'Beneficiaire Etablissement 2',
         }),
       ]
-      jeunesEtablissement = [
-        ...jeunesConseiller.map(({ id, nom, prenom }) => ({ id, nom, prenom })),
-        ...jeunesAutreConseiller,
+      beneficiairesEtablissement = [
+        ...beneficiairesConseiller.map(({ id, nom, prenom }) => ({
+          id,
+          nom,
+          prenom,
+        })),
+        ...beneficiairesAutreConseiller,
       ]
       ;(supprimerEvenement as jest.Mock).mockResolvedValue(undefined)
       ;(creerEvenement as jest.Mock).mockResolvedValue(
         '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
       )
-      ;(getJeunesDeLEtablissementClientSide as jest.Mock).mockResolvedValue(
-        jeunesEtablissement
-      )
+      ;(
+        getBeneficiairesDeLEtablissementClientSide as jest.Mock
+      ).mockResolvedValue(beneficiairesEtablissement)
       typesRendezVous = typesEvenement()
 
       alerteSetter = jest.fn()
@@ -95,7 +102,7 @@ describe('EditionRdvPage client side', () => {
       })
 
       describe('header', () => {
-        it("ne contient pas de message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", () => {
+        it("ne contient pas de message pour prévenir qu'il y a des bénéficiaires qui ne sont pas au conseiller", () => {
           // Then
           expect(() =>
             screen.getByText(/des jeunes que vous ne suivez pas/)
@@ -191,21 +198,21 @@ describe('EditionRdvPage client side', () => {
           })
         })
 
-        it('contient une liste pour choisir un jeune', () => {
+        it('contient une liste pour choisir un bénéficiaire', () => {
           // Then
-          const selectJeune = within(etape).getByRole('combobox', {
+          const selectBeneficiaire = within(etape).getByRole('combobox', {
             name: /Bénéficiaires/,
           })
           const options = within(etape).getByRole('listbox', { hidden: true })
 
-          expect(selectJeune).toHaveAttribute('aria-required', 'true')
-          expect(selectJeune).toHaveAttribute('multiple', '')
-          for (const jeune of jeunesConseiller) {
-            const jeuneOption = within(options).getByRole('option', {
-              name: `${jeune.nom} ${jeune.prenom}`,
+          expect(selectBeneficiaire).toHaveAttribute('aria-required', 'true')
+          expect(selectBeneficiaire).toHaveAttribute('multiple', '')
+          for (const beneficiaire of beneficiairesConseiller) {
+            const beneficiaireOption = within(options).getByRole('option', {
+              name: `${beneficiaire.nom} ${beneficiaire.prenom}`,
               hidden: true,
             })
-            expect(jeuneOption).toBeInTheDocument()
+            expect(beneficiaireOption).toBeInTheDocument()
           }
         })
 
@@ -362,7 +369,7 @@ describe('EditionRdvPage client side', () => {
       })
 
       describe('quand tous les champs ne sont pas remplis', () => {
-        let selectJeunes: HTMLInputElement
+        let selectBeneficiaires: HTMLInputElement
         let selectModalite: HTMLSelectElement
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
@@ -376,7 +383,7 @@ describe('EditionRdvPage client side', () => {
           selectType = screen.getByRole('combobox', {
             name: /Type/,
           })
-          selectJeunes = screen.getByRole('combobox', {
+          selectBeneficiaires = screen.getByRole('combobox', {
             name: /Bénéficiaires/,
           })
           selectModalite = screen.getByRole('combobox', {
@@ -439,8 +446,8 @@ describe('EditionRdvPage client side', () => {
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(
-            selectJeunes,
-            getNomBeneficiaireComplet(jeunesConseiller[0])
+            selectBeneficiaires,
+            getNomBeneficiaireComplet(beneficiairesConseiller[0])
           )
 
           //When
@@ -459,8 +466,8 @@ describe('EditionRdvPage client side', () => {
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(
-            selectJeunes,
-            getNomBeneficiaireComplet(jeunesConseiller[0])
+            selectBeneficiaires,
+            getNomBeneficiaireComplet(beneficiairesConseiller[0])
           )
           await userEvent.type(inputDate, '2022-03-03')
 
@@ -480,8 +487,8 @@ describe('EditionRdvPage client side', () => {
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
           await userEvent.type(
-            selectJeunes,
-            getNomBeneficiaireComplet(jeunesConseiller[0])
+            selectBeneficiaires,
+            getNomBeneficiaireComplet(beneficiairesConseiller[0])
           )
           await userEvent.type(inputDate, '2022-03-03')
           await userEvent.type(inputHoraire, '02:37')
@@ -498,7 +505,7 @@ describe('EditionRdvPage client side', () => {
       })
 
       describe('formulaire rempli', () => {
-        let selectJeunes: HTMLInputElement
+        let selectBeneficiaires: HTMLInputElement
         let selectModalite: HTMLSelectElement
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
@@ -514,7 +521,7 @@ describe('EditionRdvPage client side', () => {
           })
           await userEvent.selectOptions(selectType, typesRendezVous[0].code)
 
-          selectJeunes = screen.getByRole('combobox', {
+          selectBeneficiaires = screen.getByRole('combobox', {
             name: /Bénéficiaires/,
           })
           selectModalite = screen.getByRole('combobox', {
@@ -534,12 +541,12 @@ describe('EditionRdvPage client side', () => {
 
           // Given
           await userEvent.type(
-            selectJeunes,
-            getNomBeneficiaireComplet(jeunesConseiller[0])
+            selectBeneficiaires,
+            getNomBeneficiaireComplet(beneficiairesConseiller[0])
           )
           await userEvent.type(
-            selectJeunes,
-            getNomBeneficiaireComplet(jeunesConseiller[2])
+            selectBeneficiaires,
+            getNomBeneficiaireComplet(beneficiairesConseiller[2])
           )
           await userEvent.selectOptions(selectModalite, modalites[0])
           await userEvent.type(inputDate, '2022-03-03')
@@ -556,7 +563,10 @@ describe('EditionRdvPage client side', () => {
 
             // Then
             expect(creerEvenement).toHaveBeenCalledWith({
-              jeunesIds: [jeunesConseiller[2].id, jeunesConseiller[0].id],
+              jeunesIds: [
+                beneficiairesConseiller[2].id,
+                beneficiairesConseiller[0].id,
+              ],
               titre: 'Titre de l’événement',
               type: 'ACTIVITES_EXTERIEURES',
               modality: modalites[0],
@@ -583,7 +593,10 @@ describe('EditionRdvPage client side', () => {
 
             // Then
             expect(creerEvenement).toHaveBeenCalledWith({
-              jeunesIds: [jeunesConseiller[2].id, jeunesConseiller[0].id],
+              jeunesIds: [
+                beneficiairesConseiller[2].id,
+                beneficiairesConseiller[0].id,
+              ],
               titre: 'Titre de l’événement',
               type: 'AUTRE',
               precision: 'un texte de précision',
@@ -760,18 +773,20 @@ describe('EditionRdvPage client side', () => {
       })
     })
 
-    describe('quand un id de jeune est spécifié', () => {
+    describe('quand un id de bénéficiaire est spécifié', () => {
       it('initialise le destinataire', async () => {
         // Given
-        const idJeune = jeunesConseiller[2].id
-        const jeuneFullname = getNomBeneficiaireComplet(jeunesConseiller[2])
+        const idBeneficiaire = beneficiairesConseiller[2].id
+        const beneficiaireFullname = getNomBeneficiaireComplet(
+          beneficiairesConseiller[2]
+        )
 
         // When
         renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
-            idJeune={idJeune}
+            idBeneficiaire={idBeneficiaire}
             lectureSeule={false}
             conseillerEstObservateur={false}
           />
@@ -784,7 +799,7 @@ describe('EditionRdvPage client side', () => {
         // Then
         expect(() =>
           screen.getByRole('option', {
-            name: jeuneFullname,
+            name: beneficiaireFullname,
             hidden: true,
           })
         ).toThrow()
@@ -792,7 +807,7 @@ describe('EditionRdvPage client side', () => {
           name: /Bénéficiaires/,
         })
         expect(
-          within(destinataires).getByText(jeuneFullname)
+          within(destinataires).getByText(beneficiaireFullname)
         ).toBeInTheDocument()
       })
     })
@@ -801,18 +816,18 @@ describe('EditionRdvPage client side', () => {
       let evenement: Evenement
       beforeEach(() => {
         // Given
-        const jeune0 = {
-          id: jeunesConseiller[0].id,
-          prenom: jeunesConseiller[0].prenom,
-          nom: jeunesConseiller[0].nom,
+        const beneficiaire0 = {
+          id: beneficiairesConseiller[0].id,
+          prenom: beneficiairesConseiller[0].prenom,
+          nom: beneficiairesConseiller[0].nom,
         }
-        const jeune2 = {
-          id: jeunesConseiller[2].id,
-          prenom: jeunesConseiller[2].prenom,
-          nom: jeunesConseiller[2].nom,
+        const beneficiaire2 = {
+          id: beneficiairesConseiller[2].id,
+          prenom: beneficiairesConseiller[2].prenom,
+          nom: beneficiairesConseiller[2].nom,
         }
 
-        evenement = unEvenement({ jeunes: [jeune0, jeune2] })
+        evenement = unEvenement({ jeunes: [beneficiaire0, beneficiaire2] })
 
         // When
         renderWithContexts(
@@ -866,18 +881,22 @@ describe('EditionRdvPage client side', () => {
         expect(within(historique).getAllByRole('listitem').length).toEqual(2)
       })
 
-      it('sélectionne les jeunes du rendez-vous', () => {
-        const jeune0Fullname = getNomBeneficiaireComplet(jeunesConseiller[0])
-        const jeune2Fullname = getNomBeneficiaireComplet(jeunesConseiller[2])
+      it('sélectionne les beneficiaires du rendez-vous', () => {
+        const beneficiaire0Fullname = getNomBeneficiaireComplet(
+          beneficiairesConseiller[0]
+        )
+        const beneficiaire2Fullname = getNomBeneficiaireComplet(
+          beneficiairesConseiller[2]
+        )
         expect(() =>
           screen.getByRole('option', {
-            name: jeune0Fullname,
+            name: beneficiaire0Fullname,
             hidden: true,
           })
         ).toThrow()
         expect(() =>
           screen.getByRole('option', {
-            name: jeune2Fullname,
+            name: beneficiaire2Fullname,
             hidden: true,
           })
         ).toThrow()
@@ -886,10 +905,10 @@ describe('EditionRdvPage client side', () => {
           name: /Bénéficiaires/,
         })
         expect(
-          within(destinataires).getByText(jeune0Fullname)
+          within(destinataires).getByText(beneficiaire0Fullname)
         ).toBeInTheDocument()
         expect(
-          within(destinataires).getByText(jeune2Fullname)
+          within(destinataires).getByText(beneficiaire2Fullname)
         ).toBeInTheDocument()
       })
 
@@ -953,18 +972,21 @@ describe('EditionRdvPage client side', () => {
         let buttonValider: HTMLButtonElement
         beforeEach(async () => {
           // Given
-          const searchJeune = screen.getByRole('combobox', {
+          const searchBeneficiaire = screen.getByRole('combobox', {
             name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
           })
           const beneficiaires = screen.getByRole('region', {
             name: /Bénéficiaires/,
           })
-          const jeuneSelectionne = within(beneficiaires).getByText(
-            getNomBeneficiaireComplet(jeunesConseiller[2])
+          const beneficiaireSelectionne = within(beneficiaires).getByText(
+            getNomBeneficiaireComplet(beneficiairesConseiller[2])
           )
-          const enleverJeune = within(jeuneSelectionne).getByRole('button', {
-            name: /Enlever/,
-          })
+          const enleverBeneficiaire = within(beneficiaireSelectionne).getByRole(
+            'button',
+            {
+              name: /Enlever/,
+            }
+          )
 
           const selectModalite = screen.getByRole('combobox', {
             name: 'Modalité',
@@ -985,10 +1007,10 @@ describe('EditionRdvPage client side', () => {
 
           // Given
           await userEvent.type(
-            searchJeune,
-            getNomBeneficiaireComplet(jeunesConseiller[1])
+            searchBeneficiaire,
+            getNomBeneficiaireComplet(beneficiairesConseiller[1])
           )
-          await userEvent.click(enleverJeune)
+          await userEvent.click(enleverBeneficiaire)
           await userEvent.selectOptions(selectModalite, modalites[0])
 
           await userEvent.clear(inputDate)
@@ -1046,7 +1068,10 @@ describe('EditionRdvPage client side', () => {
 
             // Then
             expect(updateRendezVous).toHaveBeenCalledWith(evenement.id, {
-              jeunesIds: [jeunesConseiller[1].id, jeunesConseiller[0].id],
+              jeunesIds: [
+                beneficiairesConseiller[1].id,
+                beneficiairesConseiller[0].id,
+              ],
               titre: 'Nouveau titre',
               type: 'AUTRE',
               modality: modalites[0],
@@ -1112,19 +1137,19 @@ describe('EditionRdvPage client side', () => {
       let evenement: Evenement
       beforeEach(() => {
         // Given
-        const jeune = {
-          id: jeunesConseiller[0].id,
-          prenom: jeunesConseiller[0].prenom,
-          nom: jeunesConseiller[0].nom,
+        const beneficiaire = {
+          id: beneficiairesConseiller[0].id,
+          prenom: beneficiairesConseiller[0].prenom,
+          nom: beneficiairesConseiller[0].nom,
         }
-        const jeuneAutreConseiller = {
-          id: 'jeune-autre-conseiller',
+        const beneficiaireAutreConseiller = {
+          id: 'beneficiaire-autre-conseiller',
           prenom: 'Michel',
           nom: 'Dupont',
         }
 
         evenement = unEvenement({
-          jeunes: [jeune, jeuneAutreConseiller],
+          jeunes: [beneficiaire, beneficiaireAutreConseiller],
           createur: { id: '2', nom: 'Hermet', prenom: 'Gaëlle' },
         })
 
@@ -1140,38 +1165,39 @@ describe('EditionRdvPage client side', () => {
         )
       })
 
-      it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", () => {
+      it("contient un message pour prévenir qu'il y a des bénéficiaires qui ne sont pas au conseiller", () => {
         // Then
         expect(
           screen.getByText(/des bénéficiaires que vous ne suivez pas/)
         ).toBeInTheDocument()
       })
 
-      it('contient tous les jeunes, y compris ceux qui ne sont pas aux conseiller connecté', () => {
+      it('contient tous les bénéficiaires, y compris ceux qui ne sont pas aux conseiller connecté', () => {
         // Given
         const beneficiaires = screen.getByRole('region', {
           name: /Bénéficiaires/,
         })
 
         // Then
-        const jeune = within(beneficiaires).getByText(
-          getNomBeneficiaireComplet(jeunesConseiller[0])
+        const beneficiaire = within(beneficiaires).getByText(
+          getNomBeneficiaireComplet(beneficiairesConseiller[0])
         )
         expect(() =>
-          within(jeune).getByLabelText(
+          within(beneficiaire).getByLabelText(
             /Ce bénéficiaire n’est pas dans votre portefeuille/
           )
         ).toThrow()
         expect(() =>
           screen.getByRole('option', {
-            name: getNomBeneficiaireComplet(jeunesConseiller[0]),
+            name: getNomBeneficiaireComplet(beneficiairesConseiller[0]),
             hidden: true,
           })
         ).toThrow()
 
-        const autreJeune = within(beneficiaires).getByText('Dupont Michel')
+        const autreBeneficiaire =
+          within(beneficiaires).getByText('Dupont Michel')
         expect(
-          within(autreJeune).getByLabelText(
+          within(autreBeneficiaire).getByLabelText(
             /Ce bénéficiaire n’est pas dans votre portefeuille/
           )
         ).toBeInTheDocument()
@@ -1192,7 +1218,7 @@ describe('EditionRdvPage client side', () => {
         ).toBeInTheDocument()
       })
 
-      it("contient un message spécial lors de la suppression pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
+      it("contient un message spécial lors de la suppression pour prévenir qu'il y a des bénéficiaires qui ne sont pas au conseiller", async () => {
         // When
         const deleteButtonFromPage = screen.getByText('Supprimer')
         await userEvent.click(deleteButtonFromPage)
@@ -1200,7 +1226,7 @@ describe('EditionRdvPage client side', () => {
         // Then
         expect(
           screen.getByText(
-            /concerne des bénéficiaires qui ne sont pas dans votre portefeuille/
+            /concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille/
           )
         ).toBeInTheDocument()
         expect(
@@ -1246,7 +1272,10 @@ describe('EditionRdvPage client side', () => {
 
           // Then
           expect(updateRendezVous).toHaveBeenCalledWith(evenement.id, {
-            jeunesIds: [jeunesConseiller[0].id, 'jeune-autre-conseiller'],
+            jeunesIds: [
+              beneficiairesConseiller[0].id,
+              'beneficiaire-autre-conseiller',
+            ],
             type: 'AUTRE',
             titre: 'Prise de nouvelles par téléphone',
             modality: modalites[2],
@@ -1322,9 +1351,9 @@ describe('EditionRdvPage client side', () => {
   })
 
   describe('Animation collective', () => {
-    let jeunesConseiller: BeneficiaireFromListe[]
-    let jeunesAutreConseiller: BaseBeneficiaire[]
-    let jeunesEtablissement: BaseBeneficiaire[]
+    let beneficiairesConseiller: BeneficiaireFromListe[]
+    let beneficiairesAutreConseiller: BaseBeneficiaire[]
+    let beneficiairesEtablissement: BaseBeneficiaire[]
 
     let typesRendezVous: TypeEvenementReferentiel[]
 
@@ -1332,28 +1361,32 @@ describe('EditionRdvPage client side', () => {
     let push: Function
     let refresh: jest.Mock
     beforeEach(() => {
-      jeunesConseiller = desItemsJeunes()
-      jeunesAutreConseiller = [
-        uneBaseJeune({
-          id: 'jeune-etablissement-1',
-          prenom: 'Jeune Etablissement 1',
+      beneficiairesConseiller = desItemsBeneficiaires()
+      beneficiairesAutreConseiller = [
+        uneBaseBeneficiaire({
+          id: 'beneficiaire-etablissement-1',
+          prenom: 'beneficiaire Etablissement 1',
         }),
-        uneBaseJeune({
-          id: 'jeune-etablissement-2',
-          prenom: 'Jeune Etablissement 2',
+        uneBaseBeneficiaire({
+          id: 'beneficiaire-etablissement-2',
+          prenom: 'beneficiaire Etablissement 2',
         }),
       ]
-      jeunesEtablissement = [
-        ...jeunesConseiller.map(({ id, nom, prenom }) => ({ id, nom, prenom })),
-        ...jeunesAutreConseiller,
+      beneficiairesEtablissement = [
+        ...beneficiairesConseiller.map(({ id, nom, prenom }) => ({
+          id,
+          nom,
+          prenom,
+        })),
+        ...beneficiairesAutreConseiller,
       ]
       ;(supprimerEvenement as jest.Mock).mockResolvedValue(undefined)
       ;(creerEvenement as jest.Mock).mockResolvedValue(
         '963afb47-2b15-46a9-8c0c-0e95240b2eb5'
       )
-      ;(getJeunesDeLEtablissementClientSide as jest.Mock).mockResolvedValue(
-        jeunesEtablissement
-      )
+      ;(
+        getBeneficiairesDeLEtablissementClientSide as jest.Mock
+      ).mockResolvedValue(beneficiairesEtablissement)
       typesRendezVous = typesAnimationCollective()
 
       alerteSetter = jest.fn()
@@ -1389,13 +1422,13 @@ describe('EditionRdvPage client side', () => {
 
       it('récupère les bénéficiaires de l’établissement', async () => {
         // Then
-        expect(getJeunesDeLEtablissementClientSide).toHaveBeenCalledWith(
+        expect(getBeneficiairesDeLEtablissementClientSide).toHaveBeenCalledWith(
           'id-etablissement'
         )
-        jeunesEtablissement.forEach((jeune) =>
+        beneficiairesEtablissement.forEach((beneficiaire) =>
           expect(
             screen.getByRole('option', {
-              name: getNomBeneficiaireComplet(jeune),
+              name: getNomBeneficiaireComplet(beneficiaire),
               hidden: true,
             })
           ).toBeInTheDocument()
@@ -1439,10 +1472,10 @@ describe('EditionRdvPage client side', () => {
         await userEvent.click(buttonValider)
 
         // Then
-        const selectJeunes = screen.getByRole('combobox', {
+        const selectBeneficiaires = screen.getByRole('combobox', {
           name: /Bénéficiaires/,
         })
-        expect(selectJeunes).toHaveAttribute('aria-required', 'false')
+        expect(selectBeneficiaires).toHaveAttribute('aria-required', 'false')
         expect(creerEvenement).toHaveBeenCalledWith(
           expect.objectContaining({
             jeunesIds: [],
@@ -1450,13 +1483,13 @@ describe('EditionRdvPage client side', () => {
         )
       })
 
-      it("contient un message pour prévenir qu'il y a des jeunes qui ne sont pas au conseiller", async () => {
+      it("contient un message pour prévenir qu'il y a des bénéficiaires qui ne sont pas au conseiller", async () => {
         // Given
         await userEvent.type(
           screen.getByLabelText(
             /Recherchez et ajoutez un ou plusieurs bénéficiaires/
           ),
-          getNomBeneficiaireComplet(jeunesAutreConseiller[0])
+          getNomBeneficiaireComplet(beneficiairesAutreConseiller[0])
         )
 
         // Then
@@ -1563,24 +1596,24 @@ describe('EditionRdvPage client side', () => {
     })
 
     describe('quand on consulte une animation collective close', () => {
-      let jeuneAbsent: BaseBeneficiaire & { futPresent: boolean }
-      let jeunePresent: BaseBeneficiaire & { futPresent: boolean }
+      let beneficiaireAbsent: BaseBeneficiaire & { futPresent: boolean }
+      let beneficiairePresent: BaseBeneficiaire & { futPresent: boolean }
 
       beforeEach(async () => {
-        jeuneAbsent = {
-          id: jeunesConseiller[0].id,
-          prenom: jeunesConseiller[0].prenom,
-          nom: jeunesConseiller[0].nom,
+        beneficiaireAbsent = {
+          id: beneficiairesConseiller[0].id,
+          prenom: beneficiairesConseiller[0].prenom,
+          nom: beneficiairesConseiller[0].nom,
           futPresent: false,
         }
-        jeunePresent = {
-          id: jeunesConseiller[1].id,
-          prenom: jeunesConseiller[1].prenom,
-          nom: jeunesConseiller[1].nom,
+        beneficiairePresent = {
+          id: beneficiairesConseiller[1].id,
+          prenom: beneficiairesConseiller[1].prenom,
+          nom: beneficiairesConseiller[1].nom,
           futPresent: true,
         }
         const evenement = unEvenement({
-          jeunes: [jeuneAbsent, jeunePresent],
+          jeunes: [beneficiaireAbsent, beneficiairePresent],
           type: { code: 'ATELIER', label: 'Atelier' },
           statut: StatutAnimationCollective.Close,
         })
@@ -1609,7 +1642,9 @@ describe('EditionRdvPage client side', () => {
 
       it('ne récupère pas les autres bénéficiaires de l’établissement', async () => {
         // Then
-        expect(getJeunesDeLEtablissementClientSide).toHaveBeenCalledTimes(0)
+        expect(
+          getBeneficiairesDeLEtablissementClientSide
+        ).toHaveBeenCalledTimes(0)
       })
 
       it('empêche toute modification', () => {
@@ -1649,12 +1684,12 @@ describe('EditionRdvPage client side', () => {
         // Then
         expect(
           within(
-            screen.getByText(getNomBeneficiaireComplet(jeunePresent))
+            screen.getByText(getNomBeneficiaireComplet(beneficiairePresent))
           ).getByLabelText(/Ce bénéficiaire était présent à l’événement/)
         ).toBeInTheDocument()
         expect(
           within(
-            screen.getByText(getNomBeneficiaireComplet(jeuneAbsent))
+            screen.getByText(getNomBeneficiaireComplet(beneficiaireAbsent))
           ).queryByLabelText(/Ce bénéficiaire était présent à l’événement/)
         ).not.toBeInTheDocument()
       })

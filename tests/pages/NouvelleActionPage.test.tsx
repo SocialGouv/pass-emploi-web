@@ -25,7 +25,7 @@ describe('NouvelleActionPage client side', () => {
     // When
     renderWithContexts(
       <NouvelleActionPage
-        idJeune='id-jeune'
+        idBeneficiaire='id-beneficiaire'
         categories={categories}
         actionsPredefinies={actionsPredefinies}
         returnTo='/lien/retour'
@@ -234,7 +234,7 @@ describe('NouvelleActionPage client side', () => {
             dateFinReelle: '2023-12-20',
             statut: 'Terminee',
           },
-          'id-jeune'
+          'id-beneficiaire'
         )
       })
 

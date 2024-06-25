@@ -22,11 +22,11 @@ import {
   updateMessage,
 } from 'clients/firebase.client'
 import {
-  desItemsJeunes,
+  desItemsBeneficiaires,
   unChat,
-  uneBaseJeune,
-  unJeuneChat,
-} from 'fixtures/jeune'
+  uneBaseBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import {
   desMessagesAntechronologiques,
   desMessagesListeDeDiffusionParJour,
@@ -35,7 +35,11 @@ import {
   unMessage,
 } from 'fixtures/message'
 import { unDetailOffreEmploi } from 'fixtures/offre'
-import { Chat, BeneficiaireChat, BeneficiaireFromListe } from 'interfaces/beneficiaire'
+import {
+  Chat,
+  BeneficiaireChat,
+  BeneficiaireFromListe,
+} from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import {
@@ -102,7 +106,7 @@ describe('MessagesFirebaseAndApiService', () => {
       // Given
       const now = DateTime.now()
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
-      const jeuneChat = unJeuneChat()
+      const jeuneChat = unBeneficiaireChat()
 
       // When
       await setReadByConseiller(jeuneChat.chatId)
@@ -118,7 +122,7 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.toggleFlag', () => {
     it('updates chat in firebase', async () => {
       // Given
-      const jeuneChat = unJeuneChat()
+      const jeuneChat = unBeneficiaireChat()
 
       // When
       await toggleFlag(jeuneChat.chatId, false)
@@ -142,16 +146,20 @@ describe('MessagesFirebaseAndApiService', () => {
           _idConseiller: string,
           fn: (chats: { [idJeune: string]: Chat }) => void
         ) =>
-          fn({ 'jeune-1': unChat(), 'jeune-2': unChat(), 'jeune-3': unChat() })
+          fn({
+            'beneficiaire-1': unChat(),
+            'beneficiaire-2': unChat(),
+            'beneficiaire-3': unChat(),
+          })
       )
 
       // When
       await observeConseillerChats(
         cleChiffrement,
         [
-          { ...uneBaseJeune({ id: 'jeune-1' }) },
-          { ...uneBaseJeune({ id: 'jeune-2' }) },
-          { ...uneBaseJeune({ id: 'jeune-3' }) },
+          { ...uneBaseBeneficiaire({ id: 'beneficiaire-1' }) },
+          { ...uneBaseBeneficiaire({ id: 'beneficiaire-2' }) },
+          { ...uneBaseBeneficiaire({ id: 'beneficiaire-3' }) },
         ],
         updateChats
       )
@@ -165,12 +173,12 @@ describe('MessagesFirebaseAndApiService', () => {
       )
     })
 
-    it('calls provided callback with new jeuneChat built from found chat', async () => {
+    it('calls provided callback with new beneficiaireChat built from found chat', async () => {
       // Then
       expect(updateChats).toHaveBeenCalledWith([
-        { ...uneBaseJeune({ id: 'jeune-1' }), ...unChat() },
-        { ...uneBaseJeune({ id: 'jeune-2' }), ...unChat() },
-        { ...uneBaseJeune({ id: 'jeune-3' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'beneficiaire-1' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'beneficiaire-2' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'beneficiaire-3' }), ...unChat() },
       ])
     })
   })
@@ -269,11 +277,15 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.messagesNotRead', () => {
     it('retourne nombre de messages nons lus par les jeunes', async () => {
       // Given
-      const idsJeunes: string[] = ['jeune-1', 'jeune-2', 'jeune-3']
+      const idsJeunes: string[] = [
+        'beneficiaire-1',
+        'beneficiaire-2',
+        'beneficiaire-3',
+      ]
       ;(getChatsDuConseiller as jest.Mock).mockResolvedValue({
-        'jeune-1': unChat({ chatId: `chat-jeune-1` }),
-        'jeune-2': unChat({ chatId: `chat-jeune-2` }),
-        'jeune-3': unChat({ chatId: `chat-jeune-3` }),
+        'beneficiaire-1': unChat({ chatId: `chat-beneficiaire-1` }),
+        'beneficiaire-2': unChat({ chatId: `chat-beneficiaire-2` }),
+        'beneficiaire-3': unChat({ chatId: `chat-beneficiaire-3` }),
       })
 
       //When
@@ -282,9 +294,9 @@ describe('MessagesFirebaseAndApiService', () => {
       //Then
       expect(getChatsDuConseiller).toHaveBeenCalledWith('idConseiller')
       expect(actual).toEqual({
-        ['jeune-1']: 1,
-        ['jeune-2']: 1,
-        ['jeune-3']: 1,
+        ['beneficiaire-1']: 1,
+        ['beneficiaire-2']: 1,
+        ['beneficiaire-3']: 1,
       })
     })
 
@@ -294,16 +306,16 @@ describe('MessagesFirebaseAndApiService', () => {
 
       //When
       const actual = await countMessagesNotRead([
-        'jeune-1',
-        'jeune-2',
-        'jeune-3',
+        'beneficiaire-1',
+        'beneficiaire-2',
+        'beneficiaire-3',
       ])
 
       //Then
       expect(actual).toEqual({
-        'jeune-1': 0,
-        'jeune-2': 0,
-        'jeune-3': 0,
+        'beneficiaire-1': 0,
+        'beneficiaire-2': 0,
+        'beneficiaire-3': 0,
       })
     })
   })
@@ -315,7 +327,7 @@ describe('MessagesFirebaseAndApiService', () => {
     beforeEach(async () => {
       // Given
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
-      jeuneChat = unJeuneChat()
+      jeuneChat = unBeneficiaireChat()
       newMessage = 'nouveauMessage'
       // When
     })
@@ -426,7 +438,7 @@ describe('MessagesFirebaseAndApiService', () => {
     let newMessageGroupe: string
     beforeEach(async () => {
       // Given
-      idsBeneficiaires = desItemsJeunes().map(({ id }) => id)
+      idsBeneficiaires = desItemsBeneficiaires().map(({ id }) => id)
       idsListesDeDiffusion = ['liste-1', 'liste-2']
       newMessageGroupe = 'nouveau message groupé'
     })
@@ -579,7 +591,7 @@ describe('MessagesFirebaseAndApiService', () => {
     beforeEach(async () => {
       // Given
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
-      destinataires = desItemsJeunes()
+      destinataires = desItemsBeneficiaires()
       idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'Regarde cette offre qui pourrait t’intéresser.'
       offre = unDetailOffreEmploi()
@@ -662,7 +674,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.supprimerMessage', () => {
-    const jeuneChat = unJeuneChat()
+    const jeuneChat = unBeneficiaireChat()
     const message = unMessage()
     const now = DateTime.now()
     beforeEach(async () => {
@@ -716,7 +728,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.modifierMessage', () => {
-    const jeuneChat = unJeuneChat()
+    const jeuneChat = unBeneficiaireChat()
     const message = unMessage()
     const now = DateTime.now()
     beforeEach(async () => {
@@ -790,7 +802,7 @@ describe('MessagesFirebaseAndApiService', () => {
     const now = DateTime.fromISO('2024-04-24')
 
     beforeEach(() => {
-      jeuneChat = unJeuneChat()
+      jeuneChat = unBeneficiaireChat()
       recherche = 'tchoupi'
 
       jest.spyOn(DateTime, 'now').mockReturnValue(now)

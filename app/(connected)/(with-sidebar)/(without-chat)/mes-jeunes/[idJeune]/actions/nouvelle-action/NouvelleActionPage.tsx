@@ -19,14 +19,14 @@ import { useConfirmBeforeLeaving } from 'utils/hooks/useConfirmBeforeLeaving'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type EditionActionProps = {
-  idJeune: string
+  idBeneficiaire: string
   categories: SituationNonProfessionnelle[]
   actionsPredefinies: ActionPredefinie[]
   returnTo: string
 }
 
 function NouvelleActionPage({
-  idJeune,
+  idBeneficiaire,
   categories,
   actionsPredefinies,
   returnTo,
@@ -46,7 +46,7 @@ function NouvelleActionPage({
     const { creerAction: _creerAction } = await import(
       'services/actions.service'
     )
-    await _creerAction(action, idJeune)
+    await _creerAction(action, idBeneficiaire)
 
     setTrackingTitle('Actions jeune – Succès création action')
     setSuccesCreation(true)

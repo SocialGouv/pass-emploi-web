@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 
 import Portefeuille from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/page'
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { compareBeneficiairesByNom } from 'interfaces/beneficiaire'
 import { countActionsJeunes } from 'services/actions.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
@@ -19,7 +19,7 @@ jest.mock('services/actions.service')
 
 describe('PortefeuillePage server side', () => {
   beforeEach(() => {
-    const jeunes = desItemsJeunes()
+    const jeunes = desItemsBeneficiaires()
     ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(jeunes)
     ;(countActionsJeunes as jest.Mock).mockResolvedValue(
       jeunes.map((j) => ({
@@ -67,7 +67,7 @@ describe('PortefeuillePage server side', () => {
       // Then
       expect(PortefeuillePage).toHaveBeenCalledWith(
         expect.objectContaining({
-          conseillerJeunes: desItemsJeunes()
+          conseillerJeunes: desItemsBeneficiaires()
             .map((jeune) => ({
               ...jeune,
               nbActionsNonTerminees: 0,
@@ -103,7 +103,7 @@ describe('PortefeuillePage server side', () => {
       // Then
       expect(PortefeuillePage).toHaveBeenCalledWith(
         {
-          conseillerJeunes: desItemsJeunes()
+          conseillerJeunes: desItemsBeneficiaires()
             .map((jeune) => ({
               ...jeune,
               nbActionsNonTerminees: 7,

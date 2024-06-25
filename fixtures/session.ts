@@ -36,7 +36,7 @@ export function unDetailSessionJson(
     },
     inscriptions: [
       {
-        idJeune: 'jeune-1',
+        idJeune: 'beneficiaire-1',
         nom: 'Beau',
         prenom: 'Harry',
         statut: 'INSCRIT',
@@ -70,7 +70,7 @@ export function unDetailSession(overrides: Partial<Session> = {}): Session {
     },
     inscriptions: [
       {
-        idJeune: 'jeune-1',
+        idJeune: 'beneficiaire-1',
         nom: 'Beau',
         prenom: 'Harry',
         statut: 'INSCRIT',

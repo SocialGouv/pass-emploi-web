@@ -17,7 +17,7 @@ import {
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
-  getActionsJeuneServerSide,
+  getActionsBeneficiaireServerSide,
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -81,7 +81,7 @@ export default async function FicheBeneficiaire({
         ),
     userIsPoleEmploi
       ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : getActionsJeuneServerSide(params.idJeune, page, accessToken),
+      : getActionsBeneficiaireServerSide(params.idJeune, page, accessToken),
     userIsPoleEmploi
       ? ([] as SituationNonProfessionnelle[])
       : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),

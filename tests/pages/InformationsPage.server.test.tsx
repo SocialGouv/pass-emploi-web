@@ -5,7 +5,10 @@ import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeune
 import Informations, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/page'
-import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
+import {
+  desConseillersBeneficiaire,
+  unDetailBeneficiaire,
+} from 'fixtures/beneficiaire'
 import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 import {
   getConseillersDuJeuneServerSide,
@@ -32,13 +35,16 @@ describe('HistoriquePage server side', () => {
       categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
     },
   ]
-  const listeConseillers = desConseillersJeune()
+  const listeConseillers = desConseillersBeneficiaire()
 
   let metadata: Metadata
   beforeEach(async () => {
     // Given
     ;(getJeuneDetails as jest.Mock).mockResolvedValue(
-      unDetailJeune({ id: 'id-jeune', situations: listeSituations })
+      unDetailBeneficiaire({
+        id: 'id-beneficiaire',
+        situations: listeSituations,
+      })
     )
     ;(getConseillersDuJeuneServerSide as jest.Mock).mockResolvedValue(
       listeConseillers
@@ -49,15 +55,15 @@ describe('HistoriquePage server side', () => {
     })
 
     // When
-    const params = { idJeune: 'id-jeune' }
+    const params = { idJeune: 'id-beneficiaire' }
     metadata = await generateMetadata({ params })
     render(await Informations({ params }))
   })
 
   it('prépare la page', async () => {
     //Given
-    let DetailJeune = unDetailJeune({
-      id: 'id-jeune',
+    let DetailJeune = unDetailBeneficiaire({
+      id: 'id-beneficiaire',
       situations: listeSituations,
     })
     // Then
@@ -65,14 +71,17 @@ describe('HistoriquePage server side', () => {
       title: 'Informations - Jirac Kenji - Portefeuille',
     })
 
-    expect(getJeuneDetails).toHaveBeenCalledWith('id-jeune', 'accessToken')
+    expect(getJeuneDetails).toHaveBeenCalledWith(
+      'id-beneficiaire',
+      'accessToken'
+    )
     expect(getConseillersDuJeuneServerSide).toHaveBeenCalledWith(
-      'id-jeune',
+      'id-beneficiaire',
       'accessToken'
     )
     expect(HistoriquePage).toHaveBeenCalledWith(
       {
-        idJeune: 'id-jeune',
+        idBeneficiaire: 'id-beneficiaire',
         lectureSeule: false,
         situations: listeSituations,
         conseillers: listeConseillers,

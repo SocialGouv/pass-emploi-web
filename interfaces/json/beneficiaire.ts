@@ -15,20 +15,20 @@ interface Situation {
   dateFin?: string
 }
 
-export interface BaseJeuneJson {
+export interface BaseBeneficiaireJson {
   id: string
   firstName: string
   lastName: string
 }
 
-export interface ItemJeuneJson extends BaseJeuneJson {
+export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
   lastActivity: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
   situationCourante?: Situation
 }
 
-export interface DetailJeuneJson extends BaseJeuneJson {
+export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
   creationDate: string
   isActivated: boolean
   isReaffectationTemporaire: boolean
@@ -41,7 +41,7 @@ export interface DetailJeuneJson extends BaseJeuneJson {
   estAArchiver?: boolean
 }
 
-export type JeuneEtablissementJson = {
+export type BeneficiaireEtablissementJson = {
   jeune: BaseBeneficiaire
   referent: { id: string; nom: string; prenom: string }
   situation?: string
@@ -66,7 +66,7 @@ export interface MetadonneesFavorisJson {
   }
 }
 
-export interface SuppressionJeuneFormData {
+export interface SuppressionBeneficiaireFormData {
   motif: string
   commentaire?: string
 }
@@ -127,53 +127,57 @@ function toCategorieSituation(categorie?: string): CategorieSituation {
   }
 }
 
-export function jsonToBaseJeune(jeune: BaseJeuneJson): BaseBeneficiaire {
+export function jsonToBaseBeneficiaire(
+  beneficiaire: BaseBeneficiaireJson
+): BaseBeneficiaire {
   return {
-    id: jeune.id,
-    prenom: jeune.firstName,
-    nom: jeune.lastName,
+    id: beneficiaire.id,
+    prenom: beneficiaire.firstName,
+    nom: beneficiaire.lastName,
   }
 }
 
-export function jsonToItemJeune({
+export function jsonToItemBeneficiaire({
   firstName,
   lastName,
-  ...jeune
-}: ItemJeuneJson): BeneficiaireFromListe {
+  ...beneficiaire
+}: ItemBeneficiaireJson): BeneficiaireFromListe {
   return {
-    ...jeune,
+    ...beneficiaire,
     prenom: firstName,
     nom: lastName,
-    situationCourante: toCategorieSituation(jeune.situationCourante?.categorie),
+    situationCourante: toCategorieSituation(
+      beneficiaire.situationCourante?.categorie
+    ),
   }
 }
 
-export function jsonToDetailJeune({
+export function jsonToDetailBeneficiaire({
   firstName,
   lastName,
   conseiller,
-  ...jeune
-}: DetailJeuneJson): DetailBeneficiaire {
+  ...beneficiaire
+}: DetailBeneficiaireJson): DetailBeneficiaire {
   return {
-    ...jeune,
-    estAArchiver: Boolean(jeune.estAArchiver),
+    ...beneficiaire,
+    estAArchiver: Boolean(beneficiaire.estAArchiver),
     prenom: firstName,
     nom: lastName,
     idConseiller: conseiller.id,
     situations:
-      jeune.situations?.map((situation) => ({
+      beneficiaire.situations?.map((situation) => ({
         ...situation,
         categorie: toCategorieSituation(situation.categorie),
         etat: toEtatSituation(situation.etat),
       })) ?? [],
-    idPartenaire: jeune.idPartenaire ?? '',
+    idPartenaire: beneficiaire.idPartenaire ?? '',
   }
 }
 
-export function jsonToJeuneEtablissement({
+export function jsonToBeneficiaireEtablissement({
   jeune,
   ...json
-}: JeuneEtablissementJson): BeneficiaireEtablissement {
+}: BeneficiaireEtablissementJson): BeneficiaireEtablissement {
   return {
     ...json,
     base: jeune,
@@ -231,13 +235,13 @@ export function jsonToIndicateursSemaine(
   }
 }
 
-export interface JeunePoleEmploiFormData {
+export interface BeneficiaireFranceTravailFormData {
   prenom: string
   nom: string
   email: string
 }
 
-export interface JeuneMiloFormData {
+export interface BeneficiaireMiloFormData {
   idDossier: string
   nom: string
   prenom: string

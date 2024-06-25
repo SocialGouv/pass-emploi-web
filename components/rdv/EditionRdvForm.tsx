@@ -24,6 +24,11 @@ import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
+import {
+  BaseBeneficiaire,
+  compareParId,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import {
   estClos,
@@ -31,11 +36,6 @@ import {
   Evenement,
   TYPE_EVENEMENT,
 } from 'interfaces/evenement'
-import {
-  BaseBeneficiaire,
-  compareParId,
-  getNomBeneficiaireComplet,
-} from 'interfaces/beneficiaire'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'
@@ -44,25 +44,25 @@ import { dateIsInInterval, toShortDate } from 'utils/date'
 
 interface EditionRdvFormProps {
   conseiller: Conseiller
-  jeunesConseiller: BaseBeneficiaire[]
+  beneficiairesConseiller: BaseBeneficiaire[]
   typesRendezVous: TypeEvenementReferentiel[]
   redirectTo: string
   conseillerIsCreator: boolean
   evenement?: Evenement
-  idJeune?: string
+  idBeneficiaire?: string
   evenementTypeAC?: boolean
   lectureSeule?: boolean
   leaveWithChanges: () => void
   onChanges: (hasChanges: boolean) => void
   soumettreRendezVous: (payload: EvenementFormData) => Promise<void>
   showConfirmationModal: (payload: EvenementFormData) => void
-  recupererJeunesDeLEtablissement: () => Promise<BaseBeneficiaire[]>
+  recupererBeneficiairesDeLEtablissement: () => Promise<BaseBeneficiaire[]>
   onBeneficiairesDUnAutrePortefeuille: (b: boolean) => void
 }
 
 export function EditionRdvForm({
-  jeunesConseiller,
-  recupererJeunesDeLEtablissement,
+  beneficiairesConseiller,
+  recupererBeneficiairesDeLEtablissement,
   typesRendezVous,
   redirectTo,
   onBeneficiairesDUnAutrePortefeuille,
@@ -72,17 +72,17 @@ export function EditionRdvForm({
   leaveWithChanges,
   onChanges,
   evenement,
-  idJeune,
+  idBeneficiaire,
   showConfirmationModal,
   evenementTypeAC,
   lectureSeule,
 }: EditionRdvFormProps) {
-  const defaultJeunes = initJeunesFromRdvOrIdJeune()
-  const [jeunesEtablissement, setJeunesEtablissement] = useState<
+  const defaultBeneficiaires = initBeneficiairesFromRdvOrIdBeneficiaire()
+  const [beneficiairesEtablissement, setBeneficiairesEtablissement] = useState<
     BaseBeneficiaire[]
   >([])
   const [idsJeunes, setIdsJeunes] = useState<ValueWithError<string[]>>({
-    value: defaultJeunes.map(({ id }) => id),
+    value: defaultBeneficiaires.map(({ id }) => id),
   })
   const [codeTypeRendezVous, setCodeTypeRendezVous] = useState<
     ValueWithError<string | undefined>
@@ -155,50 +155,54 @@ export function EditionRdvForm({
   function estUnBeneficiaireDuConseiller(
     idBeneficiaireAVerifier: string
   ): boolean {
-    return jeunesConseiller.some(({ id }) => idBeneficiaireAVerifier === id)
+    return beneficiairesConseiller.some(
+      ({ id }) => idBeneficiaireAVerifier === id
+    )
   }
 
-  function buildOptionsJeunes(): OptionBeneficiaire[] {
+  function buildOptionsBeneficiaires(): OptionBeneficiaire[] {
     if (lectureSeule) return []
 
     if (!evenementTypeAC) {
-      return jeunesConseiller.map((jeune) => ({
-        id: jeune.id,
-        value: getNomBeneficiaireComplet(jeune),
+      return beneficiairesConseiller.map((beneficiaire) => ({
+        id: beneficiaire.id,
+        value: getNomBeneficiaireComplet(beneficiaire),
         avecIndication: false,
       }))
     }
 
-    return jeunesEtablissement.map((jeune) => ({
-      id: jeune.id,
-      value: getNomBeneficiaireComplet(jeune),
-      avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
+    return beneficiairesEtablissement.map((beneficiaire) => ({
+      id: beneficiaire.id,
+      value: getNomBeneficiaireComplet(beneficiaire),
+      avecIndication: !estUnBeneficiaireDuConseiller(beneficiaire.id),
     }))
   }
 
-  function initJeunesFromRdvOrIdJeune(): OptionBeneficiaire[] {
+  function initBeneficiairesFromRdvOrIdBeneficiaire(): OptionBeneficiaire[] {
     if (evenement && estClos(evenement)) {
-      return evenement.jeunes.map((jeune) => ({
-        id: jeune.id,
-        value: getNomBeneficiaireComplet(jeune),
-        avecIndication: jeune.futPresent,
+      return evenement.jeunes.map((beneficiaire) => ({
+        id: beneficiaire.id,
+        value: getNomBeneficiaireComplet(beneficiaire),
+        avecIndication: beneficiaire.futPresent,
       }))
     }
 
     if (evenement) {
-      return evenement.jeunes.map((jeune) => ({
-        id: jeune.id,
-        value: getNomBeneficiaireComplet(jeune),
-        avecIndication: !estUnBeneficiaireDuConseiller(jeune.id),
+      return evenement.jeunes.map((beneficiaire) => ({
+        id: beneficiaire.id,
+        value: getNomBeneficiaireComplet(beneficiaire),
+        avecIndication: !estUnBeneficiaireDuConseiller(beneficiaire.id),
       }))
     }
 
-    if (idJeune) {
-      const jeune = jeunesConseiller.find(({ id }) => id === idJeune)!
+    if (idBeneficiaire) {
+      const beneficiaire = beneficiairesConseiller.find(
+        ({ id }) => id === idBeneficiaire
+      )!
       return [
         {
-          id: jeune.id,
-          value: getNomBeneficiaireComplet(jeune),
+          id: beneficiaire.id,
+          value: getNomBeneficiaireComplet(beneficiaire),
           avecIndication: false,
         },
       ]
@@ -276,7 +280,11 @@ export function EditionRdvForm({
     }
   }
 
-  function updateIdsJeunes({ beneficiaires }: { beneficiaires?: string[] }) {
+  function updateIdsBeneficiaires({
+    beneficiaires,
+  }: {
+    beneficiaires?: string[]
+  }) {
     setIdsJeunes({
       value: beneficiaires!,
       error: validatePresenceParticipants(beneficiaires!),
@@ -592,7 +600,7 @@ export function EditionRdvForm({
       categorie: 'Emargement',
       action: 'Export des inscrits à une AC',
       nom: '',
-      aDesBeneficiaires: jeunesConseiller.length > 0,
+      aDesBeneficiaires: beneficiairesConseiller.length > 0,
     })
   }
 
@@ -603,9 +611,11 @@ export function EditionRdvForm({
 
   useEffect(() => {
     if (evenementTypeAC && !lectureSeule) {
-      recupererJeunesDeLEtablissement().then(setJeunesEtablissement)
+      recupererBeneficiairesDeLEtablissement().then(
+        setBeneficiairesEtablissement
+      )
     }
-  }, [evenementTypeAC, lectureSeule, recupererJeunesDeLEtablissement])
+  }, [evenementTypeAC, lectureSeule, recupererBeneficiairesDeLEtablissement])
 
   function updateNbMaxParticipants(value: string) {
     const parsed = parseInt(value, 10)
@@ -786,10 +796,10 @@ export function EditionRdvForm({
           )}
           <BeneficiairesMultiselectAutocomplete
             id='select-beneficiaires'
-            beneficiaires={buildOptionsJeunes()}
+            beneficiaires={buildOptionsBeneficiaires()}
             typeSelection='Bénéficiaires'
-            defaultBeneficiaires={defaultJeunes}
-            onUpdate={updateIdsJeunes}
+            defaultBeneficiaires={defaultBeneficiaires}
+            onUpdate={updateIdsBeneficiaires}
             error={idsJeunes.error}
             required={!evenementTypeAC}
             disabled={lectureSeule}

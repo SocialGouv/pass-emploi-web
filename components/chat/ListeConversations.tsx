@@ -56,14 +56,14 @@ export default function ListeConversations({
         {conversations && conversations.length > 0 && (
           <>
             <ul className='px-4 pb-24'>
-              {conversations.map((jeuneChat: BeneficiaireChat) => (
-                <li key={`chat-${jeuneChat.id}`} className='mb-2'>
+              {conversations.map((beneficiaireChat: BeneficiaireChat) => (
+                <li key={`chat-${beneficiaireChat.id}`} className='mb-2'>
                   <ConversationTile
-                    jeuneChat={jeuneChat}
-                    id={`chat-${jeuneChat.id}`}
-                    onClick={() => onSelectConversation(jeuneChat.id)}
+                    beneficiaireChat={beneficiaireChat}
+                    id={`chat-${beneficiaireChat.id}`}
+                    onClick={() => onSelectConversation(beneficiaireChat.id)}
                     onToggleFlag={(flagged) =>
-                      onToggleFlag(jeuneChat.chatId, flagged)
+                      onToggleFlag(beneficiaireChat.chatId, flagged)
                     }
                   />
                 </li>

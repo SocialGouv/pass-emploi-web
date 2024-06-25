@@ -69,7 +69,7 @@ export default async function ModificationAction({
         action={action}
         actionsPredefinies={actionsPredefinies}
         aDesCommentaires={commentaires.length > 0}
-        idJeune={jeune.id}
+        idBeneficiaire={jeune.id}
         situationsNonProfessionnelles={situationsNonProfessionnelles}
         returnTo={returnTo}
       />

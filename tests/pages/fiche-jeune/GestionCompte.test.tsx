@@ -8,14 +8,14 @@ import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
-  desItemsJeunes,
-  extractBaseJeune,
-  unDetailJeune,
-} from 'fixtures/jeune'
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  unDetailBeneficiaire,
+} from 'fixtures/beneficiaire'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { BaseBeneficiaire, DetailBeneficiaire } from 'interfaces/beneficiaire'
-import { MotifSuppressionJeune } from 'interfaces/referentiel'
+import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererAgenda } from 'services/agenda.service'
 import {
@@ -32,7 +32,7 @@ jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('Gestion du compte dans la fiche jeune', () => {
-  let motifsSuppression: MotifSuppressionJeune[]
+  let motifsSuppression: MotifSuppressionBeneficiaire[]
 
   let alerteSetter: jest.Mock
   let portefeuilleSetter: (updatedBeneficiaires: BaseBeneficiaire[]) => void
@@ -44,7 +44,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
     ;(useRouter as jest.Mock).mockReturnValue({ push })
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
-    portefeuille = desItemsJeunes().map(extractBaseJeune)
+    portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
 
     motifsSuppression = desMotifsDeSuppression()
     ;(getMotifsSuppression as jest.Mock).mockResolvedValue(motifsSuppression)
@@ -57,7 +57,10 @@ describe('Gestion du compte dans la fiche jeune', () => {
   describe('pour tous les conseillers', () => {
     it('affiche un bouton pour supprimer le compte d’un bénéficiaire', async () => {
       // Given
-      await renderFicheJeune(StructureConseiller.POLE_EMPLOI, unDetailJeune())
+      await renderFicheJeune(
+        StructureConseiller.POLE_EMPLOI,
+        unDetailBeneficiaire()
+      )
 
       // Then
       const deleteButton = screen.getByText('Supprimer ce compte')
@@ -69,7 +72,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         // Given
         await renderFicheJeune(
           StructureConseiller.POLE_EMPLOI,
-          unDetailJeune({ isActivated: true }),
+          unDetailBeneficiaire({ isActivated: true }),
           portefeuilleSetter,
           alerteSetter
         )
@@ -170,7 +173,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
           await userEvent.click(supprimerButtonModal)
 
           // Then
-          expect(archiverJeune).toHaveBeenCalledWith('jeune-1', {
+          expect(archiverJeune).toHaveBeenCalledWith('beneficiaire-1', {
             motif: 'Demande du jeune de sortir du dispositif',
             commentaire: undefined,
           })
@@ -190,7 +193,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         // Given
         await renderFicheJeune(
           StructureConseiller.POLE_EMPLOI,
-          unDetailJeune({ isActivated: false }),
+          unDetailBeneficiaire({ isActivated: false }),
           portefeuilleSetter,
           alerteSetter
         )
@@ -222,7 +225,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         await userEvent.click(supprimerButtonModal)
 
         // Then
-        expect(supprimerJeuneInactif).toHaveBeenCalledWith('jeune-1')
+        expect(supprimerJeuneInactif).toHaveBeenCalledWith('beneficiaire-1')
 
         expect(portefeuilleSetter).toHaveBeenCalledWith([
           portefeuille[1],
@@ -238,7 +241,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         // Given
         await renderFicheJeune(
           StructureConseiller.POLE_EMPLOI,
-          unDetailJeune({ isReaffectationTemporaire: true })
+          unDetailBeneficiaire({ isReaffectationTemporaire: true })
         )
 
         // Then
@@ -253,7 +256,7 @@ describe('Gestion du compte dans la fiche jeune', () => {
         // Given
         await renderFicheJeune(
           StructureConseiller.MILO,
-          unDetailJeune({ isActivated: false })
+          unDetailBeneficiaire({ isActivated: false })
         )
 
         // Then

@@ -6,7 +6,7 @@ import Qualification, {
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/page'
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
 import {
   getAction,
@@ -69,7 +69,7 @@ describe('QualificationPage server side', () => {
         ;(getAction as jest.Mock).mockResolvedValue({
           action: uneAction(),
           jeune: {
-            id: 'jeune-1',
+            id: 'beneficiaire-1',
             prenom: 'Nadia',
             nom: 'Sanfamiye',
           },
@@ -98,7 +98,7 @@ describe('QualificationPage server side', () => {
             },
           }),
           jeune: {
-            id: 'jeune-1',
+            id: 'beneficiaire-1',
             prenom: 'Nadia',
             nom: 'Sanfamiye',
           },
@@ -119,7 +119,7 @@ describe('QualificationPage server side', () => {
       it('récupère la liste des situations non professionnelles', async () => {
         // Given
         const action = uneAction({ status: StatutAction.Terminee })
-        const beneficiaire = uneBaseJeune()
+        const beneficiaire = uneBaseBeneficiaire()
         const situationsNonProfessionnelles = desCategoriesAvecNONSNP()
         const params = { idAction: 'id-action' }
         ;(getAction as jest.Mock).mockResolvedValue({
@@ -153,7 +153,7 @@ describe('QualificationPage server side', () => {
             action,
             categories: situationsNonProfessionnelles,
             returnTo: expect.stringMatching(
-              '/mes-jeunes/jeune-1/actions/id-action-1'
+              '/mes-jeunes/beneficiaire-1/actions/id-action-1'
             ),
             returnToListe: '/pilotage',
           },

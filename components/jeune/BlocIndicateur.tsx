@@ -12,14 +12,14 @@ export function BlocIndicateurs({
   debutSemaine,
   finSemaine,
   indicateursSemaine,
-  idJeune,
+  idBeneficiaire,
   pathPrefix,
   metadonneesFavoris,
 }: {
   debutSemaine: DateTime
   finSemaine: DateTime
   indicateursSemaine: IndicateursSemaine
-  idJeune: string
+  idBeneficiaire: string
   pathPrefix: string
   metadonneesFavoris?: MetadonneesFavoris
 }) {
@@ -30,14 +30,14 @@ export function BlocIndicateurs({
       </h2>
       <IndicateursActions
         actions={indicateursSemaine.actions}
-        idJeune={idJeune}
+        idBeneficiaire={idBeneficiaire}
         pathPrefix={pathPrefix}
       />
       <IndicateursRendezvous rendezVous={indicateursSemaine.rendezVous} />
       <IndicateursOffres
         offres={indicateursSemaine.offres}
         favoris={indicateursSemaine.favoris}
-        idJeune={idJeune}
+        idBeneficiaire={idBeneficiaire}
         pathPrefix={pathPrefix}
         metadonneesFavoris={metadonneesFavoris}
       />
@@ -46,12 +46,12 @@ export function BlocIndicateurs({
 }
 
 interface IndicateursActionsProps extends Pick<IndicateursSemaine, 'actions'> {
-  idJeune: string
+  idBeneficiaire: string
   pathPrefix: string
 }
 function IndicateursActions({
   actions,
-  idJeune,
+  idBeneficiaire,
   pathPrefix,
 }: IndicateursActionsProps) {
   return (
@@ -85,7 +85,10 @@ function IndicateursActions({
           textColor='primary_darken'
         />
       </ul>
-      <LienVersActions idJeune={idJeune} pathPrefix={pathPrefix} />
+      <LienVersActions
+        idBeneficiaire={idBeneficiaire}
+        pathPrefix={pathPrefix}
+      />
     </div>
   )
 }
@@ -109,7 +112,7 @@ function IndicateursRendezvous({
 }
 interface IndicateursOffresProps
   extends Pick<IndicateursSemaine, 'offres' | 'favoris'> {
-  idJeune: string
+  idBeneficiaire: string
   pathPrefix: string
   metadonneesFavoris?: MetadonneesFavoris
 }
@@ -117,7 +120,7 @@ interface IndicateursOffresProps
 function IndicateursOffres({
   offres,
   favoris,
-  idJeune,
+  idBeneficiaire,
   pathPrefix,
   metadonneesFavoris,
 }: IndicateursOffresProps) {
@@ -163,22 +166,25 @@ function IndicateursOffres({
         />
       </ul>
       {metadonneesFavoris?.autoriseLePartage && (
-        <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />
+        <LienVersFavoris
+          idBeneficiaire={idBeneficiaire}
+          pathPrefix={pathPrefix}
+        />
       )}
     </div>
   )
 }
 function LienVersActions({
-  idJeune,
+  idBeneficiaire,
   pathPrefix,
 }: {
-  idJeune?: string
+  idBeneficiaire?: string
   pathPrefix: string
 }) {
   return (
     <div className='flex justify-end mt-4'>
       <Link
-        href={`${pathPrefix}/${idJeune}?onglet=actions`}
+        href={`${pathPrefix}/${idBeneficiaire}?onglet=actions`}
         className='flex float-right items-center text-content_color underline hover:text-primary hover:fill-primary'
       >
         Voir toutes les actions

@@ -12,7 +12,7 @@ import {
   typesEvenementCEJ,
   unEvenement,
 } from 'fixtures/evenement'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   getDetailsEvenement,
@@ -105,7 +105,7 @@ describe('EditionRdvPage server side', () => {
 
       // Then
       expect(EditionRdvPage).toHaveBeenCalledWith(
-        expect.objectContaining({ idJeune: 'id-jeune' }),
+        expect.objectContaining({ idBeneficiaire: 'id-jeune' }),
         {}
       )
     })
@@ -115,7 +115,7 @@ describe('EditionRdvPage server side', () => {
       const evenement = unEvenement()
       ;(getDetailsEvenement as jest.Mock).mockResolvedValue(evenement)
       ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
-        desItemsJeunes()
+        desItemsBeneficiaires()
       )
 
       // When
@@ -156,7 +156,7 @@ describe('EditionRdvPage server side', () => {
         accessToken: 'accessToken',
       })
       ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
-        desItemsJeunes()
+        desItemsBeneficiaires()
       )
       ;(getTypesRendezVous as jest.Mock).mockResolvedValue(typesEvenement())
     })
@@ -201,7 +201,7 @@ describe('EditionRdvPage server side', () => {
 
       // Then
       expect(EditionRdvPage).toHaveBeenCalledWith(
-        expect.objectContaining({ idJeune: 'id-jeune' }),
+        expect.objectContaining({ idBeneficiaire: 'id-jeune' }),
         {}
       )
     })

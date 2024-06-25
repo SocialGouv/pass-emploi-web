@@ -2,7 +2,11 @@ import { act, screen } from '@testing-library/react'
 import React from 'react'
 
 import MessageriePage from 'app/(connected)/messagerie/MessageriePage'
-import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -25,7 +29,9 @@ jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 
 describe('MessageriePage client side', () => {
-  const jeunes: BaseBeneficiaire[] = desItemsJeunes().map(extractBaseJeune)
+  const jeunes: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+    extractBaseBeneficiaire
+  )
   let jeunesChats: BeneficiaireChat[]
 
   let conseillers: ConseillerHistorique[]
@@ -49,17 +55,17 @@ describe('MessageriePage client side', () => {
       desListesDeDiffusion()
     )
     jeunesChats = [
-      unJeuneChat({
+      unBeneficiaireChat({
         ...jeunes[0],
         chatId: `chat-${jeunes[0].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
+      unBeneficiaireChat({
         ...jeunes[1],
         chatId: `chat-${jeunes[1].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
+      unBeneficiaireChat({
         ...jeunes[2],
         chatId: `chat-${jeunes[2].id}`,
         seenByConseiller: false,
