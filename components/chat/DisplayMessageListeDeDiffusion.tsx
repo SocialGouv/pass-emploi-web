@@ -24,7 +24,7 @@ export default function DisplayMessageListeDeDiffusion({
     <>
       <div
         className={`text-base-regular break-words p-4 rounded-base text-content_color ${
-          messagerieFullScreen ? 'bg-grey_100' : 'bg-blanc'
+          messagerieFullScreen ? 'bg-grey_100' : 'bg-white'
         } mb-1`}
       >
         <TexteAvecLien texte={message.content} />

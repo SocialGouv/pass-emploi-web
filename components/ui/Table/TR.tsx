@@ -54,7 +54,7 @@ const TR = forwardRef(
                 name={IconName.ChevronRight}
                 focusable={false}
                 aria-hidden={true}
-                className=' w-6 h-6 fill-blanc rounded-full bg-primary mx-auto'
+                className=' w-6 h-6 fill-white rounded-full bg-primary mx-auto'
               />
             </Link>
           </TD>

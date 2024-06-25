@@ -88,7 +88,7 @@ export function DetailMessageListeDeDiffusion({
               {destinataires.map((destinataire) => (
                 <li
                   key={destinataire.id}
-                  className='mt-2 bg-blanc rounded-base p-3'
+                  className='mt-2 bg-white rounded-base p-3'
                 >
                   {aLuLeMessage(destinataire) ? 'Lu par ' : 'Non lu par '}
                   <div className='flex items-center'>

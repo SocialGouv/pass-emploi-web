@@ -305,7 +305,7 @@ function RechercheOffresPage() {
           <button
             type='button'
             onClick={() => setCollapsed(!collapsed)}
-            className='p-2 hover:bg-blanc hover:rounded-l'
+            className='p-2 hover:bg-white hover:rounded-l'
           >
             <IconComponent
               name={collapsed ? IconName.ChevronDown : IconName.ChevronUp}

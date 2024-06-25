@@ -115,7 +115,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   }, [])
 
   const modalTemplate = (
-    <div className='rounded-l bg-blanc max-w-[620px] p-3' ref={modalRef}>
+    <div className='rounded-l bg-white max-w-[620px] p-3' ref={modalRef}>
       <div className='flex justify-end'>
         <button
           type='button'

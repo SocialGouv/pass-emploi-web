@@ -23,7 +23,7 @@
 
 .buttonPrimary {
   background-color: theme('colors.primary');
-  color: theme('colors.blanc');
+  color: theme('colors.white');
   border: 1px solid transparent;
   box-shadow: theme('boxShadow.base');
 }
@@ -31,7 +31,7 @@
 .buttonPrimary:hover,
 .buttonPrimary:active {
   background-color: theme('colors.primary_darken');
-  color: theme('colors.blanc');
+  color: theme('colors.white');
   border: 1px solid theme('colors.primary');
 }
 
@@ -43,7 +43,7 @@
 }
 
 .buttonPrimary[disabled]:hover {
-  color: theme('colors.blanc');
+  color: theme('colors.white');
   border: 1px solid transparent;
 }
 
@@ -53,7 +53,7 @@
 
 .buttonSecondary,
 .buttonTertiary {
-  background-color: theme('colors.blanc');
+  background-color: theme('colors.white');
   color: theme('colors.primary');
   border: 1px solid theme('colors.primary');
 }
@@ -86,7 +86,7 @@
 
 .buttonWarning:hover {
   background-color: theme('colors.warning');
-  color: theme('colors.blanc');
+  color: theme('colors.white');
 }
 
 .buttonWarning[disabled] {
@@ -104,15 +104,15 @@
 
 .buttonPrimaryDark {
   background-color: theme('colors.primary_darken');
-  color: theme('colors.blanc');
+  color: theme('colors.white');
   border: 1px solid transparent;
   box-shadow: theme('boxShadow.base');
 }
 
 .buttonPrimaryDark:hover,
 .buttonPrimaryDark:active {
-  background-color: theme('colors.primary_darker');
-  color: theme('colors.blanc');
-  border: 1px solid theme('colors.primary_darker');
+  background-color: theme('colors.primary_darken_strong');
+  color: theme('colors.white');
+  border: 1px solid theme('colors.primary_darken_strong');
 }
 

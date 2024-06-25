@@ -58,7 +58,7 @@ export default function Button({
       {isLoading && (
         <IconComponent
           name={IconName.Spinner}
-          className='w-6 h-6 fill-blanc animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
+          className='w-6 h-6 fill-white animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
         />
       )}
       <span

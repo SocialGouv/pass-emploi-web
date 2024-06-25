@@ -58,7 +58,7 @@ export default function TexteAvecLien({
               aria-label={`${lien} (nouvelle fenêtre)`}
               className={`flex items-center underline ${
                 lighten
-                  ? 'text-blanc hover:text-primary_lighten'
+                  ? 'text-white hover:text-primary_lighten'
                   : 'text-content_color hover:text-primary'
               }`}
               onClick={(e) => confirmationRedirectionLienExterne(e, lien)}

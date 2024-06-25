@@ -177,7 +177,7 @@ export default function MessagesDuJour({
             </button>
 
             <div
-              className='p-4 bg-blanc rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
+              className='p-4 bg-white rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
               onClick={() => inputRef.current!.focus()}
             >
               <label htmlFor='input-new-message' className='sr-only'>
@@ -204,7 +204,7 @@ export default function MessagesDuJour({
                   name={IconName.Send}
                   aria-hidden={true}
                   focusable={false}
-                  className='m-auto w-6 h-6 fill-blanc'
+                  className='m-auto w-6 h-6 fill-white'
                 />
               </button>
             </div>

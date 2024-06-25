@@ -568,7 +568,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                   name={IconName.Send}
                   focusable={false}
                   aria-hidden={true}
-                  className={`w-6 h-6 mr-2 fill-blanc`}
+                  className={`w-6 h-6 mr-2 fill-white`}
                 />
                 Valider mon choix
               </Button>

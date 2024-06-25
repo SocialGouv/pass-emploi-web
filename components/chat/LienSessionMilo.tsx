@@ -10,7 +10,7 @@ export default function LienSessionMilo({
   infoSessionMilo: InfoSessionMilo
 }) {
   return (
-    <div className='mt-4 p-4 rounded-base bg-blanc'>
+    <div className='mt-4 p-4 rounded-base bg-white'>
       <div className='text-base-bold text-content_color'>
         <dl>
           <dt className='sr-only'>Titre de la session :</dt>

@@ -253,17 +253,17 @@ export default function FormRechercheOffres({
       {collapsed && (
         <div className='flex mt-4 mb-8 gap-2'>
           {labelTypeOffre && (
-            <p className='bg-blanc px-2 py-1 text-primary rounded-base'>
+            <p className='bg-white px-2 py-1 text-primary rounded-base'>
               {labelTypeOffre}
             </p>
           )}
           {motsCles && (
-            <p className='bg-blanc px-2 py-1 text-primary rounded-base'>
+            <p className='bg-white px-2 py-1 text-primary rounded-base'>
               {motsCles}
             </p>
           )}
           {offreLieu && (
-            <div className='flex bg-blanc px-2 py-1 text-primary rounded-base align-middle gap-2'>
+            <div className='flex bg-white px-2 py-1 text-primary rounded-base align-middle gap-2'>
               <IconComponent
                 name={IconName.LocationOn}
                 focusable={false}

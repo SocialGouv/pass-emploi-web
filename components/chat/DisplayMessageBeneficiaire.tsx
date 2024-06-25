@@ -39,14 +39,14 @@ export default function DisplayMessageBeneficiaire(
   return (
     <li className='mb-5' id={message.id} data-testid={message.id}>
       {isDeleted(message) && (
-        <div className='text-xs-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-blanc bg-primary_darken mb-1'>
+        <div className='text-xs-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-white bg-primary_darken mb-1'>
           Message supprimé
         </div>
       )}
 
       {!isDeleted(message) && (
         <>
-          <div className='text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-blanc bg-primary_darken mb-1'>
+          <div className='text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-white bg-primary_darken mb-1'>
             <span className='sr-only'>{beneficiaireNomComplet} :</span>
 
             {message.type === TypeMessage.MESSAGE_PJ &&
@@ -157,7 +157,7 @@ function MessagePJ({
             key={id}
             id={id}
             nom={nom}
-            className='fill-blanc'
+            className='fill-white'
             highlight={
               highlight?.key === 'piecesJointes.nom' ? highlight : undefined
             }

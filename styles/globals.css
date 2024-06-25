@@ -16,7 +16,7 @@ html {
   min-height: 100%;
   padding: 0;
   margin: 0;
-  background-color: theme('colors.blanc');
+  background-color: theme('colors.white');
   color: #000;
   overflow-y: hidden;
 }

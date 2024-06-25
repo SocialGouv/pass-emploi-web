@@ -95,7 +95,7 @@ export default function ListeListesDeDiffusion({
                 {listesDeDiffusion.map((liste) => (
                   <li
                     key={liste.id}
-                    className='bg-blanc rounded-base mb-2 last:mb-0'
+                    className='bg-white rounded-base mb-2 last:mb-0'
                   >
                     <ListeDeDiffusionTile
                       liste={liste}

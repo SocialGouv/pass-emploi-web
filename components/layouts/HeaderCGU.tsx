@@ -27,7 +27,7 @@ export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
       {!estPassEmploi(conseiller) && (
         <LogoCEJ
           role='img'
-          className='mb-8 mx-auto h-[64px] w-[120px] fill-blanc'
+          className='mb-8 mx-auto h-[64px] w-[120px] fill-white'
           focusable={false}
           aria-label='contrat d’engagement jeune'
           title='contrat d’engagement jeune'

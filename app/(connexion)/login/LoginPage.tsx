@@ -70,7 +70,7 @@ function LoginPage({
   return (
     <main role='main' className='bg-primary_lighten w-full grow relative'>
       <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-        <div className='bg-blanc p-[25px] layout_s:px-[122px] rounded-l drop-shadow-lg'>
+        <div className='bg-white p-[25px] layout_s:px-[122px] rounded-l drop-shadow-lg'>
           <h2>
             <span className='sr-only'>Contrat d’engagement jeune</span>
             <LogoCEJ

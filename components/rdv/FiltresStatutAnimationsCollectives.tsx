@@ -94,7 +94,7 @@ export default function FiltresStatutAnimationsCollectives({
 
       {afficherFiltresAnimationsCollectives && (
         <form
-          className='absolute z-10 bg-blanc rounded-l shadow-base p-4 text-base-regular'
+          className='absolute z-10 bg-white rounded-l shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrerAnimationsCollectives}
         >

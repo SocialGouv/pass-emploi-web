@@ -14,12 +14,12 @@ export default function LienOffre({
   return (
     <div
       className={`mt-4 p-4 rounded-base ${
-        isSentByConseiller ? 'bg-primary_darken' : 'bg-blanc'
+        isSentByConseiller ? 'bg-primary_darken' : 'bg-white'
       }`}
     >
       <p
         className={`text-base-bold ${
-          isSentByConseiller ? 'text-blanc' : 'text-content_color'
+          isSentByConseiller ? 'text-white' : 'text-content_color'
         }`}
       >
         {infoOffre.titre}
@@ -29,7 +29,7 @@ export default function LienOffre({
         href={`/offres/${typeToUrlParam(infoOffre.type)}/${infoOffre.id}`}
         className={`mt-4 w-max ml-auto text-s-regular underline ${
           isSentByConseiller
-            ? 'text-blanc underline hover:text-primary_lighten'
+            ? 'text-white underline hover:text-primary_lighten'
             : 'text-primary_darken hover:text-primary'
         }`}
       >

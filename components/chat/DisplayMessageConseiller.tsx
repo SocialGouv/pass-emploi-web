@@ -107,7 +107,7 @@ export default function DisplayMessageConseiller(
 
 function MessageSupprime() {
   return (
-    <div className='text-xs-regular text-grey_800 max-w-[90%] p-4 rounded-base w-max text-left bg-blanc mt-0 mr-0 mb-1 ml-auto'>
+    <div className='text-xs-regular text-grey_800 max-w-[90%] p-4 rounded-base w-max text-left bg-white mt-0 mr-0 mb-1 ml-auto'>
       Vous avez supprimé ce message
     </div>
   )
@@ -123,7 +123,7 @@ function MessageConseiller(props: DisplayMessageConseillerProps) {
 
   return (
     <div
-      className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left bg-blanc mt-0 mr-0 mb-1 ml-auto ${
+      className={`text-base-regular break-words max-w-[90%] p-4 rounded-base w-max text-left bg-white mt-0 mr-0 mb-1 ml-auto ${
         isConseillerCourant ? 'text-primary_darken' : 'text-accent_2'
       } ${isEnCoursDeModification ? 'border-2 border-solid border-primary_darken' : ''}`}
     >
@@ -231,7 +231,7 @@ function FooterMessage({
         type='button'
         className={
           afficherMenuEdition
-            ? 'bg-primary rounded-full fill-blanc'
+            ? 'bg-primary rounded-full fill-white'
             : 'fill-grey_800 hover:rounded-full hover:shadow-m'
         }
         title={`${afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour votre message du ${toFrenchDateTime(creationDate)}`}
@@ -250,7 +250,7 @@ function FooterMessage({
 
       {afficherMenuEdition && (
         <div
-          className='absolute top-[2em] z-10 bg-blanc rounded-base p-2 shadow-m'
+          className='absolute top-[2em] z-10 bg-white rounded-base p-2 shadow-m'
           ref={scrollToRef}
         >
           <button
@@ -269,7 +269,7 @@ function FooterMessage({
           <button
             type='button'
             onClick={() => onSuppression()}
-            className='p-2 flex items-center text-warning text-s-bold gap-2 hover:rounded-base hover:bg-warning hover:text-blanc hover:shadow-m'
+            className='p-2 flex items-center text-warning text-s-bold gap-2 hover:rounded-base hover:bg-warning hover:text-white hover:shadow-m'
           >
             <IconComponent
               focusable={false}

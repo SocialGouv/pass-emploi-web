@@ -33,7 +33,7 @@ export default function ChatNav({
       >
         <IconComponent
           name={IconName.Close}
-          className='w-10 h-10 fill-blanc'
+          className='w-10 h-10 fill-white'
           aria-hidden={true}
           focusable={false}
           title='Fermer le menu principal'
