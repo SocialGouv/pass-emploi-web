@@ -6,7 +6,11 @@ import React from 'react'
 import ChatRoom from 'components/chat/ChatRoom'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import { BaseBeneficiaire, BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
@@ -21,24 +25,26 @@ jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
 jest.mock('components/Modal')
 
 describe('<ChatRoom />', () => {
-  const jeunes: BaseBeneficiaire[] = desItemsJeunes().map(extractBaseJeune)
-  let jeunesChats: BeneficiaireChat[]
+  const beneficiaires: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+    extractBaseBeneficiaire
+  )
+  let beneficiairesChats: BeneficiaireChat[]
 
   beforeEach(async () => {
-    jeunesChats = [
-      unJeuneChat({
-        ...jeunes[0],
-        chatId: `chat-${jeunes[0].id}`,
+    beneficiairesChats = [
+      unBeneficiaireChat({
+        ...beneficiaires[0],
+        chatId: `chat-${beneficiaires[0].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
-        ...jeunes[1],
-        chatId: `chat-${jeunes[1].id}`,
+      unBeneficiaireChat({
+        ...beneficiaires[1],
+        chatId: `chat-${beneficiaires[1].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
-        ...jeunes[2],
-        chatId: `chat-${jeunes[2].id}`,
+      unBeneficiaireChat({
+        ...beneficiaires[2],
+        chatId: `chat-${beneficiaires[2].id}`,
         seenByConseiller: false,
       }),
     ]
@@ -58,7 +64,7 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatRoom
-            jeunesChats={jeunesChats}
+            jeunesChats={beneficiairesChats}
             showMenu={false}
             onAccesConversation={accederConversation}
             onAccesListesDiffusion={() => {}}
@@ -95,7 +101,7 @@ describe('<ChatRoom />', () => {
         await act(async () => {
           renderWithContexts(
             <ChatRoom
-              jeunesChats={jeunesChats}
+              jeunesChats={beneficiairesChats}
               showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
@@ -124,7 +130,7 @@ describe('<ChatRoom />', () => {
         await act(async () => {
           renderWithContexts(
             <ChatRoom
-              jeunesChats={jeunesChats}
+              jeunesChats={beneficiairesChats}
               showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
@@ -166,7 +172,7 @@ describe('<ChatRoom />', () => {
             await act(async () => {
               renderWithContexts(
                 <ChatRoom
-                  jeunesChats={jeunesChats}
+                  jeunesChats={beneficiairesChats}
                   showMenu={false}
                   onAccesConversation={accederConversation}
                   onAccesListesDiffusion={() => {}}
@@ -261,7 +267,7 @@ describe('<ChatRoom />', () => {
             await act(async () => {
               renderWithContexts(
                 <ChatRoom
-                  jeunesChats={jeunesChats}
+                  jeunesChats={beneficiairesChats}
                   showMenu={false}
                   onAccesConversation={accederConversation}
                   onAccesListesDiffusion={() => {}}
@@ -312,7 +318,7 @@ describe('<ChatRoom />', () => {
         await act(async () => {
           renderWithContexts(
             <ChatRoom
-              jeunesChats={jeunesChats}
+              jeunesChats={beneficiairesChats}
               showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
@@ -349,7 +355,7 @@ describe('<ChatRoom />', () => {
     })
   })
 
-  describe('quand le conseiller a des jeunes', () => {
+  describe('quand le conseiller a des beneficiaires', () => {
     let accederConversation: (idJeune: string) => void
     beforeEach(async () => {
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
@@ -357,7 +363,7 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatRoom
-            jeunesChats={jeunesChats}
+            jeunesChats={beneficiairesChats}
             showMenu={false}
             onAccesConversation={accederConversation}
             onAccesListesDiffusion={() => {}}
@@ -382,22 +388,22 @@ describe('<ChatRoom />', () => {
       ).toBeInTheDocument()
     })
 
-    describe('pour chaque jeune', () => {
-      const cases = jeunes.map((jeune) => [jeune])
-      it.each(cases)('affiche le chat de %j', (jeune) => {
+    describe('pour chaque bénéficiaire', () => {
+      const cases = beneficiaires.map((beneficiaire) => [beneficiaire])
+      it.each(cases)('affiche le chat de %j', (beneficiaire) => {
         // Then
         expect(
-          screen.getByText(`${jeune.prenom} ${jeune.nom}`)
+          screen.getByText(`${beneficiaire.prenom} ${beneficiaire.nom}`)
         ).toBeInTheDocument()
       })
     })
 
-    describe('quand on sélectionne un jeune', () => {
-      it('affiche la conversation du jeune', async () => {
-        const [jeuneSelectionne] = jeunes
+    describe('quand on sélectionne un beneficiaire', () => {
+      it('affiche la conversation du beneficiaire', async () => {
+        const [beneficiaireSelectionne] = beneficiaires
         // Given
         const goToConversation = screen
-          .getByText(jeuneSelectionne.prenom, {
+          .getByText(beneficiaireSelectionne.prenom, {
             exact: false,
           })
           .closest('button')
@@ -407,16 +413,18 @@ describe('<ChatRoom />', () => {
 
         // Then
         expect(accederConversation).toHaveBeenCalledTimes(1)
-        expect(accederConversation).toHaveBeenCalledWith(jeuneSelectionne.id)
+        expect(accederConversation).toHaveBeenCalledWith(
+          beneficiaireSelectionne.id
+        )
       })
     })
 
     describe("quand on clique sur le flag d'une conversation", () => {
       it('change son suivi', async () => {
         // Given
-        const [jeune] = jeunes
+        const [beneficiaire] = beneficiaires
         const conversationCard = screen
-          .getByText(jeune.prenom, {
+          .getByText(beneficiaire.prenom, {
             exact: false,
           })
           .closest('div')
@@ -429,12 +437,15 @@ describe('<ChatRoom />', () => {
         await userEvent.click(flagConversation!)
 
         // Then
-        expect(toggleFlag).toHaveBeenCalledWith(`chat-${jeune.id}`, false)
+        expect(toggleFlag).toHaveBeenCalledWith(
+          `chat-${beneficiaire.id}`,
+          false
+        )
       })
     })
   })
 
-  describe("quand le conseiller n'a pas de jeunes", () => {
+  describe("quand le conseiller n'a pas de beneficiaires", () => {
     it('affiche un message informatif', async () => {
       // Given
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
@@ -472,7 +483,7 @@ describe('<ChatRoom />', () => {
       // Given
       renderWithContexts(
         <ChatRoom
-          jeunesChats={jeunesChats}
+          jeunesChats={beneficiairesChats}
           showMenu={false}
           onAccesConversation={() => {}}
           onAccesListesDiffusion={() => {}}

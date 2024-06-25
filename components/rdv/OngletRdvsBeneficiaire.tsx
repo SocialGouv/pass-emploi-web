@@ -6,9 +6,9 @@ import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
 import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
-import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
 interface OngletRdvsBeneficiaireProps {
   rdvs: EvenementListItem[]

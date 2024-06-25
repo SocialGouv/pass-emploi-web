@@ -4,7 +4,10 @@ import { getServerSession } from 'next-auth'
 
 import LayoutWhenConnected from 'app/(connected)/layout'
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes, extractBaseJeune } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+} from 'fixtures/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -65,7 +68,7 @@ describe('LayoutWhenConnected', () => {
       conseiller = unConseiller()
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
 
-      portefeuille = desItemsJeunes()
+      portefeuille = desItemsBeneficiaires()
       ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
         portefeuille
       )
@@ -95,7 +98,7 @@ describe('LayoutWhenConnected', () => {
       expect(PortefeuilleProvider).toHaveBeenCalledWith(
         expect.objectContaining({
           portefeuille: [portefeuille[2], portefeuille[0], portefeuille[1]].map(
-            extractBaseJeune
+            extractBaseBeneficiaire
           ),
         }),
         {}

@@ -7,7 +7,7 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 
 interface DeleteRdvModalProps {
-  aDesJeunesDUnAutrePortefeuille: boolean
+  aDesBeneficiairesDUnAutrePortefeuille: boolean
   onClose: () => void
   performDelete: () => Promise<void>
   evenementTypeAC: boolean
@@ -15,7 +15,7 @@ interface DeleteRdvModalProps {
 }
 
 export default function DeleteRdvModal({
-  aDesJeunesDUnAutrePortefeuille,
+  aDesBeneficiairesDUnAutrePortefeuille,
   onClose,
   performDelete,
   evenementTypeAC,
@@ -33,7 +33,7 @@ export default function DeleteRdvModal({
       onClose={handleCloseModal}
       titleIllustration={IllustrationName.Delete}
     >
-      {aDesJeunesDUnAutrePortefeuille && (
+      {aDesBeneficiairesDUnAutrePortefeuille && (
         <>
           <div className='mb-6'>
             <InformationMessage
@@ -51,7 +51,7 @@ export default function DeleteRdvModal({
         </>
       )}
 
-      {!aDesJeunesDUnAutrePortefeuille && (
+      {!aDesBeneficiairesDUnAutrePortefeuille && (
         <div className='text-base-regular text-content_color text-center mt-6'>
           <p>Les bénéficiaires seront notifiées de la suppression.</p>
         </div>

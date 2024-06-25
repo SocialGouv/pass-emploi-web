@@ -8,9 +8,9 @@ import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
@@ -54,7 +54,7 @@ describe('Favoris dans la fiche jeune', () => {
       expect(screen.getByText('Service civique :')).toBeInTheDocument()
       expect(
         screen.getByRole('link', { name: 'Voir tous les favoris' })
-      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/favoris')
+      ).toHaveAttribute('href', '/mes-jeunes/beneficiaire-1/favoris')
     })
 
     it('n’affiche pas de lien pour la liste des favoris quand le jeune n’a pas autorisé le partage', async () => {
@@ -77,7 +77,7 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

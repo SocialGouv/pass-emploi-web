@@ -4,13 +4,13 @@ import React from 'react'
 
 import EmargementRdvPage from 'app/(connected)/(full-page)/emargement/[idEvenement]/EmargementRdvPage'
 import { unEvenement } from 'fixtures/evenement'
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { unDetailSession } from 'fixtures/session'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toFrenchDateTime } from 'utils/date'
 
 describe('<EmargementRdvPage>', () => {
-  const beneficiaire = uneBaseJeune({ nom: 'LeRoi', prenom: 'Babar' })
+  const beneficiaire = uneBaseBeneficiaire({ nom: 'LeRoi', prenom: 'Babar' })
   const acAEmarger = unEvenement({
     titre: 'Meeting de la famille Pirate',
     organisme: 'Tchoupi SARL',

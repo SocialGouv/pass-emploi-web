@@ -4,7 +4,10 @@ import { DateTime } from 'luxon'
 import React, { ReactElement } from 'react'
 
 import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
-import { desConseillersJeune, unJeuneChat } from 'fixtures/jeune'
+import {
+  desConseillersBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import { desMessagesParJour, unMessage } from 'fixtures/message'
 import { ConseillerHistorique, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
@@ -27,15 +30,15 @@ jest.mock('services/messages.service')
 jest.mock('services/fichiers.service')
 
 describe('<ConversationBeneficiaire />', () => {
-  let jeuneChat: BeneficiaireChat
+  let beneficiaireChat: BeneficiaireChat
 
-  let conseillersJeunes: ConseillerHistorique[]
+  let conseillersBeneficiaires: ConseillerHistorique[]
   let rerender: (children: ReactElement) => void
   const messagesParJour = desMessagesParJour()
   let unsubscribe: () => void
   beforeEach(async () => {
-    jeuneChat = unJeuneChat()
-    conseillersJeunes = desConseillersJeune()
+    beneficiaireChat = unBeneficiaireChat()
+    conseillersBeneficiaires = desConseillersBeneficiaire()
     unsubscribe = jest.fn()
     ;(getChatCredentials as jest.Mock).mockResolvedValue({
       token: 'tokenFirebase',
@@ -68,8 +71,8 @@ describe('<ConversationBeneficiaire />', () => {
     await act(async () => {
       const renderResult = renderWithContexts(
         <ConversationBeneficiaire
-          jeuneChat={jeuneChat}
-          conseillers={conseillersJeunes}
+          jeuneChat={beneficiaireChat}
+          conseillers={conseillersBeneficiaires}
           onBack={jest.fn()}
         />
       )
@@ -80,7 +83,7 @@ describe('<ConversationBeneficiaire />', () => {
   it('s’abonne au message de la conversation', async () => {
     // Then
     expect(observeDerniersMessages).toHaveBeenCalledWith(
-      jeuneChat.chatId,
+      beneficiaireChat.chatId,
       'cleChiffrement',
       1,
       expect.any(Function)
@@ -104,14 +107,14 @@ describe('<ConversationBeneficiaire />', () => {
     // Then
     expect(unsubscribe).toHaveBeenCalledTimes(2)
     expect(observeDerniersMessages).toHaveBeenCalledWith(
-      jeuneChat.chatId,
+      beneficiaireChat.chatId,
       'cleChiffrement',
       2,
       expect.any(Function)
     )
 
     expect(observeDerniersMessages).toHaveBeenCalledWith(
-      jeuneChat.chatId,
+      beneficiaireChat.chatId,
       'cleChiffrement',
       3,
       expect.any(Function)
@@ -141,13 +144,13 @@ describe('<ConversationBeneficiaire />', () => {
 
   it('marque la conversation en "lu"', async () => {
     // Then
-    expect(setReadByConseiller).toHaveBeenCalledWith(jeuneChat.chatId)
+    expect(setReadByConseiller).toHaveBeenCalledWith(beneficiaireChat.chatId)
   })
 
   it('s’abonne à "jeuneReading"', async () => {
     // Then
     expect(observeJeuneReadingDate).toHaveBeenCalledWith(
-      jeuneChat.chatId,
+      beneficiaireChat.chatId,
       expect.any(Function)
     )
   })
@@ -164,11 +167,11 @@ describe('<ConversationBeneficiaire />', () => {
     await userEvent.upload(fileInput, file, { applyAccept: false })
     await userEvent.type(messageInput, 'TOTO')
 
-    const newJeuneChat = unJeuneChat({ chatId: 'new-jeune-chat' })
+    const newBeneficiaireChat = unBeneficiaireChat({ chatId: 'new-jeune-chat' })
     rerender(
       <ConversationBeneficiaire
-        jeuneChat={newJeuneChat}
-        conseillers={conseillersJeunes}
+        jeuneChat={newBeneficiaireChat}
+        conseillers={conseillersBeneficiaires}
         onBack={jest.fn()}
       />
     )
@@ -205,7 +208,7 @@ describe('<ConversationBeneficiaire />', () => {
       it('affiche le nom complet du conseiller', () => {
         // Then
         const messageItem = screen.getByTestId(message.id)
-        const conseiller = conseillersJeunes.find(
+        const conseiller = conseillersBeneficiaires.find(
           (conseiller) => conseiller.id === message.conseillerId
         )
         expect(
@@ -381,7 +384,7 @@ describe('<ConversationBeneficiaire />', () => {
       })
 
       // Then
-      expect(setReadByConseiller).toHaveBeenCalledWith(jeuneChat.chatId)
+      expect(setReadByConseiller).toHaveBeenCalledWith(beneficiaireChat.chatId)
     })
 
     it('envoie un nouveau message', async () => {
@@ -395,7 +398,7 @@ describe('<ConversationBeneficiaire />', () => {
 
       // Then
       expect(sendNouveauMessage).toHaveBeenCalledWith({
-        jeuneChat: jeuneChat,
+        beneficiaireChat: beneficiaireChat,
         newMessage: newMessage,
         cleChiffrement: 'cleChiffrement',
       })
@@ -425,7 +428,7 @@ describe('<ConversationBeneficiaire />', () => {
         screen.getByLabelText('Supprimer la pièce jointe imageupload.png')
       ).toBeInTheDocument()
       expect(fileInput).toHaveAttribute('disabled', '')
-      expect(uploadFichier).toHaveBeenCalledWith(['jeune-1'], [], file)
+      expect(uploadFichier).toHaveBeenCalledWith(['beneficiaire-1'], [], file)
     })
 
     it('on peut supprimer la pièce jointe ', async () => {
@@ -634,7 +637,7 @@ describe('<ConversationBeneficiaire />', () => {
 
         //Then
         expect(rechercherMessagesConversation).toHaveBeenCalledWith(
-          jeuneChat.id,
+          beneficiaireChat.id,
           'tchoupi',
           'cleChiffrement'
         )
