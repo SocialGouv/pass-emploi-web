@@ -4,9 +4,12 @@ import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
 import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { unDetailSession } from 'fixtures/session'
-import { CategorieSituation, BeneficiaireEtablissement } from 'interfaces/beneficiaire'
+import {
+  CategorieSituation,
+  BeneficiaireEtablissement,
+} from 'interfaces/beneficiaire'
 import { Session } from 'interfaces/session'
 import {
   changerInscriptionsSession,
@@ -31,8 +34,8 @@ describe('Détails Session Page Client', () => {
       session.session.dateMaxInscription = '2023-06-17'
       beneficiaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -45,8 +48,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-2',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
@@ -151,8 +154,8 @@ describe('Détails Session Page Client', () => {
       })
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -165,8 +168,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-2',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
@@ -245,8 +248,8 @@ describe('Détails Session Page Client', () => {
       // Given
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -259,8 +262,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-2',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
@@ -273,8 +276,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-3',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-3',
             prenom: 'Maggy',
             nom: 'Carpe',
           }),
@@ -287,8 +290,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-4',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-4',
             prenom: 'Tom',
             nom: 'Sawyer',
           }),
@@ -323,19 +326,19 @@ describe('Détails Session Page Client', () => {
           },
           inscriptions: [
             {
-              idJeune: 'jeune-3',
+              idJeune: 'beneficiaire-3',
               nom: 'Carpe',
               prenom: 'Maggy',
               statut: 'REFUS_JEUNE',
             },
             {
-              idJeune: 'jeune-2',
+              idJeune: 'beneficiaire-2',
               nom: 'Puce',
               prenom: 'Octo',
               statut: 'REFUS_TIERS',
             },
             {
-              idJeune: 'jeune-1',
+              idJeune: 'beneficiaire-1',
               nom: 'Beau',
               prenom: 'Harry',
               statut: 'INSCRIT',
@@ -422,7 +425,7 @@ describe('Détails Session Page Client', () => {
           },
           inscriptions: [
             {
-              idJeune: 'jeune-1',
+              idJeune: 'beneficiaire-1',
               nom: 'Beau',
               prenom: 'Harry',
               statut: 'INSCRIT',
@@ -450,8 +453,16 @@ describe('Détails Session Page Client', () => {
 
         //Then
         expect(changerInscriptionsSession).toHaveBeenCalledWith('session-1', [
-          { commentaire: undefined, idJeune: 'jeune-2', statut: 'INSCRIT' },
-          { commentaire: undefined, idJeune: 'jeune-1', statut: 'INSCRIT' },
+          {
+            commentaire: undefined,
+            idJeune: 'beneficiaire-2',
+            statut: 'INSCRIT',
+          },
+          {
+            commentaire: undefined,
+            idJeune: 'beneficiaire-1',
+            statut: 'INSCRIT',
+          },
         ])
       })
     })
@@ -464,8 +475,8 @@ describe('Détails Session Page Client', () => {
       // Given
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -495,7 +506,7 @@ describe('Détails Session Page Client', () => {
         },
         inscriptions: [
           {
-            idJeune: 'jeune-1',
+            idJeune: 'beneficiaire-1',
             nom: 'Beau',
             prenom: 'Harry',
             statut: 'INSCRIT',
@@ -529,8 +540,8 @@ describe('Détails Session Page Client', () => {
       // Given
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -559,7 +570,7 @@ describe('Détails Session Page Client', () => {
         },
         inscriptions: [
           {
-            idJeune: 'jeune-1',
+            idJeune: 'beneficiaire-1',
             nom: 'Beau',
             prenom: 'Harry',
             statut: 'INSCRIT',
@@ -616,8 +627,8 @@ describe('Détails Session Page Client', () => {
       // Given
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -630,8 +641,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-2',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
@@ -644,8 +655,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-3',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-3',
             prenom: 'Maggy',
             nom: 'Carpe',
           }),
@@ -658,8 +669,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-4',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-4',
             prenom: 'Tom',
             nom: 'Sawyer',
           }),
@@ -737,7 +748,7 @@ describe('Détails Session Page Client', () => {
           },
           inscriptions: [
             {
-              idJeune: 'jeune-2',
+              idJeune: 'beneficiaire-2',
               prenom: 'Octo',
               nom: 'Puce',
               statut: 'INSCRIT',
@@ -832,7 +843,7 @@ describe('Détails Session Page Client', () => {
 
       beneficaires = [
         {
-          base: uneBaseJeune({
+          base: uneBaseBeneficiaire({
             id: 'idHarryBeau',
             prenom: 'Harry',
             nom: 'Beau',
@@ -915,7 +926,7 @@ describe('Détails Session Page Client', () => {
         // Given
         beneficairesEtablissement = [
           {
-            base: uneBaseJeune(),
+            base: uneBaseBeneficiaire(),
             referent: {
               id: 'id-conseiller',
               nom: 'Le Calamar',
@@ -956,8 +967,8 @@ describe('Détails Session Page Client', () => {
         // Given
         beneficaires = [
           {
-            base: uneBaseJeune({
-              id: 'jeune-1',
+            base: uneBaseBeneficiaire({
+              id: 'beneficiaire-1',
               prenom: 'Harry',
               nom: 'Beau',
             }),

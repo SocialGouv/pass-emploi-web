@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
 import PartageOffrePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/[idOffre]/partage/PartageOffrePage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import {
   unDetailImmersion,
   unDetailOffreEmploi,
@@ -30,7 +30,7 @@ describe('PartageOffrePage client side', () => {
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
       offre = unDetailOffreEmploi()
-      jeunes = desItemsJeunes()
+      jeunes = desItemsBeneficiaires()
       ;(partagerOffre as jest.Mock).mockResolvedValue({})
 
       renderWithContexts(

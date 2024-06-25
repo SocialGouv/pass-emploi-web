@@ -10,8 +10,8 @@ import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
-import { EvenementListItem } from 'interfaces/evenement'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { EvenementListItem } from 'interfaces/evenement'
 
 type TableauRdvsBeneficiaireProps = {
   idConseiller: string

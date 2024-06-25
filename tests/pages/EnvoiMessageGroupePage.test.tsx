@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
 import EnvoiMessageGroupePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
@@ -33,7 +33,7 @@ describe('EnvoiMessageGroupePage client side', () => {
     push = jest.fn(() => Promise.resolve())
     ;(useRouter as jest.Mock).mockReturnValue({ push })
 
-    jeunes = desItemsJeunes()
+    jeunes = desItemsBeneficiaires()
     listesDeDiffusion = desListesDeDiffusion()
     ;(signIn as jest.Mock).mockResolvedValue(undefined)
     ;(sendNouveauMessageGroupe as jest.Mock).mockResolvedValue(undefined)

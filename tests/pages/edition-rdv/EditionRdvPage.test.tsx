@@ -10,14 +10,17 @@ import {
   typesEvenementCEJ,
   unEvenement,
 } from 'fixtures/evenement'
-import { desItemsJeunes, uneBaseJeune } from 'fixtures/jeune'
-import { StructureConseiller } from 'interfaces/conseiller'
-import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
+import {
+  desItemsBeneficiaires,
+  uneBaseBeneficiaire,
+} from 'fixtures/beneficiaire'
 import {
   BaseBeneficiaire,
   getNomBeneficiaireComplet,
   BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
+import { StructureConseiller } from 'interfaces/conseiller'
+import { Evenement, StatutAnimationCollective } from 'interfaces/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modalites } from 'referentiel/evenement'
@@ -47,13 +50,13 @@ describe('EditionRdvPage client side', () => {
     let refresh: jest.Mock
 
     beforeEach(() => {
-      jeunesConseiller = desItemsJeunes()
+      jeunesConseiller = desItemsBeneficiaires()
       jeunesAutreConseiller = [
-        uneBaseJeune({
+        uneBaseBeneficiaire({
           id: 'jeune-etablissement-1',
           prenom: 'Jeune Etablissement 1',
         }),
-        uneBaseJeune({
+        uneBaseBeneficiaire({
           id: 'jeune-etablissement-2',
           prenom: 'Jeune Etablissement 2',
         }),
@@ -1332,13 +1335,13 @@ describe('EditionRdvPage client side', () => {
     let push: Function
     let refresh: jest.Mock
     beforeEach(() => {
-      jeunesConseiller = desItemsJeunes()
+      jeunesConseiller = desItemsBeneficiaires()
       jeunesAutreConseiller = [
-        uneBaseJeune({
+        uneBaseBeneficiaire({
           id: 'jeune-etablissement-1',
           prenom: 'Jeune Etablissement 1',
         }),
-        uneBaseJeune({
+        uneBaseBeneficiaire({
           id: 'jeune-etablissement-2',
           prenom: 'Jeune Etablissement 2',
         }),

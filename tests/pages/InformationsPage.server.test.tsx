@@ -5,7 +5,10 @@ import HistoriquePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeune
 import Informations, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/page'
-import { desConseillersJeune, unDetailJeune } from 'fixtures/jeune'
+import {
+  desConseillersBeneficiaire,
+  unDetailBeneficiaire,
+} from 'fixtures/beneficiaire'
 import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 import {
   getConseillersDuJeuneServerSide,
@@ -32,13 +35,13 @@ describe('HistoriquePage server side', () => {
       categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
     },
   ]
-  const listeConseillers = desConseillersJeune()
+  const listeConseillers = desConseillersBeneficiaire()
 
   let metadata: Metadata
   beforeEach(async () => {
     // Given
     ;(getJeuneDetails as jest.Mock).mockResolvedValue(
-      unDetailJeune({ id: 'id-jeune', situations: listeSituations })
+      unDetailBeneficiaire({ id: 'id-jeune', situations: listeSituations })
     )
     ;(getConseillersDuJeuneServerSide as jest.Mock).mockResolvedValue(
       listeConseillers
@@ -56,7 +59,7 @@ describe('HistoriquePage server side', () => {
 
   it('prépare la page', async () => {
     //Given
-    let DetailJeune = unDetailJeune({
+    let DetailJeune = unDetailBeneficiaire({
       id: 'id-jeune',
       situations: listeSituations,
     })

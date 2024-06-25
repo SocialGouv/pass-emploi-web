@@ -7,11 +7,11 @@ import React from 'react'
 import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 import { unAgenda } from 'fixtures/agenda'
 import {
-  desConseillersJeune,
+  desConseillersBeneficiaire,
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
   CategorieSituation,
@@ -38,8 +38,8 @@ describe('InformationsPage client side', () => {
       categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
     },
   ]
-  const listeConseillers = desConseillersJeune()
-  const jeune = unDetailJeune({ urlDossier: 'https://dossier-milo.fr' })
+  const listeConseillers = desConseillersBeneficiaire()
+  const jeune = unDetailBeneficiaire({ urlDossier: 'https://dossier-milo.fr' })
 
   beforeEach(async () => {
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())

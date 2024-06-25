@@ -12,25 +12,25 @@ import {
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import {
+  BaseBeneficiaireJson,
+  DetailBeneficiaireJson,
+  IndicateursSemaineJson,
+  ItemBeneficiaireJson,
+  BeneficiaireEtablissementJson,
+  jsonToBaseBeneficiaire,
+  jsonToDetailBeneficiaire,
+  jsonToIndicateursSemaine,
+  jsonToItemBeneficiaire,
+  jsonToBeneficiaireEtablissement,
+  jsonToMetadonneesFavoris,
+  MetadonneesFavorisJson,
+  SuppressionBeneficiaireFormData,
+} from 'interfaces/json/beneficiaire'
+import {
   ConseillerHistoriqueJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
-import {
-  BaseJeuneJson,
-  DetailJeuneJson,
-  IndicateursSemaineJson,
-  ItemJeuneJson,
-  JeuneEtablissementJson,
-  jsonToBaseJeune,
-  jsonToDetailJeune,
-  jsonToIndicateursSemaine,
-  jsonToItemJeune,
-  jsonToJeuneEtablissement,
-  jsonToMetadonneesFavoris,
-  MetadonneesFavorisJson,
-  SuppressionJeuneFormData,
-} from 'interfaces/json/jeune'
-import { MotifSuppressionJeune } from 'interfaces/referentiel'
+import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
@@ -79,11 +79,11 @@ export async function getJeuneDetails(
   accessToken: string
 ): Promise<DetailBeneficiaire | undefined> {
   try {
-    const { content: jeune } = await apiGet<DetailJeuneJson>(
+    const { content: jeune } = await apiGet<DetailBeneficiaireJson>(
       `/jeunes/${idJeune}`,
       accessToken
     )
-    return jsonToDetailJeune(jeune)
+    return jsonToDetailBeneficiaire(jeune)
   } catch (e) {
     if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
@@ -116,12 +116,12 @@ export async function createCompteJeunePoleEmploi(newJeune: {
   email: string
 }): Promise<BaseBeneficiaire> {
   const session = await getSession()
-  const { content } = await apiPost<BaseJeuneJson>(
+  const { content } = await apiPost<BaseBeneficiaireJson>(
     `/conseillers/pole-emploi/jeunes`,
     { ...newJeune, idConseiller: session!.user.id },
     session!.accessToken
   )
-  return jsonToBaseJeune(content)
+  return jsonToBaseBeneficiaire(content)
 }
 
 export async function getIdJeuneMilo(
@@ -170,15 +170,17 @@ export async function supprimerJeuneInactif(idJeune: string): Promise<void> {
 
 export async function archiverJeune(
   idJeune: string,
-  payload: SuppressionJeuneFormData
+  payload: SuppressionBeneficiaireFormData
 ): Promise<void> {
   const session = await getSession()
   await apiPost(`/jeunes/${idJeune}/archiver`, payload, session!.accessToken)
 }
 
-export async function getMotifsSuppression(): Promise<MotifSuppressionJeune[]> {
+export async function getMotifsSuppression(): Promise<
+  MotifSuppressionBeneficiaire[]
+> {
   const session = await getSession()
-  const { content: motifs } = await apiGet<MotifSuppressionJeune[]>(
+  const { content: motifs } = await apiGet<MotifSuppressionBeneficiaire[]>(
     '/referentiels/motifs-suppression-jeune',
     session!.accessToken
   )
@@ -246,11 +248,11 @@ async function getJeunesDeLEtablissement(
   idEtablissement: string,
   accessToken: string
 ) {
-  const { content: jeunes } = await apiGet<BaseJeuneJson[]>(
+  const { content: jeunes } = await apiGet<BaseBeneficiaireJson[]>(
     `/etablissements/${idEtablissement}/jeunes`,
     accessToken
   )
-  return jeunes.map(jsonToBaseJeune)
+  return jeunes.map(jsonToBaseBeneficiaire)
 }
 
 export async function getBeneficiairesDeLaStructureMilo(
@@ -264,20 +266,20 @@ export async function getBeneficiairesDeLaStructureMilo(
   const {
     content: { resultats },
   } = await apiGet<{
-    resultats: JeuneEtablissementJson[]
+    resultats: BeneficiaireEtablissementJson[]
   }>(url, accessToken)
 
   return {
-    jeunes: resultats.map(jsonToJeuneEtablissement),
+    jeunes: resultats.map(jsonToBeneficiaireEtablissement),
   }
 }
 
-export async function rechercheJeunesDeLEtablissement(
+export async function rechercheBeneficiairesDeLEtablissement(
   idEtablissement: string,
   recherche: string,
   page: number
 ): Promise<{
-  jeunes: BeneficiaireEtablissement[]
+  beneficiaires: BeneficiaireEtablissement[]
   metadonnees: MetadonneesPagination
 }> {
   const session = await getSession()
@@ -285,7 +287,7 @@ export async function rechercheJeunesDeLEtablissement(
     content: { pagination, resultats },
   } = await apiGet<{
     pagination: { total: number; limit: number }
-    resultats: JeuneEtablissementJson[]
+    resultats: BeneficiaireEtablissementJson[]
   }>(
     `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}&page=${page}`,
     session!.accessToken
@@ -296,7 +298,7 @@ export async function rechercheJeunesDeLEtablissement(
       nombrePages: Math.ceil(pagination.total / pagination.limit),
       nombreTotal: pagination.total,
     },
-    jeunes: resultats.map(jsonToJeuneEtablissement),
+    beneficiaires: resultats.map(jsonToBeneficiaireEtablissement),
   }
 }
 
@@ -304,11 +306,11 @@ async function getJeunesDuConseiller(
   idConseiller: string,
   accessToken: string
 ) {
-  const { content: jeunes } = await apiGet<ItemJeuneJson[]>(
+  const { content: jeunes } = await apiGet<ItemBeneficiaireJson[]>(
     `/conseillers/${idConseiller}/jeunes`,
     accessToken
   )
-  return jeunes.map(jsonToItemJeune)
+  return jeunes.map(jsonToItemBeneficiaire)
 }
 
 async function getConseillersDuJeune(

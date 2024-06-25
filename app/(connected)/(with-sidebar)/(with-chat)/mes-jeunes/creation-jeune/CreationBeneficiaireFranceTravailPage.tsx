@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation'
 import React, { ReactElement, useState } from 'react'
 
 import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
-import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
+import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-function PoleEmploiCreationJeune(): ReactElement {
+function CreationBeneficiaireFranceTravailPage(): ReactElement {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [portefeuille, setPortefeuille] = usePortefeuille()
@@ -20,7 +20,7 @@ function PoleEmploiCreationJeune(): ReactElement {
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
   async function creerJeunePoleEmploi(
-    newJeune: JeunePoleEmploiFormData
+    newJeune: BeneficiaireFranceTravailFormData
   ): Promise<void> {
     setCreationError(undefined)
     setCreationEnCours(true)
@@ -62,6 +62,6 @@ function PoleEmploiCreationJeune(): ReactElement {
 }
 
 export default withTransaction(
-  PoleEmploiCreationJeune.name,
+  CreationBeneficiaireFranceTravailPage.name,
   'page'
-)(PoleEmploiCreationJeune)
+)(CreationBeneficiaireFranceTravailPage)

@@ -12,8 +12,8 @@ import {
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { MetadonneesPagination } from 'types/pagination'

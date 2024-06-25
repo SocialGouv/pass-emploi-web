@@ -22,8 +22,8 @@ import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
-import { InfoFichier } from 'interfaces/fichier'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import { InfoFichier } from 'interfaces/fichier'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FormNouveauMessageGroupe } from 'services/messages.service'

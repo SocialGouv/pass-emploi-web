@@ -9,6 +9,7 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   estClos,
@@ -16,7 +17,6 @@ import {
   Evenement,
   isCodeTypeAnimationCollective,
 } from 'interfaces/evenement'
-import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import {
   isTypeAnimationCollective,
   TypeEvenementReferentiel,

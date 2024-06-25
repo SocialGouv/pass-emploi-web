@@ -27,7 +27,10 @@ import {
   MetadonneesActionsJson,
   QualificationActionJson,
 } from 'interfaces/json/action'
-import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
+import {
+  BaseBeneficiaireJson,
+  jsonToBaseBeneficiaire,
+} from 'interfaces/json/beneficiaire'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
@@ -42,11 +45,14 @@ export async function getAction(
     const {
       content: { jeune, ...actionJson },
     } = await apiGet<
-      ActionJson & { jeune: BaseJeuneJson & { idConseiller: string } }
+      ActionJson & { jeune: BaseBeneficiaireJson & { idConseiller: string } }
     >(`/actions/${idAction}`, accessToken)
     return {
       action: jsonToAction(actionJson),
-      jeune: { ...jsonToBaseJeune(jeune), idConseiller: jeune.idConseiller },
+      jeune: {
+        ...jsonToBaseBeneficiaire(jeune),
+        idConseiller: jeune.idConseiller,
+      },
     }
   } catch (e) {
     if (e instanceof ApiError) return undefined

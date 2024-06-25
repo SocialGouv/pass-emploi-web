@@ -13,7 +13,6 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
@@ -22,6 +21,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
+import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'

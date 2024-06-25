@@ -2,7 +2,7 @@ import { act, screen, within } from '@testing-library/react'
 import { DateTime } from 'luxon'
 
 import { DetailMessageListeDeDiffusion } from 'components/chat/DetailMessageListeDeDiffusion'
-import { unJeuneChat } from 'fixtures/jeune'
+import { unBeneficiaireChat } from 'fixtures/beneficiaire'
 import { unMessageListeDiffusion } from 'fixtures/message'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { MessageListeDiffusion } from 'interfaces/message'
@@ -45,11 +45,11 @@ describe('DetailMessageListeDeDiffusion', () => {
           message={message}
           onBack={() => {}}
           chats={[
-            unJeuneChat({
+            unBeneficiaireChat({
               ...destinataire1,
               lastJeuneReading: message.creationDate.plus({ day: 1 }),
             }),
-            unJeuneChat({
+            unBeneficiaireChat({
               ...destinataire2,
               lastJeuneReading: message.creationDate.minus({ day: 1 }),
             }),

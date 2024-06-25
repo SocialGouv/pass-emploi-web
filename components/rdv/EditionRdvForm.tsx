@@ -24,6 +24,11 @@ import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import { ValueWithError } from 'components/ValueWithError'
+import {
+  BaseBeneficiaire,
+  compareParId,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import {
   estClos,
@@ -31,11 +36,6 @@ import {
   Evenement,
   TYPE_EVENEMENT,
 } from 'interfaces/evenement'
-import {
-  BaseBeneficiaire,
-  compareParId,
-  getNomBeneficiaireComplet,
-} from 'interfaces/beneficiaire'
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { modalites } from 'referentiel/evenement'

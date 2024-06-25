@@ -4,8 +4,8 @@ import Dot from 'components/ui/Dot'
 import IconCheckbox from 'components/ui/Form/IconCheckbox'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
-import { UserType } from 'interfaces/conseiller'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { UserType } from 'interfaces/conseiller'
 import { toRelativeDateTime } from 'utils/date'
 
 interface ConversationTileProps {

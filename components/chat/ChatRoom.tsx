@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
-import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
@@ -295,7 +295,7 @@ export default function ChatRoom({
             className='flex justify-center my-8 layout_s:hidden'
             data-testid='form-chat'
           >
-            <RechercheJeune onSearchFilterBy={filtrerConversations} />
+            <RechercheBeneficiaire onSearchFilterBy={filtrerConversations} />
           </div>
 
           {chatsFiltres && (

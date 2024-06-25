@@ -42,7 +42,7 @@ describe('ActionsApiService', () => {
             content: {
               ...uneActionJson({ id: action.id, status: 'not_started' }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -58,7 +58,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -75,7 +75,7 @@ describe('ActionsApiService', () => {
             content: {
               ...uneActionJson({ id: action.id, status: 'in_progress' }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -91,7 +91,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -108,7 +108,7 @@ describe('ActionsApiService', () => {
             content: {
               ...uneActionJson({ id: action.id, status: 'done' }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -124,7 +124,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -141,7 +141,7 @@ describe('ActionsApiService', () => {
             content: {
               ...uneActionJson({ id: action.id, status: 'canceled' }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -157,7 +157,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -189,7 +189,7 @@ describe('ActionsApiService', () => {
                 },
               }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -205,7 +205,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -237,7 +237,7 @@ describe('ActionsApiService', () => {
                 },
               }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -253,7 +253,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',

@@ -1,4 +1,4 @@
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 
 export function desListesDeDiffusion(): ListeDeDiffusion[] {
@@ -7,7 +7,9 @@ export function desListesDeDiffusion(): ListeDeDiffusion[] {
     uneListeDeDiffusion({
       id: 'liste-2',
       titre: 'Liste métiers pâtisserie',
-      beneficiaires: [{ ...uneBaseJeune(), estDansLePortefeuille: false }],
+      beneficiaires: [
+        { ...uneBaseBeneficiaire(), estDansLePortefeuille: false },
+      ],
     }),
   ]
 }
@@ -18,7 +20,7 @@ export function uneListeDeDiffusion(
   const defaults: ListeDeDiffusion = {
     id: 'liste-1',
     titre: 'Liste export international',
-    beneficiaires: [{ ...uneBaseJeune(), estDansLePortefeuille: true }],
+    beneficiaires: [{ ...uneBaseBeneficiaire(), estDansLePortefeuille: true }],
   }
   return { ...defaults, ...overrides }
 }

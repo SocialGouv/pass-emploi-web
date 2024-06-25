@@ -21,8 +21,8 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { InfoFichier } from 'interfaces/fichier'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
+import { InfoFichier } from 'interfaces/fichier'
 import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,

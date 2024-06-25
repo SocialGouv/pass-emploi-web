@@ -3,9 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
 import EditionListeDiffusionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes-de-diffusion/edition-liste/EditionListeDiffusionPage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { BaseBeneficiaire, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import {
+  BaseBeneficiaire,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import {
@@ -31,7 +34,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
     routerPush = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
-    beneficiaires = desItemsJeunes()
+    beneficiaires = desItemsBeneficiaires()
   })
 
   describe('contenu', () => {

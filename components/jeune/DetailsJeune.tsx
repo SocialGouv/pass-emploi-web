@@ -4,12 +4,12 @@ import React, { useState } from 'react'
 
 import { BlocInformationJeuneFicheBeneficiaire } from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
+import { DetailBeneficiaire, IndicateursSemaine } from 'interfaces/beneficiaire'
 import {
   Conseiller,
   estPoleEmploi,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { DetailBeneficiaire, IndicateursSemaine } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'

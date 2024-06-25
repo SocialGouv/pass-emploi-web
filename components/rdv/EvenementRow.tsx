@@ -6,9 +6,12 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
+import {
+  BaseBeneficiaire,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
-import { BaseBeneficiaire, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { toShortDate, toFrenchTime, toMonthday } from 'utils/date'
 
 interface EvenementRowProps {

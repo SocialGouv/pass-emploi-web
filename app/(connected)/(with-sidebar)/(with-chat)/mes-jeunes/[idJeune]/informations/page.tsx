@@ -9,8 +9,8 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,

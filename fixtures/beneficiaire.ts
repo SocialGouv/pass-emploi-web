@@ -12,31 +12,31 @@ import {
   BeneficiaireFromListe,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 import {
-  BaseJeuneJson,
-  DetailJeuneJson,
+  BaseBeneficiaireJson,
+  DetailBeneficiaireJson,
   IndicateursSemaineJson,
-  ItemJeuneJson,
+  ItemBeneficiaireJson,
   MetadonneesFavorisJson,
-} from 'interfaces/json/jeune'
+} from 'interfaces/json/beneficiaire'
+import { ConseillerHistoriqueJson } from 'interfaces/json/conseiller'
 
-export const uneBaseJeune = (
+export const uneBaseBeneficiaire = (
   overrides: Partial<BaseBeneficiaire> = {}
 ): BaseBeneficiaire => {
   const defaults: BaseBeneficiaire = {
-    id: 'jeune-1',
+    id: 'beneficiaire-1',
     prenom: 'Kenji',
     nom: 'Jirac',
   }
   return { ...defaults, ...overrides }
 }
 
-export const unDetailJeune = (
+export const unDetailBeneficiaire = (
   overrides: Partial<DetailBeneficiaire> = {}
 ): DetailBeneficiaire => {
   const defaults: DetailBeneficiaire = {
-    ...uneBaseJeune(),
+    ...uneBaseBeneficiaire(),
     email: 'kenji.jirac@email.fr',
     isActivated: true,
     idPartenaire: '1234',
@@ -95,11 +95,11 @@ export const uneMetadonneeFavorisJson = (
   return { ...defaults, ...overrides }
 }
 
-export const unItemJeune = (
+export const unItemBeneficiaire = (
   overrides: Partial<BeneficiaireFromListe> = {}
 ): BeneficiaireFromListe => {
   const defaults: BeneficiaireFromListe = {
-    ...uneBaseJeune(),
+    ...uneBaseBeneficiaire(),
     isActivated: true,
     isReaffectationTemporaire: false,
     lastActivity: '2021-12-07T17:30:07.756Z',
@@ -108,17 +108,17 @@ export const unItemJeune = (
   return { ...defaults, ...overrides }
 }
 
-export const desItemsJeunes = (): BeneficiaireFromListe[] => [
-  unItemJeune(),
-  unItemJeune({
-    id: 'jeune-2',
+export const desItemsBeneficiaires = (): BeneficiaireFromListe[] => [
+  unItemBeneficiaire(),
+  unItemBeneficiaire({
+    id: 'beneficiaire-2',
     prenom: 'Nadia',
     nom: 'Sanfamiye',
     lastActivity: '2022-01-30T17:30:07.756Z',
     isActivated: true,
   }),
-  unItemJeune({
-    id: 'jeune-3',
+  unItemBeneficiaire({
+    id: 'beneficiaire-3',
     prenom: 'Maria',
     nom: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
@@ -126,22 +126,22 @@ export const desItemsJeunes = (): BeneficiaireFromListe[] => [
   }),
 ]
 
-export const uneBaseJeuneJson = (
-  overrides: Partial<BaseJeuneJson> = {}
-): BaseJeuneJson => {
-  const defaults: BaseJeuneJson = {
-    id: 'jeune-1',
+export const uneBaseBeneficiaireJson = (
+  overrides: Partial<BaseBeneficiaireJson> = {}
+): BaseBeneficiaireJson => {
+  const defaults: BaseBeneficiaireJson = {
+    id: 'beneficiaire-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
   }
   return { ...defaults, ...overrides }
 }
 
-export const unDetailJeuneJson = (
-  overrides: Partial<DetailJeuneJson> = {}
-): DetailJeuneJson => {
-  const defaults: DetailJeuneJson = {
-    id: 'jeune-1',
+export const unDetailBeneficiaireJson = (
+  overrides: Partial<DetailBeneficiaireJson> = {}
+): DetailBeneficiaireJson => {
+  const defaults: DetailBeneficiaireJson = {
+    id: 'beneficiaire-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
     email: 'kenji.jirac@email.fr',
@@ -154,11 +154,11 @@ export const unDetailJeuneJson = (
   return { ...defaults, ...overrides }
 }
 
-export const unItemJeuneJson = (
-  overrides: Partial<ItemJeuneJson> = {}
-): ItemJeuneJson => {
-  const defaults: ItemJeuneJson = {
-    id: 'jeune-1',
+export const unItemBeneficiaireJson = (
+  overrides: Partial<ItemBeneficiaireJson> = {}
+): ItemBeneficiaireJson => {
+  const defaults: ItemBeneficiaireJson = {
+    id: 'beneficiaire-1',
     firstName: 'Kenji',
     lastName: 'Jirac',
     isActivated: true,
@@ -168,17 +168,17 @@ export const unItemJeuneJson = (
   return { ...defaults, ...overrides }
 }
 
-export const desItemsJeunesJson = (): ItemJeuneJson[] => [
-  unItemJeuneJson(),
-  unItemJeuneJson({
-    id: 'jeune-2',
+export const desItemsBeneficiairesJson = (): ItemBeneficiaireJson[] => [
+  unItemBeneficiaireJson(),
+  unItemBeneficiaireJson({
+    id: 'beneficiaire-2',
     firstName: 'Nadia',
     lastName: 'Sanfamiye',
     lastActivity: '2022-01-30T17:30:07.756Z',
     isActivated: true,
   }),
-  unItemJeuneJson({
-    id: 'jeune-3',
+  unItemBeneficiaireJson({
+    id: 'beneficiaire-3',
     firstName: 'Maria',
     lastName: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
@@ -186,29 +186,29 @@ export const desItemsJeunesJson = (): ItemJeuneJson[] => [
   }),
 ]
 
-export const unJeuneAvecActionsNonTerminees = (
+export const unBeneficiaireAvecActionsNonTerminees = (
   overrides: Partial<BeneficiaireAvecNbActionsNonTerminees> = {}
 ): BeneficiaireAvecNbActionsNonTerminees => {
   const defaults: BeneficiaireAvecNbActionsNonTerminees = {
-    ...unItemJeune(),
+    ...unItemBeneficiaire(),
     nbActionsNonTerminees: 5,
   }
   return { ...defaults, ...overrides }
 }
 
-export const desJeunesAvecActionsNonTerminees =
+export const desBeneficiairesAvecActionsNonTerminees =
   (): BeneficiaireAvecNbActionsNonTerminees[] => [
-    unJeuneAvecActionsNonTerminees(),
-    unJeuneAvecActionsNonTerminees({
-      id: 'jeune-2',
+    unBeneficiaireAvecActionsNonTerminees(),
+    unBeneficiaireAvecActionsNonTerminees({
+      id: 'beneficiaire-2',
       prenom: 'Nadia',
       nom: 'Sanfamiye',
       isActivated: false,
       lastActivity: '2022-01-30T17:30:07.756Z',
       nbActionsNonTerminees: 0,
     }),
-    unJeuneAvecActionsNonTerminees({
-      id: 'jeune-3',
+    unBeneficiaireAvecActionsNonTerminees({
+      id: 'beneficiaire-3',
       prenom: 'Maria',
       nom: "D'Aböville-Muñoz François",
       lastActivity: '2022-02-07T17:30:07.756Z',
@@ -233,11 +233,11 @@ export const unChat = (overrides: Partial<Chat> = {}): Chat => {
   return { ...defaults, ...overrides }
 }
 
-export const unJeuneChat = (
+export const unBeneficiaireChat = (
   overrides: Partial<BeneficiaireChat> = {}
 ): BeneficiaireChat => {
   const defaults: BeneficiaireChat = {
-    id: 'jeune-1',
+    id: 'beneficiaire-1',
     prenom: 'Kenji',
     nom: 'Jirac',
     ...unChat(),
@@ -258,7 +258,7 @@ export const unConseillerHistorique = (
   return { ...defaults, ...overrides }
 }
 
-export const desConseillersJeune = (): ConseillerHistorique[] => [
+export const desConseillersBeneficiaire = (): ConseillerHistorique[] => [
   unConseillerHistorique(),
   unConseillerHistorique({
     id: 'conseiller-2',
@@ -292,16 +292,19 @@ export const desConseillersJeune = (): ConseillerHistorique[] => [
   }),
 ]
 
-export const desConseillersJeuneJson = (): ConseillerHistoriqueJson[] => {
-  return desConseillersJeune().map((conseiller) => ({
-    id: conseiller.id,
-    nom: conseiller.nom,
-    prenom: conseiller.prenom,
-    date: conseiller.depuis,
-  }))
-}
+export const desConseillersBeneficiaireJson =
+  (): ConseillerHistoriqueJson[] => {
+    return desConseillersBeneficiaire().map((conseiller) => ({
+      id: conseiller.id,
+      nom: conseiller.nom,
+      prenom: conseiller.prenom,
+      date: conseiller.depuis,
+    }))
+  }
 
-export function extractBaseJeune(base: BaseBeneficiaire): BaseBeneficiaire {
+export function extractBaseBeneficiaire(
+  base: BaseBeneficiaire
+): BaseBeneficiaire {
   return { id: base.id, nom: base.nom, prenom: base.prenom }
 }
 

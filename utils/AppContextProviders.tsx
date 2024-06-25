@@ -4,7 +4,7 @@ import { apm } from '@elastic/apm-rum'
 import { ThemeProvider } from 'next-themes'
 import React, { ReactNode } from 'react'
 
-import { extractBaseJeune } from 'fixtures/jeune'
+import { extractBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { Conseiller } from 'interfaces/conseiller'
 import {
   compareBeneficiairesByNom,
@@ -31,7 +31,7 @@ export default function AppContextProviders({
   children: ReactNode
 }) {
   const portefeuilleTrie = portefeuille
-    .map(extractBaseJeune)
+    .map(extractBaseBeneficiaire)
     .sort(compareBeneficiairesByNom)
 
   apm.setUserContext({

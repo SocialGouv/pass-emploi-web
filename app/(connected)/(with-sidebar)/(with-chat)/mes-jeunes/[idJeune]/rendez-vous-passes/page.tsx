@@ -6,9 +6,9 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { PeriodeEvenements } from 'interfaces/evenement'
-import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { getRendezVousJeune } from 'services/evenements.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
