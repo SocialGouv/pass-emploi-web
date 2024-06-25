@@ -67,7 +67,6 @@ export default async function DetailsSession({
     conseiller.structureMilo!.id,
     accessToken
   )
-
   return (
     <>
       <PageRetourPortal lien={redirectTo} />
@@ -76,7 +75,7 @@ export default async function DetailsSession({
       <FicheDetailsSession
         session={session}
         returnTo={redirectTo}
-        beneficiairesStructureMilo={beneficiairesStructureMilo.jeunes}
+        beneficiairesStructureMilo={beneficiairesStructureMilo.beneficiaires}
       />
     </>
   )

@@ -12,42 +12,42 @@ import {
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import {
+  BaseBeneficiaireJson,
+  DetailBeneficiaireJson,
+  IndicateursSemaineJson,
+  ItemBeneficiaireJson,
+  BeneficiaireEtablissementJson,
+  jsonToBaseBeneficiaire,
+  jsonToDetailBeneficiaire,
+  jsonToIndicateursSemaine,
+  jsonToItemBeneficiaire,
+  jsonToBeneficiaireEtablissement,
+  jsonToMetadonneesFavoris,
+  MetadonneesFavorisJson,
+  SuppressionBeneficiaireFormData,
+} from 'interfaces/json/beneficiaire'
+import {
   ConseillerHistoriqueJson,
   toConseillerHistorique,
 } from 'interfaces/json/conseiller'
-import {
-  BaseJeuneJson,
-  DetailJeuneJson,
-  IndicateursSemaineJson,
-  ItemJeuneJson,
-  JeuneEtablissementJson,
-  jsonToBaseJeune,
-  jsonToDetailJeune,
-  jsonToIndicateursSemaine,
-  jsonToItemJeune,
-  jsonToJeuneEtablissement,
-  jsonToMetadonneesFavoris,
-  MetadonneesFavorisJson,
-  SuppressionJeuneFormData,
-} from 'interfaces/json/jeune'
-import { MotifSuppressionJeune } from 'interfaces/referentiel'
+import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
 export async function getIdentitesBeneficiairesServerSide(
-  idsJeunes: string[],
+  idsBeneficiaires: string[],
   idConseiller: string,
   accessToken: string
 ): Promise<BaseBeneficiaire[]> {
-  return getIdentitesBeneficiaires(idsJeunes, idConseiller, accessToken)
+  return getIdentitesBeneficiaires(idsBeneficiaires, idConseiller, accessToken)
 }
 
 export async function getIdentitesBeneficiairesClientSide(
-  idsJeunes: string[]
+  idsBeneficiaires: string[]
 ): Promise<BaseBeneficiaire[]> {
   const session = await getSession()
   return getIdentitesBeneficiaires(
-    idsJeunes,
+    idsBeneficiaires,
     session!.user.id,
     session!.accessToken
   )
@@ -57,21 +57,21 @@ export async function getJeunesDuConseillerServerSide(
   idConseiller: string,
   accessToken: string
 ): Promise<BeneficiaireFromListe[]> {
-  return getJeunesDuConseiller(idConseiller, accessToken)
+  return getBeneficiairesDuConseiller(idConseiller, accessToken)
 }
 
 export async function getJeunesDuConseillerClientSide(): Promise<
   BeneficiaireFromListe[]
 > {
   const session = await getSession()
-  return getJeunesDuConseiller(session!.user.id, session!.accessToken)
+  return getBeneficiairesDuConseiller(session!.user.id, session!.accessToken)
 }
 
 export async function getJeunesDuConseillerParId(
   idConseiller: string
 ): Promise<BeneficiaireFromListe[]> {
   const session = await getSession()
-  return getJeunesDuConseiller(idConseiller, session!.accessToken)
+  return getBeneficiairesDuConseiller(idConseiller, session!.accessToken)
 }
 
 export async function getJeuneDetails(
@@ -79,11 +79,11 @@ export async function getJeuneDetails(
   accessToken: string
 ): Promise<DetailBeneficiaire | undefined> {
   try {
-    const { content: jeune } = await apiGet<DetailJeuneJson>(
+    const { content: jeune } = await apiGet<DetailBeneficiaireJson>(
       `/jeunes/${idJeune}`,
       accessToken
     )
-    return jsonToDetailJeune(jeune)
+    return jsonToDetailBeneficiaire(jeune)
   } catch (e) {
     if (e instanceof ApiError && e.statusCode === 404) {
       return undefined
@@ -97,7 +97,7 @@ export async function getConseillersDuJeuneServerSide(
   accessToken: string
 ): Promise<ConseillerHistorique[]> {
   {
-    return getConseillersDuJeune(idJeune, accessToken)
+    return getConseillersDuBeneficiaire(idJeune, accessToken)
   }
 }
 
@@ -106,7 +106,7 @@ export async function getConseillersDuJeuneClientSide(
 ): Promise<ConseillerHistorique[]> {
   {
     const session = await getSession()
-    return getConseillersDuJeune(idJeune, session!.accessToken)
+    return getConseillersDuBeneficiaire(idJeune, session!.accessToken)
   }
 }
 
@@ -116,12 +116,12 @@ export async function createCompteJeunePoleEmploi(newJeune: {
   email: string
 }): Promise<BaseBeneficiaire> {
   const session = await getSession()
-  const { content } = await apiPost<BaseJeuneJson>(
+  const { content } = await apiPost<BaseBeneficiaireJson>(
     `/conseillers/pole-emploi/jeunes`,
     { ...newJeune, idConseiller: session!.user.id },
     session!.accessToken
   )
-  return jsonToBaseJeune(content)
+  return jsonToBaseBeneficiaire(content)
 }
 
 export async function getIdJeuneMilo(
@@ -170,15 +170,17 @@ export async function supprimerJeuneInactif(idJeune: string): Promise<void> {
 
 export async function archiverJeune(
   idJeune: string,
-  payload: SuppressionJeuneFormData
+  payload: SuppressionBeneficiaireFormData
 ): Promise<void> {
   const session = await getSession()
   await apiPost(`/jeunes/${idJeune}/archiver`, payload, session!.accessToken)
 }
 
-export async function getMotifsSuppression(): Promise<MotifSuppressionJeune[]> {
+export async function getMotifsSuppression(): Promise<
+  MotifSuppressionBeneficiaire[]
+> {
   const session = await getSession()
-  const { content: motifs } = await apiGet<MotifSuppressionJeune[]>(
+  const { content: motifs } = await apiGet<MotifSuppressionBeneficiaire[]>(
     '/referentiels/motifs-suppression-jeune',
     session!.accessToken
   )
@@ -219,65 +221,77 @@ export async function modifierIdentifiantPartenaire(
 
 export async function getIndicateursJeuneAlleges(
   idConseiller: string,
-  idJeune: string,
+  idBeneficiaire: string,
   dateDebut: DateTime,
   dateFin: DateTime
 ): Promise<IndicateursSemaine> {
-  return getIndicateursJeune(idConseiller, idJeune, dateDebut, dateFin, true)
+  return getIndicateursBeneficiaire(
+    idConseiller,
+    idBeneficiaire,
+    dateDebut,
+    dateFin,
+    true
+  )
 }
 
 export async function getIndicateursJeuneComplets(
   idConseiller: string,
-  idJeune: string,
+  idBeneficiaire: string,
   dateDebut: DateTime,
   dateFin: DateTime
 ): Promise<IndicateursSemaine> {
-  return getIndicateursJeune(idConseiller, idJeune, dateDebut, dateFin, false)
+  return getIndicateursBeneficiaire(
+    idConseiller,
+    idBeneficiaire,
+    dateDebut,
+    dateFin,
+    false
+  )
 }
 
-export async function getJeunesDeLEtablissementClientSide(
+export async function getBeneficiairesDeLEtablissementClientSide(
   idEtablissement: string
 ): Promise<BaseBeneficiaire[]> {
   const session = await getSession()
-  return getJeunesDeLEtablissement(idEtablissement, session!.accessToken)
+  return getBeneficiairesDeLEtablissement(idEtablissement, session!.accessToken)
 }
 
-async function getJeunesDeLEtablissement(
+async function getBeneficiairesDeLEtablissement(
   idEtablissement: string,
   accessToken: string
 ) {
-  const { content: jeunes } = await apiGet<BaseJeuneJson[]>(
+  const { content: beneficiaires } = await apiGet<BaseBeneficiaireJson[]>(
     `/etablissements/${idEtablissement}/jeunes`,
     accessToken
   )
-  return jeunes.map(jsonToBaseJeune)
+  return beneficiaires.map(jsonToBaseBeneficiaire)
 }
 
 export async function getBeneficiairesDeLaStructureMilo(
   idStructureMilo: string,
   accessToken: string
 ): Promise<{
-  jeunes: BeneficiaireEtablissement[]
+  beneficiaires: BeneficiaireEtablissement[]
 }> {
   let url = `/structures-milo/${idStructureMilo}/jeunes`
 
   const {
     content: { resultats },
   } = await apiGet<{
-    resultats: JeuneEtablissementJson[]
+    resultats: BeneficiaireEtablissementJson[]
   }>(url, accessToken)
 
   return {
-    jeunes: resultats.map(jsonToJeuneEtablissement),
+    beneficiaires: resultats.map(jsonToBeneficiaireEtablissement),
   }
 }
 
-export async function rechercheJeunesDeLEtablissement(
+export async function rechercheBeneficiairesDeLEtablissement(
   idEtablissement: string,
   recherche: string,
   page: number
 ): Promise<{
-  jeunes: BeneficiaireEtablissement[]
+  beneficiaires: BeneficiaireEtablissement[]
   metadonnees: MetadonneesPagination
 }> {
   const session = await getSession()
@@ -285,7 +299,7 @@ export async function rechercheJeunesDeLEtablissement(
     content: { pagination, resultats },
   } = await apiGet<{
     pagination: { total: number; limit: number }
-    resultats: JeuneEtablissementJson[]
+    resultats: BeneficiaireEtablissementJson[]
   }>(
     `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}&page=${page}`,
     session!.accessToken
@@ -296,29 +310,29 @@ export async function rechercheJeunesDeLEtablissement(
       nombrePages: Math.ceil(pagination.total / pagination.limit),
       nombreTotal: pagination.total,
     },
-    jeunes: resultats.map(jsonToJeuneEtablissement),
+    beneficiaires: resultats.map(jsonToBeneficiaireEtablissement),
   }
 }
 
-async function getJeunesDuConseiller(
+async function getBeneficiairesDuConseiller(
   idConseiller: string,
   accessToken: string
 ) {
-  const { content: jeunes } = await apiGet<ItemJeuneJson[]>(
+  const { content: beneficiaires } = await apiGet<ItemBeneficiaireJson[]>(
     `/conseillers/${idConseiller}/jeunes`,
     accessToken
   )
-  return jeunes.map(jsonToItemJeune)
+  return beneficiaires.map(jsonToItemBeneficiaire)
 }
 
-async function getConseillersDuJeune(
-  idJeune: string,
+async function getConseillersDuBeneficiaire(
+  idBeneficiaire: string,
   accessToken: string
 ): Promise<ConseillerHistorique[]> {
   {
     try {
       const { content: historique } = await apiGet<ConseillerHistoriqueJson[]>(
-        `/jeunes/${idJeune}/conseillers`,
+        `/jeunes/${idBeneficiaire}/conseillers`,
         accessToken
       )
       return historique.map(toConseillerHistorique)
@@ -331,9 +345,9 @@ async function getConseillersDuJeune(
   }
 }
 
-async function getIndicateursJeune(
+async function getIndicateursBeneficiaire(
   idConseiller: string,
-  idJeune: string,
+  idBeneficiaire: string,
   dateDebut: DateTime,
   dateFin: DateTime,
   exclureOffresEtFavoris: boolean
@@ -343,19 +357,19 @@ async function getIndicateursJeune(
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
 
   const { content: indicateurs } = await apiGet<IndicateursSemaineJson>(
-    `/conseillers/${idConseiller}/jeunes/${idJeune}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&exclureOffresEtFavoris=${exclureOffresEtFavoris}`,
+    `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&exclureOffresEtFavoris=${exclureOffresEtFavoris}`,
     session!.accessToken
   )
   return jsonToIndicateursSemaine(indicateurs)
 }
 
 async function getIdentitesBeneficiaires(
-  idsJeunes: string[],
+  idsBeneficiaires: string[],
   idConseiller: string,
   accessToken: string
 ): Promise<BaseBeneficiaire[]> {
-  if (!idsJeunes.length) return []
-  const queryParam = idsJeunes.map((id) => 'ids=' + id).join('&')
+  if (!idsBeneficiaires.length) return []
+  const queryParam = idsBeneficiaires.map((id) => 'ids=' + id).join('&')
 
   const { content: beneficiaires } = await apiGet<BaseBeneficiaire[]>(
     `/conseillers/${idConseiller}/jeunes/identites?${queryParam}`,

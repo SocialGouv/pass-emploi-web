@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 import PartageOffre from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/[idOffre]/partage/page'
 import PartageOffrePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/[idOffre]/partage/PartageOffrePage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import {
   unDetailImmersion,
   unDetailOffreEmploi,
@@ -52,7 +52,7 @@ describe('Page Partage Offre', () => {
     )
     ;(getImmersionServerSide as jest.Mock).mockResolvedValue(immersion)
     ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(
-      desItemsJeunes()
+      desItemsBeneficiaires()
     )
     ;(headers as jest.Mock).mockReturnValue(
       new Map([['referer', 'referer-url']])

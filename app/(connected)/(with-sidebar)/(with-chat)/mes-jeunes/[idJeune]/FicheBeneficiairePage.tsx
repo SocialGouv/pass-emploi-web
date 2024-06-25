@@ -23,16 +23,16 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
-import { EvenementListItem } from 'interfaces/evenement'
-import { Offre, Recherche } from 'interfaces/favoris'
 import {
   DetailBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { MotifSuppressionJeune } from 'interfaces/referentiel'
+import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { EvenementListItem } from 'interfaces/evenement'
+import { Offre, Recherche } from 'interfaces/favoris'
+import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
+import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import { MetadonneesPagination } from 'types/pagination'
@@ -111,7 +111,7 @@ function FicheBeneficiairePage({
   const [alerte, setAlerte] = useAlerte()
 
   const [motifsSuppression, setMotifsSuppression] = useState<
-    MotifSuppressionJeune[]
+    MotifSuppressionBeneficiaire[]
   >([])
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
@@ -178,10 +178,10 @@ function FicheBeneficiairePage({
     filtres: { statuts: StatutAction[]; categories: string[] },
     tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-    const { getActionsJeuneClientSide } = await import(
+    const { getActionsBeneficiaireClientSide } = await import(
       'services/actions.service'
     )
-    const result = await getActionsJeuneClientSide(jeune.id, {
+    const result = await getActionsBeneficiaireClientSide(jeune.id, {
       page,
       filtres,
       tri,
@@ -218,7 +218,7 @@ function FicheBeneficiairePage({
   }
 
   async function archiverJeuneActif(
-    payload: SuppressionJeuneFormData
+    payload: SuppressionBeneficiaireFormData
   ): Promise<void> {
     try {
       const { archiverJeune } = await import('services/jeunes.service')
@@ -535,7 +535,7 @@ function FicheBeneficiairePage({
               className='mt-8 pb-8'
             >
               <BlocFavoris
-                idJeune={jeune.id}
+                idBeneficiaire={jeune.id}
                 metadonneesFavoris={metadonneesFavoris}
               />
             </div>

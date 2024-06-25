@@ -9,8 +9,8 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
@@ -60,7 +60,7 @@ export default async function Informations({
 
       <InformationsPage
         conseillers={conseillers}
-        idJeune={beneficiaire.id}
+        idBeneficiaire={beneficiaire.id}
         situations={beneficiaire.situations}
         lectureSeule={lectureSeule}
         jeune={beneficiaire}

@@ -15,7 +15,7 @@ import {
   jsonToBaseConseiller,
   jsonToConseiller,
 } from 'interfaces/json/conseiller'
-import { JeuneMiloFormData } from 'interfaces/json/jeune'
+import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 
 export async function getConseillerServerSide(
   user: Session.HydratedUser,
@@ -96,7 +96,7 @@ export async function getDossierJeune(
 }
 
 export async function createCompteJeuneMilo(
-  newJeune: JeuneMiloFormData
+  newJeune: BeneficiaireMiloFormData
 ): Promise<BaseBeneficiaire> {
   const session = await getSession()
   const { content } = await apiPost<BaseBeneficiaire>(

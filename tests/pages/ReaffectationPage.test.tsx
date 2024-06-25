@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { getConseillers } from 'services/conseiller.service'
@@ -18,7 +18,7 @@ describe('Reaffectation', () => {
   let conseillers: BaseConseiller[]
   beforeEach(async () => {
     // Given
-    jeunes = desItemsJeunes()
+    jeunes = desItemsBeneficiaires()
     conseillers = [
       {
         id: 'id-nils-tavernier',
@@ -432,7 +432,7 @@ describe('Reaffectation', () => {
         expect(reaffecter).toHaveBeenCalledWith(
           'id-nils-tavernier',
           'id-neil-armstrong',
-          ['jeune-2'],
+          ['beneficiaire-2'],
           false
         )
       })

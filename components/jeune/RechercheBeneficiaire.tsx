@@ -4,15 +4,15 @@ import { InputError } from 'components/ui/Form/InputError'
 import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
-interface RechercheJeuneProps {
+interface RechercheBeneficiaireProps {
   onSearchFilterBy: (query: string) => void
   minCaracteres?: number
 }
 
-export const RechercheJeune = ({
+export const RechercheBeneficiaire = ({
   onSearchFilterBy,
   minCaracteres,
-}: RechercheJeuneProps) => {
+}: RechercheBeneficiaireProps) => {
   const [query, setQuery] = useState<string>('')
   const [error, setError] = useState<string>()
 
@@ -36,15 +36,17 @@ export const RechercheJeune = ({
   return (
     <form role='search' onSubmit={onSubmit} className='grow max-w-[75%]'>
       <label
-        htmlFor='rechercher-jeunes'
+        htmlFor='rechercher-beneficiaires'
         className='text-base-medium text-content_color'
       >
         Rechercher un bénéficiaire par son nom ou prénom
       </label>
-      {error && <InputError id='rechercher-jeunes--error'>{error}</InputError>}
+      {error && (
+        <InputError id='rechercher-beneficiaires--error'>{error}</InputError>
+      )}
       <div className='flex mt-3'>
         <ResettableTextInput
-          id='rechercher-jeunes'
+          id='rechercher-beneficiaires'
           value={query}
           onChange={setQuery}
           onReset={onReset}

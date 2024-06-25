@@ -5,7 +5,7 @@ import RendezVousPasses, {
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/page'
 import RendezVousPassesPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
 import { unEvenementListItem } from 'fixtures/evenement'
-import { unDetailJeune } from 'fixtures/jeune'
+import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
 import { getRendezVousJeune } from 'services/evenements.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -25,7 +25,7 @@ describe('RendezVousPassesPage server side', () => {
     ;(getRendezVousJeune as jest.Mock).mockResolvedValue([
       unEvenementListItem(),
     ])
-    ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
+    ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailBeneficiaire())
   })
 
   describe('quand le conseiller n’est pas France Travail', () => {
@@ -51,7 +51,7 @@ describe('RendezVousPassesPage server side', () => {
       expect(metadata).toEqual({ title: 'Rendez-vous passés - Jirac Kenji' })
       expect(RendezVousPassesPage).toHaveBeenCalledWith(
         {
-          beneficiaire: unDetailJeune(),
+          beneficiaire: unDetailBeneficiaire(),
           rdvs: [unEvenementListItem()],
           lectureSeule: false,
         },

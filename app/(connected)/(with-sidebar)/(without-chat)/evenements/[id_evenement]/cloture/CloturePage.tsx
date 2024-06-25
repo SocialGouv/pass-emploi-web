@@ -14,8 +14,11 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
+import {
+  BaseBeneficiaire,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { Evenement } from 'interfaces/evenement'
-import { BaseBeneficiaire, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 

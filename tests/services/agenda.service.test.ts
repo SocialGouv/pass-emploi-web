@@ -29,11 +29,11 @@ describe('AgendaService', () => {
       })
 
       // When
-      const actual = await recupererAgenda('jeune-1', maintenant)
+      const actual = await recupererAgenda('beneficiaire-1', maintenant)
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/jeunes/jeune-1/home/agenda?maintenant=2022-09-01T00%3A00%3A00.000%2B02%3A00',
+        '/jeunes/beneficiaire-1/home/agenda?maintenant=2022-09-01T00%3A00%3A00.000%2B02%3A00',
         'accessToken'
       )
       expect(actual).toEqual({

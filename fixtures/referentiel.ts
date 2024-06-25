@@ -3,7 +3,7 @@ import {
   Departement,
   Localite,
   Metier,
-  MotifSuppressionJeune,
+  MotifSuppressionBeneficiaire,
 } from 'interfaces/referentiel'
 
 export function uneListeDAgencesMILO() {
@@ -195,7 +195,7 @@ export function desMetiers(): Metier[] {
   ]
 }
 
-export function desMotifsDeSuppression(): MotifSuppressionJeune[] {
+export function desMotifsDeSuppression(): MotifSuppressionBeneficiaire[] {
   return [
     {
       motif: 'Emploi durable (plus de 6 mois)',

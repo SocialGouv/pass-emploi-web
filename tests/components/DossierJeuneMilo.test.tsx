@@ -1,13 +1,13 @@
 import { act, screen } from '@testing-library/react'
 import React from 'react'
 
-import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import DossierBeneficiaireMilo from 'components/jeune/DossierBeneficiaireMilo'
 import { unDossierMilo } from 'fixtures/milo'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<DossierMilo', () => {
-  describe("quand l'e-mail du jeune est renseigné", () => {
+  describe("quand l'e-mail du bénéficiaire est renseigné", () => {
     beforeEach(async () => {
       //GIVEN
       const dossier = unDossierMilo()
@@ -15,7 +15,7 @@ describe('<DossierMilo', () => {
       //WHEN
       await act(async () => {
         renderWithContexts(
-          <DossierJeuneMilo
+          <DossierBeneficiaireMilo
             dossier={dossier}
             onCreateCompte={jest.fn()}
             erreurMessageHttpPassEmploi=''
@@ -26,7 +26,7 @@ describe('<DossierMilo', () => {
       })
     })
 
-    it("affiche les informations d'un dossier jeune avec e-mail", () => {
+    it("affiche les informations d'un dossier bénéficiaire avec e-mail", () => {
       //THEN
       expect(getByDescriptionTerm('Prénom :')).toHaveTextContent('Kenji')
       expect(getByDescriptionTerm('Nom :')).toHaveTextContent('GIRAC')
@@ -47,7 +47,7 @@ describe('<DossierMilo', () => {
     })
   })
 
-  describe("quand l'e-mail du jeune n'est pas renseigné", () => {
+  describe("quand l'e-mail du bénéficiaire n'est pas renseigné", () => {
     beforeEach(async () => {
       //GIVEN
       const dossier = unDossierMilo({ email: undefined })
@@ -55,7 +55,7 @@ describe('<DossierMilo', () => {
       //WHEN
       await act(async () => {
         renderWithContexts(
-          <DossierJeuneMilo
+          <DossierBeneficiaireMilo
             dossier={dossier}
             onCreateCompte={jest.fn()}
             erreurMessageHttpPassEmploi=''
@@ -74,16 +74,18 @@ describe('<DossierMilo', () => {
     it("affiche un message d'erreur", () => {
       //THEN
       expect(
-        screen.getByText("L'e-mail du jeune n'est peut-être pas renseigné")
-      ).toBeInTheDocument()
-      expect(
         screen.getByText(
-          "1. Renseignez l'e-mail du jeune sur son profil i-milo"
+          "L'e-mail du bénéficiaire n'est peut-être pas renseigné"
         )
       ).toBeInTheDocument()
       expect(
         screen.getByText(
-          '2. Rafraîchissez ensuite cette page ou saisissez à nouveau le numéro de dossier du jeune pour créer le compte application CEJ'
+          "1. Renseignez l'e-mail du bénéficiaire sur son profil i-milo"
+        )
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          '2. Rafraîchissez ensuite cette page ou saisissez à nouveau le numéro de dossier du bénéficiaire pour créer le compte application CEJ'
         )
       ).toBeInTheDocument()
     })
