@@ -50,7 +50,7 @@ describe('Authenticator', () => {
           expiresAtTimestamp: 1638434737000,
           idConseiller: '972d013d-3781-418a-9b8d-1e288f346b45',
           estSuperviseur: true,
-          estSuperviseurPEBRSA: false,
+          estSuperviseurResponsable: false,
           estConseiller: true,
           structureConseiller: StructureConseiller.MILO,
         })
@@ -159,7 +159,7 @@ describe('Authenticator', () => {
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
 
       accessToken =
-        'eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCIsImtpZCI6Ijh4TFNNUERWWExmZGNmdXdSMkdhaWItbTY3S1hoMHQ3c1h1VGUxNnpaLTAifQ.eyJ1c2VySWQiOiJjYmY4ZmIxMy04NDM4LTQ5ODEtOGJiZC1kNzRmYmZiNzFmZGEiLCJ1c2VyUm9sZXMiOlsiU1VQRVJWSVNFVVIiLCJTVVBFUlZJU0VVUl9QRV9CUlNBIl0sInVzZXJTdHJ1Y3R1cmUiOiJQT0xFX0VNUExPSSIsInVzZXJUeXBlIjoiQ09OU0VJTExFUiIsImVtYWlsIjoidG5hbjA0ODBAcG9sZS1lbXBsb2kuZnIiLCJmYW1pbHlfbmFtZSI6IlJlY2V0dGUiLCJnaXZlbl9uYW1lIjoiVE5BTjA0ODAiLCJhenAiOiJwYXNzLWVtcGxvaS1zd2FnZ2VyIiwianRpIjoieXk0bjR3QS1lZXVnNVl3RWtaYzZrIiwic3ViIjoiQ09OU0VJTExFUnxQT0xFX0VNUExPSXxUTkFOMDQ4MCIsImlhdCI6MTcxODYzMzQxMCwiZXhwIjoxNzE4NjMzNDcwLCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwcm9maWxlIiwiY2xpZW50X2lkIjoicGFzcy1lbXBsb2ktc3dhZ2dlciIsImlzcyI6Imh0dHBzOi8vaWQucGFzcy1lbXBsb2kuaW5jdWJhdGV1ci5uZXQvYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL2FwaS5wYXNzLWVtcGxvaS5pbmN1YmF0ZXVyLm5ldCJ9.rPd1LRLWj8A0lEND1wbBvMi5_1qg4dC2oO-8P6C8oemo5ZCA-PsZhmiO91mRTJVb4OxPKK3lE_KlZjdYSpt5xfHJaew9S5791vMukpeH4QqIRY6DIVTVP9VrvQuls6PBfP1qkN6zQ2vqVU08bJFPnUyxtDk36fqs3-z61_HJtfX7Ddu2HzQYLYqj_7jkqxdqYakjqX_HYMEztVrrlT7B8eytXHIZc85K32wsyDy-LHkZP0CC1XymzjD4bWoVbVvWVrsBhWFScE6LXpUHz02H3RqvOtRgQvpEPz2nGQSlQq0vP8ssBG694iy10_Ul8wTMQ3a5R1kus-zghb5SvaSkkQ'
+        'eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCIsImtpZCI6Ijh4TFNNUERWWExmZGNmdXdSMkdhaWItbTY3S1hoMHQ3c1h1VGUxNnpaLTAifQ.eyJ1c2VySWQiOiIyZDI5ZDFlMS01MmE1LTRkMmUtYWE0MC1hMjQzNWM1ZTgyNGEiLCJ1c2VyUm9sZXMiOlsiU1VQRVJWSVNFVVIiLCJTVVBFUlZJU0VVUl9SRVNQT05TQUJMRSJdLCJ1c2VyU3RydWN0dXJlIjoiUE9MRV9FTVBMT0lfQUlKIiwidXNlclR5cGUiOiJDT05TRUlMTEVSIiwiZW1haWwiOiJ0bmFuMDEwMEBwb2xlLWVtcGxvaS5mciIsImZhbWlseV9uYW1lIjoiVE5BTjAxMDAiLCJnaXZlbl9uYW1lIjoiUmVjZXR0ZSIsImF6cCI6InBhc3MtZW1wbG9pLXN3YWdnZXIiLCJqdGkiOiJfVFdkMU9jRTRFR0tXR2w4bnVLZTUiLCJzdWIiOiJDT05TRUlMTEVSfFBPTEVfRU1QTE9JX0FJSnxUTkFOMDEwMCIsImlhdCI6MTcxOTMwNjU2MiwiZXhwIjoxNzE5NzM4NTYyLCJzY29wZSI6Im9wZW5pZCBlbWFpbCBwcm9maWxlIiwiY2xpZW50X2lkIjoicGFzcy1lbXBsb2ktc3dhZ2dlciIsImlzcyI6Imh0dHBzOi8vaWQucGFzcy1lbXBsb2kuaW5jdWJhdGV1ci5uZXQvYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL2FwaS5wYXNzLWVtcGxvaS5pbmN1YmF0ZXVyLm5ldCJ9.G009wIukvwBX5s7h7GHXw8r_V2WIG2y__lNB4vfDX1J8JVcVDItn9yep5NKaa7XX_iC8tPAscq8C0dg4BbDjtQUR72irfo7mDUQgZ2kXJxbdFPtHf6_wLq67Jzw45hta8GGjBD5CKDSf72jxGlQ6cHr3cFGG9hB_PDETTmzHmPhckLyjpderhXff0SQzQ5YvMvG_fY6PGMC0mOfnEIn6I8ZbIbeNfSqTiwtsJ2SfOIZ3SeWSgOjDvftfYNBZSMx8wRYiat8HuYDc41w6Z0ZyyGoeHzCM5XviJmSzF2u8SV7eQa55UCy0QSg8rxUwEiqHQCuQ7vuRm8lgIV6xOZJbGQ'
       refreshToken =
         'eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI1N2Q0M2NmNy02YjRiLTRlZTItODNkYi0xOTRjYWUwYjZkMGUifQ.eyJleHAiOjE2Mzg0MzYyMzcsImlhdCI6MTYzODQzNDQzNywianRpIjoiYzRmODI0ZjUtNDhlNS00ZDkwLTkwNWQtNmYxZDhlOGJmYTkxIiwiaXNzIjoiaHR0cHM6Ly9wYS1hdXRoLXN0YWdpbmcub3NjLXNlY251bS1mcjEuc2NhbGluZ28uaW8vYXV0aC9yZWFsbXMvcGFzcy1lbXBsb2kiLCJhdWQiOiJodHRwczovL3BhLWF1dGgtc3RhZ2luZy5vc2Mtc2VjbnVtLWZyMS5zY2FsaW5nby5pby9hdXRoL3JlYWxtcy9wYXNzLWVtcGxvaSIsInN1YiI6IjQ0ODA5MmRhLTRhZDctNGZjZi04ZmY1LWEzMDNmMzBlYTEwOSIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJwYXNzLWVtcGxvaS13ZWIiLCJzZXNzaW9uX3N0YXRlIjoiYTBiNDliM2QtNjU3Ny00MWNkLWI5NzAtNTQwNDk5NWI4MmEzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsInNpZCI6ImEwYjQ5YjNkLTY1NzctNDFjZC1iOTcwLTU0MDQ5OTViODJhMyJ9.u9FW5_DfCAbWHff8K3ZazNOea7uoe_Bb2onJ_cVpmFs'
     })
@@ -189,11 +189,11 @@ describe('Authenticator', () => {
             accessToken,
             refreshToken,
             expiresAtTimestamp: expiresAtInSeconds * 1000,
-            idConseiller: 'cbf8fb13-8438-4981-8bbd-d74fbfb71fda',
+            idConseiller: '2d29d1e1-52a5-4d2e-aa40-a2435c5e824a',
             estSuperviseur: true,
-            estSuperviseurPEBRSA: true,
+            estSuperviseurResponsable: true,
             estConseiller: true,
-            structureConseiller: StructureConseiller.POLE_EMPLOI,
+            structureConseiller: StructureConseiller.POLE_EMPLOI_AIJ,
           })
         })
 
@@ -218,11 +218,11 @@ describe('Authenticator', () => {
             accessToken,
             refreshToken,
             expiresAtTimestamp: expiresAtInSeconds * 1000,
-            idConseiller: 'cbf8fb13-8438-4981-8bbd-d74fbfb71fda',
+            idConseiller: '2d29d1e1-52a5-4d2e-aa40-a2435c5e824a',
             estSuperviseur: true,
-            estSuperviseurPEBRSA: true,
+            estSuperviseurResponsable: true,
             estConseiller: true,
-            structureConseiller: StructureConseiller.POLE_EMPLOI,
+            structureConseiller: StructureConseiller.POLE_EMPLOI_AIJ,
           })
         })
       })
