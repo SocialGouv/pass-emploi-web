@@ -47,10 +47,10 @@ const ConseillerIntrouvableSuggestionModal = dynamic(
 )
 
 type ReaffectationProps = {
-  estSuperviseurPEBRSA: boolean
+  estSuperviseurFTBRSA: boolean
 }
 
-function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
+function ReaffectationPage({ estSuperviseurFTBRSA }: ReaffectationProps) {
   const [portefeuille] = usePortefeuille()
   const conseillerInitialRef = useRef<{
     resetRechercheConseiller: () => void
@@ -95,7 +95,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
     'Réaffectation jeunes – Etape 1 – Saisie mail cons. ini.'
   )
 
-  const numerosEtapes: NumeroEtape[] = estSuperviseurPEBRSA
+  const numerosEtapes: NumeroEtape[] = estSuperviseurFTBRSA
     ? [2, 3, 4, 5]
     : [1, 2, 3, 4]
 
@@ -230,7 +230,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
       return
     }
     let formInvalid = false
-    if (estSuperviseurPEBRSA && structureReaffectation.value === undefined) {
+    if (estSuperviseurFTBRSA && structureReaffectation.value === undefined) {
       setStructureReaffectation({
         ...structureReaffectation,
         error: 'Veuillez choisir un contrat de réaffectation',
@@ -358,7 +358,7 @@ function ReaffectationPage({ estSuperviseurPEBRSA }: ReaffectationProps) {
       </p>
 
       <form onSubmit={reaffecterBeneficiaires} className='grow'>
-        {estSuperviseurPEBRSA && (
+        {estSuperviseurFTBRSA && (
           <Etape numero={1} titre='Choisissez un accompagnement'>
             {structureReaffectation.error && (
               <InputError id='structure-reaffectation--error' className='mb-2'>

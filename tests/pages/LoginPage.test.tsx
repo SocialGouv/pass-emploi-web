@@ -21,8 +21,8 @@ describe('LoginPage client side', () => {
     beforeEach(async () => {
       render(
         <LoginPage
-          ssoPoleEmploiBRSAEstActif={true}
-          ssoPoleEmploiAIJEstActif={true}
+          ssoFranceTravailBRSAEstActif={true}
+          ssoFranceTravailAIJEstActif={true}
           isFromEmail={false}
         />
       )
@@ -48,13 +48,13 @@ describe('LoginPage client side', () => {
       const miloButton = screen.getByRole('button', {
         name: 'Connexion conseiller Mission Locale',
       })
-      const poleEmploiCEJButton = screen.getByRole('button', {
+      const franceTravailCEJButton = screen.getByRole('button', {
         name: 'Connexion conseiller France Travail CEJ',
       })
-      const poleEmploiBRSAButton = screen.getByRole('button', {
+      const franceTravailBRSAButton = screen.getByRole('button', {
         name: 'Connexion conseiller France Travail BRSA',
       })
-      const poleEmploiAIJButton = screen.getByRole('button', {
+      const franceTravailAIJButton = screen.getByRole('button', {
         name: 'Connexion conseiller France Travail AIJ',
       })
 
@@ -62,13 +62,13 @@ describe('LoginPage client side', () => {
 
       //THEN
       expect(miloButton).toBeInTheDocument()
-      expect(poleEmploiCEJButton).toBeInTheDocument()
-      expect(poleEmploiBRSAButton).toBeInTheDocument()
-      expect(poleEmploiAIJButton).toBeInTheDocument()
+      expect(franceTravailCEJButton).toBeInTheDocument()
+      expect(franceTravailBRSAButton).toBeInTheDocument()
+      expect(franceTravailAIJButton).toBeInTheDocument()
       expect(buttonsNb.length).toEqual(4)
     })
 
-    it("permet de s'identifier en tant que conseiller PE CEJ", async () => {
+    it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
       // Given
       const peButton = screen.getByRole('button', {
         name: 'Connexion conseiller France Travail CEJ',
@@ -85,7 +85,7 @@ describe('LoginPage client side', () => {
       )
     })
 
-    it("permet de s'identifier en tant que conseiller PE BRSA", async () => {
+    it("permet de s'identifier en tant que conseiller FT BRSA", async () => {
       // Given
       const peBRSAButton = screen.getByRole('button', {
         name: 'Connexion conseiller France Travail BRSA',
@@ -102,7 +102,7 @@ describe('LoginPage client side', () => {
       )
     })
 
-    it("permet de s'identifier en tant que conseiller PE AIJ", async () => {
+    it("permet de s'identifier en tant que conseiller FT AIJ", async () => {
       // Given
       const peAIJButton = screen.getByRole('button', {
         name: 'Connexion conseiller France Travail AIJ',
@@ -168,7 +168,7 @@ describe('LoginPage client side', () => {
       // When
       await act(async () => {
         render(
-          <LoginPage ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />
+          <LoginPage ssoFranceTravailBRSAEstActif={true} isFromEmail={false} />
         )
       })
 

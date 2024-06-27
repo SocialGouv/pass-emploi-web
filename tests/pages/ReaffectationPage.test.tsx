@@ -35,11 +35,11 @@ describe('Reaffectation', () => {
     ;(getJeunesDuConseillerParId as jest.Mock).mockResolvedValue(jeunes)
   })
 
-  describe('Conseiller SUPERVISEUR_PE_BRSA', () => {
+  describe('Conseiller SUPERVISEUR_FT_BRSA', () => {
     beforeEach(async () => {
       // When
       act(() => {
-        renderWithContexts(<ReaffectationPage estSuperviseurPEBRSA={true} />)
+        renderWithContexts(<ReaffectationPage estSuperviseurFTBRSA={true} />)
       })
     })
     describe('Étape 1 : contrat réaffectation', () => {
@@ -160,11 +160,11 @@ describe('Reaffectation', () => {
     })
   })
 
-  describe('Conseiller non SUPERVISEUR_PE_BRSA', () => {
+  describe('Conseiller non SUPERVISEUR_FT_BRSA', () => {
     beforeEach(async () => {
       // When
       act(() => {
-        renderWithContexts(<ReaffectationPage estSuperviseurPEBRSA={false} />)
+        renderWithContexts(<ReaffectationPage estSuperviseurFTBRSA={false} />)
       })
     })
     describe('Étape 1 : type réaffectation', () => {

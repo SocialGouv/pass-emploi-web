@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import TableauActionsJeune from 'components/action/TableauActionsJeune'
 import EmptyState from 'components/EmptyState'
-import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
+import { IntegrationFranceTravail } from 'components/jeune/IntegrationFranceTravail'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
@@ -13,7 +13,7 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
+import { Conseiller, estFranceTravail } from 'interfaces/conseiller'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { MetadonneesPagination } from 'types/pagination'
@@ -186,11 +186,11 @@ export default function OngletActions({
 
   return (
     <>
-      {estPoleEmploi(conseiller) && (
-        <IntegrationPoleEmploi label='actions et démarches' />
+      {estFranceTravail(conseiller) && (
+        <IntegrationFranceTravail label='actions et démarches' />
       )}
 
-      {!estPoleEmploi(conseiller) && (
+      {!estFranceTravail(conseiller) && (
         <>
           {actionsInitiales.metadonnees.nombreTotal === 0 && !lectureSeule && (
             <div className='flex flex-col justify-center items-center'>

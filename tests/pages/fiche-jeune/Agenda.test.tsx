@@ -49,16 +49,16 @@ describe('Agenda de la fiche jeune', () => {
     it('ne tente pas de récupérer l’agenda du bénéficiaire', async () => {
       // Given
       const metadonneesFavoris = uneMetadonneeFavoris()
-      const offresPE = uneListeDOffres()
-      const recherchesPE = uneListeDeRecherches()
+      const offresFT = uneListeDOffres()
+      const recherchesFT = uneListeDeRecherches()
 
       // When
-      await renderFicheJeunePE(
+      await renderFicheJeuneFT(
         StructureConseiller.POLE_EMPLOI,
         [],
         metadonneesFavoris,
-        offresPE,
-        recherchesPE
+        offresFT,
+        recherchesFT
       )
 
       // Then
@@ -472,12 +472,12 @@ async function renderFicheJeuneMILO(structure: StructureConseiller) {
   })
 }
 
-async function renderFicheJeunePE(
+async function renderFicheJeuneFT(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = [],
   metadonnees: MetadonneesFavoris,
-  offresPE: Offre[],
-  recherchesPE: Recherche[]
+  offresFT: Offre[],
+  recherchesFT: Recherche[]
 ) {
   await act(async () => {
     renderWithContexts(
@@ -487,8 +487,8 @@ async function renderFicheJeunePE(
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
         metadonneesFavoris={metadonnees}
-        offresPE={offresPE}
-        recherchesPE={recherchesPE}
+        offresFT={offresFT}
+        recherchesFT={recherchesFT}
         onglet='AGENDA'
         lectureSeule={false}
       />,

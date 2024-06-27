@@ -173,19 +173,19 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers non Milo', () => {
-    let offresPE: Offre[],
-      recherchesPE: Recherche[],
+    let offresFT: Offre[],
+      recherchesFT: Recherche[],
       metadonneesFavoris: MetadonneesFavoris
     beforeEach(async () => {
       //Given
       metadonneesFavoris = uneMetadonneeFavoris()
-      offresPE = uneListeDOffres()
-      recherchesPE = uneListeDeRecherches()
+      offresFT = uneListeDOffres()
+      recherchesFT = uneListeDeRecherches()
     })
 
     it('n’affiche pas les onglets agenda, actions et rdv', async () => {
       // When
-      await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
 
       // Then
       expect(() => screen.getByText('Agenda')).toThrow()
@@ -195,7 +195,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
       // When
-      await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
 
       // Then
       expect(screen.getByText('Offres')).toBeInTheDocument()
@@ -207,7 +207,7 @@ describe('FicheBeneficiairePage client side', () => {
       metadonneesFavoris.autoriseLePartage = false
 
       //When
-      await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
 
       // Then
       expect(screen.getByText(/Emplois/)).toBeInTheDocument()
@@ -282,8 +282,8 @@ describe('FicheBeneficiairePage client side', () => {
 
 async function renderFicheJeune(
   metadonnees: MetadonneesFavoris,
-  offresPE: Offre[],
-  recherchesPE: Recherche[],
+  offresFT: Offre[],
+  recherchesFT: Recherche[],
   lectureSeule?: boolean
 ) {
   await act(async () => {
@@ -296,8 +296,8 @@ async function renderFicheJeune(
         onglet='AGENDA'
         lectureSeule={lectureSeule ?? false}
         metadonneesFavoris={metadonnees}
-        offresPE={offresPE}
-        recherchesPE={recherchesPE}
+        offresFT={offresFT}
+        recherchesFT={recherchesFT}
       />,
       {
         customConseiller: { structure: StructureConseiller.POLE_EMPLOI },

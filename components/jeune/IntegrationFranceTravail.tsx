@@ -2,13 +2,13 @@ import React from 'react'
 
 import Exclamation from '../../assets/icons/informations/error.svg'
 
-interface IntegrationPoleEmploiProps {
+interface IntegrationFranceTravailProps {
   label: string
 }
 
-export const IntegrationPoleEmploi = ({
+export const IntegrationFranceTravail = ({
   label,
-}: IntegrationPoleEmploiProps) => (
+}: IntegrationFranceTravailProps) => (
   <div className='bg-primary_lighten rounded-base flex items-center p-4'>
     <Exclamation
       className='mr-4 fill-primary h-8 w-8'

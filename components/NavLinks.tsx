@@ -8,7 +8,7 @@ import NavLink from 'components/ui/Form/NavLink'
 import { IconName } from 'components/ui/IconComponent'
 import {
   estMilo,
-  estPoleEmploi,
+  estFranceTravail,
   estSuperviseur,
   utiliseChat,
 } from 'interfaces/conseiller'
@@ -88,7 +88,7 @@ export default function NavLinks({
           />
         )}
 
-        {!estPoleEmploi(conseiller) && items.includes(NavItem.Rdvs) && (
+        {!estFranceTravail(conseiller) && items.includes(NavItem.Rdvs) && (
           <NavLink
             isActive={isCurrentRoute('/agenda')}
             href='/agenda'
@@ -116,7 +116,7 @@ export default function NavLinks({
           />
         )}
 
-        {!estPoleEmploi(conseiller) && items.includes(NavItem.Pilotage) && (
+        {!estFranceTravail(conseiller) && items.includes(NavItem.Pilotage) && (
           <NavLink
             iconName={
               isCurrentRoute('/pilotage')
@@ -130,7 +130,7 @@ export default function NavLinks({
           />
         )}
 
-        {!estPoleEmploi(conseiller) &&
+        {!estFranceTravail(conseiller) &&
           items.includes(NavItem.Etablissement) && (
             <NavLink
               iconName={
