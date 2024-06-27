@@ -2,12 +2,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
+import { IntegrationFranceTravail } from 'components/jeune/IntegrationFranceTravail'
 import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import { Conseiller, estPoleEmploi } from 'interfaces/conseiller'
+import { Conseiller, estFranceTravail } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 
 interface OngletRdvsBeneficiaireProps {
@@ -29,11 +29,11 @@ export default function OngletRdvsBeneficiaire({
 
   return (
     <>
-      {estPoleEmploi(conseiller) && (
-        <IntegrationPoleEmploi label='convocations' />
+      {estFranceTravail(conseiller) && (
+        <IntegrationFranceTravail label='convocations' />
       )}
 
-      {!estPoleEmploi(conseiller) && (
+      {!estFranceTravail(conseiller) && (
         <>
           {erreurSessions && (
             <FailureAlert label='Impossible de récupérer les sessions' />

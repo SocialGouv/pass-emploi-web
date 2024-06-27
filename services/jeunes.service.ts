@@ -110,7 +110,7 @@ export async function getConseillersDuJeuneClientSide(
   }
 }
 
-export async function createCompteJeunePoleEmploi(newJeune: {
+export async function createCompteJeuneFranceTravail(newJeune: {
   firstName: string
   lastName: string
   email: string

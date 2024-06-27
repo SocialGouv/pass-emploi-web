@@ -8,17 +8,19 @@ import { ValueWithError } from 'components/ValueWithError'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
 import isEmailValid from 'utils/isEmailValid'
 
-type FormulaireJeunePoleEmploiProps = {
-  creerJeunePoleEmploi: (newJeune: BeneficiaireFranceTravailFormData) => void
+type FormulaireBeneficiaireFranceTravailProps = {
+  creerBeneficiaireFranceTravail: (
+    nouveauBeneficiaire: BeneficiaireFranceTravailFormData
+  ) => void
   creationEnCours: boolean
   creationError?: string
 }
 
-function FormulaireJeunePoleEmploi({
-  creerJeunePoleEmploi,
+function FormulaireBeneficiaireFranceTravail({
+  creerBeneficiaireFranceTravail,
   creationError,
   creationEnCours,
-}: FormulaireJeunePoleEmploiProps) {
+}: FormulaireBeneficiaireFranceTravailProps) {
   const [prenom, setPrenom] = useState<ValueWithError>({
     value: '',
   })
@@ -77,7 +79,7 @@ function FormulaireJeunePoleEmploi({
         email: email.value,
       }
 
-      creerJeunePoleEmploi(newJeune)
+      creerBeneficiaireFranceTravail(newJeune)
     }
   }
 
@@ -169,4 +171,4 @@ function FormulaireJeunePoleEmploi({
   )
 }
 
-export default FormulaireJeunePoleEmploi
+export default FormulaireBeneficiaireFranceTravail

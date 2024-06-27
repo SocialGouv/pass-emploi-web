@@ -6,7 +6,7 @@ import Home from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/page'
 import { unConseiller } from 'fixtures/conseiller'
 import {
   uneListeDAgencesMILO,
-  uneListeDAgencesPoleEmploi,
+  uneListeDAgencesFranceTravail,
 } from 'fixtures/referentiel'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -96,7 +96,7 @@ describe('HomePage server side', () => {
       })
       ;(getConseillerServerSide as jest.Mock).mockResolvedValue(conseiller)
       ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
-        uneListeDAgencesPoleEmploi()
+        uneListeDAgencesFranceTravail()
       )
 
       // When
@@ -109,7 +109,7 @@ describe('HomePage server side', () => {
           afficherModaleEmail: false,
           afficherModaleOnboarding: false,
           redirectUrl: '/agenda',
-          referentielAgences: uneListeDAgencesPoleEmploi(),
+          referentielAgences: uneListeDAgencesFranceTravail(),
         },
         {}
       )
@@ -156,7 +156,7 @@ describe('HomePage server side', () => {
         unConseiller({ structure: StructureConseiller.POLE_EMPLOI })
       )
       ;(getAgencesServerSide as jest.Mock).mockResolvedValue(
-        uneListeDAgencesPoleEmploi()
+        uneListeDAgencesFranceTravail()
       )
 
       // When
@@ -173,7 +173,7 @@ describe('HomePage server side', () => {
           afficherModaleEmail: false,
           afficherModaleOnboarding: true,
           redirectUrl: '/agenda',
-          referentielAgences: uneListeDAgencesPoleEmploi(),
+          referentielAgences: uneListeDAgencesFranceTravail(),
         },
         {}
       )
