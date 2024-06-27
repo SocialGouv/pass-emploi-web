@@ -1,7 +1,8 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
   "overrides": [
     {
@@ -23,5 +24,13 @@
         ]
       }
     }
-  ]
+  ],
+  "settings": {
+    "jsx-a11y": {
+      "components": {
+        "Button": "button",
+        "Input": "input"
+      }
+    }
+  }
 }

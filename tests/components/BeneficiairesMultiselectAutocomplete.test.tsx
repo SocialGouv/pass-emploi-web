@@ -1,5 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
+expect.extend(toHaveNoViolations)
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -14,6 +16,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     listesDeDiffusion?: string[]
   }) => void
 
+  let container: HTMLElement
   let input: HTMLElement
   let options: HTMLElement
   beforeEach(async () => {
@@ -58,7 +61,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     onUpdate = jest.fn()
 
     // When
-    render(
+    ;({ container } = render(
       <BeneficiairesMultiselectAutocomplete
         id='select-beneficiaires'
         beneficiaires={beneficiaires}
@@ -66,7 +69,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
         typeSelection='Bénéficiaires'
         onUpdate={onUpdate}
       />
-    )
+    ))
 
     // Then
     input = screen.getByRole('combobox', {
@@ -124,11 +127,21 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     })
   })
 
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
+  })
+
   describe('sélection bénéficiaires', () => {
     beforeEach(async () => {
       // When
       await userEvent.type(input, 'Option 1')
       await userEvent.type(input, 'Option 3')
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche les bénéficiaires sélectionnés', async () => {
