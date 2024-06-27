@@ -17,8 +17,8 @@
     "test:watch": "jest --config jest.config.js --watch"
   },
   "dependencies": {
-    "@elastic/apm-rum": "5.16.0",
-    "@elastic/apm-rum-react": "2.0.2",
+    "@elastic/apm-rum": "5.16.1",
+    "@elastic/apm-rum-react": "2.0.3",
     "@next/bundle-analyzer": "14.2.4",
     "crypto-js": "4.2.0",
     "dotenv": "16.4.5",
