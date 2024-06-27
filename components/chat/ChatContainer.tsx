@@ -16,13 +16,13 @@ import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSele
 import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 
 type ChatContainerProps = {
-  jeunesChats: BeneficiaireChat[] | undefined
+  beneficiairesChats: BeneficiaireChat[] | undefined
   menuState: [boolean, Dispatch<SetStateAction<boolean>>]
   messagerieFullScreen?: boolean
 }
 
 export default function ChatContainer({
-  jeunesChats,
+  beneficiairesChats,
   menuState: [showMenu, setShowMenu],
   messagerieFullScreen,
 }: ChatContainerProps) {
@@ -51,14 +51,20 @@ export default function ChatContainer({
         (conseillersJeunes) => setConseillers(conseillersJeunes)
       )
 
-      if (jeunesChats && !listeSelectionnee && !showRubriqueListesDeDiffusion)
+      if (
+        beneficiairesChats &&
+        !listeSelectionnee &&
+        !showRubriqueListesDeDiffusion
+      )
         setCurrentChat(
-          jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
+          beneficiairesChats.find(
+            (beneficiaireChat) => beneficiaireChat.id === idCurrentJeune
+          )
         )
     } else {
       setCurrentChat(undefined)
     }
-  }, [idCurrentJeune, jeunesChats])
+  }, [idCurrentJeune, beneficiairesChats])
 
   return (
     <>
@@ -82,7 +88,7 @@ export default function ChatContainer({
 
           {!showRubriqueListesDeDiffusion && (
             <ChatRoom
-              jeunesChats={jeunesChats}
+              beneficiairesChats={beneficiairesChats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
               onAccesListesDiffusion={() =>
@@ -99,7 +105,7 @@ export default function ChatContainer({
           {currentChat && (
             <ConversationBeneficiaire
               onBack={() => setIdCurrentJeune(undefined)}
-              jeuneChat={currentChat}
+              beneficiaireChat={currentChat}
               conseillers={conseillers}
             />
           )}
@@ -107,14 +113,14 @@ export default function ChatContainer({
           {showRubriqueListesDeDiffusion && (
             <RubriqueListesDeDiffusion
               listesDeDiffusion={listesDeDiffusion}
-              chats={jeunesChats}
+              chats={beneficiairesChats}
               onBack={() => setShowRubriqueListesDeDiffusion(false)}
             />
           )}
 
           {!currentChat && !showRubriqueListesDeDiffusion && (
             <ChatRoom
-              jeunesChats={jeunesChats}
+              beneficiairesChats={beneficiairesChats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
               onAccesListesDiffusion={() =>

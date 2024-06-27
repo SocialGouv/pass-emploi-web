@@ -23,9 +23,13 @@ import {
   updateChat,
   updateMessage,
 } from 'clients/firebase.client'
+import {
+  BaseBeneficiaire,
+  Chat,
+  BeneficiaireChat,
+} from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
-import { BaseBeneficiaire, Chat, BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   ByDay,
   ChatCredentials,
@@ -45,7 +49,7 @@ type FormNouveauMessage = {
 }
 
 export type FormNouveauMessageIndividuel = FormNouveauMessage & {
-  jeuneChat: BeneficiaireChat
+  beneficiaireChat: BeneficiaireChat
 }
 export type FormNouveauMessageImportant = {
   newMessage: string
@@ -295,7 +299,7 @@ export async function getMessagesDuMemeJour(
 export async function sendNouveauMessage({
   cleChiffrement,
   infoPieceJointe,
-  jeuneChat,
+  beneficiaireChat,
   newMessage,
 }: FormNouveauMessageIndividuel) {
   const now = DateTime.now()
@@ -322,13 +326,13 @@ export async function sendNouveauMessage({
   }
 
   await Promise.all([
-    addMessage(jeuneChat.chatId, nouveauMessage),
-    updateChat(jeuneChat.chatId, {
+    addMessage(beneficiaireChat.chatId, nouveauMessage),
+    updateChat(beneficiaireChat.chatId, {
       lastMessageContent: encryptedMessage.encryptedText,
       lastMessageIv: encryptedMessage.iv,
       lastMessageSentAt: now,
       lastMessageSentBy: UserType.CONSEILLER.toLowerCase(),
-      newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
+      newConseillerMessageCount: beneficiaireChat.newConseillerMessageCount + 1,
       seenByConseiller: true,
       lastConseillerReading: now,
     }),
@@ -337,7 +341,7 @@ export async function sendNouveauMessage({
   await Promise.all([
     notifierNouveauMessage(
       session!.user.id,
-      [jeuneChat.id],
+      [beneficiaireChat.id],
       session!.accessToken
     ),
     evenementMessage(

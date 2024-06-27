@@ -71,7 +71,7 @@ describe('<ConversationBeneficiaire />', () => {
     await act(async () => {
       const renderResult = renderWithContexts(
         <ConversationBeneficiaire
-          jeuneChat={beneficiaireChat}
+          beneficiaireChat={beneficiaireChat}
           conseillers={conseillersBeneficiaires}
           onBack={jest.fn()}
         />
@@ -170,7 +170,7 @@ describe('<ConversationBeneficiaire />', () => {
     const newBeneficiaireChat = unBeneficiaireChat({ chatId: 'new-jeune-chat' })
     rerender(
       <ConversationBeneficiaire
-        jeuneChat={newBeneficiaireChat}
+        beneficiaireChat={newBeneficiaireChat}
         conseillers={conseillersBeneficiaires}
         onBack={jest.fn()}
       />

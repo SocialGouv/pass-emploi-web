@@ -25,7 +25,7 @@ const MessageImportantModal = dynamic(
 )
 
 interface ChatRoomProps {
-  jeunesChats: BeneficiaireChat[] | undefined
+  beneficiairesChats: BeneficiaireChat[] | undefined
   showMenu: boolean
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
@@ -33,7 +33,7 @@ interface ChatRoomProps {
 }
 
 export default function ChatRoom({
-  jeunesChats,
+  beneficiairesChats,
   showMenu,
   onOuvertureMenu,
   onAccesListesDiffusion,
@@ -149,7 +149,7 @@ export default function ChatRoom({
 
   function filtrerConversations(saisieUtilisateur: string) {
     const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
-    const chatsFiltresResult = (jeunesChats ?? []).filter((jeune) => {
+    const chatsFiltresResult = (beneficiairesChats ?? []).filter((jeune) => {
       const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
       const jeuneFirstName = jeune.prenom.replace(/’/i, "'").toLocaleLowerCase()
       for (const item of querySplit) {
@@ -181,8 +181,8 @@ export default function ChatRoom({
   }, [messageImportantPreRempli])
 
   useEffect(() => {
-    setChatsFiltres(jeunesChats)
-  }, [jeunesChats])
+    setChatsFiltres(beneficiairesChats)
+  }, [beneficiairesChats])
 
   return (
     <>

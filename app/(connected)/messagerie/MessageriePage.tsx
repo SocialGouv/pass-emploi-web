@@ -67,7 +67,7 @@ function MessageriePage() {
             <div className='px-6 bg-grey_100 h-full min-h-0'>
               <ConversationBeneficiaire
                 onBack={() => setIdCurrentJeune(undefined)}
-                jeuneChat={currentChat}
+                beneficiaireChat={currentChat}
                 conseillers={conseillers}
               />
             </div>
