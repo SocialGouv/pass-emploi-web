@@ -64,7 +64,7 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatRoom
-            jeunesChats={beneficiairesChats}
+            beneficiairesChats={beneficiairesChats}
             showMenu={false}
             onAccesConversation={accederConversation}
             onAccesListesDiffusion={() => {}}
@@ -101,7 +101,7 @@ describe('<ChatRoom />', () => {
         await act(async () => {
           renderWithContexts(
             <ChatRoom
-              jeunesChats={beneficiairesChats}
+              beneficiairesChats={beneficiairesChats}
               showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
@@ -130,7 +130,7 @@ describe('<ChatRoom />', () => {
         await act(async () => {
           renderWithContexts(
             <ChatRoom
-              jeunesChats={beneficiairesChats}
+              beneficiairesChats={beneficiairesChats}
               showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
@@ -172,7 +172,7 @@ describe('<ChatRoom />', () => {
             await act(async () => {
               renderWithContexts(
                 <ChatRoom
-                  jeunesChats={beneficiairesChats}
+                  beneficiairesChats={beneficiairesChats}
                   showMenu={false}
                   onAccesConversation={accederConversation}
                   onAccesListesDiffusion={() => {}}
@@ -267,7 +267,7 @@ describe('<ChatRoom />', () => {
             await act(async () => {
               renderWithContexts(
                 <ChatRoom
-                  jeunesChats={beneficiairesChats}
+                  beneficiairesChats={beneficiairesChats}
                   showMenu={false}
                   onAccesConversation={accederConversation}
                   onAccesListesDiffusion={() => {}}
@@ -318,7 +318,7 @@ describe('<ChatRoom />', () => {
         await act(async () => {
           renderWithContexts(
             <ChatRoom
-              jeunesChats={beneficiairesChats}
+              beneficiairesChats={beneficiairesChats}
               showMenu={false}
               onAccesConversation={accederConversation}
               onAccesListesDiffusion={() => {}}
@@ -363,7 +363,7 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatRoom
-            jeunesChats={beneficiairesChats}
+            beneficiairesChats={beneficiairesChats}
             showMenu={false}
             onAccesConversation={accederConversation}
             onAccesListesDiffusion={() => {}}
@@ -454,7 +454,7 @@ describe('<ChatRoom />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatRoom
-            jeunesChats={[]}
+            beneficiairesChats={[]}
             showMenu={false}
             onAccesConversation={() => {}}
             onAccesListesDiffusion={() => {}}
@@ -483,7 +483,7 @@ describe('<ChatRoom />', () => {
       // Given
       renderWithContexts(
         <ChatRoom
-          jeunesChats={beneficiairesChats}
+          beneficiairesChats={beneficiairesChats}
           showMenu={false}
           onAccesConversation={() => {}}
           onAccesListesDiffusion={() => {}}

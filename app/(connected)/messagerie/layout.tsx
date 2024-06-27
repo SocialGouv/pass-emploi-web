@@ -29,7 +29,7 @@ export default function LayoutPageMessagerie({
 
       <div id={ID_CONTENU} className={layout.chatRoom}>
         <ChatContainer
-          jeunesChats={chats}
+          beneficiairesChats={chats}
           menuState={[false, () => {}]}
           messagerieFullScreen={true}
         />
