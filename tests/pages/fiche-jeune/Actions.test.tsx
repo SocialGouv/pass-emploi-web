@@ -70,19 +70,19 @@ describe('Actions dans la fiche jeune', () => {
   })
 
   describe("quand l'utilisateur est un conseiller France Travail", () => {
-    let offresPE: Offre[],
-      recherchesPE: Recherche[],
+    let offresFT: Offre[],
+      recherchesFT: Recherche[],
       metadonneesFavoris: MetadonneesFavoris
     beforeEach(async () => {
       metadonneesFavoris = uneMetadonneeFavoris()
-      offresPE = uneListeDOffres()
-      recherchesPE = uneListeDeRecherches()
-      await renderFicheJeunePE(
+      offresFT = uneListeDOffres()
+      recherchesFT = uneListeDeRecherches()
+      await renderFicheJeuneFT(
         StructureConseiller.POLE_EMPLOI,
         [],
         metadonneesFavoris,
-        offresPE,
-        recherchesPE
+        offresFT,
+        recherchesFT
       )
     })
     it("n'affiche pas de lien vers les actions du jeune", async () => {
@@ -661,12 +661,12 @@ async function renderFicheJeuneMILO({
   })
 }
 
-async function renderFicheJeunePE(
+async function renderFicheJeuneFT(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = [],
   metadonnees: MetadonneesFavoris,
-  offresPE: Offre[],
-  recherchesPE: Recherche[]
+  offresFT: Offre[],
+  recherchesFT: Recherche[]
 ) {
   await act(async () => {
     renderWithContexts(
@@ -676,8 +676,8 @@ async function renderFicheJeunePE(
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         metadonneesFavoris={metadonnees}
-        offresPE={offresPE}
-        recherchesPE={recherchesPE}
+        offresFT={offresFT}
+        recherchesFT={recherchesFT}
         onglet='AGENDA'
         lectureSeule={false}
       />,

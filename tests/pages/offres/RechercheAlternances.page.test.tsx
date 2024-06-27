@@ -31,7 +31,7 @@ describe('Page Recherche Alternances', () => {
   let localites: Localite[]
 
   let rendered: RenderResult
-  describe('quand le conseiller n’est pas PE BRSA', () => {
+  describe('quand le conseiller n’est pas FT BRSA', () => {
     beforeEach(async () => {
       localites = desLocalites()
       alternances = listeBaseAlternances()
@@ -696,8 +696,8 @@ describe('Page Recherche Alternances', () => {
       })
     })
   })
-  describe('quand le conseiller est PE BRSA', () => {
-    it('n’affiche pas la recherche en tant que conseiller PE BRSA', () => {
+  describe('quand le conseiller est FT BRSA', () => {
+    it('n’affiche pas la recherche en tant que conseiller FT BRSA', () => {
       rendered = renderWithContexts(<RechercheOffresPage />, {
         customConseiller: unConseiller({
           structure: StructureConseiller.POLE_EMPLOI_BRSA,

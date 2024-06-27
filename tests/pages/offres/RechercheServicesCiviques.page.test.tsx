@@ -37,7 +37,7 @@ describe('Page Recherche Offres Service civique', () => {
 
   let rendered: RenderResult
 
-  describe('quand le conseiller n’est pas PE BRSA', () => {
+  describe('quand le conseiller n’est pas FT BRSA', () => {
     beforeEach(async () => {
       communes = desCommunes()
       servicesCiviques = listeBaseServicesCiviques()
@@ -630,8 +630,8 @@ describe('Page Recherche Offres Service civique', () => {
     })
   })
 
-  describe('quand le conseiller est PE BRSA', () => {
-    it('n’affiche pas la recherche en tant que conseiller PE BRSA', () => {
+  describe('quand le conseiller est FT BRSA', () => {
+    it('n’affiche pas la recherche en tant que conseiller FT BRSA', () => {
       rendered = renderWithContexts(<RechercheOffresPage />, {
         customConseiller: unConseiller({
           structure: StructureConseiller.POLE_EMPLOI_BRSA,

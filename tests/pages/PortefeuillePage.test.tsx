@@ -236,7 +236,7 @@ describe('PortefeuillePage client side', () => {
       })
     })
 
-    it('permer de créer un jeune PE', async () => {
+    it('permer de créer un jeune FT', async () => {
       //THEN
       expect(
         screen.getByRole('link', {

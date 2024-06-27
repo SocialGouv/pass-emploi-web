@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { useRouter } from 'next/navigation'
 import React, { ReactElement, useState } from 'react'
 
-import FormulaireJeunePoleEmploi from 'components/jeune/FormulaireJeunePoleEmploi'
+import FormulaireBeneficiaireFranceTravail from 'components/jeune/FormulaireBeneficiaireFranceTravail'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
@@ -19,20 +19,20 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
   const [creationError, setCreationError] = useState<string>()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
 
-  async function creerJeunePoleEmploi(
-    newJeune: BeneficiaireFranceTravailFormData
+  async function creerBeneficiaireFranceTravail(
+    nouveauBeneficiaire: BeneficiaireFranceTravailFormData
   ): Promise<void> {
     setCreationError(undefined)
     setCreationEnCours(true)
 
     try {
-      const { createCompteJeunePoleEmploi } = await import(
+      const { createCompteJeuneFranceTravail } = await import(
         'services/jeunes.service'
       )
-      const beneficiaireCree = await createCompteJeunePoleEmploi({
-        firstName: newJeune.prenom,
-        lastName: newJeune.nom,
-        email: newJeune.email,
+      const beneficiaireCree = await createCompteJeuneFranceTravail({
+        firstName: nouveauBeneficiaire.prenom,
+        lastName: nouveauBeneficiaire.nom,
+        email: nouveauBeneficiaire.email,
       })
 
       setPortefeuille(portefeuille.concat(beneficiaireCree))
@@ -53,8 +53,8 @@ function CreationBeneficiaireFranceTravailPage(): ReactElement {
   )
 
   return (
-    <FormulaireJeunePoleEmploi
-      creerJeunePoleEmploi={creerJeunePoleEmploi}
+    <FormulaireBeneficiaireFranceTravail
+      creerBeneficiaireFranceTravail={creerBeneficiaireFranceTravail}
       creationError={creationError}
       creationEnCours={creationEnCours}
     />
