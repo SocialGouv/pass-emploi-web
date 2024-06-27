@@ -40,16 +40,19 @@ export function DetailMessageListeDeDiffusion({
 
   useEffect(() => {
     function getChatsDestinataires(
-      jeunes: BaseBeneficiaire[]
+      beneficiaires: BaseBeneficiaire[]
     ): BeneficiaireChat[] {
-      return chats!.filter((jeuneChat) =>
-        jeunes.some((jeune) => jeune.id === jeuneChat.id)
+      return chats!.filter((beneficiaireChat) =>
+        beneficiaires.some(
+          (beneficiaire) => beneficiaire.id === beneficiaireChat.id
+        )
       )
     }
 
     if (message.idsDestinataires.length && chats?.length) {
       getIdentitesBeneficiairesClientSide(message.idsDestinataires).then(
-        (jeunes) => setDestinataires(getChatsDestinataires(jeunes))
+        (beneficiaires) =>
+          setDestinataires(getChatsDestinataires(beneficiaires))
       )
     }
   }, [chats, message.idsDestinataires])

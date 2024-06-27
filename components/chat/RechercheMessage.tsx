@@ -24,13 +24,13 @@ import { useConseiller } from 'utils/conseiller/conseillerContext'
 type RechercheMessageProps = {
   beneficiaireNomComplet: string
   getConseillerNomComplet: (message: Message) => string | undefined
-  jeuneChat: BeneficiaireChat
+  beneficiaireChat: BeneficiaireChat
   toggleAfficherRecherche: () => void
 }
 export function RechercheMessage({
   beneficiaireNomComplet,
   getConseillerNomComplet,
-  jeuneChat,
+  beneficiaireChat,
   toggleAfficherRecherche,
 }: RechercheMessageProps) {
   const [conseiller] = useConseiller()
@@ -52,7 +52,7 @@ export function RechercheMessage({
 
       {messageSelectionne && (
         <MessagesDuJour
-          conversation={jeuneChat}
+          conversation={beneficiaireChat}
           messageSelectionne={messageSelectionne}
           beneficiaireNomComplet={beneficiaireNomComplet}
           getConseillerNomComplet={getConseillerNomComplet}
@@ -63,7 +63,7 @@ export function RechercheMessage({
       {!messageSelectionne && (
         <>
           <RechercheMessageForm
-            idJeuneChat={jeuneChat.id}
+            idJeuneChat={beneficiaireChat.id}
             onResultat={setResultatsRecherche}
           />
 

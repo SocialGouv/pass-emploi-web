@@ -32,7 +32,7 @@ describe('MessageriePage client side', () => {
   const jeunes: BaseBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
-  let jeunesChats: BeneficiaireChat[]
+  let beneficiairesChats: BeneficiaireChat[]
 
   let conseillers: ConseillerHistorique[]
   let updateChatsRef: (chats: BeneficiaireChat[]) => void
@@ -46,7 +46,7 @@ describe('MessageriePage client side', () => {
     ;(observeConseillerChats as jest.Mock).mockImplementation(
       (_jeune, _cle, fn) => {
         updateChatsRef = fn
-        updateChatsRef(jeunesChats)
+        updateChatsRef(beneficiairesChats)
         return Promise.resolve(() => {})
       }
     )
@@ -54,7 +54,7 @@ describe('MessageriePage client side', () => {
     ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
       desListesDeDiffusion()
     )
-    jeunesChats = [
+    beneficiairesChats = [
       unBeneficiaireChat({
         ...jeunes[0],
         chatId: `chat-${jeunes[0].id}`,

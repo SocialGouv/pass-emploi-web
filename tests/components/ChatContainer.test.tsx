@@ -24,8 +24,8 @@ jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/chat/ConversationBeneficiaire', () =>
   // eslint-disable-next-line react/display-name
-  ({ jeuneChat }: { jeuneChat: BeneficiaireChat }) => (
-    <>conversation-{jeuneChat.id}</>
+  ({ beneficiaireChat }: { beneficiaireChat: BeneficiaireChat }) => (
+    <>conversation-{beneficiaireChat.id}</>
   )
 )
 jest.mock('components/layouts/AlerteDisplayer', () => jest.fn(() => <></>))
@@ -70,7 +70,7 @@ describe('<ChatContainer />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatContainer
-            jeunesChats={beneficiairesChats}
+            beneficiairesChats={beneficiairesChats}
             menuState={[false, () => {}]}
           />,
           {}
@@ -93,7 +93,7 @@ describe('<ChatContainer />', () => {
       await act(async () => {
         renderWithContexts(
           <ChatContainer
-            jeunesChats={beneficiairesChats}
+            beneficiairesChats={beneficiairesChats}
             menuState={[false, () => {}]}
           />,
           {
@@ -125,7 +125,10 @@ describe('<ChatContainer />', () => {
     beforeEach(async () => {
       await act(async () => {
         renderWithContexts(
-          <ChatContainer jeunesChats={[]} menuState={[false, () => {}]} />,
+          <ChatContainer
+            beneficiairesChats={[]}
+            menuState={[false, () => {}]}
+          />,
           {}
         )
       })
