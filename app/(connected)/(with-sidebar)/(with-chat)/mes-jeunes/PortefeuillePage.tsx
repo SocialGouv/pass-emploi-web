@@ -19,7 +19,7 @@ import {
   BeneficiaireAvecInfosComplementaires,
   BeneficiaireAvecNbActionsNonTerminees,
 } from 'interfaces/beneficiaire'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { estMilo, estFranceTravail } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -31,8 +31,8 @@ const TutorielAjoutBeneficiaireMilo = dynamic(
   () => import('components/mes-jeunes/TutorielAjoutBeneficiaireMilo')
 )
 
-const TutorielAjoutBeneficiairePoleEmploi = dynamic(
-  () => import('components/mes-jeunes/TutorielAjoutBeneficiairePoleEmploi')
+const TutorielAjoutBeneficiaireFranceTravail = dynamic(
+  () => import('components/mes-jeunes/TutorielAjoutBeneficiaireFranceTravail')
 )
 
 type PortefeuilleProps = {
@@ -195,7 +195,7 @@ function PortefeuillePage({
             />
 
             {estMilo(conseiller) && <TutorielAjoutBeneficiaireMilo />}
-            {!estMilo(conseiller) && <TutorielAjoutBeneficiairePoleEmploi />}
+            {!estMilo(conseiller) && <TutorielAjoutBeneficiaireFranceTravail />}
           </div>
         )}
 
@@ -211,7 +211,7 @@ function PortefeuillePage({
             <TableauJeunes
               jeunesFiltres={jeunesFiltres}
               totalJeunes={conseillerJeunes.length}
-              withActions={!estPoleEmploi(conseiller)}
+              withActions={!estFranceTravail(conseiller)}
             />
           )}
         </>

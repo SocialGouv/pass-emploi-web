@@ -10,7 +10,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { estUserFranceTravail } from 'interfaces/conseiller'
 import {
   estClos,
   estCreeParSiMILO,
@@ -109,7 +109,7 @@ async function buildProps(
   searchParams: EditionRdvSearchParams | undefined
 ): Promise<Omit<EditionRdvProps, 'returnTo'>> {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (estUserPoleEmploi(user)) redirect('/mes-jeunes')
+  if (estUserFranceTravail(user)) redirect('/mes-jeunes')
 
   if (searchParams?.idRdv) {
     const evenement = await getDetailsEvenement(searchParams.idRdv, accessToken)

@@ -9,7 +9,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import {
-  estUserPoleEmploi,
+  estUserFranceTravail,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
@@ -37,7 +37,7 @@ export default async function Pilotage({
   searchParams?: PilotageSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (estUserPoleEmploi(user)) notFound()
+  if (estUserFranceTravail(user)) notFound()
 
   const [conseiller, actions, categoriesActions] = await Promise.all([
     getConseillerServerSide(user, accessToken),
