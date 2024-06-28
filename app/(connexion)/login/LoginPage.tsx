@@ -18,14 +18,14 @@ const OnboardingMobileModal = dynamic(
 )
 
 interface LoginProps {
-  ssoPoleEmploiBRSAEstActif?: boolean
-  ssoPoleEmploiAIJEstActif?: boolean
+  ssoFranceTravailBRSAEstActif?: boolean
+  ssoFranceTravailAIJEstActif?: boolean
   isFromEmail: boolean
 }
 
 function LoginPage({
-  ssoPoleEmploiBRSAEstActif,
-  ssoPoleEmploiAIJEstActif,
+  ssoFranceTravailBRSAEstActif,
+  ssoFranceTravailAIJEstActif,
   isFromEmail,
 }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
@@ -98,7 +98,7 @@ function LoginPage({
             </li>
           </ul>
 
-          {(ssoPoleEmploiBRSAEstActif || ssoPoleEmploiAIJEstActif) && (
+          {(ssoFranceTravailBRSAEstActif || ssoFranceTravailAIJEstActif) && (
             <>
               <h2 className='mt-16'>
                 <span className='sr-only'>pass emploi</span>
@@ -109,7 +109,7 @@ function LoginPage({
                 />
               </h2>
               <ul>
-                {ssoPoleEmploiBRSAEstActif && (
+                {ssoFranceTravailBRSAEstActif && (
                   <li>
                     <FormButton
                       label='Connexion conseiller France Travail BRSA'
@@ -122,7 +122,7 @@ function LoginPage({
                   </li>
                 )}
 
-                {ssoPoleEmploiAIJEstActif && (
+                {ssoFranceTravailAIJEstActif && (
                   <li>
                     <FormButton
                       label='Connexion conseiller France Travail AIJ'

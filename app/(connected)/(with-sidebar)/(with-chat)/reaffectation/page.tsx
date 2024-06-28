@@ -15,7 +15,7 @@ export default async function Reaffectation() {
     <>
       <PageHeaderPortal header='Réaffectation' />
 
-      <ReaffectationPage estSuperviseurPEBRSA={user.estSuperviseurPEBRSA} />
+      <ReaffectationPage estSuperviseurFTBRSA={user.estSuperviseurPEBRSA} />
     </>
   )
 }

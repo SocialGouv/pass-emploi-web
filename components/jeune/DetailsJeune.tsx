@@ -7,7 +7,7 @@ import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
 import { DetailBeneficiaire, IndicateursSemaine } from 'interfaces/beneficiaire'
 import {
   Conseiller,
-  estPoleEmploi,
+  estFranceTravail,
   StructureConseiller,
 } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -80,7 +80,7 @@ export default function DetailsJeune({
   return (
     <>
       <div className='flex flex-row items-stretch gap-x-6'>
-        {!estPoleEmploi(conseiller) && (
+        {!estFranceTravail(conseiller) && (
           <ResumeIndicateursJeune
             idBeneficiaire={jeune.id}
             debutDeLaSemaine={debutSemaine}

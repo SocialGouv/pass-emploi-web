@@ -320,7 +320,7 @@ describe('ProfilPage client side', () => {
   })
 
   describe('Supprimer un compte', () => {
-    describe('en tant que PE sans bénéficiaires', () => {
+    describe('en tant que FT sans bénéficiaires', () => {
       beforeEach(async () => {
         // Given
         ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue([])
@@ -377,7 +377,7 @@ describe('ProfilPage client side', () => {
       })
     })
 
-    describe('en tant que PE avec bénéficiaires', () => {
+    describe('en tant que FT avec bénéficiaires', () => {
       it('affiche une modale avec les bonnes informations', async () => {
         // Given
         jeunes = desItemsBeneficiaires()

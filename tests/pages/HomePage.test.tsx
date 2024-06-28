@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
 import HomePage from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePage'
-import { uneListeDAgencesPoleEmploi } from 'fixtures/referentiel'
+import { uneListeDAgencesFranceTravail } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -72,7 +72,7 @@ describe('HomePage client side', () => {
     beforeEach(async () => {
       // Given
       alerteSetter = jest.fn()
-      agences = uneListeDAgencesPoleEmploi()
+      agences = uneListeDAgencesFranceTravail()
 
       // When
       await act(async () => {
@@ -150,7 +150,7 @@ describe('HomePage client side', () => {
       // Then
       expect(modifierAgence).toHaveBeenCalledWith({
         id: agence.id,
-        nom: 'Agence Pôle emploi THIERS',
+        nom: 'Agence France Travail THIERS',
         codeDepartement: '3',
       })
       expect(alerteSetter).toHaveBeenCalledWith('choixAgence')
@@ -265,7 +265,7 @@ describe('HomePage client side', () => {
   })
 
   describe('quand c’est un nouveau conseiller', () => {
-    describe('quand le conseiller est Pôle emploi', () => {
+    describe('quand le conseiller est France Travail', () => {
       it('affiche l’onboarding', async () => {
         // When
         await act(async () => {

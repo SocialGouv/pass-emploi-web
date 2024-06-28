@@ -6,7 +6,7 @@ import {
   desLocalitesJson,
   desMetiers,
   uneListeDAgencesMILO,
-  uneListeDAgencesPoleEmploi,
+  uneListeDAgencesFranceTravail,
 } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -28,7 +28,7 @@ describe('ReferentielApiService', () => {
         if (url === `/referentiels/agences?structure=MILO`)
           return { content: uneListeDAgencesMILO() }
         if (url === `/referentiels/agences?structure=POLE_EMPLOI`)
-          return { content: uneListeDAgencesPoleEmploi() }
+          return { content: uneListeDAgencesFranceTravail() }
       })
     })
 
@@ -49,7 +49,7 @@ describe('ReferentielApiService', () => {
       const actual = await getAgencesServerSide(structure, 'accessToken')
 
       // THEN
-      expect(actual).toStrictEqual(uneListeDAgencesPoleEmploi())
+      expect(actual).toStrictEqual(uneListeDAgencesFranceTravail())
     })
   })
 
@@ -60,7 +60,7 @@ describe('ReferentielApiService', () => {
         if (url === `/referentiels/agences?structure=MILO`)
           return { content: uneListeDAgencesMILO() }
         if (url === `/referentiels/agences?structure=POLE_EMPLOI`)
-          return { content: uneListeDAgencesPoleEmploi() }
+          return { content: uneListeDAgencesFranceTravail() }
       })
     })
 
@@ -81,7 +81,7 @@ describe('ReferentielApiService', () => {
       const actual = await getAgencesClientSide(structure)
 
       // THEN
-      expect(actual).toStrictEqual(uneListeDAgencesPoleEmploi())
+      expect(actual).toStrictEqual(uneListeDAgencesFranceTravail())
     })
   })
 
