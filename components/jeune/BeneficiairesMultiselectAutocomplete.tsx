@@ -1,15 +1,22 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { ButtonStyle } from 'components/ui/Button/Button'
-import ButtonLink from 'components/ui/Button/ButtonLink'
+import { ButtonStyle } from '../ui/Button/Button'
+import ButtonLink from '../ui/Button/ButtonLink'
+
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import Multiselection from 'components/ui/Form/Multiselection'
 import SelectAutocomplete from 'components/ui/Form/SelectAutocomplete'
+import { IconName } from 'components/ui/IconComponent'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import {
   getListeInformations,
   ListeDeDiffusion,
 } from 'interfaces/liste-de-diffusion'
+import { trackEvent } from 'utils/analytics/matomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface BeneficiairesMultiselectAutocompleteProps {
   id: string
@@ -54,12 +61,18 @@ export default function BeneficiairesMultiselectAutocomplete({
   trackEmargement,
   lienEmargement,
 }: BeneficiairesMultiselectAutocompleteProps) {
+  const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
+  const [navigateurEstEdge, setNavigateurEstEdge] = useState<boolean>(false)
   const [beneficiairesSelectionnes, setBeneficiairesSelectionnes] =
     useState<OptionBeneficiaire[]>(defaultBeneficiaires)
   const [listesSelectionnees, setListesSelectionnees] = useState<
     ListeDeDiffusion[]
   >([])
   const input = useRef<HTMLInputElement>(null)
+
+  const mailSupportObject =
+    'Portail conseiller Mission Locale - problème inscription des bénéficiaires sous Edge'
 
   function getBeneficiairesNonSelectionnees(): OptionBeneficiaire[] {
     return beneficiaires.filter(
@@ -232,6 +245,20 @@ export default function BeneficiairesMultiselectAutocomplete({
       : 'Recherchez et ajoutez un ou plusieurs bénéficiaires'
   }
 
+  function trackContacterSupportClick() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Profil',
+      nom: '',
+      aDesBeneficiaires: portefeuille.length > 0,
+    })
+  }
+
+  useEffect(() => {
+    setNavigateurEstEdge(/Edg/.test(navigator.userAgent))
+  }, [])
+
   return (
     <>
       <Label htmlFor={id} inputRequired={required}>
@@ -240,6 +267,27 @@ export default function BeneficiairesMultiselectAutocomplete({
           helpText: labelHelpText(),
         }}
       </Label>
+      {navigateurEstEdge && (
+        <FailureAlert
+          label='Cette fonctionnalité peut être dégradée sur votre navigateur (Edge).'
+          sub={
+            <p>
+              Nous recommandons l’usage de Firefox ou de Chrome. Si vous ne
+              pouvez pas changer de navigateur, veuillez&nbsp;
+              <span className={'text-warning hover:text-primary'}>
+                <ExternalLink
+                  href={encodeURI(
+                    `mailto:${process.env.NEXT_PUBLIC_SUPPORT_MAIL}?subject=${encodeURIComponent(mailSupportObject)}`
+                  )}
+                  label={'contacter le support'}
+                  iconName={IconName.OutgoingMail}
+                  onClick={trackContacterSupportClick}
+                />
+              </span>
+            </p>
+          }
+        />
+      )}
       {error && (
         <InputError id={id + '--error'} className='mt-2'>
           {error}
