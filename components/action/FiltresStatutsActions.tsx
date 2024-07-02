@@ -76,7 +76,7 @@ export default function FiltresStatutsActions({
           <Badge
             count={statutsSelectionnes.length}
             bgColor='primary'
-            textColor='blanc'
+            textColor='white'
             size={6}
           />
         )}
@@ -84,7 +84,7 @@ export default function FiltresStatutsActions({
 
       {afficherFiltresStatuts && (
         <form
-          className='absolute z-10 bg-blanc rounded-base shadow-base p-4 text-base-regular'
+          className='absolute z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrerActions}
         >

@@ -17,7 +17,7 @@ export function MessagerieCachee({
         name={IconName.VisibilityOff}
         aria-hidden={true}
         focusable={false}
-        className='w-24 h-24 fill-blanc bg-grey_700 p-6 rounded-full my-4 m-auto'
+        className='w-24 h-24 fill-white bg-grey_700 p-6 rounded-full my-4 m-auto'
       />
       <Button
         label='Rendre visible la messagerie'

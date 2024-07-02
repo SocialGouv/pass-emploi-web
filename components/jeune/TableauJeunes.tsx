@@ -327,7 +327,7 @@ export default function TableauJeunes({
                         <Badge
                           count={jeune.nbActionsNonTerminees}
                           size={6}
-                          textColor={'blanc'}
+                          textColor={'white'}
                           bgColor={'primary'}
                         />
                       </div>

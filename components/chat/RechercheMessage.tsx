@@ -253,7 +253,7 @@ function ResultatsRecherche({
             name={IllustrationName.Search}
             focusable={false}
             aria-hidden={true}
-            className='mx-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.blanc)]'
+            className='mx-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.white)]'
           />
           <span className='sr-only'>
             Aucun résultat trouvé pour cette recherche

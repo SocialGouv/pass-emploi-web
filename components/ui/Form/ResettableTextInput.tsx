@@ -42,7 +42,7 @@ const ResettableTextInput = forwardRef(
 
     return (
       <div
-        className={`flex flex-horizontal overflow-hidden bg-blanc ${
+        className={`flex flex-horizontal overflow-hidden bg-white ${
           className ?? ''
         } ${
           disabled
@@ -57,7 +57,7 @@ const ResettableTextInput = forwardRef(
           ref={ref}
           value={value}
           onChange={applyChange}
-          className='flex-1 p-3 bg-blanc rounded-l-base'
+          className='flex-1 p-3 bg-white rounded-l-base'
           disabled={disabled}
           required={required}
           aria-describedby={invalid ? id + '--error' : undefined}

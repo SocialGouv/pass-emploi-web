@@ -186,7 +186,7 @@ export default function ChatRoom({
 
   return (
     <>
-      <div className='relative py-6 gap-4 px-4 bg-blanc flex flex-wrap justify-between shadow-base mb-6 layout_s:bg-primary_lighten layout_s:shadow-none layout_base:my-3'>
+      <div className='relative py-6 gap-4 px-4 bg-white flex flex-wrap justify-between shadow-base mb-6 layout_s:bg-primary_lighten layout_s:shadow-none layout_base:my-3'>
         <nav
           role='navigation'
           aria-label='Menu principal'
@@ -216,7 +216,7 @@ export default function ChatRoom({
         >
           <button
             type='button'
-            className='bg-primary rounded-full fill-blanc hover:shadow-base'
+            className='bg-primary rounded-full fill-white hover:shadow-base'
             title={`${afficherMenuActionsMessagerie ? 'Cacher les' : 'Accéder aux'} actions de votre messagerie`}
           >
             <IconComponent
@@ -232,7 +232,7 @@ export default function ChatRoom({
           </button>
 
           {afficherMenuActionsMessagerie && (
-            <div className='absolute top-[4em] z-10 bg-blanc rounded-base p-2 shadow-m'>
+            <div className='absolute top-[4em] z-10 bg-white rounded-base p-2 shadow-m'>
               <button
                 onClick={ouvrirModaleMessageImportant}
                 className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
@@ -300,7 +300,7 @@ export default function ChatRoom({
 
           {chatsFiltres && (
             <button
-              className='flex items-center text-primary bg-blanc rounded-base p-4 mb-2 mx-4'
+              className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
               onClick={onAccesListesDiffusion}
             >
               <IconComponent

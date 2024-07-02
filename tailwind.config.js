@@ -26,11 +26,11 @@ module.exports = {
      * - HTML: <p className="text-violet" >
      */
     colors: {
-      blanc: '#FFFFFF',
+      white: '#FFFFFF',
       primary: 'var(--primary)',
       primary_lighten: '#EEF1F8',
       primary_darken: 'var(--primary-darken)',
-      primary_darker: '#172B5A',
+      primary_darken_strong: '#172B5A',
       success: '#0D7F50',
       success_lighten: '#E5F6EF',
       success_darken: '#033C24',
@@ -44,8 +44,6 @@ module.exports = {
       accent_2_lighten: '#F6F6F6',
       accent_3: '#0C7A81',
       accent_3_lighten: '#DFFDFF',
-      accent_4: '#6D597A',
-      accent_4_lighten: '#F0EDF2',
       additional_1: '#FCBF49',
       additional_1_lighten: '#FFD88D',
       additional_2: '#15616D',
@@ -62,7 +60,6 @@ module.exports = {
       grey_700: '#878787',
       grey_800: '#646464',
       disabled: '#73758D',
-      favorite_heart: '#A44C66',
     },
 
     fill: (theme) => ({

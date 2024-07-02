@@ -66,7 +66,7 @@ export function TagCategorieAction({ categorie }: TagCategorieActionProps) {
   return (
     <Tag
       className='rounded-l'
-      backgroundColor='blanc'
+      backgroundColor='white'
       color='alert'
       iconName={IconName.Warning}
       label='Catégorie manquante'

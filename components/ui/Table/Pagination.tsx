@@ -136,7 +136,7 @@ function PaginationItem({
   disabled,
   isActive,
 }: PaginationItemProps) {
-  const activeStyle = isActive && 'bg-primary text-blanc'
+  const activeStyle = isActive && 'bg-primary text-white'
   const hoverStyle =
     !disabled && !isActive && 'hover:bg-primary_lighten hover:text-primary'
 

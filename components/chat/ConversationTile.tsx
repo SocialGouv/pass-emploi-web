@@ -40,7 +40,7 @@ export function ConversationTile({
   return (
     <div className='relative'>
       <button
-        className='w-full p-3 flex flex-col text-left border-none bg-blanc rounded-base'
+        className='w-full p-3 flex flex-col text-left border-none bg-white rounded-base'
         aria-label={`Consulter vos messages avec ${jeuneChat.prenom} ${jeuneChat.nom}`}
         onClick={onClick}
       >

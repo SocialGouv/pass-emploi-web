@@ -47,7 +47,7 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
 
   return (
     <>
-      <header className='bg-primary text-blanc flex justify-between py-12 px-8 mb-8 print:page-break-before'>
+      <header className='bg-primary text-white flex justify-between py-12 px-8 mb-8 print:page-break-before'>
         <div>
           <h1 className='text-l-bold'>Feuille d’émargement</h1>
           <h2>Mission Locale de {agence}</h2>
@@ -57,7 +57,7 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
           focusable={false}
           aria-label='contrat d’engagement jeune'
           title='contrat d’engagement jeune'
-          className='h-[64px] w-[120px] fill-blanc'
+          className='h-[64px] w-[120px] fill-white'
         />
       </header>
       <div className='mb-8'>

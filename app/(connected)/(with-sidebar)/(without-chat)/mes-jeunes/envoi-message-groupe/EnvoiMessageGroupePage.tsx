@@ -377,7 +377,7 @@ function EnvoiMessageGroupePage({
               name={IconName.Send}
               aria-hidden={true}
               focusable={false}
-              className='mr-2 h-4 w-4 fill-blanc'
+              className='mr-2 h-4 w-4 fill-white'
             />
             Envoyer
           </Button>

@@ -80,7 +80,7 @@ export default function FiltresCategoriesActions({
           <Badge
             count={categoriesSelectionnees.length}
             bgColor='primary'
-            textColor='blanc'
+            textColor='white'
             size={6}
           />
         )}
@@ -88,7 +88,7 @@ export default function FiltresCategoriesActions({
 
       {afficherFiltres && (
         <form
-          className='absolute z-10 bg-blanc rounded-base shadow-base p-4 text-base-regular'
+          className='absolute z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-categories'
           onSubmit={filtrer}
         >

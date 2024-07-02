@@ -5,6 +5,8 @@ import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+import renderWithContexts from 'tests/renderWithContexts'
+import { ReactElement } from 'react'
 
 describe('BeneficiairesMultiselectAutocomplete', () => {
   let beneficiaires: OptionBeneficiaire[]
@@ -16,6 +18,8 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 
   let input: HTMLElement
   let options: HTMLElement
+
+  let rerender: (children: ReactElement) => void
   beforeEach(async () => {
     // Given
     beneficiaires = [
@@ -58,7 +62,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     onUpdate = jest.fn()
 
     // When
-    render(
+    const renderResult = renderWithContexts(
       <BeneficiairesMultiselectAutocomplete
         id='select-beneficiaires'
         beneficiaires={beneficiaires}
@@ -67,6 +71,8 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
         onUpdate={onUpdate}
       />
     )
+
+    rerender = renderResult.rerender
 
     // Then
     input = screen.getByRole('combobox', {
@@ -247,5 +253,76 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       // Then
       expect(onUpdate).toHaveBeenCalledWith({ listesDeDiffusion: [] })
     })
+  })
+})
+
+describe('quand le conseiller utilise Edge', () => {
+  it('affiche un message d’erreur', () => {
+    //Given
+    const beneficiaires: OptionBeneficiaire[] = [
+      { id: 'option-1', value: 'Option 1' },
+      { id: 'option-2', value: 'Option 2' },
+      { id: 'option-3', value: 'Option 3' },
+    ]
+    const listes: ListeDeDiffusion[] = [
+      {
+        id: 'liste-1',
+        titre: 'Liste 1',
+        beneficiaires: [
+          {
+            id: 'option-1',
+            nom: 'Option',
+            prenom: '1',
+            estDansLePortefeuille: true,
+          },
+        ],
+      },
+      {
+        id: 'liste-2',
+        titre: 'Liste 2',
+        beneficiaires: [
+          {
+            id: 'option-2',
+            nom: 'Option',
+            prenom: '2',
+            estDansLePortefeuille: true,
+          },
+          {
+            id: 'option-3',
+            nom: 'Option',
+            prenom: '3',
+            estDansLePortefeuille: true,
+          },
+        ],
+      },
+    ]
+
+    let onUpdate: (selectedIds: {
+      beneficiaires?: string[]
+      listesDeDiffusion?: string[]
+    }) => void
+    onUpdate = jest.fn()
+
+    Object.defineProperty(window.navigator, 'userAgent', {
+      value:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.64',
+      writable: true,
+    })
+
+    // When
+    renderWithContexts(
+      <BeneficiairesMultiselectAutocomplete
+        id='select-beneficiaires'
+        beneficiaires={beneficiaires}
+        listesDeDiffusion={listes}
+        typeSelection='Bénéficiaires'
+        onUpdate={onUpdate}
+      />
+    )
+
+    //Then
+    expect(
+      screen.getByText(/Nous recommandons l’usage de Firefox ou de Chrome./)
+    ).toBeInTheDocument()
   })
 })

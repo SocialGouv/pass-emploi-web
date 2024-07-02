@@ -22,7 +22,7 @@ export function DataTag({
       case 'primary':
         return 'bg-primary_lighten'
       case 'secondary':
-        return 'bg-blanc'
+        return 'bg-white'
       case 'additional':
         return 'bg-additional_5_lighten'
     }

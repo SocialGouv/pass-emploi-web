@@ -27,7 +27,7 @@ export default function FileInput({
   const styleLabel = iconOnly
     ? 'bg-primary w-12 h-12 border-none rounded-full short:hidden'
     : `${buttonStyle.button} ${buttonStyle.buttonSecondary} w-fit text-s-bold`
-  const styleIcone = iconOnly ? 'w-6 h-6 fill-blanc' : 'w-4 h-4 mr-2'
+  const styleIcone = iconOnly ? 'w-6 h-6 fill-white' : 'w-4 h-4 mr-2'
 
   function emettreFichier(event: ChangeEvent<HTMLInputElement>) {
     if (!event.target.files || !event.target.files[0]) return

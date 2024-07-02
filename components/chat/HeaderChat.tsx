@@ -56,7 +56,7 @@ export default function HeaderChat({
         >
           <button
             type='button'
-            className='bg-primary rounded-full fill-blanc hover:shadow-base'
+            className='bg-primary rounded-full fill-white hover:shadow-base'
             title={`${afficherMenuActionsMessagerie ? 'Cacher les' : 'Accéder aux'} actions de votre messagerie`}
           >
             <IconComponent
@@ -72,7 +72,7 @@ export default function HeaderChat({
           </button>
 
           {afficherMenuActionsMessagerie && (
-            <div className='absolute top-[4em] z-10 bg-blanc rounded-base p-2 shadow-m'>
+            <div className='absolute top-[4em] z-10 bg-white rounded-base p-2 shadow-m'>
               <button
                 onClick={permuterVisibiliteMessagerie}
                 className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'

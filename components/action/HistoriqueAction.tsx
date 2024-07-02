@@ -31,7 +31,7 @@ export function HistoriqueAction({ action }: HistoriqueActionProps) {
             setCollapsed(!collapsed)
           }}
           aria-expanded={collapsed}
-          className='p-2 hover:bg-blanc hover:rounded-l'
+          className='p-2 hover:bg-white hover:rounded-l'
         >
           <IconComponent
             name={collapsed ? IconName.ChevronDown : IconName.ChevronUp}
@@ -46,7 +46,7 @@ export function HistoriqueAction({ action }: HistoriqueActionProps) {
       </div>
 
       <div
-        className={`bg-blanc border border-solid border-grey_100 rounded-base p-4 ${
+        className={`bg-white border border-solid border-grey_100 rounded-base p-4 ${
           collapsed ? 'hidden' : 'mb-8'
         }`}
       >

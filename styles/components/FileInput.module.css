@@ -8,5 +8,5 @@
     opacity: 50%;
     cursor: not-allowed;
     border: 1px solid transparent;
-    color: theme('colors.blanc');
+    color: theme('colors.white');
 }
