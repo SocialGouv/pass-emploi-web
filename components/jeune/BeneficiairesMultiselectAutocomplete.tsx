@@ -276,9 +276,7 @@ export default function BeneficiairesMultiselectAutocomplete({
               pouvez pas changer de navigateur, veuillez&nbsp;
               <span className={'text-warning hover:text-primary'}>
                 <ExternalLink
-                  href={encodeURI(
-                    `mailto:${process.env.NEXT_PUBLIC_SUPPORT_MAIL}?subject=${encodeURIComponent(mailSupportObject)}`
-                  )}
+                  href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_MAIL}?subject=${encodeURIComponent(mailSupportObject)}`}
                   label={'contacter le support'}
                   iconName={IconName.OutgoingMail}
                   onClick={trackContacterSupportClick}
