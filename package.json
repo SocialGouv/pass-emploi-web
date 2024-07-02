@@ -19,11 +19,13 @@
   "dependencies": {
     "@elastic/apm-rum": "5.16.0",
     "@elastic/apm-rum-react": "2.0.2",
+    "@lhci/cli": "0.14.x",
     "@next/bundle-analyzer": "14.2.4",
     "crypto-js": "4.2.0",
     "dotenv": "16.4.5",
     "elastic-apm-node": "4.6.0",
     "firebase": "10.12.2",
+    "global": "^4.4.0",
     "html-react-parser": "5.1.10",
     "jsonwebtoken": "9.0.2",
     "lodash.isequal": "4.5.0",
