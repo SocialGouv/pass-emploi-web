@@ -2965,10 +2965,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.16.1":
-  version: 1.16.1
-  resolution: "@remix-run/router@npm:1.16.1"
-  checksum: 10c0/5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
+"@remix-run/router@npm:1.17.1":
+  version: 1.17.1
+  resolution: "@remix-run/router@npm:1.17.1"
+  checksum: 10c0/bee1631feb03975b64e1c7b574da432a05095dda2ff0f164c737e4952841a58d7b9861de87bd13a977fd970c74dcf8c558fc2d26c6ec01a9ae9041b1b4430869
   languageName: node
   linkType: hard
 
@@ -8980,7 +8980,7 @@ __metadata:
     prettier: "npm:^3.3.2"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
-    react-router-dom: "npm:6.23.1"
+    react-router-dom: "npm:6.24.1"
     sharp: "npm:0.33.4"
     source-map-explorer: "npm:^2.5.3"
     style-loader: "npm:^4.0.0"
@@ -9556,27 +9556,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:6.23.1":
-  version: 6.23.1
-  resolution: "react-router-dom@npm:6.23.1"
+"react-router-dom@npm:6.24.1":
+  version: 6.24.1
+  resolution: "react-router-dom@npm:6.24.1"
   dependencies:
-    "@remix-run/router": "npm:1.16.1"
-    react-router: "npm:6.23.1"
+    "@remix-run/router": "npm:1.17.1"
+    react-router: "npm:6.24.1"
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: 10c0/01b954d7d0ff4c53bb2edbc816458f3fad1ce9ee49a4dfdc5c866065c23026c9cce429b46b754cbaebb83b22cfe5f605bbf441acf515e3c377cbdf021b0bec4c
+  checksum: 10c0/458c6c539304984c47b0ad8d5d5b1f8859cc0845e47591d530cb4fcb13498f70a89b42bc4daeea55d57cfa08408b453bcf601cabb2c987f554cdcac13805caa8
   languageName: node
   linkType: hard
 
-"react-router@npm:6.23.1":
-  version: 6.23.1
-  resolution: "react-router@npm:6.23.1"
+"react-router@npm:6.24.1":
+  version: 6.24.1
+  resolution: "react-router@npm:6.24.1"
   dependencies:
-    "@remix-run/router": "npm:1.16.1"
+    "@remix-run/router": "npm:1.17.1"
   peerDependencies:
     react: ">=16.8"
-  checksum: 10c0/091949805745136350ab049b2a96281bf38742c9d3651019fb48ea79c5eafbfb0379f1d3e636602dd56b0ef278389e8fd25be983dc2c0ffd1103d06dfa8019f3
+  checksum: 10c0/f50c78ca52c5154ab933c17708125e8bf71ccf2072993a80302526a0a23db9ceac6e36d5c891d62ccd16f13e60cd1b6533a2036523d1b09e0148ac49e34b2e83
   languageName: node
   linkType: hard
 
