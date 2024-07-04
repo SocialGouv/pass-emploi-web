@@ -71,7 +71,6 @@ export default function FiltresStatutAnimationsCollectives({
   return (
     <div className='relative'>
       <button
-        aria-controls='filtres-statut'
         onClick={() =>
           setAfficherFiltresAnimationsCollectives(
             !afficherFiltresAnimationsCollectives

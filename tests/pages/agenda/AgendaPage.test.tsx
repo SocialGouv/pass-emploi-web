@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -16,12 +17,14 @@ import {
   getSessionsMissionLocaleClientSide,
 } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/evenements.service')
 jest.mock('services/sessions.service')
 jest.mock('components/PageActionsPortal')
 
 describe('AgendaPage client side', () => {
+  let container: HTMLElement
   let replace: jest.Mock
   const SEPTEMBRE_1_14H = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
 
@@ -52,13 +55,18 @@ describe('AgendaPage client side', () => {
 
     // When
     await act(async () => {
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <AgendaPage onglet='ETABLISSEMENT' periodeIndexInitial={0} />,
         {
           customConseiller: conseiller,
         }
-      )
+      ))
     })
+  })
+
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 
   it('contient des liens créer pour des évènements', () => {
