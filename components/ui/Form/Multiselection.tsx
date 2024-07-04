@@ -32,7 +32,6 @@ export default function Multiselection({
     <ul
       aria-labelledby={`${id}--title`}
       id={id}
-      role='region'
       className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
       aria-live='polite'
       aria-relevant='additions removals'
