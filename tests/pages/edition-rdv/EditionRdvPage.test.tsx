@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
@@ -32,6 +33,7 @@ import {
 import { getBeneficiairesDeLEtablissementClientSide } from 'services/jeunes.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/evenements.service')
 jest.mock('services/jeunes.service')
@@ -39,6 +41,7 @@ jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('EditionRdvPage client side', () => {
+  let container: HTMLElement
   describe('Rendez-vous', () => {
     let beneficiairesConseiller: BeneficiaireFromListe[]
     let beneficiairesAutreConseiller: BaseBeneficiaire[]
@@ -87,7 +90,7 @@ describe('EditionRdvPage client side', () => {
     describe('contenu', () => {
       beforeEach(() => {
         // When
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda?onglet=conseiller'
@@ -98,7 +101,12 @@ describe('EditionRdvPage client side', () => {
             customConseiller: { email: 'fake@email.com' },
             customAlerte: { alerteSetter },
           }
-        )
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       describe('header', () => {
@@ -803,7 +811,7 @@ describe('EditionRdvPage client side', () => {
             hidden: true,
           })
         ).toThrow()
-        const destinataires = screen.getByRole('region', {
+        const destinataires = screen.getByRole('list', {
           name: /Bénéficiaires/,
         })
         expect(
@@ -830,7 +838,7 @@ describe('EditionRdvPage client side', () => {
         evenement = unEvenement({ jeunes: [beneficiaire0, beneficiaire2] })
 
         // When
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
@@ -841,7 +849,12 @@ describe('EditionRdvPage client side', () => {
           {
             customAlerte: { alerteSetter },
           }
-        )
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche le créateur de l’événement', () => {
@@ -901,7 +914,7 @@ describe('EditionRdvPage client side', () => {
           })
         ).toThrow()
 
-        const destinataires = screen.getByRole('region', {
+        const destinataires = screen.getByRole('list', {
           name: /Bénéficiaires/,
         })
         expect(
@@ -975,7 +988,7 @@ describe('EditionRdvPage client side', () => {
           const searchBeneficiaire = screen.getByRole('combobox', {
             name: /Recherchez et ajoutez un ou plusieurs bénéficiaires/,
           })
-          const beneficiaires = screen.getByRole('region', {
+          const beneficiaires = screen.getByRole('list', {
             name: /Bénéficiaires/,
           })
           const beneficiaireSelectionne = within(beneficiaires).getByText(
@@ -1154,7 +1167,7 @@ describe('EditionRdvPage client side', () => {
         })
 
         // When
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='/agenda'
@@ -1162,7 +1175,12 @@ describe('EditionRdvPage client side', () => {
             conseillerEstObservateur={false}
             lectureSeule={false}
           />
-        )
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it("contient un message pour prévenir qu'il y a des bénéficiaires qui ne sont pas au conseiller", () => {
@@ -1174,7 +1192,7 @@ describe('EditionRdvPage client side', () => {
 
       it('contient tous les bénéficiaires, y compris ceux qui ne sont pas aux conseiller connecté', () => {
         // Given
-        const beneficiaires = screen.getByRole('region', {
+        const beneficiaires = screen.getByRole('list', {
           name: /Bénéficiaires/,
         })
 
@@ -1183,7 +1201,7 @@ describe('EditionRdvPage client side', () => {
           getNomBeneficiaireComplet(beneficiairesConseiller[0])
         )
         expect(() =>
-          within(beneficiaire).getByLabelText(
+          within(beneficiaire).getByText(
             /Ce bénéficiaire n’est pas dans votre portefeuille/
           )
         ).toThrow()
@@ -1197,7 +1215,7 @@ describe('EditionRdvPage client side', () => {
         const autreBeneficiaire =
           within(beneficiaires).getByText('Dupont Michel')
         expect(
-          within(autreBeneficiaire).getByLabelText(
+          within(autreBeneficiaire).getByText(
             /Ce bénéficiaire n’est pas dans votre portefeuille/
           )
         ).toBeInTheDocument()
@@ -1295,7 +1313,7 @@ describe('EditionRdvPage client side', () => {
     describe('quand le conseiller connecté n’est référent d’aucun bénéficiaire de l’événement', () => {
       beforeEach(() => {
         // When
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <EditionRdvPage
             typesRendezVous={typesRendezVous}
             returnTo='https://localhost:3000/agenda'
@@ -1306,7 +1324,12 @@ describe('EditionRdvPage client side', () => {
           {
             customPortefeuille: { value: [] },
           }
-        )
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche encart explicatif de lecture seule', () => {
@@ -1400,7 +1423,7 @@ describe('EditionRdvPage client side', () => {
         // Given
         typesRendezVous = typesAnimationCollective()
         await act(async () => {
-          renderWithContexts(
+          ;({ container } = renderWithContexts(
             <EditionRdvPage
               typesRendezVous={typesRendezVous}
               returnTo='/agenda?onglet=etablissement'
@@ -1416,8 +1439,13 @@ describe('EditionRdvPage client side', () => {
                 },
               },
             }
-          )
+          ))
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('récupère les bénéficiaires de l’établissement', async () => {
@@ -1497,9 +1525,7 @@ describe('EditionRdvPage client side', () => {
           screen.getByText(/des bénéficiaires que vous ne suivez pas/)
         ).toBeInTheDocument()
         expect(
-          screen.getByLabelText(
-            'Ce bénéficiaire n’est pas dans votre portefeuille'
-          )
+          screen.getByText('Ce bénéficiaire n’est pas dans votre portefeuille')
         ).toBeInTheDocument()
       })
     })
@@ -1619,7 +1645,7 @@ describe('EditionRdvPage client side', () => {
         })
 
         await act(async () => {
-          renderWithContexts(
+          ;({ container } = renderWithContexts(
             <EditionRdvPage
               typesRendezVous={typesRendezVous}
               returnTo='/agenda'
@@ -1636,8 +1662,13 @@ describe('EditionRdvPage client side', () => {
                 },
               },
             }
-          )
+          ))
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('ne récupère pas les autres bénéficiaires de l’établissement', async () => {
@@ -1683,14 +1714,14 @@ describe('EditionRdvPage client side', () => {
       it('indique les bénéficiaires qui étaient présents', () => {
         // Then
         expect(
-          within(
-            screen.getByText(getNomBeneficiaireComplet(beneficiairePresent))
-          ).getByLabelText(/Ce bénéficiaire était présent à l’événement/)
+          within(screen.getByText(getNomBeneficiaireComplet(beneficiairePresent))).getByText(
+            /Ce bénéficiaire était présent à l’événement/
+          )
         ).toBeInTheDocument()
         expect(
-          within(
-            screen.getByText(getNomBeneficiaireComplet(beneficiaireAbsent))
-          ).queryByLabelText(/Ce bénéficiaire était présent à l’événement/)
+          within(screen.getByText(getNomBeneficiaireComplet(beneficiaireAbsent))).queryByText(
+            /Ce bénéficiaire était présent à l’événement/
+          )
         ).not.toBeInTheDocument()
       })
     })
