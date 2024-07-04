@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -18,12 +19,14 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/messages.service')
 jest.mock('services/conseiller.service')
 jest.mock('components/PageActionsPortal')
 
 describe('PortefeuillePage client side', () => {
+  let container: HTMLElement
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let refresh: jest.Mock
   const jeunes = desBeneficiairesAvecActionsNonTerminees()
@@ -45,10 +48,15 @@ describe('PortefeuillePage client side', () => {
     beforeEach(async () => {
       // WHEN
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it("affiche la liste des bénéficiaires s'il en a", async () => {
@@ -176,7 +184,7 @@ describe('PortefeuillePage client side', () => {
         })
 
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PortefeuillePage
             conseillerJeunes={[jeune, beneficiaireAvecStructureDifferente]}
             isFromEmail
@@ -187,8 +195,13 @@ describe('PortefeuillePage client side', () => {
               structureMilo: { nom: 'Agence', id: '1' },
             },
           }
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('permer de créer un jeune MILO', async () => {
@@ -214,7 +227,7 @@ describe('PortefeuillePage client side', () => {
 
       //THEN
       expect(
-        row3.getByLabelText(
+        row3.getByText(
           /Ce bénéficiaire est rattaché à une Mission Locale différente/
         )
       ).toBeInTheDocument()
@@ -227,13 +240,18 @@ describe('PortefeuillePage client side', () => {
       const jeune = unBeneficiaireAvecActionsNonTerminees()
 
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PortefeuillePage conseillerJeunes={[jeune]} isFromEmail />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
           }
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('permer de créer un jeune FT', async () => {

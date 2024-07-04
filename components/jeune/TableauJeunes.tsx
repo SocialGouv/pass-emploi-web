@@ -280,42 +280,46 @@ export default function TableauJeunes({
             <TBody>
               {jeunesAffiches.map(
                 (jeune: BeneficiaireAvecInfosComplementaires) => (
-                  <TR
-                    key={jeune.id}
-                    href={`/mes-jeunes/${jeune.id}`}
-                    linkLabel={getRowLabel(jeune)}
-                  >
-                    <TD isBold className='rounded-l-base'>
-                      <span className='flex items-baseline'>
-                        {jeune.structureMilo?.id ===
-                          conseiller.structureMilo?.id &&
-                          jeune.isReaffectationTemporaire && (
-                            <span
-                              aria-label='bénéficiaire temporaire'
-                              className='self-center mr-2'
-                            >
-                              <IconComponent
-                                name={IconName.Schedule}
-                                aria-hidden={true}
-                                focusable={false}
-                                className='w-4 h-4'
-                                title='bénéficiaire temporaire'
-                              />
-                            </span>
-                          )}
-                        {jeune.structureMilo?.id !==
-                          conseiller.structureMilo?.id && (
+                <TR
+                  key={jeune.id}
+                  href={`/mes-jeunes/${jeune.id}`}
+                  linkLabel={getRowLabel(jeune)}
+                >
+                  <TD isBold className='rounded-l-base'>
+                    <span className='flex items-baseline'>
+                      {jeune.structureMilo?.id ===
+                        conseiller.structureMilo?.id &&
+                        jeune.isReaffectationTemporaire && (
                           <span
+                            aria-label='bénéficiaire temporaire'
                             className='self-center mr-2'
-                            aria-label='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                           >
                             <IconComponent
-                              name={IconName.Error}
+                              name={IconName.Schedule}
                               aria-hidden={true}
                               focusable={false}
-                              className='w-4 h-4 fill-warning'
-                              title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
+                              className='w-4 h-4'
+                              title='bénéficiaire temporaire'
                             />
+                            <span className='sr-only'>
+                              bénéficiaire temporaire
+                            </span>
+                          </span>
+                        )}
+                      {jeune.structureMilo?.id !==
+                        conseiller.structureMilo?.id && (
+                        <span className='self-center mr-2'>
+                            <IconComponent
+                            name={IconName.Error}
+                            aria-hidden={true}
+                            focusable={false}
+                            className='w-4 h-4 fill-warning'
+                            title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
+                          />
+                          <span className='sr-only'>
+                            Ce bénéficiaire est rattaché à une Mission Locale
+                            différente de la vôtre.
+                          </span>
                           </span>
                         )}
                         {getNomBeneficiaireComplet(jeune)}
