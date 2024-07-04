@@ -303,16 +303,14 @@ function EditionRdvPage({
           <dl>
             <div className='mt-6 border border-solid border-grey_100 rounded-base p-4'>
               <dt className='sr-only'>Type de l’événement</dt>
-              <dd className='text-base-bold'>{evenement.type.label}</dd>
+              <dd className='text-base-bold mb-2'>{evenement.type.label}</dd>
 
-              <div className='mt-2'>
-                <dt className='inline'>Créé(e) par : </dt>
-                <dd className='inline text-s-bold'>
-                  {estCreeParSiMILO(evenement) && 'Système d’information MILO'}
-                  {!estCreeParSiMILO(evenement) &&
-                    `${evenement.createur.prenom}  ${evenement.createur.nom}`}
-                </dd>
-              </div>
+              <dt className='inline mt-2'>Créé(e) par : </dt>
+              <dd className='inline text-s-bold'>
+                {estCreeParSiMILO(evenement) && 'Système d’information MILO'}
+                {!estCreeParSiMILO(evenement) &&
+                  `${evenement.createur.prenom}  ${evenement.createur.nom}`}
+              </dd>
             </div>
 
             {!estCreeParSiMILO(evenement) &&

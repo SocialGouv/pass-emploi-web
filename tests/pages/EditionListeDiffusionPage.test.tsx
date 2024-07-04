@@ -241,7 +241,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         })
       ).toThrow()
 
-      const destinataires = screen.getByRole('region', {
+      const destinataires = screen.getByRole('list', {
         name: /Bénéficiaires/,
       })
       expect(
