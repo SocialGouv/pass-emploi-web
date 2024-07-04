@@ -240,6 +240,7 @@ export default function TableauActionsAQualifier({
                   title={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
                     tri === 'ALPHABETIQUE' ? 'inversé' : ''
                   }`}
+                  type='button'
                 >
                   Bénéficiaire
                   <SortIcon

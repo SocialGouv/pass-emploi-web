@@ -203,6 +203,7 @@ export default function TableauJeunes({
                     title={`Afficher la liste des bénéficiaires triée par noms de famille par ordre alphabétique ${
                       isName && !sortDesc ? 'inversé' : ''
                     }`}
+                    type='button'
                   >
                     <span className='mr-1'>Bénéficiaire</span>
                     <SortIcon isSorted={isName} isDesc={sortDesc} />
@@ -222,6 +223,7 @@ export default function TableauJeunes({
                         ? 'chronologique'
                         : 'antéchronologique'
                     }`}
+                    type='button'
                   >
                     <span className='mr-1'>Dernière activité</span>
                     <SortIcon isSorted={isDate} isDesc={sortDesc} />
@@ -241,6 +243,7 @@ export default function TableauJeunes({
                       title={`Afficher la liste des bénéficiaires triée par nombre d'actions non terminées du jeune par ordre ${
                         isAction && !sortDesc ? 'croissant' : 'décroissant'
                       }`}
+                      type='button'
                     >
                       <span className='mr-1'>Actions</span>
                       <SortIcon isSorted={isAction} isDesc={sortDesc} />
@@ -258,6 +261,7 @@ export default function TableauJeunes({
                     title={`Afficher la liste des messages non lus par nombre ${
                       isMessage && !sortDesc ? 'croissant' : 'décroissant'
                     }`}
+                    type='button'
                   >
                     <span className='mr-1'>
                       Messages non lus par les bénéficiaires

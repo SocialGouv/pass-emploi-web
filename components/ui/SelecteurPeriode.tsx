@@ -75,6 +75,7 @@ export function SelecteurPeriode({
         <button
           aria-label='Aller à la période précédente'
           onClick={allerPeriodePrecedente}
+          type='button'
         >
           <IconComponent
             name={IconName.ChevronLeft}
@@ -93,6 +94,7 @@ export function SelecteurPeriode({
         <button
           aria-label='Aller à la période suivante'
           onClick={allerPeriodeSuivante}
+          type='button'
         >
           <IconComponent
             name={IconName.ChevronRight}

@@ -43,6 +43,7 @@ export function ConversationTile({
         className='w-full p-3 flex flex-col text-left border-none bg-white rounded-base'
         aria-label={`Consulter vos messages avec ${jeuneChat.prenom} ${jeuneChat.nom}`}
         onClick={onClick}
+        type='button'
       >
         {!jeuneChat.seenByConseiller && (
           <p className='text-accent_1 text-s-regular mb-2'>

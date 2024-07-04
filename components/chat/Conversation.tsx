@@ -353,6 +353,7 @@ export function Conversation({
                         style={ButtonStyle.TERTIARY}
                         className='mx-auto mb-3'
                         isLoading={loadingMoreMessages}
+                        type='button'
                       >
                         <IconComponent
                           name={IconName.ChevronUp}

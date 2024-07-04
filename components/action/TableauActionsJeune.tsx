@@ -258,6 +258,7 @@ export default function TableauActionsJeune({
                     aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
                     title={getOrdreTriParDate()}
                     className={columnHeaderButtonStyle}
+                    type='button'
                   >
                     Date de l’action
                     <SortIcon
