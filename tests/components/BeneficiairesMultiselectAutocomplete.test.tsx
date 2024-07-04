@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe, toHaveNoViolations } from 'jest-axe'
 expect.extend(toHaveNoViolations)
@@ -148,7 +148,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 
     it('affiche les bénéficiaires sélectionnés', async () => {
       // Then
-      const selections = screen.getByRole('region', {
+      const selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (2)',
       })
       expect(within(selections).getByText('Option 1')).toBeInTheDocument()
@@ -172,7 +172,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       await userEvent.type(input, 'Sélectionner tous mes destinataires')
 
       // Then
-      const selections = screen.getByRole('region', {
+      const selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (3)',
       })
       expect(within(selections).getByText('Option 1')).toBeInTheDocument()
@@ -192,7 +192,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 
     it('affiche la liste sélectionnée', async () => {
       // Then
-      const selections = screen.getByRole('region', {
+      const selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (2)',
       })
       expect(within(selections).getByText('Liste 2 (2)')).toBeInTheDocument()
@@ -210,7 +210,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       // Given
       await userEvent.type(input, 'Option 1')
       await userEvent.type(input, 'Option 3')
-      selections = screen.getByRole('region', {
+      selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (2)',
       })
 
@@ -240,7 +240,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       // Given
       await userEvent.type(input, 'Liste 1 (1)')
       await userEvent.type(input, 'Option 3')
-      selections = screen.getByRole('region', {
+      selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (2)',
       })
 
