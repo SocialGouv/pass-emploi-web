@@ -151,6 +151,7 @@ function PaginationItem({
         className={`rounded-full ${
           typeof children === 'number' ? 'px-3' : 'px-1'
         } py-1 fill-primary_darken disabled:cursor-not-allowed disabled:fill-grey_700 disabled:text-grey_700 ${activeStyle} ${hoverStyle}`}
+        type='button'
       >
         {children}
       </button>

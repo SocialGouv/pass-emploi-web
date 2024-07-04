@@ -302,6 +302,7 @@ export default function ChatRoom({
             <button
               className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
               onClick={onAccesListesDiffusion}
+              type='button'
             >
               <IconComponent
                 name={IconName.PeopleFill}
