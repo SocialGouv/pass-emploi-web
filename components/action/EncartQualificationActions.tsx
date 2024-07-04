@@ -63,6 +63,7 @@ export default function EncartQualificationActions({
             style={ButtonStyle.SECONDARY}
             label='Enregistrer les actions en non SNP'
             disabled={boutonsDisabled}
+            type='button'
           >
             Enregistrer les actions en non SNP
           </Button>
@@ -71,6 +72,7 @@ export default function EncartQualificationActions({
             style={ButtonStyle.PRIMARY}
             label='Qualifier les actions en SNP'
             disabled={boutonsDisabled}
+            type='button'
           >
             Qualifier les actions en SNP
           </Button>

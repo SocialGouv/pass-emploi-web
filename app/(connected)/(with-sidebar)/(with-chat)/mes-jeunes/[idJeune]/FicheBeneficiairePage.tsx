@@ -286,7 +286,11 @@ function FicheBeneficiairePage({
     <>
       {!lectureSeule && (
         <PageActionsPortal>
-          <Button onClick={openDeleteJeuneModal} style={ButtonStyle.SECONDARY}>
+          <Button
+            onClick={openDeleteJeuneModal}
+            style={ButtonStyle.SECONDARY}
+            type='button'
+          >
             <IconComponent
               name={IconName.Delete}
               focusable={false}

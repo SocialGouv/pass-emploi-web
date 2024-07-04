@@ -41,6 +41,7 @@ export default function HeaderChat({
           className='border-none rounded-full mr-2 bg-primary_lighten flex items-center hover:text-primary focus:pr-2'
           aria-label={labelRetour}
           onClick={onBack}
+          type='button'
         >
           <IconComponent
             name={IconName.ArrowBackward}

@@ -29,6 +29,7 @@ export default function FiltresStatutsActions({
           type='radio'
           value={statut}
           id={id}
+          name={propsStatutsActions[statut].label}
           className='h-5 w-5 shrink-0'
           checked={statutsSelectionnes.includes(statut)}
           onChange={actionnerStatut}
@@ -64,6 +65,7 @@ export default function FiltresStatutsActions({
         aria-label='Statut - Filtrer les actions'
         title='Filtrer les actions par statut'
         className='flex items-center p-4 w-full h-full gap-2'
+        type='button'
       >
         Statut
         <IconComponent
@@ -102,6 +104,7 @@ export default function FiltresStatutsActions({
                 value='Tout sélectionner'
                 id='statut-tout-selectionner'
                 className='h-5 w-5 shrink-0'
+                name='Tout sélectionner'
                 checked={statutsSelectionnes.length === 0}
                 onChange={actionnerStatut}
               />
