@@ -65,9 +65,9 @@ export default function ContenuCGUConseillerPassEmploi() {
         « Superviseur » permet aux agents habilités d’organiser et de modifier
         l’affectation d’un Usager à un Conseiller déterminé.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
         A- Conseiller France Travail
-      </h4>
+      </h3>
       <p className='mb-4'>
         L’authentification se fait via les identifiants métier France Travail
         (système « PEAMA ») : le DGASI et un mot de passe. Par ailleurs ces
