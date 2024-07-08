@@ -7,18 +7,18 @@ import React from 'react'
 import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
 import { unAgenda } from 'fixtures/agenda'
 import {
-  desConseillersJeune,
+  desConseillersBeneficiaire,
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
-import { StructureConseiller } from 'interfaces/conseiller'
+} from 'fixtures/beneficiaire'
 import {
   CategorieSituation,
   ConseillerHistorique,
-  DetailJeune,
+  DetailBeneficiaire,
   EtatSituation,
-} from 'interfaces/jeune'
+} from 'interfaces/beneficiaire'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -38,8 +38,8 @@ describe('InformationsPage client side', () => {
       categorie: CategorieSituation.CONTRAT_EN_ALTERNANCE,
     },
   ]
-  const listeConseillers = desConseillersJeune()
-  const jeune = unDetailJeune({ urlDossier: 'https://dossier-milo.fr' })
+  const listeConseillers = desConseillersBeneficiaire()
+  const jeune = unDetailBeneficiaire({ urlDossier: 'https://dossier-milo.fr' })
 
   beforeEach(async () => {
     ;(recupererAgenda as jest.Mock).mockResolvedValue(unAgenda())
@@ -240,7 +240,7 @@ async function renderHistorique(
   }>,
   conseillers: ConseillerHistorique[],
   structure: StructureConseiller,
-  beneficiaire: DetailJeune
+  beneficiaire: DetailBeneficiaire
 ) {
   const SEPTEMBRE_1 = DateTime.fromISO('2022-09-01T14:00:00.000+02:00')
   jest.spyOn(DateTime, 'now').mockReturnValue(SEPTEMBRE_1)
@@ -250,7 +250,7 @@ async function renderHistorique(
   await act(async () => {
     renderWithContexts(
       <Historique
-        idJeune={'id'}
+        idBeneficiaire={'id'}
         situations={situations}
         conseillers={conseillers}
         lectureSeule={false}

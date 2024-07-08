@@ -6,9 +6,9 @@ import React from 'react'
 
 import TableauRdvsBeneficiaire from 'components/rdv/TableauRdvsBeneficiaire'
 import { desEvenementsListItems } from 'fixtures/evenement'
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { toShortDate } from 'utils/date'
 
 describe('<TableauRdvsBeneficiaire>', () => {
@@ -22,7 +22,7 @@ describe('<TableauRdvsBeneficiaire>', () => {
       <TableauRdvsBeneficiaire
         rdvs={[]}
         idConseiller='1'
-        beneficiaire={uneBaseJeune()}
+        beneficiaire={uneBaseBeneficiaire()}
       />
     )
 
@@ -47,7 +47,7 @@ describe('<TableauRdvsBeneficiaire>', () => {
         <TableauRdvsBeneficiaire
           rdvs={listeRdv}
           idConseiller='1'
-          beneficiaire={uneBaseJeune()}
+          beneficiaire={uneBaseBeneficiaire()}
         />
       )
     })
@@ -71,7 +71,7 @@ describe('<TableauRdvsBeneficiaire>', () => {
           name: `Consulter l’événement du ${DateTime.fromISO(rdv.date).toFormat(
             'EEEE d MMMM',
             { locale: 'fr-FR' }
-          )} avec ${getNomJeuneComplet(uneBaseJeune())}`,
+          )} avec ${getNomBeneficiaireComplet(uneBaseBeneficiaire())}`,
         })
         expect(link).toHaveAttribute(
           'href',

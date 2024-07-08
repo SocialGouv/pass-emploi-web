@@ -9,6 +9,7 @@ import {
   PageHeaderPortal,
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
 import {
   estClos,
@@ -16,7 +17,6 @@ import {
   Evenement,
   isCodeTypeAnimationCollective,
 } from 'interfaces/evenement'
-import { JeuneFromListe } from 'interfaces/jeune'
 import {
   isTypeAnimationCollective,
   TypeEvenementReferentiel,
@@ -115,8 +115,11 @@ async function buildProps(
     const evenement = await getDetailsEvenement(searchParams.idRdv, accessToken)
     if (!evenement) notFound()
 
-    const jeunes = await getJeunesDuConseillerServerSide(user.id, accessToken)
-    return buildPropsModificationEvenement(evenement, jeunes)
+    const beneficiaires = await getJeunesDuConseillerServerSide(
+      user.id,
+      accessToken
+    )
+    return buildPropsModificationEvenement(evenement, beneficiaires)
   }
 
   const typesEvenements = await getTypesRendezVous(accessToken)
@@ -129,13 +132,16 @@ async function buildProps(
 
 function buildPropsModificationEvenement(
   evenement: Evenement,
-  jeunes: JeuneFromListe[]
+  beneficiaires: BeneficiaireFromListe[]
 ): Omit<EditionRdvProps, 'returnTo'> {
   const estUneAC = isCodeTypeAnimationCollective(evenement.type.code)
   const aUnBeneficiaireInscritALEvenement: boolean =
     Boolean(evenement) &&
-    evenement.jeunes.some((jeuneEvenement) =>
-      jeunes.some((jeuneConseiller) => jeuneConseiller.id === jeuneEvenement.id)
+    evenement.jeunes.some((beneficiaireEvenement) =>
+      beneficiaires.some(
+        (beneficiaireConseiller) =>
+          beneficiaireConseiller.id === beneficiaireEvenement.id
+      )
     )
   const conseillerEstObservateur =
     !estUneAC && !aUnBeneficiaireInscritALEvenement
@@ -158,7 +164,7 @@ function buildPropsModificationEvenement(
 function buildPropsCreationEvenement(
   typesEvenements: TypeEvenementReferentiel[],
   creationAC: boolean,
-  idJeune?: string
+  idBeneficiaire?: string
 ): Omit<EditionRdvProps, 'returnTo'> {
   const typesRdvCEJ: TypeEvenementReferentiel[] = []
   const typesRdvAC: TypeEvenementReferentiel[] = []
@@ -172,6 +178,6 @@ function buildPropsCreationEvenement(
     lectureSeule: false,
     typesRendezVous: creationAC ? typesRdvAC : typesRdvCEJ,
     evenementTypeAC: creationAC,
-    idJeune,
+    idBeneficiaire,
   }
 }

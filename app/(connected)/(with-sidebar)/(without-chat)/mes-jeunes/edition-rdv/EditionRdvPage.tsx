@@ -21,7 +21,7 @@ import {
 import { EvenementFormData } from 'interfaces/json/evenement'
 import { TypeEvenementReferentiel } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { getJeunesDeLEtablissementClientSide } from 'services/jeunes.service'
+import { getBeneficiairesDeLEtablissementClientSide } from 'services/jeunes.service'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -46,7 +46,7 @@ export type EditionRdvProps = {
   lectureSeule: boolean
   returnTo: string
   typesRendezVous: TypeEvenementReferentiel[]
-  idJeune?: string
+  idBeneficiaire?: string
   evenement?: Evenement
   evenementTypeAC?: boolean
 }
@@ -56,7 +56,7 @@ function EditionRdvPage({
   lectureSeule,
   returnTo,
   typesRendezVous,
-  idJeune,
+  idBeneficiaire,
   evenement,
   evenementTypeAC,
 }: EditionRdvProps) {
@@ -93,7 +93,7 @@ function EditionRdvPage({
   } else
     initialTracking = `Création ${
       evenementTypeAC ? 'animation collective' : 'rdv'
-    } ${idJeune ? ' jeune' : ''} `
+    } ${idBeneficiaire ? ' jeune' : ''} `
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
   const aDesBeneficiaires = portefeuille.length > 0
 
@@ -140,11 +140,11 @@ function EditionRdvPage({
     setTrackingTitle(initialTracking)
   }
 
-  function aDesJeunesDUnAutrePortefeuille(): boolean {
+  function aDesBeneficiaireDUnAutrePortefeuille(): boolean {
     if (conseillerEstObservateur) return true
 
     const fromEvenement = evenement?.jeunes.some(
-      ({ id }) => !portefeuille.some((jeune) => jeune.id === id)
+      ({ id }) => !portefeuille.some((beneficiaire) => beneficiaire.id === id)
     )
     return fromEvenement || formHasBeneficiaireAutrePortefeuille
   }
@@ -202,9 +202,9 @@ function EditionRdvPage({
     }
   }
 
-  function recupererJeunesDeLEtablissement() {
+  function recupererBeneficiairesDeLEtablissement() {
     if (conseiller.agence?.id) {
-      return getJeunesDeLEtablissementClientSide(conseiller.agence.id)
+      return getBeneficiairesDeLEtablissementClientSide(conseiller.agence.id)
     }
     return Promise.resolve([])
   }
@@ -281,7 +281,7 @@ function EditionRdvPage({
         </div>
       )}
 
-      {!conseillerEstObservateur && aDesJeunesDUnAutrePortefeuille() && (
+      {!conseillerEstObservateur && aDesBeneficiaireDUnAutrePortefeuille() && (
         <div className='mb-6'>
           <InformationMessage label='Cet événement concerne des bénéficiaires que vous ne suivez pas et qui ne sont pas dans votre portefeuille' />
         </div>
@@ -364,10 +364,12 @@ function EditionRdvPage({
       )}
 
       <EditionRdvForm
-        jeunesConseiller={portefeuille}
-        recupererJeunesDeLEtablissement={recupererJeunesDeLEtablissement}
+        beneficiairesConseiller={portefeuille}
+        recupererBeneficiairesDeLEtablissement={
+          recupererBeneficiairesDeLEtablissement
+        }
         typesRendezVous={typesRendezVous}
-        idJeune={idJeune}
+        idBeneficiaire={idBeneficiaire}
         evenement={evenement}
         redirectTo={returnTo}
         conseiller={conseiller}
@@ -405,7 +407,7 @@ function EditionRdvPage({
 
       {showDeleteRdvModal && (
         <DeleteRdvModal
-          aDesJeunesDUnAutrePortefeuille={aDesJeunesDUnAutrePortefeuille()}
+          aDesBeneficiairesDUnAutrePortefeuille={aDesBeneficiaireDUnAutrePortefeuille()}
           onClose={closeDeleteRdvModal}
           performDelete={supprimerEvenement}
           evenementTypeAC={evenementTypeAC!}

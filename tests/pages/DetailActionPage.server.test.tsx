@@ -7,8 +7,8 @@ import DetailAction, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/actions/[idAction]/page'
 import { unCommentaire, uneAction } from 'fixtures/action'
-import { unDetailJeune } from 'fixtures/jeune'
-import { BaseJeune } from 'interfaces/jeune'
+import { unDetailBeneficiaire } from 'fixtures/beneficiaire'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { getAction, recupererLesCommentaires } from 'services/actions.service'
 import { getJeuneDetails } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -56,18 +56,18 @@ describe('ActionPage server side', () => {
     it("récupère les info de l'action et du jeune", async () => {
       const action = uneAction()
       const commentaires = [unCommentaire()]
-      const jeune: BaseJeune & { idConseiller: string } = {
-        id: 'jeune-1',
+      const jeune: BaseBeneficiaire & { idConseiller: string } = {
+        id: 'beneficiaire-1',
         prenom: 'Nadia',
         nom: 'Sanfamiye',
         idConseiller: 'id-conseiller',
       }
       ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
       ;(recupererLesCommentaires as jest.Mock).mockResolvedValue(commentaires)
-      ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
+      ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailBeneficiaire())
 
       // When
-      const params = { idJeune: 'jeune-1', idAction: 'id-action' }
+      const params = { idJeune: 'beneficiaire-1', idAction: 'id-action' }
       const metadata = await generateMetadata({ params })
       render(await DetailAction({ params }))
 
@@ -92,21 +92,23 @@ describe('ActionPage server side', () => {
       it('prépare la page', async () => {
         const action = uneAction()
         const commentaires = [unCommentaire()]
-        const jeune: BaseJeune & { idConseiller: string } = {
-          id: 'jeune-1',
+        const jeune: BaseBeneficiaire & { idConseiller: string } = {
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
         }
         ;(getAction as jest.Mock).mockResolvedValue({ action, jeune })
         ;(recupererLesCommentaires as jest.Mock).mockResolvedValue(commentaires)
-        ;(getJeuneDetails as jest.Mock).mockResolvedValue(unDetailJeune())
+        ;(getJeuneDetails as jest.Mock).mockResolvedValue(
+          unDetailBeneficiaire()
+        )
         ;(headers as jest.Mock).mockReturnValue(
           new Map([['referer', '/pilotage']])
         )
 
         // When
-        const params = { idJeune: 'jeune-1', idAction: 'id-action' }
+        const params = { idJeune: 'beneficiaire-1', idAction: 'id-action' }
         const metadata = await generateMetadata({ params })
         render(await DetailAction({ params }))
 
@@ -145,8 +147,8 @@ describe('ActionPage server side', () => {
       it('renvoie une 404', async () => {
         const action = uneAction()
         const commentaires = [unCommentaire()]
-        const jeune: BaseJeune & { idConseiller: string } = {
-          id: 'jeune-1',
+        const jeune: BaseBeneficiaire & { idConseiller: string } = {
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',

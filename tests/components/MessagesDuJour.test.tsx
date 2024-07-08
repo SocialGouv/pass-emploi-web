@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 import React from 'react'
 
 import MessagesDuJour from 'components/chat/MessagesDuJour'
-import { unChat } from 'fixtures/jeune'
+import { unChat } from 'fixtures/beneficiaire'
 import { unMessage } from 'fixtures/message'
 import { Message } from 'interfaces/message'
 import {

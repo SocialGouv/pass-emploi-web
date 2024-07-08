@@ -13,23 +13,23 @@ import { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import {
   CategorieSituation,
   ConseillerHistorique,
-  DetailJeune,
+  DetailBeneficiaire,
   EtatSituation,
   IndicateursSemaine,
   MetadonneesFavoris,
-} from 'interfaces/jeune'
+} from 'interfaces/beneficiaire'
+import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type InformationsPageProps = {
-  idJeune: string
-  jeune: DetailJeune
+  idBeneficiaire: string
+  jeune: DetailBeneficiaire
   situations: Array<{
     categorie: CategorieSituation
     etat?: EtatSituation
@@ -44,7 +44,7 @@ type InformationsPageProps = {
 export type Onglet = 'INFORMATIONS' | 'INDICATEURS' | 'CONSEILLERS'
 
 function InformationsPage({
-  idJeune,
+  idBeneficiaire,
   situations,
   conseillers,
   lectureSeule,
@@ -83,7 +83,7 @@ function InformationsPage({
     ) {
       getIndicateursJeuneComplets(
         conseiller.id,
-        idJeune,
+        idBeneficiaire,
         debutSemaine,
         finSemaine
       ).then(setIndicateursSemaine)
@@ -148,7 +148,7 @@ function InformationsPage({
 
           {estMilo(conseiller) && (
             <BlocSituation
-              idJeune={idJeune}
+              idBeneficiaire={idBeneficiaire}
               situations={situations}
               versionResumee={false}
             />
@@ -170,7 +170,7 @@ function InformationsPage({
               debutSemaine={debutSemaine}
               finSemaine={finSemaine}
               indicateursSemaine={indicateursSemaine}
-              idJeune={idJeune}
+              idBeneficiaire={idBeneficiaire}
               pathPrefix={pathPrefix}
               metadonneesFavoris={metadonneesFavoris}
             />

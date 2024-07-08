@@ -2,23 +2,23 @@ import React, { useState } from 'react'
 
 import { Conversation } from 'components/chat/Conversation'
 import { RechercheMessage } from 'components/chat/RechercheMessage'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { Message } from 'interfaces/message'
 
 type ConversationBeneficiaireProps = {
   conseillers: ConseillerHistorique[]
-  jeuneChat: JeuneChat
+  beneficiaireChat: BeneficiaireChat
   onBack: () => void
 }
 
 export default function ConversationBeneficiaire({
-  jeuneChat,
+  beneficiaireChat,
   conseillers,
   onBack,
 }: ConversationBeneficiaireProps) {
   const [afficherRecherche, setAfficherRecherche] = useState<boolean>(false)
 
-  const beneficiaireNomComplet = `${jeuneChat.prenom} ${jeuneChat.nom}`
+  const beneficiaireNomComplet = `${beneficiaireChat.prenom} ${beneficiaireChat.nom}`
 
   function getConseillerNomComplet(message: Message) {
     const conseillerTrouve = conseillers.find(
@@ -35,7 +35,7 @@ export default function ConversationBeneficiaire({
         <Conversation
           beneficiaireNomComplet={beneficiaireNomComplet}
           getConseillerNomComplet={getConseillerNomComplet}
-          jeuneChat={jeuneChat}
+          beneficiaireChat={beneficiaireChat}
           onBack={onBack}
           toggleAfficherRecherche={() => setAfficherRecherche(true)}
         />
@@ -45,7 +45,7 @@ export default function ConversationBeneficiaire({
         <RechercheMessage
           beneficiaireNomComplet={beneficiaireNomComplet}
           getConseillerNomComplet={getConseillerNomComplet}
-          jeuneChat={jeuneChat}
+          beneficiaireChat={beneficiaireChat}
           toggleAfficherRecherche={() => setAfficherRecherche(false)}
         />
       )}

@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
-import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
 import SituationTag from 'components/jeune/SituationTag'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -18,8 +18,11 @@ import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
 import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
+import {
+  getNomBeneficiaireComplet,
+  BeneficiaireEtablissement,
+} from 'interfaces/beneficiaire'
 import { estMilo, estSuperviseur } from 'interfaces/conseiller'
-import { getNomJeuneComplet, JeuneEtablissement } from 'interfaces/jeune'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import { MetadonneesPagination } from 'types/pagination'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -36,7 +39,7 @@ function EtablissementPage() {
 
   const [recherche, setRecherche] = useState<string>()
   const [resultatsRecherche, setResultatsRecherche] =
-    useState<JeuneEtablissement[]>()
+    useState<BeneficiaireEtablissement[]>()
   const [metadonnees, setMetadonnees] = useState<MetadonneesPagination>()
   const [pageCourante, setPageCourante] = useState<number>()
 
@@ -47,15 +50,15 @@ function EtablissementPage() {
       setResultatsRecherche(undefined)
       setMetadonnees(undefined)
     } else if (nouvelleRecherche(input, page)) {
-      const { rechercheJeunesDeLEtablissement } = await import(
+      const { rechercheBeneficiairesDeLEtablissement } = await import(
         'services/jeunes.service'
       )
-      const resultats = await rechercheJeunesDeLEtablissement(
+      const resultats = await rechercheBeneficiairesDeLEtablissement(
         conseiller.agence!.id!,
         input,
         page
       )
-      setResultatsRecherche(resultats.jeunes)
+      setResultatsRecherche(resultats.beneficiaires)
       setMetadonnees(resultats.metadonnees)
       setPageCourante(page)
     }
@@ -94,7 +97,7 @@ function EtablissementPage() {
       )}
 
       {Boolean(conseiller.agence) && (
-        <RechercheJeune
+        <RechercheBeneficiaire
           onSearchFilterBy={(input) => rechercherJeunes(input, 1)}
           minCaracteres={2}
         />
@@ -134,10 +137,11 @@ function EtablissementPage() {
                   key={jeune.base.id}
                   href={'etablissement/beneficiaires/' + jeune.base.id}
                   linkLabel={
-                    'Accéder à la fiche de ' + getNomJeuneComplet(jeune.base)
+                    'Accéder à la fiche de ' +
+                    getNomBeneficiaireComplet(jeune.base)
                   }
                 >
-                  <TD isBold>{getNomJeuneComplet(jeune.base)}</TD>
+                  <TD isBold>{getNomBeneficiaireComplet(jeune.base)}</TD>
                   {conseillerEstMilo && (
                     <TD>
                       {jeune.situation && (

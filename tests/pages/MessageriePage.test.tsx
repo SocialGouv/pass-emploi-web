@@ -2,11 +2,19 @@ import { act, screen } from '@testing-library/react'
 import React from 'react'
 
 import MessageriePage from 'app/(connected)/messagerie/MessageriePage'
-import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import {
+  BaseBeneficiaire,
+  ConseillerHistorique,
+  BeneficiaireChat,
+} from 'interfaces/beneficiaire'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
@@ -21,11 +29,13 @@ jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 
 describe('MessageriePage client side', () => {
-  const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
-  let jeunesChats: JeuneChat[]
+  const jeunes: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+    extractBaseBeneficiaire
+  )
+  let beneficiairesChats: BeneficiaireChat[]
 
   let conseillers: ConseillerHistorique[]
-  let updateChatsRef: (chats: JeuneChat[]) => void
+  let updateChatsRef: (chats: BeneficiaireChat[]) => void
   let messages: ByDay<MessageListeDiffusion>[]
 
   beforeEach(async () => {
@@ -36,7 +46,7 @@ describe('MessageriePage client side', () => {
     ;(observeConseillerChats as jest.Mock).mockImplementation(
       (_jeune, _cle, fn) => {
         updateChatsRef = fn
-        updateChatsRef(jeunesChats)
+        updateChatsRef(beneficiairesChats)
         return Promise.resolve(() => {})
       }
     )
@@ -44,18 +54,18 @@ describe('MessageriePage client side', () => {
     ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
       desListesDeDiffusion()
     )
-    jeunesChats = [
-      unJeuneChat({
+    beneficiairesChats = [
+      unBeneficiaireChat({
         ...jeunes[0],
         chatId: `chat-${jeunes[0].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
+      unBeneficiaireChat({
         ...jeunes[1],
         chatId: `chat-${jeunes[1].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
+      unBeneficiaireChat({
         ...jeunes[2],
         chatId: `chat-${jeunes[2].id}`,
         seenByConseiller: false,

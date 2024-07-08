@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
 import EnvoiMessageGroupePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { uploadFichier } from 'services/fichiers.service'
@@ -18,10 +18,10 @@ jest.mock('services/fichiers.service')
 jest.mock('services/messages.service')
 
 describe('EnvoiMessageGroupePage client side', () => {
-  let jeunes: JeuneFromListe[]
+  let beneficiaires: BeneficiaireFromListe[]
   let listesDeDiffusion: ListeDeDiffusion[]
 
-  let inputSearchJeune: HTMLSelectElement
+  let inputSearchBeneficiaire: HTMLSelectElement
   let inputMessage: HTMLInputElement
   let fileInput: HTMLInputElement
   let submitButton: HTMLButtonElement
@@ -33,7 +33,7 @@ describe('EnvoiMessageGroupePage client side', () => {
     push = jest.fn(() => Promise.resolve())
     ;(useRouter as jest.Mock).mockReturnValue({ push })
 
-    jeunes = desItemsJeunes()
+    beneficiaires = desItemsBeneficiaires()
     listesDeDiffusion = desListesDeDiffusion()
     ;(signIn as jest.Mock).mockResolvedValue(undefined)
     ;(sendNouveauMessageGroupe as jest.Mock).mockResolvedValue(undefined)
@@ -52,7 +52,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       }
     )
 
-    inputSearchJeune = screen.getByRole('combobox', {
+    inputSearchBeneficiaire = screen.getByRole('combobox', {
       name: /Destinataires/,
     })
     inputMessage = screen.getByLabelText('* Message')
@@ -68,7 +68,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       // Then
       expect(screen.getAllByRole('group').length).toBe(2)
       expect(screen.getByLabelText('* Message')).toBeInTheDocument()
-      expect(inputSearchJeune).toBeInTheDocument()
+      expect(inputSearchBeneficiaire).toBeInTheDocument()
       expect(
         screen.getByRole('button', { name: 'Envoyer' })
       ).toBeInTheDocument()
@@ -104,7 +104,7 @@ describe('EnvoiMessageGroupePage client side', () => {
 
     it('ne valide pas le formulaire si aucun message ou pièce jointe n’est renseigné', async () => {
       // Given
-      await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
+      await userEvent.type(inputSearchBeneficiaire, 'Sanfamiye Nadia')
 
       //When
       await userEvent.click(submitButton)
@@ -123,12 +123,15 @@ describe('EnvoiMessageGroupePage client side', () => {
       // Given
       newMessage = 'Un nouveau message pour plusieurs destinataires'
 
-      await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
-      await userEvent.type(inputSearchJeune, 'Liste export international (1)')
+      await userEvent.type(inputSearchBeneficiaire, 'Sanfamiye Nadia')
+      await userEvent.type(
+        inputSearchBeneficiaire,
+        'Liste export international (1)'
+      )
       await userEvent.type(inputMessage, newMessage)
     })
 
-    it('sélectionne plusieurs jeunes dans la liste', () => {
+    it('sélectionne plusieurs bénéficiaires dans la liste', () => {
       // Then
       expect(screen.getByText('Destinataires (2)')).toBeInTheDocument()
       expect(screen.getByText('Sanfamiye Nadia')).toBeInTheDocument()
@@ -144,7 +147,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       // Then
       expect(uploadFichier).toHaveBeenCalledTimes(0)
       expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
-        idsBeneficiaires: [jeunes[1].id],
+        idsBeneficiaires: [beneficiaires[1].id],
         idsListesDeDiffusion: ['liste-1'],
         newMessage,
         cleChiffrement: 'cleChiffrement',
@@ -233,8 +236,11 @@ describe('EnvoiMessageGroupePage client side', () => {
         type: 'image/png',
       })
 
-      await userEvent.type(inputSearchJeune, 'Sanfamiye Nadia')
-      await userEvent.type(inputSearchJeune, 'Liste export international (1)')
+      await userEvent.type(inputSearchBeneficiaire, 'Sanfamiye Nadia')
+      await userEvent.type(
+        inputSearchBeneficiaire,
+        'Liste export international (1)'
+      )
       await userEvent.type(inputMessage, newMessage)
       await userEvent.upload(fileInput, file, { applyAccept: false })
     })
@@ -258,12 +264,12 @@ describe('EnvoiMessageGroupePage client side', () => {
 
       // Then
       expect(uploadFichier).toHaveBeenCalledWith(
-        [jeunes[1].id],
+        [beneficiaires[1].id],
         ['liste-1'],
         file
       )
       expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
-        idsBeneficiaires: [jeunes[1].id],
+        idsBeneficiaires: [beneficiaires[1].id],
         idsListesDeDiffusion: ['liste-1'],
         newMessage,
         cleChiffrement: 'cleChiffrement',
@@ -280,12 +286,12 @@ describe('EnvoiMessageGroupePage client side', () => {
 
       // Then
       expect(uploadFichier).toHaveBeenCalledWith(
-        [jeunes[1].id],
+        [beneficiaires[1].id],
         ['liste-1'],
         file
       )
       expect(sendNouveauMessageGroupe).toHaveBeenCalledWith({
-        idsBeneficiaires: [jeunes[1].id],
+        idsBeneficiaires: [beneficiaires[1].id],
         idsListesDeDiffusion: ['liste-1'],
         newMessage:
           'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
@@ -311,11 +317,11 @@ describe('EnvoiMessageGroupePage client side', () => {
     })
   })
 
-  describe('quand on selectionne tout les jeunes dans le champ de recherche', () => {
-    it('sélectionne tout les jeunes dans la liste', async () => {
+  describe('quand on selectionne tout les bénéficiaires dans le champ de recherche', () => {
+    it('sélectionne tout les bénéficiaires dans la liste', async () => {
       // When
       await userEvent.type(
-        inputSearchJeune,
+        inputSearchBeneficiaire,
         'Sélectionner tous mes destinataires'
       )
 

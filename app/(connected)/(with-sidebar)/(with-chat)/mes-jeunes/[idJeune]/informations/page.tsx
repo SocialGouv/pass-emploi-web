@@ -9,8 +9,8 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { estUserPoleEmploi } from 'interfaces/conseiller'
-import { getNomJeuneComplet } from 'interfaces/jeune'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
@@ -32,7 +32,7 @@ export async function generateMetadata({
 
   const lectureSeule = user.id !== beneficiaire.idConseiller
   return {
-    title: `Informations - ${getNomJeuneComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
+    title: `Informations - ${getNomBeneficiaireComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
   }
 }
 
@@ -60,7 +60,7 @@ export default async function Informations({
 
       <InformationsPage
         conseillers={conseillers}
-        idJeune={beneficiaire.id}
+        idBeneficiaire={beneficiaire.id}
         situations={beneficiaire.situations}
         lectureSeule={lectureSeule}
         jeune={beneficiaire}

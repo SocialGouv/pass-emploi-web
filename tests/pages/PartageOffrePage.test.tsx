@@ -3,13 +3,13 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
 import PartageOffrePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/[idOffre]/partage/PartageOffrePage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import {
   unDetailImmersion,
   unDetailOffreEmploi,
   unDetailServiceCivique,
 } from 'fixtures/offre'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { partagerOffre } from 'services/messages.service'
@@ -20,7 +20,7 @@ jest.mock('services/messages.service')
 describe('PartageOffrePage client side', () => {
   describe('commun', () => {
     let offre: DetailOffre
-    let jeunes: BaseJeune[]
+    let jeunes: BaseBeneficiaire[]
 
     let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
     let push: Function
@@ -30,7 +30,7 @@ describe('PartageOffrePage client side', () => {
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
       offre = unDetailOffreEmploi()
-      jeunes = desItemsJeunes()
+      jeunes = desItemsBeneficiaires()
       ;(partagerOffre as jest.Mock).mockResolvedValue({})
 
       renderWithContexts(

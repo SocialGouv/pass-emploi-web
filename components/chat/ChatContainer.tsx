@@ -7,7 +7,7 @@ import ConversationBeneficiaire from 'components/chat/ConversationBeneficiaire'
 import ListeListesDeDiffusion from 'components/chat/ListeListesDeDiffusion'
 import RubriqueListesDeDiffusion from 'components/chat/RubriqueListesDeDiffusion'
 import HeaderListeListesDeDiffusion from 'components/messagerie/HeaderListeListesDeDiffusion'
-import { ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
+import { ConseillerHistorique, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
@@ -16,18 +16,18 @@ import { useListeDeDiffusionSelectionnee } from 'utils/chat/listeDeDiffusionSele
 import { useShowRubriqueListeDeDiffusion } from 'utils/chat/showRubriqueListeDeDiffusionContext'
 
 type ChatContainerProps = {
-  jeunesChats: JeuneChat[] | undefined
+  beneficiairesChats: BeneficiaireChat[] | undefined
   menuState: [boolean, Dispatch<SetStateAction<boolean>>]
   messagerieFullScreen?: boolean
 }
 
 export default function ChatContainer({
-  jeunesChats,
+  beneficiairesChats,
   menuState: [showMenu, setShowMenu],
   messagerieFullScreen,
 }: ChatContainerProps) {
   const [idCurrentJeune, setIdCurrentJeune] = useCurrentJeune()
-  const [currentChat, setCurrentChat] = useState<JeuneChat | undefined>(
+  const [currentChat, setCurrentChat] = useState<BeneficiaireChat | undefined>(
     undefined
   )
   const [conseillers, setConseillers] = useState<ConseillerHistorique[]>([])
@@ -51,14 +51,20 @@ export default function ChatContainer({
         (conseillersJeunes) => setConseillers(conseillersJeunes)
       )
 
-      if (jeunesChats && !listeSelectionnee && !showRubriqueListesDeDiffusion)
+      if (
+        beneficiairesChats &&
+        !listeSelectionnee &&
+        !showRubriqueListesDeDiffusion
+      )
         setCurrentChat(
-          jeunesChats.find((jeuneChat) => jeuneChat.id === idCurrentJeune)
+          beneficiairesChats.find(
+            (beneficiaireChat) => beneficiaireChat.id === idCurrentJeune
+          )
         )
     } else {
       setCurrentChat(undefined)
     }
-  }, [idCurrentJeune, jeunesChats])
+  }, [idCurrentJeune, beneficiairesChats])
 
   return (
     <>
@@ -82,7 +88,7 @@ export default function ChatContainer({
 
           {!showRubriqueListesDeDiffusion && (
             <ChatRoom
-              jeunesChats={jeunesChats}
+              beneficiairesChats={beneficiairesChats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
               onAccesListesDiffusion={() =>
@@ -99,7 +105,7 @@ export default function ChatContainer({
           {currentChat && (
             <ConversationBeneficiaire
               onBack={() => setIdCurrentJeune(undefined)}
-              jeuneChat={currentChat}
+              beneficiaireChat={currentChat}
               conseillers={conseillers}
             />
           )}
@@ -107,14 +113,14 @@ export default function ChatContainer({
           {showRubriqueListesDeDiffusion && (
             <RubriqueListesDeDiffusion
               listesDeDiffusion={listesDeDiffusion}
-              chats={jeunesChats}
+              chats={beneficiairesChats}
               onBack={() => setShowRubriqueListesDeDiffusion(false)}
             />
           )}
 
           {!currentChat && !showRubriqueListesDeDiffusion && (
             <ChatRoom
-              jeunesChats={jeunesChats}
+              beneficiairesChats={beneficiairesChats}
               showMenu={showMenu}
               onOuvertureMenu={() => setShowMenu(true)}
               onAccesListesDiffusion={() =>

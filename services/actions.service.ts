@@ -11,7 +11,7 @@ import {
   StatutAction,
   TotalActions,
 } from 'interfaces/action'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import {
   ActionFormData,
   ActionJson,
@@ -27,7 +27,10 @@ import {
   MetadonneesActionsJson,
   QualificationActionJson,
 } from 'interfaces/json/action'
-import { BaseJeuneJson, jsonToBaseJeune } from 'interfaces/json/jeune'
+import {
+  BaseBeneficiaireJson,
+  jsonToBaseBeneficiaire,
+} from 'interfaces/json/beneficiaire'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
 
@@ -35,17 +38,21 @@ export async function getAction(
   idAction: string,
   accessToken: string
 ): Promise<
-  { action: Action; jeune: BaseJeune & { idConseiller: string } } | undefined
+  | { action: Action; jeune: BaseBeneficiaire & { idConseiller: string } }
+  | undefined
 > {
   try {
     const {
       content: { jeune, ...actionJson },
     } = await apiGet<
-      ActionJson & { jeune: BaseJeuneJson & { idConseiller: string } }
+      ActionJson & { jeune: BaseBeneficiaireJson & { idConseiller: string } }
     >(`/actions/${idAction}`, accessToken)
     return {
       action: jsonToAction(actionJson),
-      jeune: { ...jsonToBaseJeune(jeune), idConseiller: jeune.idConseiller },
+      jeune: {
+        ...jsonToBaseBeneficiaire(jeune),
+        idConseiller: jeune.idConseiller,
+      },
     }
   } catch (e) {
     if (e instanceof ApiError) return undefined
@@ -68,7 +75,7 @@ export async function countActionsJeunes(
   }))
 }
 
-export async function getActionsJeuneClientSide(
+export async function getActionsBeneficiaireClientSide(
   idJeune: string,
   options: {
     page: number
@@ -80,15 +87,15 @@ export async function getActionsJeuneClientSide(
   }
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
   const session = await getSession()
-  return getActionsJeune(idJeune, options, session!.accessToken)
+  return getActionsBeneficiaire(idJeune, options, session!.accessToken)
 }
 
-export async function getActionsJeuneServerSide(
+export async function getActionsBeneficiaireServerSide(
   idJeune: string,
   page: number,
   accessToken: string
 ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-  return getActionsJeune(
+  return getActionsBeneficiaire(
     idJeune,
     { page, filtres: { statuts: [], categories: [] } },
     accessToken
@@ -233,7 +240,7 @@ export async function getSituationsNonProfessionnelles(
       )
 }
 
-async function getActionsJeune(
+async function getActionsBeneficiaire(
   idJeune: string,
   {
     tri,

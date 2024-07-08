@@ -20,8 +20,8 @@ import {
   getAction,
   getActionsAQualifierClientSide,
   getActionsAQualifierServerSide,
-  getActionsJeuneClientSide,
-  getActionsJeuneServerSide,
+  getActionsBeneficiaireClientSide,
+  getActionsBeneficiaireServerSide,
   getSituationsNonProfessionnelles,
   qualifier,
   qualifierActions,
@@ -42,7 +42,7 @@ describe('ActionsApiService', () => {
             content: {
               ...uneActionJson({ id: action.id, status: 'not_started' }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -58,7 +58,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -75,7 +75,7 @@ describe('ActionsApiService', () => {
             content: {
               ...uneActionJson({ id: action.id, status: 'in_progress' }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -91,7 +91,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -108,7 +108,7 @@ describe('ActionsApiService', () => {
             content: {
               ...uneActionJson({ id: action.id, status: 'done' }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -124,7 +124,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -141,7 +141,7 @@ describe('ActionsApiService', () => {
             content: {
               ...uneActionJson({ id: action.id, status: 'canceled' }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -157,7 +157,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -189,7 +189,7 @@ describe('ActionsApiService', () => {
                 },
               }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -205,7 +205,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -237,7 +237,7 @@ describe('ActionsApiService', () => {
                 },
               }),
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 firstName: 'Nadia',
                 lastName: 'Sanfamiye',
                 idConseiller: 'id-conseiller',
@@ -253,7 +253,7 @@ describe('ActionsApiService', () => {
       expect(actual).toStrictEqual({
         action,
         jeune: {
-          id: 'jeune-1',
+          id: 'beneficiaire-1',
           prenom: 'Nadia',
           nom: 'Sanfamiye',
           idConseiller: 'id-conseiller',
@@ -275,7 +275,7 @@ describe('ActionsApiService', () => {
     })
   })
 
-  describe('.getActionsJeuneClientSide', () => {
+  describe('.getActionsBeneficiaireClientSide', () => {
     it('renvoie les actions du jeune', async () => {
       // GIVEN
       const actions = uneListeDActions()
@@ -291,7 +291,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await getActionsJeuneClientSide('whatever', {
+      const actual = await getActionsBeneficiaireClientSide('whatever', {
         tri: 'date_decroissante',
         page: 1,
         filtres: { statuts: [], categories: [] },
@@ -322,7 +322,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await getActionsJeuneClientSide('whatever', {
+      const actual = await getActionsBeneficiaireClientSide('whatever', {
         tri: 'date_decroissante',
         page: 1,
         filtres: { statuts: [StatutAction.AFaire], categories: [] },
@@ -356,7 +356,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await getActionsJeuneClientSide('whatever', {
+      const actual = await getActionsBeneficiaireClientSide('whatever', {
         tri: 'date_decroissante',
         page: 1,
         filtres: {
@@ -393,7 +393,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await getActionsJeuneClientSide('whatever', {
+      const actual = await getActionsBeneficiaireClientSide('whatever', {
         tri: 'date_decroissante',
         page: 1,
         filtres: {
@@ -417,7 +417,7 @@ describe('ActionsApiService', () => {
     })
   })
 
-  describe('.getActionsJeuneServerSide', () => {
+  describe('.getActionsBeneficiaireServerSide', () => {
     it('renvoie les actions du jeune', async () => {
       // GIVEN
       const actions = uneListeDActions()
@@ -433,7 +433,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await getActionsJeuneServerSide(
+      const actual = await getActionsBeneficiaireServerSide(
         'whatever',
         1,
         'accessToken'

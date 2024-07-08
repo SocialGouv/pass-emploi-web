@@ -6,15 +6,15 @@ import EmptyState from 'components/EmptyState'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { InlineDefinitionItem } from 'components/ui/InlineDefinitionItem'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 
 type BlocFavorisProps = {
-  idJeune: string
+  idBeneficiaire: string
   metadonneesFavoris: MetadonneesFavoris
 }
 
 export default function BlocFavoris({
-  idJeune,
+  idBeneficiaire,
   metadonneesFavoris: { offres, recherches, autoriseLePartage },
 }: BlocFavorisProps) {
   const pathPrefix = usePathname()?.startsWith('/etablissement')
@@ -45,7 +45,10 @@ export default function BlocFavoris({
             <RecherchesSauvegardees total={recherches.total} />
 
             {autoriseLePartage && (
-              <LienVersFavoris idJeune={idJeune} pathPrefix={pathPrefix} />
+              <LienVersFavoris
+                idBeneficiaire={idBeneficiaire}
+                pathPrefix={pathPrefix}
+              />
             )}
           </dl>
         </div>
@@ -93,16 +96,16 @@ function RecherchesSauvegardees({ total }: { total: number }) {
 }
 
 export function LienVersFavoris({
-  idJeune,
+  idBeneficiaire,
   pathPrefix,
 }: {
-  idJeune: string
+  idBeneficiaire: string
   pathPrefix: string
 }) {
   return (
     <div className='flex justify-end mt-4'>
       <Link
-        href={`${pathPrefix}/${idJeune}/favoris`}
+        href={`${pathPrefix}/${idBeneficiaire}/favoris`}
         className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
       >
         Voir tous les favoris

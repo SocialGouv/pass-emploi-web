@@ -1,24 +1,24 @@
 import { DateTime } from 'luxon'
 
-import { unItemJeune, unJeuneChat } from 'fixtures/jeune'
+import { unItemBeneficiaire, unBeneficiaireChat } from 'fixtures/beneficiaire'
 import {
   CategorieSituation,
-  compareJeuneChat,
-  compareJeunesBySituation,
-} from 'interfaces/jeune'
+  compareBeneficiaireChat,
+  compareBeneficiairesBySituation,
+} from 'interfaces/beneficiaire'
 
 describe('Jeune', () => {
-  describe('.compareJeunesBySituation', () => {
+  describe('.compareBeneficiairesBySituation', () => {
     it('trie les jeunes par situation par ordre alphabétique', () => {
       // Given
-      const unJeuneSituationBenevolat = unItemJeune({
+      const unJeuneSituationBenevolat = unItemBeneficiaire({
         situationCourante: CategorieSituation.CONTRAT_DE_VOLONTARIAT_BENEVOLAT,
       })
-      const unJeuneSituationEmploi = unItemJeune({
+      const unJeuneSituationEmploi = unItemBeneficiaire({
         situationCourante: CategorieSituation.EMPLOI,
       })
-      const unJeuneSansSituation = unItemJeune()
-      const unJeuneSansSituationAussi = unItemJeune()
+      const unJeuneSansSituation = unItemBeneficiaire()
+      const unJeuneSansSituationAussi = unItemBeneficiaire()
 
       // When
       const actual = [
@@ -26,7 +26,7 @@ describe('Jeune', () => {
         unJeuneSituationEmploi,
         unJeuneSansSituation,
         unJeuneSituationBenevolat,
-      ].sort(compareJeunesBySituation)
+      ].sort(compareBeneficiairesBySituation)
 
       // Then
       expect(actual).toStrictEqual([
@@ -38,30 +38,30 @@ describe('Jeune', () => {
     })
   })
 
-  describe('.compareJeuneChat', () => {
+  describe('.compareBeneficiaireChat', () => {
     it('trie d’abord par messages non lus, puis suivis, puis anté-chrnonologique', () => {
       // Given
-      const unJeuneChatNonLu = unJeuneChat({
-        id: 'jeune-1',
+      const unJeuneChatNonLu = unBeneficiaireChat({
+        id: 'beneficiaire-1',
         seenByConseiller: false,
         flaggedByConseiller: false,
       })
 
-      const unJeuneChatSuivi = unJeuneChat({
-        id: 'jeune-2',
+      const unJeuneChatSuivi = unBeneficiaireChat({
+        id: 'beneficiaire-2',
         seenByConseiller: true,
         flaggedByConseiller: true,
       })
 
-      const unJeuneChatRecent = unJeuneChat({
-        id: 'jeune-3',
+      const unJeuneChatRecent = unBeneficiaireChat({
+        id: 'beneficiaire-3',
         seenByConseiller: true,
         flaggedByConseiller: false,
         lastMessageSentAt: DateTime.local(2022, 1, 10),
       })
 
-      const unJeuneChatVieux = unJeuneChat({
-        id: 'jeune-4',
+      const unJeuneChatVieux = unBeneficiaireChat({
+        id: 'beneficiaire-4',
         seenByConseiller: true,
         flaggedByConseiller: false,
         lastMessageSentAt: DateTime.local(2022, 1, 1),
@@ -73,7 +73,7 @@ describe('Jeune', () => {
         unJeuneChatNonLu,
         unJeuneChatRecent,
         unJeuneChatSuivi,
-      ].sort(compareJeuneChat)
+      ].sort(compareBeneficiaireChat)
 
       // Then
       expect(actual).toStrictEqual([

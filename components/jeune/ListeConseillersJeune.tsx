@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import React, { useCallback } from 'react'
 
-import { ConseillerHistorique } from 'interfaces/jeune'
+import { ConseillerHistorique } from 'interfaces/beneficiaire'
 import { toShortDate as _toShortDate } from 'utils/date'
 
 interface ListeConseillersJeuneprops {

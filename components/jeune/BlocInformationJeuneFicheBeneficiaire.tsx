@@ -9,13 +9,13 @@ import {
 } from 'components/jeune/BlocInformationJeune'
 import SituationTag from 'components/jeune/SituationTag'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 import { Conseiller, estMilo } from 'interfaces/conseiller'
-import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
 import { toShortDate } from 'utils/date'
 
 interface BlocInformationJeuneFicheBeneficiaireProps {
   conseiller: Conseiller
-  idJeune: string
+  idBeneficiaire: string
   dateFinCEJ?: string
   email?: string
   situations?: Array<{
@@ -33,7 +33,7 @@ export function BlocInformationJeuneFicheBeneficiaire({
   conseiller,
   dateFinCEJ,
   email,
-  idJeune,
+  idBeneficiaire,
   situations,
   onIdentifiantPartenaireCopie,
   identifiantPartenaire,
@@ -88,22 +88,25 @@ export function BlocInformationJeuneFicheBeneficiaire({
             />
           )}
 
-        <LienVersInformations idJeune={idJeune} pathPrefix={pathPrefix} />
+        <LienVersInformations
+          idBeneficiaire={idBeneficiaire}
+          pathPrefix={pathPrefix}
+        />
       </dl>
     </div>
   )
 }
 
 function LienVersInformations({
-  idJeune,
+  idBeneficiaire,
   pathPrefix,
 }: {
-  idJeune: string
+  idBeneficiaire: string
   pathPrefix: string
 }) {
   return (
     <Link
-      href={`${pathPrefix}/${idJeune}/informations?onglet=informations`}
+      href={`${pathPrefix}/${idBeneficiaire}/informations?onglet=informations`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary'
     >
       Voir plus d’informations

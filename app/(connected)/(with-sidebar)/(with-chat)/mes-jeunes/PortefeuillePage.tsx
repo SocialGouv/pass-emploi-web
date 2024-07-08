@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
 import TableauJeunes from 'components/jeune/TableauJeunes'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
@@ -15,11 +15,11 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import {
-  JeuneAvecInfosComplementaires,
-  JeuneAvecNbActionsNonTerminees,
-} from 'interfaces/jeune'
+  BeneficiaireAvecInfosComplementaires,
+  BeneficiaireAvecNbActionsNonTerminees,
+} from 'interfaces/beneficiaire'
+import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -36,7 +36,7 @@ const TutorielAjoutBeneficiairePoleEmploi = dynamic(
 )
 
 type PortefeuilleProps = {
-  conseillerJeunes: JeuneAvecNbActionsNonTerminees[]
+  conseillerJeunes: BeneficiaireAvecNbActionsNonTerminees[]
   isFromEmail: boolean
 }
 
@@ -49,9 +49,9 @@ function PortefeuillePage({
   const router = useRouter()
 
   const [conseiller, setConseiller] = useConseiller()
-  const [jeunes, setJeunes] = useState<JeuneAvecInfosComplementaires[]>()
+  const [jeunes, setJeunes] = useState<BeneficiaireAvecInfosComplementaires[]>()
   const [jeunesFiltres, setJeunesFiltres] =
-    useState<JeuneAvecInfosComplementaires[]>()
+    useState<BeneficiaireAvecInfosComplementaires[]>()
 
   const [
     isRecuperationBeneficiairesLoading,
@@ -202,7 +202,7 @@ function PortefeuillePage({
       {conseillerJeunes.length > 0 && (
         <>
           <div className='mb-12'>
-            <RechercheJeune onSearchFilterBy={onSearch} />
+            <RechercheBeneficiaire onSearchFilterBy={onSearch} />
           </div>
 
           {!jeunesFiltres && <SpinningLoader />}

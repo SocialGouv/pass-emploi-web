@@ -10,13 +10,13 @@ import { desEvenementsListItems } from 'fixtures/evenement'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getOffres } from 'services/favoris.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
@@ -77,14 +77,20 @@ describe('Rendez-vous de la fiche jeune', () => {
         // Then
         expect(
           screen.getByRole('link', { name: 'Voir les événements passés' })
-        ).toHaveAttribute('href', '/mes-jeunes/jeune-1/rendez-vous-passes')
+        ).toHaveAttribute(
+          'href',
+          '/mes-jeunes/beneficiaire-1/rendez-vous-passes'
+        )
       })
 
       it('permet la prise de rendez-vous', async () => {
         // Then
         expect(
           screen.getByRole('link', { name: 'Créer un rendez-vous' })
-        ).toHaveAttribute('href', '/mes-jeunes/edition-rdv?idJeune=jeune-1')
+        ).toHaveAttribute(
+          'href',
+          '/mes-jeunes/edition-rdv?idJeune=beneficiaire-1'
+        )
       })
     })
     describe('conseiller avec sessions milo', () => {
@@ -159,7 +165,7 @@ async function renderFicheJeune(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
@@ -187,7 +193,7 @@ async function renderFicheJeunePE(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

@@ -22,11 +22,11 @@ import {
   updateMessage,
 } from 'clients/firebase.client'
 import {
-  desItemsJeunes,
+  desItemsBeneficiaires,
   unChat,
-  uneBaseJeune,
-  unJeuneChat,
-} from 'fixtures/jeune'
+  uneBaseBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import {
   desMessagesAntechronologiques,
   desMessagesListeDeDiffusionParJour,
@@ -35,7 +35,11 @@ import {
   unMessage,
 } from 'fixtures/message'
 import { unDetailOffreEmploi } from 'fixtures/offre'
-import { Chat, JeuneChat, JeuneFromListe } from 'interfaces/jeune'
+import {
+  Chat,
+  BeneficiaireChat,
+  BeneficiaireFromListe,
+} from 'interfaces/beneficiaire'
 import { ByDay, Message } from 'interfaces/message'
 import { DetailOffreEmploi } from 'interfaces/offre'
 import {
@@ -102,13 +106,13 @@ describe('MessagesFirebaseAndApiService', () => {
       // Given
       const now = DateTime.now()
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
-      const jeuneChat = unJeuneChat()
+      const beneficiaireChat = unBeneficiaireChat()
 
       // When
-      await setReadByConseiller(jeuneChat.chatId)
+      await setReadByConseiller(beneficiaireChat.chatId)
 
       // Then
-      expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+      expect(updateChat).toHaveBeenCalledWith(beneficiaireChat.chatId, {
         seenByConseiller: true,
         lastConseillerReading: now,
       })
@@ -118,13 +122,13 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.toggleFlag', () => {
     it('updates chat in firebase', async () => {
       // Given
-      const jeuneChat = unJeuneChat()
+      const beneficiaireChat = unBeneficiaireChat()
 
       // When
-      await toggleFlag(jeuneChat.chatId, false)
+      await toggleFlag(beneficiaireChat.chatId, false)
 
       // Then
-      expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+      expect(updateChat).toHaveBeenCalledWith(beneficiaireChat.chatId, {
         flaggedByConseiller: false,
       })
     })
@@ -142,16 +146,20 @@ describe('MessagesFirebaseAndApiService', () => {
           _idConseiller: string,
           fn: (chats: { [idJeune: string]: Chat }) => void
         ) =>
-          fn({ 'jeune-1': unChat(), 'jeune-2': unChat(), 'jeune-3': unChat() })
+          fn({
+            'beneficiaire-1': unChat(),
+            'beneficiaire-2': unChat(),
+            'beneficiaire-3': unChat(),
+          })
       )
 
       // When
       await observeConseillerChats(
         cleChiffrement,
         [
-          { ...uneBaseJeune({ id: 'jeune-1' }) },
-          { ...uneBaseJeune({ id: 'jeune-2' }) },
-          { ...uneBaseJeune({ id: 'jeune-3' }) },
+          { ...uneBaseBeneficiaire({ id: 'beneficiaire-1' }) },
+          { ...uneBaseBeneficiaire({ id: 'beneficiaire-2' }) },
+          { ...uneBaseBeneficiaire({ id: 'beneficiaire-3' }) },
         ],
         updateChats
       )
@@ -165,12 +173,12 @@ describe('MessagesFirebaseAndApiService', () => {
       )
     })
 
-    it('calls provided callback with new jeuneChat built from found chat', async () => {
+    it('calls provided callback with new beneficiaireChat built from found chat', async () => {
       // Then
       expect(updateChats).toHaveBeenCalledWith([
-        { ...uneBaseJeune({ id: 'jeune-1' }), ...unChat() },
-        { ...uneBaseJeune({ id: 'jeune-2' }), ...unChat() },
-        { ...uneBaseJeune({ id: 'jeune-3' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'beneficiaire-1' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'beneficiaire-2' }), ...unChat() },
+        { ...uneBaseBeneficiaire({ id: 'beneficiaire-3' }), ...unChat() },
       ])
     })
   })
@@ -269,11 +277,15 @@ describe('MessagesFirebaseAndApiService', () => {
   describe('.messagesNotRead', () => {
     it('retourne nombre de messages nons lus par les jeunes', async () => {
       // Given
-      const idsJeunes: string[] = ['jeune-1', 'jeune-2', 'jeune-3']
+      const idsJeunes: string[] = [
+        'beneficiaire-1',
+        'beneficiaire-2',
+        'beneficiaire-3',
+      ]
       ;(getChatsDuConseiller as jest.Mock).mockResolvedValue({
-        'jeune-1': unChat({ chatId: `chat-jeune-1` }),
-        'jeune-2': unChat({ chatId: `chat-jeune-2` }),
-        'jeune-3': unChat({ chatId: `chat-jeune-3` }),
+        'beneficiaire-1': unChat({ chatId: `chat-beneficiaire-1` }),
+        'beneficiaire-2': unChat({ chatId: `chat-beneficiaire-2` }),
+        'beneficiaire-3': unChat({ chatId: `chat-beneficiaire-3` }),
       })
 
       //When
@@ -282,9 +294,9 @@ describe('MessagesFirebaseAndApiService', () => {
       //Then
       expect(getChatsDuConseiller).toHaveBeenCalledWith('idConseiller')
       expect(actual).toEqual({
-        ['jeune-1']: 1,
-        ['jeune-2']: 1,
-        ['jeune-3']: 1,
+        ['beneficiaire-1']: 1,
+        ['beneficiaire-2']: 1,
+        ['beneficiaire-3']: 1,
       })
     })
 
@@ -294,28 +306,28 @@ describe('MessagesFirebaseAndApiService', () => {
 
       //When
       const actual = await countMessagesNotRead([
-        'jeune-1',
-        'jeune-2',
-        'jeune-3',
+        'beneficiaire-1',
+        'beneficiaire-2',
+        'beneficiaire-3',
       ])
 
       //Then
       expect(actual).toEqual({
-        'jeune-1': 0,
-        'jeune-2': 0,
-        'jeune-3': 0,
+        'beneficiaire-1': 0,
+        'beneficiaire-2': 0,
+        'beneficiaire-3': 0,
       })
     })
   })
 
   describe('.sendNouveauMessage', () => {
-    let jeuneChat: JeuneChat
+    let beneficiaireChat: BeneficiaireChat
     let newMessage: string
     const now = DateTime.now()
     beforeEach(async () => {
       // Given
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
-      jeuneChat = unJeuneChat()
+      beneficiaireChat = unBeneficiaireChat()
       newMessage = 'nouveauMessage'
       // When
     })
@@ -323,14 +335,14 @@ describe('MessagesFirebaseAndApiService', () => {
     describe('sans piece jointe', () => {
       beforeEach(async () => {
         await sendNouveauMessage({
-          jeuneChat,
+          beneficiaireChat,
           newMessage,
           cleChiffrement,
         })
       })
       it('adds a new message to firebase', async () => {
         // Then
-        expect(addMessage).toHaveBeenCalledWith(jeuneChat.chatId, {
+        expect(addMessage).toHaveBeenCalledWith(beneficiaireChat.chatId, {
           idConseiller: 'idConseiller',
           message: {
             encryptedText: `Encrypted: ${newMessage}`,
@@ -342,12 +354,13 @@ describe('MessagesFirebaseAndApiService', () => {
 
       it('updates chat in firebase', async () => {
         // Then
-        expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+        expect(updateChat).toHaveBeenCalledWith(beneficiaireChat.chatId, {
           lastMessageContent: `Encrypted: ${newMessage}`,
           lastMessageIv: `IV: ${newMessage}`,
           lastMessageSentAt: now,
           lastMessageSentBy: 'conseiller',
-          newConseillerMessageCount: jeuneChat.newConseillerMessageCount + 1,
+          newConseillerMessageCount:
+            beneficiaireChat.newConseillerMessageCount + 1,
           seenByConseiller: true,
           lastConseillerReading: now,
         })
@@ -357,7 +370,7 @@ describe('MessagesFirebaseAndApiService', () => {
         // Then
         expect(apiPost).toHaveBeenCalledWith(
           `/conseillers/idConseiller/jeunes/notify-messages`,
-          { idsJeunes: [jeuneChat.id] },
+          { idsJeunes: [beneficiaireChat.id] },
           accessToken
         )
       })
@@ -382,7 +395,7 @@ describe('MessagesFirebaseAndApiService', () => {
     describe('avec piece jointe', () => {
       beforeEach(async () => {
         await sendNouveauMessage({
-          jeuneChat,
+          beneficiaireChat,
           newMessage,
           infoPieceJointe: { id: 'fake-id', nom: 'fake-nom' },
           cleChiffrement,
@@ -391,7 +404,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
       it('adds a new message to firebase', async () => {
         // Then
-        expect(addMessage).toHaveBeenCalledWith(jeuneChat.chatId, {
+        expect(addMessage).toHaveBeenCalledWith(beneficiaireChat.chatId, {
           idConseiller: 'idConseiller',
           message: {
             encryptedText: `Encrypted: ${newMessage}`,
@@ -426,7 +439,7 @@ describe('MessagesFirebaseAndApiService', () => {
     let newMessageGroupe: string
     beforeEach(async () => {
       // Given
-      idsBeneficiaires = desItemsJeunes().map(({ id }) => id)
+      idsBeneficiaires = desItemsBeneficiaires().map(({ id }) => id)
       idsListesDeDiffusion = ['liste-1', 'liste-2']
       newMessageGroupe = 'nouveau message groupé'
     })
@@ -570,7 +583,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.partagerOffre', () => {
-    let destinataires: JeuneFromListe[]
+    let destinataires: BeneficiaireFromListe[]
     let idsJeunes: string[]
     let chats: { [idJeune: string]: Chat }
     let newMessageGroupe: string
@@ -579,7 +592,7 @@ describe('MessagesFirebaseAndApiService', () => {
     beforeEach(async () => {
       // Given
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
-      destinataires = desItemsJeunes()
+      destinataires = desItemsBeneficiaires()
       idsJeunes = destinataires.map(({ id }) => id)
       newMessageGroupe = 'Regarde cette offre qui pourrait t’intéresser.'
       offre = unDetailOffreEmploi()
@@ -662,7 +675,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.supprimerMessage', () => {
-    const jeuneChat = unJeuneChat()
+    const beneficiaireChat = unBeneficiaireChat()
     const message = unMessage()
     const now = DateTime.now()
     beforeEach(async () => {
@@ -671,15 +684,19 @@ describe('MessagesFirebaseAndApiService', () => {
 
     it('marque le message comme supprimé', async () => {
       // When
-      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement)
+      await supprimerMessage(beneficiaireChat.chatId, message, cleChiffrement)
 
       // Then
-      expect(updateMessage).toHaveBeenCalledWith(jeuneChat.chatId, message.id, {
-        message: 'Encrypted: (message supprimé)',
-        date: now,
-        oldMessage: `Encrypted: content`,
-        status: 'deleted',
-      })
+      expect(updateMessage).toHaveBeenCalledWith(
+        beneficiaireChat.chatId,
+        message.id,
+        {
+          message: 'Encrypted: (message supprimé)',
+          date: now,
+          oldMessage: `Encrypted: content`,
+          status: 'deleted',
+        }
+      )
     })
 
     it('met à jour la conversation si le dernier message est supprimé', async () => {
@@ -687,17 +704,17 @@ describe('MessagesFirebaseAndApiService', () => {
       ;(getIdLastMessage as jest.Mock).mockResolvedValue(message.id)
 
       // When
-      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement)
+      await supprimerMessage(beneficiaireChat.chatId, message, cleChiffrement)
 
       // Then
-      expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+      expect(updateChat).toHaveBeenCalledWith(beneficiaireChat.chatId, {
         lastMessageContent: 'Encrypted: (message supprimé)',
       })
     })
 
     it('track la suppression du message', async () => {
       // When
-      await supprimerMessage(jeuneChat.chatId, message, cleChiffrement)
+      await supprimerMessage(beneficiaireChat.chatId, message, cleChiffrement)
 
       // Then
       expect(apiPost).toHaveBeenCalledWith(
@@ -716,7 +733,7 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.modifierMessage', () => {
-    const jeuneChat = unJeuneChat()
+    const beneficiaireChat = unBeneficiaireChat()
     const message = unMessage()
     const now = DateTime.now()
     beforeEach(async () => {
@@ -726,19 +743,23 @@ describe('MessagesFirebaseAndApiService', () => {
     it('modifie le message', async () => {
       // When
       await modifierMessage(
-        jeuneChat.chatId,
+        beneficiaireChat.chatId,
         message,
         'nouveau contenu',
         cleChiffrement
       )
 
       // Then
-      expect(updateMessage).toHaveBeenCalledWith(jeuneChat.chatId, message.id, {
-        message: 'Encrypted: nouveau contenu',
-        date: now,
-        oldMessage: `Encrypted: content`,
-        status: 'edited',
-      })
+      expect(updateMessage).toHaveBeenCalledWith(
+        beneficiaireChat.chatId,
+        message.id,
+        {
+          message: 'Encrypted: nouveau contenu',
+          date: now,
+          oldMessage: `Encrypted: content`,
+          status: 'edited',
+        }
+      )
     })
 
     it('met à jour la conversation si le dernier message est modifié', async () => {
@@ -747,14 +768,14 @@ describe('MessagesFirebaseAndApiService', () => {
 
       // When
       await modifierMessage(
-        jeuneChat.chatId,
+        beneficiaireChat.chatId,
         message,
         'nouveau contenu',
         cleChiffrement
       )
 
       // Then
-      expect(updateChat).toHaveBeenCalledWith(jeuneChat.chatId, {
+      expect(updateChat).toHaveBeenCalledWith(beneficiaireChat.chatId, {
         lastMessageContent: 'Encrypted: nouveau contenu',
       })
     })
@@ -762,7 +783,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('track la modification du message', async () => {
       // Given
       await modifierMessage(
-        jeuneChat.chatId,
+        beneficiaireChat.chatId,
         message,
         'nouveau contenu',
         cleChiffrement
@@ -785,12 +806,12 @@ describe('MessagesFirebaseAndApiService', () => {
   })
 
   describe('.rechercherMessagesConversation', () => {
-    let jeuneChat: JeuneChat
+    let beneficiaireChat: BeneficiaireChat
     let recherche: string
     const now = DateTime.fromISO('2024-04-24')
 
     beforeEach(() => {
-      jeuneChat = unJeuneChat()
+      beneficiaireChat = unBeneficiaireChat()
       recherche = 'tchoupi'
 
       jest.spyOn(DateTime, 'now').mockReturnValue(now)
@@ -812,7 +833,7 @@ describe('MessagesFirebaseAndApiService', () => {
     it('recherche un mot clé', async () => {
       //When
       await rechercherMessagesConversation(
-        jeuneChat.chatId,
+        beneficiaireChat.chatId,
         recherche,
         cleChiffrement
       )
@@ -820,7 +841,7 @@ describe('MessagesFirebaseAndApiService', () => {
       //Then
       expect(rechercherMessages).toHaveBeenCalledWith(
         accessToken,
-        jeuneChat.chatId,
+        beneficiaireChat.chatId,
         recherche
       )
     })
@@ -839,7 +860,7 @@ describe('MessagesFirebaseAndApiService', () => {
 
       //When
       const resultats = await rechercherMessagesConversation(
-        jeuneChat.chatId,
+        beneficiaireChat.chatId,
         recherche,
         cleChiffrement
       )

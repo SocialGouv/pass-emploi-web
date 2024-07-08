@@ -3,7 +3,7 @@ import React from 'react'
 
 import RendezVousPasses from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
 import { unEvenementListItem } from 'fixtures/evenement'
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -28,7 +28,7 @@ describe('RendezVousPassesPage client side', () => {
 
       renderWithContexts(
         <RendezVousPasses
-          beneficiaire={uneBaseJeune()}
+          beneficiaire={uneBaseBeneficiaire()}
           lectureSeule={false}
           rdvs={rdvs}
         />
@@ -76,7 +76,7 @@ describe('RendezVousPassesPage client side', () => {
       // When
       renderWithContexts(
         <RendezVousPasses
-          beneficiaire={uneBaseJeune()}
+          beneficiaire={uneBaseBeneficiaire()}
           lectureSeule={false}
           rdvs={[]}
         />,

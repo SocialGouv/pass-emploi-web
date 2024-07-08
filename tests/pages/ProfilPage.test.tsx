@@ -4,10 +4,10 @@ import { useRouter } from 'next/navigation'
 
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { JeuneFromListe } from 'interfaces/jeune'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import {
   modifierAgence,
   modifierNotificationsSonores,
@@ -23,7 +23,7 @@ jest.mock('components/Modal')
 
 describe('ProfilPage client side', () => {
   let conseiller: Conseiller
-  let jeunes: JeuneFromListe[]
+  let jeunes: BeneficiaireFromListe[]
   let push: Function
 
   describe('contenu', () => {
@@ -380,7 +380,7 @@ describe('ProfilPage client side', () => {
     describe('en tant que PE avec bénéficiaires', () => {
       it('affiche une modale avec les bonnes informations', async () => {
         // Given
-        jeunes = desItemsJeunes()
+        jeunes = desItemsBeneficiaires()
         ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(
           jeunes
         )
