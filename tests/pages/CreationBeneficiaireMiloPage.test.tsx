@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import CreationBeneficiaireMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
@@ -15,13 +16,20 @@ import {
   getDossierJeune,
 } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/conseiller.service')
 
 describe('CreationBeneficiaireMiloPage client side', () => {
+  let container: HTMLElement
   describe("quand le dossier n'a pas encore été saisi", () => {
     beforeEach(() => {
-      renderWithContexts(<CreationBeneficiaireMiloPage />)
+      ;({ container } = renderWithContexts(<CreationBeneficiaireMiloPage />))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('devrait afficher le champ de recherche de dossier', () => {
@@ -75,11 +83,10 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       setAlerte = jest.fn()
       setPortefeuille = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
-
-      renderWithContexts(<CreationBeneficiaireMiloPage />, {
+      ;({ container } = renderWithContexts(<CreationBeneficiaireMiloPage />, {
         customAlerte: { alerteSetter: setAlerte },
         customPortefeuille: { setter: setPortefeuille },
-      })
+      }))
 
       await userEvent.type(
         screen.getByRole('textbox', { name: 'Numéro de dossier' }),
@@ -88,6 +95,20 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       await userEvent.click(
         screen.getByRole('button', { name: 'Valider le numéro' })
       )
+    })
+
+    it('a11y', async () => {
+      //Given
+      const createCompteButton = screen.getByRole('button', {
+        name: 'Créer le compte',
+      })
+
+      //When
+      await userEvent.click(createCompteButton)
+
+      //Then
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('devrait revenir sur la page des jeunes du conseiller', async () => {
