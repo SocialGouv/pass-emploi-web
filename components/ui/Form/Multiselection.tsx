@@ -42,8 +42,8 @@ export default function Multiselection({
           className='bg-white w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           aria-atomic={true}
         >
-          {avecIndication && renderIndication({ value })}
-          {estUneListe && renderListeItem({ value })}
+          {avecIndication && renderIndication({ value, idItem })}
+          {estUneListe && renderListeItem({ value, idItem })}
           {!avecIndication && !estUneListe && value}
 
           {!disabled && (
