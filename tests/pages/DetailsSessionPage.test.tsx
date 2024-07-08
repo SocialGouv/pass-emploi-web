@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
@@ -17,6 +18,7 @@ import {
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
@@ -25,6 +27,8 @@ jest.mock('services/jeunes.service')
 jest.mock('services/sessions.service')
 
 describe('Détails Session Page Client', () => {
+  let container: HTMLElement
+
   describe('contenu', () => {
     let session: Session
     let beneficiaires: BeneficiaireEtablissement[]
@@ -63,13 +67,18 @@ describe('Détails Session Page Client', () => {
         },
       ]
       // When
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficiaires}
           returnTo='whatever'
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un encart d’information pour la modification sur i-milo', () => {
@@ -513,14 +522,18 @@ describe('Détails Session Page Client', () => {
           },
         ],
       })
-
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficaires}
           returnTo='whatever'
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un message d’alerte', () => {
@@ -577,14 +590,18 @@ describe('Détails Session Page Client', () => {
           },
         ],
       })
-
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficaires}
           returnTo='whatever'
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un message d’alerte', () => {
@@ -994,14 +1011,18 @@ describe('Détails Session Page Client', () => {
             statut: 'AClore',
           },
         })
-
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={beneficaires}
             returnTo='whatever'
           />
-        )
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche un message d’alerte', () => {
