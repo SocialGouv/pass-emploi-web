@@ -77,5 +77,6 @@
   },
   "browser": {
     "elastic-apm-node": false
-  }
+  },
+  "packageManager": "yarn@4.3.1"
 }
