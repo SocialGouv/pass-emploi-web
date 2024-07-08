@@ -1,4 +1,5 @@
 import { act, screen, within } from '@testing-library/react'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -12,11 +13,13 @@ import {
 } from 'services/sessions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/sessions.service')
 
 describe('PilotagePage client side - Sessions', () => {
   describe('contenu', () => {
+    let container: HTMLElement
     let sessions: SessionsAClore[]
 
     beforeEach(async () => {
@@ -26,8 +29,8 @@ describe('PilotagePage client side - Sessions', () => {
       )
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
-      await act(async () =>
-        renderWithContexts(
+      await act(async () => {
+        ;({ container } = renderWithContexts(
           <Pilotage
             onglet='SESSIONS_IMILO'
             actions={{
@@ -54,8 +57,13 @@ describe('PilotagePage client side - Sessions', () => {
               },
             },
           }
-        )
-      )
+        ))
+      })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('résume les activités', async () => {

@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -14,6 +15,7 @@ import {
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ApiError } from 'utils/httpClient'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/actions.service')
 jest.mock('components/Modal')
@@ -22,6 +24,7 @@ describe('PilotagePage client side - Actions', () => {
   describe('contenu', () => {
     let actions: ActionPilotage[]
     let actionSansCategorie: ActionPilotage
+    let container: HTMLElement
 
     beforeEach(async () => {
       actions = uneListeDActionsAQualifier()
@@ -57,8 +60,8 @@ describe('PilotagePage client side - Actions', () => {
       })
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
-      await act(async () =>
-        renderWithContexts(
+      await act(async () => {
+        ;({ container } = renderWithContexts(
           <Pilotage
             onglet='ACTIONS'
             actions={{
@@ -71,8 +74,13 @@ describe('PilotagePage client side - Actions', () => {
               metadonnees: { nombrePages: 1, nombreTotal: 0 },
             }}
           />
-        )
-      )
+        ))
+      })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('résume les activités', async () => {
@@ -217,6 +225,11 @@ describe('PilotagePage client side - Actions', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
       })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
       it('filtre les actions', () => {
         // Then
         expect(getActionsAQualifierClientSide).toHaveBeenCalledWith('1', {
@@ -299,6 +312,11 @@ describe('PilotagePage client side - Actions', () => {
               name: `Sélection ${actions[0].titre} ${actions[0].categorie?.libelle ?? ''}`,
             })
           )
+        })
+
+        it('a11y', async () => {
+          const results = await axe(container)
+          expect(results).toHaveNoViolations()
         })
 
         it('permet de qualifier l’action', () => {
