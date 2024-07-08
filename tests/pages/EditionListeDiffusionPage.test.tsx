@@ -251,7 +251,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
         within(destinataires).getByText(beneficiaire2Fullname)
       ).toBeInTheDocument()
       expect(
-        within(destinataires).getByLabelText(
+        within(destinataires).getByText(
           'Ce bénéficiaire a été réaffecté temporairement à un autre conseiller'
         )
       ).toBeInTheDocument()

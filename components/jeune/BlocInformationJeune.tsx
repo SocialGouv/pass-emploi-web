@@ -82,18 +82,18 @@ export function BlocInformationJeune({
 
 export function Email({ email }: { email: string }) {
   return (
-    <div className='flex items-center'>
+    <dl className='flex items-center'>
       <dt>
         <IconComponent
           name={IconName.Mail}
+          role='img'
           aria-label='e-mail'
-          aria-hidden={false}
           focusable={false}
           className='w-4 h-4 fill-primary mr-2'
         />
       </dt>
       <dd className='text-primary'>{email}</dd>
-    </div>
+    </dl>
   )
 }
 
@@ -104,15 +104,17 @@ export function IdentifiantPartenaire(props: {
 }) {
   return (
     <div className='flex'>
-      <dt className='text-base-regular mr-2'>Identifiant France Travail :</dt>
-      <dd className='text-base-bold' onCopy={props.onCopy}>
-        {props.identifiantPartenaire ?? (
-          <>
-            <span className='sr-only'>non renseigné</span>
-            <span>-</span>
-          </>
-        )}
-      </dd>
+      <dl className='flex'>
+        <dt className='text-base-regular mr-2'>Identifiant France Travail :</dt>
+        <dd className='text-base-bold' onCopy={props.onCopy}>
+          {props.identifiantPartenaire ?? (
+            <>
+              <span className='sr-only'>non renseigné</span>
+              <span>-</span>
+            </>
+          )}
+        </dd>
+      </dl>
       <button
         className='ml-5 flex items-center text-primary'
         aria-label={
