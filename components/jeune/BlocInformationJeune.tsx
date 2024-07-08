@@ -46,19 +46,21 @@ export function BlocInformationJeune({
             </dd>
           </div>
         )}
+      </dl>
 
-        {email && <Email email={email} />}
+      {email && <Email email={email} />}
 
-        {!conseillerEstMilo &&
-          onIdentifiantPartenaireCopie &&
-          onIdentifiantPartenaireClick && (
-            <IdentifiantPartenaire
-              identifiantPartenaire={identifiantPartenaire}
-              onCopy={onIdentifiantPartenaireCopie}
-              onClick={onIdentifiantPartenaireClick}
-            />
-          )}
+      {!conseillerEstMilo &&
+        onIdentifiantPartenaireCopie &&
+        onIdentifiantPartenaireClick && (
+          <IdentifiantPartenaire
+            identifiantPartenaire={identifiantPartenaire}
+            onCopy={onIdentifiantPartenaireCopie}
+            onClick={onIdentifiantPartenaireClick}
+          />
+        )}
 
+      <dl>
         {urlDossier && (
           <DossierExterne href={urlDossier} onClick={onDossierMiloClick} />
         )}
