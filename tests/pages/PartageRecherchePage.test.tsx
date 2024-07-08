@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -14,10 +15,12 @@ import {
 } from 'services/suggestions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/suggestions.service')
 
 describe('Partage Recherche', () => {
+  let container: HTMLElement
   const TITRE = 'Prof - Marseille 06'
   const MOTS_CLES = 'Prof'
   const LABEL_METIER = 'Professeur'
@@ -38,8 +41,7 @@ describe('Partage Recherche', () => {
       alerteSetter = jest.fn()
       push = jest.fn(() => Promise.resolve())
       ;(useRouter as jest.Mock).mockReturnValue({ push })
-
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <PartageRecherchePage
           type={TypeOffre.EMPLOI}
           criteresRecherche={{
@@ -54,7 +56,7 @@ describe('Partage Recherche', () => {
         {
           customAlerte: { alerteSetter },
         }
-      )
+      ))
 
       //Given
       inputSearchBeneficiaire = screen.getByRole('combobox', {
@@ -64,6 +66,11 @@ describe('Partage Recherche', () => {
       submitButton = screen.getByRole('button', {
         name: 'Envoyer',
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     describe('quand le formulaire n’a pas encore été soumis', () => {
@@ -78,15 +85,24 @@ describe('Partage Recherche', () => {
         ).toBeInTheDocument()
       })
 
-      it('ne valide pas le formulaire si aucun destinataires n’est sélectionné', async () => {
-        //Given
-        await userEvent.click(submitButton)
+      describe('ne valide pas le formulaire si aucun destinataires n’est sélectionné', () => {
+        beforeEach(async () => {
+          //Given
+          await userEvent.click(submitButton)
+        })
 
-        // Then
-        expect(inputSearchBeneficiaire.selectedOptions).toBe(undefined)
-        expect(
-          screen.getByText(/Le champ ”Destinataires” est vide./)
-        ).toBeInTheDocument()
+        it('a11y', async () => {
+          const results = await axe(container)
+          expect(results).toHaveNoViolations()
+        })
+
+        it('contenu', () => {
+          // Then
+          expect(inputSearchBeneficiaire.selectedOptions).toBe(undefined)
+          expect(
+            screen.getByText(/Le champ ”Destinataires” est vide./)
+          ).toBeInTheDocument()
+        })
       })
     })
 
@@ -95,6 +111,11 @@ describe('Partage Recherche', () => {
         // Given
         await userEvent.type(inputSearchBeneficiaire, 'Jirac Kenji')
         await userEvent.type(inputSearchBeneficiaire, 'Sanfamiye Nadia')
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('sélectionne plusieurs bénéficiaires dans la liste', () => {
@@ -120,7 +141,7 @@ describe('Partage Recherche', () => {
       beforeEach(() => {
         // Given
         ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PartageRecherchePage
             type={TypeOffre.EMPLOI}
             criteresRecherche={{
@@ -132,7 +153,7 @@ describe('Partage Recherche', () => {
             }}
             returnTo=''
           />
-        )
+        ))
 
         //Given
         inputSearchBeneficiaire = screen.getByRole('combobox', {
@@ -142,6 +163,11 @@ describe('Partage Recherche', () => {
         submitButton = screen.getByRole('button', {
           name: 'Envoyer',
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche les informations de la suggestion d’offre d’emploi', () => {
@@ -176,7 +202,7 @@ describe('Partage Recherche', () => {
       beforeEach(() => {
         // Given
         ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PartageRecherchePage
             type={TypeOffre.ALTERNANCE}
             criteresRecherche={{
@@ -188,7 +214,7 @@ describe('Partage Recherche', () => {
             }}
             returnTo=''
           />
-        )
+        ))
 
         //Given
         inputSearchBeneficiaire = screen.getByRole('combobox', {
@@ -198,6 +224,11 @@ describe('Partage Recherche', () => {
         submitButton = screen.getByRole('button', {
           name: 'Envoyer',
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche les informations de la suggestion d’alternance', () => {
@@ -232,7 +263,7 @@ describe('Partage Recherche', () => {
       beforeEach(() => {
         // Given
         ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PartageRecherchePage
             type={TypeOffre.IMMERSION}
             criteresRecherche={{
@@ -245,7 +276,7 @@ describe('Partage Recherche', () => {
             }}
             returnTo=''
           />
-        )
+        ))
 
         //Given
         inputSearchBeneficiaire = screen.getByRole('combobox', {
@@ -255,6 +286,11 @@ describe('Partage Recherche', () => {
         submitButton = screen.getByRole('button', {
           name: 'Envoyer',
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche les informations de la suggestion d’immersion', () => {
@@ -291,7 +327,7 @@ describe('Partage Recherche', () => {
       beforeEach(() => {
         // Given
         ;(useRouter as jest.Mock).mockReturnValue({ push: () => {} })
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PartageRecherchePage
             type={TypeOffre.SERVICE_CIVIQUE}
             criteresRecherche={{
@@ -302,7 +338,7 @@ describe('Partage Recherche', () => {
             }}
             returnTo=''
           />
-        )
+        ))
 
         //Given
         inputSearchBeneficiaire = screen.getByRole('combobox', {
@@ -312,6 +348,11 @@ describe('Partage Recherche', () => {
         submitButton = screen.getByRole('button', {
           name: 'Envoyer',
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche les informations de la suggestion de service civique', () => {

@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import PartageOffrePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/[idOffre]/partage/PartageOffrePage'
@@ -10,14 +11,22 @@ import {
   unDetailServiceCivique,
 } from 'fixtures/offre'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
-import { DetailOffre, TypeOffre } from 'interfaces/offre'
+import {
+  DetailImmersion,
+  DetailOffre,
+  DetailOffreEmploi,
+  DetailServiceCivique,
+  TypeOffre,
+} from 'interfaces/offre'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { partagerOffre } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/messages.service')
 
 describe('PartageOffrePage client side', () => {
+  let container: HTMLElement
   describe('commun', () => {
     let offre: DetailOffre
     let jeunes: BaseBeneficiaire[]
@@ -32,13 +41,17 @@ describe('PartageOffrePage client side', () => {
       offre = unDetailOffreEmploi()
       jeunes = desItemsBeneficiaires()
       ;(partagerOffre as jest.Mock).mockResolvedValue({})
-
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <PartageOffrePage offre={offre} returnTo='/return/to' />,
         {
           customAlerte: { alerteSetter },
         }
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('contient une liste pour choisir un ou plusieurs jeune', () => {
@@ -89,7 +102,7 @@ describe('PartageOffrePage client side', () => {
     })
 
     describe('formulaire incomplet', () => {
-      it('ne valide pas le formulaire si aucun bénéficiaire n’est sélectionné', async () => {
+      beforeEach(async () => {
         //Given
         let buttonValider: HTMLButtonElement = screen.getByRole('button', {
           name: 'Envoyer',
@@ -97,7 +110,14 @@ describe('PartageOffrePage client side', () => {
 
         //When
         await userEvent.click(buttonValider)
+      })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('ne valide pas le formulaire si aucun bénéficiaire n’est sélectionné', async () => {
         //Then
         expect(partagerOffre).not.toHaveBeenCalled()
         expect(
@@ -123,6 +143,11 @@ describe('PartageOffrePage client side', () => {
         await userEvent.type(selectJeune, 'Jirac Kenji')
         await userEvent.type(selectJeune, "D'Aböville-Muñoz François Maria")
         await userEvent.type(inputMessage, message)
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it("partage l'offre", async () => {
@@ -167,91 +192,138 @@ describe('PartageOffrePage client side', () => {
   })
 
   describe('spécifique', () => {
-    it("affiche les informations de l’offre d'emploi", () => {
-      // Given
-      const offre = unDetailOffreEmploi()
-      renderWithContexts(
-        <PartageOffrePage offre={offre} returnTo='/return/to' />
-      )
+    describe("affiche les informations de l’offre d'emploi", () => {
+      let offre: DetailOffreEmploi
+      beforeEach(() => {
+        // Given
+        offre = unDetailOffreEmploi()
+        ;({ container } = renderWithContexts(
+          <PartageOffrePage offre={offre} returnTo='/return/to' />
+        ))
+      })
 
-      // Then
-      const offreCard = screen.getByRole('heading', {
-        name: 'Offre n°' + offre.id,
-      }).parentElement!
-      expect(within(offreCard).getByText('Emploi')).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.typeContrat)).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
-      expect(
-        within(offreCard).getByText(offre.nomEntreprise!)
-      ).toBeInTheDocument()
-      expect(
-        within(offreCard).getByText(offre.localisation!)
-      ).toBeInTheDocument()
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        const offreCard = screen.getByRole('heading', {
+          name: 'Offre n°' + offre.id,
+        }).parentElement!
+        expect(within(offreCard).getByText('Emploi')).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.typeContrat)
+        ).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.nomEntreprise!)
+        ).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.localisation!)
+        ).toBeInTheDocument()
+      })
     })
 
-    it("affiche les informations de l’offre d'alternance", () => {
-      // Given
-      const offre = unDetailOffreEmploi({ type: TypeOffre.ALTERNANCE })
-      renderWithContexts(
-        <PartageOffrePage offre={offre} returnTo='/return/to' />
-      )
+    describe("affiche les informations de l’offre d'alternance", () => {
+      let offre: DetailOffreEmploi
 
-      // Then
-      const offreCard = screen.getByRole('heading', {
-        name: 'Offre n°' + offre.id,
-      }).parentElement!
-      expect(within(offreCard).getByText('Alternance')).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.typeContrat)).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
-      expect(
-        within(offreCard).getByText(offre.nomEntreprise!)
-      ).toBeInTheDocument()
-      expect(
-        within(offreCard).getByText(offre.localisation!)
-      ).toBeInTheDocument()
+      beforeEach(() => {
+        // Given
+        offre = unDetailOffreEmploi({ type: TypeOffre.ALTERNANCE })
+        ;({ container } = renderWithContexts(
+          <PartageOffrePage offre={offre} returnTo='/return/to' />
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        const offreCard = screen.getByRole('heading', {
+          name: 'Offre n°' + offre.id,
+        }).parentElement!
+        expect(within(offreCard).getByText('Alternance')).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.titre)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.typeContrat)
+        ).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.duree!)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.nomEntreprise!)
+        ).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.localisation!)
+        ).toBeInTheDocument()
+      })
     })
 
-    it('affiche les informations du service civique', () => {
-      // Given
-      const offre = unDetailServiceCivique()
-      renderWithContexts(
-        <PartageOffrePage offre={offre} returnTo='/return/to' />
-      )
+    describe('affiche les informations du service civique', () => {
+      let offre: DetailServiceCivique
 
-      // Then
-      const offreCard = screen.getByRole('heading', {
-        name: offre.titre,
-      }).parentElement!
-      expect(within(offreCard).getByText(offre.domaine)).toBeInTheDocument()
-      expect(
-        within(offreCard).getByText(offre.organisation!)
-      ).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.ville!)).toBeInTheDocument()
-      expect(
-        within(offreCard).getByText('Dès le 17 février 2022')
-      ).toBeInTheDocument()
+      beforeEach(() => {
+        // Given
+        offre = unDetailServiceCivique()
+        ;({ container } = renderWithContexts(
+          <PartageOffrePage offre={offre} returnTo='/return/to' />
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        const offreCard = screen.getByRole('heading', {
+          name: offre.titre,
+        }).parentElement!
+        expect(within(offreCard).getByText(offre.domaine)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.organisation!)
+        ).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.ville!)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText('Dès le 17 février 2022')
+        ).toBeInTheDocument()
+      })
     })
 
-    it("affiche les informations de l'immersion", () => {
-      // Given
-      const offre = unDetailImmersion()
-      renderWithContexts(
-        <PartageOffrePage offre={offre} returnTo='/return/to' />
-      )
+    describe("affiche les informations de l'immersion", () => {
+      let offre: DetailImmersion
 
-      // Then
-      const offreCard = screen.getByRole('heading', {
-        name: offre.titre,
-      }).parentElement!
-      expect(
-        within(offreCard).getByText(offre.nomEtablissement)
-      ).toBeInTheDocument()
-      expect(within(offreCard).getByText(offre.ville)).toBeInTheDocument()
-      expect(
-        within(offreCard).getByText(offre.secteurActivite)
-      ).toBeInTheDocument()
+      beforeEach(() => {
+        // Given
+        offre = unDetailImmersion()
+        ;({ container } = renderWithContexts(
+          <PartageOffrePage offre={offre} returnTo='/return/to' />
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        const offreCard = screen.getByRole('heading', {
+          name: offre.titre,
+        }).parentElement!
+        expect(
+          within(offreCard).getByText(offre.nomEtablissement)
+        ).toBeInTheDocument()
+        expect(within(offreCard).getByText(offre.ville)).toBeInTheDocument()
+        expect(
+          within(offreCard).getByText(offre.secteurActivite)
+        ).toBeInTheDocument()
+      })
     })
   })
 })
