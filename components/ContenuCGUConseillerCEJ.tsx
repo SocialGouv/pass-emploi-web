@@ -66,9 +66,9 @@ export default function ContenuCGUConseillerCEJ() {
         « Superviseur » permet aux agents habilités d’organiser et de modifier
         l’affectation d’un jeune à un Conseiller déterminé.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
         A- Conseiller en Mission Locale
-      </h4>
+      </h3>
       <p className='mb-4'>
         L’authentification se fait via les identifiants de l’outil professionnel
         i-Milo : un identifiant et un mot de passe. Si l’utilisateur est déjà
@@ -77,9 +77,9 @@ export default function ContenuCGUConseillerCEJ() {
         pas encore authentifié dans son i-Milo, il s’authentifie via la mire de
         connexion i-Milo.
       </p>
-      <h4 className='mb-2 mt-2 text-s-bold text-accent_2'>
+      <h3 className='mb-2 mt-2 text-s-bold text-accent_2'>
         B- Conseiller France Travail
-      </h4>
+      </h3>
       <p className='mb-4'>
         L’authentification se fait via les identifiants métier France Travail
         (système « PEAMA ») : le DGASI et un mot de passe. Par ailleurs ces
