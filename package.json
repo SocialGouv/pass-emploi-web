@@ -22,7 +22,7 @@
     "@next/bundle-analyzer": "14.2.4",
     "crypto-js": "4.2.0",
     "dotenv": "16.4.5",
-    "elastic-apm-node": "4.6.0",
+    "elastic-apm-node": "4.7.0",
     "firebase": "10.12.3",
     "html-react-parser": "5.1.10",
     "jsonwebtoken": "9.0.2",
@@ -37,12 +37,12 @@
     "pino": "9.2.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-router-dom": "6.23.1",
+    "react-router-dom": "6.24.1",
     "sharp": "0.33.4"
   },
   "devDependencies": {
     "@svgr/webpack": "8.1.0",
-    "@testing-library/dom": "^10.1.0",
+    "@testing-library/dom": "^10.3.1",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
@@ -71,7 +71,7 @@
     "tailwindcss": "^3.4.4",
     "ts-loader": "^9.5.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   },
   "resolutions": {
     "@firebase/firestore/@grpc/grpc-js": "^1.9.15"
