@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/dom'
 import { act } from '@testing-library/react'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import React from 'react'
 
 import EmargementRdvPage from 'app/(connected)/(full-page)/emargement/[idEvenement]/EmargementRdvPage'
@@ -8,8 +9,10 @@ import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { unDetailSession } from 'fixtures/session'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toFrenchDateTime } from 'utils/date'
+expect.extend(toHaveNoViolations)
 
 describe('<EmargementRdvPage>', () => {
+  let container: HTMLElement
   const beneficiaire = uneBaseBeneficiaire({ nom: 'LeRoi', prenom: 'Babar' })
   const acAEmarger = unEvenement({
     titre: 'Meeting de la famille Pirate',
@@ -25,17 +28,24 @@ describe('<EmargementRdvPage>', () => {
   })
 
   describe('quand l’événement est une ac', () => {
-    it('affiche les informations de l’ac', async () => {
+    beforeEach(async () => {
       //When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <EmargementRdvPage
             evenement={acAEmarger}
             agence='Montastruc-la-Conseillère'
           />
-        )
+        ))
       })
+    })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it('affiche les informations de l’ac', async () => {
       //Then
       expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
         'Mission Locale de Montastruc-la-Conseillère'
@@ -51,17 +61,24 @@ describe('<EmargementRdvPage>', () => {
   })
 
   describe('quand l’événement est une session', () => {
-    it('affiche les informations de la session', async () => {
+    beforeEach(async () => {
       //When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <EmargementRdvPage
             evenement={sessionAEmarger}
             agence='Montastruc-la-Conseillère'
           />
-        )
+        ))
       })
+    })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it('affiche les informations de la session', async () => {
       //Then
       expect(screen.getByRole('heading', { level: 2 })).toHaveAccessibleName(
         'Mission Locale de Montastruc-la-Conseillère'
