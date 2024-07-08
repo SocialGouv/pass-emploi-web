@@ -1,4 +1,5 @@
 import { act, screen, within } from '@testing-library/react'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import React from 'react'
 
 import OffrePage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/[idOffre]/OffrePage'
@@ -6,10 +7,12 @@ import { unDetailImmersion } from 'fixtures/offre'
 import { DetailImmersion } from 'interfaces/offre'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('components/PageActionsPortal')
 
 describe('OffrePage client side - Immersion', () => {
+  let container: HTMLElement
   let offre: DetailImmersion
 
   beforeEach(async () => {
@@ -18,8 +21,13 @@ describe('OffrePage client side - Immersion', () => {
 
     // When
     await act(async () => {
-      renderWithContexts(<OffrePage offre={offre} />)
+      ;({ container } = renderWithContexts(<OffrePage offre={offre} />))
     })
+  })
+
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 
   it("permet de partager l'offre", () => {
