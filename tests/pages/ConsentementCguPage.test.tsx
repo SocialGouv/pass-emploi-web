@@ -1,5 +1,6 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -9,10 +10,12 @@ import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { modifierDateSignatureCGU } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/conseiller.service')
 
 describe('ConsentementCGUPage client side', () => {
+  let container: HTMLElement
   let routerPush: Function
 
   beforeEach(async () => {
@@ -23,48 +26,68 @@ describe('ConsentementCGUPage client side', () => {
   })
 
   describe('Adapte le texte', () => {
-    it('Pour un conseiller BRSA', async () => {
-      // Given
+    describe('Pour un conseiller BRSA', () => {
       const conseiller = unConseiller({
         structure: StructureConseiller.POLE_EMPLOI_BRSA,
       })
 
-      // When
-      await act(async () => {
-        renderWithContexts(<ConsentementCguPage returnTo='/mes-jeunes' />, {
-          customConseiller: conseiller,
+      beforeEach(async () => {
+        await act(async () => {
+          ;({ container } = renderWithContexts(
+            <ConsentementCguPage returnTo='/mes-jeunes' />,
+            {
+              customConseiller: conseiller,
+            }
+          ))
         })
       })
 
-      // Then
-      expect(
-        screen.getByText(
-          /La plateforme pass emploi a pour objet de contribuer à l’insertion professionnelle des Usagers du RSA./
-        )
-      ).toBeInTheDocument()
-      expect(() => screen.getByText('CEJ')).toThrow()
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', async () => {
+        // Then
+        expect(
+          screen.getByText(
+            /La plateforme pass emploi a pour objet de contribuer à l’insertion professionnelle des Usagers du RSA./
+          )
+        ).toBeInTheDocument()
+        expect(() => screen.getByText('CEJ')).toThrow()
+      })
     })
 
-    it('Pour un conseiller CEJ', async () => {
-      // Given
+    describe('Pour un conseiller CEJ', () => {
       const conseiller = unConseiller({
         structure: StructureConseiller.MILO,
       })
 
-      // When
-      await act(async () => {
-        renderWithContexts(<ConsentementCguPage returnTo='/mes-jeunes' />, {
-          customConseiller: conseiller,
+      beforeEach(async () => {
+        await act(async () => {
+          ;({ container } = renderWithContexts(
+            <ConsentementCguPage returnTo='/mes-jeunes' />,
+            {
+              customConseiller: conseiller,
+            }
+          ))
         })
       })
 
-      // Then
-      expect(
-        screen.getByText(
-          /La plateforme CEJ a pour objet de contribuer à la diminution du décrochage des jeunes en accompagnement vers l’emploi./
-        )
-      ).toBeInTheDocument()
-      expect(() => screen.getByText('pass emploi')).toThrow()
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', async () => {
+        // Then
+        expect(
+          screen.getByText(
+            /La plateforme CEJ a pour objet de contribuer à la diminution du décrochage des jeunes en accompagnement vers l’emploi./
+          )
+        ).toBeInTheDocument()
+        expect(() => screen.getByText('pass emploi')).toThrow()
+      })
     })
   })
 
@@ -72,9 +95,17 @@ describe('ConsentementCGUPage client side', () => {
     beforeEach(async () => {
       // Given
       const conseiller = unConseiller()
-      renderWithContexts(<ConsentementCguPage returnTo='/mes-jeunes' />, {
-        customConseiller: conseiller,
-      })
+      ;({ container } = renderWithContexts(
+        <ConsentementCguPage returnTo='/mes-jeunes' />,
+        {
+          customConseiller: conseiller,
+        }
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('Affiche un message d’erreur quand le conseiller ne donne pas son consentement', async () => {
@@ -108,6 +139,11 @@ describe('ConsentementCGUPage client side', () => {
       it('Redirige vers la page souhaitée', async () => {
         // Then
         expect(routerPush).toHaveBeenCalledWith('/mes-jeunes')
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
     })
   })
