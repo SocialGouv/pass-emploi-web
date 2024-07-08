@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import EnvoiMessageGroupePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
@@ -12,12 +13,15 @@ import { uploadFichier } from 'services/fichiers.service'
 import { sendNouveauMessageGroupe, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ApiError } from 'utils/httpClient'
+expect.extend(toHaveNoViolations)
 
 jest.mock('components/Modal')
 jest.mock('services/fichiers.service')
 jest.mock('services/messages.service')
 
 describe('EnvoiMessageGroupePage client side', () => {
+  let container: HTMLElement
+
   let beneficiaires: BeneficiaireFromListe[]
   let listesDeDiffusion: ListeDeDiffusion[]
 
@@ -41,8 +45,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       id: 'id-fichier',
       nom: 'imageupload.png',
     })
-
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <EnvoiMessageGroupePage
         listesDiffusion={listesDeDiffusion}
         returnTo='/mes-jeunes'
@@ -50,7 +53,7 @@ describe('EnvoiMessageGroupePage client side', () => {
       {
         customAlerte: { alerteSetter },
       }
-    )
+    ))
 
     inputSearchBeneficiaire = screen.getByRole('combobox', {
       name: /Destinataires/,
@@ -64,6 +67,11 @@ describe('EnvoiMessageGroupePage client side', () => {
   })
 
   describe("quand le formulaire n'a pas encore été soumis", () => {
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
     it('devrait afficher les champs pour envoyer un message', () => {
       // Then
       expect(screen.getAllByRole('group').length).toBe(2)
@@ -129,6 +137,11 @@ describe('EnvoiMessageGroupePage client side', () => {
         'Liste export international (1)'
       )
       await userEvent.type(inputMessage, newMessage)
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('sélectionne plusieurs bénéficiaires dans la liste', () => {
@@ -245,6 +258,11 @@ describe('EnvoiMessageGroupePage client side', () => {
       await userEvent.upload(fileInput, file, { applyAccept: false })
     })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
     it('affiche le nom du fichier sélectionné', () => {
       // Then
       expect(screen.getByText('imageupload.png')).toBeInTheDocument()
@@ -300,20 +318,30 @@ describe('EnvoiMessageGroupePage client side', () => {
       })
     })
 
-    it("affiche un message d'erreur en cas d'échec de l'upload de la pièce jointe", async () => {
-      // Given
-      const messageErreur = 'Le poids du document dépasse 5Mo'
-      ;(uploadFichier as jest.Mock).mockRejectedValue(
-        new ApiError(400, messageErreur)
-      )
+    describe("affiche un message d'erreur en cas d'échec de l'upload de la pièce jointe", () => {
+      let messageErreur: string
+      beforeEach(async () => {
+        // Given
+        messageErreur = 'Le poids du document dépasse 5Mo'
+        ;(uploadFichier as jest.Mock).mockRejectedValue(
+          new ApiError(400, messageErreur)
+        )
 
-      // When
-      await userEvent.click(submitButton)
+        // When
+        await userEvent.click(submitButton)
+      })
 
-      // Then
-      expect(uploadFichier).toHaveBeenCalledTimes(1)
-      expect(sendNouveauMessageGroupe).toHaveBeenCalledTimes(0)
-      expect(screen.getByText(messageErreur)).toBeInTheDocument()
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', async () => {
+        // Then
+        expect(uploadFichier).toHaveBeenCalledTimes(1)
+        expect(sendNouveauMessageGroupe).toHaveBeenCalledTimes(0)
+        expect(screen.getByText(messageErreur)).toBeInTheDocument()
+      })
     })
   })
 
