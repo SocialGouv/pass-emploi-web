@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -11,11 +12,13 @@ import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { deleteAction, modifierAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/actions.service')
 jest.mock('components/PageActionsPortal')
 
 describe('ActionPage client side', () => {
+  let container: HTMLElement
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let routerPush: Function
   const action = uneAction()
@@ -41,7 +44,7 @@ describe('ActionPage client side', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <DetailActionPage
           action={action}
           jeune={jeune}
@@ -52,7 +55,12 @@ describe('ActionPage client side', () => {
         {
           customAlerte: { alerteSetter },
         }
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it("affiche les information d'une action", () => {
@@ -111,7 +119,7 @@ describe('ActionPage client side', () => {
     ;(deleteAction as jest.Mock).mockResolvedValue({})
 
     beforeEach(async () => {
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <DetailActionPage
           action={action}
           jeune={jeune}
@@ -123,7 +131,12 @@ describe('ActionPage client side', () => {
           customAlerte: { alerteSetter },
           customConseiller: { id: 'fake-id' },
         }
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un encart lecture seule si ce n‘est pas le conseiller du jeune', async () => {
@@ -194,6 +207,27 @@ describe('ActionPage client side', () => {
         ).toMatch(
           '/mes-jeunes/beneficiaire-1/actions/id-action-1/qualification?liste=beneficiaire'
         )
+      })
+
+      it('a11y', async () => {
+        ;({ container } = renderWithContexts(
+          <DetailActionPage
+            action={actionAQualifier}
+            jeune={jeune}
+            commentaires={[]}
+            lectureSeule={false}
+            from='beneficiaire'
+          />,
+          {
+            customConseiller: {
+              structure: StructureConseiller.MILO,
+            },
+            customAlerte: { alerteSetter },
+          }
+        ))
+
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       describe('quand le conseiller vient de la page pilotage', () => {
@@ -281,8 +315,7 @@ describe('ActionPage client side', () => {
       //When
       beforeEach(async () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
-
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
@@ -296,7 +329,12 @@ describe('ActionPage client side', () => {
             },
             customAlerte: { alerteSetter },
           }
-        )
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche un encart d’information de qualification en SNP', async () => {
@@ -330,8 +368,7 @@ describe('ActionPage client side', () => {
       //When
       beforeEach(async () => {
         ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
-
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <DetailActionPage
             action={actionAQualifier}
             jeune={jeune}
@@ -345,7 +382,12 @@ describe('ActionPage client side', () => {
             },
             customAlerte: { alerteSetter },
           }
-        )
+        ))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('ne permet pas de modifier le statut de l’action', () => {
