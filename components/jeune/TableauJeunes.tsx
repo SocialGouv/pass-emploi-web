@@ -290,18 +290,19 @@ export default function TableauJeunes({
                       {jeune.structureMilo?.id ===
                         conseiller.structureMilo?.id &&
                         jeune.isReaffectationTemporaire && (
-                          <span
-                            aria-label='bénéficiaire temporaire'
-                            className='self-center mr-2'
-                          >
+                          <span className='self-center mr-2'>
                             <IconComponent
                               name={IconName.Schedule}
-                              aria-hidden={true}
                               focusable={false}
                               className='w-4 h-4'
+                              role='img'
+                              aria-labelledby='label-beneficiaire-temporaire'
                               title='bénéficiaire temporaire'
                             />
-                            <span className='sr-only'>
+                            <span
+                              id='label-beneficiaire-temporaire'
+                              className='sr-only'
+                            >
                               bénéficiaire temporaire
                             </span>
                           </span>
@@ -311,12 +312,13 @@ export default function TableauJeunes({
                         <span className='self-center mr-2'>
                             <IconComponent
                             name={IconName.Error}
-                            aria-hidden={true}
                             focusable={false}
+                            role='img'
+                            aria-labelledby='label-ml-differente'
                             className='w-4 h-4 fill-warning'
                             title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                           />
-                          <span className='sr-only'>
+                          <span id='label-ml-differente' className='sr-only'>
                             Ce bénéficiaire est rattaché à une Mission Locale
                             différente de la vôtre.
                           </span>
