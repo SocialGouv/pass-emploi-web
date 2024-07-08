@@ -1,9 +1,11 @@
 import { render } from '@testing-library/react'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { signOut } from 'next-auth/react'
 import React from 'react'
 
 import LogoutPage from 'app/(connexion)/logout/LogoutPage'
 import { signOut as chatSignOut } from 'services/messages.service'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/messages.service', () => ({
   signOut: jest.fn(async () => {}),
@@ -13,9 +15,16 @@ jest.mock('next-auth/react', () => ({
 }))
 
 describe('LogoutPage client side', () => {
+  let container: HTMLElement
+
   beforeEach(() => {
     // Given
-    render(<LogoutPage />)
+    ;({ container } = render(<LogoutPage />))
+  })
+
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 
   it('déconnecte de la messagerie', async () => {

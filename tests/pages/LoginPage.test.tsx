@@ -1,16 +1,19 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import React from 'react'
 
 import LoginPage from 'app/(connexion)/login/LoginPage'
+expect.extend(toHaveNoViolations)
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }))
 
 describe('LoginPage client side', () => {
+  let container: HTMLElement
   beforeEach(async () => {
     ;(useSearchParams as jest.Mock).mockReturnValue({
       get: (param: string) => param,
@@ -19,13 +22,18 @@ describe('LoginPage client side', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      render(
+      ;({ container } = render(
         <LoginPage
           ssoFranceTravailBRSAEstActif={true}
           ssoFranceTravailAIJEstActif={true}
           isFromEmail={false}
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('devrait afficher deux titres de niveau 2', () => {
@@ -146,18 +154,12 @@ describe('LoginPage client side', () => {
 
   describe("quand l'utilisateur est sur mobile", () => {
     let originalInnerWidth: PropertyDescriptor
-    beforeEach(() => {
+    beforeEach(async () => {
       originalInnerWidth = Object.getOwnPropertyDescriptor(
         window,
         'innerWidth'
       )!
-    })
 
-    afterEach(() => {
-      Object.defineProperty(window, 'innerWidth', originalInnerWidth)
-    })
-
-    it("affiche une modale d'onboarding", async () => {
       // Given
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -167,11 +169,22 @@ describe('LoginPage client side', () => {
 
       // When
       await act(async () => {
-        render(
+        ;({ container } = render(
           <LoginPage ssoFranceTravailBRSAEstActif={true} isFromEmail={false} />
-        )
+        ))
       })
+    })
 
+    afterEach(() => {
+      Object.defineProperty(window, 'innerWidth', originalInnerWidth)
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it("affiche une modale d'onboarding", async () => {
       // Then
       expect(
         screen.getByRole('heading', {
