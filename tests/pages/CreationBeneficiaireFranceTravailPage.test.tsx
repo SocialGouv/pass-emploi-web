@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/navigation'
 
@@ -13,10 +14,12 @@ import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { createCompteJeuneFranceTravail } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/jeunes.service')
 
 describe('CreationBeneficiaireFranceTravailPage client side', () => {
+  let container: HTMLElement
   let submitButton: HTMLElement
 
   let push: Function
@@ -30,11 +33,10 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
     portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
-
-    renderWithContexts(<CreationBeneficiaireFranceTravailPage />, {
+    ;({ container } = renderWithContexts(<CreationBeneficiaireFranceTravailPage />, {
       customAlerte: { alerteSetter },
       customPortefeuille: { setter: portefeuilleSetter },
-    })
+    }))
 
     submitButton = screen.getByRole('button', {
       name: 'Créer le compte',
@@ -42,6 +44,11 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
   })
 
   describe("quand le formulaire n'a pas encore été soumis", () => {
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
     it('devrait afficher les champ de création de compte', () => {
       // Then
       expect(
@@ -63,6 +70,11 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
         await userEvent.type(inputName, 'Sanfamiye')
         const inputEmail = screen.getByLabelText(emailLabel)
         await userEvent.type(inputEmail, 'nadia.sanfamiye@francetravail.fr')
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('demande le remplissage du prénom', async () => {
@@ -121,6 +133,20 @@ describe('CreationBeneficiaireFranceTravailPage client side', () => {
       await userEvent.type(inputName, 'Sanfamiye')
       const inputEmail = screen.getByLabelText(emailLabel)
       await userEvent.type(inputEmail, 'nadia.sanfamiye@francetravail.fr')
+    })
+
+    it('a11y', async () => {
+      // Given
+      ;(createCompteJeunePoleEmploi as Mock<any>).mockResolvedValue(
+        uneBaseJeune()
+      )
+
+      // When
+      await userEvent.click(submitButton)
+
+      //Then
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('devrait revenir sur la page des jeunes du conseiller', async () => {
