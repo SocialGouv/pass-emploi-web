@@ -1,23 +1,32 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import React from 'react'
 
 import FavorisPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/favoris/FavorisPage'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 describe('FavorisPage client side', () => {
+  let container: HTMLElement
+
   const offres = uneListeDOffres()
   const recherches = uneListeDeRecherches()
 
   beforeEach(async () => {
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <FavorisPage
         offres={offres}
         recherches={recherches}
         lectureSeule={false}
       />
-    )
+    ))
+  })
+
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 
   it('affiche la liste des offres du jeune', () => {
