@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 
-import CreationJeuneMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
+import CreationBeneficiaireMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
@@ -18,10 +18,10 @@ import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/conseiller.service')
 
-describe('CreationJeuneMiloPage client side', () => {
+describe('CreationBeneficiaireMiloPage client side', () => {
   describe("quand le dossier n'a pas encore été saisi", () => {
     beforeEach(() => {
-      renderWithContexts(<CreationJeuneMiloPage />)
+      renderWithContexts(<CreationBeneficiaireMiloPage />)
     })
 
     it('devrait afficher le champ de recherche de dossier', () => {
@@ -76,7 +76,7 @@ describe('CreationJeuneMiloPage client side', () => {
       setPortefeuille = jest.fn()
       ;(useRouter as jest.Mock).mockReturnValue({ push })
 
-      renderWithContexts(<CreationJeuneMiloPage />, {
+      renderWithContexts(<CreationBeneficiaireMiloPage />, {
         customAlerte: { alerteSetter: setAlerte },
         customPortefeuille: { setter: setPortefeuille },
       })

@@ -10,7 +10,7 @@ import {
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { estUserFranceTravail } from 'interfaces/conseiller'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
@@ -67,7 +67,7 @@ export default async function Informations({
         metadonneesFavoris={metadonneesJeune}
         onglet={searchParamToOnglet(
           searchParams?.onglet,
-          estUserPoleEmploi(user)
+          estUserFranceTravail(user)
         )}
       />
     </>
@@ -76,11 +76,11 @@ export default async function Informations({
 
 function searchParamToOnglet(
   onglet: string | undefined,
-  estPoleEmploi: boolean
+  estFranceTravail: boolean
 ): Onglet {
   switch (onglet) {
     case 'indicateurs':
-      return estPoleEmploi ? 'INFORMATIONS' : 'INDICATEURS'
+      return estFranceTravail ? 'INFORMATIONS' : 'INDICATEURS'
     case 'conseillers':
       return 'CONSEILLERS'
     case 'informations':

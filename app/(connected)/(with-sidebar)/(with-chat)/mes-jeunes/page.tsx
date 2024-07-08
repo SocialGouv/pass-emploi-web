@@ -8,7 +8,7 @@ import {
   compareBeneficiairesByNom,
   BeneficiaireAvecNbActionsNonTerminees,
 } from 'interfaces/beneficiaire'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { estUserFranceTravail } from 'interfaces/conseiller'
 import { countActionsJeunes } from 'services/actions.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -28,7 +28,7 @@ export default async function Portefeuille({
   )
 
   let beneficiairesAvecNbActionsNonTerminees: BeneficiaireAvecNbActionsNonTerminees[]
-  if (estUserPoleEmploi(user)) {
+  if (estUserFranceTravail(user)) {
     beneficiairesAvecNbActionsNonTerminees = beneficiaires.map(
       (beneficiaire) => ({
         ...beneficiaire,

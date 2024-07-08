@@ -32,10 +32,10 @@ export default async function Login({
       </header>
 
       <LoginPage
-        ssoPoleEmploiBRSAEstActif={
+        ssoFranceTravailBRSAEstActif={
           process.env.NEXT_PUBLIC_ENABLE_PE_BRSA_SSO === 'true'
         }
-        ssoPoleEmploiAIJEstActif={
+        ssoFranceTravailAIJEstActif={
           process.env.NEXT_PUBLIC_ENABLE_PE_AIJ_SSO === 'true'
         }
         isFromEmail={isFromEmail}

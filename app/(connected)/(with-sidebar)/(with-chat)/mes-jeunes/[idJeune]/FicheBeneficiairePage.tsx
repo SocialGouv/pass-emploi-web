@@ -28,7 +28,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
+import { estMilo, estFranceTravail } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
@@ -84,8 +84,8 @@ type FicheBeneficiaireProps = {
   onglet: Onglet
   erreurSessions?: boolean
   metadonneesFavoris?: MetadonneesFavoris
-  offresPE?: Offre[]
-  recherchesPE?: Recherche[]
+  offresFT?: Offre[]
+  recherchesFT?: Recherche[]
 }
 
 function FicheBeneficiairePage({
@@ -96,8 +96,8 @@ function FicheBeneficiairePage({
   metadonneesFavoris,
   onglet,
   lectureSeule,
-  offresPE,
-  recherchesPE,
+  offresFT,
+  recherchesFT,
   erreurSessions,
 }: FicheBeneficiaireProps) {
   const router = useRouter()
@@ -272,7 +272,7 @@ function FicheBeneficiairePage({
   }, [jeune, lectureSeule])
 
   useEffect(() => {
-    if (!estPoleEmploi(conseiller) && !indicateursSemaine) {
+    if (!estFranceTravail(conseiller) && !indicateursSemaine) {
       getIndicateursJeuneAlleges(
         conseiller.id,
         jeune.id,
@@ -388,7 +388,7 @@ function FicheBeneficiairePage({
         />
       </div>
 
-      {!estPoleEmploi(conseiller) && (
+      {!estFranceTravail(conseiller) && (
         <>
           <div className='flex justify-between mt-6 mb-4'>
             <div className='flex'>
@@ -440,7 +440,7 @@ function FicheBeneficiairePage({
           <TabList className='mt-10'>
             <Tab
               label='Actions'
-              count={!estPoleEmploi(conseiller) ? totalActions : undefined}
+              count={!estFranceTravail(conseiller) ? totalActions : undefined}
               selected={currentTab === 'ACTIONS'}
               controls='liste-actions'
               onSelectTab={() => switchTab('ACTIONS')}
@@ -455,7 +455,7 @@ function FicheBeneficiairePage({
             />
             <Tab
               label='Rendez-vous'
-              count={!estPoleEmploi(conseiller) ? rdvs.length : undefined}
+              count={!estFranceTravail(conseiller) ? rdvs.length : undefined}
               selected={currentTab === 'RDVS'}
               controls='liste-rdvs'
               onSelectTab={() => switchTab('RDVS')}
@@ -543,11 +543,11 @@ function FicheBeneficiairePage({
         </>
       )}
 
-      {estPoleEmploi(conseiller) && (
+      {estFranceTravail(conseiller) && (
         <>
           {metadonneesFavoris?.autoriseLePartage &&
-            offresPE &&
-            recherchesPE && (
+            offresFT &&
+            recherchesFT && (
               <>
                 <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
                 <p className='text-base-regular'>
@@ -555,8 +555,8 @@ function FicheBeneficiairePage({
                   mises en favoris.
                 </p>
                 <TabFavoris
-                  offres={offresPE}
-                  recherches={recherchesPE}
+                  offres={offresFT}
+                  recherches={recherchesFT}
                   lectureSeule={lectureSeule}
                 />
               </>

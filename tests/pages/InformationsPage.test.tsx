@@ -215,7 +215,7 @@ describe('InformationsPage client side', () => {
     })
   })
 
-  describe('quand l’utilisateur est un conseiller Pôle Empoi', () => {
+  describe('quand l’utilisateur est un conseiller France Travail', () => {
     it('n’affiche pas l’onglet Indicateurs', async () => {
       // Given
       await renderHistorique([], [], StructureConseiller.POLE_EMPLOI, jeune)

@@ -4,7 +4,7 @@ import EtapesTutoAjoutBeneficiaire from 'components/mes-jeunes/EtapesTutoAjoutBe
 import { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 
-export default function TutorielAjoutBeneficiairePoleEmploi() {
+export default function TutorielAjoutBeneficiaireFranceTravail() {
   const etapes = [
     {
       icon: IconName.NumberCircleOne,
