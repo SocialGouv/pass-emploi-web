@@ -530,7 +530,6 @@ function DetailsSessionPage({
             <ul
               aria-label='Bénéficiaires sélectionnés'
               id='selected-beneficiaires'
-              role='region'
               className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
               aria-live='polite'
               aria-relevant='additions removals'
