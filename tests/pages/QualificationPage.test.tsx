@@ -1,5 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { DateTime } from 'luxon'
 
 import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
@@ -14,12 +15,14 @@ import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { qualifier } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/actions.service')
 
 describe('QualificationPage client side', () => {
   let action: Action & { jeune: { id: string } }
   let categories: SituationNonProfessionnelle[]
+  let container: HTMLElement
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   beforeEach(() => {
@@ -44,7 +47,7 @@ describe('QualificationPage client side', () => {
     alerteSetter = jest.fn()
 
     // When
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <QualificationPage
         beneficiaire={uneBaseBeneficiaire()}
         action={action}
@@ -55,7 +58,7 @@ describe('QualificationPage client side', () => {
       {
         customAlerte: { alerteSetter },
       }
-    )
+    ))
   })
 
   describe('quand il s’agit d’une action SNP', () => {
@@ -63,6 +66,11 @@ describe('QualificationPage client side', () => {
       // Given
       const selectSNP = screen.getByRole('combobox', { name: '* Catégorie' })
       await userEvent.selectOptions(selectSNP, categories[1].code)
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it("affiche les informations principales de l'action", () => {
@@ -148,6 +156,11 @@ describe('QualificationPage client side', () => {
         fireEvent.change(inputDateFin, { target: { value: '2022-09-05' } })
       })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
       it('affiche un message d’erreur si le commentaire est vide', async () => {
         // When
         await userEvent.clear(inputTitreEtDescription)
@@ -205,6 +218,11 @@ describe('QualificationPage client side', () => {
           )
         })
 
+        it('a11y', async () => {
+          const results = await axe(container)
+          expect(results).toHaveNoViolations()
+        })
+
         it('envoie la qualification au fuseau horaire du navigateur du client', async () => {
           // Then
           expect(qualifier).toHaveBeenCalledWith(action.id, 'SNP_3', {
@@ -255,6 +273,11 @@ describe('QualificationPage client side', () => {
       await userEvent.selectOptions(selectSNP, categories[3].code)
     })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
     it('affiche seulement les informations principales', () => {
       // Then
       expect(
@@ -280,6 +303,11 @@ describe('QualificationPage client side', () => {
           name: /Enregistrer/,
         })
         await userEvent.click(submit)
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it("qualifie l'action en NON SNP", () => {
