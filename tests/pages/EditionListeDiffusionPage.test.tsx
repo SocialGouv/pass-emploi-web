@@ -17,6 +17,8 @@ import {
   supprimerListeDeDiffusion,
 } from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { axe, toHaveNoViolations } from 'jest-axe'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/Modal')
@@ -24,6 +26,7 @@ jest.mock('components/PageActionsPortal')
 
 describe('Page d’édition d’une liste de diffusion', () => {
   let beneficiaires: BaseBeneficiaire[]
+  let container: HTMLElement
 
   let alerteSetter: (alert: AlerteParam | undefined) => void
   let routerPush: jest.Mock
@@ -39,12 +42,17 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
   describe('contenu', () => {
     beforeEach(() => {
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <EditionListeDiffusionPage returnTo='/mes-jeunes/listes-de-diffusion' />,
         {
           customAlerte: { alerteSetter },
         }
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche le formulaire', () => {
@@ -79,6 +87,11 @@ describe('Page d’édition d’une liste de diffusion', () => {
         creationButton = screen.getByRole('button', {
           name: 'Créer la liste',
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('ne soumet pas le formulaire quand aucun titre n’est renseigné', async () => {
@@ -132,6 +145,11 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
         // When
         await userEvent.click(creationButton)
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       describe('quand le formulaire est validé', () => {
@@ -194,7 +212,7 @@ describe('Page d’édition d’une liste de diffusion', () => {
       listeDeDiffusion = uneListeDeDiffusion({
         beneficiaires: [beneficiaire0, beneficiaire2],
       })
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <EditionListeDiffusionPage
           returnTo='/mes-jeunes/listes-de-diffusion'
           liste={listeDeDiffusion}
@@ -202,7 +220,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
         {
           customAlerte: { alerteSetter },
         }
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('permet de supprimer la liste', async () => {
@@ -301,6 +324,11 @@ describe('Page d’édition d’une liste de diffusion', () => {
         await userEvent.click(
           screen.getByRole('button', { name: 'Modifier la liste' })
         )
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('modifie la liste', async () => {
