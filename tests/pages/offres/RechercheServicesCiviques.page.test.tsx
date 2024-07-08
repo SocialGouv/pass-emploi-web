@@ -6,6 +6,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { DateTime } from 'luxon'
 import React from 'react'
 
@@ -27,6 +28,7 @@ import {
 import { searchServicesCiviques } from 'services/services-civiques.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/referentiel.service')
 jest.mock('services/services-civiques.service')
@@ -458,6 +460,11 @@ describe('Page Recherche Offres Service civique', () => {
         offresList = screen.getByRole('list', {
           description: 'Liste des résultats (37 offres)',
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(rendered.container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche toutes les offres', async () => {
