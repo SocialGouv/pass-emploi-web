@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -9,11 +10,13 @@ import { StatutAnimationCollective } from 'interfaces/evenement'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { cloreSession } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/sessions.service')
 jest.mock('services/conseiller.service')
 
 describe('Cloture Session', () => {
+  let container: HTMLElement
   let session = unDetailSession({
     session: {
       ...unDetailSession().session,
@@ -53,7 +56,7 @@ describe('Cloture Session', () => {
     })
 
     // When
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <ClotureSession
         session={session}
         inscriptionsInitiales={inscriptionsInitiales}
@@ -62,7 +65,12 @@ describe('Cloture Session', () => {
       {
         customAlerte: { alerteSetter },
       }
-    )
+    ))
+  })
+
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 
   it('affiche les bénéficiaires de la session', async () => {
@@ -128,6 +136,11 @@ describe('Cloture Session', () => {
       const clore = screen.getByRole('button', { name: 'Clore la session' })
       expect(clore).toBeInTheDocument()
       await userEvent.click(clore)
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('clôt la session', async () => {
