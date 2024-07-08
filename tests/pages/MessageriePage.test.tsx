@@ -1,4 +1,5 @@
 import { act, screen } from '@testing-library/react'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import React from 'react'
 
 import MessageriePage from 'app/(connected)/messagerie/MessageriePage'
@@ -23,12 +24,14 @@ import {
   observeConseillerChats,
 } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/jeunes.service')
 jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 
 describe('MessageriePage client side', () => {
+  let container: HTMLElement
   const jeunes: BaseBeneficiaire[] = desItemsBeneficiaires().map(
     extractBaseBeneficiaire
   )
@@ -74,14 +77,21 @@ describe('MessageriePage client side', () => {
   })
 
   describe('tunnel de messagerie', () => {
-    it('affiche un message de bienvenue au landing sur la page', async () => {
+    beforeEach(async () => {
       //When
-      renderWithContexts(<MessageriePage />, {
+      ;({ container } = renderWithContexts(<MessageriePage />, {
         customConseiller: {
           structure: StructureConseiller.POLE_EMPLOI,
         },
-      })
+      }))
+    })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it('affiche un message de bienvenue au landing sur la page', async () => {
       //Then
       expect(
         screen.getByText('Bienvenue dans votre espace de messagerie.')
@@ -90,20 +100,29 @@ describe('MessageriePage client side', () => {
   })
 
   describe('tunnel des listes de diffusion', () => {
-    it('conseille à l’utilisateur de sélectionner une liste de diffusion au clic sur ”voir mes listes de diffusion”', async () => {
-      //When
-      await act(async () => {
-        renderWithContexts(<MessageriePage />, {
-          customConseiller: {
-            structure: StructureConseiller.POLE_EMPLOI,
-          },
-          customShowRubriqueListeDeDiffusion: { value: true },
+    describe('conseille à l’utilisateur de sélectionner une liste de diffusion au clic sur ”voir mes listes de diffusion”', () => {
+      beforeEach(async () => {
+        //When
+        await act(async () => {
+          ;({ container } = renderWithContexts(<MessageriePage />, {
+            customConseiller: {
+              structure: StructureConseiller.POLE_EMPLOI,
+            },
+            customShowRubriqueListeDeDiffusion: { value: true },
+          }))
         })
       })
-      //Then
-      expect(
-        screen.getByText('Veuillez sélectionner une liste de diffusion.')
-      ).toBeInTheDocument()
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+      it('contenu', async () => {
+        //Then
+        expect(
+          screen.getByText('Veuillez sélectionner une liste de diffusion.')
+        ).toBeInTheDocument()
+      })
     })
 
     describe('quand une liste est sélectionée', () => {
@@ -113,7 +132,7 @@ describe('MessageriePage client side', () => {
 
         //When
         await act(async () => {
-          renderWithContexts(<MessageriePage />, {
+          ;({ container } = renderWithContexts(<MessageriePage />, {
             customConseiller: {
               structure: StructureConseiller.POLE_EMPLOI,
             },
@@ -121,10 +140,14 @@ describe('MessageriePage client side', () => {
             customListeDeDiffusionSelectionnee: {
               value: listeSelectionnee,
             },
-          })
+          }))
         })
       })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
       it('affiche le lien vers la page de modification de la liste si une liste est sélectionnée', async () => {
         expect(
           screen.getByRole('link', {
