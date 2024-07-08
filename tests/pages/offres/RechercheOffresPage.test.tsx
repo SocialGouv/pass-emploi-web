@@ -1,16 +1,25 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import React from 'react'
 
 import RechercheOffres from 'app/(connected)/(with-sidebar)/(with-chat)/offres/RechercheOffresPage'
 import { searchOffresEmploi } from 'services/offres-emploi.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/offres-emploi.service')
 
 describe('Page Recherche Offres', () => {
+  let container: HTMLElement
+
   beforeEach(() => {
-    renderWithContexts(<RechercheOffres />, {})
+    ;({ container } = renderWithContexts(<RechercheOffres />, {}))
+  })
+
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 
   it('nécessite de selectionner un type d’offre', () => {
