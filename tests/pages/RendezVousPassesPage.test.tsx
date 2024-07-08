@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import React from 'react'
 
 import RendezVousPasses from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
@@ -6,9 +7,11 @@ import { unEvenementListItem } from 'fixtures/evenement'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { EvenementListItem } from 'interfaces/evenement'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 describe('RendezVousPassesPage client side', () => {
   describe('quand il y a des rendez-vous passés', () => {
+    let container: HTMLElement
     let rdvs: EvenementListItem[]
     beforeEach(async () => {
       // Given
@@ -25,14 +28,18 @@ describe('RendezVousPassesPage client side', () => {
         }),
         unEvenementListItem({ id: 'evenement-3' }),
       ]
-
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <RendezVousPasses
           beneficiaire={uneBaseBeneficiaire()}
           lectureSeule={false}
           rdvs={rdvs}
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche le tableau des rendez-vous passés du conseiller avec le jeune', async () => {
@@ -72,17 +79,25 @@ describe('RendezVousPassesPage client side', () => {
   })
 
   describe('quand il n’y a pas de rendez-vous passés', () => {
-    it('affiche un message', async () => {
+    let container: HTMLElement
+    beforeEach(async () => {
       // When
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <RendezVousPasses
           beneficiaire={uneBaseBeneficiaire()}
           lectureSeule={false}
           rdvs={[]}
         />,
         {}
-      )
+      ))
+    })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it('affiche un message', async () => {
       // Then
       expect(
         screen.getByText(
