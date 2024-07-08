@@ -1,18 +1,31 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 
 import ListesDiffusionPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/listes-de-diffusion/ListesDiffusionPage'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('components/PageActionsPortal')
 
 describe('Page Listes de Diffusion', () => {
+  let container: HTMLElement
   describe('contenu', () => {
+    beforeEach(async () => {
+      ;({ container } = renderWithContexts(
+        <ListesDiffusionPage listesDiffusion={[]} />
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
     it('afficher un lien pour créer une liste de diffusion', () => {
       // Given - When
-      renderWithContexts(<ListesDiffusionPage listesDiffusion={[]} />)
       const pageActionPortal = screen.getByTestId('page-action-portal')
 
       // Then
@@ -27,7 +40,14 @@ describe('Page Listes de Diffusion', () => {
   describe('quand il n’y a pas de listes de diffusion', () => {
     beforeEach(() => {
       // Given - When
-      renderWithContexts(<ListesDiffusionPage listesDiffusion={[]} />)
+      ;({ container } = renderWithContexts(
+        <ListesDiffusionPage listesDiffusion={[]} />
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche le message idoine', async () => {
@@ -55,9 +75,14 @@ describe('Page Listes de Diffusion', () => {
       // Given
       listesDeDiffusion = desListesDeDiffusion()
       // When
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <ListesDiffusionPage listesDiffusion={listesDeDiffusion} />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche les informations des listes', () => {
