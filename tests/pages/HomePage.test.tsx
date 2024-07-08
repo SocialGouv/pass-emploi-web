@@ -1,5 +1,6 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import HomePage from 'app/(connected)/(with-sidebar)/(with-chat)/(index)/HomePage'
@@ -9,11 +10,13 @@ import { Agence } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { modifierAgence } from 'services/conseiller.service'
 import renderWithContexts from 'tests/renderWithContexts'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/conseiller.service')
 jest.mock('components/Modal')
 
 describe('HomePage client side', () => {
+  let container: HTMLElement
   let replace: jest.Mock
   beforeEach(() => {
     // Given
@@ -25,7 +28,7 @@ describe('HomePage client side', () => {
     beforeEach(async () => {
       // When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <HomePage
             afficherModaleAgence={true}
             afficherModaleEmail={false}
@@ -35,8 +38,13 @@ describe('HomePage client side', () => {
           {
             customConseiller: { structure: StructureConseiller.MILO },
           }
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('contient un message pour demander la structure du conseiller', () => {
@@ -76,7 +84,7 @@ describe('HomePage client side', () => {
 
       // When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <HomePage
             afficherModaleAgence={true}
             afficherModaleEmail={false}
@@ -88,8 +96,13 @@ describe('HomePage client side', () => {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
             customAlerte: { alerteSetter },
           }
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it("contient un message pour demander l'agence du conseiller", () => {
@@ -230,7 +243,7 @@ describe('HomePage client side', () => {
     beforeEach(async () => {
       // When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <HomePage
             afficherModaleAgence={false}
             afficherModaleEmail={true}
@@ -240,8 +253,13 @@ describe('HomePage client side', () => {
           {
             customConseiller: { structure: StructureConseiller.MILO },
           }
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('contient un message pour demander l’adresse email du conseiller', () => {
@@ -266,10 +284,10 @@ describe('HomePage client side', () => {
 
   describe('quand c’est un nouveau conseiller', () => {
     describe('quand le conseiller est France Travail', () => {
-      it('affiche l’onboarding', async () => {
+      beforeEach(async () => {
         // When
         await act(async () => {
-          renderWithContexts(
+          ;({ container } = renderWithContexts(
             <HomePage
               afficherModaleAgence={false}
               afficherModaleEmail={false}
@@ -279,11 +297,17 @@ describe('HomePage client side', () => {
             {
               customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
             }
-          )
+          ))
         })
+      })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('affiche l’onboarding', async () => {
         // Then
-
         expect(
           screen.getByRole('heading', {
             level: 2,
@@ -326,10 +350,10 @@ describe('HomePage client side', () => {
     })
 
     describe('quand le conseiller est Milo', () => {
-      it('affiche l’onboarding', async () => {
+      beforeEach(async () => {
         // When
         await act(async () => {
-          renderWithContexts(
+          ;({ container } = renderWithContexts(
             <HomePage
               afficherModaleAgence={false}
               afficherModaleEmail={false}
@@ -339,11 +363,17 @@ describe('HomePage client side', () => {
             {
               customConseiller: { structure: StructureConseiller.MILO },
             }
-          )
+          ))
         })
+      })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('affiche l’onboarding', async () => {
         // Then
-
         expect(
           screen.getByRole('heading', {
             level: 2,
@@ -395,10 +425,10 @@ describe('HomePage client side', () => {
     })
 
     describe('quand le conseiller est BRSA', () => {
-      it('affiche l’onboarding', async () => {
+      beforeEach(async () => {
         // When
         await act(async () => {
-          renderWithContexts(
+          ;({ container } = renderWithContexts(
             <HomePage
               afficherModaleAgence={false}
               afficherModaleEmail={false}
@@ -410,9 +440,16 @@ describe('HomePage client side', () => {
                 structure: StructureConseiller.POLE_EMPLOI_BRSA,
               },
             }
-          )
+          ))
         })
+      })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('affiche l’onboarding', async () => {
         // Then
         expect(
           screen.getByRole('heading', {
