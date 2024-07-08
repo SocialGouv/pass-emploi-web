@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import React from 'react'
 
 import EtablissementPage from 'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
@@ -15,6 +16,7 @@ import { rechercheBeneficiairesDeLEtablissement } from 'services/jeunes.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toRelativeDateTime } from 'utils/date'
+expect.extend(toHaveNoViolations)
 
 jest.mock('services/jeunes.service')
 jest.mock('services/referentiel.service')
@@ -23,6 +25,7 @@ jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('EtablissementPage client side', () => {
+  let container: HTMLElement
   const unBeneficiaire = (page: number): BeneficiaireEtablissement => ({
     base: {
       id: 'id-jeune',
@@ -48,16 +51,22 @@ describe('EtablissementPage client side', () => {
 
   describe('Render', () => {
     describe('quand le conseiller est superviseur', () => {
-      it('affiche un lien vers la page de réaffectation', () => {
-        // When
-        renderWithContexts(<EtablissementPage />, {
+      beforeEach(async () => {
+        ;({ container } = renderWithContexts(<EtablissementPage />, {
           customConseiller: {
             structure: StructureConseiller.MILO,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
             estSuperviseur: true,
           },
-        })
+        }))
+      })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('affiche un lien vers la page de réaffectation', () => {
         // Then
         expect(
           screen.getByRole('link', {
@@ -69,12 +78,17 @@ describe('EtablissementPage client side', () => {
 
     describe('quand le conseiller n’est pas superviseur', () => {
       beforeEach(async () => {
-        renderWithContexts(<EtablissementPage />, {
+        ;({ container } = renderWithContexts(<EtablissementPage />, {
           customConseiller: {
             structure: StructureConseiller.MILO,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
           },
-        })
+        }))
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche un champ de recherche', () => {
@@ -278,14 +292,22 @@ describe('EtablissementPage client side', () => {
   })
 
   describe('Quand le conseiller n’est pas MILO', () => {
-    it('n’affiche pas la colonne Situation', async () => {
-      // Given
-      renderWithContexts(<EtablissementPage />, {
+    beforeEach(async () => {
+      ;({ container } = renderWithContexts(<EtablissementPage />, {
         customConseiller: {
           structure: StructureConseiller.POLE_EMPLOI,
           agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
         },
-      })
+      }))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it('n’affiche pas la colonne Situation', async () => {
+      // Given
       const inputRechercheBeneficiaire = screen.getByLabelText(
         /Rechercher un bénéficiaire par son nom ou prénom/
       )
@@ -313,10 +335,15 @@ describe('EtablissementPage client side', () => {
 
       // When
       await act(async () => {
-        renderWithContexts(<EtablissementPage />, {
+        ;({ container } = renderWithContexts(<EtablissementPage />, {
           customConseiller: { structure: StructureConseiller.MILO },
-        })
+        }))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('n’affiche pas le champs de recherche', async () => {
