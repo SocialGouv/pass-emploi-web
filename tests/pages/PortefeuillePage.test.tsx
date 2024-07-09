@@ -1,25 +1,25 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
-import { unConseiller } from 'fixtures/conseiller'
 import {
   desBeneficiairesAvecActionsNonTerminees,
   unBeneficiaireAvecActionsNonTerminees,
 } from 'fixtures/beneficiaire'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
+import { unConseiller } from 'fixtures/conseiller'
 import {
   CategorieSituation,
   BeneficiaireAvecNbActionsNonTerminees,
 } from 'interfaces/beneficiaire'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/messages.service')
 jest.mock('services/conseiller.service')
@@ -55,7 +55,12 @@ describe('PortefeuillePage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -200,7 +205,12 @@ describe('PortefeuillePage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -250,7 +260,12 @@ describe('PortefeuillePage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 

@@ -280,48 +280,51 @@ export default function TableauJeunes({
             <TBody>
               {jeunesAffiches.map(
                 (jeune: BeneficiaireAvecInfosComplementaires) => (
-                <TR
-                  key={jeune.id}
-                  href={`/mes-jeunes/${jeune.id}`}
-                  linkLabel={getRowLabel(jeune)}
-                >
-                  <TD isBold className='rounded-l-base'>
-                    <span className='flex items-baseline'>
-                      {jeune.structureMilo?.id ===
-                        conseiller.structureMilo?.id &&
-                        jeune.isReaffectationTemporaire && (
+                  <TR
+                    key={jeune.id}
+                    href={`/mes-jeunes/${jeune.id}`}
+                    linkLabel={getRowLabel(jeune)}
+                  >
+                    <TD isBold className='rounded-l-base'>
+                      <span className='flex items-baseline'>
+                        {jeune.structureMilo?.id ===
+                          conseiller.structureMilo?.id &&
+                          jeune.isReaffectationTemporaire && (
+                            <span className='self-center mr-2'>
+                              <IconComponent
+                                name={IconName.Schedule}
+                                focusable={false}
+                                className='w-4 h-4'
+                                role='img'
+                                aria-labelledby={`label-beneficiaire-temporaire-${jeune.id}`}
+                                title='bénéficiaire temporaire'
+                              />
+                              <span
+                                id={`label-beneficiaire-temporaire-${jeune.id}`}
+                                className='sr-only'
+                              >
+                                bénéficiaire temporaire
+                              </span>
+                            </span>
+                          )}
+                        {jeune.structureMilo?.id !==
+                          conseiller.structureMilo?.id && (
                           <span className='self-center mr-2'>
                             <IconComponent
-                              name={IconName.Schedule}
+                              name={IconName.Error}
                               focusable={false}
-                              className='w-4 h-4'
                               role='img'
-                              aria-labelledby='label-beneficiaire-temporaire'
-                              title='bénéficiaire temporaire'
+                              aria-labelledby={`label-ml-differente-${jeune.id}`}
+                              className='w-4 h-4 fill-warning'
+                              title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                             />
                             <span
-                              id='label-beneficiaire-temporaire'
+                              id={`label-ml-differente-${jeune.id}`}
                               className='sr-only'
                             >
-                              bénéficiaire temporaire
+                              Ce bénéficiaire est rattaché à une Mission Locale
+                              différente de la vôtre.
                             </span>
-                          </span>
-                        )}
-                      {jeune.structureMilo?.id !==
-                        conseiller.structureMilo?.id && (
-                        <span className='self-center mr-2'>
-                            <IconComponent
-                            name={IconName.Error}
-                            focusable={false}
-                            role='img'
-                            aria-labelledby='label-ml-differente'
-                            className='w-4 h-4 fill-warning'
-                            title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
-                          />
-                          <span id='label-ml-differente' className='sr-only'>
-                            Ce bénéficiaire est rattaché à une Mission Locale
-                            différente de la vôtre.
-                          </span>
                           </span>
                         )}
                         {getNomBeneficiaireComplet(jeune)}

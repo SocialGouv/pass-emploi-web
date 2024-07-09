@@ -1,13 +1,13 @@
-import { screen } from '@testing-library/react'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { act, screen } from '@testing-library/react'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import RendezVousPasses from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/rendez-vous-passes/RendezVousPassesPage'
-import { unEvenementListItem } from 'fixtures/evenement'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
+import { unEvenementListItem } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 describe('RendezVousPassesPage client side', () => {
   describe('quand il y a des rendez-vous passés', () => {
@@ -38,7 +38,12 @@ describe('RendezVousPassesPage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -93,7 +98,12 @@ describe('RendezVousPassesPage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 

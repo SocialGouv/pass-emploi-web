@@ -1,29 +1,28 @@
 import { act, screen } from '@testing-library/react'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
 
 describe('FicheBeneficiairePage client side', () => {
-  let container: HTMLElement
   beforeEach(async () => {
     ;(getIndicateursJeuneAlleges as jest.Mock).mockResolvedValue(
       desIndicateursSemaine()
@@ -61,6 +60,7 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers non référent', () => {
+    let container: HTMLElement
     let setIdJeune: (id: string | undefined) => void
     beforeEach(async () => {
       // Given
@@ -120,11 +120,13 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers non France Travail', () => {
+    let container: HTMLElement
+
     it('a11y', async () => {
       await act(async () => {
         ;({ container } = renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailJeune()}
+            jeune={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -213,26 +215,17 @@ describe('FicheBeneficiairePage client side', () => {
     })
 
     it('a11y', async () => {
+      let results: AxeResults
+      const container = await renderFicheJeune(
+        metadonneesFavoris,
+        offresFT,
+        recherchesFT
+      )
+
       await act(async () => {
-        ;({ container } = renderWithContexts(
-          <FicheBeneficiairePage
-            jeune={unDetailJeune()}
-            rdvs={[]}
-            actionsInitiales={desActionsInitiales()}
-            categoriesActions={desCategories()}
-            onglet='AGENDA'
-            lectureSeule={false}
-            metadonneesFavoris={metadonneesFavoris}
-            offresPE={offresPE}
-            recherchesPE={recherchesPE}
-          />,
-          {
-            customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-          }
-        ))
+        results = await axe(container)
       })
 
-      const results = await axe(container)
       expect(results).toHaveNoViolations()
     })
 
@@ -338,9 +331,10 @@ async function renderFicheJeune(
   offresFT: Offre[],
   recherchesFT: Recherche[],
   lectureSeule?: boolean
-) {
+): Promise<HTMLElement> {
+  let container: HTMLElement
   await act(async () => {
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <FicheBeneficiairePage
         jeune={unDetailBeneficiaire()}
         rdvs={[]}
@@ -355,6 +349,7 @@ async function renderFicheJeune(
       {
         customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
       }
-    )
+    ))
   })
+  return container
 }

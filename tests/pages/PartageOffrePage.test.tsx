@@ -1,6 +1,7 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import PartageOffrePage from 'app/(connected)/(with-sidebar)/(without-chat)/offres/[typeOffre]/[idOffre]/partage/PartageOffrePage'
@@ -21,7 +22,6 @@ import {
 import { AlerteParam } from 'referentiel/alerteParam'
 import { partagerOffre } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/messages.service')
 
@@ -50,7 +50,12 @@ describe('PartageOffrePage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -113,7 +118,12 @@ describe('PartageOffrePage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -146,7 +156,12 @@ describe('PartageOffrePage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -203,7 +218,12 @@ describe('PartageOffrePage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -239,7 +259,12 @@ describe('PartageOffrePage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -275,7 +300,12 @@ describe('PartageOffrePage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -307,7 +337,12 @@ describe('PartageOffrePage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 

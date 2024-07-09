@@ -1,6 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
@@ -33,7 +34,6 @@ import {
 import { getBeneficiairesDeLEtablissementClientSide } from 'services/jeunes.service'
 import getByDescriptionTerm, { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/evenements.service')
 jest.mock('services/jeunes.service')
@@ -105,7 +105,12 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -853,7 +858,12 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -1179,7 +1189,12 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -1328,7 +1343,12 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -1444,7 +1464,12 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -1667,7 +1692,12 @@ describe('EditionRdvPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -1714,14 +1744,14 @@ describe('EditionRdvPage client side', () => {
       it('indique les bénéficiaires qui étaient présents', () => {
         // Then
         expect(
-          within(screen.getByText(getNomBeneficiaireComplet(beneficiairePresent))).getByText(
-            /Ce bénéficiaire était présent à l’événement/
-          )
+          within(
+            screen.getByText(getNomBeneficiaireComplet(beneficiairePresent))
+          ).getByText(/Ce bénéficiaire était présent à l’événement/)
         ).toBeInTheDocument()
         expect(
-          within(screen.getByText(getNomBeneficiaireComplet(beneficiaireAbsent))).queryByText(
-            /Ce bénéficiaire était présent à l’événement/
-          )
+          within(
+            screen.getByText(getNomBeneficiaireComplet(beneficiaireAbsent))
+          ).queryByText(/Ce bénéficiaire était présent à l’événement/)
         ).not.toBeInTheDocument()
       })
     })

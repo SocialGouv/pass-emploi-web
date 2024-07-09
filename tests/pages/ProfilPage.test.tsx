@@ -1,14 +1,14 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
-import { unConseiller } from 'fixtures/conseiller'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import {
   modifierAgence,
   modifierNotificationsSonores,
@@ -17,7 +17,6 @@ import {
 import { getJeunesDuConseillerClientSide } from 'services/jeunes.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/conseiller.service')
 jest.mock('services/jeunes.service')

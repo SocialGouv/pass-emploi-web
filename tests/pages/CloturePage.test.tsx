@@ -1,6 +1,7 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -9,7 +10,6 @@ import { unEvenement } from 'fixtures/evenement'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { cloreAnimationCollective } from 'services/evenements.service'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/evenements.service')
 
@@ -44,7 +44,12 @@ describe('CloturePage client side', () => {
   })
 
   it('a11y', async () => {
-    const results = await axe(container)
+    let results: AxeResults
+
+    await act(async () => {
+      results = await axe(container)
+    })
+
     expect(results).toHaveNoViolations()
   })
 
@@ -108,7 +113,12 @@ describe('CloturePage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 

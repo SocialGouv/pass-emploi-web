@@ -1,6 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import ReaffectationPage from 'app/(connected)/(with-sidebar)/(with-chat)/reaffectation/ReaffectationPage'
@@ -10,7 +10,6 @@ import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { getConseillers } from 'services/conseiller.service'
 import { getJeunesDuConseillerParId, reaffecter } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/conseiller.service')
 jest.mock('services/jeunes.service')

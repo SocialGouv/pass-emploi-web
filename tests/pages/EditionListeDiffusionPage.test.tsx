@@ -1,5 +1,7 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import EditionListeDiffusionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes-de-diffusion/edition-liste/EditionListeDiffusionPage'
@@ -17,8 +19,6 @@ import {
   supprimerListeDeDiffusion,
 } from 'services/listes-de-diffusion.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { axe, toHaveNoViolations } from 'jest-axe'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/listes-de-diffusion.service')
 jest.mock('components/Modal')
@@ -51,7 +51,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -90,7 +95,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -148,7 +158,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -224,7 +239,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -327,7 +347,12 @@ describe('Page d’édition d’une liste de diffusion', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 

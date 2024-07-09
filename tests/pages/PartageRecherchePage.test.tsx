@@ -1,6 +1,7 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -15,7 +16,6 @@ import {
 } from 'services/suggestions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/suggestions.service')
 
@@ -69,7 +69,12 @@ describe('Partage Recherche', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -92,7 +97,12 @@ describe('Partage Recherche', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 
@@ -114,7 +124,12 @@ describe('Partage Recherche', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -166,7 +181,12 @@ describe('Partage Recherche', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -227,7 +247,12 @@ describe('Partage Recherche', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -289,7 +314,12 @@ describe('Partage Recherche', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -351,7 +381,12 @@ describe('Partage Recherche', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
