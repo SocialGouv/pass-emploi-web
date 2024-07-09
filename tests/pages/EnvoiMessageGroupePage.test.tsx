@@ -1,6 +1,7 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import EnvoiMessageGroupePage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/envoi-message-groupe/EnvoiMessageGroupePage'
@@ -13,7 +14,6 @@ import { uploadFichier } from 'services/fichiers.service'
 import { sendNouveauMessageGroupe, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ApiError } from 'utils/httpClient'
-expect.extend(toHaveNoViolations)
 
 jest.mock('components/Modal')
 jest.mock('services/fichiers.service')
@@ -68,7 +68,10 @@ describe('EnvoiMessageGroupePage client side', () => {
 
   describe("quand le formulaire n'a pas encore été soumis", () => {
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+      await act(async () => {
+        results = await axe(container)
+      })
       expect(results).toHaveNoViolations()
     })
 
@@ -140,7 +143,12 @@ describe('EnvoiMessageGroupePage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -259,7 +267,12 @@ describe('EnvoiMessageGroupePage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -332,7 +345,12 @@ describe('EnvoiMessageGroupePage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 

@@ -1,6 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -15,7 +16,6 @@ import {
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 import { ApiError } from 'utils/httpClient'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/actions.service')
 jest.mock('components/Modal')
@@ -79,7 +79,12 @@ describe('PilotagePage client side - Actions', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -226,7 +231,12 @@ describe('PilotagePage client side - Actions', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -315,7 +325,12 @@ describe('PilotagePage client side - Actions', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 

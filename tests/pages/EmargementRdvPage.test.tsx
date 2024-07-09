@@ -1,15 +1,14 @@
 import { screen } from '@testing-library/dom'
 import { act } from '@testing-library/react'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import EmargementRdvPage from 'app/(connected)/(full-page)/emargement/[idEvenement]/EmargementRdvPage'
-import { unEvenement } from 'fixtures/evenement'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
+import { unEvenement } from 'fixtures/evenement'
 import { unDetailSession } from 'fixtures/session'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toFrenchDateTime } from 'utils/date'
-expect.extend(toHaveNoViolations)
 
 describe('<EmargementRdvPage>', () => {
   let container: HTMLElement

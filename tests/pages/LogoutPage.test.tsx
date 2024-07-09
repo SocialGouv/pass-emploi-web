@@ -1,11 +1,10 @@
 import { render } from '@testing-library/react'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { axe } from 'jest-axe'
 import { signOut } from 'next-auth/react'
 import React from 'react'
 
 import LogoutPage from 'app/(connexion)/logout/LogoutPage'
 import { signOut as chatSignOut } from 'services/messages.service'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/messages.service', () => ({
   signOut: jest.fn(async () => {}),

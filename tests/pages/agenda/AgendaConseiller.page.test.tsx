@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -12,7 +12,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { getRendezVousConseiller } from 'services/evenements.service'
 import { getSessionsBeneficiaires } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/evenements.service')
 jest.mock('services/sessions.service')
