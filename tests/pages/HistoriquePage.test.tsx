@@ -1,8 +1,9 @@
 import { act, RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import Historique from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/informations/InformationsPage'
@@ -24,7 +25,6 @@ import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/jeunes.service')
 jest.mock('services/agenda.service')
@@ -63,7 +63,12 @@ describe('HistoriquePage client side', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 
@@ -87,7 +92,12 @@ describe('HistoriquePage client side', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 
@@ -115,7 +125,12 @@ describe('HistoriquePage client side', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 
@@ -137,7 +152,12 @@ describe('HistoriquePage client side', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 
@@ -169,7 +189,12 @@ describe('HistoriquePage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -254,7 +279,12 @@ describe('HistoriquePage client side', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 
@@ -284,7 +314,12 @@ describe('HistoriquePage client side', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 
@@ -310,7 +345,12 @@ describe('HistoriquePage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 

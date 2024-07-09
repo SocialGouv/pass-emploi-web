@@ -1,12 +1,11 @@
 import { screen } from '@testing-library/react'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import AidePage from 'app/(connected)/(with-sidebar)/(without-chat-full-screen)/aide/AidePage'
 import { unConseiller } from 'fixtures/conseiller'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 describe('Aide client side', () => {
   let container: HTMLElement

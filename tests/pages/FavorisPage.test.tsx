@@ -1,12 +1,12 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import FavorisPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/favoris/FavorisPage'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 describe('FavorisPage client side', () => {
   let container: HTMLElement
@@ -25,7 +25,12 @@ describe('FavorisPage client side', () => {
   })
 
   it('a11y', async () => {
-    const results = await axe(container)
+    let results: AxeResults
+
+    await act(async () => {
+      results = await axe(container)
+    })
+
     expect(results).toHaveNoViolations()
   })
 

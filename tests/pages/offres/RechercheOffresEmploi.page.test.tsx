@@ -6,7 +6,8 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import RechercheOffresPage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/RechercheOffresPage'
@@ -21,7 +22,6 @@ import {
 import { getCommunesEtDepartements } from 'services/referentiel.service'
 import { getByTextContent } from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/offres-emploi.service')
 jest.mock('services/referentiel.service')
@@ -525,7 +525,12 @@ describe('Page Recherche Offres Emploi', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(rendered.container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(rendered.container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 

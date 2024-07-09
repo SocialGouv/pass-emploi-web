@@ -1,5 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import OffrePage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/[idOffre]/OffrePage'
@@ -7,7 +8,6 @@ import { unDetailImmersion } from 'fixtures/offre'
 import { DetailImmersion } from 'interfaces/offre'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('components/PageActionsPortal')
 
@@ -26,7 +26,12 @@ describe('OffrePage client side - Immersion', () => {
   })
 
   it('a11y', async () => {
-    const results = await axe(container)
+    let results: AxeResults
+
+    await act(async () => {
+      results = await axe(container)
+    })
+
     expect(results).toHaveNoViolations()
   })
 

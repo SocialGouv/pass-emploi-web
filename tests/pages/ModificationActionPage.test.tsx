@@ -1,6 +1,7 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 
 import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/modification/ModificationActionPage'
@@ -12,7 +13,6 @@ import {
 import { StatutAction } from 'interfaces/action'
 import { creerAction, modifierAction } from 'services/actions.service'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/actions.service')
 jest.mock('components/Modal')
@@ -45,7 +45,12 @@ describe('ModificationActionPage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -189,7 +194,12 @@ describe('ModificationActionPage client side', () => {
         })
 
         it('a11y', async () => {
-          const results = await axe(container)
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
           expect(results).toHaveNoViolations()
         })
 
@@ -206,7 +216,12 @@ describe('ModificationActionPage client side', () => {
 
         describe('succès', () => {
           it('a11y', async () => {
-            const results = await axe(container)
+            let results: AxeResults
+
+            await act(async () => {
+              results = await axe(container)
+            })
+
             expect(results).toHaveNoViolations()
           })
 
@@ -256,7 +271,12 @@ describe('ModificationActionPage client side', () => {
     })
 
     it('a11y', async () => {
-      const results = await axe(container)
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
       expect(results).toHaveNoViolations()
     })
 
@@ -274,7 +294,12 @@ describe('ModificationActionPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -300,7 +325,12 @@ describe('ModificationActionPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 
@@ -322,7 +352,12 @@ describe('ModificationActionPage client side', () => {
       })
 
       it('a11y', async () => {
-        const results = await axe(container)
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
         expect(results).toHaveNoViolations()
       })
 

@@ -1,7 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
-expect.extend(toHaveNoViolations)
+import { axe } from 'jest-axe'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,

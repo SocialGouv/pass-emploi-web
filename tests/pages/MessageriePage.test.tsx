@@ -1,5 +1,5 @@
 import { act, screen } from '@testing-library/react'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import MessageriePage from 'app/(connected)/messagerie/MessageriePage'
@@ -10,12 +10,12 @@ import {
 } from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
-import { StructureConseiller } from 'interfaces/conseiller'
 import {
   BaseBeneficiaire,
   ConseillerHistorique,
   BeneficiaireChat,
 } from 'interfaces/beneficiaire'
+import { StructureConseiller } from 'interfaces/conseiller'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
@@ -24,7 +24,6 @@ import {
   observeConseillerChats,
 } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-expect.extend(toHaveNoViolations)
 
 jest.mock('services/jeunes.service')
 jest.mock('services/messages.service')

@@ -62,35 +62,37 @@ export function BlocInformationJeuneFicheBeneficiaire({
         </>
       )}
 
-      {conseillerEstMilo && (
-        <dl className='flex'>
-          <dt className='text-base-regular'>Date de fin du CEJ :</dt>
-          <dd className='text-base-bold ml-1'>
-            {dateFinCEJ ? (
-              toShortDate(dateFinCEJ)
-            ) : (
-              <InformationNonDisponible />
-            )}
-          </dd>
-        </dl>
-      )}
-
-      {email && <Email email={email} />}
-
-      {!conseillerEstMilo &&
-        onIdentifiantPartenaireCopie &&
-        onIdentifiantPartenaireClick && (
-          <IdentifiantPartenaire
-            identifiantPartenaire={identifiantPartenaire}
-            onCopy={onIdentifiantPartenaireCopie}
-            onClick={onIdentifiantPartenaireClick}
-          />
+      <dl className='flex flex-col'>
+        {conseillerEstMilo && (
+          <div className='flex'>
+            <dt className='text-base-regular'>Date de fin du CEJ :</dt>
+            <dd className='text-base-bold ml-1'>
+              {dateFinCEJ ? (
+                toShortDate(dateFinCEJ)
+              ) : (
+                <InformationNonDisponible />
+              )}
+            </dd>
+          </div>
         )}
 
+        {email && <Email email={email} />}
+
+        {!conseillerEstMilo &&
+          onIdentifiantPartenaireCopie &&
+          onIdentifiantPartenaireClick && (
+            <IdentifiantPartenaire
+              identifiantPartenaire={identifiantPartenaire}
+              onCopy={onIdentifiantPartenaireCopie}
+              onClick={onIdentifiantPartenaireClick}
+            />
+          )}
+      </dl>
+
       <LienVersInformations
-          idBeneficiaire={idBeneficiaire}
-          pathPrefix={pathPrefix}
-        />
+        idBeneficiaire={idBeneficiaire}
+        pathPrefix={pathPrefix}
+      />
     </div>
   )
 }

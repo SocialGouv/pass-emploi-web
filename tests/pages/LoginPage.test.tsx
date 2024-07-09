@@ -1,12 +1,11 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { axe, toHaveNoViolations } from 'jest-axe'
+import { axe } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import React from 'react'
 
 import LoginPage from 'app/(connexion)/login/LoginPage'
-expect.extend(toHaveNoViolations)
 
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),

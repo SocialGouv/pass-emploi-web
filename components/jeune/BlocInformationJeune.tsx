@@ -46,21 +46,19 @@ export function BlocInformationJeune({
             </dd>
           </div>
         )}
-      </dl>
 
-      {email && <Email email={email} />}
+        {email && <Email email={email} />}
 
-      {!conseillerEstMilo &&
-        onIdentifiantPartenaireCopie &&
-        onIdentifiantPartenaireClick && (
-          <IdentifiantPartenaire
-            identifiantPartenaire={identifiantPartenaire}
-            onCopy={onIdentifiantPartenaireCopie}
-            onClick={onIdentifiantPartenaireClick}
-          />
-        )}
+        {!conseillerEstMilo &&
+          onIdentifiantPartenaireCopie &&
+          onIdentifiantPartenaireClick && (
+            <IdentifiantPartenaire
+              identifiantPartenaire={identifiantPartenaire}
+              onCopy={onIdentifiantPartenaireCopie}
+              onClick={onIdentifiantPartenaireClick}
+            />
+          )}
 
-      <dl>
         {urlDossier && (
           <DossierExterne href={urlDossier} onClick={onDossierMiloClick} />
         )}
@@ -84,7 +82,7 @@ export function BlocInformationJeune({
 
 export function Email({ email }: { email: string }) {
   return (
-    <dl className='flex items-center'>
+    <div className='flex items-center'>
       <dt>
         <IconComponent
           name={IconName.Mail}
@@ -95,7 +93,7 @@ export function Email({ email }: { email: string }) {
         />
       </dt>
       <dd className='text-primary'>{email}</dd>
-    </dl>
+    </div>
   )
 }
 
@@ -106,34 +104,32 @@ export function IdentifiantPartenaire(props: {
 }) {
   return (
     <div className='flex'>
-      <dl className='flex'>
-        <dt className='text-base-regular mr-2'>Identifiant France Travail :</dt>
-        <dd className='text-base-bold' onCopy={props.onCopy}>
-          {props.identifiantPartenaire ?? (
-            <>
-              <span className='sr-only'>non renseigné</span>
-              <span>-</span>
-            </>
-          )}
-        </dd>
-      </dl>
-      <button
-        className='ml-5 flex items-center text-primary'
-        aria-label={
-          props.identifiantPartenaire
-            ? 'Modifier l’identifiant France Travail'
-            : 'Ajouter l’identifiant France Travail'
-        }
-        onClick={props.onClick}
-      >
-        <IconComponent
-          name={IconName.Edit}
-          aria-hidden={true}
-          focusable={false}
-          className='w-4 h-4 mr-1 fill-primary'
-        />
-        {props.identifiantPartenaire ? 'Modifier' : 'Ajouter'}
-      </button>
+      <dt className='text-base-regular mr-2'>Identifiant France Travail :</dt>
+      <dd className='text-base-bold' onCopy={props.onCopy}>
+        {props.identifiantPartenaire ?? (
+          <>
+            <span className='sr-only'>non renseigné</span>
+            <span>-</span>
+          </>
+        )}
+        <button
+          className='ml-5 flex items-center text-primary'
+          aria-label={
+            props.identifiantPartenaire
+              ? 'Modifier l’identifiant France Travail'
+              : 'Ajouter l’identifiant France Travail'
+          }
+          onClick={props.onClick}
+        >
+          <IconComponent
+            name={IconName.Edit}
+            aria-hidden={true}
+            focusable={false}
+            className='w-4 h-4 mr-1 fill-primary'
+          />
+          {props.identifiantPartenaire ? 'Modifier' : 'Ajouter'}
+        </button>
+      </dd>
     </div>
   )
 }
