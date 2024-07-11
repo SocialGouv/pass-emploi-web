@@ -46,16 +46,16 @@ describe('LoginPage client side', () => {
 
     it('devrait avoir quatre boutons', () => {
       const miloButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Mission Locale',
+        name: 'Connexion Mission Locale',
       })
       const franceTravailCEJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail CEJ',
+        name: 'Connexion France Travail CEJ',
       })
       const franceTravailBRSAButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail BRSA',
+        name: 'Connexion BRSA',
       })
       const franceTravailAIJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail AIJ',
+        name: 'Connexion AIJ',
       })
 
       const buttonsNb = screen.getAllByRole('button')
@@ -71,7 +71,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
       // Given
       const peButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail CEJ',
+        name: 'Connexion France Travail CEJ',
       })
 
       // When
@@ -88,7 +88,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT BRSA", async () => {
       // Given
       const peBRSAButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail BRSA',
+        name: 'Connexion BRSA',
       })
 
       // When
@@ -105,7 +105,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT AIJ", async () => {
       // Given
       const peAIJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail AIJ',
+        name: 'Connexion AIJ',
       })
 
       // When
@@ -122,7 +122,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller MiLo", async () => {
       // Given
       const miloButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Mission Locale',
+        name: 'Connexion Mission Locale',
       })
 
       // When
