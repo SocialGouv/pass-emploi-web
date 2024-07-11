@@ -68,75 +68,82 @@ function LoginPage({
   }, [])
 
   return (
-    <main role='main' className='bg-primary_lighten w-full grow relative'>
-      <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-        <div className='bg-white p-[25px] layout_s:px-[122px] rounded-l drop-shadow-lg'>
-          <h2>
-            <span className='sr-only'>Contrat d’engagement jeune</span>
-            <LogoCEJ
-              className='m-auto h-[64px] w-[120px] fill-primary_darken'
-              focusable={false}
-              aria-hidden={true}
-            />
-          </h2>
-          <ul className='mt-6'>
-            <li>
-              <FormButton
-                label='Connexion conseiller Mission Locale'
-                className='whitespace-nowrap'
-                handleSubmit={(event) =>
-                  handleSignin(event, 'similo-conseiller')
-                }
+    <main
+      role='main'
+      className='bg-primary_lighten w-full grow relative flex justify-center items-center'
+    >
+      <div>
+        <div className='flex-1 flex flex-wrap gap-12 justify-center items-end bg-white py-24 px-8 layout_s:px-16 rounded-l drop-shadow-lg'>
+          <div>
+            <h2>
+              <span className='sr-only'>Contrat d’engagement jeune</span>
+              <LogoCEJ
+                className='m-auto h-[64px] w-[120px] fill-primary_darken'
+                focusable={false}
+                aria-hidden={true}
               />
-            </li>
-            <li>
-              <FormButton
-                label='Connexion conseiller France Travail CEJ'
-                className='mt-4 whitespace-nowrap'
-                handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
-              />
-            </li>
-          </ul>
-
-          {(ssoFranceTravailBRSAEstActif || ssoFranceTravailAIJEstActif) && (
-            <>
-              <h2 className='mt-16'>
-                <span className='sr-only'>pass emploi</span>
-                <LogoPassEmploi
-                  className='m-auto fill-primary_darken'
-                  focusable={false}
-                  aria-hidden={true}
+            </h2>
+            <ul className='mt-6'>
+              <li>
+                <FormButton
+                  label='Connexion Mission Locale'
+                  className='whitespace-nowrap'
+                  handleSubmit={(event) =>
+                    handleSignin(event, 'similo-conseiller')
+                  }
                 />
-              </h2>
-              <ul>
-                {ssoFranceTravailBRSAEstActif && (
-                  <li>
-                    <FormButton
-                      label='Connexion conseiller France Travail BRSA'
-                      className='mt-6 whitespace-nowrap'
-                      style={ButtonStyle.PRIMARY_DARK}
-                      handleSubmit={(event) =>
-                        handleSignin(event, 'pe-brsa-conseiller')
-                      }
-                    />
-                  </li>
-                )}
+              </li>
+              <li>
+                <FormButton
+                  label='Connexion France Travail CEJ'
+                  className='mt-6 whitespace-nowrap'
+                  handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
+                />
+              </li>
+            </ul>
+          </div>
 
-                {ssoFranceTravailAIJEstActif && (
-                  <li>
-                    <FormButton
-                      label='Connexion conseiller France Travail AIJ'
-                      className='mt-6 whitespace-nowrap'
-                      style={ButtonStyle.PRIMARY_DARK}
-                      handleSubmit={(event) =>
-                        handleSignin(event, 'pe-aij-conseiller')
-                      }
-                    />
-                  </li>
-                )}
-              </ul>
-            </>
-          )}
+          <div className='flex-1'>
+            {(ssoFranceTravailBRSAEstActif || ssoFranceTravailAIJEstActif) && (
+              <>
+                <h2>
+                  <span className='sr-only'>pass emploi</span>
+                  <LogoPassEmploi
+                    className='m-auto fill-primary_darken'
+                    focusable={false}
+                    aria-hidden={true}
+                  />
+                </h2>
+                <ul>
+                  {ssoFranceTravailBRSAEstActif && (
+                    <li>
+                      <FormButton
+                        label='Connexion BRSA'
+                        className='mt-6 whitespace-nowrap'
+                        style={ButtonStyle.PRIMARY_DARK}
+                        handleSubmit={(event) =>
+                          handleSignin(event, 'pe-brsa-conseiller')
+                        }
+                      />
+                    </li>
+                  )}
+
+                  {ssoFranceTravailAIJEstActif && (
+                    <li>
+                      <FormButton
+                        label='Connexion AIJ'
+                        className='mt-6 whitespace-nowrap'
+                        style={ButtonStyle.PRIMARY_DARK}
+                        handleSubmit={(event) =>
+                          handleSignin(event, 'pe-aij-conseiller')
+                        }
+                      />
+                    </li>
+                  )}
+                </ul>
+              </>
+            )}
+          </div>
           {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>
       </div>
