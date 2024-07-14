@@ -2,16 +2,10 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 
-import { StructureConseiller } from 'interfaces/conseiller'
-
 type AuthErrorPageProps = {
   erreur: string
-  utilisateur: {
-    type?: 'JEUNE' | 'CONSEILLER'
-    structure?: StructureConseiller
-  }
 }
-function AuthErrorPage({ erreur, utilisateur }: AuthErrorPageProps) {
+function AuthErrorPage({ erreur }: AuthErrorPageProps) {
   return (
     <>
       <header>
