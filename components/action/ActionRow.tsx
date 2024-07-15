@@ -5,6 +5,7 @@ import React from 'react'
 import TagStatutAction from 'components/action/TagStatutAction'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import { Action, StatutAction } from 'interfaces/action'
 import { toLongMonthDate } from 'utils/date'
@@ -35,11 +36,7 @@ export default function ActionRow({
   const dateEcheance = toLongMonthDate(action.dateEcheance)
 
   return (
-    <TR
-      href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
-      linkLabel={`Voir le détail de l'action ${action.content}`}
-      isSelected={isChecked}
-    >
+    <TR isSelected={isChecked}>
       <TD
         onClick={(e) => {
           e.preventDefault()
@@ -86,6 +83,10 @@ export default function ActionRow({
           />
         </span>
       </TD>
+      <TDLink
+        href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
+        label={`Voir le détail de l'action ${action.content}`}
+      />
     </TR>
   )
 }

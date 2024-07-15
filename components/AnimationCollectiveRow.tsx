@@ -4,6 +4,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import {
   AnimationCollective,
@@ -52,12 +53,7 @@ export function AnimationCollectiveRow(
   }
 
   return (
-    <TR
-      key={animationCollective.id}
-      href={getHref(animationCollective)}
-      linkLabel={labelLien(animationCollective)}
-      rowLabel={`Consulter ${animationCollective.type} ${animationCollective.titre}`}
-    >
+    <TR key={animationCollective.id}>
       <TD>
         {toFrenchTime(animationCollective.date)} - {animationCollective.duree}{' '}
         min
@@ -117,6 +113,10 @@ export function AnimationCollectiveRow(
           </>
         )}
       </TD>
+      <TDLink
+        href={getHref(animationCollective)}
+        label={labelLien(animationCollective)}
+      />
     </TR>
   )
 }

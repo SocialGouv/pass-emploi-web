@@ -10,9 +10,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { estMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
@@ -184,12 +182,11 @@ export default function OngletAgendaEtablissement({
 
       {agendaEvenements && evenements!.length > 0 && (
         <Table
-          asDiv={true}
           caption={{
             text: 'Liste des animations collectives de mon établissement',
           }}
         >
-          <THead>
+          <thead>
             <TR isHeader={true}>
               <TH>Horaires</TH>
               <TH>Titre</TH>
@@ -212,13 +209,13 @@ export default function OngletAgendaEtablissement({
               </TH>
               <TH>Voir le détail</TH>
             </TR>
-          </THead>
-          <TBody>
+          </thead>
+          <tbody>
             <AgendaRows
               agenda={agendaEvenements}
               Item={({ item: ac }) => AnimationCollectiveRow(ac)}
             />
-          </TBody>
+          </tbody>
         </Table>
       )}
     </>

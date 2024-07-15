@@ -2,6 +2,7 @@ import React from 'react'
 
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import { ActionPilotage } from 'interfaces/action'
 import { toLongMonthDate } from 'utils/date'
@@ -20,11 +21,7 @@ export default function ActionRowPilotage({
   const dateFinReelle = toLongMonthDate(action.dateFinReelle)
 
   return (
-    <TR
-      href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
-      linkLabel={`Accéder au détail de l’action : ${action.titre}`}
-      isSelected={isChecked}
-    >
+    <TR isSelected={isChecked}>
       <TD
         onClick={(e) => {
           e.preventDefault()
@@ -60,6 +57,10 @@ export default function ActionRowPilotage({
       <TD>
         <span className='flex flex-row'>{dateFinReelle}</span>
       </TD>
+      <TDLink
+        href={`/mes-jeunes/${action.beneficiaire.id}/actions/${action.id}`}
+        label={`Accéder au détail de l’action : ${action.titre}`}
+      />
     </TR>
   )
 }

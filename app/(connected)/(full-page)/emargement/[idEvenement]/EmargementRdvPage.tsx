@@ -5,10 +5,8 @@ import React, { useEffect } from 'react'
 
 import LogoCEJ from 'assets/images/logo_app_cej.svg'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import {
   BaseBeneficiaire,
@@ -72,21 +70,20 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
       </div>
 
       <Table
-        asDiv={true}
         caption={{
           text: `Nombre de bénéficiaires inscrits`,
           count: inscriptions.length,
           visible: true,
         }}
       >
-        <THead>
+        <thead>
           <TR isHeader={true}>
             <TH>N°</TH>
             <TH>Prénom NOM</TH>
             <TH>Signature</TH>
           </TR>
-        </THead>
-        <TBody>
+        </thead>
+        <tbody>
           {inscriptions.map((jeune, key) => (
             <TR key={key} classname='shadow-none'>
               <TD className='border border-grey_500'>{key + 1}</TD>
@@ -96,7 +93,7 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
               <TD className='py-8 border border-grey_500'></TD>
             </TR>
           ))}
-        </TBody>
+        </tbody>
       </Table>
     </>
   )

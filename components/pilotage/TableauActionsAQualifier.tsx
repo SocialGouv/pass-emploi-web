@@ -10,9 +10,7 @@ import IllustrationComponent, {
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import {
   ActionAQualifier,
@@ -214,8 +212,8 @@ export default function TableauActionsAQualifier({
       )}
 
       {actionsFiltrees.length > 0 && (
-        <Table asDiv={true} caption={{ text: 'Liste des actions à qualifier' }}>
-          <THead>
+        <Table caption={{ text: 'Liste des actions à qualifier' }}>
+          <thead>
             <TR isHeader={true}>
               <TH estCliquable={true}>
                 <div className='flex justify-center w-full h-full p-4'>
@@ -260,9 +258,9 @@ export default function TableauActionsAQualifier({
               <TH>Date de réalisation</TH>
               <TH>Voir le détail</TH>
             </TR>
-          </THead>
+          </thead>
 
-          <TBody>
+          <tbody>
             {actionsFiltrees.map((action: ActionPilotage) => (
               <ActionRowPilotage
                 action={action}
@@ -271,7 +269,7 @@ export default function TableauActionsAQualifier({
                 onSelection={selectionnerAction}
               />
             ))}
-          </TBody>
+          </tbody>
         </Table>
       )}
     </>
