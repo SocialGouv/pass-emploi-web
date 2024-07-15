@@ -37,7 +37,7 @@ export default function TabList({ children, className, label }: TabListProps) {
 
   useEffect(() => {
     const focusableTabs: NodeListOf<HTMLLIElement> =
-      tablistRef.current!.querySelectorAll('li[role="tab"]')
+      tablistRef.current!.querySelectorAll('li>button[role="tab"]')
     setTabs(Array.from(focusableTabs))
   }, [])
 
