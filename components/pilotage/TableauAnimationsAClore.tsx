@@ -2,10 +2,9 @@ import React from 'react'
 
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
 import { toLongMonthDate } from 'utils/date'
@@ -20,26 +19,19 @@ export default function TableauAnimationsAClore({
   return (
     <>
       {animationsCollectives.length > 0 && (
-        <Table
-          asDiv={true}
-          caption={{ text: 'Liste des animations collectives à clore' }}
-        >
-          <THead>
+        <Table caption={{ text: 'Liste des animations collectives à clore' }}>
+          <thead>
             <TR isHeader={true}>
               <TH>Date</TH>
               <TH>Titre de l’animation collective</TH>
               <TH>Participants</TH>
               <TH>Voir le détail</TH>
             </TR>
-          </THead>
+          </thead>
 
-          <TBody>
+          <tbody>
             {animationsCollectives.map((ac: AnimationCollectivePilotage) => (
-              <TR
-                key={ac.id}
-                href={`/mes-jeunes/edition-rdv?idRdv=${ac.id}`}
-                linkLabel={`Accéder au détail de l’animation collective : ${ac.titre}`}
-              >
+              <TR key={ac.id}>
                 <TD>{toLongMonthDate(ac.date)}</TD>
                 <TD isBold>{ac.titre}</TD>
                 <TD>
@@ -50,9 +42,13 @@ export default function TableauAnimationsAClore({
                     size={6}
                   />
                 </TD>
+                <TDLink
+                  href={`/mes-jeunes/edition-rdv?idRdv=${ac.id}`}
+                  label={`Accéder au détail de l’animation collective : ${ac.titre}`}
+                />
               </TR>
             ))}
-          </TBody>
+          </tbody>
         </Table>
       )}
     </>

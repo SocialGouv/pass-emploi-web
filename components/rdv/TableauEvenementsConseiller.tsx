@@ -3,9 +3,7 @@ import React from 'react'
 import { AgendaData, AgendaRows } from 'components/AgendaRows'
 import { EvenementRow } from 'components/rdv/EvenementRow'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 
@@ -19,8 +17,8 @@ export default function TableauEvenementsConseiller({
   idConseiller,
 }: TableauEvenementsConseillerProps) {
   return (
-    <Table asDiv={true} caption={{ text: 'Liste de mes événements' }}>
-      <THead>
+    <Table caption={{ text: 'Liste de mes événements' }}>
+      <thead>
         <TR isHeader={true}>
           <TH>Horaires</TH>
           <TH>Bénéficiaire</TH>
@@ -29,9 +27,9 @@ export default function TableauEvenementsConseiller({
           <TH>Créé par vous</TH>
           <TH>Voir le détail</TH>
         </TR>
-      </THead>
+      </thead>
 
-      <TBody>
+      <tbody>
         <AgendaRows
           agenda={agendaEvenements}
           Item={({ item }) => (
@@ -42,7 +40,7 @@ export default function TableauEvenementsConseiller({
             />
           )}
         />
-      </TBody>
+      </tbody>
     </Table>
   )
 }

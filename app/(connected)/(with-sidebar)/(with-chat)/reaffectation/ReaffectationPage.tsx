@@ -22,16 +22,14 @@ import RecapitulatifErreursFormulaire, {
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { ValueWithError } from 'components/ValueWithError'
 import {
+  BeneficiaireFromListe,
   compareBeneficiairesByNom,
   getNomBeneficiaireComplet,
-  BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
 import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -725,13 +723,13 @@ const ChoixConseiller = forwardRef(
 
         {choixConseillers && choixConseillers.length > 0 && (
           <Table caption={{ text: 'Choix du conseiller ' + name }}>
-            <THead>
+            <thead>
               <TR isHeader={true}>
                 <TH>Conseiller</TH>
                 <TH>E-mail conseiller</TH>
               </TR>
-            </THead>
-            <TBody>
+            </thead>
+            <tbody>
               {choixConseillers.map((conseiller) => (
                 <TR
                   key={conseiller.id}
@@ -761,7 +759,7 @@ const ChoixConseiller = forwardRef(
                   </TD>
                 </TR>
               ))}
-            </TBody>
+            </tbody>
           </Table>
         )}
       </>

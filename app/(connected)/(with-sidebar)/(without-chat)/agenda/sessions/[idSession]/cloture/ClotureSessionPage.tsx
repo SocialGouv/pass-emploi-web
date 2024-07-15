@@ -9,10 +9,8 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import {
@@ -201,7 +199,7 @@ function ClotureSessionPage({
 
       <form onSubmit={soumettreClotureSession} className='mt-6'>
         <Table caption={{ text: 'Bénéficiaires de la session' }}>
-          <THead>
+          <thead>
             <TR isHeader={true}>
               <TH>
                 {' '}
@@ -229,9 +227,9 @@ function ClotureSessionPage({
               </TH>
               <TH>Statut</TH>
             </TR>
-          </THead>
+          </thead>
 
-          <TBody>
+          <tbody>
             {session.inscriptions.map((beneficiaire) => (
               <TR
                 key={beneficiaire.idJeune}
@@ -287,7 +285,7 @@ function ClotureSessionPage({
                 </TD>
               </TR>
             ))}
-          </TBody>
+          </tbody>
         </Table>
 
         {estAClore(session) && (

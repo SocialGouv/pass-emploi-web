@@ -13,14 +13,13 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import {
-  getNomBeneficiaireComplet,
   BeneficiaireEtablissement,
+  getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import { estMilo, estSuperviseur } from 'interfaces/conseiller'
 import { getAgencesClientSide } from 'services/referentiel.service'
@@ -115,14 +114,13 @@ function EtablissementPage() {
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
-            asDiv={true}
             caption={{
               text: `Résultat de recherche`,
               count: resultatsRecherche!.length,
               visible: true,
             }}
           >
-            <THead>
+            <thead>
               <TR isHeader={true}>
                 <TH>Bénéficiaire</TH>
                 {conseillerEstMilo && <TH>Situation</TH>}
@@ -130,17 +128,10 @@ function EtablissementPage() {
                 <TH>Conseiller</TH>
                 <TH>Voir le détail</TH>
               </TR>
-            </THead>
-            <TBody>
+            </thead>
+            <tbody>
               {resultatsRecherche!.map((jeune) => (
-                <TR
-                  key={jeune.base.id}
-                  href={'etablissement/beneficiaires/' + jeune.base.id}
-                  linkLabel={
-                    'Accéder à la fiche de ' +
-                    getNomBeneficiaireComplet(jeune.base)
-                  }
-                >
+                <TR key={jeune.base.id}>
                   <TD isBold>{getNomBeneficiaireComplet(jeune.base)}</TD>
                   {conseillerEstMilo && (
                     <TD>
@@ -158,9 +149,16 @@ function EtablissementPage() {
                       {jeune.referent.prenom} {jeune.referent.nom}
                     </div>
                   </TD>
+                  <TDLink
+                    href={'etablissement/beneficiaires/' + jeune.base.id}
+                    label={
+                      'Accéder à la fiche de ' +
+                      getNomBeneficiaireComplet(jeune.base)
+                    }
+                  />
                 </TR>
               ))}
-            </TBody>
+            </tbody>
           </Table>
 
           {metadonnees!.nombrePages > 1 && (
