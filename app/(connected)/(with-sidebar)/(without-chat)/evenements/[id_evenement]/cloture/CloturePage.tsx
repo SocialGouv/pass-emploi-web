@@ -9,10 +9,8 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import {
   BaseBeneficiaire,
@@ -75,13 +73,13 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
 
       <form onSubmit={cloreAnimationCollective} className='mt-6'>
         <Table caption={{ text: 'Bénéficiaires de l’animation collective' }}>
-          <THead>
+          <thead>
             <TR isHeader={true}>
               <TH>Présence</TH>
               <TH>Bénéficiaires ({evenement.jeunes.length})</TH>
             </TR>
-          </THead>
-          <TBody>
+          </thead>
+          <tbody>
             <TR onClick={(e) => selectionnerTousLesBeneficiaires(e)}>
               <TD>
                 <input
@@ -101,8 +99,8 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
                 </label>
               </TD>
             </TR>
-          </TBody>
-          <TBody>
+          </tbody>
+          <tbody>
             {evenement.jeunes.map((jeune: BaseBeneficiaire) => (
               <TR
                 key={jeune.id}
@@ -127,7 +125,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
                 </TD>
               </TR>
             ))}
-          </TBody>
+          </tbody>
         </Table>
 
         <div className='flex justify-center mt-10 p-4'>

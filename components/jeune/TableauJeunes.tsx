@@ -7,15 +7,14 @@ import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { TagDate } from 'components/ui/Indicateurs/Tag'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import {
-  getNomBeneficiaireComplet,
   BeneficiaireAvecInfosComplementaires,
   CategorieSituation,
+  getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -61,16 +60,6 @@ export default function TableauJeunes({
 
   useMatomo('Mes jeunes', jeunesFiltres.length > 0)
 
-  function getRowLabel(jeune: BeneficiaireAvecInfosComplementaires) {
-    const labelFiche = `Accéder à la fiche de ${jeune.prenom} ${jeune.nom}`
-    const labelActivite = jeune.isActivated
-      ? `dernière activité ${toRelativeDateTime(jeune.lastActivity!)}`
-      : 'non activé'
-    const labelMessages = `${jeune.messagesNonLus} messages non lus`
-
-    return `${labelFiche}, ${labelActivite}, ${labelMessages}`
-  }
-
   return (
     <>
       {jeunesFiltres.length === 0 && (
@@ -86,7 +75,6 @@ export default function TableauJeunes({
       {jeunesFiltres.length > 0 && (
         <>
           <Table
-            asDiv={true}
             caption={{
               text: 'Liste des bénéficiaires',
               count:
@@ -94,7 +82,7 @@ export default function TableauJeunes({
               visible: true,
             }}
           >
-            <THead estCache={true}>
+            <thead className='sr-only'>
               <TR isHeader={true}>
                 <TH>{beneficiaireSituationColumn}</TH>
                 <TH>{dateFinCEJColumn}</TH>
@@ -105,16 +93,12 @@ export default function TableauJeunes({
                 <TH>{derniereActiviteColumn}</TH>
                 <TH>{voirDetailColumn}</TH>
               </TR>
-            </THead>
+            </thead>
 
-            <TBody>
+            <tbody>
               {jeunesAffiches.map(
                 (jeune: BeneficiaireAvecInfosComplementaires) => (
-                  <TR
-                    key={jeune.id}
-                    href={`/mes-jeunes/${jeune.id}`}
-                    linkLabel={getRowLabel(jeune)}
-                  >
+                  <TR key={jeune.id}>
                     <TD isBold className='rounded-l-base'>
                       <span className={styleTDTitle}>
                         {jeune.structureMilo?.id ===
@@ -215,10 +199,14 @@ export default function TableauJeunes({
                         )}
                       </div>
                     </TD>
+                    <TDLink
+                      href={`/mes-jeunes/${jeune.id}`}
+                      label={`Accéder à la fiche de ${jeune.prenom} ${jeune.nom}`}
+                    />
                   </TR>
                 )
               )}
-            </TBody>
+            </tbody>
           </Table>
 
           {nombrePagesJeunes > 1 && (
