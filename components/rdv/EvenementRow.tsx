@@ -5,6 +5,7 @@ import React, { ReactElement } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import {
   BaseBeneficiaire,
@@ -12,7 +13,7 @@ import {
 } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
-import { toShortDate, toFrenchTime, toMonthday } from 'utils/date'
+import { toFrenchTime, toMonthday, toShortDate } from 'utils/date'
 
 interface EvenementRowProps {
   evenement: EvenementListItem
@@ -89,11 +90,7 @@ export function EvenementRow({
   }
 
   return (
-    <TR
-      href={evenement.isSession ? urlSessionMilo : urlRdv}
-      linkLabel={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
-      rowLabel={`${fullDate} - ${evenement.type} avec ${labelBeneficiaires}`}
-    >
+    <TR>
       <TD
         aria-label={withDate ? fullDate + ' - ' + timeAndDuration : ''}
         className='rounded-l-base'
@@ -172,6 +169,10 @@ export function EvenementRow({
           </>
         )}
       </TD>
+      <TDLink
+        href={evenement.isSession ? urlSessionMilo : urlRdv}
+        label={`Consulter l’événement du ${fullDate} avec ${labelBeneficiaires}`}
+      />
     </TR>
   )
 }
