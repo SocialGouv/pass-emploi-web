@@ -48,7 +48,7 @@ const TR = forwardRef(
             children,
             (child) => child && React.cloneElement(child, { asDiv: true })
           )}
-          <TD asDiv={true} className='hover:bg-primary_lighten px-0 py-0'>
+          <TD asDiv={true} className='hover:bg-primary_lighten px-4 py-0'>
             <Link href={href} title={linkLabel} className='block w-full h-full'>
               <IconComponent
                 name={IconName.ChevronRight}
