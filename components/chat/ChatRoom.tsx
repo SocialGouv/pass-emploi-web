@@ -73,6 +73,7 @@ export default function ChatRoom({
   }
 
   function permuterVisibiliteMessagerie() {
+    setAfficherMenuActionsMessagerie(false)
     setMessagerieEstVisible(!messagerieEstVisible)
   }
 
@@ -142,6 +143,7 @@ export default function ChatRoom({
   }
 
   async function ouvrirModaleMessageImportant() {
+    setAfficherMenuActionsMessagerie(false)
     setAfficherModaleMessageImportant(true)
     setSuccesEnvoiMessageImportant(undefined)
     setSuccesDesactivationMessageImportant(undefined)
@@ -210,11 +212,9 @@ export default function ChatRoom({
         </nav>
 
         <h2 className='text-l-bold text-primary'>Messagerie</h2>
-        <div
-          onClick={permuterMenuActionsMessagerie}
-          className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
-        >
+        <div className='relative flex items-center gap-2 justify-end text-xs-medium text-content'>
           <button
+            onClick={permuterMenuActionsMessagerie}
             type='button'
             className='bg-primary rounded-full fill-white hover:shadow-base'
             title={`${afficherMenuActionsMessagerie ? 'Cacher les' : 'Accéder aux'} actions de votre messagerie`}

@@ -64,7 +64,7 @@ export function DetailMessageListeDeDiffusion({
           titre='Détail du message'
           labelRetour={'Retour aux messages de ma liste'}
           onBack={onBack}
-          permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+          onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
           messagerieEstVisible={messagerieEstVisible}
         />
       )}
