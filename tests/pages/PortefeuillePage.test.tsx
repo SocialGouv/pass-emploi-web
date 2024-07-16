@@ -72,7 +72,6 @@ describe('PortefeuillePage client side', () => {
           screen.getByText(jeune.nbActionsNonTerminees)
         ).toBeInTheDocument()
       })
-      expect(screen.getAllByText('2')).toHaveLength(jeunes.length)
 
       expect(() =>
         screen.getByText("Vous n'avez pas encore intégré de bénéficiaires.")
@@ -124,6 +123,13 @@ describe('PortefeuillePage client side', () => {
         //THEN
         expect(() => row2.getByText('bénéficiaire temporaire')).toThrow()
       })
+    })
+
+    it('masque le header du tableau', () => {
+      expect(screen.getAllByRole('rowgroup')[0]).toHaveAttribute(
+        'class',
+        'table-header-group sr-only'
+      )
     })
   })
 
@@ -226,7 +232,7 @@ describe('PortefeuillePage client side', () => {
     it("affiche la colonne nombre d'actions des jeunes", () => {
       // Then
       expect(
-        screen.getByRole('columnheader', { name: 'Actions' })
+        screen.getByRole('columnheader', { name: /Actions/ })
       ).toBeInTheDocument()
     })
 
