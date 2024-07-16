@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Dot from 'components/ui/Dot'
-import IconCheckbox from 'components/ui/Form/IconCheckbox'
+import IconToggle from 'components/ui/Form/IconToggle'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
@@ -95,14 +95,15 @@ export function ConversationTile({
           )}
         </span>
       </button>
-      <IconCheckbox
+
+      <IconToggle
         id={`${id}--flag`}
         checked={beneficiaireChat.flaggedByConseiller}
         checkedIconName={IconName.BookmarkFill}
         uncheckedIconName={IconName.BookmarkOutline}
-        checkedLabel='Ne plus suivre la conversation'
-        uncheckedLabel='Suivre la conversation'
-        onChange={toggleFollowMessage}
+        actionLabel='Suivre la conversation'
+        oppositeActionLabel='Ne plus suivre la conversation'
+        onToggle={toggleFollowMessage}
         className='absolute top-3 right-3 w-5 h-5 fill-primary'
       />
     </div>
