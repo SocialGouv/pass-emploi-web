@@ -486,44 +486,30 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 </InputError>
               )}
               <ul>
-                <li
-                  onClick={toggleTousLesBeneficiaires}
-                  className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'
-                >
-                  <input
-                    id='reaffectation-tout-selectionner'
-                    type='checkbox'
-                    className='mr-4'
-                    readOnly={true}
-                    ref={toutSelectionnerCheckboxRef}
-                  />
-                  <label
-                    htmlFor='reaffectation-tout-selectionner'
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                <li>
+                  <label className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'>
+                    <input
+                      type='checkbox'
+                      className='mr-4'
+                      onChange={toggleTousLesBeneficiaires}
+                      ref={toutSelectionnerCheckboxRef}
+                    />
                     Tout sélectionner
                   </label>
                 </li>
 
                 {beneficiaires.map((beneficiaire: BeneficiaireFromListe) => (
-                  <li
-                    key={beneficiaire.id}
-                    onClick={() => selectionnerBeneficiaire(beneficiaire)}
-                    className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'
-                  >
-                    <input
-                      id={'checkbox-' + beneficiaire.id}
-                      type='checkbox'
-                      checked={idsBeneficiairesSelected.value.includes(
-                        beneficiaire.id
-                      )}
-                      readOnly={true}
-                      className='mr-4 ml-6'
-                    />
-                    <label
-                      htmlFor={'checkbox-' + beneficiaire.id}
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                  <li key={beneficiaire.id}>
+                    <label className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'>
+                      <input
+                        type='checkbox'
+                        checked={idsBeneficiairesSelected.value.includes(
+                          beneficiaire.id
+                        )}
+                        onChange={() => selectionnerBeneficiaire(beneficiaire)}
+                        readOnly={true}
+                        className='mr-4 ml-6'
+                      />
                       {getNomBeneficiaireComplet(beneficiaire)}
                     </label>
                   </li>
