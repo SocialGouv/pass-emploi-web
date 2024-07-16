@@ -453,8 +453,6 @@ function DetailsSessionPage({
             </Label>
             <Switch
               id='visibilite-session'
-              checkedLabel='Oui'
-              uncheckedLabel='Non'
               checked={visibiliteSession}
               onChange={handleChangerVisibiliteSession}
               disabled={loadingChangerVisibilite}
