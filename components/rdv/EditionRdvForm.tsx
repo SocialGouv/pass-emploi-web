@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 import {
   BeneficiaireIndicationPortefeuille,
@@ -489,11 +489,11 @@ export function EditionRdvForm({
     )
   }
 
-  function handlePresenceConseiller(e: ChangeEvent<HTMLInputElement>) {
+  function handlePresenceConseiller() {
     if (typeEntretienIndividuelConseillerSelected()) {
       setConseillerPresent(true)
     } else {
-      setConseillerPresent(e.target.checked)
+      setConseillerPresent(!isConseillerPresent)
     }
   }
 
@@ -978,7 +978,7 @@ export function EditionRdvForm({
                 id='emailInvitation'
                 disabled={Boolean(evenement)}
                 checked={sendEmailInvitation}
-                onChange={(e) => setSendEmailInvitation(e.target.checked)}
+                onChange={() => setSendEmailInvitation(!sendEmailInvitation)}
               />
             </div>
           </div>
