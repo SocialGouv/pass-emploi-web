@@ -176,22 +176,17 @@ export default function MessagesDuJour({
               />
             </button>
 
-            <div
-              className='p-4 bg-white rounded-base border text-base-bold border-grey_700 focus-within:outline focus-within:outline-1'
-              onClick={() => inputRef.current!.focus()}
-            >
-              <label htmlFor='input-new-message' className='sr-only'>
-                Message à envoyer
-              </label>
-              <textarea
-                ref={inputRef}
-                id='input-new-message'
-                className='w-full outline-none text-base-regular'
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder='Écrivez votre message ici...'
-                rows={5}
-              />
-            </div>
+            <label htmlFor='input-new-message' className='sr-only'>
+              Message à envoyer
+            </label>
+            <textarea
+              ref={inputRef}
+              id='input-new-message'
+              className='p-4 bg-white rounded-base border border-grey_700'
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder='Écrivez votre message ici...'
+              rows={5}
+            />
             <div className='relative'>
               <button
                 type='submit'
