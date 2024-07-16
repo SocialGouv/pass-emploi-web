@@ -223,18 +223,22 @@ function FooterMessage({
   }
 
   return (
-    <div
+    <button
+      type='button'
       onClick={permuterMenuEdition}
-      className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
+      title={`${afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour votre message du ${toFrenchDateTime(creationDate)}`}
+      aria-label={`
+          ${afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour
+          votre message du ${toFrenchDateTime(creationDate, { a11y: true })}
+        `}
+      className='relative flex items-center gap-2 ml-auto text-xs-medium text-content'
     >
-      <button
-        type='button'
+      <div
         className={
           afficherMenuEdition
             ? 'bg-primary rounded-full fill-white'
             : 'fill-grey_800 hover:rounded-full hover:shadow-m'
         }
-        title={`${afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour votre message du ${toFrenchDateTime(creationDate)}`}
       >
         <IconComponent
           focusable={false}
@@ -242,11 +246,7 @@ function FooterMessage({
           className='inline w-4 h-4 m-1'
           name={IconName.More}
         />
-        <span className='sr-only'>
-          {afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour
-          votre message du {toFrenchDateTime(creationDate, { a11y: true })}
-        </span>
-      </button>
+      </div>
 
       {afficherMenuEdition && (
         <div
@@ -290,7 +290,7 @@ function FooterMessage({
         {estModifie && ' · Modifié'}
         {!estModifie && (!isSeenByJeune ? ' · Envoyé' : ' · Lu')}
       </span>
-    </div>
+    </button>
   )
 }
 
