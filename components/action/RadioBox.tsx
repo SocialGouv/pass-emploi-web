@@ -1,6 +1,4 @@
-import { MouseEvent } from 'react'
-
-interface RadioBoxProps {
+type RadioBoxProps = {
   isSelected: boolean
   id: string
   label: string
@@ -19,23 +17,13 @@ export default function RadioBox({
   color = 'primary',
   disabled,
 }: RadioBoxProps) {
-  function onClickDiv(e: MouseEvent) {
-    e.preventDefault()
-    if (disabled) return
-    onChange()
-  }
-  function onClickInput(e: MouseEvent) {
-    e.stopPropagation()
-  }
-
   const selectedStyle = `border-${color} bg-${color}_lighten text-${color}`
 
   return (
-    <div
-      className={`flex items-center w-fit px-4 py-2 border border-solid rounded-l text-s-bold mr-4 cursor-pointer ${
+    <label
+      className={`flex items-center w-fit px-4 py-2 border border-solid rounded-l text-s-bold mr-4 ${
         isSelected ? selectedStyle : 'border-grey_800 text-grey_800'
-      } ${disabled ? 'hover:cursor-not-allowed' : ''}`}
-      onClick={onClickDiv}
+      } ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
     >
       <input
         type='radio'
@@ -44,18 +32,10 @@ export default function RadioBox({
         checked={isSelected}
         required={true}
         className='mr-2'
-        onClick={onClickInput}
         onChange={onChange}
         disabled={disabled}
       />
-      <label
-        htmlFor={id}
-        className={`whitespace-nowrap cursor-pointer ${
-          disabled ? 'hover:cursor-not-allowed' : ''
-        }`}
-      >
-        {label}
-      </label>
-    </div>
+      <span className='whitespace-nowrap'>{label}</span>
+    </label>
   )
 }
