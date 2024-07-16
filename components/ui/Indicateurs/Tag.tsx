@@ -52,6 +52,17 @@ export function TagStatut({ className, ...props }: TagProps) {
   return <Tag className={'rounded-l ' + className} {...props} />
 }
 
+export function TagDate({ className, ...props }: TagProps) {
+  return (
+    <Tag
+      className={'rounded-l ' + className}
+      backgroundColor='grey_100'
+      color='grey_800'
+      {...props}
+    />
+  )
+}
+
 export function TagCategorieAction({ categorie }: TagCategorieActionProps) {
   if (categorie)
     return (
