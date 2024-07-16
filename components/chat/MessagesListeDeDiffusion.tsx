@@ -58,7 +58,7 @@ export default function MessagesListeDeDiffusion({
             titre={liste.titre}
             labelRetour={'Retour à mes listes de diffusion'}
             onBack={onBack}
-            permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+            onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
             messagerieEstVisible={messagerieEstVisible}
           />
 

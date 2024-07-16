@@ -324,10 +324,10 @@ export function Conversation({
             </Link>
           </span>
         }
-        onClickBookMark={toggleFlag}
+        onPermuterBookMark={toggleFlag}
         isFlaggedByConseiller={isFlaggedByConseiller}
-        onClickRecherche={toggleAfficherRecherche}
-        permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+        onLancerRecherche={toggleAfficherRecherche}
+        onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
         messagerieEstVisible={messagerieEstVisible}
       />
 
