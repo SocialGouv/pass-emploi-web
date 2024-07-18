@@ -53,5 +53,17 @@
         ]
       }
     }
-  ]
+  ],
+  "settings": {
+    "jsx-a11y": {
+      "polymorphicPropName": "as",
+      "components": {
+        "Table": "table",
+        "TR": "tr",
+        "TH": "th",
+        "TD": "td",
+        "TDLink": "td"
+      }
+    }
+  }
 }

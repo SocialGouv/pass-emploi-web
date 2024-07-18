@@ -1,9 +1,13 @@
 import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
-import { AgendaData, AgendaRows, buildAgendaData } from 'components/AgendaRows'
-import { AnimationCollectiveRow } from 'components/AnimationCollectiveRow'
 import EmptyState from 'components/EmptyState'
+import {
+  AgendaData,
+  AgendaRows,
+  buildAgendaData,
+} from 'components/rdv/AgendaRows'
+import { AnimationCollectiveRow } from 'components/rdv/AnimationCollectiveRow'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
