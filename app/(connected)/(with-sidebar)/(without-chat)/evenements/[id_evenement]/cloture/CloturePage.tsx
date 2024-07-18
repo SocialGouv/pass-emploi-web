@@ -39,7 +39,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
     }
   }
 
-  function selectionnerTousLesBeneficiaires(_event: FormEvent) {
+  function selectionnerTousLesBeneficiaires() {
     if (idsSelectionnes.length !== evenement.jeunes.length) {
       setIdsSelectionnes(evenement.jeunes.map((jeune) => jeune.id))
     } else {
@@ -80,20 +80,20 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
             </TR>
           </thead>
           <tbody>
-            <TR onClick={(e) => selectionnerTousLesBeneficiaires(e)}>
+            <TR>
               <TD>
                 <input
                   id='cloture-tout-selectionner'
                   type='checkbox'
                   checked={idsSelectionnes.length === evenement.jeunes.length}
                   title='Tout sélectionner'
-                  onChange={() => false}
+                  onClick={selectionnerTousLesBeneficiaires}
                 />
               </TD>
               <TD>
                 <label
                   htmlFor='cloture-tout-selectionner'
-                  onClick={(e) => e.stopPropagation()}
+                  className='cursor-pointer before:fixed before:inset-0 before:z-10'
                 >
                   Tout sélectionner
                 </label>
@@ -102,23 +102,20 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
           </tbody>
           <tbody>
             {evenement.jeunes.map((jeune: BaseBeneficiaire) => (
-              <TR
-                key={jeune.id}
-                onClick={() => selectionnerBeneficiaire(jeune)}
-              >
+              <TR key={jeune.id}>
                 <TD>
                   <input
                     type='checkbox'
                     id={'checkbox-' + jeune.id}
                     checked={idsSelectionnes.includes(jeune.id)}
                     title={'Sélectionner ' + getNomBeneficiaireComplet(jeune)}
-                    onChange={() => false}
+                    onChange={() => selectionnerBeneficiaire(jeune)}
                   />
                 </TD>
                 <TD>
                   <label
                     htmlFor={'checkbox-' + jeune.id}
-                    onClick={(e) => e.stopPropagation()}
+                    className='cursor-pointer before:fixed before:inset-0 before:z-10'
                   >
                     {getNomBeneficiaireComplet(jeune)}
                   </label>
