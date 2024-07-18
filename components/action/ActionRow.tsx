@@ -37,28 +37,22 @@ export default function ActionRow({
 
   return (
     <TR isSelected={isChecked}>
-      <TD
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          onSelection(action)
-        }}
-      >
-        <input
-          id={`selectionner-${action.id}`}
-          type='checkbox'
-          checked={isChecked}
-          title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
-            action.content
-          }`}
-          className='w-4 h-4 cursor-pointer'
-          aria-label={`Sélection ${action.content} ${
-            action.qualification?.libelle ?? ''
-          }`}
-          disabled={!actionEstTerminee}
-          onClick={(e) => e.stopPropagation()}
-          onChange={() => onSelection(action)}
-        />
+      <TD className='relative'>
+        <label className='absolute inset-0 z-20 cursor-pointer p-4'>
+          <span className='sr-only'>
+            Sélection {action.content} {action.qualification?.libelle}
+          </span>
+          <input
+            type='checkbox'
+            checked={isChecked}
+            title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
+              action.content
+            }`}
+            className='w-4 h-4 cursor-pointer'
+            disabled={!actionEstTerminee}
+            onChange={() => onSelection(action)}
+          />
+        </label>
       </TD>
       <TD className='rounded-l-base max-w-[400px]'>
         <span

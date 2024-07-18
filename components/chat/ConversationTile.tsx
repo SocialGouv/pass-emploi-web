@@ -104,7 +104,7 @@ export function ConversationTile({
         actionLabel='Suivre la conversation'
         oppositeActionLabel='Ne plus suivre la conversation'
         onToggle={toggleFollowMessage}
-        className='absolute top-3 right-3 w-5 h-5 fill-primary'
+        className='absolute top-3 right-3 w-5 h-5 fill-primary hover:fill-primary_darken'
       />
     </div>
   )

@@ -39,6 +39,7 @@ export default function IconToggle({
           name={checked ? checkedIconName : uncheckedIconName}
           focusable={false}
           aria-hidden={true}
+          className='fill-inherit'
         />
       </button>
     </>

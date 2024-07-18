@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { AgendaData, AgendaRows } from 'components/AgendaRows'
+import { AgendaData, AgendaRows } from 'components/rdv/AgendaRows'
 import { EvenementRow } from 'components/rdv/EvenementRow'
 import Table from 'components/ui/Table/Table'
 import { TH } from 'components/ui/Table/TH'

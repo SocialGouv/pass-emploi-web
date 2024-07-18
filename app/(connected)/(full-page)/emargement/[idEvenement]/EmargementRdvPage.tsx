@@ -85,7 +85,7 @@ function EmargementRdvPage({ evenement, agence }: EmargementRdvPageProps) {
         </thead>
         <tbody>
           {inscriptions.map((jeune, key) => (
-            <TR key={key} classname='shadow-none'>
+            <TR key={key} className='shadow-none'>
               <TD className='border border-grey_500'>{key + 1}</TD>
               <TD className='border-y border-grey_500'>
                 {jeune.prenom} {jeune.nom}
