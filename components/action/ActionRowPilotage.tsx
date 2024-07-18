@@ -22,30 +22,21 @@ export default function ActionRowPilotage({
 
   return (
     <TR isSelected={isChecked}>
-      <TD
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          onSelection(action)
-        }}
-      >
-        <input
-          id={`selectionner-${action.id}`}
-          type='checkbox'
-          checked={isChecked}
-          title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
-            action.titre
-          }`}
-          className='w-4 h-4 cursor-pointer'
-          aria-label={`Sélection ${action.titre} ${
-            action.categorie?.libelle ?? ''
-          }`}
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-          }}
-          onChange={() => onSelection(action)}
-        />
+      <TD className='relative'>
+        <label className='absolute inset-0 z-20 cursor-pointer p-4'>
+          <span className='sr-only'>
+            Sélection {action.titre} {action.categorie?.libelle}
+          </span>
+          <input
+            type='checkbox'
+            checked={isChecked}
+            title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
+              action.titre
+            }`}
+            className='w-4 h-4 cursor-pointer'
+            onChange={() => onSelection(action)}
+          />
+        </label>
       </TD>
       <TD isBold={isChecked}>
         {action.beneficiaire.nom} {action.beneficiaire.prenom}

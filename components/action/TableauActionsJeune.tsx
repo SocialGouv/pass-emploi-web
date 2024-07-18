@@ -236,17 +236,16 @@ export default function TableauActionsJeune({
             <thead>
               <TR isHeader={true}>
                 <TH estCliquable={true}>
-                  <div className='flex justify-center w-full h-full p-4'>
+                  <label className='cursor-pointer p-4'>
+                    <span className='sr-only'>Tout sélectionner</span>
                     <input
-                      id='qualification-tout-selectionner'
                       type='checkbox'
                       title='Tout sélectionner'
                       onChange={selectionnerToutesLesActions}
-                      className='flex items-center cursor-pointer w-4 h-4 p-4'
-                      aria-label='Tout sélectionner'
+                      className='w-4 h-4 p-4'
                       ref={toutSelectionnerCheckboxRef}
                     />
-                  </div>
+                  </label>
                 </TH>
                 <TH>Titre de l’action</TH>
                 <TH estCliquable={true}>
