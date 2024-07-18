@@ -717,24 +717,17 @@ const ChoixConseiller = forwardRef(
             </thead>
             <tbody>
               {choixConseillers.map((conseiller) => (
-                <TR
-                  key={conseiller.id}
-                  onClick={() => choisirConseiller(conseiller)}
-                >
+                <TR key={conseiller.id} className='relative rotate-0'>
                   <TD isBold>
-                    <input
-                      type='radio'
-                      id={'choix-' + name + '--' + conseiller.id}
-                      name={'choix-' + name}
-                      checked={idConseillerSelectionne === conseiller.id}
-                      readOnly={true}
-                      required={true}
-                      className='mr-2'
-                    />
-                    <label
-                      htmlFor={'choix-' + name + '--' + conseiller.id}
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                    <label className='before:fixed before:inset-0 before:z-10 cursor-pointer'>
+                      <input
+                        type='radio'
+                        name={'choix-' + name}
+                        checked={idConseillerSelectionne === conseiller.id}
+                        required={true}
+                        className='mr-2'
+                        onChange={() => choisirConseiller(conseiller)}
+                      />
                       {conseiller.firstName} {conseiller.lastName}
                     </label>
                   </TD>
