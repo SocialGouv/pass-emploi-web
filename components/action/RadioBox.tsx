@@ -1,6 +1,5 @@
 type RadioBoxProps = {
   isSelected: boolean
-  id: string
   label: string
   name: string
   onChange: () => void
@@ -11,7 +10,6 @@ type RadioBoxProps = {
 export default function RadioBox({
   isSelected,
   onChange,
-  id,
   label,
   name,
   color = 'primary',
@@ -27,12 +25,12 @@ export default function RadioBox({
     >
       <input
         type='radio'
-        id={id}
         name={name}
         checked={isSelected}
         required={true}
+        readOnly={true}
         className='mr-2'
-        onChange={onChange}
+        onClick={onChange}
         disabled={disabled}
       />
       <span className='whitespace-nowrap'>{label}</span>
