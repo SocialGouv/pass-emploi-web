@@ -56,13 +56,16 @@
   ],
   "settings": {
     "jsx-a11y": {
-      "polymorphicPropName": "as",
       "components": {
         "Table": "table",
         "TR": "tr",
         "TH": "th",
         "TD": "td",
-        "TDLink": "td"
+        "TDLink": "td",
+        "IconComponent": "svg",
+        "Input": "input",
+        "Select": "select",
+        "Textarea": "textarea"
       }
     }
   }

@@ -172,7 +172,6 @@ export default function FormRechercheOffres({
               isSelected={typeOffre === TypeOffre.EMPLOI}
               onChange={() => changerTypeOffre(TypeOffre.EMPLOI)}
               name='type-offre'
-              id='type-offre--emploi'
               label='Offre d’emploi'
             />
 
@@ -182,7 +181,6 @@ export default function FormRechercheOffres({
                   isSelected={typeOffre === TypeOffre.ALTERNANCE}
                   onChange={() => changerTypeOffre(TypeOffre.ALTERNANCE)}
                   name='type-offre'
-                  id='type-offre--alternance'
                   label='Alternance'
                 />
 
@@ -190,7 +188,6 @@ export default function FormRechercheOffres({
                   isSelected={typeOffre === TypeOffre.SERVICE_CIVIQUE}
                   onChange={() => changerTypeOffre(TypeOffre.SERVICE_CIVIQUE)}
                   name='type-offre'
-                  id='type-offre--service-civique'
                   label='Service civique'
                 />
               </>
@@ -199,7 +196,6 @@ export default function FormRechercheOffres({
               isSelected={typeOffre === TypeOffre.IMMERSION}
               onChange={() => changerTypeOffre(TypeOffre.IMMERSION)}
               name='type-offre'
-              id='type-offre--immersion'
               label='Immersion'
             />
           </div>

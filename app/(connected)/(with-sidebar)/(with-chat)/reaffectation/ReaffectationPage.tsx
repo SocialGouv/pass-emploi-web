@@ -367,7 +367,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 {structureReaffectation.error}
               </InputError>
             )}
-            <div className='flex flex-wrap'>
+            <div className='flex flex-wrap' id='structure-reaffectation--CEJ'>
               <RadioBox
                 isSelected={
                   structureReaffectation.value ===
@@ -380,7 +380,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 }
                 label='CEJ'
                 name='structure-reaffectation'
-                id='structure-reaffectation--CEJ'
               />
 
               <RadioBox
@@ -395,7 +394,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 }
                 label='BRSA'
                 name='structure-reaffectation'
-                id='structure-reaffectation--BRSA'
               />
 
               <RadioBox
@@ -410,7 +408,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 }
                 label='AIJ'
                 name='structure-reaffectation'
-                id='structure-reaffectation--AIJ'
               />
             </div>
           </Etape>
@@ -431,7 +428,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               onChange={() => handleInputTypeReaffectation(true)}
               label='Temporaire'
               name='type-reaffectation'
-              id='type-reaffectation--temporaire'
             />
 
             <RadioBox
@@ -439,7 +435,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               onChange={() => handleInputTypeReaffectation(false)}
               label='Définitive'
               name='type-reaffectation'
-              id='type-reaffectation--definitive'
             />
           </div>
         </Etape>

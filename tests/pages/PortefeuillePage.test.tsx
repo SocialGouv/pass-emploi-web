@@ -81,54 +81,51 @@ describe('PortefeuillePage client side', () => {
 
     describe("affiche le statut d'activation du compte d'un jeune", () => {
       it("si le compte n'a pas été activé", () => {
-        const row2 = within(
-          screen
-            .getByText('Sanfamiye Nadia')
-            .closest('[role="row"]') as HTMLElement
-        )
+        const row = screen.getByRole('cell', {
+          name: 'Sanfamiye Nadia Sans situation',
+        }).parentElement!
 
         //THEN
-        expect(row2.getByText('Compte non activé')).toBeInTheDocument()
+        expect(
+          within(row).getByRole('cell', { name: 'Compte non activé' })
+        ).toBeInTheDocument()
       })
 
       it('si le compte a été activé', () => {
-        const row1 = within(
-          screen.getByText('Jirac Kenji').closest('[role="row"]') as HTMLElement
-        )
+        const row = screen.getByRole('cell', {
+          name: 'Jirac Kenji Sans situation',
+        }).parentElement!
 
         //THEN
-        expect(row1.getByText('Le 07/12/2021 à 18h30')).toBeInTheDocument()
+        expect(
+          within(row).getByRole('cell', { name: 'Le 07/12/2021 à 18h30' })
+        ).toBeInTheDocument()
       })
     })
 
     describe("affiche la réaffectation temporaire d'un jeune", () => {
       it('si le compte a été réaffecté temporairement', () => {
-        const row3 = within(
-          screen.getByText(/Maria/).closest('[role="row"]') as HTMLElement
-        )
-
-        //THEN
         expect(
-          row3.getByLabelText('bénéficiaire temporaire')
+          screen.getByRole('cell', {
+            name: "bénéficiaire temporaire D'Aböville-Muñoz François Maria Sans situation",
+          })
         ).toBeInTheDocument()
       })
 
       it("si le compte n'a pas été réaffecté temporairement", () => {
-        const row2 = within(
-          screen
-            .getByText('Sanfamiye Nadia')
-            .closest('[role="row"]') as HTMLElement
-        )
+        const row = screen.getByRole('cell', {
+          name: 'Sanfamiye Nadia Sans situation',
+        }).parentElement!
 
         //THEN
-        expect(() => row2.getByText('bénéficiaire temporaire')).toThrow()
+        expect(() => within(row).getByText(/bénéficiaire temporaire/)).toThrow()
       })
     })
 
     it('masque le header du tableau', () => {
       expect(screen.getAllByRole('rowgroup')[0]).toHaveAttribute(
         'class',
-        'table-header-group sr-only'
+        'sr-only'
       )
     })
   })
@@ -237,15 +234,11 @@ describe('PortefeuillePage client side', () => {
     })
 
     it('affiche si la structure du bénéficiaire est différente', () => {
-      const row3 = within(
-        screen.getByText(/Kenji/).closest('[role="row"]') as HTMLElement
-      )
-
       //THEN
       expect(
-        row3.getByText(
-          /Ce bénéficiaire est rattaché à une Mission Locale différente/
-        )
+        screen.getByRole('cell', {
+          name: 'Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre. Jirac Kenji Sans situation',
+        })
       ).toBeInTheDocument()
     })
   })

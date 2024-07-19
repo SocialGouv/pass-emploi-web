@@ -35,9 +35,9 @@ export function HistoriqueAction({ action }: HistoriqueActionProps) {
             title={`${expanded ? 'Cacher' : 'Voir'} l’historique`}
             className='h-6 w-6 fill-primary'
             focusable={false}
-            aria-labelledby='label-action-historique'
+            aria-hidden={true}
           />
-          <span id='label-action-historique' className='sr-only'>
+          <span className='sr-only'>
             {expanded ? 'Cacher' : 'Voir'} l’historique
           </span>
         </button>
