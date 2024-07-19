@@ -87,7 +87,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
                   type='checkbox'
                   checked={idsSelectionnes.length === evenement.jeunes.length}
                   title='Tout sélectionner'
-                  onClick={selectionnerTousLesBeneficiaires}
+                  onChange={selectionnerTousLesBeneficiaires}
                 />
               </TD>
               <TD>

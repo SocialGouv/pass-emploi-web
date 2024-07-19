@@ -8,13 +8,12 @@ describe('Tab & TabList', () => {
   describe('Tab', () => {
     describe('component', () => {
       let onSelectTab: () => void
-      let container: HTMLElement
       beforeEach(() => {
         // Given
         onSelectTab = jest.fn()
 
         // When
-        container = render(
+        render(
           <Tab
             label='Titre tab'
             controls='controlled-id'
@@ -22,12 +21,14 @@ describe('Tab & TabList', () => {
             onSelectTab={onSelectTab}
             count={7}
           />
-        ).container
+        )
       })
 
       it('renders a tab', () => {
         // Then
-        expect(container.querySelector('li')).toHaveAttribute('role', 'tab')
+        expect(
+          screen.getByRole('tab', { name: 'Titre tab 7' })
+        ).toBeInTheDocument()
       })
 
       it('shows title and count', () => {

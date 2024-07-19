@@ -5,12 +5,12 @@ import React from 'react'
 
 import ChatRoom from 'components/chat/ChatRoom'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
-import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import { BaseBeneficiaire, BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
@@ -428,10 +428,9 @@ describe('<ChatRoom />', () => {
             exact: false,
           })
           .closest('div')
-        const flagConversation = within(conversationCard!).getByRole(
-          'checkbox',
-          { name: /Ne plus suivre/ }
-        )
+        const flagConversation = within(conversationCard!).getByRole('switch', {
+          name: 'Suivre la conversation',
+        })
 
         // When
         await userEvent.click(flagConversation!)

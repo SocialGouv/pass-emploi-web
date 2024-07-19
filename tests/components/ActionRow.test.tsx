@@ -10,8 +10,12 @@ import { uneAction } from 'fixtures/action'
 import { StatutAction } from 'interfaces/action'
 
 describe('<ActionRow/>', () => {
+  let container: HTMLElement
   beforeEach(async () => {
     ;(usePathname as jest.Mock).mockReturnValue('/mes-jeunes')
+    const table = document.createElement('table')
+    const tbody = document.createElement('tbody')
+    container = document.body.appendChild(table.appendChild(tbody))
   })
 
   it("devrait afficher les informations des actions d'un jeune", () => {
@@ -22,7 +26,8 @@ describe('<ActionRow/>', () => {
         jeuneId='1'
         isChecked={false}
         onSelection={() => {}}
-      />
+      />,
+      { container }
     )
     expect(
       screen.getByText('Identifier ses atouts et ses compétences')
@@ -42,7 +47,8 @@ describe('<ActionRow/>', () => {
         jeuneId='1'
         isChecked={false}
         onSelection={() => {}}
-      />
+      />,
+      { container }
     )
     expect(screen.getByText('À faire')).toBeInTheDocument()
   })
@@ -55,7 +61,8 @@ describe('<ActionRow/>', () => {
         jeuneId='1'
         isChecked={false}
         onSelection={() => {}}
-      />
+      />,
+      { container }
     )
     expect(screen.getByText('Terminée - À qualifier')).toBeInTheDocument()
   })
@@ -68,7 +75,8 @@ describe('<ActionRow/>', () => {
         jeuneId='1'
         isChecked={false}
         onSelection={() => {}}
-      />
+      />,
+      { container }
     )
     expect(screen.getByText('En retard')).toBeInTheDocument()
   })
@@ -82,7 +90,8 @@ describe('<ActionRow/>', () => {
           jeuneId='1'
           isChecked={false}
           onSelection={() => {}}
-        />
+        />,
+        { container }
       )
 
       // Then
@@ -101,7 +110,8 @@ describe('<ActionRow/>', () => {
           jeuneId='1'
           isChecked={true}
           onSelection={() => {}}
-        />
+        />,
+        { container }
       )
 
       // Then
@@ -122,7 +132,8 @@ describe('<ActionRow/>', () => {
           jeuneId='1'
           isChecked={false}
           onSelection={onSelection}
-        />
+        />,
+        { container }
       )
 
       // When
