@@ -2,6 +2,7 @@ import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -20,6 +21,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { toLongMonthDate } from 'utils/date'
 
 jest.mock('services/messages.service')
 jest.mock('services/conseiller.service')
@@ -77,6 +79,22 @@ describe('PortefeuillePage client side', () => {
         screen.getByText("Vous n'avez pas encore intégré de bénéficiaires.")
       ).toThrow()
       expect(() => screen.getByText(/transférés temporairement/)).toThrow()
+    })
+
+    it('affiche la date de fin du CEJ', () => {
+      jeunes.forEach((jeune) => {
+        const nomBeneficiaire = `${jeune.nom} ${jeune.prenom}`
+        const row = within(
+          screen.getByRole('cell', { name: new RegExp(nomBeneficiaire) })
+            .parentElement!
+        )
+
+        if (jeune.dateFinCEJ)
+          expect(
+            row.getByText(toLongMonthDate(DateTime.fromISO(jeune.dateFinCEJ)))
+          ).toBeInTheDocument()
+        else expect(row.getByText('Pas de date renseignée')).toBeInTheDocument()
+      })
     })
 
     describe("affiche le statut d'activation du compte d'un jeune", () => {
@@ -237,8 +255,8 @@ describe('PortefeuillePage client side', () => {
       //THEN
       expect(
         screen.getByRole('cell', {
-          name: 'Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre. Jirac Kenji Sans situation',
-        })
+          name: /Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre. Jirac Kenji/,
+        }).parentElement!
       ).toBeInTheDocument()
     })
   })
