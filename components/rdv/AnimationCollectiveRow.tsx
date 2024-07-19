@@ -161,11 +161,6 @@ function statusProps({ type, statut }: AnimationCollective): {
         label: type === 'Atelier' ? 'Clos' : 'Close',
         color: 'accent_2',
       }
-    case undefined:
-      return {
-        label: '',
-        color: '',
-      }
   }
 }
 

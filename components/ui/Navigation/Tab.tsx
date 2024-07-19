@@ -20,7 +20,7 @@ export default function Tab({
   iconName,
 }: TabProps) {
   return (
-    <li role='none'>
+    <li role='presentation'>
       <button
         role='tab'
         tabIndex={selected ? 0 : -1}

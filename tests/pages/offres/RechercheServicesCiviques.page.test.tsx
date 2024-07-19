@@ -181,17 +181,17 @@ describe('Page Recherche Offres Service civique', () => {
           name: 'Date de début',
         })
         expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
+          within(dateDebutGroupe).getByRole('switch', {
             name: /Dès que possible/,
           })
         ).toBeChecked()
         expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
+          within(dateDebutGroupe).getByRole('switch', {
             name: /À partir de/,
           })
         ).not.toBeChecked()
         expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
+          within(dateDebutGroupe).getByRole('switch', {
             name: /À partir de/,
           })
         ).toHaveAttribute('disabled')
@@ -216,12 +216,12 @@ describe('Page Recherche Offres Service civique', () => {
           name: 'Date de début',
         })
         expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
+          within(dateDebutGroupe).getByRole('switch', {
             name: /Dès que possible/,
           })
         ).not.toBeChecked()
         expect(
-          within(dateDebutGroupe).getByRole('checkbox', {
+          within(dateDebutGroupe).getByRole('switch', {
             name: /À partir de/,
           })
         ).toBeChecked()

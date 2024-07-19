@@ -6,7 +6,7 @@ import React from 'react'
 import { ConversationTile } from 'components/chat/ConversationTile'
 import { unBeneficiaireChat } from 'fixtures/beneficiaire'
 
-describe('<ChatRoomTile />', () => {
+describe('<ConversationTile />', () => {
   let toggleFlag: (flagged: boolean) => void
 
   beforeEach(async () => {
@@ -26,10 +26,13 @@ describe('<ChatRoomTile />', () => {
           onToggleFlag={toggleFlag}
         />
       )
+      const button = screen.getByRole('switch', {
+        name: 'Suivre la conversation',
+      })
+      expect(button).toHaveProperty('title', 'Ne plus suivre la conversation')
 
-      await userEvent.click(
-        screen.getByRole('checkbox', { name: 'Ne plus suivre la conversation' })
-      )
+      // When
+      await userEvent.click(button)
 
       // Then
       expect(toggleFlag).toHaveBeenCalledWith(false)
@@ -49,10 +52,13 @@ describe('<ChatRoomTile />', () => {
           onToggleFlag={toggleFlag}
         />
       )
+      const button = screen.getByRole('switch', {
+        name: 'Suivre la conversation',
+      })
+      expect(button).toHaveProperty('title', 'Suivre la conversation')
 
-      await userEvent.click(
-        screen.getByRole('checkbox', { name: 'Suivre la conversation' })
-      )
+      // When
+      await userEvent.click(button)
 
       // Then
       expect(toggleFlag).toHaveBeenCalledWith(true)
