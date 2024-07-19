@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
@@ -13,12 +14,11 @@ import { TH } from 'components/ui/Table/TH'
 import TR from 'components/ui/Table/TR'
 import {
   BeneficiaireAvecInfosComplementaires,
-  CategorieSituation,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toRelativeDateTime } from 'utils/date'
+import { toLongMonthDate, toRelativeDateTime } from 'utils/date'
 
 interface TableauJeunesProps {
   jeunesFiltres: BeneficiaireAvecInfosComplementaires[]
@@ -143,9 +143,7 @@ export default function TableauJeunes({
                         )}
                         {getNomBeneficiaireComplet(jeune)}
                       </span>
-                      <SituationTag
-                        situation={CategorieSituation.SANS_SITUATION}
-                      />
+                      <SituationTag situation={jeune.situationCourante} />
                     </TD>
 
                     <TD>
@@ -155,7 +153,15 @@ export default function TableauJeunes({
                       >
                         {dateFinCEJColumn}
                       </span>
-                      <TagDate label='12 août 1999' />
+                      <TagDate
+                        label={
+                          jeune.dateFinCEJ
+                            ? toLongMonthDate(
+                                DateTime.fromISO(jeune.dateFinCEJ)
+                              )
+                            : 'Pas de date renseignée'
+                        }
+                      />
                     </TD>
 
                     {withActions && (

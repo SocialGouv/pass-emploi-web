@@ -35,6 +35,7 @@ export interface BeneficiaireFromListe extends BaseBeneficiaire {
   }
   situationCourante: CategorieSituation
   structureMilo?: { id: string }
+  dateFinCEJ?: string
 }
 
 export interface DetailBeneficiaire extends BaseBeneficiaire {
