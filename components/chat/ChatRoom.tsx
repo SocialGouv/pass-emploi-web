@@ -200,14 +200,15 @@ export default function ChatRoom({
             aria-controls='menu-mobile'
             aria-expanded={showMenu}
             className='absolute left-4 top-[calc(50%-1.25rem)]'
+            title='Ouvrir le menu principal'
           >
             <IconComponent
               name={IconName.Menu}
               className='w-10 h-10 fill-primary layout_s:hidden'
               aria-hidden={true}
               focusable={false}
-              title='Ouvrir le menu principal'
             />
+            <span className='sr-only'>Ouvrir le menu principal</span>
           </button>
         </nav>
 

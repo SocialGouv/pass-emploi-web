@@ -1,5 +1,7 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 import React from 'react'
 
@@ -58,11 +60,12 @@ describe('<ChatRoom />', () => {
 
     it('n’affiche pas de pastille s’il n’y a pas de message configuré', async () => {
       //Given
+      let container: HTMLElement
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
 
       //When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <ChatRoom
             beneficiairesChats={beneficiairesChats}
             showMenu={false}
@@ -73,7 +76,7 @@ describe('<ChatRoom />', () => {
           {
             customConseiller: unConseiller({ id: 'id-conseiller' }),
           }
-        )
+        ))
       })
 
       await userEvent.click(
@@ -83,6 +86,8 @@ describe('<ChatRoom />', () => {
       )
 
       //Then
+      const result = await axe(container)
+      expect(result).toHaveNoViolations()
       expect(() =>
         screen.getByText('Un message important est déjà configuré')
       ).toThrow()
@@ -357,11 +362,12 @@ describe('<ChatRoom />', () => {
 
   describe('quand le conseiller a des beneficiaires', () => {
     let accederConversation: (idJeune: string) => void
+    let container: HTMLElement
     beforeEach(async () => {
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
       accederConversation = jest.fn()
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <ChatRoom
             beneficiairesChats={beneficiairesChats}
             showMenu={false}
@@ -370,8 +376,18 @@ describe('<ChatRoom />', () => {
             onOuvertureMenu={() => {}}
           />,
           {}
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche les alertes sur petit écran', () => {
@@ -447,11 +463,12 @@ describe('<ChatRoom />', () => {
   describe("quand le conseiller n'a pas de beneficiaires", () => {
     it('affiche un message informatif', async () => {
       // Given
+      let container: HTMLElement
       ;(getMessageImportant as jest.Mock).mockResolvedValue(undefined)
 
       // When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <ChatRoom
             beneficiairesChats={[]}
             showMenu={false}
@@ -460,10 +477,12 @@ describe('<ChatRoom />', () => {
             onOuvertureMenu={() => {}}
           />,
           {}
-        )
+        ))
       })
 
       // Then
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
       expect(screen.getByText('Vous pouvez échanger :')).toBeInTheDocument()
       expect(
         screen.getByText('directement avec un bénéficiaire')
