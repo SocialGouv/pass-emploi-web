@@ -70,12 +70,15 @@ export default function TableauBeneficiairesMilo({
         </TR>
       </thead>
 
-      <tbody>
+      <tbody className='grid grid-cols-[repeat(5,auto)] layout_base:grid-cols-[repeat(6,auto)] grid-flow-rows gap-y-2'>
         {beneficiairesAffiches.map(
           (beneficiaire: BeneficiaireAvecInfosComplementaires) => (
-            <TR key={beneficiaire.id}>
+            <TR
+              key={beneficiaire.id}
+              className='grid grid-cols-subgrid grid-rows-2 layout_base:grid-rows-1 col-span-full items-center'
+            >
               <TD isBold className='rounded-l-base'>
-                <span className={styleTDTitle}>
+                <div className='mb-2'>
                   {beneficiaire.structureMilo?.id ===
                     conseiller.structureMilo?.id &&
                     beneficiaire.isReaffectationTemporaire && (
@@ -104,7 +107,7 @@ export default function TableauBeneficiairesMilo({
                         focusable={false}
                         role='img'
                         aria-labelledby={`label-ml-differente-${beneficiaire.id}`}
-                        className='w-4 h-4 fill-warning'
+                        className='inline w-4 h-4 fill-warning'
                         title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                       />
                       <span
@@ -117,17 +120,17 @@ export default function TableauBeneficiairesMilo({
                     </span>
                   )}
                   {getNomBeneficiaireComplet(beneficiaire)}
-                </span>
+                </div>
                 <SituationTag situation={beneficiaire.situationCourante} />
               </TD>
 
               <TD>
-                <span
-                  className={`${styleTDTitle} text-s-regular text-grey_800`}
+                <div
+                  className='mb-2 text-s-regular text-grey_800'
                   aria-hidden={true}
                 >
                   {dateFinCEJColumn}
-                </span>
+                </div>
                 <TagDate
                   label={
                     beneficiaire.dateFinCEJ
@@ -140,41 +143,41 @@ export default function TableauBeneficiairesMilo({
               </TD>
 
               <TD className='border-l-1 border-grey_800'>
-                <span
-                  className={`${styleTDTitle} text-s-regular text-grey_800`}
+                <div
+                  className='mb-2 text-s-regular text-grey_800'
                   aria-hidden={true}
                 >
                   {actionsColumn}
-                </span>
-                <div className='mx-auto text-m-bold'>
-                  {beneficiaire.nbActionsNonTerminees}
                 </div>
+                <span className='text-m-bold'>
+                  {beneficiaire.nbActionsNonTerminees}
+                </span>
               </TD>
 
               <TD className='rounded-r-base'>
-                <span
-                  className={`${styleTDTitle} text-s-regular text-grey_800`}
+                <div
+                  className='mb-2 text-s-regular text-grey_800'
                   aria-hidden={true}
                 >
                   {rdvColumn}
-                </span>
-                <div className='mx-auto text-m-bold'>12</div>
+                </div>
+                <span className='text-m-bold'>12</span>
               </TD>
 
-              <TD>
-                <span
-                  className={`${styleTDTitle} text-s-regular text-grey_800`}
+              <TD className='row-start-2 col-span-full layout_base:row-start-1 layout_base:col-start-5 layout_base:col-span-1'>
+                <div
+                  className='inline layout_base:block mr-8 mb-2 text-s-regular text-grey_800'
                   aria-hidden={true}
                 >
                   {derniereActiviteColumn}
-                </span>
-                <div>
+                </div>
+                <span>
                   {beneficiaire.isActivated &&
                     toRelativeDateTime(beneficiaire.lastActivity!)}
                   {!beneficiaire.isActivated && (
                     <span className='text-warning'>Compte non activé</span>
                   )}
-                </div>
+                </span>
               </TD>
               <TDLink
                 href={`/mes-jeunes/${beneficiaire.id}`}
