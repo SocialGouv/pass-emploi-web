@@ -26,7 +26,7 @@ export default function Select({
         required={required}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
-        className={`${styles.input} truncate ${invalid ? styles.invalid : ''}`}
+        className={`${styles.input} relative truncate ${invalid ? styles.invalid : ''}`}
         onBlur={onBlur}
         aria-describedby={invalid ? id + '--error' : undefined}
         aria-invalid={invalid || undefined}

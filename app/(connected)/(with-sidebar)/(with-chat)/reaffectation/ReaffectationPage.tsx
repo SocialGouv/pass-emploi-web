@@ -22,16 +22,14 @@ import RecapitulatifErreursFormulaire, {
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { ValueWithError } from 'components/ValueWithError'
 import {
+  BeneficiaireFromListe,
   compareBeneficiairesByNom,
   getNomBeneficiaireComplet,
-  BeneficiaireFromListe,
 } from 'interfaces/beneficiaire'
 import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
 import useMatomo from 'utils/analytics/useMatomo'
@@ -369,7 +367,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 {structureReaffectation.error}
               </InputError>
             )}
-            <div className='flex flex-wrap'>
+            <div className='flex flex-wrap' id='structure-reaffectation--CEJ'>
               <RadioBox
                 isSelected={
                   structureReaffectation.value ===
@@ -382,7 +380,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 }
                 label='CEJ'
                 name='structure-reaffectation'
-                id='structure-reaffectation--CEJ'
               />
 
               <RadioBox
@@ -397,7 +394,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 }
                 label='BRSA'
                 name='structure-reaffectation'
-                id='structure-reaffectation--BRSA'
               />
 
               <RadioBox
@@ -412,7 +408,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 }
                 label='AIJ'
                 name='structure-reaffectation'
-                id='structure-reaffectation--AIJ'
               />
             </div>
           </Etape>
@@ -433,7 +428,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               onChange={() => handleInputTypeReaffectation(true)}
               label='Temporaire'
               name='type-reaffectation'
-              id='type-reaffectation--temporaire'
             />
 
             <RadioBox
@@ -441,7 +435,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
               onChange={() => handleInputTypeReaffectation(false)}
               label='Définitive'
               name='type-reaffectation'
-              id='type-reaffectation--definitive'
             />
           </div>
         </Etape>
@@ -488,44 +481,30 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
                 </InputError>
               )}
               <ul>
-                <li
-                  onClick={toggleTousLesBeneficiaires}
-                  className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'
-                >
-                  <input
-                    id='reaffectation-tout-selectionner'
-                    type='checkbox'
-                    className='mr-4'
-                    readOnly={true}
-                    ref={toutSelectionnerCheckboxRef}
-                  />
-                  <label
-                    htmlFor='reaffectation-tout-selectionner'
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                <li>
+                  <label className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'>
+                    <input
+                      type='checkbox'
+                      className='mr-4'
+                      onChange={toggleTousLesBeneficiaires}
+                      ref={toutSelectionnerCheckboxRef}
+                    />
                     Tout sélectionner
                   </label>
                 </li>
 
                 {beneficiaires.map((beneficiaire: BeneficiaireFromListe) => (
-                  <li
-                    key={beneficiaire.id}
-                    onClick={() => selectionnerBeneficiaire(beneficiaire)}
-                    className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'
-                  >
-                    <input
-                      id={'checkbox-' + beneficiaire.id}
-                      type='checkbox'
-                      checked={idsBeneficiairesSelected.value.includes(
-                        beneficiaire.id
-                      )}
-                      readOnly={true}
-                      className='mr-4 ml-6'
-                    />
-                    <label
-                      htmlFor={'checkbox-' + beneficiaire.id}
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                  <li key={beneficiaire.id}>
+                    <label className='rounded-base p-4 flex items-center focus-within:bg-primary_lighten shadow-base mb-2 cursor-pointer hover:bg-primary_lighten'>
+                      <input
+                        type='checkbox'
+                        checked={idsBeneficiairesSelected.value.includes(
+                          beneficiaire.id
+                        )}
+                        onChange={() => selectionnerBeneficiaire(beneficiaire)}
+                        readOnly={true}
+                        className='mr-4 ml-6'
+                      />
                       {getNomBeneficiaireComplet(beneficiaire)}
                     </label>
                   </li>
@@ -725,32 +704,25 @@ const ChoixConseiller = forwardRef(
 
         {choixConseillers && choixConseillers.length > 0 && (
           <Table caption={{ text: 'Choix du conseiller ' + name }}>
-            <THead>
+            <thead>
               <TR isHeader={true}>
                 <TH>Conseiller</TH>
                 <TH>E-mail conseiller</TH>
               </TR>
-            </THead>
-            <TBody>
+            </thead>
+            <tbody>
               {choixConseillers.map((conseiller) => (
-                <TR
-                  key={conseiller.id}
-                  onClick={() => choisirConseiller(conseiller)}
-                >
+                <TR key={conseiller.id} className='relative rotate-0'>
                   <TD isBold>
-                    <input
-                      type='radio'
-                      id={'choix-' + name + '--' + conseiller.id}
-                      name={'choix-' + name}
-                      checked={idConseillerSelectionne === conseiller.id}
-                      readOnly={true}
-                      required={true}
-                      className='mr-2'
-                    />
-                    <label
-                      htmlFor={'choix-' + name + '--' + conseiller.id}
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                    <label className='before:fixed before:inset-0 before:z-10 cursor-pointer'>
+                      <input
+                        type='radio'
+                        name={'choix-' + name}
+                        checked={idConseillerSelectionne === conseiller.id}
+                        required={true}
+                        className='mr-2'
+                        onChange={() => choisirConseiller(conseiller)}
+                      />
                       {conseiller.firstName} {conseiller.lastName}
                     </label>
                   </TD>
@@ -761,7 +733,7 @@ const ChoixConseiller = forwardRef(
                   </TD>
                 </TR>
               ))}
-            </TBody>
+            </tbody>
           </Table>
         )}
       </>

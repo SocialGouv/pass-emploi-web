@@ -1064,7 +1064,7 @@ describe('Détails Session Page Client', () => {
 })
 
 function getToggleVisibiliteSession() {
-  return screen.getByRole<HTMLInputElement>('checkbox', {
+  return screen.getByRole<HTMLInputElement>('switch', {
     name: /Rendre visible la session/,
   })
 }

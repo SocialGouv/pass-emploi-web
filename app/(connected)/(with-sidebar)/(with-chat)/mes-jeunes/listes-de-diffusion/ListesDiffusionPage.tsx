@@ -10,10 +10,9 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import SortIcon from 'components/ui/SortIcon'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -110,9 +109,8 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
             count: listesDiffusion.length,
             visible: true,
           }}
-          asDiv={true}
         >
-          <THead>
+          <thead>
             <TR isHeader={true}>
               <TH estCliquable={true}>
                 <button
@@ -132,21 +130,21 @@ function ListesDiffusionPage({ listesDiffusion }: ListesDiffusionPageProps) {
               <TH>Nombre de destinataires</TH>
               <TH>Voir le détail</TH>
             </TR>
-          </THead>
-          <TBody>
+          </thead>
+          <tbody>
             {listeTriees.map((liste) => (
-              <TR
-                key={liste.id}
-                href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
-                linkLabel={`Consulter la liste ${liste.titre}`}
-              >
+              <TR key={liste.id}>
                 <TD>
                   <TitreListe liste={liste} />
                 </TD>
                 <TD>{liste.beneficiaires.length} destinataire(s)</TD>
+                <TDLink
+                  href={`/mes-jeunes/listes-de-diffusion/edition-liste?idListe=${liste.id}`}
+                  label={`Consulter la liste ${liste.titre}`}
+                />
               </TR>
             ))}
-          </TBody>
+          </tbody>
         </Table>
       )}
     </>

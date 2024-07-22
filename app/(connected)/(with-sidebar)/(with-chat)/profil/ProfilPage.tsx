@@ -3,7 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import React, { ChangeEvent, useState } from 'react'
+import React, { useState } from 'react'
 
 import {
   FormContainer,
@@ -56,10 +56,10 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
   const [trackingLabel, setTrackingLabel] = useState<string>('Profil')
   const aDesBeneficiaires = portefeuille.length > 0
 
-  async function toggleNotificationsSonores(e: ChangeEvent<HTMLInputElement>) {
+  async function toggleNotificationsSonores() {
     const conseillerMisAJour = {
       ...conseiller,
-      notificationsSonores: e.target.checked,
+      notificationsSonores: !conseiller.notificationsSonores,
     }
 
     const { modifierNotificationsSonores } = await import(

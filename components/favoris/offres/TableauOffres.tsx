@@ -5,9 +5,7 @@ import OffreRow from 'components/favoris/offres/OffreRow'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
 
@@ -32,8 +30,8 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
       )}
 
       {offres.length > 0 && (
-        <Table asDiv={true} caption={{ text: 'Liste des offres en favoris' }}>
-          <THead>
+        <Table caption={{ text: 'Liste des offres en favoris' }}>
+          <thead>
             <TR isHeader={true}>
               <TH>N°Offre</TH>
               <TH>Titre</TH>
@@ -41,12 +39,12 @@ export default function TableauOffres({ offres }: TableauOffresProps) {
               <TH>Type</TH>
               <TH>Voir le détail</TH>
             </TR>
-          </THead>
-          <TBody>
+          </thead>
+          <tbody>
             {offres.map((offre) => (
               <OffreRow key={offre.id} offre={offre} />
             ))}
-          </TBody>
+          </tbody>
         </Table>
       )}
     </>

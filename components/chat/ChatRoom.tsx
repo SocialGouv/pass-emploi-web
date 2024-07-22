@@ -73,6 +73,7 @@ export default function ChatRoom({
   }
 
   function permuterVisibiliteMessagerie() {
+    setAfficherMenuActionsMessagerie(false)
     setMessagerieEstVisible(!messagerieEstVisible)
   }
 
@@ -142,6 +143,7 @@ export default function ChatRoom({
   }
 
   async function ouvrirModaleMessageImportant() {
+    setAfficherMenuActionsMessagerie(false)
     setAfficherModaleMessageImportant(true)
     setSuccesEnvoiMessageImportant(undefined)
     setSuccesDesactivationMessageImportant(undefined)
@@ -198,23 +200,22 @@ export default function ChatRoom({
             aria-controls='menu-mobile'
             aria-expanded={showMenu}
             className='absolute left-4 top-[calc(50%-1.25rem)]'
+            title='Ouvrir le menu principal'
           >
             <IconComponent
               name={IconName.Menu}
               className='w-10 h-10 fill-primary layout_s:hidden'
               aria-hidden={true}
               focusable={false}
-              title='Ouvrir le menu principal'
             />
+            <span className='sr-only'>Ouvrir le menu principal</span>
           </button>
         </nav>
 
         <h2 className='text-l-bold text-primary'>Messagerie</h2>
-        <div
-          onClick={permuterMenuActionsMessagerie}
-          className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
-        >
+        <div className='relative flex items-center gap-2 justify-end text-xs-medium text-content'>
           <button
+            onClick={permuterMenuActionsMessagerie}
             type='button'
             className='bg-primary rounded-full fill-white hover:shadow-base'
             title={`${afficherMenuActionsMessagerie ? 'Cacher les' : 'Accéder aux'} actions de votre messagerie`}

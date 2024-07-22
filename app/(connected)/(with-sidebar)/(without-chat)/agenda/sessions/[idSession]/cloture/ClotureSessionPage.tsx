@@ -9,10 +9,8 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { StatutAnimationCollective } from 'interfaces/evenement'
 import {
@@ -49,13 +47,11 @@ function ClotureSessionPage({
     Array<InformationBeneficiaireSession>
   >(inscriptionsInitiales)
 
-  const [statutBeneficiaire, setStatutBeneficiaire] = useState<string>()
-
   const [trackingLabel, setTrackingLabel] = useState<string>(
     'Session - Clôture de la session'
   )
 
-  function cocherTousLesBeneficiaires(_event: FormEvent) {
+  function cocherTousLesBeneficiaires() {
     if (idsSelectionnes.length === 0) {
       setIdsSelectionnes(
         session.inscriptions.map((beneficiaire) => beneficiaire.idJeune)
@@ -94,7 +90,6 @@ function ClotureSessionPage({
     if (!Boolean(idsSelectionnes.includes(beneficiaire.idJeune))) {
       selection = idsSelectionnes.concat(beneficiaire.idJeune)
       setIdsSelectionnes(selection)
-      setStatutBeneficiaire(StatutBeneficiaire.PRESENT)
       setEmargements((currentEmargements) =>
         metAJourListeBeneficiairesEmarges(currentEmargements, {
           ...beneficiaire,
@@ -109,7 +104,6 @@ function ClotureSessionPage({
       selection = idsSelectionnes.filter((id) => id !== beneficiaire.idJeune)
 
       setIdsSelectionnes(selection)
-      setStatutBeneficiaire(beneficiaire.statut)
       setEmargements((prev) => {
         return [
           ...prev?.filter(({ idJeune }) => idJeune !== beneficiaire.idJeune),
@@ -201,76 +195,58 @@ function ClotureSessionPage({
 
       <form onSubmit={soumettreClotureSession} className='mt-6'>
         <Table caption={{ text: 'Bénéficiaires de la session' }}>
-          <THead>
+          <thead>
             <TR isHeader={true}>
               <TH>
-                {' '}
                 <input
                   disabled={
                     session.session.statut === StatutAnimationCollective.Close
                   }
                   id='cloture-tout-selectionner'
                   type='checkbox'
-                  checked={Boolean(
-                    idsSelectionnes.length === session.inscriptions.length
-                  )}
                   title='Tout sélectionner'
-                  onChange={(e) => cocherTousLesBeneficiaires(e)}
+                  onChange={cocherTousLesBeneficiaires}
                   className='mr-4'
                   ref={toutSelectionnerCheckboxRef}
                 />
-                <label
-                  htmlFor='cloture-tout-selectionner'
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <label htmlFor='cloture-tout-selectionner'>
                   <span className='sr-only'>Tout sélectionner</span>
                   Présence des bénéficiaires
                 </label>
               </TH>
               <TH>Statut</TH>
             </TR>
-          </THead>
+          </thead>
 
-          <TBody>
+          <tbody>
             {session.inscriptions.map((beneficiaire) => (
-              <TR
-                key={beneficiaire.idJeune}
-                onClick={() =>
-                  modifierStatutBeneficiaire({
-                    idJeune: beneficiaire.idJeune,
-                    statut: beneficiaire.statut,
-                  })
-                }
-              >
+              <TR key={beneficiaire.idJeune}>
                 <TD>
-                  <input
-                    disabled={
-                      beneficiaire.statut === StatutBeneficiaire.PRESENT
-                    }
-                    type='checkbox'
-                    name={beneficiaire.idJeune}
-                    id={'checkbox-' + beneficiaire.idJeune}
-                    checked={
-                      Boolean(idsSelectionnes.includes(beneficiaire.idJeune)) ||
-                      beneficiaire.statut === StatutBeneficiaire.PRESENT
-                    }
-                    title={
-                      'Sélectionner ' +
-                      `${beneficiaire.prenom} ${beneficiaire.nom}`
-                    }
-                    readOnly={true}
-                    value={statutBeneficiaire ?? beneficiaire.statut}
-                    className='mr-4'
-                  />
                   <label
                     className={`${
                       beneficiaire.statut === StatutBeneficiaire.PRESENT
                         ? 'text-disabled'
-                        : ''
+                        : 'before:fixed before:inset-0 before:z-10 cursor-pointer'
                     }`}
-                    htmlFor={'checkbox-' + beneficiaire.idJeune}
-                    onClick={(e) => e.stopPropagation()}
                   >
+                    <input
+                      disabled={
+                        beneficiaire.statut === StatutBeneficiaire.PRESENT
+                      }
+                      type='checkbox'
+                      name={beneficiaire.idJeune}
+                      checked={
+                        Boolean(
+                          idsSelectionnes.includes(beneficiaire.idJeune)
+                        ) || beneficiaire.statut === StatutBeneficiaire.PRESENT
+                      }
+                      title={
+                        'Sélectionner ' +
+                        `${beneficiaire.prenom} ${beneficiaire.nom}`
+                      }
+                      onChange={() => modifierStatutBeneficiaire(beneficiaire)}
+                      className='mr-4'
+                    />
                     {beneficiaire.prenom} {beneficiaire.nom}
                   </label>
                 </TD>
@@ -287,7 +263,7 @@ function ClotureSessionPage({
                 </TD>
               </TR>
             ))}
-          </TBody>
+          </tbody>
         </Table>
 
         {estAClore(session) && (

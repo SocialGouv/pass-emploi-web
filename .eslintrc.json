@@ -1,12 +1,18 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:jsx-a11y/strict"
   ],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx"],
-      "parserOptions": { "project": "./tsconfig.*?.json" },
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "parserOptions": {
+        "project": "./tsconfig.*?.json"
+      },
       "rules": {
         "import/no-unresolved": "error",
         "import/order": [
@@ -17,11 +23,50 @@
               "caseInsensitive": true
             },
             "newlines-between": "always",
-            "groups": ["builtin", "external", "parent", "sibling", "index"],
-            "pathGroupsExcludedImportTypes": ["builtin"]
+            "groups": [
+              "builtin",
+              "external",
+              "parent",
+              "sibling",
+              "index"
+            ],
+            "pathGroupsExcludedImportTypes": [
+              "builtin"
+            ]
+          }
+        ],
+        "jsx-a11y/no-noninteractive-tabindex": [
+          "error",
+          {
+            "roles": [
+              "tabpanel"
+            ]
+          }
+        ],
+        "jsx-a11y/no-noninteractive-element-to-interactive-role": [
+          "error",
+          {
+            "ul": [
+              "tablist"
+            ]
           }
         ]
       }
     }
-  ]
+  ],
+  "settings": {
+    "jsx-a11y": {
+      "components": {
+        "Table": "table",
+        "TR": "tr",
+        "TH": "th",
+        "TD": "td",
+        "TDLink": "td",
+        "IconComponent": "svg",
+        "Input": "input",
+        "Select": "select",
+        "Textarea": "textarea"
+      }
+    }
+  }
 }

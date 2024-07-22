@@ -245,7 +245,7 @@ describe('Page Recherche Offres Emploi', () => {
         name: 'Expérience',
       })
       expect(
-        within(experienceGroup).getByRole('checkbox', {
+        within(experienceGroup).getByRole('switch', {
           name: /Afficher uniquement les offres débutant accepté/,
         })
       ).not.toBeChecked()
