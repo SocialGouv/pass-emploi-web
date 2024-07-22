@@ -9,28 +9,6 @@ describe('<NavLink/>', () => {
   const label = 'Un super lien'
   const href = '/whatever'
 
-  it('affiche un lien externe', () => {
-    //When
-    render(
-      <NavLink
-        label={label}
-        href={href}
-        isExternal={true}
-        iconName={IconName.Warning}
-        showLabelOnSmallScreen={false}
-      />
-    )
-
-    //Then
-    const lien = screen.getByRole('link', { name: /Un super lien/ })
-    expect(lien).toBeInTheDocument()
-    expect(lien).toHaveAttribute('href', href)
-    expect(lien).toHaveAttribute(
-      'aria-label',
-      'Un super lien (nouvelle fenêtre)'
-    )
-  })
-
   it('affiche un lien avec un badge', () => {
     //When
     render(
@@ -38,20 +16,16 @@ describe('<NavLink/>', () => {
         label={label}
         href={href}
         badgeLabel={badgeLabel}
-        isExternal={true}
         iconName={IconName.Warning}
         showLabelOnSmallScreen={false}
       />
     )
 
     //Then
-    const lien = screen.getByRole('link', { name: /Un super lien/ })
-    expect(lien).toBeInTheDocument()
+    const lien = screen.getByRole('link', {
+      name: 'Un super lien Vous avez une action en attente',
+    })
     expect(lien).toHaveAttribute('href', href)
-    expect(lien).toHaveAttribute(
-      'aria-label',
-      'Un super lien (nouvelle fenêtre)'
-    )
     expect(screen.getByText(badgeLabel)).toBeInTheDocument()
   })
 
@@ -62,20 +36,16 @@ describe('<NavLink/>', () => {
         label={label}
         href={href}
         badgeLabel={badgeLabel}
-        isExternal={true}
         iconName={IconName.Warning}
         showLabelOnSmallScreen={true}
       />
     )
 
     //Then
-    const lien = screen.getByRole('link', { name: /Un super lien/ })
-    expect(lien).toBeInTheDocument()
+    const lien = screen.getByRole('link', {
+      name: 'Un super lien Vous avez une action en attente',
+    })
     expect(lien).toHaveAttribute('href', href)
-    expect(lien).toHaveAttribute(
-      'aria-label',
-      'Un super lien (nouvelle fenêtre)'
-    )
     expect(screen.getByText(badgeLabel)).toBeInTheDocument()
   })
 })
