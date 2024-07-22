@@ -193,8 +193,7 @@ export default function NavLinks({
             />
           )}
       </ul>
-      <ul>
-        <div className='border border-solid border-white mb-2'></div>
+      <ul className='border-t-2 border-solid border-white pt-2'>
         {items.includes(NavItem.Aide) && (
           <NavLink
             href='/aide'
