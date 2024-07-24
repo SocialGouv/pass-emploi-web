@@ -1,9 +1,9 @@
-import React, { ReactElement } from 'react'
+import React, { ReactNode } from 'react'
 
 import { Badge } from 'components/ui/Indicateurs/Badge'
 
 interface TableProps {
-  children: Array<ReactElement | false>
+  children: ReactNode
   caption: { text: string; count?: number; visible?: boolean }
 }
 
