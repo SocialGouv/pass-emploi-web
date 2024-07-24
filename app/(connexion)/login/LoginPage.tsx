@@ -74,7 +74,7 @@ function LoginPage({
     >
       <div>
         <div className='flex-1 flex flex-wrap gap-12 justify-center items-end bg-white py-24 px-8 layout_s:px-16 rounded-l drop-shadow-lg'>
-          <div>
+          <div className='flex-1 flex-col'>
             <h2>
               <span className='sr-only'>Contrat d’engagement jeune</span>
               <LogoCEJ
@@ -87,7 +87,7 @@ function LoginPage({
               <li>
                 <FormButton
                   label='Connexion Mission Locale'
-                  className='whitespace-nowrap'
+                  className='w-64 whitespace-nowrap'
                   handleSubmit={(event) =>
                     handleSignin(event, 'similo-conseiller')
                   }
@@ -96,14 +96,14 @@ function LoginPage({
               <li>
                 <FormButton
                   label='Connexion France Travail CEJ'
-                  className='mt-6 whitespace-nowrap'
+                  className='w-64 mt-6 whitespace-nowrap'
                   handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
                 />
               </li>
             </ul>
           </div>
 
-          <div className='flex-1'>
+          <div className='flex-1 flex-col'>
             {(ssoFranceTravailBRSAEstActif || ssoFranceTravailAIJEstActif) && (
               <>
                 <h2>
@@ -119,7 +119,7 @@ function LoginPage({
                     <li>
                       <FormButton
                         label='Connexion BRSA'
-                        className='mt-6 whitespace-nowrap'
+                        className='w-64 mt-6 whitespace-nowrap'
                         style={ButtonStyle.PRIMARY_DARK}
                         handleSubmit={(event) =>
                           handleSignin(event, 'pe-brsa-conseiller')
@@ -132,7 +132,7 @@ function LoginPage({
                     <li>
                       <FormButton
                         label='Connexion AIJ'
-                        className='mt-6 whitespace-nowrap'
+                        className='w-64 mt-6 whitespace-nowrap'
                         style={ButtonStyle.PRIMARY_DARK}
                         handleSubmit={(event) =>
                           handleSignin(event, 'pe-aij-conseiller')
