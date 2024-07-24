@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
 
+import { compareDates, compareDatesDesc } from 'utils/date'
+
 export enum EtatSituation {
   EN_COURS = 'en cours',
   PREVU = 'prévue',
@@ -148,6 +150,13 @@ export function compareBeneficiairesByNom(
   )
 }
 
+export function compareBeneficiairesByLastNameDesc(
+  beneficiaire1: BaseBeneficiaire,
+  beneficiaire2: BaseBeneficiaire
+): number {
+  return -compareBeneficiairesByNom(beneficiaire1, beneficiaire2)
+}
+
 export function compareBeneficiairesBySituation(
   beneficiaire1: BeneficiaireFromListe,
   beneficiaire2: BeneficiaireFromListe
@@ -155,6 +164,13 @@ export function compareBeneficiairesBySituation(
   return `${beneficiaire1.situationCourante}`.localeCompare(
     `${beneficiaire2.situationCourante}`
   )
+}
+
+export function compareBeneficiairesBySituationDesc(
+  beneficiaire1: BeneficiaireFromListe,
+  beneficiaire2: BeneficiaireFromListe
+): number {
+  return -compareBeneficiairesBySituation(beneficiaire1, beneficiaire2)
 }
 
 export function compareBeneficiaireChat(
@@ -166,6 +182,34 @@ export function compareBeneficiaireChat(
     comparerParConversationSuivie(a, b) ||
     comparerParDate(a, b)
   )
+}
+
+export function compareBeneficiairesByLastActivity(
+  beneficiaire1: BeneficiaireFromListe,
+  beneficiaire2: BeneficiaireFromListe,
+  sortStatutCompteActif: number
+) {
+  const date1 = beneficiaire1.lastActivity
+    ? DateTime.fromISO(beneficiaire1.lastActivity)
+    : undefined
+  const date2 = beneficiaire2.lastActivity
+    ? DateTime.fromISO(beneficiaire2.lastActivity)
+    : undefined
+  return compareDates(date1, date2) || sortStatutCompteActif
+}
+
+export function compareBeneficiairesByLastActivityDesc(
+  beneficiaire1: BeneficiaireFromListe,
+  beneficiaire2: BeneficiaireFromListe,
+  sortStatutCompteActif: number
+) {
+  const date1 = beneficiaire1.lastActivity
+    ? DateTime.fromISO(beneficiaire1.lastActivity)
+    : undefined
+  const date2 = beneficiaire2.lastActivity
+    ? DateTime.fromISO(beneficiaire2.lastActivity)
+    : undefined
+  return compareDatesDesc(date1, date2) || -sortStatutCompteActif
 }
 
 export function getNomBeneficiaireComplet(
