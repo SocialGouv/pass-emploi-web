@@ -70,7 +70,7 @@ function LoginPage({
   return (
     <main
       role='main'
-      className='bg-primary_lighten w-full grow relative flex justify-center items-center'
+      className='w-full relative flex justify-center items-center'
     >
       <div>
         <div className='flex-1 flex flex-wrap gap-12 justify-center items-end bg-white pt-5 pb-5 px-8 layout_s:px-16 rounded-l drop-shadow-lg'>
