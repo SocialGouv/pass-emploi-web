@@ -12,12 +12,14 @@ interface RenseignementAgenceFormProps {
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
   onClose: () => void
+  onContactSupport: () => void
 }
 
 export default function RenseignementAgenceForm({
   referentielAgences,
   onAgenceChoisie,
   onClose,
+  onContactSupport,
 }: RenseignementAgenceFormProps) {
   const [idAgenceSelectionnee, setIdAgenceSelectionnee] =
     useState<ValueWithError>({ value: '' })
@@ -93,6 +95,7 @@ export default function RenseignementAgenceForm({
         onChange={selectAgence}
         invalid={Boolean(idAgenceSelectionnee.error)}
         disabled={showAgenceLibre}
+        onContactSupport={onContactSupport}
       />
 
       <input

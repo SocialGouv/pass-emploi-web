@@ -13,6 +13,7 @@ type RechercheImmersionsPrincipaleProps = {
   recupererCommunes: (search: string) => Promise<Commune[]>
   query: FormValues<SearchImmersionsQuery>
   onQueryUpdate: (query: FormValues<SearchImmersionsQuery>) => void
+  onContactSupport: () => void
 }
 
 export default function RechercheImmersionsPrincipale({
@@ -20,6 +21,7 @@ export default function RechercheImmersionsPrincipale({
   recupererCommunes,
   query,
   onQueryUpdate,
+  onContactSupport,
 }: RechercheImmersionsPrincipaleProps) {
   function updateMetier({ selected }: { selected?: Metier }) {
     const { metier, ...autresCriteres } = query
@@ -57,6 +59,7 @@ export default function RechercheImmersionsPrincipale({
         errorMessage=''
         defaultValue={query.metier?.value?.libelle}
         required={true}
+        onContactSupport={onContactSupport}
       />
 
       <Label htmlFor='communes' inputRequired={true}>
@@ -78,6 +81,7 @@ export default function RechercheImmersionsPrincipale({
         errorMessage=''
         defaultValue={query.commune?.value?.libelle}
         required={true}
+        onContactSupport={onContactSupport}
       />
     </Etape>
   )

@@ -14,6 +14,7 @@ type RechercheOffresEmploiPrincipaleProps = {
   query: FormValues<SearchOffresEmploiQuery>
   onQueryUpdate: (query: FormValues<SearchOffresEmploiQuery>) => void
   onRechercheParIdOffre: (value: boolean) => void
+  onContactSupport: () => void
 }
 const RAYON_DEFAULT = 10
 
@@ -22,6 +23,7 @@ export default function RechercheOffresEmploiPrincipale({
   query,
   onQueryUpdate,
   onRechercheParIdOffre,
+  onContactSupport,
 }: RechercheOffresEmploiPrincipaleProps) {
   const [isSearchByIdOffre, setSearchByIdOffre] = useState<boolean>(false)
 
@@ -126,6 +128,7 @@ export default function RechercheOffresEmploiPrincipale({
         errorMessage='Veuillez saisir une localisation correcte.'
         defaultValue={query.commune?.libelle ?? query.departement?.libelle}
         disabled={isSearchByIdOffre}
+        onContactSupport={onContactSupport}
       />
     </Etape>
   )

@@ -610,7 +610,16 @@ export function EditionRdvForm({
     })
   }
 
-  // @ts-ignore
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Rendez-vous',
+      nom: 'Autocomplétion Edge',
+      aDesBeneficiaires: jeunesConseiller.length > 0,
+    })
+  }
+
   return (
     <>
       <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
@@ -803,6 +812,7 @@ export function EditionRdvForm({
             }
             trackEmargement={trackEmargement}
             lienEmargement={lienEmargement}
+            onContactSupport={trackContacterSupport}
           />
         </Etape>
 

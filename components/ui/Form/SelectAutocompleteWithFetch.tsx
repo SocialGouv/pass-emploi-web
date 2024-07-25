@@ -10,11 +10,13 @@ type SelectAutocompleteWithFetchProps<T> = {
   fetch: (search: string) => Promise<T[]>
   fieldNames: { id: string; value: string }
   onUpdateSelected: (value: { selected?: T; hasError: boolean }) => void
+  onContactSupport: () => void
   errorMessage: string
   defaultValue?: string
   required?: boolean
   disabled?: boolean
 }
+
 export default function SelectAutocompleteWithFetch<T>({
   id,
   fetch,
@@ -24,6 +26,7 @@ export default function SelectAutocompleteWithFetch<T>({
   defaultValue,
   required,
   disabled = false,
+  onContactSupport,
 }: SelectAutocompleteWithFetchProps<T>) {
   const [entites, setEntites] = useState<WithSimplifiedLabel<T>[]>([])
   const options: Array<{ id: string; value: string }> = entites.map(
@@ -99,6 +102,7 @@ export default function SelectAutocompleteWithFetch<T>({
         value={input.value ?? ''}
         required={required}
         disabled={disabled}
+        onContactSupport={onContactSupport}
       />
     </>
   )

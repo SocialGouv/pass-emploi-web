@@ -18,6 +18,8 @@ import { TypeOffre } from 'interfaces/offre'
 import { TypeLocalite } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 export type CriteresRecherche =
@@ -61,6 +63,7 @@ function PartageRecherchePage({
 }: PartageRechercheProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
 
   const [idsDestinataires, setIdsDestinataires] = useState<
@@ -212,6 +215,16 @@ function PartageRecherchePage({
     })
   }
 
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Partage recherche',
+      nom: 'Autocomplétion Edge',
+      aDesBeneficiaires: portefeuille.length > 0,
+    })
+  }
+
   return (
     <>
       <SuggestionCard
@@ -240,6 +253,7 @@ function PartageRecherchePage({
             typeSelection='Destinataires'
             onUpdate={updateIdsDestinataires}
             error={idsDestinataires.error}
+            onContactSupport={trackContacterSupport}
           />
         </Etape>
 
