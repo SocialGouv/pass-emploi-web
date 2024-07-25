@@ -26,7 +26,7 @@ export default async function Login({
   return (
     <div className='flex flex-col justify-center h-screen w-screen'>
       <header role='banner' className='bg-primary_lighten'>
-        <h1 className='text-m-bold text-primary_darken text-center mt-[48px] mb-[24px]'>
+        <h1 className='text-xl-bold text-primary_darken text-center mt-[48px] mb-[24px]'>
           Connectez-vous à l&apos;espace conseiller
         </h1>
       </header>
