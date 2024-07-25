@@ -26,7 +26,9 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { ListeDeDiffusionFormData } from 'services/listes-de-diffusion.service'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const ConfirmationDeleteListeDiffusionModal = dynamic(
@@ -46,7 +48,9 @@ function EditionListeDiffusionPage({
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
+  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
+
   const defaultBeneficiaires = getDefaultBeneficiaires()
   const [idsBeneficiaires, setIdsBeneficiaires] = useState<
     ValueWithError<string[]>
@@ -205,6 +209,16 @@ function EditionListeDiffusionPage({
     return erreurs
   }
 
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Liste diffusion',
+      nom: 'Autocomplétion Edge',
+      aDesBeneficiaires: portefeuille.length > 0,
+    })
+  }
+
   useMatomo(
     liste ? 'Modification liste diffusion' : 'Création liste diffusion',
     portefeuille.length > 0
@@ -270,6 +284,7 @@ function EditionListeDiffusionPage({
           required={true}
           error={idsBeneficiaires.error}
           renderIndication={BeneficiaireIndicationReaffectaction}
+          onContactSupport={trackContacterSupport}
         />
 
         <div className='flex gap-2 mt-6 justify-center'>

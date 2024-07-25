@@ -21,7 +21,7 @@ export default function ConseillerIntrouvableSuggestionModal({
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Contact Support',
-      action: 'Profil',
+      action: 'Réaffectation',
       nom: '',
       aDesBeneficiaires: portefeuille.length > 0,
     })

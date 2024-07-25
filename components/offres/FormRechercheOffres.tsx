@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, ReactElement, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
 import RechercheImmersionsPrincipale from 'components/offres/RechercheImmersionsPrincipale'
@@ -17,8 +17,10 @@ import { SearchImmersionsQuery } from 'services/immersions.service'
 import { SearchOffresEmploiQuery } from 'services/offres-emploi.service'
 import { SearchServicesCiviquesQuery } from 'services/services-civiques.service'
 import { FormValues } from 'types/form'
+import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useSessionStorage } from 'utils/hooks/useSessionStorage'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type FormRechercheOffresProps = {
   hasResults: boolean
@@ -54,6 +56,8 @@ export default function FormRechercheOffres({
   stateTypeOffre,
 }: FormRechercheOffresProps) {
   const [conseiller] = useConseiller()
+  const [portefeuille] = usePortefeuille()
+
   const [showFilters, setShowFilters] = useState<boolean>(true)
   const [showMoreFilters, setShowMoreFilters] = useState<boolean>(false)
   const [countCriteres, setCountCriteres] = useSessionStorage<number>(
@@ -156,6 +160,16 @@ export default function FormRechercheOffres({
     setQueryServicesCiviques(query)
     setOffreLieu(query.commune?.libelle)
     setMotsCles(query.domaine)
+  }
+
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Recherche offres',
+      nom: 'Autocomplétion Edge',
+      aDesBeneficiaires: portefeuille.length > 0,
+    })
   }
 
   return (
@@ -278,7 +292,7 @@ export default function FormRechercheOffres({
     </form>
   )
 
-  function getRechercheMain(): JSX.Element | null {
+  function getRechercheMain(): ReactElement | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return (
@@ -290,6 +304,7 @@ export default function FormRechercheOffres({
             onRechercheParIdOffre={(value) => {
               setShowFilters(!value)
             }}
+            onContactSupport={trackContacterSupport}
           />
         )
       case TypeOffre.ALTERNANCE:
@@ -302,6 +317,7 @@ export default function FormRechercheOffres({
             onRechercheParIdOffre={(value) => {
               setShowFilters(!value)
             }}
+            onContactSupport={trackContacterSupport}
           />
         )
       case TypeOffre.SERVICE_CIVIQUE:
@@ -310,6 +326,7 @@ export default function FormRechercheOffres({
             recupererCommunes={fetchCommunes}
             query={queryServicesCiviques}
             onQueryUpdate={updateQueryServiceCivique}
+            onContactSupport={trackContacterSupport}
           />
         )
       case TypeOffre.IMMERSION:
@@ -319,6 +336,7 @@ export default function FormRechercheOffres({
             recupererCommunes={fetchCommunes}
             query={queryImmersions}
             onQueryUpdate={updateQueryImmersion}
+            onContactSupport={trackContacterSupport}
           />
         )
       case undefined:
@@ -326,7 +344,7 @@ export default function FormRechercheOffres({
     }
   }
 
-  function getRechercheSecondary(): JSX.Element | null {
+  function getRechercheSecondary(): ReactElement | null {
     switch (typeOffre) {
       case TypeOffre.EMPLOI:
         return (

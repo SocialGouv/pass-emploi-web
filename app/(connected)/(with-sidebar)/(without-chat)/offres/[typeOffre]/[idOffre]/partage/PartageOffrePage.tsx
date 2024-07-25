@@ -21,8 +21,10 @@ import { getNomJeuneComplet } from 'interfaces/jeune'
 import { DetailOffre, TypeOffre } from 'interfaces/offre'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type PartageOffrePageProps = {
@@ -35,6 +37,7 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
+  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [idsDestinataires, setIdsDestinataires] = useState<
     ValueWithError<string[]>
@@ -107,6 +110,16 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
     }
   }
 
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Partage offre',
+      nom: 'Autocomplétion Edge',
+      aDesBeneficiaires: portefeuille.length > 0,
+    })
+  }
+
   useMatomo('Partage offre', portefeuille.length > 0)
 
   return (
@@ -121,6 +134,7 @@ function PartageOffrePage({ offre, returnTo }: PartageOffrePageProps) {
             typeSelection='Bénéficiaires'
             onUpdate={updateIdsDestinataires}
             error={idsDestinataires.error}
+            onContactSupport={trackContacterSupport}
           />
         </Etape>
 

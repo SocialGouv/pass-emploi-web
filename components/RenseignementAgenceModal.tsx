@@ -9,6 +9,8 @@ import {
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Conseiller, estMilo } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
+import { trackEvent } from 'utils/analytics/matomo'
+import { usePortefeuille } from 'utils/portefeuilleContext'
 
 interface RenseignementAgenceModalProps {
   conseiller: Conseiller
@@ -26,7 +28,18 @@ export default function RenseignementAgenceModal({
   onClose,
 }: RenseignementAgenceModalProps) {
   const conseillerEstMilo = estMilo(conseiller)
+  const [portefeuille] = usePortefeuille()
   const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
+
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Renseignement agence',
+      nom: 'Autocomplétion Edge',
+      aDesBeneficiaires: portefeuille.length > 0,
+    })
+  }
 
   return (
     <Modal
@@ -58,6 +71,7 @@ export default function RenseignementAgenceModal({
           referentielAgences={referentielAgences}
           onAgenceChoisie={onAgenceChoisie}
           onClose={onClose}
+          onContactSupport={trackContacterSupport}
         />
       )}
     </Modal>

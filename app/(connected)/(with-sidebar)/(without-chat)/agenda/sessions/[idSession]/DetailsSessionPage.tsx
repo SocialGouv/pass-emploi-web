@@ -277,6 +277,16 @@ function DetailsSessionPage({
     })
   }
 
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Détail session',
+      nom: 'Autocomplétion Edge',
+      aDesBeneficiaires,
+    })
+  }
+
   useMatomo(trackingLabel, aDesBeneficiaires)
 
   return (
@@ -499,6 +509,7 @@ function DetailsSessionPage({
             disabled={
               nbPlacesDisponibles.value === 0 || dateLimiteInscriptionDepassee
             }
+            onContactSupport={trackContacterSupport}
           />
 
           <div className='flex mb-4 justify-between items-center'>

@@ -11,6 +11,7 @@ type RechercheServicesCiviquesPrincipaleProps = {
   recupererCommunes: (search: string) => Promise<Commune[]>
   query: FormValues<SearchServicesCiviquesQuery>
   onQueryUpdate: (query: FormValues<SearchServicesCiviquesQuery>) => void
+  onContactSupport: () => void
 }
 const RAYON_DEFAULT = 10
 
@@ -18,6 +19,7 @@ export default function RechercheServicesCiviquesPrincipale({
   recupererCommunes,
   query,
   onQueryUpdate,
+  onContactSupport,
 }: RechercheServicesCiviquesPrincipaleProps) {
   function updateCommune({
     selected,
@@ -54,6 +56,7 @@ export default function RechercheServicesCiviquesPrincipale({
         onUpdateSelected={updateCommune}
         errorMessage='Veuillez saisir une commune correcte.'
         defaultValue={query.commune?.libelle}
+        onContactSupport={onContactSupport}
       />
     </Etape>
   )

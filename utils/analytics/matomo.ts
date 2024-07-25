@@ -97,7 +97,7 @@ export function trackPage({
     push([
       'setCustomDimension',
       numeroDimensionAvecBeneficiaires,
-      avecBeneficiairesDimencsionString(aDesBeneficiaires),
+      avecBeneficiairesDimensionString(aDesBeneficiaires),
     ])
 
     push(['setDocumentTitle', customTitle || document.title])
@@ -119,30 +119,7 @@ export function trackEvent(trackEventSettings: TrackEventSettings): void {
   push([
     'setCustomDimension',
     numeroDimensionAvecBeneficiaires,
-    avecBeneficiairesDimencsionString(trackEventSettings.aDesBeneficiaires),
-  ])
-
-  push([
-    'trackEvent',
-    trackEventSettings.categorie,
-    trackEventSettings.categorie + ' ' + trackEventSettings.action,
-    trackEventSettings.categorie + ' ' + trackEventSettings.nom,
-  ])
-}
-
-export function trackEventBeneficiaire(
-  trackEventSettings: Omit<TrackEventSettings, 'aDesBeneficiaires'>
-): void {
-  push(['setCustomDimension', 1, 'jeune'])
-  push([
-    'setCustomDimension',
-    2,
-    userStructureDimensionString(trackEventSettings.structure),
-  ])
-  push([
-    'setCustomDimension',
-    numeroDimensionAvecBeneficiaires,
-    avecBeneficiairesDimencsionString(null),
+    avecBeneficiairesDimensionString(trackEventSettings.aDesBeneficiaires),
   ])
 
   push([
@@ -183,7 +160,7 @@ export function trackSSR({
     urlref: refererUrl,
     dimension1: 'conseiller',
     dimension2: userStructureDimensionString(structure),
-    dimension3: avecBeneficiairesDimencsionString(aDesBeneficiaires),
+    dimension3: avecBeneficiairesDimensionString(aDesBeneficiaires),
   })
 }
 
@@ -204,7 +181,7 @@ function userStructureDimensionString(
   }
 }
 
-function avecBeneficiairesDimencsionString(
+function avecBeneficiairesDimensionString(
   aDesBeneficiaires: boolean | null
 ): 'oui' | 'non' | 'non applicable' {
   if (aDesBeneficiaires === null) return 'non applicable'

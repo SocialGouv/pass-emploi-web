@@ -1,25 +1,18 @@
-import { forwardRef } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
 
-import Input from 'components/ui/Form/Input'
+import Input, { InputProps } from 'components/ui/Form/Input'
+import { IconName } from 'components/ui/IconComponent'
+import ExternalLink from 'components/ui/Navigation/ExternalLink'
+import FailureAlert from 'components/ui/Notifications/FailureAlert'
 
 export type OptionAutocomplete = { id: string; value: string }
 
-interface SelectAutocompleteProps {
-  options: OptionAutocomplete[]
-  onChange: (value: string) => void
-  id: string
-  multiple?: boolean
-  required?: boolean
-  invalid?: boolean
-  disabled?: boolean
-  onBlur?: () => void
-  value?: string
-  ariaDescribedBy?: string
-}
-
 const SelectAutocomplete = forwardRef<
   HTMLInputElement,
-  SelectAutocompleteProps
+  InputProps & {
+    options: OptionAutocomplete[]
+    onContactSupport: () => void
+  }
 >(
   (
     {
@@ -32,12 +25,42 @@ const SelectAutocomplete = forwardRef<
       required,
       onBlur,
       value,
-      ariaDescribedBy,
+      onContactSupport,
+      ['aria-describedby']: ariaDescribedBy,
+      ...rest
     },
     ref
   ) => {
+    const [navigateurEstEdge, setNavigateurEstEdge] = useState<boolean>(false)
+    const mailSupportObject =
+      'Portail conseiller Mission Locale - problème champ d’autocomplétion sous Edge'
+
+    useEffect(() => {
+      setNavigateurEstEdge(/Edg/.test(navigator.userAgent))
+    }, [])
+
     return (
       <>
+        {navigateurEstEdge && (
+          <FailureAlert
+            label='Cette fonctionnalité peut être dégradée sur votre navigateur (Edge).'
+            sub={
+              <p>
+                Nous recommandons l’usage de Firefox ou de Chrome. Si vous ne
+                pouvez pas changer de navigateur, veuillez&nbsp;
+                <span className={'text-warning hover:text-primary'}>
+                  <ExternalLink
+                    href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_MAIL}?subject=${encodeURIComponent(mailSupportObject)}`}
+                    label={'contacter le support'}
+                    iconName={IconName.OutgoingMail}
+                    onClick={onContactSupport}
+                  />
+                </span>
+              </p>
+            }
+          />
+        )}
+
         <Input
           type='text'
           id={id}
@@ -52,7 +75,8 @@ const SelectAutocomplete = forwardRef<
           disabled={disabled}
           onBlur={onBlur}
           value={value}
-          aria-describedby={invalid ? `${id}--error` : ariaDescribedBy}
+          aria-describedby={ariaDescribedBy + (invalid ? ` ${id}--error` : '')}
+          {...rest}
         />
         <datalist id={`${id}--options`}>
           {options.map(({ id: optionId, value: optionValue }) => (

@@ -2,7 +2,7 @@ import { ComponentPropsWithoutRef, forwardRef } from 'react'
 
 import styles from 'styles/components/Input.module.css'
 
-type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'onChange'> & {
+export type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'onChange'> & {
   onChange: (value: string) => void
   invalid?: boolean
 }

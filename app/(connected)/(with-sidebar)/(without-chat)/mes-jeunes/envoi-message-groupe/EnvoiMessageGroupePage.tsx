@@ -28,8 +28,10 @@ import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { FormNouveauMessageGroupe } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
+import { trackEvent } from 'utils/analytics/matomo'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { useConfirmBeforeLeaving } from 'utils/hooks/useConfirmBeforeLeaving'
 import { ApiError } from 'utils/httpClient'
 import { usePortefeuille } from 'utils/portefeuilleContext'
@@ -52,7 +54,9 @@ function EnvoiMessageGroupePage({
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
 
+  const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
+
   const [selectionError, setSelectionError] = useState<string | undefined>()
   const [messageError, setMessageError] = useState<string | undefined>()
   const [selectedJeunesIds, setSelectedJeunesIds] = useState<string[]>([])
@@ -241,6 +245,16 @@ function EnvoiMessageGroupePage({
     return erreurs
   }
 
+  function trackContacterSupport() {
+    trackEvent({
+      structure: conseiller.structure,
+      categorie: 'Contact Support',
+      action: 'Message groupé',
+      nom: 'Autocomplétion Edge',
+      aDesBeneficiaires: portefeuille.length > 0,
+    })
+  }
+
   return (
     <>
       {erreurEnvoi && (
@@ -262,6 +276,7 @@ function EnvoiMessageGroupePage({
             typeSelection='Destinataires'
             onUpdate={updateDestinataires}
             error={selectionError}
+            onContactSupport={trackContacterSupport}
           />
           <Link
             href='/mes-jeunes/listes-de-diffusion'
