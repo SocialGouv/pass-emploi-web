@@ -83,7 +83,7 @@ function LoginPage({
                 aria-hidden={true}
               />
             </h2>
-            <ul className='mt-6'>
+            <ul className='mt-6 flex flex-col items-center'>
               <li>
                 <FormButton
                   label='Connexion Mission Locale'
@@ -102,7 +102,7 @@ function LoginPage({
               </li>
             </ul>
           </div>
-          <div className='flex-1 border-l-2 border-primary_lighten h-60'></div>
+          <div className='flex-1 border-l-2 border-primary_lighten h-60 layout_xs:hidden layout_m:flex'></div>
           <div className='flex-1 flex-col'>
             {(ssoFranceTravailBRSAEstActif || ssoFranceTravailAIJEstActif) && (
               <>
@@ -114,7 +114,7 @@ function LoginPage({
                     aria-hidden={true}
                   />
                 </h2>
-                <ul>
+                <ul className='flex flex-col items-center'>
                   {ssoFranceTravailBRSAEstActif && (
                     <li>
                       <FormButton
