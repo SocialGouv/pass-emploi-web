@@ -73,8 +73,8 @@ function LoginPage({
       className='w-full relative flex justify-center items-center'
     >
       <div>
-        <div className='flex-1 flex flex-wrap gap-12 justify-center items-end bg-white pt-5 pb-5 px-8 layout_s:px-16 rounded-l drop-shadow-lg'>
-          <div className='flex-1 flex-col'>
+        <div className='flex-1 flex flex-wrap gap-12 justify-center items-center bg-white py-6 px-8 layout_s:px-16 rounded-l drop-shadow-lg'>
+          <div className='flex-1 flex-col justify-items-center'>
             <h2>
               <span className='sr-only'>Contrat d’engagement jeune</span>
               <LogoCEJ
@@ -96,7 +96,7 @@ function LoginPage({
               <li>
                 <FormButton
                   label='Connexion France Travail CEJ'
-                  className='mt-6 whitespace-nowrap'
+                  className='w-64 mt-6 whitespace-nowrap'
                   handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
                 />
               </li>
