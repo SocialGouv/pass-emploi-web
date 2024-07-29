@@ -128,15 +128,21 @@ export default function TableauBeneficiairesMilo({
                 >
                   {dateFinCEJColumn}
                 </span>
-                <TagDate
-                  label={
-                    beneficiaire.dateFinCEJ
-                      ? toLongMonthDate(
-                          DateTime.fromISO(beneficiaire.dateFinCEJ)
-                        )
-                      : 'Pas de date renseignée'
-                  }
-                />
+
+                {beneficiaire.dateFinCEJ && (
+                  <TagDate
+                    label={toLongMonthDate(
+                      DateTime.fromISO(beneficiaire.dateFinCEJ)
+                    )}
+                  />
+                )}
+
+                {!beneficiaire.dateFinCEJ && (
+                  <>
+                    --
+                    <span className='sr-only'>information non disponible</span>
+                  </>
+                )}
               </TD>
 
               <TD className='border-l-1 border-grey_800'>
