@@ -1,9 +1,10 @@
+import { DateTime } from 'luxon'
 import { Metadata } from 'next'
 import React from 'react'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { TotalActions } from 'interfaces/action'
+import { CompteurActionsPeriode } from 'interfaces/action'
 import {
   compareBeneficiairesByNom,
   BeneficiaireAvecNbActionsNonTerminees,
@@ -36,20 +37,20 @@ export default async function Portefeuille({
       })
     )
   } else {
-    const totauxActions: TotalActions[] = await countActionsJeunes(
-      user.id,
-      accessToken
-    )
+    const dateDebut = DateTime.now().startOf('week')
+    const dateFin = DateTime.now().endOf('week')
+    const compteurActionsPeriode: CompteurActionsPeriode[] =
+      await countActionsJeunes(user.id, dateDebut, dateFin, accessToken)
 
     beneficiairesAvecNbActionsNonTerminees = beneficiaires.map(
       (beneficiaire) => {
-        const totalBeneficiaire = totauxActions.find(
-          (action) => action.idJeune === beneficiaire.id
+        const actionsPeriode = compteurActionsPeriode.find(
+          (action) => action.idBeneficiaire === beneficiaire.id
         )
 
         return {
           ...beneficiaire,
-          nbActionsNonTerminees: totalBeneficiaire?.nbActionsNonTerminees ?? 0,
+          nbActionsNonTerminees: actionsPeriode?.actions ?? 0,
         }
       }
     )

@@ -21,7 +21,7 @@ import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { toLongMonthDate } from 'utils/date'
+import { toLongMonthDate, toShortDate } from 'utils/date'
 
 jest.mock('services/messages.service')
 jest.mock('services/conseiller.service')
@@ -199,6 +199,7 @@ describe('PortefeuillePage client side', () => {
   describe('quand le conseiller est MILO', () => {
     let jeune: BeneficiaireAvecNbActionsNonTerminees
     let beneficiaireAvecStructureDifferente: BeneficiaireAvecNbActionsNonTerminees
+    jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO('2024-01-01'))
 
     beforeEach(async () => {
       //GIVEN
@@ -245,6 +246,15 @@ describe('PortefeuillePage client side', () => {
           name: 'Ajouter un bénéficiaire',
         })
       ).toHaveAttribute('href', '/mes-jeunes/creation-jeune')
+    })
+
+    it('affiche la période en cours', () => {
+      const DEBUT_PERIODE = toShortDate(DateTime.now().startOf('week'))
+      const FIN_PERIODE = toShortDate(DateTime.now().endOf('week'))
+
+      expect(
+        screen.getByText(`Semaine du ${DEBUT_PERIODE} au ${FIN_PERIODE}`)
+      ).toBeInTheDocument()
     })
 
     it("affiche la colonne nombre d'actions des jeunes", () => {

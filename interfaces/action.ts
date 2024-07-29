@@ -38,9 +38,9 @@ export interface QualificationAction {
   isSituationNonProfessionnelle: boolean
 }
 
-export interface TotalActions {
-  idJeune: string
-  nbActionsNonTerminees: number
+export interface CompteurActionsPeriode {
+  idBeneficiaire: string
+  actions: number
 }
 
 export enum StatutAction {
