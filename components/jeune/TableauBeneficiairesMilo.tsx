@@ -15,7 +15,7 @@ import {
 } from 'interfaces/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toLongMonthDate, toRelativeDateTime } from 'utils/date'
+import { toLongMonthDate, toRelativeDateTime, toShortDate } from 'utils/date'
 
 interface TableauBeneficiairesMiloProps {
   beneficiairesFiltres: BeneficiaireAvecInfosComplementaires[]
@@ -43,6 +43,9 @@ export default function TableauBeneficiairesMilo({
   const derniereActiviteColumn = 'Dernière activité'
   const voirDetailColumn = 'Voir le détail'
 
+  const DEBUT_PERIODE = DateTime.now().startOf('week')
+  const FIN_PERIODE = DateTime.now().endOf('week')
+
   useEffect(() => {
     setBeneficiairesAffiches(
       beneficiairesFiltres.slice(10 * (page - 1), 10 * page)
@@ -52,144 +55,151 @@ export default function TableauBeneficiairesMilo({
   useMatomo('Mes jeunes', total > 0)
 
   return (
-    <Table
-      caption={{
-        text: 'Liste des bénéficiaires',
-        count: total === beneficiairesFiltres.length ? total : undefined,
-        visible: true,
-      }}
-    >
-      <thead className='sr-only'>
-        <TR isHeader={true}>
-          <TH>{beneficiaireSituationColumn}</TH>
-          <TH>{dateFinCEJColumn}</TH>
-          <TH estCliquable={true}>{actionsColumn}</TH>
-          <TH>{rdvColumn}</TH>
-          <TH>{derniereActiviteColumn}</TH>
-          <TH>{voirDetailColumn}</TH>
-        </TR>
-      </thead>
+    <>
+      <h2 className='text-m-bold mb-2 text-center text-grey_800'>
+        Semaine du {toShortDate(DEBUT_PERIODE)} au {toShortDate(FIN_PERIODE)}
+      </h2>
+      <Table
+        caption={{
+          text: 'Liste des bénéficiaires',
+          count: total === beneficiairesFiltres.length ? total : undefined,
+          visible: true,
+        }}
+      >
+        <thead className='sr-only'>
+          <TR isHeader={true}>
+            <TH>{beneficiaireSituationColumn}</TH>
+            <TH>{dateFinCEJColumn}</TH>
+            <TH estCliquable={true}>{actionsColumn}</TH>
+            <TH>{rdvColumn}</TH>
+            <TH>{derniereActiviteColumn}</TH>
+            <TH>{voirDetailColumn}</TH>
+          </TR>
+        </thead>
 
-      <tbody>
-        {beneficiairesAffiches.map(
-          (beneficiaire: BeneficiaireAvecInfosComplementaires) => (
-            <TR key={beneficiaire.id}>
-              <TD isBold className='rounded-l-base'>
-                <span className={styleTDTitle}>
-                  {beneficiaire.structureMilo?.id ===
-                    conseiller.structureMilo?.id &&
-                    beneficiaire.isReaffectationTemporaire && (
+        <tbody>
+          {beneficiairesAffiches.map(
+            (beneficiaire: BeneficiaireAvecInfosComplementaires) => (
+              <TR key={beneficiaire.id}>
+                <TD isBold className='rounded-l-base'>
+                  <span className={styleTDTitle}>
+                    {beneficiaire.structureMilo?.id ===
+                      conseiller.structureMilo?.id &&
+                      beneficiaire.isReaffectationTemporaire && (
+                        <span className='self-center mr-2'>
+                          <IconComponent
+                            name={IconName.Schedule}
+                            focusable={false}
+                            className='w-4 h-4'
+                            role='img'
+                            aria-labelledby={`label-beneficiaire-temporaire-${beneficiaire.id}`}
+                            title='bénéficiaire temporaire'
+                          />
+                          <span
+                            id={`label-beneficiaire-temporaire-${beneficiaire.id}`}
+                            className='sr-only'
+                          >
+                            bénéficiaire temporaire
+                          </span>
+                        </span>
+                      )}
+                    {beneficiaire.structureMilo?.id !==
+                      conseiller.structureMilo?.id && (
                       <span className='self-center mr-2'>
                         <IconComponent
-                          name={IconName.Schedule}
+                          name={IconName.Error}
                           focusable={false}
-                          className='w-4 h-4'
                           role='img'
-                          aria-labelledby={`label-beneficiaire-temporaire-${beneficiaire.id}`}
-                          title='bénéficiaire temporaire'
+                          aria-labelledby={`label-ml-differente-${beneficiaire.id}`}
+                          className='w-4 h-4 fill-warning'
+                          title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                         />
                         <span
-                          id={`label-beneficiaire-temporaire-${beneficiaire.id}`}
+                          id={`label-ml-differente-${beneficiaire.id}`}
                           className='sr-only'
                         >
-                          bénéficiaire temporaire
+                          Ce bénéficiaire est rattaché à une Mission Locale
+                          différente de la vôtre.
                         </span>
                       </span>
                     )}
-                  {beneficiaire.structureMilo?.id !==
-                    conseiller.structureMilo?.id && (
-                    <span className='self-center mr-2'>
-                      <IconComponent
-                        name={IconName.Error}
-                        focusable={false}
-                        role='img'
-                        aria-labelledby={`label-ml-differente-${beneficiaire.id}`}
-                        className='w-4 h-4 fill-warning'
-                        title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
-                      />
-                      <span
-                        id={`label-ml-differente-${beneficiaire.id}`}
-                        className='sr-only'
-                      >
-                        Ce bénéficiaire est rattaché à une Mission Locale
-                        différente de la vôtre.
+                    {getNomBeneficiaireComplet(beneficiaire)}
+                  </span>
+                  <SituationTag situation={beneficiaire.situationCourante} />
+                </TD>
+
+                <TD>
+                  <span
+                    className={`${styleTDTitle} text-s-regular text-grey_800`}
+                    aria-hidden={true}
+                  >
+                    {dateFinCEJColumn}
+                  </span>
+
+                  {beneficiaire.dateFinCEJ && (
+                    <TagDate
+                      label={toLongMonthDate(
+                        DateTime.fromISO(beneficiaire.dateFinCEJ)
+                      )}
+                    />
+                  )}
+
+                  {!beneficiaire.dateFinCEJ && (
+                    <>
+                      --
+                      <span className='sr-only'>
+                        information non disponible
                       </span>
-                    </span>
+                    </>
                   )}
-                  {getNomBeneficiaireComplet(beneficiaire)}
-                </span>
-                <SituationTag situation={beneficiaire.situationCourante} />
-              </TD>
+                </TD>
 
-              <TD>
-                <span
-                  className={`${styleTDTitle} text-s-regular text-grey_800`}
-                  aria-hidden={true}
-                >
-                  {dateFinCEJColumn}
-                </span>
+                <TD className='border-l-1 border-grey_800'>
+                  <span
+                    className={`${styleTDTitle} text-s-regular text-grey_800`}
+                    aria-hidden={true}
+                  >
+                    {actionsColumn}
+                  </span>
+                  <div className='mx-auto text-m-bold'>
+                    {beneficiaire.nbActionsNonTerminees}
+                  </div>
+                </TD>
 
-                {beneficiaire.dateFinCEJ && (
-                  <TagDate
-                    label={toLongMonthDate(
-                      DateTime.fromISO(beneficiaire.dateFinCEJ)
+                <TD className='rounded-r-base'>
+                  <span
+                    className={`${styleTDTitle} text-s-regular text-grey_800`}
+                    aria-hidden={true}
+                  >
+                    {rdvColumn}
+                  </span>
+                  <div className='mx-auto text-m-bold'>12</div>
+                </TD>
+
+                <TD>
+                  <span
+                    className={`${styleTDTitle} text-s-regular text-grey_800`}
+                    aria-hidden={true}
+                  >
+                    {derniereActiviteColumn}
+                  </span>
+                  <div>
+                    {beneficiaire.isActivated &&
+                      toRelativeDateTime(beneficiaire.lastActivity!)}
+                    {!beneficiaire.isActivated && (
+                      <span className='text-warning'>Compte non activé</span>
                     )}
-                  />
-                )}
-
-                {!beneficiaire.dateFinCEJ && (
-                  <>
-                    --
-                    <span className='sr-only'>information non disponible</span>
-                  </>
-                )}
-              </TD>
-
-              <TD className='border-l-1 border-grey_800'>
-                <span
-                  className={`${styleTDTitle} text-s-regular text-grey_800`}
-                  aria-hidden={true}
-                >
-                  {actionsColumn}
-                </span>
-                <div className='mx-auto text-m-bold'>
-                  {beneficiaire.nbActionsNonTerminees}
-                </div>
-              </TD>
-
-              <TD className='rounded-r-base'>
-                <span
-                  className={`${styleTDTitle} text-s-regular text-grey_800`}
-                  aria-hidden={true}
-                >
-                  {rdvColumn}
-                </span>
-                <div className='mx-auto text-m-bold'>12</div>
-              </TD>
-
-              <TD>
-                <span
-                  className={`${styleTDTitle} text-s-regular text-grey_800`}
-                  aria-hidden={true}
-                >
-                  {derniereActiviteColumn}
-                </span>
-                <div>
-                  {beneficiaire.isActivated &&
-                    toRelativeDateTime(beneficiaire.lastActivity!)}
-                  {!beneficiaire.isActivated && (
-                    <span className='text-warning'>Compte non activé</span>
-                  )}
-                </div>
-              </TD>
-              <TDLink
-                href={`/mes-jeunes/${beneficiaire.id}`}
-                label={`Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`}
-              />
-            </TR>
-          )
-        )}
-      </tbody>
-    </Table>
+                  </div>
+                </TD>
+                <TDLink
+                  href={`/mes-jeunes/${beneficiaire.id}`}
+                  label={`Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`}
+                />
+              </TR>
+            )
+          )}
+        </tbody>
+      </Table>
+    </>
   )
 }
