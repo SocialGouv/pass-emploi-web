@@ -15,6 +15,7 @@ import {
 import { QualificationAction, StatutAction } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import {
+  countActionsJeunes,
   creerAction,
   deleteAction,
   getAction,
@@ -708,6 +709,40 @@ describe('ActionsApiService', () => {
         'accessToken'
       )
       expect(result).toEqual(desCategories())
+    })
+  })
+
+  describe('.countActionsJeunes', () => {
+    it('retourne la liste des compteurs d’actions', async () => {
+      jest
+        .spyOn(DateTime, 'now')
+        .mockReturnValue(DateTime.fromISO('2024-08-01'))
+      const dateDebut = DateTime.now().startOf('week')
+      const dateFin = DateTime.now().endOf('week')
+      const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+      const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
+      const compteursActions = [
+        { idBeneficiaire: 'id-beneficiaire', actions: '3' },
+      ]
+
+      ;(apiGet as jest.Mock).mockResolvedValue({
+        content: compteursActions,
+      })
+
+      // WHEN
+      const result = await countActionsJeunes(
+        'id-conseiller',
+        dateDebut,
+        dateFin,
+        'accessToken'
+      )
+
+      // THEN
+      expect(apiGet).toHaveBeenCalledWith(
+        `/conseillers/milo/id-conseiller/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+        'accessToken'
+      )
+      expect(result).toEqual(compteursActions)
     })
   })
 })

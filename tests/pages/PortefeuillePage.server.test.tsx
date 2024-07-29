@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react'
+import { DateTime } from 'luxon'
 
 import Portefeuille from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/page'
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
@@ -23,8 +24,8 @@ describe('PortefeuillePage server side', () => {
     ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(jeunes)
     ;(countActionsJeunes as jest.Mock).mockResolvedValue(
       jeunes.map((j) => ({
-        idJeune: j.id,
-        nbActionsNonTerminees: 7,
+        idBeneficiaire: j.id,
+        actions: 7,
       }))
     )
   })
@@ -92,9 +93,17 @@ describe('PortefeuillePage server side', () => {
     })
 
     it('récupère les actions des jeunes', () => {
+      jest
+        .spyOn(DateTime, 'now')
+        .mockReturnValue(DateTime.fromISO('2024-08-01'))
+      const dateDebut = DateTime.now().startOf('week')
+      const dateFin = DateTime.now().endOf('week')
+
       // Then
       expect(countActionsJeunes).toHaveBeenCalledWith(
         'id-conseiller',
+        dateDebut,
+        dateFin,
         'accessToken'
       )
     })
