@@ -12,7 +12,7 @@ export enum CategorieSituation {
   EMPLOI = 'Emploi',
   CONTRAT_EN_ALTERNANCE = 'Contrat en Alternance',
   FORMATION = 'Formation',
-  IMMERSION_EN_ENTREPRISE = 'Immersion en entreprise',
+  IMMERSION_EN_ENTREPRISE = 'Immersion',
   PMSMP = 'Pmsmp',
   CONTRAT_DE_VOLONTARIAT_BENEVOLAT = 'Contrat de volontariat - bénévolat',
   SCOLARITE = 'Scolarité',
