@@ -70,11 +70,11 @@ function LoginPage({
   return (
     <main
       role='main'
-      className='bg-primary_lighten w-full grow relative flex justify-center items-center'
+      className='w-full relative flex justify-center items-center'
     >
       <div>
-        <div className='flex-1 flex flex-wrap gap-12 justify-center items-end bg-white py-24 px-8 layout_s:px-16 rounded-l drop-shadow-lg'>
-          <div>
+        <div className='flex-1 flex flex-wrap gap-12 justify-center items-center bg-white py-6 px-8 layout_s:px-16 rounded-l drop-shadow-lg layout_l:py-24'>
+          <div className='flex-1 flex-col justify-items-center'>
             <h2>
               <span className='sr-only'>Contrat d’engagement jeune</span>
               <LogoCEJ
@@ -83,11 +83,11 @@ function LoginPage({
                 aria-hidden={true}
               />
             </h2>
-            <ul className='mt-6'>
+            <ul className='mt-6 flex flex-col items-center'>
               <li>
                 <FormButton
                   label='Connexion Mission Locale'
-                  className='whitespace-nowrap'
+                  className='w-64 whitespace-nowrap'
                   handleSubmit={(event) =>
                     handleSignin(event, 'similo-conseiller')
                   }
@@ -96,14 +96,14 @@ function LoginPage({
               <li>
                 <FormButton
                   label='Connexion France Travail CEJ'
-                  className='mt-6 whitespace-nowrap'
+                  className='w-64 mt-6 whitespace-nowrap'
                   handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
                 />
               </li>
             </ul>
           </div>
-
-          <div className='flex-1'>
+          <div className='flex-1 border-l-2 border-primary_lighten h-60 layout_xs:hidden layout_m:flex'></div>
+          <div className='flex-1 flex-col'>
             {(ssoFranceTravailBRSAEstActif || ssoFranceTravailAIJEstActif) && (
               <>
                 <h2>
@@ -114,12 +114,12 @@ function LoginPage({
                     aria-hidden={true}
                   />
                 </h2>
-                <ul>
+                <ul className='flex flex-col items-center'>
                   {ssoFranceTravailBRSAEstActif && (
                     <li>
                       <FormButton
                         label='Connexion BRSA'
-                        className='mt-6 whitespace-nowrap'
+                        className='w-64 mt-6 whitespace-nowrap'
                         style={ButtonStyle.PRIMARY_DARK}
                         handleSubmit={(event) =>
                           handleSignin(event, 'pe-brsa-conseiller')
@@ -132,7 +132,7 @@ function LoginPage({
                     <li>
                       <FormButton
                         label='Connexion AIJ'
-                        className='mt-6 whitespace-nowrap'
+                        className='w-64 mt-6 whitespace-nowrap'
                         style={ButtonStyle.PRIMARY_DARK}
                         handleSubmit={(event) =>
                           handleSignin(event, 'pe-aij-conseiller')
