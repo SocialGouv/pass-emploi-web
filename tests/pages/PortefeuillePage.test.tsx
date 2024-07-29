@@ -93,7 +93,10 @@ describe('PortefeuillePage client side', () => {
           expect(
             row.getByText(toLongMonthDate(DateTime.fromISO(jeune.dateFinCEJ)))
           ).toBeInTheDocument()
-        else expect(row.getByText('Pas de date renseignée')).toBeInTheDocument()
+        else
+          expect(
+            row.getByText('information non disponible')
+          ).toBeInTheDocument()
       })
     })
 

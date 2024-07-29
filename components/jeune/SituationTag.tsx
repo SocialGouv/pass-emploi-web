@@ -26,7 +26,7 @@ const mappedSituation: {
     color: 'accent_3',
     backgroundColor: 'accent_3_lighten',
   },
-  'Immersion en entreprise': {
+  Immersion: {
     color: 'accent_1',
     backgroundColor: 'accent_1_lighten',
   },
