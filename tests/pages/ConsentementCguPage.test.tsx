@@ -50,8 +50,14 @@ describe('ConsentementCGUPage client side', () => {
         // Then
         expect(
           screen.getByText(
-            /La plateforme pass emploi a pour objet de contribuer à l’insertion professionnelle des Usagers du RSA./
+            /La plateforme pass emploi a pour objet de contribuer à l’insertion professionnelle des Usagers./
           )
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(/« Le bénéficiaire de l’AIJ »/)
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(/« Le bénéficiaire du RSA »/)
         ).toBeInTheDocument()
         expect(() => screen.getByText('CEJ')).toThrow()
       })
