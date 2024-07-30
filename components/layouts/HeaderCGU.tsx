@@ -40,7 +40,7 @@ export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
         Application conseiller{' '}
         {estPassEmploi(conseiller) ? 'pass emploi' : 'CEJ'}
       </p>
-      <p className='text-s-regular'>Version 5 – 23 avril 2024</p>
+      <p className='text-s-regular'>Version 6 – 03 juillet 2024</p>
     </header>
   )
 }
