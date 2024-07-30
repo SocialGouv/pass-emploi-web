@@ -16,18 +16,18 @@ export default function ContenuCGUConseillerPassEmploi() {
         Article 1 – Champ d’application
       </h2>
       <p className='mb-4'>
-        Tout Usager qui est en situation de décrochage peut créer un compte via
-        l’application « pass emploi » et utiliser l’application pour être
-        accompagné dans sa recherche, pour trouver des ressources ou pour être
-        accompagné dans son projet professionnel en général.
+        Tout Conseiller qui accompagne les Usagers peut créer un compte sur la
+        plateforme « pass emploi » et utiliser l’application pour accompagner
+        l’Usager dans sa recherche, pour trouver des ressources ou dans son
+        projet professionnel en général.
       </p>
 
       <h2 className='text-m-bold text-primary mt-10 mb-4'>Article 2 – Objet</h2>
       <p className='mb-4'>
-        La plateforme pass emploi a pour objet de contribuer à l’insertion
+        La plateforme « pass emploi » a pour objet de contribuer à l’insertion
         professionnelle des Usagers. En ce sens, elle cherche à améliorer la
-        mise en relation des Usagers et leur conseiller ou conseillère, force de
-        proposition d’actions et conseils aux Usagers.
+        mise en relation des Usagers et de leur Conseiller, force de proposition
+        d’actions et conseils aux Usagers.
       </p>
 
       <h2 className='text-m-bold text-primary mt-10 mb-4'>
@@ -164,9 +164,9 @@ export default function ContenuCGUConseillerPassEmploi() {
         B – Suppression par le Conseiller
       </h4>
       <p className='mb-4'>
-        Les Conseillers peuvent également supprimer le compte d’un Usager qu’il
-        suit en cliquant sur le bouton « Supprimer ». Cette suppression ne peut
-        survenir que pour 3 motifs :
+        Les Conseillers peuvent supprimer le compte d’un Usager qu’il suit en
+        cliquant sur le bouton « Supprimer ». Cette suppression ne peut survenir
+        que pour 3 motifs :
       </p>
       <ul className='list-disc mb-8 ml-8'>
         <li>L’usager est sorti du dispositif « pass emploi » ;</li>
@@ -187,6 +187,9 @@ export default function ContenuCGUConseillerPassEmploi() {
       </h2>
       <h3 className='text-base-bold text-content_color mb-2'>5.1 L’éditeur</h3>
       <p className='mb-4'>
+        La DGEFP a qualité d’éditeur de l’application « pass emploi ».
+      </p>
+      <p className='mb-4'>
         Les sources des informations diffusées sur la Plateforme sont réputées
         fiables mais le site ne garantit pas qu’il soit exempt de défauts,
         d’erreurs ou d’omissions.
@@ -200,7 +203,8 @@ export default function ContenuCGUConseillerPassEmploi() {
       <p className='mb-4'>
         L’éditeur s’engage à la sécurisation de la Plateforme, notamment en
         prenant toutes les mesures nécessaires permettant de garantir la
-        sécurité et la confidentialité des informations fournies.
+        sécurité et la confidentialité des informations fournies. Les échanges
+        sur la plateforme entre l’Usager et son Conseiller sont chiffrés.
       </p>
       <p className='mb-4'>
         L’éditeur fournit les moyens nécessaires et raisonnables pour assurer un
@@ -230,6 +234,15 @@ export default function ContenuCGUConseillerPassEmploi() {
         caractère personnel sur un système non sécurisé.
       </p>
       <p className='mb-4'>
+        Il doit également supprimer le compte d’un Usager pour l’un des trois
+        motifs suivants :{' '}
+      </p>
+      <ul className='list-disc mb-8 ml-8'>
+        <li>L’usager est sorti du dispositif « pass emploi » ;</li>
+        <li>L’usager est radié du dispositif « pass emploi » ;</li>
+        <li>Un autre compte existe ou va être créé.</li>
+      </ul>
+      <p className='mb-4'>
         Toute question ou propos peut être supprimé s’il contrevient à une
         disposition des présentes CGU, s’il est contraire à des dispositions
         légales ou pour n’importe quelle raison jugée opportune par l’équipe de
@@ -258,33 +271,8 @@ export default function ContenuCGUConseillerPassEmploi() {
         </li>
       </ul>
       <p className='mb-4'>
-        Toute question ou propos peut être supprimé s’il contrevient à une
-        disposition des présentes CGU, s’il est contraire à des dispositions
-        légales ou pour n’importe quelle raison jugée opportune par l’équipe de
-        la plateforme, et ce, sans préavis.
-      </p>
-
-      <h3 className='text-base-bold text-content_color mb-2'>5.4 L’Usager</h3>
-      <p className='mb-4'>
-        Toute information transmise par l’Usager est de sa seule responsabilité.
-        Il est rappelé que toute personne procédant à une fausse déclaration
-        pour elle-même ou pour autrui s’expose, notamment, aux sanctions prévues
-        à l’article 441-1 du code pénal, prévoyant des peines pouvant aller
-        jusqu’à trois ans d’emprisonnement et 45 000 euros d’amende.
-      </p>
-      <p className='mb-4'>
-        L’Usager s’engage à ne pas mettre en ligne de contenus ou informations
-        contraires aux dispositions légales et réglementaires en vigueur. En
-        particulier, l’Utilisateur s’engage à ne pas publier dans le champ libre
-        de question, de message racistes, sexistes, injurieux, insultants ou
-        contraires à l’ordre public.
-      </p>
-      <p className='mb-4'>
-        Les pièces jointes déposées par l’Usager ne contiennent pas de données
-        sensibles, particulièrement ce dernier veille à ne pas déposer de
-        données relatives à ses opinions philosophiques, politiques, à sa
-        religion, à sa santé ou à son orientation sexuelle ou sur sa vie
-        sexuelle.
+        Le Superviseur doit notamment s’assurer que le Conseiller respecte ses
+        obligations au titre de l’article 5.2 des présentes CGU.
       </p>
       <p className='mb-4'>
         Toute question ou propos peut être supprimé s’il contrevient à une

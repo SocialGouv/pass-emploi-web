@@ -50,7 +50,7 @@ describe('ConsentementCGUPage client side', () => {
         // Then
         expect(
           screen.getByText(
-            /La plateforme pass emploi a pour objet de contribuer à l’insertion professionnelle des Usagers./
+            /le cadre juridique de la Plateforme « pass emploi »/
           )
         ).toBeInTheDocument()
         expect(
