@@ -5,20 +5,22 @@ import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessag
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
 import { ValueWithError } from 'components/ValueWithError'
-import { JeunePoleEmploiFormData } from 'interfaces/json/jeune'
+import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
 import isEmailValid from 'utils/isEmailValid'
 
-type FormulaireJeunePoleEmploiProps = {
-  creerJeunePoleEmploi: (newJeune: JeunePoleEmploiFormData) => void
+type FormulaireBeneficiaireFranceTravailProps = {
+  creerBeneficiaireFranceTravail: (
+    nouveauBeneficiaire: BeneficiaireFranceTravailFormData
+  ) => void
   creationEnCours: boolean
   creationError?: string
 }
 
-function FormulaireJeunePoleEmploi({
-  creerJeunePoleEmploi,
+function FormulaireBeneficiaireFranceTravail({
+  creerBeneficiaireFranceTravail,
   creationError,
   creationEnCours,
-}: FormulaireJeunePoleEmploiProps) {
+}: FormulaireBeneficiaireFranceTravailProps) {
   const [prenom, setPrenom] = useState<ValueWithError>({
     value: '',
   })
@@ -71,13 +73,13 @@ function FormulaireJeunePoleEmploi({
     e.preventDefault()
     const isValid = validate()
     if (isValid && !creationEnCours) {
-      const newJeune: JeunePoleEmploiFormData = {
+      const newJeune: BeneficiaireFranceTravailFormData = {
         prenom: prenom.value,
         nom: nom.value,
         email: email.value,
       }
 
-      creerJeunePoleEmploi(newJeune)
+      creerBeneficiaireFranceTravail(newJeune)
     }
   }
 
@@ -169,4 +171,4 @@ function FormulaireJeunePoleEmploi({
   )
 }
 
-export default FormulaireJeunePoleEmploi
+export default FormulaireBeneficiaireFranceTravail

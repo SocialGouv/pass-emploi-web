@@ -1,13 +1,14 @@
 import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
-import { desItemsJeunes } from 'fixtures/jeune'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
+import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import { JeuneFromListe } from 'interfaces/jeune'
 import {
   modifierAgence,
   modifierNotificationsSonores,
@@ -23,7 +24,8 @@ jest.mock('components/Modal')
 
 describe('ProfilPage client side', () => {
   let conseiller: Conseiller
-  let jeunes: JeuneFromListe[]
+  let container: HTMLElement
+  let jeunes: BeneficiaireFromListe[]
   let push: Function
 
   describe('contenu', () => {
@@ -37,10 +39,18 @@ describe('ProfilPage client side', () => {
 
       // When
       await act(async () => {
-        renderWithContexts(<ProfilPage referentielAgences={[]} />, {
-          customConseiller: conseiller,
-        })
+        ;({ container } = renderWithContexts(
+          <ProfilPage referentielAgences={[]} />,
+          {
+            customConseiller: conseiller,
+          }
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche les informations du conseiller', () => {
@@ -71,12 +81,21 @@ describe('ProfilPage client side', () => {
   })
 
   describe('quand il manque des informations', () => {
-    it("n'affiche pas les informations manquantes", async () => {
+    beforeEach(async () => {
       // When
       await act(async () => {
-        renderWithContexts(<ProfilPage referentielAgences={[]} />)
+        ;({ container } = renderWithContexts(
+          <ProfilPage referentielAgences={[]} />
+        ))
       })
+    })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it("n'affiche pas les informations manquantes", async () => {
       // Then
       expect(() => screen.getByRole('term', { name: /Votre e-mail/ })).toThrow()
       expect(() => screen.getByRole('term', { name: /Votre agence/ })).toThrow()
@@ -111,10 +130,18 @@ describe('ProfilPage client side', () => {
 
         // When
         await act(async () => {
-          renderWithContexts(<ProfilPage referentielAgences={[]} />, {
-            customConseiller: conseiller,
-          })
+          ;({ container } = renderWithContexts(
+            <ProfilPage referentielAgences={[]} />,
+            {
+              customConseiller: conseiller,
+            }
+          ))
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche le label correspondant', async () => {
@@ -144,10 +171,18 @@ describe('ProfilPage client side', () => {
 
         // When
         await act(async () => {
-          renderWithContexts(<ProfilPage referentielAgences={agences} />, {
-            customConseiller: conseiller,
-          })
+          ;({ container } = renderWithContexts(
+            <ProfilPage referentielAgences={agences} />,
+            {
+              customConseiller: conseiller,
+            }
+          ))
         })
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('contient un input pour choisir un département', () => {
@@ -288,21 +323,29 @@ describe('ProfilPage client side', () => {
 
     describe('si son adresse email n’est pas encore renseignée', () => {
       const agences = uneListeDAgencesMILO()
+      const conseiller = unConseiller({
+        structure: StructureConseiller.MILO,
+        email: undefined,
+      })
 
-      it('contient à renseigner son adresse mail', async () => {
-        // Given
-        const conseiller = unConseiller({
-          structure: StructureConseiller.MILO,
-          email: undefined,
-        })
-
+      beforeEach(async () => {
         // When
         await act(async () => {
-          renderWithContexts(<ProfilPage referentielAgences={agences} />, {
-            customConseiller: conseiller,
-          })
+          ;({ container } = renderWithContexts(
+            <ProfilPage referentielAgences={agences} />,
+            {
+              customConseiller: conseiller,
+            }
+          ))
         })
+      })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contient à renseigner son adresse mail', async () => {
         // Then
         expect(
           screen.getByText('Votre adresse mail n’est pas renseignée')
@@ -320,7 +363,7 @@ describe('ProfilPage client side', () => {
   })
 
   describe('Supprimer un compte', () => {
-    describe('en tant que PE sans bénéficiaires', () => {
+    describe('en tant que FT sans bénéficiaires', () => {
       beforeEach(async () => {
         // Given
         ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue([])
@@ -334,9 +377,12 @@ describe('ProfilPage client side', () => {
 
         // When
         await act(async () => {
-          renderWithContexts(<ProfilPage referentielAgences={[]} />, {
-            customConseiller: conseiller,
-          })
+          ;({ container } = renderWithContexts(
+            <ProfilPage referentielAgences={[]} />,
+            {
+              customConseiller: conseiller,
+            }
+          ))
         })
 
         const supprimerConseillerButton = screen.getByRole('button', {
@@ -344,6 +390,11 @@ describe('ProfilPage client side', () => {
         })
 
         await userEvent.click(supprimerConseillerButton)
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche une modale avec les bonnes informations', async () => {
@@ -377,25 +428,36 @@ describe('ProfilPage client side', () => {
       })
     })
 
-    describe('en tant que PE avec bénéficiaires', () => {
-      it('affiche une modale avec les bonnes informations', async () => {
+    describe('en tant que FT avec bénéficiaires', () => {
+      beforeEach(async () => {
         // Given
-        jeunes = desItemsJeunes()
+        jeunes = desItemsBeneficiaires()
         ;(getJeunesDuConseillerClientSide as jest.Mock).mockResolvedValue(
           jeunes
         )
 
         // When
         await act(async () => {
-          renderWithContexts(<ProfilPage referentielAgences={[]} />, {
-            customConseiller: conseiller,
-          })
+          ;({ container } = renderWithContexts(
+            <ProfilPage referentielAgences={[]} />,
+            {
+              customConseiller: conseiller,
+            }
+          ))
         })
 
         const supprimerConseillerButton = screen.getByRole('button', {
           name: 'Supprimer mon compte',
         })
         await userEvent.click(supprimerConseillerButton)
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+
+      it('affiche une modale avec les bonnes informations', async () => {
         // Then
         expect(screen.getByText('Fermer')).toBeInTheDocument()
         expect(

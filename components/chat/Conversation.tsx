@@ -21,8 +21,8 @@ import IllustrationComponent, {
   IllustrationName,
 } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import { InfoFichier } from 'interfaces/fichier'
-import { JeuneChat } from 'interfaces/jeune'
 import { ByDay, fromConseiller, Message } from 'interfaces/message'
 import {
   FormNouveauMessageIndividuel,
@@ -41,7 +41,7 @@ type ConversationProps = {
   beneficiaireNomComplet: string
   onBack: () => void
   getConseillerNomComplet: (message: Message) => string | undefined
-  jeuneChat: JeuneChat
+  beneficiaireChat: BeneficiaireChat
   toggleAfficherRecherche: () => void
 }
 
@@ -49,7 +49,7 @@ export function Conversation({
   beneficiaireNomComplet,
   onBack,
   getConseillerNomComplet,
-  jeuneChat,
+  beneficiaireChat,
   toggleAfficherRecherche,
 }: ConversationProps) {
   const chatCredentials = useChatCredentials()
@@ -58,7 +58,7 @@ export function Conversation({
   const [userInput, setUserInput] = useState('')
 
   const [isFlaggedByConseiller, setFlaggedByConseiller] = useState<boolean>(
-    jeuneChat.flaggedByConseiller
+    beneficiaireChat.flaggedByConseiller
   )
 
   const [uploadedFileError, setUploadedFileError] = useState<
@@ -141,7 +141,7 @@ export function Conversation({
     if (!(userInput || Boolean(uploadedFileInfo)) || isFileUploading) return
 
     const formNouveauMessage: FormNouveauMessageIndividuel = {
-      jeuneChat,
+      beneficiaireChat: beneficiaireChat,
       newMessage:
         userInput ||
         'Votre conseiller vous a transmis une nouvelle pièce jointe : ',
@@ -166,7 +166,7 @@ export function Conversation({
 
     unsubscribeFromMessages.current()
     unsubscribeFromMessages.current = observerMessages(
-      jeuneChat.chatId,
+      beneficiaireChat.chatId,
       pageSuivante
     )
 
@@ -189,7 +189,7 @@ export function Conversation({
         'services/fichiers.service'
       )
       const infoFichier = await _uploadFichier(
-        [jeuneChat.id],
+        [beneficiaireChat.id],
         [],
         fichierSelectionne
       )
@@ -218,7 +218,7 @@ export function Conversation({
     if (!messageAModifier || !userInput) return
 
     await _modifierMessage(
-      jeuneChat.chatId,
+      beneficiaireChat.chatId,
       messageAModifier,
       userInput,
       chatCredentials!.cleChiffrement
@@ -237,7 +237,7 @@ export function Conversation({
 
   async function supprimerMessage(message: Message) {
     await _supprimerMessage(
-      jeuneChat.chatId,
+      beneficiaireChat.chatId,
       message,
       chatCredentials!.cleChiffrement
     )
@@ -262,7 +262,7 @@ export function Conversation({
     const { toggleFlag: _toggleFlag } = await import(
       'services/messages.service'
     )
-    await _toggleFlag(jeuneChat.chatId, flagged)
+    await _toggleFlag(beneficiaireChat.chatId, flagged)
     trackEvent({
       structure: conseiller.structure,
       categorie: 'Conversation suivie',
@@ -274,11 +274,14 @@ export function Conversation({
   }
 
   useEffect(() => {
-    unsubscribeFromMessages.current = observerMessages(jeuneChat.chatId, 1)
-    setReadByConseiller(jeuneChat.chatId)
+    unsubscribeFromMessages.current = observerMessages(
+      beneficiaireChat.chatId,
+      1
+    )
+    setReadByConseiller(beneficiaireChat.chatId)
 
     return unsubscribeFromMessages.current
-  }, [jeuneChat.chatId, observerMessages])
+  }, [beneficiaireChat.chatId, observerMessages])
 
   useEffect(() => {
     if (messagesByDay?.length && nombrePagesChargees === 1) {
@@ -291,18 +294,18 @@ export function Conversation({
 
   useEffect(() => {
     const unsubscribe = observeJeuneReadingDate(
-      jeuneChat.chatId,
+      beneficiaireChat.chatId,
       setLastSeenByJeune
     )
     return () => unsubscribe()
-  }, [jeuneChat.chatId])
+  }, [beneficiaireChat.chatId])
 
   useEffect(() => {
     if (uploadedFileInfo) {
       deleteFile()
     }
     resetTextbox()
-  }, [jeuneChat.chatId])
+  }, [beneficiaireChat.chatId])
 
   return (
     <>
@@ -313,11 +316,11 @@ export function Conversation({
           <span>
             Discuter avec{' '}
             <Link
-              aria-label={`Voir la fiche de ${jeuneChat.nom} ${jeuneChat.prenom}`}
-              href={`/mes-jeunes/${jeuneChat.id}`}
+              aria-label={`Voir la fiche de ${beneficiaireChat.nom} ${beneficiaireChat.prenom}`}
+              href={`/mes-jeunes/${beneficiaireChat.id}`}
               className='underline'
             >
-              {jeuneChat.nom} {jeuneChat.prenom}
+              {beneficiaireChat.nom} {beneficiaireChat.prenom}
             </Link>
           </span>
         }
@@ -353,6 +356,7 @@ export function Conversation({
                         style={ButtonStyle.TERTIARY}
                         className='mx-auto mb-3'
                         isLoading={loadingMoreMessages}
+                        type='button'
                       >
                         <IconComponent
                           name={IconName.ChevronUp}
@@ -540,7 +544,7 @@ export function Conversation({
                   ref={inputRef}
                   id='input-new-message'
                   className='w-full outline-none text-base-regular'
-                  onFocus={() => setReadByConseiller(jeuneChat.chatId)}
+                  onFocus={() => setReadByConseiller(beneficiaireChat.chatId)}
                   onChange={(e) => setUserInput(e.target.value)}
                   placeholder='Écrivez votre message ici...'
                   rows={5}

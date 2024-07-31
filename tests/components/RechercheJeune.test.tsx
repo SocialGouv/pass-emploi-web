@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
-import { desJeunesAvecActionsNonTerminees } from 'fixtures/jeune'
+import { desBeneficiairesAvecActionsNonTerminees } from 'fixtures/beneficiaire'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
@@ -12,7 +12,7 @@ jest.mock('services/messages.service')
 describe('Recherche', () => {
   beforeEach(async () => {
     //GIVEN
-    const jeunes = desJeunesAvecActionsNonTerminees()
+    const jeunes = desBeneficiairesAvecActionsNonTerminees()
 
     ;(signIn as jest.Mock).mockResolvedValue(undefined)
     ;(countMessagesNotRead as jest.Mock).mockResolvedValue({})

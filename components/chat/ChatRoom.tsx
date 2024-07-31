@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
-import { RechercheJeune } from 'components/jeune/RechercheJeune'
+import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { JeuneChat } from 'interfaces/jeune'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
   desactiverMessageImportant,
   FormNouveauMessageImportant,
@@ -25,7 +25,7 @@ const MessageImportantModal = dynamic(
 )
 
 interface ChatRoomProps {
-  jeunesChats: JeuneChat[] | undefined
+  beneficiairesChats: BeneficiaireChat[] | undefined
   showMenu: boolean
   onOuvertureMenu: () => void
   onAccesListesDiffusion: () => void
@@ -33,7 +33,7 @@ interface ChatRoomProps {
 }
 
 export default function ChatRoom({
-  jeunesChats,
+  beneficiairesChats,
   showMenu,
   onOuvertureMenu,
   onAccesListesDiffusion,
@@ -43,7 +43,7 @@ export default function ChatRoom({
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
 
-  const [chatsFiltres, setChatsFiltres] = useState<JeuneChat[]>()
+  const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
   const [messageImportantPreRempli, setMessageImportantPreRempli] = useState<
@@ -149,7 +149,7 @@ export default function ChatRoom({
 
   function filtrerConversations(saisieUtilisateur: string) {
     const querySplit = saisieUtilisateur.toLowerCase().split(/-|\s/)
-    const chatsFiltresResult = (jeunesChats ?? []).filter((jeune) => {
+    const chatsFiltresResult = (beneficiairesChats ?? []).filter((jeune) => {
       const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
       const jeuneFirstName = jeune.prenom.replace(/’/i, "'").toLocaleLowerCase()
       for (const item of querySplit) {
@@ -181,8 +181,8 @@ export default function ChatRoom({
   }, [messageImportantPreRempli])
 
   useEffect(() => {
-    setChatsFiltres(jeunesChats)
-  }, [jeunesChats])
+    setChatsFiltres(beneficiairesChats)
+  }, [beneficiairesChats])
 
   return (
     <>
@@ -295,13 +295,14 @@ export default function ChatRoom({
             className='flex justify-center my-8 layout_s:hidden'
             data-testid='form-chat'
           >
-            <RechercheJeune onSearchFilterBy={filtrerConversations} />
+            <RechercheBeneficiaire onSearchFilterBy={filtrerConversations} />
           </div>
 
           {chatsFiltres && (
             <button
               className='flex items-center text-primary bg-white rounded-base p-4 mb-2 mx-4'
               onClick={onAccesListesDiffusion}
+              type='button'
             >
               <IconComponent
                 name={IconName.PeopleFill}

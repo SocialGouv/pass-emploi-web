@@ -19,7 +19,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import FailureAlert from 'components/ui/Notifications/FailureAlert'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { ValueWithError } from 'components/ValueWithError'
-import { JeuneEtablissement } from 'interfaces/jeune'
+import { BeneficiaireEtablissement } from 'interfaces/beneficiaire'
 import { estAClore, Session, StatutBeneficiaire } from 'interfaces/session'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
@@ -35,7 +35,7 @@ const DesinscriptionBeneficiaireModal = dynamic(
 )
 
 type DetailSessionProps = {
-  beneficiairesStructureMilo: JeuneEtablissement[]
+  beneficiairesStructureMilo: BeneficiaireEtablissement[]
   session: Session
   returnTo: string
 }
@@ -135,10 +135,9 @@ function DetailsSessionPage({
     return beneficiairesStructureMilo
       .filter(
         (beneficiaire) =>
-          !beneficiairesSelectionnes.value.some(
-            (selectedBeneficiaire) =>
-              selectedBeneficiaire.id === beneficiaire.base.id
-          )
+          !beneficiairesSelectionnes.value.some((selectedBeneficiaire) => {
+            return selectedBeneficiaire.id === beneficiaire.base.id
+          })
       )
       .map((beneficiaire) => ({
         id: beneficiaire.base.id,
@@ -531,7 +530,6 @@ function DetailsSessionPage({
             <ul
               aria-label='Bénéficiaires sélectionnés'
               id='selected-beneficiaires'
-              role='region'
               className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
               aria-live='polite'
               aria-relevant='additions removals'

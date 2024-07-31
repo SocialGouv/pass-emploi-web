@@ -1,18 +1,20 @@
 import { act, screen } from '@testing-library/react'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/jeune'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -32,7 +34,7 @@ describe('FicheBeneficiairePage client side', () => {
     it('modifie le currentJeune', async () => {
       // Given
       const setIdJeune = jest.fn()
-      const jeune = unDetailJeune()
+      const jeune = unDetailBeneficiaire()
 
       // When
       await act(async () => {
@@ -53,11 +55,12 @@ describe('FicheBeneficiairePage client side', () => {
       })
 
       // Then
-      expect(setIdJeune).toHaveBeenCalledWith('jeune-1')
+      expect(setIdJeune).toHaveBeenCalledWith('beneficiaire-1')
     })
   })
 
   describe('pour les conseillers non référent', () => {
+    let container: HTMLElement
     let setIdJeune: (id: string | undefined) => void
     beforeEach(async () => {
       // Given
@@ -65,9 +68,9 @@ describe('FicheBeneficiairePage client side', () => {
 
       // When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailJeune()}
+            jeune={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -78,8 +81,13 @@ describe('FicheBeneficiairePage client side', () => {
             customConseiller: { id: 'fake-id' },
             customCurrentJeune: { idSetter: setIdJeune },
           }
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('ne modifie pas le currentJeune', async () => {
@@ -112,12 +120,35 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers non France Travail', () => {
+    let container: HTMLElement
+
+    it('a11y', async () => {
+      await act(async () => {
+        ;({ container } = renderWithContexts(
+          <FicheBeneficiairePage
+            jeune={unDetailBeneficiaire()}
+            rdvs={[]}
+            actionsInitiales={desActionsInitiales()}
+            categoriesActions={desCategories()}
+            onglet='AGENDA'
+            lectureSeule={false}
+          />,
+          {
+            customConseiller: { structure: StructureConseiller.MILO },
+          }
+        ))
+      })
+
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
     it('affiche un lien pour accéder au calendrier de l’établissement', async () => {
       // When
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailJeune()}
+            jeune={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -144,7 +175,7 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
-              jeune={unDetailJeune({ isActivated: false })}
+              jeune={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
@@ -173,19 +204,34 @@ describe('FicheBeneficiairePage client side', () => {
   })
 
   describe('pour les conseillers non Milo', () => {
-    let offresPE: Offre[],
-      recherchesPE: Recherche[],
+    let offresFT: Offre[],
+      recherchesFT: Recherche[],
       metadonneesFavoris: MetadonneesFavoris
     beforeEach(async () => {
       //Given
       metadonneesFavoris = uneMetadonneeFavoris()
-      offresPE = uneListeDOffres()
-      recherchesPE = uneListeDeRecherches()
+      offresFT = uneListeDOffres()
+      recherchesFT = uneListeDeRecherches()
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+      const container = await renderFicheJeune(
+        metadonneesFavoris,
+        offresFT,
+        recherchesFT
+      )
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('n’affiche pas les onglets agenda, actions et rdv', async () => {
       // When
-      await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
 
       // Then
       expect(() => screen.getByText('Agenda')).toThrow()
@@ -195,7 +241,7 @@ describe('FicheBeneficiairePage client side', () => {
 
     it('affiche les onglets recherche et offres si le bénéficiaire a accepté le partage', async () => {
       // When
-      await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
 
       // Then
       expect(screen.getByText('Offres')).toBeInTheDocument()
@@ -207,7 +253,7 @@ describe('FicheBeneficiairePage client side', () => {
       metadonneesFavoris.autoriseLePartage = false
 
       //When
-      await renderFicheJeune(metadonneesFavoris, offresPE, recherchesPE)
+      await renderFicheJeune(metadonneesFavoris, offresFT, recherchesFT)
 
       // Then
       expect(screen.getByText(/Emplois/)).toBeInTheDocument()
@@ -223,7 +269,7 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
-              jeune={unDetailJeune({ isActivated: false })}
+              jeune={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
@@ -254,7 +300,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailJeune({ structureMilo: { id: '2' } })}
+            jeune={unDetailBeneficiaire({ structureMilo: { id: '2' } })}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -282,26 +328,28 @@ describe('FicheBeneficiairePage client side', () => {
 
 async function renderFicheJeune(
   metadonnees: MetadonneesFavoris,
-  offresPE: Offre[],
-  recherchesPE: Recherche[],
+  offresFT: Offre[],
+  recherchesFT: Recherche[],
   lectureSeule?: boolean
-) {
+): Promise<HTMLElement> {
+  let container: HTMLElement
   await act(async () => {
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
         onglet='AGENDA'
         lectureSeule={lectureSeule ?? false}
         metadonneesFavoris={metadonnees}
-        offresPE={offresPE}
-        recherchesPE={recherchesPE}
+        offresFT={offresFT}
+        recherchesFT={recherchesFT}
       />,
       {
         customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
       }
-    )
+    ))
   })
+  return container
 }

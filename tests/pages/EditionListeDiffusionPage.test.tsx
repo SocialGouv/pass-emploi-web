@@ -1,11 +1,16 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 
 import EditionListeDiffusionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/listes-de-diffusion/edition-liste/EditionListeDiffusionPage'
-import { desItemsJeunes } from 'fixtures/jeune'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { uneListeDeDiffusion } from 'fixtures/listes-de-diffusion'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
+import {
+  BaseBeneficiaire,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import {
@@ -20,7 +25,8 @@ jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('Page d’édition d’une liste de diffusion', () => {
-  let beneficiaires: BaseJeune[]
+  let beneficiaires: BaseBeneficiaire[]
+  let container: HTMLElement
 
   let alerteSetter: (alert: AlerteParam | undefined) => void
   let routerPush: jest.Mock
@@ -31,17 +37,27 @@ describe('Page d’édition d’une liste de diffusion', () => {
     routerPush = jest.fn()
     ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
 
-    beneficiaires = desItemsJeunes()
+    beneficiaires = desItemsBeneficiaires()
   })
 
   describe('contenu', () => {
     beforeEach(() => {
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <EditionListeDiffusionPage returnTo='/mes-jeunes/listes-de-diffusion' />,
         {
           customAlerte: { alerteSetter },
         }
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche le formulaire', () => {
@@ -76,6 +92,16 @@ describe('Page d’édition d’une liste de diffusion', () => {
         creationButton = screen.getByRole('button', {
           name: 'Créer la liste',
         })
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
       })
 
       it('ne soumet pas le formulaire quand aucun titre n’est renseigné', async () => {
@@ -120,15 +146,25 @@ describe('Page d’édition d’une liste de diffusion', () => {
         await userEvent.type(titreInput, 'Liste métiers aéronautique')
         await userEvent.type(
           destinatairesSelect,
-          getNomJeuneComplet(beneficiaires[0])
+          getNomBeneficiaireComplet(beneficiaires[0])
         )
         await userEvent.type(
           destinatairesSelect,
-          getNomJeuneComplet(beneficiaires[2])
+          getNomBeneficiaireComplet(beneficiaires[2])
         )
 
         // When
         await userEvent.click(creationButton)
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
       })
 
       describe('quand le formulaire est validé', () => {
@@ -176,22 +212,22 @@ describe('Page d’édition d’une liste de diffusion', () => {
     let listeDeDiffusion: ListeDeDiffusion
     beforeEach(() => {
       // When
-      const jeune0 = {
+      const beneficiaire0 = {
         id: beneficiaires[0].id,
         prenom: beneficiaires[0].prenom,
         nom: beneficiaires[0].nom,
         estDansLePortefeuille: true,
       }
-      const jeune2 = {
+      const beneficiaire2 = {
         id: 'id-2',
         prenom: 'Jacques',
         nom: 'Chirac',
         estDansLePortefeuille: false,
       }
       listeDeDiffusion = uneListeDeDiffusion({
-        beneficiaires: [jeune0, jeune2],
+        beneficiaires: [beneficiaire0, beneficiaire2],
       })
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <EditionListeDiffusionPage
           returnTo='/mes-jeunes/listes-de-diffusion'
           liste={listeDeDiffusion}
@@ -199,7 +235,17 @@ describe('Page d’édition d’une liste de diffusion', () => {
         {
           customAlerte: { alerteSetter },
         }
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('permet de supprimer la liste', async () => {
@@ -223,32 +269,32 @@ describe('Page d’édition d’une liste de diffusion', () => {
 
     it('charge les bénéficiaires de la liste', () => {
       // Then
-      const jeune0Fullname = getNomJeuneComplet(beneficiaires[0])
-      const jeune2Fullname = 'Chirac Jacques'
+      const beneficiaire0Fullname = getNomBeneficiaireComplet(beneficiaires[0])
+      const beneficiaire2Fullname = 'Chirac Jacques'
       expect(() =>
         screen.getByRole('option', {
-          name: jeune0Fullname,
+          name: beneficiaire0Fullname,
           hidden: true,
         })
       ).toThrow()
       expect(() =>
         screen.getByRole('option', {
-          name: jeune2Fullname,
+          name: beneficiaire2Fullname,
           hidden: true,
         })
       ).toThrow()
 
-      const destinataires = screen.getByRole('region', {
+      const destinataires = screen.getByRole('list', {
         name: /Bénéficiaires/,
       })
       expect(
-        within(destinataires).getByText(jeune0Fullname)
+        within(destinataires).getByText(beneficiaire0Fullname)
       ).toBeInTheDocument()
       expect(
-        within(destinataires).getByText(jeune2Fullname)
+        within(destinataires).getByText(beneficiaire2Fullname)
       ).toBeInTheDocument()
       expect(
-        within(destinataires).getByLabelText(
+        within(destinataires).getByText(
           'Ce bénéficiaire a été réaffecté temporairement à un autre conseiller'
         )
       ).toBeInTheDocument()
@@ -291,13 +337,23 @@ describe('Page d’édition d’une liste de diffusion', () => {
           screen.getByLabelText(
             /Recherchez et ajoutez un ou plusieurs bénéficiaires/
           ),
-          getNomJeuneComplet(beneficiaires[1])
+          getNomBeneficiaireComplet(beneficiaires[1])
         )
 
         // When
         await userEvent.click(
           screen.getByRole('button', { name: 'Modifier la liste' })
         )
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
       })
 
       it('modifie la liste', async () => {

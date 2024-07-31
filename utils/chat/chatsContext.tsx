@@ -10,7 +10,7 @@ import React, {
   useState,
 } from 'react'
 
-import { compareJeuneChat, JeuneChat } from 'interfaces/jeune'
+import { compareBeneficiaireChat, BeneficiaireChat } from 'interfaces/beneficiaire'
 import { observeConseillerChats } from 'services/messages.service'
 import { useChatCredentials } from 'utils/chat/chatCredentialsContext'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -18,7 +18,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 const CHEMIN_DU_SON = '/sounds/notification.mp3'
 
-const ChatsContext = createContext<JeuneChat[] | undefined>(undefined)
+const ChatsContext = createContext<BeneficiaireChat[] | undefined>(undefined)
 
 export function ChatsProvider({ children }: { children: ReactNode }) {
   const [conseiller] = useConseiller()
@@ -29,7 +29,7 @@ export function ChatsProvider({ children }: { children: ReactNode }) {
   const [titleBackup, setTitleBackup] = useState<string | undefined>()
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
-  const [chats, setChats] = useState<JeuneChat[]>()
+  const [chats, setChats] = useState<BeneficiaireChat[]>()
   const [hasMessageNonLu, setHasMessageNonLu] = useState<boolean>(false)
 
   const destructorRef = useRef<() => void>(() => undefined)
@@ -49,8 +49,8 @@ export function ChatsProvider({ children }: { children: ReactNode }) {
 
     return () => destructorRef.current()
 
-    function updateChats(updatedChats: JeuneChat[]) {
-      setChats((prevChats: JeuneChat[] | undefined) => {
+    function updateChats(updatedChats: BeneficiaireChat[]) {
+      setChats((prevChats: BeneficiaireChat[] | undefined) => {
         if (prevChats) {
           updatedChats.forEach((updatedChat) => {
             const prevChat = prevChats.find(
@@ -67,7 +67,7 @@ export function ChatsProvider({ children }: { children: ReactNode }) {
           })
         }
 
-        return [...updatedChats].sort(compareJeuneChat)
+        return [...updatedChats].sort(compareBeneficiaireChat)
       })
 
       setHasMessageNonLu(
@@ -97,11 +97,14 @@ export function ChatsProvider({ children }: { children: ReactNode }) {
   return <ChatsContext.Provider value={chats}>{children}</ChatsContext.Provider>
 }
 
-export function useChats(): JeuneChat[] | undefined {
+export function useChats(): BeneficiaireChat[] | undefined {
   return useContext(ChatsContext)
 }
 
-function aUnNouveauMessage(previousChat: JeuneChat, updatedChat: JeuneChat) {
+function aUnNouveauMessage(
+  previousChat: BeneficiaireChat,
+  updatedChat: BeneficiaireChat
+) {
   return (
     previousChat.lastMessageContent !== updatedChat.lastMessageContent &&
     updatedChat.lastMessageSentBy === 'jeune'

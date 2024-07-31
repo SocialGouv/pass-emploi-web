@@ -4,12 +4,12 @@ import React, { useState } from 'react'
 
 import { BlocInformationJeuneFicheBeneficiaire } from 'components/jeune/BlocInformationJeuneFicheBeneficiaire'
 import { ResumeIndicateursJeune } from 'components/jeune/ResumeIndicateursJeune'
+import { DetailBeneficiaire, IndicateursSemaine } from 'interfaces/beneficiaire'
 import {
   Conseiller,
-  estPoleEmploi,
+  estFranceTravail,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { DetailJeune, IndicateursSemaine } from 'interfaces/jeune'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import { trackEvent } from 'utils/analytics/matomo'
@@ -20,7 +20,7 @@ const UpdateIdentifiantPartenaireModal = dynamic(
 )
 
 interface DetailsJeuneProps {
-  jeune: DetailJeune
+  jeune: DetailBeneficiaire
   conseiller: Conseiller
   indicateursSemaine: IndicateursSemaine | undefined
 }
@@ -80,9 +80,9 @@ export default function DetailsJeune({
   return (
     <>
       <div className='flex flex-row items-stretch gap-x-6'>
-        {!estPoleEmploi(conseiller) && (
+        {!estFranceTravail(conseiller) && (
           <ResumeIndicateursJeune
-            idJeune={jeune.id}
+            idBeneficiaire={jeune.id}
             debutDeLaSemaine={debutSemaine}
             finDeLaSemaine={finSemaine}
             indicateursSemaine={indicateursSemaine}
@@ -90,7 +90,7 @@ export default function DetailsJeune({
         )}
 
         <BlocInformationJeuneFicheBeneficiaire
-          idJeune={jeune.id}
+          idBeneficiaire={jeune.id}
           dateFinCEJ={jeune.dateFinCEJ}
           email={jeune.email}
           situations={jeune.situations}

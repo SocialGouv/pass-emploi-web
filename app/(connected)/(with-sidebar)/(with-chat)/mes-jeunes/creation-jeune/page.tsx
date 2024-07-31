@@ -1,19 +1,19 @@
 import { Metadata } from 'next'
 
-import CreationJeuneMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeuneMiloPage'
-import CreationJeunePoleEmploiPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeunePoleEmploiPage'
+import CreationBeneficiaireFranceTravailPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireFranceTravailPage'
+import CreationBeneficiaireMiloPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireMiloPage'
 import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { estUserMilo, estUserPoleEmploi } from 'interfaces/conseiller'
+import { estUserMilo, estUserFranceTravail } from 'interfaces/conseiller'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 export const metadata: Metadata = {
   title: 'Créer compte bénéficiaire - Portefeuille',
 }
 
-export default async function CreationJeuneMilo() {
+export default async function CreationBeneficiaire() {
   const { user } = await getMandatorySessionServerSide()
 
   return (
@@ -21,8 +21,8 @@ export default async function CreationJeuneMilo() {
       <PageFilArianePortal />
       <PageHeaderPortal header='Créer un compte bénéficiaire' />
 
-      {estUserMilo(user) && <CreationJeuneMiloPage />}
-      {estUserPoleEmploi(user) && <CreationJeunePoleEmploiPage />}
+      {estUserMilo(user) && <CreationBeneficiaireMiloPage />}
+      {estUserFranceTravail(user) && <CreationBeneficiaireFranceTravailPage />}
     </>
   )
 }

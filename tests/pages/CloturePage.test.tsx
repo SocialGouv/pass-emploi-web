@@ -1,5 +1,7 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -12,6 +14,8 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/evenements.service')
 
 describe('CloturePage client side', () => {
+  let container: HTMLElement
+
   const animationCollective = unEvenement()
 
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
@@ -28,7 +32,7 @@ describe('CloturePage client side', () => {
     })
 
     // When
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <CloturePage
         evenement={animationCollective}
         returnTo={`/mes-jeunes/edition-rdv?idRdv=${animationCollective.id}&redirectUrl=redirectUrl`}
@@ -36,7 +40,17 @@ describe('CloturePage client side', () => {
       {
         customAlerte: { alerteSetter },
       }
-    )
+    ))
+  })
+
+  it('a11y', async () => {
+    let results: AxeResults
+
+    await act(async () => {
+      results = await axe(container)
+    })
+
+    expect(results).toHaveNoViolations()
   })
 
   it("affiche les bénéficiaires de l'événement", async () => {
@@ -96,6 +110,16 @@ describe('CloturePage client side', () => {
       // When
       const clore = screen.getByText('Clore')
       await userEvent.click(clore)
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('clôt l’animation collective', async () => {

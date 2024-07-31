@@ -9,8 +9,8 @@ import {
   PageFilArianePortal,
   PageHeaderPortal,
 } from 'components/PageNavigationPortals'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
-import { getNomJeuneComplet } from 'interfaces/jeune'
+import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
+import { estUserFranceTravail } from 'interfaces/conseiller'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
@@ -32,7 +32,7 @@ export async function generateMetadata({
 
   const lectureSeule = user.id !== beneficiaire.idConseiller
   return {
-    title: `Informations - ${getNomJeuneComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
+    title: `Informations - ${getNomBeneficiaireComplet(beneficiaire)} - ${lectureSeule ? 'Etablissement' : 'Portefeuille'}`,
   }
 }
 
@@ -60,14 +60,14 @@ export default async function Informations({
 
       <InformationsPage
         conseillers={conseillers}
-        idJeune={beneficiaire.id}
+        idBeneficiaire={beneficiaire.id}
         situations={beneficiaire.situations}
         lectureSeule={lectureSeule}
         jeune={beneficiaire}
         metadonneesFavoris={metadonneesJeune}
         onglet={searchParamToOnglet(
           searchParams?.onglet,
-          estUserPoleEmploi(user)
+          estUserFranceTravail(user)
         )}
       />
     </>
@@ -76,11 +76,11 @@ export default async function Informations({
 
 function searchParamToOnglet(
   onglet: string | undefined,
-  estPoleEmploi: boolean
+  estFranceTravail: boolean
 ): Onglet {
   switch (onglet) {
     case 'indicateurs':
-      return estPoleEmploi ? 'INFORMATIONS' : 'INDICATEURS'
+      return estFranceTravail ? 'INFORMATIONS' : 'INDICATEURS'
     case 'conseillers':
       return 'CONSEILLERS'
     case 'informations':

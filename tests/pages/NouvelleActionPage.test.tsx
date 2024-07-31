@@ -1,5 +1,7 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 
 import NouvelleActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/nouvelle-action/NouvelleActionPage'
@@ -15,6 +17,7 @@ jest.mock('services/actions.service')
 jest.mock('components/Modal')
 
 describe('NouvelleActionPage client side', () => {
+  let container: HTMLElement
   const categories: SituationNonProfessionnelle[] = desCategories()
   const actionsPredefinies: ActionPredefinie[] = desActionsPredefinies()
 
@@ -23,14 +26,24 @@ describe('NouvelleActionPage client side', () => {
     jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO('2023-12-19'))
 
     // When
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <NouvelleActionPage
-        idJeune='id-jeune'
+        idBeneficiaire='id-beneficiaire'
         categories={categories}
         actionsPredefinies={actionsPredefinies}
         returnTo='/lien/retour'
       />
-    )
+    ))
+  })
+
+  it('a11y', async () => {
+    let results: AxeResults
+
+    await act(async () => {
+      results = await axe(container)
+    })
+
+    expect(results).toHaveNoViolations()
   })
 
   it("permet d'annuler la création de l'action", () => {
@@ -138,65 +151,135 @@ describe('NouvelleActionPage client side', () => {
       submit = screen.getByRole('button', { name: 'Créer l’action' })
     })
 
-    it("affiche un message d'erreur quand la catégorie est vide", async () => {
-      // When
-      await userEvent.click(submit)
+    describe("affiche un message d'erreur quand la catégorie est vide", () => {
+      beforeEach(async () => {
+        // When
+        await userEvent.click(submit)
+      })
 
-      // Then
-      expect(
-        screen.getByText(/Le champ “Catégorie" est vide/)
-      ).toBeInTheDocument()
-      expect(creerAction).not.toHaveBeenCalled()
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        expect(
+          screen.getByText(/Le champ “Catégorie" est vide/)
+        ).toBeInTheDocument()
+        expect(creerAction).not.toHaveBeenCalled()
+      })
     })
 
-    it("affiche un message d'erreur quand le titre est vide", async () => {
-      // When
-      await userEvent.click(submit)
+    describe("affiche un message d'erreur quand le titre est vide", () => {
+      beforeEach(async () => {
+        // When
+        await userEvent.click(submit)
+      })
 
-      // Then
-      expect(
-        screen.getByText(/Le champ “Titre de l’action" est vide/)
-      ).toBeInTheDocument()
-      expect(creerAction).not.toHaveBeenCalled()
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        expect(
+          screen.getByText(/Le champ “Titre de l’action" est vide/)
+        ).toBeInTheDocument()
+        expect(creerAction).not.toHaveBeenCalled()
+      })
     })
 
-    it("affiche un message d'erreur quand le titre est autre et le titre personnalisé est vide", async () => {
-      // When
-      await userEvent.selectOptions(
-        screen.getByRole('combobox', { name: /Titre/ }),
-        'Autre'
-      )
-      await userEvent.click(submit)
-
-      // Then
-      expect(
-        screen.getByText(/Le champ "Titre personnalisé" est vide/)
-      ).toBeInTheDocument()
-      expect(creerAction).not.toHaveBeenCalled()
-    })
-
-    it("affiche un message d'erreur quand la date de réalisation est vide", async () => {
-      //Given
-      await userEvent.click(submit)
-
-      // Then
-      expect(
-        screen.getByText(/Le champ “Date de réalisation” est vide/)
-      ).toBeInTheDocument()
-      expect(creerAction).not.toHaveBeenCalled()
-    })
-
-    it("affiche un message d'erreur quand la date de réalisation n'est pas dans l'intervalle : un an avant, deux ans après", async () => {
-      const dateEcheance = screen.getByLabelText(/Date/)
-      await userEvent.type(dateEcheance, '2000-07-30')
-      await userEvent.tab()
-
-      // Then
-      expect(
-        screen.getByText(
-          `Le champ “Date de réalisation” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
+    describe("affiche un message d'erreur quand le titre est autre et le titre personnalisé est vide", () => {
+      beforeEach(async () => {
+        // When
+        await userEvent.selectOptions(
+          screen.getByRole('combobox', { name: /Titre/ }),
+          'Autre'
         )
-      ).toBeInTheDocument()
+        await userEvent.click(submit)
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        expect(
+          screen.getByText(/Le champ "Titre personnalisé" est vide/)
+        ).toBeInTheDocument()
+        expect(creerAction).not.toHaveBeenCalled()
+      })
+    })
+
+    describe("affiche un message d'erreur quand la date de réalisation est vide", () => {
+      beforeEach(async () => {
+        //Given
+        await userEvent.click(submit)
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        expect(
+          screen.getByText(/Le champ “Date de réalisation” est vide/)
+        ).toBeInTheDocument()
+        expect(creerAction).not.toHaveBeenCalled()
+      })
+    })
+
+    describe("affiche un message d'erreur quand la date de réalisation n'est pas dans l'intervalle : un an avant, deux ans après", () => {
+      beforeEach(async () => {
+        const dateEcheance = screen.getByLabelText(/Date/)
+        await userEvent.type(dateEcheance, '2000-07-30')
+        await userEvent.tab()
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        expect(
+          screen.getByText(
+            `Le champ “Date de réalisation” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
+          )
+        ).toBeInTheDocument()
+      })
     })
 
     describe('formulaire valide', () => {
@@ -223,6 +306,16 @@ describe('NouvelleActionPage client side', () => {
         await userEvent.click(submit)
       })
 
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
+      })
+
       it("crée l'action", () => {
         // Then
         expect(creerAction).toHaveBeenCalledWith(
@@ -234,11 +327,21 @@ describe('NouvelleActionPage client side', () => {
             dateFinReelle: '2023-12-20',
             statut: 'Terminee',
           },
-          'id-jeune'
+          'id-beneficiaire'
         )
       })
 
       describe('succès', () => {
+        it('a11y', async () => {
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
+          expect(results).toHaveNoViolations()
+        })
+
         it('affiche message de succès', () => {
           // Then
           expect(

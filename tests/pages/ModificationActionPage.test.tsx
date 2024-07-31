@@ -1,5 +1,7 @@
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 
 import ModificationActionPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/modification/ModificationActionPage'
@@ -16,6 +18,8 @@ jest.mock('services/actions.service')
 jest.mock('components/Modal')
 
 describe('ModificationActionPage client side', () => {
+  let container: HTMLElement
+
   const actionsPredefinies = desActionsPredefinies()
   const situationsNonProfessionnelles = desCategories()
 
@@ -28,16 +32,26 @@ describe('ModificationActionPage client side', () => {
     const action = uneAction()
     beforeEach(async () => {
       // When
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <ModificationActionPage
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
           aDesCommentaires={false}
-          idJeune='id-jeune'
+          idBeneficiaire='id-beneficiaire'
           actionsPredefinies={actionsPredefinies}
           returnTo='/lien/retour'
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it("permet d'annuler la modification de l'action", () => {
@@ -179,6 +193,16 @@ describe('ModificationActionPage client side', () => {
           await userEvent.click(submit)
         })
 
+        it('a11y', async () => {
+          let results: AxeResults
+
+          await act(async () => {
+            results = await axe(container)
+          })
+
+          expect(results).toHaveNoViolations()
+        })
+
         it("modifier l'action", () => {
           // Then
           expect(modifierAction).toHaveBeenCalledWith('id-action-1', {
@@ -191,6 +215,16 @@ describe('ModificationActionPage client side', () => {
         })
 
         describe('succès', () => {
+          it('a11y', async () => {
+            let results: AxeResults
+
+            await act(async () => {
+              results = await axe(container)
+            })
+
+            expect(results).toHaveNoViolations()
+          })
+
           it('affiche message de succès', () => {
             // Then
             expect(
@@ -207,7 +241,10 @@ describe('ModificationActionPage client side', () => {
               screen.getByRole('link', {
                 name: 'Consulter la liste des actions',
               })
-            ).toHaveAttribute('href', '/mes-jeunes/id-jeune?onglet=actions')
+            ).toHaveAttribute(
+              'href',
+              '/mes-jeunes/id-beneficiaire?onglet=actions'
+            )
           })
         })
       })
@@ -221,16 +258,26 @@ describe('ModificationActionPage client side', () => {
     })
     beforeEach(async () => {
       // When
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <ModificationActionPage
           action={action}
           situationsNonProfessionnelles={situationsNonProfessionnelles}
           aDesCommentaires={false}
-          idJeune='id-jeune'
+          idBeneficiaire='id-beneficiaire'
           actionsPredefinies={actionsPredefinies}
           returnTo='/lien/retour'
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('contient un champ pour saisir une date de fin', () => {
@@ -240,46 +287,88 @@ describe('ModificationActionPage client side', () => {
       )
     })
 
-    it('contient un champ pour saisir une date d’échéance si on change le statut de l’action', async () => {
-      // When
-      await userEvent.click(screen.getByRole('radio', { name: 'À faire' }))
+    describe('contient un champ pour saisir une date d’échéance si on change le statut de l’action', () => {
+      beforeEach(async () => {
+        // When
+        await userEvent.click(screen.getByRole('radio', { name: 'À faire' }))
+      })
 
-      // Then
-      expect(
-        screen.queryByLabelText('* Date de réalisation')
-      ).not.toBeInTheDocument()
-      expect(screen.getByLabelText('* Date de l’action')).toHaveAttribute(
-        'required'
-      )
-    })
+      it('a11y', async () => {
+        let results: AxeResults
 
-    it("affiche un message d'erreur quand la date d'échéance est vide", async () => {
-      // Given
-      const submit = screen.getByRole('button', { name: /Enregistrer/ })
+        await act(async () => {
+          results = await axe(container)
+        })
 
-      // When
-      await userEvent.clear(screen.getByLabelText('* Date de réalisation'))
-      await userEvent.click(submit)
+        expect(results).toHaveNoViolations()
+      })
 
-      // Then
-      expect(
-        screen.getByText(/Le champ “Date de réalisation” est vide/)
-      ).toBeInTheDocument()
-      expect(creerAction).not.toHaveBeenCalled()
-    })
-
-    it("affiche un message d'erreur quand date d'échéance n'est pas dans l'intervalle : un an avant, deux ans après", async () => {
-      const dateRealisation = screen.getByLabelText(/Date/)
-      await userEvent.clear(dateRealisation)
-      await userEvent.type(dateRealisation, '2000-07-30')
-      await userEvent.tab()
-
-      // Then
-      expect(
-        screen.getByText(
-          `Le champ “Date de réalisation” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
+      it('contenu', () => {
+        // Then
+        expect(
+          screen.queryByLabelText('* Date de réalisation')
+        ).not.toBeInTheDocument()
+        expect(screen.getByLabelText('* Date de l’action')).toHaveAttribute(
+          'required'
         )
-      ).toBeInTheDocument()
+      })
+    })
+
+    describe("affiche un message d'erreur quand la date d'échéance est vide", () => {
+      beforeEach(async () => {
+        // Given
+        const submit = screen.getByRole('button', { name: /Enregistrer/ })
+
+        // When
+        await userEvent.clear(screen.getByLabelText('* Date de réalisation'))
+        await userEvent.click(submit)
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        expect(
+          screen.getByText(/Le champ “Date de réalisation” est vide/)
+        ).toBeInTheDocument()
+        expect(creerAction).not.toHaveBeenCalled()
+      })
+    })
+
+    describe("affiche un message d'erreur quand date d'échéance n'est pas dans l'intervalle : un an avant, deux ans après", () => {
+      beforeEach(async () => {
+        const dateRealisation = screen.getByLabelText(/Date/)
+        await userEvent.clear(dateRealisation)
+        await userEvent.type(dateRealisation, '2000-07-30')
+        await userEvent.tab()
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
+      })
+
+      it('contenu', () => {
+        // Then
+        expect(
+          screen.getByText(
+            `Le champ “Date de réalisation” est invalide. Le date attendue est comprise entre le 18/12/2022 et le 19/12/2025.`
+          )
+        ).toBeInTheDocument()
+      })
     })
   })
 })

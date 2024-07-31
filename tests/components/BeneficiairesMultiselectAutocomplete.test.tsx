@@ -1,12 +1,12 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe } from 'jest-axe'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
 } from 'components/jeune/BeneficiairesMultiselectAutocomplete'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import renderWithContexts from 'tests/renderWithContexts'
-import { ReactElement } from 'react'
 
 describe('BeneficiairesMultiselectAutocomplete', () => {
   let beneficiaires: OptionBeneficiaire[]
@@ -16,10 +16,10 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     listesDeDiffusion?: string[]
   }) => void
 
+  let container: HTMLElement
   let input: HTMLElement
   let options: HTMLElement
 
-  let rerender: (children: ReactElement) => void
   beforeEach(async () => {
     // Given
     beneficiaires = [
@@ -62,7 +62,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     onUpdate = jest.fn()
 
     // When
-    const renderResult = renderWithContexts(
+    ;({ container } = renderWithContexts(
       <BeneficiairesMultiselectAutocomplete
         id='select-beneficiaires'
         beneficiaires={beneficiaires}
@@ -70,9 +70,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
         typeSelection='Bénéficiaires'
         onUpdate={onUpdate}
       />
-    )
-
-    rerender = renderResult.rerender
+    ))
 
     // Then
     input = screen.getByRole('combobox', {
@@ -130,6 +128,11 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
     })
   })
 
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
+  })
+
   describe('sélection bénéficiaires', () => {
     beforeEach(async () => {
       // When
@@ -137,9 +140,14 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       await userEvent.type(input, 'Option 3')
     })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
     it('affiche les bénéficiaires sélectionnés', async () => {
       // Then
-      const selections = screen.getByRole('region', {
+      const selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (2)',
       })
       expect(within(selections).getByText('Option 1')).toBeInTheDocument()
@@ -163,7 +171,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       await userEvent.type(input, 'Sélectionner tous mes destinataires')
 
       // Then
-      const selections = screen.getByRole('region', {
+      const selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (3)',
       })
       expect(within(selections).getByText('Option 1')).toBeInTheDocument()
@@ -183,7 +191,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
 
     it('affiche la liste sélectionnée', async () => {
       // Then
-      const selections = screen.getByRole('region', {
+      const selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (2)',
       })
       expect(within(selections).getByText('Liste 2 (2)')).toBeInTheDocument()
@@ -201,7 +209,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       // Given
       await userEvent.type(input, 'Option 1')
       await userEvent.type(input, 'Option 3')
-      selections = screen.getByRole('region', {
+      selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (2)',
       })
 
@@ -231,7 +239,7 @@ describe('BeneficiairesMultiselectAutocomplete', () => {
       // Given
       await userEvent.type(input, 'Liste 1 (1)')
       await userEvent.type(input, 'Option 3')
-      selections = screen.getByRole('region', {
+      selections = screen.getByRole('list', {
         name: 'Bénéficiaires sélectionnés (2)',
       })
 

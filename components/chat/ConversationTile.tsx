@@ -4,68 +4,72 @@ import Dot from 'components/ui/Dot'
 import IconCheckbox from 'components/ui/Form/IconCheckbox'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
+import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
-import { JeuneChat } from 'interfaces/jeune'
 import { toRelativeDateTime } from 'utils/date'
 
 interface ConversationTileProps {
   id: string
-  jeuneChat: JeuneChat
+  beneficiaireChat: BeneficiaireChat
   onClick: () => void
   onToggleFlag: (flagged: boolean) => void
 }
 
 export function ConversationTile({
   id,
-  jeuneChat,
+  beneficiaireChat,
   onClick,
   onToggleFlag,
 }: ConversationTileProps) {
   const lastMessageSentAt: string | undefined =
-    jeuneChat.lastMessageSentAt &&
-    toRelativeDateTime(jeuneChat.lastMessageSentAt)
+    beneficiaireChat.lastMessageSentAt &&
+    toRelativeDateTime(beneficiaireChat.lastMessageSentAt)
 
-  const isLastMessageSeenByJeune = checkIfLastMessageSeenByJeune()
+  const isLastMessageSeenByBeneficiaire = checkIfLastMessageSeenByBeneficiaire()
 
-  function checkIfLastMessageSeenByJeune(): boolean | undefined {
-    if (!jeuneChat.lastMessageSentAt) return
-    if (!jeuneChat.lastJeuneReading) return false
-    return jeuneChat.lastMessageSentAt < jeuneChat.lastJeuneReading
+  function checkIfLastMessageSeenByBeneficiaire(): boolean | undefined {
+    if (!beneficiaireChat.lastMessageSentAt) return
+    if (!beneficiaireChat.lastJeuneReading) return false
+    return (
+      beneficiaireChat.lastMessageSentAt < beneficiaireChat.lastJeuneReading
+    )
   }
 
   function toggleFollowMessage() {
-    onToggleFlag(!jeuneChat.flaggedByConseiller)
+    onToggleFlag(!beneficiaireChat.flaggedByConseiller)
   }
 
   return (
     <div className='relative'>
       <button
         className='w-full p-3 flex flex-col text-left border-none bg-white rounded-base'
-        aria-label={`Consulter vos messages avec ${jeuneChat.prenom} ${jeuneChat.nom}`}
+        aria-label={`Consulter vos messages avec ${beneficiaireChat.prenom} ${beneficiaireChat.nom}`}
         onClick={onClick}
+        type='button'
       >
-        {!jeuneChat.seenByConseiller && (
+        {!beneficiaireChat.seenByConseiller && (
           <p className='text-accent_1 text-s-regular mb-2'>
             <Dot color='accent_1' className='ml-1 mr-2' />
             Nouveau(x) message(s)
           </p>
         )}
         <span className='text-base-medium text-primary_darken mb-2 w-full flex justify-between'>
-          {jeuneChat.prenom} {jeuneChat.nom}
+          {beneficiaireChat.prenom} {beneficiaireChat.nom}
         </span>
         <span className='text-s-regular text-grey_800 mb-[8px]'>
           {' '}
-          {jeuneChat.lastMessageSentBy === UserType.CONSEILLER.toLowerCase()
+          {beneficiaireChat.lastMessageSentBy ===
+          UserType.CONSEILLER.toLowerCase()
             ? 'Vous'
-            : jeuneChat.prenom}{' '}
-          : {jeuneChat.lastMessageContent}
+            : beneficiaireChat.prenom}{' '}
+          : {beneficiaireChat.lastMessageContent}
         </span>
         <span className='text-xs-regular text-content_color self-end'>
           {lastMessageSentAt}{' '}
-          {jeuneChat.lastMessageSentBy === 'conseiller' && (
+          {beneficiaireChat.lastMessageSentBy === 'conseiller' && (
             <>
               <Dot color='grey_700' />{' '}
-              {isLastMessageSeenByJeune && (
+              {isLastMessageSeenByBeneficiaire && (
                 <span>
                   Lu{' '}
                   <IconComponent
@@ -76,11 +80,11 @@ export function ConversationTile({
                   />
                 </span>
               )}
-              {!isLastMessageSeenByJeune && (
+              {!isLastMessageSeenByBeneficiaire && (
                 <>
                   <span>Non lu </span>
                   <Badge
-                    count={jeuneChat.newConseillerMessageCount}
+                    count={beneficiaireChat.newConseillerMessageCount}
                     textColor='accent_1'
                     bgColor='accent_1_lighten'
                     size={6}
@@ -93,7 +97,7 @@ export function ConversationTile({
       </button>
       <IconCheckbox
         id={`${id}--flag`}
-        checked={jeuneChat.flaggedByConseiller}
+        checked={beneficiaireChat.flaggedByConseiller}
         checkedIconName={IconName.BookmarkFill}
         uncheckedIconName={IconName.BookmarkOutline}
         checkedLabel='Ne plus suivre la conversation'

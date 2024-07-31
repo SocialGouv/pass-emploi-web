@@ -6,6 +6,8 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import RechercheOffresPage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/RechercheOffresPage'
@@ -387,6 +389,16 @@ describe('Page Recherche Immersions', () => {
       offresList = screen.getByRole('list', {
         description: `Liste des résultats (37 offres)`,
       })
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(rendered.container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche les offres', async () => {

@@ -5,26 +5,26 @@ import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
-import { DossierMilo } from 'interfaces/jeune'
-import { JeuneMiloFormData } from 'interfaces/json/jeune'
+import { DossierMilo } from 'interfaces/beneficiaire'
+import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-interface DossierJeuneMiloProps {
+interface DossierBeneficiaireMiloProps {
   dossier: DossierMilo
-  onCreateCompte: (data: JeuneMiloFormData) => Promise<void>
+  onCreateCompte: (data: BeneficiaireMiloFormData) => Promise<void>
   erreurMessageHttpPassEmploi?: string
   onRefresh: () => void
   onRetour: () => void
 }
 
-export default function DossierJeuneMilo({
+export default function DossierBeneficiaireMilo({
   dossier,
   onCreateCompte,
   erreurMessageHttpPassEmploi,
   onRefresh,
   onRetour,
-}: DossierJeuneMiloProps) {
+}: DossierBeneficiaireMiloProps) {
   const [portefeuille] = usePortefeuille()
   const [creationEnCours, setCreationEnCours] = useState<boolean>(false)
   const [tracking, setTracking] = useState<string>(
@@ -35,9 +35,9 @@ export default function DossierJeuneMilo({
 
   const aDesBeneficiaires = portefeuille.length > 0
 
-  async function addJeune() {
+  async function addBeneficiaire() {
     if (!creationEnCours) {
-      const newJeune = {
+      const newBeneficiaire = {
         idDossier: dossier.id,
         nom: dossier.nom,
         prenom: dossier.prenom,
@@ -45,7 +45,7 @@ export default function DossierJeuneMilo({
       }
 
       setCreationEnCours(true)
-      onCreateCompte(newJeune).finally(() => {
+      onCreateCompte(newBeneficiaire).finally(() => {
         setCreationEnCours(false)
       })
     }
@@ -99,16 +99,17 @@ export default function DossierJeuneMilo({
           {!dossier.email && (
             <>
               <p className='text-base-bold text-warning mb-2'>
-                L&apos;e-mail du jeune n&apos;est peut-être pas renseigné
+                L&apos;e-mail du bénéficiaire n&apos;est peut-être pas renseigné
               </p>
               <ol className='text-base-regular text-warning'>
                 <li className='mb-3.5'>
-                  1. Renseignez l&apos;e-mail du jeune sur son profil i-milo
+                  1. Renseignez l&apos;e-mail du bénéficiaire sur son profil
+                  i-milo
                 </li>
                 <li className='mb-3.5'>
                   2. Rafraîchissez ensuite cette page ou saisissez à nouveau le
-                  numéro de dossier du jeune pour créer le compte application
-                  CEJ
+                  numéro de dossier du bénéficiaire pour créer le compte
+                  application CEJ
                 </li>
               </ol>
             </>
@@ -140,7 +141,7 @@ export default function DossierJeuneMilo({
             className='mr-2.5 w-3 h-3'
             role='img'
             focusable={false}
-            aria-label="Retour Création d'un compte jeune étape 1"
+            aria-label="Retour Création d'un compte bénéficiaire étape 1"
           />
           Retour
         </Button>
@@ -148,7 +149,7 @@ export default function DossierJeuneMilo({
         {!erreurMessageHttpPassEmploi && (
           <ActionButtons
             dossier={dossier}
-            addJeune={addJeune}
+            addBeneficiaire={addBeneficiaire}
             creationEnCours={creationEnCours}
             onRefresh={onRefresh}
           />
@@ -160,17 +161,17 @@ export default function DossierJeuneMilo({
 
 function ActionButtons({
   dossier,
-  addJeune,
+  addBeneficiaire,
   creationEnCours,
   onRefresh,
 }: {
   dossier: DossierMilo
-  addJeune: () => Promise<void>
+  addBeneficiaire: () => Promise<void>
   creationEnCours: boolean
   onRefresh: () => void
 }) {
   return dossier.email ? (
-    <Button type='button' onClick={addJeune} disabled={creationEnCours}>
+    <Button type='button' onClick={addBeneficiaire} disabled={creationEnCours}>
       {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
     </Button>
   ) : (

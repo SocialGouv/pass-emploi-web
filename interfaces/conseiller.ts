@@ -39,7 +39,7 @@ export function estMilo(conseiller: Conseiller): boolean {
   return conseiller.structure === StructureConseiller.MILO
 }
 
-export function estPoleEmploi(conseiller: Conseiller): boolean {
+export function estFranceTravail(conseiller: Conseiller): boolean {
   return (
     conseiller.structure === StructureConseiller.POLE_EMPLOI ||
     estPassEmploi(conseiller)
@@ -69,7 +69,7 @@ export function estUserMilo(user: Session.HydratedUser): boolean {
   return user.structure === StructureConseiller.MILO
 }
 
-export function estUserPoleEmploi(user: Session.HydratedUser): boolean {
+export function estUserFranceTravail(user: Session.HydratedUser): boolean {
   return (
     user.structure === StructureConseiller.POLE_EMPLOI ||
     user.structure === StructureConseiller.POLE_EMPLOI_BRSA ||
@@ -101,9 +101,11 @@ export function utiliseChat({
 }
 
 export function doitSignerLesCGU(conseiller: Conseiller): boolean {
-  return (
-    !conseiller.dateSignatureCGU ||
-    DateTime.fromISO(conseiller.dateSignatureCGU) <
-      DateTime.fromISO(process.env.VERSION_CGU_COURANTE!)
-  )
+  if (!conseiller.dateSignatureCGU) return false
+
+  return estPassEmploi(conseiller)
+    ? DateTime.fromISO(conseiller.dateSignatureCGU) <
+        DateTime.fromISO(process.env.VERSION_CGU_PASS_EMPLOI_COURANTE!)
+    : DateTime.fromISO(conseiller.dateSignatureCGU) <
+        DateTime.fromISO(process.env.VERSION_CGU_CEJ_COURANTE!)
 }

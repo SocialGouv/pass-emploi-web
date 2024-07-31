@@ -10,15 +10,15 @@ import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
 import { EntreeAgenda } from 'interfaces/agenda'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -49,16 +49,16 @@ describe('Agenda de la fiche jeune', () => {
     it('ne tente pas de récupérer l’agenda du bénéficiaire', async () => {
       // Given
       const metadonneesFavoris = uneMetadonneeFavoris()
-      const offresPE = uneListeDOffres()
-      const recherchesPE = uneListeDeRecherches()
+      const offresFT = uneListeDOffres()
+      const recherchesFT = uneListeDeRecherches()
 
       // When
-      await renderFicheJeunePE(
+      await renderFicheJeuneFT(
         StructureConseiller.POLE_EMPLOI,
         [],
         metadonneesFavoris,
-        offresPE,
-        recherchesPE
+        offresFT,
+        recherchesFT
       )
 
       // Then
@@ -458,7 +458,7 @@ async function renderFicheJeuneMILO(structure: StructureConseiller) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
@@ -472,23 +472,23 @@ async function renderFicheJeuneMILO(structure: StructureConseiller) {
   })
 }
 
-async function renderFicheJeunePE(
+async function renderFicheJeuneFT(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = [],
   metadonnees: MetadonneesFavoris,
-  offresPE: Offre[],
-  recherchesPE: Recherche[]
+  offresFT: Offre[],
+  recherchesFT: Recherche[]
 ) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
         metadonneesFavoris={metadonnees}
-        offresPE={offresPE}
-        recherchesPE={recherchesPE}
+        offresFT={offresFT}
+        recherchesFT={recherchesFT}
         onglet='AGENDA'
         lectureSeule={false}
       />,

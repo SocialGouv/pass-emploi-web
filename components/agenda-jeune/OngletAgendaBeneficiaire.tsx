@@ -5,11 +5,11 @@ import {
   EntreesAgendaParJourDeLaSemaine,
   SemaineAgenda,
 } from 'components/agenda-jeune/EntreesAgendaParJourDeLaSemaine'
-import { IntegrationPoleEmploi } from 'components/jeune/IntegrationPoleEmploi'
+import { IntegrationFranceTravail } from 'components/jeune/IntegrationFranceTravail'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import { Agenda, EntreeAgenda } from 'interfaces/agenda'
-import { estPoleEmploi } from 'interfaces/conseiller'
+import { estFranceTravail } from 'interfaces/conseiller'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toMonthday } from 'utils/date'
 
@@ -33,7 +33,7 @@ export default function OngletAgendaBeneficiaire({
   const [nombreActionsEnRetard, setNombreActionsEnRetard] = useState<number>()
 
   useEffect(() => {
-    if (!estPoleEmploi(conseiller)) {
+    if (!estFranceTravail(conseiller)) {
       recupererAgenda().then(
         ({
           entrees,
@@ -61,11 +61,11 @@ export default function OngletAgendaBeneficiaire({
 
   return (
     <>
-      {estPoleEmploi(conseiller) && (
-        <IntegrationPoleEmploi label='convocations et démarches' />
+      {estFranceTravail(conseiller) && (
+        <IntegrationFranceTravail label='convocations et démarches' />
       )}
 
-      {!estPoleEmploi(conseiller) && (
+      {!estFranceTravail(conseiller) && (
         <>
           {!semaines && <SpinningLoader />}
 

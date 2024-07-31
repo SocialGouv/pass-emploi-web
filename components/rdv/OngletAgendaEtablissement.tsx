@@ -198,8 +198,10 @@ export default function OngletAgendaEtablissement({
                 Visible{' '}
                 <IconComponent
                   name={IconName.Info}
-                  className='inline h-4 w-4 fill-primary'
+                  focusable={false}
+                  role='img'
                   aria-label='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
+                  className='inline h-4 w-4 fill-primary'
                 />
               </TH>
               <TH estCliquable={true}>

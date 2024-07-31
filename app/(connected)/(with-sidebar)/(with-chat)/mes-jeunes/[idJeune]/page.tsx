@@ -11,13 +11,13 @@ import {
 } from 'components/PageNavigationPortals'
 import { SituationNonProfessionnelle } from 'interfaces/action'
 import {
-  estUserPoleEmploi,
+  estUserFranceTravail,
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { EvenementListItem, PeriodeEvenements } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
 import {
-  getActionsJeuneServerSide,
+  getActionsBeneficiaireServerSide,
   getSituationsNonProfessionnelles,
 } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
@@ -57,7 +57,7 @@ export default async function FicheBeneficiaire({
   searchParams?: FicheBeneficiaireSearchParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  const userIsPoleEmploi = estUserPoleEmploi(user)
+  const userIsFranceTravail = estUserFranceTravail(user)
 
   const page = searchParams?.page ? parseInt(searchParams.page) : 1
 
@@ -72,17 +72,17 @@ export default async function FicheBeneficiaire({
     getConseillerServerSide(user, accessToken),
     getJeuneDetails(params.idJeune, accessToken),
     getMetadonneesFavorisJeune(params.idJeune, accessToken),
-    userIsPoleEmploi
+    userIsFranceTravail
       ? ([] as EvenementListItem[])
       : getRendezVousJeune(
           params.idJeune,
           PeriodeEvenements.FUTURS,
           accessToken
         ),
-    userIsPoleEmploi
+    userIsFranceTravail
       ? { actions: [], metadonnees: { nombreTotal: 0, nombrePages: 0 } }
-      : getActionsJeuneServerSide(params.idJeune, page, accessToken),
-    userIsPoleEmploi
+      : getActionsBeneficiaireServerSide(params.idJeune, page, accessToken),
+    userIsFranceTravail
       ? ([] as SituationNonProfessionnelle[])
       : getSituationsNonProfessionnelles({ avecNonSNP: false }, accessToken),
   ])
@@ -109,8 +109,8 @@ export default async function FicheBeneficiaire({
   let recherchesPE: Recherche[] = []
   if (metadonneesFavoris?.autoriseLePartage) {
     ;[offresPE, recherchesPE] = await Promise.all([
-      userIsPoleEmploi ? getOffres(params.idJeune, accessToken) : [],
-      userIsPoleEmploi
+      userIsFranceTravail ? getOffres(params.idJeune, accessToken) : [],
+      userIsFranceTravail
         ? getRecherchesSauvegardees(params.idJeune, accessToken)
         : [],
     ])
@@ -146,8 +146,8 @@ export default async function FicheBeneficiaire({
         rdvs={rdvsEtSessionsTriesParDate}
         actionsInitiales={{ ...actions, page }}
         categoriesActions={categoriesActions}
-        offresPE={offresPE}
-        recherchesPE={recherchesPE}
+        offresFT={offresPE}
+        recherchesFT={recherchesPE}
         onglet={onglet}
         lectureSeule={jeune.idConseiller !== user.id}
         erreurSessions={erreurSessions}

@@ -1,5 +1,7 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -25,6 +27,7 @@ jest.mock('components/Modal')
 describe('PilotagePage client side - Animations collectives', () => {
   describe('contenu', () => {
     let animationsCollectives: AnimationCollectivePilotage[]
+    let container: HTMLElement
 
     beforeEach(async () => {
       animationsCollectives = uneListeDAnimationCollectiveAClore()
@@ -43,8 +46,8 @@ describe('PilotagePage client side - Animations collectives', () => {
       }))
       ;(useRouter as jest.Mock).mockReturnValue({ replace: jest.fn() })
 
-      await act(async () =>
-        renderWithContexts(
+      await act(async () => {
+        ;({ container } = renderWithContexts(
           <Pilotage
             onglet='ANIMATIONS_COLLECTIVES'
             actions={{
@@ -70,8 +73,18 @@ describe('PilotagePage client side - Animations collectives', () => {
               },
             },
           }
-        )
-      )
+        ))
+      })
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('résume les activités', async () => {

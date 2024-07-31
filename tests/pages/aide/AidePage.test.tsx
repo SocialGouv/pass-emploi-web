@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import AidePage from 'app/(connected)/(with-sidebar)/(without-chat-full-screen)/aide/AidePage'
@@ -7,6 +8,7 @@ import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import renderWithContexts from 'tests/renderWithContexts'
 
 describe('Aide client side', () => {
+  let container: HTMLElement
   describe('conseiller Milo', () => {
     let conseiller: Conseiller
     beforeEach(async () => {
@@ -16,8 +18,14 @@ describe('Aide client side', () => {
         agence: { nom: 'Agence', id: 'id-test' },
         structureMilo: { nom: 'Agence', id: 'id-test' },
       })
+      ;({ container } = renderWithContexts(<AidePage />, {
+        customConseiller: conseiller,
+      }))
+    })
 
-      renderWithContexts(<AidePage />, { customConseiller: conseiller })
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un lien vers le site ressources', () => {
@@ -75,9 +83,14 @@ describe('Aide client side', () => {
 
   describe('conseiller France Travail', () => {
     beforeEach(async () => {
-      renderWithContexts(<AidePage />, {
+      ;({ container } = renderWithContexts(<AidePage />, {
         customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
-      })
+      }))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un lien vers pour nous contacter', () => {
@@ -101,9 +114,14 @@ describe('Aide client side', () => {
 
   describe('conseiller France Travail BRSA', () => {
     beforeEach(async () => {
-      renderWithContexts(<AidePage />, {
+      ;({ container } = renderWithContexts(<AidePage />, {
         customConseiller: { structure: StructureConseiller.POLE_EMPLOI_BRSA },
-      })
+      }))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un lien vers pour nous contacter', () => {

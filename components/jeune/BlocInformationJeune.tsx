@@ -86,8 +86,8 @@ export function Email({ email }: { email: string }) {
       <dt>
         <IconComponent
           name={IconName.Mail}
+          role='img'
           aria-label='e-mail'
-          aria-hidden={false}
           focusable={false}
           className='w-4 h-4 fill-primary mr-2'
         />
@@ -112,24 +112,24 @@ export function IdentifiantPartenaire(props: {
             <span>-</span>
           </>
         )}
+        <button
+          className='ml-5 flex items-center text-primary'
+          aria-label={
+            props.identifiantPartenaire
+              ? 'Modifier l’identifiant France Travail'
+              : 'Ajouter l’identifiant France Travail'
+          }
+          onClick={props.onClick}
+        >
+          <IconComponent
+            name={IconName.Edit}
+            aria-hidden={true}
+            focusable={false}
+            className='w-4 h-4 mr-1 fill-primary'
+          />
+          {props.identifiantPartenaire ? 'Modifier' : 'Ajouter'}
+        </button>
       </dd>
-      <button
-        className='ml-5 flex items-center text-primary'
-        aria-label={
-          props.identifiantPartenaire
-            ? 'Modifier l’identifiant France Travail'
-            : 'Ajouter l’identifiant France Travail'
-        }
-        onClick={props.onClick}
-      >
-        <IconComponent
-          name={IconName.Edit}
-          aria-hidden={true}
-          focusable={false}
-          className='w-4 h-4 mr-1 fill-primary'
-        />
-        {props.identifiantPartenaire ? 'Modifier' : 'Ajouter'}
-      </button>
     </div>
   )
 }

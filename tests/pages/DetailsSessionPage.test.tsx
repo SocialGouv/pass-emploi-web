@@ -1,12 +1,17 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 
 import DetailsSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
-import { uneBaseJeune } from 'fixtures/jeune'
+import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { unDetailSession } from 'fixtures/session'
-import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
+import {
+  CategorieSituation,
+  BeneficiaireEtablissement,
+} from 'interfaces/beneficiaire'
 import { Session } from 'interfaces/session'
 import {
   changerInscriptionsSession,
@@ -22,17 +27,19 @@ jest.mock('services/jeunes.service')
 jest.mock('services/sessions.service')
 
 describe('Détails Session Page Client', () => {
+  let container: HTMLElement
+
   describe('contenu', () => {
     let session: Session
-    let beneficiaires: JeuneEtablissement[]
+    let beneficiaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       session = unDetailSession()
       session.session.dateMaxInscription = '2023-06-17'
       beneficiaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -45,8 +52,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-2',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
@@ -60,13 +67,23 @@ describe('Détails Session Page Client', () => {
         },
       ]
       // When
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficiaires}
           returnTo='whatever'
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un encart d’information pour la modification sur i-milo', () => {
@@ -134,7 +151,7 @@ describe('Détails Session Page Client', () => {
     let sessionVisible: Session
     let sessionInvisible: Session
     let toggleVisibiliteSession: HTMLInputElement
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       sessionVisible = unDetailSession()
@@ -151,8 +168,8 @@ describe('Détails Session Page Client', () => {
       })
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -165,8 +182,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-2',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
@@ -240,13 +257,13 @@ describe('Détails Session Page Client', () => {
 
   describe('permet de gérer la liste des inscrits', () => {
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -259,8 +276,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-2',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
@@ -273,8 +290,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-3',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-3',
             prenom: 'Maggy',
             nom: 'Carpe',
           }),
@@ -287,8 +304,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-4',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-4',
             prenom: 'Tom',
             nom: 'Sawyer',
           }),
@@ -323,19 +340,19 @@ describe('Détails Session Page Client', () => {
           },
           inscriptions: [
             {
-              idJeune: 'jeune-3',
+              idJeune: 'beneficiaire-3',
               nom: 'Carpe',
               prenom: 'Maggy',
               statut: 'REFUS_JEUNE',
             },
             {
-              idJeune: 'jeune-2',
+              idJeune: 'beneficiaire-2',
               nom: 'Puce',
               prenom: 'Octo',
               statut: 'REFUS_TIERS',
             },
             {
-              idJeune: 'jeune-1',
+              idJeune: 'beneficiaire-1',
               nom: 'Beau',
               prenom: 'Harry',
               statut: 'INSCRIT',
@@ -422,7 +439,7 @@ describe('Détails Session Page Client', () => {
           },
           inscriptions: [
             {
-              idJeune: 'jeune-1',
+              idJeune: 'beneficiaire-1',
               nom: 'Beau',
               prenom: 'Harry',
               statut: 'INSCRIT',
@@ -450,8 +467,16 @@ describe('Détails Session Page Client', () => {
 
         //Then
         expect(changerInscriptionsSession).toHaveBeenCalledWith('session-1', [
-          { commentaire: undefined, idJeune: 'jeune-2', statut: 'INSCRIT' },
-          { commentaire: undefined, idJeune: 'jeune-1', statut: 'INSCRIT' },
+          {
+            commentaire: undefined,
+            idJeune: 'beneficiaire-2',
+            statut: 'INSCRIT',
+          },
+          {
+            commentaire: undefined,
+            idJeune: 'beneficiaire-1',
+            statut: 'INSCRIT',
+          },
         ])
       })
     })
@@ -459,13 +484,13 @@ describe('Détails Session Page Client', () => {
 
   describe('si la date limite d’inscription est dépassée', () => {
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -495,21 +520,30 @@ describe('Détails Session Page Client', () => {
         },
         inscriptions: [
           {
-            idJeune: 'jeune-1',
+            idJeune: 'beneficiaire-1',
             nom: 'Beau',
             prenom: 'Harry',
             statut: 'INSCRIT',
           },
         ],
       })
-
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficaires}
           returnTo='whatever'
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un message d’alerte', () => {
@@ -524,13 +558,13 @@ describe('Détails Session Page Client', () => {
 
   describe('si la date de début est dépassée', () => {
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -559,21 +593,30 @@ describe('Détails Session Page Client', () => {
         },
         inscriptions: [
           {
-            idJeune: 'jeune-1',
+            idJeune: 'beneficiaire-1',
             nom: 'Beau',
             prenom: 'Harry',
             statut: 'INSCRIT',
           },
         ],
       })
-
-      renderWithContexts(
+      ;({ container } = renderWithContexts(
         <DetailsSessionPage
           session={session}
           beneficiairesStructureMilo={beneficaires}
           returnTo='whatever'
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('affiche un message d’alerte', () => {
@@ -611,13 +654,13 @@ describe('Détails Session Page Client', () => {
 
   describe('permet de désinscrire un bénéficiaire', () => {
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
     beforeEach(async () => {
       // Given
       beneficaires = [
         {
-          base: uneBaseJeune({
-            id: 'jeune-1',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-1',
             prenom: 'Harry',
             nom: 'Beau',
           }),
@@ -630,8 +673,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-2',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-2',
             prenom: 'Octo',
             nom: 'Puce',
           }),
@@ -644,8 +687,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-3',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-3',
             prenom: 'Maggy',
             nom: 'Carpe',
           }),
@@ -658,8 +701,8 @@ describe('Détails Session Page Client', () => {
           dateDerniereActivite: '2023-03-01T14:11:38.040Z',
         },
         {
-          base: uneBaseJeune({
-            id: 'jeune-4',
+          base: uneBaseBeneficiaire({
+            id: 'beneficiaire-4',
             prenom: 'Tom',
             nom: 'Sawyer',
           }),
@@ -737,7 +780,7 @@ describe('Détails Session Page Client', () => {
           },
           inscriptions: [
             {
-              idJeune: 'jeune-2',
+              idJeune: 'beneficiaire-2',
               prenom: 'Octo',
               nom: 'Puce',
               statut: 'INSCRIT',
@@ -800,7 +843,7 @@ describe('Détails Session Page Client', () => {
   describe('permet de réinscrire un bénéficiaire', () => {
     //Given
     let session: Session
-    let beneficaires: JeuneEtablissement[]
+    let beneficaires: BeneficiaireEtablissement[]
 
     beforeEach(async () => {
       session = unDetailSession({
@@ -832,7 +875,7 @@ describe('Détails Session Page Client', () => {
 
       beneficaires = [
         {
-          base: uneBaseJeune({
+          base: uneBaseBeneficiaire({
             id: 'idHarryBeau',
             prenom: 'Harry',
             nom: 'Beau',
@@ -911,11 +954,11 @@ describe('Détails Session Page Client', () => {
     describe('quand la session est à venir', () => {
       it("n'affiche pas le lien Clore", async () => {
         let session: Session
-        let beneficairesEtablissement: JeuneEtablissement[]
+        let beneficairesEtablissement: BeneficiaireEtablissement[]
         // Given
         beneficairesEtablissement = [
           {
-            base: uneBaseJeune(),
+            base: uneBaseBeneficiaire(),
             referent: {
               id: 'id-conseiller',
               nom: 'Le Calamar',
@@ -951,13 +994,13 @@ describe('Détails Session Page Client', () => {
 
     describe('quand la session est passée et non close', () => {
       let session: Session
-      let beneficaires: JeuneEtablissement[]
+      let beneficaires: BeneficiaireEtablissement[]
       beforeEach(async () => {
         // Given
         beneficaires = [
           {
-            base: uneBaseJeune({
-              id: 'jeune-1',
+            base: uneBaseBeneficiaire({
+              id: 'beneficiaire-1',
               prenom: 'Harry',
               nom: 'Beau',
             }),
@@ -983,14 +1026,23 @@ describe('Détails Session Page Client', () => {
             statut: 'AClore',
           },
         })
-
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <DetailsSessionPage
             session={session}
             beneficiairesStructureMilo={beneficaires}
             returnTo='whatever'
           />
-        )
+        ))
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
+        })
+
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche un message d’alerte', () => {

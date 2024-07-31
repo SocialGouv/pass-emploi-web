@@ -7,9 +7,9 @@ import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import { getByTextContent } from 'tests/querySelector'
@@ -33,7 +33,7 @@ describe('Indicateurs dans la fiche jeune', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailJeune()}
+            jeune={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -76,7 +76,7 @@ describe('Indicateurs dans la fiche jeune', () => {
         })
       ).toHaveAttribute(
         'href',
-        '/mes-jeunes/jeune-1/informations?onglet=indicateurs'
+        '/mes-jeunes/beneficiaire-1/informations?onglet=indicateurs'
       )
     })
   })

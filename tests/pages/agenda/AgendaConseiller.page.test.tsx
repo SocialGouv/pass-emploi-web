@@ -1,5 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -16,6 +17,7 @@ jest.mock('services/evenements.service')
 jest.mock('services/sessions.service')
 
 describe('Agenda - Onglet conseiller', () => {
+  let container: HTMLElement
   let replace: jest.Mock
   const AOUT_25_0H = DateTime.fromISO('2022-08-25T00:00:00.000+02:00')
   const AOUT_31_23H = DateTime.fromISO('2022-08-31T23:59:59.999+02:00')
@@ -64,13 +66,18 @@ describe('Agenda - Onglet conseiller', () => {
 
       // When
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <AgendaPage onglet='CONSEILLER' periodeIndexInitial={0} />,
           {
             customConseiller: conseiller,
           }
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('a deux boutons de navigation', () => {

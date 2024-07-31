@@ -30,7 +30,7 @@ describe('NouvelleActionPage server side', () => {
     })
     ;(getIdentitesBeneficiairesServerSide as jest.Mock).mockResolvedValue([
       {
-        id: 'id-jeune',
+        id: 'id-beneficiaire',
         prenom: 'Serge',
         nom: 'Lama',
       },
@@ -38,12 +38,12 @@ describe('NouvelleActionPage server side', () => {
 
     // When
     const metadata = await generateMetadata({
-      params: { idJeune: 'id-jeune' },
+      params: { idJeune: 'id-beneficiaire' },
     })
 
     // Then
     expect(getIdentitesBeneficiairesServerSide).toHaveBeenCalledWith(
-      ['id-jeune'],
+      ['id-beneficiaire'],
       'id-conseiller',
       'accessToken'
     )
@@ -70,7 +70,7 @@ describe('NouvelleActionPage server side', () => {
     // When
     render(
       await NouvelleAction({
-        params: { idJeune: 'id-jeune' },
+        params: { idJeune: 'id-beneficiaire' },
       })
     )
 
@@ -78,7 +78,7 @@ describe('NouvelleActionPage server side', () => {
     expect(getActionsPredefinies).toHaveBeenCalledWith('accessToken')
     expect(NouvelleActionPage).toHaveBeenCalledWith(
       {
-        idJeune: 'id-jeune',
+        idBeneficiaire: 'id-beneficiaire',
         categories: desCategories(),
         actionsPredefinies: [
           {
@@ -86,7 +86,7 @@ describe('NouvelleActionPage server side', () => {
             titre: 'Identifier ses atouts et ses compétences',
           },
         ],
-        returnTo: '/mes-jeunes/id-jeune?onglet=actions',
+        returnTo: '/mes-jeunes/id-beneficiaire?onglet=actions',
       },
       {}
     )

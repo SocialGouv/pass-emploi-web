@@ -1,36 +1,44 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe } from 'jest-axe'
 import { Mock } from 'jest-mock'
 import { useRouter } from 'next/navigation'
 
-import CreationJeunePoleEmploiPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationJeunePoleEmploiPage'
-import { desItemsJeunes, extractBaseJeune, uneBaseJeune } from 'fixtures/jeune'
-import { BaseJeune } from 'interfaces/jeune'
+import CreationBeneficiaireFranceTravailPage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/creation-jeune/CreationBeneficiaireFranceTravailPage'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  uneBaseBeneficiaire,
+} from 'fixtures/beneficiaire'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { createCompteJeunePoleEmploi } from 'services/jeunes.service'
+import { createCompteJeuneFranceTravail } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/jeunes.service')
 
-describe('CreationJeunePoleEmploiPage client side', () => {
+describe('CreationBeneficiaireFranceTravailPage client side', () => {
+  let container: HTMLElement
   let submitButton: HTMLElement
 
   let push: Function
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
-  let portefeuilleSetter: (updatedBeneficiaires: BaseJeune[]) => void
-  let portefeuille: BaseJeune[]
+  let portefeuilleSetter: (updatedBeneficiaires: BaseBeneficiaire[]) => void
+  let portefeuille: BaseBeneficiaire[]
   const emailLabel: string = '* E-mail (ex : monemail@exemple.com)'
   beforeEach(async () => {
     push = jest.fn(() => Promise.resolve())
     ;(useRouter as jest.Mock).mockReturnValue({ push })
     alerteSetter = jest.fn()
     portefeuilleSetter = jest.fn()
-    portefeuille = desItemsJeunes().map(extractBaseJeune)
-
-    renderWithContexts(<CreationJeunePoleEmploiPage />, {
-      customAlerte: { alerteSetter },
-      customPortefeuille: { setter: portefeuilleSetter },
-    })
+    portefeuille = desItemsBeneficiaires().map(extractBaseBeneficiaire)
+    ;({ container } = renderWithContexts(
+      <CreationBeneficiaireFranceTravailPage />,
+      {
+        customAlerte: { alerteSetter },
+        customPortefeuille: { setter: portefeuilleSetter },
+      }
+    ))
 
     submitButton = screen.getByRole('button', {
       name: 'Créer le compte',
@@ -38,6 +46,11 @@ describe('CreationJeunePoleEmploiPage client side', () => {
   })
 
   describe("quand le formulaire n'a pas encore été soumis", () => {
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
     it('devrait afficher les champ de création de compte', () => {
       // Then
       expect(
@@ -58,7 +71,12 @@ describe('CreationJeunePoleEmploiPage client side', () => {
         const inputName = screen.getByLabelText('* Nom')
         await userEvent.type(inputName, 'Sanfamiye')
         const inputEmail = screen.getByLabelText(emailLabel)
-        await userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
+        await userEvent.type(inputEmail, 'nadia.sanfamiye@francetravail.fr')
+      })
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
       })
 
       it('demande le remplissage du prénom', async () => {
@@ -73,7 +91,7 @@ describe('CreationJeunePoleEmploiPage client side', () => {
         expect(
           screen.getByText('Veuillez renseigner le prénom du bénéficiaire')
         ).toBeInTheDocument()
-        expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
+        expect(createCompteJeuneFranceTravail).toHaveBeenCalledTimes(0)
       })
 
       it('demande le remplissage du nom', async () => {
@@ -88,7 +106,7 @@ describe('CreationJeunePoleEmploiPage client side', () => {
         expect(
           screen.getByText('Veuillez renseigner le nom du bénéficiaire')
         ).toBeInTheDocument()
-        expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
+        expect(createCompteJeuneFranceTravail).toHaveBeenCalledTimes(0)
       })
 
       it("demande le remplissage de l'email", async () => {
@@ -103,7 +121,7 @@ describe('CreationJeunePoleEmploiPage client side', () => {
         expect(
           screen.getByText("Veuillez renseigner l'e-mail du bénéficiaire")
         ).toBeInTheDocument()
-        expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(0)
+        expect(createCompteJeuneFranceTravail).toHaveBeenCalledTimes(0)
       })
     })
   })
@@ -116,40 +134,54 @@ describe('CreationJeunePoleEmploiPage client side', () => {
       const inputName = screen.getByLabelText('* Nom')
       await userEvent.type(inputName, 'Sanfamiye')
       const inputEmail = screen.getByLabelText(emailLabel)
-      await userEvent.type(inputEmail, 'nadia.sanfamiye@poleemploi.fr')
+      await userEvent.type(inputEmail, 'nadia.sanfamiye@francetravail.fr')
+    })
+
+    it('a11y', async () => {
+      // Given
+      ;(createCompteJeuneFranceTravail as Mock<any>).mockResolvedValue(
+        uneBaseBeneficiaire()
+      )
+
+      // When
+      await userEvent.click(submitButton)
+
+      //Then
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('devrait revenir sur la page des jeunes du conseiller', async () => {
       // Given
-      ;(createCompteJeunePoleEmploi as Mock<any>).mockResolvedValue(
-        uneBaseJeune()
+      ;(createCompteJeuneFranceTravail as Mock<any>).mockResolvedValue(
+        uneBaseBeneficiaire()
       )
 
       // When
       await userEvent.click(submitButton)
 
       // Then
-      expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
-      expect(createCompteJeunePoleEmploi).toHaveBeenCalledWith({
+      expect(createCompteJeuneFranceTravail).toHaveBeenCalledTimes(1)
+      expect(createCompteJeuneFranceTravail).toHaveBeenCalledWith({
         firstName: 'Nadia',
         lastName: 'Sanfamiye',
-        email: 'nadia.sanfamiye@poleemploi.fr',
+        email: 'nadia.sanfamiye@francetravail.fr',
       })
 
       expect(portefeuilleSetter).toHaveBeenCalledWith([
         ...portefeuille,
-        uneBaseJeune(),
+        uneBaseBeneficiaire(),
       ])
       expect(alerteSetter).toHaveBeenCalledWith(
         'creationBeneficiaire',
-        'jeune-1'
+        'beneficiaire-1'
       )
       expect(push).toHaveBeenCalledWith('/mes-jeunes')
     })
 
     it("devrait afficher un message d'erreur en cas de création de compte en échec", async () => {
       // Given
-      ;(createCompteJeunePoleEmploi as Mock<any>).mockRejectedValue({
+      ;(createCompteJeuneFranceTravail as Mock<any>).mockRejectedValue({
         message: "un message d'erreur",
       })
 
@@ -157,7 +189,7 @@ describe('CreationJeunePoleEmploiPage client side', () => {
       await userEvent.click(submitButton)
 
       // Then
-      expect(createCompteJeunePoleEmploi).toHaveBeenCalledTimes(1)
+      expect(createCompteJeuneFranceTravail).toHaveBeenCalledTimes(1)
       expect(screen.getByText("un message d'erreur")).toBeInTheDocument()
     })
   })

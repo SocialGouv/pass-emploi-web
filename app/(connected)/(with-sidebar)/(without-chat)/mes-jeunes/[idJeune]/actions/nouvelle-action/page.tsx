@@ -48,7 +48,7 @@ export default async function NouvelleAction({
       <PageHeaderPortal header='Créer une nouvelle action' />
 
       <NouvelleActionPage
-        idJeune={params.idJeune}
+        idBeneficiaire={params.idJeune}
         categories={categories}
         actionsPredefinies={actionsPredefinies}
         returnTo={returnTo}

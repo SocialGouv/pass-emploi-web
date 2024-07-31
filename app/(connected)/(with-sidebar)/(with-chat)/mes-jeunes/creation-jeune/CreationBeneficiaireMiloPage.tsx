@@ -4,16 +4,16 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-import DossierJeuneMilo from 'components/jeune/DossierJeuneMilo'
+import DossierBeneficiaireMilo from 'components/jeune/DossierBeneficiaireMilo'
 import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
-import { DossierMilo } from 'interfaces/jeune'
-import { JeuneMiloFormData } from 'interfaces/json/jeune'
+import { DossierMilo } from 'interfaces/beneficiaire'
+import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-function CreationJeuneMiloPage() {
+function CreationBeneficiaireMiloPage() {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
   const [portefeuille, setPortefeuille] = usePortefeuille()
@@ -35,7 +35,7 @@ function CreationJeuneMiloPage() {
     }
   }
 
-  async function creerCompteJeune(beneficiaireData: JeuneMiloFormData) {
+  async function creerCompteJeune(beneficiaireData: BeneficiaireMiloFormData) {
     setErreurCreation(undefined)
 
     try {
@@ -82,7 +82,7 @@ function CreationJeuneMiloPage() {
       )}
 
       {dossier && (
-        <DossierJeuneMilo
+        <DossierBeneficiaireMilo
           dossier={dossier}
           onCreateCompte={creerCompteJeune}
           erreurMessageHttpPassEmploi={erreurCreation}
@@ -103,6 +103,6 @@ function CreationEtape({ etape }: { etape: 1 | 2 }) {
 }
 
 export default withTransaction(
-  CreationJeuneMiloPage.name,
+  CreationBeneficiaireMiloPage.name,
   'page'
-)(CreationJeuneMiloPage)
+)(CreationBeneficiaireMiloPage)

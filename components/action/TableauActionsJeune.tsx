@@ -23,10 +23,10 @@ import {
   SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
 interface TableauActionsJeuneProps {
-  jeune: BaseJeune
+  jeune: BaseBeneficiaire
   categories: SituationNonProfessionnelle[]
   actionsFiltrees: Action[]
   isLoading: boolean
@@ -258,6 +258,7 @@ export default function TableauActionsJeune({
                     aria-label={`Date de l’action - ${getOrdreTriParDate()}`}
                     title={getOrdreTriParDate()}
                     className={columnHeaderButtonStyle}
+                    type='button'
                   >
                     Date de l’action
                     <SortIcon

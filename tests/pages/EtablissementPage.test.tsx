@@ -1,14 +1,19 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import EtablissementPage from 'app/(connected)/(with-sidebar)/(with-chat)/etablissement/EtablissementPage'
 import { uneListeDAgencesMILO } from 'fixtures/referentiel'
+import {
+  CategorieSituation,
+  BeneficiaireEtablissement,
+} from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { CategorieSituation, JeuneEtablissement } from 'interfaces/jeune'
 import { Agence } from 'interfaces/referentiel'
 import { modifierAgence } from 'services/conseiller.service'
-import { rechercheJeunesDeLEtablissement } from 'services/jeunes.service'
+import { rechercheBeneficiairesDeLEtablissement } from 'services/jeunes.service'
 import { getAgencesClientSide } from 'services/referentiel.service'
 import renderWithContexts from 'tests/renderWithContexts'
 import { toRelativeDateTime } from 'utils/date'
@@ -20,7 +25,8 @@ jest.mock('components/Modal')
 jest.mock('components/PageActionsPortal')
 
 describe('EtablissementPage client side', () => {
-  const unJeune = (page: number): JeuneEtablissement => ({
+  let container: HTMLElement
+  const unBeneficiaire = (page: number): BeneficiaireEtablissement => ({
     base: {
       id: 'id-jeune',
       nom: 'Page ' + page,
@@ -35,9 +41,9 @@ describe('EtablissementPage client side', () => {
     dateDerniereActivite: '2023-03-01T14:11:38.040Z',
   })
   beforeEach(async () => {
-    ;(rechercheJeunesDeLEtablissement as jest.Mock).mockImplementation(
+    ;(rechercheBeneficiairesDeLEtablissement as jest.Mock).mockImplementation(
       async (_idEtablissement, _recherche, page: number) => ({
-        jeunes: [unJeune(page)],
+        beneficiaires: [unBeneficiaire(page)],
         metadonnees: { nombrePages: 4, nombreTotal: 37 },
       })
     )
@@ -45,16 +51,27 @@ describe('EtablissementPage client side', () => {
 
   describe('Render', () => {
     describe('quand le conseiller est superviseur', () => {
-      it('affiche un lien vers la page de réaffectation', () => {
-        // When
-        renderWithContexts(<EtablissementPage />, {
+      beforeEach(async () => {
+        ;({ container } = renderWithContexts(<EtablissementPage />, {
           customConseiller: {
             structure: StructureConseiller.MILO,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
             estSuperviseur: true,
           },
+        }))
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
         })
 
+        expect(results).toHaveNoViolations()
+      })
+
+      it('affiche un lien vers la page de réaffectation', () => {
         // Then
         expect(
           screen.getByRole('link', {
@@ -66,12 +83,22 @@ describe('EtablissementPage client side', () => {
 
     describe('quand le conseiller n’est pas superviseur', () => {
       beforeEach(async () => {
-        renderWithContexts(<EtablissementPage />, {
+        ;({ container } = renderWithContexts(<EtablissementPage />, {
           customConseiller: {
             structure: StructureConseiller.MILO,
             agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
           },
+        }))
+      })
+
+      it('a11y', async () => {
+        let results: AxeResults
+
+        await act(async () => {
+          results = await axe(container)
         })
+
+        expect(results).toHaveNoViolations()
       })
 
       it('affiche un champ de recherche', () => {
@@ -90,21 +117,21 @@ describe('EtablissementPage client side', () => {
 
       describe('recherche', () => {
         beforeEach(async () => {
-          const inputRechercheJeune = screen.getByLabelText(
+          const inputRechercheBeneficiaire = screen.getByLabelText(
             /Rechercher un bénéficiaire par son nom ou prénom/
           )
-          const buttonRechercheJeune = screen.getByRole('button', {
+          const buttonRechercheBeneficiaire = screen.getByRole('button', {
             name: 'Rechercher',
           })
 
           // When
-          await userEvent.type(inputRechercheJeune, 'am')
-          await userEvent.click(buttonRechercheJeune)
+          await userEvent.type(inputRechercheBeneficiaire, 'am')
+          await userEvent.click(buttonRechercheBeneficiaire)
         })
 
-        it('lance une recherche parmis les jeunes de la Mission Locale', async () => {
+        it('lance une recherche parmis les bénéficiaires de la Mission Locale', async () => {
           // Then
-          expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledWith(
+          expect(rechercheBeneficiairesDeLEtablissement).toHaveBeenCalledWith(
             'id-etablissement',
             'am',
             1
@@ -113,27 +140,27 @@ describe('EtablissementPage client side', () => {
 
         it('affiche le resultat de la recherche dans un tableau', async () => {
           // Then
-          const tableauDeJeunes = screen.getByRole('table', {
+          const tableauDeBeneficiaires = screen.getByRole('table', {
             name: 'Résultat de recherche (1)',
           })
-          expect(tableauDeJeunes).toBeInTheDocument()
+          expect(tableauDeBeneficiaires).toBeInTheDocument()
           expect(
-            within(tableauDeJeunes).getByRole('columnheader', {
+            within(tableauDeBeneficiaires).getByRole('columnheader', {
               name: 'Bénéficiaire',
             })
           ).toBeInTheDocument()
           expect(
-            within(tableauDeJeunes).getByRole('columnheader', {
+            within(tableauDeBeneficiaires).getByRole('columnheader', {
               name: 'Situation',
             })
           ).toBeInTheDocument()
           expect(
-            within(tableauDeJeunes).getByRole('columnheader', {
+            within(tableauDeBeneficiaires).getByRole('columnheader', {
               name: 'Dernière activité',
             })
           ).toBeInTheDocument()
           expect(
-            within(tableauDeJeunes).getByRole('columnheader', {
+            within(tableauDeBeneficiaires).getByRole('columnheader', {
               name: 'Conseiller',
             })
           ).toBeInTheDocument()
@@ -143,18 +170,18 @@ describe('EtablissementPage client side', () => {
             })
           ).toHaveAttribute('href', 'etablissement/beneficiaires/id-jeune')
           expect(
-            within(tableauDeJeunes).getByText(`Page 1 Albert`)
+            within(tableauDeBeneficiaires).getByText(`Page 1 Albert`)
           ).toBeInTheDocument()
           expect(
-            within(tableauDeJeunes).getByText('Emploi')
+            within(tableauDeBeneficiaires).getByText('Emploi')
           ).toBeInTheDocument()
           expect(
-            within(tableauDeJeunes).getByText(
+            within(tableauDeBeneficiaires).getByText(
               toRelativeDateTime('2023-03-01T14:11:38.040Z')
             )
           ).toBeInTheDocument()
           expect(
-            within(tableauDeJeunes).getByText(`Carlo Le Calamar`)
+            within(tableauDeBeneficiaires).getByText(`Carlo Le Calamar`)
           ).toBeInTheDocument()
         })
 
@@ -165,7 +192,9 @@ describe('EtablissementPage client side', () => {
           )
 
           // Then
-          expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledTimes(1)
+          expect(rechercheBeneficiairesDeLEtablissement).toHaveBeenCalledTimes(
+            1
+          )
           expect(
             screen.queryByText(/Résultat de recherche/)
           ).not.toBeInTheDocument()
@@ -179,7 +208,7 @@ describe('EtablissementPage client side', () => {
             )
 
             // Then
-            expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledWith(
+            expect(rechercheBeneficiairesDeLEtablissement).toHaveBeenCalledWith(
               'id-etablissement',
               'am',
               3
@@ -193,12 +222,12 @@ describe('EtablissementPage client side', () => {
             await userEvent.click(screen.getByLabelText('Page suivante'))
 
             // Then
-            expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledWith(
+            expect(rechercheBeneficiairesDeLEtablissement).toHaveBeenCalledWith(
               'id-etablissement',
               'am',
               2
             )
-            expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledWith(
+            expect(rechercheBeneficiairesDeLEtablissement).toHaveBeenCalledWith(
               'id-etablissement',
               'am',
               3
@@ -215,28 +244,32 @@ describe('EtablissementPage client side', () => {
             await userEvent.click(screen.getByLabelText(`Page 1`))
 
             // Then
-            expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledTimes(1)
+            expect(
+              rechercheBeneficiairesDeLEtablissement
+            ).toHaveBeenCalledTimes(1)
           })
         })
       })
 
       it(`prévient qu'il n'y a pas de résultat`, async () => {
         // Given
-        const inputRechercheJeune = screen.getByLabelText(
+        const inputRechercheBeneficiaire = screen.getByLabelText(
           /Rechercher un bénéficiaire par son nom ou prénom/
         )
-        const buttonRechercheJeune = screen.getByRole('button', {
+        const buttonRechercheBeneficiaire = screen.getByRole('button', {
           name: 'Rechercher',
         })
 
-        ;(rechercheJeunesDeLEtablissement as jest.Mock).mockResolvedValue({
-          jeunes: [],
+        ;(
+          rechercheBeneficiairesDeLEtablissement as jest.Mock
+        ).mockResolvedValue({
+          beneficiaires: [],
           metadonnes: { nombrePages: 0, nombreTotal: 0 },
         })
 
         // When
-        await userEvent.type(inputRechercheJeune, 'am')
-        await userEvent.click(buttonRechercheJeune)
+        await userEvent.type(inputRechercheBeneficiaire, 'am')
+        await userEvent.click(buttonRechercheBeneficiaire)
 
         // Then
         expect(
@@ -248,19 +281,19 @@ describe('EtablissementPage client side', () => {
 
       it(`prévient qu'il faut saisir au moins 2 caractères`, async () => {
         // Given
-        const inputRechercheJeune = screen.getByLabelText(
+        const inputRechercheBeneficiaire = screen.getByLabelText(
           /Rechercher un bénéficiaire par son nom ou prénom/
         )
-        const buttonRechercheJeune = screen.getByRole('button', {
+        const buttonRechercheBeneficiaire = screen.getByRole('button', {
           name: 'Rechercher',
         })
 
         // When
-        await userEvent.type(inputRechercheJeune, 'z')
-        await userEvent.click(buttonRechercheJeune)
+        await userEvent.type(inputRechercheBeneficiaire, 'z')
+        await userEvent.click(buttonRechercheBeneficiaire)
 
         // Then
-        expect(rechercheJeunesDeLEtablissement).toHaveBeenCalledTimes(0)
+        expect(rechercheBeneficiairesDeLEtablissement).toHaveBeenCalledTimes(0)
         expect(
           screen.getByText('Veuillez saisir au moins 2 caractères')
         ).toBeInTheDocument()
@@ -269,24 +302,37 @@ describe('EtablissementPage client side', () => {
   })
 
   describe('Quand le conseiller n’est pas MILO', () => {
-    it('n’affiche pas la colonne Situation', async () => {
-      // Given
-      renderWithContexts(<EtablissementPage />, {
+    beforeEach(async () => {
+      ;({ container } = renderWithContexts(<EtablissementPage />, {
         customConseiller: {
           structure: StructureConseiller.POLE_EMPLOI,
           agence: { nom: 'Mission Locale Aubenas', id: 'id-etablissement' },
         },
+      }))
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
       })
-      const inputRechercheJeune = screen.getByLabelText(
+
+      expect(results).toHaveNoViolations()
+    })
+
+    it('n’affiche pas la colonne Situation', async () => {
+      // Given
+      const inputRechercheBeneficiaire = screen.getByLabelText(
         /Rechercher un bénéficiaire par son nom ou prénom/
       )
-      const buttonRechercheJeune = screen.getByRole('button', {
+      const buttonRechercheBeneficiaire = screen.getByRole('button', {
         name: 'Rechercher',
       })
 
       // When
-      await userEvent.type(inputRechercheJeune, 'am')
-      await userEvent.click(buttonRechercheJeune)
+      await userEvent.type(inputRechercheBeneficiaire, 'am')
+      await userEvent.click(buttonRechercheBeneficiaire)
 
       // Then
       expect(
@@ -304,10 +350,20 @@ describe('EtablissementPage client side', () => {
 
       // When
       await act(async () => {
-        renderWithContexts(<EtablissementPage />, {
+        ;({ container } = renderWithContexts(<EtablissementPage />, {
           customConseiller: { structure: StructureConseiller.MILO },
-        })
+        }))
       })
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('n’affiche pas le champs de recherche', async () => {

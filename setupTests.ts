@@ -1,5 +1,7 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
+import { toHaveNoViolations } from 'jest-axe'
+expect.extend(toHaveNoViolations)
 
 global.fetch = jest.fn(async () => new Response())
 if (typeof window !== 'undefined') {

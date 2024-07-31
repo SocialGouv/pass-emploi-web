@@ -1,25 +1,25 @@
 import { DateTime } from 'luxon'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
-import { unConseiller } from 'fixtures/conseiller'
 import {
-  desConseillersJeune,
-  desConseillersJeuneJson,
+  desConseillersBeneficiaire,
+  desConseillersBeneficiaireJson,
   desIndicateursSemaine,
   desIndicateursSemaineJson,
-  desItemsJeunes,
-  desItemsJeunesJson,
-  unDetailJeune,
-  unDetailJeuneJson,
-  uneBaseJeune,
-  uneBaseJeuneJson,
+  desItemsBeneficiaires,
+  desItemsBeneficiairesJson,
+  unDetailBeneficiaire,
+  unDetailBeneficiaireJson,
+  uneBaseBeneficiaire,
+  uneBaseBeneficiaireJson,
   uneMetadonneeFavoris,
   uneMetadonneeFavorisJson,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import { desMotifsDeSuppression } from 'fixtures/referentiel'
-import { CategorieSituation } from 'interfaces/jeune'
-import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { MotifSuppressionJeune } from 'interfaces/referentiel'
+import { CategorieSituation } from 'interfaces/beneficiaire'
+import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
+import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import {
   archiverJeune,
   getConseillersDuJeuneClientSide,
@@ -29,7 +29,7 @@ import {
   getIndicateursJeuneAlleges,
   getIndicateursJeuneComplets,
   getJeuneDetails,
-  getJeunesDeLEtablissementClientSide,
+  getBeneficiairesDeLEtablissementClientSide,
   getJeunesDuConseillerClientSide,
   getJeunesDuConseillerParId,
   getJeunesDuConseillerServerSide,
@@ -37,7 +37,7 @@ import {
   getMotifsSuppression,
   modifierIdentifiantPartenaire,
   reaffecter,
-  rechercheJeunesDeLEtablissement,
+  rechercheBeneficiairesDeLEtablissement,
   getBeneficiairesDeLaStructureMilo,
   supprimerJeuneInactif,
 } from 'services/jeunes.service'
@@ -49,7 +49,7 @@ describe('JeunesApiService', () => {
   describe('.getJeunesDuConseillerClientSide', () => {
     it('renvoie les jeunes du conseiller', async () => {
       // Given
-      const jeunesJson = desItemsJeunesJson()
+      const jeunesJson = desItemsBeneficiairesJson()
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
@@ -60,7 +60,7 @@ describe('JeunesApiService', () => {
         `/conseillers/idConseiller/jeunes`,
         'accessToken'
       )
-      expect(actual).toEqual(desItemsJeunes())
+      expect(actual).toEqual(desItemsBeneficiaires())
     })
   })
 
@@ -68,7 +68,7 @@ describe('JeunesApiService', () => {
     it('renvoie les jeunes du conseiller', async () => {
       // Given
       const idConseiller = 'idConseiller'
-      const jeunesJson = desItemsJeunesJson()
+      const jeunesJson = desItemsBeneficiairesJson()
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
@@ -79,7 +79,7 @@ describe('JeunesApiService', () => {
         `/conseillers/idConseiller/jeunes`,
         'accessToken'
       )
-      expect(actual).toEqual(desItemsJeunes())
+      expect(actual).toEqual(desItemsBeneficiaires())
     })
   })
 
@@ -88,7 +88,7 @@ describe('JeunesApiService', () => {
       // Given
       const idConseiller = 'idConseiller'
       const accessToken = 'accessToken'
-      const jeunesJson = desItemsJeunesJson()
+      const jeunesJson = desItemsBeneficiairesJson()
       ;(apiGet as jest.Mock).mockResolvedValue({ content: jeunesJson })
 
       // When
@@ -102,7 +102,7 @@ describe('JeunesApiService', () => {
         `/conseillers/${idConseiller}/jeunes`,
         accessToken
       )
-      expect(actual).toEqual(desItemsJeunes())
+      expect(actual).toEqual(desItemsBeneficiaires())
     })
   })
 
@@ -110,7 +110,7 @@ describe('JeunesApiService', () => {
     it('renvoie les détails du jeune', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: unDetailJeuneJson({
+        content: unDetailBeneficiaireJson({
           urlDossier: 'url-dossier',
           dateFinCEJ: '2020-10-10',
         }),
@@ -122,7 +122,7 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith('/jeunes/id-jeune', 'accessToken')
       expect(actual).toEqual(
-        unDetailJeune({
+        unDetailBeneficiaire({
           urlDossier: 'url-dossier',
           dateFinCEJ: '2020-10-10',
         })
@@ -181,7 +181,7 @@ describe('JeunesApiService', () => {
       const idConseillerInitial = 'idConseillerInitial'
       const emailConseillerDestination = 'conseiller@email.com'
       const idConseillerDestination = 'idConseillerDestination'
-      const idsJeunes = ['id-jeune-1', 'id-jeune-2']
+      const idsJeunes = ['id-beneficiaire-1', 'id-beneficiaire-2']
       const estTemporaire = false
       ;(apiGet as jest.Mock).mockImplementation((url) => {
         if (url === `/conseillers?email=${emailConseillerDestination}`)
@@ -227,7 +227,7 @@ describe('JeunesApiService', () => {
   describe('.archiverJeune', () => {
     it('archive le jeune', async () => {
       // Given
-      const payloadFormData: SuppressionJeuneFormData = {
+      const payloadFormData: SuppressionBeneficiaireFormData = {
         motif: 'Radiation du CEJ',
         commentaire: undefined,
       }
@@ -249,7 +249,7 @@ describe('JeunesApiService', () => {
     it('renvoie les conseillers du jeune', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: desConseillersJeuneJson(),
+        content: desConseillersBeneficiaireJson(),
       })
 
       // When
@@ -260,7 +260,7 @@ describe('JeunesApiService', () => {
         '/jeunes/id-jeune/conseillers',
         'accessToken'
       )
-      expect(actual).toEqual(desConseillersJeune())
+      expect(actual).toEqual(desConseillersBeneficiaire())
     })
   })
 
@@ -268,7 +268,7 @@ describe('JeunesApiService', () => {
     it('renvoie les conseillers du jeune', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: desConseillersJeuneJson(),
+        content: desConseillersBeneficiaireJson(),
       })
 
       // When
@@ -282,7 +282,7 @@ describe('JeunesApiService', () => {
         '/jeunes/id-jeune/conseillers',
         'accessToken'
       )
-      expect(actual).toEqual(desConseillersJeune())
+      expect(actual).toEqual(desConseillersBeneficiaire())
     })
   })
 
@@ -290,7 +290,7 @@ describe('JeunesApiService', () => {
     it('renvoie les motifs de suppression', async () => {
       // Given
       const accessToken = 'accessToken'
-      const motifs: MotifSuppressionJeune[] = desMotifsDeSuppression()
+      const motifs: MotifSuppressionBeneficiaire[] = desMotifsDeSuppression()
 
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: motifs,
@@ -397,52 +397,51 @@ describe('JeunesApiService', () => {
     })
   })
 
-  describe('.getJeunesDeLEtablissementClientSide', () => {
+  describe('.getBeneficiairesDeLEtablissementClientSide', () => {
     it('retourne les bénéficiaires d’un établissement', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
-        content: [uneBaseJeuneJson()],
+        content: [uneBaseBeneficiaireJson()],
       })
 
       // When
-      const actual = await getJeunesDeLEtablissementClientSide(
-        'id-etablissement'
-      )
+      const actual =
+        await getBeneficiairesDeLEtablissementClientSide('id-etablissement')
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/etablissements/id-etablissement/jeunes',
         'accessToken'
       )
-      expect(actual).toEqual([uneBaseJeune()])
+      expect(actual).toEqual([uneBaseBeneficiaire()])
     })
   })
 
   describe('.getIdentitesBeneficiaires', () => {
     it('récupère les noms et prénoms des bénéficiaires demandés', async () => {
       // Given
-      const basesJeunes = [uneBaseJeune(), uneBaseJeune()]
+      const basesJeunes = [uneBaseBeneficiaire(), uneBaseBeneficiaire()]
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: basesJeunes,
       })
 
       // When
       const actual = await getIdentitesBeneficiairesClientSide([
-        'id-jeune-1',
-        'id-jeune-2',
-        'id-jeune-3',
+        'id-beneficiaire-1',
+        'id-beneficiaire-2',
+        'id-beneficiaire-3',
       ])
 
       // Then
       expect(apiGet).toHaveBeenCalledWith(
-        '/conseillers/idConseiller/jeunes/identites?ids=id-jeune-1&ids=id-jeune-2&ids=id-jeune-3',
+        '/conseillers/idConseiller/jeunes/identites?ids=id-beneficiaire-1&ids=id-beneficiaire-2&ids=id-beneficiaire-3',
         'accessToken'
       )
       expect(actual).toEqual(basesJeunes)
     })
   })
 
-  describe('.rechercheJeunesDeLEtablissement', () => {
+  describe('.rechercheBeneficiairesDeLEtablissement', () => {
     it('retourne le resultat de recherche des jeunes d’un etablissement', async () => {
       // Given
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -455,7 +454,7 @@ describe('JeunesApiService', () => {
           resultats: [
             {
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 nom: 'Reportaire',
                 prenom: 'Albert',
               },
@@ -472,7 +471,7 @@ describe('JeunesApiService', () => {
       })
 
       // When
-      const actual = await rechercheJeunesDeLEtablissement(
+      const actual = await rechercheBeneficiairesDeLEtablissement(
         'id-etablissement',
         'e',
         3
@@ -488,10 +487,10 @@ describe('JeunesApiService', () => {
           nombrePages: 6,
           nombreTotal: 51,
         },
-        jeunes: [
+        beneficiaires: [
           {
             base: {
-              id: 'jeune-1',
+              id: 'beneficiaire-1',
               nom: 'Reportaire',
               prenom: 'Albert',
             },
@@ -521,7 +520,7 @@ describe('JeunesApiService', () => {
           resultats: [
             {
               jeune: {
-                id: 'jeune-1',
+                id: 'beneficiaire-1',
                 nom: 'Reportaire',
                 prenom: 'Albert',
               },
@@ -549,10 +548,10 @@ describe('JeunesApiService', () => {
         'tok'
       )
       expect(actual).toEqual({
-        jeunes: [
+        beneficiaires: [
           {
             base: {
-              id: 'jeune-1',
+              id: 'beneficiaire-1',
               nom: 'Reportaire',
               prenom: 'Albert',
             },

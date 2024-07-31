@@ -71,14 +71,16 @@ export default function FiltresStatutAnimationsCollectives({
   return (
     <div className='relative'>
       <button
-        aria-controls='filtres-statut'
         onClick={() =>
           setAfficherFiltresAnimationsCollectives(
             !afficherFiltresAnimationsCollectives
           )
         }
+        aria-expanded={afficherFiltresAnimationsCollectives}
+        aria-controls='filtres-statut'
         aria-label='Statut - Filtrer les animations collectives'
         className='flex items-center p-4 w-full h-full'
+        type='button'
       >
         Statut
         <IconComponent

@@ -4,9 +4,12 @@ import React from 'react'
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { desIndicateursSemaine, unDetailJeune } from 'fixtures/jeune'
+import {
+  desIndicateursSemaine,
+  unDetailBeneficiaire,
+} from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { CategorieSituation, EtatSituation } from 'interfaces/jeune'
+import { CategorieSituation, EtatSituation } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import renderWithContexts from 'tests/renderWithContexts'
@@ -62,7 +65,10 @@ describe('Situations dans la fiche jeune', () => {
       // Then
       expect(
         screen.getByRole('link', { name: 'Voir plus d’informations' })
-      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/informations?onglet=informations')
+      ).toHaveAttribute(
+        'href',
+        '/mes-jeunes/beneficiaire-1/informations?onglet=informations'
+      )
     })
   })
 })
@@ -77,7 +83,7 @@ async function renderFicheJeune(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune({ situations: situations })}
+        jeune={unDetailBeneficiaire({ situations: situations })}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

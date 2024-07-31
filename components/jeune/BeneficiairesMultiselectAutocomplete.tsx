@@ -31,7 +31,7 @@ interface BeneficiairesMultiselectAutocompleteProps {
   defaultBeneficiaires?: OptionBeneficiaire[]
   error?: string
   disabled?: boolean
-  renderIndication?: (props: { value: string }) => JSX.Element
+  renderIndication?: (props: { value: string; id: string }) => JSX.Element
   ariaDescribedBy?: string
   lienEmargement?: string
   trackEmargement?: () => void

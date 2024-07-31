@@ -1,19 +1,21 @@
 import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
+import {
+  desBeneficiairesAvecActionsNonTerminees,
+  unBeneficiaireAvecActionsNonTerminees,
+} from 'fixtures/beneficiaire'
 import { unConseiller } from 'fixtures/conseiller'
 import {
-  desJeunesAvecActionsNonTerminees,
-  unJeuneAvecActionsNonTerminees,
-} from 'fixtures/jeune'
-import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
-import {
   CategorieSituation,
-  JeuneAvecNbActionsNonTerminees,
-} from 'interfaces/jeune'
+  BeneficiaireAvecNbActionsNonTerminees,
+} from 'interfaces/beneficiaire'
+import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
@@ -24,9 +26,10 @@ jest.mock('services/conseiller.service')
 jest.mock('components/PageActionsPortal')
 
 describe('PortefeuillePage client side', () => {
+  let container: HTMLElement
   let alerteSetter: (key: AlerteParam | undefined, target?: string) => void
   let refresh: jest.Mock
-  const jeunes = desJeunesAvecActionsNonTerminees()
+  const jeunes = desBeneficiairesAvecActionsNonTerminees()
   beforeEach(() => {
     alerteSetter = jest.fn()
     refresh = jest.fn(() => Promise.resolve())
@@ -45,10 +48,20 @@ describe('PortefeuillePage client side', () => {
     beforeEach(async () => {
       // WHEN
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PortefeuillePage conseillerJeunes={jeunes} isFromEmail />
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it("affiche la liste des bénéficiaires s'il en a", async () => {
@@ -160,22 +173,23 @@ describe('PortefeuillePage client side', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
-    let jeune: JeuneAvecNbActionsNonTerminees
-    let beneficiaireAvecStructureDifferente: JeuneAvecNbActionsNonTerminees
+    let jeune: BeneficiaireAvecNbActionsNonTerminees
+    let beneficiaireAvecStructureDifferente: BeneficiaireAvecNbActionsNonTerminees
 
     beforeEach(async () => {
       //GIVEN
-      jeune = unJeuneAvecActionsNonTerminees({
+      jeune = unBeneficiaireAvecActionsNonTerminees({
         situationCourante: CategorieSituation.DEMANDEUR_D_EMPLOI,
       })
-      beneficiaireAvecStructureDifferente = unJeuneAvecActionsNonTerminees({
-        prenom: 'Aline',
-        id: 'jeune-2',
-        structureMilo: { id: '2' },
-      })
+      beneficiaireAvecStructureDifferente =
+        unBeneficiaireAvecActionsNonTerminees({
+          prenom: 'Aline',
+          id: 'beneficiaire-2',
+          structureMilo: { id: '2' },
+        })
 
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PortefeuillePage
             conseillerJeunes={[jeune, beneficiaireAvecStructureDifferente]}
             isFromEmail
@@ -186,8 +200,18 @@ describe('PortefeuillePage client side', () => {
               structureMilo: { nom: 'Agence', id: '1' },
             },
           }
-        )
+        ))
       })
+    })
+
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
     })
 
     it('permer de créer un jeune MILO', async () => {
@@ -213,7 +237,7 @@ describe('PortefeuillePage client side', () => {
 
       //THEN
       expect(
-        row3.getByLabelText(
+        row3.getByText(
           /Ce bénéficiaire est rattaché à une Mission Locale différente/
         )
       ).toBeInTheDocument()
@@ -223,19 +247,29 @@ describe('PortefeuillePage client side', () => {
   describe('quand le conseiller est France Travail', () => {
     beforeEach(async () => {
       //GIVEN
-      const jeune = unJeuneAvecActionsNonTerminees()
+      const jeune = unBeneficiaireAvecActionsNonTerminees()
 
       await act(async () => {
-        renderWithContexts(
+        ;({ container } = renderWithContexts(
           <PortefeuillePage conseillerJeunes={[jeune]} isFromEmail />,
           {
             customConseiller: { structure: StructureConseiller.POLE_EMPLOI },
           }
-        )
+        ))
       })
     })
 
-    it('permer de créer un jeune PE', async () => {
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
+    })
+
+    it('permer de créer un jeune FT', async () => {
       //THEN
       expect(
         screen.getByRole('link', {

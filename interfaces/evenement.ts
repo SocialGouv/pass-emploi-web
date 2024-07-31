@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
 export type TypeEvenement = {
   code: string
@@ -50,7 +50,7 @@ export type Modification = { date: string; auteur: Auteur }
 export type Evenement = {
   id: string
   titre: string
-  jeunes: Array<BaseJeune & { futPresent?: boolean }>
+  jeunes: Array<BaseBeneficiaire & { futPresent?: boolean }>
   type: TypeEvenement
   date: string
   duree: number

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
-import { CategorieSituation } from 'interfaces/jeune'
+import { CategorieSituation } from 'interfaces/beneficiaire'
 
 interface TagProps {
   situation: CategorieSituation
@@ -15,36 +15,36 @@ const mappedSituation: {
   }
 } = {
   Emploi: {
-    color: 'accent_3',
-    backgroundColor: 'accent_3_lighten',
+    color: 'accent_1',
+    backgroundColor: 'accent_1_lighten',
   },
   'Contrat en Alternance': {
-    color: 'accent_3',
-    backgroundColor: 'accent_3_lighten',
+    color: 'accent_1',
+    backgroundColor: 'accent_1_lighten',
   },
   Formation: {
     color: 'accent_3',
     backgroundColor: 'accent_3_lighten',
   },
   'Immersion en entreprise': {
-    color: 'accent_3',
-    backgroundColor: 'accent_3_lighten',
+    color: 'accent_1',
+    backgroundColor: 'accent_1_lighten',
   },
   Pmsmp: {
     color: 'accent_1',
     backgroundColor: 'accent_1_lighten',
   },
   'Contrat de volontariat - bénévolat': {
-    color: 'accent_1',
-    backgroundColor: 'accent_1_lighten',
+    color: 'accent_3',
+    backgroundColor: 'accent_3_lighten',
   },
   Scolarité: {
     color: 'accent_3',
     backgroundColor: 'accent_3_lighten',
   },
   "Demandeur d'emploi": {
-    color: 'accent_1',
-    backgroundColor: 'accent_1_lighten',
+    color: 'grey_800',
+    backgroundColor: 'grey_100',
   },
   'Sans situation': {
     color: 'grey_800',

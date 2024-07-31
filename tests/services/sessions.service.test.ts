@@ -292,14 +292,14 @@ describe('SessionsApiService', () => {
     it('clôt une session', async () => {
       // Given
       const emargements = [
-        { idJeune: 'id-jeune-1', statut: 'INSCRIT' },
-        { idJeune: 'id-jeune-2', statut: 'REFUS_TIERS' },
+        { idJeune: 'id-beneficiaire-1', statut: 'INSCRIT' },
+        { idJeune: 'id-beneficiaire-2', statut: 'REFUS_TIERS' },
       ]
 
       // When
       await cloreSession('id-conseiller', 'id-session', [
-        { idJeune: 'id-jeune-1', statut: 'INSCRIT' },
-        { idJeune: 'id-jeune-2', statut: 'REFUS_TIERS' },
+        { idJeune: 'id-beneficiaire-1', statut: 'INSCRIT' },
+        { idJeune: 'id-beneficiaire-2', statut: 'REFUS_TIERS' },
       ])
 
       // Then

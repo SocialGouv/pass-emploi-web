@@ -76,7 +76,7 @@ function ConsentementCguPage({ returnTo }: ConsentementCguProps) {
             )}
             <Checkbox
               id='checkbox-consentement-cgu'
-              label='En cochant cette case, je déclare avoir pris connaissance et accepter les conditions générales d’utilisation de l’application.'
+              label='En cochant cette case, je déclare avoir pris connaissance et accepter les conditions générales d’utilisation de la plateforme.'
               checked={aDonneSonConsentement.value}
               value='donneConsentementCGU'
               onChange={mettreAJourConsentement}

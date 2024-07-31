@@ -68,6 +68,7 @@ export default function FiltresCategoriesActions({
         aria-label='Catégorie - Filtrer les actions'
         title='Filtrer les actions par catégorie'
         className='flex items-center p-4 w-full h-full gap-2'
+        type='button'
       >
         Catégorie
         <IconComponent

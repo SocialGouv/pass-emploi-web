@@ -5,18 +5,18 @@ import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import TileIndicateur from 'components/ui/TileIndicateur'
-import { IndicateursSemaine } from 'interfaces/jeune'
+import { IndicateursSemaine } from 'interfaces/beneficiaire'
 import { toShortDate } from 'utils/date'
 
 type ResumeIndicateursJeuneProps = {
-  idJeune: string
+  idBeneficiaire: string
   debutDeLaSemaine: DateTime
   finDeLaSemaine: DateTime
   indicateursSemaine: IndicateursSemaine | undefined
 }
 
 export function ResumeIndicateursJeune({
-  idJeune,
+  idBeneficiaire,
   debutDeLaSemaine,
   finDeLaSemaine,
   indicateursSemaine,
@@ -68,21 +68,24 @@ export function ResumeIndicateursJeune({
           </ul>
         </div>
       </div>
-      <LienVersIndicateurs idJeune={idJeune} pathPrefix={pathPrefix} />
+      <LienVersIndicateurs
+        idBeneficiaire={idBeneficiaire}
+        pathPrefix={pathPrefix}
+      />
     </div>
   )
 }
 
 function LienVersIndicateurs({
-  idJeune,
+  idBeneficiaire,
   pathPrefix,
 }: {
-  idJeune: string
+  idBeneficiaire: string
   pathPrefix: string
 }) {
   return (
     <Link
-      href={`${pathPrefix}/${idJeune}/informations?onglet=indicateurs`}
+      href={`${pathPrefix}/${idBeneficiaire}/informations?onglet=indicateurs`}
       className='flex items-center text-content_color underline hover:text-primary hover:fill-primary mt-4'
     >
       Voir plus d’indicateurs

@@ -8,7 +8,7 @@ import {
   PageRetourPortal,
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
-import { estUserPoleEmploi } from 'interfaces/conseiller'
+import { estUserFranceTravail } from 'interfaces/conseiller'
 import {
   getAction,
   getSituationsNonProfessionnelles,
@@ -39,7 +39,7 @@ export default async function ModificationAction({
   params: ModificationParams
 }) {
   const { user, accessToken } = await getMandatorySessionServerSide()
-  if (estUserPoleEmploi(user)) notFound()
+  if (estUserFranceTravail(user)) notFound()
 
   const [actionContent, situationsNonProfessionnelles, actionsPredefinies] =
     await Promise.all([
@@ -69,7 +69,7 @@ export default async function ModificationAction({
         action={action}
         actionsPredefinies={actionsPredefinies}
         aDesCommentaires={commentaires.length > 0}
-        idJeune={jeune.id}
+        idBeneficiaire={jeune.id}
         situationsNonProfessionnelles={situationsNonProfessionnelles}
         returnTo={returnTo}
       />

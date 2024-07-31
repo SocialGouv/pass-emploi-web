@@ -23,16 +23,16 @@ import {
   StatutAction,
 } from 'interfaces/action'
 import { Agenda } from 'interfaces/agenda'
-import { estMilo, estPoleEmploi } from 'interfaces/conseiller'
-import { EvenementListItem } from 'interfaces/evenement'
-import { Offre, Recherche } from 'interfaces/favoris'
 import {
-  DetailJeune,
+  DetailBeneficiaire,
   IndicateursSemaine,
   MetadonneesFavoris,
-} from 'interfaces/jeune'
-import { SuppressionJeuneFormData } from 'interfaces/json/jeune'
-import { MotifSuppressionJeune } from 'interfaces/referentiel'
+} from 'interfaces/beneficiaire'
+import { estMilo, estFranceTravail } from 'interfaces/conseiller'
+import { EvenementListItem } from 'interfaces/evenement'
+import { Offre, Recherche } from 'interfaces/favoris'
+import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
+import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
 import { MetadonneesPagination } from 'types/pagination'
@@ -72,7 +72,7 @@ const ongletProps: {
 }
 
 type FicheBeneficiaireProps = {
-  jeune: DetailJeune
+  jeune: DetailBeneficiaire
   rdvs: EvenementListItem[]
   categoriesActions: SituationNonProfessionnelle[]
   actionsInitiales: {
@@ -84,8 +84,8 @@ type FicheBeneficiaireProps = {
   onglet: Onglet
   erreurSessions?: boolean
   metadonneesFavoris?: MetadonneesFavoris
-  offresPE?: Offre[]
-  recherchesPE?: Recherche[]
+  offresFT?: Offre[]
+  recherchesFT?: Recherche[]
 }
 
 function FicheBeneficiairePage({
@@ -96,8 +96,8 @@ function FicheBeneficiairePage({
   metadonneesFavoris,
   onglet,
   lectureSeule,
-  offresPE,
-  recherchesPE,
+  offresFT,
+  recherchesFT,
   erreurSessions,
 }: FicheBeneficiaireProps) {
   const router = useRouter()
@@ -111,7 +111,7 @@ function FicheBeneficiairePage({
   const [alerte, setAlerte] = useAlerte()
 
   const [motifsSuppression, setMotifsSuppression] = useState<
-    MotifSuppressionJeune[]
+    MotifSuppressionBeneficiaire[]
   >([])
 
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
@@ -178,10 +178,10 @@ function FicheBeneficiairePage({
     filtres: { statuts: StatutAction[]; categories: string[] },
     tri: string
   ): Promise<{ actions: Action[]; metadonnees: MetadonneesPagination }> {
-    const { getActionsJeuneClientSide } = await import(
+    const { getActionsBeneficiaireClientSide } = await import(
       'services/actions.service'
     )
-    const result = await getActionsJeuneClientSide(jeune.id, {
+    const result = await getActionsBeneficiaireClientSide(jeune.id, {
       page,
       filtres,
       tri,
@@ -218,7 +218,7 @@ function FicheBeneficiairePage({
   }
 
   async function archiverJeuneActif(
-    payload: SuppressionJeuneFormData
+    payload: SuppressionBeneficiaireFormData
   ): Promise<void> {
     try {
       const { archiverJeune } = await import('services/jeunes.service')
@@ -272,7 +272,7 @@ function FicheBeneficiairePage({
   }, [jeune, lectureSeule])
 
   useEffect(() => {
-    if (!estPoleEmploi(conseiller) && !indicateursSemaine) {
+    if (!estFranceTravail(conseiller) && !indicateursSemaine) {
       getIndicateursJeuneAlleges(
         conseiller.id,
         jeune.id,
@@ -286,7 +286,11 @@ function FicheBeneficiairePage({
     <>
       {!lectureSeule && (
         <PageActionsPortal>
-          <Button onClick={openDeleteJeuneModal} style={ButtonStyle.SECONDARY}>
+          <Button
+            onClick={openDeleteJeuneModal}
+            style={ButtonStyle.SECONDARY}
+            type='button'
+          >
             <IconComponent
               name={IconName.Delete}
               focusable={false}
@@ -384,7 +388,7 @@ function FicheBeneficiairePage({
         />
       </div>
 
-      {!estPoleEmploi(conseiller) && (
+      {!estFranceTravail(conseiller) && (
         <>
           <div className='flex justify-between mt-6 mb-4'>
             <div className='flex'>
@@ -436,7 +440,7 @@ function FicheBeneficiairePage({
           <TabList className='mt-10'>
             <Tab
               label='Actions'
-              count={!estPoleEmploi(conseiller) ? totalActions : undefined}
+              count={!estFranceTravail(conseiller) ? totalActions : undefined}
               selected={currentTab === 'ACTIONS'}
               controls='liste-actions'
               onSelectTab={() => switchTab('ACTIONS')}
@@ -451,7 +455,7 @@ function FicheBeneficiairePage({
             />
             <Tab
               label='Rendez-vous'
-              count={!estPoleEmploi(conseiller) ? rdvs.length : undefined}
+              count={!estFranceTravail(conseiller) ? rdvs.length : undefined}
               selected={currentTab === 'RDVS'}
               controls='liste-rdvs'
               onSelectTab={() => switchTab('RDVS')}
@@ -531,7 +535,7 @@ function FicheBeneficiairePage({
               className='mt-8 pb-8'
             >
               <BlocFavoris
-                idJeune={jeune.id}
+                idBeneficiaire={jeune.id}
                 metadonneesFavoris={metadonneesFavoris}
               />
             </div>
@@ -539,11 +543,11 @@ function FicheBeneficiairePage({
         </>
       )}
 
-      {estPoleEmploi(conseiller) && (
+      {estFranceTravail(conseiller) && (
         <>
           {metadonneesFavoris?.autoriseLePartage &&
-            offresPE &&
-            recherchesPE && (
+            offresFT &&
+            recherchesFT && (
               <>
                 <h2 className='text-m-bold text-grey_800 mb-4'>Favoris</h2>
                 <p className='text-base-regular'>
@@ -551,8 +555,8 @@ function FicheBeneficiairePage({
                   mises en favoris.
                 </p>
                 <TabFavoris
-                  offres={offresPE}
-                  recherches={recherchesPE}
+                  offres={offresFT}
+                  recherches={recherchesFT}
                   lectureSeule={lectureSeule}
                 />
               </>

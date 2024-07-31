@@ -6,15 +6,18 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TR from 'components/ui/Table/TR'
+import {
+  BaseBeneficiaire,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
-import { BaseJeune, getNomJeuneComplet } from 'interfaces/jeune'
 import { toShortDate, toFrenchTime, toMonthday } from 'utils/date'
 
 interface EvenementRowProps {
   evenement: EvenementListItem
   idConseiller: string
-  beneficiaireUnique?: BaseJeune
+  beneficiaireUnique?: BaseBeneficiaire
   withDate?: boolean
   withIndicationPresenceBeneficiaire?: boolean
 }
@@ -36,7 +39,7 @@ export function EvenementRow({
   const timeAndDuration = `${toFrenchTime(date)} - ${evenement.duree} min`
 
   const labelBeneficiaires = beneficiaireUnique
-    ? getNomJeuneComplet(beneficiaireUnique)
+    ? getNomBeneficiaireComplet(beneficiaireUnique)
     : evenement.labelBeneficiaires
 
   const urlRdv = pathPrefix + '/edition-rdv?idRdv=' + evenement.id

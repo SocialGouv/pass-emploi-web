@@ -1,5 +1,7 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -14,6 +16,7 @@ jest.mock('services/sessions.service')
 jest.mock('services/conseiller.service')
 
 describe('Cloture Session', () => {
+  let container: HTMLElement
   let session = unDetailSession({
     session: {
       ...unDetailSession().session,
@@ -21,13 +24,13 @@ describe('Cloture Session', () => {
     },
     inscriptions: [
       {
-        idJeune: 'jeune-1',
+        idJeune: 'beneficiaire-1',
         nom: 'Beau',
         prenom: 'Harry',
         statut: 'INSCRIT',
       },
       {
-        idJeune: 'jeune-2',
+        idJeune: 'beneficiaire-2',
         nom: 'BE',
         prenom: 'Linda',
         statut: 'REFUS_JEUNE',
@@ -53,7 +56,7 @@ describe('Cloture Session', () => {
     })
 
     // When
-    renderWithContexts(
+    ;({ container } = renderWithContexts(
       <ClotureSession
         session={session}
         inscriptionsInitiales={inscriptionsInitiales}
@@ -62,7 +65,17 @@ describe('Cloture Session', () => {
       {
         customAlerte: { alerteSetter },
       }
-    )
+    ))
+  })
+
+  it('a11y', async () => {
+    let results: AxeResults
+
+    await act(async () => {
+      results = await axe(container)
+    })
+
+    expect(results).toHaveNoViolations()
   })
 
   it('affiche les bénéficiaires de la session', async () => {
@@ -130,15 +143,25 @@ describe('Cloture Session', () => {
       await userEvent.click(clore)
     })
 
+    it('a11y', async () => {
+      let results: AxeResults
+
+      await act(async () => {
+        results = await axe(container)
+      })
+
+      expect(results).toHaveNoViolations()
+    })
+
     it('clôt la session', async () => {
       // Then
       expect(cloreSession).toHaveBeenCalledWith('1', 'session-1', [
         {
-          idJeune: 'jeune-1',
+          idJeune: 'beneficiaire-1',
           statut: 'PRESENT',
         },
         {
-          idJeune: 'jeune-2',
+          idJeune: 'beneficiaire-2',
           statut: 'PRESENT',
         },
       ])

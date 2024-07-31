@@ -4,12 +4,12 @@ import ConfirmationMultiQualificationModal from 'components/ConfirmationMultiQua
 import ConfirmationMultiQualificationModalNonSNP from 'components/ConfirmationMultiQualificationModalNonSNP'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { ActionAQualifier } from 'interfaces/action'
-import { BaseJeune } from 'interfaces/jeune'
+import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
 type EncartQualificationActionsProps = {
   actionsSelectionnees: ActionAQualifier[]
   boutonsDisabled: boolean
-  jeune?: BaseJeune
+  jeune?: BaseBeneficiaire
   nombreActionsSelectionnees: number
   onLienExterne: (label: string) => void
   onQualification: (
@@ -63,6 +63,7 @@ export default function EncartQualificationActions({
             style={ButtonStyle.SECONDARY}
             label='Enregistrer les actions en non SNP'
             disabled={boutonsDisabled}
+            type='button'
           >
             Enregistrer les actions en non SNP
           </Button>
@@ -71,6 +72,7 @@ export default function EncartQualificationActions({
             style={ButtonStyle.PRIMARY}
             label='Qualifier les actions en SNP'
             disabled={boutonsDisabled}
+            type='button'
           >
             Qualifier les actions en SNP
           </Button>

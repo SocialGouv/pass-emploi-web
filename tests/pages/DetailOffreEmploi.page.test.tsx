@@ -1,4 +1,6 @@
 import { act, screen, within } from '@testing-library/react'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import OffrePage from 'app/(connected)/(with-sidebar)/(with-chat)/offres/[typeOffre]/[idOffre]/OffrePage'
@@ -10,6 +12,7 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('components/PageActionsPortal')
 
 describe('OffrePage client side - Emploi', () => {
+  let container: HTMLElement
   let offre: DetailOffreEmploi
 
   beforeEach(async () => {
@@ -18,8 +21,18 @@ describe('OffrePage client side - Emploi', () => {
 
     // When
     await act(async () => {
-      renderWithContexts(<OffrePage offre={offre} />)
+      ;({ container } = renderWithContexts(<OffrePage offre={offre} />))
     })
+  })
+
+  it('a11y', async () => {
+    let results: AxeResults
+
+    await act(async () => {
+      results = await axe(container)
+    })
+
+    expect(results).toHaveNoViolations()
   })
 
   it("permet de partager l'offre", () => {

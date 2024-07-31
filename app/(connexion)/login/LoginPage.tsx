@@ -18,14 +18,14 @@ const OnboardingMobileModal = dynamic(
 )
 
 interface LoginProps {
-  ssoPoleEmploiBRSAEstActif?: boolean
-  ssoPoleEmploiAIJEstActif?: boolean
+  ssoFranceTravailBRSAEstActif?: boolean
+  ssoFranceTravailAIJEstActif?: boolean
   isFromEmail: boolean
 }
 
 function LoginPage({
-  ssoPoleEmploiBRSAEstActif,
-  ssoPoleEmploiAIJEstActif,
+  ssoFranceTravailBRSAEstActif,
+  ssoFranceTravailAIJEstActif,
   isFromEmail,
 }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
@@ -68,75 +68,82 @@ function LoginPage({
   }, [])
 
   return (
-    <main role='main' className='bg-primary_lighten w-full grow relative'>
-      <div className='absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4'>
-        <div className='bg-white p-[25px] layout_s:px-[122px] rounded-l drop-shadow-lg'>
-          <h2>
-            <span className='sr-only'>Contrat d’engagement jeune</span>
-            <LogoCEJ
-              className='m-auto h-[64px] w-[120px] fill-primary_darken'
-              focusable={false}
-              aria-hidden={true}
-            />
-          </h2>
-          <ul className='mt-6'>
-            <li>
-              <FormButton
-                label='Connexion conseiller Mission Locale'
-                className='whitespace-nowrap'
-                handleSubmit={(event) =>
-                  handleSignin(event, 'similo-conseiller')
-                }
+    <main
+      role='main'
+      className='w-full relative flex justify-center items-center'
+    >
+      <div>
+        <div className='flex-1 flex flex-wrap gap-12 justify-center items-center bg-white py-6 px-8 layout_s:px-16 rounded-l drop-shadow-lg layout_l:py-24'>
+          <div className='flex-1 flex-col justify-items-center'>
+            <h2>
+              <span className='sr-only'>Contrat d’engagement jeune</span>
+              <LogoCEJ
+                className='m-auto h-[64px] w-[120px] fill-primary_darken'
+                focusable={false}
+                aria-hidden={true}
               />
-            </li>
-            <li>
-              <FormButton
-                label='Connexion conseiller France Travail CEJ'
-                className='mt-4 whitespace-nowrap'
-                handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
-              />
-            </li>
-          </ul>
-
-          {(ssoPoleEmploiBRSAEstActif || ssoPoleEmploiAIJEstActif) && (
-            <>
-              <h2 className='mt-16'>
-                <span className='sr-only'>pass emploi</span>
-                <LogoPassEmploi
-                  className='m-auto fill-primary_darken'
-                  focusable={false}
-                  aria-hidden={true}
+            </h2>
+            <ul className='mt-6 flex flex-col items-center'>
+              <li>
+                <FormButton
+                  label='Connexion Mission Locale'
+                  className='w-64 whitespace-nowrap'
+                  handleSubmit={(event) =>
+                    handleSignin(event, 'similo-conseiller')
+                  }
                 />
-              </h2>
-              <ul>
-                {ssoPoleEmploiBRSAEstActif && (
-                  <li>
-                    <FormButton
-                      label='Connexion conseiller France Travail BRSA'
-                      className='mt-6 whitespace-nowrap'
-                      style={ButtonStyle.PRIMARY_DARK}
-                      handleSubmit={(event) =>
-                        handleSignin(event, 'pe-brsa-conseiller')
-                      }
-                    />
-                  </li>
-                )}
+              </li>
+              <li>
+                <FormButton
+                  label='Connexion France Travail CEJ'
+                  className='w-64 mt-6 whitespace-nowrap'
+                  handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
+                />
+              </li>
+            </ul>
+          </div>
+          <div className='flex-1 border-l-2 border-primary_lighten h-60 layout_xs:hidden layout_m:flex'></div>
+          <div className='flex-1 flex-col'>
+            {(ssoFranceTravailBRSAEstActif || ssoFranceTravailAIJEstActif) && (
+              <>
+                <h2>
+                  <span className='sr-only'>pass emploi</span>
+                  <LogoPassEmploi
+                    className='m-auto fill-primary_darken'
+                    focusable={false}
+                    aria-hidden={true}
+                  />
+                </h2>
+                <ul className='flex flex-col items-center'>
+                  {ssoFranceTravailBRSAEstActif && (
+                    <li>
+                      <FormButton
+                        label='Connexion BRSA'
+                        className='w-64 mt-6 whitespace-nowrap'
+                        style={ButtonStyle.PRIMARY_DARK}
+                        handleSubmit={(event) =>
+                          handleSignin(event, 'pe-brsa-conseiller')
+                        }
+                      />
+                    </li>
+                  )}
 
-                {ssoPoleEmploiAIJEstActif && (
-                  <li>
-                    <FormButton
-                      label='Connexion conseiller France Travail AIJ'
-                      className='mt-6 whitespace-nowrap'
-                      style={ButtonStyle.PRIMARY_DARK}
-                      handleSubmit={(event) =>
-                        handleSignin(event, 'pe-aij-conseiller')
-                      }
-                    />
-                  </li>
-                )}
-              </ul>
-            </>
-          )}
+                  {ssoFranceTravailAIJEstActif && (
+                    <li>
+                      <FormButton
+                        label='Connexion AIJ'
+                        className='w-64 mt-6 whitespace-nowrap'
+                        style={ButtonStyle.PRIMARY_DARK}
+                        handleSubmit={(event) =>
+                          handleSignin(event, 'pe-aij-conseiller')
+                        }
+                      />
+                    </li>
+                  )}
+                </ul>
+              </>
+            )}
+          </div>
           {errorMsg && <p className='error'>{errorMsg}</p>}
         </div>
       </div>

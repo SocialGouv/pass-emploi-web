@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import RechercheOffres from 'app/(connected)/(with-sidebar)/(with-chat)/offres/RechercheOffresPage'
@@ -9,8 +10,15 @@ import renderWithContexts from 'tests/renderWithContexts'
 jest.mock('services/offres-emploi.service')
 
 describe('Page Recherche Offres', () => {
+  let container: HTMLElement
+
   beforeEach(() => {
-    renderWithContexts(<RechercheOffres />, {})
+    ;({ container } = renderWithContexts(<RechercheOffres />, {}))
+  })
+
+  it('a11y', async () => {
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 
   it('nécessite de selectionner un type d’offre', () => {

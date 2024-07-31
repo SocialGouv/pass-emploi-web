@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe } from 'jest-axe'
 import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import React from 'react'
@@ -11,6 +12,7 @@ jest.mock('next-auth/react', () => ({
 }))
 
 describe('LoginPage client side', () => {
+  let container: HTMLElement
   beforeEach(async () => {
     ;(useSearchParams as jest.Mock).mockReturnValue({
       get: (param: string) => param,
@@ -19,13 +21,18 @@ describe('LoginPage client side', () => {
 
   describe('render', () => {
     beforeEach(async () => {
-      render(
+      ;({ container } = render(
         <LoginPage
-          ssoPoleEmploiBRSAEstActif={true}
-          ssoPoleEmploiAIJEstActif={true}
+          ssoFranceTravailBRSAEstActif={true}
+          ssoFranceTravailAIJEstActif={true}
           isFromEmail={false}
         />
-      )
+      ))
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
     })
 
     it('devrait afficher deux titres de niveau 2', () => {
@@ -46,32 +53,32 @@ describe('LoginPage client side', () => {
 
     it('devrait avoir quatre boutons', () => {
       const miloButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Mission Locale',
+        name: 'Connexion Mission Locale',
       })
-      const poleEmploiCEJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail CEJ',
+      const franceTravailCEJButton = screen.getByRole('button', {
+        name: 'Connexion France Travail CEJ',
       })
-      const poleEmploiBRSAButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail BRSA',
+      const franceTravailBRSAButton = screen.getByRole('button', {
+        name: 'Connexion BRSA',
       })
-      const poleEmploiAIJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail AIJ',
+      const franceTravailAIJButton = screen.getByRole('button', {
+        name: 'Connexion AIJ',
       })
 
       const buttonsNb = screen.getAllByRole('button')
 
       //THEN
       expect(miloButton).toBeInTheDocument()
-      expect(poleEmploiCEJButton).toBeInTheDocument()
-      expect(poleEmploiBRSAButton).toBeInTheDocument()
-      expect(poleEmploiAIJButton).toBeInTheDocument()
+      expect(franceTravailCEJButton).toBeInTheDocument()
+      expect(franceTravailBRSAButton).toBeInTheDocument()
+      expect(franceTravailAIJButton).toBeInTheDocument()
       expect(buttonsNb.length).toEqual(4)
     })
 
-    it("permet de s'identifier en tant que conseiller PE CEJ", async () => {
+    it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
       // Given
       const peButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail CEJ',
+        name: 'Connexion France Travail CEJ',
       })
 
       // When
@@ -85,10 +92,10 @@ describe('LoginPage client side', () => {
       )
     })
 
-    it("permet de s'identifier en tant que conseiller PE BRSA", async () => {
+    it("permet de s'identifier en tant que conseiller FT BRSA", async () => {
       // Given
       const peBRSAButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail BRSA',
+        name: 'Connexion BRSA',
       })
 
       // When
@@ -102,10 +109,10 @@ describe('LoginPage client side', () => {
       )
     })
 
-    it("permet de s'identifier en tant que conseiller PE AIJ", async () => {
+    it("permet de s'identifier en tant que conseiller FT AIJ", async () => {
       // Given
       const peAIJButton = screen.getByRole('button', {
-        name: 'Connexion conseiller France Travail AIJ',
+        name: 'Connexion AIJ',
       })
 
       // When
@@ -122,7 +129,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller MiLo", async () => {
       // Given
       const miloButton = screen.getByRole('button', {
-        name: 'Connexion conseiller Mission Locale',
+        name: 'Connexion Mission Locale',
       })
 
       // When
@@ -146,18 +153,12 @@ describe('LoginPage client side', () => {
 
   describe("quand l'utilisateur est sur mobile", () => {
     let originalInnerWidth: PropertyDescriptor
-    beforeEach(() => {
+    beforeEach(async () => {
       originalInnerWidth = Object.getOwnPropertyDescriptor(
         window,
         'innerWidth'
       )!
-    })
 
-    afterEach(() => {
-      Object.defineProperty(window, 'innerWidth', originalInnerWidth)
-    })
-
-    it("affiche une modale d'onboarding", async () => {
       // Given
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -167,11 +168,22 @@ describe('LoginPage client side', () => {
 
       // When
       await act(async () => {
-        render(
-          <LoginPage ssoPoleEmploiBRSAEstActif={true} isFromEmail={false} />
-        )
+        ;({ container } = render(
+          <LoginPage ssoFranceTravailBRSAEstActif={true} isFromEmail={false} />
+        ))
       })
+    })
 
+    afterEach(() => {
+      Object.defineProperty(window, 'innerWidth', originalInnerWidth)
+    })
+
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it("affiche une modale d'onboarding", async () => {
       // Then
       expect(
         screen.getByRole('heading', {

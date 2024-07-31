@@ -13,8 +13,8 @@ interface MultiselectionProps {
   }[]
   typeSelection: string
   unselect: (id: string) => void
-  renderIndication?: (props: { value: string }) => JSX.Element
-  renderListeItem?: (props: { value: string }) => JSX.Element
+  renderIndication?: (props: { value: string; id: string }) => JSX.Element
+  renderListeItem?: (props: { value: string; id: string }) => JSX.Element
   disabled?: boolean
 }
 
@@ -32,7 +32,6 @@ export default function Multiselection({
     <ul
       aria-labelledby={`${id}--title`}
       id={id}
-      role='region'
       className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
       aria-live='polite'
       aria-relevant='additions removals'
@@ -43,8 +42,8 @@ export default function Multiselection({
           className='bg-white w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
           aria-atomic={true}
         >
-          {avecIndication && renderIndication({ value })}
-          {estUneListe && renderListeItem({ value })}
+          {avecIndication && renderIndication({ value, id: idItem })}
+          {estUneListe && renderListeItem({ value, id: idItem })}
           {!avecIndication && !estUneListe && value}
 
           {!disabled && (

@@ -1,12 +1,21 @@
 import { act, screen } from '@testing-library/react'
+import { axe } from 'jest-axe'
 import React from 'react'
 
 import MessageriePage from 'app/(connected)/messagerie/MessageriePage'
-import { desItemsJeunes, extractBaseJeune, unJeuneChat } from 'fixtures/jeune'
+import {
+  desItemsBeneficiaires,
+  extractBaseBeneficiaire,
+  unBeneficiaireChat,
+} from 'fixtures/beneficiaire'
 import { desListesDeDiffusion } from 'fixtures/listes-de-diffusion'
 import { desMessagesListeDeDiffusionParJour } from 'fixtures/message'
+import {
+  BaseBeneficiaire,
+  ConseillerHistorique,
+  BeneficiaireChat,
+} from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
-import { BaseJeune, ConseillerHistorique, JeuneChat } from 'interfaces/jeune'
 import { ByDay, MessageListeDiffusion } from 'interfaces/message'
 import { getConseillersDuJeuneClientSide } from 'services/jeunes.service'
 import { getListesDeDiffusionClientSide } from 'services/listes-de-diffusion.service'
@@ -21,11 +30,14 @@ jest.mock('services/messages.service')
 jest.mock('services/listes-de-diffusion.service')
 
 describe('MessageriePage client side', () => {
-  const jeunes: BaseJeune[] = desItemsJeunes().map(extractBaseJeune)
-  let jeunesChats: JeuneChat[]
+  let container: HTMLElement
+  const jeunes: BaseBeneficiaire[] = desItemsBeneficiaires().map(
+    extractBaseBeneficiaire
+  )
+  let beneficiairesChats: BeneficiaireChat[]
 
   let conseillers: ConseillerHistorique[]
-  let updateChatsRef: (chats: JeuneChat[]) => void
+  let updateChatsRef: (chats: BeneficiaireChat[]) => void
   let messages: ByDay<MessageListeDiffusion>[]
 
   beforeEach(async () => {
@@ -36,7 +48,7 @@ describe('MessageriePage client side', () => {
     ;(observeConseillerChats as jest.Mock).mockImplementation(
       (_jeune, _cle, fn) => {
         updateChatsRef = fn
-        updateChatsRef(jeunesChats)
+        updateChatsRef(beneficiairesChats)
         return Promise.resolve(() => {})
       }
     )
@@ -44,18 +56,18 @@ describe('MessageriePage client side', () => {
     ;(getListesDeDiffusionClientSide as jest.Mock).mockResolvedValue(
       desListesDeDiffusion()
     )
-    jeunesChats = [
-      unJeuneChat({
+    beneficiairesChats = [
+      unBeneficiaireChat({
         ...jeunes[0],
         chatId: `chat-${jeunes[0].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
+      unBeneficiaireChat({
         ...jeunes[1],
         chatId: `chat-${jeunes[1].id}`,
         seenByConseiller: true,
       }),
-      unJeuneChat({
+      unBeneficiaireChat({
         ...jeunes[2],
         chatId: `chat-${jeunes[2].id}`,
         seenByConseiller: false,
@@ -64,14 +76,21 @@ describe('MessageriePage client side', () => {
   })
 
   describe('tunnel de messagerie', () => {
-    it('affiche un message de bienvenue au landing sur la page', async () => {
+    beforeEach(async () => {
       //When
-      renderWithContexts(<MessageriePage />, {
+      ;({ container } = renderWithContexts(<MessageriePage />, {
         customConseiller: {
           structure: StructureConseiller.POLE_EMPLOI,
         },
-      })
+      }))
+    })
 
+    it('a11y', async () => {
+      const results = await axe(container)
+      expect(results).toHaveNoViolations()
+    })
+
+    it('affiche un message de bienvenue au landing sur la page', async () => {
       //Then
       expect(
         screen.getByText('Bienvenue dans votre espace de messagerie.')
@@ -80,20 +99,29 @@ describe('MessageriePage client side', () => {
   })
 
   describe('tunnel des listes de diffusion', () => {
-    it('conseille à l’utilisateur de sélectionner une liste de diffusion au clic sur ”voir mes listes de diffusion”', async () => {
-      //When
-      await act(async () => {
-        renderWithContexts(<MessageriePage />, {
-          customConseiller: {
-            structure: StructureConseiller.POLE_EMPLOI,
-          },
-          customShowRubriqueListeDeDiffusion: { value: true },
+    describe('conseille à l’utilisateur de sélectionner une liste de diffusion au clic sur ”voir mes listes de diffusion”', () => {
+      beforeEach(async () => {
+        //When
+        await act(async () => {
+          ;({ container } = renderWithContexts(<MessageriePage />, {
+            customConseiller: {
+              structure: StructureConseiller.POLE_EMPLOI,
+            },
+            customShowRubriqueListeDeDiffusion: { value: true },
+          }))
         })
       })
-      //Then
-      expect(
-        screen.getByText('Veuillez sélectionner une liste de diffusion.')
-      ).toBeInTheDocument()
+
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
+      it('contenu', async () => {
+        //Then
+        expect(
+          screen.getByText('Veuillez sélectionner une liste de diffusion.')
+        ).toBeInTheDocument()
+      })
     })
 
     describe('quand une liste est sélectionée', () => {
@@ -103,7 +131,7 @@ describe('MessageriePage client side', () => {
 
         //When
         await act(async () => {
-          renderWithContexts(<MessageriePage />, {
+          ;({ container } = renderWithContexts(<MessageriePage />, {
             customConseiller: {
               structure: StructureConseiller.POLE_EMPLOI,
             },
@@ -111,10 +139,14 @@ describe('MessageriePage client side', () => {
             customListeDeDiffusionSelectionnee: {
               value: listeSelectionnee,
             },
-          })
+          }))
         })
       })
 
+      it('a11y', async () => {
+        const results = await axe(container)
+        expect(results).toHaveNoViolations()
+      })
       it('affiche le lien vers la page de modification de la liste si une liste est sélectionnée', async () => {
         expect(
           screen.getByRole('link', {

@@ -3,7 +3,7 @@ import {
   Departement,
   Localite,
   Metier,
-  MotifSuppressionJeune,
+  MotifSuppressionBeneficiaire,
 } from 'interfaces/referentiel'
 
 export function uneListeDAgencesMILO() {
@@ -31,26 +31,26 @@ export function uneListeDAgencesMILO() {
   ]
 }
 
-export function uneListeDAgencesPoleEmploi() {
+export function uneListeDAgencesFranceTravail() {
   return [
     {
       id: '457',
-      nom: 'Agence Pôle emploi CLERMONT PRE LA REINE',
+      nom: 'Agence France Travail CLERMONT PRE LA REINE',
       codeDepartement: '1',
     },
     {
       id: '458',
-      nom: 'Agence Pôle emploi CLERMONT JOUHAUX',
+      nom: 'Agence France Travail CLERMONT JOUHAUX',
       codeDepartement: '2',
     },
     {
       id: '459',
-      nom: 'Agence Pôle emploi THIERS',
+      nom: 'Agence France Travail THIERS',
       codeDepartement: '3',
     },
     {
       id: '460',
-      nom: 'Agence Pôle emploi ISSOIRE',
+      nom: 'Agence France Travail ISSOIRE',
       codeDepartement: '4',
     },
   ]
@@ -195,7 +195,7 @@ export function desMetiers(): Metier[] {
   ]
 }
 
-export function desMotifsDeSuppression(): MotifSuppressionJeune[] {
+export function desMotifsDeSuppression(): MotifSuppressionBeneficiaire[] {
   return [
     {
       motif: 'Emploi durable (plus de 6 mois)',

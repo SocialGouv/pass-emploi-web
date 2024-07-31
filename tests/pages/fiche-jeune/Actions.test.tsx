@@ -15,16 +15,16 @@ import { unAgenda } from 'fixtures/agenda'
 import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
-  unDetailJeune,
+  unDetailBeneficiaire,
   uneMetadonneeFavoris,
-} from 'fixtures/jeune'
+} from 'fixtures/beneficiaire'
 import { Action, StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/jeune'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import {
-  getActionsJeuneClientSide,
+  getActionsBeneficiaireClientSide,
   qualifierActions,
 } from 'services/actions.service'
 import { recupererAgenda } from 'services/agenda.service'
@@ -70,19 +70,19 @@ describe('Actions dans la fiche jeune', () => {
   })
 
   describe("quand l'utilisateur est un conseiller France Travail", () => {
-    let offresPE: Offre[],
-      recherchesPE: Recherche[],
+    let offresFT: Offre[],
+      recherchesFT: Recherche[],
       metadonneesFavoris: MetadonneesFavoris
     beforeEach(async () => {
       metadonneesFavoris = uneMetadonneeFavoris()
-      offresPE = uneListeDOffres()
-      recherchesPE = uneListeDeRecherches()
-      await renderFicheJeunePE(
+      offresFT = uneListeDOffres()
+      recherchesFT = uneListeDeRecherches()
+      await renderFicheJeuneFT(
         StructureConseiller.POLE_EMPLOI,
         [],
         metadonneesFavoris,
-        offresPE,
-        recherchesPE
+        offresFT,
+        recherchesFT
       )
     })
     it("n'affiche pas de lien vers les actions du jeune", async () => {
@@ -135,7 +135,9 @@ describe('Actions dans la fiche jeune', () => {
       expect(() =>
         screen.getByRole('table', { name: 'Liste de mes rendez-vous' })
       ).toThrow()
-      expect(replace).toHaveBeenCalledWith('/mes-jeunes/jeune-1?onglet=actions')
+      expect(replace).toHaveBeenCalledWith(
+        '/mes-jeunes/beneficiaire-1?onglet=actions'
+      )
     })
 
     describe('permet la multi qualification', () => {
@@ -299,7 +301,10 @@ describe('Actions dans la fiche jeune', () => {
       // Then
       expect(
         screen.getByRole('link', { name: 'Créer une action' })
-      ).toHaveAttribute('href', '/mes-jeunes/jeune-1/actions/nouvelle-action')
+      ).toHaveAttribute(
+        'href',
+        '/mes-jeunes/beneficiaire-1/actions/nouvelle-action'
+      )
     })
 
     describe("quand le jeune n'a pas d'action", () => {
@@ -341,7 +346,7 @@ describe('Actions dans la fiche jeune', () => {
       let pageCourante: number
       beforeEach(async () => {
         // Given
-        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+        ;(getActionsBeneficiaireClientSide as jest.Mock).mockImplementation(
           async (_, { page }) => ({
             actions: [uneAction({ content: `Action page ${page}` })],
             metadonnees: { nombreTotal: 52, nombrePages: 6 },
@@ -365,11 +370,14 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 2,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(screen.getByText('Action page 2')).toBeInTheDocument()
       })
 
@@ -379,17 +387,23 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page précédente'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: pageCourante - 1,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: pageCourante - 1,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
 
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: pageCourante - 2,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: pageCourante - 2,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(
           screen.getByLabelText(`Page ${pageCourante - 2}`)
         ).toHaveAttribute('aria-current', 'page')
@@ -400,7 +414,7 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText(`Page ${pageCourante}`))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledTimes(0)
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledTimes(0)
       })
     })
 
@@ -408,7 +422,7 @@ describe('Actions dans la fiche jeune', () => {
       let pageCourante: number
       beforeEach(async () => {
         // Given
-        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+        ;(getActionsBeneficiaireClientSide as jest.Mock).mockImplementation(
           async () => ({
             actions: [uneAction({ content: 'Action filtrée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
@@ -434,11 +448,14 @@ describe('Actions dans la fiche jeune', () => {
 
       it('filtre les actions', () => {
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          filtres: { statuts: [StatutAction.AFaire], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 1,
+            filtres: { statuts: [StatutAction.AFaire], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
       })
 
@@ -454,11 +471,14 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          filtres: { statuts: [StatutAction.AFaire], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 2,
+            filtres: { statuts: [StatutAction.AFaire], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
       })
     })
 
@@ -466,7 +486,7 @@ describe('Actions dans la fiche jeune', () => {
       let pageCourante: number
       beforeEach(async () => {
         // Given
-        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+        ;(getActionsBeneficiaireClientSide as jest.Mock).mockImplementation(
           async () => ({
             actions: [uneAction({ content: 'Action filtrée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
@@ -492,11 +512,14 @@ describe('Actions dans la fiche jeune', () => {
 
       it('filtre les actions', () => {
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          filtres: { statuts: [], categories: ['SNP_1'] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 1,
+            filtres: { statuts: [], categories: ['SNP_1'] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(screen.getByText('Action filtrée')).toBeInTheDocument()
       })
 
@@ -512,11 +535,14 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          filtres: { statuts: [], categories: ['SNP_1'] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 2,
+            filtres: { statuts: [], categories: ['SNP_1'] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
       })
     })
 
@@ -525,7 +551,7 @@ describe('Actions dans la fiche jeune', () => {
       let headerColonneDate: HTMLButtonElement
       beforeEach(async () => {
         // Given
-        ;(getActionsJeuneClientSide as jest.Mock).mockImplementation(
+        ;(getActionsBeneficiaireClientSide as jest.Mock).mockImplementation(
           async () => ({
             actions: [uneAction({ content: 'Action triée' })],
             metadonnees: { nombreTotal: 52, nombrePages: 3 },
@@ -554,16 +580,22 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(headerColonneDate)
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_croissante',
-        })
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 1,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_decroissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 1,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_croissante',
+          }
+        )
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 1,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_decroissante',
+          }
+        )
         expect(screen.getByText('Action triée')).toBeInTheDocument()
       })
 
@@ -584,11 +616,14 @@ describe('Actions dans la fiche jeune', () => {
         await userEvent.click(screen.getByLabelText('Page 2'))
 
         // Then
-        expect(getActionsJeuneClientSide).toHaveBeenCalledWith('jeune-1', {
-          page: 2,
-          filtres: { statuts: [], categories: [] },
-          tri: 'date_echeance_croissante',
-        })
+        expect(getActionsBeneficiaireClientSide).toHaveBeenCalledWith(
+          'beneficiaire-1',
+          {
+            page: 2,
+            filtres: { statuts: [], categories: [] },
+            tri: 'date_echeance_croissante',
+          }
+        )
       })
     })
   })
@@ -612,7 +647,7 @@ async function renderFicheJeuneMILO({
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         categoriesActions={desCategories()}
         rdvs={[]}
         actionsInitiales={actionsInitiales ?? desActionsInitiales()}
@@ -626,23 +661,23 @@ async function renderFicheJeuneMILO({
   })
 }
 
-async function renderFicheJeunePE(
+async function renderFicheJeuneFT(
   structure: StructureConseiller,
   rdvs: EvenementListItem[] = [],
   metadonnees: MetadonneesFavoris,
-  offresPE: Offre[],
-  recherchesPE: Recherche[]
+  offresFT: Offre[],
+  recherchesFT: Recherche[]
 ) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailJeune()}
+        jeune={unDetailBeneficiaire()}
         categoriesActions={[]}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         metadonneesFavoris={metadonnees}
-        offresPE={offresPE}
-        recherchesPE={recherchesPE}
+        offresFT={offresFT}
+        recherchesFT={recherchesFT}
         onglet='AGENDA'
         lectureSeule={false}
       />,
