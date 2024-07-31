@@ -101,9 +101,11 @@ export function utiliseChat({
 }
 
 export function doitSignerLesCGU(conseiller: Conseiller): boolean {
-  return (
-    !conseiller.dateSignatureCGU ||
-    DateTime.fromISO(conseiller.dateSignatureCGU) <
-      DateTime.fromISO(process.env.VERSION_CGU_COURANTE!)
-  )
+  if (!conseiller.dateSignatureCGU) return false
+
+  return estPassEmploi(conseiller)
+    ? DateTime.fromISO(conseiller.dateSignatureCGU) <
+        DateTime.fromISO(process.env.VERSION_CGU_PASS_EMPLOI_COURANTE!)
+    : DateTime.fromISO(conseiller.dateSignatureCGU) <
+        DateTime.fromISO(process.env.VERSION_CGU_CEJ_COURANTE!)
 }
