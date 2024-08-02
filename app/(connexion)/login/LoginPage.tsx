@@ -73,12 +73,12 @@ function LoginPage({
       className='w-full relative flex justify-center items-center'
     >
       <div>
-        <div className='flex-1 flex flex-wrap gap-12 justify-center items-center bg-white py-6 px-8 layout_s:px-16 rounded-l drop-shadow-lg layout_l:py-24'>
+        <div className='flex-1 flex flex-wrap gap-12 justify-center items-center bg-white py-6 px-8 layout_s:px-16 rounded-l drop-shadow-lg layout_l:py-22'>
           <div className='flex-1 flex-col justify-items-center'>
             <h2>
               <span className='sr-only'>Contrat d’engagement jeune</span>
               <LogoCEJ
-                className='m-auto h-[64px] w-[120px] fill-primary_darken'
+                className='m-auto h-[88px] w-[162px] fill-primary_darken'
                 focusable={false}
                 aria-hidden={true}
               />
