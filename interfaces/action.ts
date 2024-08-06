@@ -41,6 +41,7 @@ export interface QualificationAction {
 export interface CompteurActionsPeriode {
   idBeneficiaire: string
   actions: number
+  rdvs: number
 }
 
 export enum StatutAction {

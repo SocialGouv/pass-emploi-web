@@ -7,7 +7,7 @@ import {
   ConseillerHistorique,
   DetailBeneficiaire,
   IndicateursSemaine,
-  BeneficiaireAvecNbActionsNonTerminees,
+  BeneficiaireAvecCompteursActionsRdvs,
   BeneficiaireChat,
   BeneficiaireFromListe,
   MetadonneesFavoris,
@@ -189,17 +189,18 @@ export const desItemsBeneficiairesJson = (): ItemBeneficiaireJson[] => [
 ]
 
 export const unBeneficiaireAvecActionsNonTerminees = (
-  overrides: Partial<BeneficiaireAvecNbActionsNonTerminees> = {}
-): BeneficiaireAvecNbActionsNonTerminees => {
-  const defaults: BeneficiaireAvecNbActionsNonTerminees = {
+  overrides: Partial<BeneficiaireAvecCompteursActionsRdvs> = {}
+): BeneficiaireAvecCompteursActionsRdvs => {
+  const defaults: BeneficiaireAvecCompteursActionsRdvs = {
     ...unItemBeneficiaire(),
     nbActionsNonTerminees: 5,
+    rdvs: 2,
   }
   return { ...defaults, ...overrides }
 }
 
 export const desBeneficiairesAvecActionsNonTerminees =
-  (): BeneficiaireAvecNbActionsNonTerminees[] => [
+  (): BeneficiaireAvecCompteursActionsRdvs[] => [
     unBeneficiaireAvecActionsNonTerminees(),
     unBeneficiaireAvecActionsNonTerminees({
       id: 'beneficiaire-2',
