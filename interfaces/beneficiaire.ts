@@ -76,12 +76,13 @@ export interface MetadonneesFavoris {
   }
 }
 
-export type BeneficiaireAvecNbActionsNonTerminees = BeneficiaireFromListe & {
+export type BeneficiaireAvecCompteursActionsRdvs = BeneficiaireFromListe & {
   nbActionsNonTerminees: number
+  rdvs: number
 }
 
 export type BeneficiaireAvecInfosComplementaires =
-  BeneficiaireAvecNbActionsNonTerminees & {
+  BeneficiaireAvecCompteursActionsRdvs & {
     messagesNonLus: number
   }
 

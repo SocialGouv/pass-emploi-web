@@ -14,7 +14,7 @@ import {
 import { unConseiller } from 'fixtures/conseiller'
 import {
   CategorieSituation,
-  BeneficiaireAvecNbActionsNonTerminees,
+  BeneficiaireAvecCompteursActionsRdvs,
 } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -197,8 +197,8 @@ describe('PortefeuillePage client side', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
-    let jeune: BeneficiaireAvecNbActionsNonTerminees
-    let beneficiaireAvecStructureDifferente: BeneficiaireAvecNbActionsNonTerminees
+    let jeune: BeneficiaireAvecCompteursActionsRdvs
+    let beneficiaireAvecStructureDifferente: BeneficiaireAvecCompteursActionsRdvs
     jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO('2024-01-01'))
 
     beforeEach(async () => {
@@ -257,10 +257,17 @@ describe('PortefeuillePage client side', () => {
       ).toBeInTheDocument()
     })
 
-    it("affiche la colonne nombre d'actions des jeunes", () => {
+    it("affiche la colonne nombre d'actions des bénéficiaires", () => {
       // Then
       expect(
         screen.getByRole('columnheader', { name: /Actions/ })
+      ).toBeInTheDocument()
+    })
+
+    it('affiche la colonne nombre de rendez-vous des bénéficiaires', () => {
+      // Then
+      expect(
+        screen.getByRole('columnheader', { name: /Rendez-vous/ })
       ).toBeInTheDocument()
     })
 

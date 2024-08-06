@@ -16,7 +16,7 @@ import {
   ActionFormData,
   ActionJson,
   ActionPilotageJson,
-  CompteurActionsJson,
+  CompteursPortefeuilleJson,
   actionStatusToFiltre,
   actionStatusToJson,
   CODE_QUALIFICATION_NON_SNP,
@@ -60,7 +60,7 @@ export async function getAction(
   }
 }
 
-export async function countActionsJeunes(
+export async function recupereCompteursBeneficiairesPortefeuilleMilo(
   idConseiller: string,
   dateDebut: DateTime,
   dateFin: DateTime,
@@ -69,14 +69,18 @@ export async function countActionsJeunes(
   const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
   const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
 
-  const { content: counts } = await apiGet<CompteurActionsJson[]>(
+  const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
     `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
     accessToken
   )
-  return counts.map(({ idBeneficiaire, actions }) => ({
-    idBeneficiaire,
-    actions,
-  }))
+
+  return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
+    return {
+      idBeneficiaire,
+      actions,
+      rdvs: Number(rdvs) + Number(sessions),
+    }
+  })
 }
 
 export async function getActionsBeneficiaireClientSide(

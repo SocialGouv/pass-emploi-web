@@ -52,9 +52,11 @@ export interface MetadonneesActionsJson {
   nombreActionsParPage: number
 }
 
-export interface CompteurActionsJson {
+export interface CompteursPortefeuilleJson {
   idBeneficiaire: string
   actions: number
+  rdvs: number
+  sessions: number
 }
 
 export interface CommentaireJson {
