@@ -176,7 +176,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
       aria-labelledby='modal-title'
       className={styles.modalOverlay}
     >
-      {modalTemplate}
+      <div className={styles.modalContent}>{modalTemplate}</div>
     </div>
   )
 
