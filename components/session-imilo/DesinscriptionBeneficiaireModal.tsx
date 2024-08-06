@@ -92,7 +92,7 @@ export default function DesinscriptionBeneficiaireModal({
       ref={modalRef}
     >
       <form onSubmit={validateFormulaire}>
-        <div className='mt-14 flex flex-col justify-center'>
+        <div className='mt-10 flex flex-col justify-center'>
           <div className='flex flex-col gap-2 mb-4'>
             {typeRefus.error && (
               <InputError id={'select-beneficiaires--error'} className='my-2'>
