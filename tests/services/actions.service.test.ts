@@ -15,7 +15,7 @@ import {
 import { QualificationAction, StatutAction } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
 import {
-  countActionsJeunes,
+  recupereCompteursBeneficiairesPortefeuilleMilo,
   creerAction,
   deleteAction,
   getAction,
@@ -712,7 +712,7 @@ describe('ActionsApiService', () => {
     })
   })
 
-  describe('.countActionsJeunes', () => {
+  describe('.recupereCompteursBeneficiairesPortefeuilleMilo', () => {
     it('retourne la liste des compteurs d’actions', async () => {
       jest
         .spyOn(DateTime, 'now')
@@ -722,7 +722,12 @@ describe('ActionsApiService', () => {
       const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
       const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
       const compteursActions = [
-        { idBeneficiaire: 'id-beneficiaire', actions: '3' },
+        {
+          idBeneficiaire: 'id-beneficiaire',
+          actions: 3,
+          rdvs: 2,
+          sessions: 4,
+        },
       ]
 
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -730,7 +735,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const result = await countActionsJeunes(
+      const result = await recupereCompteursBeneficiairesPortefeuilleMilo(
         'id-conseiller',
         dateDebut,
         dateFin,
@@ -742,7 +747,13 @@ describe('ActionsApiService', () => {
         `/conseillers/milo/id-conseiller/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
         'accessToken'
       )
-      expect(result).toEqual(compteursActions)
+      expect(result).toEqual([
+        {
+          idBeneficiaire: 'id-beneficiaire',
+          actions: 3,
+          rdvs: 6,
+        },
+      ])
     })
   })
 })

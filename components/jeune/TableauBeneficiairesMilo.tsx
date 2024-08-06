@@ -173,7 +173,7 @@ export default function TableauBeneficiairesMilo({
                   >
                     {rdvColumn}
                   </span>
-                  <div className='mx-auto text-m-bold'>12</div>
+                  <div className='mx-auto text-m-bold'>{beneficiaire.rdvs}</div>
                 </TD>
 
                 <TD>

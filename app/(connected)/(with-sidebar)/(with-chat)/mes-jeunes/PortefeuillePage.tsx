@@ -17,7 +17,7 @@ import IllustrationComponent, {
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import {
   BeneficiaireAvecInfosComplementaires,
-  BeneficiaireAvecNbActionsNonTerminees,
+  BeneficiaireAvecCompteursActionsRdvs,
 } from 'interfaces/beneficiaire'
 import { estMilo, utiliseChat } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -36,7 +36,7 @@ const TutorielAjoutBeneficiaireFranceTravail = dynamic(
 )
 
 type PortefeuilleProps = {
-  conseillerJeunes: BeneficiaireAvecNbActionsNonTerminees[]
+  conseillerJeunes: BeneficiaireAvecCompteursActionsRdvs[]
   isFromEmail: boolean
 }
 
