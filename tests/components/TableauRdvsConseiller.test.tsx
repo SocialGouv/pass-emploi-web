@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
-import { buildAgendaData } from 'components/AgendaRows'
+import { buildAgendaData } from 'components/rdv/AgendaRows'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'

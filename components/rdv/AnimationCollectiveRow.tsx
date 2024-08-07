@@ -1,9 +1,11 @@
 import React, { ReactElement, useState } from 'react'
 
+import IconToggle from 'components/ui/Form/IconToggle'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import {
   AnimationCollective,
@@ -30,7 +32,7 @@ export function AnimationCollectiveRow(
     else return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
   }
 
-  async function handleChangerVisibiliteSession() {
+  async function permuterVisibiliteSession() {
     setLoadingChangerVisibilite(true)
 
     const { changerVisibiliteSession } = await import(
@@ -52,12 +54,7 @@ export function AnimationCollectiveRow(
   }
 
   return (
-    <TR
-      key={animationCollective.id}
-      href={getHref(animationCollective)}
-      linkLabel={labelLien(animationCollective)}
-      rowLabel={`Consulter ${animationCollective.type} ${animationCollective.titre}`}
-    >
+    <TR key={animationCollective.id}>
       <TD>
         {toFrenchTime(animationCollective.date)} - {animationCollective.duree}{' '}
         min
@@ -69,31 +66,22 @@ export function AnimationCollectiveRow(
         </span>
       </TD>
       <TD>{tagType(animationCollective)}</TD>
-      <TD className='flex justify-center items-center'>
+      <TD>
         {animationCollective.isSession && (
           <>
             {loadingChangerVisibilite && <SpinningLoader className='w-6 h-6' />}
 
             {!loadingChangerVisibilite && (
-              <button
-                type='button'
-                onClick={handleChangerVisibiliteSession}
-                className='flex text-s-medium text-primary_darken hover:text-primary items-center justify-center'
-              >
-                <IconComponent
-                  aria-label={estCache ? 'Non visible' : 'Visible'}
-                  className='inline m-auto h-6 w-6 fill-primary cursor-pointer'
-                  focusable={false}
-                  name={
-                    estCache ? IconName.VisibilityOff : IconName.VisibilityOn
-                  }
-                  role='img'
-                  title={estCache ? 'Non visible' : 'Visible'}
-                />
-                <span className='sr-only'>
-                  Rendre {estCache ? 'non visible' : 'visible'} l’évènement.
-                </span>
-              </button>
+              <IconToggle
+                id={`${animationCollective.id}--visibilite`}
+                checked={!estCache}
+                checkedIconName={IconName.VisibilityOn}
+                uncheckedIconName={IconName.VisibilityOff}
+                actionLabel='Rendre visible l’événement'
+                oppositeActionLabel='Cacher l’événement'
+                onToggle={permuterVisibiliteSession}
+                className='block relative z-20 m-auto h-6 w-6 fill-primary hover:fill-primary_darken'
+              />
             )}
           </>
         )}
@@ -117,6 +105,10 @@ export function AnimationCollectiveRow(
           </>
         )}
       </TD>
+      <TDLink
+        href={getHref(animationCollective)}
+        label={labelLien(animationCollective)}
+      />
     </TR>
   )
 }
@@ -168,11 +160,6 @@ function statusProps({ type, statut }: AnimationCollective): {
       return {
         label: type === 'Atelier' ? 'Clos' : 'Close',
         color: 'accent_2',
-      }
-    case undefined:
-      return {
-        label: '',
-        color: '',
       }
   }
 }

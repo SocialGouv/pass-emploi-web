@@ -70,9 +70,7 @@ describe('ProfilPage client side', () => {
 
       // Then
       expect(toggleNotifications).toBeInTheDocument()
-      expect(toggleNotifications.checked).toEqual(
-        conseiller.notificationsSonores
-      )
+      expect(toggleNotifications).not.toBeChecked()
     })
 
     it('affiche un bouton pour supprimer le compte', () =>
@@ -500,7 +498,7 @@ describe('ProfilPage client side', () => {
 })
 
 function getToggleNotifications() {
-  return screen.getByRole<HTMLInputElement>('checkbox', {
-    name: /notifications sonores/,
+  return screen.getByRole<HTMLInputElement>('switch', {
+    name: 'Recevoir des notifications sonores pour la réception de nouveaux messages',
   })
 }

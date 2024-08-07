@@ -5,31 +5,47 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 export default function HeaderChat({
   labelRetour,
   onBack,
-  onClickBookMark,
+  onPermuterBookMark,
   isFlaggedByConseiller,
-  onClickRecherche,
+  onLancerRecherche,
   titre,
-  permuterVisibiliteMessagerie,
+  onPermuterVisibiliteMessagerie,
   messagerieEstVisible,
 }: {
   onBack: () => void
   labelRetour: string
   messagerieEstVisible: boolean
-  permuterVisibiliteMessagerie: () => void
   afficherBlurBtn?: boolean
   titre: string | ReactElement
   isFlaggedByConseiller?: boolean
-  onClickBookMark?: () => void
-  onClickRecherche?: () => void
+  onPermuterVisibiliteMessagerie: () => void
+  onPermuterBookMark?: () => void
+  onLancerRecherche?: () => void
 }) {
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
     useState<boolean>(false)
+
   function permuterMenuActionsMessagerie() {
     setAfficherMenuActionsMessagerie(!afficherMenuActionsMessagerie)
   }
 
-  const toto =
-    onClickBookMark &&
+  function permuterVisibiliteMessagerie() {
+    setAfficherMenuActionsMessagerie(false)
+    onPermuterVisibiliteMessagerie()
+  }
+
+  function rechercherMessage() {
+    setAfficherMenuActionsMessagerie(false)
+    onLancerRecherche!()
+  }
+
+  function permuterFlag() {
+    setAfficherMenuActionsMessagerie(false)
+    onPermuterBookMark!()
+  }
+
+  const flag =
+    onPermuterBookMark &&
     (isFlaggedByConseiller
       ? { label: 'Ne plus suivre la conversation', icon: IconName.BookmarkFill }
       : { label: 'Suivre la conversation', icon: IconName.BookmarkOutline })
@@ -51,11 +67,10 @@ export default function HeaderChat({
           />
           <span className='text-s-regular text-content underline'>Retour</span>
         </button>
-        <div
-          onClick={permuterMenuActionsMessagerie}
-          className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
-        >
+
+        <div className='relative flex items-center gap-2 justify-end text-xs-medium text-content'>
           <button
+            onClick={permuterMenuActionsMessagerie}
             type='button'
             className='bg-primary rounded-full fill-white hover:shadow-base'
             title={`${afficherMenuActionsMessagerie ? 'Cacher les' : 'Accéder aux'} actions de votre messagerie`}
@@ -93,10 +108,10 @@ export default function HeaderChat({
                   : 'Rendre visible la messagerie'}
               </button>
 
-              {onClickRecherche && (
+              {onLancerRecherche && (
                 <button
                   className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
-                  onClick={onClickRecherche}
+                  onClick={rechercherMessage}
                 >
                   <IconComponent
                     name={IconName.Search}
@@ -108,25 +123,26 @@ export default function HeaderChat({
                 </button>
               )}
 
-              {onClickBookMark && (
+              {onPermuterBookMark && (
                 <button
                   className='p-2 flex items-center text-nowrap text-s-bold gap-2 hover:text-primary hover:fill-primary'
-                  onClick={onClickBookMark}
+                  onClick={permuterFlag}
                 >
                   <IconComponent
-                    name={toto!.icon}
-                    title={toto!.label}
+                    name={flag!.icon}
+                    title={flag!.label}
                     className='inline w-6 h-6 fill-[current-color]'
                     focusable={false}
                     aria-hidden={true}
                   />
-                  {toto!.label}
+                  {flag!.label}
                 </button>
               )}
             </div>
           )}
         </div>
       </div>
+
       <div className='flex'>
         <h2 className='w-full text-left text-primary text-m-bold ml-2'>
           {titre}

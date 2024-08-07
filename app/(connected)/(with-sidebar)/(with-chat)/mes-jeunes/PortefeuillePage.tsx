@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
-import TableauJeunes from 'components/jeune/TableauJeunes'
+import TableauBeneficiaires from 'components/jeune/TableauBeneficiaires'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -17,9 +17,9 @@ import IllustrationComponent, {
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import {
   BeneficiaireAvecInfosComplementaires,
-  BeneficiaireAvecNbActionsNonTerminees,
+  BeneficiaireAvecCompteursActionsRdvs,
 } from 'interfaces/beneficiaire'
-import { estMilo, estFranceTravail } from 'interfaces/conseiller'
+import { estMilo, utiliseChat } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { countMessagesNotRead } from 'services/messages.service'
 import { useAlerte } from 'utils/alerteContext'
@@ -36,7 +36,7 @@ const TutorielAjoutBeneficiaireFranceTravail = dynamic(
 )
 
 type PortefeuilleProps = {
-  conseillerJeunes: BeneficiaireAvecNbActionsNonTerminees[]
+  conseillerJeunes: BeneficiaireAvecCompteursActionsRdvs[]
   isFromEmail: boolean
 }
 
@@ -124,7 +124,7 @@ function PortefeuillePage({
     )
 
     let promiseMessagesNotRead: Promise<{ [idJeune: string]: number }>
-    if (!chatCredentials) {
+    if (!chatCredentials || !utiliseChat(conseiller)) {
       promiseMessagesNotRead = Promise.resolve(mapSansMessage)
     } else {
       promiseMessagesNotRead = countMessagesNotRead(
@@ -208,10 +208,9 @@ function PortefeuillePage({
           {!jeunesFiltres && <SpinningLoader />}
 
           {jeunesFiltres && (
-            <TableauJeunes
-              jeunesFiltres={jeunesFiltres}
-              totalJeunes={conseillerJeunes.length}
-              withActions={!estFranceTravail(conseiller)}
+            <TableauBeneficiaires
+              beneficiairesFiltres={jeunesFiltres}
+              total={conseillerJeunes.length}
             />
           )}
         </>

@@ -407,14 +407,12 @@ export function EditionActionForm({
             <div className='mb-7 flex flex-wrap'>
               <RadioBox
                 isSelected={statut === StatutAction.AFaire}
-                id='statut-action--arealiser'
                 label='À faire'
                 name='statut-action'
                 onChange={() => modifierStatut(StatutAction.AFaire)}
               />
               <RadioBox
                 isSelected={statut === StatutAction.Terminee}
-                id='statut-action--terminee'
                 label='Terminée'
                 name='statut-action'
                 onChange={() => modifierStatut(StatutAction.Terminee)}

@@ -1,6 +1,8 @@
 import { screen } from '@testing-library/dom'
-import { within } from '@testing-library/react'
+import { act, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AxeResults } from 'axe-core'
+import { axe } from 'jest-axe'
 import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -16,9 +18,9 @@ describe('<Sidebar/>', () => {
     ;(useRouter as jest.Mock).mockReturnValue({ push: routerPush })
   })
 
-  it('affiche les liens de la barre de navigation', () => {
+  it('affiche les liens de la barre de navigation', async () => {
     // WHEN
-    renderSidebar({ structure: StructureConseiller.MILO })
+    await renderSidebar({ structure: StructureConseiller.MILO })
 
     // THEN
     const navigation = screen.getByRole('navigation')
@@ -48,7 +50,7 @@ describe('<Sidebar/>', () => {
 
   it('permet la deconnexion', async () => {
     // When
-    renderSidebar()
+    await renderSidebar()
     await userEvent.click(screen.getByRole('button', { name: 'Déconnexion' }))
 
     // Then
@@ -57,7 +59,7 @@ describe('<Sidebar/>', () => {
 
   it('afficher le lien vers la réaffectation quand le conseiller est superviseur', async () => {
     // When
-    renderSidebar({ estSuperviseur: true })
+    await renderSidebar({ estSuperviseur: true })
 
     // Then
     const navigation = screen.getByRole('navigation')
@@ -68,7 +70,7 @@ describe('<Sidebar/>', () => {
 
   it('affiche un badge si le conseiller n’a pas d’adresse e-mail', async () => {
     //WHEN
-    renderSidebar({ email: undefined })
+    await renderSidebar({ email: undefined })
 
     //THEN
     expect(
@@ -76,41 +78,41 @@ describe('<Sidebar/>', () => {
     ).toBeInTheDocument()
   })
 
-  it("n'affiche pas le lien de l’agenda lorsque le conseiller est France Travail", () => {
+  it("n'affiche pas le lien de l’agenda lorsque le conseiller est France Travail", async () => {
     // WHEN
-    renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+    await renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
     // THEN
     expect(() => screen.getByText('Agenda')).toThrow()
   })
 
-  it("n'affiche pas le lien de rendez-vous lorsque le conseiller est France Travail", () => {
+  it("n'affiche pas le lien de rendez-vous lorsque le conseiller est France Travail", async () => {
     // WHEN
-    renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+    await renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
     // THEN
     expect(() => screen.getByText('Pilotage')).toThrow()
   })
 
-  it("n'affiche pas le lien de Mission Locale lorsque le conseiller est France Travail", () => {
+  it("n'affiche pas le lien de Mission Locale lorsque le conseiller est France Travail", async () => {
     // WHEN
-    renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+    await renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
     // THEN
     expect(() => screen.getByText('Mission Locale')).toThrow()
   })
 
-  it("n'affiche pas le lien de Messagerie lorsque le conseiller est MILO", () => {
+  it("n'affiche pas le lien de Messagerie lorsque le conseiller est MILO", async () => {
     // WHEN
-    renderSidebar({ structure: StructureConseiller.MILO })
+    await renderSidebar({ structure: StructureConseiller.MILO })
 
     // THEN
     expect(() => screen.getByText('Messagerie')).toThrow()
   })
 
-  it('affiche le lien de Messagerie lorsque le conseiller n’est pas MILO (PE, BRSA, Pass emploi)', () => {
+  it('affiche le lien de Messagerie lorsque le conseiller n’est pas MILO (PE, BRSA, Pass emploi)', async () => {
     // WHEN
-    renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
+    await renderSidebar({ structure: StructureConseiller.POLE_EMPLOI })
 
     // THEN
     const navigation = screen.getByRole('navigation')
@@ -120,6 +122,15 @@ describe('<Sidebar/>', () => {
   })
 })
 
-function renderSidebar(conseiller?: Partial<Conseiller>) {
-  return renderWithContexts(<Sidebar />, { customConseiller: conseiller })
+async function renderSidebar(conseiller?: Partial<Conseiller>) {
+  let container: HTMLElement
+  ;({ container } = renderWithContexts(<Sidebar />, {
+    customConseiller: conseiller,
+  }))
+
+  let results: AxeResults
+  await act(async () => {
+    results = await axe(container)
+  })
+  expect(results).toHaveNoViolations()
 }

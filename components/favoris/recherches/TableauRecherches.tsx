@@ -5,9 +5,7 @@ import RechercheRow from 'components/favoris/recherches/RechercheRow'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { Recherche } from 'interfaces/favoris'
 
@@ -35,19 +33,19 @@ export default function TableauRecherches({
 
       {recherches.length > 0 && (
         <Table caption={{ text: 'Liste des recherches sauvegardées' }}>
-          <THead>
+          <thead>
             <TR isHeader={true}>
               <TH>Nom de la recherche</TH>
               <TH>Mot clé/métier</TH>
               <TH>Lieu/localisation</TH>
               <TH>Type</TH>
             </TR>
-          </THead>
-          <TBody>
+          </thead>
+          <tbody>
             {recherches.map((recherche) => (
               <RechercheRow key={recherche.id} recherche={recherche} />
             ))}
-          </TBody>
+          </tbody>
         </Table>
       )}
     </>

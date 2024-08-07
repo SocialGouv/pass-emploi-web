@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -12,6 +12,7 @@ import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { deleteAction, modifierAction } from 'services/actions.service'
+import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
@@ -68,11 +69,23 @@ describe('ActionPage client side', () => {
       expect(results).toHaveNoViolations()
     })
 
-    it("affiche les information d'une action", () => {
-      expect(screen.getByText(action.comment)).toBeInTheDocument()
-      expect(screen.getByText('15/02/2022')).toBeInTheDocument()
-      expect(screen.getByText('16/02/2022')).toBeInTheDocument()
-      expect(screen.getByText(action.creator)).toBeInTheDocument()
+    it("affiche les information d'une action", async () => {
+      expect(getByDescriptionTerm('Description :')).toHaveTextContent(
+        action.comment
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Voir l’historique' })
+      )
+      expect(getByDescriptionTerm('Date de création :')).toHaveTextContent(
+        '15/02/2022'
+      )
+      expect(getByDescriptionTerm('Date d’actualisation :')).toHaveTextContent(
+        '16/02/2022'
+      )
+      expect(getByDescriptionTerm("Créateur de l'action :")).toHaveTextContent(
+        action.creator
+      )
     })
 
     describe('Au clique sur un statut', () => {

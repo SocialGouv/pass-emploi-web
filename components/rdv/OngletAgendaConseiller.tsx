@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 
-import { AgendaData, buildAgendaData } from 'components/AgendaRows'
 import EmptyState from 'components/EmptyState'
+import { AgendaData, buildAgendaData } from 'components/rdv/AgendaRows'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'

@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react'
 import { notFound, redirect } from 'next/navigation'
-import React from 'react'
 
 import ClotureSessionPage from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/cloture/ClotureSessionPage'
 import ClotureSession from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/cloture/page'

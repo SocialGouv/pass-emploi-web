@@ -213,6 +213,16 @@ function FooterMessage({
     setAfficherMenuEdition(!afficherMenuEdition)
   }
 
+  function supprimerMessage() {
+    setAfficherMenuEdition(false)
+    onSuppression()
+  }
+
+  function modifierMessage() {
+    setAfficherMenuEdition(false)
+    onModification()
+  }
+
   function scrollToRef(element: HTMLElement | null) {
     if (element)
       element?.scrollIntoView({
@@ -223,39 +233,50 @@ function FooterMessage({
   }
 
   return (
-    <div
-      onClick={permuterMenuEdition}
-      className='relative flex items-center gap-2 justify-end text-xs-medium text-content'
-    >
+    <div className='relative'>
       <button
         type='button'
-        className={
-          afficherMenuEdition
-            ? 'bg-primary rounded-full fill-white'
-            : 'fill-grey_800 hover:rounded-full hover:shadow-m'
-        }
+        onClick={permuterMenuEdition}
         title={`${afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour votre message du ${toFrenchDateTime(creationDate)}`}
+        aria-label={`
+          ${afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour
+          votre message du ${toFrenchDateTime(creationDate, { a11y: true })}
+        `}
+        className='flex items-center gap-2 ml-auto text-xs-medium text-content'
       >
-        <IconComponent
-          focusable={false}
-          aria-hidden={true}
-          className='inline w-4 h-4 m-1'
-          name={IconName.More}
-        />
-        <span className='sr-only'>
-          {afficherMenuEdition ? 'Cacher' : 'Voir'} les actions possibles pour
-          votre message du {toFrenchDateTime(creationDate, { a11y: true })}
+        <div
+          className={
+            afficherMenuEdition
+              ? 'bg-primary rounded-full fill-white'
+              : 'fill-grey_800 hover:rounded-full hover:shadow-m'
+          }
+        >
+          <IconComponent
+            focusable={false}
+            aria-hidden={true}
+            className='inline w-4 h-4 m-1'
+            name={IconName.More}
+          />
+        </div>
+
+        <span>
+          <span className='sr-only'>Envoyé à </span>
+          <span aria-label={toFrenchTime(creationDate, { a11y: true })}>
+            {toFrenchTime(creationDate)}
+          </span>
+          {estModifie && ' · Modifié'}
+          {!estModifie && (!isSeenByJeune ? ' · Envoyé' : ' · Lu')}
         </span>
       </button>
 
       {afficherMenuEdition && (
         <div
-          className='absolute top-[2em] z-10 bg-white rounded-base p-2 shadow-m'
+          className='absolute top-[2em] right-0 z-10 bg-white rounded-base p-2 shadow-m'
           ref={scrollToRef}
         >
           <button
             type='button'
-            onClick={() => onModification()}
+            onClick={modifierMessage}
             className='p-2 flex items-center text-s-bold gap-2 hover:text-primary hover:rounded-base hover:bg-primary_lighten hover:shadow-m'
           >
             <IconComponent
@@ -268,7 +289,7 @@ function FooterMessage({
           </button>
           <button
             type='button'
-            onClick={() => onSuppression()}
+            onClick={supprimerMessage}
             className='p-2 flex items-center text-warning text-s-bold gap-2 hover:rounded-base hover:bg-warning hover:text-white hover:shadow-m'
           >
             <IconComponent
@@ -281,15 +302,6 @@ function FooterMessage({
           </button>
         </div>
       )}
-
-      <span>
-        <span className='sr-only'>Envoyé à </span>
-        <span aria-label={toFrenchTime(creationDate, { a11y: true })}>
-          {toFrenchTime(creationDate)}
-        </span>
-        {estModifie && ' · Modifié'}
-        {!estModifie && (!isSeenByJeune ? ' · Envoyé' : ' · Lu')}
-      </span>
     </div>
   )
 }

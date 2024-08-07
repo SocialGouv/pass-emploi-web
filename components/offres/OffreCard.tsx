@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import React, { ReactNode } from 'react'
 
 import LienPartageOffre from 'components/offres/LienPartageOffre'
@@ -19,39 +18,30 @@ export default function OffreCard({
   children,
   withPartage = false,
 }: OffreCardProps) {
-  const router = useRouter()
   const hrefDetail = '/offres/' + offrePath
 
-  function goToDetail() {
-    router.push(hrefDetail)
-  }
-
   return (
-    <div className='relative'>
-      <div
-        tabIndex={0}
-        className='block rounded-base shadow-base p-6 cursor-pointer hover:bg-primary_lighten'
-        onClick={goToDetail}
-      >
-        {children}
+    // a11y card : https://kittygiraudel.com/2022/04/02/accessible-cards/
+    // absolute position in grandparent : https://stackoverflow.com/a/25768682
+    <div className='relative block rounded-base shadow-base p-6 cursor-pointer hover:bg-primary_lighten rotate-0'>
+      {children}
 
-        <Link
-          href={hrefDetail}
-          className='absolute right-6 bottom-6 flex items-center text-s-regular underline hover:text-primary'
-          onClick={(e) => e.stopPropagation()}
-        >
-          Voir le détail <span className='sr-only'>de l’offre {titreLien}</span>
-          <IconComponent
-            name={IconName.ChevronRight}
-            className='w-4 h-4 mr-2 fill-primary'
-            focusable={false}
-            aria-hidden={true}
-          />
-        </Link>
-      </div>
+      <Link
+        href={hrefDetail}
+        className='absolute right-6 bottom-6 flex items-center text-s-regular underline hover:text-primary before:fixed before:inset-0 before:z-10'
+        onClick={(e) => e.stopPropagation()}
+      >
+        Voir le détail <span className='sr-only'>de l’offre {titreLien}</span>
+        <IconComponent
+          name={IconName.ChevronRight}
+          className='w-4 h-4 mr-2 fill-primary'
+          focusable={false}
+          aria-hidden={true}
+        />
+      </Link>
 
       {withPartage && (
-        <div className='absolute top-6 right-6'>
+        <div className='absolute top-6 right-6 z-20'>
           <LienPartageOffre
             titreOffre={titreLien}
             href={`${hrefDetail}/partage`}

@@ -7,9 +7,8 @@ import DisplayMessageConseiller from 'components/chat/DisplayMessageConseiller'
 import { unConseiller } from 'fixtures/conseiller'
 import { unMessage } from 'fixtures/message'
 import { StructureConseiller } from 'interfaces/conseiller'
-import renderWithContexts from 'tests/renderWithContexts'
-import DisplayMessageBeneficiaire from 'components/chat/DisplayMessageBeneficiaire'
 import { TypeMessage } from 'interfaces/message'
+import renderWithContexts from 'tests/renderWithContexts'
 
 describe('<DiplayMessageConseiller />', () => {
   const nomConseiller = 'johnny boi'
@@ -40,6 +39,7 @@ describe('<DiplayMessageConseiller />', () => {
             isConseillerCourant={message.conseillerId === customConseiller.id}
             onSuppression={supprimerMessage}
             onModification={modifierMessage}
+            isEnCoursDeModification={false}
           />
         )
       })
@@ -101,6 +101,7 @@ describe('<DiplayMessageConseiller />', () => {
           isConseillerCourant={true}
           onSuppression={async () => {}}
           onModification={() => {}}
+          isEnCoursDeModification={false}
         />
       )
     })
@@ -126,6 +127,7 @@ describe('<DiplayMessageConseiller />', () => {
           isConseillerCourant={true}
           onSuppression={async () => {}}
           onModification={() => {}}
+          isEnCoursDeModification={false}
         />
       )
     })
@@ -151,10 +153,10 @@ describe('<DiplayMessageConseiller />', () => {
             message={messageRecherche}
             conseillerNomComplet={nomConseiller}
             isConseillerCourant={message.conseillerId === customConseiller.id}
-            onSuppression={supprimerMessage}
-            onModification={modifierMessage}
-            isEnCoursDeModification={false}
+            estResultatDeRecherche={true}
             highlight={{ match: [0, 4], key: 'content' }}
+            isEnCoursDeModification={false}
+            onAllerAuMessage={() => {}}
           />
         )
       })
@@ -189,10 +191,10 @@ describe('<DiplayMessageConseiller />', () => {
             message={messageRecherche}
             conseillerNomComplet={nomConseiller}
             isConseillerCourant={message.conseillerId === customConseiller.id}
-            onSuppression={supprimerMessage}
-            onModification={modifierMessage}
             isEnCoursDeModification={false}
             highlight={{ match: [0, 3], key: 'piecesJointes.nom' }}
+            estResultatDeRecherche={true}
+            onAllerAuMessage={() => {}}
           />
         )
       })

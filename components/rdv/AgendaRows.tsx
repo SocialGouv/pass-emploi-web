@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon'
-import React, { Fragment } from 'react'
+import React, { Fragment, ReactNode } from 'react'
 
-import { Intercalaire } from 'components/ui/Table/Intercalaire'
+import TD from 'components/ui/Table/TD'
+import TR from 'components/ui/Table/TR'
 import {
   AUJOURDHUI_LABEL,
   formatJourIfToday,
@@ -11,6 +12,7 @@ import {
 
 export const PLAGE_HORAIRE_MATIN = 'Matin'
 export const PLAGE_HORAIRE_APRES_MIDI = 'Après-midi'
+export const NOMBRE_COLONNES = 6
 
 type DataJour<T> = { matin: T[]; apresMidi: T[] }
 export type AgendaData<T extends { id: string }> = Map<
@@ -45,7 +47,7 @@ export function AgendaRows<T extends { id: string }>({
           {!dataJour && (
             <>
               <IntercalaireDate jour={jour} index={index} />
-              <IntercalaireFiller jour={jour} />
+              <IntercalaireFiller />
             </>
           )}
 
@@ -87,6 +89,7 @@ function IntercalaireDate({ jour, index }: { jour: string; index: number }) {
   return (
     <Intercalaire
       key={'intercalaire-' + jour}
+      colspan={NOMBRE_COLONNES}
       className={`text-m-bold capitalize whitespace-nowrap pl-4 ${
         index > 0 ? 'pt-6' : ''
       } ${label === AUJOURDHUI_LABEL ? 'text-primary' : 'text-content_color'} `}
@@ -104,19 +107,25 @@ function IntercalairePlageHoraire({
   jour: string
 }) {
   return (
-    <Intercalaire key={`${label}-${jour}`} className='text-s-bold pl-4'>
+    <Intercalaire
+      colspan={NOMBRE_COLONNES}
+      key={`${label}-${jour}`}
+      className='text-s-bold pl-4'
+    >
       {label}
     </Intercalaire>
   )
 }
 
-function IntercalaireFiller({ jour }: { jour: string }) {
+function IntercalaireFiller() {
   return (
-    <Intercalaire key={'filler-' + jour} withRowStyle={true}>
-      <div className='text-base-bold max-w-[250px]'>
-        Aucun rendez-vous ou événements prévus ce jour.
-      </div>
-    </Intercalaire>
+    <TR>
+      <TD colSpan={NOMBRE_COLONNES}>
+        <div className='text-base-bold max-w-[250px]'>
+          Aucun rendez-vous ou événements prévus ce jour.
+        </div>
+      </TD>
+    </TR>
   )
 }
 
@@ -151,4 +160,22 @@ function remplirAgenda<T extends { id: string }>(
     if (isApresMidi(datetime.hour))
       (agenda.get(jour) as DataJour<T>).apresMidi.push(element)
   })
+}
+
+function Intercalaire({
+  children,
+  className,
+  colspan,
+}: {
+  children: ReactNode
+  colspan: number
+  className: string
+}): React.JSX.Element {
+  return (
+    <tr>
+      <th colSpan={colspan} className={className}>
+        {children}
+      </th>
+    </tr>
+  )
 }

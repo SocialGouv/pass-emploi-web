@@ -109,21 +109,35 @@ describe('Agenda - Onglet conseiller', () => {
       )
 
       expect(screen.getByRole('table')).toBeInTheDocument()
+
       expect(
         screen.getByRole('row', { name: 'aujourd’hui' })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('row', {
+          name: '00h00 - 125 min Jirac Kenji Autre par téléphone oui Consulter l’événement du jeudi 1 septembre avec Jirac Kenji',
+        })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
           name: 'Consulter l’événement du jeudi 1 septembre avec Jirac Kenji',
         })
       ).toBeInTheDocument()
+
       expect(
         screen.getByRole('row', { name: 'vendredi 2 septembre' })
       ).toBeInTheDocument()
+
+      expect(screen.getByText('lundi 5 septembre')).toBeInTheDocument()
       expect(screen.getByText('Matin')).toBeInTheDocument()
       expect(
         screen.getByRole('row', {
-          name: 'mercredi 7 septembre - Autre avec Jirac Kenji',
+          name: '14h59 - 125 min Jirac Kenji Autre par téléphone oui Consulter l’événement du mercredi 7 septembre avec Jirac Kenji',
+        })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('link', {
+          name: 'Consulter l’événement du mercredi 7 septembre avec Jirac Kenji',
         })
       ).toBeInTheDocument()
       expect(screen.getByText('lundi 5 septembre')).toBeInTheDocument()

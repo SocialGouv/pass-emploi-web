@@ -1,10 +1,9 @@
 import React from 'react'
 
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import { SessionsAClore } from 'services/sessions.service'
 
@@ -17,25 +16,18 @@ export default function TableauSessionsImilo({
 }: TableauSessionsImiloProps) {
   return (
     <>
-      <Table
-        asDiv={true}
-        caption={{ text: 'Liste des sessions i-milo à clore' }}
-      >
-        <THead>
+      <Table caption={{ text: 'Liste des sessions i-milo à clore' }}>
+        <thead>
           <TR isHeader={true}>
             <TH>Date</TH>
             <TH>Titre de la session</TH>
             <TH>Voir le détail</TH>
           </TR>
-        </THead>
+        </thead>
 
-        <TBody>
+        <tbody>
           {sessions.map((session: SessionsAClore) => (
-            <TR
-              key={session.id}
-              href={`/agenda/sessions/${session.id}`}
-              linkLabel={`Accéder au détail de la session : ${session.titre}`}
-            >
+            <TR key={session.id}>
               <TD>{session.date}</TD>
               <TD>
                 <div>
@@ -43,9 +35,13 @@ export default function TableauSessionsImilo({
                   {session.sousTitre && <p>{session.sousTitre}</p>}
                 </div>
               </TD>
+              <TDLink
+                href={`/agenda/sessions/${session.id}`}
+                label={`Accéder au détail de la session : ${session.titre}`}
+              />
             </TR>
           ))}
-        </TBody>
+        </tbody>
       </Table>
     </>
   )

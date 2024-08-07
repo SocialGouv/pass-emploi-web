@@ -18,14 +18,12 @@ export default function RadioBoxStatut({
   estQualifiee,
 }: RadioBoxStatutProps) {
   const { label } = propsStatutsActions[status]
-  const id = `option-statut--${label.toLowerCase()}`
 
   return (
     <RadioBox
       isSelected={isSelected}
       onChange={() => onChange(status)}
       name='option-statut'
-      id={id}
       label={estQualifiee ? 'Terminée' : label}
       disabled={isDisabled}
     />

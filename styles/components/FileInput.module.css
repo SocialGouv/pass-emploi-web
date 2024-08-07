@@ -1,6 +1,5 @@
 .input:focus + label {
-    outline: 1px solid blue;
-    outline: 1px auto -webkit-focus-ring-color;
+    outline: auto;
 }
 
 .input[disabled] + label {

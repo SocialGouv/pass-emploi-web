@@ -158,10 +158,14 @@ describe('Cloture Session', () => {
       expect(cloreSession).toHaveBeenCalledWith('1', 'session-1', [
         {
           idJeune: 'beneficiaire-1',
+          nom: 'Beau',
+          prenom: 'Harry',
           statut: 'PRESENT',
         },
         {
           idJeune: 'beneficiaire-2',
+          nom: 'BE',
+          prenom: 'Linda',
           statut: 'PRESENT',
         },
       ])

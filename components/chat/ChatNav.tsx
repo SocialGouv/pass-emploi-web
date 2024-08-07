@@ -27,17 +27,17 @@ export default function ChatNav({
         type='button'
         aria-controls='menu-mobile'
         onClick={() => setShowMenu(false)}
-        aria-label='Fermer le menu principal'
         aria-expanded={true}
         className='w-fit p-1 -ml-4 mb-6 hover:bg-primary_darken hover:rounded-full'
+        title='Fermer le menu principal'
       >
         <IconComponent
           name={IconName.Close}
           className='w-10 h-10 fill-white'
           aria-hidden={true}
           focusable={false}
-          title='Fermer le menu principal'
         />
+        <span className='sr-only'>Fermer le menu principal</span>
       </button>
       <div className='grow flex flex-col justify-between'>
         <NavLinks

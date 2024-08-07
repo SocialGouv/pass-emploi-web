@@ -2,18 +2,13 @@ import React from 'react'
 
 import { TagMetier } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import { Offre } from 'interfaces/favoris'
 
 export default function OffreRow({ offre }: { offre: Offre }) {
-  const titre = 'Ouvrir l’offre ' + offre.titre
-
   return (
-    <TR
-      href={`/offres/${offre.urlParam}/${offre.id}`}
-      linkLabel={titre}
-      rowLabel={`Offre ${offre.titre}`}
-    >
+    <TR>
       <TD>{offre.id}</TD>
       <TD>{offre.titre}</TD>
       <TD>{offre.organisation}</TD>
@@ -24,6 +19,10 @@ export default function OffreRow({ offre }: { offre: Offre }) {
           backgroundColor='primary_lighten'
         />
       </TD>
+      <TDLink
+        href={`/offres/${offre.urlParam}/${offre.id}`}
+        label={'Ouvrir l’offre ' + offre.titre}
+      />
     </TR>
   )
 }

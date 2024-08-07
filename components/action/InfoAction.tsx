@@ -20,9 +20,8 @@ function InfoAction({
           isInline ? 'text-base-medium' : 'text-m-bold pb-6 flex items-center'
         }`}
       >
-        <span>
-          {label} {isInline && ' :'}
-        </span>
+        {label}
+        {isInline && ' :'}
       </dt>
       <dd
         className={`${

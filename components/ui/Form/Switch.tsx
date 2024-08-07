@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef } from 'react'
+import { ChangeEvent } from 'react'
 
 import styles from 'styles/components/Switch.module.css'
 
@@ -19,27 +19,30 @@ export function Switch({
   uncheckedLabel = 'Non',
   onChange,
 }: SwitchProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-
   return (
-    <>
+    <label className='cursor-pointer flex items-center'>
       <input
-        ref={inputRef}
-        type='checkbox'
         id={id}
+        type='checkbox'
+        role='switch'
         checked={checked}
         disabled={disabled}
         className={styles.checkbox}
         onChange={onChange}
       />
-      <div
-        onClick={() => inputRef.current!.click()}
-        className='cursor-pointer flex items-center'
-      >
-        <span className={styles.toggle}></span>
-        {checked && <p className='ml-3'>{checkedLabel}</p>}
-        {!checked && <p className='ml-3'>{uncheckedLabel}</p>}
-      </div>
-    </>
+
+      <span className={styles.toggle} />
+
+      {checked && (
+        <span aria-hidden={true} className='ml-3'>
+          {checkedLabel}
+        </span>
+      )}
+      {!checked && (
+        <span aria-hidden={true} className='ml-3'>
+          {uncheckedLabel}
+        </span>
+      )}
+    </label>
   )
 }

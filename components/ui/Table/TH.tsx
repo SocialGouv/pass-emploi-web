@@ -2,14 +2,12 @@ import React, { ReactNode } from 'react'
 
 interface THProps {
   children: ReactNode
-  asDiv?: boolean
   estCliquable?: boolean
   title?: string
 }
 
 export function TH({
   children,
-  asDiv = false,
   estCliquable = false,
   title,
 }: THProps): React.JSX.Element {
@@ -17,16 +15,9 @@ export function TH({
     estCliquable ? 'rounded-base hover:bg-primary_lighten' : 'p-4'
   } group-hover:first:rounded-l-base group-hover:last:rounded-r-base`
 
-  if (asDiv)
-    return (
-      <div role='columnheader' className={'table-cell ' + style} title={title}>
-        {children}
-      </div>
-    )
-  else
-    return (
-      <th scope='col' className={style} title={title}>
-        {children}
-      </th>
-    )
+  return (
+    <th scope='col' className={style} title={title}>
+      {children}
+    </th>
+  )
 }

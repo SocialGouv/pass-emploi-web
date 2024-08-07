@@ -32,7 +32,7 @@ function Tag({
       {iconName && (
         <IconComponent
           name={iconName}
-          aria-hidden={!iconLabel ? true : false}
+          aria-hidden={!iconLabel}
           className='h-5 w-5 mr-1 fill-[currentColor]'
           aria-label={iconLabel ? iconLabel : undefined}
           title={iconLabel ? iconLabel : undefined}
@@ -50,6 +50,20 @@ export function TagMetier({ className, ...props }: TagProps) {
 
 export function TagStatut({ className, ...props }: TagProps) {
   return <Tag className={'rounded-l ' + className} {...props} />
+}
+
+export function TagDate({
+  className,
+  label,
+}: Pick<TagProps, 'className' | 'label'>) {
+  return (
+    <Tag
+      className={'rounded-l ' + className}
+      backgroundColor='grey_100'
+      color='grey_800'
+      label={label}
+    />
+  )
 }
 
 export function TagCategorieAction({ categorie }: TagCategorieActionProps) {

@@ -241,7 +241,7 @@ describe('Page Recherche Alternances', () => {
           name: 'Expérience',
         })
         expect(
-          within(experienceGroup).getByRole('checkbox', {
+          within(experienceGroup).getByRole('switch', {
             name: /Afficher uniquement les offres débutant accepté/,
           })
         ).not.toBeChecked()
