@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 
 import IndicationRechercheDossier from 'components/jeune/IndicationRechercheDossier'
 import Button from 'components/ui/Button/Button'
@@ -50,7 +50,9 @@ export default function FormulaireRechercheDossier({
       <IndicationRechercheDossier />
 
       <form onSubmit={handleSearchSubmit}>
-        <Label htmlFor='recherche-numero'>Numéro de dossier</Label>
+        <Label htmlFor='recherche-numero'>
+          Numéro de dossier (Exemple : 123456){' '}
+        </Label>
         <div className='w-8/12'></div>
 
         {messageErreur && (
