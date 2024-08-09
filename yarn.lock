@@ -5116,9 +5116,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elastic-apm-node@npm:4.7.0":
-  version: 4.7.0
-  resolution: "elastic-apm-node@npm:4.7.0"
+"elastic-apm-node@npm:4.7.3":
+  version: 4.7.3
+  resolution: "elastic-apm-node@npm:4.7.3"
   dependencies:
     "@elastic/ecs-pino-format": "npm:^1.5.0"
     "@opentelemetry/api": "npm:^1.4.1"
@@ -5138,9 +5138,9 @@ __metadata:
     fast-safe-stringify: "npm:^2.0.7"
     fast-stream-to-buffer: "npm:^1.0.0"
     http-headers: "npm:^3.0.2"
-    import-in-the-middle: "npm:1.8.0"
+    import-in-the-middle: "npm:1.11.0"
     json-bigint: "npm:^1.0.0"
-    lru-cache: "npm:^10.0.1"
+    lru-cache: "npm:10.2.0"
     measured-reporting: "npm:^1.51.1"
     module-details-from-path: "npm:^1.0.3"
     monitor-event-loop-delay: "npm:^1.0.0"
@@ -5157,7 +5157,7 @@ __metadata:
     sql-summary: "npm:^1.0.1"
     stream-chopper: "npm:^3.0.1"
     unicode-byte-truncate: "npm:^1.0.0"
-  checksum: 10c0/109859fe45992f96f078ad9253b3aa5433a9cc4d49d5ec834d5f098e505335a841285bc31b5ab485450f43efac2959a67883098747fb52698dedbdd605c28f75
+  checksum: 10c0/fd357658d5a2c1d9484c52bece5453ef191b0586584857e853fa46b1af8b59298d5ad78beb0f121f1954c737013a4eb7b97f255133e6c3de39ee1a4e287794d5
   languageName: node
   linkType: hard
 
@@ -6606,15 +6606,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-in-the-middle@npm:1.8.0":
-  version: 1.8.0
-  resolution: "import-in-the-middle@npm:1.8.0"
+"import-in-the-middle@npm:1.11.0":
+  version: 1.11.0
+  resolution: "import-in-the-middle@npm:1.11.0"
   dependencies:
     acorn: "npm:^8.8.2"
     acorn-import-attributes: "npm:^1.9.5"
     cjs-module-lexer: "npm:^1.2.2"
     module-details-from-path: "npm:^1.0.3"
-  checksum: 10c0/e29bc6d307c7d7efa5df8e74ca359b6d6d18900eba9dc4d8a77fa0e8b46378e74bfc1ddf93f86fad2d74d65a9ea84f1c0598ae1be8fc99fa77ac15db103c5a6b
+  checksum: 10c0/b5b52b635450f69640289b9b597fef796ef9aa6c231ae22583a1c2e97bd1b61aa0048d7fc143b4af3ec5bffb7d64131302ed0882f62e0e2d60f0a4f009daff3f
   languageName: node
   linkType: hard
 
@@ -8074,6 +8074,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:10.2.0":
+  version: 10.2.0
+  resolution: "lru-cache@npm:10.2.0"
+  checksum: 10c0/c9847612aa2daaef102d30542a8d6d9b2c2bb36581c1bf0dc3ebf5e5f3352c772a749e604afae2e46873b930a9e9523743faac4e5b937c576ab29196774712ee
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
@@ -9044,7 +9051,7 @@ __metadata:
     crypto-js: "npm:4.2.0"
     css-loader: "npm:^7.1.2"
     dotenv: "npm:16.4.5"
-    elastic-apm-node: "npm:4.7.0"
+    elastic-apm-node: "npm:4.7.3"
     eslint: "npm:^8.57.0"
     eslint-config-next: "npm:14.2.4"
     eslint-config-prettier: "npm:^9.1.0"
