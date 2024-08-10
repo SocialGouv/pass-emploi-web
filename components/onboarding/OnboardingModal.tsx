@@ -22,6 +22,7 @@ export default function OnboardingModal(
       return <OnboardingPEModal {...props} />
     case StructureConseiller.POLE_EMPLOI_BRSA:
     case StructureConseiller.POLE_EMPLOI_AIJ:
+    case StructureConseiller.CONSEIL_DEPT:
       return <OnboardingPEModal {...props} estPassEmploi={true} />
     case StructureConseiller.MILO:
       return <OnboardingMILOModal {...props} />
