@@ -3,19 +3,19 @@ import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
+import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
 import {
   BaseConseiller,
   Conseiller,
   StructureConseiller,
 } from 'interfaces/conseiller'
-import { BaseBeneficiaire, DossierMilo } from 'interfaces/beneficiaire'
+import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 import {
   BaseConseillerJson,
   ConseillerJson,
   jsonToBaseConseiller,
   jsonToConseiller,
 } from 'interfaces/json/conseiller'
-import { BeneficiaireMiloFormData } from 'interfaces/json/beneficiaire'
 
 export async function getConseillerServerSide(
   user: Session.HydratedUser,

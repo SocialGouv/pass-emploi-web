@@ -20,12 +20,14 @@ const OnboardingMobileModal = dynamic(
 interface LoginProps {
   ssoFranceTravailBRSAEstActif?: boolean
   ssoFranceTravailAIJEstActif?: boolean
+  ssoConseillerDeptEstActif?: boolean
   isFromEmail: boolean
 }
 
 function LoginPage({
   ssoFranceTravailBRSAEstActif,
   ssoFranceTravailAIJEstActif,
+  ssoConseillerDeptEstActif,
   isFromEmail,
 }: LoginProps) {
   const [errorMsg, setErrorMsg] = useState('')
@@ -104,7 +106,9 @@ function LoginPage({
           </div>
           <div className='flex-1 border-l-2 border-primary_lighten h-60 layout_xs:hidden layout_m:flex'></div>
           <div className='flex-1 flex-col'>
-            {(ssoFranceTravailBRSAEstActif || ssoFranceTravailAIJEstActif) && (
+            {(ssoFranceTravailBRSAEstActif ||
+              ssoFranceTravailAIJEstActif ||
+              ssoConseillerDeptEstActif) && (
               <>
                 <h2>
                   <span className='sr-only'>pass emploi</span>
@@ -136,6 +140,19 @@ function LoginPage({
                         style={ButtonStyle.PRIMARY_DARK}
                         handleSubmit={(event) =>
                           handleSignin(event, 'pe-aij-conseiller')
+                        }
+                      />
+                    </li>
+                  )}
+
+                  {ssoConseillerDeptEstActif && (
+                    <li>
+                      <FormButton
+                        label='Conseiller départemental'
+                        className='w-64 mt-6 whitespace-nowrap'
+                        style={ButtonStyle.PRIMARY_DARK}
+                        handleSubmit={(event) =>
+                          handleSignin(event, 'conseiller-dept')
                         }
                       />
                     </li>

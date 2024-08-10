@@ -25,6 +25,7 @@ describe('LoginPage client side', () => {
         <LoginPage
           ssoFranceTravailBRSAEstActif={true}
           ssoFranceTravailAIJEstActif={true}
+          ssoConseillerDeptEstActif={true}
           isFromEmail={false}
         />
       ))
@@ -64,6 +65,9 @@ describe('LoginPage client side', () => {
       const franceTravailAIJButton = screen.getByRole('button', {
         name: 'Connexion AIJ',
       })
+      const conseillerDeptButton = screen.getByRole('button', {
+        name: 'Conseiller départemental',
+      })
 
       const buttonsNb = screen.getAllByRole('button')
 
@@ -72,7 +76,8 @@ describe('LoginPage client side', () => {
       expect(franceTravailCEJButton).toBeInTheDocument()
       expect(franceTravailBRSAButton).toBeInTheDocument()
       expect(franceTravailAIJButton).toBeInTheDocument()
-      expect(buttonsNb.length).toEqual(4)
+      expect(conseillerDeptButton).toBeInTheDocument()
+      expect(buttonsNb.length).toEqual(5)
     })
 
     it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
@@ -123,6 +128,23 @@ describe('LoginPage client side', () => {
         'keycloak',
         { callbackUrl: '/?redirectUrl=redirectUrl' },
         { kc_idp_hint: 'pe-aij-conseiller' }
+      )
+    })
+
+    it("permet de s'identifier en tant que conseiller dept", async () => {
+      // Given
+      const cdButton = screen.getByRole('button', {
+        name: 'Conseiller départemental',
+      })
+
+      // When
+      await userEvent.click(cdButton)
+
+      // Then
+      expect(signIn).toHaveBeenCalledWith(
+        'keycloak',
+        { callbackUrl: '/?redirectUrl=redirectUrl' },
+        { kc_idp_hint: 'conseiller-dept' }
       )
     })
 

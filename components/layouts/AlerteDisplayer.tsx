@@ -161,6 +161,7 @@ function getAlertesForStructure(structure?: string): DictAlertes {
     case StructureConseiller.POLE_EMPLOI:
     case StructureConseiller.POLE_EMPLOI_BRSA:
     case StructureConseiller.POLE_EMPLOI_AIJ:
+    case StructureConseiller.CONSEIL_DEPT:
       return ALERTES
   }
 }
