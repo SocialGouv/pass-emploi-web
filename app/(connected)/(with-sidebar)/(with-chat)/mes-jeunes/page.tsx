@@ -1,15 +1,14 @@
 import { DateTime } from 'luxon'
 import { Metadata } from 'next'
-import React from 'react'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
 import { CompteurActionsPeriode } from 'interfaces/action'
 import {
-  compareBeneficiairesByNom,
   BeneficiaireAvecCompteursActionsRdvs,
+  compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
-import { estUserFranceTravail } from 'interfaces/conseiller'
+import { estUserMilo } from 'interfaces/conseiller'
 import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -29,13 +28,7 @@ export default async function Portefeuille({
   )
 
   let beneficiairesAvecCompteurs: BeneficiaireAvecCompteursActionsRdvs[]
-  if (estUserFranceTravail(user)) {
-    beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => ({
-      ...beneficiaire,
-      nbActionsNonTerminees: 0,
-      rdvs: 0,
-    }))
-  } else {
+  if (estUserMilo(user)) {
     const dateDebut = DateTime.now().startOf('week')
     const dateFin = DateTime.now().endOf('week')
     const compteurActionsPeriode: CompteurActionsPeriode[] =
@@ -57,6 +50,12 @@ export default async function Portefeuille({
         rdvs: compteursPeriode?.rdvs ?? 0,
       }
     })
+  } else {
+    beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => ({
+      ...beneficiaire,
+      nbActionsNonTerminees: 0,
+      rdvs: 0,
+    }))
   }
 
   beneficiairesAvecCompteurs.sort(compareBeneficiairesByNom)
