@@ -39,7 +39,9 @@ describe('CreationBeneficiaireMiloPage client side', () => {
         )
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('textbox', { name: 'Numéro de dossier' })
+        screen.getByRole('textbox', {
+          name: 'Numéro de dossier (Exemple : 123456)',
+        })
       ).toBeInTheDocument()
     })
 
@@ -49,7 +51,7 @@ describe('CreationBeneficiaireMiloPage client side', () => {
         name: 'Valider le numéro',
       })
       const inputSearch = screen.getByRole('textbox', {
-        name: 'Numéro de dossier',
+        name: 'Numéro de dossier (Exemple : 123456)',
       })
       await userEvent.clear(inputSearch)
 
@@ -88,7 +90,9 @@ describe('CreationBeneficiaireMiloPage client side', () => {
       }))
 
       await userEvent.type(
-        screen.getByRole('textbox', { name: 'Numéro de dossier' }),
+        screen.getByRole('textbox', {
+          name: 'Numéro de dossier (Exemple : 123456)',
+        }),
         '123456'
       )
       await userEvent.click(
