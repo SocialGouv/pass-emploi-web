@@ -101,6 +101,7 @@ export default function FiltresCategoriesActions({
           </fieldset>
           <Button className='w-full justify-center' type='submit'>
             Valider
+            <span className='sr-only'>Catégorie</span>
           </Button>
         </form>
       )}
