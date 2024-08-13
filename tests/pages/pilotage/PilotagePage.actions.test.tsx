@@ -227,7 +227,7 @@ describe('PilotagePage client side - Actions', () => {
         await userEvent.click(screen.getByText('Catégorie'))
         await userEvent.click(screen.getByLabelText('SNP 1'))
         await userEvent.click(screen.getByLabelText('SNP 2'))
-        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+        await userEvent.click(screen.getByRole('button', { name: /Valider/i }))
       })
 
       it('a11y', async () => {
@@ -277,7 +277,7 @@ describe('PilotagePage client side - Actions', () => {
       )
       await userEvent.click(screen.getByText('Catégorie'))
       await userEvent.click(screen.getByLabelText('SNP 1'))
-      await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+      await userEvent.click(screen.getByRole('button', { name: /Valider/i }))
       await userEvent.click(screen.getByLabelText('Page 2'))
 
       // Then

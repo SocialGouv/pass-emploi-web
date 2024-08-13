@@ -12,17 +12,17 @@ import {
   uneListeDActions,
 } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import { Action, StatutAction } from 'interfaces/action'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import {
   getActionsBeneficiaireClientSide,
   qualifierActions,
@@ -507,7 +507,7 @@ describe('Actions dans la fiche jeune', () => {
         // When
         await userEvent.click(screen.getByText('Catégorie'))
         await userEvent.click(screen.getByLabelText('SNP 1'))
-        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+        await userEvent.click(screen.getByRole('button', { name: /Valider/i }))
       })
 
       it('filtre les actions', () => {
