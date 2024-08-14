@@ -2,10 +2,18 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 
+import ButtonLink from '../../components/ui/Button/ButtonLink'
+
 type AuthErrorPageProps = {
   erreur: string
+  codeErreur: string | undefined
+  lienFormulaire: string | undefined
 }
-function AuthErrorPage({ erreur }: AuthErrorPageProps) {
+function AuthErrorPage({
+  erreur,
+  codeErreur,
+  lienFormulaire,
+}: AuthErrorPageProps) {
   return (
     <>
       <header>
@@ -17,7 +25,27 @@ function AuthErrorPage({ erreur }: AuthErrorPageProps) {
           <h1 className='text-m-bold text-primary text-center mt-6 mb-8'>
             Portail de connexion
           </h1>
-          <p className='text-center text-s'>{erreur}</p>
+          <div className='text-center text-s'>
+            {erreur.split('\n').map((line, index) => (
+              <span
+                key={index}
+                className={
+                  index === 0
+                    ? 'block text-center'
+                    : 'block relative left-1/2 transform -translate-x-1/2 text-left'
+                }
+              >
+                {line}
+                <br />
+              </span>
+            ))}
+            {codeErreur && <p className='text-xs m-6'>code : {codeErreur}</p>}
+            {lienFormulaire && (
+              <ButtonLink href={lienFormulaire}>
+                Contacter le support
+              </ButtonLink>
+            )}
+          </div>
 
           {/* <ExternalLink
             href={'mailto:' + process.env.NEXT_PUBLIC_SUPPORT_MAIL}
