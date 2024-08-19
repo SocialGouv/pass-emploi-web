@@ -63,7 +63,9 @@ describe('FiltresStatutsAction', () => {
     await userEvent.click(screen.getByLabelText('Annulée'))
 
     // When
-    await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Valider Statuts' })
+    )
 
     // Then
     expect(filtrerActions).toHaveBeenCalledWith([StatutAction.Annulee])
