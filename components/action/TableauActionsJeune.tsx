@@ -179,7 +179,7 @@ export default function TableauActionsJeune({
 
   return (
     <>
-      {isLoading && <SpinningLoader />}
+      {isLoading && <SpinningLoader alert={true} />}
 
       {actionsFiltrees.length === 0 && (
         <div className='flex flex-col justify-center'>

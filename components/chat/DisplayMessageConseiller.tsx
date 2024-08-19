@@ -52,26 +52,26 @@ export default function DisplayMessageConseiller(
 ) {
   const { message } = props
 
-  const [editionEnCours, setEditionEnCours] = useState<boolean>(false)
+  const [suppressionEnCours, setSuppressionEnCours] = useState<boolean>(false)
 
   async function supprimerMessage() {
-    setEditionEnCours(true)
+    setSuppressionEnCours(true)
     try {
       await (props as MessageConseillerProps).onSuppression()
     } finally {
-      setEditionEnCours(false)
+      setSuppressionEnCours(false)
     }
   }
 
   return (
     <li className='mb-5' id={message.id} data-testid={message.id}>
-      {editionEnCours && (
+      {suppressionEnCours && (
         <div className='w-fit ml-auto'>
-          <SpinningLoader />
+          <SpinningLoader alert={true} />
         </div>
       )}
 
-      {!editionEnCours && (
+      {!suppressionEnCours && (
         <>
           {isDeleted(message) && <MessageSupprime />}
 

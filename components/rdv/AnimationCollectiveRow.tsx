@@ -69,7 +69,9 @@ export function AnimationCollectiveRow(
       <TD>
         {animationCollective.isSession && (
           <>
-            {loadingChangerVisibilite && <SpinningLoader className='w-6 h-6' />}
+            {loadingChangerVisibilite && (
+              <SpinningLoader alert={true} className='w-6 h-6' />
+            )}
 
             {!loadingChangerVisibilite && (
               <IconToggle

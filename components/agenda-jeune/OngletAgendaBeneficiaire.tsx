@@ -67,7 +67,7 @@ export default function OngletAgendaBeneficiaire({
 
       {!estFranceTravail(conseiller) && (
         <>
-          {!semaines && <SpinningLoader />}
+          {!semaines && <SpinningLoader alert={true} />}
 
           {semaines && (
             <>
