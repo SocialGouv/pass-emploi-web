@@ -58,9 +58,11 @@ describe('Page Recherche Offres', () => {
     await userEvent.click(submitButton)
 
     // Then
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      /Une erreur est survenue/
-    )
+    expect(
+      screen
+        .getAllByRole('alert')
+        .find((pouet) => /Une erreur est survenue/.test(pouet.textContent!))
+    ).toBeInTheDocument()
   })
 
   it("affiche un message s'il n'y a pas de résultat", async () => {

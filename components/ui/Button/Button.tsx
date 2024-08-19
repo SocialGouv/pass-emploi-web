@@ -1,4 +1,4 @@
-import { MouseEventHandler, ReactNode } from 'react'
+import React, { MouseEventHandler, ReactNode } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import styles from 'styles/components/Button.module.css'
@@ -55,12 +55,21 @@ export default function Button({
       disabled={disabled || isLoading}
       aria-disabled={disabled || isLoading}
     >
-      {isLoading && (
-        <IconComponent
-          name={IconName.Spinner}
-          className='w-6 h-6 fill-white animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
-        />
-      )}
+      <span role='alert'>
+        {isLoading && (
+          <>
+            <IconComponent
+              aria-hidden={true}
+              focusable={false}
+              name={IconName.Spinner}
+              title='Chargement en cours'
+              className='w-6 h-6 fill-white animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
+            />
+            <span className='sr-only'>Chargement en cours</span>
+          </>
+        )}
+      </span>
+
       <span
         className={`flex items-center justify-center ${
           isLoading ? 'invisible' : ''

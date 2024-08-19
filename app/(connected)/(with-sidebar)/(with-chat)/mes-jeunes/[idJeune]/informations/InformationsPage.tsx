@@ -164,7 +164,7 @@ function InformationsPage({
           tabIndex={0}
           id='liste-indicateurs'
         >
-          {!indicateursSemaine && <SpinningLoader />}
+          {!indicateursSemaine && <SpinningLoader alert={true} />}
           {indicateursSemaine && (
             <BlocIndicateurs
               debutSemaine={debutSemaine}

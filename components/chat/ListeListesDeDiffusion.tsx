@@ -63,7 +63,7 @@ export default function ListeListesDeDiffusion({
 
       {messagerieEstVisible && (
         <>
-          {!listesDeDiffusion && <SpinningLoader />}
+          {!listesDeDiffusion && <SpinningLoader alert={true} />}
 
           {listesDeDiffusion && listesDeDiffusion.length === 0 && (
             <div className='bg-grey_100 flex flex-col justify-center items-center'>
