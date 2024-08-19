@@ -443,7 +443,9 @@ describe('Actions dans la fiche jeune', () => {
         // When
         await userEvent.click(screen.getByText('Statut'))
         await userEvent.click(screen.getByLabelText('À faire'))
-        await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Valider Statuts' })
+        )
       })
 
       it('filtre les actions', () => {
@@ -507,7 +509,9 @@ describe('Actions dans la fiche jeune', () => {
         // When
         await userEvent.click(screen.getByText('Catégorie'))
         await userEvent.click(screen.getByLabelText('SNP 1'))
-        await userEvent.click(screen.getByRole('button', { name: /Valider/i }))
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Valider Catégorie' })
+        )
       })
 
       it('filtre les actions', () => {
