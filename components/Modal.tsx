@@ -115,7 +115,10 @@ const Modal = forwardRef((props: ModalProps, ref) => {
   }, [])
 
   const modalTemplate = (
-    <div className='rounded-l bg-white max-w-[620px] p-3' ref={modalRef}>
+    <div
+      className='rounded-l bg-white max-h-[90%] max-h-[90%] max-w-[min(90%,_620px)] overflow-auto p-3'
+      ref={modalRef}
+    >
       <div className='flex justify-end'>
         <button
           type='button'
@@ -176,7 +179,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
       aria-labelledby='modal-title'
       className={styles.modalOverlay}
     >
-      <div className={styles.modalContent}>{modalTemplate}</div>
+      {modalTemplate}
     </div>
   )
 
