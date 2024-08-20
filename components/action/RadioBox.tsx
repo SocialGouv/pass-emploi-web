@@ -33,7 +33,7 @@ export default function RadioBox({
         onClick={onChange}
         disabled={disabled}
       />
-      <span className='whitespace-nowrap'>{label}</span>
+      <span>{label}</span>
     </label>
   )
 }
