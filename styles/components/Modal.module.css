@@ -13,11 +13,4 @@
 	padding: 0 1.5rem;
 	box-sizing: border-box;
 }
-.modalContent {
-	max-width: 90vw;
-	max-height: 90vh;
-	overflow: auto;
-	background: white;
-	border-radius: 8px;
-	padding: 1.5rem;
-}
+

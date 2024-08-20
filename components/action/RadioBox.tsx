@@ -33,7 +33,7 @@ export default function RadioBox({
         onClick={onChange}
         disabled={disabled}
       />
-      <span className='flex items-center'>{label}</span>
+      <span>{label}</span>
     </label>
   )
 }
