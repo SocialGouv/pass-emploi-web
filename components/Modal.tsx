@@ -116,7 +116,7 @@ const Modal = forwardRef((props: ModalProps, ref) => {
 
   const modalTemplate = (
     <div
-      className='rounded-l bg-white max-h-[90%] max-h-[90%] max-w-[min(90%,_620px)] overflow-auto p-3'
+      className='rounded-l bg-white max-h-[90%] max-w-[min(90%,_620px)] overflow-auto p-3'
       ref={modalRef}
     >
       <div className='flex justify-end'>
