@@ -7,14 +7,16 @@ import TD from 'components/ui/Table/TD'
 export default function TDLink({
   href,
   label,
+  className,
 }: {
   href: string
   label: string
+  className?: string
 }) {
   // a11y card : https://kittygiraudel.com/2022/04/02/accessible-cards/
   // absolute position in grandparent : https://stackoverflow.com/a/25768682
   return (
-    <TD className='hover:bg-primary_lighten px-4 py-0'>
+    <TD className={`hover:bg-primary_lighten px-4 py-0 ${className ?? ''}`}>
       <Link
         href={href}
         className='block w-full h-full before:fixed before:inset-0 before:z-10 cursor-pointer'

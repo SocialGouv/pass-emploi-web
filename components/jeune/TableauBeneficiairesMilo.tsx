@@ -34,8 +34,6 @@ export default function TableauBeneficiairesMilo({
     BeneficiaireAvecInfosComplementaires[]
   >([])
 
-  const styleTDTitle = 'flex items-baseline mb-2'
-
   const beneficiaireSituationColumn = 'Bénéficiaire et situation'
   const dateFinCEJColumn = 'Fin de CEJ'
   const actionsColumn = 'Actions créées'
@@ -77,12 +75,15 @@ export default function TableauBeneficiairesMilo({
           </TR>
         </thead>
 
-        <tbody>
+        <tbody className='grid grid-cols-[repeat(5,auto)] layout_m:grid-cols-[repeat(6,auto)] grid-flow-rows gap-y-2'>
           {beneficiairesAffiches.map(
             (beneficiaire: BeneficiaireAvecInfosComplementaires) => (
-              <TR key={beneficiaire.id}>
-                <TD isBold className='rounded-l-base'>
-                  <span className={styleTDTitle}>
+              <TR
+                key={beneficiaire.id}
+                className='grid grid-cols-subgrid grid-rows-[repeat(2,auto)] layout_m:grid-rows-[auto] col-span-full items-center'
+              >
+                <TD isBold className='rounded-tl-base layout_m:rounded-l-base'>
+                  <div className='mb-2'>
                     {beneficiaire.structureMilo?.id ===
                       conseiller.structureMilo?.id &&
                       beneficiaire.isReaffectationTemporaire && (
@@ -111,7 +112,7 @@ export default function TableauBeneficiairesMilo({
                           focusable={false}
                           role='img'
                           aria-labelledby={`label-ml-differente-${beneficiaire.id}`}
-                          className='w-4 h-4 fill-warning'
+                          className='inline w-4 h-4 fill-warning'
                           title='Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre.'
                         />
                         <span
@@ -124,17 +125,17 @@ export default function TableauBeneficiairesMilo({
                       </span>
                     )}
                     {getNomBeneficiaireComplet(beneficiaire)}
-                  </span>
+                  </div>
                   <SituationTag situation={beneficiaire.situationCourante} />
                 </TD>
 
                 <TD>
-                  <span
-                    className={`${styleTDTitle} text-s-regular text-grey_800`}
+                  <div
+                    className='mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {dateFinCEJColumn}
-                  </span>
+                  </div>
 
                   {beneficiaire.dateFinCEJ && (
                     <TagDate
@@ -155,45 +156,47 @@ export default function TableauBeneficiairesMilo({
                 </TD>
 
                 <TD className='border-l-1 border-grey_800'>
-                  <span
-                    className={`${styleTDTitle} text-s-regular text-grey_800`}
+                  <div
+                    className='mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {actionsColumn}
-                  </span>
-                  <div className='mx-auto text-m-bold'>
-                    {beneficiaire.nbActionsNonTerminees}
                   </div>
-                </TD>
-
-                <TD className='rounded-r-base'>
-                  <span
-                    className={`${styleTDTitle} text-s-regular text-grey_800`}
-                    aria-hidden={true}
-                  >
-                    {rdvColumn}
+                  <span className='text-m-bold'>
+                    {beneficiaire.nbActionsNonTerminees}
                   </span>
-                  <div className='mx-auto text-m-bold'>{beneficiaire.rdvs}</div>
                 </TD>
 
                 <TD>
-                  <span
-                    className={`${styleTDTitle} text-s-regular text-grey_800`}
+                  <div
+                    className='mb-2 text-s-regular text-grey_800'
+                    aria-hidden={true}
+                  >
+                    {rdvColumn}
+                  </div>
+                  <span className='text-m-bold'>{beneficiaire.rdvs}</span>
+                </TD>
+
+                <TD className='row-start-2 col-start-1 col-end-4 rounded-b-base layout_m:rounded-none layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1'>
+                  <div
+                    className='inline layout_m:block mr-8 mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {derniereActiviteColumn}
-                  </span>
-                  <div>
+                  </div>
+                  <span>
                     {beneficiaire.isActivated &&
                       toRelativeDateTime(beneficiaire.lastActivity!)}
                     {!beneficiaire.isActivated && (
                       <span className='text-warning'>Compte non activé</span>
                     )}
-                  </div>
+                  </span>
                 </TD>
+
                 <TDLink
                   href={`/mes-jeunes/${beneficiaire.id}`}
                   label={`Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`}
+                  className='row-span-2'
                 />
               </TR>
             )
