@@ -108,8 +108,6 @@ export function EvenementRow({
           <>
             <IconComponent
               name={IconName.LocationOn}
-              role='img'
-              aria-label='lieu de rendez-vous'
               className='inline mr-2 h-6 w-6 fill-primary'
             />
             {evenement.modality}
