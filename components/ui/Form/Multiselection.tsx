@@ -33,14 +33,11 @@ export default function Multiselection({
       aria-labelledby={`${id}--title`}
       id={id}
       className='bg-grey_100 rounded-base px-2 py-4 max-h-96 overflow-y-auto'
-      aria-live='polite'
-      aria-relevant='additions removals'
     >
       {selection.map(({ id: idItem, value, avecIndication, estUneListe }) => (
         <li
           key={idItem}
           className='bg-white w-full rounded-full px-8 py-2 mb-2 last:mb-0 flex justify-between items-center break-all overflow-y-auto max-h-56'
-          aria-atomic={true}
         >
           {avecIndication && renderIndication({ value, id: idItem })}
           {estUneListe && renderListeItem({ value, id: idItem })}

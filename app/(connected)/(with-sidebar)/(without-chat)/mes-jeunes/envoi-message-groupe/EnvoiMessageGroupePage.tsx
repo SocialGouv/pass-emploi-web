@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -78,6 +78,7 @@ function EnvoiMessageGroupePage({
       value: getNomBeneficiaireComplet(jeune),
     }))
   }
+  const fileInputRef = useRef<HTMLLabelElement>(null)
 
   function formIsValid(): boolean {
     const selectionEstValide = isSelectedJeunesIdsValid()
@@ -212,6 +213,7 @@ function EnvoiMessageGroupePage({
   function enleverFichier() {
     setErreurUploadPieceJointe(undefined)
     setPieceJointe(undefined)
+    fileInputRef.current?.focus()
   }
 
   function updateDestinataires(selectedIds: {
@@ -319,6 +321,7 @@ function EnvoiMessageGroupePage({
                 ariaDescribedby='piece-jointe-multi--desc'
                 onChange={setPieceJointe}
                 disabled={Boolean(pieceJointe)}
+                ref={fileInputRef}
               />
             </div>
 
