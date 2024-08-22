@@ -1,4 +1,4 @@
-import { DateTime, Interval } from 'luxon'
+import { DateTime, Duration, Interval } from 'luxon'
 import { DateTimeFormatOptions } from 'luxon/src/misc'
 
 export const AUJOURDHUI_LABEL = 'aujourd’hui'
@@ -34,7 +34,7 @@ export function toWeekday(date: string | DateTime): string {
 }
 
 const TIME_H_SEPARATOR = "HH'h'mm"
-const TIME_A11Y_SEPARATOR = "H 'heure' mm"
+const TIME_A11Y_SEPARATOR = "H 'heure' m"
 /** 02h39 (a11y : 2 heure 39) */
 export function toFrenchTime(
   date: string | DateTime,
@@ -112,6 +112,20 @@ export function formatJourIfToday(date: DateTime): string {
   return dateIsToday(date)
     ? AUJOURDHUI_LABEL
     : toFrenchFormat(date, WEEKDAY_MONTH_LONG)
+}
+
+const DURATION_H_SEPARATOR = "h'h'mm"
+const DURATION_A11Y_SEPARATOR = "h 'heure' m"
+export function toFrenchDuration(
+  durationInMinutes: number,
+  { a11y }: { a11y: boolean } = { a11y: false }
+): string {
+  if (durationInMinutes < 60)
+    return `${durationInMinutes} ${a11y ? 'minutes' : 'min'}`
+
+  return Duration.fromDurationLike({ minute: durationInMinutes }).toFormat(
+    a11y ? DURATION_A11Y_SEPARATOR : DURATION_H_SEPARATOR
+  )
 }
 
 function toFrenchString(

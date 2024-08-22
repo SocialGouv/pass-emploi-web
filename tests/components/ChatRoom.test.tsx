@@ -419,9 +419,9 @@ describe('<ChatRoom />', () => {
         const [beneficiaireSelectionne] = beneficiaires
         // Given
         const goToConversation = screen
-          .getByText(beneficiaireSelectionne.prenom, {
-            exact: false,
-          })
+          .getByText(
+            `${beneficiaireSelectionne.prenom} ${beneficiaireSelectionne.nom}`
+          )
           .closest('button')
 
         // When
@@ -440,12 +440,10 @@ describe('<ChatRoom />', () => {
         // Given
         const [beneficiaire] = beneficiaires
         const conversationCard = screen
-          .getByText(beneficiaire.prenom, {
-            exact: false,
-          })
+          .getByText(`${beneficiaire.prenom} ${beneficiaire.nom}`)
           .closest('div')
         const flagConversation = within(conversationCard!).getByRole('switch', {
-          name: 'Suivre la conversation',
+          name: 'Suivi de la conversation avec Kenji Jirac',
         })
 
         // When

@@ -12,8 +12,8 @@ export function TH({
   title,
 }: THProps): React.JSX.Element {
   const style = `text-s-medium text-left text-content_color ${
-    estCliquable ? 'rounded-base hover:bg-primary_lighten' : 'p-4'
-  } group-hover:first:rounded-l-base group-hover:last:rounded-r-base`
+    estCliquable ? 'hover:rounded-base hover:bg-primary_lighten' : 'p-4'
+  }`
 
   return (
     <th scope='col' className={style} title={title}>

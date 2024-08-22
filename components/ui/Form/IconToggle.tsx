@@ -1,30 +1,33 @@
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 
+type ToggleState = {
+  iconName: IconName
+  actionTitle: string
+}
 type IconToggleProps = {
   id: string
+  label: string
   checked: boolean
-  checkedIconName: IconName
-  uncheckedIconName: IconName
-  actionLabel: string
-  oppositeActionLabel: string
+  checkedState: ToggleState
+  uncheckedState: ToggleState
   onToggle: () => void
   className?: string
 }
 
 export default function IconToggle({
   id,
+  label,
   checked,
-  checkedIconName,
-  uncheckedIconName,
-  actionLabel,
-  oppositeActionLabel,
+  checkedState,
+  uncheckedState,
   onToggle,
   className,
 }: IconToggleProps) {
+  const state = checked ? checkedState : uncheckedState
   return (
     <>
       <label htmlFor={id} className='sr-only'>
-        {actionLabel}
+        {label}
       </label>
       <button
         id={id}
@@ -32,11 +35,11 @@ export default function IconToggle({
         role='switch'
         aria-checked={checked}
         onClick={onToggle}
-        title={checked ? oppositeActionLabel : actionLabel}
+        title={state.actionTitle}
         className={className}
       >
         <IconComponent
-          name={checked ? checkedIconName : uncheckedIconName}
+          name={state.iconName}
           focusable={false}
           aria-hidden={true}
           className='fill-inherit'

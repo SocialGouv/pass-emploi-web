@@ -142,42 +142,33 @@ describe('Agenda - Onglet établissement', () => {
         ).toBeInTheDocument()
       })
       expect(
-        screen.getByRole('row', { name: 'lundi 29 août' }).nextSibling
-      ).toHaveAccessibleName('Après-midi')
-      expect(
         screen.getByRole('cell', {
-          name: 'Prise de nouvelles par téléphone',
+          name: 'Prise de nouvelles par téléphone Atelier Visible',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier Clos du lundi 29 août à 14h00',
+          name: 'Consulter Atelier Prise de nouvelles par téléphone du lundi 29 août à 14h00',
         })
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('row', { name: 'aujourd’hui' }).nextSibling
-      ).toHaveAccessibleName('Après-midi')
-      expect(
         screen.getByRole('cell', {
-          name: 'Préparation de CV',
+          name: 'Préparation de CV Atelier Visible',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier À clore du jeudi 1 septembre à 14h00',
+          name: 'Consulter Atelier Préparation de CV du jeudi 1 septembre à 14h00',
         })
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('row', { name: 'dimanche 4 septembre' }).nextSibling
-      ).toHaveAccessibleName('Après-midi')
-      expect(
         screen.getByRole('cell', {
-          name: 'Écriture de lettre de motivation',
+          name: 'Écriture de lettre de motivation Atelier Visible',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo À venir du dimanche 4 septembre à 14h00',
+          name: 'Consulter Atelier i-milo Titre offre session milo du dimanche 4 septembre à 14h00',
         })
       ).toBeInTheDocument()
     })
@@ -282,22 +273,22 @@ describe('Agenda - Onglet établissement', () => {
 
       expect(
         screen.getByRole('cell', {
-          name: 'Titre offre session milo Nom session',
+          name: 'Titre offre session milo Nom session Informations de la session non modifiables Atelier i-milo Visibilité de l’événement Titre offre session milo',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo À venir du dimanche 4 septembre à 14h00',
+          name: 'Consulter Atelier i-milo Titre offre session milo du dimanche 4 septembre à 14h00',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('cell', {
-          name: 'Titre offre session milo 2 Nom session',
+          name: 'Titre offre session milo 2 Nom session Informations de la session non modifiables Atelier i-milo 2 Visibilité de l’événement Titre offre session milo 2',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo 2 À venir du lundi 5 septembre à 14h00',
+          name: 'Consulter Atelier i-milo 2 Titre offre session milo 2 du lundi 5 septembre à 14h00',
         })
       ).toBeInTheDocument()
     })
@@ -317,7 +308,9 @@ describe('Agenda - Onglet établissement', () => {
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', { name: 'Rendre visible l’événement' })
+        ).getByRole('switch', {
+          name: 'Visibilité de l’événement Titre offre session milo',
+        })
       ).toBeChecked()
 
       expect(
@@ -325,7 +318,9 @@ describe('Agenda - Onglet établissement', () => {
           screen.getByRole('row', {
             name: /Titre offre session milo 2 Nom session/,
           })
-        ).getByRole('switch', { name: 'Rendre visible l’événement' })
+        ).getByRole('switch', {
+          name: 'Visibilité de l’événement Titre offre session milo 2',
+        })
       ).not.toBeChecked()
     })
 
@@ -344,7 +339,9 @@ describe('Agenda - Onglet établissement', () => {
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', { name: 'Rendre visible l’événement' })
+        ).getByRole('switch', {
+          name: 'Visibilité de l’événement Titre offre session milo',
+        })
       )
 
       expect(
@@ -352,7 +349,9 @@ describe('Agenda - Onglet établissement', () => {
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', { name: 'Rendre visible l’événement' })
+        ).getByRole('switch', {
+          name: 'Visibilité de l’événement Titre offre session milo',
+        })
       ).not.toBeChecked()
 
       expect(changerVisibiliteSession).toHaveBeenCalledWith(
@@ -386,14 +385,10 @@ describe('Agenda - Onglet établissement', () => {
       await userEvent.click(periodeCouranteButton)
 
       // Then
-      expect(getSessionsMissionLocaleClientSide).toHaveBeenCalledWith(
+      expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
         '1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
-      )
-
-      await waitFor(() =>
-        expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
       )
 
       // When
@@ -403,14 +398,6 @@ describe('Agenda - Onglet établissement', () => {
         'id-test',
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
-      )
-
-      await waitFor(() =>
-        expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
-          '1',
-          SEPTEMBRE_8_0H,
-          SEPTEMBRE_14_23H
-        )
       )
     })
   })

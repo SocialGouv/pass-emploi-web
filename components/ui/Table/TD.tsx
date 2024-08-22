@@ -11,9 +11,9 @@ export default function TD({
   isBold = false,
   ...props
 }: TDProps) {
-  const style = `p-4 align-middle  ${
+  const style = `p-4 align-middle ${
     isBold ? 'text-base-bold' : 'text-base-regular'
-  } group-hover:first:rounded-l-base group-hover:last:rounded-r-base ${className}`
+  } first:rounded-l-base last:rounded-r-base ${className}`
 
   return (
     <td className={style} {...props}>

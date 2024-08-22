@@ -76,7 +76,7 @@ describe('<MessagesListeDeDiffusion />', () => {
       })
 
       jour.messages.forEach(({ creationDate }) => {
-        const creationTime = creationDate.toFormat("H 'heure' mm")
+        const creationTime = creationDate.toFormat("H 'heure' m")
 
         expect(
           within(listeMessages).getByRole('button', {
@@ -92,7 +92,7 @@ describe('<MessagesListeDeDiffusion />', () => {
   it('affiche le détail d’un message', async () => {
     // Given
     const message = messages[0].messages[0]
-    const creationTime = message.creationDate.toFormat("H 'heure' mm")
+    const creationTime = message.creationDate.toFormat("H 'heure' m")
 
     // When
     await userEvent.click(
