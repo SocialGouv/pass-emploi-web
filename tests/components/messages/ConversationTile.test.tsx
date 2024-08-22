@@ -27,7 +27,7 @@ describe('<ConversationTile />', () => {
         />
       )
       const button = screen.getByRole('switch', {
-        name: 'Suivre la conversation',
+        name: 'Suivi de la conversation avec Kenji Jirac',
       })
       expect(button).toHaveProperty('title', 'Ne plus suivre la conversation')
 
@@ -53,7 +53,7 @@ describe('<ConversationTile />', () => {
         />
       )
       const button = screen.getByRole('switch', {
-        name: 'Suivre la conversation',
+        name: 'Suivi de la conversation avec Kenji Jirac',
       })
       expect(button).toHaveProperty('title', 'Suivre la conversation')
 

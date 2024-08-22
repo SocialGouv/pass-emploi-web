@@ -24,6 +24,7 @@ export function ConversationTile({
   const lastMessageSentAt: string | undefined =
     beneficiaireChat.lastMessageSentAt &&
     toRelativeDateTime(beneficiaireChat.lastMessageSentAt)
+  const beneficiaireFullname = `${beneficiaireChat.prenom} ${beneficiaireChat.nom}`
 
   const isLastMessageSeenByBeneficiaire = checkIfLastMessageSeenByBeneficiaire()
 
@@ -43,7 +44,7 @@ export function ConversationTile({
     <div className='relative'>
       <button
         className='w-full p-3 flex flex-col text-left border-none bg-white rounded-base'
-        aria-label={`Consulter vos messages avec ${beneficiaireChat.prenom} ${beneficiaireChat.nom}`}
+        aria-label={`Consulter vos messages avec ${beneficiaireFullname}`}
         onClick={onClick}
         type='button'
       >
@@ -54,7 +55,7 @@ export function ConversationTile({
           </p>
         )}
         <span className='text-base-medium text-primary_darken mb-2 w-full flex justify-between'>
-          {beneficiaireChat.prenom} {beneficiaireChat.nom}
+          {beneficiaireFullname}
         </span>
         <span className='text-s-regular text-grey_800 mb-[8px]'>
           {' '}
@@ -98,11 +99,16 @@ export function ConversationTile({
 
       <IconToggle
         id={`${id}--flag`}
+        label={'Suivi de la conversation avec ' + beneficiaireFullname}
         checked={beneficiaireChat.flaggedByConseiller}
-        checkedIconName={IconName.BookmarkFill}
-        uncheckedIconName={IconName.BookmarkOutline}
-        actionLabel='Suivre la conversation'
-        oppositeActionLabel='Ne plus suivre la conversation'
+        checkedState={{
+          iconName: IconName.BookmarkFill,
+          actionTitle: 'Ne plus suivre la conversation',
+        }}
+        uncheckedState={{
+          iconName: IconName.BookmarkOutline,
+          actionTitle: 'Suivre la conversation',
+        }}
         onToggle={toggleFollowMessage}
         className='absolute top-3 right-3 w-5 h-5 fill-primary hover:fill-primary_darken'
       />

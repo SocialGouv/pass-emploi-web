@@ -2,7 +2,10 @@ import React, { ReactElement, useState } from 'react'
 
 import IconToggle from 'components/ui/Form/IconToggle'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
+import {
+  TagMetier,
+  TagStatut as _TagStatut,
+} from 'components/ui/Indicateurs/Tag'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
@@ -13,12 +16,21 @@ import {
 } from 'interfaces/evenement'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toFrenchTime, toMonthday } from 'utils/date'
+import {
+  toFrenchDuration,
+  toFrenchTime,
+  toLongMonthDate,
+  toMonthday,
+} from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-export function AnimationCollectiveRow(
+export function AnimationCollectiveRow({
+  animationCollective,
+}: {
   animationCollective: AnimationCollective
-) {
+}) {
+  const { date } = animationCollective
+
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [estCache, setEstCache] = useState<boolean>(
@@ -38,10 +50,10 @@ export function AnimationCollectiveRow(
     const { changerVisibiliteSession } = await import(
       'services/sessions.service'
     )
-    const doitEtreVisible = estCache
-    await changerVisibiliteSession(animationCollective.id, doitEtreVisible)
+    const doitDevenirVisible = estCache
+    await changerVisibiliteSession(animationCollective.id, doitDevenirVisible)
 
-    setEstCache(!doitEtreVisible)
+    setEstCache(!doitDevenirVisible)
     setLoadingChangerVisibilite(false)
 
     trackEvent({
@@ -54,59 +66,50 @@ export function AnimationCollectiveRow(
   }
 
   return (
-    <TR key={animationCollective.id}>
+    <TR>
       <TD>
-        {toFrenchTime(animationCollective.date)} - {animationCollective.duree}{' '}
-        min
-      </TD>
-      <TD>
-        {animationCollective.titre}
-        <span className='block text-s-regular'>
-          {animationCollective.sousTitre}
+        <div className='text-m-bold'>{toLongMonthDate(date)}</div>
+        {toFrenchTime(date)} -{' '}
+        <span className='inline-flex items-center'>
+          <IconComponent
+            name={IconName.ScheduleOutline}
+            role='img'
+            aria-label='durée'
+            title='durée'
+            className='inline w-[1em] h-[1em] fill-[currentColor] mr-1'
+          />
+          <span
+            aria-label={toFrenchDuration(animationCollective.duree, {
+              a11y: true,
+            })}
+          >
+            {toFrenchDuration(animationCollective.duree)}
+          </span>
         </span>
       </TD>
-      <TD>{tagType(animationCollective)}</TD>
+
       <TD>
-        {animationCollective.isSession && (
-          <>
-            {loadingChangerVisibilite && (
-              <SpinningLoader alert={true} className='w-6 h-6' />
-            )}
-
-            {!loadingChangerVisibilite && (
-              <IconToggle
-                id={`${animationCollective.id}--visibilite`}
-                checked={!estCache}
-                checkedIconName={IconName.VisibilityOn}
-                uncheckedIconName={IconName.VisibilityOff}
-                actionLabel='Rendre visible l’événement'
-                oppositeActionLabel='Cacher l’événement'
-                onToggle={permuterVisibiliteSession}
-                className='block relative z-20 m-auto h-6 w-6 fill-primary hover:fill-primary_darken'
-              />
-            )}
-          </>
+        <div className='text-base-bold'>{animationCollective.titre}</div>
+        {animationCollective.sousTitre && (
+          <div>{animationCollective.sousTitre}</div>
         )}
-
-        {!animationCollective.isSession && (
-          <IconComponent
-            aria-label={estCache ? 'Non visible' : 'Visible'}
-            className='inline h-6 w-6 fill-primary'
-            focusable={false}
-            name={estCache ? IconName.VisibilityOff : IconName.VisibilityOn}
-            role='img'
-            title={estCache ? 'Non visible' : 'Visible'}
+        <div className='mt-1 flex gap-2'>
+          <TagType {...animationCollective} />
+          <Visiblite
+            {...animationCollective}
+            loadingChangerVisibilite={loadingChangerVisibilite}
+            estCache={estCache}
+            onChangerVisibliteSession={permuterVisibiliteSession}
           />
-        )}
+        </div>
       </TD>
+
       <TD>
-        {animationCollective.statut && tagStatut(animationCollective)}
-        {!animationCollective.statut && (
-          <>
-            -<span className='sr-only'>information non disponible</span>
-          </>
-        )}
+        {animationCollective.statut && <TagStatut {...animationCollective} />}
+        {!animationCollective.statut &&
+          -(<span className='sr-only'>information non disponible</span>)}
       </TD>
+
       <TDLink
         href={getHref(animationCollective)}
         label={labelLien(animationCollective)}
@@ -115,13 +118,31 @@ export function AnimationCollectiveRow(
   )
 }
 
+function statusProps({ type, statut }: AnimationCollective): {
+  label: string
+  color: string
+} {
+  switch (statut) {
+    case StatutAnimationCollective.AVenir:
+      return { label: 'À venir', color: 'accent_1' }
+    case StatutAnimationCollective.AClore:
+      return { label: 'À clore', color: 'warning' }
+
+    case StatutAnimationCollective.Close:
+      return {
+        label: type === 'Atelier' ? 'Clos' : 'Close',
+        color: 'accent_2',
+      }
+  }
+}
+
 function labelLien(ac: AnimationCollective): string {
-  return `Consulter ${ac.type} ${statusProps(ac).label} du ${toMonthday(
+  return `Consulter ${ac.type} ${ac.titre} du ${toMonthday(
     ac.date
   )} à ${toFrenchTime(ac.date)}`
 }
 
-function tagType({ isSession, type }: AnimationCollective): ReactElement {
+function TagType({ isSession, type }: AnimationCollective): ReactElement {
   let tagProps: { color: string; iconName?: IconName; iconLabel?: string } = {
     color: 'additional_2',
     iconName: undefined,
@@ -144,35 +165,73 @@ function tagType({ isSession, type }: AnimationCollective): ReactElement {
       backgroundColor={tagProps.color + '_lighten'}
       iconName={tagProps.iconName}
       iconLabel={tagProps.iconLabel}
+      className='!px-2 !py-1 !text-xs !font-bold [&>svg]:!w-4 [&>svg]:!h-4'
     />
   )
 }
 
-function statusProps({ type, statut }: AnimationCollective): {
-  label: string
-  color: string
-} {
-  switch (statut) {
-    case StatutAnimationCollective.AVenir:
-      return { label: 'À venir', color: 'accent_1' }
-    case StatutAnimationCollective.AClore:
-      return { label: 'À clore', color: 'warning' }
-
-    case StatutAnimationCollective.Close:
-      return {
-        label: type === 'Atelier' ? 'Clos' : 'Close',
-        color: 'accent_2',
-      }
-  }
-}
-
-function tagStatut(ac: AnimationCollective): JSX.Element {
+function TagStatut(ac: AnimationCollective): ReactElement {
   const { label, color } = statusProps(ac)
   return (
-    <TagStatut
+    <_TagStatut
       label={label}
       color={color}
       backgroundColor={color + '_lighten'}
+      className='!px-2 !py-1 !text-xs !font-bold'
     />
+  )
+}
+
+function Visiblite({
+  id,
+  isSession,
+  titre,
+  loadingChangerVisibilite,
+  estCache,
+  onChangerVisibliteSession,
+}: {
+  loadingChangerVisibilite: boolean
+  estCache: boolean
+  onChangerVisibliteSession: () => void
+} & AnimationCollective): ReactElement {
+  return (
+    <>
+      {isSession && (
+        <>
+          {loadingChangerVisibilite && (
+            <SpinningLoader alert={true} className='!m-0 w-6 h-6' />
+          )}
+
+          {!loadingChangerVisibilite && (
+            <IconToggle
+              id={`${id}--visibilite`}
+              label={'Visibilité de l’événement ' + titre}
+              checked={!estCache}
+              checkedState={{
+                iconName: IconName.VisibilityOn,
+                actionTitle: 'Cacher l’événement',
+              }}
+              uncheckedState={{
+                iconName: IconName.VisibilityOff,
+                actionTitle: 'Rendre visible l’événement',
+              }}
+              onToggle={onChangerVisibliteSession}
+              className='relative z-20 h-6 w-6 fill-primary hover:fill-primary_darken'
+            />
+          )}
+        </>
+      )}
+
+      {!isSession && (
+        <IconComponent
+          aria-label={estCache ? 'Non visible' : 'Visible'}
+          className='inline h-6 w-6 fill-primary'
+          focusable={false}
+          name={estCache ? IconName.VisibilityOff : IconName.VisibilityOn}
+          role='img'
+          title={estCache ? 'Non visible' : 'Visible'}
+        />
+      )}
+    </>
   )
 }
