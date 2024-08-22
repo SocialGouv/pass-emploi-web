@@ -2,13 +2,16 @@ import { DateTime } from 'luxon'
 
 import { EntreeAgenda } from 'interfaces/agenda'
 import {
+  BaseBeneficiaire,
+  getNomBeneficiaireComplet,
+} from 'interfaces/beneficiaire'
+import {
   AnimationCollective,
   Evenement,
   EvenementListItem,
   StatutAnimationCollective,
   TypeEvenement,
 } from 'interfaces/evenement'
-import { BaseBeneficiaire, getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import {
   jsonToTypeSessionMilo,
   SessionMiloBeneficiairesJson,
@@ -134,14 +137,20 @@ export function rdvJsonToEntree(rdv: EvenementJeuneJson): EntreeAgenda {
 export function jsonToAnimationCollective(
   json: AnimationCollectiveJson
 ): AnimationCollective {
-  return {
+  const animationCollective: AnimationCollective = {
     id: json.id,
     type: jsonToTypeAnimationCollective(json.type),
     titre: json.title,
     date: DateTime.fromISO(json.date),
     duree: json.duration,
     statut: jsonToStatutAnimationCollective(json.statut),
+    nombreParticipants: json.jeunes.length,
   }
+
+  if (json.nombreMaxParticipants)
+    animationCollective.nombreMaxParticipants = json.nombreMaxParticipants
+
+  return animationCollective
 }
 
 export function sessionMiloJsonToEvenementListItem(

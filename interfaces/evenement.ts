@@ -23,6 +23,8 @@ export type AnimationCollective = {
   sousTitre?: string
   isSession?: boolean
   estCache?: boolean
+  nombreParticipants: number
+  nombreMaxParticipants?: number
 }
 
 export type AnimationCollectivePilotage = {

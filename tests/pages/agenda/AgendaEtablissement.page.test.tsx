@@ -58,6 +58,9 @@ describe('Agenda - Onglet établissement', () => {
         id: 'ac-2',
         titre: 'Préparation de CV',
         date: SEPTEMBRE_1_14H,
+        duree: 30,
+        nombreParticipants: 2,
+        nombreMaxParticipants: 2,
         statut: StatutAnimationCollective.AClore,
       }),
       uneAnimationCollective({
@@ -141,31 +144,41 @@ describe('Agenda - Onglet établissement', () => {
           })
         ).toBeInTheDocument()
       })
-      expect(
-        screen.getByRole('cell', {
+
+      const row1 = screen
+        .getByRole('cell', {
           name: 'Prise de nouvelles par téléphone Atelier Visible',
         })
-      ).toBeInTheDocument()
+        .closest('tr')!
       expect(
-        screen.getByRole('link', {
+        within(row1).getByRole('cell', {
+          name: '29 août 2022 14h00 - durée 2 heure 5',
+        })
+      )
+      expect(within(row1).getByRole('cell', { name: '1 inscrit /10' }))
+      expect(
+        within(row1).getByRole('link', {
           name: 'Consulter Atelier Prise de nouvelles par téléphone du lundi 29 août à 14h00',
         })
       ).toBeInTheDocument()
-      expect(
-        screen.getByRole('cell', {
+
+      const row2 = screen
+        .getByRole('cell', {
           name: 'Préparation de CV Atelier Visible',
         })
-      ).toBeInTheDocument()
+        .closest('tr')!
       expect(
-        screen.getByRole('link', {
+        within(row2).getByRole('cell', {
+          name: '1 septembre 2022 14h00 - durée 30 minutes',
+        })
+      )
+      expect(within(row2).getByRole('cell', { name: 'Complet' }))
+      expect(
+        within(row2).getByRole('link', {
           name: 'Consulter Atelier Préparation de CV du jeudi 1 septembre à 14h00',
         })
       ).toBeInTheDocument()
-      expect(
-        screen.getByRole('cell', {
-          name: 'Écriture de lettre de motivation Atelier Visible',
-        })
-      ).toBeInTheDocument()
+
       expect(
         screen.getByRole('link', {
           name: 'Consulter Atelier i-milo Titre offre session milo du dimanche 4 septembre à 14h00',

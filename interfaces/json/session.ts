@@ -34,6 +34,8 @@ export type SessionMiloJson = {
   estVisible: boolean
   type: TypeEvenement
   statut: StatutAnimationCollectiveJson
+  nombreParticipants: number
+  nombreMaxParticipants?: number
 }
 
 export type DetailsSessionJson = {
@@ -78,7 +80,7 @@ export function sessionMiloJsonToAnimationCollective(
   json: SessionMiloJson
 ): AnimationCollective {
   const dateDebut = DateTime.fromISO(json.dateHeureDebut)
-  return {
+  const animationCollective: AnimationCollective = {
     id: json.id,
     date: dateDebut,
     duree: minutesEntreDeuxDates(
@@ -91,7 +93,13 @@ export function sessionMiloJsonToAnimationCollective(
     type: jsonToTypeSessionMilo(json.type),
     isSession: true,
     estCache: !json.estVisible,
+    nombreParticipants: json.nombreParticipants,
   }
+
+  if (json.nombreMaxParticipants)
+    animationCollective.nombreMaxParticipants = json.nombreMaxParticipants
+
+  return animationCollective
 }
 
 export function sessionJsonToEntree(

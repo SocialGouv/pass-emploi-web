@@ -134,6 +134,7 @@ export default function OngletAgendaEtablissement({
             <tr>
               <th scope='col'>Horaires et durée</th>
               <th scope='col'>Titre, type et visibilité</th>
+              <th scope='col'>Inscrits</th>
               <th scope='col'>Statut </th>
               <th scope='col'>Voir le détail</th>
             </tr>

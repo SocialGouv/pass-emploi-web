@@ -105,9 +105,11 @@ export function AnimationCollectiveRow({
       </TD>
 
       <TD>
-        {animationCollective.statut && <TagStatut {...animationCollective} />}
-        {!animationCollective.statut &&
-          -(<span className='sr-only'>information non disponible</span>)}
+        <Inscrits {...animationCollective} />
+      </TD>
+
+      <TD>
+        <TagStatut {...animationCollective} />
       </TD>
 
       <TDLink
@@ -231,6 +233,37 @@ function Visiblite({
           role='img'
           title={estCache ? 'Non visible' : 'Visible'}
         />
+      )}
+    </>
+  )
+}
+
+function Inscrits({
+  nombreMaxParticipants,
+  nombreParticipants,
+}: AnimationCollective): ReactElement {
+  const aUneCapaciteLimite = nombreMaxParticipants !== undefined
+  const aAtteintLaCapaciteLimite = nombreParticipants >= nombreMaxParticipants!
+  const aPlusieursParticipants = nombreParticipants !== 1
+
+  return (
+    <>
+      {!aUneCapaciteLimite && (
+        <>
+          <span className='text-m-bold'>{nombreParticipants}</span> inscrit
+          {aPlusieursParticipants ? 's' : ''}
+        </>
+      )}
+
+      {aUneCapaciteLimite && aAtteintLaCapaciteLimite && (
+        <span className='text-base-bold text-warning'>Complet</span>
+      )}
+
+      {aUneCapaciteLimite && !aAtteintLaCapaciteLimite && (
+        <>
+          <span className='text-m-bold'>{nombreParticipants}</span> inscrit
+          {nombreParticipants !== 1 ? 's' : ''} /{nombreMaxParticipants}
+        </>
       )}
     </>
   )
