@@ -144,6 +144,8 @@ export function uneAnimationCollective(
     date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
     duree: 125,
     statut: StatutAnimationCollective.AVenir,
+    nombreParticipants: 1,
+    nombreMaxParticipants: 10,
   }
   return { ...defaults, ...overrides }
 }
@@ -196,6 +198,7 @@ export function unEvenementJson(
         nom: 'Jirac',
       },
     ],
+    nombreMaxParticipants: 10,
     type: { code: 'AUTRE', label: 'Autre' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',
