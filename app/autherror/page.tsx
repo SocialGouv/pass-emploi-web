@@ -39,6 +39,12 @@ export default function AuthError({
       break
     default:
       {
+        let contacterConseiller =
+          searchParams?.typeUtilisateur === 'JEUNE' ||
+          searchParams?.typeUtilisateur === 'BENEFICIAIRE'
+            ? ' ou contacter votre conseiller'
+            : ''
+
         if (searchParams?.reason === 'Callback') {
           let idpName = ''
           switch (searchParams?.structureUtilisateur) {
@@ -54,15 +60,9 @@ export default function AuthError({
             default:
               idpName = "du fournissuer d'identité"
           }
-          erreur = `Une erreur ${idpName} est survenue, veuillez réessayer ultérieurement.`
+          erreur = `Une erreur ${idpName} est survenue, veuillez réessayer ultérieurement${contacterConseiller}.`
           searchParams.reason = undefined
         } else {
-          let contacterConseiller =
-            searchParams?.typeUtilisateur === 'JEUNE' ||
-            searchParams?.typeUtilisateur === 'BENEFICIAIRE'
-              ? ' ou contacter votre conseiller'
-              : ''
-
           erreur = `Une erreur est survenue, veuillez recharger cette page.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${contacterConseiller}.`
         }
       }
