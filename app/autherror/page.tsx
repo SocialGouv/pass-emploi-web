@@ -4,8 +4,8 @@ import AuthErrorPage from 'app/autherror/AuthErrorPage'
 
 type AuthErrorSearchParams = Partial<{
   reason?: string
-  typeUtilisateur: string
-  structureUtilisateur: string
+  typeUtilisateur?: string
+  structureUtilisateur?: string
 }>
 
 export default function AuthError({
@@ -37,14 +37,36 @@ export default function AuthError({
       erreur =
         "Veuillez vous connecter en choisissant le bon accompagnement (CEJ / BRSA / AIJ). Si vous avez changé d'accompagnement, veuillez supprimer votre compte ou contacter le support."
       break
-    default: {
-      erreur =
-        'Une erreur inconnue est survenue, veuillez essayer les solutions suivantes :\n\n- Recharger cette page\n- Activer les cookies\n- Supprimer le cache navigateur'
+    default:
+      {
+        if (searchParams?.reason === 'Callback') {
+          let idpName = ''
+          switch (searchParams?.structureUtilisateur) {
+            case 'MILO':
+              idpName = 'i-Milo'
+              break
+            case 'POLE_EMPLOI':
+            case 'POLE_EMPLOI_BRSA':
+            case 'POLE_EMPLOI_AIJ':
+            case 'FRANCE_TRAVAIL':
+              idpName = 'France Travail Connect'
+              break
+            default:
+              idpName = "du fournissuer d'identité"
+          }
+          erreur = `Une erreur ${idpName} est survenue, veuillez réessayer ultérieurement.`
+          searchParams.reason = undefined
+        } else {
+          let contacterConseiller =
+            searchParams?.typeUtilisateur === 'JEUNE' ||
+            searchParams?.typeUtilisateur === 'BENEFICIAIRE'
+              ? ' ou contacter votre conseiller'
+              : ''
 
-      if (searchParams?.typeUtilisateur === 'JEUNE') {
-        erreur +=
-          '\n\nVeuillez contacter votre conseiller si le problème persiste.'
-      } else if (searchParams?.typeUtilisateur === 'CONSEILLER') {
+          erreur = `Une erreur est survenue, veuillez recharger cette page.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${contacterConseiller}.`
+        }
+      }
+      if (searchParams?.typeUtilisateur === 'CONSEILLER') {
         lienFormulaire = ((): string | undefined => {
           switch (searchParams.structureUtilisateur) {
             case StructureConseiller.MILO:
@@ -67,7 +89,6 @@ export default function AuthError({
           }
         })()
       }
-    }
   }
 
   return (

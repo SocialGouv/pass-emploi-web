@@ -27,21 +27,14 @@ function AuthErrorPage({
           </h1>
           <div className='text-center text-s'>
             {erreur.split('\n').map((line, index) => (
-              <span
-                key={index}
-                className={
-                  index === 0
-                    ? 'block text-center'
-                    : 'block relative left-1/2 transform -translate-x-1/2 text-left'
-                }
-              >
+              <span key={index}>
                 {line}
                 <br />
               </span>
             ))}
-            {codeErreur && <p className='text-xs m-6'>code : {codeErreur}</p>}
+            {codeErreur && <p className='text-xs mt-6'>code : {codeErreur}</p>}
             {lienFormulaire && (
-              <ButtonLink href={lienFormulaire}>
+              <ButtonLink className='mt-6' href={lienFormulaire}>
                 Contacter le support
               </ButtonLink>
             )}
