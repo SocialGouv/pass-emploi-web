@@ -108,8 +108,6 @@ export function EvenementRow({
           <>
             <IconComponent
               name={IconName.LocationOn}
-              focusable={false}
-              aria-hidden={true}
               className='inline mr-2 h-6 w-6 fill-primary'
             />
             {evenement.modality}
