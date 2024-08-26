@@ -58,7 +58,7 @@ export default function AuthError({
               idpName = 'France Travail Connect'
               break
             default:
-              idpName = "du fournissuer d'identité"
+              idpName = "du fournisseur d'identité"
           }
           erreur = `Une erreur ${idpName} est survenue, veuillez réessayer ultérieurement${contacterConseiller}.`
           searchParams.reason = undefined
