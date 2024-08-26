@@ -17,12 +17,10 @@ export default function TR({
   const [containsExtendedClickZone, setContainsExtendedClickZone] =
     useState<boolean>(false)
 
-  const selectedStyle = 'bg-primary_lighten shadow-m'
-  const style = `focus-within:bg-primary_lighten rounded-base shadow-base ${
-    isSelected ? selectedStyle : ''
+  const style = `[&:focus-within>td]:bg-primary_lighten shadow-base ${
+    isSelected ? '[&>td]:bg-primary_lighten shadow-m' : ''
   }`
-  const clickableStyle =
-    'group cursor-pointer hover:bg-primary_lighten hover:rounded-base'
+  const clickableStyle = 'cursor-pointer [&:hover>td]:bg-primary_lighten'
 
   useEffect(() => {
     const clickableContent = Array.from(
