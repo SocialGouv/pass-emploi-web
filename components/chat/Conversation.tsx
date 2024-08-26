@@ -408,9 +408,9 @@ export function Conversation({
                   <ul ref={conteneurMessagesRef}>
                     {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                       <li key={messagesOfADay.date.toMillis()} className='mb-5'>
-                        <div className='text-base-regular text-center mb-3'>
-                          <span>{displayDate(messagesOfADay.date)}</span>
-                        </div>
+                        <p className='text-base-regular text-center mb-3'>
+                          {displayDate(messagesOfADay.date)}
+                        </p>
 
                         <ul>
                           {messagesOfADay.messages.map((message: Message) => (

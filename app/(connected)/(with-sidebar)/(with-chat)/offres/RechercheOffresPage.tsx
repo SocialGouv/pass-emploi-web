@@ -312,6 +312,7 @@ function RechercheOffresPage() {
               title={`${collapsed ? 'Voir' : 'Cacher'} les critères`}
               className='h-6 w-6 fill-primary'
               focusable={false}
+              aria-hidden='true'
             />
             <span className='sr-only'>
               {collapsed ? 'Voir' : 'Cacher'} les critères

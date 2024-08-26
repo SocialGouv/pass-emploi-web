@@ -96,9 +96,9 @@ function CreationBeneficiaireMiloPage() {
 
 function CreationEtape({ etape }: { etape: 1 | 2 }) {
   return (
-    <div className='bg-primary_lighten rounded-base w-auto inline-block p-2 text-base-medium text-primary'>
-      <span>{etape} sur 2</span>
-    </div>
+    <p className='bg-primary_lighten rounded-base w-auto inline-block p-2 text-base-medium text-primary'>
+      Etape {etape} sur 2
+    </p>
   )
 }
 
