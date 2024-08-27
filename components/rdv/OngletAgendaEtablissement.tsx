@@ -58,13 +58,18 @@ export default function OngletAgendaEtablissement({
         dateDebut,
         dateFin
       )
+      const evenementsRecuperes = [...animationsCollectives]
 
       if (peutAccederAuxSessions(conseiller)) {
         const sessions = await recupererSessionsMilo(dateDebut, dateFin)
-        setEvenements([...sessions, ...animationsCollectives])
-      } else {
-        setEvenements([...animationsCollectives])
+        evenementsRecuperes.push(...sessions)
       }
+
+      setEvenements(
+        evenementsRecuperes.toSorted(
+          (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
+        )
+      )
     } catch (e) {
       setFailed(true)
     } finally {
