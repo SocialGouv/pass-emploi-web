@@ -4,11 +4,11 @@ import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 
 import ProfilPage from 'app/(connected)/(with-sidebar)/(with-chat)/profil/ProfilPage'
-import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsBeneficiaires,
   unBeneficiaireChat,
 } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
 import {
   BaseBeneficiaire,
   BeneficiaireChat,
@@ -108,8 +108,8 @@ async function renderWithNotificationsSonores(notificationsSonores: boolean) {
 
 async function toggleNotifications() {
   await userEvent.click(
-    screen.getByRole<HTMLInputElement>('checkbox', {
-      name: /notifications sonores/,
+    screen.getByRole<HTMLInputElement>('switch', {
+      name: 'Recevoir des notifications sonores pour la réception de nouveaux messages',
     })
   )
 }

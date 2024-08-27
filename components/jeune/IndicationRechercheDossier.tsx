@@ -14,7 +14,9 @@ function IndicationRechercheDossier({}: IndicationRechercheDossierProps) {
 
       <li className='text-s-regular text-center' style={{ flex: '0 0 136px' }}>
         <Indication2 focusable={false} aria-hidden={true} className='my-2' />
-        Le numéro de dossier à saisir se situe dans l’adresse du navigateur
+        Le numéro de dossier se trouve dans l’URL du dossier du jeune dans
+        i-milo après &apos;/dossiers/&apos; et comporte 7 chiffres sans espaces
+        ni caractères spéciaux.
       </li>
 
       <li className='text-s-regular text-center' style={{ flex: '0 0 260px' }}>

@@ -37,7 +37,7 @@ export default function ListeListesDeDiffusion({
             titre={'Mes listes de diffusion'}
             labelRetour={'Retour sur ma messagerie'}
             onBack={onBack!}
-            permuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
+            onPermuterVisibiliteMessagerie={permuterVisibiliteMessagerie}
             messagerieEstVisible={messagerieEstVisible}
           />
 
@@ -63,7 +63,7 @@ export default function ListeListesDeDiffusion({
 
       {messagerieEstVisible && (
         <>
-          {!listesDeDiffusion && <SpinningLoader />}
+          {!listesDeDiffusion && <SpinningLoader alert={true} />}
 
           {listesDeDiffusion && listesDeDiffusion.length === 0 && (
             <div className='bg-grey_100 flex flex-col justify-center items-center'>

@@ -12,7 +12,7 @@ export enum CategorieSituation {
   EMPLOI = 'Emploi',
   CONTRAT_EN_ALTERNANCE = 'Contrat en Alternance',
   FORMATION = 'Formation',
-  IMMERSION_EN_ENTREPRISE = 'Immersion en entreprise',
+  IMMERSION_EN_ENTREPRISE = 'Immersion',
   PMSMP = 'Pmsmp',
   CONTRAT_DE_VOLONTARIAT_BENEVOLAT = 'Contrat de volontariat - bénévolat',
   SCOLARITE = 'Scolarité',
@@ -37,6 +37,7 @@ export interface BeneficiaireFromListe extends BaseBeneficiaire {
   }
   situationCourante: CategorieSituation
   structureMilo?: { id: string }
+  dateFinCEJ?: string
 }
 
 export interface DetailBeneficiaire extends BaseBeneficiaire {
@@ -75,12 +76,13 @@ export interface MetadonneesFavoris {
   }
 }
 
-export type BeneficiaireAvecNbActionsNonTerminees = BeneficiaireFromListe & {
+export type BeneficiaireAvecCompteursActionsRdvs = BeneficiaireFromListe & {
   nbActionsNonTerminees: number
+  rdvs: number
 }
 
 export type BeneficiaireAvecInfosComplementaires =
-  BeneficiaireAvecNbActionsNonTerminees & {
+  BeneficiaireAvecCompteursActionsRdvs & {
     messagesNonLus: number
   }
 

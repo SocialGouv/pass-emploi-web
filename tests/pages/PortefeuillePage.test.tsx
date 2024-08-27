@@ -2,6 +2,7 @@ import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
+import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -13,13 +14,14 @@ import {
 import { unConseiller } from 'fixtures/conseiller'
 import {
   CategorieSituation,
-  BeneficiaireAvecNbActionsNonTerminees,
+  BeneficiaireAvecCompteursActionsRdvs,
 } from 'interfaces/beneficiaire'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { recupererBeneficiaires } from 'services/conseiller.service'
 import { countMessagesNotRead, signIn } from 'services/messages.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { toLongMonthDate, toShortDate } from 'utils/date'
 
 jest.mock('services/messages.service')
 jest.mock('services/conseiller.service')
@@ -72,7 +74,6 @@ describe('PortefeuillePage client side', () => {
           screen.getByText(jeune.nbActionsNonTerminees)
         ).toBeInTheDocument()
       })
-      expect(screen.getAllByText('2')).toHaveLength(jeunes.length)
 
       expect(() =>
         screen.getByText("Vous n'avez pas encore intégré de bénéficiaires.")
@@ -80,50 +81,73 @@ describe('PortefeuillePage client side', () => {
       expect(() => screen.getByText(/transférés temporairement/)).toThrow()
     })
 
-    describe("affiche le statut d'activation du compte d'un jeune", () => {
-      it("si le compte n'a pas été activé", () => {
-        const row2 = within(
-          screen
-            .getByText('Sanfamiye Nadia')
-            .closest('[role="row"]') as HTMLElement
+    it('affiche la date de fin du CEJ', () => {
+      jeunes.forEach((jeune) => {
+        const nomBeneficiaire = `${jeune.nom} ${jeune.prenom}`
+        const row = within(
+          screen.getByRole('cell', { name: new RegExp(nomBeneficiaire) })
+            .parentElement!
         )
 
+        if (jeune.dateFinCEJ)
+          expect(
+            row.getByText(toLongMonthDate(DateTime.fromISO(jeune.dateFinCEJ)))
+          ).toBeInTheDocument()
+        else
+          expect(
+            row.getByText('information non disponible')
+          ).toBeInTheDocument()
+      })
+    })
+
+    describe("affiche le statut d'activation du compte d'un jeune", () => {
+      it("si le compte n'a pas été activé", () => {
+        const row = screen.getByRole('cell', {
+          name: 'Sanfamiye Nadia Sans situation',
+        }).parentElement!
+
         //THEN
-        expect(row2.getByText('Compte non activé')).toBeInTheDocument()
+        expect(
+          within(row).getByRole('cell', { name: 'Compte non activé' })
+        ).toBeInTheDocument()
       })
 
       it('si le compte a été activé', () => {
-        const row1 = within(
-          screen.getByText('Jirac Kenji').closest('[role="row"]') as HTMLElement
-        )
+        const row = screen.getByRole('cell', {
+          name: 'Jirac Kenji Sans situation',
+        }).parentElement!
 
         //THEN
-        expect(row1.getByText('Le 07/12/2021 à 18h30')).toBeInTheDocument()
+        expect(
+          within(row).getByRole('cell', { name: 'Le 07/12/2021 à 18h30' })
+        ).toBeInTheDocument()
       })
     })
 
     describe("affiche la réaffectation temporaire d'un jeune", () => {
       it('si le compte a été réaffecté temporairement', () => {
-        const row3 = within(
-          screen.getByText(/Maria/).closest('[role="row"]') as HTMLElement
-        )
-
-        //THEN
         expect(
-          row3.getByLabelText('bénéficiaire temporaire')
+          screen.getByRole('cell', {
+            name: "bénéficiaire temporaire D'Aböville-Muñoz François Maria Sans situation",
+          })
         ).toBeInTheDocument()
       })
 
       it("si le compte n'a pas été réaffecté temporairement", () => {
-        const row2 = within(
-          screen
-            .getByText('Sanfamiye Nadia')
-            .closest('[role="row"]') as HTMLElement
-        )
+        const row = screen.getByRole('cell', {
+          name: 'Sanfamiye Nadia Sans situation',
+        }).parentElement!
 
         //THEN
-        expect(() => row2.getByText('bénéficiaire temporaire')).toThrow()
+        expect(() => within(row).getByText(/bénéficiaire temporaire/)).toThrow()
       })
+    })
+
+    it('masque le header du tableau', () => {
+      expect(screen.getAllByRole('rowgroup')[0]).toHaveAttribute(
+        'class',
+        'sr-only'
+      )
     })
   })
 
@@ -173,8 +197,9 @@ describe('PortefeuillePage client side', () => {
   })
 
   describe('quand le conseiller est MILO', () => {
-    let jeune: BeneficiaireAvecNbActionsNonTerminees
-    let beneficiaireAvecStructureDifferente: BeneficiaireAvecNbActionsNonTerminees
+    let jeune: BeneficiaireAvecCompteursActionsRdvs
+    let beneficiaireAvecStructureDifferente: BeneficiaireAvecCompteursActionsRdvs
+    jest.spyOn(DateTime, 'now').mockReturnValue(DateTime.fromISO('2024-01-01'))
 
     beforeEach(async () => {
       //GIVEN
@@ -223,23 +248,35 @@ describe('PortefeuillePage client side', () => {
       ).toHaveAttribute('href', '/mes-jeunes/creation-jeune')
     })
 
-    it("affiche la colonne nombre d'actions des jeunes", () => {
+    it('affiche la période en cours', () => {
+      const DEBUT_PERIODE = toShortDate(DateTime.now().startOf('week'))
+      const FIN_PERIODE = toShortDate(DateTime.now().endOf('week'))
+
+      expect(
+        screen.getByText(`Semaine du ${DEBUT_PERIODE} au ${FIN_PERIODE}`)
+      ).toBeInTheDocument()
+    })
+
+    it("affiche la colonne nombre d'actions des bénéficiaires", () => {
       // Then
       expect(
-        screen.getByRole('columnheader', { name: 'Actions' })
+        screen.getByRole('columnheader', { name: /Actions/ })
+      ).toBeInTheDocument()
+    })
+
+    it('affiche la colonne nombre de rendez-vous des bénéficiaires', () => {
+      // Then
+      expect(
+        screen.getByRole('columnheader', { name: /Rendez-vous/ })
       ).toBeInTheDocument()
     })
 
     it('affiche si la structure du bénéficiaire est différente', () => {
-      const row3 = within(
-        screen.getByText(/Kenji/).closest('[role="row"]') as HTMLElement
-      )
-
       //THEN
       expect(
-        row3.getByText(
-          /Ce bénéficiaire est rattaché à une Mission Locale différente/
-        )
+        screen.getByRole('cell', {
+          name: /Ce bénéficiaire est rattaché à une Mission Locale différente de la vôtre. Jirac Kenji/,
+        }).parentElement!
       ).toBeInTheDocument()
     })
   })

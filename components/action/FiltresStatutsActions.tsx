@@ -116,6 +116,7 @@ export default function FiltresStatutsActions({
           </fieldset>
           <Button className='w-full justify-center' type='submit'>
             Valider
+            <span className='sr-only'> Statuts</span>
           </Button>
         </form>
       )}

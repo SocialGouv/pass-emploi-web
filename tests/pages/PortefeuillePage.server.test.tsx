@@ -1,10 +1,11 @@
 import { render } from '@testing-library/react'
+import { DateTime } from 'luxon'
 
 import Portefeuille from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/page'
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { compareBeneficiairesByNom } from 'interfaces/beneficiaire'
-import { countActionsJeunes } from 'services/actions.service'
+import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -21,10 +22,13 @@ describe('PortefeuillePage server side', () => {
   beforeEach(() => {
     const jeunes = desItemsBeneficiaires()
     ;(getJeunesDuConseillerServerSide as jest.Mock).mockResolvedValue(jeunes)
-    ;(countActionsJeunes as jest.Mock).mockResolvedValue(
+    ;(
+      recupereCompteursBeneficiairesPortefeuilleMilo as jest.Mock
+    ).mockResolvedValue(
       jeunes.map((j) => ({
-        idJeune: j.id,
-        nbActionsNonTerminees: 7,
+        idBeneficiaire: j.id,
+        actions: 7,
+        rdvs: 3,
       }))
     )
   })
@@ -60,7 +64,9 @@ describe('PortefeuillePage server side', () => {
 
     it('ne récupère pas les actions des jeunes', () => {
       // Then
-      expect(countActionsJeunes).not.toHaveBeenCalled()
+      expect(
+        recupereCompteursBeneficiairesPortefeuilleMilo
+      ).not.toHaveBeenCalled()
     })
 
     it("renvoie les jeunes sans leur nombre d'actions", () => {
@@ -71,6 +77,7 @@ describe('PortefeuillePage server side', () => {
             .map((jeune) => ({
               ...jeune,
               nbActionsNonTerminees: 0,
+              rdvs: 0,
             }))
             .sort(compareBeneficiairesByNom),
         }),
@@ -87,16 +94,22 @@ describe('PortefeuillePage server side', () => {
         accessToken: 'accessToken',
       })
 
+      jest
+        .spyOn(DateTime, 'now')
+        .mockReturnValue(DateTime.fromISO('2024-08-01'))
+
       // When
       render(await Portefeuille({}))
     })
 
     it('récupère les actions des jeunes', () => {
+      const dateDebut = DateTime.now().startOf('week')
+      const dateFin = DateTime.now().endOf('week')
+
       // Then
-      expect(countActionsJeunes).toHaveBeenCalledWith(
-        'id-conseiller',
-        'accessToken'
-      )
+      expect(
+        recupereCompteursBeneficiairesPortefeuilleMilo
+      ).toHaveBeenCalledWith('id-conseiller', dateDebut, dateFin, 'accessToken')
     })
 
     it("renvoie les jeunes avec leur nombre d'actions", () => {
@@ -107,6 +120,7 @@ describe('PortefeuillePage server side', () => {
             .map((jeune) => ({
               ...jeune,
               nbActionsNonTerminees: 7,
+              rdvs: 3,
             }))
             .sort(compareBeneficiairesByNom),
           isFromEmail: false,

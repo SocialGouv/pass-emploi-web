@@ -25,6 +25,8 @@ export default function ConfirmationDeleteConseillerModal({
 
   const labelStructure = ((): string => {
     switch (conseiller.structure) {
+      case StructureConseiller.CONSEIL_DEPT:
+        return 'départemental'
       case StructureConseiller.POLE_EMPLOI_BRSA:
         return 'BRSA'
       case StructureConseiller.POLE_EMPLOI_AIJ:

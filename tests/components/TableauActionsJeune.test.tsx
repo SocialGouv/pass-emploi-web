@@ -69,7 +69,9 @@ describe('TableauActionsJeune', () => {
       // Given
       await userEvent.click(screen.getByText('Statut'))
       await userEvent.click(screen.getByLabelText('À faire'))
-      await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Valider Statuts' })
+      )
     })
 
     it('sauvegarde les statuts sélectionnés', async () => {

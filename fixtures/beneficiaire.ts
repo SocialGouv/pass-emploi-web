@@ -7,7 +7,7 @@ import {
   ConseillerHistorique,
   DetailBeneficiaire,
   IndicateursSemaine,
-  BeneficiaireAvecNbActionsNonTerminees,
+  BeneficiaireAvecCompteursActionsRdvs,
   BeneficiaireChat,
   BeneficiaireFromListe,
   MetadonneesFavoris,
@@ -123,6 +123,7 @@ export const desItemsBeneficiaires = (): BeneficiaireFromListe[] => [
     nom: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
     isActivated: true,
+    dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
   }),
 ]
 
@@ -183,21 +184,23 @@ export const desItemsBeneficiairesJson = (): ItemBeneficiaireJson[] => [
     lastName: "D'Aböville-Muñoz François",
     lastActivity: '2022-02-07T17:30:07.756Z',
     isActivated: true,
+    dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
   }),
 ]
 
 export const unBeneficiaireAvecActionsNonTerminees = (
-  overrides: Partial<BeneficiaireAvecNbActionsNonTerminees> = {}
-): BeneficiaireAvecNbActionsNonTerminees => {
-  const defaults: BeneficiaireAvecNbActionsNonTerminees = {
+  overrides: Partial<BeneficiaireAvecCompteursActionsRdvs> = {}
+): BeneficiaireAvecCompteursActionsRdvs => {
+  const defaults: BeneficiaireAvecCompteursActionsRdvs = {
     ...unItemBeneficiaire(),
     nbActionsNonTerminees: 5,
+    rdvs: 2,
   }
   return { ...defaults, ...overrides }
 }
 
 export const desBeneficiairesAvecActionsNonTerminees =
-  (): BeneficiaireAvecNbActionsNonTerminees[] => [
+  (): BeneficiaireAvecCompteursActionsRdvs[] => [
     unBeneficiaireAvecActionsNonTerminees(),
     unBeneficiaireAvecActionsNonTerminees({
       id: 'beneficiaire-2',
@@ -214,6 +217,7 @@ export const desBeneficiairesAvecActionsNonTerminees =
       lastActivity: '2022-02-07T17:30:07.756Z',
       isReaffectationTemporaire: true,
       nbActionsNonTerminees: 8,
+      dateFinCEJ: '2022-06-11T00:00:00.000+00:00',
     }),
   ]
 

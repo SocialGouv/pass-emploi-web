@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import FiltresStatutsActions from 'components/action/FiltresStatutsActions'
@@ -63,7 +63,9 @@ describe('FiltresStatutsAction', () => {
     await userEvent.click(screen.getByLabelText('Annulée'))
 
     // When
-    await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Valider Statuts' })
+    )
 
     // Then
     expect(filtrerActions).toHaveBeenCalledWith([StatutAction.Annulee])

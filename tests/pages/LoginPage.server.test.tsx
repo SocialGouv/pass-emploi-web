@@ -41,6 +41,7 @@ describe('LoginPage server side', () => {
         isFromEmail: true,
         ssoFranceTravailBRSAEstActif: true,
         ssoFranceTravailAIJEstActif: true,
+        ssoConseillerDeptEstActif: true,
       },
       {}
     )

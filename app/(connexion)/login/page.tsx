@@ -39,6 +39,9 @@ export default async function Login({
           ssoFranceTravailAIJEstActif={
             process.env.NEXT_PUBLIC_ENABLE_PE_AIJ_SSO === 'true'
           }
+          ssoConseillerDeptEstActif={
+            process.env.NEXT_PUBLIC_ENABLE_CONSEILLER_DEPT_SSO === 'true'
+          }
           isFromEmail={isFromEmail}
         />
       </div>

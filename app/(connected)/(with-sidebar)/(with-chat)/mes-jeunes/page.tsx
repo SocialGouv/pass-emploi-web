@@ -1,15 +1,15 @@
+import { DateTime } from 'luxon'
 import { Metadata } from 'next'
-import React from 'react'
 
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { PageHeaderPortal } from 'components/PageNavigationPortals'
-import { TotalActions } from 'interfaces/action'
+import { CompteurActionsPeriode } from 'interfaces/action'
 import {
+  BeneficiaireAvecCompteursActionsRdvs,
   compareBeneficiairesByNom,
-  BeneficiaireAvecNbActionsNonTerminees,
 } from 'interfaces/beneficiaire'
-import { estUserFranceTravail } from 'interfaces/conseiller'
-import { countActionsJeunes } from 'services/actions.service'
+import { estUserMilo } from 'interfaces/conseiller'
+import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -27,41 +27,44 @@ export default async function Portefeuille({
     accessToken
   )
 
-  let beneficiairesAvecNbActionsNonTerminees: BeneficiaireAvecNbActionsNonTerminees[]
-  if (estUserFranceTravail(user)) {
-    beneficiairesAvecNbActionsNonTerminees = beneficiaires.map(
-      (beneficiaire) => ({
+  let beneficiairesAvecCompteurs: BeneficiaireAvecCompteursActionsRdvs[]
+  if (estUserMilo(user)) {
+    const dateDebut = DateTime.now().startOf('week')
+    const dateFin = DateTime.now().endOf('week')
+    const compteurActionsPeriode: CompteurActionsPeriode[] =
+      await recupereCompteursBeneficiairesPortefeuilleMilo(
+        user.id,
+        dateDebut,
+        dateFin,
+        accessToken
+      )
+
+    beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => {
+      const compteursPeriode = compteurActionsPeriode.find(
+        (compteurs) => compteurs.idBeneficiaire === beneficiaire.id
+      )
+
+      return {
         ...beneficiaire,
-        nbActionsNonTerminees: 0,
-      })
-    )
-  } else {
-    const totauxActions: TotalActions[] = await countActionsJeunes(
-      user.id,
-      accessToken
-    )
-
-    beneficiairesAvecNbActionsNonTerminees = beneficiaires.map(
-      (beneficiaire) => {
-        const totalBeneficiaire = totauxActions.find(
-          (action) => action.idJeune === beneficiaire.id
-        )
-
-        return {
-          ...beneficiaire,
-          nbActionsNonTerminees: totalBeneficiaire?.nbActionsNonTerminees ?? 0,
-        }
+        nbActionsNonTerminees: compteursPeriode?.actions ?? 0,
+        rdvs: compteursPeriode?.rdvs ?? 0,
       }
-    )
+    })
+  } else {
+    beneficiairesAvecCompteurs = beneficiaires.map((beneficiaire) => ({
+      ...beneficiaire,
+      nbActionsNonTerminees: 0,
+      rdvs: 0,
+    }))
   }
 
-  beneficiairesAvecNbActionsNonTerminees.sort(compareBeneficiairesByNom)
+  beneficiairesAvecCompteurs.sort(compareBeneficiairesByNom)
   return (
     <>
       <PageHeaderPortal header='Portefeuille' />
 
       <PortefeuillePage
-        conseillerJeunes={beneficiairesAvecNbActionsNonTerminees}
+        conseillerJeunes={beneficiairesAvecCompteurs}
         isFromEmail={Boolean(searchParams?.source)}
       />
     </>

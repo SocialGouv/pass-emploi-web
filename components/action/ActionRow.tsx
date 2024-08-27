@@ -5,6 +5,7 @@ import React from 'react'
 import TagStatutAction from 'components/action/TagStatutAction'
 import { TagCategorieAction } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
+import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import { Action, StatutAction } from 'interfaces/action'
 import { toLongMonthDate } from 'utils/date'
@@ -35,33 +36,23 @@ export default function ActionRow({
   const dateEcheance = toLongMonthDate(action.dateEcheance)
 
   return (
-    <TR
-      href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
-      linkLabel={`Voir le détail de l'action ${action.content}`}
-      isSelected={isChecked}
-    >
-      <TD
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          onSelection(action)
-        }}
-      >
-        <input
-          id={`selectionner-${action.id}`}
-          type='checkbox'
-          checked={isChecked}
-          title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
-            action.content
-          }`}
-          className='w-4 h-4 cursor-pointer'
-          aria-label={`Sélection ${action.content} ${
-            action.qualification?.libelle ?? ''
-          }`}
-          disabled={!actionEstTerminee}
-          onClick={(e) => e.stopPropagation()}
-          onChange={() => onSelection(action)}
-        />
+    <TR isSelected={isChecked}>
+      <TD className='relative'>
+        <label className='absolute inset-0 z-20 cursor-pointer p-4'>
+          <span className='sr-only'>
+            Sélection {action.content} {action.qualification?.libelle}
+          </span>
+          <input
+            type='checkbox'
+            checked={isChecked}
+            title={`${isChecked ? 'Désélectionner' : 'Sélectionner'} ${
+              action.content
+            }`}
+            className='w-4 h-4 cursor-pointer'
+            disabled={!actionEstTerminee}
+            onChange={() => onSelection(action)}
+          />
+        </label>
       </TD>
       <TD className='rounded-l-base max-w-[400px]'>
         <span
@@ -86,6 +77,10 @@ export default function ActionRow({
           />
         </span>
       </TD>
+      <TDLink
+        href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}
+        label={`Voir le détail de l'action ${action.content}`}
+      />
     </TR>
   )
 }

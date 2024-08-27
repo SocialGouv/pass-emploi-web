@@ -6,17 +6,17 @@ import {
   Action,
   ActionPilotage,
   Commentaire,
+  CompteurActionsPeriode,
   QualificationAction,
   SituationNonProfessionnelle,
   StatutAction,
-  TotalActions,
 } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import {
   ActionFormData,
   ActionJson,
   ActionPilotageJson,
-  ActionsCountJson,
+  CompteursPortefeuilleJson,
   actionStatusToFiltre,
   actionStatusToJson,
   CODE_QUALIFICATION_NON_SNP,
@@ -60,19 +60,27 @@ export async function getAction(
   }
 }
 
-export async function countActionsJeunes(
+export async function recupereCompteursBeneficiairesPortefeuilleMilo(
   idConseiller: string,
+  dateDebut: DateTime,
+  dateFin: DateTime,
   accessToken: string
-): Promise<TotalActions[]> {
-  const { content: counts } = await apiGet<ActionsCountJson[]>(
-    `/conseillers/${idConseiller}/actions`,
+): Promise<CompteurActionsPeriode[]> {
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
+
+  const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
+    `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
     accessToken
   )
-  return counts.map((count: ActionsCountJson) => ({
-    idJeune: count.jeuneId,
-    nbActionsNonTerminees:
-      count.todoActionsCount + count.inProgressActionsCount,
-  }))
+
+  return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
+    return {
+      idBeneficiaire,
+      actions,
+      rdvs: Number(rdvs) + Number(sessions),
+    }
+  })
 }
 
 export async function getActionsBeneficiaireClientSide(

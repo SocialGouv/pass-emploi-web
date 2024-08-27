@@ -26,6 +26,7 @@ export interface ItemBeneficiaireJson extends BaseBeneficiaireJson {
   isActivated: boolean
   isReaffectationTemporaire: boolean
   situationCourante?: Situation
+  dateFinCEJ?: string
 }
 
 export interface DetailBeneficiaireJson extends BaseBeneficiaireJson {
@@ -113,9 +114,8 @@ function toCategorieSituation(categorie?: string): CategorieSituation {
     case 'Formation':
       return CategorieSituation.FORMATION
     case 'Immersion en entreprise':
-      return CategorieSituation.IMMERSION_EN_ENTREPRISE
     case 'Pmsmp':
-      return CategorieSituation.PMSMP
+      return CategorieSituation.IMMERSION_EN_ENTREPRISE
     case 'Contrat de volontariat - bénévolat':
       return CategorieSituation.CONTRAT_DE_VOLONTARIAT_BENEVOLAT
     case 'Scolarité':

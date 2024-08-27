@@ -9,10 +9,8 @@ import ButtonLink from 'components/ui/Button/ButtonLink'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import Table from 'components/ui/Table/Table'
-import { TBody } from 'components/ui/Table/TBody'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
-import { THead } from 'components/ui/Table/THead'
 import TR from 'components/ui/Table/TR'
 import {
   BaseBeneficiaire,
@@ -41,7 +39,7 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
     }
   }
 
-  function selectionnerTousLesBeneficiaires(_event: FormEvent) {
+  function selectionnerTousLesBeneficiaires() {
     if (idsSelectionnes.length !== evenement.jeunes.length) {
       setIdsSelectionnes(evenement.jeunes.map((jeune) => jeune.id))
     } else {
@@ -75,59 +73,56 @@ function CloturePage({ returnTo, evenement }: ClotureProps) {
 
       <form onSubmit={cloreAnimationCollective} className='mt-6'>
         <Table caption={{ text: 'Bénéficiaires de l’animation collective' }}>
-          <THead>
+          <thead>
             <TR isHeader={true}>
               <TH>Présence</TH>
               <TH>Bénéficiaires ({evenement.jeunes.length})</TH>
             </TR>
-          </THead>
-          <TBody>
-            <TR onClick={(e) => selectionnerTousLesBeneficiaires(e)}>
+          </thead>
+          <tbody>
+            <TR>
               <TD>
                 <input
                   id='cloture-tout-selectionner'
                   type='checkbox'
                   checked={idsSelectionnes.length === evenement.jeunes.length}
                   title='Tout sélectionner'
-                  onChange={() => false}
+                  onChange={selectionnerTousLesBeneficiaires}
                 />
               </TD>
               <TD>
                 <label
                   htmlFor='cloture-tout-selectionner'
-                  onClick={(e) => e.stopPropagation()}
+                  className='cursor-pointer before:fixed before:inset-0 before:z-10'
                 >
                   Tout sélectionner
                 </label>
               </TD>
             </TR>
-          </TBody>
-          <TBody>
+          </tbody>
+          <tbody>
             {evenement.jeunes.map((jeune: BaseBeneficiaire) => (
-              <TR
-                key={jeune.id}
-                onClick={() => selectionnerBeneficiaire(jeune)}
-              >
+              <TR key={jeune.id}>
                 <TD>
                   <input
                     type='checkbox'
                     id={'checkbox-' + jeune.id}
                     checked={idsSelectionnes.includes(jeune.id)}
                     title={'Sélectionner ' + getNomBeneficiaireComplet(jeune)}
-                    onChange={() => false}
+                    onChange={() => selectionnerBeneficiaire(jeune)}
                   />
                 </TD>
                 <TD>
                   <label
                     htmlFor={'checkbox-' + jeune.id}
-                    onClick={(e) => e.stopPropagation()}
+                    className='cursor-pointer before:fixed before:inset-0 before:z-10'
                   >
                     {getNomBeneficiaireComplet(jeune)}
                   </label>
                 </TD>
               </TR>
             ))}
-          </TBody>
+          </tbody>
         </Table>
 
         <div className='flex justify-center mt-10 p-4'>

@@ -1,8 +1,5 @@
-import { MouseEvent } from 'react'
-
-interface RadioBoxProps {
+type RadioBoxProps = {
   isSelected: boolean
-  id: string
   label: string
   name: string
   onChange: () => void
@@ -13,49 +10,30 @@ interface RadioBoxProps {
 export default function RadioBox({
   isSelected,
   onChange,
-  id,
   label,
   name,
   color = 'primary',
   disabled,
 }: RadioBoxProps) {
-  function onClickDiv(e: MouseEvent) {
-    e.preventDefault()
-    if (disabled) return
-    onChange()
-  }
-  function onClickInput(e: MouseEvent) {
-    e.stopPropagation()
-  }
-
   const selectedStyle = `border-${color} bg-${color}_lighten text-${color}`
 
   return (
-    <div
-      className={`flex items-center w-fit px-4 py-2 border border-solid rounded-l text-s-bold mr-4 cursor-pointer ${
+    <label
+      className={`flex items-center w-fit px-4 py-2 border border-solid rounded-l text-s-bold mr-4 ${
         isSelected ? selectedStyle : 'border-grey_800 text-grey_800'
-      } ${disabled ? 'hover:cursor-not-allowed' : ''}`}
-      onClick={onClickDiv}
+      } ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
     >
       <input
         type='radio'
-        id={id}
         name={name}
         checked={isSelected}
         required={true}
+        readOnly={true}
         className='mr-2'
-        onClick={onClickInput}
-        onChange={onChange}
+        onClick={onChange}
         disabled={disabled}
       />
-      <label
-        htmlFor={id}
-        className={`whitespace-nowrap cursor-pointer ${
-          disabled ? 'hover:cursor-not-allowed' : ''
-        }`}
-      >
-        {label}
-      </label>
-    </div>
+      <span>{label}</span>
+    </label>
   )
 }

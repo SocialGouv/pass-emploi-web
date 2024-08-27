@@ -21,7 +21,7 @@ import {
   IndicateursSemaine,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
-import { estMilo, estFranceTravail } from 'interfaces/conseiller'
+import { estFranceTravail, estMilo } from 'interfaces/conseiller'
 import { getIndicateursJeuneComplets } from 'services/jeunes.service'
 import useMatomo from 'utils/analytics/useMatomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
@@ -164,7 +164,7 @@ function InformationsPage({
           tabIndex={0}
           id='liste-indicateurs'
         >
-          {!indicateursSemaine && <SpinningLoader />}
+          {!indicateursSemaine && <SpinningLoader alert={true} />}
           {indicateursSemaine && (
             <BlocIndicateurs
               debutSemaine={debutSemaine}

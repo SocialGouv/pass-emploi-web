@@ -92,7 +92,7 @@ export default function DesinscriptionBeneficiaireModal({
       ref={modalRef}
     >
       <form onSubmit={validateFormulaire}>
-        <div className='mt-14 flex flex-col justify-center'>
+        <div className='mt-10 flex flex-col justify-center'>
           <div className='flex flex-col gap-2 mb-4'>
             {typeRefus.error && (
               <InputError id={'select-beneficiaires--error'} className='my-2'>
@@ -108,7 +108,6 @@ export default function DesinscriptionBeneficiaireModal({
               }}
               label='J’ai fait une erreur lors de l’ajout de ce bénéficiaire'
               name='type-refus'
-              id='type-refus--erreur'
             />
             <RadioBox
               isSelected={typeRefus.value === StatutBeneficiaire.REFUS_TIERS}
@@ -118,7 +117,6 @@ export default function DesinscriptionBeneficiaireModal({
               }}
               label='Refus tiers (la désinscription est à mon initiative ou à celle d’un tiers)'
               name='type-refus'
-              id='type-refus--tiers'
             />
             <RadioBox
               isSelected={typeRefus.value === StatutBeneficiaire.REFUS_JEUNE}
@@ -127,7 +125,6 @@ export default function DesinscriptionBeneficiaireModal({
               }
               label='Refus jeune (la désinscription est à l’initiative du bénéficiaire)'
               name='type-refus'
-              id='type-refus--jeune'
             />
           </div>
 
