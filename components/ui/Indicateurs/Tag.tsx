@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { StructureConseiller } from 'interfaces/conseiller'
 
 interface TagProps {
   label: string
@@ -9,10 +10,18 @@ interface TagProps {
   className?: string
   iconName?: IconName
   iconLabel?: string
+  isSmallTag?: boolean
 }
 
 interface TagCategorieActionProps {
   categorie?: string
+}
+
+interface TagTypeProps {
+  isSession?: boolean
+  type?: string
+  source?: string
+  isSmallTag?: boolean
 }
 
 function Tag({
@@ -22,12 +31,13 @@ function Tag({
   className,
   iconName,
   iconLabel,
+  isSmallTag,
 }: TagProps) {
   return (
     <span
       className={`flex items-center w-fit text-s-medium text-${color} px-3 bg-${backgroundColor} whitespace-nowrap ${
         className ?? ''
-      }`}
+      } ${isSmallTag ? '!px-2 !py-1 !text-xs !font-bold [&>svg]:!w-4 [&>svg]:!h-4' : ''}`}
     >
       {iconName && (
         <IconComponent
@@ -62,6 +72,51 @@ export function TagDate({
       backgroundColor='grey_100'
       color='grey_800'
       label={label}
+    />
+  )
+}
+
+export function TagType({
+  isSession,
+  type,
+  source,
+  isSmallTag = false,
+}: TagTypeProps): ReactElement {
+  let tagProps: {
+    color: string
+    iconName?: IconName
+    iconLabel?: string
+    background?: string
+  } = {
+    color: 'content_color',
+    iconName: undefined,
+    iconLabel: undefined,
+    background: 'additional_5',
+  }
+  if (source === StructureConseiller.MILO)
+    tagProps = {
+      color: 'content_color',
+      iconName: IconName.Lock,
+      iconLabel: 'Non modifiable',
+      background: 'additional_5',
+    }
+
+  if (isSession)
+    tagProps = {
+      color: 'accent_1',
+      iconName: IconName.Lock,
+      iconLabel: 'Informations de la session non modifiables',
+      background: 'accent_1',
+    }
+
+  return (
+    <TagMetier
+      label={type!}
+      color={tagProps.color}
+      backgroundColor={tagProps.background + '_lighten'}
+      iconName={tagProps.iconName}
+      iconLabel={tagProps.iconLabel}
+      isSmallTag={isSmallTag}
     />
   )
 }

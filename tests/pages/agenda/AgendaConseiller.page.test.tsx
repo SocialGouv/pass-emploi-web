@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
@@ -111,36 +111,16 @@ describe('Agenda - Onglet conseiller', () => {
       expect(screen.getByRole('table')).toBeInTheDocument()
 
       expect(
-        screen.getByRole('row', { name: 'aujourd’hui' })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('row', {
-          name: '00h00 - 125 min Jirac Kenji Autre par téléphone oui Consulter l’événement du jeudi 1 septembre avec Jirac Kenji',
-        })
-      ).toBeInTheDocument()
-      expect(
         screen.getByRole('link', {
-          name: 'Consulter l’événement du jeudi 1 septembre avec Jirac Kenji',
+          name: 'Consulter l’événement du 1 septembre 2022 à 0 heure 0 avec Jirac Kenji',
         })
       ).toBeInTheDocument()
 
       expect(
-        screen.getByRole('row', { name: 'vendredi 2 septembre' })
-      ).toBeInTheDocument()
-
-      expect(screen.getByText('lundi 5 septembre')).toBeInTheDocument()
-      expect(screen.getByText('Matin')).toBeInTheDocument()
-      expect(
-        screen.getByRole('row', {
-          name: '14h59 - 125 min Jirac Kenji Autre par téléphone oui Consulter l’événement du mercredi 7 septembre avec Jirac Kenji',
-        })
-      ).toBeInTheDocument()
-      expect(
         screen.getByRole('link', {
-          name: 'Consulter l’événement du mercredi 7 septembre avec Jirac Kenji',
+          name: 'Consulter l’événement du 7 septembre 2022 à 14 heure 59 avec Jirac Kenji',
         })
       ).toBeInTheDocument()
-      expect(screen.getByText('lundi 5 septembre')).toBeInTheDocument()
     })
 
     it('permet de changer de période de 7 jours', async () => {
@@ -168,11 +148,6 @@ describe('Agenda - Onglet conseiller', () => {
         AOUT_25_0H,
         AOUT_31_23H
       )
-      await waitFor(() =>
-        expect(
-          screen.getByRole('row', { name: 'dimanche 28 août' })
-        ).toBeInTheDocument()
-      )
 
       // When
       await userEvent.click(buttonPeriodeCourante)
@@ -187,11 +162,6 @@ describe('Agenda - Onglet conseiller', () => {
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
       )
-      await waitFor(() =>
-        expect(
-          screen.getByRole('row', { name: 'dimanche 4 septembre' })
-        ).toBeInTheDocument()
-      )
 
       // When
       await userEvent.click(periodeFutureButton)
@@ -205,11 +175,6 @@ describe('Agenda - Onglet conseiller', () => {
         '1',
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
-      )
-      await waitFor(() =>
-        expect(
-          screen.getByRole('row', { name: 'jeudi 8 septembre' })
-        ).toBeInTheDocument()
       )
     })
   })

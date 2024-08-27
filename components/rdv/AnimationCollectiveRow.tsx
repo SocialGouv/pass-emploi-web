@@ -70,21 +70,20 @@ export function AnimationCollectiveRow({
       <TD>
         <div className='text-m-bold'>{toLongMonthDate(date)}</div>
         {toFrenchTime(date)} -{' '}
-        <span className='inline-flex items-center'>
+        <span className='sr-only'>
+          durée{' '}
+          {toFrenchDuration(animationCollective.duree, {
+            a11y: true,
+          })}
+        </span>
+        <span className='inline-flex items-center' aria-hidden={true}>
           <IconComponent
             name={IconName.ScheduleOutline}
-            role='img'
-            aria-label='durée'
+            focusable={false}
             title='durée'
             className='inline w-[1em] h-[1em] fill-[currentColor] mr-1'
           />
-          <span
-            aria-label={toFrenchDuration(animationCollective.duree, {
-              a11y: true,
-            })}
-          >
-            {toFrenchDuration(animationCollective.duree)}
-          </span>
+          {toFrenchDuration(animationCollective.duree)}
         </span>
       </TD>
 
@@ -167,7 +166,7 @@ function TagType({ isSession, type }: AnimationCollective): ReactElement {
       backgroundColor={tagProps.color + '_lighten'}
       iconName={tagProps.iconName}
       iconLabel={tagProps.iconLabel}
-      className='!px-2 !py-1 !text-xs !font-bold [&>svg]:!w-4 [&>svg]:!h-4'
+      isSmallTag={true}
     />
   )
 }

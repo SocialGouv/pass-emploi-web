@@ -1,45 +1,32 @@
 import React from 'react'
 
-import { AgendaData, AgendaRows } from 'components/rdv/AgendaRows'
-import { EvenementRow } from 'components/rdv/EvenementRow'
+import { AgendaRow } from 'components/rdv/AgendaRow'
 import Table from 'components/ui/Table/Table'
-import { TH } from 'components/ui/Table/TH'
-import TR from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
 
 type TableauEvenementsConseillerProps = {
-  idConseiller: string
-  agendaEvenements: AgendaData<EvenementListItem>
+  evenements: EvenementListItem[]
 }
 
 export default function TableauEvenementsConseiller({
-  agendaEvenements,
-  idConseiller,
+  evenements,
 }: TableauEvenementsConseillerProps) {
   return (
     <Table caption={{ text: 'Liste de mes événements' }}>
-      <thead>
-        <TR isHeader={true}>
-          <TH>Horaires</TH>
-          <TH>Bénéficiaire</TH>
-          <TH>Type</TH>
-          <TH>Modalité</TH>
-          <TH>Créé par vous</TH>
-          <TH>Voir le détail</TH>
-        </TR>
+      <thead className='sr-only'>
+        <tr>
+          <th scope='col'>Horaires et durée</th>
+          <th scope='col'>Bénéficiaire et modalités</th>
+          <th scope='col'>Créateur</th>
+          <th scope='col'>Inscrits</th>
+          <th scope='col'>Voir le détail</th>
+        </tr>
       </thead>
 
       <tbody>
-        <AgendaRows
-          agenda={agendaEvenements}
-          Item={({ item }) => (
-            <EvenementRow
-              key={item.id}
-              evenement={item}
-              idConseiller={idConseiller}
-            />
-          )}
-        />
+        {evenements.map((evenement) => (
+          <AgendaRow key={evenement.id} evenement={evenement} />
+        ))}
       </tbody>
     </Table>
   )
