@@ -286,7 +286,7 @@ describe('Agenda - Onglet établissement', () => {
 
       expect(
         screen.getByRole('cell', {
-          name: 'Titre offre session milo Nom session Informations de la session non modifiables Atelier i-milo Visibilité de l’événement Titre offre session milo',
+          name: 'Titre offre session milo Nom session Informations de la session non modifiables Atelier i-milo Visibilité de l’événement Titre offre session milo Visible',
         })
       ).toBeInTheDocument()
       expect(
@@ -296,7 +296,7 @@ describe('Agenda - Onglet établissement', () => {
       ).toBeInTheDocument()
       expect(
         screen.getByRole('cell', {
-          name: 'Titre offre session milo 2 Nom session Informations de la session non modifiables Atelier i-milo 2 Visibilité de l’événement Titre offre session milo 2',
+          name: 'Titre offre session milo 2 Nom session Informations de la session non modifiables Atelier i-milo 2 Visibilité de l’événement Titre offre session milo 2 Non visible',
         })
       ).toBeInTheDocument()
       expect(
@@ -321,20 +321,20 @@ describe('Agenda - Onglet établissement', () => {
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', {
+        ).getByRole('combobox', {
           name: 'Visibilité de l’événement Titre offre session milo',
         })
-      ).toBeChecked()
+      ).toHaveTextContent('Visible')
 
       expect(
         within(
           screen.getByRole('row', {
             name: /Titre offre session milo 2 Nom session/,
           })
-        ).getByRole('switch', {
+        ).getByRole('combobox', {
           name: 'Visibilité de l’événement Titre offre session milo 2',
         })
-      ).not.toBeChecked()
+      ).toHaveTextContent('Non visible')
     })
 
     it('permet de modifier la visibilité d’une session', async () => {
@@ -347,14 +347,15 @@ describe('Agenda - Onglet établissement', () => {
         ).toBeInTheDocument()
       })
 
-      await userEvent.click(
+      await userEvent.selectOptions(
         within(
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', {
+        ).getByRole('combobox', {
           name: 'Visibilité de l’événement Titre offre session milo',
-        })
+        }),
+        'Non visible'
       )
 
       expect(
@@ -362,10 +363,10 @@ describe('Agenda - Onglet établissement', () => {
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', {
+        ).getByRole('combobox', {
           name: 'Visibilité de l’événement Titre offre session milo',
         })
-      ).not.toBeChecked()
+      ).toHaveTextContent('Non visible')
 
       expect(changerVisibiliteSession).toHaveBeenCalledWith(
         'id-session-1',

@@ -1,12 +1,11 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ChangeEvent, ReactElement, useState } from 'react'
 
-import IconToggle from 'components/ui/Form/IconToggle'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   TagMetier,
   TagStatut as _TagStatut,
 } from 'components/ui/Indicateurs/Tag'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import SelectButton from 'components/ui/SelectButton'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
@@ -36,25 +35,17 @@ export function AnimationCollectiveRow({
   const [estCache, setEstCache] = useState<boolean>(
     animationCollective.estCache ?? false
   )
-  const [loadingChangerVisibilite, setLoadingChangerVisibilite] =
-    useState<boolean>(false)
-
   function getHref(ac: AnimationCollective): string {
     if (ac.isSession) return `agenda/sessions/${ac.id}`
     else return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
   }
 
-  async function permuterVisibiliteSession() {
-    setLoadingChangerVisibilite(true)
-
+  async function permuterVisibiliteSession(visibilite: boolean) {
     const { changerVisibiliteSession } = await import(
       'services/sessions.service'
     )
-    const doitDevenirVisible = estCache
-    await changerVisibiliteSession(animationCollective.id, doitDevenirVisible)
-
-    setEstCache(!doitDevenirVisible)
-    setLoadingChangerVisibilite(false)
+    await changerVisibiliteSession(animationCollective.id, visibilite)
+    setEstCache(!visibilite)
 
     trackEvent({
       structure: conseiller.structure,
@@ -97,7 +88,6 @@ export function AnimationCollectiveRow({
           <TagType {...animationCollective} />
           <Visiblite
             {...animationCollective}
-            loadingChangerVisibilite={loadingChangerVisibilite}
             estCache={estCache}
             onChangerVisibliteSession={permuterVisibiliteSession}
           />
@@ -188,50 +178,44 @@ function Visiblite({
   id,
   isSession,
   titre,
-  loadingChangerVisibilite,
   estCache,
   onChangerVisibliteSession,
 }: {
-  loadingChangerVisibilite: boolean
   estCache: boolean
-  onChangerVisibliteSession: () => void
+  onChangerVisibliteSession: (visible: boolean) => Promise<void>
 } & AnimationCollective): ReactElement {
+  const selectId = id + '--visibilite'
+
+  async function changerVisibilite(e: ChangeEvent<HTMLSelectElement>) {
+    const value = e.target.value
+    await onChangerVisibliteSession(value === 'visible')
+  }
+
   return (
     <>
       {isSession && (
         <>
-          {loadingChangerVisibilite && (
-            <SpinningLoader alert={true} className='!m-0 w-6 h-6' />
-          )}
-
-          {!loadingChangerVisibilite && (
-            <IconToggle
-              id={`${id}--visibilite`}
-              label={'Visibilité de l’événement ' + titre}
-              checked={!estCache}
-              checkedState={{
-                iconName: IconName.VisibilityOn,
-                actionTitle: 'Cacher l’événement',
-              }}
-              uncheckedState={{
-                iconName: IconName.VisibilityOff,
-                actionTitle: 'Rendre visible l’événement',
-              }}
-              onToggle={onChangerVisibliteSession}
-              className='relative z-20 h-6 w-6 fill-primary hover:fill-primary_darken'
-            />
-          )}
+          <label htmlFor={selectId} className='sr-only'>
+            Visibilité de l’événement {titre}
+          </label>
+          <SelectButton
+            id={selectId}
+            onChange={changerVisibilite}
+            value={estCache ? 'non-visible' : 'visible'}
+            className={`z-20 text-xs-bold ${estCache ? 'text-content_color border-grey_800 bg-grey_100' : 'border-success text-success bg-success_lighten'}`}
+          >
+            <option value='visible'>Visible</option>
+            <option value='non-visible'>Non visible</option>
+          </SelectButton>
         </>
       )}
 
       {!isSession && (
-        <IconComponent
-          aria-label={estCache ? 'Non visible' : 'Visible'}
-          className='inline h-6 w-6 fill-primary'
-          focusable={false}
-          name={estCache ? IconName.VisibilityOff : IconName.VisibilityOn}
-          role='img'
-          title={estCache ? 'Non visible' : 'Visible'}
+        <TagMetier
+          label='Visible'
+          color='success'
+          backgroundColor='success_lighten'
+          className='!px-2 !py-1 !text-xs !font-bold'
         />
       )}
     </>
