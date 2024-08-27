@@ -77,5 +77,5 @@ const FileInput = forwardRef<HTMLLabelElement, FileInputProps>(
     )
   }
 )
-FileInput.displayName = 'Input'
+FileInput.displayName = 'FileInput'
 export default FileInput
