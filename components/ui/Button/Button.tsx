@@ -63,7 +63,7 @@ export default function Button({
               focusable={false}
               name={IconName.Spinner}
               title='Chargement en cours'
-              className='w-6 h-6 fill-white animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
+              className='w-6 h-6 animate-spin absolute top-0 bottom-0 left-0 right-0 m-auto'
             />
             <span className='sr-only'>Chargement en cours</span>
           </>

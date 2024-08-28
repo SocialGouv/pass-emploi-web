@@ -1,0 +1,47 @@
+.wrapper {
+  position: relative;
+  display: grid;
+  grid-template-areas: "select";
+  align-items: center;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.wrapper > select {
+  grid-area: select;
+  /* style reset */
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  outline: none;
+}
+
+.wrapper:focus-within {
+  outline: auto;
+}
+
+.wrapper::after {
+  content: "";
+  grid-area: select;
+  width: 0.8em;
+  height: 0.5em;
+  background-color: currentColor;
+  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+  justify-self: end;
+}
+
+.wrapper.loading {
+  border: none;
+}
+
+.wrapper.loading::after {
+  display: none;
+}

@@ -65,7 +65,8 @@
         "IconComponent": "svg",
         "Input": "input",
         "Select": "select",
-        "Textarea": "textarea"
+        "Textarea": "textarea",
+        "SelectButton": "select"
       }
     }
   }
