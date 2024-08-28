@@ -93,7 +93,8 @@ export default function DesinscriptionBeneficiaireModal({
     >
       <form onSubmit={validateFormulaire}>
         <div className='mt-10 flex flex-col justify-center'>
-          <div className='flex flex-col gap-2 mb-4'>
+          <fieldset className='flex flex-col gap-2 mb-4'>
+            <legend className='sr-only'>Motif de désinscription</legend>
             {typeRefus.error && (
               <InputError id={'select-beneficiaires--error'} className='my-2'>
                 {typeRefus.error}
@@ -126,22 +127,22 @@ export default function DesinscriptionBeneficiaireModal({
               label='Refus jeune (la désinscription est à l’initiative du bénéficiaire)'
               name='type-refus'
             />
-          </div>
 
-          <Label htmlFor='refus-commentaire'>
-            {{
-              main: 'Veuillez préciser le motif de désinscription du bénéficiaire',
-              helpText: '250 caractères maximum',
-            }}
-          </Label>
-          <Textarea
-            id='refus-commentaire'
-            maxLength={250}
-            onChange={(value: string) => setCommentaire({ value: value })}
-            onBlur={validateCommentaire}
-            disabled={typeRefus.value !== StatutBeneficiaire.REFUS_JEUNE}
-            ref={textCommentaire}
-          />
+            <Label htmlFor='refus-commentaire'>
+              {{
+                main: 'Veuillez préciser le motif de désinscription du bénéficiaire',
+                helpText: '250 caractères maximum',
+              }}
+            </Label>
+            <Textarea
+              id='refus-commentaire'
+              maxLength={250}
+              onChange={(value: string) => setCommentaire({ value: value })}
+              onBlur={validateCommentaire}
+              disabled={typeRefus.value !== StatutBeneficiaire.REFUS_JEUNE}
+              ref={textCommentaire}
+            />
+          </fieldset>
 
           <div className='flex justify-center'>
             <Button
