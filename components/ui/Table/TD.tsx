@@ -11,7 +11,7 @@ export default function TD({
   isBold = false,
   ...props
 }: TDProps) {
-  const style = `p-4 align-middle ${
+  const style = `p-4 ${
     isBold ? 'text-base-bold' : 'text-base-regular'
   } first:rounded-l-base last:rounded-r-base ${className}`
 

@@ -82,7 +82,10 @@ export default function TableauBeneficiairesMilo({
                 key={beneficiaire.id}
                 className='grid grid-cols-subgrid grid-rows-[repeat(2,auto)] layout_m:grid-rows-[auto] col-span-full items-center'
               >
-                <TD isBold className='rounded-tl-base layout_m:rounded-l-base'>
+                <TD
+                  isBold
+                  className='rounded-tl-base h-full layout_m:rounded-l-base'
+                >
                   <div className='mb-2'>
                     {beneficiaire.structureMilo?.id ===
                       conseiller.structureMilo?.id &&
@@ -129,7 +132,7 @@ export default function TableauBeneficiairesMilo({
                   <SituationTag situation={beneficiaire.situationCourante} />
                 </TD>
 
-                <TD>
+                <TD className='h-full'>
                   <div
                     className='mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
@@ -155,7 +158,7 @@ export default function TableauBeneficiairesMilo({
                   )}
                 </TD>
 
-                <TD className='border-l-1 border-grey_800'>
+                <TD className='h-full border-l-1 border-grey_800'>
                   <div
                     className='mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
@@ -167,7 +170,7 @@ export default function TableauBeneficiairesMilo({
                   </span>
                 </TD>
 
-                <TD>
+                <TD className='h-full'>
                   <div
                     className='mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
@@ -177,7 +180,7 @@ export default function TableauBeneficiairesMilo({
                   <span className='text-m-bold'>{beneficiaire.rdvs}</span>
                 </TD>
 
-                <TD className='row-start-2 col-start-1 col-end-4 rounded-b-base layout_m:rounded-none layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1'>
+                <TD className='h-full row-start-2 col-span-4 rounded-b-base layout_m:rounded-none layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1'>
                   <div
                     className='inline layout_m:block mr-8 mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
@@ -196,7 +199,7 @@ export default function TableauBeneficiairesMilo({
                 <TDLink
                   href={`/mes-jeunes/${beneficiaire.id}`}
                   label={`Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`}
-                  className='row-span-2'
+                  className='row-span-2 h-full flex items-center'
                 />
               </TR>
             )
