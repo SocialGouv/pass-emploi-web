@@ -191,7 +191,7 @@ describe('EditionRdvPage client side', () => {
         it('contient un champ pour saisir une description', () => {
           // Then
           const inputDescription = within(etape).getByRole('textbox', {
-            name: /Commentaire/,
+            name: /Description/,
           })
           expect(inputDescription).toBeInTheDocument()
           expect(inputDescription).not.toHaveAttribute('required')
@@ -407,7 +407,7 @@ describe('EditionRdvPage client side', () => {
           inputDuree = screen.getByLabelText('* Durée format : hh:mm')
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
-            name: /Commentaire/,
+            name: /Description/,
           })
 
           buttonValider = screen.getByRole('button', {
@@ -545,7 +545,7 @@ describe('EditionRdvPage client side', () => {
           inputDuree = screen.getByLabelText('* Durée format : hh:mm')
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
-            name: /Commentaire/,
+            name: /Description/,
           })
 
           buttonValider = screen.getByRole('button', {
@@ -758,7 +758,7 @@ describe('EditionRdvPage client side', () => {
       it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Commentaire/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
         expect(screen.getByLabelText(/Heure/)).toBeDisabled()
@@ -971,7 +971,7 @@ describe('EditionRdvPage client side', () => {
           'Prise de nouvelles par téléphone'
         )
         expect(
-          screen.getByLabelText<HTMLInputElement>(/Commentaire/).value
+          screen.getByLabelText<HTMLInputElement>(/Description/).value
         ).toEqual('Rendez-vous avec Kenji')
       })
 
@@ -1021,7 +1021,7 @@ describe('EditionRdvPage client side', () => {
             name: 'Titre',
           })
           const inputDescription = screen.getByRole('textbox', {
-            name: /Commentaire/,
+            name: /Description/,
           })
 
           buttonValider = screen.getByRole('button', {
@@ -1272,7 +1272,7 @@ describe('EditionRdvPage client side', () => {
       describe('quand on modifie le rendez-vous', () => {
         beforeEach(async () => {
           const inputDescription =
-            screen.getByLabelText<HTMLInputElement>(/Commentaire/)
+            screen.getByLabelText<HTMLInputElement>(/Description/)
           await userEvent.clear(inputDescription)
           await userEvent.type(
             inputDescription,
@@ -1364,7 +1364,7 @@ describe('EditionRdvPage client side', () => {
       it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Commentaire/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
         expect(screen.getByLabelText(/Heure/)).toBeDisabled()
@@ -1711,7 +1711,7 @@ describe('EditionRdvPage client side', () => {
       it('empêche toute modification', () => {
         // Then
         expect(screen.getByLabelText(/Titre/)).toBeDisabled()
-        expect(screen.getByLabelText(/Commentaire/)).toBeDisabled()
+        expect(screen.getByLabelText(/Description/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
         expect(screen.getByLabelText(/Heure/)).toBeDisabled()

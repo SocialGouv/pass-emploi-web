@@ -112,8 +112,11 @@ export function EditionRdvForm({
   })
   const regexDuree = /^\d{2}:\d{2}$/
   const dureeRdv = dureeFromMinutes(evenement?.duree)
-  const [duree, setDuree] = useState<ValueWithError<string | undefined>>({
-    value: dureeRdv,
+  //todo : calculate heure de fin
+  const [heureDeFin, setHeureDeFin] = useState<
+    ValueWithError<string | undefined>
+  >({
+    value: undefined,
   })
   const [adresse, setAdresse] = useState<string | undefined>(evenement?.adresse)
   const [organisme, setOrganisme] = useState<string | undefined>(
@@ -219,7 +222,7 @@ export function EditionRdvForm({
           modalite ||
           date.value ||
           horaire.value ||
-          duree.value ||
+          heureDeFin.value ||
           titre.value ||
           adresse ||
           organisme ||
@@ -235,7 +238,7 @@ export function EditionRdvForm({
       modalite !== evenement.modality ||
       date.value !== dateRdv ||
       horaire.value !== timeRdv ||
-      duree.value !== dureeRdv ||
+      heureDeFin.value !== dureeRdv ||
       adresse !== evenement.adresse ||
       organisme !== evenement.organisme ||
       titre.value !== evenement.titre ||
@@ -362,7 +365,7 @@ export function EditionRdvForm({
     }
     return horaireEstValide
   }
-
+  //todo : validate heure de Fin
   function validateDuree() {
     const dureeEstValide = Boolean(duree.value && regexDuree.test(duree.value))
 
@@ -517,7 +520,7 @@ export function EditionRdvForm({
     const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous.value!,
-      date: dateTime,
+      date: dateTime.toISO(),
       duration: dureeEnMinutes,
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,
@@ -719,8 +722,8 @@ export function EditionRdvForm({
 
           <Label htmlFor='description' withBulleMessageSensible={true}>
             {{
-              main: 'Commentaire',
-              helpText: '250 caractères maximum',
+              main: 'Description',
+              helpText: '500 caractères maximum',
             }}
           </Label>
           {description.error && (
@@ -731,7 +734,7 @@ export function EditionRdvForm({
           <Textarea
             id='description'
             defaultValue={description.value}
-            maxLength={250}
+            maxLength={500}
             onChange={(value: string) => setDescription({ value })}
             invalid={Boolean(description.error)}
             onBlur={validateDescription}
@@ -880,9 +883,9 @@ export function EditionRdvForm({
             disabled={lectureSeule}
           />
 
-          <Label htmlFor='duree' inputRequired={true}>
+          <Label htmlFor='HeureDeFin' inputRequired={true}>
             {{
-              main: 'Durée',
+              main: 'Heure De Fin',
               helpText: 'format : hh:mm',
             }}
           </Label>
@@ -893,12 +896,12 @@ export function EditionRdvForm({
           )}
           <Input
             type='time' // FIXME type='text' ou 'number' ('time' c'est pour des horaires)
-            id='duree'
+            id='heureDeFin'
             required={true}
-            defaultValue={duree.value}
-            onChange={(value: string) => setDuree({ value })}
+            defaultValue={heureDeFin.value}
+            onChange={(value: string) => setHeureDeFin({ value })}
             onBlur={validateDuree}
-            invalid={Boolean(duree.error)}
+            invalid={Boolean(heureDeFin.error)}
             disabled={lectureSeule}
           />
 
