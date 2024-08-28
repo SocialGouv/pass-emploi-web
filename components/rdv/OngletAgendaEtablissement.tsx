@@ -199,7 +199,7 @@ export default function OngletAgendaEtablissement({
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className='grid auto-rows-fr grid-cols-[repeat(3,auto)] layout_m:grid-cols-[auto_1fr_repeat(3,auto)] gap-y-2'>
             {evenementsFiltres.map((evenement) => (
               <AnimationCollectiveRow
                 key={evenement.id}

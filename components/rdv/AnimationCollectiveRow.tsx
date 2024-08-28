@@ -57,28 +57,30 @@ export function AnimationCollectiveRow({
   }
 
   return (
-    <TR>
-      <TD>
+    <TR className='grid grid-cols-subgrid grid-rows-[repeat(3,auto) layout_m:grid-rows-[auto] col-span-full'>
+      <TD className='col-start-1 col-end-3 !rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_m:col-end-2 layout_m:!rounded-l-base layout_m:flex layout_m:flex-col layout_m:justify-center layout_m:!p-2'>
         <div className='text-m-bold'>{toLongMonthDate(date)}</div>
-        {toFrenchTime(date)} -{' '}
-        <span className='sr-only'>
-          durée{' '}
-          {toFrenchDuration(animationCollective.duree, {
-            a11y: true,
-          })}
-        </span>
-        <span className='inline-flex items-center' aria-hidden={true}>
-          <IconComponent
-            name={IconName.ScheduleOutline}
-            focusable={false}
-            title='durée'
-            className='inline w-[1em] h-[1em] fill-[currentColor] mr-1'
-          />
-          {toFrenchDuration(animationCollective.duree)}
-        </span>
+        <div>
+          {toFrenchTime(date)} -{' '}
+          <span className='sr-only'>
+            durée{' '}
+            {toFrenchDuration(animationCollective.duree, {
+              a11y: true,
+            })}
+          </span>
+          <span className='inline-flex items-center' aria-hidden={true}>
+            <IconComponent
+              name={IconName.ScheduleOutline}
+              focusable={false}
+              title='durée'
+              className='inline w-[1em] h-[1em] fill-[currentColor] mr-1'
+            />
+            {toFrenchDuration(animationCollective.duree)}
+          </span>
+        </div>
       </TD>
 
-      <TD>
+      <TD className='row-start-2 row-end-5 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_m:row-span-1 layout_m:rounded-none layout_m:flex layout_m:flex-col layout_m:justify-center layout_m:!p-2'>
         <div className='text-base-bold'>{animationCollective.titre}</div>
         {animationCollective.sousTitre && (
           <div>{animationCollective.sousTitre}</div>
@@ -93,15 +95,16 @@ export function AnimationCollectiveRow({
         </div>
       </TD>
 
-      <TD>
+      <TD className='row-start-2 col-start-2 !p-0 layout_m:row-start-1 layout_m:col-start-3 layout_m:flex layout_m:items-center layout_m:justify-center layout_m:!p-2'>
         <Inscrits {...animationCollective} />
       </TD>
 
-      <TD>
+      <TD className='row-start-3 !p-0 !pb-2 layout_m:row-start-1 layout_m:col-start-4 layout_m:flex layout_m:items-center layout_m:justify-center layout_m:!p-2'>
         <TagStatut {...animationCollective} />
       </TD>
 
       <TDLink
+        className='row-span-3 flex items-center justify-center !p-2 !pl-4 layout_m:row-span-1 layout_m:!p-2'
         href={getHref(animationCollective)}
         label={labelLien(animationCollective)}
       />
@@ -230,7 +233,7 @@ function Inscrits({
   const aPlusieursParticipants = nombreParticipants !== 1
 
   return (
-    <>
+    <div>
       {!aUneCapaciteLimite && (
         <>
           <span className='text-m-bold'>{nombreParticipants}</span> inscrit
@@ -248,6 +251,6 @@ function Inscrits({
           {nombreParticipants !== 1 ? 's' : ''} /{nombreMaxParticipants}
         </>
       )}
-    </>
+    </div>
   )
 }
