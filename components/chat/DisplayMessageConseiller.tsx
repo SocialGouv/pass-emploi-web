@@ -64,7 +64,7 @@ export default function DisplayMessageConseiller(
   }
 
   return (
-    <li className='mb-5' id={message.id} data-testid={message.id}>
+    <li className='mb-5' id={'message-' + message.id} data-testid={message.id}>
       {suppressionEnCours && (
         <div className='w-fit ml-auto'>
           <SpinningLoader alert={true} />

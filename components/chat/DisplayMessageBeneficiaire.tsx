@@ -37,7 +37,7 @@ export default function DisplayMessageBeneficiaire(
   const { message, beneficiaireNomComplet } = props
 
   return (
-    <li className='mb-5' id={message.id} data-testid={message.id}>
+    <li className='mb-5' id={'message-' + message.id} data-testid={message.id}>
       {isDeleted(message) && (
         <div className='text-xs-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-white bg-primary_darken mb-1'>
           Message supprimé

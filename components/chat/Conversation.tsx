@@ -172,7 +172,9 @@ export function Conversation({
 
     setNombrePagesChargees(pageSuivante)
     const previousFirstDisplayedMessage =
-      conteneurMessagesRef.current!.querySelector('#' + idFirstDisplayedMessage)
+      conteneurMessagesRef.current!.querySelector(
+        '#message-' + idFirstDisplayedMessage
+      )
     previousFirstDisplayedMessage!.scrollIntoView({
       block: 'nearest',
       inline: 'nearest',
