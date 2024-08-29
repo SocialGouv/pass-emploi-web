@@ -9,7 +9,9 @@ describe('FiltresStatutsAction', () => {
   beforeEach(async () => {
     // Given
     filtrerActions = jest.fn()
-    render(<FiltresStatutsActions onFiltres={filtrerActions} />)
+    render(
+      <FiltresStatutsActions defaultValue={[]} onFiltres={filtrerActions} />
+    )
 
     // When
     await userEvent.click(screen.getByText('Statut'))
@@ -64,7 +66,7 @@ describe('FiltresStatutsAction', () => {
 
     // When
     await userEvent.click(
-      screen.getByRole('button', { name: 'Valider Statuts' })
+      screen.getByRole('button', { name: 'Valider la sélection des statuts' })
     )
 
     // Then

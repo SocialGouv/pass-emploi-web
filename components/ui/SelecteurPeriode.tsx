@@ -64,7 +64,7 @@ export function SelecteurPeriode({
   }, [indexPeriodeAffichee])
 
   return (
-    <>
+    <div>
       <p className='text-base-medium'>Période :</p>
 
       <div className='flex items-center mt-1'>
@@ -104,6 +104,6 @@ export function SelecteurPeriode({
           />
         </button>
       </div>
-    </>
+    </div>
   )
 }

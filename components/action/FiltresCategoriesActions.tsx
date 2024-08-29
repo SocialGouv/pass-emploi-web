@@ -1,4 +1,11 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useState,
+} from 'react'
 
 import Button from 'components/ui/Button/Button'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -11,11 +18,10 @@ type FiltresCategoriesActionsProps = {
   onFiltres: (categoriesSelectionnees: string[]) => void
 }
 
-export default function FiltresCategoriesActions({
-  categories,
-  defaultValue,
-  onFiltres,
-}: FiltresCategoriesActionsProps) {
+function FiltresCategoriesActions(
+  { categories, defaultValue, onFiltres }: FiltresCategoriesActionsProps,
+  ref: ForwardedRef<HTMLButtonElement>
+) {
   const [afficherFiltres, setAfficherFiltres] = useState<boolean>(false)
   const [categoriesSelectionnees, setCategoriesSelectionnees] = useState<
     string[]
@@ -62,10 +68,10 @@ export default function FiltresCategoriesActions({
   return (
     <div className='relative'>
       <button
+        ref={ref}
         aria-controls='filtres-categories'
         aria-expanded={afficherFiltres}
         onClick={() => setAfficherFiltres(!afficherFiltres)}
-        aria-label='Catégorie - Filtrer les actions'
         title='Filtrer les actions par catégorie'
         className='flex items-center p-4 w-full h-full gap-2'
         type='button'
@@ -73,17 +79,20 @@ export default function FiltresCategoriesActions({
         Catégorie
         <IconComponent
           name={IconName.Filter}
-          aria-hidden={true}
-          focusable={false}
+          role='img'
+          aria-label='Filtrer les actions'
           className='h-6 w-6 fill-primary'
         />
         {categoriesSelectionnees.length > 0 && (
-          <Badge
-            count={categoriesSelectionnees.length}
-            bgColor='primary'
-            textColor='white'
-            size={6}
-          />
+          <>
+            <Badge
+              count={categoriesSelectionnees.length}
+              bgColor='primary'
+              textColor='white'
+              size={6}
+            />
+            <span className='sr-only'> filtre sélectionné</span>
+          </>
         )}
       </button>
 
@@ -101,10 +110,12 @@ export default function FiltresCategoriesActions({
           </fieldset>
           <Button className='w-full justify-center' type='submit'>
             Valider
-            <span className='sr-only'>Catégorie</span>
+            <span className='sr-only'> la sélection des catégories</span>
           </Button>
         </form>
       )}
     </div>
   )
 }
+
+export default forwardRef(FiltresCategoriesActions)

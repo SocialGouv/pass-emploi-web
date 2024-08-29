@@ -125,7 +125,7 @@ describe('PilotagePage client side - Actions', () => {
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Catégorie',
+          name: 'Catégorie Filtrer les actions',
         })
       ).toBeInTheDocument()
     })
@@ -228,7 +228,7 @@ describe('PilotagePage client side - Actions', () => {
         await userEvent.click(screen.getByLabelText('SNP 1'))
         await userEvent.click(screen.getByLabelText('SNP 2'))
         await userEvent.click(
-          screen.getByRole('button', { name: 'Valider Catégorie' })
+          screen.getByRole('button', { name: 'Valider la sélection des catégories' })
         )
       })
 
@@ -280,7 +280,7 @@ describe('PilotagePage client side - Actions', () => {
       await userEvent.click(screen.getByText('Catégorie'))
       await userEvent.click(screen.getByLabelText('SNP 1'))
       await userEvent.click(
-        screen.getByRole('button', { name: 'Valider Catégorie' })
+        screen.getByRole('button', { name: 'Valider la sélection des catégories' })
       )
       await userEvent.click(screen.getByLabelText('Page 2'))
 
