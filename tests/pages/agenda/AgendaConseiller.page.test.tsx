@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
@@ -12,6 +12,7 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { getRendezVousConseiller } from 'services/evenements.service'
 import { getSessionsBeneficiaires } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
+import { toLongMonthDate } from 'utils/date'
 
 jest.mock('services/evenements.service')
 jest.mock('services/sessions.service')
@@ -37,13 +38,43 @@ describe('Agenda - Onglet conseiller', () => {
       asPath: '/mes-jeunes',
     })
     ;(getRendezVousConseiller as jest.Mock).mockImplementation(
-      async (_, dateDebut) => [unEvenementListItem({ date: dateDebut.toISO() })]
+      async (_, dateDebut) => [
+        unEvenementListItem({
+          date: dateDebut.toISO(),
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+          ],
+        }),
+        unEvenementListItem({
+          date: dateDebut.plus({ day: 1 }).toISO(),
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+          ],
+          nombreMaxParticipants: 1,
+        }),
+        unEvenementListItem({
+          date: dateDebut.plus({ day: 2 }).toISO(),
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+          ],
+          nombreMaxParticipants: 2,
+        }),
+        unEvenementListItem({
+          date: dateDebut.plus({ day: 3 }).toISO(),
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
+          ],
+          nombreMaxParticipants: 3,
+        }),
+      ]
     )
     ;(getSessionsBeneficiaires as jest.Mock).mockImplementation(
       async (_, _dateDebut: DateTime, dateFin: DateTime) => [
         unEvenementListItem({
           id: 'session',
           date: dateFin.set({ hour: 14 }).toISO(),
+          isSession: true,
         }),
       ]
     )
@@ -176,6 +207,45 @@ describe('Agenda - Onglet conseiller', () => {
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
       )
+    })
+
+    it('affiche le nombre d’inscrits', async () => {
+      const row1 = screen
+        .getByRole('cell', {
+          name: /1 septembre 2022 00h00 - durée 2 heure 5/,
+        })
+        .closest('tr')!
+
+      const row2 = screen
+        .getByRole('cell', {
+          name: /2 septembre 2022 00h00 - durée 2 heure 5/,
+        })
+        .closest('tr')!
+
+      const row3 = screen
+        .getByRole('cell', {
+          name: /3 septembre 2022 00h00 - durée 2 heure 5/,
+        })
+        .closest('tr')!
+
+      const row4 = screen
+        .getByRole('cell', {
+          name: /4 septembre 2022 00h00 - durée 2 heure 5/,
+        })
+        .closest('tr')!
+
+      expect(
+        within(row1).getByRole('cell', { name: '1 inscrit' })
+      ).toBeInTheDocument()
+      expect(
+        within(row2).getByRole('cell', { name: 'Complet' })
+      ).toBeInTheDocument()
+      expect(
+        within(row3).getByRole('cell', { name: '1 inscrit /2' })
+      ).toBeInTheDocument()
+      expect(
+        within(row4).getByRole('cell', { name: '2 inscrits /3' })
+      ).toBeInTheDocument()
     })
   })
 })

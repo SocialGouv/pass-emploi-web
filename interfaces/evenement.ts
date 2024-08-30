@@ -47,9 +47,11 @@ export type EvenementListItem = {
   createur?: Createur
   modality?: string
   labelBeneficiaires?: string
+  beneficiaires?: Array<BaseBeneficiaire & { futPresent?: boolean }>
   source?: string
   futPresent?: boolean
   isSession?: boolean
+  nombreMaxParticipants?: number
 }
 
 type Auteur = { nom: string; prenom: string }

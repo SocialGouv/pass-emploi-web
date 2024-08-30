@@ -104,7 +104,9 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
 
 export function desEvenementsListItems(): EvenementListItem[] {
   return [
-    unEvenementListItem(),
+    unEvenementListItem({
+      beneficiaires: [{ id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' }],
+    }),
     {
       id: '2',
       labelBeneficiaires: 'Jirac Raja',
@@ -115,6 +117,7 @@ export function desEvenementsListItems(): EvenementListItem[] {
       createur: {
         id: '2',
       },
+      beneficiaires: [{ id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' }],
       source: 'MILO',
     },
   ]

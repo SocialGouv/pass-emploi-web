@@ -110,12 +110,15 @@ export function jsonToListItem(
     createur: json.createur,
     source: json.source,
   }
+  if (json.nombreMaxParticipants)
+    evenement.nombreMaxParticipants = json.nombreMaxParticipants
   if (json.modality) evenement.modality = json.modality
   if (json.futPresent !== undefined) evenement.futPresent = json.futPresent
   if (Object.prototype.hasOwnProperty.call(json, 'jeunes')) {
     evenement.labelBeneficiaires = jsonToBeneficiaires(
       (json as EvenementJson).jeunes
     )
+    evenement.beneficiaires = (json as EvenementJson).jeunes
   }
 
   return evenement
@@ -158,7 +161,16 @@ export function sessionMiloJsonToEvenementListItem(
 ): EvenementListItem {
   const dateDebut = DateTime.fromISO(json.dateHeureDebut)
   const dateFin = DateTime.fromISO(json.dateHeureFin)
-  return {
+  const beneficiairesSession = json.beneficiaires.map(
+    ({ idJeune, nom, prenom }) => {
+      return {
+        id: idJeune,
+        prenom,
+        nom,
+      }
+    }
+  )
+  const evenement: EvenementListItem = {
     id: json.id,
     type: jsonToTypeSessionMilo(json.type),
     date: json.dateHeureDebut,
@@ -166,7 +178,14 @@ export function sessionMiloJsonToEvenementListItem(
     labelBeneficiaires: jsonToBeneficiaires(json.beneficiaires),
     source: 'MILO',
     isSession: true,
+    beneficiaires: beneficiairesSession,
   }
+
+  if (json.nbPlacesRestantes)
+    evenement.nombreMaxParticipants =
+      json.beneficiaires.length + json.nbPlacesRestantes
+
+  return evenement
 }
 
 function jsonToTypeAnimationCollective(jsonType: TypeEvenement): string {

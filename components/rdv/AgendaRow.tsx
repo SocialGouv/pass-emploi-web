@@ -72,7 +72,9 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
         />
       </TD>
 
-      <TD></TD>
+      <TD>
+        <Inscrits evenement={evenement} />
+      </TD>
 
       <TDLink
         href={evenement.isSession ? urlSessionMilo : urlRdv}
@@ -102,6 +104,45 @@ function CreateurEvenementLabel({
       <p>
         --
         <span className='sr-only'>information non disponible</span>
+      </p>
+    )
+}
+
+function Inscrits({
+  evenement,
+}: {
+  evenement: EvenementListItem
+}): ReactElement {
+  if (!evenement.beneficiaires) {
+    return (
+      <p>
+        --
+        <span className='sr-only'>information non disponible</span>
+      </p>
+    )
+  }
+
+  const nombreParticipants = evenement.beneficiaires.length
+  const maxParticipants = evenement.nombreMaxParticipants
+
+  const aUneCapaciteLimite = maxParticipants !== undefined
+  const aAtteintLaCapaciteLimite = nombreParticipants >= maxParticipants!
+  const aPlusieursParticipants = nombreParticipants !== 1
+
+  if (!aUneCapaciteLimite)
+    return (
+      <p>
+        <span className='text-m-bold'>{nombreParticipants}</span> inscrit
+        {aPlusieursParticipants ? 's' : ''}
+      </p>
+    )
+  else if (aUneCapaciteLimite && aAtteintLaCapaciteLimite)
+    return <p className='text-base-bold text-warning'>Complet</p>
+  else
+    return (
+      <p>
+        <span className='text-m-bold'>{nombreParticipants}</span> inscrit
+        {nombreParticipants !== 1 ? 's' : ''} /{maxParticipants}
       </p>
     )
 }
