@@ -1,8 +1,7 @@
 import { DateTime } from 'luxon'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
-import { AgendaData, buildAgendaData } from 'components/rdv/AgendaRows'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
@@ -37,8 +36,6 @@ export default function OngletAgendaConseiller({
 }: OngletAgendaConseillerProps) {
   const [evenements, setEvenements] = useState<EvenementListItem[]>()
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
-  const [agendaEvenements, setAgendaEvenements] =
-    useState<AgendaData<EvenementListItem>>()
   const [failed, setFailed] = useState<boolean>(false)
 
   async function chargerNouvellePeriode(
@@ -52,7 +49,6 @@ export default function OngletAgendaConseiller({
 
   async function initEvenementsPeriode(dateDebut: DateTime, dateFin: DateTime) {
     setFailed(false)
-    setAgendaEvenements(undefined)
 
     try {
       const evenementsPeriode = await chargerEvenements(dateDebut, dateFin)
@@ -89,16 +85,6 @@ export default function OngletAgendaConseiller({
       )
   }
 
-  useEffect(() => {
-    if (evenements && periode) {
-      setAgendaEvenements(
-        buildAgendaData(evenements, periode, ({ date }) =>
-          DateTime.fromISO(date)
-        )
-      )
-    }
-  }, [evenements, periode])
-
   return (
     <>
       <SelecteurPeriode
@@ -108,7 +94,7 @@ export default function OngletAgendaConseiller({
         trackNavigation={trackNavigation}
       />
 
-      {!agendaEvenements && !failed && (
+      {!evenements && !failed && (
         <EmptyState
           illustrationName={IllustrationName.Sablier}
           titre='L’affichage de votre agenda peut prendre quelques instants.'
@@ -116,7 +102,7 @@ export default function OngletAgendaConseiller({
         />
       )}
 
-      {!agendaEvenements && failed && (
+      {!evenements && failed && (
         <EmptyState
           illustrationName={IllustrationName.Maintenance}
           titre='L’affichage de votre agenda a échoué.'
@@ -128,12 +114,7 @@ export default function OngletAgendaConseiller({
         />
       )}
 
-      {agendaEvenements && (
-        <TableauEvenementsConseiller
-          idConseiller={conseiller.id}
-          agendaEvenements={agendaEvenements}
-        />
-      )}
+      {evenements && <TableauEvenementsConseiller evenements={evenements} />}
     </>
   )
 }
