@@ -14,6 +14,7 @@ export default function AuthError({
   searchParams?: AuthErrorSearchParams
 }) {
   let erreur: string
+  let codeErreur: string | undefined
   let lienFormulaire: string | undefined
   switch (searchParams?.reason) {
     case 'UTILISATEUR_INEXISTANT':
@@ -64,6 +65,7 @@ export default function AuthError({
           searchParams.reason = undefined
         } else {
           erreur = `Une erreur est survenue, veuillez recharger cette page.\n\nSi le problème persiste, veuillez supprimer le cache de votre navigateur${contacterConseiller}.`
+          codeErreur = searchParams?.reason
         }
       }
       if (searchParams?.typeUtilisateur === 'CONSEILLER') {
@@ -94,7 +96,7 @@ export default function AuthError({
   return (
     <AuthErrorPage
       erreur={erreur}
-      codeErreur={searchParams?.reason}
+      codeErreur={codeErreur}
       lienFormulaire={lienFormulaire}
     />
   )
