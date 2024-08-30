@@ -216,7 +216,6 @@ function sessionMiloBeneficiaireJsonToEvenementListItem(
       dateDebut,
       DateTime.fromISO(json.dateHeureFin)
     ),
-    idCreateur: json.id ?? undefined,
     isSession: true,
   }
 }

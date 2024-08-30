@@ -107,7 +107,7 @@ export function jsonToListItem(
     type: json.type.label,
     date: json.date,
     duree: json.duration,
-    idCreateur: json.createur.id,
+    createur: json.createur,
     source: json.source,
   }
   if (json.modality) evenement.modality = json.modality

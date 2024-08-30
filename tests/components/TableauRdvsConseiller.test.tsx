@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/dom'
-import { render } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
 import React from 'react'
@@ -7,12 +6,8 @@ import React from 'react'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
 import { desEvenementsListItems } from 'fixtures/evenement'
 import { EvenementListItem } from 'interfaces/evenement'
-import {
-  toFrenchDuration,
-  toFrenchTime,
-  toLongMonthDate,
-  toMonthday,
-} from 'utils/date'
+import renderWithContexts from 'tests/renderWithContexts'
+import { toFrenchDuration, toFrenchTime, toLongMonthDate } from 'utils/date'
 
 describe('<TableauRdvsConseiller>', () => {
   beforeEach(async () => {
@@ -26,7 +21,7 @@ describe('<TableauRdvsConseiller>', () => {
       listeRdv = desEvenementsListItems()
 
       // When
-      render(
+      renderWithContexts(
         <TableauEvenementsConseiller evenements={listeRdv} idConseiller='1' />
       )
     })

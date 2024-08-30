@@ -8,6 +8,7 @@ import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
 import { EvenementListItem } from 'interfaces/evenement'
+import { useConseiller } from 'utils/conseiller/conseillerContext'
 import { toFrenchDuration, toFrenchTime, toLongMonthDate } from 'utils/date'
 
 export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
@@ -15,6 +16,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
     ? '/etablissement/beneficiaires'
     : '/mes-jeunes'
 
+  const [conseiller] = useConseiller()
   const date = DateTime.fromISO(evenement.date)
   const longMonthDate = toLongMonthDate(date)
   const heure = toFrenchTime(date)
@@ -64,7 +66,10 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
 
       <TD>
         <div className='text-grey_800'>créé par</div>
-        --
+        <CreateurEvenementLabel
+          evenement={evenement}
+          idConseiller={conseiller.id}
+        />
       </TD>
 
       <TD></TD>
@@ -75,4 +80,25 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
       />
     </TR>
   )
+}
+
+function CreateurEvenementLabel(
+  evenement: EvenementListItem,
+  idConseiller: string
+): ReactElement {
+  if (evenement.isSession && evenement.createur?.id === idConseiller)
+    return <p>Vous</p>
+  else if (evenement.createur?.prenom)
+    return (
+      <p>
+        {evenement.createur.prenom} {evenement.createur.nom}
+      </p>
+    )
+  else
+    return (
+      <p>
+        --
+        <span className='sr-only'>information non disponible</span>
+      </p>
+    )
 }
