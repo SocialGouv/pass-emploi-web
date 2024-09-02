@@ -171,7 +171,7 @@ export function sessionMiloJsonToEvenementListItem(
 
 function jsonToTypeAnimationCollective(jsonType: TypeEvenement): string {
   if (jsonType.code === 'INFORMATION_COLLECTIVE') {
-    return 'Info coll'
+    return 'Information collective'
   }
   return jsonType.label
 }

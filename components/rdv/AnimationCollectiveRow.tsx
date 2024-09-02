@@ -4,6 +4,7 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import {
   TagMetier,
   TagStatut as _TagStatut,
+  TagType,
 } from 'components/ui/Indicateurs/Tag'
 import SelectButton from 'components/ui/SelectButton'
 import TD from 'components/ui/Table/TD'
@@ -86,7 +87,7 @@ export function AnimationCollectiveRow({
           <div>{animationCollective.sousTitre}</div>
         )}
         <div className='mt-1 flex gap-2'>
-          <TagType {...animationCollective} />
+          <TagType {...animationCollective} isSmallTag={true} />
           <Visiblite
             {...animationCollective}
             estCache={estCache}
@@ -134,34 +135,6 @@ function labelLien(ac: AnimationCollective): string {
   return `Consulter ${ac.type} ${ac.titre} du ${toMonthday(
     ac.date
   )} à ${toFrenchTime(ac.date)}`
-}
-
-function TagType({ isSession, type }: AnimationCollective): ReactElement {
-  let tagProps: { color: string; iconName?: IconName; iconLabel?: string } = {
-    color: 'additional_2',
-    iconName: undefined,
-    iconLabel: undefined,
-  }
-
-  if (type === 'Atelier') tagProps.color = 'accent_2'
-  if (type === 'Information collective') tagProps.iconName = IconName.Error
-  if (isSession)
-    tagProps = {
-      color: 'accent_1',
-      iconName: IconName.Lock,
-      iconLabel: 'Informations de la session non modifiables',
-    }
-
-  return (
-    <TagMetier
-      label={type}
-      color={tagProps.color}
-      backgroundColor={tagProps.color + '_lighten'}
-      iconName={tagProps.iconName}
-      iconLabel={tagProps.iconLabel}
-      isSmallTag={true}
-    />
-  )
 }
 
 function TagStatut(ac: AnimationCollective): ReactElement {
