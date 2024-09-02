@@ -270,7 +270,7 @@ describe('EvenementsApiService', () => {
       const animationsCollectives: AnimationCollective[] = [
         uneAnimationCollective({
           id: 'ac-passee',
-          type: 'Info coll',
+          type: 'Information collective',
           date: dateDebut,
           statut: StatutAnimationCollective.AVenir,
         }),
