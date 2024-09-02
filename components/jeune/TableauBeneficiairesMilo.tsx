@@ -180,14 +180,14 @@ export default function TableauBeneficiairesMilo({
                   <span className='text-m-bold'>{beneficiaire.rdvs}</span>
                 </TD>
 
-                <TD className='h-full row-start-2 col-span-4 rounded-bl-base layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1 layout_m:rounded-none'>
+                <TD className='h-full row-start-2 col-span-4 flex flex-col justify-center rounded-bl-base layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1 layout_m:rounded-none'>
                   <div
-                    className='inline layout_m:block mr-8 mb-2 text-s-regular text-grey_800'
+                    className='inline layout_m:block mr-8 mb-2 text-xs-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {derniereActiviteColumn}
                   </div>
-                  <span>
+                  <span className='text-s-regular'>
                     {beneficiaire.isActivated &&
                       toRelativeDateTime(beneficiaire.lastActivity!)}
                     {!beneficiaire.isActivated && (
