@@ -82,10 +82,13 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
   )
 }
 
-function CreateurEvenementLabel(
-  evenement: EvenementListItem,
+function CreateurEvenementLabel({
+  evenement,
+  idConseiller,
+}: {
+  evenement: EvenementListItem
   idConseiller: string
-): ReactElement {
+}): ReactElement {
   if (evenement.isSession && evenement.createur?.id === idConseiller)
     return <p>Vous</p>
   else if (evenement.createur?.prenom)
