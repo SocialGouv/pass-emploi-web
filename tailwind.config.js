@@ -79,6 +79,7 @@ module.exports = {
     screenSize: (theme) => theme('screens'),
 
     borderRadius: {
+      none: '0px',
       base: '8px',
       l: '24px',
       full: '9999px',

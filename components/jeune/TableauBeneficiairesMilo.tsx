@@ -75,7 +75,7 @@ export default function TableauBeneficiairesMilo({
           </TR>
         </thead>
 
-        <tbody className='grid grid-cols-[repeat(5,auto)] layout_m:grid-cols-[repeat(6,auto)] grid-flow-rows gap-y-2'>
+        <tbody className='grid grid-cols-[repeat(5,auto)] layout_m:grid-cols-[repeat(6,auto)] gap-y-2'>
           {beneficiairesAffiches.map(
             (beneficiaire: BeneficiaireAvecInfosComplementaires) => (
               <TR
@@ -84,7 +84,7 @@ export default function TableauBeneficiairesMilo({
               >
                 <TD
                   isBold
-                  className='rounded-tl-base h-full layout_m:rounded-l-base'
+                  className='h-full !rounded-tl-base !rounded-bl-none layout_m:!rounded-l-base'
                 >
                   <div className='mb-2'>
                     {beneficiaire.structureMilo?.id ===
@@ -180,7 +180,7 @@ export default function TableauBeneficiairesMilo({
                   <span className='text-m-bold'>{beneficiaire.rdvs}</span>
                 </TD>
 
-                <TD className='h-full row-start-2 col-span-4 rounded-b-base layout_m:rounded-none layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1'>
+                <TD className='h-full row-start-2 col-span-4 rounded-bl-base layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1 layout_m:rounded-none'>
                   <div
                     className='inline layout_m:block mr-8 mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
@@ -199,7 +199,7 @@ export default function TableauBeneficiairesMilo({
                 <TDLink
                   href={`/mes-jeunes/${beneficiaire.id}`}
                   label={`Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`}
-                  className='row-span-2 h-full flex items-center'
+                  className='row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
                 />
               </TR>
             )
