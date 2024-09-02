@@ -93,31 +93,58 @@ export default function DesinscriptionBeneficiaireModal({
     >
       <form onSubmit={validateFormulaire}>
         <div className='mt-10 flex flex-col justify-center'>
-          <fieldset className='flex flex-col gap-2 mb-4'>
-            <legend className='sr-only'>Motif de désinscription</legend>
-            {typeRefus.error && (
-              <InputError id={'select-beneficiaires--error'} className='my-2'>
-                {typeRefus.error}
-              </InputError>
-            )}
 
-            <RadioBox
-              isSelected={typeRefus.value === StatutBeneficiaire.DESINSCRIT}
-              onChange={() => {
-                setTypeRefus({ value: StatutBeneficiaire.DESINSCRIT })
-                textCommentaire.current!.value = ''
+          <fieldset>
+            <legend className='sr-only'>Motif de désinscription</legend>
+
+            <div className='flex flex-col gap-2 mb-4'>
+              {typeRefus.error && (
+                <InputError id={'select-beneficiaires--error'} className='my-2'>
+                  {typeRefus.error}
+                </InputError>
+              )}
+
+              <RadioBox
+                isSelected={typeRefus.value === StatutBeneficiaire.DESINSCRIT}
+                onChange={() => {
+                  setTypeRefus({ value: StatutBeneficiaire.DESINSCRIT })
+                  textCommentaire.current!.value = ''
+                }}
+                label='J’ai fait une erreur lors de l’ajout de ce bénéficiaire'
+                name='type-refus'
+              />
+              <RadioBox
+                isSelected={typeRefus.value === StatutBeneficiaire.REFUS_TIERS}
+                onChange={() => {
+                  setTypeRefus({ value: StatutBeneficiaire.REFUS_TIERS })
+                  textCommentaire.current!.value = ''
+                }}
+                label='Refus tiers (la désinscription est à mon initiative ou à celle d’un tiers)'
+                name='type-refus'
+              />
+              <RadioBox
+                isSelected={typeRefus.value === StatutBeneficiaire.REFUS_JEUNE}
+                onChange={() =>
+                  setTypeRefus({ value: StatutBeneficiaire.REFUS_JEUNE })
+                }
+                label='Refus jeune (la désinscription est à l’initiative du bénéficiaire)'
+                name='type-refus'
+              />
+            </div>
+
+            <Label htmlFor='refus-commentaire'>
+              {{
+                main: 'Veuillez préciser le motif de désinscription du bénéficiaire',
+                helpText: '250 caractères maximum',
               }}
-              label='J’ai fait une erreur lors de l’ajout de ce bénéficiaire'
-              name='type-refus'
-            />
-            <RadioBox
-              isSelected={typeRefus.value === StatutBeneficiaire.REFUS_TIERS}
-              onChange={() => {
-                setTypeRefus({ value: StatutBeneficiaire.REFUS_TIERS })
-                textCommentaire.current!.value = ''
-              }}
-              label='Refus tiers (la désinscription est à mon initiative ou à celle d’un tiers)'
-              name='type-refus'
+            </Label>
+            <Textarea
+              id='refus-commentaire'
+              maxLength={250}
+              onChange={(value: string) => setCommentaire({ value: value })}
+              onBlur={validateCommentaire}
+              disabled={typeRefus.value !== StatutBeneficiaire.REFUS_JEUNE}
+              ref={textCommentaire}
             />
             <RadioBox
               isSelected={typeRefus.value === StatutBeneficiaire.REFUS_JEUNE}
