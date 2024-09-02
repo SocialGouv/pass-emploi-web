@@ -81,7 +81,7 @@ export function AnimationCollectiveRow({
         </div>
       </TD>
 
-      <TD className='row-start-2 row-end-5 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_m:row-span-1 layout_m:rounded-none layout_m:flex layout_m:flex-col layout_m:justify-center layout_m:!p-2'>
+      <TD className='row-start-2 row-end-4 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_m:row-span-1 layout_m:rounded-none layout_m:flex layout_m:flex-col layout_m:justify-center layout_m:!p-2'>
         <div className='text-base-bold'>{animationCollective.titre}</div>
         {animationCollective.sousTitre && (
           <div>{animationCollective.sousTitre}</div>
