@@ -97,7 +97,7 @@ export function EvenementRow({
       </TD>
 
       <TD className='rounded-r-base'>
-        {evenement.idCreateur === idConseiller && (
+        {evenement.createur?.id === idConseiller && (
           <>
             <span className='sr-only'>oui</span>
             <IconComponent
@@ -108,7 +108,7 @@ export function EvenementRow({
             />
           </>
         )}
-        {evenement.idCreateur !== idConseiller && (
+        {evenement.createur?.id !== idConseiller && (
           <>
             <span className='sr-only'>non</span>
             <IconComponent

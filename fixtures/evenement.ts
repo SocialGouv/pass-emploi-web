@@ -112,7 +112,9 @@ export function desEvenementsListItems(): EvenementListItem[] {
       modality: 'En agence',
       date: '2021-10-25T12:00:00.000Z',
       duree: 25,
-      idCreateur: '2',
+      createur: {
+        id: '2',
+      },
       source: 'MILO',
     },
   ]
@@ -128,7 +130,11 @@ export function unEvenementListItem(
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
     duree: 125,
-    idCreateur: '1',
+    createur: {
+      id: '1',
+      nom: 'Tavernier',
+      prenom: 'Nils',
+    },
     source: 'PASS_EMPLOI',
   }
   return { ...defaults, ...overrides }

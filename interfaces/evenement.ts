@@ -34,12 +34,17 @@ export type AnimationCollectivePilotage = {
   nombreInscrits: number
 }
 
+type Createur = {
+  id: string
+  nom?: string
+  prenom?: string
+}
 export type EvenementListItem = {
   id: string
   type: string
   date: string
   duree: number
-  idCreateur?: string
+  createur?: Createur
   modality?: string
   labelBeneficiaires?: string
   source?: string
