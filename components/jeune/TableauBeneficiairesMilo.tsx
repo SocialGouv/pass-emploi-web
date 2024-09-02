@@ -37,7 +37,7 @@ export default function TableauBeneficiairesMilo({
   const beneficiaireSituationColumn = 'Bénéficiaire et situation'
   const dateFinCEJColumn = 'Fin de CEJ'
   const actionsColumn = 'Actions créées'
-  const rdvColumn = 'Rendez-vous et ateliers'
+  const rdvColumn = 'RDV et ateliers'
   const derniereActiviteColumn = 'Dernière activité'
   const voirDetailColumn = 'Voir le détail'
 
