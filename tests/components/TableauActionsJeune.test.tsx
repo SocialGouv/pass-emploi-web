@@ -70,7 +70,7 @@ describe('TableauActionsJeune', () => {
       await userEvent.click(screen.getByText('Statut'))
       await userEvent.click(screen.getByLabelText('À faire'))
       await userEvent.click(
-        screen.getByRole('button', { name: 'Valider Statuts' })
+        screen.getByRole('button', { name: 'Valider la sélection des statuts' })
       )
     })
 
@@ -131,12 +131,12 @@ describe('TableauActionsJeune', () => {
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Catégorie',
+          name: 'Catégorie Filtrer les actions',
         })
       ).toBeInTheDocument()
       expect(
         within(tableauDActions).getByRole('columnheader', {
-          name: 'Statut',
+          name: 'Statut Filtrer les actions',
         })
       ).toBeInTheDocument()
     })

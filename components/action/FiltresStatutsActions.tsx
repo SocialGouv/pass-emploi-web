@@ -1,4 +1,11 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useState,
+} from 'react'
 
 import propsStatutsActions from 'components/action/propsStatutsActions'
 import Button from 'components/ui/Button/Button'
@@ -8,13 +15,13 @@ import { StatutAction } from 'interfaces/action'
 
 type FiltresStatutsActionsProps = {
   onFiltres: (statutsSelectionnes: StatutAction[]) => void
-  defaultValue?: StatutAction[]
+  defaultValue: StatutAction[]
 }
 
-export default function FiltresStatutsActions({
-  onFiltres,
-  defaultValue = [],
-}: FiltresStatutsActionsProps) {
+function FiltresStatutsActions(
+  { onFiltres, defaultValue = [] }: FiltresStatutsActionsProps,
+  ref: ForwardedRef<HTMLButtonElement>
+) {
   const [afficherFiltresStatuts, setAfficherFiltresStatuts] =
     useState<boolean>(false)
   const [statutsSelectionnes, setStatutsSelectionnes] = useState<
@@ -59,10 +66,10 @@ export default function FiltresStatutsActions({
   return (
     <div className='relative'>
       <button
+        ref={ref}
         aria-controls='filtres-statut'
         aria-expanded={afficherFiltresStatuts}
         onClick={() => setAfficherFiltresStatuts(!afficherFiltresStatuts)}
-        aria-label='Statut - Filtrer les actions'
         title='Filtrer les actions par statut'
         className='flex items-center p-4 w-full h-full gap-2'
         type='button'
@@ -70,17 +77,20 @@ export default function FiltresStatutsActions({
         Statut
         <IconComponent
           name={IconName.Filter}
-          aria-hidden={true}
-          focusable={false}
+          role='img'
+          aria-label='Filtrer les actions'
           className='h-6 w-6 fill-primary'
         />
         {statutsSelectionnes.length > 0 && (
-          <Badge
-            count={statutsSelectionnes.length}
-            bgColor='primary'
-            textColor='white'
-            size={6}
-          />
+          <>
+            <Badge
+              count={statutsSelectionnes.length}
+              bgColor='primary'
+              textColor='white'
+              size={6}
+            />
+            <span className='sr-only'> filtre sélectionné</span>
+          </>
         )}
       </button>
 
@@ -116,10 +126,12 @@ export default function FiltresStatutsActions({
           </fieldset>
           <Button className='w-full justify-center' type='submit'>
             Valider
-            <span className='sr-only'> Statuts</span>
+            <span className='sr-only'> la sélection des statuts</span>
           </Button>
         </form>
       )}
     </div>
   )
 }
+
+export default forwardRef(FiltresStatutsActions)
