@@ -132,7 +132,7 @@ export default function TableauBeneficiairesMilo({
                   <SituationTag situation={beneficiaire.situationCourante} />
                 </TD>
 
-                <TD className='h-full'>
+                <TD className='relative h-full after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""]'>
                   <div
                     className='mb-2 text-s-regular text-grey_800'
                     aria-hidden={true}
