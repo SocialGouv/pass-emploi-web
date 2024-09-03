@@ -291,10 +291,10 @@ describe('EditionRdvPage client side', () => {
           expect(inputHoraire).toHaveAttribute('type', 'time')
         })
 
-        it('contient un champ pour choisir la durée', () => {
+        it('contient un champ pour choisir la heure de fin', () => {
           // Then
           const inputDuree = within(etape).getByLabelText(
-            '* Durée format : hh:mm'
+            '* heure de fin format : hh:mm'
           )
           expect(inputDuree).toBeInTheDocument()
           expect(inputDuree).toHaveAttribute('required', '')

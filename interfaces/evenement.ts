@@ -56,6 +56,7 @@ export type Evenement = {
   type: TypeEvenement
   date: string
   duree: number
+  heureDeFin: string
   presenceConseiller: boolean
   invitation: boolean
   createur: Auteur & { id: string }
