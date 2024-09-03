@@ -293,12 +293,12 @@ describe('EditionRdvPage client side', () => {
 
         it('contient un champ pour choisir la heure de fin', () => {
           // Then
-          const inputDuree = within(etape).getByLabelText(
-            '* heure de fin format : hh:mm'
+          const inputHeurDefin = within(etape).getByLabelText(
+            '* Heure de fin format : hh:mm'
           )
-          expect(inputDuree).toBeInTheDocument()
-          expect(inputDuree).toHaveAttribute('required', '')
-          expect(inputDuree).toHaveAttribute('type', 'time')
+          expect(inputHeurDefin).toBeInTheDocument()
+          expect(inputHeurDefin).toHaveAttribute('required', '')
+          expect(inputHeurDefin).toHaveAttribute('type', 'time')
         })
 
         it('contient un champ pour indiquer l’adresse si besoin', () => {
@@ -387,7 +387,7 @@ describe('EditionRdvPage client side', () => {
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
         let inputHoraire: HTMLInputElement
-        let inputDuree: HTMLInputElement
+        let inputHeurDefin: HTMLInputElement
         let inputTitre: HTMLInputElement
         let inputDescription: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
@@ -404,7 +404,9 @@ describe('EditionRdvPage client side', () => {
           })
           inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
           inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
-          inputDuree = screen.getByLabelText('* Durée format : hh:mm')
+          inputHeurDefin = screen.getByLabelText(
+            '* Heure de fin format : hh:mm'
+          )
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
             name: /Description/,
@@ -512,7 +514,7 @@ describe('EditionRdvPage client side', () => {
           //Then
           expect(creerEvenement).not.toHaveBeenCalled()
           expect(
-            screen.getByText(/Le champ “Durée“ est vide./)
+            screen.getByText(/Le champ “Heure de fin“ est vide./)
           ).toBeInTheDocument()
         })
       })
@@ -523,7 +525,7 @@ describe('EditionRdvPage client side', () => {
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
         let inputHoraire: HTMLInputElement
-        let inputDuree: HTMLInputElement
+        let inputHeurDefin: HTMLInputElement
         let inputTitre: HTMLInputElement
         let inputDescription: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
@@ -542,7 +544,7 @@ describe('EditionRdvPage client side', () => {
           })
           inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
           inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
-          inputDuree = screen.getByLabelText('* Durée format : hh:mm')
+          inputHeurDefin = screen.getByLabelText('* Heur de fin format : hh:mm')
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
             name: /Description/,
@@ -564,7 +566,7 @@ describe('EditionRdvPage client side', () => {
           await userEvent.selectOptions(selectModalite, modalites[0])
           await userEvent.type(inputDate, '2022-03-03')
           await userEvent.type(inputHoraire, '10:30')
-          await userEvent.type(inputDuree, '02:37')
+          await userEvent.type(inputHeurDefin, '02:37')
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
         })

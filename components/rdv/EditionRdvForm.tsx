@@ -921,14 +921,14 @@ export function EditionRdvForm({
             disabled={lectureSeule}
           />
 
-          <Label htmlFor='HeureDeFin' inputRequired={true}>
+          <Label htmlFor='heureDeFin' inputRequired={true}>
             {{
-              main: 'Heure De Fin',
+              main: 'Heure de fin',
               helpText: 'format : hh:mm',
             }}
           </Label>
           {heureDeFin.error && (
-            <InputError id='HeureDeFin--error' className='mb-2'>
+            <InputError id='heureDeFin--error' className='mb-2'>
               {heureDeFin.error}
             </InputError>
           )}
