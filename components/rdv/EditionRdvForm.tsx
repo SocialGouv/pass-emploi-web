@@ -116,7 +116,7 @@ export function EditionRdvForm({
   })
 
   const heureFin =
-    timeRdv && timeRdv.plus({ minutes: evenement?.duree }).toFormat('HH:mm')
+    timeRdv && timeRdv.plus({ minutes: evenement!.duree }).toFormat('HH:mm')
   const [heureDeFin, setHeureDeFin] = useState<
     ValueWithError<string | undefined>
   >({ value: heureFin })
@@ -259,7 +259,7 @@ export function EditionRdvForm({
     )
     const nombreMaxParticipantsEstValide = validateNombreMaxParticipants()
     const dateEstValide = validateDate()
-    const horaireEstValide = validateHoraire()
+    const horaireEstValide = validateHeureDeDebut()
     const heureDeFinEstValide = validateHeureDeFin()
     const descriptionEstValide = validateDescription()
 
@@ -349,7 +349,7 @@ export function EditionRdvForm({
     }
   }
 
-  function validateHoraire() {
+  function validateHeureDeDebut() {
     const horaireEstValide = Boolean(
       heureDeDebut.value && regexHeure.test(heureDeDebut.value)
     )
@@ -371,9 +371,9 @@ export function EditionRdvForm({
 
   function validateHeureDeFin() {
     const heureDeFinDateTime =
-      heureDeFin?.value && DateTime.fromFormat(heureDeFin.value, 'hh:mm')
+      heureDeFin?.value && DateTime.fromFormat(heureDeFin.value, 'HH:mm')
     const horaireDateTime =
-      heureDeDebut?.value && DateTime.fromFormat(heureDeDebut.value, 'hh:mm')
+      heureDeDebut?.value && DateTime.fromFormat(heureDeDebut.value, 'HH:mm')
 
     const heureDefinEstValide = Boolean(
       heureDeFin.value && regexHeure.test(heureDeFin.value)
@@ -538,26 +538,23 @@ export function EditionRdvForm({
 
     setIsLoading(true)
 
-    const heureDebut = DateTime.fromISO(`${date.value}T${heureDeDebut.value}`)
-    const heureFin = DateTime.fromISO(`${date.value}T${heureDeFin.value}`)
-    const dureeEnMinutes = heureFin.diff(heureDebut, 'minutes').minutes
-    const dureeString = dureeFromMinutes(dureeEnMinutes)
-    if (dureeEnMinutes >= 0) {
-      setHeureDeFin({
-        value: heureFin.toFormat('HH:mm'),
-      })
-    } else {
-      console.error(
-        'L’heure de fin ne peut être antérieure à l’heure de début.'
-      )
-      setIsLoading(false)
-      return
-    }
+    const heureDeDebutfromIso = DateTime.fromISO(
+      `${date.value}T${heureDeDebut.value}`
+    )
+
+    const heureDeFinfromIso = DateTime.fromISO(
+      `${date.value}T${heureDeFin.value}`
+    )
+
+    const dureeEnMinutes = heureDeFinfromIso.diff(
+      heureDeDebutfromIso,
+      'minutes'
+    ).minutes
 
     const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous.value!,
-      date: heureDebut.toISO(),
+      date: heureDeDebutfromIso.toISO(),
       duration: dureeEnMinutes,
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,
@@ -913,7 +910,7 @@ export function EditionRdvForm({
             defaultValue={heureDeDebut.value}
             required={true}
             onChange={(value: string) => setHeureDeDebut({ value })}
-            onBlur={validateHoraire}
+            onBlur={validateHeureDeDebut}
             invalid={Boolean(heureDeDebut.error)}
             aria-invalid={heureDeDebut.error ? true : undefined}
             aria-describedby={heureDeDebut.error ? 'horaire--error' : undefined}
@@ -932,7 +929,7 @@ export function EditionRdvForm({
             </InputError>
           )}
           <Input
-            type='time' // FIXME type='text' ou 'number' ('time' c'est pour des horaires)
+            type='time'
             id='heureDeFin'
             required={true}
             defaultValue={heureDeFin.value}

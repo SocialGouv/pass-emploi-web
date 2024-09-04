@@ -673,7 +673,7 @@ describe('EditionRdvPage client side', () => {
           ).toBeInTheDocument()
         })
 
-        it('affiche une erreur quand la description dépasse 250 caractères', async () => {
+        it('affiche une erreur quand la description dépasse 500 caractères', async () => {
           // When
           await userEvent.clear(inputDescription)
           await userEvent.type(
