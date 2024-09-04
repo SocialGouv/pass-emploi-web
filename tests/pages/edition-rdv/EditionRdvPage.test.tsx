@@ -386,8 +386,8 @@ describe('EditionRdvPage client side', () => {
         let selectModalite: HTMLSelectElement
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
-        let inputHoraire: HTMLInputElement
-        let inputHeurDefin: HTMLInputElement
+        let inputHeureDeDebut: HTMLInputElement
+        let inputHeurDeFin: HTMLInputElement
         let inputTitre: HTMLInputElement
         let inputDescription: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
@@ -403,10 +403,10 @@ describe('EditionRdvPage client side', () => {
             name: 'Modalité',
           })
           inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
-          inputHoraire = screen.getByLabelText(
+          inputHeureDeDebut = screen.getByLabelText(
             '* Heure de début format : hh:mm'
           )
-          inputHeurDefin = screen.getByLabelText(
+          inputHeurDeFin = screen.getByLabelText(
             '* Heure de fin format : hh:mm'
           )
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
@@ -508,7 +508,7 @@ describe('EditionRdvPage client side', () => {
             getNomBeneficiaireComplet(beneficiairesConseiller[0])
           )
           await userEvent.type(inputDate, '2022-03-03')
-          await userEvent.type(inputHoraire, '02:37')
+          await userEvent.type(inputHeureDeDebut, '02:37')
 
           //When
           await userEvent.click(buttonValider)
@@ -1328,7 +1328,7 @@ describe('EditionRdvPage client side', () => {
             date: '2021-10-21T12:00:00.000+02:00',
             adresse: '36 rue de marseille, 93200 Saint-Denis',
             organisme: 'S.A.R.L',
-            duration: 125,
+            duration: 60,
             comment: 'modification de la description',
             presenceConseiller: false,
             invitation: true,
@@ -1730,8 +1730,8 @@ describe('EditionRdvPage client side', () => {
         expect(screen.getByLabelText(/Description/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
-        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
-        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure de début/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure de fin/)).toBeDisabled()
         expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()

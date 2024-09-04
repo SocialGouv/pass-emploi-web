@@ -104,23 +104,26 @@ export function EditionRdvForm({
   const [date, setDate] = useState<ValueWithError<string | undefined>>({
     value: dateRdv,
   })
-  const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
+
+  const regexHeure = /^([01]\d|2[0-3]):([0-5]\d)$/
   const timeRdv = evenement && DateTime.fromISO(evenement.date)
+  const heureDebut = timeRdv?.toFormat('HH:mm')
+
   const [heureDeDebut, setHeureDeDebut] = useState<
     ValueWithError<string | undefined>
   >({
-    value: timeRdv?.toFormat('hh:mm'),
+    value: heureDebut,
   })
 
-  const regexHeureDeFin = /^([01]\d|2[0-3]):([0-5]\d)$/
   const dureeRdv = dureeFromMinutes(evenement?.duree)
   const [duree, setDuree] = useState<ValueWithError<string | undefined>>({
     value: dureeRdv,
   })
-  const heureFin = timeRdv && timeRdv.plus({ minutes: evenement?.duree })
+  const heureFin =
+    timeRdv && timeRdv.plus({ minutes: evenement?.duree }).toFormat('hh:mm')
   const [heureDeFin, setHeureDeFin] = useState<
     ValueWithError<string | undefined>
-  >({ value: heureFin?.toFormat('hh:mm') })
+  >({ value: heureFin })
 
   const [adresse, setAdresse] = useState<string | undefined>(evenement?.adresse)
   const [organisme, setOrganisme] = useState<string | undefined>(
@@ -237,18 +240,18 @@ export function EditionRdvForm({
 
     const previousIds = evenement.jeunes.map(({ id }) => id).sort(compareParId)
     const currentIds = [...idsJeunes.value].sort(compareParId)
-    return (
+    return Boolean(
       previousIds.toString() !== currentIds.toString() ||
-      modalite !== evenement.modality ||
-      date.value !== dateRdv ||
-      heureDeDebut.value !== timeRdv ||
-      heureDeFin.value !== evenement.heureDeFin ||
-      adresse !== evenement.adresse ||
-      organisme !== evenement.organisme ||
-      titre.value !== evenement.titre ||
-      description.value !== evenement.commentaire ||
-      isConseillerPresent !== evenement.presenceConseiller ||
-      nombreMaxParticipants.value !== evenement.nombreMaxParticipants
+        modalite !== evenement.modality ||
+        date.value !== dateRdv ||
+        heureDeDebut.value !== heureDebut ||
+        heureDeFin.value !== heureFin ||
+        adresse !== evenement.adresse ||
+        organisme !== evenement.organisme ||
+        titre.value !== evenement.titre ||
+        description.value !== evenement.commentaire ||
+        isConseillerPresent !== evenement.presenceConseiller ||
+        nombreMaxParticipants.value !== evenement.nombreMaxParticipants
     )
   }
 
@@ -352,7 +355,7 @@ export function EditionRdvForm({
 
   function validateHoraire() {
     const horaireEstValide = Boolean(
-      heureDeDebut.value && regexHoraire.test(heureDeDebut.value)
+      heureDeDebut.value && regexHeure.test(heureDeDebut.value)
     )
 
     if (!heureDeDebut.value) {
@@ -360,7 +363,7 @@ export function EditionRdvForm({
         ...heureDeDebut,
         error: 'Le champ “Horaire“ est vide. Renseignez un horaire.',
       })
-    } else if (!regexHoraire.test(heureDeDebut.value)) {
+    } else if (!regexHeure.test(heureDeDebut.value)) {
       setHeureDeDebut({
         ...heureDeDebut,
         error:
@@ -377,7 +380,7 @@ export function EditionRdvForm({
       heureDeDebut?.value && DateTime.fromFormat(heureDeDebut.value, 'hh:mm')
 
     const heureDefinEstValide = Boolean(
-      heureDeFin.value && regexHeureDeFin.test(heureDeFin.value)
+      heureDeFin.value && regexHeure.test(heureDeFin.value)
     )
 
     if (!heureDeFin.value) {
@@ -385,7 +388,7 @@ export function EditionRdvForm({
         ...heureDeFin,
         error: 'Le champ “Heure de fin“ est vide. Renseignez une heure de fin.',
       })
-    } else if (!regexHeureDeFin.test(heureDeFin.value)) {
+    } else if (!regexHeure.test(heureDeFin.value)) {
       setHeureDeFin({
         ...heureDeFin,
         error:
