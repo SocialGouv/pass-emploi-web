@@ -284,7 +284,7 @@ describe('EditionRdvPage client side', () => {
         it("contient un champ pour choisir l'horaire", () => {
           // Then
           const inputHoraire = within(etape).getByLabelText(
-            '* Heure format : hh:mm'
+            '* Heure de début format : hh:mm'
           )
           expect(inputHoraire).toBeInTheDocument()
           expect(inputHoraire).toHaveAttribute('required', '')
@@ -403,7 +403,9 @@ describe('EditionRdvPage client side', () => {
             name: 'Modalité',
           })
           inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
-          inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
+          inputHoraire = screen.getByLabelText(
+            '* Heure de début format : hh:mm'
+          )
           inputHeurDefin = screen.getByLabelText(
             '* Heure de fin format : hh:mm'
           )
@@ -525,7 +527,7 @@ describe('EditionRdvPage client side', () => {
         let selectType: HTMLSelectElement
         let inputDate: HTMLInputElement
         let inputHoraire: HTMLInputElement
-        let inputHeurDefin: HTMLInputElement
+        let inputHeureDeFin: HTMLInputElement
         let inputTitre: HTMLInputElement
         let inputDescription: HTMLTextAreaElement
         let buttonValider: HTMLButtonElement
@@ -543,8 +545,12 @@ describe('EditionRdvPage client side', () => {
             name: 'Modalité',
           })
           inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
-          inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
-          inputHeurDefin = screen.getByLabelText('* Heur de fin format : hh:mm')
+          inputHoraire = screen.getByLabelText(
+            '* Heure de début format : hh:mm'
+          )
+          inputHeureDeFin = screen.getByLabelText(
+            '* Heure de fin format : hh:mm'
+          )
           inputTitre = screen.getByRole('textbox', { name: 'Titre' })
           inputDescription = screen.getByRole('textbox', {
             name: /Description/,
@@ -566,7 +572,7 @@ describe('EditionRdvPage client side', () => {
           await userEvent.selectOptions(selectModalite, modalites[0])
           await userEvent.type(inputDate, '2022-03-03')
           await userEvent.type(inputHoraire, '10:30')
-          await userEvent.type(inputHeurDefin, '02:37')
+          await userEvent.type(inputHeureDeFin, '11:30')
           await userEvent.type(inputTitre, 'Titre de l’événement')
           await userEvent.type(inputDescription, 'Lorem ipsum dolor sit amet')
         })
@@ -589,7 +595,7 @@ describe('EditionRdvPage client side', () => {
               date: '2022-03-03T10:30:00.000+01:00',
               adresse: undefined,
               organisme: undefined,
-              duration: 157,
+              duration: 60,
               comment: 'Lorem ipsum dolor sit amet',
               presenceConseiller: true,
               invitation: false,
@@ -619,7 +625,7 @@ describe('EditionRdvPage client side', () => {
               date: '2022-03-03T10:30:00.000+01:00',
               adresse: undefined,
               organisme: undefined,
-              duration: 157,
+              duration: 60,
               comment: 'Lorem ipsum dolor sit amet',
               presenceConseiller: true,
               invitation: false,
@@ -763,8 +769,8 @@ describe('EditionRdvPage client side', () => {
         expect(screen.getByLabelText(/Description/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
-        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
-        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure de début/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure de fin/)).toBeDisabled()
         expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
@@ -951,12 +957,12 @@ describe('EditionRdvPage client side', () => {
         expect(screen.getByLabelText<HTMLInputElement>(/Date/).value).toEqual(
           '2021-10-21'
         )
-        expect(screen.getByLabelText<HTMLSelectElement>(/Heure/).value).toEqual(
-          '12:00'
-        )
-        expect(screen.getByLabelText<HTMLSelectElement>(/Durée/).value).toEqual(
-          '02:05'
-        )
+        expect(
+          screen.getByLabelText<HTMLSelectElement>(/Heure de début/).value
+        ).toEqual('12:00')
+        expect(
+          screen.getByLabelText<HTMLSelectElement>(/Heure de fin/).value
+        ).toEqual('02:05')
         expect(
           screen.getByLabelText<HTMLInputElement>(/Adresse/).value
         ).toEqual('36 rue de marseille, 93200 Saint-Denis')
@@ -1017,8 +1023,12 @@ describe('EditionRdvPage client side', () => {
             name: 'Modalité',
           })
           const inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
-          const inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
-          const inputDuree = screen.getByLabelText('* Durée format : hh:mm')
+          const inputHeureDeDebut = screen.getByLabelText(
+            '* Heure de début format : hh:mm'
+          )
+          const inputHeureDeFin = screen.getByLabelText(
+            '* Heure de fin format : hh:mm'
+          )
           const inputTitre = screen.getByRole('textbox', {
             name: 'Titre',
           })
@@ -1040,10 +1050,10 @@ describe('EditionRdvPage client side', () => {
 
           await userEvent.clear(inputDate)
           await userEvent.type(inputDate, '2022-03-03')
-          await userEvent.clear(inputHoraire)
-          await userEvent.type(inputHoraire, '10:30')
-          await userEvent.clear(inputDuree)
-          await userEvent.type(inputDuree, '02:37')
+          await userEvent.clear(inputHeureDeDebut)
+          await userEvent.type(inputHeureDeDebut, '10:30')
+          await userEvent.clear(inputHeureDeFin)
+          await userEvent.type(inputHeureDeFin, '11:30')
           await userEvent.clear(inputTitre)
           await userEvent.type(inputTitre, 'Nouveau titre')
           await userEvent.clear(inputDescription)
@@ -1104,7 +1114,7 @@ describe('EditionRdvPage client side', () => {
               date: '2022-03-03T10:30:00.000+01:00',
               adresse: '36 rue de marseille, 93200 Saint-Denis',
               organisme: 'S.A.R.L',
-              duration: 157,
+              duration: 60,
               comment: 'Lorem ipsum dolor sit amet',
               presenceConseiller: false,
               invitation: true,
@@ -1369,8 +1379,8 @@ describe('EditionRdvPage client side', () => {
         expect(screen.getByLabelText(/Description/)).toBeDisabled()
         expect(screen.getByLabelText('Modalité')).toBeDisabled()
         expect(screen.getByLabelText(/Date/)).toBeDisabled()
-        expect(screen.getByLabelText(/Heure/)).toBeDisabled()
-        expect(screen.getByLabelText(/Durée/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure de début/)).toBeDisabled()
+        expect(screen.getByLabelText(/Heure de fin/)).toBeDisabled()
         expect(screen.getByLabelText(/Adresse/)).toBeDisabled()
         expect(screen.getByLabelText(/Organisme/)).toBeDisabled()
         expect(screen.getByLabelText(/conseiller sera présent/)).toBeDisabled()
@@ -1511,13 +1521,17 @@ describe('EditionRdvPage client side', () => {
           name: /Type/,
         })
         const inputDate = screen.getByLabelText('* Date format : jj/mm/aaaa')
-        const inputHoraire = screen.getByLabelText('* Heure format : hh:mm')
-        const inputDuree = screen.getByLabelText('* Durée format : hh:mm')
+        const inputHeureDeDebut = screen.getByLabelText(
+          '* Heure de début format : hh:mm'
+        )
+        const inputHeureDeFin = screen.getByLabelText(
+          '* Heure de fin format : hh:mm'
+        )
         const inputTitre = screen.getByLabelText('* Titre')
         await userEvent.selectOptions(selectType, 'Atelier')
         await userEvent.type(inputDate, '2022-03-03')
-        await userEvent.type(inputHoraire, '10:30')
-        await userEvent.type(inputDuree, '02:37')
+        await userEvent.type(inputHeureDeDebut, '10:30')
+        await userEvent.type(inputHeureDeFin, '11:30')
         await userEvent.type(inputTitre, 'Titre de l’événement')
 
         // When

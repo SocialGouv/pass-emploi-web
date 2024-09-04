@@ -106,7 +106,9 @@ export function EditionRdvForm({
   })
   const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
   const timeRdv = evenement && DateTime.fromISO(evenement.date)
-  const [horaire, setHoraire] = useState<ValueWithError<string | undefined>>({
+  const [heureDeDebut, setHeureDeDebut] = useState<
+    ValueWithError<string | undefined>
+  >({
     value: timeRdv?.toFormat('hh:mm'),
   })
 
@@ -223,7 +225,7 @@ export function EditionRdvForm({
           codeTypeRendezVous.value ||
           modalite ||
           date.value ||
-          horaire.value ||
+          heureDeDebut.value ||
           heureDeFin.value ||
           titre.value ||
           adresse ||
@@ -239,7 +241,7 @@ export function EditionRdvForm({
       previousIds.toString() !== currentIds.toString() ||
       modalite !== evenement.modality ||
       date.value !== dateRdv ||
-      horaire.value !== timeRdv ||
+      heureDeDebut.value !== timeRdv ||
       heureDeFin.value !== evenement.heureDeFin ||
       adresse !== evenement.adresse ||
       organisme !== evenement.organisme ||
@@ -350,17 +352,17 @@ export function EditionRdvForm({
 
   function validateHoraire() {
     const horaireEstValide = Boolean(
-      horaire.value && regexHoraire.test(horaire.value)
+      heureDeDebut.value && regexHoraire.test(heureDeDebut.value)
     )
 
-    if (!horaire.value) {
-      setHoraire({
-        ...horaire,
+    if (!heureDeDebut.value) {
+      setHeureDeDebut({
+        ...heureDeDebut,
         error: 'Le champ “Horaire“ est vide. Renseignez un horaire.',
       })
-    } else if (!regexHoraire.test(horaire.value)) {
-      setHoraire({
-        ...horaire,
+    } else if (!regexHoraire.test(heureDeDebut.value)) {
+      setHeureDeDebut({
+        ...heureDeDebut,
         error:
           'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.',
       })
@@ -372,7 +374,7 @@ export function EditionRdvForm({
     const heureDeFinDateTime =
       heureDeFin?.value && DateTime.fromFormat(heureDeFin.value, 'hh:mm')
     const horaireDateTime =
-      horaire?.value && DateTime.fromFormat(horaire.value, 'hh:mm')
+      heureDeDebut?.value && DateTime.fromFormat(heureDeDebut.value, 'hh:mm')
 
     const heureDefinEstValide = Boolean(
       heureDeFin.value && regexHeureDeFin.test(heureDeFin.value)
@@ -526,8 +528,6 @@ export function EditionRdvForm({
 
   async function handleSoumettreRdv(e: FormEvent) {
     e.preventDefault()
-    console.log('Horaire :', horaire)
-    console.log('Heure de Fin :', heureDeFin)
 
     if (!formIsValid()) {
       document
@@ -539,13 +539,12 @@ export function EditionRdvForm({
 
     setIsLoading(true)
 
-    const heureDebut = DateTime.fromISO(`${date.value}T${horaire.value}`)
+    const heureDebut = DateTime.fromISO(`${date.value}T${heureDeDebut.value}`)
     const heureFin = DateTime.fromISO(`${date.value}T${heureDeFin.value}`)
     const dureeEnMinutes = heureFin.diff(heureDebut, 'minutes').minutes
     const dureeString = dureeFromMinutes(dureeEnMinutes)
     if (dureeEnMinutes >= 0) {
       setDuree({ value: dureeString })
-      console.log('duration:', dureeString)
     } else {
       console.error(
         'L’heure de fin ne peut être antérieure à l’heure de début.'
@@ -620,7 +619,7 @@ export function EditionRdvForm({
         label: 'Le champ Date est vide.',
         titreChamp: 'Date',
       })
-    if (horaire.error)
+    if (heureDeDebut.error)
       erreurs.push({
         ancre: '#horaire',
         label: 'Le champ Horaire est vide.',
@@ -897,27 +896,27 @@ export function EditionRdvForm({
             disabled={lectureSeule}
           />
 
-          <Label htmlFor='horaire' inputRequired={true}>
+          <Label htmlFor='heureDeDebut' inputRequired={true}>
             {{
-              main: 'Heure',
+              main: 'Heure de début',
               helpText: 'format : hh:mm',
             }}
           </Label>
-          {horaire.error && (
+          {heureDeDebut.error && (
             <InputError id='horaire--error' className='mb-2'>
-              {horaire.error}
+              {heureDeDebut.error}
             </InputError>
           )}
           <Input
             type='time'
-            id='horaire'
-            defaultValue={horaire.value}
+            id='heureDeDebut'
+            defaultValue={heureDeDebut.value}
             required={true}
-            onChange={(value: string) => setHoraire({ value })}
+            onChange={(value: string) => setHeureDeDebut({ value })}
             onBlur={validateHoraire}
-            invalid={Boolean(horaire.error)}
-            aria-invalid={horaire.error ? true : undefined}
-            aria-describedby={horaire.error ? 'horaire--error' : undefined}
+            invalid={Boolean(heureDeDebut.error)}
+            aria-invalid={heureDeDebut.error ? true : undefined}
+            aria-describedby={heureDeDebut.error ? 'horaire--error' : undefined}
             disabled={lectureSeule}
           />
 
