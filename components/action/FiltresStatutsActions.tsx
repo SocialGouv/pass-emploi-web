@@ -96,7 +96,7 @@ function FiltresStatutsActions(
 
       {afficherFiltresStatuts && (
         <form
-          className='absolute z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
+          className='absolute w-max left-0 z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrerActions}
         >

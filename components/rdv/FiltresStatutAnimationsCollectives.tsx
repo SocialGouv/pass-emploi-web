@@ -77,7 +77,7 @@ function FiltresStatutAnimationsCollectives(
 
       {afficherFiltres && (
         <form
-          className='absolute z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
+          className='absolute w-max right-0 z-10 bg-white rounded-base shadow-base p-4 text-base-regular'
           id='filtres-statut'
           onSubmit={filtrer}
         >
