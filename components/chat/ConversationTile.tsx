@@ -49,10 +49,10 @@ export function ConversationTile({
         type='button'
       >
         {!beneficiaireChat.seenByConseiller && (
-          <p className='text-accent_1 text-s-regular mb-2'>
+          <span className='text-accent_1 text-s-regular mb-2'>
             <Dot color='accent_1' className='ml-1 mr-2' />
             Nouveau(x) message(s)
-          </p>
+          </span>
         )}
         <span className='text-base-medium text-primary_darken mb-2 w-full flex justify-between'>
           {beneficiaireFullname}

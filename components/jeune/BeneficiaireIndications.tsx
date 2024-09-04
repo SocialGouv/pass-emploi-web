@@ -11,7 +11,7 @@ export function BeneficiaireListeItem({
 }: BeneficiaireIndicationProps) {
   const infoLabel = 'Liste de diffusion'
   return (
-    <div className='flex items-center'>
+    <p className='flex items-center'>
       <IconComponent
         name={IconName.PeopleFill}
         focusable={false}
@@ -24,7 +24,7 @@ export function BeneficiaireListeItem({
         {infoLabel}
       </span>
       {value}
-    </div>
+    </p>
   )
 }
 
@@ -34,7 +34,7 @@ export function BeneficiaireIndicationPortefeuille({
 }: BeneficiaireIndicationProps) {
   const infoLabel = 'Ce bénéficiaire n’est pas dans votre portefeuille'
   return (
-    <div className='flex items-center text-base-bold text-accent_3'>
+    <p className='flex items-center text-base-bold text-accent_3'>
       <IconComponent
         name={IconName.Info}
         focusable={false}
@@ -47,7 +47,7 @@ export function BeneficiaireIndicationPortefeuille({
         {infoLabel}
       </span>
       {value}
-    </div>
+    </p>
   )
 }
 
@@ -57,7 +57,7 @@ export function BeneficiaireIndicationPresent({
 }: BeneficiaireIndicationProps) {
   const infoLabel = 'Ce bénéficiaire était présent à l’événement'
   return (
-    <div className='flex items-center text-base-bold text-success'>
+    <p className='flex items-center text-base-bold text-success'>
       <IconComponent
         name={IconName.Check}
         role='img'
@@ -70,7 +70,7 @@ export function BeneficiaireIndicationPresent({
         {infoLabel}
       </span>
       {value}
-    </div>
+    </p>
   )
 }
 
@@ -81,7 +81,7 @@ export function BeneficiaireIndicationReaffectaction({
   const infoLabel =
     'Ce bénéficiaire a été réaffecté temporairement à un autre conseiller'
   return (
-    <div className='flex items-center text-base-bold text-accent_3'>
+    <p className='flex items-center text-base-bold text-accent_3'>
       <IconComponent
         name={IconName.Info}
         focusable={false}
@@ -94,6 +94,6 @@ export function BeneficiaireIndicationReaffectaction({
         {infoLabel}
       </span>
       {value}
-    </div>
+    </p>
   )
 }

@@ -180,9 +180,9 @@ function ListeDeDiffusionTile({
           <h4 className='text-base-medium'>{liste.titre}</h4>
         )}
 
-        <span className='text-s-regular'>
+        <p className='text-s-regular'>
           {liste.beneficiaires.length} destinataire(s)
-        </span>
+        </p>
       </div>
       <IconComponent
         name={IconName.ChevronRight}

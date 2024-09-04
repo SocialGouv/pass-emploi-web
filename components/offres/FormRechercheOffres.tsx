@@ -229,10 +229,10 @@ export default function FormRechercheOffres({
 
         {typeOffre && (
           <>
-            <div className='mt-5 mb-4 text-center'>
+            <p className='mt-5 mb-4 text-center'>
               [{countCriteres}] filtre{countCriteres > 1 && 's'} sélectionné
               {countCriteres > 1 && 's'}
-            </div>
+            </p>
 
             <Button type='submit' className='mx-auto'>
               <IconComponent

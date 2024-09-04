@@ -108,7 +108,7 @@ export default function DisplayMessageBeneficiaire(
           </div>
           <div className='text-xs-medium text-content text-left'>
             {!isResultatRecherche(props) && (
-              <>
+              <p>
                 <span className='sr-only'>Envoyé à </span>
                 <span
                   aria-label={toFrenchTime(message.creationDate, {
@@ -118,13 +118,13 @@ export default function DisplayMessageBeneficiaire(
                   {toFrenchTime(message.creationDate)}
                 </span>
                 {isEdited(message) && ' · Modifié'}
-              </>
+              </p>
             )}
 
             {isResultatRecherche(props) && (
-              <span aria-label={`Le ${toLongMonthDate(message.creationDate)}`}>
+              <p aria-label={`Le ${toLongMonthDate(message.creationDate)}`}>
                 Le {toShortDate(message.creationDate)}
-              </span>
+              </p>
             )}
           </div>
         </>

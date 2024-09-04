@@ -154,9 +154,7 @@ export default function MessagesDuJour({
       {messageAModifier && (
         <form onSubmit={modifierMessage} className='p-3'>
           <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-3'>
-            <span className='self-center text-s-regular'>
-              Modifier le message
-            </span>
+            <p className='self-center text-s-regular'>Modifier le message</p>
             <button
               type='button'
               onClick={() => {
