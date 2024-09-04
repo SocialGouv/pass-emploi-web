@@ -24,7 +24,7 @@ export default async function Login({
   const isFromEmail = getIsFromEmail(searchParams)
 
   return (
-    <div className='flex flex-col justify-center h-screen w-screen'>
+    <div className='flex flex-col justify-center h-screen w-screen overflow-y-auto'>
       <div className='grow flex flex-col justify-center bg-primary_lighten'>
         <header role='banner'>
           <h1 className='text-xl-bold text-primary_darken text-center mt-[48px] mb-[24px]'>
