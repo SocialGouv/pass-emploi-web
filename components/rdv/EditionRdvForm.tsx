@@ -115,12 +115,8 @@ export function EditionRdvForm({
     value: heureDebut,
   })
 
-  const dureeRdv = dureeFromMinutes(evenement?.duree)
-  const [duree, setDuree] = useState<ValueWithError<string | undefined>>({
-    value: dureeRdv,
-  })
   const heureFin =
-    timeRdv && timeRdv.plus({ minutes: evenement?.duree }).toFormat('hh:mm')
+    timeRdv && timeRdv.plus({ minutes: evenement?.duree }).toFormat('HH:mm')
   const [heureDeFin, setHeureDeFin] = useState<
     ValueWithError<string | undefined>
   >({ value: heureFin })
@@ -547,16 +543,17 @@ export function EditionRdvForm({
     const dureeEnMinutes = heureFin.diff(heureDebut, 'minutes').minutes
     const dureeString = dureeFromMinutes(dureeEnMinutes)
     if (dureeEnMinutes >= 0) {
-      setDuree({ value: dureeString })
+      setHeureDeFin({
+        value: heureFin.toFormat('HH:mm'),
+      })
     } else {
       console.error(
         'L’heure de fin ne peut être antérieure à l’heure de début.'
       )
+      setIsLoading(false)
+      return
     }
 
-    setHeureDeFin({
-      value: heureFin.toFormat('HH:mm'),
-    })
     const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous.value!,

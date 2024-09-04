@@ -962,7 +962,7 @@ describe('EditionRdvPage client side', () => {
         ).toEqual('12:00')
         expect(
           screen.getByLabelText<HTMLSelectElement>(/Heure de fin/).value
-        ).toEqual('02:05')
+        ).toEqual('14:05')
         expect(
           screen.getByLabelText<HTMLInputElement>(/Adresse/).value
         ).toEqual('36 rue de marseille, 93200 Saint-Denis')
@@ -1328,7 +1328,7 @@ describe('EditionRdvPage client side', () => {
             date: '2021-10-21T12:00:00.000+02:00',
             adresse: '36 rue de marseille, 93200 Saint-Denis',
             organisme: 'S.A.R.L',
-            duration: 60,
+            duration: 125,
             comment: 'modification de la description',
             presenceConseiller: false,
             invitation: true,
