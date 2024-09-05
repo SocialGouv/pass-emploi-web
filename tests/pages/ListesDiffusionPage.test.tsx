@@ -127,7 +127,7 @@ describe('Page Listes de Diffusion', () => {
     it('affiche le nombre de listes', () => {
       // Then
       expect(
-        screen.getByRole('table', { name: 'Listes (2)' })
+        screen.getByRole('table', { name: 'Listes (2 éléments)' })
       ).toBeInTheDocument()
     })
 
