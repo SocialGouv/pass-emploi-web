@@ -9,6 +9,7 @@ import React, { useState } from 'react'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
+import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
@@ -183,7 +184,41 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
           </ButtonLink>
         )}
       </PageActionsPortal>
+      <div className='mb-12'>
+        <form role='search' onSubmit={() => {}} className='grow max-w-[75%]'>
+          <label
+            htmlFor='rechercher-beneficiaires'
+            className='text-base-medium text-content_color'
+          >
+            Rechercher un atelier ou une information collective
+          </label>
 
+          <div className='flex mt-3'>
+            <ResettableTextInput
+              id='rechercher-beneficiaires'
+              className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
+              onChange={() => {}}
+              onReset={() => {}}
+              value=''
+            />
+
+            <button
+              className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
+              type='submit'
+            >
+              <IconComponent
+                name={IconName.Search}
+                focusable={false}
+                aria-hidden={true}
+                className='w-6 h-6 fill-[currentColor]'
+              />
+              <span className='ml-1 sr-only layout_s:not-sr-only'>
+                Rechercher
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
       <TabList className='mb-6'>
         <Tab
           label={
