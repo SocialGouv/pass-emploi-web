@@ -8,37 +8,37 @@ interface TableProps {
 }
 
 export default function Table({ children, caption }: TableProps) {
-  const style = 'w-full border-spacing-y-2 border-separate'
-  const captionStyle = 'text-m-bold text-grey_800'
-  const captionLabel = caption.count
-    ? `${caption.text} (${caption.count})`
-    : caption.text
-
-  function Caption() {
-    return (
-      <>
-        {caption.text}{' '}
-        {caption.count !== undefined && (
-          <Badge
-            count={caption.count}
-            textColor='primary'
-            bgColor='primary_lighten'
-            size={6}
-          />
-        )}
-      </>
-    )
-  }
-
   return (
-    <table className={style}>
-      <caption
-        className={captionStyle + (caption.visible ? ' text-left' : ' sr-only')}
-        aria-label={captionLabel}
-      >
-        <Caption />
-      </caption>
+    <table className={'w-full border-spacing-y-2 border-separate'}>
+      <Caption {...caption} />
       {children}
     </table>
+  )
+}
+
+function Caption({
+  text,
+  count,
+  visible,
+}: {
+  text: string
+  count?: number
+  visible?: boolean
+}) {
+  return (
+    <caption
+      className={`text-m-bold text-grey_800 ${visible ? 'text-left' : 'sr-only'}`}
+      aria-label={count ? `${text} (${count} éléments)` : text}
+    >
+      {text}{' '}
+      {count !== undefined && (
+        <Badge
+          count={count}
+          textColor='primary'
+          bgColor='primary_lighten'
+          size={6}
+        />
+      )}
+    </caption>
   )
 }
