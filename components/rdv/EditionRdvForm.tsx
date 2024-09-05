@@ -116,7 +116,7 @@ export function EditionRdvForm({
   })
 
   const heureFin =
-    timeRdv && timeRdv.plus({ minutes: evenement!.duree }).toFormat('HH:mm')
+    timeRdv && timeRdv.plus({ minutes: evenement.duree }).toFormat('HH:mm')
   const [heureDeFin, setHeureDeFin] = useState<
     ValueWithError<string | undefined>
   >({ value: heureFin })
