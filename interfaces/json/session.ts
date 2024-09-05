@@ -23,6 +23,7 @@ export type SessionMiloBeneficiairesJson = {
   dateHeureFin: string
   type: TypeEvenement
   beneficiaires: InscriptionSessionJson[]
+  nbPlacesRestantes?: number
 }
 
 export type SessionMiloJson = {

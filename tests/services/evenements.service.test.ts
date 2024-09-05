@@ -170,8 +170,20 @@ describe('EvenementsApiService', () => {
         'accessToken'
       )
       expect(actual).toEqual([
-        unEvenementListItem(),
-        unEvenementListItem({ labelBeneficiaires: 'Bénéficiaires multiples' }),
+        unEvenementListItem({
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+          ],
+          nombreMaxParticipants: 10,
+        }),
+        unEvenementListItem({
+          labelBeneficiaires: 'Bénéficiaires multiples',
+          beneficiaires: [
+            { id: '1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: '2', nom: 'Sanfamiye', prenom: 'Nadia' },
+          ],
+          nombreMaxParticipants: 10,
+        }),
       ])
     })
   })
