@@ -315,7 +315,7 @@ export function Conversation({
         onBack={onBack}
         labelRetour='Retour sur ma messagerie'
         titre={
-          <span>
+          <p>
             Discuter avec{' '}
             <Link
               aria-label={`Voir la fiche de ${beneficiaireChat.nom} ${beneficiaireChat.prenom}`}
@@ -324,7 +324,7 @@ export function Conversation({
             >
               {beneficiaireChat.nom} {beneficiaireChat.prenom}
             </Link>
-          </span>
+          </p>
         }
         onPermuterBookMark={toggleFlag}
         isFlaggedByConseiller={isFlaggedByConseiller}
@@ -347,9 +347,9 @@ export function Conversation({
                 {messagesByDay.length !== 0 && (
                   <>
                     {hasNoMoreMessages && (
-                      <span className='text-xs-regular text-center block mb-3'>
+                      <p className='text-xs-regular text-center block mb-3'>
                         Aucun message plus ancien
-                      </span>
+                      </p>
                     )}
 
                     {!hasNoMoreMessages && (
@@ -411,7 +411,7 @@ export function Conversation({
                     {messagesByDay.map((messagesOfADay: ByDay<Message>) => (
                       <li key={messagesOfADay.date.toMillis()} className='mb-5'>
                         <div className='text-base-regular text-center mb-3'>
-                          <span>{displayDate(messagesOfADay.date)}</span>
+                          <p>{displayDate(messagesOfADay.date)}</p>
                         </div>
 
                         <ul>
@@ -470,13 +470,13 @@ export function Conversation({
             <div className='grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-3'>
               {!messageAModifier && (
                 <>
-                  <span
+                  <p
                     id='piece-jointe--desc'
                     className='self-center text-xs-regular short:hidden'
                   >
                     Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG
                     (5 Mo maximum)
-                  </span>
+                  </p>
 
                   <FileInput
                     id='piece-jointe'
@@ -491,9 +491,9 @@ export function Conversation({
 
               {messageAModifier && (
                 <>
-                  <span className='self-center text-s-regular'>
+                  <p className='self-center text-s-regular'>
                     Modifier le message
-                  </span>
+                  </p>
                   <button
                     type='button'
                     onClick={annulerModificationmessage}
@@ -521,9 +521,9 @@ export function Conversation({
               >
                 {uploadedFileInfo && (
                   <div className='flex px-2 py-1 rounded-base bg-primary_lighten w-fit mb-4'>
-                    <span className='break-all overflow-y-auto max-h-56'>
+                    <p className='break-all overflow-y-auto max-h-56'>
                       {uploadedFileInfo.nom}
-                    </span>
+                    </p>
                     <button
                       type='button'
                       aria-label={
