@@ -75,9 +75,6 @@
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.5.4"
   },
-  "resolutions": {
-    "tailwindcss/micromatch": "4.0.8"
-  },
   "browser": {
     "elastic-apm-node": false
   },
