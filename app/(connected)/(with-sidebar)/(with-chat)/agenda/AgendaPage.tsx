@@ -4,7 +4,9 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
+
+import { AnimationCollectiveRow } from '../../../../../components/rdv/AnimationCollectiveRow'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import PageActionsPortal from 'components/PageActionsPortal'
@@ -53,6 +55,11 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
   }
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
   const [periodeIndex, setPeriodeIndex] = useState<number>(periodeIndexInitial)
+  const [titreAnimationCollectives, setTitreAnimationCollectives] = useState<
+    AnimationCollective[]
+  >([])
+  const [filteredAnimationCollectives, setFilteredAnimationCollectives] =
+    useState<AnimationCollective[]>([])
 
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
@@ -157,6 +164,46 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
   }
 
+  const onSearch = useCallback(
+    (query: string) => {
+      console.log('AC-----' + titreAnimationCollectives)
+
+      if (titreAnimationCollectives) {
+        const querySplit = query.toLowerCase().split(/-|\s/)
+
+        if (query) {
+          const filteredResults = titreAnimationCollectives.filter(
+            (titreAnimationCollective) => {
+              const titre = titreAnimationCollective.titre
+                .replace(/’/i, "'")
+                .toLowerCase()
+              const sousTitre =
+                titreAnimationCollective.sousTitre
+                  ?.replace(/’/i, "'")
+                  .toLowerCase() || ''
+
+              return querySplit.some(
+                (item) => titre.includes(item) || sousTitre.includes(item)
+              )
+            }
+          )
+
+          setFilteredAnimationCollectives(filteredResults)
+
+          if (filteredResults.length > 0) {
+            setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
+          } else {
+            setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
+          }
+        } else {
+          setFilteredAnimationCollectives(titreAnimationCollectives)
+          setTrackingTitle(initialTracking)
+        }
+      }
+    },
+    [titreAnimationCollectives, initialTracking]
+  )
+
   useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
@@ -184,41 +231,7 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
           </ButtonLink>
         )}
       </PageActionsPortal>
-      <div className='mb-12'>
-        <form role='search' onSubmit={() => {}} className='grow max-w-[75%]'>
-          <label
-            htmlFor='rechercher-beneficiaires'
-            className='text-base-medium text-content_color'
-          >
-            Rechercher un atelier ou une information collective
-          </label>
 
-          <div className='flex mt-3'>
-            <ResettableTextInput
-              id='rechercher-beneficiaires'
-              className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
-              onChange={() => {}}
-              onReset={() => {}}
-              value=''
-            />
-
-            <button
-              className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
-              type='submit'
-            >
-              <IconComponent
-                name={IconName.Search}
-                focusable={false}
-                aria-hidden={true}
-                className='w-6 h-6 fill-[currentColor]'
-              />
-              <span className='ml-1 sr-only layout_s:not-sr-only'>
-                Rechercher
-              </span>
-            </button>
-          </div>
-        </form>
-      </div>
       <TabList className='mb-6'>
         <Tab
           label={
@@ -253,6 +266,8 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
               trackNavigation={trackNavigation}
               periodeIndex={periodeIndex}
               changerPeriode={switchPeriode}
+              onSearchFilterBy={onSearch}
+              minCaracteres={3}
             />
           )}
 

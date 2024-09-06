@@ -1,11 +1,14 @@
 import { DateTime } from 'luxon'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
+
+import { InputError } from '../ui/Form/InputError'
+import ResettableTextInput from '../ui/Form/ResettableTextInput'
 
 import EmptyState from 'components/EmptyState'
 import { AnimationCollectiveRow } from 'components/rdv/AnimationCollectiveRow'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { IconName } from 'components/ui/IconComponent'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import Table from 'components/ui/Table/Table'
@@ -28,6 +31,8 @@ type OngletAgendaEtablissementProps = {
   trackNavigation: (append?: string) => void
   periodeIndex: number
   changerPeriode: (index: number) => void
+  onSearchFilterBy: (query: string) => void
+  minCaracteres?: number
 }
 
 export default function OngletAgendaEtablissement({
@@ -36,6 +41,8 @@ export default function OngletAgendaEtablissement({
   trackNavigation,
   periodeIndex,
   changerPeriode,
+  onSearchFilterBy,
+  minCaracteres,
 }: OngletAgendaEtablissementProps) {
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
@@ -48,6 +55,8 @@ export default function OngletAgendaEtablissement({
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
   const [labelPeriode, setLabelPeriode] = useState<string>()
   const [failed, setFailed] = useState<boolean>(false)
+  const [query, setQuery] = useState<string>('')
+  const [error, setError] = useState<string>()
 
   async function modifierFiltres(nouveauxFiltres: StatutAnimationCollective[]) {
     setFiltres(nouveauxFiltres)
@@ -106,6 +115,21 @@ export default function OngletAgendaEtablissement({
       setEvenementsFiltres(acFiltrees)
     }
   }
+  function onSubmit(e: FormEvent) {
+    e.preventDefault()
+
+    if (minCaracteres && query.length < minCaracteres) {
+      setError(`Veuillez saisir au moins ${minCaracteres} caractères`)
+    } else {
+      setError(undefined)
+      onSearchFilterBy(query)
+    }
+  }
+  function onReset() {
+    setQuery('')
+    setError(undefined)
+    onSearchFilterBy('')
+  }
 
   useEffect(() => {
     if (evenements) filtrerEvenements(evenements)
@@ -113,6 +137,45 @@ export default function OngletAgendaEtablissement({
 
   return (
     <>
+      <div className='mb-12'>
+        <form role='search' onSubmit={onSubmit} className='grow max-w-[75%]'>
+          <label
+            htmlFor='rechercher-beneficiaires'
+            className='text-base-medium text-content_color'
+          >
+            Rechercher un atelier ou une information collective
+          </label>
+          {error && (
+            <InputError id='rechercher-beneficiaires--error'>
+              {error}
+            </InputError>
+          )}
+          <div className='flex mt-3'>
+            <ResettableTextInput
+              id='rechercher-beneficiaires'
+              className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
+              onChange={(value: string) => setQuery(value)}
+              onReset={onReset}
+              value={query}
+            />
+
+            <button
+              className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
+              type='submit'
+            >
+              <IconComponent
+                name={IconName.Search}
+                focusable={false}
+                aria-hidden={true}
+                className='w-6 h-6 fill-[currentColor]'
+              />
+              <span className='ml-1 sr-only layout_s:not-sr-only'>
+                Rechercher
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
       <nav className='flex justify-between items-end'>
         <SelecteurPeriode
           onNouvellePeriode={modifierPeriode}
