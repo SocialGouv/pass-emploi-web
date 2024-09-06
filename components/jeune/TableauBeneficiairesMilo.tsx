@@ -84,9 +84,9 @@ export default function TableauBeneficiairesMilo({
               >
                 <TD
                   isBold
-                  className='h-full !rounded-tl-base !rounded-bl-none layout_m:!rounded-l-base'
+                  className='h-full !p-2 !rounded-tl-base !rounded-bl-none layout_m:!rounded-l-base'
                 >
-                  <div className='mb-2'>
+                  <div>
                     {beneficiaire.structureMilo?.id ===
                       conseiller.structureMilo?.id &&
                       beneficiaire.isReaffectationTemporaire && (
@@ -132,9 +132,9 @@ export default function TableauBeneficiairesMilo({
                   <SituationTag situation={beneficiaire.situationCourante} />
                 </TD>
 
-                <TD className='relative h-full after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""]'>
+                <TD className='relative h-full !p-2 after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""]'>
                   <div
-                    className='mb-2 text-s-regular text-grey_800'
+                    className='text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {dateFinCEJColumn}
@@ -158,9 +158,9 @@ export default function TableauBeneficiairesMilo({
                   )}
                 </TD>
 
-                <TD className='h-full border-l-1 border-grey_800'>
+                <TD className='h-full !p-2'>
                   <div
-                    className='mb-2 text-s-regular text-grey_800'
+                    className='text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {actionsColumn}
@@ -170,9 +170,9 @@ export default function TableauBeneficiairesMilo({
                   </span>
                 </TD>
 
-                <TD className='h-full'>
+                <TD className='h-full !p-2'>
                   <div
-                    className='mb-2 text-s-regular text-grey_800'
+                    className='text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {rdvColumn}
@@ -180,26 +180,31 @@ export default function TableauBeneficiairesMilo({
                   <span className='text-m-bold'>{beneficiaire.rdvs}</span>
                 </TD>
 
-                <TD className='h-full row-start-2 col-span-4 flex flex-col justify-center rounded-bl-base layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1 layout_m:rounded-none'>
-                  <div
-                    className='inline layout_m:block mr-8 mb-2 text-xs-regular text-grey_800'
-                    aria-hidden={true}
-                  >
-                    {derniereActiviteColumn}
-                  </div>
-                  <span className='text-s-regular'>
-                    {beneficiaire.isActivated &&
-                      toRelativeDateTime(beneficiaire.lastActivity!)}
-                    {!beneficiaire.isActivated && (
-                      <span className='text-warning'>Compte non activé</span>
-                    )}
-                  </span>
+                <TD className='h-full !p-2 row-start-2 col-span-4 flex flex-row justify-start items-baseline gap-4 rounded-bl-base layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1 layout_m:rounded-none layout_m:flex-col layout_m:gap-0 layout_m:justify-center layout_m:pt-0'>
+                  {beneficiaire.isActivated && (
+                    <>
+                      <span
+                        className='text-xs-regular text-grey_800'
+                        aria-hidden={true}
+                      >
+                        {derniereActiviteColumn}
+                      </span>
+                      <span className='text-s-regular'>
+                        {toRelativeDateTime(beneficiaire.lastActivity!)}
+                      </span>
+                    </>
+                  )}
+                  {!beneficiaire.isActivated && (
+                    <span className='text-s-regular text-warning'>
+                      Compte non activé
+                    </span>
+                  )}
                 </TD>
 
                 <TDLink
                   href={`/mes-jeunes/${beneficiaire.id}`}
                   label={`Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`}
-                  className='row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
+                  className='!p-2 row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
                 />
               </TR>
             )

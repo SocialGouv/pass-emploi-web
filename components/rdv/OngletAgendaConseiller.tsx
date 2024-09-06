@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
 import TableauEvenementsConseiller from 'components/rdv/TableauEvenementsConseiller'
+import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import { Conseiller, peutAccederAuxSessions } from 'interfaces/conseiller'
@@ -114,7 +115,21 @@ export default function OngletAgendaConseiller({
         />
       )}
 
-      {evenements && <TableauEvenementsConseiller evenements={evenements} />}
+      {evenements?.length === 0 && (
+        <EmptyState
+          illustrationName={IllustrationName.Checklist}
+          titre='Vous n’avez aucun événement dans votre agenda sur cette période.'
+          lien={{
+            href: '/mes-jeunes/edition-rdv',
+            label: 'Créer un rendez-vous',
+            iconName: IconName.Add,
+          }}
+        />
+      )}
+
+      {evenements && evenements.length > 0 && (
+        <TableauEvenementsConseiller evenements={evenements} />
+      )}
     </>
   )
 }

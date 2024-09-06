@@ -12,7 +12,6 @@ import { StructureConseiller } from 'interfaces/conseiller'
 import { getRendezVousConseiller } from 'services/evenements.service'
 import { getSessionsBeneficiaires } from 'services/sessions.service'
 import renderWithContexts from 'tests/renderWithContexts'
-import { toLongMonthDate } from 'utils/date'
 
 jest.mock('services/evenements.service')
 jest.mock('services/sessions.service')
@@ -40,12 +39,14 @@ describe('Agenda - Onglet conseiller', () => {
     ;(getRendezVousConseiller as jest.Mock).mockImplementation(
       async (_, dateDebut) => [
         unEvenementListItem({
+          id: 'rdv-1',
           date: dateDebut.toISO(),
           beneficiaires: [
             { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
           ],
         }),
         unEvenementListItem({
+          id: 'rdv-2',
           date: dateDebut.plus({ day: 1 }).toISO(),
           beneficiaires: [
             { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
@@ -53,6 +54,7 @@ describe('Agenda - Onglet conseiller', () => {
           nombreMaxParticipants: 1,
         }),
         unEvenementListItem({
+          id: 'rdv-3',
           date: dateDebut.plus({ day: 2 }).toISO(),
           beneficiaires: [
             { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
@@ -60,6 +62,7 @@ describe('Agenda - Onglet conseiller', () => {
           nombreMaxParticipants: 2,
         }),
         unEvenementListItem({
+          id: 'rdv-4',
           date: dateDebut.plus({ day: 3 }).toISO(),
           beneficiaires: [
             { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
@@ -75,6 +78,10 @@ describe('Agenda - Onglet conseiller', () => {
           id: 'session',
           date: dateFin.set({ hour: 14 }).toISO(),
           isSession: true,
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
+          ],
         }),
       ]
     )
