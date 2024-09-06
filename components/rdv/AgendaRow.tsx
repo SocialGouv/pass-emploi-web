@@ -29,20 +29,9 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
   const urlRdv = pathPrefix + '/edition-rdv?idRdv=' + evenement.id
   const urlSessionMilo = '/agenda/sessions/' + evenement.id
 
-  function TagModalite({ modality }: EvenementListItem): ReactElement {
-    return (
-      <TagStatut
-        backgroundColor='primary_lighten'
-        color='primary'
-        label={modality!}
-        className='!px-2 !py-1 !text-xs !font-bold [&>svg]:!w-4 [&>svg]:!h-4'
-      />
-    )
-  }
-
   return (
-    <TR>
-      <TD className='rounded-l-base'>
+    <TR className='grid grid-cols-subgrid grid-rows-[repeat(2,auto) layout_base:grid-rows-[auto] col-span-full'>
+      <TD className='!rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:!rounded-l-base layout_base:justify-center layout_base:!p-2'>
         <div className='text-m-bold'>{longMonthDate}</div>
         {heure} - <span className='sr-only'>durée {dureeA11y}</span>
         <span className='inline-flex items-center' aria-hidden={true}>
@@ -56,7 +45,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
         </span>
       </TD>
 
-      <TD>
+      <TD className='row-start-2 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_base:row-start-1 layout_base:col-start-2 layout_base:rounded-none layout_base:justify-center layout_base:!p-2'>
         <div className='text-base-bold'>{evenement.labelBeneficiaires}</div>
         <div className='mt-1 flex flex-wrap gap-2'>
           <TagType {...evenement} isSmallTag={true} />
@@ -64,7 +53,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
         </div>
       </TD>
 
-      <TD>
+      <TD className='col-start-2 !p-0 layout_base:col-start-3 layout_base:!p-2'>
         <div className='text-grey_800'>créé par</div>
         <CreateurEvenementLabel
           evenement={evenement}
@@ -72,11 +61,12 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
         />
       </TD>
 
-      <TD>
+      <TD className='row-start-2 !p-0 !pb-2 layout_base:row-start-1 layout_base:col-start-4 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:!p-2'>
         <Inscrits evenement={evenement} />
       </TD>
 
       <TDLink
+        className='row-span-2 flex items-center justify-center !p-2 !pl-4 layout_base:row-span-1 layout_base:!p-2'
         href={evenement.isSession ? urlSessionMilo : urlRdv}
         label={`Consulter l’événement du ${longMonthDate} à ${heureA11y} avec ${evenement.labelBeneficiaires}`}
       />
@@ -91,21 +81,20 @@ function CreateurEvenementLabel({
   evenement: EvenementListItem
   idConseiller: string
 }): ReactElement {
-  if (evenement.isSession && evenement.createur?.id === idConseiller)
-    return <p>Vous</p>
-  else if (evenement.createur?.prenom)
+  if (evenement.createur?.id === idConseiller) return <p>Vous</p>
+  if (evenement.createur?.prenom)
     return (
       <p>
         {evenement.createur.prenom} {evenement.createur.nom}
       </p>
     )
-  else
-    return (
-      <p>
-        --
-        <span className='sr-only'>information non disponible</span>
-      </p>
-    )
+
+  return (
+    <p>
+      --
+      <span className='sr-only'>information non disponible</span>
+    </p>
+  )
 }
 
 function Inscrits({
@@ -113,16 +102,7 @@ function Inscrits({
 }: {
   evenement: EvenementListItem
 }): ReactElement {
-  if (!evenement.beneficiaires) {
-    return (
-      <p>
-        --
-        <span className='sr-only'>information non disponible</span>
-      </p>
-    )
-  }
-
-  const nombreParticipants = evenement.beneficiaires.length
+  const nombreParticipants = evenement.beneficiaires!.length
   const maxParticipants = evenement.nombreMaxParticipants
 
   const aUneCapaciteLimite = maxParticipants !== undefined
@@ -145,4 +125,15 @@ function Inscrits({
         {nombreParticipants !== 1 ? 's' : ''} /{maxParticipants}
       </p>
     )
+}
+
+function TagModalite({ modality }: EvenementListItem): ReactElement {
+  return (
+    <TagStatut
+      backgroundColor='primary_lighten'
+      color='primary'
+      label={modality!}
+      className='!px-2 !py-1 !text-xs !font-bold [&>svg]:!w-4 [&>svg]:!h-4'
+    />
+  )
 }

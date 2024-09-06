@@ -58,8 +58,8 @@ export function AnimationCollectiveRow({
   }
 
   return (
-    <TR className='grid grid-cols-subgrid grid-rows-[repeat(3,auto) layout_m:grid-rows-[auto] col-span-full'>
-      <TD className='col-start-1 col-end-3 !rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_m:col-end-2 layout_m:!rounded-l-base layout_m:flex layout_m:flex-col layout_m:justify-center layout_m:!p-2'>
+    <TR className='grid grid-cols-subgrid grid-rows-[repeat(3,auto) layout_base:grid-rows-[auto] col-span-full'>
+      <TD className='col-start-1 col-end-3 !rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:col-end-2 layout_base:!rounded-l-base layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
         <div className='text-m-bold'>{toLongMonthDate(date)}</div>
         <div>
           {toFrenchTime(date)} -{' '}
@@ -81,7 +81,7 @@ export function AnimationCollectiveRow({
         </div>
       </TD>
 
-      <TD className='row-start-2 row-end-4 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_m:row-span-1 layout_m:rounded-none layout_m:flex layout_m:flex-col layout_m:justify-center layout_m:!p-2'>
+      <TD className='row-start-2 row-end-4 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_base:row-span-1 layout_base:rounded-none layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
         <div className='text-base-bold'>{animationCollective.titre}</div>
         {animationCollective.sousTitre && (
           <div>{animationCollective.sousTitre}</div>
@@ -96,16 +96,16 @@ export function AnimationCollectiveRow({
         </div>
       </TD>
 
-      <TD className='row-start-2 col-start-2 !p-0 layout_m:row-start-1 layout_m:col-start-3 layout_m:flex layout_m:items-center layout_m:justify-center layout_m:!p-2'>
+      <TD className='row-start-2 col-start-2 !p-0 layout_base:row-start-1 layout_base:col-start-3 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:!p-2'>
         <Inscrits {...animationCollective} />
       </TD>
 
-      <TD className='row-start-3 !p-0 !pb-2 layout_m:row-start-1 layout_m:col-start-4 layout_m:flex layout_m:items-center layout_m:justify-center layout_m:!p-2'>
+      <TD className='row-start-3 !p-0 !pb-2 layout_base:row-start-1 layout_base:col-start-4 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:!p-2'>
         <TagStatut {...animationCollective} />
       </TD>
 
       <TDLink
-        className='row-span-3 flex items-center justify-center !p-2 !pl-4 layout_m:row-span-1 layout_m:!p-2'
+        className='row-span-3 flex items-center justify-center !p-2 !pl-4 layout_base:row-span-1 layout_base:!p-2'
         href={getHref(animationCollective)}
         label={labelLien(animationCollective)}
       />
