@@ -5,11 +5,11 @@ import { ThemeProvider } from 'next-themes'
 import React, { ReactNode } from 'react'
 
 import { extractBaseBeneficiaire } from 'fixtures/beneficiaire'
-import { Conseiller } from 'interfaces/conseiller'
 import {
-  compareBeneficiairesByNom,
   BeneficiaireFromListe,
+  compareBeneficiairesByNom,
 } from 'interfaces/beneficiaire'
+import { Conseiller } from 'interfaces/conseiller'
 import { AlerteProvider } from 'utils/alerteContext'
 import { ChatCredentialsProvider } from 'utils/chat/chatCredentialsContext'
 import { ChatsProvider } from 'utils/chat/chatsContext'

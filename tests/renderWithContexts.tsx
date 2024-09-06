@@ -116,7 +116,7 @@ function provideContexts(
   return (
     <ConseillerProvider conseiller={conseiller}>
       <PortefeuilleProvider
-        portefeuille={portefeuille.value}
+        portefeuille={portefeuille.value ?? []}
         setterForTests={portefeuille.setter}
       >
         <ChatCredentialsProvider
