@@ -70,7 +70,9 @@ function DetailActionPage({
   }>(null)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
-    const { modifierAction } = await import('services/actions.service')
+    const { modifierAction } = await import(
+      'server-actions/actions.server-actions'
+    )
     await modifierAction(action.id, { statut: statutChoisi })
     setStatut(statutChoisi)
 
@@ -185,7 +187,7 @@ function DetailActionPage({
           </h2>
           {!qualifiee && (
             <ButtonLink
-              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification?misc=${random}`}
+              href={`/mes-jeunes/${jeune.id}/actions/${action.id}/modification`}
               style={ButtonStyle.SECONDARY}
             >
               <IconComponent

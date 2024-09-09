@@ -1,17 +1,17 @@
 import { render } from '@testing-library/react'
 import { redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth'
 
 import LoginPage from 'app/(connexion)/login/LoginPage'
 import Login, { metadata } from 'app/(connexion)/login/page'
+import { getSessionServerSide } from 'utils/auth/auth'
 
-jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
+jest.mock('utils/auth/auth', () => ({ getSessionServerSide: jest.fn() }))
 jest.mock('app/(connexion)/login/LoginPage')
 
 describe('LoginPage server side', () => {
   it('redirige si l’utilisateur est déjà connecté', async () => {
     // Given
-    ;(getServerSession as jest.Mock).mockResolvedValue({})
+    ;(getSessionServerSide as jest.Mock).mockResolvedValue({})
 
     // When
     const promise = Login({
@@ -27,7 +27,7 @@ describe('LoginPage server side', () => {
 
   it('prépare la page de login sinon', async () => {
     // Then
-    ;(getServerSession as jest.Mock).mockResolvedValue(null)
+    ;(getSessionServerSide as jest.Mock).mockResolvedValue(null)
 
     // When
     render(await Login({ searchParams: { source: 'notif-mail' } }))

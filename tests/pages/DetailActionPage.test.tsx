@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
@@ -11,11 +11,15 @@ import { StatutAction } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { deleteAction, modifierAction } from 'services/actions.service'
+import { modifierAction } from 'server-actions/actions.server-actions'
+import { deleteAction } from 'services/actions.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
+jest.mock('server-actions/actions.server-actions', () => ({
+  modifierAction: jest.fn(),
+}))
 jest.mock('components/PageActionsPortal')
 
 describe('ActionPage client side', () => {

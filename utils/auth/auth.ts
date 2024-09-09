@@ -1,9 +1,4 @@
 import apm, { UserObject } from 'elastic-apm-node'
-import type {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from 'next'
 import { redirect } from 'next/navigation'
 import type { NextAuthOptions } from 'next-auth'
 import { Account, getServerSession, Session } from 'next-auth'
