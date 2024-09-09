@@ -42,6 +42,50 @@ type OngletAgendaEtablissementProps = {
   initialTracking: string
 }
 
+function RechercheAgendaForm(props: {
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+  error: string | undefined
+  onChange: (value: string) => void
+  onReset: () => void
+  value: string
+}) {
+  return (
+    <form role='search' onSubmit={props.onSubmit} className='grow max-w-[75%]'>
+      <label
+        htmlFor='rechercher-agenda'
+        className='text-base-medium text-content_color'
+      >
+        Rechercher un atelier ou une information collective
+      </label>
+      {props.error && (
+        <InputError id='rechercher-agenda--error'>{props.error}</InputError>
+      )}
+      <div className='flex mt-3'>
+        <ResettableTextInput
+          id='rechercher-agenda'
+          className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
+          onChange={props.onChange}
+          onReset={props.onReset}
+          value={props.value}
+        />
+
+        <button
+          className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
+          type='submit'
+        >
+          <IconComponent
+            name={IconName.Search}
+            focusable={false}
+            aria-hidden={true}
+            className='w-6 h-6 fill-[currentColor]'
+          />
+          <span className='ml-1 sr-only layout_s:not-sr-only'>Rechercher</span>
+        </button>
+      </div>
+    </form>
+  )
+}
+
 export default function OngletAgendaEtablissement({
   recupererAnimationsCollectives,
   recupererSessionsMilo,
@@ -53,6 +97,7 @@ export default function OngletAgendaEtablissement({
 }: OngletAgendaEtablissementProps) {
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
+  const [nombreDeResultatRecherche, setNombreDeResultatRecherche] = useState(0)
 
   const filtresRef = useRef<HTMLButtonElement>(null)
   const [filtres, setFiltres] = useState<StatutAnimationCollective[]>([])
@@ -134,12 +179,13 @@ export default function OngletAgendaEtablissement({
 
             return querySplit.some((item) => titre.includes(item))
           })
-
+          // à enlever
           evenementsFiltres.forEach((event, index) => {
             console.log(`Event ${index} - Titre: ${event.titre}`)
           })
 
           setEvenementsFiltres(filtererResultat)
+          setNombreDeResultatRecherche(filtererResultat.length)
 
           if (filtererResultat.length > 0) {
             setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
@@ -149,6 +195,7 @@ export default function OngletAgendaEtablissement({
         } else {
           setEvenementsFiltres(evenementsFiltres)
           setTrackingTitle(initialTracking)
+          setNombreDeResultatRecherche(0)
         }
       }
     },
@@ -159,7 +206,7 @@ export default function OngletAgendaEtablissement({
     event.preventDefault()
 
     if (!query.trim()) {
-      setError('Please enter a search query.')
+      setError(`Veuillez saisir au moins un caractère`)
       return
     }
 
@@ -169,7 +216,7 @@ export default function OngletAgendaEtablissement({
 
   const onReset = () => {
     setQuery('')
-    setEvenementsFiltres([])
+    if (evenements) filtrerEvenements(evenements)
   }
 
   useEffect(() => {
@@ -179,45 +226,19 @@ export default function OngletAgendaEtablissement({
   return (
     <>
       <div className='mb-12'>
-        <form role='search' onSubmit={onSubmit} className='grow max-w-[75%]'>
-          <label
-            htmlFor='rechercher-beneficiaires'
-            className='text-base-medium text-content_color'
-          >
-            Rechercher un atelier ou une information collective
-          </label>
-          {error && (
-            <InputError id='rechercher-beneficiaires--error'>
-              {error}
-            </InputError>
-          )}
-          <div className='flex mt-3'>
-            <ResettableTextInput
-              id='rechercher-beneficiaires'
-              className='flex-1 border border-solid border-grey_700 rounded-l-base border-r-0 text-base-medium text-primary_darken'
-              onChange={(value: string) => setQuery(value)}
-              onReset={onReset}
-              value={query}
-            />
-
-            <button
-              className='flex p-3 items-center text-base-bold text-primary border border-primary rounded-r-base hover:bg-primary_lighten'
-              type='submit'
-            >
-              <IconComponent
-                name={IconName.Search}
-                focusable={false}
-                aria-hidden={true}
-                className='w-6 h-6 fill-[currentColor]'
-              />
-              <span className='ml-1 sr-only layout_s:not-sr-only'>
-                Rechercher
-              </span>
-            </button>
-          </div>
-        </form>
+        <RechercheAgendaForm
+          onSubmit={onSubmit}
+          error={error}
+          onChange={(value: string) => setQuery(value)}
+          onReset={onReset}
+          value={query}
+        />
       </div>
       <nav className='flex justify-between items-end'>
+        <p className='text-m-bold text-primary mr-6'>
+          {nombreDeResultatRecherche}{' '}
+          {nombreDeResultatRecherche === 1 ? 'résultat' : 'résultats'}
+        </p>
         <SelecteurPeriode
           onNouvellePeriode={modifierPeriode}
           periodeCourante={periodeIndex}
@@ -302,7 +323,7 @@ export default function OngletAgendaEtablissement({
               <th scope='col'>Horaires et durée</th>
               <th scope='col'>Titre, type et visibilité</th>
               <th scope='col'>Inscrits</th>
-              <th scope='col'>Statut </th>
+              <th scope='col'>Statut</th>
               <th scope='col'>Voir le détail</th>
             </tr>
           </thead>
