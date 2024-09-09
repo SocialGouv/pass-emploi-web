@@ -44,7 +44,7 @@ export async function getAction(
       content: { jeune, ...actionJson },
     } = await apiGet<
       ActionJson & { jeune: BaseBeneficiaireJson & { idConseiller: string } }
-    >(`/actions/${idAction}`, accessToken)
+    >(`/actions/${idAction}`, accessToken, 'action-' + idAction)
     return {
       action: jsonToAction(actionJson),
       jeune: {
@@ -149,26 +149,6 @@ export async function creerAction(
     payload,
     session!.accessToken
   )
-}
-
-export async function modifierAction(
-  idAction: string,
-  modifications: Partial<ActionFormData>
-): Promise<void> {
-  const session = await getSession()
-
-  const actionModifiee = {
-    status: modifications.statut
-      ? actionStatusToJson(modifications.statut)
-      : undefined,
-    contenu: modifications.titre,
-    description: modifications.description,
-    dateEcheance: modifications.dateEcheance,
-    dateFinReelle: modifications.dateFinReelle,
-    codeQualification: modifications.codeCategorie,
-  }
-
-  await apiPut(`/actions/${idAction}`, actionModifiee, session!.accessToken)
 }
 
 export async function qualifier(

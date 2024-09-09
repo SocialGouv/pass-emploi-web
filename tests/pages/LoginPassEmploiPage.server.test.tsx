@@ -1,19 +1,19 @@
 import { render } from '@testing-library/react'
 import { redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth'
 
 import LoginPassEmploiPage from 'app/(connexion)/login/passemploi/LoginPassEmploiPage'
 import LoginPassEmploi, {
   metadata,
 } from 'app/(connexion)/login/passemploi/page'
+import { getSessionServerSide } from 'utils/auth/auth'
 
-jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
+jest.mock('utils/auth/auth', () => ({ getSessionServerSide: jest.fn() }))
 jest.mock('app/(connexion)/login/passemploi/LoginPassEmploiPage')
 
 describe('LoginPassEmploiPage server side', () => {
   it('redirige si l’utilisateur est déjà connecté', async () => {
     // Given
-    ;(getServerSession as jest.Mock).mockResolvedValue({})
+    ;(getSessionServerSide as jest.Mock).mockResolvedValue({})
 
     // When
     const promise = LoginPassEmploi({
@@ -29,7 +29,7 @@ describe('LoginPassEmploiPage server side', () => {
 
   it('prépare la page de login sinon', async () => {
     // Then
-    ;(getServerSession as jest.Mock).mockResolvedValue(null)
+    ;(getSessionServerSide as jest.Mock).mockResolvedValue(null)
 
     // When
     render(await LoginPassEmploi({ searchParams: { source: 'notif-mail' } }))

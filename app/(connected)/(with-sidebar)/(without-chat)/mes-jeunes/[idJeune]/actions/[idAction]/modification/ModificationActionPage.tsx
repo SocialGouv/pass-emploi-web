@@ -59,7 +59,7 @@ function ModificationPage({
 
   async function modifierAction(payload: ActionFormData): Promise<void> {
     const { modifierAction: _modifierAction } = await import(
-      'services/actions.service'
+      'server-actions/actions.server-actions'
     )
     await _modifierAction(action.id, payload)
 

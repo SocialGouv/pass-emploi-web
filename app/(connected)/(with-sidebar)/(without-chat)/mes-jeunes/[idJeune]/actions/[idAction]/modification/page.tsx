@@ -51,7 +51,6 @@ export default async function ModificationAction({
   const { action, jeune } = actionContent
   if (action.status === StatutAction.Qualifiee) notFound()
 
-  // FIXME : dirty fix, problème de rafraichissement de l’action
   const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
   return (
     <>

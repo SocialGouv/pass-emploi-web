@@ -11,13 +11,17 @@ import { StatutAction } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
-import { deleteAction, modifierAction } from 'services/actions.service'
+import { modifierAction } from 'server-actions/actions.server-actions'
+import { deleteAction } from 'services/actions.service'
 import { commenterAction } from 'services/messages.service'
 import getByDescriptionTerm from 'tests/querySelector'
 import renderWithContexts from 'tests/renderWithContexts'
 
 jest.mock('services/actions.service')
 jest.mock('services/messages.service')
+jest.mock('server-actions/actions.server-actions', () => ({
+  modifierAction: jest.fn(),
+}))
 jest.mock('components/PageActionsPortal')
 
 describe('ActionPage client side', () => {
