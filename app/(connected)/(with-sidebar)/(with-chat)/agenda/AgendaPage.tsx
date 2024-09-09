@@ -4,14 +4,11 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useState } from 'react'
-
-import { AnimationCollectiveRow } from '../../../../../components/rdv/AnimationCollectiveRow'
+import React, { useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import ResettableTextInput from 'components/ui/Form/ResettableTextInput'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import Tab from 'components/ui/Navigation/Tab'
 import TabList from 'components/ui/Navigation/TabList'
@@ -55,11 +52,6 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
   }
   const [currentTab, setCurrentTab] = useState<Onglet>(onglet)
   const [periodeIndex, setPeriodeIndex] = useState<number>(periodeIndexInitial)
-  const [titreAnimationCollectives, setTitreAnimationCollectives] = useState<
-    AnimationCollective[]
-  >([])
-  const [filteredAnimationCollectives, setFilteredAnimationCollectives] =
-    useState<AnimationCollective[]>([])
 
   let initialTracking = `Agenda`
   if (alerte?.key === AlerteParam.creationRDV)
@@ -164,46 +156,6 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
     return initialTracking + ' ' + ongletProps[tab].trackingLabel
   }
 
-  const onSearch = useCallback(
-    (query: string) => {
-      console.log('AC-----' + titreAnimationCollectives)
-
-      if (titreAnimationCollectives) {
-        const querySplit = query.toLowerCase().split(/-|\s/)
-
-        if (query) {
-          const filteredResults = titreAnimationCollectives.filter(
-            (titreAnimationCollective) => {
-              const titre = titreAnimationCollective.titre
-                .replace(/’/i, "'")
-                .toLowerCase()
-              const sousTitre =
-                titreAnimationCollective.sousTitre
-                  ?.replace(/’/i, "'")
-                  .toLowerCase() || ''
-
-              return querySplit.some(
-                (item) => titre.includes(item) || sousTitre.includes(item)
-              )
-            }
-          )
-
-          setFilteredAnimationCollectives(filteredResults)
-
-          if (filteredResults.length > 0) {
-            setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
-          } else {
-            setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
-          }
-        } else {
-          setFilteredAnimationCollectives(titreAnimationCollectives)
-          setTrackingTitle(initialTracking)
-        }
-      }
-    },
-    [titreAnimationCollectives, initialTracking]
-  )
-
   useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
@@ -266,8 +218,9 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
               trackNavigation={trackNavigation}
               periodeIndex={periodeIndex}
               changerPeriode={switchPeriode}
-              onSearchFilterBy={onSearch}
-              minCaracteres={3}
+              minCaracteres={4}
+              setTrackingTitle={setTrackingTitle}
+              initialTracking={initialTracking}
             />
           )}
 

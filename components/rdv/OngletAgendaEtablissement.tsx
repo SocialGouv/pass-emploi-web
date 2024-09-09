@@ -1,5 +1,11 @@
 import { DateTime } from 'luxon'
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import React, {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import { InputError } from '../ui/Form/InputError'
 import ResettableTextInput from '../ui/Form/ResettableTextInput'
@@ -31,8 +37,9 @@ type OngletAgendaEtablissementProps = {
   trackNavigation: (append?: string) => void
   periodeIndex: number
   changerPeriode: (index: number) => void
-  onSearchFilterBy: (query: string) => void
   minCaracteres?: number
+  setTrackingTitle: (title: string) => void
+  initialTracking: string
 }
 
 export default function OngletAgendaEtablissement({
@@ -41,8 +48,8 @@ export default function OngletAgendaEtablissement({
   trackNavigation,
   periodeIndex,
   changerPeriode,
-  onSearchFilterBy,
-  minCaracteres,
+  setTrackingTitle,
+  initialTracking,
 }: OngletAgendaEtablissementProps) {
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
@@ -115,20 +122,54 @@ export default function OngletAgendaEtablissement({
       setEvenementsFiltres(acFiltrees)
     }
   }
-  function onSubmit(e: FormEvent) {
-    e.preventDefault()
 
-    if (minCaracteres && query.length < minCaracteres) {
-      setError(`Veuillez saisir au moins ${minCaracteres} caractères`)
-    } else {
-      setError(undefined)
-      onSearchFilterBy(query)
+  const onSearch = useCallback(
+    (query: string) => {
+      if (evenementsFiltres) {
+        const querySplit = query.toLowerCase().split(/-|\s/)
+
+        if (query) {
+          const filtererResultat = evenementsFiltres.filter((evenement) => {
+            const titre = evenement.titre.replace(/’/i, "'").toLowerCase()
+
+            return querySplit.some((item) => titre.includes(item))
+          })
+
+          evenementsFiltres.forEach((event, index) => {
+            console.log(`Event ${index} - Titre: ${event.titre}`)
+          })
+
+          setEvenementsFiltres(filtererResultat)
+
+          if (filtererResultat.length > 0) {
+            setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
+          } else {
+            setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
+          }
+        } else {
+          setEvenementsFiltres(evenementsFiltres)
+          setTrackingTitle(initialTracking)
+        }
+      }
+    },
+    [evenementsFiltres, setTrackingTitle, initialTracking]
+  )
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    if (!query.trim()) {
+      setError('Please enter a search query.')
+      return
     }
+
+    setError('')
+    onSearch(query)
   }
-  function onReset() {
+
+  const onReset = () => {
     setQuery('')
-    setError(undefined)
-    onSearchFilterBy('')
+    setEvenementsFiltres([])
   }
 
   useEffect(() => {
