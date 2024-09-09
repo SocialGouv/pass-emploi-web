@@ -142,6 +142,12 @@ export type IndicateursSemaine = {
   }
 }
 
+export type CompteursPeriode = {
+  idBeneficiaire: string
+  actions: number
+  rdvs: number
+}
+
 export function compareBeneficiairesByNom(
   beneficiaire1: BaseBeneficiaire,
   beneficiaire2: BaseBeneficiaire

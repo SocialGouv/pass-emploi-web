@@ -13,12 +13,10 @@ import {
   peutAccederAuxSessions,
 } from 'interfaces/conseiller'
 import { AnimationCollectivePilotage } from 'interfaces/evenement'
-import {
-  getActionsAQualifierServerSide,
-  getSituationsNonProfessionnelles,
-} from 'services/actions.service'
+import { getActionsAQualifierServerSide } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import {
   getSessionsACloreServerSide,
   SessionsAClore,

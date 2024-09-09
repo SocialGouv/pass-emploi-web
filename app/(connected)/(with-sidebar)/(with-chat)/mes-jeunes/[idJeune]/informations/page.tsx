@@ -11,10 +11,10 @@ import {
 } from 'components/PageNavigationPortals'
 import { getNomBeneficiaireComplet } from 'interfaces/beneficiaire'
 import { estUserFranceTravail } from 'interfaces/conseiller'
+import { getMetadonneesFavorisJeune } from 'services/favoris.service'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
-  getMetadonneesFavorisJeune,
 } from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 

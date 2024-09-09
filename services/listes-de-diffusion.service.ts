@@ -1,7 +1,12 @@
 import { getSession } from 'next-auth/react'
 
-import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
+import { apiGet } from 'clients/api.client'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
+
+export const LISTES_DIFFUSION_CACHE_TAG = {
+  SINGLETON: 'liste-diffusion',
+  LISTE: 'listes-diffusion',
+}
 
 export type ListeDeDiffusionFormData = {
   titre: string
@@ -28,44 +33,10 @@ export async function recupererListeDeDiffusion(
 ): Promise<ListeDeDiffusion> {
   const { content: listeDeDiffusion } = await apiGet<ListeDeDiffusion>(
     `/listes-de-diffusion/${id}`,
-    accessToken
+    accessToken,
+    LISTES_DIFFUSION_CACHE_TAG.SINGLETON
   )
   return listeDeDiffusion
-}
-
-export async function creerListeDeDiffusion({
-  titre,
-  idsBeneficiaires,
-}: ListeDeDiffusionFormData): Promise<void> {
-  const session = await getSession()
-  const { user, accessToken } = session!
-
-  await apiPost(
-    `/conseillers/${user.id}/listes-de-diffusion`,
-    { titre, idsBeneficiaires },
-    accessToken
-  )
-}
-
-export async function modifierListeDeDiffusion(
-  idListe: string,
-  { titre, idsBeneficiaires }: ListeDeDiffusionFormData
-): Promise<void> {
-  const session = await getSession()
-
-  await apiPut(
-    '/listes-de-diffusion/' + idListe,
-    { titre, idsBeneficiaires },
-    session!.accessToken
-  )
-}
-
-export async function supprimerListeDeDiffusion(
-  idListe: string
-): Promise<void> {
-  const session = await getSession()
-
-  await apiDelete('/listes-de-diffusion/' + idListe, session!.accessToken)
 }
 
 async function getListesDeDiffusion(
@@ -74,7 +45,8 @@ async function getListesDeDiffusion(
 ): Promise<ListeDeDiffusion[]> {
   const { content: listesDeDiffusion } = await apiGet<ListeDeDiffusion[]>(
     `/conseillers/${idConseiller}/listes-de-diffusion`,
-    accessToken
+    accessToken,
+    LISTES_DIFFUSION_CACHE_TAG.LISTE
   )
   return listesDeDiffusion
 }

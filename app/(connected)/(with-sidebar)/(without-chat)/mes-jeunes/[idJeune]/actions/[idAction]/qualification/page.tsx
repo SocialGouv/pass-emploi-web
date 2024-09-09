@@ -9,6 +9,8 @@ import {
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
 import { estUserMilo } from 'interfaces/conseiller'
+import { getAction } from 'services/actions.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type QualificationParams = { idAction: string }
@@ -21,7 +23,6 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { accessToken } = await getMandatorySessionServerSide()
 
-  const { getAction } = await import('services/actions.service')
   const actionContent = await getAction(params.idAction, accessToken)
 
   return {
@@ -38,9 +39,6 @@ export default async function Qualification({
   const { user, accessToken } = await getMandatorySessionServerSide()
   if (!estUserMilo(user)) notFound()
 
-  const { getAction, getSituationsNonProfessionnelles } = await import(
-    'services/actions.service'
-  )
   const [actionContent, categories] = await Promise.all([
     getAction(params.idAction, accessToken),
     getSituationsNonProfessionnelles({ avecNonSNP: true }, accessToken),
@@ -50,8 +48,7 @@ export default async function Qualification({
   const { action, jeune } = actionContent
   if (action.status !== StatutAction.Terminee) notFound()
 
-  // FIXME : dirty fix, problème de l’action
-  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}?misc=${Math.random()}`
+  const returnTo = `/mes-jeunes/${jeune.id}/actions/${action.id}`
   const returnToListe =
     searchParams?.liste === 'pilotage'
       ? '/pilotage'

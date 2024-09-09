@@ -30,7 +30,8 @@ export async function getImmersionServerSide(
   try {
     const { content: immersionJson } = await apiGet<DetailImmersionJson>(
       `/offres-immersion/${idImmersion}`,
-      accessToken
+      accessToken,
+      'offre'
     )
     return jsonToDetailImmersion(immersionJson)
   } catch (e) {
@@ -55,7 +56,8 @@ export async function searchImmersions(
     const searchParams = buildSearchParams(query)
     const result = await apiGet<ImmersionItemJson[]>(
       path + searchParams,
-      session!.accessToken
+      session!.accessToken,
+      'offres'
     )
     immersionsJson = result.content
     cache = { query, resultsJson: immersionsJson }

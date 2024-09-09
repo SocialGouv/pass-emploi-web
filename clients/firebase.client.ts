@@ -29,9 +29,9 @@ import {
 import { DateTime } from 'luxon'
 
 import { apiGet } from 'clients/api.client'
+import { Chat } from 'interfaces/beneficiaire'
 import { UserType } from 'interfaces/conseiller'
 import { InfoFichier } from 'interfaces/fichier'
-import { Chat } from 'interfaces/beneficiaire'
 import {
   InfoOffre,
   Message,
@@ -485,7 +485,11 @@ export async function rechercherMessages(
       message: FirebaseMessage & { creationDate: { _seconds: number } }
       matches: MessageRechercheMatch[]
     }>
-  }>(`/jeunes/${idBeneficiaire}/messages?recherche=${recherche}`, accessToken)
+  }>(
+    `/jeunes/${idBeneficiaire}/messages?recherche=${recherche}`,
+    accessToken,
+    'messages'
+  )
 
   return resultats.map(({ message, id, matches }) => {
     return {

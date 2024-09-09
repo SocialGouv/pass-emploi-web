@@ -4,26 +4,25 @@ import { getSession } from 'next-auth/react'
 import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
 import {
   BaseBeneficiaire,
+  BeneficiaireEtablissement,
+  BeneficiaireFromListe,
+  CompteursPeriode,
   ConseillerHistorique,
   DetailBeneficiaire,
   IndicateursSemaine,
-  BeneficiaireEtablissement,
-  BeneficiaireFromListe,
-  MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 import {
   BaseBeneficiaireJson,
+  BeneficiaireEtablissementJson,
+  CompteursPortefeuilleJson,
   DetailBeneficiaireJson,
   IndicateursSemaineJson,
   ItemBeneficiaireJson,
-  BeneficiaireEtablissementJson,
   jsonToBaseBeneficiaire,
+  jsonToBeneficiaireEtablissement,
   jsonToDetailBeneficiaire,
   jsonToIndicateursSemaine,
   jsonToItemBeneficiaire,
-  jsonToBeneficiaireEtablissement,
-  jsonToMetadonneesFavoris,
-  MetadonneesFavorisJson,
   SuppressionBeneficiaireFormData,
 } from 'interfaces/json/beneficiaire'
 import {
@@ -81,7 +80,8 @@ export async function getJeuneDetails(
   try {
     const { content: jeune } = await apiGet<DetailBeneficiaireJson>(
       `/jeunes/${idJeune}`,
-      accessToken
+      accessToken,
+      'beneficiaire'
     )
     return jsonToDetailBeneficiaire(jeune)
   } catch (e) {
@@ -133,7 +133,8 @@ export async function getIdJeuneMilo(
       content: { id },
     } = await apiGet<{ id: string }>(
       `/conseillers/milo/jeunes/${numeroDossier}`,
-      accessToken
+      accessToken,
+      'milo'
     )
     return id
   } catch (e) {
@@ -182,27 +183,10 @@ export async function getMotifsSuppression(): Promise<
   const session = await getSession()
   const { content: motifs } = await apiGet<MotifSuppressionBeneficiaire[]>(
     '/referentiels/motifs-suppression-jeune',
-    session!.accessToken
+    session!.accessToken,
+    'referentiel'
   )
   return motifs
-}
-
-export async function getMetadonneesFavorisJeune(
-  idJeune: string,
-  accessToken: string
-): Promise<MetadonneesFavoris | undefined> {
-  try {
-    const { content: metadonneesFavoris } = await apiGet<{
-      favoris: MetadonneesFavorisJson
-    }>(`/jeunes/${idJeune}/favoris/metadonnees`, accessToken)
-    return jsonToMetadonneesFavoris(metadonneesFavoris)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 404) {
-      return undefined
-    }
-
-    throw e
-  }
 }
 
 export async function modifierIdentifiantPartenaire(
@@ -259,10 +243,11 @@ export async function getBeneficiairesDeLEtablissementClientSide(
 async function getBeneficiairesDeLEtablissement(
   idEtablissement: string,
   accessToken: string
-) {
+): Promise<BaseBeneficiaire[]> {
   const { content: beneficiaires } = await apiGet<BaseBeneficiaireJson[]>(
     `/etablissements/${idEtablissement}/jeunes`,
-    accessToken
+    accessToken,
+    'beneficiaires'
   )
   return beneficiaires.map(jsonToBaseBeneficiaire)
 }
@@ -279,7 +264,7 @@ export async function getBeneficiairesDeLaStructureMilo(
     content: { resultats },
   } = await apiGet<{
     resultats: BeneficiaireEtablissementJson[]
-  }>(url, accessToken)
+  }>(url, accessToken, 'portefeuille')
 
   return {
     beneficiaires: resultats.map(jsonToBeneficiaireEtablissement),
@@ -302,7 +287,8 @@ export async function rechercheBeneficiairesDeLEtablissement(
     resultats: BeneficiaireEtablissementJson[]
   }>(
     `/v2/etablissements/${idEtablissement}/jeunes?q=${recherche}&page=${page}`,
-    session!.accessToken
+    session!.accessToken,
+    'portefeuille'
   )
 
   return {
@@ -317,10 +303,11 @@ export async function rechercheBeneficiairesDeLEtablissement(
 async function getBeneficiairesDuConseiller(
   idConseiller: string,
   accessToken: string
-) {
+): Promise<BeneficiaireFromListe[]> {
   const { content: beneficiaires } = await apiGet<ItemBeneficiaireJson[]>(
     `/conseillers/${idConseiller}/jeunes`,
-    accessToken
+    accessToken,
+    'portefeuille'
   )
   return beneficiaires.map(jsonToItemBeneficiaire)
 }
@@ -333,7 +320,8 @@ async function getConseillersDuBeneficiaire(
     try {
       const { content: historique } = await apiGet<ConseillerHistoriqueJson[]>(
         `/jeunes/${idBeneficiaire}/conseillers`,
-        accessToken
+        accessToken,
+        'conseillers'
       )
       return historique.map(toConseillerHistorique)
     } catch (e) {
@@ -358,9 +346,34 @@ async function getIndicateursBeneficiaire(
 
   const { content: indicateurs } = await apiGet<IndicateursSemaineJson>(
     `/conseillers/${idConseiller}/jeunes/${idBeneficiaire}/indicateurs?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}&exclureOffresEtFavoris=${exclureOffresEtFavoris}`,
-    session!.accessToken
+    session!.accessToken,
+    'agenda'
   )
   return jsonToIndicateursSemaine(indicateurs)
+}
+
+export async function recupereCompteursBeneficiairesPortefeuilleMilo(
+  idConseiller: string,
+  dateDebut: DateTime,
+  dateFin: DateTime,
+  accessToken: string
+): Promise<CompteursPeriode[]> {
+  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
+  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
+
+  const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
+    `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
+    accessToken,
+    'actions'
+  )
+
+  return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
+    return {
+      idBeneficiaire,
+      actions,
+      rdvs: Number(rdvs) + Number(sessions),
+    }
+  })
 }
 
 async function getIdentitesBeneficiaires(
@@ -373,7 +386,8 @@ async function getIdentitesBeneficiaires(
 
   const { content: beneficiaires } = await apiGet<BaseBeneficiaire[]>(
     `/conseillers/${idConseiller}/jeunes/identites?${queryParam}`,
-    accessToken
+    accessToken,
+    'beneficiaires'
   )
 
   return beneficiaires

@@ -9,12 +9,11 @@ import {
 } from 'components/PageNavigationPortals'
 import { StatutAction } from 'interfaces/action'
 import { estUserFranceTravail } from 'interfaces/conseiller'
+import { getAction, recupererLesCommentaires } from 'services/actions.service'
 import {
-  getAction,
+  getActionsPredefinies,
   getSituationsNonProfessionnelles,
-  recupererLesCommentaires,
-} from 'services/actions.service'
-import { getActionsPredefinies } from 'services/referentiel.service'
+} from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 type ModificationActionParams = { idAction: string }

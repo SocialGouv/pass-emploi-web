@@ -1,14 +1,11 @@
 import { DateTime } from 'luxon'
 import { getSession } from 'next-auth/react'
 
-import { apiDelete, apiGet, apiPost, apiPut } from 'clients/api.client'
+import { apiDelete, apiGet, apiPost } from 'clients/api.client'
 import {
   Action,
   ActionPilotage,
   Commentaire,
-  CompteurActionsPeriode,
-  QualificationAction,
-  SituationNonProfessionnelle,
   StatutAction,
 } from 'interfaces/action'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
@@ -16,16 +13,12 @@ import {
   ActionFormData,
   ActionJson,
   ActionPilotageJson,
-  CompteursPortefeuilleJson,
   actionStatusToFiltre,
   actionStatusToJson,
-  CODE_QUALIFICATION_NON_SNP,
   CommentaireJson,
   jsonToAction,
   jsonToActionPilotage,
-  jsonToQualification,
   MetadonneesActionsJson,
-  QualificationActionJson,
 } from 'interfaces/json/action'
 import {
   BaseBeneficiaireJson,
@@ -33,6 +26,8 @@ import {
 } from 'interfaces/json/beneficiaire'
 import { MetadonneesPagination } from 'types/pagination'
 import { ApiError } from 'utils/httpClient'
+
+export const ACTION_CACHE_TAG = { SINGLETON: 'action', LISTE: 'actions' }
 
 export async function getAction(
   idAction: string,
@@ -46,7 +41,7 @@ export async function getAction(
       content: { jeune, ...actionJson },
     } = await apiGet<
       ActionJson & { jeune: BaseBeneficiaireJson & { idConseiller: string } }
-    >(`/actions/${idAction}`, accessToken, 'action-' + idAction)
+    >(`/actions/${idAction}`, accessToken, ACTION_CACHE_TAG.SINGLETON)
     return {
       action: jsonToAction(actionJson),
       jeune: {
@@ -58,29 +53,6 @@ export async function getAction(
     if (e instanceof ApiError) return undefined
     throw e
   }
-}
-
-export async function recupereCompteursBeneficiairesPortefeuilleMilo(
-  idConseiller: string,
-  dateDebut: DateTime,
-  dateFin: DateTime,
-  accessToken: string
-): Promise<CompteurActionsPeriode[]> {
-  const dateDebutUrlEncoded = encodeURIComponent(dateDebut.toISO())
-  const dateFinUrlEncoded = encodeURIComponent(dateFin.toISO())
-
-  const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
-    `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-    accessToken
-  )
-
-  return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {
-    return {
-      idBeneficiaire,
-      actions,
-      rdvs: Number(rdvs) + Number(sessions),
-    }
-  })
 }
 
 export async function getActionsBeneficiaireClientSide(
@@ -153,35 +125,6 @@ export async function creerAction(
   )
 }
 
-export async function qualifier(
-  idAction: string,
-  type: string,
-  options?: {
-    dateFinModifiee?: DateTime
-    commentaire?: string
-  }
-): Promise<QualificationAction> {
-  const session = await getSession()
-
-  const payload: {
-    codeQualification: string
-    dateFinReelle?: string
-    commentaireQualification?: string
-  } = { codeQualification: type }
-
-  if (options?.dateFinModifiee)
-    payload.dateFinReelle = options.dateFinModifiee.toISO()
-  if (options?.commentaire)
-    payload.commentaireQualification = options.commentaire
-
-  const { content } = await apiPost<QualificationActionJson>(
-    `/actions/${idAction}/qualifier`,
-    payload,
-    session!.accessToken
-  )
-  return jsonToQualification(content)
-}
-
 export async function qualifierActions(
   actions: Array<{ idAction: string; codeQualification: string }>,
   estSNP: boolean
@@ -208,24 +151,10 @@ export async function recupererLesCommentaires(
 ): Promise<Commentaire[]> {
   const commentairesJson = await apiGet<CommentaireJson[]>(
     `/actions/${idAction}/commentaires`,
-    accessToken
+    accessToken,
+    'commentaires'
   )
   return commentairesJson.content
-}
-
-export async function getSituationsNonProfessionnelles(
-  { avecNonSNP }: { avecNonSNP: boolean },
-  accessToken: string
-): Promise<SituationNonProfessionnelle[]> {
-  const { content } = await apiGet<SituationNonProfessionnelle[]>(
-    '/referentiels/qualifications-actions/types',
-    accessToken
-  )
-  return avecNonSNP
-    ? content
-    : content.filter(
-        (categorie) => categorie.code !== CODE_QUALIFICATION_NON_SNP
-      )
 }
 
 async function getActionsBeneficiaire(
@@ -259,7 +188,7 @@ async function getActionsBeneficiaire(
   } = await apiGet<{
     actions: ActionJson[]
     metadonnees: MetadonneesActionsJson
-  }>(url, accessToken)
+  }>(url, accessToken, ACTION_CACHE_TAG.LISTE)
 
   const nombrePages = Math.ceil(
     metadonnees.nombreFiltrees / metadonnees.nombreActionsParPage
@@ -310,7 +239,11 @@ async function getActionsAQualifier(
   } = await apiGet<{
     pagination: { total: number; limit: number }
     resultats: ActionPilotageJson[]
-  }>(`/v2/conseillers/${idConseiller}/actions?${queryParams}`, accessToken)
+  }>(
+    `/v2/conseillers/${idConseiller}/actions?${queryParams}`,
+    accessToken,
+    ACTION_CACHE_TAG.LISTE
+  )
 
   const nombrePages = Math.ceil(pagination.total / pagination.limit)
 

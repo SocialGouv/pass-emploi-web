@@ -1,11 +1,11 @@
 import {
   BaseBeneficiaire,
+  BeneficiaireEtablissement,
+  BeneficiaireFromListe,
   CategorieSituation,
   DetailBeneficiaire,
   EtatSituation,
   IndicateursSemaine,
-  BeneficiaireEtablissement,
-  BeneficiaireFromListe,
   MetadonneesFavoris,
 } from 'interfaces/beneficiaire'
 
@@ -90,6 +90,13 @@ export type IndicateursSemaineJson = {
     offresSauvegardees: number
     recherchesSauvegardees: number
   }
+}
+
+export interface CompteursPortefeuilleJson {
+  idBeneficiaire: string
+  actions: number
+  rdvs: number
+  sessions: number
 }
 
 function toEtatSituation(etat: string): EtatSituation | undefined {

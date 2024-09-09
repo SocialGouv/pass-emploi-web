@@ -38,12 +38,6 @@ export interface QualificationAction {
   isSituationNonProfessionnelle: boolean
 }
 
-export interface CompteurActionsPeriode {
-  idBeneficiaire: string
-  actions: number
-  rdvs: number
-}
-
 export enum StatutAction {
   AFaire = 'AFaire',
   Terminee = 'Terminee',
