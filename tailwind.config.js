@@ -101,6 +101,12 @@ module.exports = {
       m: '0 8px 12px 0px rgba(39, 73, 150, 0.24)',
       none: 'none',
     },
+
+    listStyleType: {
+      none: 'none',
+      disc: 'disc',
+      circle: 'circle',
+    },
   },
   plugins: [],
 }
