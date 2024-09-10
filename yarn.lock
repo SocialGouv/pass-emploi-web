@@ -8614,9 +8614,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-logger@npm:5.0.0":
-  version: 5.0.0
-  resolution: "next-logger@npm:5.0.0"
+"next-logger@npm:5.0.1":
+  version: 5.0.1
+  resolution: "next-logger@npm:5.0.1"
   dependencies:
     lilconfig: "npm:^3.1.2"
   peerDependencies:
@@ -8628,7 +8628,7 @@ __metadata:
       optional: true
     winston:
       optional: true
-  checksum: 10c0/c2657016930260416fdc1aeb2731173af2932068a3f36c79458377c52eb694d6d69b6422270ac3c15d87ded610062f996d44921b06401800f18421ca9021af0b
+  checksum: 10c0/53b71be41c85ce680c8e15dc0d7b90ee7fe19eecbea003c03a1511103029fffe7041c3008e9f6e0340fe188fcd131de7f7922e78a5894f0e6ea81efd30574597
   languageName: node
   linkType: hard
 
@@ -9178,7 +9178,7 @@ __metadata:
     matomo-tracker: "npm:2.2.4"
     next: "npm:14.2.8"
     next-auth: "npm:4.24.7"
-    next-logger: "npm:5.0.0"
+    next-logger: "npm:5.0.1"
     next-themes: "npm:0.3.0"
     nextjs-toploader: "npm:3.6.15"
     pino: "npm:9.4.0"

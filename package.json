@@ -30,7 +30,7 @@
     "matomo-tracker": "2.2.4",
     "next": "14.2.8",
     "next-auth": "4.24.7",
-    "next-logger": "5.0.0",
+    "next-logger": "5.0.1",
     "next-themes": "0.3.0",
     "nextjs-toploader": "3.6.15",
     "pino": "9.4.0",
