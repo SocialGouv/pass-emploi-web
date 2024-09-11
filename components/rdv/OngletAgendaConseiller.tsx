@@ -91,7 +91,6 @@ export default function OngletAgendaConseiller({
       <SelecteurPeriode
         onNouvellePeriode={chargerNouvellePeriode}
         periodeCourante={periodeIndex}
-        nombreJours={7}
         trackNavigation={trackNavigation}
       />
 
