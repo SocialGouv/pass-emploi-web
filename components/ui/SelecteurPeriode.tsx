@@ -71,14 +71,20 @@ export function SelecteurPeriode({
   }, [indexPeriodeAffichee])
 
   return (
-    <div>
-      <p className='text-base-medium'>Période :</p>
-
-      <div className='flex items-center mt-1'>
-        <p className='text-m-bold text-primary mr-6'>
+    <div className='grid grid-rows-[repeat(2,auto)] grid-cols-[repeat(2,auto)] gap-x-6'>
+      <p
+        className='grid grid-rows-subgrid grid-cols-1 row-span-2 text-base-medium'
+        aria-live='polite'
+        aria-atomic={true}
+      >
+        Période :{' '}
+        <span className='text-m-bold text-primary self-center'>
           du {toShortDate(periodeAffiche.debut)} au{' '}
           {toShortDate(periodeAffiche.fin)}
-        </p>
+        </span>
+      </p>
+
+      <div className='flex items-center col-start-2 row-start-2'>
         <button
           aria-label={`Aller à la période précédente du ${toLongMonthDate(jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1))} au ${toLongMonthDate(jourDeFinDeLaPeriode(indexPeriodeAffichee - 1))}`}
           onClick={allerPeriodePrecedente}
