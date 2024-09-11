@@ -140,7 +140,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement',
+            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -279,7 +279,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement',
+            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -311,7 +311,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement',
+            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -342,7 +342,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement',
+            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })

@@ -37,14 +37,17 @@ export default function OngletAgendaConseiller({
 }: OngletAgendaConseillerProps) {
   const [evenements, setEvenements] = useState<EvenementListItem[]>()
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [labelPeriode, setLabelPeriode] = useState<string>()
   const [failed, setFailed] = useState<boolean>(false)
 
   async function chargerNouvellePeriode(
     nouvellePeriodeIndex: number,
     dateDebut: DateTime,
-    dateFin: DateTime
+    dateFin: DateTime,
+    label: string
   ) {
     await initEvenementsPeriode(dateDebut, dateFin)
+    setLabelPeriode(label)
     changerPeriode(nouvellePeriodeIndex)
   }
 
@@ -127,7 +130,10 @@ export default function OngletAgendaConseiller({
       )}
 
       {evenements && evenements.length > 0 && (
-        <TableauEvenementsConseiller evenements={evenements} />
+        <TableauEvenementsConseiller
+          evenements={evenements}
+          periodeLabel={labelPeriode!}
+        />
       )}
     </>
   )
