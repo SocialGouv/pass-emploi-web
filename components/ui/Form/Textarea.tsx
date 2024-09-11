@@ -75,7 +75,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       let descriptions = []
       if (invalid) descriptions.push(id + '--error')
       if (maxLength) descriptions.push(id + '--length')
-      return descriptions.length ? descriptions.join(',') : undefined
+      return descriptions.length ? descriptions.join(' ') : undefined
     }
 
     function provideStyle(): string {
