@@ -46,6 +46,7 @@ export default function OngletAgendaEtablissement({
     useState<AnimationCollective[]>()
 
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [labelPeriode, setLabelPeriode] = useState<string>()
   const [failed, setFailed] = useState<boolean>(false)
 
   async function modifierFiltres(nouveauxFiltres: StatutAnimationCollective[]) {
@@ -56,9 +57,11 @@ export default function OngletAgendaEtablissement({
   async function modifierPeriode(
     nouvellePeriodeIndex: number,
     dateDebut: DateTime,
-    dateFin: DateTime
+    dateFin: DateTime,
+    label: string
   ) {
     await chargerEvenementsPeriode(dateDebut, dateFin)
+    setLabelPeriode(label)
     changerPeriode(nouvellePeriodeIndex)
   }
 
@@ -185,7 +188,9 @@ export default function OngletAgendaEtablissement({
       {evenementsFiltres && evenementsFiltres.length > 0 && (
         <Table
           caption={{
-            text: 'Liste des animations collectives de mon établissement',
+            text:
+              'Liste des animations collectives de mon établissement ' +
+              labelPeriode,
           }}
         >
           <thead className='sr-only'>

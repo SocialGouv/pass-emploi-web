@@ -10,8 +10,9 @@ type SelecteurPeriodeProps = {
   onNouvellePeriode: (
     indexPeriode: number,
     dateDebut: DateTime,
-    dateFin: DateTime
-  ) => Promise<void>
+    dateFin: DateTime,
+    label: string
+  ) => void
   trackNavigation: (append?: string) => void
   periodeCourante: number
 }
@@ -29,9 +30,11 @@ export function SelecteurPeriode({
   const [periodeAffiche, setPeriodeAffiche] = useState<{
     debut: DateTime
     fin: DateTime
-  }>({
-    debut: jourDeDebutDeLaPeriode(indexPeriodeAffichee),
-    fin: jourDeFinDeLaPeriode(indexPeriodeAffichee),
+    longLabel: string
+  }>(() => {
+    const debut = jourDeDebutDeLaPeriode(indexPeriodeAffichee)
+    const fin = jourDeFinDeLaPeriode(indexPeriodeAffichee)
+    return { debut, fin, longLabel: labelPeriode(debut, fin) }
   })
 
   function jourDeDebutDeLaPeriode(indexPeriode: number): DateTime {
@@ -42,6 +45,15 @@ export function SelecteurPeriode({
 
   function jourDeFinDeLaPeriode(indexPeriode: number): DateTime {
     return jourDeDebutDeLaPeriode(indexPeriode).plus({ day: 6 }).endOf('day')
+  }
+
+  function labelPeriode(
+    debut: DateTime,
+    fin: DateTime,
+    format?: string
+  ): string {
+    const toFormat = format === 'short' ? toShortDate : toLongMonthDate
+    return `du ${toFormat(debut)} au ${toFormat(fin)}`
   }
 
   async function allerPeriodePrecedente() {
@@ -60,18 +72,15 @@ export function SelecteurPeriode({
   }
 
   useEffect(() => {
-    const debutPeriodeAffichee = jourDeDebutDeLaPeriode(indexPeriodeAffichee)
-    const finPeriodeAffichee = jourDeFinDeLaPeriode(indexPeriodeAffichee)
-    onNouvellePeriode(
-      indexPeriodeAffichee,
-      debutPeriodeAffichee,
-      finPeriodeAffichee
-    )
-    setPeriodeAffiche({ debut: debutPeriodeAffichee, fin: finPeriodeAffichee })
+    const debut = jourDeDebutDeLaPeriode(indexPeriodeAffichee)
+    const fin = jourDeFinDeLaPeriode(indexPeriodeAffichee)
+    const label = labelPeriode(debut, fin)
+    onNouvellePeriode(indexPeriodeAffichee, debut, fin, label)
+    setPeriodeAffiche({ debut, fin, longLabel: label })
   }, [indexPeriodeAffichee])
 
   return (
-    <div className='grid grid-rows-[repeat(2,auto)] grid-cols-[repeat(2,auto)] gap-x-6'>
+    <div className='grid grid-rows-[repeat(2,auto)] grid-cols-[repeat(2,auto)] gap-x-6 w-fit'>
       <p
         className='grid grid-rows-subgrid grid-cols-1 row-span-2 text-base-medium'
         aria-live='polite'
@@ -79,14 +88,19 @@ export function SelecteurPeriode({
       >
         Période :{' '}
         <span className='text-m-bold text-primary self-center'>
-          du {toShortDate(periodeAffiche.debut)} au{' '}
-          {toShortDate(periodeAffiche.fin)}
+          {labelPeriode(periodeAffiche.debut, periodeAffiche.fin, 'short')}
         </span>
       </p>
 
       <div className='flex items-center col-start-2 row-start-2'>
         <button
-          aria-label={`Aller à la période précédente du ${toLongMonthDate(jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1))} au ${toLongMonthDate(jourDeFinDeLaPeriode(indexPeriodeAffichee - 1))}`}
+          aria-label={
+            `Aller à la période précédente ` +
+            labelPeriode(
+              jourDeDebutDeLaPeriode(indexPeriodeAffichee - 1),
+              jourDeFinDeLaPeriode(indexPeriodeAffichee - 1)
+            )
+          }
           onClick={allerPeriodePrecedente}
           type='button'
         >
@@ -103,14 +117,16 @@ export function SelecteurPeriode({
           onClick={allerPeriodeActuelle}
         >
           <span className='sr-only'>Aller à la </span>Période en cours
-          <span className='sr-only'>
-            {' '}
-            du {toLongMonthDate(periodeAffiche.debut)} au{' '}
-            {toLongMonthDate(periodeAffiche.fin)}
-          </span>
+          <span className='sr-only'> {periodeAffiche.longLabel}</span>
         </Button>
         <button
-          aria-label={`Aller à la période suivante du ${toLongMonthDate(jourDeDebutDeLaPeriode(indexPeriodeAffichee + 1))} au ${toLongMonthDate(jourDeFinDeLaPeriode(indexPeriodeAffichee + 1))}`}
+          aria-label={
+            `Aller à la période suivante ` +
+            labelPeriode(
+              jourDeDebutDeLaPeriode(indexPeriodeAffichee + 1),
+              jourDeFinDeLaPeriode(indexPeriodeAffichee + 1)
+            )
+          }
           onClick={allerPeriodeSuivante}
           type='button'
         >

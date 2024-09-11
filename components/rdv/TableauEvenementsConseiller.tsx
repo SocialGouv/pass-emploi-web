@@ -6,13 +6,15 @@ import { EvenementListItem } from 'interfaces/evenement'
 
 type TableauEvenementsConseillerProps = {
   evenements: EvenementListItem[]
+  periodeLabel: string
 }
 
 export default function TableauEvenementsConseiller({
   evenements,
+  periodeLabel,
 }: TableauEvenementsConseillerProps) {
   return (
-    <Table caption={{ text: 'Liste de mes événements' }}>
+    <Table caption={{ text: 'Liste de mes événements ' + periodeLabel }}>
       <thead className='sr-only'>
         <tr>
           <th scope='col'>Horaires et durée</th>
