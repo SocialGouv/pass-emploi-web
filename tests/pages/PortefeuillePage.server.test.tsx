@@ -5,8 +5,10 @@ import Portefeuille from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/
 import PortefeuillePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { compareBeneficiairesByNom } from 'interfaces/beneficiaire'
-import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/actions.service'
-import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import {
+  getJeunesDuConseillerServerSide,
+  recupereCompteursBeneficiairesPortefeuilleMilo,
+} from 'services/jeunes.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
@@ -16,7 +18,6 @@ jest.mock(
   'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/PortefeuillePage'
 )
 jest.mock('services/jeunes.service')
-jest.mock('services/actions.service')
 
 describe('PortefeuillePage server side', () => {
   beforeEach(() => {

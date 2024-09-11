@@ -36,7 +36,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi/ID_OFFRE_EMPLOI',
-        'accessToken'
+        'accessToken',
+        'offre'
       )
       expect(actual).toStrictEqual(unDetailOffreEmploi())
     })
@@ -56,7 +57,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi/ID_OFFRE_EMPLOI',
-        'accessToken'
+        'accessToken',
+        'offre'
       )
       expect(actual).toStrictEqual(
         unDetailOffreEmploi({ type: TypeOffre.ALTERNANCE })
@@ -93,7 +95,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi/ID_OFFRE_EMPLOI',
-        'accessToken'
+        'accessToken',
+        'offre'
       )
       expect(actual).toStrictEqual(unDetailOffreEmploi())
     })
@@ -110,7 +113,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi/ID_OFFRE_EMPLOI',
-        'accessToken'
+        'accessToken',
+        'offre'
       )
       expect(actual).toStrictEqual(
         unDetailOffreEmploi({ type: TypeOffre.ALTERNANCE })
@@ -149,7 +153,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
       expect(actual).toEqual({
         metadonnees: { nombreTotal: 35, nombrePages: 4 },
@@ -167,7 +172,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&q=prof%20industrie',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -181,7 +187,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&departement=75',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -192,7 +199,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&commune=35238',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -203,7 +211,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&contrat=CDI&contrat=autre',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -214,7 +223,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&duree=1&duree=2',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -225,7 +235,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&rayon=32',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -236,7 +247,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&debutantAccepte=true',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
   })
@@ -259,7 +271,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
       expect(actual).toEqual({
         metadonnees: { nombreTotal: 35, nombrePages: 4 },
@@ -277,7 +290,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&q=prof%20industrie',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -288,7 +302,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&departement=75',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -299,7 +314,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&commune=35238',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -310,7 +326,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&contrat=CDI&contrat=autre',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -321,7 +338,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&duree=1&duree=2',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -332,7 +350,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&rayon=32',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -343,7 +362,8 @@ describe('OffresEmploiApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-emploi?page=3&limit=10&alternance=true&debutantAccepte=true',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
   })

@@ -4,24 +4,23 @@ import { DateTime } from 'luxon'
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import FicheBeneficiaire from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/page'
 import { uneAction } from 'fixtures/action'
-import { unConseiller } from 'fixtures/conseiller'
-import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
-import { unEvenementListItem } from 'fixtures/evenement'
-import { uneListeDOffres } from 'fixtures/favoris'
 import {
   desConseillersBeneficiaire,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { unConseiller } from 'fixtures/conseiller'
+import { dateFuture, dateFutureLoin, datePasseeLoin, now } from 'fixtures/date'
+import { unEvenementListItem } from 'fixtures/evenement'
+import { uneListeDOffres } from 'fixtures/favoris'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { getActionsBeneficiaireServerSide } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getRendezVousJeune } from 'services/evenements.service'
-import { getOffres } from 'services/favoris.service'
+import { getMetadonneesFavorisJeune, getOffres } from 'services/favoris.service'
 import {
   getConseillersDuJeuneServerSide,
   getJeuneDetails,
-  getMetadonneesFavorisJeune,
 } from 'services/jeunes.service'
 import { getSessionsMiloBeneficiaire } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
@@ -38,6 +37,7 @@ jest.mock('services/evenements.service')
 jest.mock('services/actions.service')
 jest.mock('services/favoris.service')
 jest.mock('services/conseiller.service')
+jest.mock('services/referentiel.service')
 
 describe('FicheBeneficiairePage server side', () => {
   const rdvAVenir = unEvenementListItem({

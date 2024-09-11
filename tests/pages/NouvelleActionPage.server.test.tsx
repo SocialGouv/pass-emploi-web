@@ -5,9 +5,11 @@ import NouvelleAction, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/nouvelle-action/page'
 import { desCategories } from 'fixtures/action'
-import { getSituationsNonProfessionnelles } from 'services/actions.service'
 import { getIdentitesBeneficiairesServerSide } from 'services/jeunes.service'
-import { getActionsPredefinies } from 'services/referentiel.service'
+import {
+  getActionsPredefinies,
+  getSituationsNonProfessionnelles,
+} from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({

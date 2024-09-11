@@ -5,8 +5,8 @@ import {
   desLocalites,
   desLocalitesJson,
   desMetiers,
-  uneListeDAgencesMILO,
   uneListeDAgencesFranceTravail,
+  uneListeDAgencesMILO,
 } from 'fixtures/referentiel'
 import { StructureConseiller } from 'interfaces/conseiller'
 import {
@@ -98,7 +98,8 @@ describe('ReferentielApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/communes-et-departements?recherche=Hauts%20de%20seine',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(actual).toEqual(desLocalites())
     })
@@ -117,7 +118,8 @@ describe('ReferentielApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         "/referentiels/communes-et-departements?villesOnly=true&recherche=L'Ha%C3%BF-les-Roses",
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(actual).toEqual(desCommunes())
     })
@@ -136,7 +138,8 @@ describe('ReferentielApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/metiers?recherche=D%C3%A9veloppeuse',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(actual).toEqual(desMetiers())
     })
@@ -160,7 +163,8 @@ describe('ReferentielApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/actions-predefinies',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(actual).toEqual([
         {

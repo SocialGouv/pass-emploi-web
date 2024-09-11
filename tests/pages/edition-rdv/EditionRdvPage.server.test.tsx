@@ -6,19 +6,17 @@ import EditionRdvPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes-je
 import EditionRdv, {
   generateMetadata,
 } from 'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/page'
+import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import {
   typesAnimationCollective,
   typesEvenement,
   typesEvenementCEJ,
   unEvenement,
 } from 'fixtures/evenement'
-import { desItemsBeneficiaires } from 'fixtures/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  getDetailsEvenement,
-  getTypesRendezVous,
-} from 'services/evenements.service'
+import { getDetailsEvenement } from 'services/evenements.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import { getTypesRendezVous } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
@@ -28,6 +26,7 @@ jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/edition-rdv/EditionRdvPage'
 )
 jest.mock('services/evenements.service')
+jest.mock('services/referentiel.service')
 jest.mock('services/jeunes.service')
 
 describe('EditionRdvPage server side', () => {

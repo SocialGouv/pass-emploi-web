@@ -44,6 +44,7 @@ describe('SessionsApiService', () => {
             label: 'info coll i-milo',
           },
           statut: 'CLOTUREE',
+          nombreParticipants: 0,
         },
         {
           id: 'id-session',
@@ -57,6 +58,7 @@ describe('SessionsApiService', () => {
             label: 'Atelier i-milo',
           },
           statut: 'A_VENIR',
+          nombreParticipants: 0,
         },
       ]
       ;(apiGet as jest.Mock).mockResolvedValue({
@@ -73,7 +75,8 @@ describe('SessionsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/milo/id-conseiller/sessions?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
-        'accessToken'
+        'accessToken',
+        'sessions'
       )
       const sessionsMilo: AnimationCollective[] = [
         {
@@ -86,6 +89,7 @@ describe('SessionsApiService', () => {
           statut: StatutAnimationCollective.Close,
           isSession: true,
           estCache: false,
+          nombreParticipants: 0,
         },
         {
           id: 'id-session',
@@ -97,6 +101,7 @@ describe('SessionsApiService', () => {
           statut: StatutAnimationCollective.AVenir,
           isSession: true,
           estCache: true,
+          nombreParticipants: 0,
         },
       ]
       expect(actual).toEqual(sessionsMilo)
@@ -187,7 +192,8 @@ describe('SessionsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/milo/id-conseiller/agenda/sessions?dateDebut=2022-09-01T00%3A00%3A00.000%2B02%3A00&dateFin=2022-09-07T23%3A59%3A59.999%2B02%3A00`,
-        'accessToken'
+        'accessToken',
+        'sessions'
       )
       const sessionsMilo: EvenementListItem[] = [
         {
@@ -237,7 +243,8 @@ describe('SessionsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/milo/id-conseiller/sessions/session-1',
-        'accessToken'
+        'accessToken',
+        'session'
       )
       const expected = unDetailSession()
       expected.session.dateMaxInscription = '2023-06-17'
@@ -354,7 +361,8 @@ describe('SessionsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/jeunes/milo/${idJeune}/sessions?dateDebut=2022-09-01T11%3A00%3A00.000%2B02%3A00&filtrerEstInscrit=true`,
-        accessToken
+        accessToken,
+        'sessions'
       )
 
       const sessionsMiloJeune: EvenementListItem[] = [

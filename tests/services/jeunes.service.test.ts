@@ -20,25 +20,25 @@ import { desMotifsDeSuppression } from 'fixtures/referentiel'
 import { CategorieSituation } from 'interfaces/beneficiaire'
 import { SuppressionBeneficiaireFormData } from 'interfaces/json/beneficiaire'
 import { MotifSuppressionBeneficiaire } from 'interfaces/referentiel'
+import { getMetadonneesFavorisJeune } from 'services/favoris.service'
 import {
   archiverJeune,
+  getBeneficiairesDeLaStructureMilo,
+  getBeneficiairesDeLEtablissementClientSide,
   getConseillersDuJeuneClientSide,
   getConseillersDuJeuneServerSide,
-  getIdJeuneMilo,
   getIdentitesBeneficiairesClientSide,
+  getIdJeuneMilo,
   getIndicateursJeuneAlleges,
   getIndicateursJeuneComplets,
   getJeuneDetails,
-  getBeneficiairesDeLEtablissementClientSide,
   getJeunesDuConseillerClientSide,
   getJeunesDuConseillerParId,
   getJeunesDuConseillerServerSide,
-  getMetadonneesFavorisJeune,
   getMotifsSuppression,
   modifierIdentifiantPartenaire,
   reaffecter,
   rechercheBeneficiairesDeLEtablissement,
-  getBeneficiairesDeLaStructureMilo,
   supprimerJeuneInactif,
 } from 'services/jeunes.service'
 import { ApiError } from 'utils/httpClient'
@@ -58,7 +58,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/idConseiller/jeunes`,
-        'accessToken'
+        'accessToken',
+        'portefeuille'
       )
       expect(actual).toEqual(desItemsBeneficiaires())
     })
@@ -77,7 +78,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/idConseiller/jeunes`,
-        'accessToken'
+        'accessToken',
+        'portefeuille'
       )
       expect(actual).toEqual(desItemsBeneficiaires())
     })
@@ -100,7 +102,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/${idConseiller}/jeunes`,
-        accessToken
+        accessToken,
+        'portefeuille'
       )
       expect(actual).toEqual(desItemsBeneficiaires())
     })
@@ -120,7 +123,11 @@ describe('JeunesApiService', () => {
       const actual = await getJeuneDetails('id-jeune', 'accessToken')
 
       // Then
-      expect(apiGet).toHaveBeenCalledWith('/jeunes/id-jeune', 'accessToken')
+      expect(apiGet).toHaveBeenCalledWith(
+        '/jeunes/id-jeune',
+        'accessToken',
+        'beneficiaire'
+      )
       expect(actual).toEqual(
         unDetailBeneficiaire({
           urlDossier: 'url-dossier',
@@ -156,7 +163,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/milo/jeunes/numero-dossier',
-        'accessToken'
+        'accessToken',
+        'milo'
       )
       expect(actual).toEqual('id-jeune')
     })
@@ -258,7 +266,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/jeunes/id-jeune/conseillers',
-        'accessToken'
+        'accessToken',
+        'conseillers'
       )
       expect(actual).toEqual(desConseillersBeneficiaire())
     })
@@ -280,7 +289,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/jeunes/id-jeune/conseillers',
-        'accessToken'
+        'accessToken',
+        'conseillers'
       )
       expect(actual).toEqual(desConseillersBeneficiaire())
     })
@@ -302,7 +312,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/motifs-suppression-jeune',
-        accessToken
+        accessToken,
+        'referentiel'
       )
       expect(actual).toEqual(motifs)
     })
@@ -321,7 +332,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/jeunes/id-jeune/favoris/metadonnees',
-        'accessToken'
+        'accessToken',
+        'favoris'
       )
       expect(actual).toEqual(uneMetadonneeFavoris())
     })
@@ -365,7 +377,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00&exclureOffresEtFavoris=true',
-        'accessToken'
+        'accessToken',
+        'agenda'
       )
       expect(actual).toEqual(desIndicateursSemaine())
     })
@@ -391,7 +404,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/id-conseiller/jeunes/id-jeune/indicateurs?dateDebut=2022-10-10T00%3A00%3A00.000%2B02%3A00&dateFin=2022-10-17T00%3A00%3A00.000%2B02%3A00&exclureOffresEtFavoris=false',
-        'accessToken'
+        'accessToken',
+        'agenda'
       )
       expect(actual).toEqual(desIndicateursSemaine())
     })
@@ -411,7 +425,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/etablissements/id-etablissement/jeunes',
-        'accessToken'
+        'accessToken',
+        'beneficiaires'
       )
       expect(actual).toEqual([uneBaseBeneficiaire()])
     })
@@ -435,7 +450,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/idConseiller/jeunes/identites?ids=id-beneficiaire-1&ids=id-beneficiaire-2&ids=id-beneficiaire-3',
-        'accessToken'
+        'accessToken',
+        'beneficiaires'
       )
       expect(actual).toEqual(basesJeunes)
     })
@@ -480,7 +496,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/etablissements/id-etablissement/jeunes?q=e&page=3',
-        'accessToken'
+        'accessToken',
+        'portefeuille'
       )
       expect(actual).toEqual({
         metadonnees: {
@@ -545,7 +562,8 @@ describe('JeunesApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/structures-milo/id-structure/jeunes',
-        'tok'
+        'tok',
+        'portefeuille'
       )
       expect(actual).toEqual({
         beneficiaires: [

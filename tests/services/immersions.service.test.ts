@@ -28,7 +28,8 @@ describe('ImmersionsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-immersion/ID_IMMERSION',
-        'accessToken'
+        'accessToken',
+        'offre'
       )
       expect(actual).toStrictEqual(unDetailImmersion())
     })
@@ -73,7 +74,8 @@ describe('ImmersionsApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/offres-immersion?lat=48.830108&lon=2.323026&distance=52&rome=M1805',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
 
       expect(actual).toEqual({

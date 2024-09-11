@@ -6,7 +6,13 @@ import {
   SituationNonProfessionnelle,
 } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
-import { Agence, Commune, Localite, Metier } from 'interfaces/referentiel'
+import {
+  Agence,
+  Commune,
+  Localite,
+  Metier,
+  TypeEvenementReferentiel,
+} from 'interfaces/referentiel'
 
 const TAG = 'referentiel'
 
@@ -70,6 +76,17 @@ export async function getSituationsNonProfessionnelles(
     : content.filter(
         (categorie) => categorie.code !== CODE_QUALIFICATION_NON_SNP
       )
+}
+
+export async function getTypesRendezVous(
+  accessToken: string
+): Promise<TypeEvenementReferentiel[]> {
+  const { content: types } = await apiGet<TypeEvenementReferentiel[]>(
+    '/referentiels/types-rendezvous',
+    accessToken,
+    'referentiel'
+  )
+  return types
 }
 
 async function getAgences(

@@ -12,10 +12,10 @@ import {
   uneListeDActionsAQualifierJson,
   uneListeDActionsJson,
 } from 'fixtures/action'
-import { QualificationAction, StatutAction } from 'interfaces/action'
+import { StatutAction } from 'interfaces/action'
 import { CODE_QUALIFICATION_NON_SNP } from 'interfaces/json/action'
+import { qualifier } from 'server-actions/actions.server-actions'
 import {
-  recupereCompteursBeneficiairesPortefeuilleMilo,
   creerAction,
   deleteAction,
   getAction,
@@ -23,11 +23,11 @@ import {
   getActionsAQualifierServerSide,
   getActionsBeneficiaireClientSide,
   getActionsBeneficiaireServerSide,
-  getSituationsNonProfessionnelles,
-  qualifier,
   qualifierActions,
   recupererLesCommentaires,
 } from 'services/actions.service'
+import { recupereCompteursBeneficiairesPortefeuilleMilo } from 'services/jeunes.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import { ApiError } from 'utils/httpClient'
 
 jest.mock('clients/api.client')
@@ -301,7 +301,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions,
@@ -332,7 +333,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=in_progress&statuts=not_started',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: expect.arrayContaining([]),
@@ -369,7 +371,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&statuts=done&etats=QUALIFIEE',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: expect.arrayContaining([]),
@@ -406,7 +409,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_decroissante&categories=SANTE',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: expect.arrayContaining([]),
@@ -443,7 +447,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/jeunes/whatever/actions?page=1&tri=date_echeance_decroissante',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions,
@@ -472,7 +477,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/conseillers/whatever/actions?page=1&aQualifier=true&tri=BENEFICIAIRE_ALPHABETIQUE&codesCategories=SANTE&codesCategories=EMPLOI',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: uneListeDActionsAQualifier(),
@@ -500,7 +506,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/conseillers/whatever/actions?page=1&aQualifier=true',
-        'accessToken'
+        'accessToken',
+        'actions'
       )
       expect(actual).toStrictEqual({
         actions: uneListeDActionsAQualifier(),
@@ -551,7 +558,7 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await qualifier('id-action', CODE_QUALIFICATION_NON_SNP, {
+      await qualifier('id-action', CODE_QUALIFICATION_NON_SNP, {
         commentaire: 'commentaire',
       })
 
@@ -562,14 +569,9 @@ describe('ActionsApiService', () => {
           codeQualification: CODE_QUALIFICATION_NON_SNP,
           commentaireQualification: 'commentaire',
         },
-        'accessToken'
+        'accessToken',
+        ['action', 'actions']
       )
-      const expected: QualificationAction = {
-        libelle: 'Non-SNP',
-        code: 'NON_SNP',
-        isSituationNonProfessionnelle: false,
-      }
-      expect(actual).toStrictEqual(expected)
     })
 
     it('qualifie une action avec une date de début et date de fin', async () => {
@@ -583,9 +585,9 @@ describe('ActionsApiService', () => {
       })
 
       // WHEN
-      const actual = await qualifier('id-action', 'SANTE', {
+      await qualifier('id-action', 'SANTE', {
         commentaire: 'commentaire',
-        dateFinModifiee: DateTime.fromISO('2022-09-06T22:00:00.000Z'),
+        dateFinModifiee: '2022-09-06T22:00:00.000Z',
       })
 
       // THEN
@@ -594,16 +596,11 @@ describe('ActionsApiService', () => {
         {
           commentaireQualification: 'commentaire',
           codeQualification: 'SANTE',
-          dateFinReelle: '2022-09-07T00:00:00.000+02:00',
+          dateFinReelle: '2022-09-06T22:00:00.000Z',
         },
-        'accessToken'
+        'accessToken',
+        ['action', 'actions']
       )
-      const expected: QualificationAction = {
-        libelle: 'Santé',
-        code: 'SANTE',
-        isSituationNonProfessionnelle: true,
-      }
-      expect(actual).toStrictEqual(expected)
     })
   })
 
@@ -664,7 +661,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/actions/id-action/commentaires',
-        'accessToken'
+        'accessToken',
+        'commentaires'
       )
       expect(result).toEqual([commentaire])
     })
@@ -686,12 +684,13 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/qualifications-actions/types',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(result).toEqual(desCategoriesAvecNONSNP())
     })
 
-    it('retourne la liste des situations non professionnelles', async () => {
+    it('retourne la liste des situations non professionnelles sans Non SNP', async () => {
       // GIVEN
       ;(apiGet as jest.Mock).mockResolvedValue({
         content: desCategoriesAvecNONSNP(),
@@ -706,7 +705,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         '/referentiels/qualifications-actions/types',
-        'accessToken'
+        'accessToken',
+        'referentiel'
       )
       expect(result).toEqual(desCategories())
     })
@@ -745,7 +745,8 @@ describe('ActionsApiService', () => {
       // THEN
       expect(apiGet).toHaveBeenCalledWith(
         `/conseillers/milo/id-conseiller/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
-        'accessToken'
+        'accessToken',
+        'agenda'
       )
       expect(result).toEqual([
         {

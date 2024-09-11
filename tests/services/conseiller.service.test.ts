@@ -50,7 +50,11 @@ describe('ConseillerApiService', () => {
       const actual = await getConseillerServerSide(user, accessToken)
 
       // Then
-      expect(apiGet).toHaveBeenCalledWith('/conseillers/id-user', accessToken)
+      expect(apiGet).toHaveBeenCalledWith(
+        '/conseillers/id-user',
+        accessToken,
+        'conseiller'
+      )
       expect(actual).toEqual(
         unConseiller({
           agence: { nom: 'Milo Marseille', id: 'id-agence' },
@@ -74,7 +78,8 @@ describe('ConseillerApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers?q=conseiller@email.com',
-        accessToken
+        accessToken,
+        'conseillers'
       )
       expect(actual).toEqual([
         {
@@ -101,7 +106,8 @@ describe('ConseillerApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers?q=conseiller@email.com&structure=POLE_EMPLOI_BRSA',
-        accessToken
+        accessToken,
+        'conseillers'
       )
       expect(actual).toEqual([
         {

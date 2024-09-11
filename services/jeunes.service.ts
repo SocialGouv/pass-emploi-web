@@ -364,7 +364,7 @@ export async function recupereCompteursBeneficiairesPortefeuilleMilo(
   const { content: counts } = await apiGet<CompteursPortefeuilleJson[]>(
     `/conseillers/milo/${idConseiller}/compteurs-portefeuille?dateDebut=${dateDebutUrlEncoded}&dateFin=${dateFinUrlEncoded}`,
     accessToken,
-    'actions'
+    'agenda'
   )
 
   return counts.map(({ idBeneficiaire, actions, rdvs, sessions }) => {

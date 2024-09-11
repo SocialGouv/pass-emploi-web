@@ -115,17 +115,6 @@ export async function getDetailsEvenement(
   }
 }
 
-export async function getTypesRendezVous(
-  accessToken: string
-): Promise<TypeEvenementReferentiel[]> {
-  const { content: types } = await apiGet<TypeEvenementReferentiel[]>(
-    '/referentiels/types-rendezvous',
-    accessToken,
-    'referentiel'
-  )
-  return types
-}
-
 export async function creerEvenement(
   newRDV: EvenementFormData
 ): Promise<string> {

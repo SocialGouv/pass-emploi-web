@@ -8,12 +8,10 @@ import { unConseiller } from 'fixtures/conseiller'
 import { uneListeDAnimationCollectiveAClore } from 'fixtures/evenement'
 import { uneListeDeSessionsAClore } from 'fixtures/session'
 import { StructureConseiller } from 'interfaces/conseiller'
-import {
-  getActionsAQualifierServerSide,
-  getSituationsNonProfessionnelles,
-} from 'services/actions.service'
+import { getActionsAQualifierServerSide } from 'services/actions.service'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getAnimationsCollectivesACloreServerSide } from 'services/evenements.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import { getSessionsACloreServerSide } from 'services/sessions.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
@@ -22,6 +20,7 @@ jest.mock('utils/auth/auth', () => ({
 }))
 jest.mock('app/(connected)/(with-sidebar)/(with-chat)/pilotage/PilotagePage')
 jest.mock('services/actions.service')
+jest.mock('services/referentiel.service')
 jest.mock('services/sessions.service')
 jest.mock('services/conseiller.service')
 jest.mock('services/evenements.service')

@@ -21,11 +21,9 @@ import {
   isTypeAnimationCollective,
   TypeEvenementReferentiel,
 } from 'interfaces/referentiel'
-import {
-  getDetailsEvenement,
-  getTypesRendezVous,
-} from 'services/evenements.service'
+import { getDetailsEvenement } from 'services/evenements.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
+import { getTypesRendezVous } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 import redirectedFromHome from 'utils/redirectedFromHome'
 

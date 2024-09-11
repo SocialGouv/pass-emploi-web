@@ -3,19 +3,21 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 
 import LayoutWhenConnected from 'app/(connected)/layout'
-import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
-import { Conseiller } from 'interfaces/conseiller'
+import { unConseiller } from 'fixtures/conseiller'
 import { BeneficiaireFromListe } from 'interfaces/beneficiaire'
+import { Conseiller } from 'interfaces/conseiller'
 import { getConseillerServerSide } from 'services/conseiller.service'
 import { getJeunesDuConseillerServerSide } from 'services/jeunes.service'
 import { ConseillerProvider } from 'utils/conseiller/conseillerContext'
 import { PortefeuilleProvider } from 'utils/portefeuilleContext'
 
-jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
+// jest.mock('utils/auth/auth', () => ({
+//   getMandatorySessionServerSide: jest.fn(),
+// }))
 
 jest.mock('services/conseiller.service')
 jest.mock('utils/conseiller/conseillerContext', () => ({

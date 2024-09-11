@@ -13,12 +13,11 @@ import {
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
 import { StructureConseiller } from 'interfaces/conseiller'
+import { getAction, recupererLesCommentaires } from 'services/actions.service'
 import {
-  getAction,
+  getActionsPredefinies,
   getSituationsNonProfessionnelles,
-  recupererLesCommentaires,
-} from 'services/actions.service'
-import { getActionsPredefinies } from 'services/referentiel.service'
+} from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({

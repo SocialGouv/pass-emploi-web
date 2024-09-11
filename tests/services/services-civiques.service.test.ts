@@ -30,7 +30,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/services-civique/ID_SERVICE_CIVIQUE',
-        'accessToken'
+        'accessToken',
+        'offre'
       )
       expect(actual).toStrictEqual({
         dateDeDebut: '2022-11-01T00:00:00.000Z',
@@ -79,7 +80,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
       expect(actual).toEqual({
         metadonnees: {
@@ -97,7 +99,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&lon=2.323026&lat=48.830108',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -108,7 +111,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&domaine=code-domaine',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -119,7 +123,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&dateDeDebutMinimum=2022-11-01T00%3A00%3A00.000%2B01%3A00',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
 
@@ -130,7 +135,8 @@ describe('ServicesCiviqueApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/v2/services-civique?page=3&limit=10&distance=43',
-        'accessToken'
+        'accessToken',
+        'offres'
       )
     })
   })

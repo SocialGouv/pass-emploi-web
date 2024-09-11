@@ -8,16 +8,15 @@ import QualificationPage from 'app/(connected)/(with-sidebar)/(without-chat)/mes
 import { desCategoriesAvecNONSNP, uneAction } from 'fixtures/action'
 import { uneBaseBeneficiaire } from 'fixtures/beneficiaire'
 import { StatutAction } from 'interfaces/action'
-import {
-  getAction,
-  getSituationsNonProfessionnelles,
-} from 'services/actions.service'
+import { getAction } from 'services/actions.service'
+import { getSituationsNonProfessionnelles } from 'services/referentiel.service'
 import { getMandatorySessionServerSide } from 'utils/auth/auth'
 
 jest.mock('utils/auth/auth', () => ({
   getMandatorySessionServerSide: jest.fn(),
 }))
 jest.mock('services/actions.service')
+jest.mock('services/referentiel.service')
 jest.mock(
   'app/(connected)/(with-sidebar)/(without-chat)/mes-jeunes/[idJeune]/actions/[idAction]/qualification/QualificationPage'
 )

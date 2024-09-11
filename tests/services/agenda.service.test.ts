@@ -34,7 +34,8 @@ describe('AgendaService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/jeunes/beneficiaire-1/home/agenda?maintenant=2022-09-01T00%3A00%3A00.000%2B02%3A00',
-        'accessToken'
+        'accessToken',
+        'agenda'
       )
       expect(actual).toEqual({
         entrees: [

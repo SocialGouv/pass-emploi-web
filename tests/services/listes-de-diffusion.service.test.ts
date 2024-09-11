@@ -6,11 +6,13 @@ import {
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import {
   creerListeDeDiffusion,
+  modifierListeDeDiffusion,
+  supprimerListeDeDiffusion,
+} from 'server-actions/listes-de-diffusion.server-actions'
+import {
   getListesDeDiffusionClientSide,
   getListesDeDiffusionServerSide,
-  modifierListeDeDiffusion,
   recupererListeDeDiffusion,
-  supprimerListeDeDiffusion,
 } from 'services/listes-de-diffusion.service'
 
 jest.mock('clients/api.client')
@@ -30,7 +32,8 @@ describe('ListesDeDiffusionApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/idConseiller/listes-de-diffusion',
-        'accessToken'
+        'accessToken',
+        'listes-diffusion'
       )
       expect(actual).toEqual(listesDeDiffusion)
     })
@@ -53,7 +56,8 @@ describe('ListesDeDiffusionApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/conseillers/idConseiller/listes-de-diffusion',
-        'accessToken'
+        'accessToken',
+        'listes-diffusion'
       )
       expect(actual).toEqual(listesDeDiffusion)
     })
@@ -74,7 +78,8 @@ describe('ListesDeDiffusionApiService', () => {
       // Then
       expect(apiGet).toHaveBeenCalledWith(
         '/listes-de-diffusion/1',
-        'accessToken'
+        'accessToken',
+        'liste-diffusion'
       )
       expect(actual).toEqual(listeDeDiffusion)
     })
@@ -96,7 +101,8 @@ describe('ListesDeDiffusionApiService', () => {
       expect(apiPost).toHaveBeenCalledWith(
         '/conseillers/idConseiller/listes-de-diffusion',
         { titre, idsBeneficiaires },
-        'accessToken'
+        'accessToken',
+        ['liste-diffusion', 'listes-diffusion']
       )
     })
   })
@@ -117,7 +123,8 @@ describe('ListesDeDiffusionApiService', () => {
       expect(apiPut).toHaveBeenCalledWith(
         '/listes-de-diffusion/id-liste',
         { titre, idsBeneficiaires },
-        'accessToken'
+        'accessToken',
+        ['liste-diffusion', 'listes-diffusion']
       )
     })
   })
@@ -130,7 +137,8 @@ describe('ListesDeDiffusionApiService', () => {
       // Then
       expect(apiDelete).toHaveBeenCalledWith(
         '/listes-de-diffusion/id-liste',
-        'accessToken'
+        'accessToken',
+        ['liste-diffusion']
       )
     })
   })

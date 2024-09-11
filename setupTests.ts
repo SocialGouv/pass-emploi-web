@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
 import { toHaveNoViolations } from 'jest-axe'
+import { getMandatorySessionServerSide } from 'utils/auth/auth'
 expect.extend(toHaveNoViolations)
 
 global.fetch = jest.fn(async () => new Response())
@@ -31,16 +32,21 @@ jest.mock('next/dist/client/components/redirect', () => ({
   ),
 }))
 
+const session = {
+  user: {
+    id: 'idConseiller',
+    estSuperviseur: false,
+    estSuperviseurResponsable: false,
+    structure: 'MILO',
+  },
+  accessToken: 'accessToken',
+}
 jest.mock('next-auth/react', () => ({
-  getSession: async () => ({
-    user: {
-      id: 'idConseiller',
-      estSuperviseur: false,
-      estSuperviseurResponsable: false,
-      structure: 'MILO',
-    },
-    accessToken: 'accessToken',
-  }),
+  getSession: async () => session,
+}))
+jest.mock('utils/auth/auth', () => ({
+  getSessionServerSide: async () => session,
+  getMandatorySessionServerSide: async () => session,
 }))
 
 afterEach(() => {

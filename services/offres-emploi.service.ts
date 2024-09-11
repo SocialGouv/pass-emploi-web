@@ -64,7 +64,7 @@ async function getOffreEmploi(idOffreEmploi: string, accessToken: string) {
     const { content: offreEmploiJson } = await apiGet<DetailOffreEmploiJson>(
       `/offres-emploi/${idOffreEmploi}`,
       accessToken,
-      'offres'
+      'offre'
     )
     return offreEmploiJson && jsonToDetailOffreEmploi(offreEmploiJson)
   } catch (e) {
