@@ -51,7 +51,7 @@ export default function FormulaireRechercheDossier({
 
       <form onSubmit={handleSearchSubmit}>
         <Label htmlFor='recherche-numero'>
-          Numéro de dossier (Exemple : 123456){' '}
+          {{ main: 'Numéro de dossier', helpText: 'Exemple : 123456' }}
         </Label>
         <div className='w-8/12'></div>
 
@@ -66,7 +66,7 @@ export default function FormulaireRechercheDossier({
           id='recherche-numero'
           onChange={handleSearchInputChanges}
           invalid={Boolean(messageErreur)}
-          aria-describedby='recherche-numero--error'
+          placeholder='123456'
         />
 
         <Button type='submit'>Valider le numéro</Button>
