@@ -182,6 +182,7 @@ export default function MessagesDuJour({
               id='input-new-message'
               className='p-4 bg-white rounded-base border border-grey_700'
               onChange={(e) => setUserInput(e.target.value)}
+              title='Écrivez votre message ici...'
               placeholder='Écrivez votre message ici...'
               rows={5}
             />

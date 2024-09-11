@@ -551,6 +551,7 @@ export function Conversation({
                   className='w-full outline-none text-base-regular'
                   onFocus={() => setReadByConseiller(beneficiaireChat.chatId)}
                   onChange={(e) => setUserInput(e.target.value)}
+                  title='Écrivez votre message ici...'
                   placeholder='Écrivez votre message ici...'
                   rows={5}
                 />
