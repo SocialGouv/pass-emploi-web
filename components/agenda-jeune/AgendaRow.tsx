@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
+import propsStatutsActions from 'components/action/propsStatutsActions'
 import TagStatutAction from 'components/action/TagStatutAction'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { TagStatut } from 'components/ui/Indicateurs/Tag'
@@ -30,7 +31,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
     action: {
       href: `${pathPrefix}/${idBeneficiaire}/actions/`,
       iconName: IconName.ChecklistRtlFill,
-      label: `Consulter l'action ${entree.titre}, de statut ${entree.statut}`,
+      label: `Consulter l'action ${entree.titre}${statutAction()}`,
     },
     evenement: {
       href: `${pathPrefix}/edition-rdv?idRdv=`,
@@ -53,6 +54,12 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
     )
   }
 
+  function statutAction(): string {
+    if (!entree.statut) return ''
+    if (determineActionEnRetard()) return ', de statut En retard'
+    return `, de statut ${propsStatutsActions[entree.statut].label}`
+  }
+
   return (
     <li className='mt-4 text-base-regular rounded-base shadow-base hover:bg-primary_lighten'>
       <Link
@@ -64,8 +71,7 @@ export default function AgendaRow({ entree, idBeneficiaire }: AgendaRowProps) {
           <IconComponent
             name={iconName}
             focusable={false}
-            aria-label={entree.type}
-            title={entree.type}
+            aria-hidden={true}
             className='w-6 h-6'
           />
         </div>
