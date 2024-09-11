@@ -188,6 +188,13 @@ function MessagePJ({
       )
     case 'expiree':
       return <p className='text-xs-regular'>Pièce jointe expirée</p>
+    case 'erreur_analyse':
+      return (
+        <p className='whitespace-pre-wrap'>
+          Erreur lors de l’analyse de la pièce jointe envoyée par votre
+          bénéficiaire. Vous pouvez lui demander de la renvoyer.
+        </p>
+      )
     default:
       return <SpinningLoader className='w-6 h-6 mr-2 fill-primary_lighten' />
   }
