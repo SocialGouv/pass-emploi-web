@@ -31,18 +31,20 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
 
   return (
     <TR className='grid grid-cols-subgrid grid-rows-[repeat(2,auto) layout_base:grid-rows-[auto] col-span-full'>
-      <TD className='!rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:!rounded-l-base layout_base:justify-center layout_base:!p-2'>
+      <TD className='!rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:!rounded-l-base layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
         <div className='text-m-bold'>{longMonthDate}</div>
-        {heure} - <span className='sr-only'>durée {dureeA11y}</span>
-        <span className='inline-flex items-center' aria-hidden={true}>
-          <IconComponent
-            name={IconName.ScheduleOutline}
-            focusable={false}
-            title='durée'
-            className='inline w-[1em] h-[1em] fill-[currentColor] mr-1'
-          />
-          {duree}
-        </span>
+        <div>
+          {heure} - <span className='sr-only'>durée {dureeA11y}</span>
+          <span className='inline-flex items-center' aria-hidden={true}>
+            <IconComponent
+              name={IconName.ScheduleOutline}
+              focusable={false}
+              title='durée'
+              className='inline w-[1em] h-[1em] fill-[currentColor] mr-1'
+            />
+            {duree}
+          </span>
+        </div>
       </TD>
 
       <TD className='row-start-2 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_base:row-start-1 layout_base:col-start-2 layout_base:rounded-none layout_base:justify-center layout_base:!p-2'>
@@ -53,7 +55,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
         </div>
       </TD>
 
-      <TD className='col-start-2 !p-0 layout_base:col-start-3 layout_base:!p-2'>
+      <TD className='col-start-2 !p-0 layout_base:col-start-3 layout_base:!p-2 layout_base:flex layout_base:flex-col layout_base:justify-center'>
         <div className='text-grey_800'>créé par</div>
         <CreateurEvenementLabel
           evenement={evenement}
