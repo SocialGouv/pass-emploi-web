@@ -203,8 +203,12 @@ describe('<ChatRoom />', () => {
             })
 
             await userEvent.click(boutonSettings)
-            inputDateDebut = screen.getByLabelText('Date de début')
-            inputDateFin = screen.getByLabelText('Date de fin')
+            inputDateDebut = screen.getByLabelText(
+              'Date de début format : jj/mm/aaaa'
+            )
+            inputDateFin = screen.getByLabelText(
+              'Date de fin format : jj/mm/aaaa'
+            )
             inputMessage = screen.getByLabelText(/Message/)
             submitBtn = screen.getByRole('button', { name: 'Envoyer' })
           })
@@ -296,8 +300,12 @@ describe('<ChatRoom />', () => {
 
             await userEvent.click(boutonSettings)
 
-            const inputDateDebut = screen.getByLabelText('Date de début')
-            const inputDateFin = screen.getByLabelText('Date de fin')
+            const inputDateDebut = screen.getByLabelText(
+              'Date de début format : jj/mm/aaaa'
+            )
+            const inputDateFin = screen.getByLabelText(
+              'Date de fin format : jj/mm/aaaa'
+            )
             const inputMessage = screen.getByLabelText(/Message/)
 
             //Then
