@@ -23,7 +23,7 @@ export default function TableauEvenementsConseiller({
         </tr>
       </thead>
 
-      <tbody className='grid auto-rows-fr grid-cols-[repeat(3,auto)] layout_base:grid-cols-[repeat(5,auto)] gap-y-2'>
+      <tbody className='grid auto-rows-auto grid-cols-[repeat(3,auto)] layout_base:grid-cols-[repeat(5,auto)] gap-y-2'>
         {evenements.map((evenement) => (
           <AgendaRow key={evenement.id} evenement={evenement} />
         ))}
