@@ -112,7 +112,6 @@ export default function OngletAgendaEtablissement({
     <>
       <nav className='flex justify-between items-end'>
         <SelecteurPeriode
-          nombreJours={7}
           onNouvellePeriode={modifierPeriode}
           periodeCourante={periodeIndex}
           trackNavigation={trackNavigation}

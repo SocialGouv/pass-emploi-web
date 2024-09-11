@@ -189,11 +189,11 @@ describe('Agenda - Onglet établissement', () => {
     it('a deux boutons de navigation', () => {
       // When
       const periodesFuturesButton = screen.getByRole('button', {
-        name: 'Aller à la période suivante',
+        name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
       })
 
       const periodesPasseesButton = screen.getByRole('button', {
-        name: 'Aller à la période précédente',
+        name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
 
       // Then
@@ -204,13 +204,13 @@ describe('Agenda - Onglet établissement', () => {
     it('permet de changer de période de 7 jours', async () => {
       // Given
       const periodesPasseesButton = screen.getByRole('button', {
-        name: 'Aller à la période précédente',
+        name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
       const periodeCouranteButton = screen.getByRole('button', {
-        name: 'Aller à la Période en cours',
+        name: 'Aller à la Période en cours du 1 septembre 2022 au 7 septembre 2022',
       })
       const periodesFuturesButton = screen.getByRole('button', {
-        name: 'Aller à la période suivante',
+        name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
       })
 
       // When
@@ -377,13 +377,13 @@ describe('Agenda - Onglet établissement', () => {
     it('permet de changer de période de 7 jours', async () => {
       // Given
       const periodesPasseesButton = screen.getByRole('button', {
-        name: 'Aller à la période précédente',
+        name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
       const periodeCouranteButton = screen.getByRole('button', {
-        name: 'Aller à la Période en cours',
+        name: 'Aller à la Période en cours du 1 septembre 2022 au 7 septembre 2022',
       })
       const periodesFuturesButton = screen.getByRole('button', {
-        name: 'Aller à la période suivante',
+        name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
       })
 
       // When
