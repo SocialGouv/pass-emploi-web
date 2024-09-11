@@ -474,7 +474,7 @@ export function Conversation({
                     id='piece-jointe--desc'
                     className='self-center text-xs-regular short:hidden'
                   >
-                    Formats acceptés de pièce jointe : .PDF, .JPG, .JPEG, .PNG
+                    Formats acceptés de pièce jointe : .PDF, .JPG, .PNG, .WEBP
                     (5 Mo maximum)
                   </p>
 
@@ -485,6 +485,7 @@ export function Conversation({
                     isLoading={isFileUploading}
                     disabled={Boolean(uploadedFileInfo)}
                     iconOnly={true}
+                    invalid={Boolean(uploadedFileError)}
                   />
                 </>
               )}
