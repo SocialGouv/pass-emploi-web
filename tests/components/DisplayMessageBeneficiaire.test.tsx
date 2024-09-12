@@ -134,7 +134,7 @@ describe('<DiplayMessageBeneficiaire />', () => {
       })
 
       // Then
-      expect(() => screen.getByText('piece-jointe.jpg')).toThrow()
+      expect(screen.getByText('piece-jointe.jpg')).toBeInTheDocument()
     })
 
     it('statut analyse_a_faire', async () => {
@@ -273,7 +273,9 @@ describe('<DiplayMessageBeneficiaire />', () => {
       })
 
       // Then
-      expect(screen.getByText('Pièce jointe expirée')).toBeInTheDocument()
+      expect(
+        screen.getByText('piece-jointe.jpg (Pièce jointe expirée)')
+      ).toBeInTheDocument()
     })
 
     it('affiche un résultat de recherche avec nom de la pj surligné', async () => {
