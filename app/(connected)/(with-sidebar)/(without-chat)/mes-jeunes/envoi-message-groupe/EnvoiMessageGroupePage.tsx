@@ -252,9 +252,9 @@ function EnvoiMessageGroupePage({
       <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
-        <div className='text-s-bold text-content_color mb-8'>
+        <p className='text-s-bold text-content_color mb-8'>
           Tous les champs avec * sont obligatoires
-        </div>
+        </p>
 
         <Etape numero={1} titre='Sélectionnez des destinataires'>
           <BeneficiairesMultiselectAutocomplete
