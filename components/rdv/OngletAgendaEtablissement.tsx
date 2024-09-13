@@ -37,7 +37,6 @@ type OngletAgendaEtablissementProps = {
   trackNavigation: (append?: string) => void
   periodeIndex: number
   changerPeriode: (index: number) => void
-  minCaracteres?: number
   setTrackingTitle: (title: string) => void
   initialTracking: string
 }
