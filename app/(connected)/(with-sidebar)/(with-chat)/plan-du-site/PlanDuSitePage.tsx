@@ -106,12 +106,12 @@ function LiensMilo({
                 </Link>
               </li>
               <li>
-                <Link href='/agenda?onglet=animationsCollectives'>
+                <Link href='/pilotage?onglet=animationsCollectives'>
                   Pilotage - Onglet Animations Collectives
                 </Link>
               </li>
               <li>
-                <Link href='/agenda?onglet=sessionsImilo'>
+                <Link href='/pilotage?onglet=sessionsImilo'>
                   Pilotage - Onglet Sessions i-milo
                 </Link>
               </li>
