@@ -57,7 +57,7 @@ describe('LoginPage client side', () => {
         name: 'Connexion Mission Locale',
       })
       const franceTravailCEJButton = screen.getByRole('button', {
-        name: 'Connexion France Travail CEJ',
+        name: 'Connexion France Travail',
       })
       const franceTravailBRSAButton = screen.getByRole('button', {
         name: 'Connexion BRSA',
@@ -66,7 +66,7 @@ describe('LoginPage client side', () => {
         name: 'Connexion AIJ',
       })
       const conseillerDeptButton = screen.getByRole('button', {
-        name: 'Conseiller départemental',
+        name: 'Connexion Conseil départemental',
       })
 
       const buttonsNb = screen.getAllByRole('button')
@@ -83,7 +83,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller FT CEJ", async () => {
       // Given
       const peButton = screen.getByRole('button', {
-        name: 'Connexion France Travail CEJ',
+        name: 'Connexion France Travail',
       })
 
       // When
@@ -134,7 +134,7 @@ describe('LoginPage client side', () => {
     it("permet de s'identifier en tant que conseiller dept", async () => {
       // Given
       const cdButton = screen.getByRole('button', {
-        name: 'Conseiller départemental',
+        name: 'Connexion Conseil départemental',
       })
 
       // When

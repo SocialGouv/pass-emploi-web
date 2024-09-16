@@ -95,7 +95,7 @@ function LoginPage({
           </li>
           <li>
             <FormButton
-              label='Connexion France Travail CEJ'
+              label='Connexion France Travail'
               className='whitespace-nowrap'
               handleSubmit={(event) => handleSignin(event, 'pe-conseiller')}
             />
@@ -141,7 +141,7 @@ function LoginPage({
           {ssoConseillerDeptEstActif && (
             <li>
               <FormButton
-                label='Conseiller départemental'
+                label='Connexion Conseil départemental'
                 className='whitespace-nowrap'
                 style={ButtonStyle.PRIMARY_DARK}
                 handleSubmit={(event) => handleSignin(event, 'conseiller-dept')}

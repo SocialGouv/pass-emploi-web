@@ -49,7 +49,7 @@ export function AgendaRow({ evenement }: { evenement: EvenementListItem }) {
 
       <TD className='row-start-2 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_base:row-start-1 layout_base:col-start-2 layout_base:rounded-none layout_base:justify-center layout_base:!p-2'>
         <div className='text-base-bold'>{evenement.labelBeneficiaires}</div>
-        <div className='mt-1 flex flex-wrap gap-2'>
+        <div className='mt-1 flex flex-col gap-2'>
           <TagType {...evenement} isSmallTag={true} />
           {evenement.modality && <TagModalite {...evenement} />}
         </div>
