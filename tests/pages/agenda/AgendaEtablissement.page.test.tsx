@@ -140,7 +140,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
+            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -240,6 +240,64 @@ describe('Agenda - Onglet établissement', () => {
         SEPTEMBRE_14_23H
       )
     })
+
+    it('permet de rechercher un événement', async () => {
+      //Given
+      const inputRechercheAgenda = screen.getByRole('textbox', {
+        name: 'Rechercher un atelier ou une information collective',
+      })
+      const buttonAgendaRecherche = screen.getByRole('button', {
+        name: 'Rechercher',
+      })
+      const buttonReinitialiserRecherche = screen.getByRole('button', {
+        name: 'Effacer le champ de saisie',
+      })
+
+      // When
+      await userEvent.type(inputRechercheAgenda, 'Prise')
+      await userEvent.click(buttonAgendaRecherche)
+
+      // Then
+      await waitFor(() => {
+        expect(
+          screen.getByRole('table', {
+            name: '1 résultats du 1 septembre 2022 au 7 septembre 2022',
+          })
+        ).toBeInTheDocument()
+      })
+      expect(
+        screen.getByRole('cell', {
+          name: 'Prise de nouvelles par téléphone Atelier Visible',
+        })
+      ).toBeInTheDocument()
+      expect(() =>
+        screen.getByRole('cell', {
+          name: 'Préparation de CV Atelier Visible',
+        })
+      ).toThrow()
+
+      // When
+      await userEvent.click(buttonReinitialiserRecherche)
+
+      // Then
+      await waitFor(() => {
+        expect(
+          screen.getByRole('table', {
+            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
+          })
+        ).toBeInTheDocument()
+      })
+      expect(
+        screen.getByRole('cell', {
+          name: 'Prise de nouvelles par téléphone Atelier Visible',
+        })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('cell', {
+          name: 'Préparation de CV Atelier Visible',
+        })
+      ).toBeInTheDocument()
+    })
   })
 
   describe('agenda missions locale quand le conseiller est Milo', () => {
@@ -279,7 +337,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
+            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -311,7 +369,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
+            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -342,7 +400,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
+            name: '5 ateliers ou informations collectives du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })

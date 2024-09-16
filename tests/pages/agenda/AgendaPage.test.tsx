@@ -63,30 +63,6 @@ describe('AgendaPage client side', () => {
       ))
     })
   })
-  it('contient input recherche agenda', async () => {
-    //given
-    const inputRechercheAgenda = screen.getByLabelText(
-      /Rechercher un atelier ou une information collective/
-    )
-    const buttonReinitialiser = screen.getByRole('button', {
-      name: /Effacer le champ de saisie/i,
-    })
-    expect(inputRechercheAgenda).toBeInTheDocument()
-
-    const buttonAgendaRecherche = screen.getByRole('button', {
-      name: 'Rechercher',
-    })
-
-    expect(buttonAgendaRecherche).toBeInTheDocument()
-
-    //then
-    fireEvent.change(inputRechercheAgenda, { target: { value: 'query' } })
-    fireEvent.click(buttonReinitialiser)
-    await userEvent.type(inputRechercheAgenda, 'test')
-    await userEvent.click(buttonAgendaRecherche)
-    const nombreDeResultatRecherche = screen.getByText(/0 résultat/)
-    expect(nombreDeResultatRecherche).toBeInTheDocument()
-  })
 
   it('a11y', async () => {
     let results: AxeResults

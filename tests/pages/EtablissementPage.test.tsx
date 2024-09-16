@@ -141,7 +141,7 @@ describe('EtablissementPage client side', () => {
         it('affiche le resultat de la recherche dans un tableau', async () => {
           // Then
           const tableauDeBeneficiaires = screen.getByRole('table', {
-            name: 'Résultat de recherche (1)',
+            name: 'Résultat de recherche (1 éléments)',
           })
           expect(tableauDeBeneficiaires).toBeInTheDocument()
           expect(

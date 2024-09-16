@@ -218,8 +218,6 @@ function AgendaPage({ onglet, periodeIndexInitial }: AgendaPageProps) {
               trackNavigation={trackNavigation}
               periodeIndex={periodeIndex}
               changerPeriode={switchPeriode}
-              setTrackingTitle={setTrackingTitle}
-              initialTracking={initialTracking}
             />
           )}
 
