@@ -150,11 +150,14 @@ export default function MessageImportantModal({
             au niveau de la messagerie
           </p>
           <p className='text-base-bold'>Tous les champs sont obligatoires</p>
+
           <form onSubmit={validateFormulaire}>
             <div className='mt-4 flex flex-col justify-center'>
               <div className='flex gap-2 mb-4 items-end'>
                 <div className='w-1/2'>
-                  <Label htmlFor='date-debut'>Date de début</Label>
+                  <Label htmlFor='date-debut'>
+                    {{ main: 'Date de début', helpText: 'format : jj/mm/aaaa' }}
+                  </Label>
                   {dateDebut.error && (
                     <InputError id='date-debut--error' className='mb-2'>
                       {dateDebut.error}
@@ -170,8 +173,11 @@ export default function MessageImportantModal({
                     invalid={Boolean(dateDebut.error)}
                   />
                 </div>
+
                 <div className='w-1/2'>
-                  <Label htmlFor='date-fin'>Date de fin</Label>
+                  <Label htmlFor='date-fin'>
+                    {{ main: 'Date de fin', helpText: 'format : jj/mm/aaaa' }}
+                  </Label>
                   {dateFin.error && (
                     <InputError id={'date-fin--error'} className='mb-2'>
                       {dateFin.error}
@@ -196,7 +202,7 @@ export default function MessageImportantModal({
                 }}
               </Label>
               {message.error && (
-                <InputError id={'message--error'} className='mb-2'>
+                <InputError id={'message-important--error'} className='mb-2'>
                   {message.error}
                 </InputError>
               )}

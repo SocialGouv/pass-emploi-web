@@ -17,8 +17,8 @@ export default function LienEvitement() {
 
   return (
     <>
-      <div ref={refContainer} tabIndex={-1} hidden />
-      <div className='h-0 overflow-hidden focus-within:h-auto focus-within:bg-white '>
+      <div ref={refContainer} tabIndex={-1} className='sr-only' />
+      <div className='sr-only focus-within:not-sr-only'>
         <a
           href={`#${ID_CONTENU}`}
           title='Aller au contenu'

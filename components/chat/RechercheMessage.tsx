@@ -248,7 +248,7 @@ function ResultatsRecherche({
       )}
 
       {resultatsRecherche.length === 0 && (
-        <>
+        <p>
           <IllustrationComponent
             name={IllustrationName.Search}
             focusable={false}
@@ -258,7 +258,7 @@ function ResultatsRecherche({
           <span className='sr-only'>
             Aucun résultat trouvé pour cette recherche
           </span>
-        </>
+        </p>
       )}
     </>
   )

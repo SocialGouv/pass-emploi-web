@@ -225,7 +225,7 @@ describe('<ConversationBeneficiaire />', () => {
     // When
     await userEvent.click(
       screen.getByRole('button', {
-        name: 'Voir les actions possibles pour votre message du 22 décembre 2021 à 0 heure 00',
+        name: 'Voir les actions possibles pour votre message du 22 décembre 2021 à 0 heure 0',
       })
     )
     await userEvent.click(

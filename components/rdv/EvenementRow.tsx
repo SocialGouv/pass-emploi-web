@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon'
 import { usePathname } from 'next/navigation'
-import React, { ReactElement } from 'react'
+import React from 'react'
 
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { TagMetier } from 'components/ui/Indicateurs/Tag'
+import { TagType } from 'components/ui/Indicateurs/Tag'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
@@ -11,23 +11,20 @@ import {
   BaseBeneficiaire,
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
-import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { toFrenchTime, toMonthday, toShortDate } from 'utils/date'
 
 interface EvenementRowProps {
   evenement: EvenementListItem
   idConseiller: string
-  beneficiaireUnique?: BaseBeneficiaire
-  withDate?: boolean
+  beneficiaire: BaseBeneficiaire
   withIndicationPresenceBeneficiaire?: boolean
 }
 
 export function EvenementRow({
   evenement,
   idConseiller,
-  beneficiaireUnique,
-  withDate,
+  beneficiaire,
   withIndicationPresenceBeneficiaire = false,
 }: EvenementRowProps) {
   const pathPrefix = usePathname()?.startsWith('/etablissement')
@@ -39,69 +36,23 @@ export function EvenementRow({
   const fullDate = toMonthday(date)
   const timeAndDuration = `${toFrenchTime(date)} - ${evenement.duree} min`
 
-  const labelBeneficiaires = beneficiaireUnique
-    ? getNomBeneficiaireComplet(beneficiaireUnique)
-    : evenement.labelBeneficiaires
+  const labelBeneficiaires = getNomBeneficiaireComplet(beneficiaire)
 
   const urlRdv = pathPrefix + '/edition-rdv?idRdv=' + evenement.id
   const urlSessionMilo = '/agenda/sessions/' + evenement.id
 
-  function tagType({
-    isSession,
-    type,
-    source,
-  }: EvenementListItem): ReactElement {
-    let tagProps: {
-      color: string
-      iconName?: IconName
-      iconLabel?: string
-      background?: string
-    } = {
-      color: 'content_color',
-      iconName: undefined,
-      iconLabel: undefined,
-      background: 'additional_5',
-    }
-    if (source === StructureConseiller.MILO)
-      tagProps = {
-        color: 'content_color',
-        iconName: IconName.Lock,
-        iconLabel: 'Non modifiable',
-        background: 'additional_5',
-      }
-
-    if (isSession)
-      tagProps = {
-        color: 'accent_1',
-        iconName: IconName.Lock,
-        iconLabel: 'Informations de la session non modifiables',
-        background: 'accent_1',
-      }
-
-    return (
-      <TagMetier
-        label={type}
-        color={tagProps.color}
-        backgroundColor={tagProps.background + '_lighten'}
-        iconName={tagProps.iconName}
-        iconLabel={tagProps.iconLabel}
-      />
-    )
-  }
-
   return (
     <TR>
       <TD
-        aria-label={withDate ? fullDate + ' - ' + timeAndDuration : ''}
+        aria-label={fullDate + ' - ' + timeAndDuration}
         className='rounded-l-base'
       >
-        {withDate && `${shortDate} - `}
-        {timeAndDuration}
+        {shortDate} - {timeAndDuration}
       </TD>
 
-      {!beneficiaireUnique && <TD isBold>{evenement.labelBeneficiaires}</TD>}
-
-      <TD>{tagType(evenement)}</TD>
+      <TD>
+        <TagType {...evenement} />
+      </TD>
 
       <TD>
         {!withIndicationPresenceBeneficiaire && (
@@ -146,7 +97,7 @@ export function EvenementRow({
       </TD>
 
       <TD className='rounded-r-base'>
-        {evenement.idCreateur === idConseiller && (
+        {evenement.createur?.id === idConseiller && (
           <>
             <span className='sr-only'>oui</span>
             <IconComponent
@@ -157,7 +108,7 @@ export function EvenementRow({
             />
           </>
         )}
-        {evenement.idCreateur !== idConseiller && (
+        {evenement.createur?.id !== idConseiller && (
           <>
             <span className='sr-only'>non</span>
             <IconComponent

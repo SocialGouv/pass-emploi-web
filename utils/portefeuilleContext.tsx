@@ -4,9 +4,8 @@ import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
 
-type MaybePortefeuille = BaseBeneficiaire[] | undefined
 type PortefeuilleState = [
-  MaybePortefeuille,
+  BaseBeneficiaire[],
   (updatedBeneficiaires: BaseBeneficiaire[]) => void,
 ]
 
@@ -20,10 +19,10 @@ export function PortefeuilleProvider({
   setterForTests,
 }: {
   children: ReactNode
-  portefeuille?: MaybePortefeuille
+  portefeuille: BaseBeneficiaire[]
   setterForTests?: (updatedBeneficiaires: BaseBeneficiaire[]) => void
 }) {
-  const [state, setPortefeuille] = useState<MaybePortefeuille>(portefeuille)
+  const [state, setPortefeuille] = useState<BaseBeneficiaire[]>(portefeuille)
   const setter = setterForTests ?? setPortefeuille
 
   return (
@@ -33,27 +32,11 @@ export function PortefeuilleProvider({
   )
 }
 
-export function usePortefeuillePotentiellementPasRecupere(): PortefeuilleState {
+export function usePortefeuille(): PortefeuilleState {
   const portefeuilleContext = useContext(PortefeuilleContext)
   if (!portefeuilleContext) {
-    throw new Error(
-      'usePortefeuillePotentiellementPasRecupere must be used within PortefeuilleProvider'
-    )
+    throw new Error('usePortefeuille must be used within PortefeuilleProvider')
   }
+
   return portefeuilleContext
-}
-
-export function usePortefeuille(): [
-  BaseBeneficiaire[],
-  (updatedBeneficiaires: BaseBeneficiaire[]) => void,
-] {
-  const [portefeuille, setPortefeuille] =
-    usePortefeuillePotentiellementPasRecupere()
-  if (!portefeuille) {
-    throw new Error(
-      'usePortefeuille must be used within Layout where portefeuille is initialized'
-    )
-  }
-
-  return [portefeuille, setPortefeuille]
 }

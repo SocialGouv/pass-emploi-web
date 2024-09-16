@@ -37,7 +37,7 @@ export default function DisplayMessageBeneficiaire(
   const { message, beneficiaireNomComplet } = props
 
   return (
-    <li className='mb-5' id={message.id} data-testid={message.id}>
+    <li className='mb-5' id={'message-' + message.id} data-testid={message.id}>
       {isDeleted(message) && (
         <div className='text-xs-regular break-words max-w-[90%] p-4 rounded-base w-max text-left text-white bg-primary_darken mb-1'>
           Message supprimé
@@ -108,7 +108,7 @@ export default function DisplayMessageBeneficiaire(
           </div>
           <div className='text-xs-medium text-content text-left'>
             {!isResultatRecherche(props) && (
-              <>
+              <p>
                 <span className='sr-only'>Envoyé à </span>
                 <span
                   aria-label={toFrenchTime(message.creationDate, {
@@ -118,13 +118,13 @@ export default function DisplayMessageBeneficiaire(
                   {toFrenchTime(message.creationDate)}
                 </span>
                 {isEdited(message) && ' · Modifié'}
-              </>
+              </p>
             )}
 
             {isResultatRecherche(props) && (
-              <span aria-label={`Le ${toLongMonthDate(message.creationDate)}`}>
+              <p aria-label={`Le ${toLongMonthDate(message.creationDate)}`}>
                 Le {toShortDate(message.creationDate)}
-              </span>
+              </p>
             )}
           </div>
         </>
@@ -169,6 +169,7 @@ function MessagePJ({
         <p className='whitespace-pre-wrap'>
           La pièce-jointe envoyée par votre bénéficiaire a été bloquée par
           l’antivirus
+          <span className='block text-xs-regular'>{nom}</span>
         </p>
       )
     case 'analyse_a_faire':
@@ -187,9 +188,22 @@ function MessagePJ({
         </>
       )
     case 'expiree':
-      return <p className='text-xs-regular'>Pièce jointe expirée</p>
+      return <p className='text-xs-regular'>{nom} (Pièce jointe expirée)</p>
+    case 'erreur_analyse':
+      return (
+        <p className='whitespace-pre-wrap'>
+          Erreur lors de l’analyse de la pièce jointe envoyée par votre
+          bénéficiaire. Vous pouvez lui demander de la renvoyer.
+          <span className='block text-xs-regular'>{nom}</span>
+        </p>
+      )
     default:
-      return <SpinningLoader className='w-6 h-6 mr-2 fill-primary_lighten' />
+      return (
+        <div className='flex flex-row justify-end items-center break-all'>
+          <SpinningLoader className='w-4 h-4 mr-2 fill-primary_lighten' />
+          {nom}
+        </div>
+      )
   }
 }
 

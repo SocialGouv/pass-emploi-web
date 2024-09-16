@@ -249,7 +249,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
     if (!conseillerInitial.value) {
       setConseillerInitial({
-        ...conseillerDestination,
+        ...conseillerInitial,
         error: 'Veuillez rechercher un conseiller initial',
       })
       return
@@ -679,7 +679,7 @@ const ChoixConseiller = forwardRef(
             id={id}
             onChange={handleInputQuery}
             required={true}
-            invalid={Boolean(queryConseiller.error)}
+            invalid={Boolean(queryConseiller.error || error)}
             ref={inputRef}
           />
 
@@ -722,6 +722,7 @@ const ChoixConseiller = forwardRef(
                         required={true}
                         className='mr-2'
                         onChange={() => choisirConseiller(conseiller)}
+                        aria-describedby={error ? id + '--error' : undefined}
                       />
                       {conseiller.firstName} {conseiller.lastName}
                     </label>

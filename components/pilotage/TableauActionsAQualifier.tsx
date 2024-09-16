@@ -42,6 +42,7 @@ export default function TableauActionsAQualifier({
   onLienExterne,
   onQualification,
 }: TableauActionsConseillerProps) {
+  const filtresRef = useRef<HTMLButtonElement>(null)
   const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
 
   const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
@@ -71,12 +72,14 @@ export default function TableauActionsAQualifier({
 
   function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
     setCategoriesValidees(categoriesSelectionnees)
+    filtresRef.current!.focus()
     onFiltres(categoriesSelectionnees)
   }
 
   function reinitialiserFiltres() {
     onFiltres([])
     setCategoriesValidees([])
+    filtresRef.current!.focus()
   }
 
   function selectionnerAction({ id, categorie }: ActionPilotage) {
@@ -249,6 +252,7 @@ export default function TableauActionsAQualifier({
               <TH>Titre de l’action</TH>
               <TH estCliquable={true}>
                 <FiltresCategoriesActions
+                  ref={filtresRef}
                   categories={categories}
                   defaultValue={categoriesValidees}
                   onFiltres={filtrerActionsParCategorie}

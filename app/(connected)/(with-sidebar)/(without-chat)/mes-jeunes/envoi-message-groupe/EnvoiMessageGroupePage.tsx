@@ -252,9 +252,9 @@ function EnvoiMessageGroupePage({
       <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
-        <div className='text-s-bold text-content_color mb-8'>
+        <p className='text-s-bold text-content_color mb-8'>
           Tous les champs avec * sont obligatoires
-        </div>
+        </p>
 
         <Etape numero={1} titre='Sélectionnez des destinataires'>
           <BeneficiairesMultiselectAutocomplete
@@ -278,6 +278,7 @@ function EnvoiMessageGroupePage({
             />
           </Link>
         </Etape>
+
         <Etape numero={2} titre='Écrivez votre message'>
           <Label
             htmlFor='message'
@@ -307,7 +308,8 @@ function EnvoiMessageGroupePage({
               className='self-center text-xs-regular'
             >
               <p>
-                Taille maximum autorisée : 5 Mo aux formats .PDF, .JPG, .PNG
+                Taille maximum autorisée : 5 Mo aux formats .PDF, .JPG, .PNG,
+                .WEBP
               </p>
               <p>
                 Attention à ne pas partager de données sensibles, à caractères
@@ -322,6 +324,7 @@ function EnvoiMessageGroupePage({
                 onChange={setPieceJointe}
                 disabled={Boolean(pieceJointe)}
                 ref={fileInputRef}
+                invalid={Boolean(erreurUploadPieceJointe)}
               />
             </div>
 
@@ -349,6 +352,7 @@ function EnvoiMessageGroupePage({
             )}
           </div>
         </Etape>
+
         <div className='flex justify-center'>
           {!formHasChanges() && (
             <ButtonLink

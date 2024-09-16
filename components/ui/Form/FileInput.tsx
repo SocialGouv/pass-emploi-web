@@ -51,7 +51,7 @@ const FileInput = forwardRef<HTMLLabelElement, FileInputProps>(
           aria-invalid={invalid}
           onChange={emettreFichier}
           className={style.input + ' sr-only'}
-          accept='.pdf, .png, .jpeg, .jpg'
+          accept='.pdf, .png, .jpeg, .jpg, .webp'
           disabled={disabled || isLoading}
         />
         <label

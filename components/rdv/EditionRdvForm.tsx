@@ -104,17 +104,23 @@ export function EditionRdvForm({
   const [date, setDate] = useState<ValueWithError<string | undefined>>({
     value: dateRdv,
   })
-  const regexHoraire = /^([0-1]\d|2[0-3]):[0-5]\d$/
-  const timeRdv =
-    evenement && DateTime.fromISO(evenement.date).toFormat('HH:mm')
-  const [horaire, setHoraire] = useState<ValueWithError<string | undefined>>({
-    value: timeRdv,
+
+  const regexHeure = /^([01]\d|2[0-3]):([0-5]\d)$/
+  const timeRdv = evenement && DateTime.fromISO(evenement.date)
+  const heureDebut = timeRdv?.toFormat('HH:mm')
+
+  const [heureDeDebut, setHeureDeDebut] = useState<
+    ValueWithError<string | undefined>
+  >({
+    value: heureDebut,
   })
-  const regexDuree = /^\d{2}:\d{2}$/
-  const dureeRdv = dureeFromMinutes(evenement?.duree)
-  const [duree, setDuree] = useState<ValueWithError<string | undefined>>({
-    value: dureeRdv,
-  })
+
+  const heureFin =
+    timeRdv && timeRdv.plus({ minutes: evenement.duree }).toFormat('HH:mm')
+  const [heureDeFin, setHeureDeFin] = useState<
+    ValueWithError<string | undefined>
+  >({ value: heureFin })
+
   const [adresse, setAdresse] = useState<string | undefined>(evenement?.adresse)
   const [organisme, setOrganisme] = useState<string | undefined>(
     evenement?.organisme
@@ -218,8 +224,8 @@ export function EditionRdvForm({
           codeTypeRendezVous.value ||
           modalite ||
           date.value ||
-          horaire.value ||
-          duree.value ||
+          heureDeDebut.value ||
+          heureDeFin.value ||
           titre.value ||
           adresse ||
           organisme ||
@@ -230,18 +236,18 @@ export function EditionRdvForm({
 
     const previousIds = evenement.jeunes.map(({ id }) => id).sort(compareParId)
     const currentIds = [...idsJeunes.value].sort(compareParId)
-    return (
+    return Boolean(
       previousIds.toString() !== currentIds.toString() ||
-      modalite !== evenement.modality ||
-      date.value !== dateRdv ||
-      horaire.value !== timeRdv ||
-      duree.value !== dureeRdv ||
-      adresse !== evenement.adresse ||
-      organisme !== evenement.organisme ||
-      titre.value !== evenement.titre ||
-      description.value !== evenement.commentaire ||
-      isConseillerPresent !== evenement.presenceConseiller ||
-      nombreMaxParticipants.value !== evenement.nombreMaxParticipants
+        modalite !== evenement.modality ||
+        date.value !== dateRdv ||
+        heureDeDebut.value !== heureDebut ||
+        heureDeFin.value !== heureFin ||
+        adresse !== evenement.adresse ||
+        organisme !== evenement.organisme ||
+        titre.value !== evenement.titre ||
+        description.value !== evenement.commentaire ||
+        isConseillerPresent !== evenement.presenceConseiller ||
+        nombreMaxParticipants.value !== evenement.nombreMaxParticipants
     )
   }
 
@@ -253,8 +259,8 @@ export function EditionRdvForm({
     )
     const nombreMaxParticipantsEstValide = validateNombreMaxParticipants()
     const dateEstValide = validateDate()
-    const horaireEstValide = validateHoraire()
-    const dureeEstValide = validateDuree()
+    const horaireEstValide = validateHeureDeDebut()
+    const heureDeFinEstValide = validateHeureDeFin()
     const descriptionEstValide = validateDescription()
 
     return (
@@ -264,7 +270,7 @@ export function EditionRdvForm({
       nombreMaxParticipantsEstValide &&
       dateEstValide &&
       horaireEstValide &&
-      dureeEstValide &&
+      heureDeFinEstValide &&
       descriptionEstValide
     )
   }
@@ -343,19 +349,19 @@ export function EditionRdvForm({
     }
   }
 
-  function validateHoraire() {
+  function validateHeureDeDebut() {
     const horaireEstValide = Boolean(
-      horaire.value && regexHoraire.test(horaire.value)
+      heureDeDebut.value && regexHeure.test(heureDeDebut.value)
     )
 
-    if (!horaire.value) {
-      setHoraire({
-        ...horaire,
+    if (!heureDeDebut.value) {
+      setHeureDeDebut({
+        ...heureDeDebut,
         error: 'Le champ “Horaire“ est vide. Renseignez un horaire.',
       })
-    } else if (!regexHoraire.test(horaire.value)) {
-      setHoraire({
-        ...horaire,
+    } else if (!regexHeure.test(heureDeDebut.value)) {
+      setHeureDeDebut({
+        ...heureDeDebut,
         error:
           'Le champ “Heure” est invalide. Le format attendu est hh:mm, par exemple : 11h10.',
       })
@@ -363,23 +369,45 @@ export function EditionRdvForm({
     return horaireEstValide
   }
 
-  function validateDuree() {
-    const dureeEstValide = Boolean(duree.value && regexDuree.test(duree.value))
+  function validateHeureDeFin() {
+    const heureDeFinDateTime =
+      heureDeFin?.value && DateTime.fromFormat(heureDeFin.value, 'HH:mm')
+    const horaireDateTime =
+      heureDeDebut?.value && DateTime.fromFormat(heureDeDebut.value, 'HH:mm')
 
-    if (!duree.value) {
-      setDuree({
-        ...duree,
-        error: 'Le champ “Durée“ est vide. Renseignez une durée.',
+    const heureDefinEstValide = Boolean(
+      heureDeFin.value && regexHeure.test(heureDeFin.value)
+    )
+
+    if (!heureDeFin.value) {
+      setHeureDeFin({
+        ...heureDeFin,
+        error: 'Le champ “Heure de fin“ est vide. Renseignez une heure de fin.',
       })
-    } else if (!regexDuree.test(duree.value)) {
-      setDuree({
-        ...duree,
+    } else if (!regexHeure.test(heureDeFin.value)) {
+      setHeureDeFin({
+        ...heureDeFin,
         error:
-          'Le champ “Durée” est invalide. Le format attendu est hh:mm, par exemple : 00:30 pour 30 minutes.',
+          'Le champ “Heure de fin” est invalide. Le format attendu est hh:mm',
+      })
+    } else if (
+      heureDeFinDateTime &&
+      horaireDateTime &&
+      heureDeFinDateTime <= horaireDateTime
+    ) {
+      setHeureDeFin({
+        ...heureDeFin,
+        error: 'L’heure de fin doit être postérieure à l’heure de début.',
+      })
+      return false
+    } else {
+      setHeureDeFin({
+        ...heureDeFin,
+        error: undefined,
       })
     }
 
-    return dureeEstValide
+    return heureDefinEstValide
   }
 
   function validateType(): boolean {
@@ -510,14 +538,23 @@ export function EditionRdvForm({
 
     setIsLoading(true)
 
-    const [dureeHeures, dureeMinutes] = duree.value!.split(':')
-    const dateTime = DateTime.fromISO(`${date.value}T${horaire.value}`).toISO()
-    const dureeEnMinutes =
-      parseInt(dureeHeures, 10) * 60 + parseInt(dureeMinutes, 10)
+    const heureDeDebutfromIso = DateTime.fromISO(
+      `${date.value}T${heureDeDebut.value}`
+    )
+
+    const heureDeFinfromIso = DateTime.fromISO(
+      `${date.value}T${heureDeFin.value}`
+    )
+
+    const dureeEnMinutes = heureDeFinfromIso.diff(
+      heureDeDebutfromIso,
+      'minutes'
+    ).minutes
+
     const payload: EvenementFormData = {
       jeunesIds: idsJeunes.value,
       type: codeTypeRendezVous.value!,
-      date: dateTime,
+      date: heureDeDebutfromIso.toISO(),
       duration: dureeEnMinutes,
       presenceConseiller: isConseillerPresent,
       invitation: sendEmailInvitation,
@@ -579,17 +616,17 @@ export function EditionRdvForm({
         label: 'Le champ Date est vide.',
         titreChamp: 'Date',
       })
-    if (horaire.error)
+    if (heureDeDebut.error)
       erreurs.push({
         ancre: '#horaire',
         label: 'Le champ Horaire est vide.',
         titreChamp: 'Horaire',
       })
-    if (duree.error)
+    if (heureDeFin.error)
       erreurs.push({
-        ancre: '#duree',
-        label: 'Le champ Durée est vide.',
-        titreChamp: 'Durée',
+        ancre: '#HeureDeFin',
+        label: 'Le champ heure de fin est vide.',
+        titreChamp: 'Heure De Fin',
       })
     return erreurs
   }
@@ -719,8 +756,8 @@ export function EditionRdvForm({
 
           <Label htmlFor='description' withBulleMessageSensible={true}>
             {{
-              main: 'Commentaire',
-              helpText: '250 caractères maximum',
+              main: 'Description',
+              helpText: '500 caractères maximum',
             }}
           </Label>
           {description.error && (
@@ -731,7 +768,7 @@ export function EditionRdvForm({
           <Textarea
             id='description'
             defaultValue={description.value}
-            maxLength={250}
+            maxLength={500}
             onChange={(value: string) => setDescription({ value })}
             invalid={Boolean(description.error)}
             onBlur={validateDescription}
@@ -856,49 +893,49 @@ export function EditionRdvForm({
             disabled={lectureSeule}
           />
 
-          <Label htmlFor='horaire' inputRequired={true}>
+          <Label htmlFor='heureDeDebut' inputRequired={true}>
             {{
-              main: 'Heure',
+              main: 'Heure de début',
               helpText: 'format : hh:mm',
             }}
           </Label>
-          {horaire.error && (
+          {heureDeDebut.error && (
             <InputError id='horaire--error' className='mb-2'>
-              {horaire.error}
+              {heureDeDebut.error}
             </InputError>
           )}
           <Input
             type='time'
-            id='horaire'
-            defaultValue={horaire.value}
+            id='heureDeDebut'
+            defaultValue={heureDeDebut.value}
             required={true}
-            onChange={(value: string) => setHoraire({ value })}
-            onBlur={validateHoraire}
-            invalid={Boolean(horaire.error)}
-            aria-invalid={horaire.error ? true : undefined}
-            aria-describedby={horaire.error ? 'horaire--error' : undefined}
+            onChange={(value: string) => setHeureDeDebut({ value })}
+            onBlur={validateHeureDeDebut}
+            invalid={Boolean(heureDeDebut.error)}
+            aria-invalid={heureDeDebut.error ? true : undefined}
+            aria-describedby={heureDeDebut.error ? 'horaire--error' : undefined}
             disabled={lectureSeule}
           />
 
-          <Label htmlFor='duree' inputRequired={true}>
+          <Label htmlFor='heureDeFin' inputRequired={true}>
             {{
-              main: 'Durée',
+              main: 'Heure de fin',
               helpText: 'format : hh:mm',
             }}
           </Label>
-          {duree.error && (
-            <InputError id='duree--error' className='mb-2'>
-              {duree.error}
+          {heureDeFin.error && (
+            <InputError id='heureDeFin--error' className='mb-2'>
+              {heureDeFin.error}
             </InputError>
           )}
           <Input
-            type='time' // FIXME type='text' ou 'number' ('time' c'est pour des horaires)
-            id='duree'
+            type='time'
+            id='heureDeFin'
             required={true}
-            defaultValue={duree.value}
-            onChange={(value: string) => setDuree({ value })}
-            onBlur={validateDuree}
-            invalid={Boolean(duree.error)}
+            defaultValue={heureDeFin.value}
+            onChange={(value: string) => setHeureDeFin({ value })}
+            onBlur={validateHeureDeFin}
+            invalid={Boolean(heureDeFin.error)}
             disabled={lectureSeule}
           />
 

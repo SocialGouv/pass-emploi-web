@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { DateTime } from 'luxon'
@@ -37,13 +37,51 @@ describe('Agenda - Onglet conseiller', () => {
       asPath: '/mes-jeunes',
     })
     ;(getRendezVousConseiller as jest.Mock).mockImplementation(
-      async (_, dateDebut) => [unEvenementListItem({ date: dateDebut.toISO() })]
+      async (_, dateDebut) => [
+        unEvenementListItem({
+          id: 'rdv-1',
+          date: dateDebut.toISO(),
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+          ],
+        }),
+        unEvenementListItem({
+          id: 'rdv-2',
+          date: dateDebut.plus({ day: 1 }).toISO(),
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+          ],
+          nombreMaxParticipants: 1,
+        }),
+        unEvenementListItem({
+          id: 'rdv-3',
+          date: dateDebut.plus({ day: 2 }).toISO(),
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+          ],
+          nombreMaxParticipants: 2,
+        }),
+        unEvenementListItem({
+          id: 'rdv-4',
+          date: dateDebut.plus({ day: 3 }).toISO(),
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
+          ],
+          nombreMaxParticipants: 3,
+        }),
+      ]
     )
     ;(getSessionsBeneficiaires as jest.Mock).mockImplementation(
       async (_, _dateDebut: DateTime, dateFin: DateTime) => [
         unEvenementListItem({
           id: 'session',
           date: dateFin.set({ hour: 14 }).toISO(),
+          isSession: true,
+          beneficiaires: [
+            { id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' },
+            { id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' },
+          ],
         }),
       ]
     )
@@ -83,11 +121,11 @@ describe('Agenda - Onglet conseiller', () => {
     it('a deux boutons de navigation', () => {
       // When
       const periodesFutures = screen.getByRole('button', {
-        name: 'Aller à la période suivante',
+        name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
       })
 
       const periodesPassees = screen.getByRole('button', {
-        name: 'Aller à la période précédente',
+        name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
 
       // Then
@@ -111,48 +149,28 @@ describe('Agenda - Onglet conseiller', () => {
       expect(screen.getByRole('table')).toBeInTheDocument()
 
       expect(
-        screen.getByRole('row', { name: 'aujourd’hui' })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('row', {
-          name: '00h00 - 125 min Jirac Kenji Autre par téléphone oui Consulter l’événement du jeudi 1 septembre avec Jirac Kenji',
-        })
-      ).toBeInTheDocument()
-      expect(
         screen.getByRole('link', {
-          name: 'Consulter l’événement du jeudi 1 septembre avec Jirac Kenji',
+          name: 'Consulter l’événement du 1 septembre 2022 à 0 heure 0 avec Jirac Kenji',
         })
       ).toBeInTheDocument()
 
       expect(
-        screen.getByRole('row', { name: 'vendredi 2 septembre' })
-      ).toBeInTheDocument()
-
-      expect(screen.getByText('lundi 5 septembre')).toBeInTheDocument()
-      expect(screen.getByText('Matin')).toBeInTheDocument()
-      expect(
-        screen.getByRole('row', {
-          name: '14h59 - 125 min Jirac Kenji Autre par téléphone oui Consulter l’événement du mercredi 7 septembre avec Jirac Kenji',
-        })
-      ).toBeInTheDocument()
-      expect(
         screen.getByRole('link', {
-          name: 'Consulter l’événement du mercredi 7 septembre avec Jirac Kenji',
+          name: 'Consulter l’événement du 7 septembre 2022 à 14 heure 59 avec Jirac Kenji',
         })
       ).toBeInTheDocument()
-      expect(screen.getByText('lundi 5 septembre')).toBeInTheDocument()
     })
 
     it('permet de changer de période de 7 jours', async () => {
       // Given
       const periodePasseeButton = screen.getByRole('button', {
-        name: 'Aller à la période précédente',
+        name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
       const buttonPeriodeCourante = screen.getByRole('button', {
-        name: 'Aller à la Période en cours',
+        name: 'Aller à la Période en cours du 1 septembre 2022 au 7 septembre 2022',
       })
       const periodeFutureButton = screen.getByRole('button', {
-        name: 'Aller à la période suivante',
+        name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
       })
 
       // When
@@ -168,11 +186,6 @@ describe('Agenda - Onglet conseiller', () => {
         AOUT_25_0H,
         AOUT_31_23H
       )
-      await waitFor(() =>
-        expect(
-          screen.getByRole('row', { name: 'dimanche 28 août' })
-        ).toBeInTheDocument()
-      )
 
       // When
       await userEvent.click(buttonPeriodeCourante)
@@ -186,11 +199,6 @@ describe('Agenda - Onglet conseiller', () => {
         '1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
-      )
-      await waitFor(() =>
-        expect(
-          screen.getByRole('row', { name: 'dimanche 4 septembre' })
-        ).toBeInTheDocument()
       )
 
       // When
@@ -206,11 +214,45 @@ describe('Agenda - Onglet conseiller', () => {
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
       )
-      await waitFor(() =>
-        expect(
-          screen.getByRole('row', { name: 'jeudi 8 septembre' })
-        ).toBeInTheDocument()
-      )
+    })
+
+    it('affiche le nombre d’inscrits', async () => {
+      const row1 = screen
+        .getByRole('cell', {
+          name: /1 septembre 2022 00h00 - durée 2 heure 5/,
+        })
+        .closest('tr')!
+
+      const row2 = screen
+        .getByRole('cell', {
+          name: /2 septembre 2022 00h00 - durée 2 heure 5/,
+        })
+        .closest('tr')!
+
+      const row3 = screen
+        .getByRole('cell', {
+          name: /3 septembre 2022 00h00 - durée 2 heure 5/,
+        })
+        .closest('tr')!
+
+      const row4 = screen
+        .getByRole('cell', {
+          name: /4 septembre 2022 00h00 - durée 2 heure 5/,
+        })
+        .closest('tr')!
+
+      expect(
+        within(row1).getByRole('cell', { name: '1 inscrit' })
+      ).toBeInTheDocument()
+      expect(
+        within(row2).getByRole('cell', { name: 'Complet' })
+      ).toBeInTheDocument()
+      expect(
+        within(row3).getByRole('cell', { name: '1 inscrit /2' })
+      ).toBeInTheDocument()
+      expect(
+        within(row4).getByRole('cell', { name: '2 inscrits /3' })
+      ).toBeInTheDocument()
     })
   })
 })

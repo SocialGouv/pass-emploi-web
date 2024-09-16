@@ -1,13 +1,13 @@
 import { render, RenderResult } from '@testing-library/react'
 import React, { ReactNode } from 'react'
 
-import { unConseiller } from 'fixtures/conseiller'
 import {
   desItemsBeneficiaires,
   extractBaseBeneficiaire,
 } from 'fixtures/beneficiaire'
-import { Conseiller } from 'interfaces/conseiller'
+import { unConseiller } from 'fixtures/conseiller'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
+import { Conseiller } from 'interfaces/conseiller'
 import { ListeDeDiffusion } from 'interfaces/liste-de-diffusion'
 import { AlerteParam } from 'referentiel/alerteParam'
 import { Alerte, AlerteProvider } from 'utils/alerteContext'
@@ -116,7 +116,7 @@ function provideContexts(
   return (
     <ConseillerProvider conseiller={conseiller}>
       <PortefeuilleProvider
-        portefeuille={portefeuille.value}
+        portefeuille={portefeuille.value ?? []}
         setterForTests={portefeuille.setter}
       >
         <ChatCredentialsProvider

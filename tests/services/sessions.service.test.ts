@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 import { apiGet, apiPatch, apiPost } from 'clients/api.client'
 import { unDetailSession, unDetailSessionJson } from 'fixtures/session'
 import {
@@ -10,7 +12,6 @@ import {
   SessionMiloBeneficiairesJson,
   SessionMiloJson,
 } from 'interfaces/json/session'
-import { DateTime } from 'luxon'
 import {
   changerInscriptionsSession,
   changerVisibiliteSession,
@@ -197,6 +198,9 @@ describe('SessionsApiService', () => {
           labelBeneficiaires: 'Granger Hermione',
           source: 'MILO',
           isSession: true,
+          beneficiaires: [
+            { id: 'id-beneficiaire', nom: 'Granger', prenom: 'Hermione' },
+          ],
         },
         {
           id: 'id-session-2',
@@ -206,6 +210,10 @@ describe('SessionsApiService', () => {
           labelBeneficiaires: 'Bénéficiaires multiples',
           source: 'MILO',
           isSession: true,
+          beneficiaires: [
+            { id: 'id-beneficiaire', nom: 'Granger', prenom: 'Hermione' },
+            { id: 'id-beneficiaire-2', nom: 'Potter', prenom: 'Harry' },
+          ],
         },
       ]
       expect(actual).toEqual(sessionsMilo)
@@ -355,7 +363,6 @@ describe('SessionsApiService', () => {
           type: 'Atelier i-milo',
           date: '2022-09-01T11:00:00.000Z',
           duree: 120,
-          idCreateur: '1',
           isSession: true,
         },
       ]

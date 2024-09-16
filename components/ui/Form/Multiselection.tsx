@@ -44,7 +44,7 @@ export default function Multiselection({
           {!avecIndication && !estUneListe && value}
 
           {!disabled && (
-            <button type='reset' onClick={() => unselect(idItem)}>
+            <button type='button' onClick={() => unselect(idItem)}>
               <span className='sr-only'>
                 Enlever {typeSelection} {value}
               </span>

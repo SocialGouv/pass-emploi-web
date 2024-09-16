@@ -23,6 +23,8 @@ export type AnimationCollective = {
   sousTitre?: string
   isSession?: boolean
   estCache?: boolean
+  nombreParticipants: number
+  nombreMaxParticipants?: number
 }
 
 export type AnimationCollectivePilotage = {
@@ -32,17 +34,24 @@ export type AnimationCollectivePilotage = {
   nombreInscrits: number
 }
 
+type Createur = {
+  id: string
+  nom?: string
+  prenom?: string
+}
 export type EvenementListItem = {
   id: string
   type: string
   date: string
   duree: number
-  idCreateur?: string
+  createur?: Createur
   modality?: string
   labelBeneficiaires?: string
+  beneficiaires?: Array<BaseBeneficiaire & { futPresent?: boolean }>
   source?: string
   futPresent?: boolean
   isSession?: boolean
+  nombreMaxParticipants?: number
 }
 
 type Auteur = { nom: string; prenom: string }

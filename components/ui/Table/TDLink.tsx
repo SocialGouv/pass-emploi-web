@@ -16,10 +16,10 @@ export default function TDLink({
   // a11y card : https://kittygiraudel.com/2022/04/02/accessible-cards/
   // absolute position in grandparent : https://stackoverflow.com/a/25768682
   return (
-    <TD className={`hover:bg-primary_lighten px-4 py-0 ${className ?? ''}`}>
+    <TD className={className}>
       <Link
         href={href}
-        className='block w-full h-full before:fixed before:inset-0 before:z-10 cursor-pointer'
+        className='block before:fixed before:inset-0 before:z-10 cursor-pointer'
       >
         <IconComponent
           name={IconName.ChevronRight}

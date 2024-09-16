@@ -79,6 +79,7 @@ module.exports = {
     screenSize: (theme) => theme('screens'),
 
     borderRadius: {
+      none: '0px',
       base: '8px',
       l: '24px',
       full: '9999px',
@@ -99,6 +100,12 @@ module.exports = {
       base: '0 4px 12px 0px rgba(39, 73, 150, 0.12)',
       m: '0 8px 12px 0px rgba(39, 73, 150, 0.24)',
       none: 'none',
+    },
+
+    listStyleType: {
+      none: 'none',
+      disc: 'disc',
+      circle: 'circle',
     },
   },
   plugins: [],

@@ -7,16 +7,16 @@ interface FormButtonProps {
   style?: ButtonStyle
 }
 
-export const FormButton = ({
+export default function FormButton({
   label,
   handleSubmit,
   className,
   style = ButtonStyle.PRIMARY,
-}: FormButtonProps) => {
+}: FormButtonProps) {
   return (
     <form onSubmit={handleSubmit} className={className}>
       <Button type='submit' className='w-full' style={style}>
-        <span className='w-full'>{label}</span>
+        {label}
       </Button>
     </form>
   )

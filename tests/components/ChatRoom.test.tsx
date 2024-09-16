@@ -203,8 +203,12 @@ describe('<ChatRoom />', () => {
             })
 
             await userEvent.click(boutonSettings)
-            inputDateDebut = screen.getByLabelText('Date de début')
-            inputDateFin = screen.getByLabelText('Date de fin')
+            inputDateDebut = screen.getByLabelText(
+              'Date de début format : jj/mm/aaaa'
+            )
+            inputDateFin = screen.getByLabelText(
+              'Date de fin format : jj/mm/aaaa'
+            )
             inputMessage = screen.getByLabelText(/Message/)
             submitBtn = screen.getByRole('button', { name: 'Envoyer' })
           })
@@ -296,8 +300,12 @@ describe('<ChatRoom />', () => {
 
             await userEvent.click(boutonSettings)
 
-            const inputDateDebut = screen.getByLabelText('Date de début')
-            const inputDateFin = screen.getByLabelText('Date de fin')
+            const inputDateDebut = screen.getByLabelText(
+              'Date de début format : jj/mm/aaaa'
+            )
+            const inputDateFin = screen.getByLabelText(
+              'Date de fin format : jj/mm/aaaa'
+            )
             const inputMessage = screen.getByLabelText(/Message/)
 
             //Then
@@ -419,9 +427,9 @@ describe('<ChatRoom />', () => {
         const [beneficiaireSelectionne] = beneficiaires
         // Given
         const goToConversation = screen
-          .getByText(beneficiaireSelectionne.prenom, {
-            exact: false,
-          })
+          .getByText(
+            `${beneficiaireSelectionne.prenom} ${beneficiaireSelectionne.nom}`
+          )
           .closest('button')
 
         // When
@@ -440,12 +448,10 @@ describe('<ChatRoom />', () => {
         // Given
         const [beneficiaire] = beneficiaires
         const conversationCard = screen
-          .getByText(beneficiaire.prenom, {
-            exact: false,
-          })
+          .getByText(`${beneficiaire.prenom} ${beneficiaire.nom}`)
           .closest('div')
         const flagConversation = within(conversationCard!).getByRole('switch', {
-          name: 'Suivre la conversation',
+          name: 'Suivi de la conversation avec Kenji Jirac',
         })
 
         // When

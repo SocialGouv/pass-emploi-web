@@ -196,6 +196,7 @@ export default function NavLinks({
       <ul className='border-t-2 border-solid border-white pt-2'>
         {items.includes(NavItem.Aide) && (
           <NavLink
+            isActive={isCurrentRoute('/aide')}
             href='/aide'
             label='Aide et ressources'
             iconName={IconName.Help}

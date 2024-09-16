@@ -1,7 +1,8 @@
 import React from 'react'
 
-import LogoCEJ from 'assets/images/logo_app_cej.svg'
-import LogoPassEmploi from 'assets/images/logo_pass_emploi.svg'
+import IllustrationComponent, {
+  IllustrationName,
+} from 'components/ui/IllustrationComponent'
 import { Conseiller, estPassEmploi } from 'interfaces/conseiller'
 
 type HeaderCGUProps = {
@@ -15,9 +16,10 @@ export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
       className='flex justify-between items-center flex-col py-8 border-b border-solid border-primary_lighten mb-8'
     >
       {estPassEmploi(conseiller) && (
-        <LogoPassEmploi
+        <IllustrationComponent
+          name={IllustrationName.LogoPassemploi}
           role='img'
-          className='mb-8 mx-auto fill-primary_darken'
+          className='mb-8 mx-auto w-[95px] fill-primary_darken'
           focusable={false}
           aria-label='pass emploi'
           title='pass emploi'
@@ -25,7 +27,8 @@ export default function HeaderCGU({ conseiller }: HeaderCGUProps) {
       )}
 
       {!estPassEmploi(conseiller) && (
-        <LogoCEJ
+        <IllustrationComponent
+          name={IllustrationName.LogoCEJ}
           role='img'
           className='mb-8 mx-auto h-[64px] w-[120px] fill-white'
           focusable={false}

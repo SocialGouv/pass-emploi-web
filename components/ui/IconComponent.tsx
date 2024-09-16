@@ -53,6 +53,7 @@ import PageViewOutlineIcon from 'assets/icons/informations/page_view_outline.svg
 import PeopleFillIcon from 'assets/icons/informations/people_fill.svg'
 import PeopleOutlineIcon from 'assets/icons/informations/people_outline.svg'
 import ScheduleIcon from 'assets/icons/informations/schedule.svg'
+import ScheduleOutlineIcon from 'assets/icons/informations/schedule_outline.svg'
 import VisibilityOffIcon from 'assets/icons/informations/visibility-off.svg'
 import VisibilityOnIcon from 'assets/icons/informations/visibility-on.svg'
 import WarningIcon from 'assets/icons/informations/warning.svg'
@@ -144,6 +145,7 @@ export enum IconName {
   PeopleOutline = 'PeopleOutline',
   Remove = 'Remove',
   Schedule = 'Schedule',
+  ScheduleOutline = 'ScheduleOutline',
   Search = 'Search',
   Send = 'Send',
   Settings = 'Settings',
@@ -212,6 +214,7 @@ const iconsByName: { [key in IconName]: any } = {
   [IconName.PeopleFill]: PeopleFillIcon,
   [IconName.PeopleOutline]: PeopleOutlineIcon,
   [IconName.Schedule]: ScheduleIcon,
+  [IconName.ScheduleOutline]: ScheduleOutlineIcon,
   [IconName.Share]: ShareIcon,
   [IconName.SwapVert]: SwapVertIcon,
   [IconName.Info]: InfoIcon,

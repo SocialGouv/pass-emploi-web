@@ -51,6 +51,8 @@ export default function TableauActionsJeune({
   onQualification,
   tri,
 }: TableauActionsJeuneProps) {
+  const filtresStatutRef = useRef<HTMLButtonElement>(null)
+  const filtresCategoriesRef = useRef<HTMLButtonElement>(null)
   const [statutsValides, setStatutsValides] = useState<StatutAction[]>([])
   const [categoriesValidees, setCategoriesValidees] = useState<string[]>([])
 
@@ -69,6 +71,7 @@ export default function TableauActionsJeune({
     onFiltres([])
     setStatutsValides([])
     setCategoriesValidees([])
+    filtresStatutRef.current!.focus()
   }
 
   function getIsSortedByDateEcheance(): boolean {
@@ -99,6 +102,7 @@ export default function TableauActionsJeune({
 
   function filtrerActionsParCategorie(categoriesSelectionnees: string[]) {
     setCategoriesValidees(categoriesSelectionnees)
+    filtresCategoriesRef.current!.focus()
     onFiltres([
       { colonne: 'categories', values: categoriesSelectionnees },
       { colonne: 'statuts', values: statutsValides },
@@ -107,6 +111,7 @@ export default function TableauActionsJeune({
 
   function filtrerActionsParStatuts(statutsSelectionnes: StatutAction[]) {
     setStatutsValides(statutsSelectionnes)
+    filtresStatutRef.current!.focus()
     onFiltres([
       { colonne: 'categories', values: categoriesValidees },
       { colonne: 'statuts', values: statutsSelectionnes },
@@ -265,6 +270,7 @@ export default function TableauActionsJeune({
                 </TH>
                 <TH estCliquable={true}>
                   <FiltresCategoriesActions
+                    ref={filtresCategoriesRef}
                     categories={categories}
                     defaultValue={categoriesValidees}
                     onFiltres={filtrerActionsParCategorie}
@@ -272,6 +278,7 @@ export default function TableauActionsJeune({
                 </TH>
                 <TH estCliquable={true}>
                   <FiltresStatutsActions
+                    ref={filtresStatutRef}
                     defaultValue={statutsValides}
                     onFiltres={filtrerActionsParStatuts}
                   />

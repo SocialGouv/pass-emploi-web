@@ -37,7 +37,7 @@ export default function TableauBeneficiairesMilo({
   const beneficiaireSituationColumn = 'Bénéficiaire et situation'
   const dateFinCEJColumn = 'Fin de CEJ'
   const actionsColumn = 'Actions créées'
-  const rdvColumn = 'Rendez-vous et ateliers'
+  const rdvColumn = 'RDV et ateliers'
   const derniereActiviteColumn = 'Dernière activité'
   const voirDetailColumn = 'Voir le détail'
 
@@ -75,15 +75,18 @@ export default function TableauBeneficiairesMilo({
           </TR>
         </thead>
 
-        <tbody className='grid grid-cols-[repeat(5,auto)] layout_m:grid-cols-[repeat(6,auto)] grid-flow-rows gap-y-2'>
+        <tbody className='grid grid-cols-[repeat(5,auto)] layout_m:grid-cols-[repeat(6,auto)] gap-y-2'>
           {beneficiairesAffiches.map(
             (beneficiaire: BeneficiaireAvecInfosComplementaires) => (
               <TR
                 key={beneficiaire.id}
                 className='grid grid-cols-subgrid grid-rows-[repeat(2,auto)] layout_m:grid-rows-[auto] col-span-full items-center'
               >
-                <TD isBold className='rounded-tl-base layout_m:rounded-l-base'>
-                  <div className='mb-2'>
+                <TD
+                  isBold
+                  className='h-full !p-2 !rounded-tl-base !rounded-bl-none layout_m:!rounded-l-base'
+                >
+                  <div>
                     {beneficiaire.structureMilo?.id ===
                       conseiller.structureMilo?.id &&
                       beneficiaire.isReaffectationTemporaire && (
@@ -129,9 +132,9 @@ export default function TableauBeneficiairesMilo({
                   <SituationTag situation={beneficiaire.situationCourante} />
                 </TD>
 
-                <TD>
+                <TD className='relative h-full !p-2 after:content-none after:absolute after:right-0 after:top-4 after:bottom-4 after:border-l-2 after:border-grey_500 layout_m:after:content-[""]'>
                   <div
-                    className='mb-2 text-s-regular text-grey_800'
+                    className='text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {dateFinCEJColumn}
@@ -155,9 +158,9 @@ export default function TableauBeneficiairesMilo({
                   )}
                 </TD>
 
-                <TD className='border-l-1 border-grey_800'>
+                <TD className='h-full !p-2'>
                   <div
-                    className='mb-2 text-s-regular text-grey_800'
+                    className='text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {actionsColumn}
@@ -167,9 +170,9 @@ export default function TableauBeneficiairesMilo({
                   </span>
                 </TD>
 
-                <TD>
+                <TD className='h-full !p-2'>
                   <div
-                    className='mb-2 text-s-regular text-grey_800'
+                    className='text-s-regular text-grey_800'
                     aria-hidden={true}
                   >
                     {rdvColumn}
@@ -177,26 +180,31 @@ export default function TableauBeneficiairesMilo({
                   <span className='text-m-bold'>{beneficiaire.rdvs}</span>
                 </TD>
 
-                <TD className='row-start-2 col-start-1 col-end-4 rounded-b-base layout_m:rounded-none layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1'>
-                  <div
-                    className='inline layout_m:block mr-8 mb-2 text-s-regular text-grey_800'
-                    aria-hidden={true}
-                  >
-                    {derniereActiviteColumn}
-                  </div>
-                  <span>
-                    {beneficiaire.isActivated &&
-                      toRelativeDateTime(beneficiaire.lastActivity!)}
-                    {!beneficiaire.isActivated && (
-                      <span className='text-warning'>Compte non activé</span>
-                    )}
-                  </span>
+                <TD className='h-full !p-2 row-start-2 col-span-4 flex flex-row justify-start items-baseline gap-4 rounded-bl-base layout_m:row-start-1 layout_m:col-start-5 layout_m:col-span-1 layout_m:rounded-none layout_m:flex-col layout_m:gap-0 layout_m:justify-center layout_m:pt-0'>
+                  {beneficiaire.isActivated && (
+                    <>
+                      <span
+                        className='text-xs-regular text-grey_800'
+                        aria-hidden={true}
+                      >
+                        {derniereActiviteColumn}
+                      </span>
+                      <span className='text-s-regular'>
+                        {toRelativeDateTime(beneficiaire.lastActivity!)}
+                      </span>
+                    </>
+                  )}
+                  {!beneficiaire.isActivated && (
+                    <span className='text-s-regular text-warning'>
+                      Compte non activé
+                    </span>
+                  )}
                 </TD>
 
                 <TDLink
                   href={`/mes-jeunes/${beneficiaire.id}`}
                   label={`Accéder à la fiche de ${beneficiaire.prenom} ${beneficiaire.nom}`}
-                  className='row-span-2'
+                  className='!p-2 row-span-2 h-full flex items-center justify-center layout_m:row-span-1'
                 />
               </TR>
             )

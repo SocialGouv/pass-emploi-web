@@ -62,20 +62,20 @@ export default function ActionRow({
         </span>
       </TD>
       <TD>
-        <span className='flex flex-row items-center'>{dateEcheance}</span>
+        <p className='flex flex-row items-center'>{dateEcheance}</p>
       </TD>
       <TD>
-        <span className='flex items-baseline text-ellipsis wrap overflow-hidden max-w-[300px]'>
+        <p className='flex items-baseline text-ellipsis wrap overflow-hidden max-w-[300px]'>
           <TagCategorieAction categorie={action.qualification?.libelle} />
-        </span>
+        </p>
       </TD>
       <TD>
-        <span className='flex items-center'>
+        <p className='flex items-center'>
           <TagStatutAction
             status={action.status}
             actionEstEnRetard={actionEstEnRetard}
           />
-        </span>
+        </p>
       </TD>
       <TDLink
         href={`${pathPrefix}/${jeuneId}/actions/${action.id}`}

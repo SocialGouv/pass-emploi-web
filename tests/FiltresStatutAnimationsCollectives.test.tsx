@@ -13,12 +13,17 @@ describe('FiltresStatutAnimationsCollectives', () => {
     filtrerAnimationsCollectives = jest.fn()
     render(
       <FiltresStatutAnimationsCollectives
+        defaultValue={[]}
         onFiltres={filtrerAnimationsCollectives}
       />
     )
 
     // When
-    await userEvent.click(screen.getByRole('button', { name: /Statut/ }))
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Statuts Filtrer les animations collectives',
+      })
+    )
   })
 
   it('affiche une liste de statuts', async () => {
@@ -68,7 +73,9 @@ describe('FiltresStatutAnimationsCollectives', () => {
     await userEvent.click(screen.getByLabelText('À venir'))
 
     // When
-    await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Valider la sélection des statuts' })
+    )
 
     // Then
     expect(filtrerAnimationsCollectives).toHaveBeenCalledWith([

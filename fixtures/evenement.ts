@@ -104,7 +104,9 @@ export function unEvenement(overrides: Partial<Evenement> = {}): Evenement {
 
 export function desEvenementsListItems(): EvenementListItem[] {
   return [
-    unEvenementListItem(),
+    unEvenementListItem({
+      beneficiaires: [{ id: 'beneficiaire-1', nom: 'Jirac', prenom: 'Kenji' }],
+    }),
     {
       id: '2',
       labelBeneficiaires: 'Jirac Raja',
@@ -112,7 +114,10 @@ export function desEvenementsListItems(): EvenementListItem[] {
       modality: 'En agence',
       date: '2021-10-25T12:00:00.000Z',
       duree: 25,
-      idCreateur: '2',
+      createur: {
+        id: '2',
+      },
+      beneficiaires: [{ id: 'beneficiaire-2', nom: 'Trotro', prenom: 'L’âne' }],
       source: 'MILO',
     },
   ]
@@ -128,7 +133,11 @@ export function unEvenementListItem(
     modality: 'par téléphone',
     date: '2021-10-21T10:00:00.000Z',
     duree: 125,
-    idCreateur: '1',
+    createur: {
+      id: '1',
+      nom: 'Tavernier',
+      prenom: 'Nils',
+    },
     source: 'PASS_EMPLOI',
   }
   return { ...defaults, ...overrides }
@@ -144,6 +153,8 @@ export function uneAnimationCollective(
     date: DateTime.fromISO('2021-10-21T10:00:00.000Z'),
     duree: 125,
     statut: StatutAnimationCollective.AVenir,
+    nombreParticipants: 1,
+    nombreMaxParticipants: 10,
   }
   return { ...defaults, ...overrides }
 }
@@ -196,6 +207,7 @@ export function unEvenementJson(
         nom: 'Jirac',
       },
     ],
+    nombreMaxParticipants: 10,
     type: { code: 'AUTRE', label: 'Autre' },
     title: 'Prise de nouvelles par téléphone',
     precision: 'Prise de nouvelles',

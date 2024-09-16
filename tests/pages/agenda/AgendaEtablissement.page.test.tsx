@@ -58,6 +58,9 @@ describe('Agenda - Onglet établissement', () => {
         id: 'ac-2',
         titre: 'Préparation de CV',
         date: SEPTEMBRE_1_14H,
+        duree: 30,
+        nombreParticipants: 2,
+        nombreMaxParticipants: 2,
         statut: StatutAnimationCollective.AClore,
       }),
       uneAnimationCollective({
@@ -137,47 +140,48 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement',
+            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
+
+      const row1 = screen
+        .getByRole('cell', {
+          name: 'Prise de nouvelles par téléphone Atelier Visible',
+        })
+        .closest('tr')!
       expect(
-        screen.getByRole('row', { name: 'lundi 29 août' }).nextSibling
-      ).toHaveAccessibleName('Après-midi')
+        within(row1).getByRole('cell', {
+          name: '29 août 2022 14h00 - durée 2 heure 5',
+        })
+      )
+      expect(within(row1).getByRole('cell', { name: '1 inscrit /10' }))
       expect(
-        screen.getByRole('cell', {
-          name: 'Prise de nouvelles par téléphone',
+        within(row1).getByRole('link', {
+          name: 'Consulter Atelier Prise de nouvelles par téléphone du lundi 29 août à 14h00',
         })
       ).toBeInTheDocument()
+
+      const row2 = screen
+        .getByRole('cell', {
+          name: 'Préparation de CV Atelier Visible',
+        })
+        .closest('tr')!
+      expect(
+        within(row2).getByRole('cell', {
+          name: '1 septembre 2022 14h00 - durée 30 minutes',
+        })
+      )
+      expect(within(row2).getByRole('cell', { name: 'Complet' }))
+      expect(
+        within(row2).getByRole('link', {
+          name: 'Consulter Atelier Préparation de CV du jeudi 1 septembre à 14h00',
+        })
+      ).toBeInTheDocument()
+
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier Clos du lundi 29 août à 14h00',
-        })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('row', { name: 'aujourd’hui' }).nextSibling
-      ).toHaveAccessibleName('Après-midi')
-      expect(
-        screen.getByRole('cell', {
-          name: 'Préparation de CV',
-        })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('link', {
-          name: 'Consulter Atelier À clore du jeudi 1 septembre à 14h00',
-        })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('row', { name: 'dimanche 4 septembre' }).nextSibling
-      ).toHaveAccessibleName('Après-midi')
-      expect(
-        screen.getByRole('cell', {
-          name: 'Écriture de lettre de motivation',
-        })
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo À venir du dimanche 4 septembre à 14h00',
+          name: 'Consulter Atelier i-milo Titre offre session milo du dimanche 4 septembre à 14h00',
         })
       ).toBeInTheDocument()
     })
@@ -185,11 +189,11 @@ describe('Agenda - Onglet établissement', () => {
     it('a deux boutons de navigation', () => {
       // When
       const periodesFuturesButton = screen.getByRole('button', {
-        name: 'Aller à la période suivante',
+        name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
       })
 
       const periodesPasseesButton = screen.getByRole('button', {
-        name: 'Aller à la période précédente',
+        name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
 
       // Then
@@ -200,13 +204,13 @@ describe('Agenda - Onglet établissement', () => {
     it('permet de changer de période de 7 jours', async () => {
       // Given
       const periodesPasseesButton = screen.getByRole('button', {
-        name: 'Aller à la période précédente',
+        name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
       const periodeCouranteButton = screen.getByRole('button', {
-        name: 'Aller à la Période en cours',
+        name: 'Aller à la Période en cours du 1 septembre 2022 au 7 septembre 2022',
       })
       const periodesFuturesButton = screen.getByRole('button', {
-        name: 'Aller à la période suivante',
+        name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
       })
 
       // When
@@ -275,29 +279,29 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement',
+            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
 
       expect(
         screen.getByRole('cell', {
-          name: 'Titre offre session milo Nom session',
+          name: 'Titre offre session milo Nom session Informations de la session non modifiables Atelier i-milo Visibilité de l’événement Titre offre session milo Visible',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo À venir du dimanche 4 septembre à 14h00',
+          name: 'Consulter Atelier i-milo Titre offre session milo du dimanche 4 septembre à 14h00',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('cell', {
-          name: 'Titre offre session milo 2 Nom session',
+          name: 'Titre offre session milo 2 Nom session Informations de la session non modifiables Atelier i-milo 2 Visibilité de l’événement Titre offre session milo 2 Non visible',
         })
       ).toBeInTheDocument()
       expect(
         screen.getByRole('link', {
-          name: 'Consulter Atelier i-milo 2 À venir du lundi 5 septembre à 14h00',
+          name: 'Consulter Atelier i-milo 2 Titre offre session milo 2 du lundi 5 septembre à 14h00',
         })
       ).toBeInTheDocument()
     })
@@ -307,7 +311,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement',
+            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
@@ -317,16 +321,20 @@ describe('Agenda - Onglet établissement', () => {
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', { name: 'Rendre visible l’événement' })
-      ).toBeChecked()
+        ).getByRole('combobox', {
+          name: 'Visibilité de l’événement Titre offre session milo',
+        })
+      ).toHaveTextContent('Visible')
 
       expect(
         within(
           screen.getByRole('row', {
             name: /Titre offre session milo 2 Nom session/,
           })
-        ).getByRole('switch', { name: 'Rendre visible l’événement' })
-      ).not.toBeChecked()
+        ).getByRole('combobox', {
+          name: 'Visibilité de l’événement Titre offre session milo 2',
+        })
+      ).toHaveTextContent('Non visible')
     })
 
     it('permet de modifier la visibilité d’une session', async () => {
@@ -334,17 +342,20 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: 'Liste des animations collectives de mon établissement',
+            name: 'Liste des animations collectives de mon établissement du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
 
-      await userEvent.click(
+      await userEvent.selectOptions(
         within(
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', { name: 'Rendre visible l’événement' })
+        ).getByRole('combobox', {
+          name: 'Visibilité de l’événement Titre offre session milo',
+        }),
+        'Non visible'
       )
 
       expect(
@@ -352,8 +363,10 @@ describe('Agenda - Onglet établissement', () => {
           screen.getByRole('row', {
             name: /Titre offre session milo Nom session/,
           })
-        ).getByRole('switch', { name: 'Rendre visible l’événement' })
-      ).not.toBeChecked()
+        ).getByRole('combobox', {
+          name: 'Visibilité de l’événement Titre offre session milo',
+        })
+      ).toHaveTextContent('Non visible')
 
       expect(changerVisibiliteSession).toHaveBeenCalledWith(
         'id-session-1',
@@ -364,13 +377,13 @@ describe('Agenda - Onglet établissement', () => {
     it('permet de changer de période de 7 jours', async () => {
       // Given
       const periodesPasseesButton = screen.getByRole('button', {
-        name: 'Aller à la période précédente',
+        name: 'Aller à la période précédente du 25 août 2022 au 31 août 2022',
       })
       const periodeCouranteButton = screen.getByRole('button', {
-        name: 'Aller à la Période en cours',
+        name: 'Aller à la Période en cours du 1 septembre 2022 au 7 septembre 2022',
       })
       const periodesFuturesButton = screen.getByRole('button', {
-        name: 'Aller à la période suivante',
+        name: 'Aller à la période suivante du 8 septembre 2022 au 14 septembre 2022',
       })
 
       // When
@@ -386,14 +399,10 @@ describe('Agenda - Onglet établissement', () => {
       await userEvent.click(periodeCouranteButton)
 
       // Then
-      expect(getSessionsMissionLocaleClientSide).toHaveBeenCalledWith(
+      expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
         '1',
         SEPTEMBRE_1_0H,
         SEPTEMBRE_7_23H
-      )
-
-      await waitFor(() =>
-        expect(screen.getByText('dimanche 4 septembre')).toBeInTheDocument()
       )
 
       // When
@@ -403,14 +412,6 @@ describe('Agenda - Onglet établissement', () => {
         'id-test',
         SEPTEMBRE_8_0H,
         SEPTEMBRE_14_23H
-      )
-
-      await waitFor(() =>
-        expect(getSessionsMissionLocaleClientSide).toHaveBeenLastCalledWith(
-          '1',
-          SEPTEMBRE_8_0H,
-          SEPTEMBRE_14_23H
-        )
       )
     })
   })

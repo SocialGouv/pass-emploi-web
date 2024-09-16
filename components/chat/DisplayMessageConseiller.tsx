@@ -64,7 +64,7 @@ export default function DisplayMessageConseiller(
   }
 
   return (
-    <li className='mb-5' id={message.id} data-testid={message.id}>
+    <li className='mb-5' id={'message-' + message.id} data-testid={message.id}>
       {suppressionEnCours && (
         <div className='w-fit ml-auto'>
           <SpinningLoader alert={true} />
@@ -90,12 +90,12 @@ export default function DisplayMessageConseiller(
               )}
 
               {isResultatRecherche(props) && (
-                <span
+                <p
                   className='flex justify-end text-xs-medium text-content'
                   aria-label={`Le ${toLongMonthDate(message.creationDate)}`}
                 >
                   Le {toShortDate(message.creationDate)}
-                </span>
+                </p>
               )}
             </>
           )}
@@ -259,14 +259,14 @@ function FooterMessage({
           />
         </div>
 
-        <span>
+        <p>
           <span className='sr-only'>Envoyé à </span>
           <span aria-label={toFrenchTime(creationDate, { a11y: true })}>
             {toFrenchTime(creationDate)}
           </span>
           {estModifie && ' · Modifié'}
           {!estModifie && (!isSeenByJeune ? ' · Envoyé' : ' · Lu')}
-        </span>
+        </p>
       </button>
 
       {afficherMenuEdition && (

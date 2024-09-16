@@ -54,7 +54,12 @@ export default function NavLink({
   return (
     <li>
       {href && (
-        <Link href={href} className={linkStyle} onClick={onClick}>
+        <Link
+          aria-current={isActive && 'page'}
+          href={href}
+          className={linkStyle}
+          onClick={onClick}
+        >
           {linkContent}
         </Link>
       )}

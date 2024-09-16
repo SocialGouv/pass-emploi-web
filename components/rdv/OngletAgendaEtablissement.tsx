@@ -1,21 +1,14 @@
 import { DateTime } from 'luxon'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import EmptyState from 'components/EmptyState'
-import {
-  AgendaData,
-  AgendaRows,
-  buildAgendaData,
-} from 'components/rdv/AgendaRows'
 import { AnimationCollectiveRow } from 'components/rdv/AnimationCollectiveRow'
 import FiltresStatutAnimationsCollectives from 'components/rdv/FiltresStatutAnimationsCollectives'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import IconComponent, { IconName } from 'components/ui/IconComponent'
+import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { SelecteurPeriode } from 'components/ui/SelecteurPeriode'
 import Table from 'components/ui/Table/Table'
-import { TH } from 'components/ui/Table/TH'
-import TR from 'components/ui/Table/TR'
 import { estMilo, peutAccederAuxSessions } from 'interfaces/conseiller'
 import {
   AnimationCollective,
@@ -46,24 +39,29 @@ export default function OngletAgendaEtablissement({
 }: OngletAgendaEtablissementProps) {
   const [conseiller] = useConseiller()
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
+
+  const filtresRef = useRef<HTMLButtonElement>(null)
+  const [filtres, setFiltres] = useState<StatutAnimationCollective[]>([])
   const [evenementsFiltres, setEvenementsFiltres] =
     useState<AnimationCollective[]>()
 
-  const [agendaEvenements, setAgendaEvenements] =
-    useState<AgendaData<AnimationCollective>>()
   const [periode, setPeriode] = useState<{ debut: DateTime; fin: DateTime }>()
+  const [labelPeriode, setLabelPeriode] = useState<string>()
   const [failed, setFailed] = useState<boolean>(false)
 
-  const [statutsValides, setStatutsValides] = useState<
-    StatutAnimationCollective[]
-  >([])
+  async function modifierFiltres(nouveauxFiltres: StatutAnimationCollective[]) {
+    setFiltres(nouveauxFiltres)
+    filtresRef.current!.focus()
+  }
 
-  async function chargerNouvellePeriode(
+  async function modifierPeriode(
     nouvellePeriodeIndex: number,
     dateDebut: DateTime,
-    dateFin: DateTime
+    dateFin: DateTime,
+    label: string
   ) {
     await chargerEvenementsPeriode(dateDebut, dateFin)
+    setLabelPeriode(label)
     changerPeriode(nouvellePeriodeIndex)
   }
 
@@ -72,20 +70,25 @@ export default function OngletAgendaEtablissement({
     dateFin: DateTime
   ) {
     setFailed(false)
-    setAgendaEvenements(undefined)
+    setEvenementsFiltres(undefined)
 
     try {
       const animationsCollectives = await recupererAnimationsCollectives(
         dateDebut,
         dateFin
       )
+      const evenementsRecuperes = [...animationsCollectives]
 
       if (peutAccederAuxSessions(conseiller)) {
         const sessions = await recupererSessionsMilo(dateDebut, dateFin)
-        setEvenements([...sessions, ...animationsCollectives])
-      } else {
-        setEvenements([...animationsCollectives])
+        evenementsRecuperes.push(...sessions)
       }
+
+      setEvenements(
+        evenementsRecuperes.toSorted(
+          (ac1, ac2) => ac1.date.toMillis() - ac2.date.toMillis()
+        )
+      )
     } catch (e) {
       setFailed(true)
     } finally {
@@ -94,39 +97,37 @@ export default function OngletAgendaEtablissement({
   }
 
   function filtrerEvenements(aFiltrer: AnimationCollective[]) {
-    if (!statutsValides.length) setEvenementsFiltres(aFiltrer)
+    setEvenementsFiltres(undefined)
+    if (!filtres.length) setEvenementsFiltres(aFiltrer)
     else {
       const acFiltrees = aFiltrer.filter(
-        (ac) => ac.statut && statutsValides.includes(ac.statut)
+        (ac) => ac.statut && filtres.includes(ac.statut)
       )
       setEvenementsFiltres(acFiltrees)
     }
   }
 
   useEffect(() => {
-    if (evenements) {
-      filtrerEvenements(evenements)
-    }
-  }, [evenements, statutsValides])
-
-  useEffect(() => {
-    if (evenementsFiltres && periode) {
-      setAgendaEvenements(
-        buildAgendaData(evenementsFiltres, periode, ({ date }) => date)
-      )
-    }
-  }, [evenementsFiltres, periode])
+    if (evenements) filtrerEvenements(evenements)
+  }, [evenements, filtres])
 
   return (
     <>
-      <SelecteurPeriode
-        nombreJours={7}
-        onNouvellePeriode={chargerNouvellePeriode}
-        periodeCourante={periodeIndex}
-        trackNavigation={trackNavigation}
-      />
+      <nav className='flex justify-between items-end'>
+        <SelecteurPeriode
+          onNouvellePeriode={modifierPeriode}
+          periodeCourante={periodeIndex}
+          trackNavigation={trackNavigation}
+        />
 
-      {!agendaEvenements && !failed && (
+        <FiltresStatutAnimationsCollectives
+          ref={filtresRef}
+          onFiltres={modifierFiltres}
+          defaultValue={filtres}
+        />
+      </nav>
+
+      {!evenementsFiltres && !failed && (
         <EmptyState
           illustrationName={IllustrationName.Sablier}
           titre={`
@@ -138,7 +139,7 @@ export default function OngletAgendaEtablissement({
         />
       )}
 
-      {!agendaEvenements && failed && (
+      {!evenementsFiltres && failed && (
         <EmptyState
           illustrationName={IllustrationName.Maintenance}
           titre={`
@@ -155,12 +156,12 @@ export default function OngletAgendaEtablissement({
         />
       )}
 
-      {agendaEvenements && evenementsFiltres!.length === 0 && (
+      {evenementsFiltres?.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
             illustrationName={IllustrationName.Checklist}
             titre={
-              statutsValides.length === 0
+              filtres.length === 0
                 ? 'Il n’y a pas d’animation collective sur cette période dans votre établissement.'
                 : 'Aucune animation collective ne correspond au(x) filtre(s) sélectionné(s) sur cette période.'
             }
@@ -175,7 +176,7 @@ export default function OngletAgendaEtablissement({
             <Button
               type='button'
               style={ButtonStyle.SECONDARY}
-              onClick={() => setStatutsValides([])}
+              onClick={() => modifierFiltres([])}
               className='m-auto mt-8'
             >
               Réinitialiser les filtres
@@ -184,41 +185,31 @@ export default function OngletAgendaEtablissement({
         </div>
       )}
 
-      {agendaEvenements && evenements!.length > 0 && (
+      {evenementsFiltres && evenementsFiltres.length > 0 && (
         <Table
           caption={{
-            text: 'Liste des animations collectives de mon établissement',
+            text:
+              'Liste des animations collectives de mon établissement ' +
+              labelPeriode,
           }}
         >
-          <thead>
-            <TR isHeader={true}>
-              <TH>Horaires</TH>
-              <TH>Titre</TH>
-              <TH>Type</TH>
-              <TH title='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'>
-                Visible{' '}
-                <IconComponent
-                  name={IconName.Info}
-                  focusable={false}
-                  role='img'
-                  aria-label='Les sessions i-milo visibles ou non par les bénéficiaires de votre Mission Locale.'
-                  className='inline h-4 w-4 fill-primary'
-                />
-              </TH>
-              <TH estCliquable={true}>
-                <FiltresStatutAnimationsCollectives
-                  onFiltres={setStatutsValides}
-                  defaultValue={statutsValides}
-                />
-              </TH>
-              <TH>Voir le détail</TH>
-            </TR>
+          <thead className='sr-only'>
+            <tr>
+              <th scope='col'>Horaires et durée</th>
+              <th scope='col'>Titre, type et visibilité</th>
+              <th scope='col'>Inscrits</th>
+              <th scope='col'>Statut </th>
+              <th scope='col'>Voir le détail</th>
+            </tr>
           </thead>
-          <tbody>
-            <AgendaRows
-              agenda={agendaEvenements}
-              Item={({ item: ac }) => AnimationCollectiveRow(ac)}
-            />
+
+          <tbody className='grid auto-rows-auto grid-cols-[repeat(3,auto)] layout_base:grid-cols-[repeat(5,auto)] gap-y-2'>
+            {evenementsFiltres.map((evenement) => (
+              <AnimationCollectiveRow
+                key={evenement.id}
+                animationCollective={evenement}
+              />
+            ))}
           </tbody>
         </Table>
       )}

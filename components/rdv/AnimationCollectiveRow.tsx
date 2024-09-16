@@ -1,9 +1,12 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ChangeEvent, ReactElement, useState } from 'react'
 
-import IconToggle from 'components/ui/Form/IconToggle'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
-import { TagMetier, TagStatut } from 'components/ui/Indicateurs/Tag'
-import { SpinningLoader } from 'components/ui/SpinningLoader'
+import {
+  TagMetier,
+  TagStatut as _TagStatut,
+  TagType,
+} from 'components/ui/Indicateurs/Tag'
+import SelectButton from 'components/ui/SelectButton'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import TR from 'components/ui/Table/TR'
@@ -13,36 +16,37 @@ import {
 } from 'interfaces/evenement'
 import { trackEvent } from 'utils/analytics/matomo'
 import { useConseiller } from 'utils/conseiller/conseillerContext'
-import { toFrenchTime, toMonthday } from 'utils/date'
+import {
+  toFrenchDuration,
+  toFrenchTime,
+  toLongMonthDate,
+  toMonthday,
+} from 'utils/date'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
-export function AnimationCollectiveRow(
+export function AnimationCollectiveRow({
+  animationCollective,
+}: {
   animationCollective: AnimationCollective
-) {
+}) {
+  const { date } = animationCollective
+
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [estCache, setEstCache] = useState<boolean>(
     animationCollective.estCache ?? false
   )
-  const [loadingChangerVisibilite, setLoadingChangerVisibilite] =
-    useState<boolean>(false)
-
   function getHref(ac: AnimationCollective): string {
     if (ac.isSession) return `agenda/sessions/${ac.id}`
     else return `/mes-jeunes/edition-rdv?idRdv=${ac.id}`
   }
 
-  async function permuterVisibiliteSession() {
-    setLoadingChangerVisibilite(true)
-
+  async function permuterVisibiliteSession(visibilite: boolean) {
     const { changerVisibiliteSession } = await import(
       'services/sessions.service'
     )
-    const doitEtreVisible = estCache
-    await changerVisibiliteSession(animationCollective.id, doitEtreVisible)
-
-    setEstCache(!doitEtreVisible)
-    setLoadingChangerVisibilite(false)
+    await changerVisibiliteSession(animationCollective.id, visibilite)
+    setEstCache(!visibilite)
 
     trackEvent({
       structure: conseiller.structure,
@@ -54,97 +58,58 @@ export function AnimationCollectiveRow(
   }
 
   return (
-    <TR key={animationCollective.id}>
-      <TD>
-        {toFrenchTime(animationCollective.date)} - {animationCollective.duree}{' '}
-        min
+    <TR className='grid grid-cols-subgrid grid-rows-[repeat(3,auto) layout_base:grid-rows-[auto] col-span-full'>
+      <TD className='col-start-1 col-end-3 !rounded-tl-base !rounded-bl-none !p-0 !pt-2 !pl-2 layout_base:col-end-2 layout_base:!rounded-l-base layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
+        <div className='text-m-bold'>{toLongMonthDate(date)}</div>
+        <div>
+          {toFrenchTime(date)} -{' '}
+          <span className='sr-only'>
+            durée{' '}
+            {toFrenchDuration(animationCollective.duree, {
+              a11y: true,
+            })}
+          </span>
+          <span className='inline-flex items-center' aria-hidden={true}>
+            <IconComponent
+              name={IconName.ScheduleOutline}
+              focusable={false}
+              title='durée'
+              className='inline w-[1em] h-[1em] fill-[currentColor] mr-1'
+            />
+            {toFrenchDuration(animationCollective.duree)}
+          </span>
+        </div>
       </TD>
-      <TD>
-        {animationCollective.titre}
-        <span className='block text-s-regular'>
-          {animationCollective.sousTitre}
-        </span>
-      </TD>
-      <TD>{tagType(animationCollective)}</TD>
-      <TD>
-        {animationCollective.isSession && (
-          <>
-            {loadingChangerVisibilite && (
-              <SpinningLoader alert={true} className='w-6 h-6' />
-            )}
 
-            {!loadingChangerVisibilite && (
-              <IconToggle
-                id={`${animationCollective.id}--visibilite`}
-                checked={!estCache}
-                checkedIconName={IconName.VisibilityOn}
-                uncheckedIconName={IconName.VisibilityOff}
-                actionLabel='Rendre visible l’événement'
-                oppositeActionLabel='Cacher l’événement'
-                onToggle={permuterVisibiliteSession}
-                className='block relative z-20 m-auto h-6 w-6 fill-primary hover:fill-primary_darken'
-              />
-            )}
-          </>
+      <TD className='row-start-2 row-end-4 rounded-bl-base !pt-0 !pb-2 !pl-2 layout_base:row-span-1 layout_base:rounded-none layout_base:flex layout_base:flex-col layout_base:justify-center layout_base:!p-2'>
+        <div className='text-base-bold'>{animationCollective.titre}</div>
+        {animationCollective.sousTitre && (
+          <div>{animationCollective.sousTitre}</div>
         )}
-
-        {!animationCollective.isSession && (
-          <IconComponent
-            aria-label={estCache ? 'Non visible' : 'Visible'}
-            className='inline h-6 w-6 fill-primary'
-            focusable={false}
-            name={estCache ? IconName.VisibilityOff : IconName.VisibilityOn}
-            role='img'
-            title={estCache ? 'Non visible' : 'Visible'}
+        <div className='mt-1 flex gap-2'>
+          <TagType {...animationCollective} isSmallTag={true} />
+          <Visiblite
+            {...animationCollective}
+            estCache={estCache}
+            onChangerVisibliteSession={permuterVisibiliteSession}
           />
-        )}
+        </div>
       </TD>
-      <TD>
-        {animationCollective.statut && tagStatut(animationCollective)}
-        {!animationCollective.statut && (
-          <>
-            -<span className='sr-only'>information non disponible</span>
-          </>
-        )}
+
+      <TD className='row-start-2 col-start-2 !p-0 layout_base:row-start-1 layout_base:col-start-3 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:!p-2'>
+        <Inscrits {...animationCollective} />
       </TD>
+
+      <TD className='row-start-3 !p-0 !pb-2 layout_base:row-start-1 layout_base:col-start-4 layout_base:flex layout_base:items-center layout_base:justify-center layout_base:!p-2'>
+        <TagStatut {...animationCollective} />
+      </TD>
+
       <TDLink
+        className='row-span-3 flex items-center justify-center !p-2 !pl-4 layout_base:row-span-1 layout_base:!p-2'
         href={getHref(animationCollective)}
         label={labelLien(animationCollective)}
       />
     </TR>
-  )
-}
-
-function labelLien(ac: AnimationCollective): string {
-  return `Consulter ${ac.type} ${statusProps(ac).label} du ${toMonthday(
-    ac.date
-  )} à ${toFrenchTime(ac.date)}`
-}
-
-function tagType({ isSession, type }: AnimationCollective): ReactElement {
-  let tagProps: { color: string; iconName?: IconName; iconLabel?: string } = {
-    color: 'additional_2',
-    iconName: undefined,
-    iconLabel: undefined,
-  }
-
-  if (type === 'Atelier') tagProps.color = 'accent_2'
-  if (type === 'Information collective') tagProps.iconName = IconName.Error
-  if (isSession)
-    tagProps = {
-      color: 'accent_1',
-      iconName: IconName.Lock,
-      iconLabel: 'Informations de la session non modifiables',
-    }
-
-  return (
-    <TagMetier
-      label={type}
-      color={tagProps.color}
-      backgroundColor={tagProps.color + '_lighten'}
-      iconName={tagProps.iconName}
-      iconLabel={tagProps.iconLabel}
-    />
   )
 }
 
@@ -166,13 +131,99 @@ function statusProps({ type, statut }: AnimationCollective): {
   }
 }
 
-function tagStatut(ac: AnimationCollective): JSX.Element {
+function labelLien(ac: AnimationCollective): string {
+  return `Consulter ${ac.type} ${ac.titre} du ${toMonthday(
+    ac.date
+  )} à ${toFrenchTime(ac.date)}`
+}
+
+function TagStatut(ac: AnimationCollective): ReactElement {
   const { label, color } = statusProps(ac)
   return (
-    <TagStatut
+    <_TagStatut
       label={label}
       color={color}
       backgroundColor={color + '_lighten'}
+      className='!px-2 !py-1 !text-xs !font-bold'
     />
+  )
+}
+
+function Visiblite({
+  id,
+  isSession,
+  titre,
+  estCache,
+  onChangerVisibliteSession,
+}: {
+  estCache: boolean
+  onChangerVisibliteSession: (visible: boolean) => Promise<void>
+} & AnimationCollective): ReactElement {
+  const selectId = id + '--visibilite'
+
+  async function changerVisibilite(e: ChangeEvent<HTMLSelectElement>) {
+    const value = e.target.value
+    await onChangerVisibliteSession(value === 'visible')
+  }
+
+  return (
+    <>
+      {isSession && (
+        <>
+          <label htmlFor={selectId} className='sr-only'>
+            Visibilité de l’événement {titre}
+          </label>
+          <SelectButton
+            id={selectId}
+            onChange={changerVisibilite}
+            value={estCache ? 'non-visible' : 'visible'}
+            className={`z-20 text-xs-bold ${estCache ? 'text-content_color border-grey_800 bg-grey_100' : 'border-success text-success bg-success_lighten'}`}
+          >
+            <option value='visible'>Visible</option>
+            <option value='non-visible'>Non visible</option>
+          </SelectButton>
+        </>
+      )}
+
+      {!isSession && (
+        <TagMetier
+          label='Visible'
+          color='success'
+          backgroundColor='success_lighten'
+          className='!px-2 !py-1 !text-xs !font-bold'
+        />
+      )}
+    </>
+  )
+}
+
+function Inscrits({
+  nombreMaxParticipants,
+  nombreParticipants,
+}: AnimationCollective): ReactElement {
+  const aUneCapaciteLimite = nombreMaxParticipants !== undefined
+  const aAtteintLaCapaciteLimite = nombreParticipants >= nombreMaxParticipants!
+  const aPlusieursParticipants = nombreParticipants !== 1
+
+  return (
+    <div>
+      {!aUneCapaciteLimite && (
+        <>
+          <span className='text-m-bold'>{nombreParticipants}</span> inscrit
+          {aPlusieursParticipants ? 's' : ''}
+        </>
+      )}
+
+      {aUneCapaciteLimite && aAtteintLaCapaciteLimite && (
+        <span className='text-base-bold text-warning'>Complet</span>
+      )}
+
+      {aUneCapaciteLimite && !aAtteintLaCapaciteLimite && (
+        <>
+          <span className='text-m-bold'>{nombreParticipants}</span> inscrit
+          {nombreParticipants !== 1 ? 's' : ''} /{nombreMaxParticipants}
+        </>
+      )}
+    </div>
   )
 }

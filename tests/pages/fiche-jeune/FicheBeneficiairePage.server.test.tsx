@@ -49,7 +49,9 @@ describe('FicheBeneficiairePage server side', () => {
       type: 'Atelier i-milo',
       date: '2022-09-01T11:00:00.000Z',
       duree: 120,
-      idCreateur: '1',
+      createur: {
+        id: '1',
+      },
       isSession: true,
     },
   ]

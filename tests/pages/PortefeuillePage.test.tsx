@@ -267,7 +267,7 @@ describe('PortefeuillePage client side', () => {
     it('affiche la colonne nombre de rendez-vous des bénéficiaires', () => {
       // Then
       expect(
-        screen.getByRole('columnheader', { name: /Rendez-vous/ })
+        screen.getByRole('columnheader', { name: 'RDV et ateliers' })
       ).toBeInTheDocument()
     })
 
