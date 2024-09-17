@@ -2,7 +2,7 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { ForwardedRef, forwardRef, useRef, useState } from 'react'
 
 import DossierBeneficiaireMilo from 'components/jeune/DossierBeneficiaireMilo'
 import FormulaireRechercheDossier from 'components/jeune/FormulaireRechercheDossier'
@@ -18,6 +18,8 @@ function CreationBeneficiaireMiloPage() {
   const [_, setAlerte] = useAlerte()
   const [portefeuille, setPortefeuille] = usePortefeuille()
 
+  const etapeRef = useRef<HTMLDivElement>(null)
+
   const [dossier, setDossier] = useState<DossierMilo | undefined>()
   const [erreurDossier, setErreurDossier] = useState<string | undefined>()
   const [erreurCreation, setErreurCreation] = useState<string | undefined>()
@@ -27,7 +29,9 @@ function CreationBeneficiaireMiloPage() {
 
     try {
       const { getDossierJeune } = await import('services/conseiller.service')
-      setDossier(await getDossierJeune(id))
+      const dossierJeune = await getDossierJeune(id)
+      setDossier(dossierJeune)
+      etapeRef.current!.focus()
     } catch (error) {
       setErreurDossier(
         (error as Error).message || "Une erreur inconnue s'est produite"
@@ -70,7 +74,7 @@ function CreationBeneficiaireMiloPage() {
 
   return (
     <>
-      <CreationEtape etape={!dossier ? 1 : 2} />
+      <CreationEtape etape={!dossier ? 1 : 2} ref={etapeRef} />
 
       {!dossier && (
         <div className='mt-4'>
@@ -87,20 +91,31 @@ function CreationBeneficiaireMiloPage() {
           onCreateCompte={creerCompteJeune}
           erreurMessageHttpPassEmploi={erreurCreation}
           onRefresh={() => rechercherDossier(dossier.id)}
-          onRetour={clearDossier}
+          onRetour={() => {
+            clearDossier()
+            etapeRef.current!.focus()
+          }}
         />
       )}
     </>
   )
 }
 
-function CreationEtape({ etape }: { etape: 1 | 2 }) {
-  return (
-    <div className='bg-primary_lighten rounded-base w-auto inline-block p-2 text-base-medium text-primary'>
-      <span>{etape} sur 2</span>
-    </div>
-  )
-}
+const CreationEtape = forwardRef(
+  ({ etape }: { etape: 1 | 2 }, ref: ForwardedRef<HTMLDivElement>) => {
+    return (
+      <p
+        className='bg-primary_lighten rounded-base w-auto inline-block p-2 text-base-medium text-primary'
+        ref={ref}
+        tabIndex={-1}
+      >
+        <span className='sr-only'>Création de compte : étape </span>
+        <span>{etape} sur 2</span>
+      </p>
+    )
+  }
+)
+CreationEtape.displayName = 'CreationEtape'
 
 export default withTransaction(
   CreationBeneficiaireMiloPage.name,

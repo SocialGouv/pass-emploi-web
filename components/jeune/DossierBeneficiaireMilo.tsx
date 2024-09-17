@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
+import DeprecatedErrorMessage from 'components/ui/Form/DeprecatedErrorMessage'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { DossierMilo } from 'interfaces/beneficiaire'
@@ -129,7 +129,7 @@ export default function DossierBeneficiaireMilo({
       )}
 
       {erreurMessageHttpPassEmploi && (
-        <DeprecatedErrorMessage className='mt-8'>
+        <DeprecatedErrorMessage className='mt-8' ref={(e) => e?.focus()}>
           {erreurMessageHttpPassEmploi}
         </DeprecatedErrorMessage>
       )}
