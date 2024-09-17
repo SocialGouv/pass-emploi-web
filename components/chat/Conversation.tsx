@@ -89,6 +89,8 @@ export function Conversation({
 
   const conteneurMessagesRef = useRef<HTMLUListElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
+  const addFileRef = useRef<HTMLInputElement>(null)
+  const deleteFileRef = useRef<HTMLButtonElement>(null)
 
   const observerMessages = useCallback(
     (idChatToObserve: string, nombreDePages: number) => {
@@ -210,7 +212,7 @@ export function Conversation({
     inputRef.current!.focus()
   }
 
-  function annulerModificationmessage() {
+  function annulerModificationMessage() {
     setMessageAModifier(undefined)
     resetTextbox()
   }
@@ -303,11 +305,14 @@ export function Conversation({
   }, [beneficiaireChat.chatId])
 
   useEffect(() => {
-    if (uploadedFileInfo) {
-      deleteFile()
-    }
+    if (uploadedFileInfo) deleteFile()
     resetTextbox()
   }, [beneficiaireChat.chatId])
+
+  useEffect(() => {
+    if (uploadedFileInfo) deleteFileRef.current!.focus()
+    else addFileRef.current!.focus()
+  }, [uploadedFileInfo])
 
   return (
     <>
@@ -479,6 +484,7 @@ export function Conversation({
                   </p>
 
                   <FileInput
+                    ref={addFileRef}
                     id='piece-jointe'
                     ariaDescribedby='piece-jointe--desc'
                     onChange={uploadFichier}
@@ -497,7 +503,7 @@ export function Conversation({
                   </p>
                   <button
                     type='button'
-                    onClick={annulerModificationmessage}
+                    onClick={annulerModificationMessage}
                     title='Annuler la modification du message'
                     className='w-12 h-12'
                   >
@@ -526,6 +532,7 @@ export function Conversation({
                       {uploadedFileInfo.nom}
                     </p>
                     <button
+                      ref={deleteFileRef}
                       type='button'
                       aria-label={
                         'Supprimer la pièce jointe ' + uploadedFileInfo.nom

@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { FormEvent, useRef, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
 import BeneficiairesMultiselectAutocomplete, {
   OptionBeneficiaire,
@@ -78,7 +78,8 @@ function EnvoiMessageGroupePage({
       value: getNomBeneficiaireComplet(jeune),
     }))
   }
-  const fileInputRef = useRef<HTMLLabelElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileSelectionRef = useRef<HTMLButtonElement>(null)
 
   function formIsValid(): boolean {
     const selectionEstValide = isSelectedJeunesIdsValid()
@@ -213,7 +214,6 @@ function EnvoiMessageGroupePage({
   function enleverFichier() {
     setErreurUploadPieceJointe(undefined)
     setPieceJointe(undefined)
-    fileInputRef.current?.focus()
   }
 
   function updateDestinataires(selectedIds: {
@@ -242,6 +242,11 @@ function EnvoiMessageGroupePage({
       })
     return erreurs
   }
+
+  useEffect(() => {
+    if (pieceJointe) fileSelectionRef.current!.focus()
+    else fileInputRef.current!.focus()
+  }, [pieceJointe])
 
   return (
     <>
@@ -331,6 +336,7 @@ function EnvoiMessageGroupePage({
             {pieceJointe && (
               <div className='mb-4'>
                 <Multiselection
+                  ref={fileSelectionRef}
                   selection={[
                     {
                       id: pieceJointe.name,
@@ -341,6 +347,7 @@ function EnvoiMessageGroupePage({
                   ]}
                   typeSelection='fichier'
                   unselect={enleverFichier}
+                  onYieldFocus={() => {}}
                 />
               </div>
             )}
