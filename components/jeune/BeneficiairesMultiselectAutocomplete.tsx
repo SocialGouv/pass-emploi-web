@@ -69,7 +69,7 @@ export default function BeneficiairesMultiselectAutocomplete({
   const [listesSelectionnees, setListesSelectionnees] = useState<
     ListeDeDiffusion[]
   >([])
-  const input = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const mailSupportObject =
     'Portail conseiller Mission Locale - problème inscription des bénéficiaires sous Edge'
@@ -142,7 +142,7 @@ export default function BeneficiairesMultiselectAutocomplete({
       onUpdate({
         beneficiaires: beneficiaires.map((beneficiaire) => beneficiaire.id),
       })
-      input.current!.value = ''
+      inputRef.current!.value = ''
       return
     }
 
@@ -156,7 +156,7 @@ export default function BeneficiairesMultiselectAutocomplete({
       onUpdate({
         listesDeDiffusion: updatedListesSelectionnees.map((liste) => liste.id),
       })
-      input.current!.value = ''
+      inputRef.current!.value = ''
       return
     }
 
@@ -172,7 +172,7 @@ export default function BeneficiairesMultiselectAutocomplete({
           (beneficiaire) => beneficiaire.id
         ),
       })
-      input.current!.value = ''
+      inputRef.current!.value = ''
     }
   }
 
@@ -298,7 +298,7 @@ export default function BeneficiairesMultiselectAutocomplete({
         required={required}
         multiple={true}
         aria-controls='selected-beneficiaires'
-        ref={input}
+        ref={inputRef}
         invalid={Boolean(error)}
         disabled={disabled}
         ariaDescribedBy={ariaDescribedBy}
@@ -327,6 +327,7 @@ export default function BeneficiairesMultiselectAutocomplete({
           selection={beneficiairesEtListesSelectionnes()}
           typeSelection='beneficiaire'
           unselect={deselectionnerOption}
+          onYieldFocus={() => inputRef.current!.focus()}
           renderIndication={renderIndication}
           disabled={disabled}
         />
