@@ -27,7 +27,7 @@ export default function LayoutPageMessagerie({
         <Sidebar />
       </div>
 
-      <div id={ID_CONTENU} className={layout.chatRoom}>
+      <div id={ID_CONTENU} className={layout.chatRoom} tabIndex={-1}>
         <ChatContainer
           beneficiairesChats={chats}
           menuState={[false, () => {}]}

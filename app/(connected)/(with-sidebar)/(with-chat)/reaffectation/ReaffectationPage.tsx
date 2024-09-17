@@ -20,7 +20,6 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
-import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
@@ -32,6 +31,8 @@ import {
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { AlerteParam } from 'referentiel/alerteParam'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -50,6 +51,7 @@ type ReaffectationProps = {
 }
 
 function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
+  const [alerte, setAlerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
   const conseillerInitialRef = useRef<{
     resetRechercheConseiller: () => void
@@ -81,8 +83,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   >({ value: [] })
 
   const [isReaffectationEnCours, setReaffectationEnCours] =
-    useState<boolean>(false)
-  const [isReaffectationSuccess, setReaffectationSuccess] =
     useState<boolean>(false)
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
@@ -125,7 +125,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   }
 
   function resetReaffectation(): void {
-    setReaffectationSuccess(false)
+    setAlerte(undefined)
     setErreurReaffectation(undefined)
   }
 
@@ -291,7 +291,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         isReaffectationTemporaire.value!
       )
       resetAll()
-      setReaffectationSuccess(true)
+      setAlerte(AlerteParam.reaffectation)
       setTrackingTitle('Réaffectation jeunes – Etape 1 – Succès réaff.')
     } catch (erreur) {
       setErreurReaffectation(
@@ -352,13 +352,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
   return (
     <>
-      {isReaffectationSuccess && (
-        <SuccessAlert
-          label={'Les bénéficiaires ont été réaffectés avec succès'}
-          onAcknowledge={() => setReaffectationSuccess(false)}
-        />
-      )}
-
       <RecapitulatifErreursFormulaire
         erreurs={getErreurs()}
         ref={formErrorsRef}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
+import { ID_CONTENU } from 'components/ids'
 import AlertLink from 'components/ui/Notifications/AlertLink'
 import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -22,8 +23,9 @@ export default function AlerteDisplayer({
     AlerteAffichee | undefined
   >()
 
-  async function closeAlerte(): Promise<void> {
+  async function closeAlerte() {
     setAlerte(undefined)
+    document.getElementById(ID_CONTENU)!.focus()
   }
 
   useEffect(() => {
@@ -147,6 +149,7 @@ const ALERTES: DictAlertes = {
   modificationInformationCollective: {
     title: 'L’information collective a bien été mise à jour',
   },
+  reaffectation: { title: 'Les bénéficiaires ont été réaffectés avec succès' },
 }
 
 const ALERTES_MILO: DictAlertes = {
