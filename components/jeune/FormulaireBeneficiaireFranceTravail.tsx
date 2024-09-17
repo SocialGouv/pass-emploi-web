@@ -1,8 +1,9 @@
 import { FormEvent, useEffect, useState } from 'react'
 
 import Button from 'components/ui/Button/Button'
-import { DeprecatedErrorMessage } from 'components/ui/Form/DeprecatedErrorMessage'
+import DeprecatedErrorMessage from 'components/ui/Form/DeprecatedErrorMessage'
 import Input from 'components/ui/Form/Input'
+import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 import { ValueWithError } from 'components/ValueWithError'
 import { BeneficiaireFranceTravailFormData } from 'interfaces/json/beneficiaire'
@@ -113,6 +114,9 @@ function FormulaireBeneficiaireFranceTravail({
         <Label htmlFor='jeune-prenom' inputRequired={true}>
           Prénom
         </Label>
+        {prenom.error && (
+          <InputError id='jeune-prenom--error'>{prenom.error}</InputError>
+        )}
         <div className='w-8/12'>
           <Input
             type='text'
@@ -122,13 +126,13 @@ function FormulaireBeneficiaireFranceTravail({
             invalid={Boolean(prenom.error)}
           />
         </div>
-        {prenom.error && (
-          <DeprecatedErrorMessage>{prenom.error}</DeprecatedErrorMessage>
-        )}
 
         <Label htmlFor='jeune-nom' inputRequired={true}>
           Nom
         </Label>
+        {nom.error && (
+          <InputError id='jeune-nom--error'>{nom.error}</InputError>
+        )}
         <div className='w-8/12'>
           <Input
             type='text'
@@ -138,9 +142,6 @@ function FormulaireBeneficiaireFranceTravail({
             invalid={Boolean(nom.error)}
           />
         </div>
-        {nom.error && (
-          <DeprecatedErrorMessage>{nom.error}</DeprecatedErrorMessage>
-        )}
 
         <Label htmlFor='jeune-email' inputRequired={true}>
           {{ main: 'E-mail', helpText: '(ex : monemail@exemple.com)' }}
@@ -149,6 +150,9 @@ function FormulaireBeneficiaireFranceTravail({
           Attention à bien renseigner l&apos;e-mail qui se trouve sous le
           dossier MAP du bénéficiaire.
         </p>
+        {email.error && (
+          <InputError id='jeune-email--error'>{email.error}</InputError>
+        )}
         <div className='w-8/12'>
           <Input
             type='email'
@@ -158,13 +162,11 @@ function FormulaireBeneficiaireFranceTravail({
             invalid={Boolean(email.error)}
           />
         </div>
-        {email.error && (
-          <DeprecatedErrorMessage>{email.error}</DeprecatedErrorMessage>
-        )}
+
         {error && <DeprecatedErrorMessage>{error}</DeprecatedErrorMessage>}
 
-        <Button type='submit' disabled={creationEnCours}>
-          {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
+        <Button type='submit' isLoading={creationEnCours}>
+          Créer le compte
         </Button>
       </form>
     </>

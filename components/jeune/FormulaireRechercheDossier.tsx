@@ -7,7 +7,7 @@ import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
 
 type FormulaireRechercheDossierProps = {
-  onRechercheDossier: (idDossier: string) => void
+  onRechercheDossier: (idDossier: string) => Promise<void>
   errMessage?: string
 }
 
@@ -17,8 +17,10 @@ export default function FormulaireRechercheDossier({
 }: FormulaireRechercheDossierProps) {
   const [idDossier, setIdDossier] = useState<string | undefined>()
   const [messageErreur, setMessageErreur] = useState<string | undefined>()
+  const [rechercheEnCours, setRechercheEnCours] = useState<boolean>(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  function handleSearchSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSearchSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
     if (!idDossier) {
@@ -28,7 +30,12 @@ export default function FormulaireRechercheDossier({
       return
     }
 
-    onRechercheDossier(idDossier)
+    try {
+      setRechercheEnCours(true)
+      await onRechercheDossier(idDossier)
+    } finally {
+      setRechercheEnCours(false)
+    }
   }
 
   function handleSearchInputChanges(value: string) {
@@ -38,6 +45,7 @@ export default function FormulaireRechercheDossier({
 
   useEffect(() => {
     setMessageErreur(errMessage)
+    if (errMessage) inputRef.current!.focus()
   }, [errMessage])
 
   return (
@@ -62,6 +70,7 @@ export default function FormulaireRechercheDossier({
         )}
 
         <Input
+          ref={inputRef}
           type='text'
           id='recherche-numero'
           onChange={handleSearchInputChanges}
@@ -69,7 +78,9 @@ export default function FormulaireRechercheDossier({
           placeholder='123456'
         />
 
-        <Button type='submit'>Valider le numéro</Button>
+        <Button type='submit' isLoading={rechercheEnCours}>
+          Valider le numéro
+        </Button>
       </form>
     </>
   )
