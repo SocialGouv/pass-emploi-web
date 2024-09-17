@@ -74,6 +74,8 @@ function QualificationPage({
     closeModal: (e: KeyboardEvent | MouseEvent) => void
   }>(null)
 
+  const formErrorsRef = useRef<HTMLDivElement>(null)
+
   const [labelMatomo, setLabelMatomo] = useState<string>(
     'Création Situation Non Professionnelle'
   )
@@ -138,7 +140,10 @@ function QualificationPage({
 
   async function qualifierAction(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault()
-    if (!isFormValid()) return
+    if (!isFormValid()) {
+      formErrorsRef.current!.focus()
+      return
+    }
 
     setErreurQualification(undefined)
     setIsQualificationEnCours(true)
@@ -196,7 +201,10 @@ function QualificationPage({
     <>
       {!successQualification && (
         <>
-          <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+          <RecapitulatifErreursFormulaire
+            erreurs={getErreurs()}
+            ref={formErrorsRef}
+          />
 
           <form onSubmit={qualifierAction}>
             {erreurQualification && (
