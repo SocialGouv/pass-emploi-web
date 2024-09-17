@@ -115,6 +115,7 @@ export function SelecteurPeriode({
           type='button'
           style={ButtonStyle.SECONDARY}
           onClick={allerPeriodeActuelle}
+          disabled={indexPeriodeAffichee === 0}
         >
           <span className='sr-only'>Aller à la </span>Période en cours
           <span className='sr-only'> {periodeAffiche.longLabel}</span>
