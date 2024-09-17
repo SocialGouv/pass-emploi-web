@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ForwardedRef, forwardRef } from 'react'
 
 import FailureIcon from 'assets/icons/informations/info.svg'
 
@@ -12,38 +12,48 @@ type ErreursFormulaireProps = {
   erreurs: LigneErreur[]
 }
 
-export default function RecapitulatifErreursFormulaire({
-  erreurs,
-}: ErreursFormulaireProps) {
-  if (!erreurs.length) return null
-
+function RecapitulatifErreursFormulaire(
+  { erreurs }: ErreursFormulaireProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   return (
     <div
-      role='alert'
-      className='text-warning bg-warning_lighten p-6 rounded-base mb-8'
-      id='recapitulatif-erreurs-formulaire'
+      ref={ref}
+      className={
+        erreurs.length
+          ? 'text-warning bg-warning_lighten p-6 rounded-base mb-8'
+          : ''
+      }
+      tabIndex={-1}
     >
-      <div className='flex items-center mb-4'>
-        <FailureIcon
-          aria-hidden={true}
-          focusable={false}
-          className='w-6 h-6 mr-2 fill-warning shrink-0'
-        />
-        <p className='text-base-bold grow'>{`Le formulaire contient ${erreurs.length} erreur(s).`}</p>
-      </div>
-      <ul className='list-disc ml-6'>
-        {erreurs.map(({ label, ancre, titreChamp }) => {
-          return (
-            <li key={titreChamp} className='mb-2'>
-              {label}{' '}
-              <a href={ancre} className='underline'>
-                Remplir <span className='sr-only'>le champ {titreChamp} </span>
-                <span aria-hidden={true}>&gt;</span>
-              </a>
-            </li>
-          )
-        })}
-      </ul>
+      {erreurs.length > 0 && (
+        <>
+          <div className='flex items-center mb-4'>
+            <FailureIcon
+              aria-hidden={true}
+              focusable={false}
+              className='w-6 h-6 mr-2 fill-warning shrink-0'
+            />
+            <p className='text-base-bold grow'>{`Le formulaire contient ${erreurs.length} erreur(s).`}</p>
+          </div>
+          <ul className='list-disc ml-6'>
+            {erreurs.map(({ label, ancre, titreChamp }) => {
+              return (
+                <li key={titreChamp} className='mb-2'>
+                  {label}{' '}
+                  <a href={ancre} className='underline'>
+                    Remplir{' '}
+                    <span className='sr-only'>le champ {titreChamp} </span>
+                    <span aria-hidden={true}>&gt;</span>
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </>
+      )}
     </div>
   )
 }
+
+export default forwardRef(RecapitulatifErreursFormulaire)

@@ -91,7 +91,7 @@ export function EditionActionForm({
   const [showHelperCategories, setShowHelperCategories] =
     useState<boolean>(false)
 
-  const formRef = useRef<HTMLFormElement>(null)
+  const formErrorsRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<{
     closeModal: (e: MouseEvent) => void
   }>(null)
@@ -270,7 +270,7 @@ export function EditionActionForm({
     e.preventDefault()
 
     if (!formulaireEstValide()) {
-      formRef.current!.scrollIntoView({ behavior: 'smooth' })
+      formErrorsRef.current!.focus()
       return Promise.resolve()
     }
 
@@ -291,14 +291,12 @@ export function EditionActionForm({
 
   return (
     <>
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
 
-      <form
-        id='edition-action-form'
-        onSubmit={handleSoumettreAction}
-        noValidate={true}
-        ref={formRef}
-      >
+      <form onSubmit={handleSoumettreAction} noValidate={true}>
         <p className='text-s-bold text-content_color mb-4'>
           Tous les champs avec * sont obligatoires
         </p>

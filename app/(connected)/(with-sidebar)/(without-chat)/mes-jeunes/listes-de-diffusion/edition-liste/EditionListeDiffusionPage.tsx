@@ -3,7 +3,7 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import { BeneficiaireIndicationReaffectaction } from 'components/jeune/BeneficiaireIndications'
 import BeneficiairesMultiselectAutocomplete, {
@@ -48,6 +48,8 @@ function EditionListeDiffusionPage({
 }: EditionListeDiffusionProps) {
   const router = useRouter()
   const [_, setAlerte] = useAlerte()
+
+  const formErrorsRef = useRef<HTMLDivElement>(null)
 
   const [portefeuille] = usePortefeuille()
   const defaultBeneficiaires = getDefaultBeneficiaires()
@@ -131,7 +133,11 @@ function EditionListeDiffusionPage({
 
   async function soumettreListe(e: FormEvent) {
     e.preventDefault()
-    if (!formIsValid() || !hasChanges()) return
+    if (!formIsValid()) {
+      formErrorsRef.current!.focus()
+      return
+    }
+    if (!hasChanges()) return
 
     setIsLoading(true)
     const payload: ListeDeDiffusionFormData = {
@@ -241,7 +247,10 @@ function EditionListeDiffusionPage({
         />
       )}
 
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
 
       <p className='text-s-bold text-content_color mb-4'>
         Tous les champs sont obligatoires

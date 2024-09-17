@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
 import {
   BeneficiaireIndicationPortefeuille,
@@ -77,6 +77,8 @@ export function EditionRdvForm({
   evenementTypeAC,
   lectureSeule,
 }: EditionRdvFormProps) {
+  const formErrorsRef = useRef<HTMLDivElement>(null)
+
   const defaultBeneficiaires = initBeneficiairesFromRdvOrIdBeneficiaire()
   const [beneficiairesEtablissement, setBeneficiairesEtablissement] = useState<
     BaseBeneficiaire[]
@@ -529,12 +531,10 @@ export function EditionRdvForm({
     e.preventDefault()
 
     if (!formIsValid()) {
-      document
-        .getElementById('edition-rdv-form')!
-        .scrollIntoView({ behavior: 'smooth' })
-      return Promise.resolve()
+      formErrorsRef.current!.focus()
+      return
     }
-    if (!formHasChanges()) return Promise.resolve()
+    if (!formHasChanges()) return
 
     setIsLoading(true)
 
@@ -664,13 +664,12 @@ export function EditionRdvForm({
   // @ts-ignore
   return (
     <>
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
 
-      <form
-        id='edition-rdv-form'
-        onSubmit={handleSoumettreRdv}
-        noValidate={true}
-      >
+      <form onSubmit={handleSoumettreRdv} noValidate={true}>
         <p className='text-s-bold my-6'>
           Tous les champs avec * sont obligatoires
         </p>
