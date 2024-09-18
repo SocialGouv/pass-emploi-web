@@ -1,26 +1,36 @@
-import { forwardRef, ReactNode, useImperativeHandle } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  MouseEvent,
+  ReactNode,
+  useImperativeHandle,
+} from 'react'
 
-const FakeModal = forwardRef(
-  (
-    {
-      children,
-      title,
-      onClose,
-    }: { title: string; children: ReactNode; onClose?: () => void },
-    ref
-  ) => {
-    useImperativeHandle(ref, () => ({
-      closeModal: onClose,
-    }))
+import { ModalHandles } from 'components/Modal'
 
-    return (
-      <>
-        <h2>{title}</h2>
-        {children}
-      </>
-    )
-  }
-)
-FakeModal.displayName = 'FakeModal'
+function FakeModal(
+  {
+    children,
+    title,
+    onClose,
+  }: {
+    title: string
+    children: ReactNode
+    onClose: (e: KeyboardEvent | MouseEvent) => void
+  },
+  ref: ForwardedRef<ModalHandles>
+) {
+  useImperativeHandle(ref, () => ({
+    focus: () => {},
+    closeModal: onClose,
+  }))
 
-export default FakeModal
+  return (
+    <>
+      <h2>{title}</h2>
+      {children}
+    </>
+  )
+}
+
+export default forwardRef(FakeModal)

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { BaseBeneficiaire } from 'interfaces/beneficiaire'
@@ -19,6 +19,9 @@ export default function DeleteJeuneInactifModal({
   onDelete,
 }: DeleteJeuneInactifModalProps) {
   const [portefeuille] = usePortefeuille()
+
+  const modalRef = useRef<ModalHandles>(null)
+
   useMatomo(
     'Détail Jeune - Pop-in confirmation suppression',
     portefeuille.length > 0
@@ -26,6 +29,7 @@ export default function DeleteJeuneInactifModal({
 
   return (
     <Modal
+      ref={modalRef}
       title={`Suppression du compte bénéficiaire ${jeune.prenom} ${jeune.nom}`}
       onClose={onClose}
       titleIllustration={IllustrationName.Delete}
@@ -35,7 +39,11 @@ export default function DeleteJeuneInactifModal({
         seront supprimées.
       </p>
       <div className='flex justify-center mt-4'>
-        <Button type='button' style={ButtonStyle.SECONDARY} onClick={onClose}>
+        <Button
+          type='button'
+          style={ButtonStyle.SECONDARY}
+          onClick={(e) => modalRef.current!.closeModal(e)}
+        >
           Annuler
         </Button>
         <Button

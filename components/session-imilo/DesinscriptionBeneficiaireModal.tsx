@@ -1,8 +1,8 @@
-import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import { BaseBeneficiaireASelectionner } from 'app/(connected)/(with-sidebar)/(without-chat)/agenda/sessions/[idSession]/DetailsSessionPage'
 import RadioBox from 'components/action/RadioBox'
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -28,9 +28,7 @@ export default function DesinscriptionBeneficiaireModal({
   beneficiaireADesinscrire,
   sessionName,
 }: DesinscriptionBeneficiaireModalProps) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
   const textCommentaire = useRef<HTMLTextAreaElement>(null)
 
   const [typeRefus, setTypeRefus] = useState<

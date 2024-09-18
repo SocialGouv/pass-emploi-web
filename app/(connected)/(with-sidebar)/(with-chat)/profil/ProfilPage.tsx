@@ -5,10 +5,7 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-import {
-  FormContainer,
-  RenseignementAgenceMissionLocaleForm,
-} from 'components/RenseignementAgenceMissionLocaleForm'
+import { RenseignementAgenceMissionLocaleForm } from 'components/RenseignementAgenceMissionLocaleForm'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { Switch } from 'components/ui/Form/Switch'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
@@ -236,7 +233,6 @@ function ProfilPage({ referentielAgences }: ProfilProps) {
                 referentielAgences={referentielAgences}
                 onAgenceChoisie={selectAgence}
                 onContacterSupport={trackContacterSupportClick}
-                container={FormContainer.PAGE}
               />
             )}
           </>

@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef, useState } from 'react'
+import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
@@ -11,7 +11,7 @@ import { Agence } from 'interfaces/referentiel'
 interface RenseignementAgenceFormProps {
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id?: string; nom: string }) => void
-  onClose: () => void
+  onClose: (e: MouseEvent) => void
 }
 
 export default function RenseignementAgenceForm({
@@ -119,7 +119,7 @@ export default function RenseignementAgenceForm({
           value={agenceLibre.value ?? ''}
           onChange={(value) => setAgenceLibre({ value })}
           onReset={() => setAgenceLibre({ value: '' })}
-          className={`mt-2 border border-solid rounded-base w-full mt-2 ${
+          className={`mt-2 border border-solid rounded-base w-full ${
             agenceLibre.error
               ? 'border-warning text-warning'
               : 'border-content_color'

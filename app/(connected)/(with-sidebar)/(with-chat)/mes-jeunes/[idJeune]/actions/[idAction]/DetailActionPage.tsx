@@ -3,12 +3,12 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
 import { useRouter } from 'next/navigation'
-import React, { MouseEvent, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { CommentairesAction } from 'components/action/CommentairesAction'
 import { HistoriqueAction } from 'components/action/HistoriqueAction'
 import StatutActionForm from 'components/action/StatutActionForm'
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -65,9 +65,7 @@ function DetailActionPage({
     action.status !== StatutAction.Qualifiee &&
     !Boolean(commentaires.length > 0)
 
-  const suppressionModalRef = useRef<{
-    closeModal: (e: MouseEvent) => void
-  }>(null)
+  const suppressionModalRef = useRef<ModalHandles>(null)
 
   async function updateStatutAction(statutChoisi: StatutAction): Promise<void> {
     const { modifierAction } = await import('services/actions.service')

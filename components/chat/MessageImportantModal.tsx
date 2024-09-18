@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
-import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
@@ -19,7 +19,7 @@ import { MessageImportantPreRempli } from 'services/messages.service'
 interface MessageImportantModalProps {
   messageImportantIsLoading: boolean
   messageImportantPreRempli: MessageImportantPreRempli | undefined
-  onConfirmation: (
+  onModificationMessageImportant: (
     message: string,
     dateDebut: DateTime,
     dateFin: DateTime
@@ -35,13 +35,11 @@ export default function MessageImportantModal({
   messageImportantIsLoading,
   succesEnvoiMessageImportant,
   succesDesactivationMessageImportant,
-  onConfirmation,
+  onModificationMessageImportant,
   onCancel,
   onDeleteMessageImportant,
 }: MessageImportantModalProps) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   const [dateDebut, setDateDebut] = useState<
     ValueWithError<string | undefined>
@@ -111,7 +109,7 @@ export default function MessageImportantModal({
     return true
   }
 
-  function validateFormulaire(e: FormEvent) {
+  function modifierMessageImportant(e: FormEvent) {
     e.preventDefault()
     const dateDebutEstValide = validerDateDebut()
     const dateFinEstValide = validerDateFin()
@@ -120,7 +118,7 @@ export default function MessageImportantModal({
     if (dateDebutEstValide && dateFinEstValide && messageEstValide) {
       const debut = DateTime.fromISO(dateDebut.value!)
       const fin = DateTime.fromISO(dateFin.value!)
-      onConfirmation(message.value!, debut, fin)
+      onModificationMessageImportant(message.value!, debut, fin)
     }
   }
 
@@ -128,6 +126,12 @@ export default function MessageImportantModal({
     messageImportantPreRempli?.dateFin &&
     DateTime.fromISO(messageImportantPreRempli.dateFin).startOf('day') >=
       DateTime.now().startOf('day')
+
+  useEffect(() => {
+    if (succesEnvoiMessageImportant || succesDesactivationMessageImportant) {
+      modalRef.current!.focus()
+    }
+  }, [succesEnvoiMessageImportant, succesDesactivationMessageImportant])
 
   return (
     <Modal
@@ -151,7 +155,7 @@ export default function MessageImportantModal({
           </p>
           <p className='text-base-bold'>Tous les champs sont obligatoires</p>
 
-          <form onSubmit={validateFormulaire}>
+          <form onSubmit={modifierMessageImportant}>
             <div className='mt-4 flex flex-col justify-center'>
               <div className='flex gap-2 mb-4 items-end'>
                 <div className='w-1/2'>

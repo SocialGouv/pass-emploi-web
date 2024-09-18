@@ -9,7 +9,6 @@ import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
 import {
-  desactiverMessageImportant,
   FormNouveauMessageImportant,
   getMessageImportant,
   MessageImportantPreRempli,
@@ -143,7 +142,6 @@ export default function ChatRoom({
   }
 
   async function ouvrirModaleMessageImportant() {
-    setAfficherMenuActionsMessagerie(false)
     setAfficherModaleMessageImportant(true)
     setSuccesEnvoiMessageImportant(undefined)
     setSuccesDesactivationMessageImportant(undefined)
@@ -345,7 +343,7 @@ export default function ChatRoom({
             succesDesactivationMessageImportant
           }
           messageImportantIsLoading={messageImportantIsLoading}
-          onConfirmation={envoyerMessageImportant}
+          onModificationMessageImportant={envoyerMessageImportant}
           onCancel={() => {
             setAfficherModaleMessageImportant(false)
           }}

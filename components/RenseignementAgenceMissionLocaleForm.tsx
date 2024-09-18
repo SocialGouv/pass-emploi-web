@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, MouseEvent, useEffect, useState } from 'react'
 
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
@@ -15,13 +15,8 @@ interface RenseignementAgenceMissionLocaleFormProps {
   referentielAgences: Agence[]
   onAgenceChoisie: (agence: { id: string; nom: string }) => void
   onContacterSupport: () => void
-  onClose?: () => void
-  container: FormContainer
-}
-
-export enum FormContainer {
-  MODAL,
-  PAGE,
+  isInModal?: boolean
+  onClose?: (e: MouseEvent) => void
 }
 
 interface OptionAgence {
@@ -42,7 +37,7 @@ export function RenseignementAgenceMissionLocaleForm({
   onAgenceChoisie,
   onContacterSupport,
   onClose = () => {},
-  container,
+  isInModal = false,
 }: RenseignementAgenceMissionLocaleFormProps) {
   const [departement, setDepartement] = useState<string>('')
   const [agencesMiloFiltrees, setAgencesMiloFiltrees] =
@@ -104,14 +99,10 @@ export function RenseignementAgenceMissionLocaleForm({
     <form
       onSubmit={submitMissionLocaleSelectionnee}
       noValidate={true}
-      className={`${container === FormContainer.PAGE ? '' : 'px-10 pt-6'}`}
+      className={isInModal ? 'px-10 pt-6' : ''}
     >
-      <div
-        className={`${
-          container === FormContainer.PAGE ? 'flex items-end mt-4 gap-4' : ''
-        }`}
-      >
-        <div className={`${container === FormContainer.PAGE ? 'w-[40%]' : ''}`}>
+      <div className={isInModal ? '' : 'flex items-end mt-4 gap-4'}>
+        <div className={isInModal ? '' : 'w-[40%]'}>
           <Label htmlFor='departement'>
             {{
               main: 'Département de ma Mission Locale',
@@ -121,7 +112,7 @@ export function RenseignementAgenceMissionLocaleForm({
           <Input type='text' id='departement' onChange={selectDepartement} />
         </div>
 
-        <div className={`${container === FormContainer.PAGE ? 'w-[55%]' : ''}`}>
+        <div className={isInModal ? '' : 'w-[55%]'}>
           <Label htmlFor='mission-locale' inputRequired={true}>
             Recherchez votre Mission Locale dans la liste suivante
           </Label>
@@ -147,23 +138,19 @@ export function RenseignementAgenceMissionLocaleForm({
         </div>
       </div>
 
-      {agenceNestPasDansLaListe() && container !== FormContainer.PAGE && (
+      {agenceNestPasDansLaListe() && isInModal && (
         <div className='mt-2'>
           <InformationMessage label={CONTACTER_LE_SUPPORT_LABEL} />
         </div>
       )}
 
-      {agenceNestPasDansLaListe() && container === FormContainer.PAGE && (
+      {agenceNestPasDansLaListe() && !isInModal && (
         <div className='mb-4'>
           <p>{CONTACTER_LE_SUPPORT_LABEL}</p>
         </div>
       )}
-      <div
-        className={`${
-          container === FormContainer.PAGE ? '' : 'flex justify-center mt-14'
-        }`}
-      >
-        {container !== FormContainer.PAGE && (
+      <div className={isInModal ? 'flex justify-center mt-14' : ''}>
+        {isInModal && (
           <Button
             type='button'
             style={ButtonStyle.SECONDARY}
@@ -173,11 +160,13 @@ export function RenseignementAgenceMissionLocaleForm({
             Annuler
           </Button>
         )}
+
         {(!idAgenceSelectionnee?.value || agenceEstDansLaListe()) && (
           <Button type='submit' className='mr-6'>
             Ajouter
           </Button>
         )}
+
         {agenceNestPasDansLaListe() && (
           <a
             className={`w-fit flex items-center justify-center text-s-bold ${styles.button} ${styles.buttonTertiary}`}
