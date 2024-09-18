@@ -28,7 +28,7 @@
     "lodash.isequal": "4.5.0",
     "luxon": "3.5.0",
     "matomo-tracker": "2.2.4",
-    "next": "14.2.8",
+    "next": "14.2.10",
     "next-auth": "4.24.7",
     "next-logger": "5.0.0",
     "next-themes": "0.3.0",
