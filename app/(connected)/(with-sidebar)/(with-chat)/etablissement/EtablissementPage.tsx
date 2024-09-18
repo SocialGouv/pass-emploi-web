@@ -4,7 +4,7 @@ import { withTransaction } from '@elastic/apm-rum-react'
 import React, { useState } from 'react'
 
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
-import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
+import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import SituationTag from 'components/jeune/SituationTag'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'

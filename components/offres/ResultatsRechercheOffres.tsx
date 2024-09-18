@@ -74,7 +74,7 @@ export default function ResultatsRechercheOffre({
         <>
           <ResultTitle total={nbTotal} />
           <EmptyState
-            ref={scrollToRef}
+            shouldFocus={true}
             illustrationName={IllustrationName.Search}
             titre='Pour le moment, aucune offre ne correspond à vos critères.'
             sousTitre='Modifiez vos critères de recherche ou partagez ces critères tels quels aux bénéficiaires.'
