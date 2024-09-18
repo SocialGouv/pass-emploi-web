@@ -51,7 +51,7 @@ type ReaffectationProps = {
 }
 
 function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
-  const [alerte, setAlerte] = useAlerte()
+  const [_, setAlerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
   const conseillerInitialRef = useRef<{
     resetRechercheConseiller: () => void

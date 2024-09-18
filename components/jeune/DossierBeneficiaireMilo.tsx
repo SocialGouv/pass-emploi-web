@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import RefreshIcon from 'assets/icons/actions/refresh.svg'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
-import DeprecatedErrorMessage from 'components/ui/Form/DeprecatedErrorMessage'
+import { InputError } from 'components/ui/Form/InputError'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { DossierMilo } from 'interfaces/beneficiaire'
@@ -128,12 +128,6 @@ export default function DossierBeneficiaireMilo({
         </div>
       )}
 
-      {erreurMessageHttpPassEmploi && (
-        <DeprecatedErrorMessage className='mt-8' ref={(e) => e?.focus()}>
-          {erreurMessageHttpPassEmploi}
-        </DeprecatedErrorMessage>
-      )}
-
       <div className='flex items-center mt-14 gap-4'>
         <Button style={ButtonStyle.TERTIARY} onClick={onRetour}>
           <IconComponent
@@ -146,42 +140,40 @@ export default function DossierBeneficiaireMilo({
           Retour
         </Button>
 
-        {!erreurMessageHttpPassEmploi && (
-          <ActionButtons
-            dossier={dossier}
-            addBeneficiaire={addBeneficiaire}
-            creationEnCours={creationEnCours}
-            onRefresh={onRefresh}
-          />
+        {dossier.email && (
+          <>
+            {erreurMessageHttpPassEmploi && (
+              <InputError id='creation-button--error'>
+                {erreurMessageHttpPassEmploi}
+              </InputError>
+            )}
+
+            <Button
+              id='creation-button'
+              type='button'
+              onClick={addBeneficiaire}
+              isLoading={creationEnCours}
+              disabled={Boolean(erreurMessageHttpPassEmploi)}
+              describedBy={
+                erreurMessageHttpPassEmploi && 'creation-button--error'
+              }
+            >
+              Créer le compte
+            </Button>
+          </>
+        )}
+
+        {!dossier.email && (
+          <Button type='button' onClick={onRefresh}>
+            <RefreshIcon
+              className='w-4 h-4 mr-2.5'
+              aria-hidden={true}
+              focusable={false}
+            />
+            Rafraîchir le compte
+          </Button>
         )}
       </div>
     </>
-  )
-}
-
-function ActionButtons({
-  dossier,
-  addBeneficiaire,
-  creationEnCours,
-  onRefresh,
-}: {
-  dossier: DossierMilo
-  addBeneficiaire: () => Promise<void>
-  creationEnCours: boolean
-  onRefresh: () => void
-}) {
-  return dossier.email ? (
-    <Button type='button' onClick={addBeneficiaire} disabled={creationEnCours}>
-      {creationEnCours ? 'Création en cours...' : 'Créer le compte'}
-    </Button>
-  ) : (
-    <Button type='button' onClick={onRefresh}>
-      <RefreshIcon
-        className='w-4 h-4 mr-2.5'
-        aria-hidden={true}
-        focusable={false}
-      />
-      Rafraîchir le compte
-    </Button>
   )
 }

@@ -1,7 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 
 import Button from 'components/ui/Button/Button'
-import DeprecatedErrorMessage from 'components/ui/Form/DeprecatedErrorMessage'
 import Input from 'components/ui/Form/Input'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -163,9 +162,15 @@ function FormulaireBeneficiaireFranceTravail({
           />
         </div>
 
-        {error && <DeprecatedErrorMessage>{error}</DeprecatedErrorMessage>}
+        {error && <InputError id='submit--error'>{error}</InputError>}
 
-        <Button type='submit' isLoading={creationEnCours}>
+        <Button
+          id='submit'
+          type='submit'
+          isLoading={creationEnCours}
+          disabled={Boolean(error)}
+          describedBy={error && 'submit--error'}
+        >
           Créer le compte
         </Button>
       </form>
