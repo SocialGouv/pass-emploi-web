@@ -108,7 +108,7 @@ function HeaderRechercheMessage({
         name={IconName.ArrowBackward}
         aria-hidden={true}
         focusable={false}
-        className='w-5 h-5 fill-[currentColor] mr-3'
+        className='w-5 h-5 fill-current mr-3'
       />
       <span className='text-s-regular underline'>
         Retour

@@ -52,7 +52,7 @@ export function DataTag({
           focusable={false}
           aria-label={iconLabel}
           title={iconLabel}
-          className='inline w-4 h-4 fill-[currentColor] mr-1'
+          className='inline w-4 h-4 fill-current mr-1'
         />
       )}
       {text}

@@ -253,7 +253,7 @@ export default function AidePage() {
                   App Store
                   <IconComponent
                     name={IconName.OpenInNew}
-                    className='ml-1.5 w-4 h-4 fill-[currentColor]'
+                    className='ml-1.5 w-4 h-4 fill-current'
                     focusable={false}
                     aria-hidden={true}
                   />
@@ -274,7 +274,7 @@ export default function AidePage() {
                   Play Store
                   <IconComponent
                     name={IconName.OpenInNew}
-                    className='ml-1.5 w-4 h-4 fill-[currentColor]'
+                    className='ml-1.5 w-4 h-4 fill-current'
                     focusable={false}
                     aria-hidden={true}
                   />

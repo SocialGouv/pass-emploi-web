@@ -74,7 +74,7 @@ export function AnimationCollectiveRow({
               name={IconName.ScheduleOutline}
               focusable={false}
               title='durée'
-              className='inline w-[1em] h-[1em] fill-[currentColor] mr-1'
+              className='inline w-[1em] h-[1em] fill-current mr-1'
             />
             {toFrenchDuration(animationCollective.duree)}
           </span>

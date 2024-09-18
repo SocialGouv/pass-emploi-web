@@ -160,7 +160,7 @@ function DossierExterne({
             role='img'
             title='ouvrir'
             aria-hidden={true}
-            className='ml-2 w-4 h-4 fill-[currentColor]'
+            className='ml-2 w-4 h-4 fill-current'
           />
         </a>
       </dd>

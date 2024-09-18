@@ -43,7 +43,7 @@ function Tag({
         <IconComponent
           name={iconName}
           aria-hidden={!iconLabel}
-          className='h-5 w-5 mr-1 fill-[currentColor]'
+          className='h-5 w-5 mr-1 fill-current'
           aria-label={iconLabel ? iconLabel : undefined}
           title={iconLabel ? iconLabel : undefined}
           role='img'

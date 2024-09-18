@@ -282,7 +282,7 @@ function RechercheAgendaForm({
             name={IconName.Search}
             focusable={false}
             aria-hidden={true}
-            className='w-6 h-6 fill-[currentColor]'
+            className='w-6 h-6 fill-current'
           />
           <span className='ml-1 sr-only'>Rechercher</span>
         </button>
