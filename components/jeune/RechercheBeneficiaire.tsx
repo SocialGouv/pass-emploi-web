@@ -9,10 +9,10 @@ interface RechercheBeneficiaireProps {
   minCaracteres?: number
 }
 
-export const RechercheBeneficiaire = ({
+export default function RechercheBeneficiaire({
   onSearchFilterBy,
   minCaracteres,
-}: RechercheBeneficiaireProps) => {
+}: RechercheBeneficiaireProps) {
   const [query, setQuery] = useState<string>('')
   const [error, setError] = useState<string>()
 

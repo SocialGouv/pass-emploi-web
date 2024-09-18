@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
-import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
+import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
