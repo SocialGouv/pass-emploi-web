@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { ID_CONTENU } from 'components/ids'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import { unConseiller } from 'fixtures/conseiller'
 import { StructureConseiller } from 'interfaces/conseiller'
@@ -375,17 +376,23 @@ describe('AlerteDisplayer', () => {
 
   it("permet de fermer l'alerte du succès", async () => {
     // Given
-    renderWithContexts(<AlerteDisplayer />, {
-      customAlerte: {
-        alerte: {
-          key: AlerteParam.creationRDV,
+    renderWithContexts(
+      <>
+        <div id={ID_CONTENU}></div>
+        <AlerteDisplayer />
+      </>,
+      {
+        customAlerte: {
+          alerte: {
+            key: AlerteParam.creationRDV,
+          },
+          alerteSetter,
         },
-        alerteSetter,
-      },
-      customConseiller: unConseiller({
-        structure: StructureConseiller.POLE_EMPLOI,
-      }),
-    })
+        customConseiller: unConseiller({
+          structure: StructureConseiller.POLE_EMPLOI,
+        }),
+      }
+    )
 
     // When
     await userEvent.click(screen.getByRole('button', { name: "J'ai compris" }))

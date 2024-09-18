@@ -16,7 +16,8 @@ export default function SuccessAlert({
   return (
     <div
       className='flex-col items-center text-success bg-success_lighten p-6 rounded-base mb-8'
-      role='status'
+      tabIndex={-1}
+      ref={(e) => e?.focus()}
     >
       <div className='flex justify-between'>
         <div className='flex items-center'>

@@ -78,6 +78,7 @@ function EnvoiMessageGroupePage({
       value: getNomBeneficiaireComplet(jeune),
     }))
   }
+  const formErrorsRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const fileSelectionRef = useRef<HTMLButtonElement>(null)
 
@@ -143,7 +144,10 @@ function EnvoiMessageGroupePage({
     e.preventDefault()
     e.stopPropagation()
 
-    if (!formIsValid()) return
+    if (!formIsValid()) {
+      formErrorsRef.current!.focus()
+      return
+    }
 
     setConfirmBeforeLeaving(false)
     setIsSending(true)
@@ -254,7 +258,10 @@ function EnvoiMessageGroupePage({
         <FailureAlert label={erreurEnvoi} onAcknowledge={clearDeletionError} />
       )}
 
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
 
       <form onSubmit={envoyerMessageGroupe} noValidate={true}>
         <p className='text-s-bold text-content_color mb-8'>

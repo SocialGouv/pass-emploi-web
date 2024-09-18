@@ -20,7 +20,6 @@ import IconComponent, { IconName } from 'components/ui/IconComponent'
 import RecapitulatifErreursFormulaire, {
   LigneErreur,
 } from 'components/ui/Notifications/RecapitulatifErreursFormulaire'
-import SuccessAlert from 'components/ui/Notifications/SuccessAlert'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import { TH } from 'components/ui/Table/TH'
@@ -32,6 +31,8 @@ import {
   getNomBeneficiaireComplet,
 } from 'interfaces/beneficiaire'
 import { BaseConseiller, StructureConseiller } from 'interfaces/conseiller'
+import { AlerteParam } from 'referentiel/alerteParam'
+import { useAlerte } from 'utils/alerteContext'
 import useMatomo from 'utils/analytics/useMatomo'
 import { usePortefeuille } from 'utils/portefeuilleContext'
 
@@ -50,12 +51,14 @@ type ReaffectationProps = {
 }
 
 function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
+  const [alerte, setAlerte] = useAlerte()
   const [portefeuille] = usePortefeuille()
   const conseillerInitialRef = useRef<{
     resetRechercheConseiller: () => void
   }>(null)
 
-  const toutSelectionnerCheckboxRef = useRef<HTMLInputElement | null>(null)
+  const toutSelectionnerCheckboxRef = useRef<HTMLInputElement>(null)
+  const formErrorsRef = useRef<HTMLDivElement>(null)
 
   const [structureReaffectation, setStructureReaffectation] = useState<
     ValueWithError<StructureReaffectation | undefined>
@@ -80,8 +83,6 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   >({ value: [] })
 
   const [isReaffectationEnCours, setReaffectationEnCours] =
-    useState<boolean>(false)
-  const [isReaffectationSuccess, setReaffectationSuccess] =
     useState<boolean>(false)
   const [erreurReaffectation, setErreurReaffectation] = useState<
     string | undefined
@@ -124,7 +125,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
   }
 
   function resetReaffectation(): void {
-    setReaffectationSuccess(false)
+    setAlerte(undefined)
     setErreurReaffectation(undefined)
   }
 
@@ -223,12 +224,9 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     }
   }
 
-  async function reaffecterBeneficiaires(e: FormEvent) {
-    e.preventDefault()
-    if (isReaffectationEnCours) {
-      return
-    }
-    let formInvalid = false
+  function formIsValid() {
+    let isFormValid = true
+
     if (
       estSuperviseurResponsable &&
       structureReaffectation.value === undefined
@@ -237,14 +235,15 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         ...structureReaffectation,
         error: 'Veuillez choisir un contrat de réaffectation',
       })
-      formInvalid = true
+      isFormValid = false
     }
+
     if (isReaffectationTemporaire.value === undefined) {
       setIsReaffectationTemporaire({
         ...isReaffectationTemporaire,
         error: 'Veuillez choisir un type de réaffectation',
       })
-      formInvalid = true
+      isFormValid = false
     }
 
     if (!conseillerInitial.value) {
@@ -252,15 +251,7 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         ...conseillerInitial,
         error: 'Veuillez rechercher un conseiller initial',
       })
-      return
-    }
-
-    if (!conseillerDestination.value) {
-      setConseillerDestination({
-        ...conseillerDestination,
-        error: 'Veuillez rechercher un conseiller de destination',
-      })
-      formInvalid = true
+      return false
     }
 
     if (idsBeneficiairesSelected.value.length === 0) {
@@ -268,10 +259,25 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
         ...idsBeneficiairesSelected,
         error: 'Veuillez sélectionner au moins un bénéficiaire',
       })
-      formInvalid = true
+      isFormValid = false
     }
 
-    if (formInvalid) {
+    if (!conseillerDestination.value) {
+      setConseillerDestination({
+        ...conseillerDestination,
+        error: 'Veuillez rechercher un conseiller de destination',
+      })
+      isFormValid = false
+    }
+
+    return isFormValid
+  }
+
+  async function reaffecterBeneficiaires(e: FormEvent) {
+    e.preventDefault()
+    if (isReaffectationEnCours) return
+    if (!formIsValid()) {
+      formErrorsRef.current!.focus()
       return
     }
 
@@ -279,13 +285,13 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
     try {
       const { reaffecter } = await import('services/jeunes.service')
       await reaffecter(
-        conseillerInitial.value.id,
+        conseillerInitial.value!.id,
         conseillerDestination.value!.id,
         idsBeneficiairesSelected.value,
         isReaffectationTemporaire.value!
       )
       resetAll()
-      setReaffectationSuccess(true)
+      setAlerte(AlerteParam.reaffectation)
       setTrackingTitle('Réaffectation jeunes – Etape 1 – Succès réaff.')
     } catch (erreur) {
       setErreurReaffectation(
@@ -346,14 +352,10 @@ function ReaffectationPage({ estSuperviseurResponsable }: ReaffectationProps) {
 
   return (
     <>
-      {isReaffectationSuccess && (
-        <SuccessAlert
-          label={'Les bénéficiaires ont été réaffectés avec succès'}
-          onAcknowledge={() => setReaffectationSuccess(false)}
-        />
-      )}
-
-      <RecapitulatifErreursFormulaire erreurs={getErreurs()} />
+      <RecapitulatifErreursFormulaire
+        erreurs={getErreurs()}
+        ref={formErrorsRef}
+      />
 
       <p className='text-s-bold text-content_color mb-6'>
         Tous les champs sont obligatoires

@@ -26,6 +26,7 @@ export default function PageLayout({
 
       <main
         id={ID_CONTENU}
+        tabIndex={-1}
         className={`${layout.content} ${
           fullWidth ? layout.content_fullWidth : layout.content_centered
         }`}
