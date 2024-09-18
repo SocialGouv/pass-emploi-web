@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
@@ -41,6 +41,8 @@ export default function ChatRoom({
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
+
+  const listeConversationsRef = useRef<HTMLUListElement>(null)
 
   const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
@@ -160,6 +162,7 @@ export default function ChatRoom({
     })
 
     setChatsFiltres(chatsFiltresResult)
+    listeConversationsRef.current?.focus()
   }
 
   useEffect(() => {
@@ -322,6 +325,7 @@ export default function ChatRoom({
           )}
 
           <ListeConversations
+            ref={listeConversationsRef}
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={onAccesConversation}

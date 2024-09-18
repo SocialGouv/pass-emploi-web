@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ForwardedRef, forwardRef } from 'react'
 
 import MessageGroupeIcon from 'assets/icons/actions/outgoing_mail.svg'
 import { ConversationTile } from 'components/chat/ConversationTile'
@@ -16,11 +16,14 @@ interface ListeConversationsProps {
   onSelectConversation: (idChat: string) => void
 }
 
-export default function ListeConversations({
-  conversations,
-  onSelectConversation,
-  onToggleFlag,
-}: ListeConversationsProps) {
+function ListeConversations(
+  {
+    conversations,
+    onSelectConversation,
+    onToggleFlag,
+  }: ListeConversationsProps,
+  ref: ForwardedRef<HTMLUListElement>
+) {
   return (
     <>
       <div
@@ -54,22 +57,20 @@ export default function ListeConversations({
         )}
 
         {conversations && conversations.length > 0 && (
-          <>
-            <ul className='px-4 pb-24'>
-              {conversations.map((beneficiaireChat: BeneficiaireChat) => (
-                <li key={`chat-${beneficiaireChat.id}`} className='mb-2'>
-                  <ConversationTile
-                    beneficiaireChat={beneficiaireChat}
-                    id={`chat-${beneficiaireChat.id}`}
-                    onClick={() => onSelectConversation(beneficiaireChat.id)}
-                    onToggleFlag={(flagged) =>
-                      onToggleFlag(beneficiaireChat.chatId, flagged)
-                    }
-                  />
-                </li>
-              ))}
-            </ul>
-          </>
+          <ul tabIndex={-1} ref={ref} className='px-4 pb-24'>
+            {conversations.map((beneficiaireChat: BeneficiaireChat) => (
+              <li key={`chat-${beneficiaireChat.id}`} className='mb-2'>
+                <ConversationTile
+                  beneficiaireChat={beneficiaireChat}
+                  id={`chat-${beneficiaireChat.id}`}
+                  onClick={() => onSelectConversation(beneficiaireChat.id)}
+                  onToggleFlag={(flagged) =>
+                    onToggleFlag(beneficiaireChat.chatId, flagged)
+                  }
+                />
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
@@ -91,3 +92,5 @@ export default function ListeConversations({
     </>
   )
 }
+
+export default forwardRef(ListeConversations)
