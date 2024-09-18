@@ -30,7 +30,7 @@ export default function LienRetour({ returnUrlOrPath }: LienRetourProps) {
           name={IconName.ArrowBackward}
           aria-hidden={true}
           focusable={false}
-          className='w-4 h-4 fill-[currentColor] mr-3'
+          className='w-4 h-4 fill-current mr-3'
         />
         Retour à {getLabelLienRetour(returnUrlOrPath)}
       </Link>

@@ -60,6 +60,7 @@ module.exports = {
       grey_700: '#878787',
       grey_800: '#646464',
       disabled: '#73758D',
+      current: 'currentColor',
     },
 
     fill: (theme) => ({

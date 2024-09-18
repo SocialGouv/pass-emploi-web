@@ -282,7 +282,7 @@ function FooterMessage({
             <IconComponent
               focusable={false}
               aria-hidden={true}
-              className='inline w-4 h-4 fill-[currentColor]'
+              className='inline w-4 h-4 fill-current'
               name={IconName.Edit}
             />
             Modifier le message
@@ -295,7 +295,7 @@ function FooterMessage({
             <IconComponent
               focusable={false}
               aria-hidden={true}
-              className='inline w-4 h-4 fill-[currentColor]'
+              className='inline w-4 h-4 fill-current'
               name={IconName.Delete}
             />
             Supprimer le message

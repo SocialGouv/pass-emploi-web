@@ -314,7 +314,7 @@ export default function ChatRoom({
               </span>
               <IconComponent
                 name={IconName.ChevronRight}
-                className='mr-2 h-6 w-6 fill-[currentColor]'
+                className='mr-2 h-6 w-6 fill-current'
                 aria-hidden={true}
                 focusable={false}
               />

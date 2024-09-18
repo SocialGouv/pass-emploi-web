@@ -328,7 +328,7 @@ export function EditionActionForm({
             À quoi servent les catégories ?
             <IconComponent
               name={IconName.Help}
-              className='fill-[currentColor] w-4 h-4'
+              className='fill-current w-4 h-4'
               aria-hidden={true}
               focusable={false}
             />

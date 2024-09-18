@@ -369,7 +369,7 @@ export function Conversation({
                           name={IconName.ChevronUp}
                           aria-hidden={true}
                           focusable={false}
-                          className='w-4 h-4 fill-[currentColor] mr-2'
+                          className='w-4 h-4 fill-current mr-2'
                         />
                         Voir messages plus anciens
                       </Button>
@@ -392,7 +392,7 @@ export function Conversation({
                           name={IconName.Info}
                           focusable={false}
                           aria-hidden={true}
-                          className='inline h-6 w-6 fill-[currentColor]'
+                          className='inline h-6 w-6 fill-current'
                         />
                         <strong>Attention à nos propos</strong>
                       </p>
