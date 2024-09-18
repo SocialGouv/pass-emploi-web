@@ -1,16 +1,15 @@
 'use client'
 
 import { withTransaction } from '@elastic/apm-rum-react'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
+import EmptyState from 'components/EmptyState'
 import EncartAgenceRequise from 'components/EncartAgenceRequise'
 import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import SituationTag from 'components/jeune/SituationTag'
 import PageActionsPortal from 'components/PageActionsPortal'
 import ButtonLink from 'components/ui/Button/ButtonLink'
-import IllustrationComponent, {
-  IllustrationName,
-} from 'components/ui/IllustrationComponent'
+import { IllustrationName } from 'components/ui/IllustrationComponent'
 import Pagination from 'components/ui/Table/Pagination'
 import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
@@ -35,6 +34,8 @@ function EtablissementPage() {
   const [conseiller, setConseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const [trackingTitle, setTrackingTitle] = useState<string>(initialTracking)
+
+  const tableRef = useRef<HTMLTableElement>(null)
 
   const [recherche, setRecherche] = useState<string>()
   const [resultatsRecherche, setResultatsRecherche] =
@@ -83,6 +84,10 @@ function EtablissementPage() {
     setTrackingTitle(initialTracking + ' - ' + trackingMessage)
   }
 
+  useEffect(() => {
+    if (resultatsRecherche?.length) tableRef.current!.focus()
+  }, [resultatsRecherche])
+
   useMatomo(trackingTitle, portefeuille.length > 0)
 
   return (
@@ -114,6 +119,7 @@ function EtablissementPage() {
       {Boolean(resultatsRecherche?.length) && (
         <div className='mt-6'>
           <Table
+            ref={tableRef}
             caption={{
               text: `Résultat de recherche`,
               count: resultatsRecherche!.length,
@@ -173,17 +179,12 @@ function EtablissementPage() {
       )}
 
       {resultatsRecherche?.length === 0 && (
-        <>
-          <IllustrationComponent
-            name={IllustrationName.People}
-            focusable={false}
-            aria-hidden={true}
-            className='m-auto w-[200px] h-[200px] [--secondary-fill:theme(colors.grey\_100)]'
-          />
-          <p className='text-base-bold text-center'>
-            Aucun bénéficiaire ne correspond à votre recherche.
-          </p>
-        </>
+        <EmptyState
+          shouldFocus={true}
+          illustrationName={IllustrationName.People}
+          titre='Aucun bénéficiaire trouvé.'
+          sousTitre='Recommencez ou modifiez votre recherche.'
+        />
       )}
     </>
   )
