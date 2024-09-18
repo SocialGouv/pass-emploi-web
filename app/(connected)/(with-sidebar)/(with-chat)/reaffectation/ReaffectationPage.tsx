@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import React, {
   FormEvent,
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -608,6 +609,7 @@ const ChoixConseiller = forwardRef(
     const id = 'conseiller-' + name
 
     const inputRef = useRef<HTMLInputElement>(null)
+    const tableRef = useRef<HTMLTableElement>(null)
 
     const [queryConseiller, setQueryConseiller] = useState<ValueWithError>({
       value: '',
@@ -661,6 +663,11 @@ const ChoixConseiller = forwardRef(
       }
     }
 
+    useEffect(() => {
+      if (queryConseiller.error) inputRef.current!.focus()
+      else if (choixConseillers?.length) tableRef.current!.focus()
+    }, [choixConseillers, queryConseiller.error])
+
     return (
       <>
         <Label htmlFor={id}>E-mail ou nom et prénom du conseiller</Label>
@@ -705,7 +712,10 @@ const ChoixConseiller = forwardRef(
         </div>
 
         {choixConseillers && choixConseillers.length > 0 && (
-          <Table caption={{ text: 'Choix du conseiller ' + name }}>
+          <Table
+            ref={tableRef}
+            caption={{ text: 'Choix du conseiller ' + name }}
+          >
             <thead>
               <TR isHeader={true}>
                 <TH>Conseiller</TH>
