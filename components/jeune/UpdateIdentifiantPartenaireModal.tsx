@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import Input from 'components/ui/Form/Input'
 import Label from 'components/ui/Form/Label'
@@ -22,6 +22,9 @@ export default function UpdateIdentifiantPartenaireModal({
   const [getIdentifiantPartenaire, setIdentifiantPartenaire] = useState<
     string | undefined
   >(identifiantPartenaire)
+
+  const modalRef = useRef<ModalHandles>(null)
+
   function identifiantPartenaireEstValide() {
     return (
       getIdentifiantPartenaire &&
@@ -48,7 +51,7 @@ export default function UpdateIdentifiantPartenaireModal({
     : 'Ajoutez l’identifiant France Travail du jeune'
 
   return (
-    <Modal title={titre} onClose={onClose}>
+    <Modal ref={modalRef} title={titre} onClose={onClose}>
       <div className='mt-8 mb-14'>
         <Label htmlFor='identifiantPartenaire'>
           Identifiant France Travail (10 caractères maximum)
@@ -68,7 +71,7 @@ export default function UpdateIdentifiantPartenaireModal({
           type='button'
           className='mr-4'
           style={ButtonStyle.SECONDARY}
-          onClick={onClose}
+          onClick={(e) => modalRef.current!.closeModal(e)}
         >
           <span className='px-10'>Annuler</span>
         </Button>

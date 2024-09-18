@@ -1,5 +1,5 @@
-import Modal from './Modal'
-import IconComponent, { IconName } from './ui/IconComponent'
+import Modal from 'components/Modal'
+import IconComponent, { IconName } from 'components/ui/IconComponent'
 
 export default function ConfirmationSuppressionCompteConseillerModal() {
   return (

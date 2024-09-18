@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IconName } from 'components/ui/IconComponent'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
@@ -21,16 +21,15 @@ export default function DeleteRdvModal({
   evenementTypeAC,
   titreEvenement,
 }: DeleteRdvModalProps) {
-  function handleCloseModal() {
-    onClose()
-  }
+  const modalRef = useRef<ModalHandles>(null)
 
   return (
     <Modal
+      ref={modalRef}
       title={`Souhaitez vous supprimer l’${
         evenementTypeAC ? 'animation collective' : 'événement'
       } : ${titreEvenement} ?`}
-      onClose={handleCloseModal}
+      onClose={onClose}
       titleIllustration={IllustrationName.Delete}
     >
       {aDesBeneficiairesDUnAutrePortefeuille && (
@@ -62,7 +61,7 @@ export default function DeleteRdvModal({
           type='button'
           className='mr-[16px]'
           style={ButtonStyle.SECONDARY}
-          onClick={handleCloseModal}
+          onClick={(e) => modalRef.current!.closeModal(e)}
         >
           <span className='px-[40px]'>Annuler</span>
         </Button>

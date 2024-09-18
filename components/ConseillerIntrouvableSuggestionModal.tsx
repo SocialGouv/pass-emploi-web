@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IconName } from 'components/ui/IconComponent'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
@@ -27,8 +27,11 @@ export default function ConseillerIntrouvableSuggestionModal({
     })
   }
 
+  const modalRef = useRef<ModalHandles>(null)
+
   return (
     <Modal
+      ref={modalRef}
       title={`Vous ne trouvez pas le nom d’une conseillère ou d’un conseiller CEJ dans la liste ?`}
       titleIcon={IconName.Help}
       onClose={onClose}
@@ -50,7 +53,11 @@ export default function ConseillerIntrouvableSuggestionModal({
         </span>
       </p>
       <div className='flex justify-center'>
-        <Button type='button' style={ButtonStyle.PRIMARY} onClick={onClose}>
+        <Button
+          type='button'
+          style={ButtonStyle.PRIMARY}
+          onClick={(e) => modalRef.current!.closeModal(e)}
+        >
           J’ai compris
         </Button>
       </div>

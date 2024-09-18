@@ -1,6 +1,6 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { InputError } from 'components/ui/Form/InputError'
 import Label from 'components/ui/Form/Label'
@@ -31,6 +31,8 @@ export default function DeleteJeuneActifModal({
   soumettreSuppression,
 }: DeleteJeuneActifModalProps) {
   const [portefeuille] = usePortefeuille()
+
+  const modalRef = useRef<ModalHandles>(null)
 
   const [showModalEtape1, setShowModalEtape1] = useState<boolean>(true)
   const [showModalEtape2, setShowModalEtape2] = useState<boolean>(false)
@@ -121,6 +123,7 @@ export default function DeleteJeuneActifModal({
     <>
       {showModalEtape1 && (
         <Modal
+          ref={modalRef}
           title={`Souhaitez-vous supprimer le compte bénéficiaire : ${jeune.prenom} ${jeune.nom} ?`}
           onClose={onClose}
           titleIllustration={IllustrationName.Delete}
@@ -133,7 +136,7 @@ export default function DeleteJeuneActifModal({
             <Button
               type='button'
               style={ButtonStyle.SECONDARY}
-              onClick={onClose}
+              onClick={(e) => modalRef.current!.closeModal(e)}
             >
               Annuler
             </Button>
@@ -151,6 +154,7 @@ export default function DeleteJeuneActifModal({
 
       {showModalEtape2 && (
         <Modal
+          ref={modalRef}
           title={`Souhaitez-vous supprimer le compte bénéficiaire : ${jeune.prenom} ${jeune.nom} ?`}
           onClose={onClose}
           titleIllustration={IllustrationName.Delete}
@@ -221,7 +225,7 @@ export default function DeleteJeuneActifModal({
               <Button
                 type='button'
                 style={ButtonStyle.SECONDARY}
-                onClick={onClose}
+                onClick={(e) => modalRef.current!.closeModal(e)}
               >
                 Annuler
               </Button>

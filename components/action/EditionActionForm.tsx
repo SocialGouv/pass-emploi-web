@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon'
-import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
 import RadioBox from 'components/action/RadioBox'
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -92,9 +92,7 @@ export function EditionActionForm({
     useState<boolean>(false)
 
   const formErrorsRef = useRef<HTMLDivElement>(null)
-  const modalRef = useRef<{
-    closeModal: (e: MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   function permuterAffichageHelperCategories() {
     setShowHelperCategories(!showHelperCategories)

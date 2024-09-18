@@ -1,7 +1,6 @@
-import { MouseEvent, useRef } from 'react'
+import { useRef } from 'react'
 
-import Modal from './Modal'
-
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 
@@ -16,9 +15,7 @@ export default function ConfirmationDeleteListeDiffusionModal({
   onCancel,
   onConfirmation,
 }: ConfirmationDeleteListeDiffusionModalProps) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   return (
     <Modal

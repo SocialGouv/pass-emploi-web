@@ -1,11 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import RenseignementAgenceForm from 'components/RenseignementAgenceForm'
-import {
-  FormContainer,
-  RenseignementAgenceMissionLocaleForm,
-} from 'components/RenseignementAgenceMissionLocaleForm'
+import { RenseignementAgenceMissionLocaleForm } from 'components/RenseignementAgenceMissionLocaleForm'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
 import { Conseiller, estMilo } from 'interfaces/conseiller'
 import { Agence } from 'interfaces/referentiel'
@@ -28,8 +25,11 @@ export default function RenseignementAgenceModal({
   const conseillerEstMilo = estMilo(conseiller)
   const labelAgence = conseillerEstMilo ? 'Mission Locale' : 'agence'
 
+  const modalRef = useRef<ModalHandles>(null)
+
   return (
     <Modal
+      ref={modalRef}
       title={`Ajoutez votre ${labelAgence} à votre profil`}
       onClose={onClose}
     >
@@ -48,8 +48,8 @@ export default function RenseignementAgenceModal({
           referentielAgences={referentielAgences}
           onAgenceChoisie={onAgenceChoisie}
           onContacterSupport={onContacterSupport}
-          onClose={onClose}
-          container={FormContainer.MODAL}
+          onClose={(e) => modalRef.current!.closeModal(e)}
+          isInModal={true}
         />
       )}
 
@@ -57,7 +57,7 @@ export default function RenseignementAgenceModal({
         <RenseignementAgenceForm
           referentielAgences={referentielAgences}
           onAgenceChoisie={onAgenceChoisie}
-          onClose={onClose}
+          onClose={(e) => modalRef.current!.closeModal(e)}
         />
       )}
     </Modal>
