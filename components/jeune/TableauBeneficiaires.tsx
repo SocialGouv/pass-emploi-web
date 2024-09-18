@@ -36,14 +36,12 @@ function TableauBeneficiaires(
   return (
     <>
       {beneficiairesFiltres.length === 0 && (
-        <>
-          <EmptyState
-            shouldFocus={true}
-            illustrationName={IllustrationName.People}
-            titre='Aucun bénéficiaire trouvé.'
-            sousTitre='Recommencez ou modifiez votre recherche.'
-          />
-        </>
+        <EmptyState
+          shouldFocus={true}
+          illustrationName={IllustrationName.People}
+          titre='Aucun bénéficiaire trouvé.'
+          sousTitre='Recommencez ou modifiez votre recherche.'
+        />
       )}
 
       {beneficiairesFiltres.length > 0 && (
