@@ -1,3 +1,5 @@
+import { act } from '@testing-library/react'
+import { AxeResults } from 'axe-core'
 import { axe } from 'jest-axe'
 import React from 'react'
 
@@ -17,8 +19,12 @@ describe('PlanDuSite client side', () => {
     }))
 
     //Then
-    const results = await axe(container)
-    expect(results).toHaveNoViolations()
+let results: AxeResults
+await act(async () => {
+  results = await axe(container)
+})
+
+expect(results).toHaveNoViolations()
   })
 
   it('a11y France Travail', async () => {
@@ -30,7 +36,11 @@ describe('PlanDuSite client side', () => {
     }))
 
     //Then
-    const results = await axe(container)
+    let results: AxeResults
+    await act(async () => {
+      results = await axe(container)
+    })
+
     expect(results).toHaveNoViolations()
   })
 })
