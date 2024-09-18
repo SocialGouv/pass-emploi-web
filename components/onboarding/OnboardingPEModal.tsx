@@ -1,5 +1,5 @@
 import { StaticImport } from 'next/dist/shared/lib/get-img-props'
-import React, { MouseEvent, ReactNode, useRef, useState } from 'react'
+import React, { ReactNode, useRef, useState } from 'react'
 
 import onboardingMessageriePassEmploi from 'assets/images/onboarding_messagerie_pass-emploi.webp'
 import onboardingMessagerie from 'assets/images/onboarding_messagerie_pole-emploi.webp'
@@ -7,7 +7,7 @@ import onboardingOffresPassEmploi from 'assets/images/onboarding_offres_pass-emp
 import onboardingOffres from 'assets/images/onboarding_offres_pole-emploi.webp'
 import onboardingPortefeuillePassEmploi from 'assets/images/onboarding_portefeuille_pass-emploi.webp'
 import onboardingPortefeuille from 'assets/images/onboarding_portefeuille_pole-emploi.webp'
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import OnboardingListItem from 'components/onboarding/OnboardingListItem'
 import ProgressBar from 'components/onboarding/ProgressBar'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -145,9 +145,7 @@ function OnboardingPEEtapeModal({
   onClose: () => void
   onContinue?: () => void
 }) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   return (
     <Modal
@@ -167,7 +165,7 @@ function OnboardingPEEtapeModal({
           >
             Passer l’intro
           </Button>
-          <Button style={ButtonStyle.PRIMARY} onClick={() => onContinue()}>
+          <Button style={ButtonStyle.PRIMARY} onClick={onContinue}>
             Continuer
             <IconComponent
               name={IconName.ArrowForward}

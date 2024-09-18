@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import React, { MouseEvent, ReactNode, useRef, useState } from 'react'
+import React, { ReactNode, useRef, useState } from 'react'
 
 import onboardingAgenda from 'assets/images/onboarding_agenda_milo.webp'
 import onboardingMessagerie from 'assets/images/onboarding_messagerie_milo.webp'
@@ -7,7 +7,7 @@ import onboardingOffres from 'assets/images/onboarding_offres_milo.webp'
 import onboardingPilotage from 'assets/images/onboarding_pilotage_milo.webp'
 import onboardingPortefeuille from 'assets/images/onboarding_portefeuille_milo.webp'
 import onboardingReaffectation from 'assets/images/onboarding_reaffectation_milo.webp'
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import OnboardingListItem from 'components/onboarding/OnboardingListItem'
 import ProgressBar from 'components/onboarding/ProgressBar'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
@@ -206,9 +206,7 @@ function OnboardingMILOEtapeModal({
   onClose: () => void
   onContinue?: () => void
 }) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   return (
     <Modal title={titre} onClose={onClose} ref={modalRef}>

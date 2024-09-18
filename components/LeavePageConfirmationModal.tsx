@@ -1,9 +1,8 @@
-import { MouseEvent, useRef } from 'react'
+import { useRef } from 'react'
 
-import Modal from './Modal'
-import ButtonLink from './ui/Button/ButtonLink'
-
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
+import ButtonLink from 'components/ui/Button/ButtonLink'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 
 interface LeavePageConfirmationModalProps {
@@ -19,9 +18,7 @@ export default function LeavePageConfirmationModal({
   onCancel,
   destination,
 }: LeavePageConfirmationModalProps) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   return (
     <Modal

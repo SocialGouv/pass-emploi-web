@@ -1,7 +1,6 @@
-import { MouseEvent, useRef } from 'react'
+import { useRef } from 'react'
 
-import Modal from './Modal'
-
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import { IllustrationName } from 'components/ui/IllustrationComponent'
 import { Conseiller, StructureConseiller } from 'interfaces/conseiller'
@@ -19,9 +18,7 @@ export default function ConfirmationDeleteConseillerModal({
   conseiller,
   portefeuilleAvecBeneficiaires,
 }: ConfirmationDeleteConseillerModalProps) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   const labelStructure = ((): string => {
     switch (conseiller.structure) {

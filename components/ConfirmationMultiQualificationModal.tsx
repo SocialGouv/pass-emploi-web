@@ -1,6 +1,6 @@
 import { MouseEvent, useRef } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ExternalLink from 'components/ui/Navigation/ExternalLink'
 import InformationMessage from 'components/ui/Notifications/InformationMessage'
@@ -21,9 +21,7 @@ export default function ConfirmationMultiQualificationModal({
   onConfirmation,
   onLienExterne,
 }: ConfirmationMultiQualificationModalProps) {
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   const titreModale = `Qualifier ${
     actions.length > 1 ? `les ${actions.length} actions` : 'l’action'

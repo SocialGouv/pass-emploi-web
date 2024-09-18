@@ -2,9 +2,9 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { DateTime } from 'luxon'
-import React, { FormEvent, MouseEvent, useRef, useState } from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
 import { Etape } from 'components/ui/Form/Etape'
@@ -70,9 +70,7 @@ function QualificationPage({
 
   const [showHelperCategories, setShowHelperCategories] =
     useState<boolean>(false)
-  const modalRef = useRef<{
-    closeModal: (e: KeyboardEvent | MouseEvent) => void
-  }>(null)
+  const modalRef = useRef<ModalHandles>(null)
 
   const formErrorsRef = useRef<HTMLDivElement>(null)
 

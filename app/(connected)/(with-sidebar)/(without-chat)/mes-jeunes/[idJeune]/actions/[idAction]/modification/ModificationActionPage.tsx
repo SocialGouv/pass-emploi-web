@@ -2,10 +2,10 @@
 
 import { withTransaction } from '@elastic/apm-rum-react'
 import { useRouter } from 'next/navigation'
-import React, { MouseEvent, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { EditionActionForm } from 'components/action/EditionActionForm'
-import Modal from 'components/Modal'
+import Modal, { ModalHandles } from 'components/Modal'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button, { ButtonStyle } from 'components/ui/Button/Button'
 import ButtonLink from 'components/ui/Button/ButtonLink'
@@ -58,9 +58,7 @@ function ModificationPage({
     action.status !== StatutAction.Qualifiee &&
     !aDesCommentaires
 
-  const suppressionModalRef = useRef<{
-    closeModal: (e: MouseEvent) => void
-  }>(null)
+  const suppressionModalRef = useRef<ModalHandles>(null)
 
   async function modifierAction(payload: ActionFormData): Promise<void> {
     const { modifierAction: _modifierAction } = await import(

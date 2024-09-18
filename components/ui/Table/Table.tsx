@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ForwardedRef, forwardRef, ReactNode } from 'react'
 
 import { Badge } from 'components/ui/Indicateurs/Badge'
 
@@ -7,9 +7,16 @@ interface TableProps {
   caption: { text: string; count?: number; visible?: boolean }
 }
 
-export default function Table({ children, caption }: TableProps) {
+function Table(
+  { children, caption }: TableProps,
+  ref: ForwardedRef<HTMLTableElement>
+) {
   return (
-    <table className={'w-full border-spacing-y-2 border-separate'}>
+    <table
+      tabIndex={ref ? -1 : undefined}
+      ref={ref}
+      className='w-full border-spacing-y-2 border-separate'
+    >
       <Caption {...caption} />
       {children}
     </table>
@@ -42,3 +49,5 @@ function Caption({
     </caption>
   )
 }
+
+export default forwardRef(Table)
