@@ -9,6 +9,7 @@ export interface TabProps {
   onSelectTab: () => void
   count?: number
   iconName?: IconName
+  ariaLabel?: string
 }
 
 export default function Tab({
@@ -18,6 +19,7 @@ export default function Tab({
   onSelectTab,
   count,
   iconName,
+  ariaLabel,
 }: TabProps) {
   return (
     <li role='presentation'>
@@ -46,16 +48,19 @@ export default function Tab({
             }`}
           />
         )}
-        {label}
+        {ariaLabel ? <span aria-label={ariaLabel}>{label}</span> : label}
         {count !== undefined && (
-          <span className='ml-4'>
+          <>
+            <span className='sr-only'> </span>
             <Badge
               count={count}
               textColor='primary'
               bgColor='primary_lighten'
+              style='ml-4'
               size={6}
             />
-          </span>
+            <span className='sr-only'> éléments</span>
+          </>
         )}
       </button>
     </li>

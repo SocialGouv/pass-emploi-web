@@ -29,7 +29,7 @@ import { usePortefeuille } from 'utils/portefeuilleContext'
 
 type InformationsPageProps = {
   idBeneficiaire: string
-  jeune: DetailBeneficiaire
+  beneficiaire: DetailBeneficiaire
   situations: Array<{
     categorie: CategorieSituation
     etat?: EtatSituation
@@ -48,7 +48,7 @@ function InformationsPage({
   situations,
   conseillers,
   lectureSeule,
-  jeune,
+  beneficiaire,
   onglet,
   metadonneesFavoris,
 }: InformationsPageProps) {
@@ -103,7 +103,10 @@ function InformationsPage({
 
   return (
     <>
-      <TabList className='mt-10'>
+      <TabList
+        label={`Informations complémentaires de ${beneficiaire.prenom} ${beneficiaire.nom}`}
+        className='mt-10'
+      >
         <Tab
           label='Informations'
           selected={currentTab === 'INFORMATIONS'}
@@ -138,10 +141,10 @@ function InformationsPage({
           className='mt-8 pb-8'
         >
           <BlocInformationJeune
-            creationDate={jeune.creationDate}
-            dateFinCEJ={jeune.dateFinCEJ}
-            email={jeune.email}
-            urlDossier={jeune.urlDossier}
+            creationDate={beneficiaire.creationDate}
+            dateFinCEJ={beneficiaire.dateFinCEJ}
+            email={beneficiaire.email}
+            urlDossier={beneficiaire.urlDossier}
             onDossierMiloClick={() => {}}
             conseiller={conseiller}
           />

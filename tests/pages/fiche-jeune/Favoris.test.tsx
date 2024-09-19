@@ -77,7 +77,7 @@ async function renderFicheJeune(metadonneesFavoris: MetadonneesFavoris) {
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

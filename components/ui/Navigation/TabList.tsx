@@ -2,8 +2,8 @@ import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from 'react'
 
 interface TabListProps {
   children: ReactNode
+  label: string
   className?: string
-  label?: string
 }
 
 export default function TabList({ children, className, label }: TabListProps) {

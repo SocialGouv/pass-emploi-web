@@ -97,7 +97,7 @@ describe('PilotagePage client side - Actions', () => {
         '25 À qualifier'
       )
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'Actions 25'
+        'Actions 25 éléments'
       )
     })
 

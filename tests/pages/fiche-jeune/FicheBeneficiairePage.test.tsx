@@ -40,7 +40,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={jeune}
+            beneficiaire={jeune}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -70,7 +70,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         ;({ container } = renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire()}
+            beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -126,7 +126,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         ;({ container } = renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire()}
+            beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -148,7 +148,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire()}
+            beneficiaire={unDetailBeneficiaire()}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -175,7 +175,7 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
-              jeune={unDetailBeneficiaire({ isActivated: false })}
+              beneficiaire={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
@@ -269,7 +269,7 @@ describe('FicheBeneficiairePage client side', () => {
         await act(async () => {
           renderWithContexts(
             <FicheBeneficiairePage
-              jeune={unDetailBeneficiaire({ isActivated: false })}
+              beneficiaire={unDetailBeneficiaire({ isActivated: false })}
               rdvs={[]}
               actionsInitiales={desActionsInitiales()}
               categoriesActions={desCategories()}
@@ -300,7 +300,7 @@ describe('FicheBeneficiairePage client side', () => {
       await act(async () => {
         renderWithContexts(
           <FicheBeneficiairePage
-            jeune={unDetailBeneficiaire({ structureMilo: { id: '2' } })}
+            beneficiaire={unDetailBeneficiaire({ structureMilo: { id: '2' } })}
             rdvs={[]}
             actionsInitiales={desActionsInitiales()}
             categoriesActions={desCategories()}
@@ -336,7 +336,7 @@ async function renderFicheJeune(
   await act(async () => {
     ;({ container } = renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         rdvs={[]}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

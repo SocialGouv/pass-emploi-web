@@ -6,17 +6,17 @@ import React from 'react'
 import FicheBeneficiairePage from 'app/(connected)/(with-sidebar)/(with-chat)/mes-jeunes/[idJeune]/FicheBeneficiairePage'
 import { desActionsInitiales, desCategories } from 'fixtures/action'
 import { unAgenda } from 'fixtures/agenda'
-import { desEvenementsListItems } from 'fixtures/evenement'
-import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
 import {
   desIndicateursSemaine,
   unDetailBeneficiaire,
   uneMetadonneeFavoris,
 } from 'fixtures/beneficiaire'
+import { desEvenementsListItems } from 'fixtures/evenement'
+import { uneListeDeRecherches, uneListeDOffres } from 'fixtures/favoris'
+import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { StructureConseiller } from 'interfaces/conseiller'
 import { EvenementListItem } from 'interfaces/evenement'
 import { Offre, Recherche } from 'interfaces/favoris'
-import { MetadonneesFavoris } from 'interfaces/beneficiaire'
 import { recupererAgenda } from 'services/agenda.service'
 import { getOffres } from 'services/favoris.service'
 import { getIndicateursJeuneAlleges } from 'services/jeunes.service'
@@ -52,7 +52,7 @@ describe('Rendez-vous de la fiche jeune', () => {
         // Then
         expect(
           screen.getByRole('tab', { selected: true })
-        ).toHaveAccessibleName('Rendez-vous 2')
+        ).toHaveAccessibleName('Rendez-vous 2 éléments')
         rdvs.forEach((rdv) => {
           expect(screen.getByText(rdv.type)).toBeInTheDocument()
           expect(screen.getByText(rdv.modality!)).toBeInTheDocument()
@@ -169,7 +169,7 @@ async function renderFicheJeune(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}
@@ -197,7 +197,7 @@ async function renderFicheJeuneFT(
   await act(async () => {
     renderWithContexts(
       <FicheBeneficiairePage
-        jeune={unDetailBeneficiaire()}
+        beneficiaire={unDetailBeneficiaire()}
         rdvs={rdvs}
         actionsInitiales={desActionsInitiales()}
         categoriesActions={desCategories()}

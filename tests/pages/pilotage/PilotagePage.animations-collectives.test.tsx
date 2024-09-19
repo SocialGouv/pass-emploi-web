@@ -96,7 +96,7 @@ describe('PilotagePage client side - Animations collectives', () => {
         '25 À clore'
       )
       expect(screen.getByRole('tab', { selected: true })).toHaveAccessibleName(
-        'AC app CEJ 25'
+        'Animations collectives de l’application du CEJ 25 éléments'
       )
     })
 

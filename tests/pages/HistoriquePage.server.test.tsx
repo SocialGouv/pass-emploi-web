@@ -62,7 +62,7 @@ describe('HistoriquePage server side', () => {
 
   it('prépare la page', async () => {
     //Given
-    let DetailJeune = unDetailBeneficiaire({
+    const detailBeneficiaire = unDetailBeneficiaire({
       id: 'id-beneficiaire',
       situations: listeSituations,
     })
@@ -85,7 +85,7 @@ describe('HistoriquePage server side', () => {
         lectureSeule: false,
         situations: listeSituations,
         conseillers: listeConseillers,
-        jeune: DetailJeune,
+        beneficiaire: detailBeneficiaire,
         onglet: 'INFORMATIONS',
       },
       {}

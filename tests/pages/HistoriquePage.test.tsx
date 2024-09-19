@@ -390,7 +390,7 @@ async function renderHistorique(
         situations={situations}
         conseillers={conseillers}
         lectureSeule={false}
-        jeune={beneficiaire}
+        beneficiaire={beneficiaire}
         metadonneesFavoris={uneMetadonneeFavoris()}
         onglet={'INFORMATIONS'}
       />,

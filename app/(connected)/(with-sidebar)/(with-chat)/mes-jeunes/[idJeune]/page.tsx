@@ -141,7 +141,7 @@ export default async function FicheBeneficiaire({
       <PageHeaderPortal header={`${jeune.prenom} ${jeune.nom}`} />
 
       <FicheBeneficiairePage
-        jeune={jeune}
+        beneficiaire={jeune}
         metadonneesFavoris={metadonneesFavoris}
         rdvs={rdvsEtSessionsTriesParDate}
         actionsInitiales={{ ...actions, page }}
