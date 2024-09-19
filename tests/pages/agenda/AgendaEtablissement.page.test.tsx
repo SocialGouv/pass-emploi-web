@@ -261,7 +261,7 @@ describe('Agenda - Onglet établissement', () => {
       await waitFor(() => {
         expect(
           screen.getByRole('table', {
-            name: '1 résultats du 1 septembre 2022 au 7 septembre 2022',
+            name: '1 résultat du 1 septembre 2022 au 7 septembre 2022',
           })
         ).toBeInTheDocument()
       })
