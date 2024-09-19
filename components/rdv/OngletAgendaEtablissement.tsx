@@ -44,6 +44,8 @@ export default function OngletAgendaEtablissement({
   const [evenements, setEvenements] = useState<AnimationCollective[]>()
 
   const filtresRef = useRef<HTMLButtonElement>(null)
+  const tableRef = useRef<HTMLTableElement>(null)
+
   const [filtres, setFiltres] = useState<StatutAnimationCollective[]>([])
   const [recherche, setRecherche] = useState<string>('')
   const [evenementsAffiches, setEvenementsAffiches] =
@@ -121,6 +123,10 @@ export default function OngletAgendaEtablissement({
     setEvenementsAffiches(evenementsFiltres)
   }, [evenements, filtres, recherche])
 
+  useEffect(() => {
+    tableRef.current?.focus()
+  }, [recherche])
+
   return (
     <>
       <RechercheAgendaForm onSearch={setRecherche} />
@@ -171,6 +177,7 @@ export default function OngletAgendaEtablissement({
       {evenementsAffiches?.length === 0 && (
         <div className='flex flex-col justify-center items-center'>
           <EmptyState
+            shouldFocus={true}
             illustrationName={IllustrationName.Checklist}
             titre={
               filtres.length === 0
@@ -198,11 +205,16 @@ export default function OngletAgendaEtablissement({
       )}
 
       {evenementsAffiches && evenementsAffiches.length > 0 && (
-        <table className='w-full mt-6'>
+        <table className='w-full mt-6' tabIndex={-1} ref={tableRef}>
           <caption className='mb-6 text-left text-m-bold text-primary'>
             {evenementsAffiches.length}{' '}
-            {recherche ? 'résultats' : 'ateliers ou informations collectives'}{' '}
-            <span className='sr-only'>{labelPeriode}</span>
+            {evenementsAffiches.length === 1 &&
+              (recherche ? 'résultat' : 'atelier ou information collective')}
+            {evenementsAffiches.length > 1 &&
+              (recherche
+                ? 'résultats'
+                : 'ateliers ou informations collectives')}
+            <span className='sr-only'> {labelPeriode}</span>
           </caption>
 
           <thead className='sr-only'>
@@ -282,7 +294,7 @@ function RechercheAgendaForm({
             name={IconName.Search}
             focusable={false}
             aria-hidden={true}
-            className='w-6 h-6 fill-[currentColor]'
+            className='w-6 h-6 fill-current'
           />
           <span className='ml-1 sr-only'>Rechercher</span>
         </button>

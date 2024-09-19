@@ -286,7 +286,7 @@ function EnvoiMessageGroupePage({
               name={IconName.ChevronRight}
               aria-hidden={true}
               focusable={false}
-              className='w-6 h-6 fill-[currentColor]'
+              className='w-6 h-6 fill-current'
             />
           </Link>
         </Etape>

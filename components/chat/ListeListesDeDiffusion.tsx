@@ -171,7 +171,7 @@ function ListeDeDiffusionTile({
               role='img'
               focusable={false}
               aria-label={informationLabel}
-              className='w-3 h-3 mr-2 fill-[currentColor]'
+              className='w-3 h-3 mr-2 fill-current'
             />
             {liste.titre}
           </h4>

@@ -3,9 +3,9 @@
 import { withTransaction } from '@elastic/apm-rum-react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
+import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import TableauBeneficiaires from 'components/jeune/TableauBeneficiaires'
 import PageActionsPortal from 'components/PageActionsPortal'
 import Button from 'components/ui/Button/Button'
@@ -16,8 +16,8 @@ import IllustrationComponent, {
 } from 'components/ui/IllustrationComponent'
 import { SpinningLoader } from 'components/ui/SpinningLoader'
 import {
-  BeneficiaireAvecInfosComplementaires,
   BeneficiaireAvecCompteursActionsRdvs,
+  BeneficiaireAvecInfosComplementaires,
 } from 'interfaces/beneficiaire'
 import { estMilo, utiliseChat } from 'interfaces/conseiller'
 import { AlerteParam } from 'referentiel/alerteParam'
@@ -58,6 +58,8 @@ function PortefeuillePage({
     setIsRecuperationBeneficiairesLoading,
   ] = useState<boolean>(false)
 
+  const refTableau = useRef<HTMLTableElement>(null)
+
   let initialTracking = 'Mes jeunes'
   if (conseillerJeunes.length === 0) initialTracking += ' - Aucun jeune'
   if (isFromEmail) initialTracking += ' - Origine email'
@@ -86,35 +88,34 @@ function PortefeuillePage({
     }
   }
 
-  const onSearch = useCallback(
-    (query: string) => {
-      const querySplit = query.toLowerCase().split(/-|\s/)
-      if (query) {
-        const jeunesFiltresResult = jeunes!.filter((jeune) => {
-          const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
-          const jeuneFirstName = jeune.prenom
-            .replace(/’/i, "'")
-            .toLocaleLowerCase()
-          for (const item of querySplit) {
-            if (jeuneLastName.includes(item) || jeuneFirstName.includes(item)) {
-              return true
-            }
+  function chercherBeneficiaire(query: string) {
+    const querySplit = query.toLowerCase().split(/-|\s/)
+    if (query) {
+      const jeunesFiltresResult = jeunes!.filter((jeune) => {
+        const jeuneLastName = jeune.nom.replace(/’/i, "'").toLocaleLowerCase()
+        const jeuneFirstName = jeune.prenom
+          .replace(/’/i, "'")
+          .toLocaleLowerCase()
+        for (const item of querySplit) {
+          if (jeuneLastName.includes(item) || jeuneFirstName.includes(item)) {
+            return true
           }
-          return false
-        })
-        setJeunesFiltres(jeunesFiltresResult)
-        if (jeunesFiltresResult.length > 0) {
-          setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
-        } else {
-          setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
         }
+        return false
+      })
+      setJeunesFiltres(jeunesFiltresResult)
+      if (jeunesFiltresResult.length > 0) {
+        setTrackingTitle('Clic sur Rechercher - Recherche avec résultats')
       } else {
-        setJeunesFiltres(jeunes)
-        setTrackingTitle(initialTracking)
+        setTrackingTitle('Clic sur Rechercher - Recherche sans résultats')
       }
-    },
-    [initialTracking, jeunes]
-  )
+    } else {
+      setJeunesFiltres(jeunes)
+      setTrackingTitle(initialTracking)
+    }
+
+    refTableau.current?.focus()
+  }
 
   useEffect(() => {
     if (!conseillerJeunes.length) return
@@ -202,13 +203,14 @@ function PortefeuillePage({
       {conseillerJeunes.length > 0 && (
         <>
           <div className='mb-12'>
-            <RechercheBeneficiaire onSearchFilterBy={onSearch} />
+            <RechercheBeneficiaire onSearchFilterBy={chercherBeneficiaire} />
           </div>
 
           {!jeunesFiltres && <SpinningLoader />}
 
           {jeunesFiltres && (
             <TableauBeneficiaires
+              ref={refTableau}
               beneficiairesFiltres={jeunesFiltres}
               total={conseillerJeunes.length}
             />

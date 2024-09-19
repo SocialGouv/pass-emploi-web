@@ -53,7 +53,7 @@ export default function DisplayMessageListeDeDiffusion({
               name={IconName.ChevronRight}
               aria-hidden={true}
               focusable={false}
-              className='w-5 h-5 ml-2 fill-[currentColor]'
+              className='w-5 h-5 ml-2 fill-current'
             />
           </button>
         )}

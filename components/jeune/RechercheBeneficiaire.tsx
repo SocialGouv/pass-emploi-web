@@ -9,10 +9,10 @@ interface RechercheBeneficiaireProps {
   minCaracteres?: number
 }
 
-export const RechercheBeneficiaire = ({
+export default function RechercheBeneficiaire({
   onSearchFilterBy,
   minCaracteres,
-}: RechercheBeneficiaireProps) => {
+}: RechercheBeneficiaireProps) {
   const [query, setQuery] = useState<string>('')
   const [error, setError] = useState<string>()
 
@@ -62,7 +62,7 @@ export const RechercheBeneficiaire = ({
             name={IconName.Search}
             focusable={false}
             aria-hidden={true}
-            className='w-6 h-6 fill-[currentColor]'
+            className='w-6 h-6 fill-current'
           />
           <span className='ml-1 sr-only layout_s:not-sr-only'>Rechercher</span>
         </button>

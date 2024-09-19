@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
 import dynamic from 'next/dynamic'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import ListeConversations from 'components/chat/ListeConversations'
 import { MessagerieCachee } from 'components/chat/MessagerieCachee'
-import { RechercheBeneficiaire } from 'components/jeune/RechercheBeneficiaire'
+import RechercheBeneficiaire from 'components/jeune/RechercheBeneficiaire'
 import AlerteDisplayer from 'components/layouts/AlerteDisplayer'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { BeneficiaireChat } from 'interfaces/beneficiaire'
@@ -41,6 +41,8 @@ export default function ChatRoom({
   const [conseiller] = useConseiller()
   const [portefeuille] = usePortefeuille()
   const chatCredentials = useChatCredentials()
+
+  const listeConversationsRef = useRef<HTMLUListElement>(null)
 
   const [chatsFiltres, setChatsFiltres] = useState<BeneficiaireChat[]>()
   const [afficherMenuActionsMessagerie, setAfficherMenuActionsMessagerie] =
@@ -160,6 +162,7 @@ export default function ChatRoom({
     })
 
     setChatsFiltres(chatsFiltresResult)
+    listeConversationsRef.current?.focus()
   }
 
   useEffect(() => {
@@ -314,7 +317,7 @@ export default function ChatRoom({
               </span>
               <IconComponent
                 name={IconName.ChevronRight}
-                className='mr-2 h-6 w-6 fill-[currentColor]'
+                className='mr-2 h-6 w-6 fill-current'
                 aria-hidden={true}
                 focusable={false}
               />
@@ -322,6 +325,7 @@ export default function ChatRoom({
           )}
 
           <ListeConversations
+            ref={listeConversationsRef}
             conversations={chatsFiltres}
             onToggleFlag={toggleFlag}
             onSelectConversation={onAccesConversation}

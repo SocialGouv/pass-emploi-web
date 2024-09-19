@@ -273,9 +273,7 @@ describe('EtablissementPage client side', () => {
 
         // Then
         expect(
-          screen.getByText(
-            'Aucun bénéficiaire ne correspond à votre recherche.'
-          )
+          screen.getByText('Aucun bénéficiaire trouvé.')
         ).toBeInTheDocument()
       })
 

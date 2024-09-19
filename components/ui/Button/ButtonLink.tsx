@@ -55,7 +55,7 @@ export default function ButtonLink({
         >
           <IconComponent
             name={IconName.Download}
-            className='mr-2 w-4 h-4 fill-[currentColor]'
+            className='mr-2 w-4 h-4 fill-current'
             focusable={false}
             aria-hidden={true}
           />

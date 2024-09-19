@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import IconComponent, { IconName } from 'components/ui/IconComponent'
 import { Badge } from 'components/ui/Indicateurs/Badge'
 import SortIcon from 'components/ui/SortIcon'
-import Table from 'components/ui/Table/Table'
 import TD from 'components/ui/Table/TD'
 import TDLink from 'components/ui/Table/TDLink'
 import { TH } from 'components/ui/Table/TH'
@@ -152,13 +151,7 @@ export default function TableauBeneficiairesFT({
   }
 
   return (
-    <Table
-      caption={{
-        text: 'Liste des bénéficiaires',
-        count: total === beneficiairesFiltres.length ? total : undefined,
-        visible: true,
-      }}
-    >
+    <>
       <thead>
         <TR isHeader={true}>
           <TH estCliquable={true}>
@@ -305,6 +298,6 @@ export default function TableauBeneficiairesFT({
           )
         )}
       </tbody>
-    </Table>
+    </>
   )
 }
