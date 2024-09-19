@@ -162,7 +162,11 @@ function FormulaireBeneficiaireFranceTravail({
           />
         </div>
 
-        {error && <InputError id='submit--error'>{error}</InputError>}
+        {error && (
+          <InputError id='submit--error' ref={(e) => e?.focus()}>
+            {error}
+          </InputError>
+        )}
 
         <Button
           id='submit'

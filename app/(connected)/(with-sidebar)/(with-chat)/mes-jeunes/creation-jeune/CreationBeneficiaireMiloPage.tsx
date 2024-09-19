@@ -110,7 +110,7 @@ const CreationEtape = forwardRef(
         tabIndex={-1}
       >
         <span className='sr-only'>Création de compte : étape </span>
-        <span>{etape} sur 2</span>
+        {etape} sur 2
       </p>
     )
   }
