@@ -207,7 +207,8 @@ export default function AidePage() {
                     ? avecNosRessourcesImagePassEmploi
                     : avecNosRessourcesImage
                 }
-                alt={`Flyer ”Se lancer sur ${conseillerEstPassEmploi ? 'pass emploi' : 'le CEJ'}” à retrouver sur le site ressources.`}
+                alt=''
+                aria-hidden={true}
                 className='w-1/3 object-contain'
               />
             </div>
