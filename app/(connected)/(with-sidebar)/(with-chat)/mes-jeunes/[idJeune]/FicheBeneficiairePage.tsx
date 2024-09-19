@@ -121,6 +121,8 @@ function FicheBeneficiairePage({
   const [indicateursSemaine, setIndicateursSemaine] = useState<
     IndicateursSemaine | undefined
   >()
+  const [focusCurrentTabContent, setFocusCurrentTabContent] =
+    useState<boolean>(false)
 
   const [showModaleDeleteJeuneActif, setShowModaleDeleteJeuneActif] =
     useState<boolean>(false)
@@ -161,7 +163,8 @@ function FicheBeneficiairePage({
     ? metadonneesFavoris.offres.total + metadonneesFavoris.recherches.total
     : 0
 
-  async function switchTab(tab: Onglet) {
+  function switchTab(tab: Onglet, { withFocus = false } = {}) {
+    setFocusCurrentTabContent(withFocus)
     setCurrentTab(tab)
 
     setTrackingLabel(
@@ -287,6 +290,16 @@ function FicheBeneficiairePage({
     indicateursSemaine,
     beneficiaire.id,
   ])
+
+  useEffect(() => {
+    if (focusCurrentTabContent) {
+      const table = document.querySelector<HTMLDivElement>(
+        '[role="tabpanel"] > table'
+      )
+      table?.setAttribute('tabIndex', '-1')
+      table?.focus()
+    }
+  }, [currentTab])
 
   return (
     <>
@@ -499,7 +512,9 @@ function FicheBeneficiairePage({
               <OngletAgendaBeneficiaire
                 idBeneficiaire={beneficiaire.id}
                 recupererAgenda={recupererAgenda}
-                goToActions={() => switchTab('ACTIONS')}
+                goToActions={() => {
+                  switchTab('ACTIONS', { withFocus: true })
+                }}
               />
             </div>
           )}
