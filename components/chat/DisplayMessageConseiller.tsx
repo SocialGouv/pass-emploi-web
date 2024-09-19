@@ -298,7 +298,10 @@ function FooterMessage({
               className='inline w-4 h-4 fill-current'
               name={IconName.Delete}
             />
-            Supprimer le message
+            Supprimer le message{' '}
+            <span className='sr-only'>
+              du {toFrenchDateTime(creationDate, { a11y: true })}
+            </span>
           </button>
         </div>
       )}
